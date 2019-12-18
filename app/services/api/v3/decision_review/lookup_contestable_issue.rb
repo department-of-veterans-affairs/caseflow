@@ -46,6 +46,8 @@ class Api::V3::DecisionReview::LookupContestableIssue
     end
   end
 
+  private
+
   def matches_rating_issue_id?(contestable_issue)
     contestable_issue&.rating_issue_reference_id.to_s.strip == @rating_issue_id
   end
@@ -61,8 +63,6 @@ class Api::V3::DecisionReview::LookupContestableIssue
   def contestable_issues_for_veteran_and_form_type
     @contestable_issues_for_veteran_and_form_type ||= contestable_issue_generator.contestable_issues
   end
-
-  private
 
   def contestable_issue_generator
     @contestable_issue_generator ||= ContestableIssueGenerator.new(

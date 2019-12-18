@@ -1,14 +1,23 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReview::IntakeParams
+class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   OBJECT = [Hash, ActionController::Parameters, ActiveSupport::HashWithIndifferentAccess].freeze
   BOOL = [true, false].freeze
 
   INCLUDED_PATH = ["included"].freeze
-  LEGACY_APPEAL_ISSUES_PATH = %w[attributes legacyAppealIssues].freeze
+
+  CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES.slice("compensation")
+
+  attr_reader :intake_errors
 
   def initialize(params)
     @params = params
+    @intake_errors = []
+    validate
+  end
+
+  def intake_errors?
+    !@intake_errors.empty?
   end
 
   # params for IntakesController#review
@@ -32,22 +41,28 @@ class Api::V3::DecisionReview::IntakeParams
     )
   end
 
-  def errors?
-    !errors.empty?
+  def validate 
+    if !shape_valid?
+      @intake_errors << Api::V3::DecisionReview::IntakeError.new(
+        :malformed_request, shape_error_message
+      )
+      return
+    end
+
+    if !benefit_type_valid?
+      @intake_errors << Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)
+      return
+    end
+
+    @intake_errors += contestable_issue_intake_errors
   end
 
-  def errors
-    @errors ||= if !shape_valid?
-                  [Api::V3::DecisionReview::IntakeError.new(:malformed_request, shape_error_message)]
-                elsif !benefit_type_valid?
-                  [Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)]
-                else
-                  contestable_issue_errors
-                end
+  def veteran
+    VeteranFinder.find_best_match(file_number_or_ssn)
   end
 
   def file_number_or_ssn
-    attributes["veteran"]["fileNumberOrSsn"].to_s.strip
+    attributes.dig("veteran", "fileNumberOrSsn").to_s.strip
   end
 
   private
@@ -75,7 +90,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def attributes
-    @params.dig("data", "attributes")
+    attributes? ? @params["data"]["attributes"] : {}
   end
 
   # most methods are run after `errors` method --this one isn't (hence the paranoia)
@@ -86,7 +101,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def claimant_object_present?
-    attributes? && attributes["claimant"].respond_to?(:has_key?)
+    attributes["claimant"].respond_to?(:has_key?)
   end
 
   def veteran_is_not_the_claimant?
@@ -101,7 +116,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def informal_conference_rep?
-    attributes? && !!attributes["informalConferenceRep"]
+    !!attributes["informalConferenceRep"]
   end
 
   def receipt_date
@@ -117,14 +132,19 @@ class Api::V3::DecisionReview::IntakeParams
   def contestable_issues
     @contestable_issues ||= included.map do |contestable_issue_params|
       Api::V3::DecisionReview::ContestableIssueParams.new(
-        params: contestable_issue_params,
+        decision_review_class: HigherLevelReview,
+        veteran: veteran,
+        receipt_date: receipt_date,
         benefit_type: attributes["benefitType"],
-        legacy_opt_in_approved: attributes["legacyOptInApproved"]
+        params: contestable_issue_params,
       )
     end
+  rescue StandardError
+    @intake_errors << Api::V3::DecisionReview::IntakeError.new(:malformed_contestable_issues)
+    []
   end
 
-  def contestable_issue_errors
+  def contestable_issue_intake_errors
     contestable_issues.select(&:error_code).map do |contestable_issue|
       Api::V3::DecisionReview::IntakeError.new(contestable_issue)
     end
@@ -133,9 +153,7 @@ class Api::V3::DecisionReview::IntakeParams
   end
 
   def benefit_type_valid?
-    attributes["benefitType"].in?(
-      Api::V3::DecisionReview::ContestableIssueParams::CATEGORIES_BY_BENEFIT_TYPE.keys
-    )
+    attributes["benefitType"].in?(CATEGORIES_BY_BENEFIT_TYPE.keys)
   end
 
   # array of allowed types (values) for params paths
@@ -222,64 +240,9 @@ class Api::V3::DecisionReview::IntakeParams
           [[Integer, nil],       %w[attributes decisionIssueId]],
           [[String, nil],        %w[attributes ratingIssueId]],
           [[String, nil],        %w[attributes ratingDecisionIssueId]],
-          [[Array, nil],         %w[attributes legacyAppealIssues]]
         ]
       ),
-      # [OBJECT,   ["included", 2, "attributes", "legacyAppealIssues", 0]]
-      # [[String], ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
-      # [[String], ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
-      # [OBJECT,   ["included", 2, "attributes", "legacyAppealIssues", 1]]
-      # [[String], ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealId"]],
-      # [[String], ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealIssueId"]],
-      # [OBJECT,   ["included", 5, "attributes", "legacyAppealIssues", 0]]
-      # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
-      # [[String], ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
-      # ...
-      *legacy_appeal_issues_paths.reduce([]) do |acc, path| # ^^^
-        [
-          *acc,
-          *for_array_at_path_enumerate_types_and_paths(
-            array_path: path,
-            types_and_paths: [
-              [OBJECT,    []],
-              [[String],  ["legacyAppealId"]],
-              [[String],  ["legacyAppealIssueId"]]
-            ]
-          )
-        ]
-      end
     ]
-  end
-  # rubocop:enable Metrics/MethodLength
-
-  # returns the paths of all legacyAppealIssues arrays nested in params
-  #
-  # example return:
-  #
-  # [
-  #   ["included", 0, "legacyAppealIssues"]
-  #   ["included", 3, "legacyAppealIssues"]
-  #   ["included", 4, "legacyAppealIssues"]
-  # ]
-  #
-  def legacy_appeal_issues_paths
-    included.each.with_index.reduce([]) do |acc, (contestable_issue, ci_index)|
-      if legacy_appeal_issues_present?(contestable_issue)
-        [*acc, [*INCLUDED_PATH, ci_index, *LEGACY_APPEAL_ISSUES_PATH]]
-      else
-        acc
-      end
-    end
-  rescue StandardError
-    []
-  end
-
-  def legacy_appeal_issues_present?(contestable_issue)
-    legacy_appeal_issues = contestable_issue.dig(*LEGACY_APPEAL_ISSUES_PATH)
-
-    legacy_appeal_issues.is_a?(Array) && !legacy_appeal_issues.empty?
-  rescue StandardError
-    false
   end
 
   # given the path to an array, prepends the path of each element of that array

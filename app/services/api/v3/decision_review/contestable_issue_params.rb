@@ -30,7 +30,9 @@ class Api::V3::DecisionReview::ContestableIssueParams
     @veteran = veteran
     @receipt_date = receipt_date
     @benefit_type = benefit_type
-    @ids = params[:attributes].slice(:ratingIssueId, :decisionIssueId, :ratingDecisionIssueId).symbolize_keys
+    @ids = params.as_json["attributes"]
+             .slice("ratingIssueId", "decisionIssueId", "ratingDecisionIssueId")
+             .symbolize_keys
   end
 
   def contestable_issue
@@ -38,7 +40,7 @@ class Api::V3::DecisionReview::ContestableIssueParams
   end
 
   def error_code
-    return :contestable_issue_must_have_ids if unidentified?
+    return :contestable_issue_params_must_have_ids if unidentified?
     return nil if lookup.found?
 
     :couldnt_find_contestable_issue
