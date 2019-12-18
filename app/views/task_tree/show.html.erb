@@ -50,14 +50,15 @@
 
   <ul class="cf-task-tree">
     <% task_tree_as_json.each do |appeal_type, tree| %>
-    <li class="task-name">
+    <li class="appeal-name">
       <span>
         <%= appeal_type %> ID: <%= tree[:id] %>
-        <span class="veteran-name"><%= appeal.veteran_full_name %> (<%= appeal.veteran_file_number %>)</span>
       </span>
       <ul class="nested active">
-       <li class="task-atts">
+       <li class="appeal-atts">
         <dl>
+          <dt>Veteran</dt>
+          <dd><%= appeal.veteran_full_name %> (<%= appeal.veteran_file_number %>)</dd>
           <dt>Notice Receipt Date</dt>
           <dd><%= appeal.nod_date %></dd>
           <dt>Case Established At</dt>
