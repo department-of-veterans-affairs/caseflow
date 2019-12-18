@@ -34,6 +34,8 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
+  config.force_ssl = ENV.fetch('FORCE_SSL', false)
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 

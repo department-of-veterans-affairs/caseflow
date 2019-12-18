@@ -2,6 +2,7 @@
 
 # env vars required to run the appeals-app docker container on caseflowdemo
 
+export FORCE_SSL=true
 export POSTGRES_HOST=appeals-db
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
