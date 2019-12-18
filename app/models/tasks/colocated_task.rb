@@ -123,14 +123,13 @@ class ColocatedTask < Task
   end
 
   def create_twin_of_type(params)
-    task_type = valid_type(params[:type])
-    ColocatedTask.create!(
+    task_type = ColocatedTask.valid_type(params[:type])
+    task_type.create!(
       appeal: appeal,
       parent: parent,
       assigned_by: assigned_by,
       instructions: params[:instructions],
-      assigned_to: task_type&.default_assignee,
-      type: task_type
+      assigned_to: task_type&.default_assignee
     )
   end
 
