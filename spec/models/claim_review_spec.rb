@@ -31,20 +31,8 @@ describe ClaimReview, :postgres do
   let(:rating_profile_date) { Date.new(2018, 4, 30) }
   let(:vacols_id) { nil }
   let(:vacols_sequence_id) { nil }
-
-  let!(:legacy_appeal) do
-    create(:legacy_appeal, vacols_case: vacols_case)
-  end
-
-  let(:vacols_case) do
-    create(
-      :case,
-      :status_advance,
-      bfcorlid: "12341234C",
-      case_issues: [create(:case_issue, :compensation)],
-      bfdnod: 1.year.ago
-    )
-  end
+  let(:vacols_case) { create(:case, case_issues: [create(:case_issue)]) }
+  let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
   let(:rating_request_issue) do
     build(

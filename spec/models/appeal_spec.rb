@@ -92,12 +92,8 @@ describe Appeal, :all_dbs do
     let(:ineligible_reason) { nil }
     let(:vacols_id) { nil }
     let(:vacols_sequence_id) { nil }
-
-    let(:vacols_issue) { create(:case_issue) }
-    let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
-    let(:legacy_appeal) do
-      create(:legacy_appeal, vacols_case: vacols_case)
-    end
+    let(:vacols_case) { create(:case, case_issues: [create(:case_issue)]) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
     context "when there is no associated legacy issue" do
       it "does not create a legacy issue" do
