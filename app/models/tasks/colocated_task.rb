@@ -12,7 +12,6 @@ class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :task_is_unique, on: :create
-  validate :valid_type, on: :create
 
   after_update :update_location_in_vacols
 
@@ -31,7 +30,7 @@ class ColocatedTask < Task
         params_array = params_array.map do |params|
           # Find the task type for a given action.
           create_params = params.clone
-          new_task_type = Object.const_get(params[:type])
+          new_task_type = valid_type(params[:type])
           # new_task_type should be one of the valid_task_classes in tasks_controller; otherwise fail here
           create_params.merge!(type: new_task_type.name, assigned_to: new_task_type.default_assignee)
         end
@@ -76,6 +75,14 @@ class ColocatedTask < Task
         find_subclass_by_action(action).methods(false).exclude?(:default_assignee)
       end
     end
+
+    def valid_type(type)
+      unless ColocatedTask.subclasses.include?(type)
+        fail Caseflow::Error::ActionForbiddenError, message: "Cannot create task of type #{type}"
+      end
+
+      Object.const_get(type)
+    end
   end
 
   def timeline_title
@@ -116,7 +123,7 @@ class ColocatedTask < Task
   end
 
   def create_twin_of_type(params)
-    task_type = Object.const_get(params[:type])
+    task_type = valid_type(params[:type])
     ColocatedTask.create!(
       appeal: appeal,
       parent: parent,
@@ -176,12 +183,6 @@ class ColocatedTask < Task
         )
         break
       end
-    end
-  end
-
-  def valid_type
-    unless ColocatedTask.subclasses.include?(self.class)
-      errors[:base] << "Colocated subtype is not included in the list"
     end
   end
 end
