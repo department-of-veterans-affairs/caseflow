@@ -6,7 +6,7 @@
     <% if false %><li><pre><%= task_atts.pretty_inspect %></pre></li><% end %>
 
     <% if task_atts[:tasks].present? and task_atts[:tasks].any? %>
-      <li class="task-name">
+      <li id="task-<%= task_atts["id"] %>" class="task-name">
         <span class="caret caret-down">
           <%= task_type %> <%= task_atts["id"] %> [<%= task_atts["status"] %>]
         </span>
@@ -16,7 +16,9 @@
         </ul>
       </li>
     <% else %>
-      <li class="task-name"><%= task_type %> <%= task_atts["id"] %> [<%= task_atts["status"] %>]</li>
+      <li id="task-<%= task_atts["id"] %>" class="task-name">
+        <%= task_type %> <%= task_atts["id"] %> [<%= task_atts["status"] %>]
+      </li>
       <li class="task-atts"><% task_attribute_table(task_atts) %></li>
     <% end %>
   <%
@@ -25,7 +27,7 @@
   %>
 
   <% def task_attribute_table(task_atts) %>
-    <% task = Task.find(task_atts["id"]) %>
+    <% task = appeal.tasks.to_a.find { |t| t.id == task_atts["id"] } %>
     <dl>
       <dt>Task ID</dt>
       <dd><%= task_atts["id"] %></dd>
@@ -48,23 +50,27 @@
 
   <ul class="cf-task-tree">
     <% task_tree_as_json.each do |appeal_type, tree| %>
-    <li>
+    <li class="task-name">
       <span>
         <%= appeal_type %> ID: <%= tree[:id] %>
         <b><%= appeal.veteran_full_name %> (<%= appeal.veteran_file_number %>)</b>
+      </span>
+      <ul class="nested active">
+       <li class="task-atts">
         <dl>
           <dt>Notice Receipt Date</dt>
-          <dd><%= appeal.receipt_date %></dd>
+          <dd><%= appeal.nod_date %></dd>
           <dt>Case Established At</dt>
-          <dd><%= appeal.established_at %></dd>
+          <dd><%= appeal.try(:established_at) %></dd>
           <dt>Days Aged</dt>
-          <dd><%= (Time.zone.today - appeal.established_at.to_date).to_i %></dd>
+          <dd><%= (Time.zone.today - appeal.nod_date).to_i %></dd>
           <dt>Docket Type</dt>
           <dd><%= appeal.docket_type %></dd>
           <dt>Advance on Docket</dt>
           <dd><%= appeal.aod? %></dd>
         </dl>
-      </span>
+      </li>
+     </ul>
     </li>
     <ul class="nested active">
       <% tree[:tasks].each do |task| %>
