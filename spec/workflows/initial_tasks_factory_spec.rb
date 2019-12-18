@@ -146,8 +146,9 @@ describe InitialTasksFactory, :postgres do
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
 
         expect(InformalHearingPresentationTask.count).to eq(2)
-        expect(InformalHearingPresentationTask.first.assigned_to).to eq(vva)
-        expect(InformalHearingPresentationTask.second.assigned_to).to eq(pva)
+        # sort order is non-deterministic so load by assignee
+        expect(pva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
+        expect(vva.tasks.map(&:type)).to include("InformalHearingPresentationTask")
       end
 
       it "creates RootTask assigned to Bva organization" do
