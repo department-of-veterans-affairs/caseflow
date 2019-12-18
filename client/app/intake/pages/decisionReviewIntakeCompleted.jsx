@@ -19,7 +19,8 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detail
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   const leadMessageArr = [
-    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`,
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.
+      It may take up to 24 hours for the claim to establish.`,
     <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
   ];
 
@@ -162,6 +163,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     />
     { vacolsOptInIssues.length > 0 && <VacolsOptInList issues={vacolsOptInIssues} legacyAppeals={legacyAppeals} /> }
     { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
+    <h2 className="cf-msg-screen-deck">
+      You will receive a message in your Caseflow Inbox if the establishment fails or is delayed.
+    </h2>
     </div>
     ;
   }
