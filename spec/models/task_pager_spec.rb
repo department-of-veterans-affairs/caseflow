@@ -328,9 +328,9 @@ describe TaskPager, :all_dbs do
 
       before do
         # not random, in order to have deterministic sort for testing.
-        first_initials = ('A' .. 'Z').map(&:to_s)
-        last_initials = ('Z' .. 'A').map(&:to_s)
-        middle_initials = ('a' .. 'z').map(&:to_s)
+        first_initials = ("A".."Z").map(&:to_s)
+        last_initials = ("Z".."A").map(&:to_s)
+        middle_initials = ("a".."z").map(&:to_s)
 
         created_tasks.each do |task|
           first_name = first_initials.shift
