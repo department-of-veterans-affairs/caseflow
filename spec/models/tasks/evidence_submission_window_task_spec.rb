@@ -5,12 +5,12 @@ describe EvidenceSubmissionWindowTask, :postgres do
   let(:participant_id_with_no_vso) { "11111" }
   let!(:receipt_date) { 2.days.ago }
   let!(:appeal) do
-    create(:appeal, docket_type: "evidence_submission", receipt_date: receipt_date, claimants: [
+    create(:appeal, docket_type: Constants.AMA_DOCKETS.evidence_submission, receipt_date: receipt_date, claimants: [
              create(:claimant, participant_id: participant_id_with_pva)
            ])
   end
   let!(:appeal_no_vso) do
-    create(:appeal, docket_type: "evidence_submission", claimants: [
+    create(:appeal, docket_type: Constants.AMA_DOCKETS.evidence_submission, claimants: [
              create(:claimant, participant_id: participant_id_with_no_vso)
            ])
   end

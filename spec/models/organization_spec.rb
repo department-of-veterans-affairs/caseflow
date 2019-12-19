@@ -101,7 +101,7 @@ describe Organization, :postgres do
     let!(:other_organization) { create(:organization, name: "Org") }
 
     context "when current task is assigned to a user" do
-      let(:task) { create(:generic_task, assigned_to: user) }
+      let(:task) { create(:ama_task, assigned_to: user) }
 
       it "returns a list without that organization" do
         expect(Organization.assignable(task)).to match_array([organization, other_organization])
@@ -109,7 +109,7 @@ describe Organization, :postgres do
     end
 
     context "when current task is assigned to an organization" do
-      let(:task) { create(:generic_task, assigned_to: organization) }
+      let(:task) { create(:ama_task, assigned_to: organization) }
 
       it "returns a list without that organization" do
         expect(Organization.assignable(task)).to eq([other_organization])
@@ -117,8 +117,8 @@ describe Organization, :postgres do
     end
 
     context "when current task is assigned to a user and its parent is assigned to a user to an organization" do
-      let(:parent) { create(:generic_task, assigned_to: organization) }
-      let(:task) { create(:generic_task, assigned_to: user, parent: parent) }
+      let(:parent) { create(:ama_task, assigned_to: organization) }
+      let(:task) { create(:ama_task, assigned_to: user, parent: parent) }
 
       it "returns a list without that organization" do
         expect(Organization.assignable(task)).to eq([other_organization])
@@ -126,7 +126,7 @@ describe Organization, :postgres do
     end
 
     context "when there is a named Organization as a subclass of Organization" do
-      let(:task) { create(:generic_task, assigned_to: user) }
+      let(:task) { create(:ama_task, assigned_to: user) }
       before { QualityReview.singleton }
 
       it "should be included in the list of organizations returned by assignable" do
@@ -135,7 +135,7 @@ describe Organization, :postgres do
     end
 
     context "when organization cannot receive tasks" do
-      let(:task) { create(:generic_task, assigned_to: user) }
+      let(:task) { create(:ama_task, assigned_to: user) }
       before { Bva.singleton }
 
       it "should not be included in the list of organizations returned by assignable" do

@@ -186,6 +186,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     click_intake_finish
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been submitted.")
+    expect(page).to have_content("It may take up to 24 hours for the claim to establish")
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Rating EP is being established:"
     )
@@ -761,6 +762,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
           # should redirect to tasks review page
           expect(page).to have_content("Reviews needing action")
+          expect(page).not_to have_content("It may take up to 24 hours for the claim to establish")
           expect(current_path).to eq("/decision_reviews/education")
           expect(page).to have_content("Success!")
 

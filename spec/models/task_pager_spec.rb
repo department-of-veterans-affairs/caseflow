@@ -71,7 +71,7 @@ describe TaskPager, :all_dbs do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:task_count) { TaskPager::TASKS_PER_PAGE + 3 }
 
-      before { create_list(:generic_task, task_count, assigned_to: assignee) }
+      before { create_list(:ama_task, task_count, assigned_to: assignee) }
 
       it "returns the correct number of tasks" do
         expect(subject.count).to eq(task_count)
@@ -85,7 +85,7 @@ describe TaskPager, :all_dbs do
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { create_list(:generic_task, task_count, assigned_to: assignee) }
+    before { create_list(:ama_task, task_count, assigned_to: assignee) }
 
     subject { TaskPager.new(arguments).paged_tasks }
 
@@ -120,7 +120,7 @@ describe TaskPager, :all_dbs do
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { create_list(:generic_task, task_count, assigned_to: assignee) }
+    before { create_list(:ama_task, task_count, assigned_to: assignee) }
 
     subject { TaskPager.new(arguments).total_task_count }
 
@@ -158,7 +158,7 @@ describe TaskPager, :all_dbs do
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:tasks) { task_pager.tasks_for_tab }
 
-    let!(:created_tasks) { create_list(:generic_task, 14, assigned_to: assignee) }
+    let!(:created_tasks) { create_list(:ama_task, 14, assigned_to: assignee) }
 
     subject { task_pager.sorted_tasks(tasks) }
 

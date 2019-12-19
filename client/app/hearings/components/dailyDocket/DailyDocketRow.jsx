@@ -279,7 +279,8 @@ class DailyDocketRow extends React.Component {
           initialState={this.state.initialState}
           user={user}
           index={index} />
-      </div><div>
+      </div>
+      <div>
         {this.getLeftColumn()}
         {this.getRightColumn()}
       </div>
