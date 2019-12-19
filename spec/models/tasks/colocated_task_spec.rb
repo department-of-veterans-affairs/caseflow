@@ -562,6 +562,7 @@ describe ColocatedTask, :all_dbs do
       expect(tasks.count).to eq 2
       expect(child_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
       expect(parent_task.reload.children.open.first.assigned_to).not_to eq colocated_org.users.first
+      expect(parent_task.children.open.first.label).to eq task_class.label
     end
   end
 end
