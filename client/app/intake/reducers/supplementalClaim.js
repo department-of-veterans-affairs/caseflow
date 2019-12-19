@@ -25,19 +25,19 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.id)
     },
     receiptDate: {
-      $set: serverIntake.receipt_date
+      $set: serverIntake.receiptDate
     },
     benefitType: {
-      $set: serverIntake.benefit_type
+      $set: serverIntake.benefitType
     },
     processedInCaseflow: {
       $set: serverIntake.processed_in_caseflow
     },
     veteranIsNotClaimant: {
-      $set: serverIntake.veteran_is_not_claimant
+      $set: serverIntake.veteranIsNotClaimant
     },
     claimant: {
-      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
+      $set: serverIntake.veteranIsNotClaimant ? serverIntake.claimant : null
     },
     payeeCode: {
       $set: serverIntake.payeeCode

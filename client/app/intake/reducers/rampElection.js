@@ -34,7 +34,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.option_selected
     },
     receiptDate: {
-      $set: serverIntake.receipt_date
+      $set: serverIntake.receiptDate
     },
     isReviewed: {
       $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)

@@ -17,7 +17,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.option_selected
     },
     receiptDate: {
-      $set: serverIntake.receipt_date
+      $set: serverIntake.receiptDate
     },
     appealDocket: {
       $set: serverIntake.appeal_docket

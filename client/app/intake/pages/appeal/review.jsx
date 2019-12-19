@@ -79,7 +79,7 @@ class Review extends React.PureComponent {
       <SelectClaimantConnected />
 
       <LegacyOptInApproved
-        value={legacyOptInApproved === null ? null : legacyOptInApproved}
+        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
       />

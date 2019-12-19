@@ -295,7 +295,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'NOD receipt date',
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Review option',
-        content: _.startCase(intakeData.docketType.split('_').join(' ')) }
+        content: _.startCase(intakeData.docketType) }
     ];
     break;
   default:

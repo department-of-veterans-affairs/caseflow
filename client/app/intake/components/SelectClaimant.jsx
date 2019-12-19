@@ -94,7 +94,7 @@ export default class SelectClaimant extends React.PureComponent {
         options={veteranClaimantOptions}
         onChange={setVeteranIsNotClaimant}
         errorMessage={veteranIsNotClaimantError}
-        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant}
+        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
       />
 
       { showClaimants && hasRelationships && claimantOptions() }
