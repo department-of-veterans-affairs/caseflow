@@ -5,7 +5,7 @@ class Api::V3::ContestableIssueSerializer
     @contestable_issues = contestable_issues
   end
 
-  def to_json(_ = {})
+  def to_json(_)
     { data: @contestable_issues.map { |issue| contestable_issue_json(issue) } }.to_json
   end
 
