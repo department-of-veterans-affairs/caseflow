@@ -19,9 +19,8 @@ describe QualityReviewCaseSelector, :all_dbs do
         end
       end
 
-      it "should hit the monthly limit" do
-        puts QualityReviewTask.count
-        expect(QualityReviewCaseSelector.reached_monthly_limit_in_quality_reviews?).to be(true)
+      it "should hit at least the monthly minimum of QR tasks" do
+        expect(QualityReviewTask.count).to be >= 130
       end
     end
 
