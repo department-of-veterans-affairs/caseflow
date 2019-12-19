@@ -30,7 +30,7 @@ class Api::V3::ContestableIssueSerializer
       titleOfActiveReview: contestable_issue.title_of_active_review,
       sourceReviewType: contestable_issue.source_review_type,
       timely: contestable_issue.timely?
-    }.compact
+    }
 
     { type: "ContestableIssue", attributes: attributes }
   end

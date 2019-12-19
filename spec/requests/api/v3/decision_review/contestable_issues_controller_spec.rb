@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-fdescribe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: :request do
+describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: :request do
   before { FeatureToggle.enable!(:api_v3) }
   after do
     User.instance_variable_set(:@api_user, nil)
@@ -176,7 +176,7 @@ fdescribe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type:
       end
 
       it "should have decisionIssueId attribute" do
-        issue_with_decision_issue = issues.find { |i| i["attributes"].key?("decisionIssueId") }
+        issue_with_decision_issue = issues.find { |i| i["attributes"].key?("decisionIssueId") && i["attributes"]["decisionIssueId"] }
         expect(issue_with_decision_issue).to be_present
         expect(issue_with_decision_issue["attributes"]["decisionIssueId"]).to be_a Integer
       end
@@ -186,7 +186,7 @@ fdescribe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type:
         after { FeatureToggle.disable!(:contestable_rating_decisions) }
 
         it "should have ratingDecisionId attribute" do
-          issue_with_rating_decision = issues.find { |i| i["attributes"].key?("ratingDecisionId") }
+          issue_with_rating_decision = issues.find { |i| i["attributes"].key?("ratingDecisionId") && i["attributes"]["ratingDecisionId"] }
           expect(issue_with_rating_decision).to be_present
           expect(issue_with_rating_decision["attributes"]["ratingDecisionId"]).to eq disability_dis_sn
         end
@@ -218,7 +218,7 @@ fdescribe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type:
       end
 
       it "should have sourceReviewType attribute" do
-        issue_with_source_decision_review = issues.find { |i| i["attributes"].key?("sourceReviewType") }
+        issue_with_source_decision_review = issues.find { |i| i["attributes"].key?("sourceReviewType") && i["attributes"]["sourceReviewType"] }
         expect(issue_with_source_decision_review).to be_present
         expect(issue_with_source_decision_review["attributes"]["sourceReviewType"]).to eq source.class.to_s
       end
