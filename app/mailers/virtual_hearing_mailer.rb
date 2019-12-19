@@ -6,7 +6,7 @@ class VirtualHearingMailer < ActionMailer::Base
   default from: "solutions@public.govdelivery.com"
   layout "virtual_hearing_mailer"
   attr_reader :recipient, :virtual_hearing
-  
+
   RECIPIENT_TITLES = {
     judge: "Judge",
     veteran: "Veteran",
@@ -47,14 +47,14 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
 
-    confirmation_calendar_invite(mail_recipient, virtual_hearing, link)
+    VirtualHearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient, link)
   end
 
   private
 
   def calendar_invite_name
     case recipient.title
-      when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:representative]
+    when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:representative]
       "BoardHearing.ics"
     when RECIPIENT_TITLES[:judge]
       "VirtualHearing.ics"
