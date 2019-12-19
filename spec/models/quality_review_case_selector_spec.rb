@@ -19,11 +19,9 @@ describe QualityReviewCaseSelector, :all_dbs do
         end
       end
 
-      ensure_stable do
-        fit "should hit the monthly limit" do
-          puts QualityReviewTask.count
-          expect(QualityReviewCaseSelector.reached_monthly_limit_in_quality_reviews?).to be(true)
-        end
+      it "should hit the monthly limit" do
+        puts QualityReviewTask.count
+        expect(QualityReviewCaseSelector.reached_monthly_limit_in_quality_reviews?).to be(true)
       end
     end
 
