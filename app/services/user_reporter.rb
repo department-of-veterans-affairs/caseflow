@@ -4,19 +4,17 @@
 # Originally for de-duping user records but can be used more generally
 # to report on a user's activity.
 class UserReporter
-  attr_accessor :css_id
-  attr_accessor :user_ids
   cattr_accessor :models_with_user_id
 
   def initialize(css_id)
-    @css_id = css_id.is_a?(User) ? css_id.css_id : css_id
+    @css_id = coerce_css_id(css_id)
   end
 
   def report
     report = []
-    @user_ids = []
+    user_ids = []
     all_users_for_css_id.each do |user|
-      @user_ids << user.id
+      user_ids << user.id
       report << report_user_related_records(user)
     end
     report.flatten
@@ -24,6 +22,14 @@ class UserReporter
 
   private
 
+  attr_reader :css_id
+  attr_accessor :user_ids
+
+  def coerce_css_id(css_id)
+    css_id.is_a?(User) ? css_id.css_id : css_id
+  end
+
+  # rubocop:disable Metrics/MethodLength
   def models_with_named_user_foreign_key
     [
       { model: AttorneyCaseReview, column: :attorney },
@@ -47,6 +53,7 @@ class UserReporter
       { model: UserQuota, column: :user, unique: [:team_quota_id] }
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   def models_with_user_id
     self.class.models_with_user_id ||= [
