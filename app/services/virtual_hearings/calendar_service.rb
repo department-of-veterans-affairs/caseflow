@@ -11,11 +11,18 @@ class VirtualHearings::CalendarService
   class << self
     def confirmation_calendar_invite(virtual_hearing, recipient, link)
       create_calendar_event(virtual_hearing, link) do |event, time_zone, start_time|
+        template_context = {
+          virtual_hearing: virtual_hearing,
+          time_zone: time_zone,
+          start_time_utc: start_time,
+          link: link 
+        }
+
         event.status = "CONFIRMED"
         event.summary = confirmation_summary(recipient)
         event.description = render_virtual_hearing_calendar_event_template(
           "#{recipient.title}_confirmation_event_description",
-          { virtual_hearing: virtual_hearing, time_zone: time_zone, start_time_utc: start_time, link: link }
+          template_context
         )
       end
     end

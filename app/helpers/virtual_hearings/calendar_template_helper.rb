@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# Helpers for use inside a template for a calendar invite related to 
+# Helpers for use inside a template for a calendar invite related to
 # virtual hearings.
 
 module VirtualHearings::CalendarTemplateHelper
