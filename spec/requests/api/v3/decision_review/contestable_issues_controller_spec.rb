@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: :request do
+fdescribe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: :request do
   before { FeatureToggle.enable!(:api_v3) }
   after do
     User.instance_variable_set(:@api_user, nil)
@@ -15,7 +15,12 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     end
 
     def get_issues(veteran_id: veteran.file_number, receipt_date: Time.zone.today)
-      date = receipt_date.strftime("%Y-%m-%d") if receipt_date.is_a? Time
+      date =
+        if receipt_date.is_a? String
+          receipt_date
+        else
+          receipt_date.strftime("%Y-%m-%d")
+        end
       get(
         "/api/v3/decision_review/contestable_issues",
         headers: {

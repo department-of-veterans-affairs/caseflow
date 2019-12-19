@@ -1,18 +1,9 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseController
-  before_action :set_veteran_from_header
+  before_action :set_veteran_from_header, :set_receipt_date_from_header
 
   def index
-    @receipt_date = request.headers["receiptDate"]
-    if invalid_receipt_date?
-      render_error(
-        status: 422,
-        code: :bad_receipt_date,
-        title: "Bad receipt date"
-      )
-      return
-    end
     issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
     render json: Api::V3::ContestableIssueSerializer.new(issues)
   end
@@ -30,10 +21,12 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
     )
   end
 
-  def invalid_receipt_date?
-    !@receipt_date.is_a?(Date) ||
-      @receipt_date < standin_claim_review.ama_activation_date ||
-      Time.zone.today < @receipt_date
+  def render_bad_receipt_date
+    render_error(
+      status: 422,
+      code: :bad_receipt_date,
+      title: "Bad receipt date"
+    )
   end
 
   def set_veteran_from_header
@@ -45,5 +38,20 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
         title: "Veteran not found"
       )
     end
+  end
+
+  def set_receipt_date_from_header
+    @receipt_date = Date.iso8601(request.headers["receiptDate"])
+    if invalid_receipt_date? # veteran must be set before using this helper
+      render_bad_receipt_date
+    end
+  rescue ArgumentError
+    render_bad_receipt_date
+  end
+
+  def invalid_receipt_date?
+    !@receipt_date.is_a?(Date) ||
+      @receipt_date < standin_claim_review.ama_activation_date ||
+      Time.zone.today < @receipt_date
   end
 end
