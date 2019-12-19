@@ -12,7 +12,7 @@ class VirtualHearings::CalendarService
     def confirmation_calendar_invite(virtual_hearing, recipient, link)
       create_calendar_event(virtual_hearing, link) do |event, time_zone, start_time|
         event.status = "CONFIRMED"
-        event.summary = "You're scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals."
+        event.summary = confirmation_summary(recipient)
         event.description = render_virtual_hearing_calendar_event_template(
           "#{recipient.title}_confirmation_event_description",
           { virtual_hearing: virtual_hearing, time_zone: time_zone, start_time_utc: start_time, link: link }
@@ -21,6 +21,15 @@ class VirtualHearings::CalendarService
     end
 
     private
+
+    def confirmation_summary(recipient)
+      case recipient.title
+      when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:representative]
+        "Hearing with the Board of Veterans' Appeals"
+      when RECIPIENT_TITLES[:judge]
+        "Virtual Hearing"
+      end
+    end
 
     def create_calendar
       cal = Icalendar::Calendar.new
