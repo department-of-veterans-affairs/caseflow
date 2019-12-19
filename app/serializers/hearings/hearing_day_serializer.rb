@@ -33,9 +33,9 @@ class HearingDaySerializer
     if params.key?(:hearing_days_with_virtual_hearings) && !params[:hearing_days_with_virtual_hearings].nil?
       # An optimization when serializing a collection of hearing days.
       # See HearingDaysWithVirtualHearingsQuery for how to fetch these ids.
-      return "Video, Virtual" if params[:hearing_days_with_virtual_hearings].include?(hearing_day.id)
+      return COPY::VIRTUAL_HEARING_REQUEST_TYPE if params[:hearing_days_with_virtual_hearings].include?(hearing_day.id)
     elsif VirtualHearingRepository.hearing_day_has_virtual_hearing?(hearing_day)
-      return "Video, Virtual"
+      return COPY::VIRTUAL_HEARING_REQUEST_TYPE
     end
 
     Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]

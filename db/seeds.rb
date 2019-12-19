@@ -626,8 +626,8 @@ class SeedDB
       request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
-    es = "evidence_submission"
-    dr = "direct_review"
+    es = Constants.AMA_DOCKETS.evidence_submission
+    dr = Constants.AMA_DOCKETS.direct_review
     # Older style, tasks to be created later
     [
       { number_of_claimants: nil, veteran_file_number: "783740847", docket_type: es, request_issue_count: 3 },
@@ -1068,7 +1068,7 @@ class SeedDB
     create_colocated_legacy_tasks(attorney)
 
     FactoryBot.create_list(
-      :generic_task,
+      :ama_task,
       5,
       assigned_by: judge,
       assigned_to: Translation.singleton,
