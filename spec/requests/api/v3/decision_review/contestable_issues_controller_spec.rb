@@ -176,7 +176,9 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       end
 
       it "should have decisionIssueId attribute" do
-        issue_with_decision_issue = issues.find { |i| i["attributes"].key?("decisionIssueId") && i["attributes"]["decisionIssueId"] }
+        issue_with_decision_issue = issues.find do |issue|
+          issue["attributes"].key?("decisionIssueId") && issue["attributes"]["decisionIssueId"]
+        end
         expect(issue_with_decision_issue).to be_present
         expect(issue_with_decision_issue["attributes"]["decisionIssueId"]).to be_a Integer
       end
@@ -186,7 +188,9 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         after { FeatureToggle.disable!(:contestable_rating_decisions) }
 
         it "should have ratingDecisionId attribute" do
-          issue_with_rating_decision = issues.find { |i| i["attributes"].key?("ratingDecisionId") && i["attributes"]["ratingDecisionId"] }
+          issue_with_rating_decision = issues.find do |issue|
+            issue["attributes"].key?("ratingDecisionId") && issue["attributes"]["ratingDecisionId"]
+          end
           expect(issue_with_rating_decision).to be_present
           expect(issue_with_rating_decision["attributes"]["ratingDecisionId"]).to eq disability_dis_sn
         end
@@ -218,7 +222,9 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       end
 
       it "should have sourceReviewType attribute" do
-        issue_with_source_decision_review = issues.find { |i| i["attributes"].key?("sourceReviewType") && i["attributes"]["sourceReviewType"] }
+        issue_with_source_decision_review = issues.find do |issue|
+          issue["attributes"].key?("sourceReviewType") && issue["attributes"]["sourceReviewType"]
+        end
         expect(issue_with_source_decision_review).to be_present
         expect(issue_with_source_decision_review["attributes"]["sourceReviewType"]).to eq source.class.to_s
       end
