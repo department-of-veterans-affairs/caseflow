@@ -101,7 +101,7 @@ module IntakeHelpers
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      docket_type: "evidence_submission",
+      docket_type: Constants.AMA_DOCKETS.evidence_submission,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
@@ -876,7 +876,7 @@ module IntakeHelpers
   # rubocop:enable Metrics/AbcSize
 
   def select_agree_to_withdraw_legacy_issues(withdraw)
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+    within_fieldset("Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?") do
       find("label", text: withdraw ? "Yes" : "N/A", match: :prefer_exact).click
     end
   end
