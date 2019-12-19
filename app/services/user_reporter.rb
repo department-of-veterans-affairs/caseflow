@@ -4,15 +4,16 @@
 # Originally for de-duping user records but can be used more generally
 # to report on a user's activity.
 class UserReporter
+  attr_reader :user_ids
   cattr_accessor :models_with_user_id
 
   def initialize(css_id)
     @css_id = coerce_css_id(css_id)
+    @user_ids = []
   end
 
   def report
     report = []
-    user_ids = []
     all_users_for_css_id.each do |user|
       user_ids << user.id
       report << report_user_related_records(user)
@@ -23,7 +24,7 @@ class UserReporter
   private
 
   attr_reader :css_id
-  attr_accessor :user_ids
+  attr_writer :user_ids
 
   def coerce_css_id(css_id)
     css_id.is_a?(User) ? css_id.css_id : css_id
