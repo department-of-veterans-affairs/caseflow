@@ -24,9 +24,9 @@ class VirtualHearings::CalendarService
 
     def confirmation_summary(recipient)
       case recipient.title
-      when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:representative]
+      when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
         "Hearing with the Board of Veterans' Appeals"
-      when RECIPIENT_TITLES[:judge]
+      when MailRecipient::RECIPIENT_TITLES[:judge]
         "Virtual Hearing"
       end
     end

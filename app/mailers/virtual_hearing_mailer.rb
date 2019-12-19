@@ -7,12 +7,6 @@ class VirtualHearingMailer < ActionMailer::Base
   layout "virtual_hearing_mailer"
   attr_reader :recipient, :virtual_hearing
 
-  RECIPIENT_TITLES = {
-    judge: "Judge",
-    veteran: "Veteran",
-    representative: "Representative"
-  }.freeze
-
   def cancellation(mail_recipient:, virtual_hearing: nil)
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
@@ -54,23 +48,24 @@ class VirtualHearingMailer < ActionMailer::Base
 
   def calendar_invite_name
     case recipient.title
-    when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:representative]
+    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
       "BoardHearing.ics"
-    when RECIPIENT_TITLES[:judge]
+    when MailRecipient::RECIPIENT_TITLES[:judge]
       "VirtualHearing.ics"
     end
   end
 
   def confirmation_subject
     case recipient.title
-    when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:representative]
+    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
       "Confirmation: Your virtual hearing with the Board of Veterans' Appeals"
-    when RECIPIENT_TITLES[:judge]
+    when MailRecipient::RECIPIENT_TITLES[:judge]
       "Confirmation: Your virtual hearing"
     end
   end
 
   def link
-    (recipient.title == RECIPIENT_TITLES[:judge]) ? virtual_hearing.host_link : virtual_hearing.guest_link
+    return virtual_hearing.host_link if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
+    virtual_hearing.guest_link
   end
 end
