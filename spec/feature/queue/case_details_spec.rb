@@ -553,7 +553,7 @@ RSpec.feature "Case details", :all_dbs do
           :appeal,
           veteran_file_number: "500000102",
           receipt_date: 6.months.ago.to_date.mdY,
-          docket_type: "evidence_submission"
+          docket_type: Constants.AMA_DOCKETS.evidence_submission
         )
       end
 

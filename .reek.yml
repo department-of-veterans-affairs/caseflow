@@ -104,9 +104,11 @@ detectors:
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
+      - DuplicateUserTask
       - LegacyAppealDispatch
       - Address
       - ExternalApi::PexipService
+      - InvalidAssigneeStatusOnTaskCreate
   TooManyMethods:
     enabled: false
   TooManyStatements:

@@ -20,6 +20,16 @@ describe Appeal, :all_dbs do
         expect(subject.key?(:"Appeal #{appeal.id} [id]")).to be_truthy
       end
     end
+
+    context "#structure_as_json" do
+      let!(:root_task) { create(:root_task, appeal: appeal) }
+
+      subject { appeal.structure_as_json(:id) }
+
+      it "returns the task tree as a hash" do
+        expect(subject).to eq(Appeal: { id: appeal.id, tasks: [{ RootTask: { id: root_task.id, tasks: [] } }] })
+      end
+    end
   end
 
   context "active appeals" do
@@ -658,7 +668,7 @@ describe Appeal, :all_dbs do
         end
       end
 
-      describe "when there is an actionable task with an assignee" do
+      describe "when there is an actionable task with an assignee", skip: "flake" do
         let(:assignee) { create(:user) }
         let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal) }
 

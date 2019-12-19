@@ -228,7 +228,7 @@ describe RampElection, :postgres do
           veteran_file_number: veteran_file_number,
           receipt_date: receipt_date,
           option_selected: option_selected,
-          appeal_docket: "hearing"
+          appeal_docket: Constants.AMA_DOCKETS.hearing
         ).tap do |refiling|
           RampIssue.create(review: refiling, source_issue_id: ramp_election.issues.first.id)
         end

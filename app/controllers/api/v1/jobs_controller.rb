@@ -9,6 +9,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "delete_conferences_job" => VirtualHearings::DeleteConferencesJob,
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
+    "etl_builder" => ETLBuilderJob,
     "heartbeat" => HeartbeatTasksJob,
     "missed_job_sweeper" => MissedJobSweeperJob,
     "monthly_metrics" => MonthlyMetricsReportJob,

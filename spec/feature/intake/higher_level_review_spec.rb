@@ -113,7 +113,7 @@ feature "Higher-Level Review", :all_dbs do
       "Is the claimant someone other than the Veteran?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Did they agree to withdraw their issues from the legacy system?\nPlease select an option."
+      "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?\nPlease select an option."
     )
 
     within_fieldset("What is the Benefit Type?") do
