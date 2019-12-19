@@ -228,7 +228,7 @@ RSpec.feature "AmaQueue", :all_dbs do
 
       let!(:translation_task) do
         create(
-          :generic_task,
+          :ama_task,
           :in_progress,
           assigned_to: translation_organization,
           assigned_by: judge_user,
@@ -869,7 +869,7 @@ RSpec.feature "AmaQueue", :all_dbs do
     let!(:tasks) do
       Array.new(task_count) do
         root_task = create(:root_task, appeal: create(:appeal))
-        create(:generic_task, parent: root_task, appeal: root_task.appeal, assigned_to: org)
+        create(:ama_task, parent: root_task, appeal: root_task.appeal, assigned_to: org)
       end
     end
 

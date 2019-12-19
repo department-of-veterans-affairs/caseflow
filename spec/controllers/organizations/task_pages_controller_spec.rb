@@ -16,7 +16,7 @@ describe Organizations::TaskPagesController, :postgres, type: :controller do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:task_count) { 4 }
 
-      before { create_list(:generic_task, task_count, assigned_to: organization) }
+      before { create_list(:ama_task, task_count, assigned_to: organization) }
 
       subject do
         get(:index, params: { organization_url: url, tab: tab_name })
