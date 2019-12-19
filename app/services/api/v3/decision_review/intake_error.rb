@@ -6,15 +6,14 @@ class Api::V3::DecisionReview::IntakeError
     # This method attempts to extract a symbol from an object's error_code
     # method, or, if that fails, attempts to convert the object itself to a
     # symbol. The symbol may or may not be a valid error code. Fails with nil.
-    def potential_error_code(obj)
-      (obj.try(:error_code) || obj).try(:to_sym)
+    def potential_error_code(val)
+      error_code = val.respond_to?(:error_code) ? val.error_code : val
+
+      error_code.try(:to_sym) || error_code
     end
 
-    def find_first_potential_error_code(array)
-      array.find do |obj|
-        code = potential_error_code(obj)
-        break code if code
-      end
+    def find_first_potential_error_code_that_is_a_symbol(array)
+      array.map { |val| potential_error_code(val) }.find { |error_code| error_code.is_a? Symbol }
     end
 
     # An alternative to new.
@@ -24,7 +23,10 @@ class Api::V3::DecisionReview::IntakeError
     # A new IntakeError would be created using :a_symbol_that_isnt_a_valid_error_code
     # which would be UNKNOWN_ERROR.
     def from_first_potential_error_code_found(array)
-      new find_first_potential_error_code(array)
+      new(
+        find_first_potential_error_code_that_is_a_symbol(array) ||
+          array.find { |val| !val.nil? }
+      )
     end
   end
 
@@ -45,45 +47,14 @@ class Api::V3::DecisionReview::IntakeError
       "That Line of Business (benefit type) is either invalid or not currently supported"
     ],
     [422, :invalid_file_number, "Veteran ID not found"], # i
-    [422, :request_issue_cannot_be_empty, "A request issue cannot be empty"],
+    [422, :malformed_contestable_issues, "Malformed ContestableIssues"],
     [
       422,
-      :request_issue_category_invalid_for_benefit_type,
-      "Request issue category for specified benefit type"
+      :contestable_issue_params_must_have_ids,
+      "A contestable issue must have at least one of the following: decisionIssueId," \
+        " ratingIssueId, ratingDecisionIssueId"
     ],
-    [
-      422,
-      :request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present,
-      [
-        "If you specify a legacy appeal issue, you must specify",
-        "which legacy appeal it belongs to (legacy_appeal_id)"
-      ].join(" ")
-    ],
-    [
-      422,
-      :request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present,
-      [
-        "If you specify a legacy appeal, you must specify",
-        "which issue (legacy_appeal_issue_id) of that appeal"
-      ].join(" ")
-    ],
-    [
-      422,
-      :request_issue_legacy_not_opted_in,
-      "To add a legacy issue, legacyOptInApproved must be true"
-    ],
-    [422, :request_issue_malformed, "Malformed RequestIssue"],
-    [
-      422,
-      :request_issue_must_have_at_least_one_ID_field,
-      [
-        "A request issue must have at least one of the following:",
-        "decisionIssueId,",
-        "ratingIssueId,",
-        "legacyAppealId,",
-        "legacyAppealIssueId"
-      ].join(" ")
-    ],
+    [422, :couldnt_find_contestable_issue, "Couldn't find ContestableIssue"],
     [
       422,
       :veteran_has_multiple_phone_numbers,
@@ -116,11 +87,13 @@ class Api::V3::DecisionReview::IntakeError
 
   KNOWN_ERRORS_BY_CODE = KNOWN_ERRORS.each_with_object({}) { |array, hash| hash[array.second] = array }
 
-  attr_reader :status, :code, :title
+  attr_reader :status, :code, :title, :detail, :passed_in_object, :error_code
 
   def initialize(obj = nil, detail = nil)
-    @status, @code, @title = (KNOWN_ERRORS_BY_CODE[self.class.potential_error_code(obj)] || UNKNOWN_ERROR)
+    @error_code = self.class.potential_error_code(obj)
+    @status, @code, @title = KNOWN_ERRORS_BY_CODE[@error_code] || UNKNOWN_ERROR
     @detail = detail
+    @passed_in_object = obj
   end
 
   def to_h

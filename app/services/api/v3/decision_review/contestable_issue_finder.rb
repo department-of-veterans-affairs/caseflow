@@ -14,24 +14,23 @@
 # reference a contestable issue (`valid?` method)
 # and returns that contestable issue (`contestable_issue` method)
 
-class Api::V3::DecisionReview::LookupContestableIssue
-  def initialize(opts)
-    @decision_review_class,
-      @veteran,
-      @receipt_date,
-      @benefit_type = opts.values_at(
-        :decision_review_class,
-        :veteran,
-        :receipt_date,
-        :benefit_type
+class Api::V3::DecisionReview::ContestableIssueFinder
+  def initialize(
+        decision_review_class:,
+        veteran:,
+        receipt_date:,
+        benefit_type:,
+        ratingIssueId: nil,
+        decisionIssueId: nil,
+        ratingDecisionIssueId: nil
       )
-    @rating_issue_id,
-      @decision_issue_id,
-      @rating_decision_issue_id = [
-        :ratingIssueId,
-        :decisionIssueId,
-        :ratingDecisionIssueId
-      ].map { |key| opts[key].to_s.strip }
+    @decision_review_class = decision_review_class
+    @veteran = veteran
+    @receipt_date = receipt_date
+    @benefit_type = benefit_type
+    @rating_issue_id = ratingIssueId.to_s.strip
+    @decision_issue_id = decisionIssueId.to_s.strip
+    @rating_decision_issue_id = ratingDecisionIssueId.to_s.strip
   end
 
   def found?

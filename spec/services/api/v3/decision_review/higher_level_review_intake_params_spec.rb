@@ -23,19 +23,20 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
 
   let(:attributes) do
     {
-      receiptDate: receipt_date,
+      receiptDate: formatted_receipt_date,
       informalConference: informal_conference,
       sameOffice: same_office,
       legacyOptInApproved: legacy_opt_in_approved,
       benefitType: benefit_type,
       informalConferenceTimes: informal_conference_times,
       informalConferenceRep: informal_conference_rep,
-      veteran: veteran,
+      veteran: veteran_hash,
       claimant: claimant
     }
   end
 
-  let(:receipt_date) { (Time.zone.today - 5.days).strftime("%F") }
+  let(:formatted_receipt_date) { receipt_date.strftime("%F") }
+  let(:receipt_date) { Time.zone.today - 5.days }
   let(:informal_conference) { true }
   let(:same_office) { false }
   let(:legacy_opt_in_approved) { true }
@@ -59,7 +60,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
   let(:rep_phone_number_country_code) { nil }
   let(:rep_phone_number_ext) { nil }
 
-  let(:veteran) do
+  let(:veteran_hash) do
     {
       fileNumberOrSsn: file_number_or_ssn,
       addressLine1: vet_address_line_1,
@@ -74,8 +75,16 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
       emailAddress: vet_email_address
     }
   end
-
+  let!(:veteran) do
+    Generators::Veteran.build(
+      file_number: file_number_or_ssn,
+      first_name: first_name,
+      last_name: last_name
+    )
+  end
   let(:file_number_or_ssn) { "64205050" }
+  let(:first_name) { "Jane" }
+  let(:last_name) { "Doe" }
   let(:vet_address_line_1) { nil }
   let(:vet_address_line_2) { nil }
   let(:vet_city) { nil }
@@ -131,16 +140,30 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     {
       decisionIssueId: first_contestable_issue_decision_issue_id,
       ratingIssueId: first_contestable_issue_rating_issue_id,
-      ratingDecisionIssueId: first_contestable_issue_rating_decision_issue_id,
+      ratingDecisionIssueId: first_contestable_issue_rating_decision_issue_id
     }
   end
 
-  let(:first_contestable_issue_decision_issue_id) { 232 }
-  let(:first_contestable_issue_rating_issue_id) { nil }
-  let(:first_contestable_issue_rating_decision_issue_id) { nil }
+  let(:first_contestable_issue_decision_issue_id) { contestable_issues.first&.decision_issue&.id }
+  let(:first_contestable_issue_rating_issue_id) { contestable_issues.first&.rating_issue_reference_id }
+  let(:first_contestable_issue_rating_decision_issue_id) { contestable_issues.first&.rating_decision_reference_id }
 
-  let(:object) { Api::V3::DecisionReview::IntakeParams::OBJECT }
-  let(:bool) { Api::V3::DecisionReview::IntakeParams::BOOL }
+  let(:promulgation_date) { receipt_date - 10.days }
+  let(:profile_date) { (receipt_date - 8.days).to_datetime }
+  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+
+  let(:contestable_issues) do
+    ContestableIssueGenerator.new(
+      HigherLevelReview.new(
+        veteran_file_number: veteran.file_number,
+        receipt_date: receipt_date,
+        benefit_type: benefit_type
+      )
+    ).contestable_issues
+  end
+
+  let(:object) { Api::V3::DecisionReview::HigherLevelReviewIntakeParams::OBJECT }
+  let(:bool) { Api::V3::DecisionReview::HigherLevelReviewIntakeParams::BOOL }
 
   let(:included_with_lots_of_contestable_issues) do
     [
@@ -149,8 +172,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
         attributes: {
           decisionIssueId: 1,
           ratingIssueId: "1",
-          ratingDecisionIssueId: "1",
-          legacyAppealIssues: nil
+          ratingDecisionIssueId: "1"
         }
       },
       {
@@ -158,7 +180,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
         attributes: {
           decisionIssueId: 2,
           ratingIssueId: "2",
-          ratingDecisionIssueId: "2",
+          ratingDecisionIssueId: "2"
         }
       },
       {
@@ -166,7 +188,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
         attributes: {
           decisionIssueId: 3,
           ratingIssueId: "3",
-          ratingDecisionIssueId: "3",
+          ratingDecisionIssueId: "3"
         }
       },
       {
@@ -182,7 +204,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
         attributes: {
           decisionIssueId: 5,
           ratingIssueId: "5",
-          ratingDecisionIssueId: "5",
+          ratingDecisionIssueId: "5"
         }
       },
       {
@@ -190,10 +212,14 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
         attributes: {
           decisionIssueId: 6,
           ratingIssueId: "6",
-          ratingDecisionIssueId: "6",
+          ratingDecisionIssueId: "6"
         }
       }
     ]
+  end
+
+  context do
+    it { expect(contestable_issues).not_to be_empty }
   end
 
   describe ".prepend_path_to_paths" do
@@ -208,7 +234,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
       ]
     end
     subject do
-      Api::V3::DecisionReview::IntakeParams.prepend_path_to_paths(
+      Api::V3::DecisionReview::HigherLevelReviewIntakeParams.prepend_path_to_paths(
         prepend_path: prepend_path,
         types_and_paths: types_and_paths
       )
@@ -237,484 +263,146 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     end
   end
 
-  describe "#for_array_at_path_enumerate_types_and_paths" do
-    subject do
-      intake_params.send(
-        :for_array_at_path_enumerate_types_and_paths,
-        array_path: array_path,
-        types_and_paths: types_and_paths
-      )
-    end
-    let(:array_path) { ["included"] }
-    let(:types_and_paths) do
-      [
-        [[Hash],               []],
-        [["ContestableIssue"], ["type"]],
-        [[Integer, nil],       %w[attributes decisionIssueId]],
-        [[String, nil],        %w[attributes ratingIssueId]],
-        [[String, nil],        %w[attributes ratingDecisionIssueId]],
-        [[Array, nil],         %w[attributes legacyAppealIssues]]
-      ]
-    end
-
-    it do
-      is_expected.to eq(
-        [
-          [[Hash],               ["included", 0]],
-          [["ContestableIssue"], ["included", 0, "type"]],
-          [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
-          [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
-          [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
-          [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]]
-        ]
-      )
-    end
-
-    context "types shouldn't matter" do
-      let(:types_and_paths) do
-        [
-          [[],     []],
-          [{},     ["type"]],
-          ["a",    %w[attributes decisionIssueId]],
-          [12,     %w[attributes ratingIssueId]],
-          [String, %w[attributes ratingDecisionIssueId]],
-          [nil,    %w[attributes legacyAppealIssues]]
-        ]
-      end
-
-      it do
-        is_expected.to eq(
-          [
-            [[],     ["included", 0]],
-            [{},     ["included", 0, "type"]],
-            ["a",    ["included", 0, "attributes", "decisionIssueId"]],
-            [12,     ["included", 0, "attributes", "ratingIssueId"]],
-            [String, ["included", 0, "attributes", "ratingDecisionIssueId"]],
-            [nil,    ["included", 0, "attributes", "legacyAppealIssues"]]
-          ]
-        )
-      end
-    end
-
-    context "more interesting path" do
-      let(:params) do
-        { a: [{ b: [{ c: [1, 2, 3, 4, 5, 6, 7] }] }] }
-      end
-      let(:array_path) { [:a, 0, :b, 0, :c] }
-      let(:types_and_paths) do
-        [
-          [[Integer], []]
-        ]
-      end
-
-      it do
-        is_expected.to eq(
-          [
-            [[Integer], [:a, 0, :b, 0, :c, 0]],
-            [[Integer], [:a, 0, :b, 0, :c, 1]],
-            [[Integer], [:a, 0, :b, 0, :c, 2]],
-            [[Integer], [:a, 0, :b, 0, :c, 3]],
-            [[Integer], [:a, 0, :b, 0, :c, 4]],
-            [[Integer], [:a, 0, :b, 0, :c, 5]],
-            [[Integer], [:a, 0, :b, 0, :c, 6]]
-          ]
-        )
-      end
-    end
-
-    context "another interesting path" do
-      let(:params) do
-        { a: [{ b: [{ c: [{ x: 8.8, y: 1.2 }, { x: 9, y: 22.9 }, {}] }] }] }
-      end
-      let(:array_path) { [:a, 0, :b, 0, :c] }
-      let(:types_and_paths) do
-        [
-          [[Hash], []],
-          [[Float], [:x]],
-          [[Float], [:y]]
-        ]
-      end
-
-      it do
-        is_expected.to eq(
-          [
-            [[Hash],    [:a, 0, :b, 0, :c, 0]],
-            [[Float],   [:a, 0, :b, 0, :c, 0, :x]],
-            [[Float],   [:a, 0, :b, 0, :c, 0, :y]],
-            [[Hash],    [:a, 0, :b, 0, :c, 1]],
-            [[Float],   [:a, 0, :b, 0, :c, 1, :x]],
-            [[Float],   [:a, 0, :b, 0, :c, 1, :y]],
-            [[Hash],    [:a, 0, :b, 0, :c, 2]],
-            [[Float],   [:a, 0, :b, 0, :c, 2, :x]],
-            [[Float],   [:a, 0, :b, 0, :c, 2, :y]]
-          ]
-          # in a real scenario, you could use the
-          # resulting array ^^^ and HashPathValidator
-          # to catch that the third element is empty
-          # (see params)
-        )
-      end
-    end
-  end
-
-  describe "#legacy_appeal_issues_paths" do
-    subject { intake_params.send(:legacy_appeal_issues_paths) }
-
-    it { is_expected.to eq([["included", 0, "attributes", "legacyAppealIssues"]]) }
-
-    context "lots of contestable issues, some with legacyAppealIssues some without" do
-      let(:included) do
-        [
-          { attributes: {} },
-          { attributes: {} },
-          {
-            attributes: {
-              legacyAppealIssues: ["a"]
-            }
-          },
-          { attributes: {} },
-          { attributes: {} },
-          { attributes: {} },
-          {
-            attributes: {
-              legacyAppealIssues: %w[b c d]
-            }
-          },
-          {
-            attributes: {
-              legacyAppealIssues: ["e"]
-            }
-          },
-          {
-            attributes: {
-              legacyAppealIssues: []
-            }
-          },
-          {
-            attributes: {
-              legacyAppealIssues: %w[f g h]
-            }
-          }
-        ]
-      end
-
-      it do
-        is_expected.to eq(
-          [
-            ["included", 2, "attributes", "legacyAppealIssues"],
-            ["included", 6, "attributes", "legacyAppealIssues"],
-            ["included", 7, "attributes", "legacyAppealIssues"],
-            ["included", 9, "attributes", "legacyAppealIssues"]
-          ]
-        )
-      end
-    end
-  end
-
-  describe "#types_and_paths" do
-    subject { intake_params.send(:types_and_paths) }
-
-    let(:expected_array) do
-      [
-        [object, ["data"]],
-        [["HigherLevelReview"], %w[data type]],
-        [object,         %w[data attributes]],
-        [[String, nil],  %w[data attributes receiptDate]],
-        [bool,           %w[data attributes informalConference]],
-        [[Array, nil],   %w[data attributes informalConferenceTimes]],
-        [[String, nil],  ["data", "attributes", "informalConferenceTimes", 0]],
-        [[String, nil],  ["data", "attributes", "informalConferenceTimes", 1]],
-        [[nil],          ["data", "attributes", "informalConferenceTimes", 2]],
-        [[*object, nil], %w[data attributes informalConferenceRep]],
-        [[String],       %w[data attributes informalConferenceRep name]],
-        [[String, Integer], %w[data attributes informalConferenceRep phoneNumber]],
-        [[String, Integer, nil],  %w[data attributes informalConferenceRep phoneNumberCountryCode]],
-        [[String, Integer, nil],  %w[data attributes informalConferenceRep phoneNumberExt]],
-        [bool,           %w[data attributes sameOffice]],
-        [bool,           %w[data attributes legacyOptInApproved]],
-        [[String],       %w[data attributes benefitType]],
-        [object,         %w[data attributes veteran]],
-        [[String],       %w[data attributes veteran fileNumberOrSsn]],
-        [[String, nil],  %w[data attributes veteran addressLine1]],
-        [[String, nil],  %w[data attributes veteran addressLine2]],
-        [[String, nil],  %w[data attributes veteran city]],
-        [[String, nil],  %w[data attributes veteran stateProvinceCode]],
-        [[String, nil],  %w[data attributes veteran countryCode]],
-        [[String, nil],  %w[data attributes veteran zipPostalCode]],
-        [[String, nil],  %w[data attributes veteran phoneNumber]],
-        [[String, nil],  %w[data attributes veteran phoneNumberCountryCode]],
-        [[String, nil],  %w[data attributes veteran phoneNumberExt]],
-        [[String, nil],  %w[data attributes veteran emailAddress]],
-        [[*object, nil], %w[data attributes claimant]],
-        [[String],       %w[data attributes claimant participantId]],
-        [[String],       %w[data attributes claimant payeeCode]],
-        [[String, nil],  %w[data attributes claimant addressLine1]],
-        [[String, nil],  %w[data attributes claimant addressLine2]],
-        [[String, nil],  %w[data attributes claimant city]],
-        [[String, nil],  %w[data attributes claimant stateProvinceCode]],
-        [[String, nil],  %w[data attributes claimant countryCode]],
-        [[String, nil],  %w[data attributes claimant zipPostalCode]],
-        [[String, nil],  %w[data attributes claimant phoneNumber]],
-        [[String, nil],  %w[data attributes claimant phoneNumberCountryCode]],
-        [[String, nil],  %w[data attributes claimant phoneNumberExt]],
-        [[String, nil],  %w[data attributes claimant emailAddress]],
-        [[Array],              ["included"]],
-        [object,               ["included", 0]],
-        [["ContestableIssue"], ["included", 0, "type"]],
-        [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
-        [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
-        [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
-        [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]],
-        [object,               ["included", 0, "attributes", "legacyAppealIssues", 0]],
-        [[String],             ["included", 0, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
-        [[String],             ["included", 0, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]]
-      ]
-    end
-
-    it do
-      expect(subject.length).to eq(expected_array.length)
-      expected_array.each.with_index do |expected, index|
-        expect(subject[index]).to eq(expected)
-      end
-    end
-
-    context "an empty legacyAppealIssues array is ignored" do
-      let(:first_contestable_issue_legacy_appeal_issues) { [] }
-      let(:expected_array_without_legacy_appeal_issues) { expected_array[0...-3] }
-
-      it do
-        expect(subject.length).to eq(expected_array_without_legacy_appeal_issues.length)
-        expected_array_without_legacy_appeal_issues.each.with_index do |expected, index|
-          expect(subject[index]).to eq(expected)
-        end
-      end
-
-      context "no legacyAppealIssues array" do
-        let(:first_contestable_issue_legacy_appeal_issues) { nil }
-
-        it do
-          expect(subject.length).to eq(expected_array_without_legacy_appeal_issues.length)
-          expected_array_without_legacy_appeal_issues.each.with_index do |expected, index|
-            expect(subject[index]).to eq(expected)
-          end
-        end
-      end
-    end
-
-    context "an empty included array is ignored" do
-      let(:included) { [] }
-      let(:expected_array_without_included) { expected_array[0...-9] }
-
-      it do
-        expect(subject.length).to eq(expected_array_without_included.length)
-        expected_array_without_included.each.with_index do |expected, index|
-          expect(subject[index]).to eq(expected)
-        end
-      end
-
-      context "no included" do
-        let(:included) { nil }
-
-        it do
-          expect(subject.length).to eq(expected_array_without_included.length)
-          expected_array_without_included.each.with_index do |expected, index|
-            expect(subject[index]).to eq(expected)
-          end
-        end
-      end
-    end
-
-    context "a more interesting included array" do
-      let(:included) { included_with_lots_of_contestable_issues }
-
-      let(:expected_array_with_interesting_included) do
-        expected_array[0...-9] +
-          [
-            [object,               ["included", 0]],
-            [["ContestableIssue"], ["included", 0, "type"]],
-            [[Integer, nil],       ["included", 0, "attributes", "decisionIssueId"]],
-            [[String, nil],        ["included", 0, "attributes", "ratingIssueId"]],
-            [[String, nil],        ["included", 0, "attributes", "ratingDecisionIssueId"]],
-            [[Array, nil],         ["included", 0, "attributes", "legacyAppealIssues"]],
-            [object,               ["included", 1]],
-            [["ContestableIssue"], ["included", 1, "type"]],
-            [[Integer, nil],       ["included", 1, "attributes", "decisionIssueId"]],
-            [[String, nil],        ["included", 1, "attributes", "ratingIssueId"]],
-            [[String, nil],        ["included", 1, "attributes", "ratingDecisionIssueId"]],
-            [[Array, nil],         ["included", 1, "attributes", "legacyAppealIssues"]],
-            [object,               ["included", 2]],
-            [["ContestableIssue"], ["included", 2, "type"]],
-            [[Integer, nil],       ["included", 2, "attributes", "decisionIssueId"]],
-            [[String, nil],        ["included", 2, "attributes", "ratingIssueId"]],
-            [[String, nil],        ["included", 2, "attributes", "ratingDecisionIssueId"]],
-            [[Array, nil],         ["included", 2, "attributes", "legacyAppealIssues"]],
-            [object,               ["included", 3]],
-            [["ContestableIssue"], ["included", 3, "type"]],
-            [[Integer, nil],       ["included", 3, "attributes", "decisionIssueId"]],
-            [[String, nil],        ["included", 3, "attributes", "ratingIssueId"]],
-            [[String, nil],        ["included", 3, "attributes", "ratingDecisionIssueId"]],
-            [[Array, nil],         ["included", 3, "attributes", "legacyAppealIssues"]],
-            [object,               ["included", 4]],
-            [["ContestableIssue"], ["included", 4, "type"]],
-            [[Integer, nil],       ["included", 4, "attributes", "decisionIssueId"]],
-            [[String, nil],        ["included", 4, "attributes", "ratingIssueId"]],
-            [[String, nil],        ["included", 4, "attributes", "ratingDecisionIssueId"]],
-            [[Array, nil],         ["included", 4, "attributes", "legacyAppealIssues"]],
-            [object,               ["included", 5]],
-            [["ContestableIssue"], ["included", 5, "type"]],
-            [[Integer, nil],       ["included", 5, "attributes", "decisionIssueId"]],
-            [[String, nil],        ["included", 5, "attributes", "ratingIssueId"]],
-            [[String, nil],        ["included", 5, "attributes", "ratingDecisionIssueId"]],
-            [[Array, nil],         ["included", 5, "attributes", "legacyAppealIssues"]],
-            [object,               ["included", 2, "attributes", "legacyAppealIssues", 0]],
-            [[String],             ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
-            [[String],             ["included", 2, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
-            [object,               ["included", 2, "attributes", "legacyAppealIssues", 1]],
-            [[String],             ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealId"]],
-            [[String],             ["included", 2, "attributes", "legacyAppealIssues", 1, "legacyAppealIssueId"]],
-            [object,               ["included", 4, "attributes", "legacyAppealIssues", 0]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]],
-            [object,               ["included", 4, "attributes", "legacyAppealIssues", 1]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 1, "legacyAppealId"]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 1, "legacyAppealIssueId"]],
-            [object,               ["included", 4, "attributes", "legacyAppealIssues", 2]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 2, "legacyAppealId"]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 2, "legacyAppealIssueId"]],
-            [object,               ["included", 4, "attributes", "legacyAppealIssues", 3]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 3, "legacyAppealId"]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 3, "legacyAppealIssueId"]],
-            [object,               ["included", 4, "attributes", "legacyAppealIssues", 4]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 4, "legacyAppealId"]],
-            [[String],             ["included", 4, "attributes", "legacyAppealIssues", 4, "legacyAppealIssueId"]],
-            [object,               ["included", 5, "attributes", "legacyAppealIssues", 0]],
-            [[String],             ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealId"]],
-            [[String],             ["included", 5, "attributes", "legacyAppealIssues", 0, "legacyAppealIssueId"]]
-          ]
-      end
-
-      it do
-        expect(subject.length).to eq(expected_array_with_interesting_included.length)
-        expected_array_with_interesting_included.each.with_index do |expected, index|
-          expect(subject[index]).to eq(expected)
-        end
-      end
-    end
-  end
-
-  describe "#benefit_type_valid?" do
-    subject { intake_params.send(:benefit_type_valid?) }
-
-    it { is_expected.to be true }
-
-    context "invalid benefit type" do
-      let(:benefit_type) { "qwerty" }
-
-      it { is_expected.to be false }
-    end
-
-    context "unsupported benefit type" do
-      let(:benefit_type) { "pension" }
-
-      it { is_expected.to be false }
-    end
-  end
-
-  describe "#contestable_issue_errors" do
-    subject { intake_params.send(:contestable_issue_errors) }
+  describe "#intake_errors" do
+    subject { hlr_intake_params.intake_errors }
 
     it { is_expected.to eq [] }
 
-    context "no IDs" do
-      let(:first_contestable_issue_decision_issue_id) { nil }
-      let(:first_contestable_issue_rating_issue_id) { nil }
-      let(:first_contestable_issue_rating_decision_issue_id) { nil }
-
-      it { is_expected.not_to be_empty }
+    context "no params" do
+      let(:params) { nil }
+      it do
+        expect(subject.as_json).to eq(
+          [
+            Api::V3::DecisionReview::IntakeError.new(
+              :malformed_request,
+              "payload must be an object"
+            ).as_json
+          ]
+        )
+      end
     end
   end
 
-  describe "#contestable_issues" do
-    subject { intake_params.send(:contestable_issues) }
+  describe "#intake_errors?" do
+    subject { hlr_intake_params.intake_errors? }
 
-    it { is_expected.not_to be_empty }
-    it { expect(subject.first).to be_a Api::V3::DecisionReview::ContestableIssueParams }
+    it { is_expected.to be false }
 
-    context "no contestable issues" do
-      let(:included) { [] }
-
-      it { is_expected.to be_empty }
+    context "no params" do
+      let(:params) { nil }
+      it { is_expected.to be true }
     end
   end
 
-  describe "#receipt_date" do
-    subject { intake_params.send(:receipt_date) }
+  describe "#review_params" do
+    subject { hlr_intake_params.review_params.as_json }
 
-    it { is_expected.to eq receipt_date }
-
-    context "no receipt date" do
-      let(:receipt_date) { nil }
-
-      it { is_expected.to eq Time.zone.now.strftime("%F") }
+    it do
+      is_expected.to eq(
+        {
+          receipt_date: receipt_date,
+          informal_conference: informal_conference,
+          same_office: same_office,
+          benefit_type: benefit_type,
+          claimant: participant_id,
+          payee_code: payee_code,
+          veteran_is_not_claimant: true,
+          legacy_opt_in_approved: legacy_opt_in_approved
+        }.as_json
+      )
     end
   end
 
-  describe "#veteran_is_not_the_claimant?" do
-    subject { intake_params.send(:veteran_is_not_the_claimant?) }
+  describe "#complete_params" do
+    subject { hlr_intake_params.complete_params.as_json }
 
-    it { is_expected.to be true }
-
-    context "no claimant" do
-      let(:claimant) { nil }
-
-      it { is_expected.to be false }
+    it do
+      is_expected.to eq(
+        {
+          request_issues: [
+            Api::V3::DecisionReview::ContestableIssueParams.new(
+              decision_review_class: HigherLevelReview,
+              veteran: veteran,
+              receipt_date: receipt_date,
+              benefit_type: benefit_type,
+              params: first_contestable_issue
+            ).intakes_controller_params
+          ]
+        }.as_json
+      )
     end
 
-    context "no params (non-object)" do
-      let(:params) { 1 }
+    context "lots of contestable issues" do
+      let(:included) { included_with_lots_of_contestable_issues }
 
-      it { is_expected.to be false }
+      it do
+        expect(hlr_intake_params.intake_errors?).to be true
+        is_expected.to eq(
+          {
+            request_issues: (
+              included_with_lots_of_contestable_issues.map do |contestable_issue|
+                Api::V3::DecisionReview::ContestableIssueParams.new(
+                  decision_review_class: HigherLevelReview,
+                  veteran: veteran,
+                  receipt_date: receipt_date,
+                  benefit_type: benefit_type,
+                  params: contestable_issue
+                ).intakes_controller_params
+              end
+            )
+          }.as_json
+        )
+      end
     end
   end
 
-  describe "#claimant_who_is_not_the_veteran" do
-    subject { intake_params.send(:claimant_who_is_not_the_veteran).as_json }
+  describe "#veteran" do
+    subject { hlr_intake_params.veteran }
+    let(:veteran) { create(:veteran) }
 
-    it { is_expected.to eq claimant.as_json }
+    context "use ssn" do
+      let(:file_number_or_ssn) { veteran.ssn }
 
-    context "no claimant" do
-      let(:claimant) { nil }
+      it do
+        expect(file_number_or_ssn).to be_truthy
+        is_expected.to eq veteran
+      end
+    end
 
-      it { is_expected.to eq({}) }
+    context "use file number" do
+      let(:file_number_or_ssn) { veteran.file_number }
+
+      it do
+        expect(file_number_or_ssn).to be_truthy
+        is_expected.to eq veteran
+      end
     end
   end
 
-  describe "#informal_conference_rep?" do
-    subject { intake_params.send(:informal_conference_rep?) }
+  describe "#file_number_or_ssn" do
+    subject { hlr_intake_params.file_number_or_ssn }
 
-    it { is_expected.to be true }
+    it { is_expected.to eq file_number_or_ssn }
 
-    context "no rep" do
-      let(:informal_conference_rep) { nil }
-
-      it { is_expected.to be false }
+    context "int" do
+      let(:file_number_or_ssn) { 12 }
+      it("always returns a string") { is_expected.to eq "12" }
     end
 
-    context "no params (non-object)" do
-      let(:params) { 1 }
-
-      it { is_expected.to be false }
+    context "padded string" do
+      let(:file_number_or_ssn) { "  hello  " }
+      it("removes padding") { is_expected.to eq "hello" }
     end
   end
 
   describe "#attributes" do
-    subject { intake_params.send(:attributes) }
+    subject { hlr_intake_params.attributes }
 
     it { expect(subject.as_json).to eq attributes.as_json }
   end
 
   describe "#attributes?" do
-    subject { intake_params.send(:attributes?) }
+    subject { hlr_intake_params.attributes? }
 
     it { is_expected.to be true }
 
@@ -737,8 +425,26 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     end
   end
 
+  describe "#params?" do
+    subject { hlr_intake_params.params? }
+
+    it { is_expected.to be true }
+
+    context "no params" do
+      let(:params) { nil }
+
+      it { is_expected.to be false }
+    end
+
+    context "non hash" do
+      let(:params) { true }
+
+      it { is_expected.to be false }
+    end
+  end
+
   describe "#claimant_object_present?" do
-    subject { intake_params.send(:claimant_object_present?) }
+    subject { hlr_intake_params.claimant_object_present? }
 
     it { is_expected.to be true }
 
@@ -749,8 +455,109 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     end
   end
 
-  describe "#describe_shape_error" do
-    subject { intake_params.send(:describe_shape_error) }
+  describe "#veteran_is_not_the_claimant?" do
+    subject { hlr_intake_params.veteran_is_not_the_claimant? }
+
+    it { is_expected.to be true }
+
+    context "no claimant" do
+      let(:claimant) { nil }
+
+      it { is_expected.to be false }
+    end
+
+    context "no params (non-object)" do
+      let(:params) { 1 }
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe "#claimant_who_is_not_the_veteran" do
+    subject { hlr_intake_params.claimant_who_is_not_the_veteran.as_json }
+
+    it { is_expected.to eq claimant.as_json }
+
+    context "no claimant" do
+      let(:claimant) { nil }
+
+      it { is_expected.to eq({}) }
+    end
+  end
+
+  describe "#informal_conference_rep?" do
+    subject { hlr_intake_params.informal_conference_rep? }
+
+    it { is_expected.to be true }
+
+    context "no rep" do
+      let(:informal_conference_rep) { nil }
+
+      it { is_expected.to be false }
+    end
+
+    context "no params (non-object)" do
+      let(:params) { 1 }
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe "#receipt_date" do
+    subject { hlr_intake_params.receipt_date }
+
+    it { is_expected.to eq formatted_receipt_date }
+
+    context "no receipt date" do
+      let(:formatted_receipt_date) { nil }
+
+      it("returns today") { is_expected.to eq Time.zone.now.strftime("%F") }
+    end
+  end
+
+  describe "#included" do
+    subject { hlr_intake_params.included.as_json }
+
+    it { is_expected.to eq included.as_json }
+
+    context "no included" do
+      let(:included) { nil }
+
+      it { is_expected.to eq [] }
+    end
+  end
+
+  describe "#benefit_type_valid?" do
+    subject { hlr_intake_params.benefit_type_valid? }
+
+    it { is_expected.to be true }
+
+    context "invalid benefit type" do
+      let(:benefit_type) { "qwerty" }
+
+      it { is_expected.to be false }
+    end
+
+    context "unsupported benefit type" do
+      let(:benefit_type) { "pension" }
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe "#shape_valid?" do
+    subject { hlr_intake_params.shape_valid? }
+
+    it { is_expected.to be true }
+
+    context "invalid shape" do
+      let(:params) { nil }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe "#shape_error_message" do
+    subject { hlr_intake_params.shape_error_message }
 
     it { is_expected.to be nil }
 
@@ -790,11 +597,11 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     end
 
     context "no receipt date" do
-      let(:receipt_date) { 12 }
+      let(:formatted_receipt_date) { 12 }
       it do
         is_expected.to eq(
           "[\"data\"][\"attributes\"][\"receiptDate\"]" \
-            " should be one of [String, nil]. Got: #{receipt_date.inspect}."
+            " should be one of [String, nil]. Got: #{formatted_receipt_date.inspect}."
         )
       end
     end
@@ -940,16 +747,19 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     end
 
     context "no veteran" do
-      let(:veteran) { nil }
+      let(:veteran_hash) { nil }
       it do
         is_expected.to eq(
           "[\"data\"][\"attributes\"][\"veteran\"]" \
-            " should be one of #{object.inspect}. Got: #{veteran.inspect}."
+            " should be one of #{object.inspect}. Got: #{veteran_hash.inspect}."
         )
       end
     end
 
     context "no file number or ssn" do
+      let(:contestable_issues) { [] }
+      let(:rating) { nil }
+      let(:veteran) { nil }
       let(:file_number_or_ssn) { nil }
       it do
         is_expected.to eq(
@@ -1234,7 +1044,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
       it do
         is_expected.to eq(
           "[\"included\"][0][\"attributes\"][\"decisionIssueId\"]" \
-            " should be one of [Integer, nil]. Got: #{first_contestable_issue_decision_issue_id.inspect}."
+            " should be one of [String, Integer, nil]. Got: #{first_contestable_issue_decision_issue_id.inspect}."
         )
       end
     end
@@ -1244,7 +1054,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
       it do
         is_expected.to eq(
           "[\"included\"][0][\"attributes\"][\"ratingIssueId\"]" \
-            " should be one of [String, nil]. Got: #{first_contestable_issue_rating_issue_id.inspect}."
+            " should be one of [String, Integer, nil]. Got: #{first_contestable_issue_rating_issue_id.inspect}."
         )
       end
     end
@@ -1254,181 +1064,286 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
       it do
         is_expected.to eq(
           "[\"included\"][0][\"attributes\"][\"ratingDecisionIssueId\"]" \
-            " should be one of [String, nil]. Got: #{first_contestable_issue_rating_decision_issue_id.inspect}."
-        )
-      end
-    end
-
-    context "legacy appeal issues not an array" do
-      let(:first_contestable_issue_legacy_appeal_issues) { "dog" }
-      it do
-        is_expected.to eq(
-          "[\"included\"][0][\"attributes\"][\"legacyAppealIssues\"]" \
-            " should be one of [Array, nil]. Got: #{first_contestable_issue_legacy_appeal_issues.inspect}."
-        )
-      end
-    end
-
-    context "legacy appeal issues element not an object" do
-      let(:first_contestable_issue_legacy_appeal_issues) { [nil] }
-      it do
-        is_expected.to eq(
-          "[\"included\"][0][\"attributes\"][\"legacyAppealIssues\"][0]" \
-            " should be one of #{object.inspect}. Got: #{first_contestable_issue_legacy_appeal_issues[0].inspect}."
-        )
-      end
-    end
-
-    context "no legacy appeal id" do
-      let(:first_legacy_appeal_id) { nil }
-      it do
-        is_expected.to eq(
-          "[\"included\"][0][\"attributes\"][\"legacyAppealIssues\"][0][\"legacyAppealId\"]" \
-            " should be a(n) string. Got: #{first_legacy_appeal_id.inspect}."
-        )
-      end
-    end
-
-    context "no legacy appeal issue id" do
-      let(:first_legacy_appeal_issue_id) { nil }
-      it do
-        is_expected.to eq(
-          "[\"included\"][0][\"attributes\"][\"legacyAppealIssues\"][0][\"legacyAppealIssueId\"]" \
-            " should be a(n) string. Got: #{first_legacy_appeal_issue_id.inspect}."
+          " should be one of [String, Integer, nil]." \
+          " Got: #{first_contestable_issue_rating_decision_issue_id.inspect}."
         )
       end
     end
   end
 
-  describe "#shape_error_message" do
-    subject { intake_params.send(:shape_error_message) }
+  describe "#contestable_issues" do
+    subject { hlr_intake_params.contestable_issues }
 
-    it { is_expected.to be nil }
+    it { is_expected.not_to be_empty }
+    it { expect(subject.first).to be_a Api::V3::DecisionReview::ContestableIssueParams }
 
-    context do
-      let(:params) { nil }
-      it { is_expected.to eq "payload must be an object" }
+    context "no contestable issues" do
+      let(:included) { [] }
+
+      it { is_expected.to be_empty }
     end
   end
 
-  describe "#shape_valid?" do
-    subject { intake_params.send(:shape_valid?) }
-
-    it { is_expected.to be true }
-
-    context do
-      let(:params) { nil }
-      it { is_expected.to be false  }
-    end
-  end
-
-  describe "#file_number_or_ssn" do
-    subject { intake_params.file_number_or_ssn }
-
-    it { is_expected.to eq file_number_or_ssn }
-
-    context do
-      let(:file_number_or_ssn) { 12 }
-      it { is_expected.to eq "12" }
-    end
-
-    context do
-      let(:file_number_or_ssn) { "  hello  " }
-      it { is_expected.to eq "hello" }
-    end
-  end
-
-  describe "#errors?" do
-    subject { intake_params.errors? }
-
-    it { is_expected.to be false }
-
-    context do
-      let(:params) { nil }
-      it { is_expected.to be true }
-    end
-  end
-
-  describe "#errors" do
-    subject { intake_params.errors }
+  describe "#contestable_issue_intake_errors" do
+    subject { hlr_intake_params.contestable_issue_intake_errors }
 
     it { is_expected.to eq [] }
 
-    context do
-      let(:params) { nil }
-      it do
-        expect(subject.as_json).to eq(
-          [Api::V3::DecisionReview::IntakeError.new(:malformed_request, "payload must be an object").as_json]
-        )
-      end
+    context "no IDs" do
+      let(:first_contestable_issue_decision_issue_id) { nil }
+      let(:first_contestable_issue_rating_issue_id) { nil }
+      let(:first_contestable_issue_rating_decision_issue_id) { nil }
+
+      it { is_expected.not_to be_empty }
     end
   end
 
-  describe "#errors?" do
-    subject { intake_params.errors? }
+  describe "#types_and_paths" do
+    subject { hlr_intake_params.types_and_paths }
 
-    it { is_expected.to be false }
-
-    context do
-      let(:params) { nil }
-      it { expect(subject.as_json).to be true }
+    let(:expected_array) do
+      [
+        [object, ["data"]],
+        [["HigherLevelReview"], %w[data type]],
+        [object,         %w[data attributes]],
+        [[String, nil],  %w[data attributes receiptDate]],
+        [bool,           %w[data attributes informalConference]],
+        [[Array, nil],   %w[data attributes informalConferenceTimes]],
+        [[String, nil],  ["data", "attributes", "informalConferenceTimes", 0]],
+        [[String, nil],  ["data", "attributes", "informalConferenceTimes", 1]],
+        [[nil],          ["data", "attributes", "informalConferenceTimes", 2]],
+        [[*object, nil], %w[data attributes informalConferenceRep]],
+        [[String],       %w[data attributes informalConferenceRep name]],
+        [[String, Integer], %w[data attributes informalConferenceRep phoneNumber]],
+        [[String, Integer, nil],  %w[data attributes informalConferenceRep phoneNumberCountryCode]],
+        [[String, Integer, nil],  %w[data attributes informalConferenceRep phoneNumberExt]],
+        [bool,           %w[data attributes sameOffice]],
+        [bool,           %w[data attributes legacyOptInApproved]],
+        [[String],       %w[data attributes benefitType]],
+        [object,         %w[data attributes veteran]],
+        [[String],       %w[data attributes veteran fileNumberOrSsn]],
+        [[String, nil],  %w[data attributes veteran addressLine1]],
+        [[String, nil],  %w[data attributes veteran addressLine2]],
+        [[String, nil],  %w[data attributes veteran city]],
+        [[String, nil],  %w[data attributes veteran stateProvinceCode]],
+        [[String, nil],  %w[data attributes veteran countryCode]],
+        [[String, nil],  %w[data attributes veteran zipPostalCode]],
+        [[String, nil],  %w[data attributes veteran phoneNumber]],
+        [[String, nil],  %w[data attributes veteran phoneNumberCountryCode]],
+        [[String, nil],  %w[data attributes veteran phoneNumberExt]],
+        [[String, nil],  %w[data attributes veteran emailAddress]],
+        [[*object, nil], %w[data attributes claimant]],
+        [[String],       %w[data attributes claimant participantId]],
+        [[String],       %w[data attributes claimant payeeCode]],
+        [[String, nil],  %w[data attributes claimant addressLine1]],
+        [[String, nil],  %w[data attributes claimant addressLine2]],
+        [[String, nil],  %w[data attributes claimant city]],
+        [[String, nil],  %w[data attributes claimant stateProvinceCode]],
+        [[String, nil],  %w[data attributes claimant countryCode]],
+        [[String, nil],  %w[data attributes claimant zipPostalCode]],
+        [[String, nil],  %w[data attributes claimant phoneNumber]],
+        [[String, nil],  %w[data attributes claimant phoneNumberCountryCode]],
+        [[String, nil],  %w[data attributes claimant phoneNumberExt]],
+        [[String, nil],  %w[data attributes claimant emailAddress]],
+        [[Array],                ["included"]],
+        [object,                 ["included", 0]],
+        [["ContestableIssue"],   ["included", 0, "type"]],
+        [[String, Integer, nil], ["included", 0, "attributes", "decisionIssueId"]],
+        [[String, Integer, nil], ["included", 0, "attributes", "ratingIssueId"]],
+        [[String, Integer, nil], ["included", 0, "attributes", "ratingDecisionIssueId"]]
+      ]
     end
-  end
-
-  describe "#complete_params" do
-    subject { intake_params.complete_params }
 
     it do
-      expect(subject.as_json).to eq(
-        {
-          request_issues: [
-            Api::V3::DecisionReview::ContestableIssueParams.new(
-              params: first_contestable_issue,
-              benefit_type: benefit_type,
-              legacy_opt_in_approved: legacy_opt_in_approved
-            ).intakes_controller_params
-          ]
-        }.as_json
-      )
+      expect(subject.length).to eq(expected_array.length)
+      expected_array.each.with_index do |expected, index|
+        expect(subject[index]).to eq(expected)
+      end
     end
 
-    context do
-      let(:included) { included_with_lots_of_contestable_issues }
+    context "an empty included array is ignored" do
+      let(:included) { [] }
+      let(:expected_array_without_included) { expected_array[0...-5] }
 
       it do
-        expect(subject.as_json).to eq(
-          {
-            request_issues: (
-              included_with_lots_of_contestable_issues.map do |contestable_issue|
-                Api::V3::DecisionReview::ContestableIssueParams.new(
-                  params: contestable_issue,
-                  benefit_type: benefit_type,
-                  legacy_opt_in_approved: legacy_opt_in_approved
-                ).intakes_controller_params
-              end
-            )
-          }.as_json
-        )
+        expect(subject.length).to eq(expected_array_without_included.length)
+        expected_array_without_included.each.with_index do |expected, index|
+          expect(subject[index]).to eq(expected)
+        end
+      end
+
+      context "no included" do
+        let(:included) { nil }
+
+        it do
+          expect(subject.length).to eq(expected_array_without_included.length)
+          expected_array_without_included.each.with_index do |expected, index|
+            expect(subject[index]).to eq(expected)
+          end
+        end
+      end
+    end
+
+    context "a more interesting included array" do
+      let(:included) { included_with_lots_of_contestable_issues }
+
+      let(:expected_array_with_interesting_included) do
+        expected_array[0...-5] +
+          [
+            [object,                 ["included", 0]],
+            [["ContestableIssue"],   ["included", 0, "type"]],
+            [[String, Integer, nil], ["included", 0, "attributes", "decisionIssueId"]],
+            [[String, Integer, nil], ["included", 0, "attributes", "ratingIssueId"]],
+            [[String, Integer, nil], ["included", 0, "attributes", "ratingDecisionIssueId"]],
+            [object,                 ["included", 1]],
+            [["ContestableIssue"],   ["included", 1, "type"]],
+            [[String, Integer, nil], ["included", 1, "attributes", "decisionIssueId"]],
+            [[String, Integer, nil], ["included", 1, "attributes", "ratingIssueId"]],
+            [[String, Integer, nil], ["included", 1, "attributes", "ratingDecisionIssueId"]],
+            [object,                 ["included", 2]],
+            [["ContestableIssue"],   ["included", 2, "type"]],
+            [[String, Integer, nil], ["included", 2, "attributes", "decisionIssueId"]],
+            [[String, Integer, nil], ["included", 2, "attributes", "ratingIssueId"]],
+            [[String, Integer, nil], ["included", 2, "attributes", "ratingDecisionIssueId"]],
+            [object,                 ["included", 3]],
+            [["ContestableIssue"],   ["included", 3, "type"]],
+            [[String, Integer, nil], ["included", 3, "attributes", "decisionIssueId"]],
+            [[String, Integer, nil], ["included", 3, "attributes", "ratingIssueId"]],
+            [[String, Integer, nil], ["included", 3, "attributes", "ratingDecisionIssueId"]],
+            [object,                 ["included", 4]],
+            [["ContestableIssue"],   ["included", 4, "type"]],
+            [[String, Integer, nil], ["included", 4, "attributes", "decisionIssueId"]],
+            [[String, Integer, nil], ["included", 4, "attributes", "ratingIssueId"]],
+            [[String, Integer, nil], ["included", 4, "attributes", "ratingDecisionIssueId"]],
+            [object,                 ["included", 5]],
+            [["ContestableIssue"],   ["included", 5, "type"]],
+            [[String, Integer, nil], ["included", 5, "attributes", "decisionIssueId"]],
+            [[String, Integer, nil], ["included", 5, "attributes", "ratingIssueId"]],
+            [[String, Integer, nil], ["included", 5, "attributes", "ratingDecisionIssueId"]]
+          ]
+      end
+
+      it do
+        expect(subject.length).to eq(expected_array_with_interesting_included.length)
+        expected_array_with_interesting_included.each.with_index do |expected, index|
+          expect(subject[index]).to eq(expected)
+        end
       end
     end
   end
 
-  describe "#review_params" do
-    subject { intake_params.review_params.as_json }
+  describe "#for_array_at_path_enumerate_types_and_paths" do
+    subject do
+      hlr_intake_params.for_array_at_path_enumerate_types_and_paths(
+        array_path: array_path,
+        types_and_paths: types_and_paths
+      )
+    end
+    let(:array_path) { ["included"] }
+    let(:types_and_paths) do
+      [
+        [[Hash],                 []],
+        [["ContestableIssue"],   ["type"]],
+        [[String, Integer, nil], %w[attributes decisionIssueId]],
+        [[String, Integer, nil], %w[attributes ratingIssueId]],
+        [[String, Integer, nil], %w[attributes ratingDecisionIssueId]]
+      ]
+    end
 
     it do
       is_expected.to eq(
-        {
-          receipt_date: receipt_date,
-          informal_conference: informal_conference,
-          same_office: same_office,
-          benefit_type: benefit_type,
-          claimant: participant_id,
-          payee_code: payee_code,
-          veteran_is_not_claimant: true,
-          legacy_opt_in_approved: legacy_opt_in_approved
-        }.as_json
+        [
+          [[Hash],                 ["included", 0]],
+          [["ContestableIssue"],   ["included", 0, "type"]],
+          [[String, Integer, nil], ["included", 0, "attributes", "decisionIssueId"]],
+          [[String, Integer, nil], ["included", 0, "attributes", "ratingIssueId"]],
+          [[String, Integer, nil], ["included", 0, "attributes", "ratingDecisionIssueId"]]
+        ]
       )
+    end
+
+    context "types shouldn't matter" do
+      let(:types_and_paths) do
+        [
+          [[],     []],
+          [{},     ["type"]],
+          ["a",    %w[attributes decisionIssueId]],
+          [12,     %w[attributes ratingIssueId]],
+          [String, %w[attributes ratingDecisionIssueId]]
+        ]
+      end
+
+      it do
+        is_expected.to eq(
+          [
+            [[],     ["included", 0]],
+            [{},     ["included", 0, "type"]],
+            ["a",    ["included", 0, "attributes", "decisionIssueId"]],
+            [12,     ["included", 0, "attributes", "ratingIssueId"]],
+            [String, ["included", 0, "attributes", "ratingDecisionIssueId"]]
+          ]
+        )
+      end
+    end
+
+    context "more interesting path" do
+      let(:params) do
+        { a: [{ b: [{ c: [1, 2, 3, 4, 5, 6, 7] }] }] }
+      end
+      let(:array_path) { [:a, 0, :b, 0, :c] }
+      let(:types_and_paths) do
+        [
+          [[Integer], []]
+        ]
+      end
+
+      it do
+        is_expected.to eq(
+          [
+            [[Integer], [:a, 0, :b, 0, :c, 0]],
+            [[Integer], [:a, 0, :b, 0, :c, 1]],
+            [[Integer], [:a, 0, :b, 0, :c, 2]],
+            [[Integer], [:a, 0, :b, 0, :c, 3]],
+            [[Integer], [:a, 0, :b, 0, :c, 4]],
+            [[Integer], [:a, 0, :b, 0, :c, 5]],
+            [[Integer], [:a, 0, :b, 0, :c, 6]]
+          ]
+        )
+      end
+    end
+
+    context "another interesting path" do
+      let(:params) do
+        { a: [{ b: [{ c: [{ x: 8.8, y: 1.2 }, { x: 9, y: 22.9 }, {}] }] }] }
+      end
+      let(:array_path) { [:a, 0, :b, 0, :c] }
+      let(:types_and_paths) do
+        [
+          [[Hash], []],
+          [[Float], [:x]],
+          [[Float], [:y]]
+        ]
+      end
+
+      it do
+        is_expected.to eq(
+          [
+            [[Hash],    [:a, 0, :b, 0, :c, 0]],
+            [[Float],   [:a, 0, :b, 0, :c, 0, :x]],
+            [[Float],   [:a, 0, :b, 0, :c, 0, :y]],
+            [[Hash],    [:a, 0, :b, 0, :c, 1]],
+            [[Float],   [:a, 0, :b, 0, :c, 1, :x]],
+            [[Float],   [:a, 0, :b, 0, :c, 1, :y]],
+            [[Hash],    [:a, 0, :b, 0, :c, 2]],
+            [[Float],   [:a, 0, :b, 0, :c, 2, :x]],
+            [[Float],   [:a, 0, :b, 0, :c, 2, :y]]
+          ]
+          # in a real scenario, you could use the
+          # resulting array ^^^ and HashPathValidator
+          # to catch that the third element is empty
+          # (see params)
+        )
+      end
     end
   end
 end

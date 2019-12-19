@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-describe Api::V3::DecisionReview::LookupContestableIssue, :all_dbs do
+describe Api::V3::DecisionReview::ContestableIssueFinder, :all_dbs do
   include IntakeHelpers
 
   def lookup(ids = {})
-    Api::V3::DecisionReview::LookupContestableIssue.new(
+    Api::V3::DecisionReview::ContestableIssueFinder.new(
       {
         decision_review_class: decision_review_class,
         veteran: veteran,

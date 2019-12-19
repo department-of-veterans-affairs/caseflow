@@ -30,8 +30,8 @@ class Api::V3::DecisionReview::ContestableIssueParams
     @veteran = veteran
     @receipt_date = receipt_date
     @benefit_type = benefit_type
-    @ids = params.as_json["attributes"]
-             .slice("ratingIssueId", "decisionIssueId", "ratingDecisionIssueId")
+    @ids = params[:attributes]
+             .permit("ratingIssueId", "decisionIssueId", "ratingDecisionIssueId").to_h
              .symbolize_keys
   end
 
@@ -40,10 +40,10 @@ class Api::V3::DecisionReview::ContestableIssueParams
   end
 
   def error_code
-    return :contestable_issue_params_must_have_ids if unidentified?
+    return :contestable_issue_params_must_have_ids if unidentified? # error code
     return nil if lookup.found?
 
-    :couldnt_find_contestable_issue
+    :couldnt_find_contestable_issue # error_code
   end
 
   # presence of IDs /or/ nonrating_issue_category denotes an identified request issue
@@ -81,7 +81,7 @@ class Api::V3::DecisionReview::ContestableIssueParams
   private
 
   def lookup
-    @lookup ||= Api::V3::DecisionReview::LookupContestableIssue.new(
+    @lookup ||= Api::V3::DecisionReview::ContestableIssueFinder.new(
       {
         decision_review_class: @decision_review_class,
         veteran: @veteran,

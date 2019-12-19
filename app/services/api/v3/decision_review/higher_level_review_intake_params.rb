@@ -71,22 +71,6 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
     )
   end
 
-  def validate 
-    if !shape_valid?
-      @intake_errors << Api::V3::DecisionReview::IntakeError.new(
-        :malformed_request, shape_error_message
-      )
-      return
-    end
-
-    if !benefit_type_valid?
-      @intake_errors << Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type)
-      return
-    end
-
-    @intake_errors += contestable_issue_intake_errors
-  end
-
   def veteran
     VeteranFinder.find_best_match(file_number_or_ssn)
   end
@@ -133,7 +117,11 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   end
 
   def included
-    params? ? @params["included"] : []
+    params? && @params["included"].is_a?(Array) ? @params["included"] : []
+  end
+
+  def benefit_type_valid?
+    attributes["benefitType"].in?(CATEGORIES_BY_BENEFIT_TYPE.keys)
   end
 
   def shape_valid?
@@ -151,11 +139,11 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
         veteran: veteran,
         receipt_date: receipt_date,
         benefit_type: attributes["benefitType"],
-        params: contestable_issue_params,
+        params: contestable_issue_params
       )
     end
   rescue StandardError
-    @intake_errors << Api::V3::DecisionReview::IntakeError.new(:malformed_contestable_issues)
+    @intake_errors << Api::V3::DecisionReview::IntakeError.new(:malformed_contestable_issues) # error code
     []
   end
 
@@ -165,10 +153,6 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
     end
   rescue StandardError
     [Api::V3::DecisionReview::IntakeError.new(:malformed_contestable_issues)] # error_code
-  end
-
-  def benefit_type_valid?
-    attributes["benefitType"].in?(CATEGORIES_BY_BENEFIT_TYPE.keys)
   end
 
   # array of allowed types (values) for params paths
@@ -250,13 +234,13 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
       *for_array_at_path_enumerate_types_and_paths( # ^^^
         array_path: ["included"],
         types_and_paths: [
-          [OBJECT,               []],
-          [["ContestableIssue"], ["type"]],
-          [[Integer, nil],       %w[attributes decisionIssueId]],
-          [[String, nil],        %w[attributes ratingIssueId]],
-          [[String, nil],        %w[attributes ratingDecisionIssueId]],
+          [OBJECT, []],
+          [["ContestableIssue"],   ["type"]],
+          [[String, Integer, nil], %w[attributes decisionIssueId]],
+          [[String, Integer, nil], %w[attributes ratingIssueId]],
+          [[String, Integer, nil], %w[attributes ratingDecisionIssueId]]
         ]
-      ),
+      )
     ]
   end
 
@@ -307,6 +291,22 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   end
 
   private
+
+  def validate
+    if !shape_valid?
+      @intake_errors << Api::V3::DecisionReview::IntakeError.new(
+        :malformed_request, shape_error_message # error code
+      )
+      return
+    end
+
+    if !benefit_type_valid?
+      @intake_errors << Api::V3::DecisionReview::IntakeError.new(:invalid_benefit_type) # error code
+      return
+    end
+
+    @intake_errors += contestable_issue_intake_errors
+  end
 
   def describe_shape_error
     return "payload must be an object" unless params?
