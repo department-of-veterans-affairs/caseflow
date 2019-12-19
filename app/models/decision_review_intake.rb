@@ -4,20 +4,7 @@ class DecisionReviewIntake < Intake
   include RunAsyncable
 
   def ui_hash
-    super.merge(
-      receipt_date: detail.receipt_date,
-      claimant: detail.claimant_participant_id,
-      veteran_is_not_claimant: detail.veteran_is_not_claimant,
-      payeeCode: detail.payee_code,
-      legacy_opt_in_approved: detail.legacy_opt_in_approved,
-      legacyAppeals: detail.serialized_legacy_appeals,
-      ratings: detail.serialized_ratings,
-      requestIssues: detail.request_issues.active_or_ineligible.map(&:serialize),
-      activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:serialize),
-      contestableIssuesByDate: detail.contestable_issues.map(&:serialize),
-      veteranValid: veteran&.valid?(:bgs),
-      veteranInvalidFields: veteran_invalid_fields
-    )
+  Intake::DecisionReviewIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   rescue Rating::NilRatingProfileListError, Rating::LockedRatingError
     cancel!(reason: "system_error")
     raise

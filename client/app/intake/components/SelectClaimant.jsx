@@ -6,6 +6,7 @@ import { BOOLEAN_RADIO_OPTIONS,
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES } from '../constants';
 import COPY from '../../../COPY.json';
+import PropTypes from 'prop-types';
 
 export default class SelectClaimant extends React.PureComponent {
   handlePayeeCodeChange(event) {
@@ -93,7 +94,7 @@ export default class SelectClaimant extends React.PureComponent {
         options={veteranClaimantOptions}
         onChange={setVeteranIsNotClaimant}
         errorMessage={veteranIsNotClaimantError}
-        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
+        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant}
       />
 
       { showClaimants && hasRelationships && claimantOptions() }
@@ -102,3 +103,19 @@ export default class SelectClaimant extends React.PureComponent {
     </div>;
   }
 }
+
+SelectClaimant.propTypes = {
+  isVeteranDeceased: PropTypes.bool,
+  veteranIsNotClaimant: PropTypes.bool,
+  veteranIsNotClaimantError: PropTypes.string,
+  setVeteranIsNotClaimant: PropTypes.func,
+  claimant: PropTypes.string,
+  claimantError: PropTypes.string,
+  relationships: PropTypes.array,
+  payeeCode: PropTypes.string,
+  payeeCodeError: PropTypes.string,
+  setClaimant: PropTypes.func,
+  setPayeeCode: PropTypes.func,
+  formType: PropTypes.string,
+  benefitType: PropTypes.string
+};

@@ -187,16 +187,7 @@ class Intake < ApplicationRecord
   end
 
   def ui_hash
-    {
-      id: id,
-      form_type: form_type,
-      veteran_file_number: veteran_file_number,
-      veteran_name: veteran&.name&.formatted(:readable_short),
-      veteran_form_name: veteran&.name&.formatted(:form),
-      veteran_is_deceased: veteran&.deceased?,
-      completed_at: completed_at,
-      relationships: veteran&.relationships&.map(&:serialize)
-    }
+    Intake::IntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def form_type
