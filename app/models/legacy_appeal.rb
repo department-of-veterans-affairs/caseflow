@@ -73,9 +73,7 @@ class LegacyAppeal < ApplicationRecord
            to: :document_fetcher
 
   delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex,
-           :email_address, to: :veteran,
-           prefix: true,
-           allow_nil: true
+           :email_address, to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products,
