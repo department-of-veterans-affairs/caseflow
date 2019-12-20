@@ -10,7 +10,7 @@ describe TaskActionRepository, :all_dbs do
     end
 
     context "when assigned_to is an organization" do
-      let(:task) { create(:generic_task, assigned_to: organization) }
+      let(:task) { create(:ama_task, assigned_to: organization) }
 
       it "should return all members" do
         match_users = users.map { |u| { label: u.full_name, value: u.id } }
@@ -23,8 +23,8 @@ describe TaskActionRepository, :all_dbs do
     end
 
     context "when assigned_to's parent is an organization" do
-      let(:parent) { create(:generic_task, assigned_to: organization) }
-      let(:task) { create(:generic_task, assigned_to: users.first, parent: parent) }
+      let(:parent) { create(:ama_task, assigned_to: organization) }
+      let(:task) { create(:ama_task, assigned_to: users.first, parent: parent) }
 
       it "should return all members except user" do
         user_output = users[1..users.length - 1].map { |u| { label: u.full_name, value: u.id } }
@@ -33,7 +33,7 @@ describe TaskActionRepository, :all_dbs do
     end
 
     context "when assigned_to is a user" do
-      let(:task) { create(:generic_task, assigned_to: users.first) }
+      let(:task) { create(:ama_task, assigned_to: users.first) }
 
       it "should return all members except user" do
         expect(TaskActionRepository.assign_to_user_data(task)[:options]).to match_array([])
@@ -109,7 +109,7 @@ describe TaskActionRepository, :all_dbs do
   end
 
   describe "#cancel_task_data" do
-    let(:task) { create(:generic_task, assigned_by_id: assigner_id) }
+    let(:task) { create(:ama_task, assigned_by_id: assigner_id) }
     subject { TaskActionRepository.cancel_task_data(task) }
 
     context "when the task has no assigner" do
