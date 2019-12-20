@@ -151,15 +151,25 @@ class TableFilter extends React.PureComponent {
     this.hideDropdown();
   }
 
+  filterIconAriaLabel = () => {
+    const {
+      filteredByList,
+      columnName,
+      label
+    } = this.props;
+
+    const selectedOptions = filteredByList[columnName] || "";
+
+    return selectedOptions.length ? sprintf('%s. Filtering by %s', label, selectedOptions) : label;
+  }
+
   render() {
     const {
       tableData,
       columnName,
       anyFiltersAreSet,
-      label,
       valueName,
-      getFilterValues,
-      filteredByList
+      getFilterValues
     } = this.props;
 
     const filterOptions = tableData && columnName ?
@@ -170,13 +180,11 @@ class TableFilter extends React.PureComponent {
       // WARNING: If you use getFilterValues, it will cause some of the options to
       // not display correctly when they are checked.
       getFilterValues;
-    const selectedOptions = filteredByList[columnName] || "";
-    const filterIconLabel = selectedOptions.length ? sprintf("%s. Filtering by %s", label, selectedOptions) : label;
 
     return (
       <span {...iconStyle}>
         <FilterIcon
-          label={filterIconLabel}
+          label={this.filterIconAriaLabel()}
           getRef={this.props.getFilterIconRef}
           selected={this.isFilterOpen()}
           handleActivate={this.toggleDropdown} />
