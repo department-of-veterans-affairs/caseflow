@@ -19,7 +19,7 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
-import { LIST_SCHEDULE_VIEWS } from '../constants';
+import { LIST_SCHEDULE_VIEWS, VIDEO_HEARING } from '../constants';
 import DropdownButton from '../../components/DropdownButton';
 
 const downloadButtonStyling = css({
@@ -91,20 +91,6 @@ const SwitchViewDropdown = ({ onSwitchView }) => {
 SwitchViewDropdown.propTypes = { onSwitchView: PropTypes.func };
 
 class ListTable extends React.Component {
-  formatHearingType = (type) => {
-    console.log("yo")
-    if (_.isNull(type) || _.isUndefined(type)) {
-      return null;
-    }
-    if (type === 'Video, Virtual') {
-      return 'Video';
-    }
-
-    return type
-    // const { city, state } = type;
-  
-    // return `${city}, ${state} ${getFacilityType(location)}`;
-  };
   render() {
     return (
       <LoadingDataDisplay
@@ -123,7 +109,6 @@ class ListTable extends React.Component {
           </Button>
         </div>}
         <QueueTable
-          filterValueTransform={this.formatHearingType}
           columns={this.props.hearingScheduleColumns}
           rowObjects={this.props.hearingScheduleRows}
           summary="hearing-schedule"
@@ -191,6 +176,13 @@ class ListSchedule extends React.Component {
         align: 'left',
         tableData: hearingScheduleRows,
         enableFilter: true,
+        filterValueTransform: (hearingType) => {
+          if (hearingType.toLowerCase().startsWith('video')) {
+            return VIDEO_HEARING;
+          }
+
+          return hearingType;
+        },
         anyFiltersAreSet: true,
         label: 'Filter by type',
         columnName: 'readableRequestType',
