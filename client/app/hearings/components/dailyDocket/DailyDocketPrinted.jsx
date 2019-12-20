@@ -64,7 +64,7 @@ export class DailyDocketPrinted extends React.Component {
             <strong>Location:</strong> {hearing.readableLocation}<br />
             {hearing.readableRequestType !== 'Central' &&
               <span>
-                <strong>Type:</strong> {hearing.readableRequestType}<br />
+                <strong>Type:</strong> {hearing.isVirtual ? 'Virtual' : hearing.readableRequestType}<br />
               </span>
             }
             {hearing.notes &&

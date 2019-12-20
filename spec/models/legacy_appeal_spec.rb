@@ -2558,7 +2558,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             organization_root_task = create(:root_task, appeal: appeal)
-            create(:generic_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
+            create(:ama_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
 
             # These tasks are the most recently updated but should be ignored in the determination
             create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 10)
@@ -2575,7 +2575,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             user_root_task = create(:root_task, appeal: appeal)
-            create(:generic_task, assigned_to: user, appeal: appeal, parent: user_root_task)
+            create(:ama_task, assigned_to: user, appeal: appeal, parent: user_root_task)
           end
 
           it "it returns the id" do
@@ -2588,7 +2588,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             on_hold_root = create(:root_task, appeal: appeal, updated_at: pre_ama - 1)
-            create(:generic_task, :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
+            create(:ama_task, :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
           end
 
           it "it returns something" do
