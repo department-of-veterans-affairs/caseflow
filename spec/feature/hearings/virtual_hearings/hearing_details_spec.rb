@@ -24,8 +24,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
-      expect(page).to have_field("rep-email", with: pre_loaded_rep_email)
-      expect(page).to have_field("vet-email", with: pre_loaded_vet_email)
+      expect(page).to have_field("Veteran Email", with: pre_loaded_vet_email)
+      expect(page).to have_field("POA/Representative Email", with: pre_loaded_rep_email)
     end
 
     scenario "hearing is swtiched to 'Virtual'" do
@@ -76,7 +76,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       expect(find(".dropdown-hearingType")).to have_css(".is-disabled")
       expect(page).to have_field("Veteran Email", readonly: true)
-      expect(page).to have_field("POA/Representive Email", readonly: true)
+      expect(page).to have_field("POA/Representative Email", readonly: true)
     end
 
     scenario "async job is completed" do
@@ -85,7 +85,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       hearing.reload
       expect(find(".dropdown-hearingType")).to have_no_css(".is-disabled")
       expect(page).to have_field("Veteran Email", readonly: false)
-      expect(page).to have_field("POA/Representive Email", readonly: false)
+      expect(page).to have_field("POA/Representative Email", readonly: false)
     end
   end
 
@@ -100,7 +100,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     visit "hearings/" + hearing.external_id.to_s + "/details"
 
     expect(page).to have_field("Veteran Email", with: "veteran@testingEmail.com")
-    expect(page).to have_field("POA/Representive Email", with: "rep@testingEmail.com")
+    expect(page).to have_field("POA/Representative Email", with: "rep@testingEmail.com")
 
     fill_in "Veteran Email", with: "new@email.com"
     click_button("Save")
@@ -112,6 +112,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     visit "hearings/" + hearing.external_id.to_s + "/details"
 
     expect(page).to have_field("Veteran Email", with: "new@email.com")
-    expect(page).to have_field("POA/Representive Email", with: "rep@testingEmail.com")
+    expect(page).to have_field("POA/Representative Email", with: "rep@testingEmail.com")
   end
 end
