@@ -20,8 +20,11 @@ class VirtualHearings::CalendarService
 
         event.status = "CONFIRMED"
         event.summary = confirmation_summary(recipient)
+
+        # Some * magic * here. The recipient title is used to determine
+        # which template to load.
         event.description = render_virtual_hearing_calendar_event_template(
-          "#{recipient.title}_confirmation_event_description",
+          "#{recipient.title.downcase}_confirmation_event_description",
           template_context
         )
       end
