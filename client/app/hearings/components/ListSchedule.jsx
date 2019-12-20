@@ -91,20 +91,6 @@ const SwitchViewDropdown = ({ onSwitchView }) => {
 SwitchViewDropdown.propTypes = { onSwitchView: PropTypes.func };
 
 class ListTable extends React.Component {
-  formatHearingType = (type) => {
-    console.log("yo")
-    if (_.isNull(type) || _.isUndefined(type)) {
-      return null;
-    }
-    if (type === 'Video, Virtual') {
-      return 'Video';
-    }
-
-    return type
-    // const { city, state } = type;
-  
-    // return `${city}, ${state} ${getFacilityType(location)}`;
-  };
   render() {
     return (
       <LoadingDataDisplay
@@ -123,7 +109,6 @@ class ListTable extends React.Component {
           </Button>
         </div>}
         <QueueTable
-          filterValueTransform={this.formatHearingType}
           columns={this.props.hearingScheduleColumns}
           rowObjects={this.props.hearingScheduleRows}
           summary="hearing-schedule"
