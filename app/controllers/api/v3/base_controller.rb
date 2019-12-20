@@ -18,4 +18,11 @@ class Api::V3::BaseController < Api::ApplicationController
     },
            status: :not_implemented
   end
+
+  def render_error(status:, code:, title:)
+    render(
+      json: { errors: [{ status: status, code: code, title: title }] },
+      status: status
+    )
+  end
 end
