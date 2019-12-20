@@ -158,7 +158,7 @@ class TableFilter extends React.PureComponent {
       label
     } = this.props;
 
-    const selectedOptions = filteredByList[columnName] || "";
+    const selectedOptions = filteredByList[columnName] || '';
 
     return selectedOptions.length ? sprintf('%s. Filtering by %s', label, selectedOptions) : label;
   }
