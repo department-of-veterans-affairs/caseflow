@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class VirtualHearingMailer < ActionMailer::Base
-  include VirtualHearings::CalendarHelper
-
   default from: "solutions@public.govdelivery.com"
   layout "virtual_hearing_mailer"
   attr_reader :recipient, :virtual_hearing
