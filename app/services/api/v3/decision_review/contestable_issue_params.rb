@@ -31,8 +31,8 @@ class Api::V3::DecisionReview::ContestableIssueParams
     @receipt_date = receipt_date
     @benefit_type = benefit_type
     @ids = params[:attributes]
-             .permit("ratingIssueId", "decisionIssueId", "ratingDecisionIssueId").to_h
-             .symbolize_keys
+      .permit("ratingIssueId", "decisionIssueId", "ratingDecisionIssueId").to_h
+      .symbolize_keys
   end
 
   def contestable_issue
