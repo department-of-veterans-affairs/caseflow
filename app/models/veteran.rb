@@ -53,7 +53,8 @@ class Veteran < ApplicationRecord
     middle_name: :middle_name,
     name_suffix: :name_suffix,
     ssn: :ssn,
-    participant_id: :ptcpnt_id
+    participant_id: :ptcpnt_id,
+    email_address: :email_address,
   }.freeze
 
   # TODO: get middle initial from BGS

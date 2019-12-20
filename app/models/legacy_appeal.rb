@@ -322,9 +322,6 @@ class LegacyAppeal < ApplicationRecord
     veteran&.date_of_death
   end
 
-  def veteran_email_address
-    veteran&.email_address
-  end
   attr_writer :cavc_decisions
   def cavc_decisions
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
