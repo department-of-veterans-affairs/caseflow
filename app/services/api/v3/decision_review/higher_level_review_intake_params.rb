@@ -243,6 +243,7 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
       )
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   # given the path to an array, prepends the path of each element of that array
   # to types_and_paths
