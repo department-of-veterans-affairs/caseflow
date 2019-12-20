@@ -102,7 +102,6 @@ const HeaderRow = (props) => {
             {...column}
             tableData={column.tableData || props.rowObjects}
             valueTransform={column.filterValueTransform}
-            // possibly pass a function for filtervaluetransform; transform Video, virt
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         } else if (props.useTaskPagesApi && column.filterOptions) {
@@ -113,7 +112,6 @@ const HeaderRow = (props) => {
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         }
-// may need to play with the heirarchy of components so that the proper thing displays.
         const columnTitleContent = <span>{column.header || ''}</span>;
         const columnContent = <span {...iconHeaderStyle} aria-label="">
           {columnTitleContent}
