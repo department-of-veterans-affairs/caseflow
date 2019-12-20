@@ -242,7 +242,6 @@ VirtualHearingModal.propTypes = {
     representativeEmail: PropTypes.string
   }),
   hearing: PropTypes.shape({
-    appealExternalId: PropTypes.string,
     scheduledFor: PropTypes.string,
     scheduledTimeString: PropTypes.string,
     regionalOfficeTimezone: PropTypes.string,
