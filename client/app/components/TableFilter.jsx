@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { sprintf } from 'sprintf-js';
 
 import { css, hover } from 'glamor';
 import COPY from '../../COPY.json';
@@ -157,7 +158,8 @@ class TableFilter extends React.PureComponent {
       anyFiltersAreSet,
       label,
       valueName,
-      getFilterValues
+      getFilterValues,
+      filteredByList
     } = this.props;
 
     const filterOptions = tableData && columnName ?
@@ -168,11 +170,13 @@ class TableFilter extends React.PureComponent {
       // WARNING: If you use getFilterValues, it will cause some of the options to
       // not display correctly when they are checked.
       getFilterValues;
+    const selectedOptions = filteredByList[columnName] || "";
+    const filterIconLabel = selectedOptions.length ? sprintf("%s. Filtering by %s", label, selectedOptions) : label;
 
     return (
       <span {...iconStyle}>
         <FilterIcon
-          label={label}
+          label={filterIconLabel}
           getRef={this.props.getFilterIconRef}
           selected={this.isFilterOpen()}
           handleActivate={this.toggleDropdown} />
