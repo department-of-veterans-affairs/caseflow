@@ -9,15 +9,6 @@ describe PostDecisionMotionUpdater, :all_dbs do
   end
   let(:motions_atty) { create(:user, full_name: "Motions attorney") }
   let(:appeal) { create(:appeal) }
-  let(:orig_decision_issues) do
-    Array.new(3) do
-      create(
-        :decision_issue,
-        decision_review: appeal,
-        disposition: "denied"
-      )
-    end
-  end
   let(:mtv_mail_task) { create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_atty) }
   let(:task) { create(:judge_address_motion_to_vacate_task, :in_progress, parent: mtv_mail_task, assigned_to: judge) }
   let(:vacate_type) { nil }
@@ -25,7 +16,6 @@ describe PostDecisionMotionUpdater, :all_dbs do
   let(:assigned_to_id) { nil }
   let(:hyperlink) { "https://va.gov/fake-link-to-file" }
   let(:instructions) { "formatted instructions from judge" }
-  let(:vacated_decision_issue_ids) { orig_decision_issues.map(&:id) }
   let(:params) do
     {
       vacate_type: vacate_type,
@@ -81,15 +71,6 @@ describe PostDecisionMotionUpdater, :all_dbs do
           org_task.reload
 
           expect(org_task.status).to eq Constants.TASK_STATUSES.completed
-        end
-
-        context "when vacated_decision_issue_ids are specified" do
-          let(:params) { super().merge(vacated_decision_issue_ids: vacated_decision_issue_ids) }
-          it "should create request issues" do
-            subject.process
-            appeal.reload
-            expect(appeal.request_issues.length).to eq 3
-          end
         end
       end
 
