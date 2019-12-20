@@ -72,7 +72,7 @@ class LegacyAppeal < ApplicationRecord
   delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at,
            to: :document_fetcher
 
-  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex,
+  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex, :email_address, 
            to: :veteran,
            prefix: true,
            allow_nil: true
@@ -324,6 +324,9 @@ class LegacyAppeal < ApplicationRecord
     veteran&.date_of_death
   end
 
+  def veteran_email_address
+    veteran&.email_address
+  end
   attr_writer :cavc_decisions
   def cavc_decisions
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
