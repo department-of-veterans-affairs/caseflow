@@ -378,6 +378,7 @@ class Appeal < DecisionReview
   def veteran_email_address
     veteran&.email_address
   end
+
   # we always want to show ratings on intake
   def can_contest_rating_issues?
     true

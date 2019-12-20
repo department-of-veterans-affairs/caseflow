@@ -15,9 +15,9 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   let!(:expected_alert) do
     COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
   end
- 
-  let(:pre_loaded_vet_email) { hearing.appeal.veteran.email_address}
-  let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address}
+
+  let(:pre_loaded_vet_email) { hearing.appeal.veteran.email_address }
+  let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
 
   context "user switches hearing type to 'Virtual'" do
     scenario "veteran and representative emails are pre loaded" do
