@@ -245,7 +245,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
 
       it "should still assign org task if prev atty is inactive" do
         expect(task.status).to eq Constants.TASK_STATUSES.in_progress
-        
+
         motions_atty.update_status!(Constants.USER_STATUSES.inactive)
 
         subject.process
