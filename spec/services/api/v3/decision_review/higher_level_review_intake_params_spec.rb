@@ -325,7 +325,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
               veteran: veteran,
               receipt_date: receipt_date,
               benefit_type: benefit_type,
-              params: first_contestable_issue
+              params: ActionController::Parameters.new(first_contestable_issue)
             ).intakes_controller_params
           ]
         }.as_json
@@ -346,7 +346,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
                   veteran: veteran,
                   receipt_date: receipt_date,
                   benefit_type: benefit_type,
-                  params: contestable_issue
+                  params: ActionController::Parameters.new(contestable_issue)
                 ).intakes_controller_params
               end
             )

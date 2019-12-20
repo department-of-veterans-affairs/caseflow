@@ -98,15 +98,13 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
   let(:promulgation_date) { receipt_date - 10.days }
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
 
-=begin
-  before do
-    Timecop.freeze(post_ama_start_date)
-
-    [:establish_claim!, :create_contentions!, :associate_rating_request_issues!].each do |method|
-      allow(Fakes::VBMSService).to receive(method).and_call_original
-    end
-  end
-=end
+  #   before do
+  #     Timecop.freeze(post_ama_start_date)
+  #
+  #     [:establish_claim!, :create_contentions!, :associate_rating_request_issues!].each do |method|
+  #       allow(Fakes::VBMSService).to receive(method).and_call_original
+  #     end
+  #   end
 
   context do
     it { expect(contestable_issues).not_to be_empty }
