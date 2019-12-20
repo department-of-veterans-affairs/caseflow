@@ -497,7 +497,7 @@ feature "Task queue", :all_dbs do
             vacols_case = create(:case)
             legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
             vacols_case.destroy!
-            create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+            create(:ama_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
           end
         end
 
@@ -557,7 +557,7 @@ feature "Task queue", :all_dbs do
         allow_any_instance_of(Organization).to receive(:use_task_pages_api?).and_return(true)
         Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
           .each_with_index do |task, idx|
-            child_task = create(:generic_task, parent_id: task.id)
+            child_task = create(:ama_task, parent_id: task.id)
             child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
           end
         Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
@@ -1153,7 +1153,7 @@ feature "Task queue", :all_dbs do
       let(:user) { create(:user) }
       let(:root_task) { create(:root_task) }
       let(:appeal) { root_task.appeal }
-      let(:task) { create(:generic_task, assigned_to: user) }
+      let(:task) { create(:ama_task, assigned_to: user) }
 
       before { User.authenticate!(user: user) }
 
@@ -1171,7 +1171,7 @@ feature "Task queue", :all_dbs do
       let(:user) { create(:user) }
       let(:vacols_case) { create(:case) }
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-      let!(:task) { create(:generic_task, appeal: legacy_appeal, assigned_to: user) }
+      let!(:task) { create(:ama_task, appeal: legacy_appeal, assigned_to: user) }
 
       before do
         vacols_case.destroy!

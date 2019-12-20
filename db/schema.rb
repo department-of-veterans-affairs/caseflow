@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191217215216) do
+ActiveRecord::Schema.define(version: 20191219155741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -198,7 +198,9 @@ ActiveRecord::Schema.define(version: 20191217215216) do
     t.string "sattyid"
     t.string "sdomainid", null: false
     t.string "slogid", null: false
+    t.string "smemgrp", limit: 8
     t.string "stafkey", null: false
+    t.string "stitle", limit: 16
     t.string "svlj"
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
@@ -413,6 +415,7 @@ ActiveRecord::Schema.define(version: 20191217215216) do
     t.datetime "updated_at"
     t.integer "user_id", null: false
     t.index ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_document_views_on_user_id"
   end
 
   create_table "documents", id: :serial, force: :cascade do |t|
