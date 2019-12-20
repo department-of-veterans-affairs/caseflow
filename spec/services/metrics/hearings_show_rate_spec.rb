@@ -32,5 +32,7 @@ describe Metrics::HearingsShowRate, :postgres do
 
   it do
     expect(subject).to eq(disposition_counts[:held] / (total_hearings - disposition_counts[:postponed]))
+    expect(hearing.name).to eq "Hearings Show Rate"
+    expect(hearing.id).to eq "1812216039"
   end
 end
