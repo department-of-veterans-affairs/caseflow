@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191216191111) do
+
+ActiveRecord::Schema.define(version: 20191219155741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -198,7 +199,9 @@ ActiveRecord::Schema.define(version: 20191216191111) do
     t.string "sattyid"
     t.string "sdomainid", null: false
     t.string "slogid", null: false
+    t.string "smemgrp", limit: 8
     t.string "stafkey", null: false
+    t.string "stitle", limit: 16
     t.string "svlj"
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
@@ -335,6 +338,7 @@ ActiveRecord::Schema.define(version: 20191216191111) do
     t.datetime "rating_profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
     t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
     t.datetime "updated_at"
+    t.index ["disposition"], name: "index_decision_issues_on_disposition"
     t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
@@ -412,6 +416,7 @@ ActiveRecord::Schema.define(version: 20191216191111) do
     t.datetime "updated_at"
     t.integer "user_id", null: false
     t.index ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_document_views_on_user_id"
   end
 
   create_table "documents", id: :serial, force: :cascade do |t|

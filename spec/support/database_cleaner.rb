@@ -68,10 +68,12 @@ RSpec.configure do |config|
   end
 
   config.before(:each, :etl) do
+    puts "DatabaseCleaner.start ETL"
     DatabaseCleaner[:active_record, { connection: etl }].start
   end
 
   config.append_after(:each, :etl) do
     DatabaseCleaner[:active_record, { connection: etl }].clean
+    puts "DatabaseCleaner.clean ETL"
   end
 end

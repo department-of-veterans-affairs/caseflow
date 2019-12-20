@@ -1,0 +1,75 @@
+upstream rails_app {
+   server appeals-app:3000;
+}
+
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	server_name _;
+	return 301 https://$host$request_uri;
+}
+
+server {
+        listen 443 ssl http2 default_server;
+        listen [::]:443 ssl http2 default_server;
+
+        index index.html
+
+        server_name _;
+
+        # enable subfolder method reverse proxy confs
+        include /config/nginx/proxy-confs/*.subfolder.conf;
+
+        # all ssl related config moved to ssl.conf
+        include /config/nginx/ssl.conf;
+
+
+        client_max_body_size 0;
+
+         # deny requests for files that should never be accessed
+        location ~ /\. {
+                deny all;
+        }
+
+        location ~* ^.+\.(rb|log)$ {
+                deny all;
+        }
+
+        # serve static (compiled) assets directly if they exist (for rails production)
+        location ~ ^/(assets|images|javascripts|stylesheets|swfs|system)/   {
+                try_files $uri @rails;
+                access_log off;
+                gzip_static on;
+                # to serve pre-gzipped version
+                expires max;
+                add_header Cache-Control public;
+                add_header Last-Modified "";
+                add_header ETag "";
+                break;
+        }
+
+        # send non-static file requests to the app server
+        location / {
+                try_files $uri @rails;
+        }
+
+        location @rails {
+                proxy_set_header  X-Real-IP  $remote_addr;
+                proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $http_host;
+                proxy_redirect off;
+                proxy_pass http://rails_app;
+
+                # fix the 500s
+                proxy_buffer_size          128k;
+                proxy_buffers              4 256k;
+                proxy_busy_buffers_size    256k;
+        }
+}
+
+
+
+# enable subdomain method reverse proxy confs
+include /config/nginx/proxy-confs/*.subdomain.conf;
+# enable proxy cache for auth
+proxy_cache_path cache/ keys_zone=auth_cache:10m;
