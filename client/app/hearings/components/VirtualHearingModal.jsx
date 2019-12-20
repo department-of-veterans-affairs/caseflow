@@ -1,9 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-
-import { getAppealValue } from '../../queue/QueueActions';
 
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
@@ -176,20 +172,8 @@ class VirtualHearingModal extends React.Component {
     };
 
     if (this.props.type === 'change_to_virtual') {
-      if (!this.props.virtualHearing.representativeEmail) {
-        this.props.getAppealValue(
-          this.props.hearing.appealExternalId,
-          'power_of_attorney',
-          'poa'
-        );
-      }
-      if (!this.props.virtualHearing.veteranEmail) {
-        this.props.getAppealValue(
-          this.props.hearing.appealExternalId,
-          'veteran',
-          'vet'
-        );
-      }
+      this.props.update({ veteranEmail: this.props.hearing.veteranEmailAddress,
+        representativeEmail: this.props.hearing.representativeEmailAddress });
     }
   }
 
@@ -265,7 +249,9 @@ VirtualHearingModal.propTypes = {
     centralOfficeTimeString: PropTypes.string,
     location: PropTypes.shape({
       name: PropTypes.string
-    })
+    }),
+    veteranEmailAddress: PropTypes.string,
+    representativeEmailAddress: PropTypes.string
   }).isRequired,
   type: PropTypes.oneOf([
     'change_to_virtual', 'change_from_virtual',
@@ -277,41 +263,7 @@ VirtualHearingModal.propTypes = {
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,
-  closeModal: PropTypes.func,
-  getAppealValue: PropTypes.func
+  closeModal: PropTypes.func
 };
 
-VirtualHearingModal.propTypes = {
-  preLoadedEmails: false
-};
-
-const mapStateToProps = (state, ownProps) => {
-  if (ownProps.preLoadedEmails){
-    return {}
-  }
-
-  const appeal = state.queue.appealDetails[ownProps.hearing.appealExternalId];
-
-  if (!ownProps.virtualHearing.representativeEmail) {
-    const preLoadedRepEmail = appeal && appeal.poa ? appeal.poa.representative_email_address : '';
-
-    ownProps.virtualHearing.representativeEmail = preLoadedRepEmail;
-  }
-
-  if (!ownProps.virtualHearing.veteranEmail) {
-    const preLoadedVetEmail = appeal && appeal.vet ? appeal.vet.veteran.email_address : '';
-
-    ownProps.virtualHearing.veteranEmail = preLoadedVetEmail;
-  }
-
-  return {
-    virtualHearing: ownProps.virtualHearing,
-    preLoadedEmails: true
-  };
-};
-
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  getAppealValue
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(VirtualHearingModal);
+export default VirtualHearingModal;
