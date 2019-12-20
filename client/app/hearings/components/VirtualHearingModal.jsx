@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import COPY from '../../../COPY.json';
 import _ from 'lodash';
 
