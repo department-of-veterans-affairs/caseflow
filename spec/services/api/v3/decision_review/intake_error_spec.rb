@@ -1,40 +1,6 @@
 # frozen_string_literal: true
 
 describe Api::V3::DecisionReview::IntakeError do
-  describe ".error_code" do
-    subject { described_class.error_code(val) }
-
-    let(:val) { :hello }
-    it { is_expected.to eq val }
-
-    context "not a symbol but can .to_sym" do
-      let(:val) { "banana" }
-      it { is_expected.to eq val.to_sym }
-    end
-
-    context "not a symbol and CANNOT .to_sym" do
-      let(:val) { -1 }
-      it { is_expected.to eq val }
-    end
-
-    context "has an error_code method" do
-      let(:val) { Struct.new(:error_code).new(error_code) }
-
-      let(:error_code) { "strawberry" }
-      it { is_expected.to eq val.error_code.to_sym }
-
-      context "error_code returns something that CANNOT .to_sym" do
-        let(:error_code) { -2 }
-        it { is_expected.to eq val.error_code }
-      end
-    end
-
-    context "nil" do
-      let(:val) { nil }
-      it { is_expected.to eq val }
-    end
-  end
-
   describe ".first_error_code" do
     subject { described_class.first_error_code(array) }
 
@@ -211,40 +177,6 @@ describe Api::V3::DecisionReview::IntakeError do
     end
   end
 
-  describe "#error_code" do
-    subject { described_class.new(val).error_code }
-
-    let(:val) { :hello }
-    it { is_expected.to eq val }
-
-    context "not a symbol but can .to_sym" do
-      let(:val) { "banana" }
-      it { is_expected.to eq val.to_sym }
-    end
-
-    context "not a symbol and CANNOT .to_sym" do
-      let(:val) { -1 }
-      it { is_expected.to eq val }
-    end
-
-    context "has an error_code method" do
-      let(:val) { Struct.new(:error_code).new(error_code) }
-
-      let(:error_code) { "strawberry" }
-      it { is_expected.to eq val.error_code.to_sym }
-
-      context "error_code returns something that CANNOT .to_sym" do
-        let(:error_code) { -2 }
-        it { is_expected.to eq val.error_code }
-      end
-    end
-
-    context "nil" do
-      let(:val) { nil }
-      it { is_expected.to eq val }
-    end
-  end
-
   describe "#detail" do
     subject { described_class.new(error_code, detail).detail }
 
@@ -393,6 +325,47 @@ describe Api::V3::DecisionReview::IntakeError do
           )
         end
       end
+    end
+  end
+
+  context do
+    let(:class_method) { described_class.error_code(val) }
+    let(:instance_method) { described_class.new(val).error_code }
+
+    let(:val) { :hello }
+    describe(".error_code") { it { expect(class_method).to eq val } }
+    describe("#error_code") { it { expect(instance_method).to eq val } }
+
+    context "not a symbol but can .to_sym" do
+      let(:val) { "banana" }
+      describe(".error_code") { it { expect(class_method).to eq val.to_sym } }
+      describe("#error_code") { it { expect(instance_method).to eq val.to_sym } }
+    end
+
+    context "not a symbol and CANNOT .to_sym" do
+      let(:val) { -1 }
+      describe(".error_code") { it { expect(class_method).to eq val } }
+      describe("#error_code") { it { expect(instance_method).to eq val } }
+    end
+
+    context "has an error_code method" do
+      let(:val) { Struct.new(:error_code).new(error_code) }
+
+      let(:error_code) { "strawberry" }
+      describe(".error_code") { it { expect(class_method).to eq error_code.to_sym } }
+      describe("#error_code") { it { expect(instance_method).to eq error_code.to_sym } }
+
+      context "error_code returns something that CANNOT .to_sym" do
+        let(:error_code) { -2 }
+        describe(".error_code") { it { expect(class_method).to eq error_code } }
+        describe("#error_code") { it { expect(instance_method).to eq error_code } }
+      end
+    end
+
+    context "nil" do
+      let(:val) { nil }
+      describe(".error_code") { it { expect(class_method).to eq val } }
+      describe("#error_code") { it { expect(instance_method).to eq val } }
     end
   end
 end
