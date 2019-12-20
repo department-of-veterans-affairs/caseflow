@@ -15,25 +15,36 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   let!(:expected_alert) do
     COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
   end
+ 
+  let(:pre_loaded_vet_email) { hearing.appeal.veteran.email_address}
+  let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address}
 
-  scenario "user switches hearing type to 'Virtual'" do
-    visit "hearings/" + hearing.external_id.to_s + "/details"
+  context "user switches hearing type to 'Virtual'" do
+    scenario "veteran and representative emails are pre loaded" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      click_dropdown(name: "hearingType", index: 1)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
+      expect(page).to have_field("rep-email", with: pre_loaded_rep_email)
+      expect(page).to have_field("vet-email", with: pre_loaded_vet_email)
+    end
 
-    click_dropdown(name: "hearingType", index: 1)
-    expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
+    scenario "hearing is swtiched to 'Virtual'" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      click_dropdown(name: "hearingType", index: 1)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
-    fill_in "vet-email", with: "email@testingEmail.com"
-    fill_in "rep-email", with: "email@testingEmail.com"
-    click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
+      fill_in "vet-email", with: "email@testingEmail.com"
+      click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
-    expect(page).to have_content(expected_alert)
+      expect(page).to have_content(expected_alert)
 
-    hearing.reload
-    expect(VirtualHearing.count).to eq(1)
-    expect(hearing.virtual?).to eq(true)
-    expect(hearing.virtual_hearing.veteran_email).to eq("email@testingEmail.com")
-    expect(hearing.virtual_hearing.representative_email).to eq("email@testingEmail.com")
-    expect(hearing.virtual_hearing.judge_email).to eq(nil)
+      hearing.reload
+      expect(VirtualHearing.count).to eq(1)
+      expect(hearing.virtual?).to eq(true)
+      expect(hearing.virtual_hearing.veteran_email).to eq("email@testingEmail.com")
+      expect(hearing.virtual_hearing.representative_email).to eq(pre_loaded_rep_email)
+      expect(hearing.virtual_hearing.judge_email).to eq(nil)
+    end
   end
 
   context "for an existing Virtual Hearing" do
