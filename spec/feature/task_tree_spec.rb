@@ -21,7 +21,7 @@ feature "Task Tree", :all_dbs do
 
     before do
       User.authenticate!(user: attorney_user)
-      visit "/appeals/#{appeal.external_id}/task_tree"
+      visit "/task_tree/Appeal/#{appeal.external_id}"
     end
 
     it "shows dynamic task tree" do

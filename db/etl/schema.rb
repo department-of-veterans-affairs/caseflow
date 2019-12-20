@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191209162326) do
+ActiveRecord::Schema.define(version: 20191218214351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,15 +77,86 @@ ActiveRecord::Schema.define(version: 20191209162326) do
     t.index ["veteran_participant_id"], name: "index_appeals_on_veteran_participant_id"
   end
 
+  create_table "attorney_case_reviews", force: :cascade, comment: "Denormalized attorney_case_reviews" do |t|
+    t.bigint "appeal_id", null: false, comment: "tasks.appeal_id"
+    t.string "appeal_type", null: false, comment: "tasks.appeal_type"
+    t.string "attorney_css_id", limit: 20, null: false, comment: "users.css_id"
+    t.string "attorney_full_name", limit: 255, null: false, comment: "users.full_name"
+    t.bigint "attorney_id", null: false, comment: "attorney_case_reviews.attorney_id"
+    t.string "attorney_sattyid", limit: 20, comment: "users.sattyid"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.string "document_reference_id", limit: 50, comment: "attorney_case_reviews.document_id"
+    t.string "document_type", limit: 20, comment: "attorney_case_reviews.document_type"
+    t.text "note", comment: "attorney_case_reviews.note"
+    t.boolean "overtime", comment: "attorney_case_reviews.overtime"
+    t.datetime "review_created_at", null: false, comment: "attorney_case_reviews.created_at"
+    t.bigint "review_id", null: false, comment: "attorney_case_reviews.id"
+    t.datetime "review_updated_at", null: false, comment: "attorney_case_reviews.updated_at"
+    t.string "reviewing_judge_css_id", limit: 20, null: false, comment: "users.css_id"
+    t.string "reviewing_judge_full_name", limit: 255, null: false, comment: "users.full_name"
+    t.bigint "reviewing_judge_id", null: false, comment: "attorney_case_reviews.reviewing_judge_id"
+    t.string "reviewing_judge_sattyid", limit: 20, comment: "users.sattyid"
+    t.string "task_id", null: false, comment: "attorney_case_reviews.task_id"
+    t.boolean "untimely_evidence", comment: "attorney_case_reviews.untimely_evidence"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.string "vacols_id", comment: "Substring attorney_case_reviews.task_id for Legacy Appeals"
+    t.string "work_product", limit: 20, comment: "attorney_case_reviews.work_product"
+    t.index ["appeal_id"], name: "index_attorney_case_reviews_on_appeal_id"
+    t.index ["appeal_type"], name: "index_attorney_case_reviews_on_appeal_type"
+    t.index ["attorney_id"], name: "index_attorney_case_reviews_on_attorney_id"
+    t.index ["created_at"], name: "index_attorney_case_reviews_on_created_at"
+    t.index ["document_type"], name: "index_attorney_case_reviews_on_document_type"
+    t.index ["review_created_at"], name: "index_attorney_case_reviews_on_review_created_at"
+    t.index ["review_id"], name: "index_attorney_case_reviews_on_review_id"
+    t.index ["review_updated_at"], name: "index_attorney_case_reviews_on_review_updated_at"
+    t.index ["reviewing_judge_id"], name: "index_attorney_case_reviews_on_reviewing_judge_id"
+    t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
+    t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
+    t.index ["vacols_id"], name: "index_attorney_case_reviews_on_vacols_id"
+  end
+
+  create_table "decision_issues", force: :cascade, comment: "Copy of decision_issues" do |t|
+    t.string "benefit_type", limit: 20, comment: "decision_issues.benefit_type"
+    t.date "caseflow_decision_date", comment: "decision_issues.caseflow_decision_date"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.bigint "decision_review_id", comment: "decision_issues.decision_review_id"
+    t.string "decision_review_type", limit: 20, comment: "decision_issues.decision_review_type"
+    t.string "decision_text", comment: "decision_issues.decision_text"
+    t.string "description", comment: "decision_issues.description"
+    t.string "diagnostic_code", limit: 20, comment: "decision_issues.diagnostic_code"
+    t.string "disposition", limit: 50, comment: "decision_issues.disposition"
+    t.date "end_product_last_action_date", comment: "decision_issues.end_product_last_action_date"
+    t.datetime "issue_created_at", comment: "decision_issues.created_at"
+    t.datetime "issue_deleted_at", comment: "decision_issues.deleted_at"
+    t.datetime "issue_updated_at", comment: "decision_issues.updated_at"
+    t.bigint "participant_id", null: false, comment: "decision_issues.participant_id"
+    t.bigint "rating_issue_reference_id", comment: "decision_issues.rating_issue_reference_id"
+    t.datetime "rating_profile_date", comment: "decision_issues.rating_profile_date"
+    t.datetime "rating_promulgation_date", comment: "decision_issues.rating_promulgation_date"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["created_at"], name: "index_decision_issues_on_created_at"
+    t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
+    t.index ["disposition"], name: "index_decision_issues_on_disposition"
+    t.index ["issue_created_at"], name: "index_decision_issues_on_issue_created_at"
+    t.index ["issue_deleted_at"], name: "index_decision_issues_on_issue_deleted_at"
+    t.index ["issue_updated_at"], name: "index_decision_issues_on_issue_updated_at"
+    t.index ["participant_id"], name: "index_decision_issues_on_participant_id"
+    t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "index_decision_issues_uniq", unique: true
+    t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
+  end
+
   create_table "organizations", force: :cascade, comment: "Copy of Organizations table" do |t|
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
     t.string "role", comment: "Role users in organization must have, if present"
+    t.string "status", default: "active", comment: "Whether organization is active, inactive, or in some other Status."
+    t.datetime "status_updated_at", comment: "Track when organization status last changed."
     t.string "type", comment: "Single table inheritance"
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
     t.index ["created_at"], name: "index_organizations_on_created_at"
+    t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true
   end
@@ -147,6 +218,7 @@ ActiveRecord::Schema.define(version: 20191209162326) do
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
     t.index ["created_at"], name: "index_tasks_on_created_at"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
+    t.index ["task_id"], name: "index_tasks_on_task_id"
     t.index ["task_status"], name: "index_tasks_on_task_status"
     t.index ["task_type"], name: "index_tasks_on_task_type"
     t.index ["updated_at"], name: "index_tasks_on_updated_at"
@@ -163,10 +235,12 @@ ActiveRecord::Schema.define(version: 20191209162326) do
     t.string "sattyid", limit: 20
     t.string "selected_regional_office", limit: 255, comment: "CSEM regional office"
     t.string "slogid", limit: 20
+    t.string "smemgrp", limit: 8, comment: "VACOLS cached_user_attributes.smemgrp"
     t.string "stafkey", limit: 20
     t.string "station_id", limit: 20, null: false, comment: "CSEM station"
     t.string "status", limit: 20, default: "active", comment: "Whether or not the user is an active user of caseflow"
     t.datetime "status_updated_at", comment: "When the user's status was last updated"
+    t.string "stitle", limit: 16, comment: "VACOLS cached_user_attributes.stitle"
     t.string "svlj", limit: 1
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.integer "user_id", null: false, comment: "ID of the User"

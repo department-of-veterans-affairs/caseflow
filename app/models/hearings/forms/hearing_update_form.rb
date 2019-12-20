@@ -13,6 +13,10 @@ class HearingUpdateForm < BaseHearingUpdateForm
     update_advance_on_docket_motion unless advance_on_docket_motion_attributes.nil?
   end
 
+  def hearing_updated?
+    super || advance_on_docket_motion_attributes&.present?
+  end
+
   private
 
   def update_advance_on_docket_motion

@@ -77,7 +77,7 @@ FactoryBot.define do
       end
     end
 
-    factory :generic_task, class: Task do
+    factory :ama_task, class: Task do
       type { Task.name }
       appeal { create(:appeal) }
     end
@@ -102,11 +102,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_to { create(:user) }
       days_on_hold { rand(1..100) }
-      parent { create(:generic_task) }
+      parent { create(:ama_task) }
     end
 
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
-      parent { create(:generic_task) }
+      parent { create(:ama_task) }
       assigned_to { Colocated.singleton }
 
       factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do

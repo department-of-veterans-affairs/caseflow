@@ -1,5 +1,5 @@
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import _ from 'lodash';
 
 export const isPreviouslyScheduledHearing = (hearing) => (

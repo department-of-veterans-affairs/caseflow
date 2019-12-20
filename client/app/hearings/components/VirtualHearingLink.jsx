@@ -1,6 +1,7 @@
 import { css } from 'glamor';
 import React from 'react';
 import PropTypes from 'prop-types';
+import querystring from 'querystring';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { COLORS } from '../../constants/AppConstants';
 import { ExternalLink } from '../../components/RenderFunctions';
@@ -16,18 +17,28 @@ class VirtualHearingLink extends React.PureComponent {
     return role === 'host' ? virtualHearing.hostPin : virtualHearing.guestPin;
   }
 
+  getUrl() {
+    const { role, virtualHearing } = this.props;
+    const qs = querystring.stringify(
+      {
+        conference: virtualHearing.alias,
+        pin: this.getPin(),
+        join: 1,
+        role
+      }
+    );
+
+    return `https://${virtualHearing.clientHost}/webapp/?${qs}`;
+  }
+
   render() {
-    const { isVirtual, newWindow, role, showFullLink, virtualHearing } = this.props;
+    const { isVirtual, newWindow, showFullLink, virtualHearing } = this.props;
 
     if (!isVirtual) {
       return null;
     }
 
-    const href = `https://${virtualHearing.clientHost}/webapp/\
-      ?conference=${virtualHearing.alias}\
-      &pin=${this.getPin()}\
-      &join=1\
-      &role=${role}`;
+    const href = this.getUrl();
 
     return (
       <Link

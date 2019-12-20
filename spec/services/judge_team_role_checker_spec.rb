@@ -53,7 +53,7 @@ describe JudgeTeamRoleChecker, :postgres do
 
           describe ".judge_teams_with_incorrect_number_of_leads" do
             it "identifies team with missing JudgeTeamLead" do
-              expect(get_teams_with_wrong_lead_count.call).to eq(judge_teams)
+              expect(get_teams_with_wrong_lead_count.call).to match_array(judge_teams)
             end
           end
 
@@ -91,7 +91,7 @@ describe JudgeTeamRoleChecker, :postgres do
 
           describe ".judge_teams_with_incorrect_number_of_leads" do
             it "identifies the team with missing JudgeTeamLead" do
-              expect(get_teams_with_wrong_lead_count.call).to eq([judge_team2])
+              expect(get_teams_with_wrong_lead_count.call).to contain_exactly(judge_team2)
             end
           end
 
@@ -127,7 +127,7 @@ describe JudgeTeamRoleChecker, :postgres do
 
           describe ".judge_teams_with_incorrect_number_of_leads" do
             it "identifies the team with missing JudgeTeamLead" do
-              expect(get_teams_with_wrong_lead_count.call).to eq([judge_team2])
+              expect(get_teams_with_wrong_lead_count.call).to contain_exactly(judge_team2)
             end
           end
 
