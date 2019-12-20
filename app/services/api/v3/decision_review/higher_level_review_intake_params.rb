@@ -117,7 +117,7 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   end
 
   def included
-    params? && @params["included"].is_a?(Array) ? @params["included"] : []
+    (params? && @params["included"].is_a?(Array)) ? @params["included"] : []
   end
 
   def benefit_type_valid?

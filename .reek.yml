@@ -26,10 +26,10 @@ detectors:
     exclude:
       - Address
       - Fakes::PersistentStore#convert_dates_from
-      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   UncommunicativeParameterName:
     exclude:
       - Address
+      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   DataClump:
     exclude:
       - HearingSerializerBase
@@ -87,7 +87,7 @@ detectors:
       - Api::V3::DecisionReview::IntakeError#potential_error_code
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#attributes?
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#params?
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#error_code
+      - Api::V3::DecisionReview::IntakeError#error_code
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error

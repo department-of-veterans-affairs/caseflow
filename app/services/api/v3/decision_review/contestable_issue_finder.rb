@@ -15,7 +15,7 @@
 # and returns that contestable issue (`contestable_issue` method)
 
 class Api::V3::DecisionReview::ContestableIssueFinder
-  # rubocop:disable Metrics/ParameterLists, Naming/VariableName
+  # rubocop:disable Metrics/ParameterLists, Naming/VariableName, Naming/MethodParameterName
   def initialize(
         decision_review_class:,
         veteran:,
@@ -33,7 +33,7 @@ class Api::V3::DecisionReview::ContestableIssueFinder
     @decision_issue_id = decisionIssueId.to_s.strip
     @rating_decision_issue_id = ratingDecisionIssueId.to_s.strip
   end
-  # rubocop:enable Metrics/ParameterLists, Naming/VariableName
+  # rubocop:enable Metrics/ParameterLists, Naming/VariableName, Naming/MethodParameterName
 
   def found?
     !!contestable_issue
