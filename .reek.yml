@@ -26,6 +26,7 @@ detectors:
     exclude:
       - Address
       - Fakes::PersistentStore#convert_dates_from
+      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   UncommunicativeParameterName:
     exclude:
       - Address
@@ -80,12 +81,16 @@ detectors:
     exclude:
       - Address#initialize
       - LegacyDocket#new_distributed_case
+      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReview::IntakeError#potential_error_code
-      - Api::V3::DecisionReview::IntakeParams#attributes?
-      - Api::V3::DecisionReview::IntakeParams#claimant_object_present?
-      - Api::V3::DecisionReview::IntakeParams#describe_shape_error
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#attributes?
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#params?
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#error_code
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
   MissingSafeMethod:
     enabled: false
   NestedIterators:
@@ -110,6 +115,9 @@ detectors:
       - Address
       - ExternalApi::PexipService
       - InvalidAssigneeStatusOnTaskCreate
+      - Api::V3::DecisionReview::ContestableIssueFinder
+      - Api::V3::DecisionReview::ContestableIssueParams
+      - Api::V3::DecisionReview::IntakeError
   TooManyMethods:
     enabled: false
   TooManyStatements:
