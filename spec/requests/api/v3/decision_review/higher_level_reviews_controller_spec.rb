@@ -39,19 +39,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   let(:data) { { type: "HigherLevelReview", attributes: attributes } }
 
-  let(:included) do
-    [
-      {
-        type: "ContestableIssue",
-        attributes: {
-          ratingIssueId: "12"
-        }
-      }
-    ]
-  end
-
   let(:attributes) { default_attributes }
-
   let(:default_attributes) do
     {
       receiptDate: receipt_date.strftime("%F"),
@@ -71,9 +59,89 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   let(:legacy_opt_in_approved) { true }
   let(:benefit_type) { "compensation" }
 
+  let(:included) do
+    [
+      {
+        type: "ContestableIssue",
+        attributes: {
+          ratingIssueId: contestable_issues.first.rating_issue_reference_id,
+          decisionIssueId: contestable_issues.first.decision_issue&.id,
+          ratingDecisionIssueId: contestable_issues.first.rating_decision_reference_id
+        }
+      }
+    ]
+  end
+
   let(:promulgation_date) { receipt_date - 10.days }
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
   let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+
+  let(:contestable_issues) do
+    ContestableIssueGenerator.new(
+      HigherLevelReview.new(
+        veteran_file_number: veteran.file_number,
+        receipt_date: receipt_date,
+        benefit_type: benefit_type
+      )
+    ).contestable_issues
+  end
+
+  context do
+    it { expect(contestable_issues).not_to be_empty }
+  end
+
+  describe "#create" do
+    before do
+      allow(User).to receive(:api_user).and_return(mock_api_user)
+      before_post
+      post(
+        "/api/v3/decision_review/higher_level_reviews",
+        params: params,
+        as: :json,
+        headers: { "Authorization" => "Token #{api_key}" }
+      )
+    end
+
+    let(:before_post) { nil }
+
+    let(:expected_error) { Api::V3::DecisionReview::IntakeError.new(expected_error_code) }
+    let(:expected_error_render_hash) do
+      Api::V3::DecisionReview::IntakeErrors.new([expected_error]).render_hash
+    end
+    let(:expected_error_json) { expected_error_render_hash[:json].as_json }
+    let(:expected_error_status) { expected_error_render_hash[:status] }
+
+    context "good request" do
+      let(:before_post) do
+        allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
+      end
+
+      it "should return a 202 on success" do
+        expect(response).to have_http_status(202)
+      end
+    end
+
+    context "params are missing" do
+      let(:params) { {} }
+      let(:expected_error_code) { "malformed_request" }
+
+      it "should return malformed_request error" do
+        expect(first_error_code_in_response).to eq expected_error_code
+        expect(response).to have_http_status expected_error_status
+      end
+    end
+
+    context "using a reserved veteran file number while in prod" do
+      let(:file_number_or_ssn) { "123456789" }
+      let(:before_post) { allow(Rails).to receive(:deploy_env?).with(:prod).and_return(true) }
+      let(:expected_error_code) { "reserved_veteran_file_number" }
+
+      it "should return reserved_veteran_file_number error" do
+        expect(response_json).to eq expected_error_json
+        expect(response).to have_http_status expected_error_status
+      end
+    end
+  end
 
   describe "#show" do
     let!(:higher_level_review) do
@@ -95,7 +163,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
     it "should return ok" do
       get_higher_level_review
-      expect(response_json).to eq ""
       expect(response).to have_http_status(:ok)
     end
 
@@ -343,69 +410,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         expect(included_decision_issues.first["attributes"].keys).to include(
           "approxDecisionDate", "decisionText", "description", "disposition", "finalized"
         )
-      end
-    end
-  end
-
-  describe "#create" do
-    before do
-      allow(User).to receive(:api_user).and_return(mock_api_user)
-      before_post
-      post(
-        "/api/v3/decision_review/higher_level_reviews",
-        params: params,
-        as: :json,
-        headers: { "Authorization" => "Token #{api_key}" }
-      )
-    end
-
-    let(:before_post) { nil }
-
-    let(:expected_error) { Api::V3::DecisionReview::IntakeError.new(expected_error_code) }
-    let(:expected_error_render_hash) do
-      Api::V3::DecisionReview::IntakeErrors.new([expected_error]).render_hash
-    end
-    let(:expected_error_json) { expected_error_render_hash[:json].as_json }
-    let(:expected_error_status) { expected_error_render_hash[:status] }
-
-    context "good request" do
-      let(:before_post) do
-        allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
-      end
-
-      it "should return a 202 on success" do
-        expect(response).to have_http_status(202)
-      end
-    end
-
-    context "params are missing" do
-      let(:params) { {} }
-      let(:expected_error_code) { "malformed_request" }
-
-      it "should return malformed_request error" do
-        expect(first_error_code_in_response).to eq expected_error_code
-        expect(response).to have_http_status expected_error_status
-      end
-    end
-
-    context "when there's an invalid receipt_date" do
-      let(:attributes) { default_attributes.merge receiptDate: "wrench" }
-      let(:expected_error_code) { "intake_review_failed" }
-
-      it "should return intake_review_failed error" do
-        expect(response_json).to eq expected_error_json
-        expect(response).to have_http_status expected_error_status
-      end
-    end
-
-    context "using a reserved veteran file number while in prod" do
-      let(:file_number_or_ssn) { "123456789" }
-      let(:before_post) { allow(Rails).to receive(:deploy_env?).with(:prod).and_return(true) }
-      let(:expected_error_code) { "reserved_veteran_file_number" }
-
-      it "should return reserved_veteran_file_number error" do
-        expect(response_json).to eq expected_error_json
-        expect(response).to have_http_status expected_error_status
       end
     end
   end
