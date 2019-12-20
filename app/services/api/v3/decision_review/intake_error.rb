@@ -2,31 +2,32 @@
 
 class Api::V3::DecisionReview::IntakeError
   class << self
-    # A valid error code is a symbol listed in the KNOWN_ERRORS array.
-    # This method attempts to extract a symbol from an object's error_code
-    # method, or, if that fails, attempts to convert the object itself to a
-    # symbol. The symbol may or may not be a valid error code. Fails with nil.
-    def potential_error_code(val)
-      error_code = val.respond_to?(:error_code) ? val.error_code : val
+    # Given a value that represents an error code, returns the error code.
+    # The passed in value can either have an `error_code` method, or be, itself,
+    # an error code (a string or symbol (or anything that can be turned into a symbol)).
+    def error_code(val)
+      error_code = val.respond_to?(:error_code) ? val.error_code : val # unwrap, if necessary
 
       error_code.try(:to_sym) || error_code
     end
 
-    def find_first_potential_error_code_that_is_a_symbol(array)
-      array.map { |val| potential_error_code(val) }.find { |error_code| error_code.is_a? Symbol }
+    # stick to only using truthy error codes in KNOWN_ERRORS
+    def first_error_code(values)
+      error_code(values.find { |val| error_code(val) })
+    end
+
+    def first_non_nil(values)
+      values.find { |val| !val.nil? }
     end
 
     # An alternative to new.
-    # Given an array, it uses the first potential error_code found.
+    # Given an array, it uses the first error code found.
     # Note: if you supplied this array as your argument:
     #   [:a_symbol_that_isnt_a_valid_error_code, :veteran_not_found]
     # A new IntakeError would be created using :a_symbol_that_isnt_a_valid_error_code
     # which would be UNKNOWN_ERROR.
-    def from_first_potential_error_code_found(array)
-      new(
-        find_first_potential_error_code_that_is_a_symbol(array) ||
-          array.find { |val| !val.nil? }
-      )
+    def new_from_first_error_code(values)
+      new(first_error_code(values) || first_non_nil(values))
     end
   end
 
@@ -90,7 +91,7 @@ class Api::V3::DecisionReview::IntakeError
   attr_reader :status, :code, :title, :detail, :passed_in_object, :error_code
 
   def initialize(obj = nil, detail = nil)
-    @error_code = self.class.potential_error_code(obj)
+    @error_code = self.class.error_code(obj)
     @status, @code, @title = KNOWN_ERRORS_BY_CODE[@error_code] || UNKNOWN_ERROR
     @detail = detail
     @passed_in_object = obj
