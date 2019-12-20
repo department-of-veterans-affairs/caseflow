@@ -25,10 +25,10 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.id)
     },
     informalConference: {
-      $set: serverIntake.informal_conference
+      $set: serverIntake.informalConference
     },
     sameOffice: {
-      $set: serverIntake.same_office
+      $set: serverIntake.sameOffice
     },
     receiptDate: {
       $set: serverIntake.receiptDate

@@ -24,10 +24,10 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.id)
     },
     docketType: {
-      $set: serverIntake.docket_type
+      $set: serverIntake.docketType
     },
     receiptDate: {
-      $set: serverIntake.receipt_date
+      $set: serverIntake.receiptDate
     },
     veteranIsNotClaimant: {
       $set: serverIntake.veteranIsNotClaimant

@@ -52,8 +52,12 @@ class RampRefilingIntake < Intake
     detail.errors.messages
   end
 
+  def ramp_elections_with_decisions
+    ramp_elections.reject(&:end_product_active?)
+  end
+
   def ui_hash
-    Intake::RampElectionIntakeSerializer.new(self).serializable_hash[:data][:attributes]
+    Intake::RampRefilingIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   private
@@ -99,9 +103,5 @@ class RampRefilingIntake < Intake
 
   def ramp_elections
     RampElection.established.where(veteran_file_number: veteran_file_number).all
-  end
-
-  def ramp_elections_with_decisions
-    ramp_elections.reject(&:end_product_active?)
   end
 end

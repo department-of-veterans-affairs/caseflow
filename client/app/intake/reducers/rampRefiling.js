@@ -20,13 +20,13 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.receiptDate
     },
     appealDocket: {
-      $set: serverIntake.appeal_docket
+      $set: serverIntake.appealDocket
     },
     electionReceiptDate: {
-      $set: serverIntake.election_receipt_date && formatDateStr(serverIntake.election_receipt_date)
+      $set: serverIntake.election_receipt_date && formatDateStr(serverIntake.electionReceiptDate)
     },
     isReviewed: {
-      $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
+      $set: Boolean(serverIntake.option_selected && serverIntake.receiptDate)
     },
     issues: {
       $set: state.issues || _.keyBy(serverIntake.issues, 'id')
@@ -35,7 +35,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.completed_at)
     },
     endProductDescription: {
-      $set: serverIntake.end_product_description
+      $set: serverIntake.endProductDescription
     }
   });
 

@@ -37,13 +37,13 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.receiptDate
     },
     isReviewed: {
-      $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
+      $set: Boolean(serverIntake.option_selected && serverIntake.receiptDate)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     },
     endProductDescription: {
-      $set: serverIntake.end_product_description
+      $set: serverIntake.endProductDescription
     },
     appeals: {
       $set: formatAppeals(serverIntake.appeals)

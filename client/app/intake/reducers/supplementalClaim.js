@@ -49,7 +49,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.legacyAppeals
     },
     isReviewed: {
-      $set: Boolean(serverIntake.receipt_date)
+      $set: Boolean(serverIntake.receiptDate)
     },
     contestableIssues: {
       $set: contestableIssues

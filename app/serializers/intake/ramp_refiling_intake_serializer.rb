@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class Intake::RampElectionIntakeSerializer < Intake::IntakeSerializer
+class Intake::RampRefilingIntakeSerializer < Intake::IntakeSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
 
   attribute :option_selected do |object|
-    object.ramp_election.notice_date
+    object.detail.option_selected
   end
 
   attribute :receipt_date do |object|
