@@ -65,7 +65,7 @@ class VirtualHearings::CalendarService
         yield event, tz, start_time
       end
 
-      cal
+      cal.to_ical
     end
 
     def render_virtual_hearing_calendar_event_template(template_name, locals)
