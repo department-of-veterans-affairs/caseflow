@@ -17,7 +17,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @virtual_hearing = virtual_hearing
     @link = link
 
-    attachments[calendar_invite_name]
+    attachments[calendar_invite_name] = confirmation_calendar_invite
 
     mail(to: recipient.email, subject: confirmation_subject)
   end
@@ -38,11 +38,16 @@ class VirtualHearingMailer < ActionMailer::Base
   def calendar_invite(mail_recipient:, virtual_hearing:)
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
+    @link = link
 
-    VirtualHearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient, link)
+    confirmation_calendar_invite
   end
 
   private
+
+  def confirmation_calendar_invite
+    VirtualHearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient, link)
+  end
 
   def calendar_invite_name
     case recipient.title
