@@ -17,7 +17,7 @@ describe AsyncableJobMessaging, :postgres do
         message_count = owner.messages.count
         subject
         expect(owner.messages.count).to eq message_count + 1
-        expect(owner.messages.last.text).to match("A new note has been added to your HigherLevelReview job")
+        expect(owner.messages.last.text).to match("A new note has been added to HigherLevelReview")
         expect(owner.messages.last.text).to match(job.path)
         expect(owner.messages.last.message_type).to eq "job_note_added"
       end
@@ -55,7 +55,7 @@ describe AsyncableJobMessaging, :postgres do
     end
 
     context "when a failure first happens after 24 hours" do
-      it "sends a message to the job owner" do
+      it "sends a message to the job owner and adds a job note" do
         message_count = owner.messages.count
         Timecop.travel(Time.zone.now.tomorrow) do
           subject
@@ -65,6 +65,7 @@ describe AsyncableJobMessaging, :postgres do
         expect(owner.messages.last.text).to match(job.path)
         expect(owner.messages.last.text).not_to match("more details")
         expect(owner.messages.last.message_type).to eq "job_failing"
+        expect(job.job_notes.last.note).to match("unable to complete because of an error")
       end
     end
 
@@ -95,7 +96,7 @@ describe AsyncableJobMessaging, :postgres do
     end
 
     context "when a success happens after 24 hours of failure" do
-      it "sends a message to the job owner" do
+      it "sends a message to the job owner and adds a job note" do
         messaging.handle_job_failure
         Timecop.travel(Time.zone.now.tomorrow) do
           messaging.handle_job_failure
@@ -103,6 +104,7 @@ describe AsyncableJobMessaging, :postgres do
         end
         expect(owner.messages.last.text).to match("has successfully been processed")
         expect(owner.messages.last.text).to match(job.path)
+        expect(job.job_notes.last.note).to match("has successfully been processed")
       end
     end
   end

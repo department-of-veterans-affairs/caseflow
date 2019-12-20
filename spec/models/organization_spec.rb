@@ -31,6 +31,50 @@ describe Organization, :postgres do
     end
   end
 
+  describe ".status" do
+    let(:org) { create(:organization) }
+
+    context "upon creation" do
+      it "has a default value of 'active'" do
+        expect(org.status).to eq("active")
+      end
+    end
+
+    context "default scope" do
+      it "returns only active organizations unless explicitly descoped" do
+        create_list(:organization, 3)
+        create_list(:organization, 3, status: "inactive")
+
+        expect(Organization.all.size).to eq(3)
+        expect(Organization.unscoped.all.size).to eq(6)
+      end
+    end
+
+    context "with an invalid status" do
+      subject { org.update!(status: "invalid") }
+
+      it "fails and does not update the status_updated_at column" do
+        expect { subject }.to raise_error(ArgumentError)
+        expect(org.reload.status).not_to eq "invalid"
+        expect(org.status_updated_at).to eq nil
+      end
+    end
+
+    context "updates status_updated_at at proper time" do
+      before { Timecop.freeze(Time.zone.now) }
+
+      context "with a valid status" do
+        subject { org.inactive! }
+
+        it "succeeds and updates the status_updated_at column" do
+          expect(subject).to eq true
+          expect(org.reload.status).to eq Constants.ORGANIZATION_STATUSES.inactive
+          expect(org.status_updated_at.to_s).to eq Time.zone.now.to_s
+        end
+      end
+    end
+  end
+
   describe ".users" do
     context "when organization has no members" do
       let(:org) { create(:organization) }
@@ -57,7 +101,7 @@ describe Organization, :postgres do
     let!(:other_organization) { create(:organization, name: "Org") }
 
     context "when current task is assigned to a user" do
-      let(:task) { create(:generic_task, assigned_to: user) }
+      let(:task) { create(:ama_task, assigned_to: user) }
 
       it "returns a list without that organization" do
         expect(Organization.assignable(task)).to match_array([organization, other_organization])
@@ -65,7 +109,7 @@ describe Organization, :postgres do
     end
 
     context "when current task is assigned to an organization" do
-      let(:task) { create(:generic_task, assigned_to: organization) }
+      let(:task) { create(:ama_task, assigned_to: organization) }
 
       it "returns a list without that organization" do
         expect(Organization.assignable(task)).to eq([other_organization])
@@ -73,8 +117,8 @@ describe Organization, :postgres do
     end
 
     context "when current task is assigned to a user and its parent is assigned to a user to an organization" do
-      let(:parent) { create(:generic_task, assigned_to: organization) }
-      let(:task) { create(:generic_task, assigned_to: user, parent: parent) }
+      let(:parent) { create(:ama_task, assigned_to: organization) }
+      let(:task) { create(:ama_task, assigned_to: user, parent: parent) }
 
       it "returns a list without that organization" do
         expect(Organization.assignable(task)).to eq([other_organization])
@@ -82,7 +126,7 @@ describe Organization, :postgres do
     end
 
     context "when there is a named Organization as a subclass of Organization" do
-      let(:task) { create(:generic_task, assigned_to: user) }
+      let(:task) { create(:ama_task, assigned_to: user) }
       before { QualityReview.singleton }
 
       it "should be included in the list of organizations returned by assignable" do
@@ -91,7 +135,7 @@ describe Organization, :postgres do
     end
 
     context "when organization cannot receive tasks" do
-      let(:task) { create(:generic_task, assigned_to: user) }
+      let(:task) { create(:ama_task, assigned_to: user) }
       before { Bva.singleton }
 
       it "should not be included in the list of organizations returned by assignable" do
