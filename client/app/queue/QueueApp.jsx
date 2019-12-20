@@ -9,7 +9,6 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
-  setFeatureToggles,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
@@ -31,7 +30,6 @@ import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
-import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -84,7 +82,6 @@ import { returnToLitSupport } from './mtv/mtvActions';
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
-    this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
@@ -204,8 +201,6 @@ class QueueApp extends React.PureComponent {
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
   routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} role={this.props.userRole} />;
-
-  routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
 
@@ -658,8 +653,6 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
   canEditAod: PropTypes.bool,
-  setFeatureToggles: PropTypes.func,
-  featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
   setOrganizations: PropTypes.func,
@@ -684,7 +677,6 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
-      setFeatureToggles,
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,

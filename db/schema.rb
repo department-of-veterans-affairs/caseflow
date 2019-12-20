@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191203004132) do
+ActiveRecord::Schema.define(version: 20191219155741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -198,7 +198,9 @@ ActiveRecord::Schema.define(version: 20191203004132) do
     t.string "sattyid"
     t.string "sdomainid", null: false
     t.string "slogid", null: false
+    t.string "smemgrp", limit: 8
     t.string "stafkey", null: false
+    t.string "stitle", limit: 16
     t.string "svlj"
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
@@ -335,6 +337,7 @@ ActiveRecord::Schema.define(version: 20191203004132) do
     t.datetime "rating_profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
     t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
     t.datetime "updated_at"
+    t.index ["disposition"], name: "index_decision_issues_on_disposition"
     t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
@@ -412,6 +415,7 @@ ActiveRecord::Schema.define(version: 20191203004132) do
     t.datetime "updated_at"
     t.integer "user_id", null: false
     t.index ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_document_views_on_user_id"
   end
 
   create_table "documents", id: :serial, force: :cascade do |t|
@@ -823,6 +827,7 @@ ActiveRecord::Schema.define(version: 20191203004132) do
   create_table "legacy_issue_optins", force: :cascade, comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review." do |t|
     t.datetime "created_at", null: false, comment: "When a Request Issue is connected to a VACOLS issue on a legacy appeal, and the Veteran has agreed to withdraw their legacy appeals, a legacy_issue_optin is created at the time the Decision Review is successfully intaken. This is used to indicate that the legacy issue should subsequently be opted into AMA in VACOLS. "
     t.string "error"
+    t.bigint "legacy_issue_id", comment: "The legacy issue being opted in, which connects to the request issue"
     t.datetime "optin_processed_at", comment: "The timestamp for when the opt-in was successfully processed, meaning it was updated in VACOLS as opted into AMA."
     t.string "original_disposition_code", comment: "The original disposition code of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
     t.date "original_disposition_date", comment: "The original disposition date of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
@@ -830,8 +835,18 @@ ActiveRecord::Schema.define(version: 20191203004132) do
     t.datetime "rollback_created_at", comment: "Timestamp for when the connected request issue is removed from a Decision Review during edit, indicating that the opt-in needs to be rolled back."
     t.datetime "rollback_processed_at", comment: "Timestamp for when a rolled back opt-in has successfully finished being rolled back."
     t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
+    t.index ["legacy_issue_id"], name: "index_legacy_issue_optins_on_legacy_issue_id"
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
     t.index ["updated_at"], name: "index_legacy_issue_optins_on_updated_at"
+  end
+
+  create_table "legacy_issues", force: :cascade, comment: "On an AMA decision review, when a veteran requests to review an issue that is already being contested on a legacy appeal, the legacy issue is connected to the request issue. If the veteran also chooses to opt their legacy issues into AMA and the issue is eligible to be transferred to AMA, the issues are closed in VACOLS through a legacy issue opt-in. This table stores the legacy issues connected to each request issue, and the record for opting them into AMA (if applicable)." do |t|
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at"
+    t.bigint "request_issue_id", null: false, comment: "The request issue the legacy issue is being connected to."
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at"
+    t.string "vacols_id", null: false, comment: "The VACOLS ID of the legacy appeal that the legacy issue is part of."
+    t.integer "vacols_sequence_id", null: false, comment: "The sequence ID of the legacy issue on the legacy appeal. The vacols_id and vacols_sequence_id form a composite key to identify a specific legacy issue."
+    t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -863,9 +878,12 @@ ActiveRecord::Schema.define(version: 20191203004132) do
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
     t.string "role", comment: "Role users in organization must have, if present"
+    t.string "status", default: "active", comment: "Whether organization is active, inactive, or in some other Status."
+    t.datetime "status_updated_at", comment: "Track when organization status last changed."
     t.string "type", comment: "Single table inheritance"
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
+    t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true
   end
@@ -1174,7 +1192,6 @@ ActiveRecord::Schema.define(version: 20191203004132) do
     t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
-    t.integer "on_hold_duration"
     t.integer "parent_id"
     t.datetime "placed_on_hold_at"
     t.datetime "started_at"
@@ -1377,6 +1394,7 @@ ActiveRecord::Schema.define(version: 20191203004132) do
   add_foreign_key "legacy_hearings", "users"
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
+  add_foreign_key "legacy_issue_optins", "legacy_issues"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "tasks"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"

@@ -29,5 +29,8 @@ rake db:seed
 echo "Enabling Feature Flags"
 bundle exec rails runner scripts/enable_features_dev.rb
 
+echo "Enabling caching"
+touch tmp/caching-dev.txt
+
 echo "Starting Caseflow App RoR"
 rails server --binding 0.0.0.0 -p 3000

@@ -47,9 +47,13 @@ class RootTask < Task
   end
 
   def available_actions(user)
-    return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if MailTeam.singleton.user_has_access?(user) && ama?
+    return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if RootTask.user_can_create_mail_task?(user) && ama?
 
     []
+  end
+
+  def self.user_can_create_mail_task?(user)
+    user&.organizations&.any?(&:users_can_create_mail_task?)
   end
 
   def actions_available?(_user)
