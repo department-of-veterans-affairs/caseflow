@@ -6,9 +6,6 @@ import PropTypes from 'prop-types';
 const tableNumberStyling = css({
   '& tr > td:first-child': {
     paddingRight: 0
-  },
-  '& td:nth-child(2)': {
-    paddingLeft: 0
   }
 });
 

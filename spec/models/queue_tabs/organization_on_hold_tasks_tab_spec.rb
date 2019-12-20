@@ -39,12 +39,12 @@ describe OrganizationOnHoldTasksTab, :postgres do
     subject { tab.tasks }
 
     context "when there are tasks assigned to the assignee and other folks" do
-      let!(:other_folks_tasks) { create_list(:generic_task, 11) }
-      let!(:assignee_active_tasks) { create_list(:generic_task, 4, :assigned, assigned_to: assignee) }
-      let!(:assignee_on_hold_tasks) { create_list(:generic_task, 3, :assigned, assigned_to: assignee) }
+      let!(:other_folks_tasks) { create_list(:ama_task, 11) }
+      let!(:assignee_active_tasks) { create_list(:ama_task, 4, :assigned, assigned_to: assignee) }
+      let!(:assignee_on_hold_tasks) { create_list(:ama_task, 3, :assigned, assigned_to: assignee) }
       let!(:on_hold_tasks_children) do
         assignee_on_hold_tasks.map do |task|
-          create_list(:generic_task, 2, parent_id: task.id)
+          create_list(:ama_task, 2, parent_id: task.id)
           task.update!(status: Constants.TASK_STATUSES.on_hold)
           task.children
         end.flatten

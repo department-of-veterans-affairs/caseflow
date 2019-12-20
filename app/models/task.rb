@@ -23,6 +23,7 @@ class Task < ApplicationRecord
 
   validates :assigned_to, :appeal, :type, :status, presence: true
   validate :status_is_valid_on_create, on: :create
+  validate :assignee_status_is_valid_on_create, on: :create
 
   before_create :set_assigned_at
   before_create :verify_org_task_unique
@@ -324,7 +325,7 @@ class Task < ApplicationRecord
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i || on_hold_duration
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def update_task_type(params)
@@ -529,21 +530,16 @@ class Task < ApplicationRecord
     "#{type} completed"
   end
 
-  def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if old_style_hold_expired?
-  end
-
-  def old_style_hold_expired?
-    !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
-      (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
-  end
-
   def serializer_class
     ::WorkQueue::TaskSerializer
   end
 
   def assigned_to_label
     assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
+  end
+
+  def child_must_have_active_assignee?
+    true
   end
 
   private
@@ -658,6 +654,14 @@ class Task < ApplicationRecord
   def status_is_valid_on_create
     if status != Constants.TASK_STATUSES.assigned
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+    end
+
+    true
+  end
+
+  def assignee_status_is_valid_on_create
+    if parent&.child_must_have_active_assignee? && assigned_to.is_a?(User) && !assigned_to.active?
+      fail Caseflow::Error::InvalidAssigneeStatusOnTaskCreate, assignee: assigned_to
     end
 
     true

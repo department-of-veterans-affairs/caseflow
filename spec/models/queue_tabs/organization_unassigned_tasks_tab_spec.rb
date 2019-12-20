@@ -72,9 +72,9 @@ describe OrganizationUnassignedTasksTab, :postgres do
     subject { tab.tasks }
 
     context "when there are tasks assigned to the assignee and other folks" do
-      let!(:other_folks_tasks) { create_list(:generic_task, 11) }
-      let!(:assignee_active_tasks) { create_list(:generic_task, 4, :assigned, assigned_to: assignee) }
-      let!(:assignee_on_hold_tasks) { create_list(:generic_task, 3, :assigned, assigned_to: assignee) }
+      let!(:other_folks_tasks) { create_list(:ama_task, 11) }
+      let!(:assignee_active_tasks) { create_list(:ama_task, 4, :assigned, assigned_to: assignee) }
+      let!(:assignee_on_hold_tasks) { create_list(:ama_task, 3, :assigned, assigned_to: assignee) }
 
       before do
         assignee_on_hold_tasks.each { |task| task.update!(status: Constants.TASK_STATUSES.on_hold) }

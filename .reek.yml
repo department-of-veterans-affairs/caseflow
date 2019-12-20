@@ -65,6 +65,7 @@ detectors:
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - UserReporter#report_user_related_records
       - VeteranAttributeCacher
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
@@ -104,9 +105,11 @@ detectors:
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
+      - DuplicateUserTask
       - LegacyAppealDispatch
       - Address
       - ExternalApi::PexipService
+      - InvalidAssigneeStatusOnTaskCreate
   TooManyMethods:
     enabled: false
   TooManyStatements:

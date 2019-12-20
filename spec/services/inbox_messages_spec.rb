@@ -26,4 +26,16 @@ describe InboxMessages, :postgres do
       expect(inbox.messages.first).to_not eq(message)
     end
   end
+
+  describe "hiding older messages" do
+    before do
+      (0..200).step(25) { |age| create(:message, created_at: age.days.ago, user: user) }
+    end
+
+    it "hides messages older than the visible duration" do
+      inbox = described_class.new(user: user)
+      expect(inbox.total).to eq(5)
+      expect(inbox.messages.map(&:created_at)).to all(be > 120.days.ago)
+    end
+  end
 end
