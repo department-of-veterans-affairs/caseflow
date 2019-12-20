@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
-# Metric ID: 1812216039
+# Metric ID: 1709076052
 # Metric definition: (Number EPs with date<=7 days after outcoding date/number non-denial decisions)
 
 class Metrics::HearingsShowRate < Metrics::Base
   def call
+    if Time.zone.now.to_date - start_date < 7.days
+      fail Metrics::DateRange::DateRangeError, "Start date must be 7 days or more ago"
+    end
+
     end_products_created_within_7_days_of_outcoding / non_denial_decisions.count
   end
 
@@ -18,22 +22,38 @@ class Metrics::HearingsShowRate < Metrics::Base
 
   private
 
-  def non_denial_decisions
-    @non_denial_decisions ||= DecisionIssue
-      .where("caseflow_decision_date >= ? AND caseflow_decision_date <= ?", start_date, end_date)
-      .where.not(disposition: "Denied")
-      .where(decision_review_type: "Appeal")
+  def offset_end_date
+    # report end date should never be within 7 days of current day
+    return Time.zone.now.to_date - 7.days if (Time.zone.now.to_date - end_date) < 7.days
+
+    end_date
   end
 
-  def non_denial_decisions_end_products
-    decision_documents = DecisionDocument.where(
-      appeal: Appeal.where(id: non_denial_decisions.pluck(:decision_review_id))
+  def appeals
+    @appeals ||= BvaDispatchTask.where("closed_at >= ? AND closed_at <= ?", start_date, offset_end_date)
+      .where(status: Constants.TASK_STATUSES.completed)
+      .includes(:appeal)
+      .map(&:appeal)
+  end
+
+  def non_denial_decisions
+    @non_denial_decisions ||= DecisionIssue.where.not(disposition: "Denied")
+      .where(decision_review: appeals)
+  end
+
+  def non_denial_decion_documents
+    DecisionDocument.where(
+      appeal_id: non_denial_decisions.pluck(:decision_review_id),
+      appeal_type: "Appeal"
     )
-    EndProductEstablishment.includes(source: [appeal: [:tasks]]).where(source: decision_documents)
+  end
+
+  def non_denial_end_products
+    EndProductEstablishment.includes(source: [appeal: [:tasks]]).where(source: non_denial_decision_documents)
   end
 
   def end_products_created_within_7_days_of_outcoding
-    non_denial_decisions_end_products.select do |end_product|
+    non_denial_end_products.select do |end_product|
       (
         end_product.source.appeal.tasks.find { |task| task.type == "BvaDispatchTask" }.closed_at
         - end_product.created_at
