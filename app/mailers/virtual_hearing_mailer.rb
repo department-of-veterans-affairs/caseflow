@@ -27,7 +27,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @virtual_hearing = virtual_hearing
     @link = link
 
-    attachments[calendar_invite_name]
+    attachments[calendar_invite_name] = confirmation_calendar_invite
 
     mail(
       to: recipient.email,
