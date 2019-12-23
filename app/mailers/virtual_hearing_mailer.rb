@@ -69,6 +69,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
   def link
     return virtual_hearing.host_link if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
+
     virtual_hearing.guest_link
   end
 end

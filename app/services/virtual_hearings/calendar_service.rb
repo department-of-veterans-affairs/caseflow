@@ -18,7 +18,7 @@ class VirtualHearings::CalendarService
           virtual_hearing: virtual_hearing,
           time_zone: time_zone,
           start_time_utc: start_time,
-          link: link 
+          link: link
         }
 
         event.url = link
