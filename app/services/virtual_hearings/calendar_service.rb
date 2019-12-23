@@ -26,23 +26,31 @@ class VirtualHearings::CalendarService
         event.status = "CONFIRMED"
         event.summary = summary(recipient)
         event.description = render_virtual_hearing_calendar_event_template(
-          recipient, :confirmation template_context
+          recipient, :confirmation, template_context
         )
       end
     end
 
-        # Some * magic * here. The recipient title is used to determine
-        # which template to load.
+    # Sent when a virtual hearing is switched back to a video hearing.
+    def update_to_video_calendar_invite(hearing, recipient)
+      create_calendar_event(hearing) do |event, time_zone, start_time|
+        template_context = {
+          hearing: hearing,
+          time_zone: time_zone,
+          start_time_utc: start_time
+        }
+
+        event.status = "CONFIRMED"
+        event.summary = summary(recipient)
         event.description = render_virtual_hearing_calendar_event_template(
-          "#{recipient.title.downcase}_confirmation_event_description",
-          template_context
+          recipient, :changed_to_video, template_context
         )
       end
     end
 
     private
 
-    def confirmation_summary(recipient)
+    def summary(recipient)
       case recipient.title
       when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
         "Hearing with the Board of Veterans' Appeals"
@@ -59,7 +67,7 @@ class VirtualHearings::CalendarService
 
     def create_calendar_event(hearing)
       cal = create_calendar
-      start_time = hearing.scheduled_for
+      start_time = hearing.time.local_time
       end_time = start_time + 30.minutes
       tzid = hearing.regional_office_timezone
       tz = TZInfo::Timezone.get(tzid)
@@ -74,7 +82,7 @@ class VirtualHearings::CalendarService
         # associated with a hearing at any given time.
         event.uid = "caseflow-hearing-conference-#{hearing.id}"
 
-        yield event, tz, start_time
+        yield event, tz, start_time.utc
       end
 
       cal.to_ical
