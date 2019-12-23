@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191219155741) do
+ActiveRecord::Schema.define(version: 20191223183121) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -902,6 +902,7 @@ ActiveRecord::Schema.define(version: 20191219155741) do
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth"
+    t.string "email_address", "Person email address, cached from BGS"
     t.string "first_name", comment: "Person first name, cached from BGS"
     t.string "last_name", comment: "Person last name, cached from BGS"
     t.string "middle_name", comment: "Person middle name, cached from BGS"
@@ -1292,6 +1293,7 @@ ActiveRecord::Schema.define(version: 20191219155741) do
   create_table "veterans", force: :cascade do |t|
     t.string "closest_regional_office"
     t.datetime "created_at"
+    t.string "email_address", "The cached email address"
     t.string "file_number", null: false
     t.string "first_name"
     t.string "last_name"
