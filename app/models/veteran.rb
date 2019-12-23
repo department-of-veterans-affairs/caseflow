@@ -240,7 +240,7 @@ class Veteran < ApplicationRecord
 
   def stale?
     (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
-      self[:email_address].nil?)
+      email_address.nil?)
   end
 
   def stale_attributes?

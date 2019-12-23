@@ -743,11 +743,13 @@ describe Veteran, :all_dbs do
     let(:middle_name) { "Q" }
     let(:name_suffix) { "Esq" }
     let(:ssn) { "666000000" }
+    let(:email_address) { "test@email.com" }
     let(:bgs_first_name) { first_name }
     let(:bgs_last_name) { last_name }
     let(:bgs_middle_name) { middle_name }
     let(:bgs_name_suffix) { name_suffix }
     let(:bgs_ssn) { ssn }
+    let(:bgs_email_address) { email_address }
     let!(:veteran) do
       create(
         :veteran,
@@ -756,12 +758,14 @@ describe Veteran, :all_dbs do
         middle_name: middle_name,
         name_suffix: name_suffix,
         ssn: ssn,
+        email_address: email_address,
         bgs_veteran_record: {
           first_name: bgs_first_name,
           last_name: bgs_last_name,
           middle_name: bgs_middle_name,
           name_suffix: bgs_name_suffix,
-          ssn: bgs_ssn
+          ssn: bgs_ssn,
+          email_address: bgs_email_address
         }
       )
     end
