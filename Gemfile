@@ -18,6 +18,7 @@ gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
+gem "icalendar"
 gem "kaminari"
 # active_model_serializers has a default dependency on loofah 2.2.2 which security vulnerabilities
 # (CVE-2018-16468 and CVE-2019-15587)
