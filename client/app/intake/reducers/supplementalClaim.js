@@ -43,7 +43,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.payeeCode
     },
     legacyOptInApproved: {
-      $set: serverIntake.legacy_opt_in_approved
+      $set: serverIntake.legacyOptInApproved
     },
     legacyAppeals: {
       $set: serverIntake.legacyAppeals
