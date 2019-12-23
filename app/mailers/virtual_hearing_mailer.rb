@@ -9,6 +9,8 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
 
+    attachments[calendar_invite_name] = cancellation_calendar_invite
+
     mail(to: recipient.email, subject: "Updated location: Your hearing with the Board of Veterans' Appeals")
   end
 
@@ -35,18 +37,14 @@ class VirtualHearingMailer < ActionMailer::Base
     )
   end
 
-  def calendar_invite(mail_recipient:, virtual_hearing:)
-    @recipient = mail_recipient
-    @virtual_hearing = virtual_hearing
-    @link = link
-
-    confirmation_calendar_invite
-  end
-
   private
 
   def confirmation_calendar_invite
     VirtualHearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient, link)
+  end
+
+  def cancellation_calendar_invite
+    VirtualHearings::CalendarService.update_to_video_calendar_invite(virtual_hearing.hearing, recipient)
   end
 
   def calendar_invite_name
