@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
 require_relative "../../app/models/tasks/mail_task"
 
 describe Docket, :all_dbs do
@@ -119,7 +117,7 @@ describe Docket, :all_dbs do
         let(:user) { create(:user) }
 
         before do
-          OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
+          MailTeam.singleton.add_user(user)
         end
 
         context "nonblocking mail tasks" do

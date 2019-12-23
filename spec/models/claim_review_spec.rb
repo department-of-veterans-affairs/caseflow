@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe ClaimReview, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
@@ -301,7 +298,7 @@ describe ClaimReview, :postgres do
       let(:benefit_type) { "education" }
 
       context "when the user is already on the organization" do
-        let!(:existing_record) { OrganizationsUser.add_user_to_organization(user, claim_review.business_line) }
+        let!(:existing_record) { claim_review.business_line.add_user(user) }
 
         it "returns the existing record" do
           expect(subject).to eq(existing_record)

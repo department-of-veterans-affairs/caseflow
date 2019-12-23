@@ -13,7 +13,7 @@ class TaskActionRepository
       {
         selected: nil,
         options: organizations,
-        type: Task.name
+        type: task.type
       }
     end
 
@@ -206,10 +206,9 @@ class TaskActionRepository
         options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
           {
             label: value,
-            value: key
+            value: ColocatedTask.find_subclass_by_action(key).name
           }
-        end,
-        type: ColocatedTask.name
+        end
       }
     end
 
@@ -222,19 +221,20 @@ class TaskActionRepository
     end
 
     def complete_data(task, _user = nil)
-      if task.is_a? NoShowHearingTask
-        {
-          modal_body: COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY
-        }
-      elsif task.is_a? HearingAdminActionTask
-        {
-          modal_body: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
-        }
-      else
-        {
-          modal_body: COPY::MARK_TASK_COMPLETE_COPY
-        }
+      params = {}
+      params[:modal_body] = if task.is_a? NoShowHearingTask
+                              COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY
+                            elsif task.is_a? HearingAdminActionTask
+                              COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
+                            else
+                              COPY::MARK_TASK_COMPLETE_COPY
+                            end
+
+      if defined? task.completion_contact
+        params[:contact] = task.completion_contact
       end
+
+      params
     end
 
     def schedule_veteran_data(_task, _user = nil)

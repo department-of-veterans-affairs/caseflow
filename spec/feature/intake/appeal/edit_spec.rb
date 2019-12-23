@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "Appeal Edit issues", :all_dbs do
   include IntakeHelpers
 
@@ -12,7 +9,7 @@ feature "Appeal Edit issues", :all_dbs do
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-    OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+    non_comp_org.add_user(current_user)
   end
 
   let(:veteran) do
@@ -43,7 +40,7 @@ feature "Appeal Edit issues", :all_dbs do
     create(:appeal,
            veteran_file_number: veteran.file_number,
            receipt_date: receipt_date,
-           docket_type: "evidence_submission",
+           docket_type: Constants.AMA_DOCKETS.evidence_submission,
            veteran_is_not_claimant: false,
            legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
   end

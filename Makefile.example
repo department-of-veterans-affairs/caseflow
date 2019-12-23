@@ -61,7 +61,7 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -rf public/assets
 	rm -rf tmp/capybara
 
-realclean: clean
+realclean: clean ## TODO
 	rm -rf client/node_modules
 	rm -f client/package-lock.json
 
@@ -94,16 +94,30 @@ db:  ## Connect to your dev postgres (caseflow) db
 c:  ## Start rails console
 	bundle exec rails console
 
-migrate:  ## Migrate rails database
+etl-migrate:	## Migrate ETL database
+	DB=etl bundle exec rake db:migrate
+
+etl-test-prepare:
+	DB=etl bundle exec rake db:test:prepare
+
+etl-rollback:	## Rollback ETL database
+	DB=etl bundle exec rake db:rollback
+
+db-migrate:	## Migrate main Caseflow db
 	bundle exec rake db:migrate
 
-rollback:  ## Rollback rails database
+db-rollback:	## Rollback main Caseflow db
 	bundle exec rake db:rollback
+
+migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
+
+rollback: etl-rollback db-rollback	## Rollback all Rails databases
 
 fresh:  ## https://github.com/imsky/git-fresh
 	git fresh
 
 reset:  ## Resets databases
+	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
 	bundle exec rails runner scripts/enable_features_dev.rb
 

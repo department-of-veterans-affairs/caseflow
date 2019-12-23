@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.shared_examples "Change hearing disposition" do
   let(:current_full_name) { "Leonela Harbold" }
   let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101) }
@@ -14,7 +11,7 @@ RSpec.shared_examples "Change hearing disposition" do
   let(:instructions_text) { "This is why I'm changing this hearing's disposition." }
 
   before do
-    OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+    HearingAdmin.singleton.add_user(hearing_admin_user)
     User.authenticate!(user: hearing_admin_user)
   end
 
@@ -25,8 +22,8 @@ RSpec.shared_examples "Change hearing disposition" do
     let(:hearing_day) { create(:hearing_day, judge: hearing_user, scheduled_for: 1.month.from_now) }
 
     before do
-      OrganizationsUser.add_user_to_organization(mail_user, MailTeam.singleton)
-      OrganizationsUser.add_user_to_organization(transcription_user, TranscriptionTeam.singleton)
+      MailTeam.singleton.add_user(mail_user)
+      TranscriptionTeam.singleton.add_user(transcription_user)
     end
 
     scenario "change hearing disposition to held" do
@@ -127,7 +124,7 @@ RSpec.shared_examples "Change hearing disposition" do
     let(:veteran_hearing_link_text) { "#{appeal.veteran_full_name} | #{appeal.veteran_file_number}" }
 
     before do
-      OrganizationsUser.add_user_to_organization(hearing_mgmt_user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(hearing_mgmt_user)
     end
 
     context "changing hearing disposition" do
@@ -191,14 +188,15 @@ RSpec.shared_examples "Change hearing disposition" do
           expect(page).to have_content("Unassigned (0)")
         end
 
-        step "verify that there's a NoShowHearingTask with a hold in the HearingsManagement org assigned queue" do
-          User.authenticate!(user: hearing_mgmt_user)
-          visit "/organizations/#{HearingsManagement.singleton.url}"
-          click_on "Assigned (1)"
-          find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
-          no_show_active_row = find("dd", text: "No Show Hearing Task").find(:xpath, "ancestor::tr")
-          expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
-        end
+        # Add test back in https://github.com/department-of-veterans-affairs/caseflow/issues/12782
+        # step "verify that there's a NoShowHearingTask with a hold in the HearingsManagement org assigned queue" do
+        #   User.authenticate!(user: hearing_mgmt_user)
+        #   visit "/organizations/#{HearingsManagement.singleton.url}"
+        #   click_on "Assigned (1)"
+        #   find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
+        #   no_show_active_row = find("dd", text: "No Show Hearing Task").find(:xpath, "ancestor::tr")
+        #   expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
+        # end
       end
     end
 
@@ -270,16 +268,16 @@ RSpec.shared_examples "Change hearing disposition" do
     let(:assign_instructions_text) { "This is why I'm assigning this to you." }
 
     before do
-      OrganizationsUser.add_user_to_organization(other_admin_user, HearingAdmin.singleton)
+      HearingAdmin.singleton.add_user(other_admin_user)
 
       admin_full_names.each do |name|
         user = create(:user, full_name: name, station_id: 101)
-        OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+        HearingAdmin.singleton.add_user(user)
       end
 
       mgmt_full_names.each do |name|
         user = create(:user, full_name: name, station_id: 101)
-        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        HearingsManagement.singleton.add_user(user)
       end
     end
 

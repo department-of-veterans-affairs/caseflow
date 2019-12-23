@@ -1,23 +1,17 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "ColocatedTask", :all_dbs do
   let(:vlj_support_staff) { create(:user) }
 
-  before { OrganizationsUser.add_user_to_organization(vlj_support_staff, Colocated.singleton) }
+  before { Colocated.singleton.add_user(vlj_support_staff) }
 
   describe "attorney assigns task to vlj support staff, vlj returns it to attorney after completion" do
     let(:judge_user) { create(:user) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
-
     let(:attorney_user) { create(:user) }
     let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
-
     let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
-
     let!(:atty_task) do
       create(
         :ama_attorney_task,
@@ -27,6 +21,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
         assigned_to: attorney_user
       )
     end
+    let(:return_instructions) { "These are the instructions from the VLJ" }
 
     it "should return attorney task to active state" do
       # Attorney assigns task to VLJ support staff.
@@ -53,7 +48,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       # Return case to attorney.
       find(".Select-control", text: "Select an action…").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
-      fill_in("instructions", with: "INSTRUCTIONS FROM VLJ")
+      fill_in("instructions", with: return_instructions)
       find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
       # Redirected to personal queue page. Return to attorney succeeds.
@@ -65,15 +60,15 @@ RSpec.feature "ColocatedTask", :all_dbs do
       User.authenticate!(user: attorney_user)
       visit("/queue")
 
-      # Click into case details page. Expect to see draft decision option.
+      # Click into case details page.
       click_on(appeal.veteran.name.formatted(:readable_full))
       # verify that the instructions from the VLJ appear on the case timeline
-      scroll_to("#case_timeline-section")
-      view_text = COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
-      page.find_all("table#case-timeline-table button", text: view_text).each(&:click)
-      expect(page).to have_content(
-        "INSTRUCTIONS FROM VLJ"
-      )
+      expect(page).to have_css("h2", text: "Case Timeline")
+      scroll_to(find("h2", text: "Case Timeline"))
+      poa_task = PoaClarificationColocatedTask.find_by(assigned_to_type: User.name)
+      click_button(COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: poa_task.id)
+      expect(page).to have_content(return_instructions)
+      # Expect to see draft decision option.
       find(".Select-control", text: "Select an action…").click
       expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label])
 
@@ -129,118 +124,6 @@ RSpec.feature "ColocatedTask", :all_dbs do
 
         # Task snapshot updated with new hold information
         expect(page).to have_content("0 of #{hold_duration_days}")
-      end
-    end
-
-    context "when ColocatedTask on old-style hold is updated with a later hold expiration date" do
-      let(:old_hold_started) { 3.days.ago }
-      let(:old_hold_duration_days) { 15 }
-      let(:new_hold_duration_days) { 60 }
-
-      let(:colocated_org_task) do
-        create(
-          :ama_colocated_task,
-          appeal: appeal,
-          parent: root_task
-        )
-      end
-      let(:colocated_individual_task) { colocated_org_task.children.first }
-
-      before do
-        colocated_individual_task.update!(
-          status: Constants.TASK_STATUSES.on_hold,
-          on_hold_duration: old_hold_duration_days
-        )
-
-        # Update the placed_on_hold_at value in a different statement to avoid it being overwritten by set_timestamps.
-        colocated_individual_task.update!(placed_on_hold_at: old_hold_started)
-      end
-
-      it "wipes out the old hold and updates the task with new hold information" do
-        User.authenticate!(user: vlj_support_staff)
-        visit("/queue/appeals/#{appeal.uuid}")
-
-        # Confirm old hold information is set.
-        expect(colocated_individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
-        expect(colocated_individual_task.calculated_placed_on_hold_at).to eq(old_hold_started)
-        expect(colocated_individual_task.calculated_on_hold_duration).to eq(old_hold_duration_days)
-
-        # Place task on hold again.
-        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
-        expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
-        click_dropdown(
-          prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL,
-          text: "#{new_hold_duration_days} days"
-        )
-        fill_in("instructions", with: "some text")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
-
-        expect(page).to have_content(
-          format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, new_hold_duration_days)
-        )
-        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-        # Task snapshot updated with new hold information
-        expect(page).to have_content("0 of #{new_hold_duration_days}")
-      end
-    end
-
-    context "when ColocatedTask on old-style hold is updated with an earlier hold expiration date" do
-      let(:old_hold_started) { 3.days.ago }
-      let(:old_hold_duration_days) { 90 }
-      let(:new_hold_duration_days) { 45 }
-
-      let(:colocated_org_task) do
-        create(
-          :ama_colocated_task,
-          appeal: appeal,
-          parent: root_task
-        )
-      end
-      let(:colocated_individual_task) { colocated_org_task.children.first }
-
-      before do
-        colocated_individual_task.update!(
-          status: Constants.TASK_STATUSES.on_hold,
-          on_hold_duration: old_hold_duration_days
-        )
-
-        # Update the placed_on_hold_at value in a different statement to avoid it being overwritten by set_timestamps.
-        colocated_individual_task.update!(placed_on_hold_at: old_hold_started)
-      end
-
-      it "wipes out the old hold and updates the task with new hold information" do
-        User.authenticate!(user: vlj_support_staff)
-        visit("/queue/appeals/#{appeal.uuid}")
-
-        # Confirm old hold information is set.
-        expect(colocated_individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
-        expect(colocated_individual_task.calculated_placed_on_hold_at).to eq(old_hold_started)
-        expect(colocated_individual_task.calculated_on_hold_duration).to eq(old_hold_duration_days)
-
-        # Place task on hold again.
-        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
-        expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
-        click_dropdown(
-          prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL,
-          text: "#{new_hold_duration_days} days"
-        )
-        fill_in("instructions", with: "some text")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
-
-        expect(page).to have_content(
-          format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, new_hold_duration_days)
-        )
-        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-        # Values in database are correct.
-        colocated_individual_task.reload
-        expect(colocated_individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
-        expect(colocated_individual_task.calculated_placed_on_hold_at).to_not eq(old_hold_started)
-        expect(colocated_individual_task.calculated_on_hold_duration).to eq(new_hold_duration_days)
-
-        # Task snapshot updated with new hold information
-        expect(page).to have_content("0 of #{new_hold_duration_days}")
       end
     end
   end

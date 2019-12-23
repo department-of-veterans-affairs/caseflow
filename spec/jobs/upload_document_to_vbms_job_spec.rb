@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe UploadDocumentToVbmsJob, :postgres do
   describe ".perform" do
     it "calls #call on UploadDocumentToVbms instance" do

@@ -14,6 +14,10 @@ module Asyncable
 
   include RunAsyncable
 
+  included do
+    has_many :job_notes, as: :job
+  end
+
   # class methods to scope queries based on class-defined columns
   # we expect 5 column types:
   #  * last_submitted_at : when the job is eligible to run (can be reset to restart the job)
@@ -190,6 +194,11 @@ module Asyncable
     nil # abstract method intended to be overridden
   end
 
+  def sanitized_error
+    # keep PII out of output
+    (self[self.class.error_column] || "none").gsub(/\s.+/s, "")
+  end
+
   def expired_without_processing?
     return false if processed?
 
@@ -240,8 +249,16 @@ module Asyncable
       canceled_at: self[self.class.canceled_at_column],
       error: self[self.class.error_column],
       veteran_file_number: try(:veteran).try(:file_number),
-      user: asyncable_user
+      user: asyncable_user&.css_id
     }
+  end
+
+  def path
+    "/asyncable_jobs/#{self.class}/jobs/#{id}"
+  end
+
+  def label
+    "#{self.class} #{id}"
   end
 end
 # rubocop:enable Metrics/ModuleLength

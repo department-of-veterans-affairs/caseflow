@@ -79,8 +79,5 @@ Rails.application.configure do
   ENV["FULL_GRANT_IDS"] = "VACOLS123,VACOLS234,VACOLS345,VACOLS456"
   ENV["PARTIAL_AND_REMAND_IDS"] = "VACOLS321,VACOLS432,VACOLS543,VACOLS654"
 
-  # Allow health check to pushgateway
-  ENV["ENABLE_PUSHGATEWAY_HEALTHCHECK"] = "true"
-
   config.active_job.queue_adapter = :test
 end

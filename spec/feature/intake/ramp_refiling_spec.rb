@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.feature "RAMP Refiling Intake", :postgres do
   include IntakeHelpers
 
@@ -290,7 +287,7 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
       expect(ramp_refiling).to_not be_nil
       expect(ramp_refiling.option_selected).to eq("appeal")
-      expect(ramp_refiling.appeal_docket).to eq("evidence_submission")
+      expect(ramp_refiling.appeal_docket).to eq(Constants.AMA_DOCKETS.evidence_submission)
       expect(ramp_refiling.receipt_date.to_date).to eq(receipt_date)
 
       safe_click "#finish-intake"

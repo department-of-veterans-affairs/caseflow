@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe ColocatedTaskDistributor, :all_dbs do
   let(:assignee_pool_size) { 6 }
   let(:colocated_org) { Colocated.singleton }
@@ -10,7 +7,7 @@ describe ColocatedTaskDistributor, :all_dbs do
 
   before do
     create_list(:user, assignee_pool_size).each do |u|
-      OrganizationsUser.add_user_to_organization(u, colocated_org)
+      colocated_org.add_user(u)
     end
   end
 

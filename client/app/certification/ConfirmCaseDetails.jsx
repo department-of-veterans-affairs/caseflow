@@ -1,5 +1,5 @@
 // TODO refactor into smaller files
-/* eslint max-lines: ["error", 510]*/
+/* eslint max-lines: ["error", 520]*/
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -125,6 +125,7 @@ export class ConfirmCaseDetails extends React.Component {
   // TODO: updating state in UNSAFE_componentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
+  // eslint-disable-next-line camelcase
   UNSAFE_componentWillMount() {
     this.props.updateProgressBar();
   }
@@ -140,7 +141,7 @@ export class ConfirmCaseDetails extends React.Component {
   getValidationErrors() {
     // TODO: consider breaking this and all validation out into separate
     // modules.
-    let {
+    const {
       poaMatches,
       poaCorrectLocation,
       representativeType,
@@ -245,7 +246,7 @@ export class ConfirmCaseDetails extends React.Component {
 
   /* eslint max-statements: ["error", 14]*/
   render() {
-    let {
+    const {
       poaMatches,
       changePoaMatches,
       poaCorrectLocation,
@@ -275,7 +276,7 @@ export class ConfirmCaseDetails extends React.Component {
 
     if (updateSucceeded) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/confirm_hearing`} />;
+        to={`/certifications/${match.params.vacols_id}/confirm_hearing`} push />;
     }
 
     if (serverError) {
@@ -444,7 +445,21 @@ ConfirmCaseDetails.propTypes = {
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
   match: PropTypes.object.isRequired,
-  certificationStatus: PropTypes.string
+  certificationStatus: PropTypes.string,
+  updateProgressBar: PropTypes.func,
+  showValidationErrors: PropTypes.func,
+  resetState: PropTypes.func,
+  changeOrganizationName: PropTypes.func,
+  certificationUpdateStart: PropTypes.func,
+  organizationName: PropTypes.string,
+  bgsRepresentativeType: PropTypes.string,
+  bgsRepresentativeName: PropTypes.string,
+  bgsPoaAddressFound: PropTypes.bool,
+  vacolsRepresentativeType: PropTypes.string,
+  vacolsRepresentativeName: PropTypes.string,
+  loading: PropTypes.bool,
+  serverError: PropTypes.bool,
+  updateSucceeded: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) => ({

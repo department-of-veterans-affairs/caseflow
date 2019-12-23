@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-
 describe Api::V3::DecisionReview::IntakeStatusesController, :postgres, type: :request do
   let!(:current_user) { User.authenticate!(roles: ["Admin Intake"]) }
 

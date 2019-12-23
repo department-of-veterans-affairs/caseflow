@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe AsyncableJobsReporter, :postgres do
   before do
     seven_am_random_date = Time.new(2019, 3, 29, 7, 0, 0).in_time_zone
@@ -53,7 +50,9 @@ describe AsyncableJobsReporter, :postgres do
            veteran_file_number: veteran.file_number)
   end
 
-  subject { AsyncableJobsReporter.new(jobs: AsyncableJobs.new.jobs) }
+  let(:verbose) { true }
+
+  subject { AsyncableJobsReporter.new(jobs: AsyncableJobs.new.jobs, verbose: verbose) }
 
   describe "#summary" do
     it "returns Hash summarizing jobs" do
@@ -84,6 +83,18 @@ describe AsyncableJobsReporter, :postgres do
         SupplementalClaim has 5 total jobs in queue
       HEREDOC
       expect(subject.summarize).to eq(msg.chomp)
+    end
+
+    context "when verbose is false" do
+      let(:verbose) { false }
+
+      it "is more terse" do
+        msg = <<~HEREDOC
+          HigherLevelReview has 1 total jobs in queue
+          SupplementalClaim has 5 total jobs in queue
+        HEREDOC
+        expect(subject.summarize).to eq(msg.chomp)
+      end
     end
   end
 

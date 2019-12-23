@@ -218,18 +218,23 @@ class AddIssueManager extends React.Component {
   };
 
   setupUnidentifiedIssuesModal = () => {
-    const { intakeData, formType } = this.props;
+    const { intakeData, formType, featureToggles } = this.props;
 
     return {
       component: UnidentifiedIssuesModal,
       props: {
         intakeData,
         formType,
+        featureToggles,
         onCancel: () => this.cancel(),
         onSubmit: ({ currentIssue }) => {
           if (isCorrection(true, this.props.intakeData)) {
             this.setState({ currentIssue,
               currentModal: 'CorrectionTypeModal' });
+          } else if (currentIssue.timely === false) {
+            this.setState({ currentIssue,
+              currentModal: 'UntimelyExemptionModal',
+              addtlProps: { currentIssue } });
           } else {
             // Just add
             this.props.addIssue(currentIssue);
@@ -290,7 +295,11 @@ class AddIssueManager extends React.Component {
 
 AddIssueManager.propTypes = {
   currentModal: PropTypes.string,
-  onComplete: PropTypes.func
+  onComplete: PropTypes.func,
+  featureToggles: PropTypes.object,
+  intakeData: PropTypes.object,
+  formType: PropTypes.string,
+  addIssue: PropTypes.func
 };
 
 AddIssueManager.defaultProps = {

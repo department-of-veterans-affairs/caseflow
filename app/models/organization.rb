@@ -5,12 +5,20 @@ class Organization < ApplicationRecord
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
+  has_many :judge_team_roles, through: :organizations_users
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
 
   validates :name, presence: true
   validates :url, presence: true, uniqueness: true
 
   before_save :clean_url
+
+  enum status: {
+    Constants.ORGANIZATION_STATUSES.active.to_sym => Constants.ORGANIZATION_STATUSES.active,
+    Constants.ORGANIZATION_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
+  }
+
+  default_scope { active }
 
   class << self
     def assignable(task)
@@ -26,8 +34,18 @@ class Organization < ApplicationRecord
     end
   end
 
-  def admins
-    organizations_users.includes(:user).select(&:admin?).map(&:user)
+  def active!
+    self.status_updated_at = Time.zone.now
+    super
+  end
+
+  def inactive!
+    self.status_updated_at = Time.zone.now
+    super
+  end
+
+  def users_can_create_mail_task?
+    false
   end
 
   def can_bulk_assign_tasks?
@@ -44,6 +62,14 @@ class Organization < ApplicationRecord
 
   def use_task_pages_api?
     false
+  end
+
+  def add_user(user)
+    OrganizationsUser.find_or_create_by!(organization: self, user: user)
+  end
+
+  def admins
+    organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
 
   def non_admins

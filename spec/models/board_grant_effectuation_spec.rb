@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe BoardGrantEffectuation, :postgres do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
 
-  let!(:veteran) { decision_document.appeal.veteran }
-  let(:decision_document) { create(:decision_document) }
+  let(:claimant_participant_id) { "2019110801" }
+  let(:claimant_payee_code) { "12" }
+  let(:veteran_is_not_claimant) { nil }
+  let(:claimant) { create(:claimant, participant_id: claimant_participant_id, payee_code: claimant_payee_code) }
+  let(:veteran) { create(:veteran) }
+  let(:appeal) do
+    create(:appeal, veteran: veteran, claimants: [claimant], veteran_is_not_claimant: veteran_is_not_claimant)
+  end
+  let(:decision_document) { create(:decision_document, appeal: appeal) }
   let(:contention_reference_id) { nil }
   let(:board_grant_effectuation) do
     BoardGrantEffectuation.create(
@@ -129,6 +133,101 @@ describe BoardGrantEffectuation, :postgres do
       )
     end
 
+    it "is created with the correct claimant participant id and payee code" do
+      expect(subject.end_product_establishment).to have_attributes(
+        claimant_participant_id: claimant_participant_id,
+        payee_code: claimant_payee_code
+      )
+    end
+
+    context "the claimant has no payee code set" do
+      let(:claimant_payee_code) { nil }
+
+      context "the claimant is the veteran" do
+        let(:veteran_is_not_claimant) { false }
+
+        it "is created with a payee code of 00" do
+          expect(subject.end_product_establishment).to have_attributes(
+            payee_code: "00"
+          )
+        end
+      end
+
+      context "the claimant is not the veteran" do
+        let(:veteran_is_not_claimant) { true }
+        let(:relationship_type) { "" }
+        let(:gender) { "" }
+
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+            [
+              {
+                first_name: "Josephine",
+                gender: gender,
+                last_name: "Clark",
+                ptcpnt_id: claimant_participant_id,
+                relationship_type: relationship_type
+              }
+            ]
+          )
+        end
+
+        context "the claimaint is a spouse" do
+          let(:relationship_type) { "Spouse" }
+
+          it "is created with a payee code of 10" do
+            expect(subject.end_product_establishment).to have_attributes(
+              payee_code: "10"
+            )
+          end
+        end
+
+        context "the claimant is a child" do
+          let(:relationship_type) { "Child" }
+
+          it "is created with a payee code of 11" do
+            expect(subject.end_product_establishment).to have_attributes(
+              payee_code: "11"
+            )
+          end
+        end
+
+        context "the claimant is a parent" do
+          let(:relationship_type) { "Parent" }
+
+          context "the claimant's gender is female" do
+            let(:gender) { "F" }
+
+            it "is created with a payee code of 60" do
+              expect(subject.end_product_establishment).to have_attributes(
+                payee_code: "60"
+              )
+            end
+          end
+
+          context "the claimant's gender is male" do
+            let(:gender) { "M" }
+
+            it "is created with a payee code of 50" do
+              expect(subject.end_product_establishment).to have_attributes(
+                payee_code: "50"
+              )
+            end
+          end
+        end
+
+        context "no relationship matches the claimant's participant_id" do
+          let(:claimant_participant_id) { "2019111101" }
+
+          it "is created with a payee code of 00" do
+            expect(subject.end_product_establishment).to have_attributes(
+              payee_code: "00"
+            )
+          end
+        end
+      end
+    end
+
     context "when matching end product establishment exists" do
       let!(:matching_end_product_establishment) do
         create(
@@ -204,7 +303,7 @@ describe BoardGrantEffectuation, :postgres do
             source: decision_document,
             veteran_file_number: decision_document.appeal.veteran.file_number,
             claim_date: decision_document.decision_date,
-            payee_code: "00",
+            payee_code: "12",
             benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
             user: User.system_user,
             code: "030BGR"
@@ -219,7 +318,7 @@ describe BoardGrantEffectuation, :postgres do
               source: decision_document,
               veteran_file_number: decision_document.appeal.veteran.file_number,
               claim_date: decision_document.decision_date,
-              payee_code: "00",
+              payee_code: "12",
               benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
               user: User.system_user,
               code: "930AMABGRC"
@@ -245,7 +344,7 @@ describe BoardGrantEffectuation, :postgres do
             source: decision_document,
             veteran_file_number: decision_document.appeal.veteran.file_number,
             claim_date: decision_document.decision_date,
-            payee_code: "00",
+            payee_code: "12",
             benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
             user: User.system_user,
             code: "030BGRNR"
@@ -260,7 +359,7 @@ describe BoardGrantEffectuation, :postgres do
               source: decision_document,
               veteran_file_number: decision_document.appeal.veteran.file_number,
               claim_date: decision_document.decision_date,
-              payee_code: "00",
+              payee_code: "12",
               benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
               user: User.system_user,
               code: "930AMABGNRC"
@@ -281,7 +380,7 @@ describe BoardGrantEffectuation, :postgres do
             source: decision_document,
             veteran_file_number: decision_document.appeal.veteran.file_number,
             claim_date: decision_document.decision_date,
-            payee_code: "00",
+            payee_code: "12",
             benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
             user: User.system_user,
             code: "030BGRPMC"
@@ -296,7 +395,7 @@ describe BoardGrantEffectuation, :postgres do
               source: decision_document,
               veteran_file_number: decision_document.appeal.veteran.file_number,
               claim_date: decision_document.decision_date,
-              payee_code: "00",
+              payee_code: "12",
               benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
               user: User.system_user,
               code: "930ABGRCPMC"
@@ -322,7 +421,7 @@ describe BoardGrantEffectuation, :postgres do
             source: decision_document,
             veteran_file_number: decision_document.appeal.veteran.file_number,
             claim_date: decision_document.decision_date,
-            payee_code: "00",
+            payee_code: "12",
             benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
             user: User.system_user,
             code: "030BGNRPMC"
@@ -337,7 +436,7 @@ describe BoardGrantEffectuation, :postgres do
               source: decision_document,
               veteran_file_number: decision_document.appeal.veteran.file_number,
               claim_date: decision_document.decision_date,
-              payee_code: "00",
+              payee_code: "12",
               benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
               user: User.system_user,
               code: "930ABGNRCPMC"

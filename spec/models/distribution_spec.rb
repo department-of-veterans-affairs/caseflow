@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe Distribution, :all_dbs do
   let(:judge) { create(:user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
@@ -10,19 +7,20 @@ describe Distribution, :all_dbs do
   let(:attorneys) { create_list(:user, member_count) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
   let(:today) { Time.utc(2019, 1, 1, 12, 0, 0) }
+  let(:original_distributed_case_id) { "#{case_id}-redistributed-#{today.strftime('%F')}" }
 
   before do
     FeatureToggle.enable!(:test_facols)
     Timecop.freeze(today)
     attorneys.each do |u|
-      OrganizationsUser.add_user_to_organization(u, judge_team)
+      judge_team.add_user(u)
     end
 
     # set up a couple of extra judge teams
     2.times do
       team = JudgeTeam.create_for_judge(create(:user))
       create_list(:user, 5).each do |attorney|
-        OrganizationsUser.add_user_to_organization(attorney, team)
+        team.add_user(attorney)
       end
     end
   end
@@ -192,55 +190,131 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
     end
 
-    context "when a nonpriority legacy case re-distribtution is attempted" do
-      before do
-        @raven_called = false
-        distribution = create(:distribution, judge: judge)
-        legacy_case = legacy_nonpriority_cases.first
-        distribution.distributed_cases.create(
-          case_id: legacy_case.bfkey,
-          priority: false,
-          docket: "legacy",
-          ready_at: VacolsHelper.normalize_vacols_datetime(legacy_case.bfdloout),
-          docket_index: "123",
-          genpop: false,
-          genpop_query: "foobar"
-        )
-        distribution.update!(status: "completed", completed_at: today)
-        allow(Raven).to receive(:capture_exception) { @raven_called = true }
-      end
+    def create_nonpriority_distributed_case(distribution, case_id, ready_at)
+      distribution.distributed_cases.create(
+        case_id: case_id,
+        priority: false,
+        docket: "legacy",
+        ready_at: VacolsHelper.normalize_vacols_datetime(ready_at),
+        docket_index: "123",
+        genpop: false,
+        genpop_query: "any"
+      )
+    end
 
-      it "does not create a duplicate distributed_case" do
-        subject.distribute!
-        expect(subject.valid?).to eq(true)
-        expect(subject.error?).to eq(false)
-        expect(@raven_called).to eq(true)
+    def cancel_relevant_legacy_appeal_tasks
+      legacy_appeal.tasks.reject { |t| t.type == "RootTask" }.each do |task|
+        # update_columns to avoid triggers that will update VACOLS location dates and
+        # mess up ACD date logic.
+        task.update_columns(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
       end
     end
 
-    context "when a priority legacy case re-distribtution is attempted" do
+    context "when an illegit nonpriority legacy case re-distribtution is attempted" do
+      let(:case_id) { legacy_case.bfkey }
+      let(:legacy_case) { legacy_nonpriority_cases.first }
+
       before do
         @raven_called = false
         distribution = create(:distribution, judge: judge)
-        legacy_case = legacy_priority_cases.last
-        distribution.distributed_cases.create(
-          case_id: legacy_case.bfkey,
-          priority: true,
-          docket: "legacy",
-          ready_at: VacolsHelper.normalize_vacols_datetime(legacy_case.bfdloout),
-          docket_index: "123",
-          genpop: false,
-          genpop_query: "foobar"
-        )
+        # illegit because appeal has open tasks
+        create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
+        create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
         distribution.update!(status: "completed", completed_at: today)
         allow(Raven).to receive(:capture_exception) { @raven_called = true }
       end
 
-      it "does not create a duplicate distributed_case" do
+      it "does not create a duplicate distributed_case and sends alert" do
         subject.distribute!
         expect(subject.valid?).to eq(true)
         expect(subject.error?).to eq(false)
         expect(@raven_called).to eq(true)
+        expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
+      end
+    end
+
+    context "when a legit nonpriority legacy case re-distribtution is attempted" do
+      let(:case_id) { legacy_case.bfkey }
+      let(:legacy_case) { legacy_nonpriority_cases.first }
+      let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case) }
+
+      before do
+        @raven_called = false
+        distribution = create(:distribution, judge: judge)
+        cancel_relevant_legacy_appeal_tasks
+        create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
+        distribution.update!(status: "completed", completed_at: today)
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
+      it "renames existing case_id and does not create a duplicate distributed_case" do
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.error?).to eq(false)
+        expect(@raven_called).to eq(false)
+        expect(subject.distributed_cases.pluck(:case_id)).to include(case_id)
+        expect(DistributedCase.find_by(case_id: case_id)).to_not be_nil
+        expect(DistributedCase.find_by(case_id: original_distributed_case_id)).to_not be_nil
+      end
+    end
+
+    def create_priority_distributed_case(distribution, case_id, ready_at)
+      distribution.distributed_cases.create(
+        case_id: case_id,
+        priority: true,
+        docket: "legacy",
+        ready_at: VacolsHelper.normalize_vacols_datetime(ready_at),
+        docket_index: "123",
+        genpop: false,
+        genpop_query: "any"
+      )
+    end
+
+    context "when an illegit priority legacy case re-distribtution is attempted" do
+      let(:case_id) { legacy_case.bfkey }
+      let(:legacy_case) { legacy_priority_cases.last }
+
+      before do
+        @raven_called = false
+        distribution = create(:distribution, judge: judge)
+        # illegit because appeal has open tasks
+        create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
+        create_priority_distributed_case(distribution, case_id, legacy_case.bfdloout)
+        distribution.update!(status: "completed", completed_at: today)
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
+      it "does not create a duplicate distributed_case and sends alert" do
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.error?).to eq(false)
+        expect(@raven_called).to eq(true)
+        expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
+      end
+    end
+
+    context "when a legit priority legacy case re-distribtution is attempted" do
+      let(:case_id) { legacy_case.bfkey }
+      let(:legacy_case) { legacy_priority_cases.last }
+      let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case) }
+
+      before do
+        @raven_called = false
+        distribution = create(:distribution, judge: judge)
+        cancel_relevant_legacy_appeal_tasks
+        create_priority_distributed_case(distribution, case_id, legacy_case.bfdloout)
+        distribution.update!(status: "completed", completed_at: today)
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
+      it "renames existing case_id and does not create a duplicate distributed_case" do
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.error?).to eq(false)
+        expect(@raven_called).to eq(false)
+        expect(subject.distributed_cases.pluck(:case_id)).to include(case_id)
+        expect(DistributedCase.find_by(case_id: case_id)).to_not be_nil
+        expect(DistributedCase.find_by(case_id: original_distributed_case_id)).to_not be_nil
       end
     end
 

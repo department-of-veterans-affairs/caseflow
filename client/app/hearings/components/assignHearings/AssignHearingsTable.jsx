@@ -7,9 +7,6 @@ import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
 const tableNumberStyling = css({
   '& tr > td:first-child': {
     paddingRight: 0
-  },
-  '& td:nth-child(2)': {
-    paddingLeft: 0
   }
 });
 

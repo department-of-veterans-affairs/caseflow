@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe AppealsController, :all_dbs, type: :controller do
   include TaskHelpers
 
@@ -37,6 +34,19 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
           expect(response.status).to eq 200
           expect(response_body["appeals"].size).to eq 1
           expect(response_body["claim_reviews"].size).to eq 1
+        end
+      end
+
+      context "when request header contains Veteran file number but appeal is associated with veteran ssn" do
+        let!(:veteran) { create(:veteran, file_number: "000000000", ssn: ssn) }
+
+        it "returns valid response with one appeal" do
+          appeal
+          request.headers["HTTP_CASE_SEARCH"] = veteran.file_number
+          get :index, params: options
+          response_body = JSON.parse(response.body)
+          expect(response.status).to eq 200
+          expect(response_body["appeals"].size).to eq 1
         end
       end
 

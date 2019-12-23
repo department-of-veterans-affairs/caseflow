@@ -1,0 +1,126 @@
+body {
+  background-color: $color-white;
+}
+
+.cf-task-tree {
+  list-style-type: none;
+  margin: 0;
+  padding: 1em;
+  background-color: $color-white;
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+
+  }
+
+  .caret {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .caret::before {
+    content: '\25B6';
+    color: $color-black;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  .caret-down::before {
+    transform: rotate(90deg);
+  }
+
+  .nested {
+    display: none;
+
+    // tree connectors from https://two-wrongs.com/draw-a-tree-structure-with-only-css
+    ul,
+    li {
+      position: relative;
+      margin-bottom: 0;
+    }
+
+    li::before,
+    li::after {
+      content: '';
+      position: absolute;
+      left: -12px;
+    }
+
+    li::before {
+      border-top: 1px solid $color-black;
+      top: 9px;
+      width: 8px;
+      height: 0;
+    }
+
+    li::after {
+      border-left: 1px solid $color-black;
+      height: 100%;
+      width: 0;
+      top: 2px;
+    }
+
+    li:last-child::after {
+      height: 8px;
+      margin: 0;
+    }
+
+    .appeal-atts::before,
+    .appeal-atts::after {
+      border-left: 1px solid $color-black;
+      height: 100%;
+      width: 0;
+      top: 2px;
+    }
+  }
+
+  .active {
+    display: block;
+  }
+
+  .appeal-atts,
+  .task-atts {
+    padding: 0;
+    padding-bottom: 2em;
+  }
+
+  .appeal-name {
+    margin-bottom: 0;
+  }
+
+  .appeal-name,
+  .task-name {
+    font-weight: bold;
+  }
+
+  .veteran-name {
+    font-weight: normal;
+  }
+
+  dl {
+    font-size: 80%;
+    border: 1px solid $color-gray-light;
+    border-radius: 25px;
+    padding: 12px;
+    width: 500px;
+    margin: 0;
+
+    dt {
+      font-weight: bold;
+      float: left;
+      clear: left;
+      width: 150px;
+      text-align: right;
+    }
+
+    dt::after {
+      content: ':';
+    }
+
+    dd {
+      margin-left: 160px;
+      font-weight: normal;
+    }
+  }
+}

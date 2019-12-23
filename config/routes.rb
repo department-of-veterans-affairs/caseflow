@@ -36,6 +36,7 @@ Rails.application.routes.draw do
         resources :supplemental_claims, only: [:create, :show]
         resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
+        resources :contestable_issues, only: [:index]
       end
     end
     namespace :docs do
@@ -126,6 +127,8 @@ Rails.application.routes.draw do
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
+
+  get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
 
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
@@ -298,6 +301,7 @@ Rails.application.routes.draw do
     get code, :to => "errors#show", :status_code => code
   end
 
+  post "post_decision_motions/return", to: "post_decision_motions#return_to_lit_support"
   post "post_decision_motions", to: "post_decision_motions#create"
 
   # :nocov:

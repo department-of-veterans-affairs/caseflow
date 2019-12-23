@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   let(:judge_one) { Judge.new(create(:user, full_name: "Billie Daniel")) }
   let(:judge_two) { Judge.new(create(:user, full_name: "Joe Shmoe")) }
@@ -19,7 +16,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   before do
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney)
-      OrganizationsUser.add_user_to_organization(attorney, judge_one_team)
+      judge_one_team.add_user(attorney)
     end
 
     User.authenticate!(user: judge_one.user)

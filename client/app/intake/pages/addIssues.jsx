@@ -91,22 +91,31 @@ class AddIssuesPage extends React.Component {
     this.props.setIssueWithdrawalDate(value);
   };
 
+  editingClaimReview() {
+    const { formType, editPage } = this.props;
+
+    return (formType === 'higher_level_review' || formType === 'supplemental_claim') && editPage;
+  }
+
   willRedirect(intakeData, hasClearedEp) {
-    const { formType, featureToggles } = this.props;
+    const { formType, processedAt, featureToggles } = this.props;
     const { correctClaimReviews } = featureToggles;
 
     return (
       !formType ||
+      (this.editingClaimReview() && !processedAt) ||
       intakeData.isOutcoded ||
       (hasClearedEp && !correctClaimReviews)
     );
   }
 
   redirect(intakeData, hasClearedEp) {
-    const { formType } = this.props;
+    const { formType, processedAt } = this.props;
 
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
+    } else if (this.editingClaimReview() && !processedAt) {
+      return <Redirect to={PAGE_PATHS.NOT_EDITABLE} />;
     } else if (hasClearedEp) {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     } else if (intakeData.isOutcoded) {
@@ -280,6 +289,7 @@ class AddIssuesPage extends React.Component {
           <AddIssueManager
             intakeData={intakeData}
             formType={formType}
+            featureToggles={featureToggles}
             onComplete={() => {
               this.setState({ addingIssue: false });
             }}

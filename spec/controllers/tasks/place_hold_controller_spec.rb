@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.describe Tasks::PlaceHoldController, :postgres, type: :controller do
   describe "POST tasks/:id/place_hold" do
     let(:user) { create(:user) }
 
-    let(:parent) { create(:generic_task) }
+    let(:parent) { create(:ama_task) }
     let(:parent_id) { parent.id }
     let(:days_on_hold) { 30 }
     let(:instructions) { "Placing task on hold for 30 days" }
@@ -43,6 +40,28 @@ RSpec.describe Tasks::PlaceHoldController, :postgres, type: :controller do
         subject
 
         expect(response.status).to eq(404)
+      end
+    end
+
+    context "when the user is a VSO" do
+      let!(:user) { User.authenticate!(roles: ["VSO"]) }
+
+      it "fails" do
+        subject
+
+        expect(response.status).to eq(403)
+      end
+
+      context "when the task is an IHP task" do
+        let(:parent) { create(:informal_hearing_presentation_task) }
+
+        it "allows the task to be placed on hold" do
+          subject
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)["tasks"]["data"]
+          expect(response_body.length).to eq(2)
+        end
       end
     end
   end

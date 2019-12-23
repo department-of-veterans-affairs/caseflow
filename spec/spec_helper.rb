@@ -1,7 +1,15 @@
 # frozen_string_literal: true
 
 ENV["RAILS_ENV"] ||= "test"
-require "simplecov"
+if ENV["SINGLE_COV"]
+  # get coverage selectively in local dev
+  # add the line 'SingleCov.covered!' to the top of any *_spec.rb file to enable.
+  require "single_cov"
+  SingleCov.setup :rspec
+else
+  # default is aggregate via simplecov for CI
+  require "simplecov"
+end
 require File.expand_path("../config/environment", __dir__)
 require "rspec/rails"
 

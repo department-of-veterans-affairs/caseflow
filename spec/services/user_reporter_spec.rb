@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe UserReporter, :postgres do
   let!(:user_UC) { create(:user, css_id: "FOOBAR") }
 

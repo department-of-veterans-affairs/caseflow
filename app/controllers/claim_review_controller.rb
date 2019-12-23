@@ -4,7 +4,6 @@ class ClaimReviewController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
 
   EDIT_ERRORS = {
-    "ClaimReview::NotYetProcessed" => COPY::CLAIM_REVIEW_NOT_YET_PROCESSED_ERROR,
     "RequestIssue::MissingDecisionDate" => COPY::CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE,
     "StandardError" => COPY::CLAIM_REVIEW_EDIT_ERROR_DEFAULT
   }.freeze
@@ -70,15 +69,15 @@ class ClaimReviewController < ApplicationController
       set_flash_success_message
 
       render json: { redirect_to: claim_review.business_line.tasks_url,
-                     beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
-                     afterIssues: request_issues_update.after_issues.map(&:ui_hash),
-                     withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash) }
+                     beforeIssues: request_issues_update.before_issues.map(&:serialize),
+                     afterIssues: request_issues_update.after_issues.map(&:serialize),
+                     withdrawnIssues: request_issues_update.withdrawn_issues.map(&:serialize) }
     else
       render json: {
         redirect_to: nil,
-        beforeIssues: request_issues_update.before_issues.map(&:ui_hash),
-        afterIssues: request_issues_update.after_issues.map(&:ui_hash),
-        updatedIssues: request_issues_update.all_updated_issues.map(&:ui_hash),
+        beforeIssues: request_issues_update.before_issues.map(&:serialize),
+        afterIssues: request_issues_update.after_issues.map(&:serialize),
+        updatedIssues: request_issues_update.all_updated_issues.map(&:serialize),
         withdrawnIssues: nil
       }
     end

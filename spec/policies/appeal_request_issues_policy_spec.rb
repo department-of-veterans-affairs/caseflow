@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-
 describe AppealRequestIssuesPolicy, :postgres do
   describe "#editable?" do
     let(:appeal) { build_stubbed(:appeal) }
@@ -71,7 +69,7 @@ describe AppealRequestIssuesPolicy, :postgres do
       let(:user) { create(:user) }
 
       it "returns true" do
-        OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton)
+        BvaIntake.singleton.add_user(user)
         create(:task,
                type: "ColocatedTask",
                appeal: appeal,
@@ -86,7 +84,7 @@ describe AppealRequestIssuesPolicy, :postgres do
       let(:user) { create(:user) }
 
       it "returns false" do
-        OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton)
+        BvaIntake.singleton.add_user(user)
         create(:task,
                type: "AttorneyTask",
                appeal: appeal,
