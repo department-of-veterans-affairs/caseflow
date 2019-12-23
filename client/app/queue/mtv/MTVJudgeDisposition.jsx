@@ -87,9 +87,16 @@ export const MTVJudgeDisposition = ({
       vacate_type: vacateType
     };
 
+    // Ensure we pass selected issue IDs for partial grant
     if (issueIds.length) {
       result.vacated_decision_issue_ids = issueIds;
     }
+
+    // Select all issues if full grant
+    if (disposition === 'granted') {
+      result.vacated_decision_issue_ids = appeal.decisionIssues.map((issue) => issue.id);
+    }
+
     if (attorneyId) {
       result.assigned_to_id = attorneyId;
     }
