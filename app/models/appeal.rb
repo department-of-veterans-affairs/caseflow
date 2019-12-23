@@ -221,7 +221,7 @@ class Appeal < DecisionReview
            :date_of_birth,
            :age,
            :available_hearing_locations,
-           :email_address
+           :email_address,
            :country, to: :veteran, prefix: true
 
   def veteran_if_exists
