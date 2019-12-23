@@ -241,7 +241,7 @@ class Veteran < ApplicationRecord
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil?)
+    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? || self[:email_address].nil?)
     is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
     is_stale
   end
