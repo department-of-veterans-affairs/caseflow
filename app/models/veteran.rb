@@ -54,7 +54,7 @@ class Veteran < ApplicationRecord
     name_suffix: :name_suffix,
     ssn: :ssn,
     participant_id: :ptcpnt_id,
-    email_address: :email_address,
+    email_address: :email_address
   }.freeze
 
   # TODO: get middle initial from BGS
@@ -238,10 +238,15 @@ class Veteran < ApplicationRecord
     raise response.error # rubocop:disable Style/SignalException
   end
 
+  def is_stale?
+    (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
+      self[:email_address].nil?)
+  end
+
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? || self[:email_address].nil?)
+    is_stale = is_stale?
     is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
     is_stale
   end

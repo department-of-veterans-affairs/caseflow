@@ -221,6 +221,7 @@ class Appeal < DecisionReview
            :date_of_birth,
            :age,
            :available_hearing_locations,
+           :email_address
            :country, to: :veteran, prefix: true
 
   def veteran_if_exists
@@ -371,10 +372,6 @@ class Appeal < DecisionReview
         zip: appellant.zip
       )
     end
-  end
-
-  def veteran_email_address
-    veteran&.email_address
   end
 
   # we always want to show ratings on intake
