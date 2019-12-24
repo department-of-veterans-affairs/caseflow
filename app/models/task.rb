@@ -519,11 +519,18 @@ class Task < ApplicationRecord
 
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
+    # it would be better if we could allow the callbacks to happen sanely
     descendant_ids = descendants.pluck(:id)
-    Task.open.where(id: descendant_ids).update_all(
+
+    # by avoiding callbacks, we aren't saving PaperTrail versions
+    # Manually save the state before and after.
+    tasks = Task.open.where(id: descendant_ids)
+    tasks.each { |task| task.paper_trail.save_with_version }
+    tasks.update_all(
       status: Constants.TASK_STATUSES.cancelled,
       closed_at: Time.zone.now
     )
+    tasks.each { |task| task.paper_trail.save_with_version }
   end
 
   def timeline_title
