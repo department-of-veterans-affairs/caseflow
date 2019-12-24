@@ -47,7 +47,7 @@ RSpec.describe PostDecisionMotion, type: :model do
 
     it "creates a request issue for every selected decision issue" do
       expect(appeal.request_issues.length).to eq 0
-      post_decision_motion.create_request_issues
+      post_decision_motion.create_request_issues_for_vacature
       appeal.reload
       expect(appeal.request_issues.length).to eq 3
     end

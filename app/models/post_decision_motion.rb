@@ -29,9 +29,8 @@ class PostDecisionMotion < ApplicationRecord
     DecisionIssue.find(vacated_decision_issue_ids)
   end
 
-  def create_request_issues
-    vacated_decision_issue_ids.map do |decision_issue_id|
-      prev_decision_issue = DecisionIssue.find(decision_issue_id)
+  def create_request_issues_for_vacature
+    vacated_issues.map do |prev_decision_issue|
       RequestIssue.create!(
         decision_review: prev_decision_issue.decision_review,
         decision_review_type: prev_decision_issue.decision_review_type,
@@ -41,7 +40,8 @@ class PostDecisionMotion < ApplicationRecord
         contested_issue_description: prev_decision_issue.description,
         nonrating_issue_category: prev_decision_issue.nonrating_issue_category,
         benefit_type: prev_decision_issue.benefit_type,
-        decision_date: prev_decision_issue.caseflow_decision_date
+        decision_date: prev_decision_issue.caseflow_decision_date,
+        veteran_participant_id: task.appeal.veteran.participant_id
       )
     end
   end
