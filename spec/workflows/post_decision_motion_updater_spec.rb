@@ -122,7 +122,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
         it "saves all decision issue IDs for full grant" do
           subject.process
           motion = PostDecisionMotion.first
-  
+
           expect(motion.vacated_decision_issue_ids.length).to eq(appeal.decision_issues.length)
           expect(motion.vacated_decision_issue_ids).to include(*appeal.decision_issues.map(&:id))
         end
