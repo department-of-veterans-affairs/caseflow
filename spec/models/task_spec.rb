@@ -274,8 +274,12 @@ describe Task, :all_dbs do
     let!(:second_level_tasks) { create_list(:task, 2, appeal: appeal, parent: top_level_task) }
     let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
 
-    it "cancels all tasks and child subtasks" do
+    fit "cancels all tasks and child subtasks" do
+      initial_versions = second_level_tasks[0].versions.count
+
       top_level_task.reload.cancel_task_and_child_subtasks
+
+      expect(second_level_tasks[0].versions.count).to eq(initial_versions + 2)
 
       [top_level_task, *second_level_tasks, *third_level_task].each do |task|
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
