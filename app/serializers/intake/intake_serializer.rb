@@ -23,4 +23,8 @@ class Intake::IntakeSerializer
   attribute :relationships do |object|
     object.veteran&.relationships&.map(&:serialize)
   end
+
+  attribute :detail do |object|
+    object.detail&.ui_hash
+  end
 end

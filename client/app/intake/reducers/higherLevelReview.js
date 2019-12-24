@@ -19,55 +19,56 @@ const updateFromServerIntake = (state, serverIntake) => {
   }
 
   const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
+  const detail = serverIntake.detail;
 
   return update(state, {
     isStarted: {
-      $set: Boolean(serverIntake.id)
+      $set: Boolean(detail.id)
     },
     informalConference: {
-      $set: serverIntake.informalConference
+      $set: detail.informalConference
     },
     sameOffice: {
-      $set: serverIntake.sameOffice
+      $set: detail.sameOffice
     },
     receiptDate: {
-      $set: serverIntake.receiptDate
+      $set: detail.receiptDate
     },
     benefitType: {
-      $set: serverIntake.benefitType
+      $set: detail.benefitType
     },
     veteranIsNotClaimant: {
-      $set: serverIntake.veteranIsNotClaimant
+      $set: detail.veteranIsNotClaimant
     },
     claimant: {
-      $set: serverIntake.veteranIsNotClaimant ? serverIntake.claimant : null
+      $set: detail.veteranIsNotClaimant ? detail.claimant : null
     },
     payeeCode: {
-      $set: serverIntake.payeeCode
+      $set: detail.payeeCode
     },
     processedInCaseflow: {
-      $set: serverIntake.processed_in_caseflow
+      $set: detail.processedInCaseflow
     },
     legacyOptInApproved: {
-      $set: serverIntake.legacyOptInApproved
+      $set: detail.legacyOptInApproved
     },
     legacyAppeals: {
-      $set: serverIntake.legacyAppeals
+      $set: detail.legacyAppeals
     },
     isReviewed: {
-      $set: Boolean(serverIntake.receipt_date)
+      $set: Boolean(detail.receiptDate)
     },
     contestableIssues: {
       $set: contestableIssues
     },
     activeNonratingRequestIssues: {
-      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
+      $set: formatRequestIssues(detail.activeNonratingRequestIssues)
     },
     requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
+      $set: formatRequestIssues(detail.requestIssues, contestableIssues)
     },
     isComplete: {
-      $set: Boolean(serverIntake.completed_at)
+      $set: Boolean(serverIntake.completedAt)
     },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
@@ -86,8 +87,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     veteranInvalidFields: {
       $set: {
-        veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
-        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
+        veteranMissingFields: _.join(detail.veteranInvalidFields.veteran_missing_fields, ', '),
+        veteranAddressTooLong: detail.veteranInvalidFields.veteran_address_too_long
       }
     }
   });

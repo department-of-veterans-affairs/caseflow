@@ -9,29 +9,29 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.id
     },
     formType: {
-      $set: serverIntake.form_type
+      $set: serverIntake.formType
     },
     asyncJobUrl: {
-      $set: serverIntake.async_job_url
+      $set: serverIntake.asyncJobUrl
     },
     detailEditUrl: {
       $set: serverIntake.detailEditUrl
     },
     unreadMessages: {
-      $set: serverIntake.unread_messages
+      $set: serverIntake.unreadMessages
     },
     veteran: {
       name: {
-        $set: serverIntake.veteran_name
+        $set: serverIntake.veteranName
       },
       formName: {
-        $set: serverIntake.veteran_form_name
+        $set: serverIntake.veteranFormName
       },
       fileNumber: {
-        $set: serverIntake.veteran_file_number
+        $set: serverIntake.veteranFileNumber
       },
       isDeceased: {
-        $set: serverIntake.veteran_is_deceased
+        $set: serverIntake.veteranIsDeceased
       }
     }
   });

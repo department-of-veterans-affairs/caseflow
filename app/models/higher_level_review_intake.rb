@@ -8,7 +8,8 @@ class HigherLevelReviewIntake < ClaimReviewIntake
   end
 
   def ui_hash
-    Intake::HigherLevelReviewIntakeSerializer.new(self).serializable_hash[:data][:attributes]
+    # binding.pry
+    Intake::IntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   private
