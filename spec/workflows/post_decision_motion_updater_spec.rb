@@ -9,6 +9,15 @@ describe PostDecisionMotionUpdater, :all_dbs do
   end
   let(:motions_atty) { create(:user, full_name: "Motions attorney") }
   let(:appeal) { create(:appeal) }
+  let(:orig_decision_issues) do
+    Array.new(3) do
+      create(
+        :decision_issue,
+        decision_review: appeal,
+        disposition: "denied"
+      )
+    end
+  end
   let(:mtv_mail_task) { create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_atty) }
   let(:task) { create(:judge_address_motion_to_vacate_task, :in_progress, parent: mtv_mail_task, assigned_to: judge) }
   let(:vacate_type) { nil }
@@ -108,6 +117,14 @@ describe PostDecisionMotionUpdater, :all_dbs do
           org_task.reload
 
           expect(org_task.status).to eq Constants.TASK_STATUSES.completed
+        end
+
+        it "saves all decision issue IDs for full grant" do
+          subject.process
+          motion = PostDecisionMotion.first
+  
+          expect(motion.vacated_decision_issue_ids.length).to eq(appeal.decision_issues.length)
+          expect(motion.vacated_decision_issue_ids).to include(*appeal.decision_issues.map(&:id))
         end
       end
 
