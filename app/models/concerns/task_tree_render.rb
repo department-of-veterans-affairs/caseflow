@@ -175,9 +175,9 @@ module TaskTreeRender
       end
     end
 
-    def send_chain(obj, arr)
-      arr.inject(obj) do |o, a|
-        o.respond_to?(a) ? o.send(a) : nil
+    def send_chain(initial_obj, methods)
+      methods.inject(initial_obj) do |obj, method|
+        obj.respond_to?(method) ? obj.send(method) : nil
       end
     end
   end
@@ -233,7 +233,7 @@ module TaskTreeRender
   def write_divider(columns, col_seps = "+-|+")
     dash = col_seps[1]
     margin = dash * @@config[:cell_margin_char].size
-    col_border = columns.map { |_, g| dash * g[:width] }.join(margin + col_seps[2] + margin)
+    col_border = columns.map { |_, col| dash * col[:width] }.join(margin + col_seps[2] + margin)
     col_seps[0] + margin + col_border + margin + col_seps[3]
   end
 end
