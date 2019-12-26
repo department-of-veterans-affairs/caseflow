@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module TaskTreeRender
-  # extend ActiveSupport::Concern
+  #extend ActiveSupport::Concern
 
   mattr_accessor :config
-  @@config = {
+  self.config = {
     include_border: true,
     col_sep: "│",
     top_chars: "┌──┐",
@@ -37,29 +37,29 @@ module TaskTreeRender
   }
 
   def self.ansi
-    @@config[:include_border] = true
-    @@config[:col_sep] = "│"
-    @@config[:top_chars] = "┌──┐"
-    @@config[:bottom_chars] = "└──┘"
-    @@config[:heading_fill_char] = "─"
-    @@config
+    config[:include_border] = true
+    config[:col_sep] = "│"
+    config[:top_chars] = "┌──┐"
+    config[:bottom_chars] = "└──┘"
+    config[:heading_fill_char] = "─"
+    config
   end
 
   def self.ascii
-    @@config[:include_border] = true
-    @@config[:col_sep] = "|"
-    @@config[:top_chars] = "+--+"
-    @@config[:bottom_chars] = "+--+"
-    @@config[:heading_fill_char] = "-"
-    @@config
+    config[:include_border] = true
+    config[:col_sep] = "|"
+    config[:top_chars] = "+--+"
+    config[:bottom_chars] = "+--+"
+    config[:heading_fill_char] = "-"
+    config
   end
 
   def self.compact
-    @@config[:include_border] = false
-    @@config[:col_sep] = " "
-    @@config[:heading_fill_char] = "-"
-    @@config[:cell_margin_char] = ""
-    @@config
+    config[:include_border] = false
+    config[:col_sep] = " "
+    config[:heading_fill_char] = "-"
+    config[:cell_margin_char] = ""
+    config
   end
 
   def tree_ex1
@@ -78,7 +78,7 @@ module TaskTreeRender
   end
 
   def tree(*atts, user_func_hash: {}, col_labels: nil)
-    atts = @@config[:default_atts] unless atts.any?
+    atts = config[:default_atts] unless atts.any?
     col_keys = atts.map(&:to_s)
 
     # Create func_hash based on atts
@@ -100,8 +100,8 @@ module TaskTreeRender
       end
     else
       col_metadata.each do |key, col_obj|
-        transformer = @@config[:heading_transform_funcs_hash][@@config[:heading_transform]]
-        puts "Unknown heading transform: #{@@config[:heading_transform]}" unless transformer
+        transformer = config[:heading_transform_funcs_hash][config[:heading_transform]]
+        puts "Unknown heading transform: #{config[:heading_transform]}" unless transformer
         col_obj[:label] = transformer.call(key, col_obj)
       end
     end
@@ -118,7 +118,7 @@ module TaskTreeRender
     ts = tree_structure(col_metadata, rows, max_name_length, 0)
     table = (heading&.concat("\n") || "") + TTY::Tree.new(ts).render
 
-    if @@config[:include_border]
+    if config[:include_border]
       top_border(max_name_length, col_metadata) + "\n" +
         table + bottom_border(max_name_length, col_metadata)
     else
@@ -146,17 +146,17 @@ module TaskTreeRender
 
   def appeal_heading(_appeal_id, columns, max_name_length)
     # print appeal row: appeal_label followed by column headers
-    appeal_label = eval_appeal_label.ljust(max_name_length, @@config[:heading_fill_char])
-    "#{appeal_label} " + @@config[:col_sep] + @@config[:cell_margin_char] +
+    appeal_label = eval_appeal_label.ljust(max_name_length, config[:heading_fill_char])
+    "#{appeal_label} " + config[:col_sep] + config[:cell_margin_char] +
       columns.map do |key, _col_obj|
         value = columns[key][:label]
         value.ljust(columns[key][:width])
-      end.compact.join(@@config[:cell_margin_char] + @@config[:col_sep] + @@config[:cell_margin_char]) +
-      @@config[:cell_margin_char] + @@config[:col_sep]
+      end.compact.join(config[:cell_margin_char] + config[:col_sep] + config[:cell_margin_char]) +
+      config[:cell_margin_char] + config[:col_sep]
   end
 
   def eval_appeal_label
-    eval('"' + @@config[:appeal_label_template] + '"')
+    eval('"' + config[:appeal_label_template] + '"')
   end
 
   class << self
@@ -167,8 +167,8 @@ module TaskTreeRender
           obj[att.to_s] = ->(task) { send_chain(task, att)&.to_s || "" }
         elsif att == " "
           obj[" "] = ->(task) { (task == highlight_obj) ? "*" : " " }
-        elsif @@config[:builtin_value_funcs_hash][att]
-          obj[att.to_s] = @@config[:builtin_value_funcs_hash][att]
+        elsif config[:builtin_value_funcs_hash][att]
+          obj[att.to_s] = config[:builtin_value_funcs_hash][att]
         else
           obj[att.to_s] = ->(task) { task.send(att)&.to_s || "" }
         end
@@ -213,26 +213,26 @@ module TaskTreeRender
   end
 
   def tree_task_attributes(columns, row)
-    @@config[:col_sep] + @@config[:cell_margin_char] +
+    config[:col_sep] + config[:cell_margin_char] +
       columns.map do |key, _col_obj|
         value = row[key]
         value = "" if value.nil?
         value.ljust(columns[key][:width])
-      end.compact.join(@@config[:cell_margin_char] + @@config[:col_sep] + @@config[:cell_margin_char]) +
-      @@config[:cell_margin_char] + @@config[:col_sep]
+      end.compact.join(config[:cell_margin_char] + config[:col_sep] + config[:cell_margin_char]) +
+      config[:cell_margin_char] + config[:col_sep]
   end
 
   def top_border(max_name_length, col_metadata)
-    "".ljust(max_name_length) + " " + write_divider(col_metadata, @@config[:top_chars])
+    "".ljust(max_name_length) + " " + write_divider(col_metadata, config[:top_chars])
   end
 
   def bottom_border(max_name_length, col_metadata)
-    "".ljust(max_name_length) + " " + write_divider(col_metadata, @@config[:bottom_chars])
+    "".ljust(max_name_length) + " " + write_divider(col_metadata, config[:bottom_chars])
   end
 
   def write_divider(columns, col_seps = "+-|+")
     dash = col_seps[1]
-    margin = dash * @@config[:cell_margin_char].size
+    margin = dash * config[:cell_margin_char].size
     col_border = columns.map { |_, col| dash * col[:width] }.join(margin + col_seps[2] + margin)
     col_seps[0] + margin + col_border + margin + col_seps[3]
   end
