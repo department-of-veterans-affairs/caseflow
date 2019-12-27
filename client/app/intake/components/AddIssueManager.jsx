@@ -154,6 +154,7 @@ class AddIssueManager extends React.Component {
       props: {
         intakeData,
         formType,
+        // featureToggles
         submitText: this.requiresUntimelyExemption() ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSubmit: ({ vacolsId, vacolsSequenceId, eligibleForSocOptIn }) => {

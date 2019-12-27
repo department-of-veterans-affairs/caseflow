@@ -146,6 +146,7 @@ class LegacyOptInModal extends React.Component {
 
   render() {
     const { intakeData, onCancel } = this.props;
+    // const { verifyUnidentifiedIssue } = featureToggles;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 

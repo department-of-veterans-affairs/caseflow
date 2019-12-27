@@ -1257,7 +1257,7 @@ feature "Higher-Level Review", :all_dbs do
         scenario "adding issues" do
           start_higher_level_review(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
-
+           
           click_intake_add_issue
           expect(page).to have_content("Next")
           add_intake_rating_issue(/Left knee granted$/)
@@ -1272,6 +1272,12 @@ feature "Higher-Level Review", :all_dbs do
           expect(page).to have_content(
             "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
           )
+          
+          # Expect unidentified issue modal for unidentified issue
+          # click_intake_add_issue
+          # add_intake_rating_issue("Untimely rating issue 1")
+          # add_intake_rating_issue("None of these match")
+          # add_untimely_exemption_response("Yes")
 
           # Expect untimely exemption modal for untimely issue
           click_intake_add_issue

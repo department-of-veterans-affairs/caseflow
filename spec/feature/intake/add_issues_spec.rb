@@ -218,7 +218,7 @@ feature "Intake Add Issues Page", :all_dbs do
       visit "/intake"
       click_intake_continue
       expect(page).to have_current_path("/intake/add_issues")
-
+      
       click_intake_add_issue
       click_intake_no_matching_issues
       expect(page).to have_content("Decision date")
