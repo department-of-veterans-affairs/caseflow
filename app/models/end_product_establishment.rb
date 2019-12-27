@@ -297,7 +297,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def on_decision_issue_sync_processed
-    return unless request_issues.all? { |i| i.closed? || i.processed? }
+    return unless request_issues.all? { |issue| issue.closed? || issue.processed? }
 
     source.on_decision_issues_sync_processed
   end

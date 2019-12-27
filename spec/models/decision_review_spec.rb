@@ -163,6 +163,8 @@ describe DecisionReview, :postgres do
         vbms_remand = remanded_supplemental_claims.find_by(benefit_type: "compensation")
         epe = vbms_remand.end_product_establishments.first.reload
 
+        expect(vbms_remand.processed?).to be true
+
         expect { subject }.to_not change(remanded_supplemental_claims, :count)
 
         expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
