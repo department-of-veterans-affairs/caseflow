@@ -117,8 +117,7 @@ class SupplementalClaim < ClaimReview
         contested_issue_description: remand_decision_issue.description,
         nonrating_issue_category: remand_decision_issue.nonrating_issue_category,
         benefit_type: benefit_type,
-        decision_date: remand_decision_issue.approx_decision_date,
-        veteran_participant_id: veteran.participant_id
+        decision_date: remand_decision_issue.approx_decision_date
       )
     end
   end

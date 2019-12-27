@@ -77,69 +77,6 @@ describe Appeal, :all_dbs do
     end
   end
 
-  context "#create_remand_supplemental_claims!" do
-    before { setup_prior_claim_with_payee_code(appeal, veteran) }
-
-    let(:veteran) { create(:veteran) }
-    let(:appeal) do
-      create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
-    end
-
-    subject { appeal.create_remand_supplemental_claims! }
-
-    let!(:remanded_decision_issue) do
-      create(
-        :decision_issue,
-        decision_review: appeal,
-        disposition: "remanded",
-        benefit_type: "compensation",
-        caseflow_decision_date: decision_date
-      )
-    end
-
-    let!(:remanded_decision_issue_processed_in_caseflow) do
-      create(
-        :decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca",
-                         caseflow_decision_date: decision_date
-      )
-    end
-
-    let(:decision_date) { 10.days.ago }
-    let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: appeal) }
-
-    let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
-
-    it "creates supplemental claim, request issues, and starts processing" do
-      subject
-
-      remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)
-
-      expect(remanded_supplemental_claims.count).to eq(2)
-
-      vbms_remand = remanded_supplemental_claims.find_by(benefit_type: "compensation")
-      expect(vbms_remand).to have_attributes(
-        receipt_date: decision_date.to_date
-      )
-      expect(vbms_remand.request_issues.count).to eq(1)
-      expect(vbms_remand.request_issues.first).to have_attributes(
-        contested_decision_issue: remanded_decision_issue
-      )
-      expect(vbms_remand.end_product_establishments.first).to be_committed
-      expect(vbms_remand.tasks).to be_empty
-
-      caseflow_remand = remanded_supplemental_claims.find_by(benefit_type: "nca")
-      expect(caseflow_remand).to have_attributes(
-        receipt_date: decision_date.to_date
-      )
-      expect(caseflow_remand.request_issues.count).to eq(1)
-      expect(caseflow_remand.request_issues.first).to have_attributes(
-        contested_decision_issue: remanded_decision_issue_processed_in_caseflow
-      )
-      expect(caseflow_remand.end_product_establishments).to be_empty
-      expect(caseflow_remand.tasks.first).to have_attributes(assigned_to: BusinessLine.find_by(url: "nca"))
-    end
-  end
-
   context "#document_fetcher" do
     let(:veteran_file_number) { "64205050" }
     let(:appeal) do

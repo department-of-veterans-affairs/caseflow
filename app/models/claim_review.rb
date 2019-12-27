@@ -276,7 +276,7 @@ class ClaimReview < DecisionReview
   end
 
   def create_decision_review_task!
-    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) }
+    return if tasks.open.any? { |task| task.is_a?(DecisionReviewTask) }
     return if request_issues.active.empty?
 
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
