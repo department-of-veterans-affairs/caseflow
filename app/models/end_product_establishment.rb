@@ -296,10 +296,10 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def on_decision_issue_sync_processed(processing_request_issue)
-    if decision_issues_sync_complete?(processing_request_issue)
-      source.on_decision_issues_sync_processed
-    end
+  def on_decision_issue_sync_processed
+    return unless request_issues.all? { |i| i.closed? || i.processed? }
+
+    source.on_decision_issues_sync_processed
   end
 
   def status
@@ -358,11 +358,6 @@ class EndProductEstablishment < ApplicationRecord
 
   def all_contention_records
     source.all_contention_records(self)
-  end
-
-  def decision_issues_sync_complete?(processing_request_issue)
-    other_request_issues = request_issues.all.reject { |i| i.id == processing_request_issue.id }
-    other_request_issues.all? { |i| i.closed? || i.processed? }
   end
 
   def potential_decision_ratings

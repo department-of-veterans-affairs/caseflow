@@ -1071,7 +1071,7 @@ describe EndProductEstablishment, :postgres do
   end
 
   context "#on_decision_issue_sync_processed" do
-    subject { end_product_establishment.on_decision_issue_sync_processed(processing_request_issue) }
+    subject { end_product_establishment.on_decision_issue_sync_processed }
     let(:processed_at) { Time.zone.now }
 
     let(:processing_request_issue) do
