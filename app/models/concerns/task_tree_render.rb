@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
+# See instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 module TaskTreeRender
-  #extend ActiveSupport::Concern
 
-  mattr_accessor :config
-  self.config = {
+  mattr_accessor :treeconfig
+  self.treeconfig = {
     include_border: true,
     col_sep: "│",
     top_chars: "┌──┐",
     bottom_chars: "└──┘",
     heading_fill_char: "─",
     cell_margin_char: " ",
-    appeal_label_template: 'Appeal #{id} (#{' \
+    appeal_label_template: '#{self.class.name} #{id} (#{' \
                            "(defined?(docket_type) && docket_type) ||" \
                            "(defined?(docket_name) && docket_name)" \
                            "}) ",
@@ -22,7 +22,7 @@ module TaskTreeRender
       upcase_headings: ->(key, _col_obj) { key.upcase },
       clipped_upcase_headings: ->(key, col_obj) { key[0..[0, col_obj[:width] - 1].max].upcase }
     },
-    builtin_value_funcs_hash: {
+    value_funcs_hash: {
       ASGN_BY: lambda { |task|
         send_chain(task, [:assigned_by, :type])&.to_s ||
           send_chain(task, [:assigned_by, :name])&.to_s ||
@@ -37,53 +37,40 @@ module TaskTreeRender
   }
 
   def self.ansi
-    config[:include_border] = true
-    config[:col_sep] = "│"
-    config[:top_chars] = "┌──┐"
-    config[:bottom_chars] = "└──┘"
-    config[:heading_fill_char] = "─"
-    config
+    treeconfig[:include_border] = true
+    treeconfig[:col_sep] = "│"
+    treeconfig[:top_chars] = "┌──┐"
+    treeconfig[:bottom_chars] = "└──┘"
+    treeconfig[:heading_fill_char] = "─"
+    treeconfig[:cell_margin_char] = " "
+    treeconfig
   end
 
   def self.ascii
-    config[:include_border] = true
-    config[:col_sep] = "|"
-    config[:top_chars] = "+--+"
-    config[:bottom_chars] = "+--+"
-    config[:heading_fill_char] = "-"
-    config
+    treeconfig[:include_border] = true
+    treeconfig[:col_sep] = "|"
+    treeconfig[:top_chars] = "+--+"
+    treeconfig[:bottom_chars] = "+--+"
+    treeconfig[:heading_fill_char] = "-"
+    treeconfig[:cell_margin_char] = " "
+    treeconfig
   end
 
   def self.compact
-    config[:include_border] = false
-    config[:col_sep] = " "
-    config[:heading_fill_char] = "-"
-    config[:cell_margin_char] = ""
-    config
+    treeconfig[:include_border] = false
+    treeconfig[:col_sep] = " "
+    treeconfig[:heading_fill_char] = " "
+    treeconfig[:cell_margin_char] = ""
+    treeconfig
   end
 
-  def tree_ex1
-    tree(:id, :status, :assigned_to_type, "ASGN_TO_TYPE", :ASGN_BY, :ASGN_TO,
-         user_func_hash: {
-           "ASGN_TO_TYPE" => ->(task) { TaskTreeRender.send_chain(task, [:assigned_to, :type])&.to_s || "" }
-         })
-  end
-
-  # puts Appeal.find(3).tree
-  # puts Task.find(8).tree
-  def tree_ex2
-    atts = [:id, :status, :assigned_to_type, :parent_id, [:assigned_to, :type], :created_at, :updated_at]
-    col_labels = ["\#", "Status", "Assign2Type", "P_ID", "ASGN_TO", "Created", "Updated"]
-    tree(*atts, col_labels: col_labels)
-  end
-
-  def tree(*atts, user_func_hash: {}, col_labels: nil)
-    atts = config[:default_atts] unless atts.any?
+  def tree(*atts, col_labels: nil)
+    atts = treeconfig[:default_atts] unless atts.any?
     col_keys = atts.map(&:to_s)
 
     # Create func_hash based on atts
     # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
-    func_hash = TaskTreeRender.value_funcs_hash(atts, self).merge(user_func_hash)
+    func_hash = TaskTreeRender.derive_value_funcs_hash(atts, self)
 
     # Use func_hash to populate rows hash with same keys as func_hash
     # rows={ task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
@@ -100,8 +87,8 @@ module TaskTreeRender
       end
     else
       col_metadata.each do |key, col_obj|
-        transformer = config[:heading_transform_funcs_hash][config[:heading_transform]]
-        puts "Unknown heading transform: #{config[:heading_transform]}" unless transformer
+        transformer = treeconfig[:heading_transform_funcs_hash][treeconfig[:heading_transform]]
+        puts "Unknown heading transform: #{treeconfig[:heading_transform]}" unless transformer
         col_obj[:label] = transformer.call(key, col_obj)
       end
     end
@@ -118,15 +105,13 @@ module TaskTreeRender
     ts = tree_structure(col_metadata, rows, max_name_length, 0)
     table = (heading&.concat("\n") || "") + TTY::Tree.new(ts).render
 
-    if config[:include_border]
+    if treeconfig[:include_border]
       top_border(max_name_length, col_metadata) + "\n" +
         table + bottom_border(max_name_length, col_metadata)
     else
       table
     end
   end
-
-  INDENT_SIZE = 4
 
   def calculate_max_name_length(max_name_length = 0, depth = 0)
     max_name_length = [max_name_length, (INDENT_SIZE * depth) + self.class.name.length].max
@@ -146,29 +131,30 @@ module TaskTreeRender
 
   def appeal_heading(_appeal_id, columns, max_name_length)
     # print appeal row: appeal_label followed by column headers
-    appeal_label = eval_appeal_label.ljust(max_name_length, config[:heading_fill_char])
-    "#{appeal_label} " + config[:col_sep] + config[:cell_margin_char] +
+    appeal_label = eval_appeal_label.ljust(max_name_length, treeconfig[:heading_fill_char])
+    col_seperator_with_margins = treeconfig[:cell_margin_char] + treeconfig[:col_sep] + treeconfig[:cell_margin_char]
+    "#{appeal_label} " + treeconfig[:col_sep] + treeconfig[:cell_margin_char] +
       columns.map do |key, _col_obj|
         value = columns[key][:label]
         value.ljust(columns[key][:width])
-      end.compact.join(config[:cell_margin_char] + config[:col_sep] + config[:cell_margin_char]) +
-      config[:cell_margin_char] + config[:col_sep]
+      end.compact.join(col_seperator_with_margins) +
+      treeconfig[:cell_margin_char] + treeconfig[:col_sep]
   end
 
   def eval_appeal_label
-    eval('"' + config[:appeal_label_template] + '"')
+    eval('"' + treeconfig[:appeal_label_template] + '"')
   end
 
   class << self
-    # hash of lambdas that return string of cell value
-    def value_funcs_hash(atts, highlight_obj = nil)
+    # hash of lambdas that return string of the cell value
+    def derive_value_funcs_hash(atts, highlight_obj = nil)
       atts.each_with_object({}) do |att, obj|
         if att.is_a?(Array)
           obj[att.to_s] = ->(task) { send_chain(task, att)&.to_s || "" }
         elsif att == " "
           obj[" "] = ->(task) { (task == highlight_obj) ? "*" : " " }
-        elsif config[:builtin_value_funcs_hash][att]
-          obj[att.to_s] = config[:builtin_value_funcs_hash][att]
+        elsif treeconfig[:value_funcs_hash][att]
+          obj[att.to_s] = treeconfig[:value_funcs_hash][att]
         else
           obj[att.to_s] = ->(task) { task.send(att)&.to_s || "" }
         end
@@ -184,6 +170,8 @@ module TaskTreeRender
 
   private
 
+  INDENT_SIZE = 4
+
   def build_rows_from(tasklist, func_hash)
     tasklist.compact.each_with_object({}) do |task, rows_obj|
       rows_obj[task] = func_hash.each_with_object({}) do |(col_key, func), obj|
@@ -198,7 +186,7 @@ module TaskTreeRender
         row[key]&.size
       end.compact.max
       obj[key] = {
-        width: max_value_size
+        width: max_value_size || 0
       }
     end
   end
@@ -213,27 +201,28 @@ module TaskTreeRender
   end
 
   def tree_task_attributes(columns, row)
-    config[:col_sep] + config[:cell_margin_char] +
-      columns.map do |key, _col_obj|
-        value = row[key]
-        value = "" if value.nil?
-        value.ljust(columns[key][:width])
-      end.compact.join(config[:cell_margin_char] + config[:col_sep] + config[:cell_margin_char]) +
-      config[:cell_margin_char] + config[:col_sep]
+    col_seperator_with_margins = treeconfig[:cell_margin_char] + treeconfig[:col_sep] + treeconfig[:cell_margin_char]
+    cols_str=columns.map do |key, _col_obj|
+      value = row[key]
+      value = "" if value.nil?
+      value.ljust(columns[key][:width])
+    end.compact.join(col_seperator_with_margins)
+    treeconfig[:col_sep] + treeconfig[:cell_margin_char] + cols_str +
+      treeconfig[:cell_margin_char] + treeconfig[:col_sep]
   end
 
   def top_border(max_name_length, col_metadata)
-    "".ljust(max_name_length) + " " + write_divider(col_metadata, config[:top_chars])
+    "".ljust(max_name_length) + " " + write_divider(col_metadata, treeconfig[:top_chars])
   end
 
   def bottom_border(max_name_length, col_metadata)
-    "".ljust(max_name_length) + " " + write_divider(col_metadata, config[:bottom_chars])
+    "".ljust(max_name_length) + " " + write_divider(col_metadata, treeconfig[:bottom_chars])
   end
 
-  def write_divider(columns, col_seps = "+-|+")
-    dash = col_seps[1]
-    margin = dash * config[:cell_margin_char].size
-    col_border = columns.map { |_, col| dash * col[:width] }.join(margin + col_seps[2] + margin)
-    col_seps[0] + margin + col_border + margin + col_seps[3]
+  def write_divider(columns, border_chars = "+-|+")
+    dash = border_chars[1]
+    margin = dash * treeconfig[:cell_margin_char].size
+    col_border = columns.map { |_, col| dash * col[:width] }.join(margin + border_chars[2] + margin)
+    border_chars[0] + margin + col_border + margin + border_chars[3]
   end
 end
