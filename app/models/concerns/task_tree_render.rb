@@ -2,7 +2,6 @@
 
 # See instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 module TaskTreeRender
-
   mattr_accessor :treeconfig
   self.treeconfig = {
     include_border: true,
@@ -66,21 +65,14 @@ module TaskTreeRender
 
   def tree(*atts, col_labels: nil)
     atts = treeconfig[:default_atts] unless atts.any?
+    # rows_hash = { task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
+    rows_hash = build_rows(atts)
+
+    # Calculate column widths using rows only (not column heading labels)
     col_keys = atts.map(&:to_s)
+    col_metadata = calculate_maxwidths(col_keys, rows_hash.values)
 
-    # Create func_hash based on atts
-    # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
-    func_hash = TaskTreeRender.derive_value_funcs_hash(atts, self)
-
-    # Use func_hash to populate rows hash with same keys as func_hash
-    # rows={ task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
-    tree_rows = is_a?(Task) ? appeal.tasks : tasks
-    rows = build_rows_from(tree_rows, func_hash)
-
-    # Calculate column widths using rows only (not column header labels)
-    col_metadata = calculate_maxwidths(col_keys, rows.values)
-
-    # Set labels from specified col_labels or create heading labels using a transform
+    # Set labels using specified col_labels or create heading labels using a transform
     if col_labels
       col_keys.zip(col_labels).each do |key, label|
         col_metadata[key][:label] = label
@@ -93,17 +85,13 @@ module TaskTreeRender
       end
     end
 
-    # Update col_widths to accommodate column labels
-    col_metadata.each do |_key, col_obj|
-      col_obj[:width] = [col_obj[:width], col_obj[:label].size].max
-    end
+    update_col_widths_to_fit_col_labels(col_metadata)
 
     curr_appeal = is_a?(Task) ? appeal : self
     max_name_length = calculate_max_name_length(curr_appeal.eval_appeal_label.size)
 
-    heading = appeal.appeal_heading(appeal_id, col_metadata, max_name_length) if is_a? Task
-    ts = tree_structure(col_metadata, rows, max_name_length, 0)
-    table = (heading&.concat("\n") || "") + TTY::Tree.new(ts).render
+    ts = tree_structure(col_metadata, rows_hash, max_name_length, 0)
+    table = create_heading_if_self_is_a_task(col_metadata, max_name_length) + TTY::Tree.new(ts).render
 
     if treeconfig[:include_border]
       top_border(max_name_length, col_metadata) + "\n" +
@@ -111,6 +99,11 @@ module TaskTreeRender
     else
       table
     end
+  end
+
+  def create_heading_if_self_is_a_task(col_metadata, max_name_length)
+    heading = appeal.appeal_heading(appeal_id, col_metadata, max_name_length) if is_a? Task
+    heading&.concat("\n") || ""
   end
 
   def calculate_max_name_length(max_name_length = 0, depth = 0)
@@ -130,13 +123,13 @@ module TaskTreeRender
   end
 
   def appeal_heading(_appeal_id, columns, max_name_length)
-    # print appeal row: appeal_label followed by column headers
+    # print appeal row: appeal_label followed by column headings
     appeal_label = eval_appeal_label.ljust(max_name_length, treeconfig[:heading_fill_char])
     col_seperator_with_margins = treeconfig[:cell_margin_char] + treeconfig[:col_sep] + treeconfig[:cell_margin_char]
     "#{appeal_label} " + treeconfig[:col_sep] + treeconfig[:cell_margin_char] +
-      columns.map do |key, _col_obj|
-        value = columns[key][:label]
-        value.ljust(columns[key][:width])
+      columns.map do |_key, col_obj|
+        value = col_obj[:label]
+        value.ljust(col_obj[:width])
       end.compact.join(col_seperator_with_margins) +
       treeconfig[:cell_margin_char] + treeconfig[:col_sep]
   end
@@ -172,6 +165,17 @@ module TaskTreeRender
 
   INDENT_SIZE = 4
 
+  def build_rows(atts)
+    # Create func_hash based on atts
+    # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
+    func_hash = TaskTreeRender.derive_value_funcs_hash(atts, self)
+
+    # Use func_hash to populate returned hash with tasks as keys
+    # { task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
+    tree_rows = is_a?(Task) ? appeal.tasks : tasks
+    build_rows_from(tree_rows, func_hash)
+  end
+
   def build_rows_from(tasklist, func_hash)
     tasklist.compact.each_with_object({}) do |task, rows_obj|
       rows_obj[task] = func_hash.each_with_object({}) do |(col_key, func), obj|
@@ -191,6 +195,12 @@ module TaskTreeRender
     end
   end
 
+  def update_col_widths_to_fit_col_labels(col_metadata)
+    col_metadata.each do |_key, col_obj|
+      col_obj[:width] = [col_obj[:width], col_obj[:label].size].max
+    end
+  end
+
   def tree_children
     subs = is_a?(Task) ? children : tasks.where(parent_id: nil)
     subs.order(:id)
@@ -202,10 +212,10 @@ module TaskTreeRender
 
   def tree_task_attributes(columns, row)
     col_seperator_with_margins = treeconfig[:cell_margin_char] + treeconfig[:col_sep] + treeconfig[:cell_margin_char]
-    cols_str=columns.map do |key, _col_obj|
+    cols_str = columns.map do |key, col_obj|
       value = row[key]
       value = "" if value.nil?
-      value.ljust(columns[key][:width])
+      value.ljust(col_obj[:width])
     end.compact.join(col_seperator_with_margins)
     treeconfig[:col_sep] + treeconfig[:cell_margin_char] + cols_str +
       treeconfig[:cell_margin_char] + treeconfig[:col_sep]
