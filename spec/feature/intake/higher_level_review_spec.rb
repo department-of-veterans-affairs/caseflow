@@ -1272,12 +1272,6 @@ feature "Higher-Level Review", :all_dbs do
           expect(page).to have_content(
             "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
           )
-          
-          # Expect unidentified issue modal for unidentified issue
-          # click_intake_add_issue
-          # add_intake_rating_issue("Untimely rating issue 1")
-          # add_intake_rating_issue("None of these match")
-          # add_untimely_exemption_response("Yes")
 
           # Expect untimely exemption modal for untimely issue
           click_intake_add_issue
@@ -1367,6 +1361,29 @@ feature "Higher-Level Review", :all_dbs do
           expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
             LegacyIssueOptin::VACOLS_DISPOSITION_CODE
           )
+        end
+
+        context "with unidentified issue on legacy opt-in" do
+          before { FeatureToggle.enable!(:verify_unidentified_issue) }
+          after { FeatureToggle.disable!(:verify_unidentified_issue) }
+
+          scenario "show unidentified modal" do
+          start_higher_level_review(veteran, legacy_opt_in_approved: true)
+          visit "/intake/add_issues"
+          click_intake_add_issue
+          click_intake_no_matching_issues
+          expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+
+          # Expect unidentified issue modal for unidentified issue
+          click_intake_no_matching_issues
+          expect(page).to have_content("Describe the issue to mark it as needing further review")
+          fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+          safe_click ".add-issue"
+
+          # Expect legacy opt in issue modal to show
+          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+          add_intake_rating_issue("impairment of hip")
+         end
         end
       end
 
