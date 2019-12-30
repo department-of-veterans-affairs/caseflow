@@ -236,12 +236,12 @@ export default class QueueTable extends React.PureComponent {
     const { tabPaginationOptions = {}, numberOfPages, columns } = this.props;
 
     const sortAscending = tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
-    QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
+      QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
     const sortColumn = tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null;
     const filteredByList = this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]);
     const pageNumber = (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0;
 
-    const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber
+    const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
     const sortColName = columns.map((column) => column.name).includes(sortColumn) ? sortColumn : null;
 
     // Only request tasks from the back end if we want another page, to sort on a column, or if filters are provided
@@ -284,7 +284,8 @@ export default class QueueTable extends React.PureComponent {
         const values = columnAndValues[1].split('=')[1].split(',');
 
         if (column) {
-          const validValues = column.filterOptions.map((filterOption) => filterOption.value)
+          const validValues = column.filterOptions.map((filterOption) => filterOption.value);
+
           filters[column.columnName] = values.filter((value) => validValues.includes(value));
         }
       });
