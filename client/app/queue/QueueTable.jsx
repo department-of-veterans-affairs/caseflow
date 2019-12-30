@@ -203,29 +203,26 @@ export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const { tabPaginationOptions = {}, useTaskPagesApi } = this.props;
-    const needsTaskRequest = useTaskPagesApi && !_.isEmpty(tabPaginationOptions);
+    const { useTaskPagesApi } = this.props;
+    const validatedPaginationOptions = this.validatedPaginationOptions();
 
-    this.state = this.initialState(tabPaginationOptions, needsTaskRequest);
+    this.state = this.initialState(validatedPaginationOptions);
 
-    if (needsTaskRequest) {
+    if (useTaskPagesApi && validatedPaginationOptions.needsTaskRequest) {
       this.requestTasks();
     }
 
     this.updateAddressBar();
   }
 
-  initialState = (tabPaginationOptions, needsTaskRequest) => {
+  initialState = (paginationOptions) => {
     const { defaultSort } = this.props;
+
     const state = {
-      sortAscending: tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
-                     QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
-      sortColName: tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null,
-      filteredByList: this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]),
       cachedResponses: {},
       tasksFromApi: null,
-      loadingComponent: needsTaskRequest && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
-      currentPage: (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0
+      loadingComponent: paginationOptions.needsTaskRequest && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
+      ...paginationOptions
     };
 
     if (defaultSort) {
@@ -233,6 +230,30 @@ export default class QueueTable extends React.PureComponent {
     }
 
     return state;
+  }
+
+  validatedPaginationOptions = () => {
+    const { tabPaginationOptions = {}, numberOfPages, columns } = this.props;
+
+    const sortAscending = tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
+    QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
+    const sortColumn = tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null;
+    const filteredByList = this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]);
+    const pageNumber = (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0;
+
+    const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber
+    const sortColName = columns.map((column) => column.name).includes(sortColumn) ? sortColumn : null;
+
+    // Only request tasks from the back end if we want another page, to sort on a column, or if filters are provided
+    const needsTaskRequest = currentPage || sortColName || !_.isEmpty(filteredByList);
+
+    return {
+      sortAscending,
+      sortColName,
+      filteredByList,
+      currentPage,
+      needsTaskRequest
+    };
   }
 
   componentDidMount = () => {
@@ -262,7 +283,10 @@ export default class QueueTable extends React.PureComponent {
         const column = this.props.columns.find((col) => col.name === columnName);
         const values = columnAndValues[1].split('=')[1].split(',');
 
-        filters[column.columnName] = values;
+        if (column) {
+          const validValues = column.filterOptions.map((filterOption) => filterOption.value)
+          filters[column.columnName] = values.filter((value) => validValues.includes(value));
+        }
       });
     }
 
