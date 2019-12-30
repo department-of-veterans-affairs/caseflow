@@ -478,35 +478,39 @@ feature "Search", :all_dbs do
       end
     end
 
-    context "when VSO employee does not have access to the file number" do
-      it "displays a helpful error message on same page" do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
-        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
-        User.authenticate!(user: vso_user)
-
-        expect_any_instance_of(Fakes::BGSService).to_not receive(:can_access?)
-
-        visit "/search"
-        fill_in "searchBarEmptyList", with: appeal.docket_number
-        click_on "Search"
-
-        expect(page).to have_content("You do not have access to this claims file number")
-      end
-    end
-
-    context "when User does not have access to the file number" do
+    context "when BGS can_access? is false" do
       before do
-        user = create(:user)
-        User.authenticate!(user: user)
         Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
       end
 
-      it "displays helpful error message on the same page" do
+      def perform_search
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.docket_number
         click_on "Search"
+      end
 
-        expect(page).to have_content("You do not have access to this claims file number")
+      context "when user is VSO employee" do
+        before do
+          vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+          User.authenticate!(user: vso_user)
+        end
+
+        it "displays a helpful error message on same page" do
+          perform_search
+          expect(page).to have_content("You do not have access to this claims file number")
+        end
+      end
+
+      context "when user is not VSO employee" do
+        before do
+          user = create(:user)
+          User.authenticate!(user: user)
+        end
+
+        it "displays helpful error message on the same page" do
+          perform_search
+          expect(page).to have_content("You do not have access to this claims file number")
+        end
       end
     end
   end
