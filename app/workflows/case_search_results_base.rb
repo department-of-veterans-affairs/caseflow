@@ -65,9 +65,11 @@ class CaseSearchResultsBase
   attr_reader :success
 
   def access?(file_number)
-    return false if current_user_is_vso_employee?
+    !current_user_is_vso_employee? || bgs.can_access?(file_number)
+  end
 
-    BGSService.new.can_access?(file_number)
+  def bgs
+    @bgs ||= BGSService.new
   end
 
   def veterans_exist
