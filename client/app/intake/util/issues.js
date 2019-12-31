@@ -177,6 +177,7 @@ const formatUnidentifiedIssues = (state) => {
   return (state.addedIssues || []).
     filter((issue) => issue.isUnidentified).
     map((issue) => {
+      console.log("vacols", issue.vacolsId);
       return {
         request_issue_id: issue.id,
         decision_text: issue.description,
@@ -187,7 +188,9 @@ const formatUnidentifiedIssues = (state) => {
         correction_type: issue.correctionType,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
-        ineligibleReason: issue.ineligible_reason
+        ineligibleReason: issue.ineligible_reason,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId
       };
     });
 };
@@ -329,6 +332,9 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,
+        vacolsId: issue.vacolsId,
+        vacolsSequenceId: issue.vacolsSequenceId,
+        vacolsIssue: issue.vacolsIssue
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {

@@ -1257,7 +1257,7 @@ feature "Higher-Level Review", :all_dbs do
         scenario "adding issues" do
           start_higher_level_review(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
-           
+
           click_intake_add_issue
           expect(page).to have_content("Next")
           add_intake_rating_issue(/Left knee granted$/)
@@ -1368,22 +1368,23 @@ feature "Higher-Level Review", :all_dbs do
           after { FeatureToggle.disable!(:verify_unidentified_issue) }
 
           scenario "show unidentified modal" do
-          start_higher_level_review(veteran, legacy_opt_in_approved: true)
-          visit "/intake/add_issues"
-          click_intake_add_issue
-          click_intake_no_matching_issues
-          expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+            start_higher_level_review(veteran, legacy_opt_in_approved: true)
+            visit "/intake/add_issues"
+            click_intake_add_issue
+            click_intake_no_matching_issues
+            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
 
-          # Expect unidentified issue modal for unidentified issue
-          click_intake_no_matching_issues
-          expect(page).to have_content("Describe the issue to mark it as needing further review")
-          fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
-          safe_click ".add-issue"
+            # Expect unidentified issue modal for unidentified issue
+            click_intake_no_matching_issues
+            expect(page).to have_content("Describe the issue to mark it as needing further review")
+            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            safe_click ".add-issue"
 
-          # Expect legacy opt in issue modal to show
-          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-          add_intake_rating_issue("impairment of hip")
-         end
+            # Expect legacy opt in issue modal to show
+            expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+            add_intake_rating_issue("impairment of hip")
+            expect(page).to have_content("Service connection, impairment of hip")
+          end
         end
       end
 
