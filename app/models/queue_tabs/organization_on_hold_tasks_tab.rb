@@ -19,10 +19,6 @@ class OrganizationOnHoldTasksTab < QueueTab
     on_hold_task_children_and_timed_hold_parents
   end
 
-  def on_hold_task_children
-    super.on_hold
-  end
-
   # rubocop:disable Metrics/AbcSize
   def column_names
     [
@@ -37,4 +33,10 @@ class OrganizationOnHoldTasksTab < QueueTab
     ].compact
   end
   # rubocop:enable Metrics/AbcSize
+
+  private
+
+  def on_hold_task_children
+    super.on_hold
+  end
 end
