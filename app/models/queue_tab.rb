@@ -78,7 +78,9 @@ class QueueTab
   end
 
   def on_hold_task_children_and_timed_hold_parents
-    Task.includes(*task_includes).where(id: [visible_child_task_ids, parents_with_child_timed_hold_task_ids].flatten)
+    Task.includes(*task_includes).visible_in_queue_table_view.where(
+      id: [visible_child_task_ids, parents_with_child_timed_hold_task_ids].flatten
+    )
   end
 
   def task_includes
