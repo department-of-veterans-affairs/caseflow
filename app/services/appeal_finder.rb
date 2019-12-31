@@ -55,12 +55,6 @@ class AppealFinder
     end
   end
 
-  def XXfind_appeals_by_ssn_or_file_number(file_number_or_ssn)
-    find_appeals_for_veterans(
-      veterans: VeteranFinder.find_or_create_all(file_number_or_ssn)
-    )
-  end
-
   private
 
   attr_reader :user

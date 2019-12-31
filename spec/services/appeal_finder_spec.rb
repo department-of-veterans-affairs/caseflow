@@ -6,7 +6,6 @@ describe AppealFinder, :all_dbs do
   let(:unknown_docket_number) { "012345-000" }
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
   let(:invalid_docket_number) { "invaliddocket-number" }
-  #let(:veteran_with_no_appeals) { create(:veteran) }
   let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
 
   describe ".find_appeal_by_docket_number" do
