@@ -30,7 +30,7 @@ class AppealFinder
       MetricsService.record("VACOLS: Get appeal information for file_numbers #{file_numbers}",
                             service: :queue,
                             name: "VeteranFinderQuery.find_appeals_with_file_numbers") do
-        appeals = Appeal.where(veteran_file_number: file_numbers).reject(&:removed?).to_a
+        appeals = Appeal.established.where(veteran_file_number: file_numbers).reject(&:removed?).to_a
         # rubocop:disable Lint/HandleExceptions
         begin
           appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(*file_numbers))
@@ -71,7 +71,9 @@ class AppealFinder
                           name: "VeteranFinderQuery.find_appeals_for_vso_user") do
       vso_participant_ids = user.vsos_user_represents.map { |poa| poa[:participant_id] }
 
-      veterans.flat_map { |vet| vet.accessible_appeals_for_poa(vso_participant_ids) }
+      veterans.flat_map do |vet|
+        AppealsForPOA.new(veteran_file_number: vet.file_number, poa_participant_ids: vso_participant_ids).call
+      end
     end
   end
 
