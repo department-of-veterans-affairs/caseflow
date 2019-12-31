@@ -1,28 +1,6 @@
 # frozen_string_literal: true
 
 class AppealFinder
-  def initialize(user:)
-    @user = user
-  end
-
-  def find_appeals_for_veterans(veterans)
-    return [] if veterans.empty?
-
-    if user.vso_employee?
-      find_appeals_for_vso_user(veterans: veterans)
-    else
-      self.class.find_appeals_with_file_numbers(
-        [veterans.map(&:file_number), veterans.map(&:ssn)].flatten.compact.uniq
-      )
-    end
-  end
-
-  def find_appeals_by_ssn_or_file_number(file_number_or_ssn)
-    find_appeals_for_veterans(
-      veterans: VeteranFinder.find_or_create_all(file_number_or_ssn)
-    )
-  end
-
   class << self
     def find_appeals_with_file_numbers(file_numbers)
       return [] if file_numbers.empty?
@@ -61,9 +39,31 @@ class AppealFinder
     end
   end
 
+  def initialize(user:)
+    @user = user
+  end
+
+  def find_appeals_for_veterans(veterans)
+    return [] if veterans.empty?
+
+    if user.vso_employee?
+      find_appeals_for_vso_user(veterans: veterans)
+    else
+      self.class.find_appeals_with_file_numbers(
+        [veterans.map(&:file_number), veterans.map(&:ssn)].flatten.compact.uniq
+      )
+    end
+  end
+
+  def XXfind_appeals_by_ssn_or_file_number(file_number_or_ssn)
+    find_appeals_for_veterans(
+      veterans: VeteranFinder.find_or_create_all(file_number_or_ssn)
+    )
+  end
+
   private
 
-  attr_accessor :user
+  attr_reader :user
 
   def find_appeals_for_vso_user(veterans:)
     MetricsService.record("VACOLS: Get vso appeals information for veterans",
