@@ -46,7 +46,7 @@ describe AppealsForPOA, :all_dbs do
       described_class.new(
         veteran_file_number: veteran.file_number,
         poa_participant_ids: [vso_participant_id, "other vso participant id"]
-      ) 
+      )
     end
 
     it "returns only the case with vso assigned to it" do
