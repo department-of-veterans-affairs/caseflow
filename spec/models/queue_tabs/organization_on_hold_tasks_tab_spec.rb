@@ -44,15 +44,11 @@ describe OrganizationOnHoldTasksTab, :postgres do
       let!(:assignee_on_hold_tasks) { create_list(:ama_task, 3, :assigned, assigned_to: assignee) }
       let!(:on_hold_tasks_children) do
         assignee_on_hold_tasks.map do |task|
-          create(:ama_task, parent_id: task.id)
-          create(:timed_hold_task, parent_id: task.id)
+          create(:ama_task, :on_hold, parent_id: task.id)
+          create(:timed_hold_task, :on_hold, parent_id: task.id)
           task.update!(status: Constants.TASK_STATUSES.on_hold)
           task.children
         end.flatten
-      end
-
-      before do
-        on_hold_tasks_children.each { |task| task.update!(status: Constants.TASK_STATUSES.on_hold) }
       end
 
       it "returns on hold children of the assignee's on hold tasks and assignee tasks that are on a timed hold" do
