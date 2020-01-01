@@ -1432,7 +1432,6 @@ feature "Higher-Level Review", :all_dbs do
           # do not show inactive appeals when legacy opt in is false
           expect(page).to_not have_content("impairment of hip")
           expect(page).to_not have_content("typhoid arthritis")
-          binding.pry
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
