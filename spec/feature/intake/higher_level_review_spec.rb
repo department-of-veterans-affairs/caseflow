@@ -1385,6 +1385,39 @@ feature "Higher-Level Review", :all_dbs do
             add_intake_rating_issue("impairment of hip")
             expect(page).to have_content("Service connection, impairment of hip")
           end
+
+          scenario "with legacy opt in not approved" do
+            start_higher_level_review(veteran, legacy_opt_in_approved: false)
+            visit "/intake/add_issues"
+            click_intake_add_issue
+            click_intake_no_matching_issues
+
+            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+            # do not show inactive appeals when legacy opt in is false
+            click_intake_no_matching_issues
+            expect(page).to have_content("Describe the issue to mark it as needing further review")
+            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            safe_click ".add-issue"
+
+            add_intake_rating_issue("ankylosis of hip")
+            expect(page).to have_content(ineligible_constants.legacy_issue_not_withdrawn.to_s)
+
+            click_intake_finish
+
+            ineligible_checklist = find("ul.cf-issue-checklist")
+            expect(ineligible_checklist).to have_content(
+              ineligible_constants.legacy_issue_not_withdrawn.to_s
+            )
+
+            expect(RequestIssue.find_by(
+                     is_unidentified: true,
+                     ineligible_reason: :legacy_issue_not_withdrawn,
+                     vacols_id: "vacols1",
+                     vacols_sequence_id: "1"
+                   )).to_not be_nil
+
+            expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
+          end
         end
       end
 
@@ -1399,7 +1432,7 @@ feature "Higher-Level Review", :all_dbs do
           # do not show inactive appeals when legacy opt in is false
           expect(page).to_not have_content("impairment of hip")
           expect(page).to_not have_content("typhoid arthritis")
-
+          binding.pry
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
