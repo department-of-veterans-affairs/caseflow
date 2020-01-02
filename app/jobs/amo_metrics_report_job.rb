@@ -46,7 +46,9 @@ class AMOMetricsReportJob < CaseflowJob
     report = []
     report << "AMO metrics report #{start_date} to #{end_date.to_date}"
     report << "Supplemental Claims #{sc_stats[:total]} established, median #{sc_med} average #{sc_avg}"
+    report << "Supplemental Claims total stuck in processing #{SupplementalClaim.expired_without_processing.with_error.count}"
     report << "Higher Level Reviews #{hlr_stats[:total]} established, median #{hlr_med} average #{hlr_avg}"
+    report << "Higher Level Reviews total stuck in processing #{HigherLevelReview.expired_without_processing.with_error.count}"
     report << async_stats.as_csv
     report.join("\n")
   end
