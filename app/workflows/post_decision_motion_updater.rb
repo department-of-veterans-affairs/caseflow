@@ -28,7 +28,7 @@ class PostDecisionMotionUpdater
       vacate_type: params[:vacate_type]
     )
 
-    if disposition == "partial"
+    if disposition == "partially_granted"
       motion.vacated_decision_issue_ids = params[:vacated_decision_issue_ids]
     elsif disposition == "granted"
       # For full grant, auto populate all decision issue IDs
