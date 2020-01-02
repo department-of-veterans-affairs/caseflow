@@ -3,11 +3,15 @@
 describe AppealsForPOA, :all_dbs do
   describe "#call" do
     let(:veteran) { create(:veteran, file_number: "44556677", participant_id: participant_id) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: vbms_id)) }
+    let(:appeal_for_vso) do
+      create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)])
+    end
     let!(:appeals) do
       [
-        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
+        appeal_for_vso,
         create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)]),
-        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: vbms_id))
+        legacy_appeal
       ]
     end
 
@@ -52,8 +56,7 @@ describe AppealsForPOA, :all_dbs do
     it "returns only the case with vso assigned to it" do
       returned_appeals = subject.call
       expect(returned_appeals.count).to eq 2
-      expect(returned_appeals.first).to eq appeals.first
-      expect(returned_appeals.last).to eq appeals.last
+      expect(returned_appeals).to contain_exactly(appeal_for_vso, legacy_appeal)
     end
   end
 end
