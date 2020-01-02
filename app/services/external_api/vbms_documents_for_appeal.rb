@@ -39,12 +39,23 @@ class ExternalApi::VbmsDocumentsForAppeal
     ExternalApi::BGSService.new
   end
 
+  def vbms_paged_documents_service
+    @vbms_paged_documents_service ||= VBMS::Service::PagedDocuments.new(client: vbms_client)
+  end
+
   def fetch_veteran_file_number_docs
-    @documents = ExternalApi::VBMSRequest.new(
-      client: vbms_client,
-      request: veteran_file_number_docs_request,
-      id: file_number
-    ).call
+    @documents = if FeatureToggle.enabled?(:vbms_pagination)
+                   ExternalApi::VBMSService.call_and_log_service(
+                     service: vbms_paged_documents_service,
+                     vbms_id: file_number
+                   )[:documents]
+                 else
+                   ExternalApi::VBMSRequest.new(
+                     client: vbms_client,
+                     request: veteran_file_number_docs_request,
+                     id: file_number
+                   ).call
+                 end
   end
 
   def bgs_claim_number_nil_or_same_as_veteran_file_number?
@@ -52,11 +63,18 @@ class ExternalApi::VbmsDocumentsForAppeal
   end
 
   def fetch_bgs_claim_number_docs
-    @documents = ExternalApi::VBMSRequest.new(
-      client: vbms_client,
-      request: bgs_claim_number_docs_request,
-      id: bgs_claim_number
-    ).call
+    @documents = if FeatureToggle.enabled?(:vbms_pagination)
+                   ExternalApi::VBMSService.call_and_log_service(
+                     service: vbms_paged_documents_service,
+                     vbms_id: bgs_claim_number
+                   )[:documents]
+                 else
+                   ExternalApi::VBMSRequest.new(
+                     client: vbms_client,
+                     request: bgs_claim_number_docs_request,
+                     id: bgs_claim_number
+                   ).call
+                 end
   end
 
   def result_hash

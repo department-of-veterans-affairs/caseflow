@@ -192,4 +192,13 @@ class ExternalApi::VBMSService
       (override_vbms_client || @vbms_client).send_request(request)
     end
   end
+
+  def self.call_and_log_service(service:, vbms_id:)
+    name = service.class.name.split("::").last
+    MetricsService.record("call #{service.class} for #{vbms_id}",
+                          service: :vbms,
+                          name: name) do
+      service.call(file_number: vbms_id)
+    end
+  end
 end
