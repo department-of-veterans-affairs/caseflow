@@ -9,7 +9,7 @@ class Caseflow::Migration < ActiveRecord::Migration[5.1]
     true
   end
 
-  def add_index_with_timeout(*args)
+  def add_safe_index(*args)
     say "Extending statement_timeout to 30 minutes"
     ActiveRecord::Base.connection.execute "SET statement_timeout = 1800000" # 30 minutes
 
@@ -23,6 +23,7 @@ class Caseflow::Migration < ActiveRecord::Migration[5.1]
     say "Caught #{error}, rolling back index"
     options[:column] = columns unless options[:name]
     remove_index(table, options)
+    raise error # re-raise to abort migration
   ensure
     say "Restoring statement_timeout to 30 seconds"
     ActiveRecord::Base.connection.execute "SET statement_timeout = 30000" # 30 seconds
