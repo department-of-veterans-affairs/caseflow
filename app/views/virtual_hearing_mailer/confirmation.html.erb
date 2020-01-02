@@ -1,7 +1,7 @@
-<% if @recipient.title == VirtualHearingMailer::RECIPIENT_TITLES[:judge] %>
+<% if @recipient.title == MailRecipient::RECIPIENT_TITLES[:judge] %>
   <%= render "judge_confirmation" %>
-<% elsif @recipient.title == VirtualHearingMailer::RECIPIENT_TITLES[:representative] %>
+<% elsif @recipient.title == MailRecipient::RECIPIENT_TITLES[:representative] %>
   <%= render "representative_confirmation" %>
-<% elsif @recipient.title == VirtualHearingMailer::RECIPIENT_TITLES[:veteran] %>
+<% elsif @recipient.title == MailRecipient::RECIPIENT_TITLES[:veteran] %>
   <%= render "veteran_confirmation" %>
 <% end %>
