@@ -40,9 +40,14 @@ class ExternalApi::VBMSService
     @vbms_client ||= init_vbms_client
 
     veteran_file_number = appeal.veteran_file_number
-    request = VBMS::Requests::FindDocumentSeriesReference.new(veteran_file_number)
 
-    send_and_log_request(veteran_file_number, request)
+    if FeatureToggle.enabled?(:vbms_pagination)
+      service = VBMS::Service::PagedDocuments.new(client: @vbms_client)
+      call_log_service(service: service, vbms_id: veteran_file_number)[:documents]
+    else
+      request = VBMS::Requests::FindDocumentSeriesReference.new(veteran_file_number)
+      send_and_log_request(veteran_file_number, request)
+    end
   end
 
   def self.upload_document_to_vbms(appeal, uploadable_document)
