@@ -29,9 +29,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
       let!(:task16) { create(:ama_attorney_task, :completed_in_the_past, assigned_to: user) }
-      let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
+      let!(:task14) { create(:ama_attorney_task, assigned_to: user) }
 
-      before { task3.update!(status: Constants.TASK_STATUSES.completed) }
+      before do
+        task3.update!(status: Constants.TASK_STATUSES.completed)
+        task14.update!(status: Constants.TASK_STATUSES.on_hold)
+      end
 
       it "should process the request successfully" do
         get :index, params: { user_id: user.id, role: "attorney" }
@@ -173,7 +176,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "RO04")
         end
         let!(:task) do
-          create(:generic_task, assigned_to: user, appeal: legacy_appeal)
+          create(:ama_task, assigned_to: user, appeal: legacy_appeal)
         end
 
         it "does not make a BGS call" do
@@ -198,9 +201,9 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         let(:org_1_members) { create_list(:user, org_1_member_cnt) }
         let(:org_1_assignee) { org_1_members[0] }
         let(:org_1_non_assignee) { org_1_members[1] }
-        let!(:org_1_team_task) { create(:generic_task, assigned_to: org_1, parent: root_task) }
+        let!(:org_1_team_task) { create(:ama_task, assigned_to: org_1, parent: root_task) }
         let!(:org_1_member_task) do
-          create(:generic_task, assigned_to: org_1_assignee, parent: org_1_team_task)
+          create(:ama_task, assigned_to: org_1_assignee, parent: org_1_team_task)
         end
 
         before do
@@ -231,7 +234,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
       context "when the task belongs to the user" do
         let(:no_role_user) { create(:user) }
-        let!(:task) { create(:generic_task, assigned_to: no_role_user) }
+        let!(:task) { create(:ama_task, assigned_to: no_role_user) }
         before { User.authenticate!(user: no_role_user) }
 
         context "when there are Organizations in the table" do
@@ -319,7 +322,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       end
 
-      context "when creating a generic task" do
+      context "when creating a task" do
         let(:params) do
           [{
             "external_id": appeal.external_id,
@@ -622,10 +625,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     it "updates status to on_hold" do
-      patch :update, params: {
-        task: { status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60 },
-        id: admin_action.id
-      }
+      patch :update, params: { task: { status: Constants.TASK_STATUSES.on_hold }, id: admin_action.id }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["tasks"]["data"]
       expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold

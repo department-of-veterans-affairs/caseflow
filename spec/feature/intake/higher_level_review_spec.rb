@@ -113,7 +113,7 @@ feature "Higher-Level Review", :all_dbs do
       "Is the claimant someone other than the Veteran?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Did they agree to withdraw their issues from the legacy system?\nPlease select an option."
+      "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?\nPlease select an option."
     )
 
     within_fieldset("What is the Benefit Type?") do
@@ -225,6 +225,7 @@ feature "Higher-Level Review", :all_dbs do
     click_intake_finish
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
+    expect(page).to have_content("It may take up to 24 hours for the claim to establish")
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review} Rating EP is being established:"
     )
@@ -656,7 +657,7 @@ feature "Higher-Level Review", :all_dbs do
     end
 
     context "Veteran has no ratings" do
-      let(:decision_date) { (receipt_date + 200.days).to_date.mdY }
+      let(:decision_date) { (receipt_date + 9000.days).to_date.mdY }
 
       scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
         start_higher_level_review(veteran_no_ratings)
@@ -1200,6 +1201,7 @@ feature "Higher-Level Review", :all_dbs do
 
           # should redirect to tasks review page
           expect(page).to have_content("Reviews needing action")
+          expect(page).not_to have_content("It may take up to 24 hours for the claim to establish")
           expect(current_path).to eq("/decision_reviews/education")
           expect(OrganizationsUser.existing_record(current_user, Organization.find_by(url: "education"))).to_not be_nil
           expect(page).to have_content("Success!")

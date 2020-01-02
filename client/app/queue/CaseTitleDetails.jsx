@@ -257,11 +257,10 @@ CaseTitleDetails.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { featureToggles, userRole, canEditAod } = state.ui;
+  const { userRole, canEditAod } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    featureToggles,
     userRole,
     canEditAod,
     userIsVsoEmployee: state.ui.userIsVsoEmployee

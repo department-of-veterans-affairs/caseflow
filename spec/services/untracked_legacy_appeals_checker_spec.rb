@@ -17,7 +17,7 @@ describe UntrackedLegacyAppealsChecker, :all_dbs do
 
       # Only create tasks for tracked legacy appeals.
       tracked_legacy_appeals.each do |appeal|
-        create(:generic_task, assigned_to: create(:user), appeal: appeal)
+        create(:ama_task, assigned_to: create(:user), appeal: appeal)
       end
     end
 
@@ -38,7 +38,7 @@ describe UntrackedLegacyAppealsChecker, :all_dbs do
     before do
       tracked_legacy_appeals.each do |appeal|
         VACOLS::Case.find_by(bfkey: appeal.vacols_id).update!(bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow])
-        create(:generic_task, assigned_to: create(:user), appeal: appeal)
+        create(:ama_task, assigned_to: create(:user), appeal: appeal)
       end
     end
 

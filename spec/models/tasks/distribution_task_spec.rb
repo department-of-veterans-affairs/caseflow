@@ -13,15 +13,12 @@ describe DistributionTask, :postgres do
     let(:distribution_task) do
       create(
         :distribution_task,
-        :on_hold,
         appeal: create(:appeal),
         assigned_to: Bva.singleton
       )
     end
 
     it "is set to assigned and ready for distribution is tracked when all child tasks are completed" do
-      expect(distribution_task.ready_for_distribution?).to eq(false)
-
       child_task = create(:informal_hearing_presentation_task, parent: distribution_task)
       expect(distribution_task.ready_for_distribution?).to eq(false)
 
