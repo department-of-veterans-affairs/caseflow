@@ -41,7 +41,7 @@ class ExternalApi::VBMSService
 
     veteran_file_number = appeal.veteran_file_number
 
-    if FeatureToggle.enabled?(:vbms_pagination)
+    if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
       service = VBMS::Service::PagedDocuments.new(client: @vbms_client)
       call_log_service(service: service, vbms_id: veteran_file_number)[:documents]
     else

@@ -44,7 +44,7 @@ class ExternalApi::VbmsDocumentsForAppeal
   end
 
   def fetch_veteran_file_number_docs
-    @documents = if FeatureToggle.enabled?(:vbms_pagination)
+    @documents = if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
                    ExternalApi::VBMSService.call_and_log_service(
                      service: vbms_paged_documents_service,
                      vbms_id: file_number
@@ -63,7 +63,7 @@ class ExternalApi::VbmsDocumentsForAppeal
   end
 
   def fetch_bgs_claim_number_docs
-    @documents = if FeatureToggle.enabled?(:vbms_pagination)
+    @documents = if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
                    ExternalApi::VBMSService.call_and_log_service(
                      service: vbms_paged_documents_service,
                      vbms_id: bgs_claim_number
