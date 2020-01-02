@@ -18,8 +18,7 @@ class Caseflow::Migration < ActiveRecord::Migration[5.1]
     options[:algorithm] ||= :concurrently
 
     add_index(table, columns, options)
-
-  rescue => error
+  rescue StandardError => error
     say "Caught #{error}, rolling back index"
     options[:column] = columns unless options[:name]
     remove_index(table, options)
