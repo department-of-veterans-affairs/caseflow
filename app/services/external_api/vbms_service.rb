@@ -43,7 +43,7 @@ class ExternalApi::VBMSService
 
     if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
       service = VBMS::Service::PagedDocuments.new(client: @vbms_client)
-      call_log_service(service: service, vbms_id: veteran_file_number)[:documents]
+      call_and_log_service(service: service, vbms_id: veteran_file_number)[:documents]
     else
       request = VBMS::Requests::FindDocumentSeriesReference.new(veteran_file_number)
       send_and_log_request(veteran_file_number, request)
