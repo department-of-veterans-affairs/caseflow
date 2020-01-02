@@ -371,12 +371,6 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_to { HearingsManagement.singleton }
       parent { create(:assign_hearing_disposition_task, appeal: appeal) }
-
-      after(:build) do |task|
-        TimedHoldTask.create_from_parent(
-          task, days_on_hold: 25, instructions: ["Mail must be received within 14 days of the original hearing date."]
-        )
-      end
     end
 
     factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
