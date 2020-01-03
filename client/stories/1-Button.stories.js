@@ -22,3 +22,14 @@ export const emoji = () => (
 emoji.story = {
   name: 'with emoji'
 };
+
+export const inaccessible = () => (
+  <button style={{ backgroundColor: 'red',
+    color: 'darkRed' }} onClick={action('clicked')}>
+    Not Accessible
+  </button>
+);
+
+inaccessible.story = {
+  name: 'with accessibility problem'
+};
