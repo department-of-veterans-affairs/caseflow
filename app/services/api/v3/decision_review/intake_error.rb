@@ -55,7 +55,7 @@ class Api::V3::DecisionReview::IntakeError
       "A contestable issue must have at least one of the following: decisionIssueId," \
         " ratingIssueId, ratingDecisionIssueId"
     ],
-    [422, :couldnt_find_contestable_issue, "Couldn't find ContestableIssue"],
+    [422, :could_not_find_contestable_issue, "Could not find ContestableIssue"],
     [
       422,
       :veteran_has_multiple_phone_numbers,

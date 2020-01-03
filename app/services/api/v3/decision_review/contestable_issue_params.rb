@@ -43,7 +43,7 @@ class Api::V3::DecisionReview::ContestableIssueParams
     return :contestable_issue_params_must_have_ids if unidentified? # error code
     return nil if lookup.found?
 
-    :couldnt_find_contestable_issue # error_code
+    :could_not_find_contestable_issue # error_code
   end
 
   # presence of IDs /or/ nonrating_issue_category denotes an identified request issue

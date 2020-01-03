@@ -75,7 +75,7 @@ context Api::V3::DecisionReview::ContestableIssueParams, :all_dbs do
 
     context "bogus id" do
       let(:attributes) { { decisionIssueId: 0 } }
-      it { is_expected.to eq :couldnt_find_contestable_issue }
+      it { is_expected.to eq :could_not_find_contestable_issue }
     end
   end
 

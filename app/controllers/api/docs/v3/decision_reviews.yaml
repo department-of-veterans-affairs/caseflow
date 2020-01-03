@@ -540,13 +540,13 @@ paths:
                       }
                     ]
                   }
-                couldnt_find_contestable_issue:
+                could_not_find_contestable_issue:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title": "Couldn't find ContestableIssue",
-                        "code": "couldnt_find_contestable_issue"
+                        "title": "Could not find ContestableIssue",
+                        "code": "could_not_find_contestable_issue"
                       }
                     ]
                   }
