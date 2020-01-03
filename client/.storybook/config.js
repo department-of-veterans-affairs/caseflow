@@ -2,6 +2,8 @@ import { configure, addDecorator } from '@storybook/react';
 import { withA11y } from '@storybook/addon-a11y';
 import centered from '@storybook/addon-centered/react';
 
+import '../app/styles/app.scss';
+
 // automatically import all files ending in *.stories.js
 configure(
   [require.context('../stories', true, /\.stories\.js$/), require.context('../app', true, /\.stories\.js$/)],
@@ -15,13 +17,11 @@ addDecorator(withA11y);
 // This is a weird hack to fix the layout issues.
 addDecorator((...args) => {
   const params = new URL(document.location).searchParams;
-  const isInDockView = params.get('viewMode') === 'docs';
+  const isInDocsView = params.get('viewMode') === 'docs';
 
-  if (isInDockView) {
+  if (isInDocsView) {
     return args[0]();
   }
 
   return centered(...args);
 });
-
-import '../app/styles/app.scss';
