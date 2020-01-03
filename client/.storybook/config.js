@@ -9,6 +9,19 @@ configure(
 );
 
 addDecorator(withA11y);
-addDecorator(centered);
+// addDecorator(centered);
+
+// Centered addon causes layout issues on docs page.
+// This is a weird hack to fix the layout issues.
+addDecorator((...args) => {
+  const params = new URL(document.location).searchParams;
+  const isInDockView = params.get('viewMode') === 'docs';
+
+  if (isInDockView) {
+    return args[0]();
+  }
+
+  return centered(...args);
+});
 
 import '../app/styles/app.scss';
