@@ -56,10 +56,8 @@ module.exports = {
         ]
       },
       {
-        test: /\.(ttf|eot|woff|woff2)$/,
-        use: {
-          loader: 'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
-        }
+        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        loaders: ['file-loader']
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
