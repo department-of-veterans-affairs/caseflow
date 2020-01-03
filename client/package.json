@@ -21,7 +21,9 @@
     "build:production": "NODE_ENV=production yarn run build",
     "dev:clear-build": "rm ../app/assets/javascripts/*webpack* || true",
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
-    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development node webpack-hot-server.js"
+    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development node webpack-hot-server.js",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "cacheDirectories": [
     "node_modules",
@@ -118,6 +120,10 @@
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522e",
+    "@storybook/addon-actions": "^5.2.8",
+    "@storybook/addon-links": "^5.2.8",
+    "@storybook/addons": "^5.2.8",
+    "@storybook/react": "^5.2.8",
     "babel-eslint": "^10.0.3",
     "chai": "^3.5.0",
     "enzyme": "^3.10.0",
