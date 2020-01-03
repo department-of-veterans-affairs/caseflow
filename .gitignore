@@ -29,6 +29,7 @@ tags
 
 # Ignore hidden files
 .*
+!.storybook
 !/.github
 !.codeclimate.yml
 !.dockerignore
