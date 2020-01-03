@@ -14,6 +14,7 @@ describe Metrics::HearingsShowRate, :postgres do
   end
 
   let(:total_hearings) { disposition_counts.values.reduce(0) { |acc, count| acc + count } }
+  let(:metric) { Metrics::HearingsShowRate.new(date_range) }
 
   before do
     disposition_counts.each do |disposition, count|
@@ -28,11 +29,11 @@ describe Metrics::HearingsShowRate, :postgres do
     end
   end
 
-  subject { Metrics::HearingsShowRate.new(date_range).call }
+  subject { metric.call }
 
   it do
     expect(subject).to eq(disposition_counts[:held] / (total_hearings - disposition_counts[:postponed]))
-    expect(hearing.name).to eq "Hearings Show Rate"
-    expect(hearing.id).to eq "1812216039"
+    expect(metric.name).to eq "Hearings Show Rate"
+    expect(metric.id).to eq "1812216039"
   end
 end
