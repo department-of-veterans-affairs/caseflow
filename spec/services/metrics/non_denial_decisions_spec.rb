@@ -5,14 +5,6 @@ describe Metrics::NonDenialDecisions, :postgres do
   let(:start_date) { Time.zone.now - 45.days }
   let(:end_date) { Time.zone.now - 15.days }
   let(:date_range) { Metrics::DateRange.new(start_date, end_date) }
-  let(:outcode_params) do
-    {
-      citation_number: "12312312",
-      decision_date: Date.new(1989, 11, 9).to_s,
-      file: "longfilenamehere",
-      redacted_document_location: "C://Windows/User/BVASWIFTT/Documents/NewDecision.docx"
-    }
-  end
   let(:number_of_decisions_in_range) { 25 }
   let(:number_of_end_products_created_in_7_days) { 10 }
   before do
