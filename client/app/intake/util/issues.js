@@ -177,7 +177,6 @@ const formatUnidentifiedIssues = (state) => {
   return (state.addedIssues || []).
     filter((issue) => issue.isUnidentified).
     map((issue) => {
-      console.log("vacols", issue.vacolsId);
       return {
         request_issue_id: issue.id,
         decision_text: issue.description,
@@ -188,7 +187,7 @@ const formatUnidentifiedIssues = (state) => {
         correction_type: issue.correctionType,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
-        ineligibleReason: issue.ineligible_reason,
+        ineligibleReason: issue.ineligibleReason,
         vacols_id: issue.vacolsId,
         vacols_sequence_id: issue.vacolsSequenceId
       };
