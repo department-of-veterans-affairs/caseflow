@@ -3,8 +3,6 @@
 class PostDecisionMotion < ApplicationRecord
   belongs_to :task, optional: false
 
-  # has_many :decision_issues as: :vacated_issues
-
   validates :disposition, presence: true
   validate :vacate_type_is_present_if_granted
   validate :vacated_issues_present_if_partial
