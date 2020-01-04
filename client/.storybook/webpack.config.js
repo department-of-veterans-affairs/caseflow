@@ -14,6 +14,17 @@ module.exports = {
     rules: [
       // add your custom rules.
       {
+        test: /\.jsx?$/,
+        exclude: new RegExp(
+          'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
+        ),
+        use: [
+          {
+            loader: 'babel-loader'
+          }
+        ]
+      },
+      {
         test: /\.module\.s(a|c)ss$/,
         use: [
           {
