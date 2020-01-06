@@ -66,45 +66,37 @@ module TaskTreeRender
   def tree(*atts, col_labels: nil, highlight: nil)
     atts = treeconfig[:default_atts] unless atts.any?
     # rows_hash = { task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
-    highlight_obj = Task.find(highlight) if highlight
-    rows_hash = build_rows(atts, highlight_obj)
+    highlighted_task = self
+    highlighted_task = Task.find(highlight) if highlight
+    rows_hash = build_rows(atts, highlighted_task)
 
     # Calculate column widths using rows only (not column heading labels)
     col_keys = atts.map(&:to_s)
-    col_metadata = calculate_maxwidths(col_keys, rows_hash.values)
+    col_metadata = TaskTreeRender.calculate_maxwidths(col_keys, rows_hash.values)
 
-    # Set labels using specified col_labels or create heading labels using a transform
+    # Set labels using specified col_labels or create heading labels using treeconfig's heading_transform
     if col_labels
-      col_keys.zip(col_labels).each do |key, label|
-        col_metadata[key][:label] = label
-      end
+      TaskTreeRender.set_headings_using_labels(col_labels, col_metadata, col_keys)
     else
-      col_metadata.each do |key, col_obj|
-        transformer = treeconfig[:heading_transform_funcs_hash][treeconfig[:heading_transform]]
-        puts "Unknown heading transform: #{treeconfig[:heading_transform]}" unless transformer
-        col_obj[:label] = transformer.call(key, col_obj)
-      end
+      TaskTreeRender.set_headings_using_transform(col_metadata)
     end
 
-    update_col_widths_to_fit_col_labels(col_metadata)
+    TaskTreeRender.update_col_widths_to_fit_col_labels(col_metadata)
 
     curr_appeal = is_a?(Task) ? appeal : self
     max_name_length = calculate_max_name_length(curr_appeal.eval_appeal_label.size)
 
     ts = tree_structure(col_metadata, rows_hash, max_name_length, 0)
-    table = create_heading_if_self_is_a_task(col_metadata, max_name_length) + TTY::Tree.new(ts).render
+    table = TTY::Tree.new(ts).render
+    table.prepend(appeal.appeal_heading(appeal_id, col_metadata, max_name_length)+"\n") if is_a? Task
 
     if treeconfig[:include_border]
-      top_border(max_name_length, col_metadata) + "\n" +
-        table + bottom_border(max_name_length, col_metadata)
+      TaskTreeRender.top_border(max_name_length, col_metadata) + "\n" +
+        table +
+        TaskTreeRender.bottom_border(max_name_length, col_metadata)
     else
       table
     end
-  end
-
-  def create_heading_if_self_is_a_task(col_metadata, max_name_length)
-    heading = appeal.appeal_heading(appeal_id, col_metadata, max_name_length) if is_a? Task
-    heading&.concat("\n") || ""
   end
 
   def calculate_max_name_length(max_name_length = 0, depth = 0)
@@ -127,11 +119,10 @@ module TaskTreeRender
     # print appeal row: appeal_label followed by column headings
     appeal_label = eval_appeal_label.ljust(max_name_length, treeconfig[:heading_fill_char])
     col_seperator_with_margins = treeconfig[:cell_margin_char] + treeconfig[:col_sep] + treeconfig[:cell_margin_char]
+    col_headings_justified = columns.map { |_key, col_obj| col_obj[:label].ljust(col_obj[:width]) }
+
     "#{appeal_label} " + treeconfig[:col_sep] + treeconfig[:cell_margin_char] +
-      columns.map do |_key, col_obj|
-        value = col_obj[:label]
-        value.ljust(col_obj[:width])
-      end.compact.join(col_seperator_with_margins) +
+      col_headings_justified.join(col_seperator_with_margins) +
       treeconfig[:cell_margin_char] + treeconfig[:col_sep]
   end
 
@@ -140,13 +131,46 @@ module TaskTreeRender
   end
 
   class << self
+    def set_headings_using_labels(col_labels, col_metadata, col_keys)
+      col_keys.zip(col_labels).each do |key, label|
+        col_metadata[key][:label] = label
+      end
+    end
+
+    def set_headings_using_transform(col_metadata)
+      transformer = treeconfig[:heading_transform_funcs_hash][treeconfig[:heading_transform]]
+      unless transformer then
+        puts "Unknown heading transform: #{treeconfig[:heading_transform]}"
+        transformer = treeconfig[:heading_transform_funcs_hash][:symbol_headings]
+      end
+
+      col_metadata.each { |key, col_obj| col_obj[:label] = transformer.call(key, col_obj) }
+    end
+
+    def calculate_maxwidths(keys, rows)
+      keys.each_with_object({}) do |key, obj|
+        max_value_size = rows.map do |row|
+          row[key]&.size
+        end.compact.max
+        obj[key] = {
+          width: max_value_size || 0
+        }
+      end
+    end
+
+    def update_col_widths_to_fit_col_labels(col_metadata)
+      col_metadata.each do |_key, col_obj|
+        col_obj[:width] = [col_obj[:width], col_obj[:label].size].max
+      end
+    end
+
     # hash of lambdas that return string of the cell value
-    def derive_value_funcs_hash(atts, highlight_obj = nil)
+    def derive_value_funcs_hash(atts, highlighted_obj = nil)
       atts.each_with_object({}) do |att, obj|
         if att.is_a?(Array)
           obj[att.to_s] = ->(task) { send_chain(task, att)&.to_s || "" }
         elsif att == " "
-          obj[" "] = ->(task) { (task == highlight_obj) ? "*" : " " }
+          obj[" "] = ->(task) { (task == highlighted_obj) ? "*" : " " }
         elsif treeconfig[:value_funcs_hash][att]
           obj[att.to_s] = treeconfig[:value_funcs_hash][att]
         else
@@ -160,16 +184,31 @@ module TaskTreeRender
         obj.respond_to?(method) ? obj.send(method) : nil
       end
     end
+
+    def top_border(max_name_length, col_metadata)
+      "".ljust(max_name_length) + " " + write_border(col_metadata, treeconfig[:top_chars])
+    end
+
+    def bottom_border(max_name_length, col_metadata)
+      "".ljust(max_name_length) + " " + write_border(col_metadata, treeconfig[:bottom_chars])
+    end
+
+    def write_border(columns, border_chars = "+-|+")
+      dash = border_chars[1]
+      margin = dash * treeconfig[:cell_margin_char].size
+      col_borders = columns.map { |_, col| dash * col[:width] }.join(margin + border_chars[2] + margin)
+      border_chars[0] + margin + col_borders + margin + border_chars[3]
+    end
   end
 
   private
 
   INDENT_SIZE = 4
 
-  def build_rows(atts, highlight_obj = self)
+  def build_rows(atts, highlighted_obj = self)
     # Create func_hash based on atts
     # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
-    func_hash = TaskTreeRender.derive_value_funcs_hash(atts, highlight_obj)
+    func_hash = TaskTreeRender.derive_value_funcs_hash(atts, highlighted_obj)
 
     # Use func_hash to populate returned hash with tasks as keys
     # { task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
@@ -182,23 +221,6 @@ module TaskTreeRender
       rows_obj[task] = func_hash.each_with_object({}) do |(col_key, func), obj|
         obj[col_key] = func.call(task)
       end
-    end
-  end
-
-  def calculate_maxwidths(keys, rows)
-    keys.each_with_object({}) do |key, obj|
-      max_value_size = rows.map do |row|
-        row[key]&.size
-      end.compact.max
-      obj[key] = {
-        width: max_value_size || 0
-      }
-    end
-  end
-
-  def update_col_widths_to_fit_col_labels(col_metadata)
-    col_metadata.each do |_key, col_obj|
-      col_obj[:width] = [col_obj[:width], col_obj[:label].size].max
     end
   end
 
@@ -220,20 +242,5 @@ module TaskTreeRender
     end.compact.join(col_seperator_with_margins)
     treeconfig[:col_sep] + treeconfig[:cell_margin_char] + cols_str +
       treeconfig[:cell_margin_char] + treeconfig[:col_sep]
-  end
-
-  def top_border(max_name_length, col_metadata)
-    "".ljust(max_name_length) + " " + write_divider(col_metadata, treeconfig[:top_chars])
-  end
-
-  def bottom_border(max_name_length, col_metadata)
-    "".ljust(max_name_length) + " " + write_divider(col_metadata, treeconfig[:bottom_chars])
-  end
-
-  def write_divider(columns, border_chars = "+-|+")
-    dash = border_chars[1]
-    margin = dash * treeconfig[:cell_margin_char].size
-    col_border = columns.map { |_, col| dash * col[:width] }.join(margin + border_chars[2] + margin)
-    border_chars[0] + margin + col_border + margin + border_chars[3]
   end
 end
