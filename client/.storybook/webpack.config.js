@@ -15,9 +15,7 @@ module.exports = {
       // add your custom rules.
       {
         test: /\.jsx?$/,
-        exclude: new RegExp(
-          'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
-        ),
+        exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'),
         use: [
           {
             loader: 'babel-loader'
@@ -69,10 +67,6 @@ module.exports = {
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)$/,
         loaders: ['file-loader']
-      },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: ['url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/']
       }
     ]
   }

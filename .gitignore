@@ -43,6 +43,9 @@ node_modules
 # Generated js bundles
 /app/assets/javascripts/*
 
+# Storybook
+storybook-static/
+
 # Generated public assets
 /public/assets/*
 /public/fonts/*
