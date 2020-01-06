@@ -243,7 +243,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         response
       end
 
-      it "updates the judge's email on the virtual hearing", :aggregate_failures, focus: true do
+      it "updates the judge's email on the virtual hearing", :aggregate_failures do
         expect(subject.status).to eq(200)
 
         virtual_hearing.reload
