@@ -28,20 +28,7 @@ class PostDecisionMotion < ApplicationRecord
   end
 
   def create_request_issues_for_vacature
-    vacated_issues.map do |prev_decision_issue|
-      RequestIssue.create!(
-        decision_review: prev_decision_issue.decision_review,
-        decision_review_type: prev_decision_issue.decision_review_type,
-        contested_decision_issue_id: prev_decision_issue.id,
-        contested_rating_issue_reference_id: prev_decision_issue.rating_issue_reference_id,
-        contested_rating_issue_profile_date: prev_decision_issue.rating_profile_date,
-        contested_issue_description: prev_decision_issue.description,
-        nonrating_issue_category: prev_decision_issue.nonrating_issue_category,
-        benefit_type: prev_decision_issue.benefit_type,
-        decision_date: prev_decision_issue.caseflow_decision_date,
-        veteran_participant_id: task.appeal.veteran.participant_id
-      )
-    end
+    vacated_issues.map(&:new_request_issue_from!)
   end
 
   private
