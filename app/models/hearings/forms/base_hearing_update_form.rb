@@ -50,7 +50,17 @@ class BaseHearingUpdateForm
   end
 
   def should_create_or_update_virtual_hearing?
-    !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
+    # If any are true:
+    #   1. Any virtual hearing attributes are set
+    #   2. Hearing time is being changed
+    #   3. Judge is being changed
+    return true if !virtual_hearing_attributes.blank?
+
+    if hearing.virtual?
+      return scheduled_time_string.present? || judge_id.present?
+    end
+
+    false
   end
 
   def only_time_updated?
@@ -68,9 +78,29 @@ class BaseHearingUpdateForm
   end
 
   def email_sent_flag(attr_key)
-    status_changed = virtual_hearing_attributes.key?(:status)
+    attr_changed = virtual_hearing_attributes&.key?(:status) ||
+      virtual_hearing_attributes&.key?(attr_key) ||
+      scheduled_time_string.present? ||
+      (judge_id.present? && attr_key == :judge_email)
 
-    !(status_changed || virtual_hearing_attributes.key?(attr_key) || scheduled_time_string.present?)
+    !attr_changed
+  end
+
+  def virtual_hearing_updates
+      # The email sent flag should always be set to false if any changes are made.
+      emails_sent_updates = {
+        veteran_email_sent: email_sent_flag(:veteran_email),
+        judge_email_sent: email_sent_flag(:judge_email),
+        representative_email_sent: email_sent_flag(:representative_email)
+      }.reject { |_k, email_sent| email_sent == true }
+
+      updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
+
+      if judge_id.present?
+        updates[:judge_email] = hearing.judge&.email
+      end
+
+      updates
   end
 
   def virtual_hearing_created?
@@ -87,16 +117,7 @@ class BaseHearingUpdateForm
     end
 
     if !virtual_hearing_created?
-      # The email sent flag should always be set to false from the API.
-      emails_sent_updates = {
-        veteran_email_sent: email_sent_flag(:veteran_email),
-        judge_email_sent: email_sent_flag(:judge_email),
-        representative_email_sent: email_sent_flag(:representative_email)
-      }.reject { |_k, email_sent| email_sent == true }
-
-      updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)
-
-      virtual_hearing.update(updates)
+      virtual_hearing.update(virtual_hearing_updates)
       virtual_hearing.establishment.restart!
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
@@ -106,7 +127,7 @@ class BaseHearingUpdateForm
   def add_virtual_hearing_alert
     alerts << VirtualHearingUserAlertBuilder.new(
       changed_to_virtual: virtual_hearing_created?,
-      virtual_hearing_attributes: virtual_hearing_attributes,
+      virtual_hearing_attributes: virtual_hearing_updates,
       veteran_full_name: veteran_full_name,
       hearing_time_changed: scheduled_time_string.present?
     ).call.to_hash
