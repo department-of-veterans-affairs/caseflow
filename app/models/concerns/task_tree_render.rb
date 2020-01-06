@@ -63,10 +63,11 @@ module TaskTreeRender
     treeconfig
   end
 
-  def tree(*atts, col_labels: nil)
+  def tree(*atts, col_labels: nil, highlight: nil)
     atts = treeconfig[:default_atts] unless atts.any?
     # rows_hash = { task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
-    rows_hash = build_rows(atts)
+    highlight_obj = Task.find(highlight) if highlight
+    rows_hash = build_rows(atts, highlight_obj)
 
     # Calculate column widths using rows only (not column heading labels)
     col_keys = atts.map(&:to_s)
@@ -165,10 +166,10 @@ module TaskTreeRender
 
   INDENT_SIZE = 4
 
-  def build_rows(atts)
+  def build_rows(atts, highlight_obj = self)
     # Create func_hash based on atts
     # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
-    func_hash = TaskTreeRender.derive_value_funcs_hash(atts, self)
+    func_hash = TaskTreeRender.derive_value_funcs_hash(atts, highlight_obj)
 
     # Use func_hash to populate returned hash with tasks as keys
     # { task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
