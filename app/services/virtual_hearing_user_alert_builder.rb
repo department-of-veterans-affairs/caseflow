@@ -56,8 +56,8 @@ class VirtualHearingUserAlertBuilder
 
   def only_emails_updated?
     email_changed = virtual_hearing_attributes.key?(:veteran_email) ||
-      virtual_hearing_attributes.key?(:representative_email) ||
-      virtual_hearing_attributes.key?(:judge_email)
+                    virtual_hearing_attributes.key?(:representative_email) ||
+                    virtual_hearing_attributes.key?(:judge_email)
 
     email_changed && !cancelled? && !changed_to_virtual
   end
