@@ -7,6 +7,7 @@ import { LOGO_COLORS } from '../app/constants/AppConstants';
 
 export default {
   title: 'Commons|Frontend Toolkit/CaseflowLogo',
+  component: CaseflowLogo,
   decorators: [withKnobs]
 };
 
