@@ -76,9 +76,9 @@ module TaskTreeRender
 
     # Set labels using specified col_labels or create heading labels using treeconfig's heading_transform
     if col_labels
-      TaskTreeRender.set_headings_using_labels(col_labels, col_metadata, col_keys)
+      TaskTreeRender.configure_headings_using_labels(col_labels, col_metadata, col_keys)
     else
-      TaskTreeRender.set_headings_using_transform(col_metadata)
+      TaskTreeRender.configure_headings_using_transform(col_metadata)
     end
 
     TaskTreeRender.update_col_widths_to_fit_col_labels(col_metadata)
@@ -88,7 +88,7 @@ module TaskTreeRender
 
     ts = tree_structure(col_metadata, rows_hash, max_name_length, 0)
     table = TTY::Tree.new(ts).render
-    table.prepend(appeal.appeal_heading(appeal_id, col_metadata, max_name_length)+"\n") if is_a? Task
+    table.prepend(appeal.appeal_heading(appeal_id, col_metadata, max_name_length) + "\n") if is_a? Task
 
     if treeconfig[:include_border]
       TaskTreeRender.top_border(max_name_length, col_metadata) + "\n" +
@@ -131,16 +131,16 @@ module TaskTreeRender
   end
 
   class << self
-    def set_headings_using_labels(col_labels, col_metadata, col_keys)
+    def configure_headings_using_labels(col_labels, col_metadata, col_keys)
       col_keys.zip(col_labels).each do |key, label|
         col_metadata[key][:label] = label
       end
     end
 
-    def set_headings_using_transform(col_metadata)
+    def configure_headings_using_transform(col_metadata)
       transformer = treeconfig[:heading_transform_funcs_hash][treeconfig[:heading_transform]]
-      unless transformer then
-        puts "Unknown heading transform: #{treeconfig[:heading_transform]}"
+      unless transformer
+        Rails.logger.warn "Unknown heading transform: #{treeconfig[:heading_transform]}"
         transformer = treeconfig[:heading_transform_funcs_hash][:symbol_headings]
       end
 
