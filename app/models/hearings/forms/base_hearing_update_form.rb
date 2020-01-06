@@ -14,7 +14,7 @@ class BaseHearingUpdateForm
     ActiveRecord::Base.transaction do
       update_hearing
       add_update_hearing_alert if show_update_alert?
-      if virtual_hearing_form_or_hearing_time_was_updated?
+      if should_create_or_update_virtual_hearing?
         create_or_update_virtual_hearing
         hearing.reload
         start_async_job
@@ -49,7 +49,7 @@ class BaseHearingUpdateForm
     hearing_updated?
   end
 
-  def virtual_hearing_form_or_hearing_time_was_updated?
+  def should_create_or_update_virtual_hearing?
     !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
   end
 
