@@ -15,6 +15,7 @@ class VBMSCaseflowLogger
     end
   end
 end
+# :nocov:
 
 class ExternalApi::VBMSService
   def self.fetch_document_file(document)
@@ -206,4 +207,3 @@ class ExternalApi::VBMSService
     end
   end
 end
-# :nocov:
