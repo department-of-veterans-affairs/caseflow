@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Certification Stats Dashboard", :postgres do
+RSpec.feature "Certification Stats Dashboard", :postgres, skip: "deprecated" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 17, 55, 0, rand(1000)))
 
@@ -155,7 +155,7 @@ RSpec.feature "Certification Stats Dashboard", :postgres do
     expect(page).to have_content("Overall (median)")
   end
 
-  scenario "Unauthorized user access" do
+  fscenario "Unauthorized user access" do
     # Unauthenticated access
     User.unauthenticate!
     visit "/certification/stats"
