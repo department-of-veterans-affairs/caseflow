@@ -64,54 +64,40 @@ module TaskTreeRender
   end
 
   def tree(*atts, col_labels: nil, highlight: nil)
-    task_tree_hash, col_metadata, max_name_length=tree_hash(*atts, col_labels, highlight)
+    task_tree_hash, metadata = tree_hash(*atts, col_labels, highlight)
     table = TTY::Tree.new(task_tree_hash).render
-    table.prepend(appeal.appeal_heading(col_metadata, max_name_length) + "\n") if is_a? Task
+    table.prepend(appeal.appeal_heading(metadata.max_name_length, metadata.col_metadata) + "\n") if is_a? Task
 
     if treeconfig[:include_border]
-      TaskTreeRender.top_border(max_name_length, col_metadata) + "\n" +
+      TaskTreeRender.top_border(metadata.max_name_length, metadata.col_metadata) + "\n" +
         table +
-        TaskTreeRender.bottom_border(max_name_length, col_metadata)
+        TaskTreeRender.bottom_border(metadata.max_name_length, metadata.col_metadata)
     else
       table
     end
   end
 
+  class TreeMetadata
+    attr_accessor :col_keys, # column keys for hashes like rows, col_metadata, and func_hash
+                  :rows, # { task1=>{ "colKey1" => "strValue1", "colKey2" => "strValue2", ... }, task2=>{...} }
+                  :max_name_length, # length of longest appeal/task label (including indenting) when formatted as a tree
+                  :col_metadata # hash of column metadata (widths and labels)
+  end
+
   def tree_hash(*atts, col_labels: nil, highlight: nil)
     atts = treeconfig[:default_atts] unless atts.any?
-    # rows_hash = { task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
+
     highlighted_task = self
     highlighted_task = Task.find(highlight) if highlight
-    rows_hash = build_rows(atts, highlighted_task)
-
-    # Calculate column widths using rows only (not column heading labels)
-    col_keys = atts.map(&:to_s)
-
-    col_metadata = derive_column_metadata(col_labels, col_keys, rows_hash.values)
-    binding.pry
-
-    ts, max_name_length=tree_structure(col_metadata, rows_hash)
-    return ts, col_metadata, max_name_length
-  end
-
-  def derive_column_metadata(col_labels, col_keys, rows)
-    col_metadata = TaskTreeRender.calculate_maxwidths(col_keys, rows)
-
-    # Set labels using specified col_labels or create heading labels using treeconfig's heading_transform
-    if col_labels
-      TaskTreeRender.configure_headings_using_labels(col_labels, col_metadata, col_keys)
-    else
-      TaskTreeRender.configure_headings_using_transform(col_metadata)
-    end
-
-    TaskTreeRender.update_col_widths_to_fit_col_labels(col_metadata)
-    col_metadata
-  end
-
-  def tree_structure(col_metadata, rows)
     curr_appeal = is_a?(Task) ? appeal : self
-    max_name_length = calculate_max_name_length(curr_appeal.eval_appeal_label.size)
-    return tree_structure_recurse(col_metadata, rows, max_name_length, 0), max_name_length
+
+    metadata = TreeMetadata.new
+    metadata.col_keys = atts.map(&:to_s)
+    metadata.rows = build_rows(atts, highlighted_task)
+    metadata.max_name_length = calculate_max_name_length(curr_appeal.eval_appeal_label.size)
+    TaskTreeRender.derive_column_metadata(metadata, col_labels)
+
+    return tree_structure(metadata, 0), metadata
   end
 
   def calculate_max_name_length(max_name_length = 0, depth = 0)
@@ -121,17 +107,17 @@ module TaskTreeRender
     end.append(max_name_length).max
   end
 
-  def tree_structure_recurse(columns, rows, max_name_length, depth = 0)
+  def tree_structure(metadata, depth = 0)
     row_str = if is_a?(Task)
-                task_row(max_name_length, depth, columns, rows[self])
+                task_row(metadata.max_name_length, depth, metadata.col_metadata, metadata.rows[self])
               else
-                appeal_heading(columns, max_name_length)
+                appeal_heading(metadata.max_name_length, metadata.col_metadata)
               end
-    { "#{row_str}": tree_children.map { |child| child.tree_structure_recurse(columns, rows, max_name_length, depth + 1) } }
+    { "#{row_str}": tree_children.map { |child| child.tree_structure(metadata, depth + 1) } }
   end
 
-  def appeal_heading(columns, max_name_length)
-    # print appeal row: appeal_label followed by column headings
+  def appeal_heading(max_name_length, columns)
+    # returns string for appeal header row: appeal_label followed by column headings
     appeal_label = eval_appeal_label.ljust(max_name_length, treeconfig[:heading_fill_char])
     col_seperator_with_margins = treeconfig[:cell_margin_char] + treeconfig[:col_sep] + treeconfig[:cell_margin_char]
     col_headings_justified = columns.map { |_key, col_obj| col_obj[:label].ljust(col_obj[:width]) }
@@ -146,6 +132,33 @@ module TaskTreeRender
   end
 
   class << self
+
+    def derive_column_metadata(metadata, col_labels)
+      # Calculate column widths using rows only (not column heading labels)
+      col_metadata = calculate_maxwidths(metadata.col_keys, metadata.rows.values)
+
+      # Set labels using specified col_labels or create heading labels using treeconfig's heading_transform
+      if col_labels
+        configure_headings_using_labels(col_labels, col_metadata, metadata.col_keys)
+      else
+        configure_headings_using_transform(col_metadata)
+      end
+
+      update_col_widths_to_fit_col_labels(col_metadata)
+      metadata.col_metadata = col_metadata
+    end
+
+    def calculate_maxwidths(keys, rows)
+      keys.each_with_object({}) do |key, obj|
+        max_value_size = rows.map do |row|
+          row[key]&.size
+        end.compact.max
+        obj[key] = {
+          width: max_value_size || 0
+        }
+      end
+    end
+
     def configure_headings_using_labels(col_labels, col_metadata, col_keys)
       col_keys.zip(col_labels).each do |key, label|
         col_metadata[key][:label] = label
@@ -160,17 +173,6 @@ module TaskTreeRender
       end
 
       col_metadata.each { |key, col_obj| col_obj[:label] = transformer.call(key, col_obj) }
-    end
-
-    def calculate_maxwidths(keys, rows)
-      keys.each_with_object({}) do |key, obj|
-        max_value_size = rows.map do |row|
-          row[key]&.size
-        end.compact.max
-        obj[key] = {
-          width: max_value_size || 0
-        }
-      end
     end
 
     def update_col_widths_to_fit_col_labels(col_metadata)
@@ -226,7 +228,7 @@ module TaskTreeRender
     func_hash = TaskTreeRender.derive_value_funcs_hash(atts, highlighted_obj)
 
     # Use func_hash to populate returned hash with tasks as keys
-    # { task1=>{ "strCol1" => "strValue1", "strCol2" => "strValue2", ... }, task2=>{...} }
+    # { task1=>{ "colKey1" => "strValue1", "colKey1" => "strValue2", ... }, task2=>{...} }
     tree_rows = is_a?(Task) ? appeal.tasks : tasks
     build_rows_from(tree_rows, func_hash)
   end
