@@ -455,11 +455,7 @@ export const initialAssignTasksToUser = ({
     };
   });
 
-  const paramsArray = legacyParams.concat(amaParams);
-
-  debugger;
-
-  return Promise.all(paramsArray.map((params) => {
+  return Promise.all(legacyParams.concat(amaParams).map((params) => {
     const { requestParams, url } = params;
 
     return ApiUtil.post(url, requestParams).
