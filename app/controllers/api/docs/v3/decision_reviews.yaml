@@ -1224,10 +1224,10 @@ paths:
       tags:
         - Issues
       parameters:
-        - name: veteranId
+        - name: ssn
           in: header
           required: true
-          description: The file number or SSN of the veteran.
+          description: The SSN of the veteran.
           schema:
             type : string
         - name: receiptDate
