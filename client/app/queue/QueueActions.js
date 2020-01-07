@@ -402,7 +402,7 @@ export const bulkAssignTasks =
 // isInitial is only used for das deprecation
 const dispatchOldTasks = (dispatch, oldTasks, resp, isInitial = false) => {
   // Ama request is batched
-  if (Array.isArray(oldTasks)) {
+  if (Array.isArray(oldTasks) || oldTasks.appealType === 'Appeal') {
     dispatch(onReceiveAmaTasks(resp.tasks.data));
   } else {
     // For das deprecation, legacy_task_controller#create returns tasks, not a task
@@ -455,17 +455,19 @@ export const initialAssignTasksToUser = ({
     };
   });
 
-  return Promise.all(legacyParams.concat(amaParams).map((params) => {
+  const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
+
+  return Promise.all(paramsArray.map((params) => {
     const { requestParams, url } = params;
 
     return ApiUtil.post(url, requestParams).
       then((resp) => resp.body).
       then((resp) => {
-        const assignedTasks = [requestParams.data.tasks].flat();
+        const assignedTasks = requestParams.data.tasks;
 
-        dispatchOldTasks(dispatch, requestParams.data.tasks, resp, true);
+        dispatchOldTasks(dispatch, assignedTasks, resp, true);
 
-        assignedTasks.forEach((oldTask) => {
+        [assignedTasks].flat().forEach((oldTask) => {
           dispatch(setSelectionOfTaskOfUser({
             userId: previousAssigneeId,
             taskId: oldTask.uniqueId,

@@ -44,7 +44,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   end
 
   context "Can move appeals between attorneys" do
-    scenario "submits draft decision" do
+    fscenario "submits draft decision" do
       judge_task_one = create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
       judge_task_two = create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
 
@@ -206,7 +206,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
   end
 
-  describe "Assigning a legacy appeal to an attorney from the case details page" do
+  fdescribe "Assigning a legacy appeal to an attorney from the case details page" do
     let!(:vacols_case) { create(:case, staff: vacols_user_one) }
     let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     let!(:decass) { create(:decass, defolder: vacols_case.bfkey) }
