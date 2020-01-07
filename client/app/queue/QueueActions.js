@@ -399,16 +399,19 @@ export const bulkAssignTasks =
     }
   });
 
-// isInitial is only used for das deprecation 
-const dispatchOldTasks = (dispatch, oldTask, resp, isInitial=false) => {
-  if (oldTask.appealType === 'Appeal') {
-    dispatch(onReceiveAmaTasks(resp.tasks.data)); 
+// isInitial is only used for das deprecation
+const dispatchOldTasks = (dispatch, oldTasks, resp, isInitial = false) => {
+  // Ama request is batched
+  if (Array.isArray(oldTasks)) {
+    dispatch(onReceiveAmaTasks(resp.tasks.data));
   } else {
-    //For das deprecation, legacy_task_controller#create returns tasks, not a task
-    const tasks = isInitial && (oldTask.appealType === 'LegacyAppeal' && !oldTask.isLegacy) ? resp.tasks.data : [resp.task.data];
+    // For das deprecation, legacy_task_controller#create returns tasks, not a task
+    const tasks = isInitial && (oldTasks.appealType === 'LegacyAppeal' && !oldTasks.isLegacy) ?
+      resp.tasks.data :
+      [resp.task.data];
 
     const allTasks = prepareAllTasksForStore(tasks);
-    
+
     dispatch(onReceiveTasks({
       tasks: allTasks.tasks,
       amaTasks: allTasks.amaTasks
@@ -418,49 +421,68 @@ const dispatchOldTasks = (dispatch, oldTask, resp, isInitial=false) => {
 
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
-}) => (dispatch) => Promise.all(tasks.map((oldTask) => {
-  let params, url;
+}) => (dispatch) => {
+  const amaTasks = tasks.filter((oldTask) => oldTask.appealType === 'Appeal');
+  const legacyTasks = tasks.filter((oldTask) => oldTask.appealType === 'LegacyAppeal');
 
-  if (oldTask.appealType === 'Appeal') {
-    url = '/judge_assign_tasks';
-    params = {
+  const amaParams = {
+    url: '/judge_assign_tasks',
+    requestParams: {
       data: {
-        tasks: [{
-          external_id: oldTask.externalAppealId,
-          parent_id: oldTask.taskId,
-          assigned_to_id: assigneeId
-        }]
+        tasks: amaTasks.map((oldTask) => {
+          return {
+            external_id: oldTask.externalAppealId,
+            parent_id: oldTask.taskId,
+            assigned_to_id: assigneeId
+          };
+        })
       }
-    };
-  } else {
-    url = '/legacy_tasks';
-    params = {
-      data: {
-        tasks: {
-          assigned_to_id: assigneeId,
-          type: 'JudgeCaseAssignmentToAttorney',
-          appeal_id: oldTask.appealId
+    }
+  };
+
+  const legacyParams = legacyTasks.map((oldTask) => {
+    return {
+      url: '/legacy_tasks',
+      requestParams: {
+        data: {
+          tasks: {
+            assigned_to_id: assigneeId,
+            type: 'JudgeCaseAssignmentToAttorney',
+            appeal_id: oldTask.appealId
+          }
         }
       }
     };
-  }
+  });
 
-  return ApiUtil.post(url, params).
-    then((resp) => resp.body).
-    then((resp) => {
-      dispatchOldTasks(dispatch, oldTask, resp, true);
-      
-      dispatch(setSelectionOfTaskOfUser({
-        userId: previousAssigneeId,
-        taskId: oldTask.uniqueId,
-        selected: false
-      }));
+  const paramsArray = legacyParams.concat(amaParams);
 
-      dispatch(incrementTaskCountForAttorney({
-        id: assigneeId
-      }));
-    });
-}));
+  debugger;
+
+  return Promise.all(paramsArray.map((params) => {
+    const { requestParams, url } = params;
+
+    return ApiUtil.post(url, requestParams).
+      then((resp) => resp.body).
+      then((resp) => {
+        const assignedTasks = [requestParams.data.tasks].flat();
+
+        dispatchOldTasks(dispatch, requestParams.data.tasks, resp, true);
+
+        assignedTasks.forEach((oldTask) => {
+          dispatch(setSelectionOfTaskOfUser({
+            userId: previousAssigneeId,
+            taskId: oldTask.uniqueId,
+            selected: false
+          }));
+
+          dispatch(incrementTaskCountForAttorney({
+            id: assigneeId
+          }));
+        });
+      });
+  }));
+};
 
 export const reassignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
