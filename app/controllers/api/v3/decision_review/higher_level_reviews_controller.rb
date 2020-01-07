@@ -33,7 +33,9 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
   private
 
   def processor
-    @processor ||= Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, User.api_user)
+    inputs = params
+    inputs['fileNumberOrSsn'] = BGSService.new.fetch_file_number_by_ssn(params['fileNumberOrSsn'])
+    @processor ||= Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(inputs, User.api_user)
   end
 
   def intake_status
