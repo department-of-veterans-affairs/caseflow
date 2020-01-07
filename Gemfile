@@ -50,7 +50,7 @@ gem "puma", "~> 3.12.0"
 # rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
 # Explicitly define rack version here to avoid that.
 gem "rack", "~> 2.0.6"
-gem "rails", "5.1.6.2"
+gem "rails", "5.2.4.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -77,7 +77,7 @@ gem "validates_email_format_of"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter"
+  gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
   gem "ruby-oci8", "~> 2.2"
 end
 
