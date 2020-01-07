@@ -2,6 +2,7 @@
 
 class BaseHearingUpdateForm
   include ActiveModel::Model
+  include RunAsyncable
 
   attr_accessor :bva_poc, :disposition,
                 :hearing, :hearing_location_attributes, :hold_open,
@@ -60,10 +61,19 @@ class BaseHearingUpdateForm
   def start_async_job
     if hearing.virtual_hearing.status == "pending" || !hearing.virtual_hearing.all_emails_sent?
       hearing.virtual_hearing.establishment.submit_for_processing!
-      VirtualHearings::CreateConferenceJob.perform_later(
+
+      job_args = {
         hearing_id: hearing.id,
-        email_type: only_time_updated? ? :updated_time_confirmation : :confirmation
-      )
+        # TODO: Ideally, this would use symbols, but symbols can't be serialized for ActiveJob.
+        # Rails 6 supports passing symbols to a job.
+        email_type: only_time_updated? ? "updated_time_confirmation" : "confirmation"
+      }
+
+      if run_async?
+        VirtualHearings::CreateConferenceJob.perform_later(job_args)
+      else
+        VirtualHearings::CreateConferenceJob.perform_now(job_args)
+      end
     end
   end
 
