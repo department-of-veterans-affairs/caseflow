@@ -91,4 +91,59 @@ describe ExternalApi::VbmsDocumentsForAppeal do
       expect(docs.fetch).to eq result_hash
     end
   end
+
+  context "vbms_pagination feature toggle is on" do
+    before do
+      FeatureToggle.enable!(:vbms_pagination)
+    end
+
+    after do
+      FeatureToggle.disable!(:vbms_pagination)
+    end
+
+    let(:pagination_service) { VBMS::Service::PagedDocuments.new(client: vbms_client) }
+    let(:vbms_client) { FakeVbmsClient.new }
+    let(:bgs_client) { FakeBgsClient.new }
+    let(:docs) do
+      ExternalApi::VbmsDocumentsForAppeal.new(
+        file_number: veteran_file_number, vbms_client: vbms_client, bgs_client: bgs_client
+      )
+    end
+
+    context "when file number exists in VBMS" do
+      it "returns documents" do
+        docs_from_vbms_array = [4, 5, 6]
+        docs_from_vbms = instance_double(DocumentsFromVbmsDocuments)
+        allow(DocumentsFromVbmsDocuments).to receive(:new).and_return(docs_from_vbms)
+        allow(docs_from_vbms).to receive(:call).and_return(docs_from_vbms_array)
+
+        allow(docs).to receive(:vbms_paged_documents_service) { pagination_service }
+        allow(pagination_service).to receive(:call).and_return(documents: [1, 2, 3])
+
+        result_hash = {
+          manifest_vbms_fetched_at: nil,
+          manifest_vva_fetched_at: nil,
+          documents: docs_from_vbms_array
+        }
+
+        expect(bgs_client).to_not receive(:fetch_veteran_info)
+        expect(vbms_client).to_not receive(:send_request)
+        expect(docs.fetch).to eq result_hash
+      end
+    end
+
+    context "when VBMS cannot find file number and BGS claim number is different from file number" do
+      it "looks up the BGS claim number in VBMS" do
+        bgs_claim_number = "87654321"
+
+        allow(vbms_client).to receive(:send_request).and_raise(nonexistent_file_number_error)
+        allow(bgs_client).to receive(:fetch_veteran_info).with(veteran_file_number)
+          .and_return(claim_number: bgs_claim_number)
+        allow(docs).to receive(:vbms_paged_documents_service) { pagination_service }
+
+        expect(vbms_client).to receive(:send_request).exactly(:twice)
+        expect { docs.fetch }.to raise_error(VBMS::FilenumberDoesNotExist)
+      end
+    end
+  end
 end
