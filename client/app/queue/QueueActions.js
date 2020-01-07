@@ -429,31 +429,27 @@ export const initialAssignTasksToUser = ({
     url: '/judge_assign_tasks',
     requestParams: {
       data: {
-        tasks: amaTasks.map((oldTask) => {
-          return {
-            external_id: oldTask.externalAppealId,
-            parent_id: oldTask.taskId,
-            assigned_to_id: assigneeId
-          };
-        })
+        tasks: amaTasks.map((oldTask) => ({
+          external_id: oldTask.externalAppealId,
+          parent_id: oldTask.taskId,
+          assigned_to_id: assigneeId
+        }))
       }
     }
   };
 
-  const legacyParams = legacyTasks.map((oldTask) => {
-    return {
-      url: '/legacy_tasks',
-      requestParams: {
-        data: {
-          tasks: {
-            assigned_to_id: assigneeId,
-            type: 'JudgeCaseAssignmentToAttorney',
-            appeal_id: oldTask.appealId
-          }
+  const legacyParams = legacyTasks.map((oldTask) => ({
+    url: '/legacy_tasks',
+    requestParams: {
+      data: {
+        tasks: {
+          assigned_to_id: assigneeId,
+          type: 'JudgeCaseAssignmentToAttorney',
+          appeal_id: oldTask.appealId
         }
       }
-    };
-  });
+    }
+  }));
 
   const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
 
