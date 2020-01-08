@@ -38,15 +38,22 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
                 "document_id": "12345678.1234",
                 "overtime": true,
                 "note": "something",
-                "issues": [{ "description": "wonderful life",
-                             "benefit_type": "pension",
-                             "diagnostic_code": "5001",
-                             "request_issue_ids": [request_issue1.id, request_issue3.id] },
-                           { "disposition": "remanded", "description": "great moments",
-                             "benefit_type": "vha",
-                             "diagnostic_code": "5001",
-                             "request_issue_ids": [request_issue2.id],
-                             "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
+                "issues": [
+                  {
+                    "description": "wonderful life",
+                    "benefit_type": "pension",
+                    "diagnostic_code": "5001",
+                    "request_issue_ids": [request_issue1.id, request_issue3.id]
+                  },
+                  {
+                    "description": "great moments",
+                    "disposition": "remanded",
+                    "benefit_type": "vha",
+                    "diagnostic_code": "5001",
+                    "request_issue_ids": [request_issue2.id],
+                    "remand_reasons": [{ "code": "va_records", "post_aoj": true }]
+                  }
+                ]
               }
             end
 
