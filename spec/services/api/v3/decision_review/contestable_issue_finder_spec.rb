@@ -45,7 +45,7 @@ describe Api::V3::DecisionReview::ContestableIssueFinder, :all_dbs do
   describe "#found?" do
     it "find a veteran's rating issues" do
       rating.issues.each do |issue|
-        expect(lookup(ratingIssueId: issue.reference_id).found?).to eq true
+        expect(lookup(rating_issue_id: issue.reference_id).found?).to eq true
       end
     end
   end
@@ -60,10 +60,10 @@ describe Api::V3::DecisionReview::ContestableIssueFinder, :all_dbs do
         )
       ).contestable_issues.each do |ci|
         expect(
-          lookup(ratingIssueId: ci.rating_issue_reference_id).contestable_issue.as_json
+          lookup(rating_issue_id: ci.rating_issue_reference_id).contestable_issue.as_json
         ).to eq ci.as_json
         expect(
-          lookup(ratingIssueId: "   #{ci.rating_issue_reference_id}").contestable_issue.as_json
+          lookup(rating_issue_id: "   #{ci.rating_issue_reference_id}").contestable_issue.as_json
         ).to eq ci.as_json
       end
     end

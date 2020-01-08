@@ -30,18 +30,20 @@ class Api::V3::DecisionReview::ContestableIssueParams
     @veteran = veteran
     @receipt_date = receipt_date
     @benefit_type = benefit_type
-    @ids = params[:attributes]
-      .permit("ratingIssueId", "decisionIssueId", "ratingDecisionIssueId").to_h
-      .symbolize_keys
+    @ids = {
+      rating_issue_id: params[:attributes][:ratingIssueId],
+      decision_issue_id: params[:attributes][:decisionIssueId],
+      rating_decision_issue_id: params[:attributes][:ratingDecisionIssueId]
+    }
   end
 
   def contestable_issue
-    @contestable_issue ||= unidentified? ? nil : lookup.contestable_issue
+    @contestable_issue ||= unidentified? ? nil : contestable_issue_finder.contestable_issue
   end
 
   def error_code
     return :contestable_issue_params_must_have_ids if unidentified? # error code
-    return nil if lookup.found?
+    return nil if contestable_issue_finder.found?
 
     :could_not_find_contestable_issue # error_code
   end
@@ -80,8 +82,8 @@ class Api::V3::DecisionReview::ContestableIssueParams
 
   private
 
-  def lookup
-    @lookup ||= Api::V3::DecisionReview::ContestableIssueFinder.new(
+  def contestable_issue_finder
+    @contestable_issue_finder ||= Api::V3::DecisionReview::ContestableIssueFinder.new(
       {
         decision_review_class: @decision_review_class,
         veteran: @veteran,
