@@ -400,16 +400,13 @@ export const bulkAssignTasks =
   });
 
 // isInitial is only used for das deprecation
-const dispatchOldTasks = (dispatch, oldTasks, resp, isInitial = false) => {
+const dispatchOldTasks = (dispatch, oldTasks, resp) => {
   // Ama request is batched
   if (Array.isArray(oldTasks) || oldTasks.appealType === 'Appeal') {
     dispatch(onReceiveAmaTasks(resp.tasks.data));
   } else {
     // For das deprecation, legacy_task_controller#create returns tasks, not a task
-    const tasks = isInitial && (oldTasks.appealType === 'LegacyAppeal' && !oldTasks.isLegacy) ?
-      resp.tasks.data :
-      [resp.task.data];
-
+    const tasks = [resp.task.data].flat();
     const allTasks = prepareAllTasksForStore(tasks);
 
     dispatch(onReceiveTasks({
@@ -461,7 +458,7 @@ export const initialAssignTasksToUser = ({
       then((resp) => {
         const assignedTasks = requestParams.data.tasks;
 
-        dispatchOldTasks(dispatch, assignedTasks, resp, true);
+        dispatchOldTasks(dispatch, assignedTasks, resp);
 
         [assignedTasks].flat().forEach((oldTask) => {
           dispatch(setSelectionOfTaskOfUser({
