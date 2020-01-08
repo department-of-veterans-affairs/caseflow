@@ -6,7 +6,10 @@ import '../app/styles/app.scss';
 
 // automatically import all files ending in *.stories.js
 configure(
-  [require.context('../stories', true, /\.stories\.js$/), require.context('../app', true, /\.stories\.js$/)],
+  [
+    require.context('../stories', true, /\.(stories|story)\.(js|mdx)$/),
+    require.context('../app', true, /\.stories\.js$/)
+  ],
   module
 );
 
