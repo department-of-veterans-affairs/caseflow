@@ -11,6 +11,19 @@ export default {
   decorators: [withKnobs]
 };
 
+export const all = () => (
+  <React.Fragment>
+    <CaseflowLogo accentColor="#5c626b" overlapColor="#4d535b" />
+    <CaseflowLogo accentColor={LOGO_COLORS.CERTIFICATION.ACCENT} overlapColor={LOGO_COLORS.CERTIFICATION.OVERLAP} />
+    <CaseflowLogo accentColor={LOGO_COLORS.DISPATCH.ACCENT} overlapColor={LOGO_COLORS.DISPATCH.OVERLAP} />
+    <CaseflowLogo accentColor={LOGO_COLORS.EFOLDER.ACCENT} overlapColor={LOGO_COLORS.EFOLDER.OVERLAP} />
+    <CaseflowLogo accentColor={LOGO_COLORS.HEARINGS.ACCENT} overlapColor={LOGO_COLORS.HEARINGS.OVERLAP} />
+    <CaseflowLogo accentColor={LOGO_COLORS.INTAKE.ACCENT} overlapColor={LOGO_COLORS.INTAKE.OVERLAP} />
+    <CaseflowLogo accentColor={LOGO_COLORS.QUEUE.ACCENT} overlapColor={LOGO_COLORS.QUEUE.OVERLAP} />
+    <CaseflowLogo accentColor={LOGO_COLORS.READER.ACCENT} overlapColor={LOGO_COLORS.READER.OVERLAP} />
+  </React.Fragment>
+);
+
 export const generic = () => (
   <CaseflowLogo
     accentColor={color('Accent Color', '#5c626b', 'generic')}
