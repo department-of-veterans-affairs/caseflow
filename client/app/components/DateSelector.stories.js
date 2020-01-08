@@ -6,7 +6,7 @@ import { withKnobs, text, boolean, select } from '@storybook/addon-knobs';
 import DateSelector from './DateSelector';
 
 export default {
-  title: 'Commons|Components/DateSelector',
+  title: 'Commons/Components/DateSelector',
   component: DateSelector,
   decorators: [withKnobs]
 };
