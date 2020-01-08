@@ -424,6 +424,7 @@ export const initialAssignTasksToUser = ({
 
   const amaParams = {
     url: '/judge_assign_tasks',
+    taskIds: amaTasks.map((oldTask) => oldTask.uniqueId),
     requestParams: {
       data: {
         tasks: amaTasks.map((oldTask) => ({
@@ -437,6 +438,7 @@ export const initialAssignTasksToUser = ({
 
   const legacyParams = legacyTasks.map((oldTask) => ({
     url: '/legacy_tasks',
+    taskIds: [oldTask.uniqueId],
     requestParams: {
       data: {
         tasks: {
@@ -451,20 +453,18 @@ export const initialAssignTasksToUser = ({
   const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
 
   return Promise.all(paramsArray.map((params) => {
-    const { requestParams, url } = params;
+    const { requestParams, url, taskIds } = params;
 
     return ApiUtil.post(url, requestParams).
       then((resp) => resp.body).
       then((resp) => {
-        const assignedTasks = requestParams.data.tasks;
+        dispatchOldTasks(dispatch, requestParams.data.tasks, resp);
 
-        dispatchOldTasks(dispatch, assignedTasks, resp);
-
-        [assignedTasks].flat().forEach((oldTask) => {
+        taskIds.forEach((taskId) => {
           dispatch(setSelectionOfTaskOfUser({
             userId: previousAssigneeId,
-            taskId: oldTask.uniqueId,
-            selected: false
+            selected: false,
+            taskId
           }));
 
           dispatch(incrementTaskCountForAttorney({
