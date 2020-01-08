@@ -4,6 +4,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 
+import COPY from '../../../../COPY.json';
 import { renderAppealType } from '../../../queue/utils';
 import { HearingTime, HearingDocketTag, HearingAppellantName } from './AssignHearingsFields';
 import QueueTable from '../../../queue/QueueTable';
@@ -23,12 +24,13 @@ export default class UpcomingHearingsTable extends React.PureComponent {
   }
 
   getColumns = () => {
-    const { selectedHearingDay, selectedRegionalOffice } = this.props;
     const columns = [
       {
         header: '',
         align: 'left',
-        valueFunction: (_, rowId) => rowId + 1
+        // Since this column isn't tied to anything in the input row, _value will
+        // always be undefined.
+        valueFunction: (_value, rowId) => rowId + 1
       },
       {
         header: 'Case Details',
@@ -85,7 +87,16 @@ export default class UpcomingHearingsTable extends React.PureComponent {
     const { hearings, selectedHearingDay } = this.props;
 
     if (_.isNil(selectedHearingDay)) {
-      return <div><NoUpcomingHearingDayMessage /></div>;
+      return (
+        <div>
+          <StatusMessage
+            title={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER}
+            type="alert"
+            messageText={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE}
+            wrapInAppSegment={false}
+          />
+        </div>
+      );
     }
 
     return (

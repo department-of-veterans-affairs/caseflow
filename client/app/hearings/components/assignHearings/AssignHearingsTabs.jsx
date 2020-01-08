@@ -6,7 +6,6 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
-import { sortHearings } from '../../utils';
 import COPY from '../../../../COPY.json';
 import AssignHearingsTable from './AssignHearingsTable';
 import UpcomingHearingsTable from './UpcomingHearingsTable';
@@ -22,15 +21,6 @@ import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 const AMA_APPEALS_TAB_NAME = 'amaAppeals';
 const LEGACY_APPEALS_TAB_NAME = 'legacyAppeals';
-
-const NoUpcomingHearingDayMessage = () => (
-  <StatusMessage
-    title={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER}
-    type="alert"
-    messageText={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE}
-    wrapInAppSegment={false}
-  />
-);
 
 const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} }) => {
   if (_.isNil(selectedHearingDay)) {
