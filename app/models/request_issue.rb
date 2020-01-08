@@ -161,6 +161,19 @@ class RequestIssue < ApplicationRecord
       new(attrs).tap(&:validate_eligibility!)
     end
 
+    def new_decision_issue_from!
+      DecisionIssue.create!(
+        decision_review: decision_review,
+        decision_review_type: decision_review_type,
+        disposition: 'vacated',
+        description: "The decision: #{description} has been vacated.",
+        caseflow_decision_date: Date.today,
+        benefit_type: benefit_type,
+        decision_date: caseflow_decision_date,
+        veteran_participant_id: decision_review.veteran.participant_id
+      )
+    end
+
     private
 
     # rubocop:disable Metrics/MethodLength
