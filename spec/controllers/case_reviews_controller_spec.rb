@@ -46,8 +46,8 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
                     "request_issue_ids": [request_issue1.id, request_issue3.id]
                   },
                   {
-                    "description": "great moments",
                     "disposition": "remanded",
+                    "description": "great moments",
                     "benefit_type": "vha",
                     "diagnostic_code": "5001",
                     "request_issue_ids": [request_issue2.id],
@@ -58,7 +58,7 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
             end
 
             it "should not be successful" do
-              post :complete, params: { task_id: task.id, tasks: params }
+              post :complete, params: { task_id: task.id, tasks: params }, as: :json
               expect(response.status).to eq 400
               response_body = JSON.parse(response.body)
               msg = "Validation failed: Disposition can't be blank, Disposition is not included in the list"
