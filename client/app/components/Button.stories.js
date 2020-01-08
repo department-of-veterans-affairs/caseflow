@@ -79,7 +79,7 @@ export const loading = () => (
     onClick={action('clicked', 'loading')}
     name={text('Name', 'example', 'loading')}
     disabled={boolean('Disabled', false, 'loading')}
-    loading={boolean('Loading', false, 'loading')}
+    loading={boolean('Loading', true, 'loading')}
     loadingText={text('Loading Text', '', 'loading')}
   >
     {text('Contents', 'Sign Up', 'loading')}
