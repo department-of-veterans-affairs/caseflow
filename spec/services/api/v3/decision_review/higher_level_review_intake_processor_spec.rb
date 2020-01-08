@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "support/intake_helpers"
-require "pp"
 
 describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
   include IntakeHelpers
@@ -114,9 +113,9 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
           "rating_issue_reference_id" => request_issue[:contested_rating_issue_reference_id],
           "rating_issue_diagnostic_code" => request_issue[:contested_rating_issue_diagnostic_code],
           "rating_decision_reference_id" => request_issue[:contested_rating_decision_reference_id],
-          #"decision_text" => request_issue[:nonrating_issue_description],
+          "decision_text" => request_issue[:contested_issue_description],
           "is_unidentified" => request_issue[:is_unidentified],
-          #"decision_date" => request_issue[:decision_date],
+          "decision_date" => request_issue[:decision_date].strftime("%F"),
           "benefit_type" => request_issue[:benefit_type],
           "ramp_claim_id" => request_issue[:ramp_claim_id],
           "contested_decision_issue_id" => request_issue[:contested_decision_issue_id]
@@ -127,7 +126,7 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
             receipt_date: receipt_date,
             benefit_type: benefit_type,
             params: contestable_issue
-          ).intakes_controller_params.as_json.slice("rating_issue_reference_id", "rating_issue_diagnostic_code", "rating_decision_reference_id", "is_unidentified", "benefit_type", "ramp_claim_id", "contested_decision_issue_id")
+          ).intakes_controller_params.as_json
         )
       end
     end
