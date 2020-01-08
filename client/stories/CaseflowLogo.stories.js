@@ -6,7 +6,7 @@ import CaseflowLogo from '@department-of-veterans-affairs/caseflow-frontend-tool
 import { LOGO_COLORS } from '../app/constants/AppConstants';
 
 export default {
-  title: 'Commons|Frontend Toolkit/CaseflowLogo',
+  title: 'Commons/Frontend Toolkit/CaseflowLogo',
   component: CaseflowLogo,
   decorators: [withKnobs]
 };

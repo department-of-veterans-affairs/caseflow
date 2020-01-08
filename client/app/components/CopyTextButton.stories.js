@@ -5,7 +5,7 @@ import { withKnobs, text } from '@storybook/addon-knobs';
 import CopyTextButton from './CopyTextButton';
 
 export default {
-  title: 'Commons|Components/CopyTextButton',
+  title: 'Commons/Components/CopyTextButton',
   component: CopyTextButton,
   decorators: [withKnobs]
 };

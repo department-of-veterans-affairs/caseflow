@@ -5,7 +5,7 @@ import { withKnobs, text, boolean, select, object } from '@storybook/addon-knobs
 import Alert from './Alert';
 
 export default {
-  title: 'Commons|Components/Alert',
+  title: 'Commons/Components/Alert',
   component: Alert,
   decorators: [withKnobs]
 };

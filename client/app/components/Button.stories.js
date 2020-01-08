@@ -8,7 +8,7 @@ import Button from './Button';
 const btnTypes = ['button', 'submit', 'reset'];
 
 export default {
-  title: 'Commons|Components/Button',
+  title: 'Commons/Components/Button',
   component: Button,
   decorators: [withKnobs]
 };
