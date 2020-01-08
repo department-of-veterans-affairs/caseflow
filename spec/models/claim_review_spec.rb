@@ -1024,7 +1024,6 @@ describe ClaimReview, :postgres do
   end
 
   describe "#search_table_ui_hash" do
-    let!(:claimants) { [create(:claimant), create(:claimant)] }
     let!(:appeal) { create(:appeal) }
     let!(:sc) do
       create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number, number_of_claimants: 2)
