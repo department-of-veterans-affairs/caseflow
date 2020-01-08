@@ -13,18 +13,14 @@ import TabWindow from '../../../components/TabWindow';
 import { renderAppealType } from '../../../queue/utils';
 import StatusMessage from '../../../components/StatusMessage';
 import { getFacilityType } from '../../../components/DataDropdowns/AppealHearingLocations';
+import { NoUpcomingHearingDayMessage } from './Messages';
 import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import { AppealDocketTag, SuggestedHearingLocation, CaseDetailsInformation } from './AssignHearingsFields';
-
 import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
-
-const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
-const AMA_APPEALS_TAB_NAME = 'amaAppeals';
-const LEGACY_APPEALS_TAB_NAME = 'legacyAppeals';
 
 const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} }) => {
   if (_.isNil(selectedHearingDay)) {
-    return <div><NoUpcomingHearingDayMessage /></div>;
+    return <NoUpcomingHearingDayMessage />;
   }
 
   if (_.isEmpty(rows)) {
@@ -115,7 +111,7 @@ export class AssignHearingsTabs extends React.Component {
     }));
   };
 
-  tabWindowColumns = (tab) => {
+  tabWindowColumns = () => {
     // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
     const { selectedRegionalOffice, selectedHearingDay, displayPowerOfAttorneyColumn } = this.props;
 
@@ -247,7 +243,7 @@ export class AssignHearingsTabs extends React.Component {
             label: 'Legacy Veterans Waiting',
             page: <AvailableVeteransTable
               rows={legacyRows}
-              columns={this.tabWindowColumns(LEGACY_APPEALS_TAB_NAME)}
+              columns={this.tabWindowColumns()}
               selectedHearingDay={selectedHearingDay}
             />
           },
@@ -256,7 +252,7 @@ export class AssignHearingsTabs extends React.Component {
             page: <AvailableVeteransTable
               style={this.amaDocketCutoffLineStyle(amaAppeals)}
               rows={amaRows}
-              columns={this.tabWindowColumns(AMA_APPEALS_TAB_NAME)}
+              columns={this.tabWindowColumns()}
               selectedHearingDay={selectedHearingDay}
             />
           }
