@@ -1,17 +1,8 @@
-import { configure, addDecorator } from '@storybook/react';
+import { addDecorator } from '@storybook/react';
 import { withA11y } from '@storybook/addon-a11y';
 import centered from '@storybook/addon-centered/react';
 
 import '../app/styles/app.scss';
-
-// automatically import all files ending in *.stories.js
-configure(
-  [
-    require.context('../stories', true, /\.(stories|story)\.(js|mdx)$/),
-    require.context('../app', true, /\.stories\.js$/)
-  ],
-  module
-);
 
 addDecorator(withA11y);
 // addDecorator(centered);
