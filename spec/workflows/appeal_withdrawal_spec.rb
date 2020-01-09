@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe "Withdrawing an appeal", :postgres do
   context "appeal has one request issue and it is withdrawn" do
     it "allows it to be distributed" do

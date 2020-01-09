@@ -24,6 +24,25 @@ const getClaimantField = (formType, veteran, intakeData) => {
     }];
 };
 
+export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
+    if (formType === 'supplemental_claim') {
+      return true;
+    }
+
+    if(!decisionDateStr) {
+      return true
+    }
+
+    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+
+    // we assume the timezone of the browser for all these.
+    const decisionDate = new Date(decisionDateStr)
+    const receiptDate = new Date(receiptDateStr);
+    const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
+    
+    return lessThanOneYear;
+};
+
 export const legacyIssue = (issue, legacyAppeals) => {
   if (issue.vacolsIssue) {
     return issue.vacolsIssue;
@@ -165,7 +184,10 @@ const formatUnidentifiedIssues = (state) => {
         is_unidentified: true,
         decision_date: issue.decisionDate,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : issue.withdrawalDate,
-        correction_type: issue.correctionType
+        correction_type: issue.correctionType,
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        ineligibleReason: issue.ineligible_reason
       };
     });
 };
@@ -302,7 +324,11 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
         correctionType: issue.correctionType,
-        editable: issue.editable
+        editable: issue.editable,
+        timely: issue.timely,
+        untimelyExemption: issue.untimelyExemption,
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        ineligibleReason: issue.ineligibleReason,
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {

@@ -41,7 +41,7 @@ class Fakes::BGSService
     end
 
     def veteran_records_created?
-      veteran_store.all_keys.any?
+      veteran_store.all_veteran_file_numbers.include?("872958715") # known file_number from local/vacols//bgs_setup.csv
     end
 
     def all_grants
@@ -156,7 +156,8 @@ class Fakes::BGSService
         birth_date: "Sun, 05 Sep 1943 00:00:00 -0500",
         first_name: "Bob",
         middle_name: "Billy",
-        last_name: "Vance"
+        last_name: "Vance",
+        email_address: "bob.vance@caseflow.gov"
       }
     elsif participant_id == "1129318238"
       {
@@ -164,14 +165,24 @@ class Fakes::BGSService
         first_name: "Cathy",
         middle_name: "",
         last_name: "Smith",
-        name_suffix: "Jr."
+        name_suffix: "Jr.",
+        email_address: "cathy.smith@caseflow.gov"
+      }
+    elsif participant_id == "600153863"
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        fist_name: "Clarence",
+        middle_name: "",
+        last_name: "Darrow",
+        email_address: "clarence.darrow@caseflow.gov"
       }
     else
       {
         birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
         first_name: "Tom",
         middle_name: "Edward",
-        last_name: "Brady"
+        last_name: "Brady",
+        email_address: "tom.brady@caseflow.gov"
       }
     end
   end
@@ -274,16 +285,21 @@ class Fakes::BGSService
     default_claimant_info
   end
 
-  def fetch_file_number_by_ssn(ssn)
+  def fetch_person_by_ssn(ssn)
     return if ssn_not_found
 
     self.class.veteran_store.all_veteran_file_numbers.each do |file_number|
       record = get_veteran_record(file_number)
-      if record[:ssn].to_s == ssn.to_s
-        return file_number
-      end
+      return record if record[:ssn].to_s == ssn.to_s
     end
-    nil # i.e. not found
+    nil # not found
+  end
+
+  def fetch_file_number_by_ssn(ssn)
+    return if ssn_not_found
+
+    person = fetch_person_by_ssn(ssn)
+    return person[:file_number] if person
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)

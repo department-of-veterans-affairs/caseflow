@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Case details", :all_dbs do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
@@ -556,7 +553,7 @@ RSpec.feature "Case details", :all_dbs do
           :appeal,
           veteran_file_number: "500000102",
           receipt_date: 6.months.ago.to_date.mdY,
-          docket_type: "evidence_submission"
+          docket_type: Constants.AMA_DOCKETS.evidence_submission
         )
       end
 

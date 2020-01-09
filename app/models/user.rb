@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
   has_many :messages
+  has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
 
   BOARD_STATION_ID = "101"
 
@@ -262,6 +263,10 @@ class User < ApplicationRecord
 
   def administered_teams
     organizations_users.select(&:admin?).map(&:organization)
+  end
+
+  def administered_judge_teams
+    administered_teams.select { |team| team.is_a?(JudgeTeam) }
   end
 
   def user_info_for_idt

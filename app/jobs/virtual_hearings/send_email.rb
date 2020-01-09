@@ -14,7 +14,7 @@ class VirtualHearings::SendEmail
       virtual_hearing.veteran_email_sent = true
     end
 
-    if !virtual_hearing.judge_email_sent
+    if !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent
       send_email(:judge)
       virtual_hearing.judge_email_sent = true
     end
@@ -38,25 +38,30 @@ class VirtualHearings::SendEmail
         mail_recipient: mail_recipients[recipient],
         virtual_hearing: virtual_hearing
       ).deliver_now
+    elsif type == :updated_time_confirmation
+      VirtualHearingMailer.updated_time_confirmation(
+        mail_recipient: mail_recipients[recipient],
+        virtual_hearing: virtual_hearing
+      ).deliver_now
     end
   end
 
   def mail_recipients
     {
       veteran: MailRecipient.new(
-        full_name: virtual_hearing.hearing.appeal.veteran.name.to_s,
+        name: virtual_hearing.hearing.appeal.veteran&.first_name,
         email: virtual_hearing.veteran_email,
-        title: VirtualHearingMailer::RECIPIENT_TITLES[:veteran]
+        title: MailRecipient::RECIPIENT_TITLES[:veteran]
       ),
       judge: MailRecipient.new(
-        full_name: virtual_hearing.hearing.judge.full_name,
+        name: virtual_hearing.hearing.judge&.full_name,
         email: virtual_hearing.judge_email,
-        title: VirtualHearingMailer::RECIPIENT_TITLES[:judge]
+        title: MailRecipient::RECIPIENT_TITLES[:judge]
       ),
       representative: MailRecipient.new(
-        full_name: virtual_hearing.hearing.appeal.representative_name,
+        name: virtual_hearing.hearing.appeal.representative_name,
         email: virtual_hearing.representative_email,
-        title: VirtualHearingMailer::RECIPIENT_TITLES[:representative]
+        title: MailRecipient::RECIPIENT_TITLES[:representative]
       )
     }
   end

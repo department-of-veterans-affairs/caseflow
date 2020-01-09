@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "AmaQueue", :all_dbs do
   def valid_document_id
     "12345-12345678"
@@ -65,7 +62,7 @@ RSpec.feature "AmaQueue", :all_dbs do
       Fakes::Initializer.load!
 
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
-        appeals.first.claimants.first.participant_id => {
+        appeals.first.claimant.participant_id => {
           representative_name: poa_name,
           representative_type: "POA Attorney",
           participant_id: participant_id
@@ -201,7 +198,7 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         expect(page).to have_content("AOD status updated")
         expect(page).to have_content("AOD")
-        motion = appeals.first.claimants.first.person.advance_on_docket_motions.first
+        motion = appeals.first.claimant.person.advance_on_docket_motions.first
 
         expect(motion.granted).to eq(true)
         expect(motion.reason).to eq("serious_illness")
@@ -231,7 +228,7 @@ RSpec.feature "AmaQueue", :all_dbs do
 
       let!(:translation_task) do
         create(
-          :generic_task,
+          :ama_task,
           :in_progress,
           assigned_to: translation_organization,
           assigned_by: judge_user,
@@ -287,8 +284,12 @@ RSpec.feature "AmaQueue", :all_dbs do
 
         click_on "Pal Smith"
 
-        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: old_task.id.to_s).click
-        expect(page).to have_content(existing_instruction)
+        xstep("flake") do
+          within "#case-timeline-table" do
+            click_button COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+            expect(page).to have_content(existing_instruction)
+          end
+        end
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
@@ -868,7 +869,7 @@ RSpec.feature "AmaQueue", :all_dbs do
     let!(:tasks) do
       Array.new(task_count) do
         root_task = create(:root_task, appeal: create(:appeal))
-        create(:generic_task, parent: root_task, appeal: root_task.appeal, assigned_to: org)
+        create(:ama_task, parent: root_task, appeal: root_task.appeal, assigned_to: org)
       end
     end
 

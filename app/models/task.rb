@@ -23,6 +23,7 @@ class Task < ApplicationRecord
 
   validates :assigned_to, :appeal, :type, :status, presence: true
   validate :status_is_valid_on_create, on: :create
+  validate :assignee_status_is_valid_on_create, on: :create
 
   before_create :set_assigned_at
   before_create :verify_org_task_unique
@@ -101,11 +102,10 @@ class Task < ApplicationRecord
       end
     end
 
-    def modify_params(params)
+    def modify_params_for_create(params)
       if params.key?(:instructions) && !params[:instructions].is_a?(Array)
         params[:instructions] = [params[:instructions]]
       end
-      params.delete(:action)
       params
     end
 
@@ -137,8 +137,12 @@ class Task < ApplicationRecord
       return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
     end
 
-    def most_recently_assigned
+    def most_recently_updated
       order(:updated_at).last
+    end
+
+    def any_recently_updated(*tasks_arrays)
+      tasks_arrays.find(&:any?)&.most_recently_updated
     end
 
     def create_from_params(params, user)
@@ -148,7 +152,7 @@ class Task < ApplicationRecord
 
       verify_user_can_create!(user, parent_task)
 
-      params = modify_params(params)
+      params = modify_params_for_create(params)
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
       child
@@ -321,7 +325,7 @@ class Task < ApplicationRecord
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i || on_hold_duration
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def update_task_type(params)
@@ -373,10 +377,14 @@ class Task < ApplicationRecord
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    params["instructions"] = flattened_instructions(params)
-    update!(params)
+    update_with_instructions(params)
 
     [self]
+  end
+
+  def update_with_instructions(params)
+    params[:instructions] = flattened_instructions(params)
+    update!(params)
   end
 
   def flattened_instructions(params)
@@ -473,7 +481,7 @@ class Task < ApplicationRecord
     sibling = dup.tap do |task|
       task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
       task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-      task.instructions = [instructions, reassign_params[:instructions]].flatten
+      task.instructions = flattened_instructions(reassign_params)
       task.status = Constants.TASK_STATUSES.assigned
       task.save!
     end
@@ -482,7 +490,7 @@ class Task < ApplicationRecord
     children.open.update_all(parent_id: sibling.id)
     sibling.update!(status: status)
 
-    update!(status: Constants.TASK_STATUSES.cancelled)
+    update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
     [sibling, self, sibling.children].flatten
   end
@@ -522,21 +530,16 @@ class Task < ApplicationRecord
     "#{type} completed"
   end
 
-  def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if old_style_hold_expired?
-  end
-
-  def old_style_hold_expired?
-    !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
-      (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
-  end
-
   def serializer_class
     ::WorkQueue::TaskSerializer
   end
 
   def assigned_to_label
     assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
+  end
+
+  def child_must_have_active_assignee?
+    true
   end
 
   private
@@ -651,6 +654,14 @@ class Task < ApplicationRecord
   def status_is_valid_on_create
     if status != Constants.TASK_STATUSES.assigned
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+    end
+
+    true
+  end
+
+  def assignee_status_is_valid_on_create
+    if parent&.child_must_have_active_assignee? && assigned_to.is_a?(User) && !assigned_to.active?
+      fail Caseflow::Error::InvalidAssigneeStatusOnTaskCreate, assignee: assigned_to
     end
 
     true

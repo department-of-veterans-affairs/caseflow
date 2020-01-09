@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
-RSpec.feature "Task queue", :all_dbs do
+feature "Task queue", :all_dbs do
   let!(:vlj_support_staffer) { create(:user) }
 
   before { Colocated.singleton.add_user(vlj_support_staffer) }
@@ -224,8 +221,10 @@ RSpec.feature "Task queue", :all_dbs do
     let(:tracking_task_count) { 14 }
 
     before do
-      create_list(:informal_hearing_presentation_task, unassigned_count, :in_progress, assigned_to: vso)
-      create_list(:informal_hearing_presentation_task, assigned_count, :on_hold, assigned_to: vso)
+      create_list(:informal_hearing_presentation_task, unassigned_count, assigned_to: vso)
+      create_list(:informal_hearing_presentation_task, assigned_count, assigned_to: vso).each do |parent|
+        create(:informal_hearing_presentation_task, assigned_to: vso_employee, parent: parent)
+      end
       create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
 
       allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
@@ -436,12 +435,16 @@ RSpec.feature "Task queue", :all_dbs do
 
     let(:unassigned_count) { 8 }
     let(:assigned_count) { 12 }
+    let!(:unassigned_tasks) do
+      create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
+    end
+    let!(:assigned_tasks) do
+      create_list(:privacy_act_task, assigned_count, :on_hold, assigned_to: organization)
+    end
 
     before do
       organization.add_user(organization_user)
       User.authenticate!(user: organization_user)
-      create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
-      create_list(:privacy_act_task, assigned_count, :on_hold, assigned_to: organization)
     end
 
     context "when not using pagination" do
@@ -494,7 +497,7 @@ RSpec.feature "Task queue", :all_dbs do
             vacols_case = create(:case)
             legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
             vacols_case.destroy!
-            create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+            create(:ama_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
           end
         end
 
@@ -509,24 +512,39 @@ RSpec.feature "Task queue", :all_dbs do
 
       context "when filtering tasks" do
         let(:translation_task_count) { unassigned_count / 2 }
+        let!(:unassigned_tasks) do
+          privacy_tasks = create_list(
+            :privacy_act_task, unassigned_count / 2,
+            :in_progress,
+            assigned_to: organization
+          )
+          translation_tasks = create_list(
+            :translation_task,
+            translation_task_count,
+            :in_progress,
+            assigned_to: organization
+          )
 
-        before do
-          Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
-            .take(translation_task_count).each { |task| task.update!(type: TranslationTask.name) }
-          visit(organization.path)
+          privacy_tasks + translation_tasks
         end
 
-        it "shows the correct filters" do
-          page.find_all("path.unselected-filter-icon-inner").first.click
-          expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
-          expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
-        end
+        before { visit(organization.path) }
 
-        it "filters tasks correctly" do
-          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-          page.find_all("path.unselected-filter-icon-inner").first.click
-          page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
-          expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+        it "filters are correct, and filter as expected" do
+          step "check if there are the right number of rows for the unassigned table" do
+            expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+          end
+
+          step "check if the filter options are as expected" do
+            page.find(".unselected-filter-icon-inner", match: :first).click
+            expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
+            expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
+          end
+
+          step "clicking on a filter reduces the number of results by the expect amount" do
+            page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
+            expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
+          end
         end
       end
     end
@@ -536,18 +554,15 @@ RSpec.feature "Task queue", :all_dbs do
       let(:on_hold_count) { assigned_count / 2 }
 
       before do
-        allow_any_instance_of(QueueConfig).to receive(:use_task_pages_api?).with(organization_user).and_return(true)
-        FeatureToggle.enable!(:use_task_pages_api)
+        allow_any_instance_of(Organization).to receive(:use_task_pages_api?).and_return(true)
         Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
           .each_with_index do |task, idx|
-            child_task = create(:generic_task, parent_id: task.id)
+            child_task = create(:ama_task, parent_id: task.id)
             child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
           end
         Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
           .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
       end
-
-      after { FeatureToggle.disable!(:use_task_pages_api) }
 
       it "shows the on hold tab" do
         visit(organization.path)
@@ -781,7 +796,7 @@ RSpec.feature "Task queue", :all_dbs do
       before do
         ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
-                                                action: :aoj,
+                                                type: AojColocatedTask.name,
                                                 appeal: appeal
                                               }], attorney)
       end
@@ -824,7 +839,7 @@ RSpec.feature "Task queue", :all_dbs do
       before do
         ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
-                                                action: :schedule_hearing,
+                                                type: ScheduleHearingColocatedTask.name,
                                                 appeal: appeal,
                                                 parent: RootTask.find_or_create_by!(appeal: appeal)
                                               }], attorney)
@@ -942,7 +957,7 @@ RSpec.feature "Task queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
 
         # On case details page fill in the admin action
-        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
@@ -969,7 +984,6 @@ RSpec.feature "Task queue", :all_dbs do
       let!(:orig_judge_task) do
         create(
           :ama_judge_decision_review_task,
-          :on_hold,
           assigned_to: judge_user,
           appeal: appeal,
           parent: root_task
@@ -1070,7 +1084,7 @@ RSpec.feature "Task queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
 
         # On case details page fill in the admin action
-        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
@@ -1122,7 +1136,7 @@ RSpec.feature "Task queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
 
         # On case details page fill in the admin action
-        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
@@ -1139,7 +1153,7 @@ RSpec.feature "Task queue", :all_dbs do
       let(:user) { create(:user) }
       let(:root_task) { create(:root_task) }
       let(:appeal) { root_task.appeal }
-      let(:task) { create(:generic_task, assigned_to: user) }
+      let(:task) { create(:ama_task, assigned_to: user) }
 
       before { User.authenticate!(user: user) }
 
@@ -1157,7 +1171,7 @@ RSpec.feature "Task queue", :all_dbs do
       let(:user) { create(:user) }
       let(:vacols_case) { create(:case) }
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-      let!(:task) { create(:generic_task, appeal: legacy_appeal, assigned_to: user) }
+      let!(:task) { create(:ama_task, appeal: legacy_appeal, assigned_to: user) }
 
       before do
         vacols_case.destroy!

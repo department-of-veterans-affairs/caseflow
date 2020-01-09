@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "Asyncable Jobs index", :postgres do
   before do
     Timecop.freeze(Time.zone.now)
@@ -89,6 +86,7 @@ feature "Asyncable Jobs index", :postgres do
 
       expect(page).to have_content("another note\nwith\nmarkdown header!")
       expect(hlr.reload.job_notes.count).to eq(2)
+      expect(hlr_intake.user.messages.last.detail).to eq(hlr.job_notes.last)
     end
   end
 

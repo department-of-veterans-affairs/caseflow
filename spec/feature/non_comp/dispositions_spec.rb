@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "NonComp Dispositions Task Page", :postgres do
   include IntakeHelpers
 
@@ -208,9 +205,7 @@ feature "NonComp Dispositions Task Page", :postgres do
 
       scenario "goes back to intake" do
         visit dispositions_url
-        click_on "Edit Issues"
-
-        expect(page).to have_current_path(decision_review.reload.caseflow_only_edit_issues_url)
+        expect(page).to have_link("Edit Issues", href: decision_review.reload.caseflow_only_edit_issues_url)
       end
     end
   end

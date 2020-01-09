@@ -83,7 +83,7 @@ const HeaderRow = (props) => {
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
 
-          sortIcon = <span {...iconStyle} aria-label={`Sort by ${column.header}`}
+          sortIcon = <span {...iconStyle} aria-label={`Sort by ${column.header}`} role="button" tabIndex="0"
             onClick={() => props.setSortOrder(column.name)}>
             <DoubleArrow topColor={topColor} bottomColor={botColor} />
           </span>;

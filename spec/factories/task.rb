@@ -24,29 +24,14 @@ FactoryBot.define do
     trait :on_hold do
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
-      on_hold_duration { [30, 60, 90].sample }
 
       after(:create) do |task|
-        task.update_columns(status: Constants.TASK_STATUSES.on_hold)
-        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
-      end
-    end
-
-    trait :completed_hold do
-      started_at { rand(25..30).days.ago }
-      placed_on_hold_at { rand(15..25).days.ago }
-      on_hold_duration { 10 }
-
-      after(:create) do |task|
-        task.update_columns(status: Constants.TASK_STATUSES.on_hold)
-        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
+        TimedHoldTask.create_from_parent(task, days_on_hold: [30, 60, 90].sample)
       end
     end
 
     trait :completed do
       started_at { rand(20..30).days.ago }
-      placed_on_hold_at { rand(1..10).days.ago }
-      on_hold_duration { [30, 60, 90].sample }
       closed_at { Time.zone.now }
 
       after(:create) do |task|
@@ -57,8 +42,6 @@ FactoryBot.define do
 
     trait :completed_in_the_past do
       started_at { rand(20..30).weeks.ago }
-      placed_on_hold_at { rand(4..10).weeks.ago }
-      on_hold_duration { [30, 60, 90].sample }
 
       after(:create) do |task|
         task.update_columns(status: Constants.TASK_STATUSES.completed, closed_at: 3.weeks.ago)
@@ -94,7 +77,7 @@ FactoryBot.define do
       end
     end
 
-    factory :generic_task, class: Task do
+    factory :ama_task, class: Task do
       type { Task.name }
       appeal { create(:appeal) }
     end
@@ -119,11 +102,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_to { create(:user) }
       days_on_hold { rand(1..100) }
-      parent { create(:generic_task) }
+      parent { create(:ama_task) }
     end
 
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
-      parent { create(:generic_task) }
+      parent { create(:ama_task) }
       assigned_to { Colocated.singleton }
 
       factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
@@ -550,6 +533,14 @@ FactoryBot.define do
 
     factory :denied_motion_to_vacate_task, class: DeniedMotionToVacateTask do
       type { DeniedMotionToVacateTask.name }
+      appeal
+      association :parent, factory: :abstract_motion_to_vacate_task
+      assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+      assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
+    end
+
+    factory :dismissed_motion_to_vacate_task, class: DismissedMotionToVacateTask do
+      type { DismissedMotionToVacateTask.name }
       appeal
       association :parent, factory: :abstract_motion_to_vacate_task
       assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }

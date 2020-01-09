@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe DecisionReview, :postgres do
   before do
     Time.zone = "UTC"
@@ -367,7 +364,7 @@ describe DecisionReview, :postgres do
     it "returns CSS id of the Intake user" do
       intake = create(:intake)
       review = intake.detail
-      expect(review.asyncable_user).to eq(review.intake.user.css_id)
+      expect(review.asyncable_user).to eq(review.intake.user)
     end
   end
 end

@@ -35,13 +35,13 @@ class AsyncableJobsController < ApplicationController
   end
 
   def add_note
-    job_note = JobNote.create!(
-      job: job,
-      user: current_user,
-      note: allowed_params[:note],
-      send_to_intake_user: allowed_params[:send_to_intake_user]
+    send_to_intake_user = ActiveRecord::Type::Boolean.new.deserialize(allowed_params[:send_to_intake_user])
+    messaging = AsyncableJobMessaging.new(job: job, current_user: current_user)
+    job_note = messaging.add_job_note(
+      text: allowed_params[:note],
+      send_to_intake_user: send_to_intake_user
     )
-    render json: job_note.ui_hash
+    render json: job_note.serialize
   end
 
   private
@@ -109,7 +109,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def verify_job_access
-    return true if current_user.css_id == job&.asyncable_user
+    return true if current_user == job&.asyncable_user
 
     verify_access
   end

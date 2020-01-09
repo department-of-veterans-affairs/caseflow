@@ -12,7 +12,7 @@ class AppealFinder
       find_appeals_for_vso_user(veterans: veterans)
     else
       self.class.find_appeals_with_file_numbers(
-        veterans.map(&:file_number)
+        [veterans.map(&:file_number), veterans.map(&:ssn)].flatten.compact.uniq
       )
     end
   end

@@ -105,8 +105,8 @@ class DecisionIssue < ApplicationRecord
     REMAND_DISPOSITIONS.include?(disposition)
   end
 
-  def ui_hash
-    DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
+  def serialize
+    Intake::DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def find_or_create_remand_supplemental_claim!
@@ -196,13 +196,13 @@ class DecisionIssue < ApplicationRecord
 
   def prior_payee_code
     latest_ep = decision_review.veteran
-      .find_latest_end_product_by_claimant(decision_review.claimants.first)
+      .find_latest_end_product_by_claimant(decision_review.claimant)
 
     latest_ep&.payee_code
   end
 
   def dta_payee_code
-    decision_review.payee_code || prior_payee_code || decision_review.claimants.first.bgs_payee_code
+    decision_review.payee_code || prior_payee_code || decision_review.claimant.bgs_payee_code
   end
 
   def find_remand_supplemental_claim

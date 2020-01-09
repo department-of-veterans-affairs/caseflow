@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "Supplemental Claim Edit issues", :all_dbs do
   include IntakeHelpers
 
@@ -692,6 +689,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       it "disallows editing" do
         visit "#{url_path}/#{decision_review.uuid}/edit"
 
+        expect(page).to have_content("Review not editable")
         expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
         expect(page).to have_link("the job page")
 

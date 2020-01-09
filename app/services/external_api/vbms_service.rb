@@ -85,8 +85,8 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::EstablishClaim.new(
       veteran_hash,
       claim_hash,
-      v5: FeatureToggle.enabled?(:claims_service_v5),
-      send_userid: FeatureToggle.enabled?(:vbms_include_user)
+      v5: true,
+      send_userid: true
     )
 
     send_and_log_request(veteran_hash[:file_number], request, vbms_client_with_user(user))
@@ -97,7 +97,7 @@ class ExternalApi::VBMSService
 
     request = VBMS::Requests::ListContentions.new(
       claim_id,
-      v5: FeatureToggle.enabled?(:claims_service_v5)
+      v5: true
     )
 
     send_and_log_request(claim_id, request)
@@ -113,8 +113,8 @@ class ExternalApi::VBMSService
       claim_id: claim_id,
       contentions: contentions,
       claim_date: claim_date,
-      v5: FeatureToggle.enabled?(:claims_service_v5),
-      send_userid: FeatureToggle.enabled?(:vbms_include_user)
+      v5: true,
+      send_userid: true
     )
 
     send_and_log_request(claim_id, request, vbms_client_with_user(user))
@@ -125,8 +125,8 @@ class ExternalApi::VBMSService
 
     request = VBMS::Requests::RemoveContention.new(
       contention: contention,
-      v5: FeatureToggle.enabled?(:claims_service_v5),
-      send_userid: FeatureToggle.enabled?(:vbms_include_user)
+      v5: true,
+      send_userid: true
     )
 
     send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))
@@ -137,8 +137,8 @@ class ExternalApi::VBMSService
 
     request = VBMS::Requests::UpdateContention.new(
       contention: contention,
-      v5: FeatureToggle.enabled?(:claims_service_v5),
-      send_userid: FeatureToggle.enabled?(:vbms_include_user)
+      v5: true,
+      send_userid: true
     )
 
     send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))

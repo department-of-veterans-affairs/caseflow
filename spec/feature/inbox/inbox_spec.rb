@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "Inbox", :postgres do
   before { FeatureToggle.enable!(:inbox) }
   after { FeatureToggle.disable!(:inbox) }
 
   let!(:user) { User.authenticate!(roles: ["Mail Intake"]) }
+  let!(:hlr) { create(:higher_level_review, :requires_processing, intake: create(:intake, user: user)) }
 
   describe "index" do
     context "multiple messages" do
@@ -15,7 +13,7 @@ feature "Inbox", :postgres do
         user.messages << build(:message, text: "hello world")
         user.messages << build(:message, text: "message with <a href='/intake'>link</a>")
         user.messages << build(:message,
-                               created_at: DateTime.parse("2019-08-01T15:34:43-0500").in_time_zone,
+                               created_at: 1.month.ago,
                                text: "i have been read",
                                read_at: Time.zone.now)
       end
@@ -23,6 +21,7 @@ feature "Inbox", :postgres do
       it "show all messages and allows user to mark as read" do
         visit "/inbox"
 
+        expect(page).to have_content("Messages will remain in the intake box for 120 days")
         expect(page).to have_content("hello world")
         expect(page).to have_content("message with link")
         expect(page).to have_link("link")
@@ -42,6 +41,30 @@ feature "Inbox", :postgres do
         expect(message.reload.read_at).to_not be_nil
 
         expect(page).to have_content("Read #{message.read_at.friendly_full_format}")
+      end
+    end
+
+    context "when a job fails after 24 hours" do
+      it "displays the failure message" do
+        allow(hlr).to receive(:establish!).and_raise(StandardError.new("error with some PII"))
+        Timecop.travel(Time.zone.now.tomorrow) do
+          DecisionReviewProcessJob.perform_now(hlr)
+        end
+        visit "/inbox"
+
+        expect(page).to have_content("unable to complete")
+        expect(page).not_to have_content("some PII")
+      end
+    end
+
+    context "when a job succeeds after 24 hours" do
+      it "displays the success message" do
+        Timecop.travel(Time.zone.now.tomorrow) do
+          hlr.processed!
+        end
+        visit "/inbox"
+
+        expect(page).to have_content("successfully been processed")
       end
     end
   end

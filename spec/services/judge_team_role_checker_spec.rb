@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe JudgeTeamRoleChecker, :postgres do
   get_teams_with_wrong_lead_count = JudgeTeamRoleChecker.method(:judge_teams_with_incorrect_number_of_leads)
   get_teams_with_nonadmin_leads = JudgeTeamRoleChecker.method(:non_admin_judge_team_leads)
@@ -56,7 +53,7 @@ describe JudgeTeamRoleChecker, :postgres do
 
           describe ".judge_teams_with_incorrect_number_of_leads" do
             it "identifies team with missing JudgeTeamLead" do
-              expect(get_teams_with_wrong_lead_count.call).to eq(judge_teams)
+              expect(get_teams_with_wrong_lead_count.call).to match_array(judge_teams)
             end
           end
 
@@ -94,7 +91,7 @@ describe JudgeTeamRoleChecker, :postgres do
 
           describe ".judge_teams_with_incorrect_number_of_leads" do
             it "identifies the team with missing JudgeTeamLead" do
-              expect(get_teams_with_wrong_lead_count.call).to eq([judge_team2])
+              expect(get_teams_with_wrong_lead_count.call).to contain_exactly(judge_team2)
             end
           end
 
@@ -130,7 +127,7 @@ describe JudgeTeamRoleChecker, :postgres do
 
           describe ".judge_teams_with_incorrect_number_of_leads" do
             it "identifies the team with missing JudgeTeamLead" do
-              expect(get_teams_with_wrong_lead_count.call).to eq([judge_team2])
+              expect(get_teams_with_wrong_lead_count.call).to contain_exactly(judge_team2)
             end
           end
 

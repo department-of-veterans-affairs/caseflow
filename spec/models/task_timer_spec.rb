@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe TaskTimer, :postgres do
   describe "processing" do
     before do
@@ -12,7 +9,7 @@ describe TaskTimer, :postgres do
     it "becomes eligible to attempt in the future" do
       expect(TaskTimer.requires_processing.count).to eq 0
 
-      task = create(:generic_task, :on_hold)
+      task = create(:ama_task, :on_hold)
       TaskTimer.new(task: task).submit_for_processing!(delay: Time.zone.now + 24.hours)
 
       expect(TaskTimer.requires_processing.count).to eq 0
@@ -24,7 +21,7 @@ describe TaskTimer, :postgres do
   end
 
   describe "requires_processing" do
-    let(:task) { create(:generic_task, trait) }
+    let(:task) { create(:ama_task, trait) }
     let!(:task_timer) { TaskTimer.create!(task: task).tap(&:submit_for_processing!) }
 
     before do
