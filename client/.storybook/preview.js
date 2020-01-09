@@ -24,25 +24,3 @@ addDecorator((...args) => {
 
   return centered(...args);
 });
-
-// Here we roll a custom decorator to enable proper usage of stateful components
-const StateWrapper = ({ children }) => {
-  const [state, setState] = useState({});
-
-  return <React.Fragment>{children(state, setState)}</React.Fragment>;
-};
-
-export const withState = (story) => (
-  <StateWrapper>
-    {(state, setState) => (
-      <React.Fragment>
-        {story({
-          state,
-          setState
-        })}
-      </React.Fragment>
-    )}
-  </StateWrapper>
-);
-
-// addDecorator(withState);
