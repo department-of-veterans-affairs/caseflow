@@ -92,7 +92,7 @@ describe ExternalApi::VbmsDocumentsForAppeal do
     end
   end
 
-  context "vbms_pagination feature toggle is on" do
+  context "vbms_pagination feature toggle is on, pagination service is used" do
     before do
       FeatureToggle.enable!(:vbms_pagination)
     end
@@ -112,22 +112,31 @@ describe ExternalApi::VbmsDocumentsForAppeal do
 
     context "when file number exists in VBMS" do
       it "returns documents" do
-        docs_from_vbms_array = [4, 5, 6]
-        docs_from_vbms = instance_double(DocumentsFromVbmsDocuments)
-        allow(DocumentsFromVbmsDocuments).to receive(:new).and_return(docs_from_vbms)
-        allow(docs_from_vbms).to receive(:call).and_return(docs_from_vbms_array)
+        docs_from_vbms_response = [1, 2, 3]
+        docs_from_vbms_docs = [4, 5, 6]
 
+        # mock the pagination service
         allow(docs).to receive(:vbms_paged_documents_service) { pagination_service }
-        allow(pagination_service).to receive(:call).and_return(documents: [1, 2, 3])
+        allow(pagination_service).to receive(:call).and_return(documents: docs_from_vbms_response)
+
+        # mock the internal DocumentsFromVbmsDocuments object
+        docs_from_vbms = instance_double(DocumentsFromVbmsDocuments)
+        allow(DocumentsFromVbmsDocuments).to receive(:new).with(
+          documents: docs_from_vbms_response, file_number: veteran_file_number
+        ).and_return(docs_from_vbms)
+        allow(docs_from_vbms).to receive(:call).and_return(docs_from_vbms_docs)
 
         result_hash = {
           manifest_vbms_fetched_at: nil,
           manifest_vva_fetched_at: nil,
-          documents: docs_from_vbms_array
+          documents: docs_from_vbms_docs
         }
 
+        # validate that the older non-pagination service is not used
         expect(bgs_client).to_not receive(:fetch_veteran_info)
         expect(vbms_client).to_not receive(:send_request)
+
+        # exercise the mocked objects
         expect(docs.fetch).to eq result_hash
       end
     end
