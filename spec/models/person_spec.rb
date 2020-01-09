@@ -61,7 +61,7 @@ describe Person, :postgres do
     let(:last_name) { bgs_person[:last_name] }
     let(:date_of_birth) { bgs_person[:birth_date] }
     let(:name_suffix) { bgs_person[:name_suffix] }
-    let(:email_address) { bgs_person[:email_address]}
+    let(:email_address) { bgs_person[:email_address] }
 
     let(:person) do
       create(
