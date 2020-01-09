@@ -4,6 +4,7 @@
 module TaskTreeRender
   mattr_accessor :treeconfig
   self.treeconfig = {
+    show_all_tasks: true,
     include_border: true,
     col_sep: "│",
     top_chars: "┌──┐",
@@ -64,7 +65,7 @@ module TaskTreeRender
   end
 
   def tree(*atts, col_labels: nil, highlight: nil)
-    task_tree_hash, metadata = tree_hash(*atts, col_labels, highlight)
+    task_tree_hash, metadata = tree_hash(*atts, col_labels: col_labels, highlight: highlight)
     table = TTY::Tree.new(task_tree_hash).render
     table.prepend(appeal.appeal_heading(metadata.max_name_length, metadata.col_metadata) + "\n") if is_a? Task
 
@@ -94,6 +95,7 @@ module TaskTreeRender
     metadata = TreeMetadata.new
     metadata.col_keys = atts.map(&:to_s)
     metadata.rows = build_rows(atts, highlighted_task)
+    #pp metadata.rows
     metadata.max_name_length = calculate_max_name_length(curr_appeal.eval_appeal_label.size)
     TaskTreeRender.derive_column_metadata(metadata, col_labels)
 
@@ -109,7 +111,8 @@ module TaskTreeRender
 
   def tree_structure(metadata, depth = 0)
     row_str = if is_a?(Task)
-                task_row(metadata.max_name_length, depth, metadata.col_metadata, metadata.rows[self])
+                raise "Cannot find #{self} in #{metadata.rows.keys}" unless metadata.rows[self]
+                task_row(metadata.max_name_length, depth, metadata.col_metadata, metadata.rows[self]) if metadata.rows[self]
               else
                 appeal_heading(metadata.max_name_length, metadata.col_metadata)
               end
@@ -242,8 +245,13 @@ module TaskTreeRender
   end
 
   def tree_children
-    subs = is_a?(Task) ? children : tasks.where(parent_id: nil)
-    subs.order(:id)
+    subs = is_a?(Task) ? children.order(:id) : tasks.where(parent_id: nil)
+    child_ids = subs.map(&:id)
+    # TODO: can the following be expressed using `where`(?) so that it returns an AssociationRelation of Tasks?
+    task_ids = tasks.order(:id).select{ |t| t.parent&.appeal_id != id }.map(&:id) if treeconfig[:show_all_tasks] && ! is_a?(Task)
+    child_ids |= task_ids if task_ids
+    child_ids = child_ids.compact.sort
+    Task.where(id: child_ids)
   end
 
   def task_row(max_name_length, depth, columns, row)
