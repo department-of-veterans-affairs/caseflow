@@ -145,13 +145,24 @@ describe ExternalApi::VbmsDocumentsForAppeal do
       it "looks up the BGS claim number in VBMS" do
         bgs_claim_number = "87654321"
 
-        allow(vbms_client).to receive(:send_request).and_raise(nonexistent_file_number_error)
+        # mock service to fail for both numbers
+        allow(pagination_service).to receive(:call)
+          .with(file_number: veteran_file_number).and_raise(nonexistent_file_number_error)
+        allow(pagination_service).to receive(:call)
+          .with(file_number: bgs_claim_number).and_raise(nonexistent_file_number_error)
+
+        # mock bgs service to return claim number
         allow(bgs_client).to receive(:fetch_veteran_info).with(veteran_file_number)
           .and_return(claim_number: bgs_claim_number)
+
+        # inject our mocked pagination service
         allow(docs).to receive(:vbms_paged_documents_service) { pagination_service }
 
-        expect(vbms_client).to receive(:send_request).exactly(:twice)
-        expect { docs.fetch }.to raise_error(VBMS::FilenumberDoesNotExist)
+        # confirm everything gets called as expected
+        expect(pagination_service).to receive(:call).with(file_number: veteran_file_number).once
+        expect(pagination_service).to receive(:call).with(file_number: bgs_claim_number).once
+        expect(bgs_client).to receive(:fetch_veteran_info).once
+        expect { docs.fetch }.to raise_error(VBMS::FilenumberDoesNotExist) # the 2nd, BGS attempt.
       end
     end
   end
