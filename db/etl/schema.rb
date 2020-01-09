@@ -176,7 +176,7 @@ ActiveRecord::Schema.define(version: 20191223213954) do
   create_table "people", force: :cascade, comment: "Copy of People table" do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth"
-    t.string "email_address", comment: "Person email address, cached from BGS"
+    t.string "email_address"
     t.string "first_name", limit: 50, comment: "Person first name, cached from BGS"
     t.string "last_name", limit: 50, comment: "Person last name, cached from BGS"
     t.string "middle_name", limit: 50, comment: "Person middle name, cached from BGS"
