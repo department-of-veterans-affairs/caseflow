@@ -17,10 +17,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   let!(:api_key) { ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string }
 
-  let(:veteran_file_number) { "64205050" }
+  let(:veteran_ssn) { "64205050" }
 
   let!(:veteran) do
-    Generators::Veteran.build(file_number: veteran_file_number,
+    Generators::Veteran.build(file_number: veteran_ssn,
                               first_name: "Ed",
                               last_name: "Merica")
   end
@@ -60,7 +60,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     {
       data: {
         type: "Veteran",
-        id: veteran_file_number
+        id: veteran_ssn
       }
     }
   end
@@ -336,7 +336,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           request_issue_in_active_review = create(
             :request_issue,
             decision_date: Time.zone.today - 5.days,
-            decision_review: create(:higher_level_review, id: 10, veteran_file_number: veteran.file_number),
+            decision_review: create(:higher_level_review, id: 10, veteran_file_number: veteran.ssn),
             contested_rating_issue_reference_id: "hlr123",
             contention_reference_id: "2222",
             end_product_establishment: create(:end_product_establishment, :active),
@@ -346,7 +346,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           ineligible_request_issue = create(
             :request_issue,
             decision_date: Time.zone.today - 3.days,
-            decision_review: create(:higher_level_review, id: 11, veteran_file_number: veteran.file_number),
+            decision_review: create(:higher_level_review, id: 11, veteran_file_number: veteran.ssn),
             contested_rating_issue_reference_id: "hlr123",
             contention_reference_id: "3333",
             ineligible_reason: :duplicate_of_rating_issue_in_active_review,
@@ -459,7 +459,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     end
 
     context "reserved_veteran_file_number" do
-      let(:veteran_file_number) { "123456789" }
+      let(:veteran_ssn) { "123456789" }
 
       before do
         allow(User).to receive(:api_user).and_return(mock_api_user)
