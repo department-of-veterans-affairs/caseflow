@@ -67,7 +67,6 @@ class TaskActionRepository
     def assign_to_user_data(task, user = nil)
       users = if task.assigned_to.is_a?(Organization)
                 task.assigned_to.users.reject { |check_user| check_user.inactive? }
-                # task.assigned_to.users.active
               elsif task.parent&.assigned_to.is_a?(Organization)
                 task.parent.assigned_to.users.reject do |check_user|
                   check_user == task.assigned_to || check_user.inactive?
