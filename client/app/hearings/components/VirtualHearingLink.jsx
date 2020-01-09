@@ -22,13 +22,13 @@ class VirtualHearingLink extends React.PureComponent {
     const qs = querystring.stringify(
       {
         conference: virtualHearing.alias,
-        pin: this.getPin(),
+        pin: this.getPin()+'#',
         join: 1,
         role
       }
     );
 
-    return `https://${virtualHearing.clientHost}/webapp/?${qs}`;
+    return `https://${virtualHearing.clientHost}/webapp/?${decodeURIComponent(qs)}`;
   }
 
   render() {
