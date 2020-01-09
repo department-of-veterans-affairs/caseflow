@@ -18,6 +18,14 @@ FactoryBot.define do
       roles { ["Certify Appeal"] }
     end
 
+    # factory :inactive_user do
+    #   css_id { "DEFAULT_USER" }
+    #   full_name { "Lauren Roth" }
+    #   email { "test@example.com" }
+    #   roles { ["Certify Appeal"] }
+    #   status { }
+    # end
+
     factory :hearings_coordinator do
       css_id { "BVATWARNER" }
       full_name { "Thomas Warner" }
@@ -30,6 +38,10 @@ FactoryBot.define do
       full_name { "Sandra Warner" }
       email { "sandra.warner@example.com" }
       roles { ["Mail Intake"] }
+    end
+
+    trait :inactive do
+      status { "inactive" }
     end
 
     trait :vso_role do
