@@ -4,20 +4,23 @@
 # Metric definition: (Number EPs with date<=7 days after outcoding date/number non-denial decisions)
 
 class Metrics::NonDenialDecisions < Metrics::Base
-  def initialize(date_range)
+  def initialize(date_range, appeal_type: "Appeal", within: 7)
     super(date_range)
 
-    if start_or_end_date_within_7_days
-      fail Metrics::DateRange::DateRangeError, "Start and end dates must be 7 days or more ago"
+    @appeal_type = appeal_type
+    @within = within.to_i
+
+    if start_or_end_date_within_N_days
+      fail Metrics::DateRange::DateRangeError, "Start and end dates must be #{within} days or more ago"
     end
   end
 
   def call
-    end_products_created_within_7_days_of_outcoding.count / appeals_with_non_denial_decisions.count.to_f
+    end_products_created_within_N_days_of_outcoding.count / appeals_with_non_denial_decisions.count.to_f
   end
 
   def name
-    "Percent of non-denial decisions with an EP created within 7 days"
+    "Percent of non-denial decisions with an EP created within #{within} days"
   end
 
   def id
@@ -26,21 +29,26 @@ class Metrics::NonDenialDecisions < Metrics::Base
 
   private
 
-  def start_or_end_date_within_7_days
-    seven_days_ago = (Time.zone.now - 7.days).to_date
-    end_date > seven_days_ago || start_date > seven_days_ago
+  attr_reader :appeal_type, :within
+
+  def start_or_end_date_within_N_days
+    n_days_ago = (Time.zone.now - within.days).to_date
+    end_date > n_days_ago || start_date > n_days_ago
+  end
+
+  def completed_dispatch_tasks
+    completed = BvaDispatchTask.completed
+    appeal_type ? completed.where(appeal_type: appeal_type) : completed
   end
 
   def appeals_in_range
-    BvaDispatchTask.where("closed_at >= ? AND closed_at <= ?", start_date, end_date)
-      .where(status: Constants.TASK_STATUSES.completed)
+    completed_dispatch_tasks.where("closed_at >= ? AND closed_at <= ?", start_date, end_date)
       .includes(:appeal)
       .map(&:appeal)
   end
 
   def appeals_with_non_denial_decisions
-    @appeals_with_non_denial_decisions ||= DecisionIssue.where
-      .not(disposition: "Denied")
+    @appeals_with_non_denial_decisions ||= DecisionIssue.not_denied
       .where(decision_review: appeals_in_range)
       .includes(:decision_review)
       .map(&:decision_review)
@@ -54,13 +62,13 @@ class Metrics::NonDenialDecisions < Metrics::Base
     EndProductEstablishment.includes(source: [appeal: [:tasks]]).where(source: non_denial_decision_documents)
   end
 
-  def end_products_created_within_7_days_of_outcoding
+  def end_products_created_within_N_days_of_outcoding
     non_denial_end_products.select do |epe|
       bva_dispatch_task = bva_dispatch_task_for(epe)
       fail "No BvaDispatchTask found for EP #{epe.id}" unless bva_dispatch_task
 
       ep_date = epe.created_at || epe.established_at
-      bva_dispatch_task.closed_at - ep_date <= 7.days
+      bva_dispatch_task.closed_at - ep_date <= within.days
     end
   end
 

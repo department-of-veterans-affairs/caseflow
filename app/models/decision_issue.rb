@@ -55,6 +55,10 @@ class DecisionIssue < ApplicationRecord
       where(disposition: REMAND_DISPOSITIONS)
     end
 
+    def not_denied
+      where.not(disposition: ["Denied", "denied"])
+    end
+
     def not_remanded
       where.not(disposition: REMAND_DISPOSITIONS)
     end
