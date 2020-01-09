@@ -90,16 +90,18 @@ module TaskTreeRender
 
     highlighted_task = self
     highlighted_task = Task.find(highlight) if highlight
+    atts = [" "] | atts if highlight
+
     curr_appeal = is_a?(Task) ? appeal : self
 
     metadata = TreeMetadata.new
     metadata.col_keys = atts.map(&:to_s)
     metadata.rows = build_rows(atts, highlighted_task)
-    #pp metadata.rows
+    # pp metadata.rows
     metadata.max_name_length = calculate_max_name_length(curr_appeal.eval_appeal_label.size)
     TaskTreeRender.derive_column_metadata(metadata, col_labels)
 
-    return tree_structure(metadata, 0), metadata
+    [tree_structure(metadata, 0), metadata]
   end
 
   def calculate_max_name_length(max_name_length = 0, depth = 0)
@@ -111,7 +113,8 @@ module TaskTreeRender
 
   def tree_structure(metadata, depth = 0)
     row_str = if is_a?(Task)
-                raise "Cannot find #{self} in #{metadata.rows.keys}" unless metadata.rows[self]
+                fail "Cannot find #{self} in #{metadata.rows.keys}" unless metadata.rows[self]
+
                 task_row(metadata.max_name_length, depth, metadata.col_metadata, metadata.rows[self]) if metadata.rows[self]
               else
                 appeal_heading(metadata.max_name_length, metadata.col_metadata)
@@ -135,7 +138,6 @@ module TaskTreeRender
   end
 
   class << self
-
     def derive_column_metadata(metadata, col_labels)
       # Calculate column widths using rows only (not column heading labels)
       col_metadata = calculate_maxwidths(metadata.col_keys, metadata.rows.values)
@@ -246,9 +248,9 @@ module TaskTreeRender
 
   def tree_children
     subs = is_a?(Task) ? children.order(:id) : tasks.where(parent_id: nil)
-    child_ids = subs.map(&:id)
+    child_ids = subs.pluck(:id)
     # TODO: can the following be expressed using `where`(?) so that it returns an AssociationRelation of Tasks?
-    task_ids = tasks.order(:id).select{ |t| t.parent&.appeal_id != id }.map(&:id) if treeconfig[:show_all_tasks] && ! is_a?(Task)
+    task_ids = tasks.order(:id).reject { |t| t.parent&.appeal_id == id }.pluck(:id) if treeconfig[:show_all_tasks] && !is_a?(Task)
     child_ids |= task_ids if task_ids
     child_ids = child_ids.compact.sort
     Task.where(id: child_ids)
