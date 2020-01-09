@@ -59,7 +59,9 @@ class Metrics::NonDenialDecisions < Metrics::Base
   end
 
   def non_denial_end_products
-    EndProductEstablishment.includes(source: [appeal: [:tasks]]).where(source: non_denial_decision_documents)
+    EndProductEstablishment.includes(source: [appeal: [:tasks]])
+      .where(source: non_denial_decision_documents)
+      .where.not(established_at: nil)
   end
 
   def end_products_created_within_N_days_of_outcoding
@@ -67,14 +69,12 @@ class Metrics::NonDenialDecisions < Metrics::Base
       bva_dispatch_task = bva_dispatch_task_for(epe)
       fail "No BvaDispatchTask found for EP #{epe.id}" unless bva_dispatch_task
 
-      ep_date = epe.created_at || epe.established_at
-      bva_dispatch_task.closed_at - ep_date <= within.days
+      epe_date = epe.created_at || epe.established_at
+      bva_dispatch_task.closed_at - epe_date <= within.days
     end
   end
 
   def bva_dispatch_task_for(end_product_establishment)
-    end_product_establishment.source.appeal.tasks.completed.find do |task|
-      task.type == "BvaDispatchTask"
-    end
+    end_product_establishment.source.appeal.tasks.completed.find_by(type: "BvaDispatchTask")
   end
 end
