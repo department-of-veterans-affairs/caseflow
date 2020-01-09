@@ -36,6 +36,7 @@ class AMOMetricsReportJob < CaseflowJob
     slack_service.send_notification(msg, self.class.to_s, SLACK_CHANNEL)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def build_report(async_stats)
     sc_stats = async_stats.stats[:supplemental_claims]
     hlr_stats = async_stats.stats[:higher_level_reviews]
@@ -54,4 +55,5 @@ class AMOMetricsReportJob < CaseflowJob
     report << async_stats.as_csv
     report.join("\n")
   end
+  # rubocop:enable Metrics/AbcSize
 end
