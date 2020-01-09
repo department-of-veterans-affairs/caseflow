@@ -1,6 +1,6 @@
 import React from 'react';
-import StatusMessage from '../../../components/StatusMessage';
 import COPY from '../../../../COPY.json';
+import StatusMessage from '../../../components/StatusMessage';
 
 export const NoUpcomingHearingDayMessage = () => (
   <div>
