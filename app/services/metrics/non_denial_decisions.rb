@@ -59,7 +59,9 @@ class Metrics::NonDenialDecisions < Metrics::Base
       bva_dispatch_task = end_product.source.appeal.tasks.completed.find do |task|
         task.type == "BvaDispatchTask"
       end
-      bva_dispatch_task.closed_at - end_product.created_at <= 7.days
+      fail "No BvaDispatchTask found for EP #{end_product.id}" unless bva_dispatch_task
+      ep_date = end_product.created_at || end_product.established_at
+      bva_dispatch_task.closed_at - ep_date <= 7.days
     end
   end
 end
