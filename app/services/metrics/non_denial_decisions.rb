@@ -55,13 +55,18 @@ class Metrics::NonDenialDecisions < Metrics::Base
   end
 
   def end_products_created_within_7_days_of_outcoding
-    non_denial_end_products.select do |end_product|
-      bva_dispatch_task = end_product.source.appeal.tasks.completed.find do |task|
-        task.type == "BvaDispatchTask"
-      end
+    non_denial_end_products.select do |epe|
+      bva_dispatch_task = bva_dispatch_task_for(epe)
       fail "No BvaDispatchTask found for EP #{end_product.id}" unless bva_dispatch_task
+
       ep_date = end_product.created_at || end_product.established_at
       bva_dispatch_task.closed_at - ep_date <= 7.days
+    end
+  end
+
+  def bva_dispatch_task_for(end_product_establishment)
+    end_product_establishment.source.appeal.tasks.completed.find do |task|
+      task.type == "BvaDispatchTask"
     end
   end
 end
