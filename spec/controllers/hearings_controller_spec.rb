@@ -204,7 +204,6 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(subject.status).to eq(200)
           virtual_hearing.reload
           expect(virtual_hearing.cancelled?).to eq(true)
-          expect(virtual_hearing.all_emails_sent?).to eq(true)
         end
       end
     end

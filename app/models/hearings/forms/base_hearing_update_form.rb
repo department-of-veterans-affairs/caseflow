@@ -67,8 +67,13 @@ class BaseHearingUpdateForm
     !virtual_hearing_created? && scheduled_time_string.present?
   end
 
+  def start_async_job?
+    (hearing.virtual_hearing.pending? || !hearing.virtual_hearing.all_emails_sent?) &&
+      !hearing.virtual_hearing.cancelled?
+  end
+
   def start_async_job
-    if hearing.virtual_hearing.status == "pending" || !hearing.virtual_hearing.all_emails_sent?
+    if start_async_job?
       hearing.virtual_hearing.establishment.submit_for_processing!
       VirtualHearings::CreateConferenceJob.perform_now(
         hearing_id: hearing.id,
