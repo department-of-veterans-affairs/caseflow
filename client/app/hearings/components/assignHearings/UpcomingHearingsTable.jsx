@@ -36,7 +36,6 @@ export default class UpcomingHearingsTable extends React.PureComponent {
       {
         header: 'Case Details',
         align: 'left',
-        valueName: 'caseDetails',
         valueFunction: (row) => (
           <Link
             name={row.appealExternalId}
@@ -48,7 +47,6 @@ export default class UpcomingHearingsTable extends React.PureComponent {
       {
         header: 'Type(s)',
         align: 'left',
-        valueName: 'type',
         valueFunction: (row) => renderAppealType({
           caseType: row.appealType,
           isAdvancedOnDocket: row.aod
@@ -57,7 +55,6 @@ export default class UpcomingHearingsTable extends React.PureComponent {
       {
         header: 'Docket Number',
         align: 'left',
-        valueName: 'docketNumber',
         valueFunction: (row) => <HearingDocketTag hearing={row} />
       },
       {
@@ -74,7 +71,6 @@ export default class UpcomingHearingsTable extends React.PureComponent {
       {
         header: 'Time',
         align: 'left',
-        columnName: 'time',
         valueFunction: (row) => (
           <HearingTime hearing={row} isCentralOffice={this.isCentralOffice()} />
         )
