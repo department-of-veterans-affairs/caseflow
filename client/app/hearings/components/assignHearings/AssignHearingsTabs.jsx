@@ -68,7 +68,6 @@ export class AssignHearingsTabs extends React.Component {
 
     return location;
   };
-
   formatSuggestedHearingLocation = (suggestedLocation) => {
     if (_.isNull(suggestedLocation) || _.isUndefined(suggestedLocation)) {
       return null;
