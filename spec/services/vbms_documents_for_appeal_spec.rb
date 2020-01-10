@@ -91,4 +91,79 @@ describe ExternalApi::VbmsDocumentsForAppeal do
       expect(docs.fetch).to eq result_hash
     end
   end
+
+  context "vbms_pagination feature toggle is on, pagination service is used" do
+    before do
+      FeatureToggle.enable!(:vbms_pagination)
+    end
+
+    after do
+      FeatureToggle.disable!(:vbms_pagination)
+    end
+
+    let(:pagination_service) { VBMS::Service::PagedDocuments.new(client: vbms_client) }
+    let(:vbms_client) { FakeVbmsClient.new }
+    let(:bgs_client) { FakeBgsClient.new }
+    let(:docs) do
+      ExternalApi::VbmsDocumentsForAppeal.new(
+        file_number: veteran_file_number, vbms_client: vbms_client, bgs_client: bgs_client
+      )
+    end
+
+    context "when file number exists in VBMS" do
+      it "returns documents" do
+        docs_from_vbms_response = [1, 2, 3]
+        docs_from_vbms_docs = [4, 5, 6]
+
+        # mock the pagination service
+        allow(docs).to receive(:vbms_paged_documents_service) { pagination_service }
+        allow(pagination_service).to receive(:call).and_return(documents: docs_from_vbms_response)
+
+        # mock the internal DocumentsFromVbmsDocuments object
+        docs_from_vbms = instance_double(DocumentsFromVbmsDocuments)
+        allow(DocumentsFromVbmsDocuments).to receive(:new).with(
+          documents: docs_from_vbms_response, file_number: veteran_file_number
+        ).and_return(docs_from_vbms)
+        allow(docs_from_vbms).to receive(:call).and_return(docs_from_vbms_docs)
+
+        result_hash = {
+          manifest_vbms_fetched_at: nil,
+          manifest_vva_fetched_at: nil,
+          documents: docs_from_vbms_docs
+        }
+
+        # validate that the older non-pagination service is not used
+        expect(bgs_client).to_not receive(:fetch_veteran_info)
+        expect(vbms_client).to_not receive(:send_request)
+
+        # exercise the mocked objects
+        expect(docs.fetch).to eq result_hash
+      end
+    end
+
+    context "when VBMS cannot find file number and BGS claim number is different from file number" do
+      it "looks up the BGS claim number in VBMS" do
+        bgs_claim_number = "87654321"
+
+        # mock service to fail for both numbers
+        allow(pagination_service).to receive(:call)
+          .with(file_number: veteran_file_number).and_raise(nonexistent_file_number_error)
+        allow(pagination_service).to receive(:call)
+          .with(file_number: bgs_claim_number).and_raise(nonexistent_file_number_error)
+
+        # mock bgs service to return claim number
+        allow(bgs_client).to receive(:fetch_veteran_info).with(veteran_file_number)
+          .and_return(claim_number: bgs_claim_number)
+
+        # inject our mocked pagination service
+        allow(docs).to receive(:vbms_paged_documents_service) { pagination_service }
+
+        # confirm everything gets called as expected
+        expect(pagination_service).to receive(:call).with(file_number: veteran_file_number).once
+        expect(pagination_service).to receive(:call).with(file_number: bgs_claim_number).once
+        expect(bgs_client).to receive(:fetch_veteran_info).once
+        expect { docs.fetch }.to raise_error(VBMS::FilenumberDoesNotExist) # the 2nd, BGS attempt.
+      end
+    end
+  end
 end
