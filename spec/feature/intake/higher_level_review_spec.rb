@@ -1364,8 +1364,15 @@ feature "Higher-Level Review", :all_dbs do
         end
 
         context "with unidentified issue on legacy opt-in" do
-          before { FeatureToggle.enable!(:verify_unidentified_issue) }
-          after { FeatureToggle.disable!(:verify_unidentified_issue) }
+          before do
+            FeatureToggle.enable!(:verify_unidentified_issue)
+            FeatureToggle.enable!(:unidentified_issue_decision_date)
+          end
+
+          after do
+            FeatureToggle.disable!(:verify_unidentified_issue)
+            FeatureToggle.enable!(:unidentified_issue_decision_date)
+          end
 
           scenario "show unidentified modal" do
             start_higher_level_review(veteran, legacy_opt_in_approved: true)
@@ -1417,6 +1424,31 @@ feature "Higher-Level Review", :all_dbs do
                    )).to_not be_nil
 
             expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
+          end
+
+          scenario "checkbox on unidentified issues modal on edit page" do
+            start_higher_level_review(veteran, legacy_opt_in_approved: true)
+            visit "/intake/add_issues"
+            click_intake_add_issue
+            click_intake_no_matching_issues
+            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+
+            click_intake_no_matching_issues
+            expect(page).to have_content("Describe the issue to mark it as needing further review")
+            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            safe_click ".add-issue"
+
+            add_intake_rating_issue("ankylosis of hip")
+            click_intake_finish
+            click_on "correct the issues"
+            expect(page).to have_content("This issue has automatically closed the VACOLS issue")
+
+            click_intake_add_issue
+            click_intake_no_matching_issues
+
+            expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
+            click_intake_no_matching_issues
+            expect(page).to have_content("Verify record of prior decision")
           end
         end
       end

@@ -65,12 +65,12 @@ class UnidentifiedIssuesModal extends React.Component {
     }
   };
 
-  isCheckboxChecked = () => {
-    return this.state.checkboxSelected;
+  onCheckboxChange = (value) => {
+    this.setState({ checkboxSelected: value });
   };
 
-  onCheckboxChange = (event) => {
-    this.setState({ checkboxSelected: event });
+  isCheckboxChecked = () => {
+    return this.state.checkboxSelected;
   };
 
   getModalButtons() {
@@ -131,17 +131,15 @@ class UnidentifiedIssuesModal extends React.Component {
     please leave the checkbox unchecked and fill in the description
     and decision date submitted by the veteran. </p>
         <br />
-        <p>If found, use the prior decision's information to enter the description and decision date.
-    Update the notes with information on where you verified the record, such as VBMS or a decision document.
-    Please include identifying information for the record, such as a document title,
-    that would allow another user to find it.
+        <p>If found, please check below that it is verified. Use the prior decision's information
+        to enter the description and decision date. Update the notes with information on the record,
+        such as the location, ID, or document title.
         </p>
         <Checkbox
           label={<strong>Verify record of prior decision</strong>}
           name="verify_prior_record"
           value={this.isCheckboxChecked()}
           onChange={this.onCheckboxChange}
-          // disabled={this.state.saveInProgress}
         />
       </React.Fragment>
     );
