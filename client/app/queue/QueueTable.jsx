@@ -29,8 +29,9 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
  *     an argument and returns the value of the cell for that column.
  *   - @valueName {string} if valueFunction is not defined, cell value will use
  *     valueName to pull that attribute from the rowObject.
- *   - @filterValueTransform {function(any)} function that takes the value of the
- *     column, and transforms it into a string for filtering.
+ *   - @filterValueTransform {function(any, any)} function that takes the value of the
+ *     column, and transforms it into a string for filtering. The row is passed in as
+ *     a second argument.
  *   - @filterOptions {array[object]} array of value - displayText pairs to override the
  *     generated filter values and counts in <TableFilter>
  *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
@@ -320,7 +321,7 @@ export default class QueueTable extends React.PureComponent {
           let cellValue = _.get(row, columnName);
 
           if (columnConfig && columnConfig.filterValueTransform) {
-            cellValue = columnConfig.filterValueTransform(cellValue);
+            cellValue = columnConfig.filterValueTransform(cellValue, row);
           }
 
           if (_.isNil(cellValue)) {
