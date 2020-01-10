@@ -93,7 +93,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   describe "#create" do
     before do
       allow(User).to receive(:api_user).and_return(mock_api_user)
-      before_post
+      before_post # TODO refactor?
       post(
         "/api/v3/decision_review/higher_level_reviews",
         params: params,
@@ -116,7 +116,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
       end
 
-      it "should return a 202 on success" do
+      fit "should return a 202 on success" do
         expect(response).to have_http_status(202)
       end
     end

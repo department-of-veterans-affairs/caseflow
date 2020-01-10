@@ -34,7 +34,8 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
 
   def processor
     inputs = params
-    inputs['fileNumberOrSsn'] = BGSService.new.fetch_file_number_by_ssn(params['fileNumberOrSsn'])
+    # BGSService in test isn't finding the file_number
+    inputs['data']['attributes']['veteran']['fileNumberOrSsn'] = BGSService.new.fetch_file_number_by_ssn(params.dig('data','attributes','veteran','ssn'))
     @processor ||= Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(inputs, User.api_user)
   end
 

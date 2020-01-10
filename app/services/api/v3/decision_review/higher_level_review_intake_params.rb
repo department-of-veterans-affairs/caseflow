@@ -79,6 +79,14 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
     attributes.dig("veteran", "fileNumberOrSsn").to_s.strip
   end
 
+  # def veteran
+  #   VeteranFinder.find_best_match(ssn)
+  # end
+
+  # def ssn
+  #   attributes.dig("veteran", "ssn").to_s.strip
+  # end
+
   def attributes
     attributes? ? @params["data"]["attributes"] : {}
   end
@@ -186,6 +194,7 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
       [[String],       %w[data attributes benefitType]],
       [OBJECT,         %w[data attributes veteran]],
       [[String],       %w[data attributes veteran fileNumberOrSsn]],
+      # [[String],       %w[data attributes veteran ssn]],
       [[String, nil],  %w[data attributes veteran addressLine1]],
       [[String, nil],  %w[data attributes veteran addressLine2]],
       [[String, nil],  %w[data attributes veteran city]],
