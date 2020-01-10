@@ -15,6 +15,7 @@ describe TaskTreeRender do
       rows_hash, metadata = @appeal.tree_hash
       expect(rows_hash.count).to eq 1
       expect(metadata.rows.count).to eq @appeal.tasks.count
+      expect(@appeal.tree.lines.count).to eq @appeal.tasks.count + 3
     end
 
     it "returns only specified attributes" do

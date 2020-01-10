@@ -9,7 +9,7 @@ module TaskTreeRender
     col_sep: "│",
     top_chars: "┌──┐",
     bottom_chars: "└──┘",
-    heading_fill_char: "─",
+    heading_fill_str: "─",
     cell_margin_char: " ",
     highlight_char: "*",
     appeal_label_template: '#{self.class.name} #{id} (#{' \
@@ -42,7 +42,7 @@ module TaskTreeRender
     treeconfig[:col_sep] = "│"
     treeconfig[:top_chars] = "┌──┐"
     treeconfig[:bottom_chars] = "└──┘"
-    treeconfig[:heading_fill_char] = "─"
+    treeconfig[:heading_fill_str] = "─"
     treeconfig[:cell_margin_char] = " "
     treeconfig
   end
@@ -52,7 +52,7 @@ module TaskTreeRender
     treeconfig[:col_sep] = "|"
     treeconfig[:top_chars] = "+--+"
     treeconfig[:bottom_chars] = "+--+"
-    treeconfig[:heading_fill_char] = "-"
+    treeconfig[:heading_fill_str] = "-"
     treeconfig[:cell_margin_char] = " "
     treeconfig
   end
@@ -60,7 +60,7 @@ module TaskTreeRender
   def self.compact
     treeconfig[:include_border] = false
     treeconfig[:col_sep] = " "
-    treeconfig[:heading_fill_char] = " "
+    treeconfig[:heading_fill_str] = " "
     treeconfig[:cell_margin_char] = ""
     treeconfig
   end
@@ -124,7 +124,7 @@ module TaskTreeRender
 
   def appeal_heading(max_name_length, columns)
     # returns string for appeal header row: appeal_label followed by column headings
-    appeal_label = eval_appeal_label.ljust(max_name_length, treeconfig[:heading_fill_char])
+    appeal_label = eval_appeal_label.ljust(max_name_length, treeconfig[:heading_fill_str])
     col_seperator_with_margins = treeconfig[:cell_margin_char] + treeconfig[:col_sep] + treeconfig[:cell_margin_char]
     col_headings_justified = columns.map { |_key, col_obj| col_obj[:label].ljust(col_obj[:width]) }
 
