@@ -89,26 +89,23 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     end
   end
 
-  scenario "User can see and edit veteran and poa emails" do
-    visit "hearings/" + hearing.external_id.to_s + "/details"
+  context "User can see and edit veteran and poa emails" do
+    let!(:virtual_hearing) { create(:virtual_hearing, :active, :all_emails_sent, hearing: hearing) }
 
-    click_dropdown(name: "hearingType", index: 1)
-    fill_in "vet-email", with: "veteran@testingEmail.com"
-    fill_in "rep-email", with: "rep@testingEmail.com"
-    click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
+    scenario "user can update emails" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      fill_in "Veteran Email", with: "new@email.com"
+      fill_in "POA/Representative Email", with: "rep@testingEmail.com"
+      click_button("Save")
 
-    visit "hearings/" + hearing.external_id.to_s + "/details"
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
-    fill_in "Veteran Email", with: "new@email.com"
-    click_button("Save")
+      visit "hearings/" + hearing.external_id.to_s + "/details"
 
-    expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
-    expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-    click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
-
-    visit "hearings/" + hearing.external_id.to_s + "/details"
-
-    expect(page).to have_field("Veteran Email", with: "new@email.com")
-    expect(page).to have_field("POA/Representative Email", with: "rep@testingEmail.com")
+      expect(page).to have_field("Veteran Email", with: "new@email.com")
+      expect(page).to have_field("POA/Representative Email", with: "rep@testingEmail.com")
+    end
   end
 end
