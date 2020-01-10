@@ -17,7 +17,7 @@ FactoryBot.define do
       email { "test@example.com" }
       roles { ["Certify Appeal"] }
     end
-    
+
     factory :hearings_coordinator do
       css_id { "BVATWARNER" }
       full_name { "Thomas Warner" }

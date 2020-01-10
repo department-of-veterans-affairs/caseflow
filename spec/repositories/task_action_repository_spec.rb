@@ -27,7 +27,7 @@ describe TaskActionRepository, :all_dbs do
       let(:task) { create(:ama_task, assigned_to: users.first, parent: parent) }
 
       it "should return all members except user" do
-        user_output = users[1..users.length - 1].reject { |user| user.inactive? }.map { |u| { label: u.full_name, value: u.id } }
+        user_output = users[1..users.length - 1].reject(&:inactive?).map { |u| { label: u.full_name, value: u.id } }
         expect(TaskActionRepository.assign_to_user_data(task)[:options]).to match_array(user_output)
       end
     end
