@@ -406,7 +406,7 @@ const dispatchOldTasks = (dispatch, oldTasks, resp) => {
     dispatch(onReceiveAmaTasks(resp.tasks.data));
   } else {
     // For das deprecation, legacy_task_controller#create returns tasks, not a task
-    const tasks = [resp.task.data].flat();
+    const tasks = resp.tasks ? resp.tasks.data : [resp.task.data];
     const allTasks = prepareAllTasksForStore(tasks);
 
     dispatch(onReceiveTasks({
