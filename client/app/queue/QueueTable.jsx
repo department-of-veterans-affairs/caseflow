@@ -42,6 +42,15 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
  *     an argument and returns the value of the cell for that column.
  *   - @valueName {string} if valueFunction is not defined, cell value will use
  *     valueName to pull that attribute from the rowObject.
+ *   - @filterValueTransform {function(any, any)} function that takes the value of the
+ *     column, and transforms it into a string for filtering. The row is passed in as
+ *     a second argument.
+ *   - @filterOptions {array[object]} array of value - displayText pairs to override the
+ *     generated filter values and counts in <TableFilter>
+ *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
+ *     is automatically capitalized. default is true.
+ *   - @footer {string} footer cell value for the column
+
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary
  * - @enablePagination {boolean} whether or not to enablePagination
@@ -325,7 +334,7 @@ export default class QueueTable extends React.PureComponent {
           let cellValue = _.get(row, columnName);
 
           if (columnConfig && columnConfig.filterValueTransform) {
-            cellValue = columnConfig.filterValueTransform(cellValue);
+            cellValue = columnConfig.filterValueTransform(cellValue, row);
           }
 
           if (_.isNil(cellValue)) {
