@@ -2,7 +2,7 @@
 
 module PrintsTaskTree
   extend ActiveSupport::Concern
-  include TaskTreeRender
+  include TaskTreeRenderModule
 
   def structure_render(*atts)
     TTY::Tree.new(structure(*atts)).render

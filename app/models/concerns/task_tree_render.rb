@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # See instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
-module TaskTreeRender
+class TaskTreeRender
   mattr_accessor :treeconfig
   self.treeconfig = {
     show_all_tasks: true,
@@ -12,10 +12,10 @@ module TaskTreeRender
     heading_fill_str: "─",
     cell_margin_char: " ",
     highlight_char: "*",
-    appeal_label_template: '#{self.class.name} #{id} (#{' \
-                           "(defined?(docket_type) && docket_type) ||" \
-                           "(defined?(docket_name) && docket_name)" \
-                           "}) ",
+    appeal_label_template: ->(appeal){
+                          docket=(defined?(appeal.docket_type) && appeal.docket_type) ||
+                          (defined?(appeal.docket_name) && appeal.docket_name)
+                           "#{appeal.class.name} #{appeal.id} (#{docket}) "},
     default_atts: [:id, :status, :assigned_to_type, :ASGN_BY, :ASGN_TO, :created_at, :updated_at],
     heading_transform: :upcase_headings,
     heading_transform_funcs_hash: {
@@ -64,15 +64,19 @@ module TaskTreeRender
     treeconfig[:cell_margin_char] = ""
     treeconfig
   end
+  #
+  # def treee(*atts, col_labels: nil, highlight: nil)
+  #   puts tree(*atts, col_labels: col_labels, highlight: highlight)
+  # end
 
-  def treee(*atts, col_labels: nil, highlight: nil)
-    puts tree(*atts, col_labels: col_labels, highlight: highlight)
+  def initialize
+    puts "===> Creating TaskTreeRender"
   end
 
-  def tree(*atts, col_labels: nil, highlight: nil)
-    task_tree_hash, metadata = tree_hash(*atts, col_labels: col_labels, highlight: highlight)
+  def tree(me, *atts, col_labels: nil, highlight: nil)
+    task_tree_hash, metadata = tree_hash(me, *atts, col_labels: col_labels, highlight: highlight)
     table = TTY::Tree.new(task_tree_hash).render
-    table.prepend(appeal.appeal_heading(metadata.max_name_length, metadata.col_metadata) + "\n") if is_a? Task
+    table.prepend(appeal.appeal_heading(appeal, metadata.max_name_length, metadata.col_metadata) + "\n") if is_a? Task
 
     if treeconfig[:include_border]
       TaskTreeRender.top_border(metadata.max_name_length, metadata.col_metadata) + "\n" +
@@ -92,43 +96,43 @@ module TaskTreeRender
 
   HIGHLIGHT_COL_KEY = " "
 
-  def tree_hash(*atts, col_labels: nil, highlight: nil)
+  def tree_hash(me, *atts, col_labels: nil, highlight: nil)
     atts = treeconfig[:default_atts] unless atts.any?
 
-    highlighted_task = self
+    highlighted_task = me
     highlighted_task = Task.find(highlight) if highlight
     atts = [HIGHLIGHT_COL_KEY] | atts if highlight
 
-    curr_appeal = is_a?(Task) ? appeal : self
+    curr_appeal = me.is_a?(Task) ? me.appeal : me
 
     metadata = TreeMetadata.new
     metadata.col_keys = atts.map(&:to_s)
-    metadata.rows = build_rows(atts, highlighted_task)
-    metadata.max_name_length = calculate_max_name_length(curr_appeal.eval_appeal_label.size)
+    metadata.rows = build_rows(me, atts, highlighted_task)
+    metadata.max_name_length = calculate_max_name_length(me, eval_appeal_label(curr_appeal).size)
     TaskTreeRender.derive_column_metadata(metadata, col_labels)
 
-    [tree_structure(metadata, 0), metadata]
+    [tree_structure(me , metadata, 0), metadata]
   end
 
-  def calculate_max_name_length(max_name_length = 0, depth = 0)
-    max_name_length = [max_name_length, (INDENT_SIZE * depth) + self.class.name.length].max
-    tree_children.map do |child|
-      child.calculate_max_name_length(max_name_length, depth + 1)
+  def calculate_max_name_length(me, max_name_length = 0, depth = 0)
+    max_name_length = [max_name_length, (INDENT_SIZE * depth) + me.class.name.length].max
+    tree_children(me).map do |child|
+      calculate_max_name_length(child, max_name_length, depth + 1)
     end.append(max_name_length).max
   end
 
-  def tree_structure(metadata, depth = 0)
-    row_str = if is_a?(Task)
-                task_row(metadata.max_name_length, depth, metadata.col_metadata, metadata.rows[self])
+  def tree_structure(me, metadata, depth = 0)
+    row_str = if me.is_a?(Task)
+                task_row(me, metadata.max_name_length, depth, metadata.col_metadata, metadata.rows[me])
               else
-                appeal_heading(metadata.max_name_length, metadata.col_metadata)
+                appeal_heading(me, metadata.max_name_length, metadata.col_metadata)
               end
-    { "#{row_str}": tree_children.map { |child| child.tree_structure(metadata, depth + 1) } }
+    { "#{row_str}": tree_children(me).map { |child| tree_structure(child, metadata, depth + 1) } }
   end
 
-  def appeal_heading(max_name_length, columns)
+  def appeal_heading(appeal, max_name_length, columns)
     # returns string for appeal header row: appeal_label followed by column headings
-    appeal_label = eval_appeal_label.ljust(max_name_length, treeconfig[:heading_fill_str])
+    appeal_label = eval_appeal_label(appeal).ljust(max_name_length, treeconfig[:heading_fill_str])
     col_seperator_with_margins = treeconfig[:cell_margin_char] + treeconfig[:col_sep] + treeconfig[:cell_margin_char]
     col_headings_justified = columns.map { |_key, col_obj| col_obj[:label].ljust(col_obj[:width]) }
 
@@ -137,8 +141,8 @@ module TaskTreeRender
       treeconfig[:cell_margin_char] + treeconfig[:col_sep]
   end
 
-  def eval_appeal_label
-    eval('"' + treeconfig[:appeal_label_template] + '"')
+  def eval_appeal_label(me)
+    treeconfig[:appeal_label_template].call(me)
   end
 
   class << self
@@ -231,40 +235,40 @@ module TaskTreeRender
 
   INDENT_SIZE = 4
 
-  def build_rows(atts, highlighted_obj = self)
+  def build_rows(me, atts, highlighted_obj = self)
     # Create func_hash based on atts
     # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
     func_hash = TaskTreeRender.derive_value_funcs_hash(atts, highlighted_obj)
 
     # Use func_hash to populate returned hash with tasks as keys
     # tree_rows={ task1=>{ "colKey1" => "strValue1", "colKey1" => "strValue2", ... }, task2=>{...} }
-    tree_rows = is_a?(Task) ? appeal.tasks : tasks
+    tree_rows = me.is_a?(Task) ? me.appeal.tasks : me.tasks
     build_rows_from(tree_rows, func_hash)
   end
 
-  def build_rows_from(tasklist, func_hash)
-    tasklist.compact.each_with_object({}) do |task, rows_obj|
+  def build_rows_from(task_rows, func_hash)
+    task_rows.compact.each_with_object({}) do |task, rows_obj|
       rows_obj[task] = func_hash.each_with_object({}) do |(col_key, func), obj|
         obj[col_key] = func.call(task)
       end
     end
   end
 
-  def tree_children
-    if is_a?(Task)
-      children.order(:id)
+  def tree_children(me)
+    if me.is_a?(Task)
+      me.children.order(:id)
     else
-      roottask_ids = tasks.where(parent_id: nil).order(:id).pluck(:id)
+      roottask_ids = me.tasks.where(parent_id: nil).order(:id).pluck(:id)
       # Can the following be expressed using `where` so that it returns an AssociationRelation of Tasks?
-      task_ids = tasks.order(:id).reject { |tsk| tsk.parent&.appeal_id == id }.pluck(:id) if treeconfig[:show_all_tasks]
+      task_ids = me.tasks.order(:id).reject { |tsk| tsk.parent&.appeal_id == me.id }.pluck(:id) if treeconfig[:show_all_tasks]
       roottask_ids |= task_ids if task_ids
       roottask_ids = roottask_ids.compact.sort
       Task.where(id: roottask_ids)
     end
   end
 
-  def task_row(max_name_length, depth, columns, row)
-    self.class.name.ljust(max_name_length - (INDENT_SIZE * depth)) + " " + tree_task_attributes(columns, row)
+  def task_row(me, max_name_length, depth, columns, row)
+    me.class.name.ljust(max_name_length - (INDENT_SIZE * depth)) + " " + tree_task_attributes(columns, row)
   end
 
   def tree_task_attributes(columns, row)
