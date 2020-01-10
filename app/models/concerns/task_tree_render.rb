@@ -65,6 +65,10 @@ module TaskTreeRender
     treeconfig
   end
 
+  def treee(*atts, col_labels: nil, highlight: nil)
+    puts tree(*atts, col_labels: col_labels, highlight: highlight)
+  end
+
   def tree(*atts, col_labels: nil, highlight: nil)
     task_tree_hash, metadata = tree_hash(*atts, col_labels: col_labels, highlight: highlight)
     table = TTY::Tree.new(task_tree_hash).render
