@@ -165,7 +165,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       )
 
       request_issue = JSON.parse(response.body)["included"].find { |obj| obj["type"] == "RequestIssue" }["attributes"]
-      rating_issue = rating.issues.find {|issue| issue.reference_id == request_issue["ratingIssueId"]}
+      rating_issue = rating.issues.find { |issue| issue.reference_id == request_issue["ratingIssueId"] }
 
       expect(request_issue["description"]).to eq rating_issue.decision_text
     end
