@@ -18,7 +18,11 @@ describe Metrics::NonDenialDecisions, :postgres do
 
     BvaDispatchTask.where(status: Constants.TASK_STATUSES.completed).update_all(closed_at: Time.zone.now - 30.days)
     decision_issues.sample(number_of_end_products_created_in_7_days).each do |decision|
-      create(:end_product_establishment, source: decision.decision_review.decision_documents.first)
+      create(
+        :end_product_establishment,
+        established_at: end_date + 1,
+        source: decision.decision_review.decision_documents.first
+      )
     end
   end
 
