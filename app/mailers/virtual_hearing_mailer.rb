@@ -5,15 +5,12 @@ class VirtualHearingMailer < ActionMailer::Base
   layout "virtual_hearing_mailer"
   attr_reader :recipient, :virtual_hearing
 
-  RECIPIENT_TITLES = {
-    judge: "Judge",
-    veteran: "Veteran",
-    representative: "Representative"
-  }.freeze
-
   def cancellation(mail_recipient:, virtual_hearing: nil)
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
+
+    attachments[calendar_invite_name] = cancellation_calendar_invite
+
     mail(to: recipient.email, subject: "Updated location: Your hearing with the Board of Veterans' Appeals")
   end
 
@@ -21,6 +18,9 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
+
+    attachments[calendar_invite_name] = confirmation_calendar_invite
+
     mail(to: recipient.email, subject: confirmation_subject)
   end
 
@@ -28,22 +28,46 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
+
+    attachments[calendar_invite_name] = confirmation_calendar_invite
+
     mail(
       to: recipient.email,
       subject: "Updated time: Your virtual hearing with the Board of Veterans' Appeals"
     )
   end
 
+  private
+
+  def confirmation_calendar_invite
+    VirtualHearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient, link)
+  end
+
+  def cancellation_calendar_invite
+    VirtualHearings::CalendarService.update_to_video_calendar_invite(virtual_hearing.hearing, recipient)
+  end
+
+  def calendar_invite_name
+    case recipient.title
+    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
+      "BoardHearing.ics"
+    when MailRecipient::RECIPIENT_TITLES[:judge]
+      "VirtualHearing.ics"
+    end
+  end
+
   def confirmation_subject
     case recipient.title
-    when RECIPIENT_TITLES[:veteran], RECIPIENT_TITLES[:representative]
+    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
       "Confirmation: Your virtual hearing with the Board of Veterans' Appeals"
-    when RECIPIENT_TITLES[:judge]
+    when MailRecipient::RECIPIENT_TITLES[:judge]
       "Confirmation: Your virtual hearing"
     end
   end
 
   def link
-    (recipient.title == RECIPIENT_TITLES[:judge]) ? virtual_hearing.host_link : virtual_hearing.guest_link
+    return virtual_hearing.host_link if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
+
+    virtual_hearing.guest_link
   end
 end

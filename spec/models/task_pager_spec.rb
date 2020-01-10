@@ -327,9 +327,14 @@ describe TaskPager, :all_dbs do
       let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name }
 
       before do
+        # not random, in order to have deterministic sort for testing.
+        first_initials = ("A".."Z").map(&:to_s)
+        last_initials = ("Z".."A").map(&:to_s)
+        middle_initials = ("a".."z").map(&:to_s)
+
         created_tasks.each do |task|
-          first_name = Faker::Name.unique.first_name
-          last_name = "#{Faker::Name.unique.first_name} #{Faker::Name.unique.first_name}"
+          first_name = first_initials.shift
+          last_name = "#{middle_initials.shift} #{last_initials.shift}"
           task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
           create(
             :cached_appeal,
