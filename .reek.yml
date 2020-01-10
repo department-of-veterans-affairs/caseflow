@@ -65,6 +65,7 @@ detectors:
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - UserReporter#report_user_related_records
       - VeteranAttributeCacher
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
@@ -108,6 +109,7 @@ detectors:
       - LegacyAppealDispatch
       - Address
       - ExternalApi::PexipService
+      - InvalidAssigneeStatusOnTaskCreate
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -128,6 +130,7 @@ detectors:
       - OrganizationTrackingTasksTab#column_names
       - Fakes::BGSService
       - Fakes::PexipService
+      - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
