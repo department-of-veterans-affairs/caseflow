@@ -31,6 +31,7 @@ detectors:
   UncommunicativeParameterName:
     exclude:
       - Address
+      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   DataClump:
     exclude:
       - HearingSerializerBase
@@ -84,11 +85,16 @@ detectors:
       - Address#initialize
       - ExternalApi::VBMSService#self.create_contentions!
       - LegacyDocket#new_distributed_case
+      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   ManualDispatch:
     exclude:
-      - Api::V3::DecisionReview::IntakeParams
-      - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
       - Api::V3::DecisionReview::IntakeError#potential_error_code
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#attributes?
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#params?
+      - Api::V3::DecisionReview::IntakeError#error_code
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
   MissingSafeMethod:
     enabled: false
   NestedIterators:
@@ -113,6 +119,9 @@ detectors:
       - Address
       - ExternalApi::PexipService
       - InvalidAssigneeStatusOnTaskCreate
+      - Api::V3::DecisionReview::ContestableIssueFinder
+      - Api::V3::DecisionReview::ContestableIssueParams
+      - Api::V3::DecisionReview::IntakeError
   TooManyMethods:
     enabled: false
   TooManyStatements:
