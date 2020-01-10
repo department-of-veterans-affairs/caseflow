@@ -108,7 +108,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
     visit "hearings/" + hearing.external_id.to_s + "/details"
 
-    expect(page).to have_field("Veteran Email", with: "new@email.com", disabled: false)
-    expect(page).to have_field("POA/Representative Email", with: "rep@testingEmail.com", disabled: false)
+    expect(page).to have_field("Veteran Email", with: "new@email.com")
+    expect(page).to have_field("POA/Representative Email", with: "rep@testingEmail.com")
   end
 end
