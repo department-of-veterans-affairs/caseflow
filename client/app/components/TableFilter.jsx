@@ -41,8 +41,9 @@ const iconStyle = css(
  *     user readable text
  *   - @label {string} used for the aria-label on the icon,
  *   - @valueName {string} used as the name for the dropdown filter.
- *   - @valueTransform {function(any)} function that takes the value of the
- *     column, and transforms it into a string.
+ *   - @valueTransform {function(any, any)} function that takes the value of the
+ *     column, and transforms it into a string. The row is passed in as a second
+ *     argument.
  */
 
 class TableFilter extends React.PureComponent {
@@ -52,10 +53,10 @@ class TableFilter extends React.PureComponent {
     this.state = { open: false };
   }
 
-  transformColumnValue = (columnValue) => {
+  transformColumnValue = (columnValue, row) => {
     const { valueTransform } = this.props;
 
-    return valueTransform ? valueTransform(columnValue) : columnValue;
+    return valueTransform ? valueTransform(columnValue, row) : columnValue;
   }
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
@@ -72,7 +73,7 @@ class TableFilter extends React.PureComponent {
 
     const countByColumnName = _.countBy(
       tableDataByRow,
-      (row) => this.transformColumnValue(_.get(row, columnName))
+      (row) => this.transformColumnValue(_.get(row, columnName), row)
     );
     const uniqueOptions = [];
 

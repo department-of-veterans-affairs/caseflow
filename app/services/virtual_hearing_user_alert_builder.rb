@@ -45,6 +45,8 @@ class VirtualHearingUserAlertBuilder
       copy["MESSAGES"]["TO_VETERAN"]
     elsif virtual_hearing_attributes.key?(:representative_email)
       copy["MESSAGES"]["TO_POA"]
+    elsif virtual_hearing_attributes.key?(:judge_email)
+      copy["MESSAGES"]["TO_VLJ"]
     end
   end
 
@@ -53,7 +55,10 @@ class VirtualHearingUserAlertBuilder
   end
 
   def only_emails_updated?
-    (virtual_hearing_attributes.key?(:veteran_email) || virtual_hearing_attributes.key?(:representative_email)) &&
-      !cancelled? && !changed_to_virtual
+    email_changed = virtual_hearing_attributes.key?(:veteran_email) ||
+                    virtual_hearing_attributes.key?(:representative_email) ||
+                    virtual_hearing_attributes.key?(:judge_email)
+
+    email_changed && !cancelled? && !changed_to_virtual
   end
 end
