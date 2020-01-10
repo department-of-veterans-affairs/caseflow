@@ -13,7 +13,7 @@ describe TaskActionRepository, :all_dbs do
       let(:task) { create(:ama_task, assigned_to: organization) }
 
       it "should return all active members" do
-        match_users = users.reject{ |user| user.inactive? }.map { |u| { label: u.full_name, value: u.id } }
+        match_users = users.reject(&:inactive?).map { |u| { label: u.full_name, value: u.id } }
         expect(TaskActionRepository.assign_to_user_data(task)[:options]).to match_array match_users
       end
 
