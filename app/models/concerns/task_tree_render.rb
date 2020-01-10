@@ -11,6 +11,7 @@ module TaskTreeRender
     bottom_chars: "└──┘",
     heading_fill_char: "─",
     cell_margin_char: " ",
+    highlight_char: "*",
     appeal_label_template: '#{self.class.name} #{id} (#{' \
                            "(defined?(docket_type) && docket_type) ||" \
                            "(defined?(docket_name) && docket_name)" \
@@ -85,19 +86,20 @@ module TaskTreeRender
                   :col_metadata # hash of column metadata (widths and labels)
   end
 
+  HIGHLIGHT_COL_KEY = " "
+
   def tree_hash(*atts, col_labels: nil, highlight: nil)
     atts = treeconfig[:default_atts] unless atts.any?
 
     highlighted_task = self
     highlighted_task = Task.find(highlight) if highlight
-    atts = [" "] | atts if highlight
+    atts = [HIGHLIGHT_COL_KEY] | atts if highlight
 
     curr_appeal = is_a?(Task) ? appeal : self
 
     metadata = TreeMetadata.new
     metadata.col_keys = atts.map(&:to_s)
     metadata.rows = build_rows(atts, highlighted_task)
-    # pp metadata.rows
     metadata.max_name_length = calculate_max_name_length(curr_appeal.eval_appeal_label.size)
     TaskTreeRender.derive_column_metadata(metadata, col_labels)
 
@@ -113,9 +115,7 @@ module TaskTreeRender
 
   def tree_structure(metadata, depth = 0)
     row_str = if is_a?(Task)
-                fail "Cannot find #{self} in #{metadata.rows.keys}" unless metadata.rows[self]
-
-                task_row(metadata.max_name_length, depth, metadata.col_metadata, metadata.rows[self]) if metadata.rows[self]
+                task_row(metadata.max_name_length, depth, metadata.col_metadata, metadata.rows[self])
               else
                 appeal_heading(metadata.max_name_length, metadata.col_metadata)
               end
@@ -191,8 +191,8 @@ module TaskTreeRender
       atts.each_with_object({}) do |att, obj|
         if att.is_a?(Array)
           obj[att.to_s] = ->(task) { send_chain(task, att)&.to_s || "" }
-        elsif att == " "
-          obj[" "] = ->(task) { (task == highlighted_obj) ? "*" : " " }
+        elsif att == HIGHLIGHT_COL_KEY
+          obj[HIGHLIGHT_COL_KEY] = ->(task) { (task == highlighted_obj) ? treeconfig[:highlight_char] : " " }
         elsif treeconfig[:value_funcs_hash][att]
           obj[att.to_s] = treeconfig[:value_funcs_hash][att]
         else
@@ -233,7 +233,7 @@ module TaskTreeRender
     func_hash = TaskTreeRender.derive_value_funcs_hash(atts, highlighted_obj)
 
     # Use func_hash to populate returned hash with tasks as keys
-    # { task1=>{ "colKey1" => "strValue1", "colKey1" => "strValue2", ... }, task2=>{...} }
+    # tree_rows={ task1=>{ "colKey1" => "strValue1", "colKey1" => "strValue2", ... }, task2=>{...} }
     tree_rows = is_a?(Task) ? appeal.tasks : tasks
     build_rows_from(tree_rows, func_hash)
   end
@@ -247,13 +247,16 @@ module TaskTreeRender
   end
 
   def tree_children
-    subs = is_a?(Task) ? children.order(:id) : tasks.where(parent_id: nil)
-    child_ids = subs.pluck(:id)
-    # TODO: can the following be expressed using `where`(?) so that it returns an AssociationRelation of Tasks?
-    task_ids = tasks.order(:id).reject { |t| t.parent&.appeal_id == id }.pluck(:id) if treeconfig[:show_all_tasks] && !is_a?(Task)
-    child_ids |= task_ids if task_ids
-    child_ids = child_ids.compact.sort
-    Task.where(id: child_ids)
+    if is_a?(Task)
+      children.order(:id)
+    else
+      roottask_ids = tasks.where(parent_id: nil).order(:id).pluck(:id)
+      # Can the following be expressed using `where` so that it returns an AssociationRelation of Tasks?
+      task_ids = tasks.order(:id).reject { |tsk| tsk.parent&.appeal_id == id }.pluck(:id) if treeconfig[:show_all_tasks]
+      roottask_ids |= task_ids if task_ids
+      roottask_ids = roottask_ids.compact.sort
+      Task.where(id: roottask_ids)
+    end
   end
 
   def task_row(max_name_length, depth, columns, row)

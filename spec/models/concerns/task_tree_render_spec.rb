@@ -14,7 +14,7 @@ describe TaskTreeRender do
       # puts @appeal.tree
       rows_hash, metadata = @appeal.tree_hash
       expect(rows_hash.count).to eq 1
-      expect(metadata.rows.count).to eq 6
+      expect(metadata.rows.count).to eq @appeal.tasks.count
     end
 
     it "returns only specified attributes" do
@@ -47,21 +47,27 @@ describe TaskTreeRender do
       }
 
       _rows_hash, metadata = @appeal.tree_hash(:id, :status, :assigned_to_type, "ASGN_TO.TYPE", :ASGN_BY, :ASGN_TO)
-      @appeal.tasks.each do |t|
-        expect(metadata.rows[t]["ASGN_TO.TYPE"]).to eq t.assigned_to&.type if t.assigned_to.is_a?(Organization)
-        expect(metadata.rows[t]["ASGN_TO.TYPE"]).to eq "" if t.assigned_to.is_a?(User)
+      @appeal.tasks.each do |tsk|
+        expect(metadata.rows[tsk]["ASGN_TO.TYPE"]).to eq tsk.assigned_to&.type if tsk.assigned_to.is_a?(Organization)
+        expect(metadata.rows[tsk]["ASGN_TO.TYPE"]).to eq "" if tsk.assigned_to.is_a?(User)
       end
     end
   end
 
   context ".tree is called on a task" do
+    def check_for_highlight(metadata, task_to_highlight)
+      highlight_char = TaskTreeRender.treeconfig[:highlight_char]
+      expect(metadata.rows[task_to_highlight][" "]).to eq highlight_char
+
+      @appeal.tasks.each do |tsk|
+        expect(metadata.rows[tsk][" "]).to eq " " unless tsk == task_to_highlight
+      end
+    end
+
     it "highlights self task with an asterisk" do
       task_to_highlight = @appeal.tasks.sample
       _rows_hash, metadata = task_to_highlight.tree_hash(" ", :id, :status)
-      @appeal.tasks.each do |t|
-        expect(metadata.rows[t][" "]).to eq "*" if t == task_to_highlight
-        expect(metadata.rows[t][" "]).to eq " " unless t == task_to_highlight
-      end
+      check_for_highlight(metadata, task_to_highlight)
     end
 
     it "highlights specified task with an asterisk, even if no columns are specified" do
@@ -69,10 +75,7 @@ describe TaskTreeRender do
       # puts @appeal.root_task.tree(highlight: task_to_highlight.id)
 
       _rows_hash, metadata = @appeal.root_task.tree_hash(highlight: task_to_highlight.id)
-      @appeal.tasks.each do |t|
-        expect(metadata.rows[t][" "]).to eq "*" if t == task_to_highlight
-        expect(metadata.rows[t][" "]).to eq " " unless t == task_to_highlight
-      end
+      check_for_highlight(metadata, task_to_highlight)
     end
 
     it "highlights specified task with an asterisk, even if highlight column is not specified" do
@@ -80,10 +83,7 @@ describe TaskTreeRender do
       # puts @appeal.root_task.tree(highlight: task_to_highlight.id)
 
       _rows_hash, metadata = @appeal.root_task.tree_hash(:id, :status, highlight: task_to_highlight.id)
-      @appeal.tasks.each do |t|
-        expect(metadata.rows[t][" "]).to eq "*" if t == task_to_highlight
-        expect(metadata.rows[t][" "]).to eq " " unless t == task_to_highlight
-      end
+      check_for_highlight(metadata, task_to_highlight)
     end
   end
 end
