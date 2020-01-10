@@ -14,7 +14,8 @@ class UnidentifiedIssuesModal extends React.Component {
     this.state = {
       description: '',
       notes: '',
-      disabled: true
+      disabled: true,
+      checkboxSelected: false
     };
   }
 
@@ -65,12 +66,8 @@ class UnidentifiedIssuesModal extends React.Component {
     }
   };
 
-  onCheckboxChange = (value) => {
-    this.setState({ checkboxSelected: value });
-  };
-
-  isCheckboxChecked = () => {
-    return this.state.checkboxSelected;
+  onCheckboxChange = (event) => {
+    this.setState({ checkboxSelected: event });
   };
 
   getModalButtons() {
@@ -138,7 +135,7 @@ class UnidentifiedIssuesModal extends React.Component {
         <Checkbox
           label={<strong>Verify record of prior decision</strong>}
           name="verify_prior_record"
-          value={this.isCheckboxChecked()}
+          value={this.state.checkboxSelected}
           onChange={this.onCheckboxChange}
         />
       </React.Fragment>
