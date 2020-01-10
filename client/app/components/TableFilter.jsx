@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { sprintf } from 'sprintf-js';
 
 import { css, hover } from 'glamor';
 import COPY from '../../COPY.json';
@@ -151,12 +152,23 @@ class TableFilter extends React.PureComponent {
     this.hideDropdown();
   }
 
+  filterIconAriaLabel = () => {
+    const {
+      filteredByList,
+      columnName,
+      label
+    } = this.props;
+
+    const selectedOptions = filteredByList[columnName] || '';
+
+    return selectedOptions.length ? sprintf('%s. Filtering by %s', label, selectedOptions) : label;
+  }
+
   render() {
     const {
       tableData,
       columnName,
       anyFiltersAreSet,
-      label,
       valueName,
       getFilterValues
     } = this.props;
@@ -173,7 +185,7 @@ class TableFilter extends React.PureComponent {
     return (
       <span {...iconStyle}>
         <FilterIcon
-          label={label}
+          label={this.filterIconAriaLabel()}
           getRef={this.props.getFilterIconRef}
           selected={this.isFilterOpen()}
           handleActivate={this.toggleDropdown} />
