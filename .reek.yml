@@ -16,11 +16,13 @@ detectors:
       - Veteran
   ControlParameter:
     exclude:
+      - ExternalApi::VBMSService#self.send_and_log_request
       - Fakes::BGSService
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
+      - VBMSCaseflowLogger#log
       - Veteran
   UncommunicativeVariableName:
     exclude:
@@ -80,6 +82,7 @@ detectors:
   LongParameterList:
     exclude:
       - Address#initialize
+      - ExternalApi::VBMSService#self.create_contentions!
       - LegacyDocket#new_distributed_case
   ManualDispatch:
     exclude:
@@ -130,6 +133,7 @@ detectors:
       - OrganizationTrackingTasksTab#column_names
       - Fakes::BGSService
       - Fakes::PexipService
+      - VBMSCaseflowLogger#log
       - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
 
 ### Directory specific configuration

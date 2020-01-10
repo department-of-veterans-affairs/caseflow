@@ -21,8 +21,21 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
  * The required props are:
  * - @columns {array[string]} array of objects that define the properties
  *   of the columns. Possible attributes for each column include:
+ *   - @align {string} alignment of the column ("left", "right", or "center")
+ *   - @anyFiltersAreSet {boolean} determines whether the "Clear All Filters" option
+ *     in the dropdown is enabled
+ *   - @cellClass {string} a CSS class to apply to each cell in the column
+ *   - @columnName {string} the name of the column in the table data
+ *   - @enableFilter {boolean} whether filtering is turned on for the column
+ *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
+ *     is automatically capitalized. default is true.
+ *   - @filterOptions {array[object]} array of value - displayText pairs to override the
+ *     generated filter values and counts in <TableFilter>
+ *   - @filterValueTransform {function(any)} function that takes the value of the
+ *     column, and transforms it into a string for filtering.
+ *   - @footer {string} footer cell value for the column
  *   - @header {string|component} header cell value for the column
- *   - @align {sting} alignment of the column ("left", "right", or "center")
+ *   - @label {string} used for the aria-label on the icon,
  *   - @tableData {array[object]} array of rows that are being used to populate the table.
  *     if not specified, @rowObjects will used.
  *   - @valueFunction {function(rowObject)} function that takes `rowObject` as
@@ -37,6 +50,7 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
  *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
  *     is automatically capitalized. default is true.
  *   - @footer {string} footer cell value for the column
+
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary
  * - @enablePagination {boolean} whether or not to enablePagination
@@ -107,7 +121,6 @@ const HeaderRow = (props) => {
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         }
-
         const columnTitleContent = <span>{column.header || ''}</span>;
         const columnContent = <span {...iconHeaderStyle} aria-label="">
           {columnTitleContent}
