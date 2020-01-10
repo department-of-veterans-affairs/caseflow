@@ -652,7 +652,8 @@
       "MESSAGES": {
         "TO_VETERAN_AND_POA": "Emails to the Veteran and POA / Representative are in progress.",
         "TO_VETERAN": "Email to Veteran is in progress.",
-        "TO_POA": "Email to POA / Representative is in progress."
+        "TO_POA": "Email to POA / Representative is in progress.",
+        "TO_VLJ": "Email to VLJ is in progress."
       }
     },
     "HEARING_TIME_CHANGED": {
