@@ -103,11 +103,15 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
 
   describe "#higher_level_review" do
     it { expect(subject.run!.higher_level_review).to be_a(HigherLevelReview) }
+
     context do
       let(:request_issues) { subject.run!.higher_level_review.request_issues.to_a }
       let(:request_issue) { request_issues.first }
+
       it { expect(request_issues).to be_an Array }
+
       it { expect(request_issues.size).to be 1 }
+
       it do
         expect(
           "rating_issue_reference_id" => request_issue[:contested_rating_issue_reference_id],
