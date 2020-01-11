@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe TaskTreeRender do
+describe TaskTreeRenderModule do
   before(:all) do
     @appeal = create(:appeal, :with_post_intake_tasks)
     root = @appeal.root_task
@@ -11,6 +11,7 @@ describe TaskTreeRender do
 
   context ".tree is called on an appeal" do
     it "returns all tasks for the appeal" do
+      @appeal.treee
       rows_hash, metadata = @appeal.tree_hash
       expect(rows_hash.count).to eq 1
       expect(metadata.rows.count).to eq @appeal.tasks.count
@@ -42,8 +43,8 @@ describe TaskTreeRender do
     end
 
     it "returns column values that result from calling the specified lambda" do
-      TaskTreeRender.treeconfig[:value_funcs_hash]["ASGN_TO.TYPE"] = lambda { |task|
-        TaskTreeRender.send_chain(task, [:assigned_to, :type])&.to_s || ""
+      @appeal.default_tree_renderer.config[:value_funcs_hash]["ASGN_TO.TYPE"] = lambda { |task|
+        TaskTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s || ""
       }
 
       _rows_hash, metadata = @appeal.tree_hash(:id, :status, :assigned_to_type, "ASGN_TO.TYPE", :ASGN_BY, :ASGN_TO)
@@ -56,7 +57,7 @@ describe TaskTreeRender do
 
   context ".tree is called on a task" do
     def check_for_highlight(metadata, task_to_highlight)
-      highlight_char = TaskTreeRender.treeconfig[:highlight_char]
+      highlight_char = @appeal.default_tree_renderer.config[:highlight_char]
       expect(metadata.rows[task_to_highlight][" "]).to eq highlight_char
 
       @appeal.tasks.each do |tsk|
@@ -79,6 +80,7 @@ describe TaskTreeRender do
 
     it "highlights specified task with an asterisk, even if highlight column is not specified" do
       task_to_highlight = @appeal.tasks.sample
+      @appeal.root_task.treee(:id, :status, highlight: task_to_highlight.id)
 
       _rows_hash, metadata = @appeal.root_task.tree_hash(:id, :status, highlight: task_to_highlight.id)
       check_for_highlight(metadata, task_to_highlight)
