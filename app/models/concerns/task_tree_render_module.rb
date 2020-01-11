@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# See instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
+# Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 module TaskTreeRenderModule
   def self.new_renderer
     TaskTreeRenderer.new.tap do |ttr|
@@ -23,6 +23,7 @@ module TaskTreeRenderModule
     @global_renderer
   end
 
+  # for easy access to the global_renderer from an appeal or task instance
   def global_renderer
     TaskTreeRenderModule.static_renderer
   end
@@ -33,7 +34,7 @@ module TaskTreeRenderModule
 
   def tree(*atts, **kwargs)
     renderer = kwargs.delete(:renderer) || global_renderer
-    renderer.as_string(self, *atts, **kwargs)
+    renderer.tree_str(self, *atts, **kwargs)
   end
 
   def tree_hash(*atts, **kwargs)
@@ -41,12 +42,4 @@ module TaskTreeRenderModule
     renderer.tree_hash(self, *atts, **kwargs)
   end
 
-  def compact_treee(*atts, **kwargs)
-    kwargs[:renderer] ||= TaskTreeRenderModule.new_renderer
-    kwargs[:renderer].tap do |tr|
-      tr.compact
-      tr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :UPD_DATE]
-    end
-    treee(*atts, **kwargs)
-  end
 end

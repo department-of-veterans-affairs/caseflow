@@ -9,10 +9,29 @@ describe TaskTreeRenderModule do
     create(:ama_attorney_task, appeal: @appeal)
   end
 
+  def tree1(obj, *atts, **kwargs)
+    kwargs[:renderer] ||= TaskTreeRenderModule.new_renderer
+    kwargs[:renderer].tap do |r|
+      r.compact
+      r.config.default_atts = [:id, :status, :ASGN_TO, :UPD_DATE]
+    end
+    obj.treee(*atts, **kwargs)
+  end
+
+  def tree2(obj, *atts, **kwargs)
+    kwargs.delete(:renderer) && raise("Use other approach to allow 'renderer' named parameter!")
+    renderer = TaskTreeRenderModule.new_renderer.tap do |r|
+      r.compact
+      r.config.default_atts = [:id, :status, :ASGN_TO, :UPD_DATE]
+    end
+    puts renderer.tree_str(obj, *atts, **kwargs)
+  end
+
   context ".tree is called on an appeal" do
     it "returns all tasks for the appeal" do
-      @appeal.compact_treee
-      # binding.pry
+      tree1 @appeal
+      expect{tree2 @appeal, :id, :status, highlight: 7, renderer: "asdfsd"}.to raise_error(RuntimeError)
+      #binding.pry
       rows_hash, metadata = @appeal.tree_hash
       expect(rows_hash.count).to eq 1
       expect(metadata.rows.count).to eq @appeal.tasks.count
@@ -21,12 +40,12 @@ describe TaskTreeRenderModule do
 
     it "returns only specified attributes" do
       _rows_hash, metadata = @appeal.tree_hash(:id, :status)
-      expect(metadata.col_keys).to eq %w[id status]
+      expect(metadata.col_metadata.values.pluck(:label)).to eq %w[ID STATUS]
     end
 
     it "returns dereferenced column chain '[:assigned_to, :type]'" do
       _rows_hash, metadata = @appeal.tree_hash(:id, [:assigned_to, :type])
-      expect(metadata.col_keys).to eq ["id", "[:assigned_to, :type]"]
+      expect(metadata.col_metadata.values.pluck(:label)).to eq ["ID", "[:ASSIGNED_TO, :TYPE]"]
       @appeal.tasks.each do |tsk|
         if tsk.assigned_to.is_a?(Organization)
           expect(metadata.rows[tsk]["[:assigned_to, :type]"]).to eq tsk.assigned_to&.type
@@ -41,8 +60,6 @@ describe TaskTreeRenderModule do
       col_labels = ["\#", "Status", "AssignToType", "P_ID", "ASGN_TO", "Created"]
       _rows_hash, metadata = @appeal.tree_hash(*atts, col_labels: col_labels)
 
-      expect(metadata.col_keys).to eq ["id", "status", "assigned_to_type", "parent_id",
-                                       "[:assigned_to, :type]", "created_at"]
       expect(metadata.col_metadata.values.pluck(:label)).to eq col_labels
     end
 

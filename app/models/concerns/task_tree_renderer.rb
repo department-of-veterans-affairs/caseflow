@@ -82,8 +82,8 @@ class TaskTreeRenderer
     config
   end
 
-  def as_string(obj, *atts, col_labels: nil, highlight: nil)
-    task_tree_hash, metadata = tree_hash(obj, *atts, col_labels: col_labels, highlight: highlight)
+  def tree_str(obj, *atts, **kwargs)
+    task_tree_hash, metadata = tree_hash(obj, *atts, **kwargs)
     table = TTY::Tree.new(task_tree_hash).render
     table.prepend(metadata.appeal_heading_row + "\n") if obj.is_a? Task
 
@@ -95,44 +95,53 @@ class TaskTreeRenderer
     end
   end
 
-  class TreeMetadata
-    attr_accessor :col_keys, # column keys for hashes like rows, col_metadata, and func_hash
-                  :rows, # { task1=>{ "colKey1" => "strValue1", "colKey2" => "strValue2", ... }, task2=>{...} }
-                  :max_name_length, # length of longest appeal/task label (including indenting) when formatted as a tree
-                  :col_metadata, # hash of column metadata (widths and labels)
-                  :appeal_heading_row # final string for the appeal row with column heading labels
-  end
-
   HIGHLIGHT_COL_KEY = " "
 
   def tree_hash(obj, *atts, col_labels: nil, highlight: nil)
     atts = config.default_atts unless atts.any?
+    atts = [HIGHLIGHT_COL_KEY] | atts if highlight
 
     highlighted_task = obj
     highlighted_task = Task.find(highlight) if highlight
-    atts = [HIGHLIGHT_COL_KEY] | atts if highlight
 
-    appeal_label = appeal_label(obj.is_a?(Task) ? obj.appeal : obj)
+    # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
+    func_hash = derive_value_funcs_hash(atts, highlighted_task)
 
-    metadata = TreeMetadata.new.tap do |md|
-      md.col_keys = atts.map(&:to_s)
-      md.rows = build_rows(obj, atts, highlighted_task)
-      md.max_name_length = calculate_max_name_length(obj, appeal_label.size)
-      md.col_metadata = derive_column_metadata(md.col_keys, md.rows.values, col_labels)
-      md.appeal_heading_row = appeal_heading(appeal_label, md.max_name_length, md.col_metadata)
-    end
-
-    ts = obj.is_a?(Task) ? structure_task(obj, metadata, 0) : structure_appeal(obj, metadata, 0)
+    metadata = treemetadata(obj, atts.map(&:to_s), col_labels, func_hash)
+    ts = obj.is_a?(Task) ? structure_task(obj, metadata) : structure_appeal(obj, metadata)
     [ts, metadata]
   end
 
   private
 
-  def build_rows(obj, atts, highlighted_obj = self)
-    # Create func_hash based on atts
-    # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
-    func_hash = derive_value_funcs_hash(atts, highlighted_obj)
+  class TreeMetadata
+    attr_accessor :rows, # { task1=>{ "colKey1" => "strValue1", "colKey2" => "strValue2", ... }, task2=>{...} }
+                  :max_name_length, # length of longest appeal/task label (including indenting) when formatted as a tree
+                  :col_metadata, # hash of column metadata (widths and labels)
+                  :appeal_heading_row # final string for the appeal row with column heading labels
+  end
 
+  def treemetadata(obj, col_keys, col_labels, func_hash)
+    if obj.is_a?(Task)
+      appeal_label_str = appeal_label(obj.appeal)
+      max_name_length = calculate_max_name_length(obj)
+    else
+      appeal_label_str = appeal_label(obj)
+      max_name_length = appeal_children(obj).map do |task|
+        calculate_max_name_length(task, 1)
+      end.max
+    end
+
+    # col_keys is used for hashes like rows, col_metadata, and func_hash
+    TreeMetadata.new.tap do |md|
+      md.rows = build_rows(obj, func_hash)
+      md.max_name_length = [appeal_label_str.size, max_name_length].max
+      md.col_metadata = derive_column_metadata(col_keys, md.rows.values, col_labels)
+      md.appeal_heading_row = appeal_heading(appeal_label_str, md.max_name_length, md.col_metadata)
+    end
+  end
+
+  def build_rows(obj, func_hash)
     # Use func_hash to populate returned hash with tasks as keys
     # tree_rows={ task1=>{ "colKey1" => "strValue1", "colKey1" => "strValue2", ... }, task2=>{...} }
     tree_rows = obj.is_a?(Task) ? obj.appeal.tasks : obj.tasks
@@ -148,17 +157,17 @@ class TaskTreeRenderer
   end
 
   # hash of lambdas that return string of the cell value
-  def derive_value_funcs_hash(atts, highlighted_obj = nil)
-    {}.tap do |obj|
+  def derive_value_funcs_hash(atts, highlighted_task)
+    {}.tap do |funcs_hash|
       atts.each do |att|
         if att.is_a?(Array)
-          obj[att.to_s] = ->(task) { TaskTreeRenderer.send_chain(task, att)&.to_s || "" }
+          funcs_hash[att.to_s] = ->(task) { TaskTreeRenderer.send_chain(task, att)&.to_s || "" }
         elsif att == HIGHLIGHT_COL_KEY
-          obj[HIGHLIGHT_COL_KEY] = ->(task) { (task == highlighted_obj) ? config.highlight_char : " " }
+          funcs_hash[HIGHLIGHT_COL_KEY] = ->(task) { (task == highlighted_task) ? config.highlight_char : " " }
         elsif config.value_funcs_hash[att]
-          obj[att.to_s] = config.value_funcs_hash[att]
+          funcs_hash[att.to_s] = config.value_funcs_hash[att]
         else
-          obj[att.to_s] = ->(task) { task.send(att)&.to_s || "" }
+          funcs_hash[att.to_s] = ->(task) { task.send(att)&.to_s || "" }
         end
       end
     end
@@ -173,12 +182,11 @@ class TaskTreeRenderer
   # number of characters TTY::Tree uses for indenting
   INDENT_SIZE = 4
 
-  def calculate_max_name_length(obj, max_name_length = 0, depth = 0)
-    children = obj.is_a?(Task) ? task_children(obj) : appeal_children(obj)
-    max_name_length = [max_name_length, (INDENT_SIZE * depth) + obj.class.name.length].max
-    children.map do |task|
-      calculate_max_name_length(task, max_name_length, depth + 1)
-    end.append(max_name_length).max
+  def calculate_max_name_length(task, depth = 0)
+    task_label_length = (INDENT_SIZE * depth) + task.class.name.length
+    task_children(task).map do |child|
+      calculate_max_name_length(child, depth + 1)
+    end.append(task_label_length).max
   end
 
   def structure_appeal(appeal, metadata, depth = 0)
