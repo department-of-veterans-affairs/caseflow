@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# See instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 class TaskTreeRenderer
   attr_reader :config
 
+  # See descriptions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
   class TreeRendererConfig
     attr_accessor :show_all_tasks, :highlight_char,
                   :default_atts,
