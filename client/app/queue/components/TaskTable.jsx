@@ -197,7 +197,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   render = () => <QueueTable
-    columns={this.getQueueColumns}
+    columns={this.getQueueColumns()}
     rowObjects={this.props.tasks}
     getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
