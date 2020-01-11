@@ -28,8 +28,11 @@ describe TaskTreeRenderModule do
       _rows_hash, metadata = @appeal.tree_hash(:id, [:assigned_to, :type])
       expect(metadata.col_keys).to eq ["id", "[:assigned_to, :type]"]
       @appeal.tasks.each do |tsk|
-        expect(metadata.rows[tsk]["[:assigned_to, :type]"]).to eq tsk.assigned_to&.type if tsk.assigned_to.is_a?(Organization)
-        expect(metadata.rows[tsk]["[:assigned_to, :type]"]).to eq "" if tsk.assigned_to.is_a?(User)
+        if tsk.assigned_to.is_a?(Organization)
+          expect(metadata.rows[tsk]["[:assigned_to, :type]"]).to eq tsk.assigned_to&.type
+        else
+          expect(metadata.rows[tsk]["[:assigned_to, :type]"]).to eq ""
+        end
       end
     end
 

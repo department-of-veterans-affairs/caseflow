@@ -15,7 +15,6 @@ class TaskTreeRenderer
   end
 
   def initialize
-    puts "===> Creating TaskTreeRenderer"
     @config = TreeRendererConfig.new.tap do |conf|
       conf.show_all_tasks = true
       conf.highlight_char = "*"
@@ -45,6 +44,14 @@ class TaskTreeRenderer
       }
     end
     ansi
+  end
+
+  class << self
+    def send_chain(initial_obj, methods)
+      methods.inject(initial_obj) do |obj, method|
+        obj.respond_to?(method) ? obj.send(method) : nil
+      end
+    end
   end
 
   def ansi
@@ -107,18 +114,57 @@ class TaskTreeRenderer
 
     appeal_label = appeal_label(obj.is_a?(Task) ? obj.appeal : obj)
 
-    metadata = TreeMetadata.new
-    metadata.col_keys = atts.map(&:to_s)
-    metadata.rows = build_rows(obj, atts, highlighted_task)
-    metadata.max_name_length = calculate_max_name_length(obj, appeal_label.size)
-    metadata.col_metadata = derive_column_metadata(metadata.col_keys, metadata.rows.values, col_labels)
-    metadata.appeal_heading_row = appeal_heading(appeal_label, metadata.max_name_length, metadata.col_metadata)
+    metadata = TreeMetadata.new.tap do |md|
+      md.col_keys = atts.map(&:to_s)
+      md.rows = build_rows(obj, atts, highlighted_task)
+      md.max_name_length = calculate_max_name_length(obj, appeal_label.size)
+      md.col_metadata = derive_column_metadata(md.col_keys, md.rows.values, col_labels)
+      md.appeal_heading_row = appeal_heading(appeal_label, md.max_name_length, md.col_metadata)
+    end
 
     ts = obj.is_a?(Task) ? structure_task(obj, metadata, 0) : structure_appeal(obj, metadata, 0)
     [ts, metadata]
   end
 
   private
+
+  def build_rows(obj, atts, highlighted_obj = self)
+    # Create func_hash based on atts
+    # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
+    func_hash = derive_value_funcs_hash(atts, highlighted_obj)
+
+    # Use func_hash to populate returned hash with tasks as keys
+    # tree_rows={ task1=>{ "colKey1" => "strValue1", "colKey1" => "strValue2", ... }, task2=>{...} }
+    tree_rows = obj.is_a?(Task) ? obj.appeal.tasks : obj.tasks
+    build_rows_from(tree_rows, func_hash)
+  end
+
+  def build_rows_from(task_rows, func_hash)
+    task_rows.compact.each_with_object({}) do |task, rows_obj|
+      rows_obj[task] = func_hash.each_with_object({}) do |(col_key, func), obj|
+        obj[col_key] = func.call(task)
+      end
+    end
+  end
+
+  # hash of lambdas that return string of the cell value
+  def derive_value_funcs_hash(atts, highlighted_obj = nil)
+    {}.tap do |obj|
+      atts.each do |att|
+        if att.is_a?(Array)
+          obj[att.to_s] = ->(task) { TaskTreeRenderer.send_chain(task, att)&.to_s || "" }
+        elsif att == HIGHLIGHT_COL_KEY
+          obj[HIGHLIGHT_COL_KEY] = ->(task) { (task == highlighted_obj) ? config.highlight_char : " " }
+        elsif config.value_funcs_hash[att]
+          obj[att.to_s] = config.value_funcs_hash[att]
+        else
+          obj[att.to_s] = ->(task) { task.send(att)&.to_s || "" }
+        end
+      end
+    end
+  end
+
+  #------------------------
 
   def appeal_label(appeal)
     config.appeal_label_template.call(appeal)
@@ -150,12 +196,11 @@ class TaskTreeRenderer
   end
 
   def appeal_children(appeal)
-    roottask_ids = appeal.tasks.where(parent_id: nil).order(:id).pluck(:id)
+    roottask_ids = appeal.tasks.where(parent_id: nil).pluck(:id)
     # Can the following be expressed using `where` so that it returns an AssociationRelation of Tasks?
-    task_ids = appeal.tasks.order(:id).reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id) if config.show_all_tasks
+    task_ids = appeal.tasks.reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id) if config.show_all_tasks
     roottask_ids |= task_ids if task_ids
-    roottask_ids = roottask_ids.compact.sort
-    Task.where(id: roottask_ids)
+    Task.where(id: roottask_ids.compact.sort)
   end
 
   def appeal_heading(appeal_label, max_name_length, columns)
@@ -169,19 +214,27 @@ class TaskTreeRenderer
       config.cell_margin_char + config.col_sep
   end
 
+  #------------------------
+
   def derive_column_metadata(col_keys, row_values, col_labels)
     # Calculate column widths using rows only (not column heading labels)
-    col_metadata = TaskTreeRenderer.calculate_maxwidths(col_keys, row_values)
+    calculate_maxwidths(col_keys, row_values).tap do |col_metadata|
+      # Set labels using specified col_labels or create heading labels using config's heading_transform
+      if col_labels
+        configure_headings_using_labels(col_labels, col_metadata, col_keys)
+      else
+        configure_headings_using_transform(col_metadata)
+      end
 
-    # Set labels using specified col_labels or create heading labels using config's heading_transform
-    if col_labels
-      configure_headings_using_labels(col_labels, col_metadata, col_keys)
-    else
-      configure_headings_using_transform(col_metadata)
+      update_col_widths_to_fit_col_labels(col_metadata)
     end
+  end
 
-    update_col_widths_to_fit_col_labels(col_metadata)
-    col_metadata
+  def calculate_maxwidths(keys, row_values)
+    keys.each_with_object({}) do |key, col_md|
+      max_col_width = row_values.map { |row| row[key]&.size }.compact.max
+      col_md[key] = { width: max_col_width || 0 }
+    end
   end
 
   def configure_headings_using_labels(col_labels, col_metadata, col_keys)
@@ -206,39 +259,7 @@ class TaskTreeRenderer
     end
   end
 
-  # hash of lambdas that return string of the cell value
-  def derive_value_funcs_hash(atts, highlighted_obj = nil)
-    atts.each_with_object({}) do |att, obj|
-      if att.is_a?(Array)
-        obj[att.to_s] = ->(task) { TaskTreeRenderer.send_chain(task, att)&.to_s || "" }
-      elsif att == HIGHLIGHT_COL_KEY
-        obj[HIGHLIGHT_COL_KEY] = ->(task) { (task == highlighted_obj) ? config.highlight_char : " " }
-      elsif config.value_funcs_hash[att]
-        obj[att.to_s] = config.value_funcs_hash[att]
-      else
-        obj[att.to_s] = ->(task) { task.send(att)&.to_s || "" }
-      end
-    end
-  end
-
-  class << self
-    def calculate_maxwidths(keys, rows)
-      keys.each_with_object({}) do |key, obj|
-        max_value_size = rows.map do |row|
-          row[key]&.size
-        end.compact.max
-        obj[key] = {
-          width: max_value_size || 0
-        }
-      end
-    end
-
-    def send_chain(initial_obj, methods)
-      methods.inject(initial_obj) do |obj, method|
-        obj.respond_to?(method) ? obj.send(method) : nil
-      end
-    end
-  end
+  #------------------------
 
   def top_border(max_name_length, col_metadata)
     "".ljust(max_name_length) + " " + write_border(col_metadata, config.top_chars)
@@ -255,24 +276,7 @@ class TaskTreeRenderer
     border_chars[0] + margin + col_borders + margin + border_chars[3]
   end
 
-  def build_rows(obj, atts, highlighted_obj = self)
-    # Create func_hash based on atts
-    # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
-    func_hash = derive_value_funcs_hash(atts, highlighted_obj)
-
-    # Use func_hash to populate returned hash with tasks as keys
-    # tree_rows={ task1=>{ "colKey1" => "strValue1", "colKey1" => "strValue2", ... }, task2=>{...} }
-    tree_rows = obj.is_a?(Task) ? obj.appeal.tasks : obj.tasks
-    build_rows_from(tree_rows, func_hash)
-  end
-
-  def build_rows_from(task_rows, func_hash)
-    task_rows.compact.each_with_object({}) do |task, rows_obj|
-      rows_obj[task] = func_hash.each_with_object({}) do |(col_key, func), obj|
-        obj[col_key] = func.call(task)
-      end
-    end
-  end
+  #------------------------
 
   def task_row(task, max_name_length, depth, columns, row)
     task.class.name.ljust(max_name_length - (INDENT_SIZE * depth)) + " " + tree_task_attributes(columns, row)
