@@ -1425,7 +1425,6 @@ feature "Higher-Level Review", :all_dbs do
 
             expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
           end
-<<<<<<< HEAD
 
           scenario "checkbox on unidentified issues modal on edit page" do
             start_higher_level_review(veteran, legacy_opt_in_approved: true)
@@ -1451,8 +1450,6 @@ feature "Higher-Level Review", :all_dbs do
             click_intake_no_matching_issues
             expect(page).to have_content("Verify record of prior decision")
           end
-=======
->>>>>>> master
         end
       end
 
