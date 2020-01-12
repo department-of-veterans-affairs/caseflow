@@ -90,6 +90,7 @@ export const MTVJudgeDisposition = ({
     if (issueIds.length) {
       result.vacated_decision_issue_ids = issueIds;
     }
+
     if (attorneyId) {
       result.assigned_to_id = attorneyId;
     }
