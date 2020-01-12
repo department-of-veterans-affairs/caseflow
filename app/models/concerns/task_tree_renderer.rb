@@ -11,13 +11,15 @@ class TaskTreeRenderer
                   :appeal_label_template,
                   :value_funcs_hash,
                   :include_border,
-                  :col_sep, :top_chars, :bottom_chars, :heading_fill_str, :cell_margin_char
+                  :col_sep, :top_chars, :bottom_chars,
+                  :heading_fill_str, :cell_margin_char, :func_error_char
   end
 
   def initialize
     @config = TreeRendererConfig.new.tap do |conf|
       conf.show_all_tasks = true
       conf.highlight_char = "*"
+      conf.func_error_char = "-"
       conf.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
       conf.heading_transform = :upcase_headings
       conf.heading_transform_funcs_hash = {
@@ -34,12 +36,12 @@ class TaskTreeRenderer
         ASGN_BY: lambda { |task|
           TaskTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
             TaskTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s || ""
+            TaskTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
         },
         ASGN_TO: lambda { |task|
           TaskTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
             TaskTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s || ""
+            TaskTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
         }
       }
     end
@@ -83,6 +85,8 @@ class TaskTreeRenderer
   end
 
   def tree_str(obj, *atts, **kwargs)
+    fail "TTY::Tree does not work when config.col_sep='/'" if config.col_sep == "/"
+
     task_tree_hash, metadata = tree_hash(obj, *atts, **kwargs)
     table = TTY::Tree.new(task_tree_hash).render
     table.prepend(metadata.appeal_heading_row + "\n") if obj.is_a? Task
@@ -151,7 +155,11 @@ class TaskTreeRenderer
   def build_rows_from(task_rows, func_hash)
     task_rows.compact.each_with_object({}) do |task, rows_obj|
       rows_obj[task] = func_hash.each_with_object({}) do |(col_key, func), obj|
-        obj[col_key] = func.call(task)
+        obj[col_key] = begin
+          func.call(task)&.to_s || ""
+                       rescue StandardError
+                         config.func_error_char
+        end
       end
     end
   end
@@ -240,7 +248,7 @@ class TaskTreeRenderer
 
   def calculate_maxwidths(keys, row_values)
     keys.each_with_object({}) do |key, col_md|
-      max_col_width = row_values.map { |row| row[key]&.size }.compact.max
+      max_col_width = row_values.map { |row| row[key]&.to_s&.size || 0 }.compact.max
       col_md[key] = { width: max_col_width || 0 }
     end
   end
@@ -280,8 +288,10 @@ class TaskTreeRenderer
   def write_border(columns, border_chars = "+-|+")
     dash = border_chars[1]
     margin = dash * config.cell_margin_char.size
-    col_borders = columns.map { |_, col| dash * col[:width] }.join(margin + border_chars[2] + margin)
-    border_chars[0] + margin + col_borders + margin + border_chars[3]
+    col_sep = config.col_sep.empty? ? "" : border_chars[2].center(config.col_sep.size)
+    col_borders = columns.map { |_, col| dash * col[:width] }.join(margin + col_sep + margin)
+    (config.col_sep.empty? ? "" : border_chars[0]) + margin + col_borders + margin +
+      (config.col_sep.empty? ? "" : border_chars[3])
   end
 
   #------------------------
@@ -294,7 +304,6 @@ class TaskTreeRenderer
     col_seperator_with_margins = config.cell_margin_char + config.col_sep + config.cell_margin_char
     cols_str = columns.map do |key, col_obj|
       value = row[key]
-      value = "" if value.nil?
       value.ljust(col_obj[:width])
     end.compact.join(col_seperator_with_margins)
     config.col_sep + config.cell_margin_char + cols_str +

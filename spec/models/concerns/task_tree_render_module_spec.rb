@@ -9,33 +9,12 @@ describe TaskTreeRenderModule do
     create(:ama_attorney_task, appeal: @appeal)
   end
 
-  def tree1(obj, *atts, **kwargs)
-    kwargs[:renderer] ||= TaskTreeRenderModule.new_renderer
-    kwargs[:renderer].tap do |r|
-      r.compact
-      r.config.default_atts = [:id, :status, :ASGN_TO, :UPD_DATE]
-    end
-    obj.treee(*atts, **kwargs)
-  end
-
-  def tree2(obj, *atts, **kwargs)
-    kwargs.delete(:renderer) && raise("Use other approach to allow 'renderer' named parameter!")
-    renderer = TaskTreeRenderModule.new_renderer.tap do |r|
-      r.compact
-      r.config.default_atts = [:id, :status, :ASGN_TO, :UPD_DATE]
-    end
-    puts renderer.tree_str(obj, *atts, **kwargs)
-  end
-
   context ".tree is called on an appeal" do
     it "returns all tasks for the appeal" do
-      tree1 @appeal
-      expect{tree2 @appeal, :id, :status, highlight: 7, renderer: "asdfsd"}.to raise_error(RuntimeError)
-      #binding.pry
       rows_hash, metadata = @appeal.tree_hash
       expect(rows_hash.count).to eq 1
       expect(metadata.rows.count).to eq @appeal.tasks.count
-      # expect(@appeal.tree.lines.count).to eq @appeal.tasks.count + 3
+      expect(@appeal.tree.lines.count).to eq @appeal.tasks.count + 3
     end
 
     it "returns only specified attributes" do
@@ -64,14 +43,14 @@ describe TaskTreeRenderModule do
     end
 
     it "returns column values that result from calling the specified lambda" do
-      @appeal.global_renderer.config.value_funcs_hash["ASGN_TO.TYPE"] = lambda { |task|
-        TaskTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s || ""
-      }
+      @appeal.global_renderer.config.value_funcs_hash["ASGN_TO.TYPE"] = ->(task) { task.assigned_to.type }
+      @appeal.global_renderer.config.value_funcs_hash[:ASGN_TO_CSSID] = ->(task) { task.assigned_to.css_id }
 
+      error_char = @appeal.global_renderer.config.func_error_char
       _rows_hash, metadata = @appeal.tree_hash(:id, :status, :assigned_to_type, "ASGN_TO.TYPE", :ASGN_BY, :ASGN_TO)
       @appeal.tasks.each do |tsk|
         expect(metadata.rows[tsk]["ASGN_TO.TYPE"]).to eq tsk.assigned_to&.type if tsk.assigned_to.is_a?(Organization)
-        expect(metadata.rows[tsk]["ASGN_TO.TYPE"]).to eq "" if tsk.assigned_to.is_a?(User)
+        expect(metadata.rows[tsk]["ASGN_TO.TYPE"]).to eq error_char if tsk.assigned_to.is_a?(User)
       end
     end
   end
@@ -102,10 +81,38 @@ describe TaskTreeRenderModule do
     it "highlights specified task with an asterisk, even if highlight column is not specified" do
       task_to_highlight = @appeal.tasks.sample
       @appeal.global_renderer.config.default_atts = [:id, :status, :CLO_DATE, :CRE_TIME]
-      @appeal.root_task.treee(highlight: task_to_highlight.id)
 
       _rows_hash, metadata = @appeal.root_task.tree_hash(highlight: task_to_highlight.id)
       check_for_highlight(metadata, task_to_highlight)
+    end
+  end
+
+  context "custom TaskTreeRenderer is used in functions" do
+    def tree1(obj, *atts, **kwargs)
+      kwargs[:renderer] ||= TaskTreeRenderModule.new_renderer
+      kwargs[:renderer].tap do |r|
+        r.compact
+        r.config.default_atts = [:id, :status, :ASGN_TO, :UPD_DATE]
+      end
+      obj.tree(*atts, **kwargs)
+    end
+
+    def tree2(obj, *atts, **kwargs)
+      kwargs.delete(:renderer) && fail("Use other approach to allow 'renderer' named parameter!")
+      renderer = TaskTreeRenderModule.new_renderer.tap do |r|
+        r.compact
+        r.config.default_atts = [:id, :status, :ASGN_TO, :UPD_DATE]
+      end
+      renderer.tree_str(obj, *atts, **kwargs)
+    end
+
+    it "prints all tasks" do
+      num_lines = @appeal.tasks.count + 1
+      expect((tree1 @appeal).lines.count).to eq num_lines
+      expect((tree2 @appeal, :id, :status, highlight: 7).lines.count).to eq num_lines
+    end
+    it "should raise error" do
+      expect { tree2 @appeal, :id, :status, highlight: 7, renderer: "any value" }.to raise_error(RuntimeError)
     end
   end
 end
