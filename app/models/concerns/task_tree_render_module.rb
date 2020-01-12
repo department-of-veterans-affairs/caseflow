@@ -17,10 +17,8 @@ module TaskTreeRenderModule
     end
   end
 
-  @global_renderer = new_renderer
-
   def self.default_renderer
-    @global_renderer
+    @global_renderer ||= new_renderer
   end
 
   # for easy access to the global_renderer from an appeal or task instance
