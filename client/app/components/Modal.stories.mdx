@@ -1,0 +1,69 @@
+import { useState } from 'react';
+
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { action } from '@storybook/addon-actions';
+import { text } from '@storybook/addon-knobs';
+
+import Modal from './Modal';
+import Button from './Button';
+import TextareaField from './TextareaField';
+
+<Meta title="Commons/Components/Modal" component={Modal} />
+
+# Modals
+
+Modals are 490 pixels in width with 30px padding around the border and contain the following: a title, explanation text, a divider, and action buttons. There are modal-specific classes that must be included in your modal (see below code snippets). Whenever possible, use a close link as the left action.
+
+<Story name="default">
+  {() => {
+    const [open, setOpen] = useState(false);
+    const buttons = [
+      {
+        classNames: ['cf-modal-link', 'cf-btn-link'],
+        name: 'Cancel',
+        onClick: (e) => {
+          action('close')(e.target);
+          setOpen(false);          
+        }
+      },
+      {
+        classNames: ['usa-button', 'usa-button-secondary'],
+        name: 'Proceed with action',
+        onClick: (e) => {
+          action('submit')(e.target);
+          setOpen(false);          
+        }
+      }
+    ];
+    return (
+      <React.Fragment>
+        <Button onClick={() => setOpen(!open)}>Open Modal</Button>
+        {open && (
+          <Modal
+            closeHandler={(e) => {
+                action('close')(e.target);
+                setOpen(false);
+            }}
+            buttons={buttons}
+            title={text('Title', 'Modal Title', 'default')}
+          >
+            <p>
+              {text(
+                'Copy',
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                'default'
+              )}
+            </p>
+            <TextareaField
+              onChange={() => {}}
+              label="This is a text box for the modal."
+              name="Text Box"
+            />
+          </Modal>
+        )}
+      </React.Fragment>
+    );
+  }}
+</Story>
+
+<Props of={Modal} />
