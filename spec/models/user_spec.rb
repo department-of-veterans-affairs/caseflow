@@ -317,7 +317,7 @@ describe User, :all_dbs do
       end
     end
 
-    fcontext "when the user is a judge team admin" do
+    context "when the user is a judge team admin" do
       let(:judge) { create(:user) }
       let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
 
