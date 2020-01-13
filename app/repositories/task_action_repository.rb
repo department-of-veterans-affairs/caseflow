@@ -341,11 +341,9 @@ class TaskActionRepository
 
     def potential_task_assignees(task)
       if task.assigned_to.is_a?(Organization)
-        task.assigned_to.users.reject(&:inactive?)
+        task.assigned_to.users.active
       elsif task.parent&.assigned_to.is_a?(Organization)
-        task.parent.assigned_to.users.reject do |check_user|
-          check_user == task.assigned_to || check_user.inactive?
-        end
+        task.parent.assigned_to.users.active.reject { |check_user| check_user == task.assigned_to }
       else
         []
       end
