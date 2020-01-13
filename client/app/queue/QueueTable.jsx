@@ -652,7 +652,13 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   totalTaskCount: PropTypes.number,
   useTaskPagesApi: PropTypes.bool,
   userReadableColumnNames: PropTypes.object,
-  tabPaginationOptions: PropTypes.object
+  tabPaginationOptions: PropTypes.shape({
+    [QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM]: PropTypes.string,
+    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.number,
+    [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
+    [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
+    [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string)
+  })
 };
 
 /* eslint-enable max-lines */
