@@ -8,14 +8,14 @@ class AmaAssignHearingsTab < QueueTab
   end
 
   def tasks
+    # Sorting by docket number within each category of appeal: AOD and normal.
     ScheduleHearingTask
       .includes(*task_includes)
       .active
       .where(appeal_type: Appeal.name)
-      .joins(
-        "INNER JOIN appeals ON appeals.id = appeal_id AND tasks.appeal_type = '#{Appeal.name}'"
-      )
-      .where("appeals.closest_regional_office = ?", regional_office_key)
+      .joins(CachedAppeal.left_join_from_tasks_clause)
+      .where("cached_appeal_attributes.closest_regional_office_key = ?", regional_office_key)
+      .order("cached_appeal_attributes.is_aod DESC, cached_appeal_attributes.docket_number ASC")
   end
 
   def column_names
