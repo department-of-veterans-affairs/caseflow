@@ -43,7 +43,10 @@ class RootTask < Task
   end
 
   def update_children_status_after_closed
-    children.open.where(type: CHILD_TASK_TYPES_TO_CLOSE_AFTER_CLOSED).update_all(status: Constants.TASK_STATUSES.completed)
+    transaction do
+      # do not use update_all since that will avoid callbacks and we want versions history.
+      children.open.where(type: CHILD_TASK_TYPES_TO_CLOSE_AFTER_CLOSED).to_a.each(&:completed!)
+    end
   end
 
   def all_open_children_will_be_closed_after_closed?
