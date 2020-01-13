@@ -283,7 +283,7 @@ class Appeal < DecisionReview
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
       issue.save!
-      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
+      issue.handle_legacy_issues!
     end
     request_issues.reload
   end
