@@ -69,6 +69,8 @@ detectors:
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
       - UserReporter#report_user_related_records
+      - User#current_case_assignments_with_views
+      - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
@@ -78,6 +80,7 @@ detectors:
       - Task
       - CaseflowJob
       - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
+      - User
   IrresponsibleModule:
     enabled: false
   LongParameterList:
