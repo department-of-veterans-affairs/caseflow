@@ -4,7 +4,7 @@ Dear <%= @recipient.name %>,
 
 <p>
   The location has changed for your hearing with a Veterans Law Judge of the Board of Veterans' Appeals.
-  You will arrive at <%= @virtual_hearing.hearing.regional_office.name %> and the Judge will meet with you via video conference.
+  You will arrive at <%= @virtual_hearing.hearing.hearing_location.name %> and the Judge will meet with you via video conference.
 </p>
 
 <h3>
@@ -18,9 +18,8 @@ Dear <%= @recipient.name %>,
 Location
 </h3>
 <p>
-<%= @virtual_hearing.hearing.regional_office.name %><br/>
+<%= @virtual_hearing.hearing.hearing_location.name %><br/>
 <%= @virtual_hearing.hearing.hearing_location.address %><br/>
-<%= @virtual_hearing.hearing.hearing_location.city %>, <%= @virtual_hearing.hearing.hearing_location.state %> <%= @virtual_hearing.hearing.hearing_location.zip_code %>
 </p>
 
 <p>Sincerely,<br />The Board of Veterans' Appeals</p>

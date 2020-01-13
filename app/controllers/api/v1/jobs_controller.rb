@@ -3,6 +3,7 @@
 class Api::V1::JobsController < Api::ApplicationController
   # available jobs supported by this endpoint
   SUPPORTED_JOBS = {
+    "amo_metrics_report" => AMOMetricsReportJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
