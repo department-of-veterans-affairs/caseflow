@@ -502,6 +502,14 @@ describe User, :all_dbs do
         session["user"]["pg_user_id"] = user.id
         expect(subject).to eq user
       end
+
+      it "resets pg_user_id when it is not found" do
+        user = create(:user, css_id: css_id)
+        expect(User).to receive(:find_by_css_id).and_call_original
+        session["user"]["pg_user_id"] = user.id + 1000 # integer not found
+        expect(subject).to eq user
+        expect(session["user"]["pg_user_id"]).to eq user.id
+      end
     end
 
     context "returns nil when no user in session" do
