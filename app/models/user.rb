@@ -47,7 +47,7 @@ class User < ApplicationRecord
   def regional_office
     upcase = ->(str) { str ? str.upcase : str }
 
-    ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
+    ro_is_ambiguous_from_station_office? ? upcase.call(regional_office) : station_offices
   end
 
   def users_regional_office
@@ -416,13 +416,7 @@ class User < ApplicationRecord
       end
       user = user_by_id || find_by_css_id(css_id)
 
-      attrs = {
-        station_id: user_session["station_id"],
-        full_name: user_session["name"],
-        email: user_session["email"],
-        roles: user_session["roles"],
-        regional_office: session[:regional_office]
-      }
+      attrs = attrs_from_session(user_session)
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
       user.update!(attrs.merge(last_login_at: Time.zone.now))
@@ -463,6 +457,16 @@ class User < ApplicationRecord
     end
 
     private
+
+    def attrs_from_session(user_session)
+      {
+        station_id: user_session["station_id"],
+        full_name: user_session["name"],
+        email: user_session["email"],
+        roles: user_session["roles"],
+        regional_office: session[:regional_office]
+      }
+    end
 
     def prod_system_user
       find_or_initialize_by(station_id: "283", css_id: "CSFLOW")
