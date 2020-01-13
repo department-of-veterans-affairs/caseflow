@@ -325,16 +325,32 @@ describe ClaimReview, :postgres do
     let(:ratings) do
       [
         Generators::Rating.build(promulgation_date: Time.zone.today - 30),
+        Generators::Rating.build(promulgation_date: Time.zone.today - 60, issues: [], decisions: decisions),
         Generators::Rating.build(promulgation_date: Time.zone.today - 400)
       ]
     end
 
+    let(:decisions) do
+      [
+        { decision_text: "not service connected for bad knee" }
+      ]
+    end
+
     before do
+      FeatureToggle.enable!(:contestable_rating_decisions)
       allow(subject.veteran).to receive(:ratings).and_return(ratings)
+    end
+
+    after do
+      FeatureToggle.disable!(:contestable_rating_decisions)
     end
 
     subject do
       create(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: Time.zone.today)
+    end
+
+    it "filters out ratings with zero decisions and zero issues" do
+      expect(subject.serialized_ratings.count).to eq(3)
     end
 
     it "calculates timely flag" do

@@ -44,6 +44,8 @@ class Appeal < DecisionReview
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
+  alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
+
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
       appeal: self, use_efolder: true

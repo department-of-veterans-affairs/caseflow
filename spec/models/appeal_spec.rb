@@ -3,11 +3,11 @@
 describe Appeal, :all_dbs do
   include IntakeHelpers
 
-  let!(:appeal) { create(:appeal) }
-
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
+
+  let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze
 
   context "includes PrintsTaskTree concern" do
     context "#structure" do
