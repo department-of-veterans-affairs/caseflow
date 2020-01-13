@@ -45,7 +45,7 @@ class RootTask < Task
   def update_children_status_after_closed
     transaction do
       # do not use update_all since that will avoid callbacks and we want versions history.
-      children.open.where(type: CHILD_TASK_TYPES_TO_CLOSE_AFTER_CLOSED).to_a.each(&:completed!)
+      children.open.where(type: CHILD_TASK_TYPES_TO_CLOSE_AFTER_CLOSED).find_each(&:completed!)
     end
   end
 
