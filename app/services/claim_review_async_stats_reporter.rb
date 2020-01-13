@@ -61,6 +61,7 @@ class ClaimReviewAsyncStatsReporter
     {
       supplemental_claims: {
         total: supplemental_claims.count,
+        expired: supplemental_claims.expired_without_processing.count,
         in_progress: supplemental_claims.processable.count,
         canceled: supplemental_claims.canceled.count,
         processed: supplemental_claims.processed.count,
@@ -75,6 +76,7 @@ class ClaimReviewAsyncStatsReporter
       },
       higher_level_reviews: {
         total: higher_level_reviews.count,
+        expired: higher_level_reviews.expired_without_processing.count,
         in_progress: higher_level_reviews.processable.count,
         canceled: higher_level_reviews.canceled.count,
         processed: higher_level_reviews.processed.count,
@@ -89,6 +91,7 @@ class ClaimReviewAsyncStatsReporter
       },
       request_issues_updates: {
         total: request_issues_updates.count,
+        expired: request_issues_updates.expired_without_processing.count,
         in_progress: request_issues_updates.processable.count,
         canceled: request_issues_updates.canceled.count,
         processed: request_issues_updates.processed.count,

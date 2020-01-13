@@ -44,14 +44,17 @@ describe OrganizationAssignedTasksTab, :postgres do
       let!(:assignee_on_hold_tasks) { create_list(:ama_task, 3, :assigned, assigned_to: assignee) }
       let!(:on_hold_tasks_children) do
         assignee_on_hold_tasks.map do |task|
-          create_list(:ama_task, 2, parent_id: task.id)
+          create(:ama_task, :in_progress, parent_id: task.id)
+          create(:timed_hold_task, :assigned, parent_id: task.id)
           task.update!(status: Constants.TASK_STATUSES.on_hold)
           task.children
         end.flatten
       end
 
-      it "only returns the active tasks that are children of the assignee's on hold tasks" do
-        expect(subject).to match_array(on_hold_tasks_children)
+      it "returns active children of the assignee's on hold tasks and assignee tasks that are on a timed hold" do
+        expect(subject).to match_array(
+          [on_hold_tasks_children.select { |task| task.type.eql? Task.name }, assignee_on_hold_tasks].flatten
+        )
       end
 
       context "when the assignee is a user" do
