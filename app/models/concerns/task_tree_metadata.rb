@@ -1,56 +1,58 @@
 # frozen_string_literal: true
 
-class TaskTreeMetadataFactory
-  class TreeMetadata
-    attr_accessor :rootlevel_tasks, # holds RootTask and root-level tasks that are not under that RootTask
-                  :rows, # { task1=>{ "colKey1" => "strValue1", "colKey2" => "strValue2", ... }, task2=>{...} }
-                  :max_name_length, # length of longest appeal/task label (including indenting) when formatted as a tree
-                  :col_metadata, # hash of column metadata (widths and labels)
-                  :appeal_heading_row # final string for the appeal row with column heading labels
+class TaskTreeMetadata
+  def initialize(obj, config, func_hash, col_labels)
+    @obj = obj
+    @config = config
+    @func_hash = func_hash
+    @col_labels = col_labels
+  end
+
+  # returns RootTask and root-level tasks that are not under that RootTask
+  def rootlevel_tasks
+    @rootlevel_tasks ||= @obj.is_a?(Task) ? [@obj] : appeal_children(@obj)
+  end
+
+  # length of longest appeal/task label (including indenting) when formatted as a tree
+  def max_name_length
+    @max_name_length ||= rootlevel_tasks.map do |task|
+      calculate_max_name_length(task, starting_depth)
+    end.append(appeal_label_str.size).max
+  end
+
+  # Use func_hash to populate returned hash with tasks as keys
+  # Hashes func_hash, rows, and col_metadata all use the same keys
+  # returns { task1=>{ "colKey1" => "strValue1", "colKey1" => "strValue2", ... }, task2=>{...} }
+  def rows
+    @rows ||= build_rows_from(@obj.is_a?(Task) ? @obj.appeal.tasks : @obj.tasks)
+  end
+
+  # hash of column metadata (widths and labels)
+  def col_metadata
+    @col_metadata ||= derive_column_metadata(@func_hash.keys, rows.values, @col_labels)
+  end
+
+  # final string for the appeal row with column heading labels
+  def appeal_heading_row
+    @appeal_heading_row ||= appeal_heading_str
+  end
+
+  private
+
+  def appeal_label_str
+    @appeal_label_str ||= config.appeal_label_template.call(@obj.is_a?(Task) ? @obj.appeal : @obj)
+  end
+
+  def starting_depth
+    @obj.is_a?(Task) ? 0 : 1
   end
 
   attr_reader :config
 
-  def initialize(config)
-    @config = config
-  end
-
-  def treemetadata(obj, col_keys, col_labels, func_hash)
-    if obj.is_a?(Task)
-      appeal_label_str = appeal_label_from_template(obj.appeal)
-      rootlevel_tasks = [obj]
-      starting_depth = 0
-    else
-      appeal_label_str = appeal_label_from_template(obj)
-      rootlevel_tasks = appeal_children(obj)
-      starting_depth = 1
-    end
-
-    max_name_length = rootlevel_tasks.map do |task|
-      calculate_max_name_length(task, starting_depth)
-    end.append(appeal_label_str.size).max
-
-    # col_keys is used for hashes like rows, col_metadata, and func_hash
-    TaskTreeMetadataFactory::TreeMetadata.new.tap do |md|
-      md.rootlevel_tasks = rootlevel_tasks
-      md.rows = build_rows(obj, func_hash)
-      md.max_name_length = max_name_length
-      md.col_metadata = derive_column_metadata(col_keys, md.rows.values, col_labels)
-      md.appeal_heading_row = appeal_heading(appeal_label_str, md.max_name_length, md.col_metadata)
-    end
-  end
-
-  def build_rows(obj, func_hash)
-    # Use func_hash to populate returned hash with tasks as keys
-    # tree_rows={ task1=>{ "colKey1" => "strValue1", "colKey1" => "strValue2", ... }, task2=>{...} }
-    tree_rows = obj.is_a?(Task) ? obj.appeal.tasks : obj.tasks
-    build_rows_from(tree_rows, func_hash)
-  end
-
-  def build_rows_from(task_rows, func_hash)
+  def build_rows_from(task_rows)
     task_rows.compact.each_with_object({}) do |task, rows_obj|
-      rows_obj[task] = func_hash.each_with_object({}) do |(col_key, func), obj|
-        obj[col_key] = begin
+      rows_obj[task] = @func_hash.each_with_object({}) do |(col_key, func), row|
+        row[col_key] = begin
           func.call(task)&.to_s || ""
                        rescue StandardError
                          config.func_error_char
@@ -59,22 +61,18 @@ class TaskTreeMetadataFactory
     end
   end
 
-  def appeal_heading(appeal_label, max_name_length, columns)
-    # returns string for appeal header row: appeal_label followed by column headings
-    appeal_label = appeal_label.ljust(max_name_length, config.heading_fill_str)
+  # returns string for appeal header row: appeal_label followed by column headings
+  def appeal_heading_str
     col_seperator_with_margins = config.cell_margin_char + config.col_sep + config.cell_margin_char
-    col_headings_justified = columns.map { |_key, col_obj| col_obj[:label].ljust(col_obj[:width]) }
+    col_headings_justified = col_metadata.values.map { |col_obj| col_obj[:label].ljust(col_obj[:width]) }
 
-    "#{appeal_label} " + config.col_sep + config.cell_margin_char +
-      col_headings_justified.join(col_seperator_with_margins) +
-      config.cell_margin_char + config.col_sep
+    heading_str = appeal_label_str.ljust(max_name_length, config.heading_fill_str)
+    heading_str << " " + config.col_sep + config.cell_margin_char
+    heading_str << col_headings_justified.join(col_seperator_with_margins)
+    heading_str << config.cell_margin_char + config.col_sep
   end
 
   #------------------------
-
-  def appeal_label_from_template(appeal)
-    config.appeal_label_template.call(appeal)
-  end
 
   # number of characters TTY::Tree uses for indenting
   INDENT_SIZE = 4

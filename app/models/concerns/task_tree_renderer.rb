@@ -111,7 +111,7 @@ class TaskTreeRenderer
     # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
     func_hash = derive_value_funcs_hash(atts, highlighted_task)
 
-    metadata = TaskTreeMetadataFactory.new(config).treemetadata(obj, atts.map(&:to_s), col_labels, func_hash)
+    metadata = TaskTreeMetadata.new(obj, config, func_hash, col_labels)
     ts = obj.is_a?(Task) ? structure_task(obj, metadata) : structure_appeal(metadata)
     [ts, metadata]
   end
@@ -120,19 +120,19 @@ class TaskTreeRenderer
 
   # hash of lambdas that return string of the cell value
   def derive_value_funcs_hash(atts, highlighted_task)
-    {}.tap do |funcs_hash|
-      atts.each do |att|
-        if att.is_a?(Array)
-          funcs_hash[att.to_s] = ->(task) { TaskTreeRenderer.send_chain(task, att)&.to_s || "" }
-        elsif att == HIGHLIGHT_COL_KEY
-          funcs_hash[HIGHLIGHT_COL_KEY] = ->(task) { (task == highlighted_task) ? config.highlight_char : " " }
-        elsif config.value_funcs_hash[att]
-          funcs_hash[att.to_s] = config.value_funcs_hash[att]
-        else
-          funcs_hash[att.to_s] = ->(task) { task.send(att)&.to_s || "" }
-        end
+    funcs_hash = {}
+    atts.each do |att|
+      if att.is_a?(Array)
+        funcs_hash[att.to_s] = ->(task) { TaskTreeRenderer.send_chain(task, att)&.to_s || "" }
+      elsif att == HIGHLIGHT_COL_KEY
+        funcs_hash[HIGHLIGHT_COL_KEY] = ->(task) { (task == highlighted_task) ? config.highlight_char : " " }
+      elsif config.value_funcs_hash[att]
+        funcs_hash[att.to_s] = config.value_funcs_hash[att]
+      else
+        funcs_hash[att.to_s] = ->(task) { task.send(att)&.to_s || "" }
       end
     end
+    funcs_hash
   end
 
   def structure_appeal(metadata, depth = 0)
@@ -146,7 +146,7 @@ class TaskTreeRenderer
   end
 
   def task_row(task, max_name_length, depth, columns, row)
-    task.class.name.ljust(max_name_length - (TaskTreeMetadataFactory::INDENT_SIZE * depth)) +
+    task.class.name.ljust(max_name_length - (TaskTreeMetadata::INDENT_SIZE * depth)) +
       " " + tree_task_attributes(columns, row)
   end
 
@@ -169,13 +169,20 @@ class TaskTreeRenderer
   end
 
   def write_border(columns, border_chars = "+-|+")
+    if config.col_sep.empty?
+      col_sep = ""
+      left_char = ""
+      right_char = ""
+    else
+      col_sep = border_chars[2].center(config.col_sep.size)
+      left_char = border_chars[0]
+      right_char = border_chars[3]
+    end
     dash = border_chars[1]
     margin = dash * config.cell_margin_char.size
-    col_sep = config.col_sep.empty? ? "" : border_chars[2].center(config.col_sep.size)
-    col_borders = columns.map { |_, col| dash * col[:width] }.join(margin + col_sep + margin)
 
-    (config.col_sep.empty? ? "" : border_chars[0]) +
-      margin + col_borders + margin +
-      (config.col_sep.empty? ? "" : border_chars[3])
+    border = left_char + margin
+    border << columns.map { |_, col| dash * col[:width] }.join(margin + col_sep + margin)
+    border << margin + right_char
   end
 end
