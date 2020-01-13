@@ -268,6 +268,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("granted")
+      expect(motion.vacated_decision_issue_ids.length).to eq(appeal.decision_issues.length)
+      expect(motion.vacated_decision_issue_ids).to include(*appeal.decision_issues.map(&:id))
 
       # Verify new task creation
       instructions = format_judge_instructions(
