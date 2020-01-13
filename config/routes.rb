@@ -222,7 +222,6 @@ Rails.application.routes.draw do
   get 'user_info/represented_organizations'
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
-  get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
