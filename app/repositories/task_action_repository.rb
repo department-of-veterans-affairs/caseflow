@@ -65,13 +65,7 @@ class TaskActionRepository
     end
 
     def assign_to_user_data(task, user = nil)
-      users = if task.assigned_to.is_a?(Organization)
-                task.assigned_to.users
-              elsif task.parent&.assigned_to.is_a?(Organization)
-                task.parent.assigned_to.users.reject { |check_user| check_user == task.assigned_to }
-              else
-                []
-              end
+      users = potential_task_assignees(task)
 
       extras = if task.is_a?(HearingAdminActionTask)
                  {
@@ -342,6 +336,18 @@ class TaskActionRepository
           label: user.full_name,
           value: user.id
         }
+      end
+    end
+
+    def potential_task_assignees(task)
+      if task.assigned_to.is_a?(Organization)
+        task.assigned_to.users.reject(&:inactive?)
+      elsif task.parent&.assigned_to.is_a?(Organization)
+        task.parent.assigned_to.users.reject do |check_user|
+          check_user == task.assigned_to || check_user.inactive?
+        end
+      else
+        []
       end
     end
   end
