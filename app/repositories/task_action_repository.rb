@@ -339,6 +339,7 @@ class TaskActionRepository
       end
     end
 
+    # Exclude users who aren't active or to whom the task is already assigned.
     def potential_task_assignees(task)
       if task.assigned_to.is_a?(Organization)
         task.assigned_to.users.active
