@@ -410,10 +410,10 @@ class User < ApplicationRecord
 
       pg_user_id = user_session["pg_user_id"]
       css_id = user_session["id"]
-      user_by_id = find_by_pg_user_id!(pg_user_id)
+      user_by_id = find_by_pg_user_id!(pg_user_id, session)
       user = user_by_id || find_by_css_id(css_id)
 
-      attrs = attrs_from_session(user_session)
+      attrs = attrs_from_session(session, user_session)
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
       user.update!(attrs.merge(last_login_at: Time.zone.now))
@@ -455,14 +455,15 @@ class User < ApplicationRecord
 
     private
 
-    def find_by_pg_user_id!(pg_user_id)
+    def find_by_pg_user_id!(pg_user_id, session)
       user_by_id = find_by(id: pg_user_id)
       if !user_by_id && pg_user_id
         session["user"]["pg_user_id"] = nil
       end
+      user_by_id
     end
 
-    def attrs_from_session(user_session)
+    def attrs_from_session(session, user_session)
       {
         station_id: user_session["station_id"],
         full_name: user_session["name"],
