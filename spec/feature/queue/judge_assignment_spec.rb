@@ -29,8 +29,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       visit "/queue"
 
       find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-      expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
-      click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+      expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
+      click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id)
 
       expect(page).to have_content("Cases to Assign")
       expect(page).to have_content("Moe Syzlak")
@@ -51,8 +51,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       visit "/queue"
 
       find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-      expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
-      click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+      expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
+      click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id)
 
       expect(page).to have_content("Cases to Assign (2)")
       expect(page).to have_content("Moe Syzlak")
@@ -121,8 +121,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         visit "/queue"
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
-        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+        expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
+        click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id)
 
         expect(page).to have_content("Assign 3 Cases")
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
@@ -159,8 +159,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         visit "/queue"
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
-        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+        expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
+        click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id)
 
         expect(page).to have_current_path("/queue/#{judge_one.user.id}/assign")
         expect(page).to have_content("Assign 2 Cases")
@@ -194,7 +194,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       expect(page).to have_content("Task reassigned to #{judge_two.user.full_name}")
 
       click_on("Switch views")
-      click_on("Assign team cases")
+      click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
 
       expect(page).to_not have_content("#{appeal.veteran_first_name} #{appeal.veteran_last_name}")
       expect(page).to have_content("Cases to Assign (0)")
@@ -238,7 +238,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_on("Submit")
 
       click_on("Switch views")
-      click_on("Assign team cases")
+      click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
 
       expect(page).to_not have_content("#{appeal_one.veteran_first_name} #{appeal_one.veteran_last_name}")
       expect(page).to have_content("Cases to Assign (0)")
