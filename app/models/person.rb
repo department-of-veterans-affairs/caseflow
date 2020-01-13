@@ -7,7 +7,7 @@ class Person < ApplicationRecord
   has_many :claimants, primary_key: :participant_id, foreign_key: :participant_id
   validates :participant_id, presence: true
 
-  CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :date_of_birth].freeze
+  CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :date_of_birth, :email_address].freeze
 
   def advanced_on_docket?(appeal_receipt_date)
     advanced_on_docket_based_on_age? || AdvanceOnDocketMotion.granted_for_person?(id, appeal_receipt_date)
@@ -38,7 +38,7 @@ class Person < ApplicationRecord
   end
 
   def email_address
-    bgs_person[:email_address]
+    cached_or_fetched_from_bgs(attr_name: :email_address)
   end
 
   def stale_attributes?

@@ -65,6 +65,24 @@ class QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
   end
 
+  def on_hold_task_children
+    Task.where(parent: on_hold_tasks)
+  end
+
+  def visible_child_task_ids
+    on_hold_task_children.visible_in_queue_table_view.pluck(:id)
+  end
+
+  def parents_with_child_timed_hold_task_ids
+    on_hold_task_children.where(type: TimedHoldTask.name).pluck(:parent_id)
+  end
+
+  def on_hold_task_children_and_timed_hold_parents
+    Task.includes(*task_includes).visible_in_queue_table_view.where(
+      id: [visible_child_task_ids, parents_with_child_timed_hold_task_ids].flatten
+    )
+  end
+
   def task_includes
     [
       { appeal: [:available_hearing_locations, :claimants] },
