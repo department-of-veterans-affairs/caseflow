@@ -34,7 +34,7 @@ class JudgeTeam < Organization
   def add_user(user)
     super.tap do |org_user|
       class_name = (users.count == 1) ? JudgeTeamLead : DecisionDraftingAttorney
-      class_name.create!(organizations_user: org_user)
+      class_name.find_or_create_by(organizations_user: org_user)
     end
   end
 

@@ -316,6 +316,24 @@ describe User, :all_dbs do
         )
       end
     end
+
+    context "when the user is a judge team admin" do
+      let(:judge) { create(:user) }
+      let(:judge_team) { JudgeTeam.create_for_judge(judge) }
+
+      before { OrganizationsUser.make_user_admin(user, judge_team) }
+
+      it "returns the judge team the user is an admin on" do
+        is_expected.to include(
+          name: judge.css_id,
+          url: format("queue/%<id>s/assign", id: judge.id)
+        )
+        is_expected.not_to include(
+          name: user.css_id,
+          url: format("queue/%<id>s/assign", id: user.id)
+        )
+      end
+    end
   end
 
   context "#when BGS data is setup" do

@@ -262,7 +262,7 @@ class User < ApplicationRecord
   end
 
   def administered_teams
-    organizations_users.select(&:admin?).map(&:organization)
+    organizations_users.admin.map(&:organization)
   end
 
   def administered_judge_teams
@@ -275,11 +275,13 @@ class User < ApplicationRecord
 
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
+    judge_team_judges = administered_judge_teams.map(&:judge)
+    judge_team_judges | [self] if judge_in_vacols?
 
-    if JudgeTeam.for_judge(self) || judge_in_vacols?
+    judge_team_judges.each do |judge|
       orgs << {
-        name: "Assign",
-        url: format("queue/%s/assign", id)
+        name: judge.css_id,
+        url: format("queue/%s/assign", judge.id)
       }
     end
 
