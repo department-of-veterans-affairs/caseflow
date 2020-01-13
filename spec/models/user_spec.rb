@@ -317,7 +317,7 @@ describe User, :all_dbs do
       end
     end
 
-    context "when the user is a judge team admin" do
+    fcontext "when the user is a judge team admin" do
       let(:judge) { create(:user) }
       let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
 
@@ -327,7 +327,7 @@ describe User, :all_dbs do
         is_expected.to include(
           name: "Assign #{judge.css_id}",
           url: format("queue/%<id>s/assign", id: judge.id)
-        )
+        ), judge: judge, user: user, judge_team: judge_team.admins, jt_judge: judge_team.judge
         is_expected.not_to include(
           name: "Assign #{user.css_id}",
           url: format("queue/%<id>s/assign", id: user.id)
