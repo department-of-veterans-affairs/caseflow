@@ -84,8 +84,9 @@ export default class AssignHearings extends React.Component {
 
   render() {
     const {
-      upcomingHearingDays, selectedHearingDay,
-      appealsReadyForHearing, selectedRegionalOffice,
+      upcomingHearingDays,
+      selectedHearingDay,
+      selectedRegionalOffice,
       onSelectedHearingDayChange
     } = this.props;
     const room = this.room();
@@ -104,26 +105,22 @@ export default class AssignHearings extends React.Component {
     // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
     return (
       <React.Fragment>
-        {<UpcomingHearingDaysNav
+        <UpcomingHearingDaysNav
           upcomingHearingDays={upcomingHearingDays}
           selectedHearingDay={selectedHearingDay}
           onSelectedHearingDayChange={onSelectedHearingDayChange} />
-        }
-        {appealsReadyForHearing &&
-          <AssignHearingsTabs
-            selectedRegionalOffice={selectedRegionalOffice}
-            selectedHearingDay={selectedHearingDay}
-            appealsReadyForHearing={appealsReadyForHearing}
-            room={room}
-            displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumn}
-          />}
+        <AssignHearingsTabs
+          selectedRegionalOffice={selectedRegionalOffice}
+          selectedHearingDay={selectedHearingDay}
+          room={room}
+          displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumn}
+        />
       </React.Fragment>
     );
   }
 }
 
 AssignHearings.propTypes = {
-  regionalOffices: PropTypes.object,
   selectedRegionalOffice: PropTypes.string,
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
@@ -131,9 +128,7 @@ AssignHearings.propTypes = {
     PropTypes.string,
     PropTypes.object
   ]),
-  appealsReadyForHearing: PropTypes.object,
   userId: PropTypes.number,
-  onReceiveTasks: PropTypes.func,
   // Remove when pagination lands (#11757)
   displayPowerOfAttorneyColumn: PropTypes.bool
 };

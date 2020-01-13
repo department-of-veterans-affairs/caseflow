@@ -49,34 +49,7 @@ AvailableVeteransTable.propTypes = {
   })
 };
 
-export class AssignHearingsTabs extends React.Component {
-
-  isAmaAppeal = (appeal) => {
-    return appeal.attributes.appealType === 'Appeal';
-  };
-
-  getSuggestedHearingLocation = (locations) => {
-    if (!locations || locations.length === 0) {
-      return '';
-    }
-
-    /* Sort available locations before selecting top one. */
-    const sortedLocations = _.orderBy(locations, ['distance'], ['asc']);
-
-    /* Select first entry which should be shortest distance. */
-    const location = sortedLocations[0];
-
-    return location;
-  };
-  formatSuggestedHearingLocation = (suggestedLocation) => {
-    if (_.isNull(suggestedLocation) || _.isUndefined(suggestedLocation)) {
-      return null;
-    }
-
-    const { city, state } = suggestedLocation;
-
-    return `${city}, ${state} ${getFacilityType(location)}`;
-  }
+export class AssignHearingsTabs extends React.PureComponent {
 
   availableVeteransRows = (appeals) => {
 
@@ -208,18 +181,12 @@ export class AssignHearingsTabs extends React.Component {
     const {
       selectedHearingDay,
       selectedRegionalOffice,
-      appealsReadyForHearing,
+      displayPowerOfAttorneyColumn,
       room
     } = this.props;
 
     const hearingsForSelected = _.get(selectedHearingDay, 'hearings', {});
     const availableSlots = _.get(selectedHearingDay, 'totalSlots', 0) - Object.keys(hearingsForSelected).length;
-
-    const amaAppeals = _.filter(appealsReadyForHearing, (appeal) => this.isAmaAppeal(appeal));
-    const amaRows = this.availableVeteransRows(amaAppeals);
-    const legacyRows = this.availableVeteransRows(
-      _.filter(appealsReadyForHearing, (appeal) => !this.isAmaAppeal(appeal))
-    );
 
     // Remove when pagination lands (#11757)
     return <div className="usa-width-three-fourths">
@@ -272,10 +239,6 @@ const appealPropTypes = PropTypes.shape({
 });
 
 AssignHearingsTabs.propTypes = {
-  appealsReadyForHearing: PropTypes.oneOfType([
-    PropTypes.arrayOf(appealPropTypes),
-    PropTypes.object
-  ]),
   selectedHearingDay: PropTypes.shape({
     hearings: PropTypes.object,
     id: PropTypes.number,
