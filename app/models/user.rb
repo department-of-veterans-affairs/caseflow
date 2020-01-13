@@ -47,7 +47,7 @@ class User < ApplicationRecord
   def regional_office
     upcase = ->(str) { str ? str.upcase : str }
 
-    ro_is_ambiguous_from_station_office? ? upcase.call(regional_office) : station_offices
+    ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
   def users_regional_office
@@ -410,10 +410,7 @@ class User < ApplicationRecord
 
       pg_user_id = user_session["pg_user_id"]
       css_id = user_session["id"]
-      user_by_id = find_by(id: pg_user_id)
-      if !user_by_id && pg_user_id
-        session["user"]["pg_user_id"] = nil
-      end
+      user_by_id = find_by_pg_user_id!(pg_user_id)
       user = user_by_id || find_by_css_id(css_id)
 
       attrs = attrs_from_session(user_session)
@@ -457,6 +454,13 @@ class User < ApplicationRecord
     end
 
     private
+
+    def find_by_pg_user_id!(pg_user_id)
+      user_by_id = find_by(id: pg_user_id)
+      if !user_by_id && pg_user_id
+        session["user"]["pg_user_id"] = nil
+      end
+    end
 
     def attrs_from_session(user_session)
       {
