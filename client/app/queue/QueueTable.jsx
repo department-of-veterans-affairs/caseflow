@@ -230,12 +230,12 @@ export default class QueueTable extends React.PureComponent {
   }
 
   initialState = (paginationOptions) => {
-    const { defaultSort } = this.props;
+    const { defaultSort, useTaskPagesApi } = this.props;
 
     const state = {
       cachedResponses: {},
       tasksFromApi: null,
-      loadingComponent: paginationOptions.needsTaskRequest && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
+      loadingComponent: (useTaskPagesApi && paginationOptions.needsTaskRequest) && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
       ...paginationOptions
     };
 
@@ -258,8 +258,9 @@ export default class QueueTable extends React.PureComponent {
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
     const sortColName = columns.map((column) => column.name).includes(sortColumn) ? sortColumn : null;
 
-    // Only request tasks from the back end if we want another page, to sort on a column, or if filters are provided
-    const needsTaskRequest = currentPage || sortColName || !_.isEmpty(filteredByList);
+    // Only request tasks from the back end if no pages have been fetches, we want another page,
+    // to sort on a column, or if filters are provided
+    const needsTaskRequest = _.isUndefined(numberOfPages) || currentPage || sortColName || !_.isEmpty(filteredByList);
 
     return {
       sortAscending,
