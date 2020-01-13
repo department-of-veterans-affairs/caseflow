@@ -23,7 +23,7 @@ describe WarmBgsCachesJob, :all_dbs do
     end
     let!(:people) { create_list(:person, 5) }
 
-    #expecting this to create a Person
+    # expecting this to create a Person
     let(:bgs_poa) { BgsPowerOfAttorney.new }
     let(:bgs_address_service) { BgsAddressService.new }
 
