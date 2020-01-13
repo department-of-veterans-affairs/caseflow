@@ -1,28 +1,28 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import moment from 'moment';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
-import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
+import React from 'react';
+import _ from 'lodash';
+import moment from 'moment';
 
-import COPY from '../../../../COPY.json';
-import AssignHearingsTable from './AssignHearingsTable';
-import UpcomingHearingsTable from './UpcomingHearingsTable';
-import TabWindow from '../../../components/TabWindow';
-import { renderAppealType } from '../../../queue/utils';
-import StatusMessage from '../../../components/StatusMessage';
-import { getFacilityType } from '../../../components/DataDropdowns/AppealHearingLocations';
-import { NoUpcomingHearingDayMessage } from './Messages';
-import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import { AppealDocketTag, SuggestedHearingLocation, CaseDetailsInformation } from './AssignHearingsFields';
+import { NoUpcomingHearingDayMessage } from './Messages';
+import { getFacilityType } from '../../../components/DataDropdowns/AppealHearingLocations';
+import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
+import { renderAppealType } from '../../../queue/utils';
+import AssignHearingsTable from './AssignHearingsTable';
+import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
+import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
+import TabWindow from '../../../components/TabWindow';
+import UpcomingHearingsTable from './UpcomingHearingsTable';
 
-const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} }) => {
+const AvailableVeteransTable = ({ style = {}, selectedHearingDay, ...props }) => {
   if (_.isNil(selectedHearingDay)) {
     return <NoUpcomingHearingDayMessage />;
   }
 
+  /*
   if (_.isEmpty(rows)) {
     return <div>
       <StatusMessage
@@ -33,15 +33,16 @@ const AvailableVeteransTable = ({ rows, columns, selectedHearingDay, style = {} 
       />
     </div>;
   }
+  */
 
-  return <span {...style}>
-    <AssignHearingsTable columns={columns} rowObjects={rows} />
-  </span>;
+  return (
+    <span {...style}>
+      <AssignHearingsTable selectedHearingDay={selectedHearingDay} {...props} />
+    </span>
+  );
 };
 
 AvailableVeteransTable.propTypes = {
-  rows: PropTypes.array,
-  columns: PropTypes.array,
   style: PropTypes.object,
   selectedHearingDay: PropTypes.shape({
     id: PropTypes.number,
@@ -83,94 +84,8 @@ export class AssignHearingsTabs extends React.PureComponent {
     }));
   };
 
-  tabWindowColumns = () => {
-    // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
-    const { selectedRegionalOffice, selectedHearingDay, displayPowerOfAttorneyColumn } = this.props;
-
-    if (_.isNil(selectedHearingDay)) {
-      return [];
-    }
-
-    const columns = [
-      {
-        header: '',
-        align: 'left',
-        valueName: 'number'
-      },
-      {
-        header: 'Case Details',
-        align: 'left',
-        valueName: 'caseDetails',
-        valueFunction: (row) => <Link
-          name={row.externalId}
-          href={(() => {
-            const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
-            const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
-
-            return `/queue/appeals/${row.externalId}/${qry}`;
-          })()}>
-          {row.caseDetails}
-        </Link>
-      },
-      {
-        header: 'Type(s)',
-        align: 'left',
-        valueName: 'type'
-      },
-      {
-        header: 'Docket Number',
-        align: 'left',
-        valueName: 'docketNumber'
-      },
-      {
-        name: 'Suggested Location',
-        header: 'Suggested Location',
-        align: 'left',
-        columnName: 'suggestedLocation',
-        valueFunction: (row) => (
-          <SuggestedHearingLocation
-            suggestedLocation={row.suggestedLocation}
-            format={this.formatSuggestedHearingLocation}
-          />
-        ),
-        label: 'Filter by location',
-        filterValueTransform: this.formatSuggestedHearingLocation,
-        anyFiltersAreSet: true,
-        enableFilter: true,
-        enableFilterTextTransform: false
-      }
-    ];
-
-    // Put this in the `push` above when pagination lands (#11757)
-    if (displayPowerOfAttorneyColumn) {
-      columns.push(
-        {
-          name: 'Power of Attorney',
-          header: 'Power of Attorney (POA)',
-          columnName: 'powerOfAttorney',
-          valueName: 'powerOfAttorney',
-          valueFunction: (row) => (
-            <PowerOfAttorneyDetail
-              key={`poa-for-${row.externalId}`}
-              appealId={row.externalId}
-              displayNameOnly
-            />
-          ),
-          enableFilter: true,
-          filterValueTransform: (appealExternalId) => {
-            const { powerOfAttorneyNamesForAppeals } = this.props;
-
-            return powerOfAttorneyNamesForAppeals[appealExternalId];
-          }
-        }
-      );
-    }
-
-    return columns;
-  }
-
   amaDocketCutoffLineStyle = (appeals) => {
-    const endOfNextMonth = moment().add('months', 1).
+    const endOfNextMonth = moment().add(1, 'months').
       endOf('month');
     const indexOfLine = getIndexOfDocketLine(appeals, endOfNextMonth);
 
@@ -208,18 +123,19 @@ export class AssignHearingsTabs extends React.PureComponent {
           {
             label: 'Legacy Veterans Waiting',
             page: <AvailableVeteransTable
-              rows={legacyRows}
-              columns={this.tabWindowColumns()}
               selectedHearingDay={selectedHearingDay}
+              selectedRegionalOffice={selectedRegionalOffice}
+              displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
+              tabName={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
             />
           },
           {
             label: 'AMA Veterans Waiting',
             page: <AvailableVeteransTable
-              style={this.amaDocketCutoffLineStyle(amaAppeals)}
-              rows={amaRows}
-              columns={this.tabWindowColumns()}
               selectedHearingDay={selectedHearingDay}
+              selectedRegionalOffice={selectedRegionalOffice}
+              displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
+              tabName={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
             />
           }
         ]}
