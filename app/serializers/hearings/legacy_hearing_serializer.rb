@@ -48,6 +48,7 @@ class LegacyHearingSerializer
   attribute :regional_office_timezone
   attribute :representative
   attribute :representative_name
+  attribute :representative_email_address
   attribute :room
   attribute :scheduled_for
   attribute :scheduled_time_string
@@ -62,6 +63,7 @@ class LegacyHearingSerializer
   attribute :veteran_first_name
   attribute :veteran_gender, if: for_worksheet, &:fetch_veteran_gender
   attribute :veteran_last_name
+  attribute :veteran_email_address
   attribute :viewed_by_current_user do |hearing, params|
     hearing.hearing_views.all.any? do |hearing_view|
       hearing_view.user_id == params[:current_user_id]
