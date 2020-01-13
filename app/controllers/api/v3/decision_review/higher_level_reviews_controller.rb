@@ -4,6 +4,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
   SUCCESSFUL_CREATION_HTTP_STATUS = 202
 
   def create
+    byebug
     if processor.run!.errors?
       render_errors(processor.errors)
       return

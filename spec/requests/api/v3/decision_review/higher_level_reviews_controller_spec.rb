@@ -17,11 +17,14 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   let(:veteran_ssn) { "64205050" }
 
-  let!(:veteran) do
-    Generators::Veteran.build(file_number: veteran_ssn,
-                              first_name: "Ed",
-                              last_name: "Merica")
-  end
+  # let!(:veteran) do
+  #   veteran = Generators::Veteran.build(file_number: veteran_ssn,
+  #                             first_name: "Ed",
+  #                             last_name: "Merica")
+  #   veteran.ssn = veteran_ssn
+  #   veteran
+  # end
+  let!(:veteran) { create(:veteran, ssn: veteran_ssn) }
 
   let!(:current_user) do
     User.authenticate!(roles: ["Admin Intake"])
@@ -32,6 +35,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     create(:user, station_id: val, css_id: val, full_name: val)
   end
 
+  # TODO remove these lets that should be methods
   let(:response_json) { JSON.parse(response.body) }
   let(:first_error_code_in_response) { response_json["errors"][0]["code"] }
 
@@ -48,7 +52,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
       legacyOptInApproved: legacy_opt_in_approved,
       benefitType: benefit_type,
       veteran: {
-        ssn: veteran_ssn
+        ssn: veteran.ssn
       }
     }
   end
@@ -116,12 +120,12 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
       end
 
-      fit "should return a 202 on success" do
+      it "should return a 202 on success" do
         expect(response).to have_http_status(202)
       end
     end
 
-    context "params are missing" do
+    fcontext "params are missing" do
       let(:params) { {} }
       let(:expected_error_code) { "malformed_request" }
 
