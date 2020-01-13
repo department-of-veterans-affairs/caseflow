@@ -709,10 +709,10 @@ describe Appeal, :all_dbs do
       let(:appeal) { create(:appeal) }
       let(:today) { Time.zone.today }
 
+      let(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
       before do
-        create(:root_task, :in_progress, appeal: appeal)
-        create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 21)
-        create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 21)
+        create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 21)
+        create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 21)
       end
 
       describe "when there are no other tasks" do
@@ -723,10 +723,14 @@ describe Appeal, :all_dbs do
 
       describe "when there is an actionable task with an assignee", skip: "flake" do
         let(:assignee) { create(:user) }
-        let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal) }
+        let!(:task) do
+          create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal, parent: root_task)
+        end
 
         it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
-          expect(appeal.assigned_to_location).to eq(assignee.css_id)
+          expect(appeal.assigned_to_location).to(
+            eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
+          )
         end
       end
     end
