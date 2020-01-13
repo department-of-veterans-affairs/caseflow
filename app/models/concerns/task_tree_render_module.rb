@@ -17,13 +17,13 @@ module TaskTreeRenderModule
     end
   end
 
-  def self.default_renderer
+  def self.global_renderer
     @global_renderer ||= new_renderer
   end
 
   # for easy access to the global_renderer from an appeal or task instance
   def global_renderer
-    TaskTreeRenderModule.default_renderer
+    TaskTreeRenderModule.global_renderer
   end
 
   def treee(*atts, **kwargs)
