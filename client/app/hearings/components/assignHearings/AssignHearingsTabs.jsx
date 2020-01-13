@@ -11,7 +11,6 @@ import { getFacilityType } from '../../../components/DataDropdowns/AppealHearing
 import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import { renderAppealType } from '../../../queue/utils';
 import AssignHearingsTable from './AssignHearingsTable';
-import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
 import TabWindow from '../../../components/TabWindow';
@@ -51,38 +50,6 @@ AvailableVeteransTable.propTypes = {
 };
 
 export class AssignHearingsTabs extends React.PureComponent {
-
-  availableVeteransRows = (appeals) => {
-
-    /*
-      Sorting by docket number within each category of appeal:
-      CAVC, AOD and normal. Prepended * and + to docket number for
-      CAVC and AOD to group them first and second.
-     */
-    const sortedByAodCavc = _.sortBy(appeals, (appeal) => {
-      if (appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand) {
-        return `*${appeal.attributes.docketNumber}`;
-      } else if (appeal.attributes.aod) {
-        return `+${appeal.attributes.docketNumber}`;
-      }
-
-      return appeal.attributes.docketNumber;
-    });
-
-    return _.map(sortedByAodCavc, (appeal, index) => ({
-      number: <span>{index + 1}.</span>,
-      caseDetails: <CaseDetailsInformation appeal={appeal} />,
-      type: renderAppealType({
-        caseType: appeal.attributes.caseType,
-        isAdvancedOnDocket: appeal.attributes.aod
-      }),
-      docketNumber: <AppealDocketTag appeal={appeal} />,
-      suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.availableHearingLocations),
-      externalId: appeal.attributes.externalAppealId,
-      // The powerOfAttorney field is populated using the appeal's external id.
-      powerOfAttorney: appeal.attributes.externalAppealId
-    }));
-  };
 
   amaDocketCutoffLineStyle = (appeals) => {
     const endOfNextMonth = moment().add(1, 'months').
