@@ -17,7 +17,6 @@ import {
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';
-import { onReceiveTasks } from '../../queue/QueueActions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import { RegionalOfficeDropdown } from '../../components/DataDropdowns';
 import AssignHearings from '../components/assignHearings/AssignHearings';
@@ -58,7 +57,6 @@ class AssignHearingsContainer extends React.PureComponent {
   }
 
   onRegionalOfficeChange = (value, label) => {
-
     if (value) {
       window.history.replaceState('', '', `?roValue=${value}`);
     }
@@ -69,7 +67,10 @@ class AssignHearingsContainer extends React.PureComponent {
     });
   }
 
-  loadUpcomingHearingDays = (roValue) => {
+  loadUpcomingHearingDays = () => {
+    const { selectedRegionalOffice } = this.props;
+    const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
+
     if (!roValue) {
       return;
     }
@@ -85,21 +86,6 @@ class AssignHearingsContainer extends React.PureComponent {
     });
   };
 
-  loadAppealsReadyForHearing = (roValue) => {
-    if (!roValue) {
-      return;
-    }
-
-    const requestUrl = `/cases_to_schedule/${roValue}`;
-
-    return ApiUtil.get(requestUrl, { timeout: { response: getMinutesToMilliseconds(5) } }
-    ).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(response.body);
-
-      this.props.onReceiveAppealsReadyForHearing(resp.data);
-    });
-  };
-
   getNoUpcomingError = () => {
     if (this.props.selectedRegionalOffice) {
       return <div className="usa-input-error-message usa-input-error" {...smallTopMargin}>
@@ -108,16 +94,6 @@ class AssignHearingsContainer extends React.PureComponent {
         <p>Please verify that this RO's hearing days are in the current schedule.</p>
       </div>;
     }
-  }
-
-  createLoadPromise = () => {
-    const { selectedRegionalOffice } = this.props;
-    const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
-
-    return Promise.all([
-      this.loadUpcomingHearingDays(roValue),
-      this.loadAppealsReadyForHearing(roValue)
-    ]);
   }
 
   render = () => {
@@ -141,33 +117,31 @@ class AssignHearingsContainer extends React.PureComponent {
             staticOptions={centralOfficeStaticEntry}
           />
         </section>
-        {roValue && <LoadingDataDisplay
-          key={roValue || 0}
-          createLoadPromise={this.createLoadPromise}
-          loadingComponentProps={{
-            spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
-            message: 'Loading appeals to be scheduled for hearings...'
-          }}>
-
-          <AssignHearings
-            selectedRegionalOffice={this.props.selectedRegionalOffice.value}
-            upcomingHearingDays={this.props.upcomingHearingDays}
-            onSelectedHearingDayChange={this.props.onSelectedHearingDayChange}
-            selectedHearingDay={this.props.selectedHearingDay}
-            appealsReadyForHearing={this.props.appealsReadyForHearing}
-            userId={this.props.userId}
-            onReceiveTasks={this.props.onReceiveTasks}
-            displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumn} />
-        </LoadingDataDisplay>}
+        {roValue &&
+          <LoadingDataDisplay
+            key={roValue || 0}
+            createLoadPromise={this.loadUpcomingHearingDays}
+            loadingComponentProps={{
+              spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
+              message: 'Loading appeals to be scheduled for hearings...'
+            }}
+          >
+            <AssignHearings
+              selectedRegionalOffice={this.props.selectedRegionalOffice.value}
+              upcomingHearingDays={this.props.upcomingHearingDays}
+              onSelectedHearingDayChange={this.props.onSelectedHearingDayChange}
+              selectedHearingDay={this.props.selectedHearingDay}
+              userId={this.props.userId}
+              displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumn}
+            />
+          </LoadingDataDisplay>
+        }
       </AppSegment>
     );
   }
 }
 
 AssignHearingsContainer.propTypes = {
-  appealsReadyForHearing: PropTypes.object,
-  onReceiveAppealsReadyForHearing: PropTypes.func,
-  onReceiveTasks: PropTypes.func,
   onReceiveUpcomingHearingDays: PropTypes.func,
   onRegionalOfficeChange: PropTypes.func,
   onSelectedHearingDayChange: PropTypes.func,
@@ -190,16 +164,13 @@ AssignHearingsContainer.propTypes = {
 const mapStateToProps = (state) => ({
   selectedRegionalOffice: state.components.selectedRegionalOffice,
   upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
-  selectedHearingDay: state.hearingSchedule.selectedHearingDay,
-  appealsReadyForHearing: state.hearingSchedule.appealsReadyForHearing
+  selectedHearingDay: state.hearingSchedule.selectedHearingDay
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRegionalOfficeChange,
   onSelectedHearingDayChange,
   onReceiveUpcomingHearingDays,
-  onReceiveAppealsReadyForHearing,
-  onReceiveTasks,
   setUserCssId
 }, dispatch);
 
