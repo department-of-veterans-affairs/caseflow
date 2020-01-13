@@ -110,13 +110,13 @@ describe TaskTreeRenderModule do
     end
 
     it "prints all tasks" do
-      # puts tree2 @appeal, :id, :status, highlight: 7
+      # puts tree2 @appeal, :id, :status
       num_lines = @appeal.tasks.count + 1
       expect((tree1 @appeal).lines.count).to eq num_lines
-      expect((tree2 @appeal, :id, :status, highlight: 7).lines.count).to eq num_lines
+      expect((tree2 @appeal, :id, :status).lines.count).to eq num_lines
     end
     it "should raise error" do
-      expect { tree2 @appeal, :id, :status, highlight: 7, renderer: "any value" }.to raise_error(RuntimeError)
+      expect { tree2 @appeal, :id, :status, renderer: "any value" }.to raise_error(RuntimeError)
     end
   end
 end
