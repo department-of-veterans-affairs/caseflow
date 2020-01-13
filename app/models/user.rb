@@ -410,16 +410,14 @@ class User < ApplicationRecord
 
       pg_user_id = user_session["pg_user_id"]
       css_id = user_session["id"]
-      station_id = user_session["station_id"]
       user_by_id = find_by(id: pg_user_id)
       if !user_by_id && pg_user_id
         session["user"]["pg_user_id"] = nil
-        pg_user_id = nil
       end
       user = user_by_id || find_by_css_id(css_id)
 
       attrs = {
-        station_id: station_id,
+        station_id: user_session["station_id"],
         full_name: user_session["name"],
         email: user_session["email"],
         roles: user_session["roles"],
