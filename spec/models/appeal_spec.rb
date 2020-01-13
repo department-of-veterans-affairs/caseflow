@@ -77,6 +77,59 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "#create_issues!" do
+    subject { appeal.create_issues!(issues) }
+
+    let(:issues) { [request_issue] }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        ineligible_reason: ineligible_reason,
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id
+      )
+    end
+    let(:ineligible_reason) { nil }
+    let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
+    let(:vacols_case) { create(:case, case_issues: [create(:case_issue)]) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    context "when there is no associated legacy issue" do
+      it "does not create a legacy issue" do
+        subject
+
+        expect(request_issue.legacy_issues).to be_empty
+      end
+    end
+
+    context "when there is an associated legacy issue" do
+      let(:vacols_id) { legacy_appeal.vacols_id }
+      let(:vacols_sequence_id) { legacy_appeal.issues.first.vacols_sequence_id }
+
+      context "when the veteran did not opt in their legacy issues" do
+        let(:ineligible_reason) { "legacy_issue_not_withdrawn" }
+
+        it "creates a legacy issue, but no opt-in" do
+          subject
+
+          expect(request_issue.legacy_issues.count).to eq 1
+          expect(request_issue.legacy_issue_optin).to be_nil
+        end
+      end
+
+      context "when legacy opt in is approved by the veteran" do
+        let(:ineligible_reason) { nil }
+
+        it "creates a legacy issue and an associated opt-in" do
+          subject
+
+          expect(request_issue.legacy_issue_optin.legacy_issue).to eq(request_issue.legacy_issues.first)
+        end
+      end
+    end
+  end
+
   context "#create_remand_supplemental_claims!" do
     before { setup_prior_claim_with_payee_code(appeal, veteran) }
 
