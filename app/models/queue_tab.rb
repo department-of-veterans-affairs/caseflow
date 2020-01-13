@@ -108,8 +108,10 @@ class QueueTab
   end
 end
 
+require_dependency "ama_assign_hearings_tab"
 require_dependency "assigned_tasks_tab"
 require_dependency "completed_tasks_tab"
+require_dependency "legacy_assign_hearings_tab"
 require_dependency "on_hold_tasks_tab"
 require_dependency "organization_assigned_tasks_tab"
 require_dependency "organization_completed_tasks_tab"
