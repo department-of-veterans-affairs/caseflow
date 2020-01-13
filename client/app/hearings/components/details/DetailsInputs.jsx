@@ -79,7 +79,7 @@ class DetailsInputs extends React.Component {
               onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
             />
             <TextField
-              name="POA/Representive Email"
+              name="POA/Representative Email"
               value={virtualHearing.representativeEmail}
               strongLabel
               className={[classnames('cf-form-textinput', 'cf-inline-field')]}
