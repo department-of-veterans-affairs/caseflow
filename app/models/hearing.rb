@@ -38,6 +38,7 @@ class Hearing < ApplicationRecord
   delegate :veteran_age, to: :appeal
   delegate :veteran_gender, to: :appeal
   delegate :veteran_file_number, to: :appeal
+  delegate :veteran_email_address, to: :appeal
   delegate :docket_number, to: :appeal
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
@@ -123,6 +124,10 @@ class Hearing < ApplicationRecord
 
   def representative
     appeal.representative_name
+  end
+
+  def representative_email_address
+    appeal&.representative_email_address
   end
 
   def claimant_id
