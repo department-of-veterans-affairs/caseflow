@@ -212,10 +212,15 @@ class Veteran < ApplicationRecord
     raise response.error # rubocop:disable Style/SignalException
   end
 
+  def stale?
+    (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
+      email_address.nil?)
+  end
+
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil?)
+    is_stale = stale?
     is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
     is_stale
   end
