@@ -532,6 +532,10 @@ export default class QueueTable extends React.PureComponent {
           numberOfPages = responseFromCache.task_page_count;
           totalTaskCount = responseFromCache.total_task_count;
         }
+
+        if (this.props.tabPaginationOptions && this.props.tabPaginationOptions.onPageLoaded) {
+          this.props.tabPaginationOptions.onPageLoaded(responseFromCache);
+        }
       }
     } else {
       // Steps to calculate table data to display:
@@ -657,7 +661,8 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
     [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.number,
     [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
-    [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string)
+    [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
+    onPageLoaded: PropTypes.func
   })
 };
 
