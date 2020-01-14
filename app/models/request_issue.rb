@@ -25,6 +25,7 @@ class RequestIssue < ApplicationRecord
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_many :hearing_issue_notes
   has_one :legacy_issue_optin
+  has_many :legacy_issues
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
@@ -211,7 +212,7 @@ class RequestIssue < ApplicationRecord
     update!(end_product_establishment: epe) if epe
 
     RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?
-    create_legacy_issue_optin if legacy_issue_opted_in?
+    handle_legacy_issues!
   end
 
   def end_product_code
@@ -400,16 +401,6 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  def create_legacy_issue_optin
-    LegacyIssueOptin.create!(
-      request_issue: self,
-      vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id,
-      original_disposition_code: vacols_issue.disposition_id,
-      original_disposition_date: vacols_issue.disposition_date
-    )
-  end
-
   def vacols_issue
     return unless vacols_id && vacols_sequence_id
 
@@ -571,7 +562,32 @@ class RequestIssue < ApplicationRecord
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
+  def handle_legacy_issues!
+    create_legacy_issue!
+    create_legacy_issue_optin!
+  end
+
   private
+
+  def create_legacy_issue!
+    return unless vacols_id && vacols_sequence_id
+
+    legacy_issues.create!(
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id
+    )
+  end
+
+  def create_legacy_issue_optin!
+    return unless legacy_issue_opted_in?
+
+    LegacyIssueOptin.create!(
+      request_issue: self,
+      original_disposition_code: vacols_issue.disposition_id,
+      original_disposition_date: vacols_issue.disposition_date,
+      legacy_issue: legacy_issues.first
+    )
+  end
 
   # When a request issue already has a rating in VBMS, prevent user from editing it.
   # LockedRatingError indicates that the matching rating issue could be locked,

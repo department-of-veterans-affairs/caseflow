@@ -504,6 +504,14 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
+    factory :reconsideration_motion_mail_task, class: ReconsiderationMotionMailTask do
+      type { ReconsiderationMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { MailTeam.singleton }
+      assigned_by { nil }
+    end
+
     factory :vacate_motion_mail_task, class: VacateMotionMailTask do
       type { VacateMotionMailTask.name }
       appeal { create(:appeal) }
