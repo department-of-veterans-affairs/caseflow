@@ -314,7 +314,7 @@ class Fakes::BGSService
 
     # Simulate the error bgs throws if participant doesn't exist or doesn't have any ratings
     if ratings.blank?
-      fail Savon::Error, "java.lang.IndexOutOfBoundsException: Index: 0, Size: 0"
+      fail BGS::NoRatingsExistForVeteran, "No Ratings exist for this Veteran"
     end
 
     build_ratings_in_range(ratings, start_date, end_date)
