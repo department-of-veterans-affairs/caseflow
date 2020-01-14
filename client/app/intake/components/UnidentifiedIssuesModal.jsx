@@ -40,8 +40,7 @@ class UnidentifiedIssuesModal extends React.Component {
 
   onDescriptionChange = (value) => {
     this.setState({
-      description: value,
-      disabled: !this.isDescriptionValid(value)
+      description: value
     });
   };
 
@@ -70,6 +69,17 @@ class UnidentifiedIssuesModal extends React.Component {
     this.setState({ checkboxSelected: event });
   };
 
+  saveDisable =() => {
+
+    const description = this.isDescriptionValid(this.state.description);
+    const decisionDate = this.state.decisionDate && !this.errorOnDecisionDate(this.state.decisionDate);
+    const notes = this.state.notes;
+
+    const checked = this.state.checkboxSelected ? !(description && decisionDate && notes) : !description;
+
+    return checked;
+  }
+
   getModalButtons() {
     const btns = [
       {
@@ -81,7 +91,7 @@ class UnidentifiedIssuesModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: this.state.disabled
+        disabled: this.saveDisable()
       }
     ];
 
@@ -110,7 +120,7 @@ class UnidentifiedIssuesModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
-            optional
+            optional={!this.state.checkboxSelected}
           />
         </div>
 
@@ -159,7 +169,11 @@ class UnidentifiedIssuesModal extends React.Component {
             onChange={this.onDescriptionChange}
           />
           {unidentifiedIssueDecisionDate && this.getDecisionDate()}
-          <TextField name="Notes" optional strongLabel value={this.state.notes} onChange={this.onNotesChange} />
+          <TextField name="Notes"
+            optional={!this.state.checkboxSelected}
+            strongLabel
+            value={this.state.notes}
+            onChange={this.onNotesChange} />
           {editPage && verifyUnidentifiedIssue && this.getCheckbox()}
         </Modal>
       </div>
