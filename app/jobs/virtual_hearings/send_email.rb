@@ -11,25 +11,16 @@ class VirtualHearings::SendEmail
   def call
     if !virtual_hearing.veteran_email_sent
       send_email(:veteran)
-
-      Rails.logger.info("Sent #{type} email to veteran!")
-
       virtual_hearing.veteran_email_sent = true
     end
 
     if !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent
       send_email(:judge)
-
-      Rails.logger.info("Sent #{type} email to judge!")
-
       virtual_hearing.judge_email_sent = true
     end
 
     if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
       send_email(:representative)
-
-      Rails.logger.info("Sent #{type} email to representative!")
-
       virtual_hearing.representative_email_sent = true
     end
 
@@ -55,6 +46,8 @@ class VirtualHearings::SendEmail
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
+
+    Rails.logger.info("Sent #{type} email to #{recipient}!")
   end
 
   def mail_recipients
