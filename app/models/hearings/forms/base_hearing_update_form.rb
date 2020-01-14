@@ -80,7 +80,7 @@ class BaseHearingUpdateForm
 
     job_args = {
       hearing_id: hearing.id,
-      hearing_type: hearing.type,
+      hearing_type: hearing.name,
       # TODO: Ideally, this would use symbols, but symbols can't be serialized for ActiveJob.
       # Rails 6 supports passing symbols to a job.
       email_type: only_time_updated? ? "updated_time_confirmation" : "confirmation"
