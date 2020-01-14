@@ -319,9 +319,9 @@ describe User, :all_dbs do
 
     context "when the user is a judge team admin" do
       let(:judge) { create(:user) }
-      let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+      let!(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
 
-      before { OrganizationsUser.make_user_admin(user, judge_team) }
+      before { OrganizationsUser.make_user_admin(user, judge_team.reload!) }
 
       it "returns the judge team the user is an admin on" do
         is_expected.to include(
