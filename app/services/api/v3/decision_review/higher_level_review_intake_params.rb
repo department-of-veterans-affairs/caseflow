@@ -72,20 +72,14 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   end
 
   def veteran
-    VeteranFinder.find_best_match(file_number_or_ssn)
+    @veteran ||= VeteranFinder.find_best_match(veteran_file_number)
   end
 
-  def file_number_or_ssn
-    attributes.dig("veteran", "fileNumberOrSsn").to_s.strip
+  def veteran_file_number
+    return @veteran_file_number if @veteran_file_number
+    ssn = attributes.dig("veteran", "ssn").to_s.strip
+    @veteran_file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
   end
-
-  # def veteran
-  #   VeteranFinder.find_best_match(ssn)
-  # end
-
-  # def ssn
-  #   attributes.dig("veteran", "ssn").to_s.strip
-  # end
 
   def attributes
     attributes? ? @params["data"]["attributes"] : {}
@@ -193,8 +187,8 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
       [BOOL,           %w[data attributes legacyOptInApproved]],
       [[String],       %w[data attributes benefitType]],
       [OBJECT,         %w[data attributes veteran]],
-      [[String],       %w[data attributes veteran fileNumberOrSsn]],
-      # [[String],       %w[data attributes veteran ssn]],
+      # [[String],       %w[data attributes veteran fileNumberOrSsn]],
+      [[String],       %w[data attributes veteran ssn]],
       [[String, nil],  %w[data attributes veteran addressLine1]],
       [[String, nil],  %w[data attributes veteran addressLine2]],
       [[String, nil],  %w[data attributes veteran city]],
