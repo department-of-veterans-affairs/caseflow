@@ -329,7 +329,7 @@ describe User, :all_dbs do
         is_expected.to include(
           name: "Assign #{judge.css_id}",
           url: format("queue/%<id>s/assign", id: judge.id)
-        ), judge: judge, user: user, judge_team: JudeTeam.for_judge(judge), jt_judge: JudeTeam.for_judge(judge).judge
+        ), judge: judge, user: user, judge_team: JudgeTeam.for_judge(judge), jt_judge: JudgeTeam.for_judge(judge).judge
         is_expected.not_to include(
           name: "Assign #{user.css_id}",
           url: format("queue/%<id>s/assign", id: user.id)
