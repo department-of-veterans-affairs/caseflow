@@ -321,7 +321,7 @@ describe User, :all_dbs do
       let(:judge) { create(:user) }
 
       before do
-        judge_team = JudgeTeam.for_judge(judge)
+        judge_team = JudgeTeam.create_for_judge(judge)
         OrganizationsUser.make_user_admin(user, judge_team)
       end
 
