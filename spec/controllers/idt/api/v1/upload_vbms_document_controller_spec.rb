@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :controller do
   describe "POST /idt/api/v1/appeals/:appeal_id/upload_document" do
     let(:user) { create(:user) }
@@ -20,7 +17,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
     describe "validations" do
       before do
-        OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(user)
         key, t = Idt::Token.generate_one_time_key_and_proposed_token
         Idt::Token.activate_proposed_token(key, user.css_id)
         request.headers["TOKEN"] = t

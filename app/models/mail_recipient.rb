@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
 class MailRecipient
-  attr_reader :full_name, :email, :title
+  attr_reader :name, :email, :title
 
-  def initialize(full_name:, email:, title: nil)
-    @full_name = full_name
+  RECIPIENT_TITLES = {
+    judge: "Judge",
+    veteran: "Veteran",
+    representative: "Representative"
+  }.freeze
+
+  def initialize(name:, email:, title: nil)
+    @name = name
     @email = email
     @title = title
   end

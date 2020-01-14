@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
   has_many :messages
+  has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
 
   BOARD_STATION_ID = "101"
 
@@ -264,6 +265,10 @@ class User < ApplicationRecord
     organizations_users.select(&:admin?).map(&:organization)
   end
 
+  def administered_judge_teams
+    administered_teams.select { |team| team.is_a?(JudgeTeam) }
+  end
+
   def user_info_for_idt
     self.class.user_repository.user_info_for_idt(css_id)
   end
@@ -321,7 +326,7 @@ class User < ApplicationRecord
   end
 
   def show_regional_office_in_queue?
-    false
+    HearingsManagement.singleton.user_has_access?(self)
   end
 
   def show_reader_link_column?
@@ -405,16 +410,10 @@ class User < ApplicationRecord
 
       pg_user_id = user_session["pg_user_id"]
       css_id = user_session["id"]
-      station_id = user_session["station_id"]
-      user = pg_user_id ? find_by(id: pg_user_id) : find_by_css_id(css_id)
+      user_by_id = find_by_pg_user_id!(pg_user_id, session)
+      user = user_by_id || find_by_css_id(css_id)
 
-      attrs = {
-        station_id: station_id,
-        full_name: user_session["name"],
-        email: user_session["email"],
-        roles: user_session["roles"],
-        regional_office: session[:regional_office]
-      }
+      attrs = attrs_from_session(session, user_session)
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
       user.update!(attrs.merge(last_login_at: Time.zone.now))
@@ -455,6 +454,24 @@ class User < ApplicationRecord
     end
 
     private
+
+    def find_by_pg_user_id!(pg_user_id, session)
+      user_by_id = find_by(id: pg_user_id)
+      if !user_by_id && pg_user_id
+        session["user"]["pg_user_id"] = nil
+      end
+      user_by_id
+    end
+
+    def attrs_from_session(session, user_session)
+      {
+        station_id: user_session["station_id"],
+        full_name: user_session["name"],
+        email: user_session["email"],
+        roles: user_session["roles"],
+        regional_office: session[:regional_office]
+      }
+    end
 
     def prod_system_user
       find_or_initialize_by(station_id: "283", css_id: "CSFLOW")

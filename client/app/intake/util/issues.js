@@ -24,6 +24,25 @@ const getClaimantField = (formType, veteran, intakeData) => {
     }];
 };
 
+export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
+    if (formType === 'supplemental_claim') {
+      return true;
+    }
+
+    if(!decisionDateStr) {
+      return true
+    }
+
+    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+
+    // we assume the timezone of the browser for all these.
+    const decisionDate = new Date(decisionDateStr)
+    const receiptDate = new Date(receiptDateStr);
+    const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
+    
+    return lessThanOneYear;
+};
+
 export const legacyIssue = (issue, legacyAppeals) => {
   if (issue.vacolsIssue) {
     return issue.vacolsIssue;
@@ -163,8 +182,14 @@ const formatUnidentifiedIssues = (state) => {
         decision_text: issue.description,
         notes: issue.notes,
         is_unidentified: true,
+        decision_date: issue.decisionDate,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : issue.withdrawalDate,
-        correction_type: issue.correctionType
+        correction_type: issue.correctionType,
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        ineligibleReason: issue.ineligibleReason,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId
       };
     });
 };
@@ -287,7 +312,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
-
+  
   return issues.map((issue, index) => {
     if (issue.isUnidentified) {
       return {
@@ -296,17 +321,26 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         text: `Unidentified issue: no issue matched for "${issue.description}"`,
         notes: issue.notes,
         isUnidentified: true,
+        date: issue.decisionDate,
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
         correctionType: issue.correctionType,
-        editable: issue.editable
+        editable: issue.editable,
+        timely: issue.timely,
+        untimelyExemption: issue.untimelyExemption,
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        ineligibleReason: issue.ineligibleReason,
+        vacolsId: issue.vacolsId,
+        vacolsSequenceId: issue.vacolsSequenceId,
+        vacolsIssue: issue.vacolsIssue
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
         console.warn(issue);
         throw new Error('no decision date');
       }
+
       const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 
       return {

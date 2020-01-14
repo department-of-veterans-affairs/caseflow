@@ -147,10 +147,12 @@
   "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed denial document",
   "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues you will be granting",
   "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
+  "JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL": "Which issues would you like to vacate?",
 
   "RETURN_TO_LIT_SUPPORT_MODAL_TITLE": "Return to Litigation Support",
   "RETURN_TO_LIT_SUPPORT_MODAL_CONTENT": "Use this action to return the Motion to Vacate task to the previous Motions Attorney in case of a missing ruling letter draft.\n\nIf the previous attorney is inactive, this will return to the Litigation Support team queue for reassignment.",
   "RETURN_TO_LIT_SUPPORT_MODAL_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
+  "RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS": "I am missing a link to the draft ruling letter. Please resubmit so I can review and sign.",
 
   "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
@@ -160,7 +162,8 @@
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
 
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
-  "STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL": "Straight Vacate and Readjudication",
+  "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
+  "STRAIGHT_VACATE_TASK_LABEL": "Straight Vacate",
   "DENIED_MOTION_TO_VACATE_TASK_LABEL": "Denied Motion to Vacate",
   "DISMISSED_MOTION_TO_VACATE_TASK_LABEL": "Dismissed Motion to Vacate",
 
@@ -227,7 +230,7 @@
   "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
   "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
-  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned. Reassign tasks to a judge on the case deatils screen",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned. Reassign tasks to a judge on the case details screen",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK": "Please assign tasks to an attorney from your assign page.",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL": " Reassign tasks to a judge in the action dropdown",
   "ASSIGN_WIDGET_LOADING": "Loading...",
@@ -286,10 +289,14 @@
   "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
 
+  "MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE": "Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930. Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding of clear and unmistakable error, which would result in a brand new docket number being assigned. An updated docket number format will need to be in place for legacy appeals by 2030 in order to ensure that docket numbers are sorted correctly.",
+
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
   "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
+
+  "CANCEL_TASK_CONTACT_LIT_SUPPORT": "the Litigation Support team",
 
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE": "Assign Regional Office",
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL": "Assigning a Regional Office will place this case in the list of Veterans to be scheduled for the RO you choose. You will need to choose a location for the hearing when you schedule the Veteran.",
@@ -501,7 +508,6 @@
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
   "REVIEW_MOTION_TO_VACATE_TASK_LABEL": "Review motion to vacate",
 
-
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
 
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
@@ -548,6 +554,8 @@
   "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
   "INVALID_SORT_COLUMN": "must be a QueueColumn",
   "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
+  "QUEUE_TAB_NON_USER_ASSIGNEE_MESSAGE": "must be a User",
+  "QUEUE_TAB_NON_ORGANIZATION_ASSIGNEE_MESSAGE": "must be an Organization",
   "TASK_PAGE_INVALID_SORT_ORDER": "must be either asc or desc",
   "TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE": "must contain only Users",
   "APPEAL_RECORD_SAVED_MESSAGE": "You can now begin intake for the next opt-in election.",
@@ -561,6 +569,7 @@
 
   "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
   "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
+  "INTAKE_LEGACY_OPT_IN_MESSAGE": "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?",
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
@@ -609,7 +618,49 @@
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No rooms available for %s",
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected.",
 
-  "VIRTUAL_HEARING_MODAL_INTRO": "Calendar invites will be emailed to the Veteran, POA/Representative, and VLJ.",
-  "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the Veteran and POA/Representative emails will be used to send calendar invites and reminders <strong>for this hearing only</strong>."
+  "VIRTUAL_HEARING_REQUEST_TYPE": "Video, Virtual",
+  "VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS": "Scheduling in progress",
 
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE": "Change to Virtual Hearing",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE": "Change to Video Hearing",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE": "Change to Central Hearing",
+  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE": "Change Hearing Time",
+  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE": "Update Email Address",
+  "VIRTUAL_HEARING_CHANGE_HEARING_BUTTON": "Change and Send Email",
+  "VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON": "Update and Send Email",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Calendar invites will be emailed to the Veteran, POA/Representative, and VLJ",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO": "Emails will be sent to the Veteran and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at thier designated Regional Office or alternate hearing location</li></ul>",
+  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Updated calendar invites will be emailed to the Veteran, POA/Representative, and VLJ",
+  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "A calendar invite for the virtual hearing will be emailed to:",
+  "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the Veteran and POA/Representative emails will be used to send calendar invites and reminders <strong>for this hearing only</strong>.",
+
+  "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
+
+  "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
+
+  "VIRTUAL_HEARING_USER_ALERTS": {
+    "HEARING_CHANGED_TO_VIRTUAL": {
+      "TITLE": "We're scheduling %s's virtual hearing",
+      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran, POA / Representative, and VLJ are in progress.</li></ul>"
+    },
+    "HEARING_CHANGED_FROM_VIRTUAL": {
+      "TITLE": "We're updating %s's hearing type",
+      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+    },
+    "EMAILS_UPDATED": {
+      "TITLE": "We're emailing the invite to %s's hearing",
+      "MESSAGES": {
+        "TO_VETERAN_AND_POA": "Emails to the Veteran and POA / Representative are in progress.",
+        "TO_VETERAN": "Email to Veteran is in progress.",
+        "TO_POA": "Email to POA / Representative is in progress.",
+        "TO_VLJ": "Email to VLJ is in progress."
+      }
+    },
+    "HEARING_TIME_CHANGED": {
+      "TITLE": "We're updating the hearing time of %s's hearing",
+      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+    }
+  },
+
+  "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }

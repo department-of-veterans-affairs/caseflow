@@ -14,7 +14,7 @@ class HearingWorksheetContainer extends React.Component {
     let requestUrl = `/hearings/${this.props.hearingId}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
-      this.props.populateWorksheet(response.body);
+      this.props.populateWorksheet(response.body.data);
     });
   };
 

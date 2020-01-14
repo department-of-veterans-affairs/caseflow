@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe RequestIssue, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -112,6 +109,15 @@ describe RequestIssue, :all_dbs do
     )
   end
 
+  let!(:rating_decision_request_issue) do
+    create(
+      :request_issue,
+      :rating_decision,
+      contested_rating_issue_profile_date: profile_date,
+      decision_review: review
+    )
+  end
+
   let(:nonrating_contested_issue_description) { nil }
 
   let!(:unidentified_issue) do
@@ -119,7 +125,8 @@ describe RequestIssue, :all_dbs do
       :request_issue,
       decision_review: review,
       unidentified_issue_text: "an unidentified issue",
-      is_unidentified: true
+      is_unidentified: true,
+      decision_date: 5.days.ago
     )
   end
 
@@ -328,10 +335,27 @@ describe RequestIssue, :all_dbs do
     subject { RequestIssue.rating }
 
     it "filters by rating issues" do
-      expect(subject.length).to eq(2)
+      expect(subject.length).to eq(3)
 
       expect(subject.find_by(id: rating_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: rating_decision_request_issue.id)).to_not be_nil
       expect(subject.find_by(id: unidentified_issue.id)).to_not be_nil
+    end
+  end
+
+  context ".rating_issue" do
+    subject { RequestIssue.rating_issue }
+
+    it "filters by rating_issue issues" do
+      expect(subject.length).to eq(1)
+    end
+  end
+
+  context ".rating_decision" do
+    subject { RequestIssue.rating_decision }
+
+    it "filters by rating_decision issues" do
+      expect(subject.length).to eq(1)
     end
   end
 
@@ -534,6 +558,14 @@ describe RequestIssue, :all_dbs do
       end
     end
 
+    context "when request issue is ineligible" do
+      let(:closed_status) { "ineligible" }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
     context "when decision review is processed in caseflow" do
       it "calls EndProductCodeSelector" do
         expect_any_instance_of(EndProductCodeSelector).to receive(:call).once
@@ -610,7 +642,7 @@ describe RequestIssue, :all_dbs do
       end
 
       it "returns the review title of the request issue in active review" do
-        expect(ineligible_request_issue.ui_hash).to include(
+        expect(ineligible_request_issue.serialize).to include(
           title_of_active_review: request_issue_in_active_review.review_title
         )
       end
@@ -1033,6 +1065,13 @@ describe RequestIssue, :all_dbs do
       nonrating_request_issue.validate_eligibility!
 
       expect(nonrating_request_issue.untimely?).to eq(true)
+    end
+
+    it "flags unidentified request issue as untimely when decision date is older than receipt_date" do
+      unidentified_issue.decision_date = receipt_date - 450
+      unidentified_issue.validate_eligibility!
+
+      expect(unidentified_issue.untimely?).to eq(true)
     end
 
     it "flags rating request issue as untimely when promulgation_date is year+ older than receipt_date" do

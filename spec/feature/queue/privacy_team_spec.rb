@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Privacy team tasks and queue", :all_dbs do
   describe "Assigning ColocatedTask to Privacy team" do
     let(:attorney) { create(:user) }
@@ -28,8 +25,8 @@ RSpec.feature "Privacy team tasks and queue", :all_dbs do
 
     before do
       create(:staff, :attorney_role, sdomainid: attorney.css_id)
-      OrganizationsUser.add_user_to_organization(vlj_support_staff, vlj_support_staff_team)
-      OrganizationsUser.add_user_to_organization(privacy_team_member, privacy_team)
+      vlj_support_staff_team.add_user(vlj_support_staff)
+      privacy_team.add_user(privacy_team_member)
     end
 
     context "when appeal is a legacy appeal" do

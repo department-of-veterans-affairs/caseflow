@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe Issue, :all_dbs do
   let(:vacols_id) { "12345678" }
   let(:disposition) { :allowed }

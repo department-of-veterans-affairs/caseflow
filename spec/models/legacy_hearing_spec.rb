@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
 require "models/concerns/has_virtual_hearing_examples"
 
 describe LegacyHearing, :all_dbs do
   it_should_behave_like "a model that can have a virtual hearing" do
-    let(:instance_of_class) { create(:legacy_hearing) }
+    let(:instance_of_class) do
+      create(
+        :legacy_hearing,
+        hearing_day: create(:hearing_day, regional_office: "RO42", request_type: HearingDay::REQUEST_TYPES[:video])
+      )
+    end
   end
 
   before do
@@ -372,7 +375,12 @@ describe LegacyHearing, :all_dbs do
   context "#hearing_day" do
     context "associated hearing day exists" do
       let(:hearing_day) { create(:hearing_day) }
-      let(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
+      let(:legacy_hearing) do
+        # hearing_day_id is set to nil because the tests are testing if it
+        # gets populated correctly. hearing_day is used by the factory to initialize
+        # a case hearing in vacols.
+        create(:legacy_hearing, hearing_day: hearing_day, hearing_day_id: nil)
+      end
 
       context "and hearing day id refers to a row in Caseflow" do
         it "get hearing day returns the associated hearing day successfully" do
@@ -424,7 +432,7 @@ describe LegacyHearing, :all_dbs do
       let(:legacy_hearing) do
         create(
           :legacy_hearing,
-          hearing_day: nil,
+          hearing_day_id: nil,
           case_hearing: create(:case_hearing, vdkey: "123456")
         )
       end

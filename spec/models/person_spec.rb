@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe Person, :postgres do
   let(:known_fake_participant_id) { "1129318238" }
 
@@ -64,6 +61,7 @@ describe Person, :postgres do
     let(:last_name) { bgs_person[:last_name] }
     let(:date_of_birth) { bgs_person[:birth_date] }
     let(:name_suffix) { bgs_person[:name_suffix] }
+    let(:email_address) { bgs_person[:email_address] }
 
     let(:person) do
       create(
@@ -73,7 +71,8 @@ describe Person, :postgres do
         middle_name: middle_name,
         name_suffix: name_suffix,
         date_of_birth: date_of_birth,
-        participant_id: participant_id
+        participant_id: participant_id,
+        email_address: email_address
       )
     end
 

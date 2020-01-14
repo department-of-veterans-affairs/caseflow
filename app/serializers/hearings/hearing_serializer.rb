@@ -56,6 +56,7 @@ class HearingSerializer
   attribute :regional_office_timezone
   attribute :representative, if: for_full
   attribute :representative_name
+  attribute :representative_email_address
   attribute :room
   attribute :scheduled_for
   attribute :scheduled_time
@@ -70,7 +71,13 @@ class HearingSerializer
   attribute :veteran_first_name
   attribute :veteran_gender, if: for_full
   attribute :veteran_last_name
-  attribute :virtual, &:virtual?
+  attribute :veteran_email_address
+  attribute :is_virtual, &:virtual?
+  attribute :virtual_hearing do |object|
+    if object.virtual?
+      VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
+    end
+  end
   attribute :witness
   attribute :worksheet_issues
 end

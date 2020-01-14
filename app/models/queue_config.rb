@@ -16,14 +16,14 @@ class QueueConfig
     end
   end
 
-  def to_hash_for_user(user)
+  def to_hash
     table_title = COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE
     {
       table_title: assignee_is_org? ? format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, assignee.name) : table_title,
       active_tab: assignee.class.default_active_tab,
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
-      use_task_pages_api: use_task_pages_api?(user),
-      tabs: tabs(user).map { |tab| attach_tasks_to_tab(tab, user) }
+      use_task_pages_api: assignee.use_task_pages_api?,
+      tabs: tabs.map { |tab| attach_tasks_to_tab(tab) }
     }
   end
 
@@ -33,24 +33,20 @@ class QueueConfig
     assignee.is_a?(Organization)
   end
 
-  def use_task_pages_api?(user)
-    FeatureToggle.enabled?(:use_task_pages_api, user: user) && assignee.use_task_pages_api?
-  end
-
-  def tabs(user)
+  def tabs
     queue_tabs = assignee.queue_tabs
 
-    return queue_tabs unless !use_task_pages_api?(user) && assignee_is_org?
+    return queue_tabs unless !assignee.use_task_pages_api? && assignee_is_org?
 
-    queue_tabs.reject { |tab| tab.is_a?(::OnHoldTasksTab) }
+    queue_tabs.reject { |tab| tab.is_a?(::OrganizationOnHoldTasksTab) }
   end
 
-  def attach_tasks_to_tab(tab, user)
+  def attach_tasks_to_tab(tab)
     task_pager = TaskPager.new(assignee: assignee, tab_name: tab.name)
 
     # Only return tasks in the configuration if we are using it to populate the first page of results.
     # Otherwise avoid the overhead of the additional database requests.
-    tasks = use_task_pages_api?(user) ? serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names) : []
+    tasks = assignee.use_task_pages_api? ? serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names) : []
 
     endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 

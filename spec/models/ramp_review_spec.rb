@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe RampReview, :postgres do
   let(:ramp_election) { create(:ramp_election, option_selected: "higher_level_review", established_at: Time.zone.now) }
   let(:claim_date) { ramp_election.receipt_date.to_date.mdY }

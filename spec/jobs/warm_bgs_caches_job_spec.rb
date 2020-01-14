@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe WarmBgsCachesJob, :all_dbs do
-  context "default" do
+  context "#perform" do
     # cache keys are using default POA so no specific ids.
     let(:poa_cache_key) { "bgs-participant-poa-" }
     let(:address_cache_key) { "bgs-participant-address-" }
@@ -24,7 +21,9 @@ describe WarmBgsCachesJob, :all_dbs do
         vdkey: hearing_day.id
       )
     end
+    let!(:people) { create_list(:person, 5) }
 
+    # expecting this to create a Person
     let(:bgs_poa) { BgsPowerOfAttorney.new }
     let(:bgs_address_service) { BgsAddressService.new }
 
@@ -36,7 +35,10 @@ describe WarmBgsCachesJob, :all_dbs do
 
       appeal.veteran.update!(ssn: nil)
 
+      @people_sync = 0
+      @slack_msg = nil
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
+      allow_any_instance_of(Person).to receive(:update_cached_attributes!) { @people_sync += 1 }
     end
 
     it "fetches all hearings and warms the Rails cache" do
@@ -54,7 +56,36 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(Rails.cache.exist?(poa_cache_key)).to eq(true)
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
-      expect(@slack_msg).to eq("Updated cached attributes for 1 Veteran records")
+      expect(@slack_msg).to be_nil
+      expect(@people_sync).to eq(6)
+    end
+
+    context "errors" do
+      before do
+        allow(Raven).to receive(:capture_exception) { @raven_called = true }
+      end
+
+      context "bgs address error" do
+        before do
+          allow(bgs_address_service).to receive(:fetch_bgs_record) { fail "error!" }
+        end
+
+        it "captures exceptions" do
+          expect { described_class.perform_now }.to_not raise_error
+          expect(@raven_called).to eq true
+        end
+      end
+
+      context "bgs POA error" do
+        before do
+          allow(bgs_poa).to receive(:fetch_bgs_record) { fail "error!" }
+        end
+
+        it "captures exceptions" do
+          expect { described_class.perform_now }.to_not raise_error
+          expect(@raven_called).to eq true
+        end
+      end
     end
   end
 end

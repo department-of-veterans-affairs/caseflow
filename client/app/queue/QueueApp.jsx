@@ -9,7 +9,6 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
-  setFeatureToggles,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
@@ -31,7 +30,6 @@ import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
-import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -79,11 +77,11 @@ import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
 import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { ReturnToLitSupportModal } from './mtv/ReturnToLitSupportModal';
+import { returnToLitSupport } from './mtv/mtvActions';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
-    this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
@@ -204,8 +202,6 @@ class QueueApp extends React.PureComponent {
 
   routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} role={this.props.userRole} />;
 
-  routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
-
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
 
   routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} {...props.match.params} />;
@@ -239,13 +235,15 @@ class QueueApp extends React.PureComponent {
   routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
   routedReturnToLitSupport = (props) => {
+    const { taskId } = props.match.params;
+
     return (
       <ReturnToLitSupportModal
         {...props.match.params}
         onCancel={() => props.history.goBack()}
         onSubmit={({ instructions }) => {
-          // we'll flesh this out in future PR
-          return instructions;
+          this.props.returnToLitSupport({ instructions,
+            task_id: taskId }, props);
         }}
       />
     );
@@ -548,10 +546,19 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToPulacCerullo}
             />
             <PageRoute
-              exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
               title="Address Motion to Vacate | Caseflow"
               render={this.routedAddressMotionToVacate}
+            />
+            <PageRoute
+              exact
+              path={[
+                '/queue/appeals/:appealId/tasks/:taskId',
+                TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value,
+                TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value
+              ].join('/')}
+              title="Return to Litigation Support | Caseflow"
+              render={this.routedReturnToLitSupport}
             />
             <PageRoute
               exact
@@ -560,12 +567,6 @@ class QueueApp extends React.PureComponent {
               }`}
               title="Assign to Pulac-Cerullo | Caseflow"
               render={this.routedPulacCerulloReminder}
-            />
-            <PageRoute
-              exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value}`}
-              title="Return to Litigation Support | Caseflow"
-              render={this.routedReturnToLitSupport}
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -652,8 +653,6 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
   canEditAod: PropTypes.bool,
-  setFeatureToggles: PropTypes.func,
-  featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
   setOrganizations: PropTypes.func,
@@ -666,7 +665,8 @@ QueueApp.propTypes = {
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
-  userCanViewHearingSchedule: PropTypes.bool
+  userCanViewHearingSchedule: PropTypes.bool,
+  returnToLitSupport: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -677,12 +677,12 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
-      setFeatureToggles,
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,
       setFeedbackUrl,
-      setOrganizations
+      setOrganizations,
+      returnToLitSupport
     },
     dispatch
   );

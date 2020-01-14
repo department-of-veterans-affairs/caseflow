@@ -24,10 +24,7 @@ require "timeout"
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Dir[Rails.root.join("spec/support/**/*.rb")].each do |file|
-  excluded_files = %w[database_cleaner.rb vacols_database_cleaner.rb]
-  require file unless excluded_files.include?(file.split("/").last)
-end
+Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 # The TZ variable controls the timezone of the browser in capybara tests, so we always define it.
 # By default (esp for CI) we use Eastern time, so that it doesn't matter where the developer happens to sit.
@@ -47,7 +44,13 @@ RSpec.configure do |config|
   # subsequent test runs
   if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js") &&
      ENV["REACT_ON_RAILS_ENV"] != "HOT"
-    ReactOnRails::TestHelper.ensure_assets_compiled
+
+    # Only compile webpack-bundle.js for feature tests.
+    # https://github.com/shakacode/react_on_rails/blob/master/docs/basics/rspec-configuration.md#rspec-configuration
+    ReactOnRails::TestHelper.configure_rspec_to_compile_assets(config, :requires_webpack_assets)
+    config.define_derived_metadata(file_path: %r{spec/feature}) do |metadata|
+      metadata[:requires_webpack_assets] = true
+    end
   end
 
   config.before(:each) do

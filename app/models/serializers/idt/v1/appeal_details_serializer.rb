@@ -20,7 +20,7 @@ class Idt::V1::AppealDetailsSerializer
   attribute :veteran_death_date
 
   attribute :appellant_is_not_veteran do |object|
-    object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : object.claimant_not_veteran
+    object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : !!object.veteran_is_not_claimant
   end
 
   attribute :appellants do |object, params|

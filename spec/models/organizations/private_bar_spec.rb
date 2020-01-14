@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe PrivateBar, :postgres do
   let(:private_bar) { PrivateBar.create!(name: "Caseflow Law Group", url: "caseflow-law") }
 
@@ -23,7 +20,7 @@ describe PrivateBar, :postgres do
     it "only returns a single tab with tracking tasks" do
       tabs = private_bar.queue_tabs
       expect(tabs.length).to eq(1)
-      expect(tabs.first).to be_a(TrackingTasksTab)
+      expect(tabs.first).to be_a(OrganizationTrackingTasksTab)
     end
   end
 end

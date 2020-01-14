@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
-class VacateAndDeNovoTask < GenericTask
-  def available_actions(user)
-    actions = super(user)
+class VacateAndDeNovoTask < DecidedMotionToVacateTask
+  class << self
+    def label
+      COPY::VACATE_AND_DE_NOVO_TASK_LABEL
+    end
 
-    actions.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    def org(user)
+      team = JudgeTeam.for_judge(user.reload)
 
-    actions
-  end
+      fail(Caseflow::Error::NonexistentJudgeTeam, user_id: user.id) if team.nil?
 
-  def self.label
-    COPY::VACATE_AND_DE_NOVO_TASK_LABEL
+      team
+    end
   end
 end

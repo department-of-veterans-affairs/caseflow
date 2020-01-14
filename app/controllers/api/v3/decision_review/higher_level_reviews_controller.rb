@@ -24,9 +24,10 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
     render_errors([intake_error_code_from_exception_or_processor(error)])
   end
 
-  # stub
   def show
-    render json: {}, status: :ok
+    higher_level_review = HigherLevelReview.find_by_uuid(params[:id])
+    options = { include: [:veteran, :claimant, :request_issues, :decision_issues] }
+    render json: Api::V3::HigherLevelReviewSerializer.new(higher_level_review, options)
   end
 
   private
@@ -42,7 +43,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
   # Try to create an IntakeError from the exception, otherwise the processor's intake object.
   # If neither has an error_code, the IntakeError will be IntakeError::UNKNOWN_ERROR
   def intake_error_code_from_exception_or_processor(exception)
-    Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([exception, processor&.intake])
+    Api::V3::DecisionReview::IntakeError.new_from_first_error_code([exception, processor&.intake])
   end
 
   def render_errors(errors)

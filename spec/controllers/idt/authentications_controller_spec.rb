@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
-RSpec.describe Idt::AuthenticationsController, type: :controller do
+RSpec.describe Idt::AuthenticationsController, :postgres, type: :controller do
   describe "GET /idt/auth" do
     let(:one_time_key) do
       Idt::Token.generate_one_time_key_and_proposed_token[0]

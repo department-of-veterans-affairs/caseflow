@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
-describe GenericTask, :postgres do
+describe Task, :postgres do
   describe ".available_actions" do
     let(:task) { nil }
     let(:user) { nil }

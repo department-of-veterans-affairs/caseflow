@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Remove a Hearing Day", :postgres do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
-    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(user)
     User.authenticate!(user: user)
   end
 

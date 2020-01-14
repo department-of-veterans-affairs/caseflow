@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe User, :all_dbs do
   let(:css_id) { "TomBrady" }
   let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
@@ -72,7 +69,7 @@ describe User, :all_dbs do
     let!(:other_users) { create_list(:user, 5) }
     before do
       users.each do |user|
-        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        HearingsManagement.singleton.add_user(user)
       end
     end
     it "returns a list of hearing coordinators" do
@@ -312,6 +309,7 @@ describe User, :all_dbs do
       before { JudgeTeam.create_for_judge(user) }
 
       it "assign cases is returned" do
+        user.reload
         is_expected.to include(
           name: "Assign",
           url: format("queue/%<id>s/assign", id: user.id)
@@ -406,7 +404,7 @@ describe User, :all_dbs do
 
     context "when appeal has task assigned to user" do
       let(:appeal) { create(:appeal) }
-      let!(:task) { create(:task, type: "GenericTask", appeal: appeal, assigned_to: user) }
+      let!(:task) { create(:task, appeal: appeal, assigned_to: user) }
 
       it "should return true" do
         expect(user.appeal_has_task_assigned_to_user?(appeal)).to eq(true)
@@ -485,6 +483,14 @@ describe User, :all_dbs do
         expect(User).to_not receive(:find_by_css_id)
         session["user"]["pg_user_id"] = user.id
         expect(subject).to eq user
+      end
+
+      it "resets pg_user_id when it is not found" do
+        user = create(:user, css_id: css_id)
+        expect(User).to receive(:find_by_css_id).and_call_original
+        session["user"]["pg_user_id"] = user.id + 1000 # integer not found
+        expect(subject).to eq user
+        expect(session["user"]["pg_user_id"]).to eq user.id
       end
     end
 
@@ -566,7 +572,7 @@ describe User, :all_dbs do
     let(:user) { create(:user) }
 
     context "when user belongs to one organization but is not an admin" do
-      before { OrganizationsUser.add_user_to_organization(user, org) }
+      before { org.add_user(user) }
       it "should return an empty list" do
         expect(user.administered_teams).to eq([])
       end
@@ -584,7 +590,7 @@ describe User, :all_dbs do
       let(:admin_orgs) { create_list(:organization, 3) }
 
       before do
-        member_orgs.each { |o| OrganizationsUser.add_user_to_organization(user, o) }
+        member_orgs.each { |o| o.add_user(user) }
         admin_orgs.each { |o| OrganizationsUser.make_user_admin(user, o) }
       end
       it "should return a list of all teams user is an admin for" do
@@ -605,7 +611,7 @@ describe User, :all_dbs do
     end
 
     context "when the user is a member of some organizations" do
-      before { OrganizationsUser.add_user_to_organization(user, create(:organization)) }
+      before { create(:organization).add_user(user) }
       it "returns true" do
         expect(subject).to eq(true)
       end
@@ -630,7 +636,7 @@ describe User, :all_dbs do
     end
 
     context "when the user is a member of Case review Organization" do
-      before { OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton) }
+      before { BvaIntake.singleton.add_user(user) }
       it "returns true" do
         expect(subject).to eq(true)
       end
@@ -665,8 +671,8 @@ describe User, :all_dbs do
 
       context "when the user is a member of an org that automatically assigns tasks" do
         before do
-          OrganizationsUser.add_user_to_organization(user, create(:organization))
-          OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+          create(:organization).add_user(user)
+          Colocated.singleton.add_user(user)
         end
 
         context "when marking the user inactive" do

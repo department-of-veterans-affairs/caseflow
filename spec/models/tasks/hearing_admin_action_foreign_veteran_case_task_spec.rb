@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe HearingAdminActionForeignVeteranCaseTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
@@ -23,7 +20,7 @@ describe HearingAdminActionForeignVeteranCaseTask, :postgres do
 
   context "as a hearing user" do
     before do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(user)
 
       RequestStore[:current_user] = user
     end
@@ -44,7 +41,7 @@ describe HearingAdminActionForeignVeteranCaseTask, :postgres do
     let!(:regional_office_code) { "RO50" }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(user)
 
       RequestStore[:current_user] = user
 

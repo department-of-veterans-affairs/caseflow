@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-require "support/database_cleaner"
-
-describe QueueTab, :postgres do
-  # Use AssignedTasksTab as our example since we don't expect QueueTab to ever be instantiated directly.
-  let(:tab) { AssignedTasksTab.new(params) }
+describe QueueTab do
+  # Use OrganizationAssignedTasksTab as our example since we don't expect QueueTab to ever be instantiated directly.
+  let(:tab) { OrganizationAssignedTasksTab.new(params) }
   let(:params) do
     {
       assignee: assignee,
@@ -37,14 +34,6 @@ describe QueueTab, :postgres do
     it "interpolates assignee name in description element of hash" do
       expect(subject[:description]).to eq(format(tab.description, assignee.name))
     end
-
-    context "when the assignee is a user" do
-      let(:assignee) { create(:user) }
-
-      it "interpolates assignee name in description element of hash" do
-        expect(subject[:description]).to eq(tab.description)
-      end
-    end
   end
 
   describe ".new" do
@@ -71,16 +60,15 @@ describe QueueTab, :postgres do
 
       it "is created successfully" do
         expect { subject }.to_not raise_error
-        expect(subject).to be_a(AssignedTasksTab)
+        expect(subject).to be_a(OrganizationAssignedTasksTab)
       end
     end
 
     context "when the assignee is a user" do
       let(:assignee) { create(:user) }
 
-      it "is created successfully" do
-        expect { subject }.to_not raise_error
-        expect(subject).to be_a(AssignedTasksTab)
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
       end
     end
   end
@@ -101,7 +89,7 @@ describe QueueTab, :postgres do
 
       it "returns the class" do
         expect { subject }.to_not raise_error
-        expect(subject).to eq(CompletedTasksTab)
+        expect(subject).to eq(OrganizationCompletedTasksTab)
       end
     end
   end

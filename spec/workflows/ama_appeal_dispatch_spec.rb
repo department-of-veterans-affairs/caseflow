@@ -1,17 +1,14 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe AmaAppealDispatch, :postgres do
   describe "#call" do
     it "stores current POA participant ID in the Appeals table" do
       user = create(:user)
-      OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+      BvaDispatch.singleton.add_user(user)
       appeal = create(:appeal, :advanced_on_docket_due_to_age)
       root_task = create(:root_task, appeal: appeal)
       BvaDispatchTask.create_from_root_task(root_task)
-      claimant = appeal.claimants.first
+      claimant = appeal.claimant
       poa_participant_id = "1234567"
 
       bgs_poa = instance_double(BgsPowerOfAttorney)

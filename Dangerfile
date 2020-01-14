@@ -49,15 +49,42 @@ if !result.empty?
   )
 end
 
-# Remind folks to tag new specs appropriately if they require the DB
-new_specs = git.added_files.grep(/.*_spec\.rb/)
+# If we're performing a migration against a table that is known to be large, make sure
+# we've set connection timeouts appropriately.
+KNOWN_LARGE_TABLES = %w[
+  annotations
+  api_views
+  appeal_views
+  claims_folder_searches
+  documents
+  documents_tags
+  document_views
+  hearing_views
+  versions
+].freeze
 
-if !new_specs.empty?
+large_table_migration_pattern = /(add_index|add_column) :(#{KNOWN_LARGE_TABLES.join('|')})/
+migrations_on_large_tables = git.diff.flat_map do |chunk|
+  chunk.patch.lines.grep(/^\+\s*\w/).select do |added_line|
+    added_line.match?(large_table_migration_pattern)
+  end
+end
+
+if migrations_on_large_tables.any?
   warn(
-    "This PR adds one or more new specs. If the specs use the DB, see if " \
-    "you can rewrite them so they don't use the DB, such as by using `build_stubbed`. " \
-    "If they must use the DB, please remember to add the appropriate require statements " \
-    "and either the `:postgres` or `:all_dbs` tags, as documented in our Wiki: " \
-    "https://github.com/department-of-veterans-affairs/caseflow/wiki/Testing-Best-Practices#tests-that-write-to-the-db"
+    "This PR contains DB migrations on large tables. Be sure to set connection statement_timeout accordingly."
+  )
+end
+
+contains_new_index = git.diff.flat_map do |chunk|
+  chunk.patch.lines.grep(/^\+\s*\w/).select do |added_line|
+    added_line.match?(/add_index/)
+  end
+end
+
+if contains_new_index.any?
+  warn(
+    "This PR contains DB migrations that use add_index. Prefer Caseflow::Migration with add_safe_index instead. " \
+    "See https://github.com/department-of-veterans-affairs/caseflow/wiki/Writing-DB-migrations#index-creation-should-go-in-its-own-migration-file"
   )
 end

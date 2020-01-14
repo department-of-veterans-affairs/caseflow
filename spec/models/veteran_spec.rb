@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
-describe Veteran, :postgres do
+describe Veteran, :all_dbs do
   let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
 
   before do
@@ -370,6 +367,35 @@ describe Veteran, :postgres do
     end
   end
 
+  context "#relationship_with_participant_id" do
+    let(:relationship_participant_id) { "2019111201" }
+    let(:other_participant_id) { "2019111202" }
+
+    before do
+      allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+        [
+          {
+            first_name: "Ilse",
+            last_name: "Cerveny",
+            ptcpnt_id: other_participant_id
+          },
+          {
+            first_name: "Josephine",
+            last_name: "Clark",
+            ptcpnt_id: relationship_participant_id
+          }
+        ]
+      )
+    end
+
+    subject { veteran.relationship_with_participant_id(relationship_participant_id) }
+
+    it "returns the matching relationship" do
+      expect(subject).to_not be_nil
+      expect(subject.participant_id).to eq relationship_participant_id
+    end
+  end
+
   context "#periods_of_service" do
     subject { veteran.periods_of_service }
 
@@ -439,55 +465,6 @@ describe Veteran, :postgres do
            char_of_svc_code: nil }]
       end
       it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003"] }
-    end
-  end
-
-  context "#accessible_appeals_for_poa" do
-    let!(:appeals) do
-      [
-        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
-        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)]),
-        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: vbms_id))
-      ]
-    end
-
-    let(:vbms_id) { LegacyAppeal.convert_file_number_to_vacols(veteran.file_number) }
-    let(:participant_id) { "1234" }
-    let(:participant_id_without_vso) { "5678" }
-    let(:vso_participant_id) { "2452383" }
-    let(:participant_ids) { [participant_id, participant_id_without_vso] }
-
-    let(:poas) do
-      [
-        {
-          ptcpnt_id: participant_id,
-          power_of_attorney: {
-            legacy_poa_cd: "071",
-            nm: "PARALYZED VETERANS OF AMERICA, INC.",
-            org_type_nm: "POA National Organization",
-            ptcpnt_id: vso_participant_id
-          }
-        },
-        {
-          ptcpnt_id: participant_id_without_vso,
-          power_of_attorney: {}
-        }
-      ]
-    end
-
-    before do
-      stub_const("BGSService", ExternalApi::BGSService)
-      veteran.update!(participant_id: participant_id)
-
-      allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
-        .with(array_including(participant_ids)).and_return(poas)
-    end
-
-    it "returns only the case with vso assigned to it" do
-      returned_appeals = veteran.accessible_appeals_for_poa([vso_participant_id, "other vso participant id"])
-      expect(returned_appeals.count).to eq 2
-      expect(returned_appeals.first).to eq appeals.first
-      expect(returned_appeals.last).to eq appeals.last
     end
   end
 

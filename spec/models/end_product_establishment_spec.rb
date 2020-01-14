@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe EndProductEstablishment, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -821,6 +818,18 @@ describe EndProductEstablishment, :postgres do
           expect(end_product_establishment.code).to eq "030HLRR"
           expect(epcu.code).to eq "040SCNR"
           expect(epcu.created_at).to eq(Time.zone.now)
+        end
+
+        context "when the new claim_type_code has already been saved" do
+          it "does not create a new record" do
+            end_product_establishment.end_product_code_updates.create(code: "040SCNR", created_at: 1.hour.ago)
+
+            subject
+
+            epcus = end_product_establishment.end_product_code_updates
+            expect(epcus.count).to eq 1
+            expect(epcus.first.created_at).to eq 1.hour.ago
+          end
         end
       end
 

@@ -32,8 +32,16 @@ FactoryBot.define do
       roles { ["Mail Intake"] }
     end
 
+    trait :inactive do
+      status { "inactive" }
+    end
+
     trait :vso_role do
       roles { ["VSO"] }
+    end
+
+    trait :judge do
+      roles { ["Hearing Prep"] }
     end
 
     after(:create) do |user, evaluator|

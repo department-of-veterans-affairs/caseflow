@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe ContestableIssue, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
@@ -372,6 +369,21 @@ describe ContestableIssue, :postgres do
         let(:closed_at) { Time.zone.now }
 
         it { is_expected.to be_nil }
+      end
+    end
+  end
+
+  context "#timely?" do
+    subject { ContestableIssue.from_rating_issue(rating_issue, decision_review) }
+
+    it "should equal true" do
+      expect(subject.timely?).to eq true
+    end
+
+    context "when untimely" do
+      let(:promulgation_date) { Time.zone.today - 373.days }
+      it "should equal false" do
+        expect(subject.timely?).to eq false
       end
     end
   end

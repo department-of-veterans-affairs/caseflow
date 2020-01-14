@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe "Withdrawing an appeal", :postgres do
   context "appeal has one request issue and it is withdrawn" do
     it "allows it to be distributed" do
@@ -68,7 +65,7 @@ describe "Withdrawing an appeal", :postgres do
   end
 
   def add_blocking_mail_task_to_appeal
-    OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
+    MailTeam.singleton.add_user(user)
     CongressionalInterestMailTask.create_from_params(
       {
         appeal: appeal,

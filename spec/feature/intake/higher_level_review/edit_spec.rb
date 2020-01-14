@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "Higher Level Review Edit issues", :all_dbs do
   include IntakeHelpers
 
@@ -738,6 +735,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       it "disallows editing" do
         visit "#{url_path}/#{decision_review.uuid}/edit"
 
+        expect(page).to have_content("Review not editable")
         expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
         expect(page).to have_link("the job page")
 
@@ -961,7 +959,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(page).to have_content("5 issues")
       expect(page).to have_content("This is an unidentified issue")
       expect(find_intake_issue_by_number(5)).to have_css(".issue-unidentified")
-      expect_ineligible_issue(5)
 
       # add issue before AMA
       click_intake_add_issue
@@ -1299,7 +1296,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
   context "when remove decision reviews is enabled" do
     before do
-      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+      non_comp_org.add_user(current_user)
 
       # skip the sync call since all edit requests require resyncing
       # currently, we're not mocking out vbms and bgs
@@ -1385,7 +1382,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     context "when all caseflow decision reviews" do
       before do
         education_org = create(:business_line, name: "Education", url: "education")
-        OrganizationsUser.add_user_to_organization(current_user, education_org)
+        education_org.add_user(current_user)
       end
 
       let!(:benefit_type) { "education" }
@@ -1410,7 +1407,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     context "show alert when entire review is withdrawn" do
       before do
         education_org = create(:business_line, name: "Education", url: "education")
-        OrganizationsUser.add_user_to_organization(current_user, education_org)
+        education_org.add_user(current_user)
       end
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }

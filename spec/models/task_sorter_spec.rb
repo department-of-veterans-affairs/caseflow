@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe TaskSorter, :all_dbs do
   describe ".new" do
     subject { TaskSorter.new(args) }
@@ -36,7 +33,7 @@ describe TaskSorter, :all_dbs do
     end
 
     context "when the input tasks argument is not an ActiveRecord::Relation object" do
-      let(:args) { { tasks: [create(:generic_task)] } }
+      let(:args) { { tasks: [create(:ama_task)] } }
 
       it "raises an error" do
         expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
@@ -46,7 +43,7 @@ describe TaskSorter, :all_dbs do
     context "when all input arguments are valid" do
       let(:column) { QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name) }
       let(:sort_order) { Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC }
-      let(:tasks) { Task.where(id: create_list(:generic_task, 6).pluck(:id)) }
+      let(:tasks) { Task.where(id: create_list(:ama_task, 6).pluck(:id)) }
 
       let(:args) { { column: column, sort_order: sort_order, tasks: tasks } }
 
@@ -72,7 +69,7 @@ describe TaskSorter, :all_dbs do
     end
 
     context "when there are tasks and we specify a column to sort by" do
-      let(:tasks) { Task.where(id: create_list(:generic_task, 14).pluck(:id)) }
+      let(:tasks) { Task.where(id: create_list(:ama_task, 14).pluck(:id)) }
       let(:args) { { tasks: tasks, column: QueueColumn.from_name(column_name) } }
 
       context "when sorting by closed_at date" do
@@ -140,7 +137,7 @@ describe TaskSorter, :all_dbs do
 
       context "when sorting by task type" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name }
-        let(:tasks) { Task.where(id: create_list(:generic_task, task_types.length).pluck(:id)) }
+        let(:tasks) { Task.where(id: create_list(:ama_task, task_types.length).pluck(:id)) }
 
         let(:task_types) do
           [
@@ -158,7 +155,7 @@ describe TaskSorter, :all_dbs do
         end
 
         before do
-          OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+          Colocated.singleton.add_user(create(:user))
           tasks.each_with_index { |task, index| task.update!(type: task_types[index].name) }
         end
 
@@ -236,7 +233,7 @@ describe TaskSorter, :all_dbs do
 
       context "when sorting by assigned to column" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name }
-        let(:tasks) { Task.where(id: create_list(:generic_task, 5).pluck(:id)) }
+        let(:tasks) { Task.where(id: create_list(:ama_task, 5).pluck(:id)) }
 
         before do
           users = []
@@ -289,7 +286,7 @@ describe TaskSorter, :all_dbs do
         let(:org) { create(:organization) }
 
         before do
-          OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+          Colocated.singleton.add_user(create(:user))
 
           vacols_case_types = [:type_original, :type_post_remand, :type_cavc_remand]
           vacols_case_types.each do |case_type|
