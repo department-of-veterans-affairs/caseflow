@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import querystring from 'querystring';
 
 import {
@@ -7,6 +8,7 @@ import {
   CaseDetailsInformation,
   SuggestedHearingLocation,
 } from './AssignHearingsFields';
+import { NoVeteransToAssignMessage } from './Messages';
 import {
   getFacilityType,
 } from '../../../components/DataDropdowns/AppealHearingLocations';
@@ -21,6 +23,15 @@ const TASKS_ENDPOINT = '/hearings/schedule_hearing_tasks';
 const FILTER_PARAM_KEY = `${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`;
 
 export default class AssignHearingsTable extends React.PureComponent {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showNoVeteransToAssignError: false
+    };
+  }
+
   getSuggestedHearingLocation = (locations) => {
     if (!locations || locations.length === 0) {
       return '';
@@ -138,6 +149,13 @@ export default class AssignHearingsTable extends React.PureComponent {
     return columns;
   }
 
+  // Callback when the QueueTable receives tasks from the API. If there are no
+  // tasks for the table to display at all (not just for the current page),
+  // update this component to show an error.
+  onPageLoaded = ({ total_task_count }) => {
+    this.setState({ showNoVeteransToAssignError: total_task_count === 0 });
+  }
+
   render = () => {
     const { columns, tabName, selectedRegionalOffice } = this.props;
     const qs = querystring.stringify({
@@ -145,8 +163,13 @@ export default class AssignHearingsTable extends React.PureComponent {
       regional_office_key: selectedRegionalOffice
     });
     const tabPaginationOptions = {
-      [QUEUE_CONFIG.PAGE_NAME_REQUEST_PARAM]: 1
+      [QUEUE_CONFIG.PAGE_NAME_REQUEST_PARAM]: 1,
+      onPageLoaded: this.onPageLoaded
     };
+
+    if (this.state.showNoVeteransToAssignError) {
+      return <NoVeteransToAssignMessage />;
+    }
 
     return (
       <QueueTable
