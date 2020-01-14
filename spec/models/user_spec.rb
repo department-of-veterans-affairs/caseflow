@@ -319,9 +319,12 @@ describe User, :all_dbs do
 
     context "when the user is a judge team admin" do
       let(:judge) { create(:user) }
-      let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+      let!(:judge_team) { create(:judge_team) }
 
-      before { OrganizationsUser.make_user_admin(user, judge_team) }
+      before do
+        OrganizationsUser.make_user_admin(judge, judge_team)
+        OrganizationsUser.make_user_admin(user, judge_team)
+      end
 
       it "does not return assigned cases link for judge" do
         is_expected.to be_empty
