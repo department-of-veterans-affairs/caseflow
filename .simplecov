@@ -10,6 +10,8 @@ if ENV["RAILS_ENV"] == "test"
     add_filter "config/environments/test.rb"
     add_filter "lib/tasks"
     add_filter "app/controllers/errors_controller.rb"
+    add_filter "app/services/external_api/vbms_service.rb"
+    add_filter "app/services/external_api/bgs_service.rb"
     add_filter "spec/factories"
     add_filter "spec/"
   end
