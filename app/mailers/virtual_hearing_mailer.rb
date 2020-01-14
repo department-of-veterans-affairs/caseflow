@@ -9,7 +9,11 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
 
-    attachments[calendar_invite_name] = cancellation_calendar_invite
+    attachments.inline[calendar_invite_name] = {
+      content_type: "text/calendar; charset=UTF-8; method=REQUEST",
+      encoding: '7bit',
+      content: cancellation_calendar_invite,
+    }
 
     mail(to: recipient.email, subject: "Updated location: Your hearing with the Board of Veterans' Appeals")
   end
@@ -19,7 +23,11 @@ class VirtualHearingMailer < ActionMailer::Base
     @virtual_hearing = virtual_hearing
     @link = link
 
-    attachments[calendar_invite_name] = confirmation_calendar_invite
+    attachments.inline[calendar_invite_name] = {
+      content_type: "text/calendar; charset=UTF-8; method=REQUEST",
+      encoding: '7bit',
+      content: confirmation_calendar_invite,
+    }
 
     mail(to: recipient.email, subject: confirmation_subject)
   end
@@ -29,7 +37,11 @@ class VirtualHearingMailer < ActionMailer::Base
     @virtual_hearing = virtual_hearing
     @link = link
 
-    attachments[calendar_invite_name] = confirmation_calendar_invite
+    attachments.inline[calendar_invite_name] = {
+      content_type: "text/calendar; charset=UTF-8; method=REQUEST",
+      encoding: '7bit',
+      content: confirmation_calendar_invite,
+    }
 
     mail(
       to: recipient.email,
