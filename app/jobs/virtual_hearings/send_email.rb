@@ -28,17 +28,18 @@ class VirtualHearings::SendEmail
   end
 
   def send_email(recipient)
-    if type == :confirmation
+    case type.to_s
+    when "confirmation"
       VirtualHearingMailer.confirmation(
         mail_recipient: mail_recipients[recipient],
         virtual_hearing: virtual_hearing
       ).deliver_now
-    elsif type == :cancellation
+    when "cancellation"
       VirtualHearingMailer.cancellation(
         mail_recipient: mail_recipients[recipient],
         virtual_hearing: virtual_hearing
       ).deliver_now
-    elsif type == :updated_time_confirmation
+    when "updated_time_confirmation"
       VirtualHearingMailer.updated_time_confirmation(
         mail_recipient: mail_recipients[recipient],
         virtual_hearing: virtual_hearing
