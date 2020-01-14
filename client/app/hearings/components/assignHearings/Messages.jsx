@@ -7,15 +7,15 @@ import StatusMessage from '../../../components/StatusMessage';
 export const NoUpcomingHearingDayMessage = () => (
   <div {...css({ marginTop: 50 })}>
     <StatusMessage
-      title={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER}
+      title={COPY.ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_HEADER}
       type="alert"
-      messageText={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE}
+      messageText={COPY.ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_MESSAGE}
       wrapInAppSegment={false}
     />
   </div>
 );
 
-export const NoVeteransToAssign = () => (
+export const NoVeteransToAssignMessage = () => (
   <div>
     <StatusMessage
       title= {COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER}
