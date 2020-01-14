@@ -3,17 +3,17 @@
 describe TaskActionRepository, :all_dbs do
   describe "#assign_to_user_data" do
     let(:organization) { create(:organization, name: "Organization") }
-    let(:users) { create_list(:user, 3) }
+    let(:users) { create_list(:user, 3) + create_list(:user, 2, :inactive) }
 
     before do
-      allow(organization).to receive(:users).and_return(users)
+      users.each { |user| organization.add_user(user) }
     end
 
     context "when assigned_to is an organization" do
       let(:task) { create(:ama_task, assigned_to: organization) }
 
-      it "should return all members" do
-        match_users = users.map { |u| { label: u.full_name, value: u.id } }
+      it "should return all active members" do
+        match_users = users.reject(&:inactive?).map { |u| { label: u.full_name, value: u.id } }
         expect(TaskActionRepository.assign_to_user_data(task)[:options]).to match_array match_users
       end
 
@@ -27,7 +27,7 @@ describe TaskActionRepository, :all_dbs do
       let(:task) { create(:ama_task, assigned_to: users.first, parent: parent) }
 
       it "should return all members except user" do
-        user_output = users[1..users.length - 1].map { |u| { label: u.full_name, value: u.id } }
+        user_output = users[1..users.length - 1].reject(&:inactive?).map { |u| { label: u.full_name, value: u.id } }
         expect(TaskActionRepository.assign_to_user_data(task)[:options]).to match_array(user_output)
       end
     end

@@ -12,9 +12,10 @@ class OrganizationsUser < ApplicationRecord
   # Use instead: organization.add_user(user)
 
   def self.make_user_admin(user, organization)
-    org_user = OrganizationsUser.existing_record(user, organization)
-    org_user = organization.add_user(user) unless org_user
-    org_user.update!(admin: true)
+    org_user = OrganizationsUser.existing_record(user, organization) || organization.add_user(user)
+    org_user.tap do |org_user|
+      org_user.update!(admin: true)
+    end
   end
 
   def self.remove_admin_rights_from_user(user, organization)
