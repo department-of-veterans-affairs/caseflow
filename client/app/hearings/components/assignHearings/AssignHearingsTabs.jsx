@@ -63,44 +63,48 @@ export class AssignHearingsTabs extends React.PureComponent {
     const availableSlots = _.get(selectedHearingDay, 'totalSlots', 0) - Object.keys(hearingsForSelected).length;
 
     // Remove when pagination lands (#11757)
-    return <div className="usa-width-three-fourths">
-      {!_.isNil(selectedHearingDay) && <h1>
-        {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
-          ${room} (${availableSlots} slots remaining)`}
-      </h1>}
-      <TabWindow
-        name="scheduledHearings-tabwindow"
-        defaultPage={this.getCurrentTabIndex()}
-        tabs={[
-          {
-            label: 'Scheduled Veterans',
-            page: <UpcomingHearingsTable
-              selectRegionalOffice={selectedRegionalOffice}
-              selectedHearingDay={selectedHearingDay}
-              hearings={hearingsForSelected}
-            />
-          },
-          {
-            label: 'Legacy Veterans Waiting',
-            page: <AvailableVeteransTable
-              selectedHearingDay={selectedHearingDay}
-              selectedRegionalOffice={selectedRegionalOffice}
-              displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
-              tabName={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
-            />
-          },
-          {
-            label: 'AMA Veterans Waiting',
-            page: <AvailableVeteransTable
-              selectedHearingDay={selectedHearingDay}
-              selectedRegionalOffice={selectedRegionalOffice}
-              displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
-              tabName={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
-            />
-          }
-        ]}
-      />
-    </div>;
+    return (
+      <div className="usa-width-three-fourths">
+        {!_.isNil(selectedHearingDay) && 
+          <h1>
+            {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
+              ${room} (${availableSlots} slots remaining)`}
+          </h1>
+        }
+        <TabWindow
+          name="scheduledHearings-tabwindow"
+          defaultPage={this.getCurrentTabIndex()}
+          tabs={[
+            {
+              label: 'Scheduled Veterans',
+              page: <UpcomingHearingsTable
+                selectRegionalOffice={selectedRegionalOffice}
+                selectedHearingDay={selectedHearingDay}
+                hearings={hearingsForSelected}
+              />
+            },
+            {
+              label: 'Legacy Veterans Waiting',
+              page: <AvailableVeteransTable
+                selectedHearingDay={selectedHearingDay}
+                selectedRegionalOffice={selectedRegionalOffice}
+                displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
+                tabName={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
+              />
+            },
+            {
+              label: 'AMA Veterans Waiting',
+              page: <AvailableVeteransTable
+                selectedHearingDay={selectedHearingDay}
+                selectedRegionalOffice={selectedRegionalOffice}
+                displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
+                tabName={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
+              />
+            }
+          ]}
+        />
+      </div>
+    );
   }
 }
 
