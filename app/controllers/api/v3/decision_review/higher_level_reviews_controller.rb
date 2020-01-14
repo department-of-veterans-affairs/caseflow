@@ -33,12 +33,7 @@ class Api::V3::DecisionReview::HigherLevelReviewsController < Api::V3::BaseContr
   private
 
   def processor
-    return @processor if @processor
-    inputs = params
-    if inputs.dig('data','attributes','veteran') && params.dig('data','attributes','veteran','ssn')
-      inputs['data']['attributes']['veteran']['fileNumberOrSsn'] = BGSService.new.fetch_file_number_by_ssn(params.dig('data','attributes','veteran','ssn'))
-    end
-    @processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(inputs, User.api_user)
+    @processor ||= Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(params, User.api_user)
   end
 
   def intake_status

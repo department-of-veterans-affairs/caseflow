@@ -136,12 +136,10 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     end
 
     context "using a reserved veteran file number while in prod" do
-      let(:attributes) { default_attributes.merge(veteran: { ssn: "123456789" }) }
-      let(:before_post) { allow(Rails).to receive(:deploy_env?).with(:prod).and_return(true) }
+      let(:before_post) { allow_any_instance_of(IntakeStartValidator).to receive(:file_number_reserved?).and_return(true) }
       let(:expected_error_code) { "reserved_veteran_file_number" }
 
       it "should return reserved_veteran_file_number error" do
-        skip "this will fail for missing a fail number"
         expect(response_json).to eq expected_error_json
         expect(response).to have_http_status expected_error_status
       end
@@ -155,7 +153,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         create(:user)
       )
       processor.run!
-      puts processor.errors.map(&:to_h)
       processor.higher_level_review
     end
 
