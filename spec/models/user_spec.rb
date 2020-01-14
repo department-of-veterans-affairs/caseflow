@@ -319,15 +319,17 @@ describe User, :all_dbs do
 
     context "when the user is a judge team admin" do
       let(:judge) { create(:user) }
-      let!(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
 
-      before { OrganizationsUser.make_user_admin(user, judge_team.reload) }
+      before do
+        judge_team = JudgeTeam.for_judge(judge)
+        OrganizationsUser.make_user_admin(user, judge_team)
+      end
 
       it "returns the judge team the user is an admin on" do
         is_expected.to include(
           name: "Assign #{judge.css_id}",
           url: format("queue/%<id>s/assign", id: judge.id)
-        ), judge: judge, user: user, judge_team: judge_team.admins, jt_judge: judge_team.judge
+        ), judge: judge, user: user, judge_team: judge_team, jt_judge: judge_team.judge
         is_expected.not_to include(
           name: "Assign #{user.css_id}",
           url: format("queue/%<id>s/assign", id: user.id)
