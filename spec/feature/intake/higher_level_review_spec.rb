@@ -1374,6 +1374,8 @@ feature "Higher-Level Review", :all_dbs do
             FeatureToggle.enable!(:unidentified_issue_decision_date)
           end
 
+          let(:decision_date) { 30.days.ago.to_date.mdY }
+
           scenario "show unidentified modal" do
             start_higher_level_review(veteran, legacy_opt_in_approved: true)
             visit "/intake/add_issues"
@@ -1426,7 +1428,7 @@ feature "Higher-Level Review", :all_dbs do
             expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
           end
 
-          scenario "checkbox on unidentified issues modal on edit page" do
+          fscenario "Verify checkbox on unidentified issues modal on edit page is enabled" do
             start_higher_level_review(veteran, legacy_opt_in_approved: true)
             visit "/intake/add_issues"
             click_intake_add_issue
@@ -1448,7 +1450,22 @@ feature "Higher-Level Review", :all_dbs do
 
             expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
             click_intake_no_matching_issues
-            expect(page).to have_content("Verify record of prior decision")
+            expect(find_field("Verify record of prior decision", visible: false)).to_not be_checked
+
+            find("label", text: "Verify record of prior decision").click
+            expect(page).to have_button("Next", disabled: true)
+            expect(page).not_to have_content("Decision date (optional)")
+            expect(page).not_to have_content("Notes (optional)")
+
+            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            fill_in "Decision date", with: decision_date
+            fill_in "Notes", with: "Testing unidentified issues"
+            click_on "Next"
+
+            expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+            expect(page).to have_content("impairment of hip")
+            add_intake_rating_issue("ankylosis of hip")
+            expect(page).to have_content("Testing unidentified issues")
           end
         end
       end

@@ -134,10 +134,6 @@ class UnidentifiedIssuesModal extends React.Component {
         <p>Please look for a record of the prior decision matching the description
     and decision date of the issue that was submitted by the veteran.</p>
         <br />
-        <p>If you were unable to find a record of the prior decision,
-    please leave the checkbox unchecked and fill in the description
-    and decision date submitted by the veteran. </p>
-        <br />
         <p>If found, please check below that it is verified. Use the prior decision's information
         to enter the description and decision date. Update the notes with information on the record,
         such as the location, ID, or document title.
