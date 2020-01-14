@@ -34,11 +34,25 @@ describe OrganizationsUser, :postgres do
     end
   end
 
-  describe ".make_user_admin" do
+  fdescribe ".make_user_admin" do
     subject { OrganizationsUser.make_user_admin(user, organization) }
 
     it "returns an instance of OrganizationsUser" do
       expect(subject).to be_a(OrganizationsUser)
+    end
+  end
+
+  describe ".modify_decision_drafting" do
+    before { FeatureToggle.enable!(:use_judge_team_role) }
+    after { FeatureToggle.disable!(:use_judge_team_role) }
+    let(:judge) { create(:user) }
+    let(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let(:judge_team_org_user) { judge_team.add_user(user) }
+
+    it "toggles the judge team role" do
+      expect(judge_team_org_user.judge_team_role.type).to eq(DecisionDraftingAttorney.name)
+      OrganizationsUser.modify_decision_drafting(judge_team_org_user, judge_team)
+      expect(judge_team_org_user.reload.judge_team_role.type).to eq(nil)
     end
   end
 end
