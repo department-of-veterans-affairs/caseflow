@@ -169,7 +169,7 @@ export default class AssignHearingsTable extends React.PureComponent {
       regional_office_key: selectedRegionalOffice
     });
     const tabPaginationOptions = {
-      [QUEUE_CONFIG.PAGE_NAME_REQUEST_PARAM]: 1,
+      [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: 1,
       onPageLoaded: this.onPageLoaded
     };
 
