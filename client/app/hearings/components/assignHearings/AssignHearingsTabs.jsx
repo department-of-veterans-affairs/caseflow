@@ -14,19 +14,6 @@ import TabWindow from '../../../components/TabWindow';
 import UpcomingHearingsTable from './UpcomingHearingsTable';
 
 const AvailableVeteransTable = ({ style = {}, selectedHearingDay, ...props }) => {
-  /*
-  if (_.isEmpty(rows)) {
-    return <div>
-      <StatusMessage
-        title= {COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER}
-        type="alert"
-        messageText={COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE}
-        wrapInAppSegment={false}
-      />
-    </div>;
-  }
-  */
-
   return (
     <span {...style}>
       <AssignHearingsTable selectedHearingDay={selectedHearingDay} {...props} />
