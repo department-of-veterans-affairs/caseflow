@@ -1,18 +1,14 @@
 import { connect } from 'react-redux';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 
-import { AppealDocketTag, SuggestedHearingLocation, CaseDetailsInformation } from './AssignHearingsFields';
-import { NoUpcomingHearingDayMessage } from './Messages';
-import { getFacilityType } from '../../../components/DataDropdowns/AppealHearingLocations';
 import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
-import { renderAppealType } from '../../../queue/utils';
+import { getQueryParams } from '../../../util/QueryParamsUtil';
 import AssignHearingsTable from './AssignHearingsTable';
-import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
-import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
+import QUEUE_CONFIG, {
+  LEGACY_ASSIGN_HEARINGS_TAB_NAME
 } from '../../../../constants/QUEUE_CONFIG.json';
 import TabWindow from '../../../components/TabWindow';
 import UpcomingHearingsTable from './UpcomingHearingsTable';
@@ -56,6 +52,18 @@ export class AssignHearingsTabs extends React.PureComponent {
     return docketCutoffLineStyle(indexOfLine, endOfNextMonth.format('MMMM YYYY'));
   }
 
+  getCurrentTabIndex() {
+    const tabParam = getQueryParams(window.location.search)[QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM];
+
+    if (tabParam === LEGACY_ASSIGN_HEARINGS_TAB_NAME) {
+      return 1;
+    } else if (tabParam === QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME) {
+      return 2;
+    }
+
+    return 0;
+  }
+
   render() {
     const {
       selectedHearingDay,
@@ -75,6 +83,7 @@ export class AssignHearingsTabs extends React.PureComponent {
       </h1>}
       <TabWindow
         name="scheduledHearings-tabwindow"
+        defaultPage={this.getCurrentTabIndex()}
         tabs={[
           {
             label: 'Scheduled Veterans',

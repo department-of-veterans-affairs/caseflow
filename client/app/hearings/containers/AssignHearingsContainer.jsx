@@ -1,26 +1,26 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import COPY from '../../../COPY.json';
-import _ from 'lodash';
+import { connect } from 'react-redux';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import ApiUtil from '../../util/ApiUtil';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+
+import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';
+import { RegionalOfficeDropdown } from '../../components/DataDropdowns';
+import { encodeQueryParams, getQueryParams } from '../../util/QueryParamsUtil';
 import { getMinutesToMilliseconds } from '../../util/DateUtil';
 import {
   onReceiveUpcomingHearingDays,
-  onSelectedHearingDayChange,
-  onReceiveAppealsReadyForHearing
+  onSelectedHearingDayChange
 } from '../actions/hearingScheduleActions';
 import { onRegionalOfficeChange } from '../../components/common/actions';
-import LoadingDataDisplay from '../../components/LoadingDataDisplay';
-import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
-import { RegionalOfficeDropdown } from '../../components/DataDropdowns';
+import ApiUtil from '../../util/ApiUtil';
 import AssignHearings from '../components/assignHearings/AssignHearings';
-import { getQueryParams } from '../../util/QueryParamsUtil';
+import COPY from '../../../COPY.json';
+import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 
 const centralOfficeStaticEntry = [{
   label: 'Central',
@@ -58,13 +58,16 @@ class AssignHearingsContainer extends React.PureComponent {
 
   onRegionalOfficeChange = (value, label) => {
     if (value) {
-      window.history.replaceState('', '', `?roValue=${value}`);
+      const currentQueryParams = getQueryParams(window.location.search);
+
+      // Replace regional_office_key parameter with the new value. Do not overwrite
+      // any parameters that are currently set in the query string.
+      currentQueryParams['regional_office_key'] = value;
+
+      window.history.replaceState('', '', encodeQueryParams(currentQueryParams));
     }
 
-    this.props.onRegionalOfficeChange({
-      label,
-      value
-    });
+    this.props.onRegionalOfficeChange({ label, value });
   }
 
   loadUpcomingHearingDays = () => {
@@ -86,16 +89,6 @@ class AssignHearingsContainer extends React.PureComponent {
     });
   };
 
-  getNoUpcomingError = () => {
-    if (this.props.selectedRegionalOffice) {
-      return <div className="usa-input-error-message usa-input-error" {...smallTopMargin}>
-        <span>{this.props.selectedRegionalOffice.value && this.props.selectedRegionalOffice.label} has
-          no upcoming hearing days.</span><br />
-        <p>Please verify that this RO's hearing days are in the current schedule.</p>
-      </div>;
-    }
-  }
-
   render = () => {
     const { selectedRegionalOffice } = this.props;
     const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
@@ -113,7 +106,7 @@ class AssignHearingsContainer extends React.PureComponent {
           <RegionalOfficeDropdown
             onChange={this.onRegionalOfficeChange}
             validateValueOnMount
-            value={roValue || getQueryParams(window.location.search).roValue}
+            value={roValue || getQueryParams(window.location.search).regional_office_key}
             staticOptions={centralOfficeStaticEntry}
           />
         </section>
