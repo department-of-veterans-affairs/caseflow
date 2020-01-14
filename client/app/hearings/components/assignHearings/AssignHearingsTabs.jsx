@@ -13,14 +13,11 @@ import { renderAppealType } from '../../../queue/utils';
 import AssignHearingsTable from './AssignHearingsTable';
 import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
+} from '../../../../constants/QUEUE_CONFIG.json';
 import TabWindow from '../../../components/TabWindow';
 import UpcomingHearingsTable from './UpcomingHearingsTable';
 
 const AvailableVeteransTable = ({ style = {}, selectedHearingDay, ...props }) => {
-  if (_.isNil(selectedHearingDay)) {
-    return <NoUpcomingHearingDayMessage />;
-  }
-
   /*
   if (_.isEmpty(rows)) {
     return <div>

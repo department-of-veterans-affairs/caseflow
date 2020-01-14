@@ -79,10 +79,6 @@ export default class UpcomingHearingsTable extends React.PureComponent {
   render() {
     const { hearings, selectedHearingDay } = this.props;
 
-    if (_.isNil(selectedHearingDay)) {
-      return <NoUpcomingHearingDayMessage />;
-    }
-
     return (
       <div>
         <Link to={`/schedule/docket/${selectedHearingDay.id}`}>
