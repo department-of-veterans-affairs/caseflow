@@ -342,12 +342,12 @@ class User < ApplicationRecord
 
   def user_reactivation
     # We do not automatically re-add organization membership for reactivated users
-    JudgeTeam.for_judge(self)&.update!(status: Constants.USER_STATUSES.active, status_updated_at: Time.zone.now)
+    JudgeTeam.for_judge(self)&.active!
   end
 
   def user_inactivation
     remove_user_from_auto_assign_orgs
-    JudgeTeam.for_judge(self)&.update!(status: Constants.USER_STATUSES.inactive, status_updated_at: Time.zone.now)
+    JudgeTeam.for_judge(self)&.inactive!
   end
 
   def remove_user_from_auto_assign_orgs
