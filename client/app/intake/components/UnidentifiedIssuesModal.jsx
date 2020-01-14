@@ -14,7 +14,6 @@ class UnidentifiedIssuesModal extends React.Component {
     this.state = {
       description: '',
       notes: '',
-      disabled: true,
       checkboxSelected: false
     };
   }
@@ -69,7 +68,7 @@ class UnidentifiedIssuesModal extends React.Component {
     this.setState({ checkboxSelected: event });
   };
 
-  saveDisable =() => {
+  saveDisabled = () => {
 
     const description = this.isDescriptionValid(this.state.description);
     const decisionDate = this.state.decisionDate && !this.errorOnDecisionDate(this.state.decisionDate);
@@ -91,7 +90,7 @@ class UnidentifiedIssuesModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: this.saveDisable()
+        disabled: this.saveDisabled()
       }
     ];
 

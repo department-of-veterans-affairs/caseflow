@@ -1428,7 +1428,7 @@ feature "Higher-Level Review", :all_dbs do
             expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
           end
 
-          fscenario "Verify checkbox on unidentified issues modal on edit page is enabled" do
+          scenario "Verify checkbox on unidentified issues modal on edit page is enabled" do
             start_higher_level_review(veteran, legacy_opt_in_approved: true)
             visit "/intake/add_issues"
             click_intake_add_issue
