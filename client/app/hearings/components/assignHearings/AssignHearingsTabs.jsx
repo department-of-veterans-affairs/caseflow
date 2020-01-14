@@ -117,16 +117,6 @@ export class AssignHearingsTabs extends React.PureComponent {
   }
 }
 
-const appealPropTypes = PropTypes.shape({
-  attributes: PropTypes.shape({
-    caseType: PropTypes.string,
-    docketNumber: PropTypes.string,
-    aod: PropTypes.bool,
-    availableHearingLocations: PropTypes.array,
-    externalAppealId: PropTypes.string
-  })
-});
-
 AssignHearingsTabs.propTypes = {
   selectedHearingDay: PropTypes.shape({
     hearings: PropTypes.object,
