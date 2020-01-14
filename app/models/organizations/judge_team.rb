@@ -5,7 +5,6 @@ class JudgeTeam < Organization
     def for_judge(user)
       if use_judge_team_roles?
         administered_judge_teams = user.administered_judge_teams
-        return unless administered_judge_teams.any?
 
         # Find the one, if any, we're the JudgeTeamLead for
         administered_judge_teams.detect { |jt| user == jt.judge }
