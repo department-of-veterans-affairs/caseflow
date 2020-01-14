@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
-import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import { RegionalOfficeDropdown } from '../../components/DataDropdowns';
 import { encodeQueryParams, getQueryParams } from '../../util/QueryParamsUtil';
 import { getMinutesToMilliseconds } from '../../util/DateUtil';
@@ -27,28 +27,10 @@ const centralOfficeStaticEntry = [{
   value: 'C'
 }];
 
-const smallTopMargin = css({
-  fontStyle: 'italic',
-  '.usa-input-error': {
-    marginTop: '1rem'
-  },
-  '.usa-input-error-message': {
-    paddingBottom: '0',
-    paddingTop: '0',
-    right: '0'
-  },
-  '& > p': {
-    fontWeight: '500',
-    color: COLORS.RED_DARK,
-    marginBottom: '0',
-    fontSize: '1.7rem',
-    marginTop: '1px'
-  }
-});
-
 const roSelectionStyling = css({
   marginTop: '10px',
-  marginBottom: '10px' });
+  marginBottom: '10px'
+});
 
 class AssignHearingsContainer extends React.PureComponent {
 
@@ -62,12 +44,13 @@ class AssignHearingsContainer extends React.PureComponent {
 
       // Replace regional_office_key parameter with the new value. Do not overwrite
       // any parameters that are currently set in the query string.
-      currentQueryParams['regional_office_key'] = value;
+      currentQueryParams.regional_office_key = value;
 
       window.history.replaceState('', '', encodeQueryParams(currentQueryParams));
     }
 
-    this.props.onRegionalOfficeChange({ label, value });
+    this.props.onRegionalOfficeChange({ label,
+      value });
   }
 
   loadUpcomingHearingDays = () => {

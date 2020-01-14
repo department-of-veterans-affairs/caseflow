@@ -186,15 +186,23 @@ export default class AssignHearingsTable extends React.PureComponent {
         slowReRendersAreOk
         bodyStyling={tableNumberStyling}
         useTaskPagesApi
-        taskPagesApiEndpoint={`${TASKS_ENDPOINT}?${qs}`}
+        taskPagesApiEndpoint={`${TASKS_ENDPOINT}${qs}`}
         enablePagination
         tabPaginationOptions={tabPaginationOptions}
       />
     );
   }
-};
+}
 
 AssignHearingsTable.propTypes = {
   columns: PropTypes.array,
+  // Remove when pagination lands (#11757)
+  displayPowerOfAttorneyColumn: PropTypes.bool,
+  // Appeal ID => Attorney Name Array
+  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string),
+  selectedHearingDay: PropTypes.shape({
+    scheduledFor: PropTypes.string
+  }),
+  selectedRegionalOffice: PropTypes.string,
   tabName: PropTypes.string
 };

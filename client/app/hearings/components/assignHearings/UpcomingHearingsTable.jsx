@@ -6,7 +6,7 @@ import moment from 'moment';
 import { HearingTime, HearingDocketTag, HearingAppellantName } from './AssignHearingsFields';
 import {
   encodeQueryParams,
-  getQueryParams,
+  getQueryParams
 } from '../../../util/QueryParamsUtil';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
