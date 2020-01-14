@@ -28,7 +28,7 @@ class PostDecisionMotion < ApplicationRecord
   end
 
   def create_request_issues_for_vacature
-    vacated_issues.map(&:new_request_issue_from!)
+    vacated_issues.map(&:create_contesting_request_issue!)
   end
 
   private

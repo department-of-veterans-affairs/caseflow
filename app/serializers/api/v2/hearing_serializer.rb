@@ -21,6 +21,7 @@ class Api::V2::HearingSerializer
   attribute :hearing_location do |hearing|
     hearing.hearing_location&.name || hearing.regional_office.name
   end
+  attribute :is_virtual, &:virtual?
   attribute :room do |hearing|
     hearing.hearing_day.room
   end

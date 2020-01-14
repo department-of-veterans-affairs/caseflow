@@ -138,7 +138,7 @@ class Rating
       end
 
       unsorted.sort_by(&:promulgation_date).reverse
-    rescue Savon::Error
+    rescue Savon::Error, BGS::ShareError
       []
     end
 

@@ -55,6 +55,10 @@ class DecisionIssue < ApplicationRecord
       where(disposition: REMAND_DISPOSITIONS)
     end
 
+    def not_denied
+      where.not(disposition: %w[Denied denied])
+    end
+
     def not_remanded
       where.not(disposition: REMAND_DISPOSITIONS)
     end
@@ -155,7 +159,7 @@ class DecisionIssue < ApplicationRecord
     request_issues.first
   end
 
-  def new_request_issue_from!
+  def create_contesting_request_issue!
     RequestIssue.create!(
       decision_review: decision_review,
       decision_review_type: decision_review_type,
