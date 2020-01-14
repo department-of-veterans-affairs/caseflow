@@ -2,6 +2,7 @@
 
 class BaseHearingUpdateForm
   include ActiveModel::Model
+  include RunAsyncable
 
   attr_accessor :bva_poc, :disposition,
                 :hearing, :hearing_location_attributes, :hold_open,
@@ -14,7 +15,7 @@ class BaseHearingUpdateForm
     ActiveRecord::Base.transaction do
       update_hearing
       add_update_hearing_alert if show_update_alert?
-      if virtual_hearing_form_or_hearing_time_was_updated?
+      if should_create_or_update_virtual_hearing?
         create_or_update_virtual_hearing
         hearing.reload
         start_async_job
@@ -49,28 +50,73 @@ class BaseHearingUpdateForm
     hearing_updated?
   end
 
-  def virtual_hearing_form_or_hearing_time_was_updated?
-    !virtual_hearing_attributes.blank? || (hearing.virtual? && scheduled_time_string.present?)
+  def should_create_or_update_virtual_hearing?
+    # If any are true:
+    #   1. Any virtual hearing attributes are set
+    #   2. Hearing time is being changed
+    #   3. Judge is being changed
+    return true if !virtual_hearing_attributes.blank?
+
+    if hearing.virtual?
+      return scheduled_time_string.present? || judge_id.present?
+    end
+
+    false
   end
 
   def only_time_updated?
     !virtual_hearing_created? && scheduled_time_string.present?
   end
 
+  def start_async_job?
+    (hearing.virtual_hearing.pending? || !hearing.virtual_hearing.all_emails_sent?) &&
+      !hearing.virtual_hearing.cancelled?
+  end
+
   def start_async_job
-    if hearing.virtual_hearing.status == "pending" || !hearing.virtual_hearing.all_emails_sent?
-      hearing.virtual_hearing.establishment.submit_for_processing!
-      VirtualHearings::CreateConferenceJob.perform_now(
-        hearing_id: hearing.id,
-        email_type: only_time_updated? ? :updated_time_confirmation : :confirmation
-      )
+    return if !start_async_job?
+
+    hearing.virtual_hearing.establishment.submit_for_processing!
+
+    job_args = {
+      hearing_id: hearing.id,
+      hearing_type: hearing.class.name,
+      # TODO: Ideally, this would use symbols, but symbols can't be serialized for ActiveJob.
+      # Rails 6 supports passing symbols to a job.
+      email_type: only_time_updated? ? "updated_time_confirmation" : "confirmation"
+    }
+
+    if run_async?
+      VirtualHearings::CreateConferenceJob.perform_later(job_args)
+    else
+      VirtualHearings::CreateConferenceJob.perform_now(job_args)
     end
   end
 
   def email_sent_flag(attr_key)
-    status_changed = virtual_hearing_attributes.key?(:status)
+    attr_changed = virtual_hearing_attributes&.key?(:status) ||
+                   virtual_hearing_attributes&.key?(attr_key) ||
+                   scheduled_time_string.present? ||
+                   (judge_id.present? && attr_key == :judge_email)
 
-    !(status_changed || virtual_hearing_attributes.key?(attr_key) || scheduled_time_string.present?)
+    !attr_changed
+  end
+
+  def virtual_hearing_updates
+    # The email sent flag should always be set to false if any changes are made.
+    emails_sent_updates = {
+      veteran_email_sent: email_sent_flag(:veteran_email),
+      judge_email_sent: email_sent_flag(:judge_email),
+      representative_email_sent: email_sent_flag(:representative_email)
+    }.reject { |_k, email_sent| email_sent == true }
+
+    updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
+
+    if judge_id.present?
+      updates[:judge_email] = hearing.judge&.email
+    end
+
+    updates
   end
 
   def virtual_hearing_created?
@@ -87,16 +133,7 @@ class BaseHearingUpdateForm
     end
 
     if !virtual_hearing_created?
-      # The email sent flag should always be set to false from the API.
-      emails_sent_updates = {
-        veteran_email_sent: email_sent_flag(:veteran_email),
-        judge_email_sent: email_sent_flag(:judge_email),
-        representative_email_sent: email_sent_flag(:representative_email)
-      }.reject { |_k, email_sent| email_sent == true }
-
-      updates = virtual_hearing_attributes.compact.merge(emails_sent_updates)
-
-      virtual_hearing.update(updates)
+      virtual_hearing.update(virtual_hearing_updates)
       virtual_hearing.establishment.restart!
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
@@ -106,7 +143,7 @@ class BaseHearingUpdateForm
   def add_virtual_hearing_alert
     alerts << VirtualHearingUserAlertBuilder.new(
       changed_to_virtual: virtual_hearing_created?,
-      virtual_hearing_attributes: virtual_hearing_attributes,
+      virtual_hearing_attributes: virtual_hearing_updates,
       veteran_full_name: veteran_full_name,
       hearing_time_changed: scheduled_time_string.present?
     ).call.to_hash

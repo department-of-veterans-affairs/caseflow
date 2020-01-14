@@ -29,6 +29,10 @@ describe ClaimReview, :postgres do
   let(:benefit_type) { "compensation" }
   let(:ineligible_reason) { nil }
   let(:rating_profile_date) { Date.new(2018, 4, 30) }
+  let(:vacols_id) { nil }
+  let(:vacols_sequence_id) { nil }
+  let(:vacols_case) { create(:case, case_issues: [create(:case_issue)]) }
+  let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
   let(:rating_request_issue) do
     build(
@@ -38,7 +42,9 @@ describe ClaimReview, :postgres do
       contested_rating_issue_profile_date: rating_profile_date,
       contested_issue_description: "decision text",
       benefit_type: benefit_type,
-      ineligible_reason: ineligible_reason
+      ineligible_reason: ineligible_reason,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id
     )
   end
 
@@ -319,16 +325,32 @@ describe ClaimReview, :postgres do
     let(:ratings) do
       [
         Generators::Rating.build(promulgation_date: Time.zone.today - 30),
+        Generators::Rating.build(promulgation_date: Time.zone.today - 60, issues: [], decisions: decisions),
         Generators::Rating.build(promulgation_date: Time.zone.today - 400)
       ]
     end
 
+    let(:decisions) do
+      [
+        { decision_text: "not service connected for bad knee" }
+      ]
+    end
+
     before do
+      FeatureToggle.enable!(:contestable_rating_decisions)
       allow(subject.veteran).to receive(:ratings).and_return(ratings)
+    end
+
+    after do
+      FeatureToggle.disable!(:contestable_rating_decisions)
     end
 
     subject do
       create(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: Time.zone.today)
+    end
+
+    it "filters out ratings with zero decisions and zero issues" do
+      expect(subject.serialized_ratings.count).to eq(3)
     end
 
     it "calculates timely flag" do
@@ -430,6 +452,33 @@ describe ClaimReview, :postgres do
         subject
 
         expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRR")
+        expect(rating_request_issue.legacy_issues).to be_empty
+      end
+
+      context "when there is an associated legacy issue" do
+        let(:vacols_id) { legacy_appeal.vacols_id }
+        let(:vacols_sequence_id) { legacy_appeal.issues.first.vacols_sequence_id }
+
+        context "when the veteran did not opt in their legacy issues" do
+          let(:ineligible_reason) { "legacy_issue_not_withdrawn" }
+
+          it "creates a legacy issue, but no optin" do
+            subject
+
+            expect(rating_request_issue.legacy_issues.count).to eq 1
+            expect(rating_request_issue.legacy_issue_optin).to be_nil
+          end
+        end
+
+        context "when legacy opt in is approved by the veteran" do
+          let(:ineligible_reason) { nil }
+
+          it "creates a legacy issue and an associated opt in" do
+            subject
+
+            expect(rating_request_issue.legacy_issue_optin.legacy_issue).to eq(rating_request_issue.legacy_issues.first)
+          end
+        end
       end
     end
 
