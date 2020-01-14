@@ -152,7 +152,13 @@ export default class AssignHearingsTable extends React.PureComponent {
   // Callback when the QueueTable receives tasks from the API. If there are no
   // tasks for the table to display at all (not just for the current page),
   // update this component to show an error.
-  onPageLoaded = ({ total_task_count }) => {
+  onPageLoaded = (response) => {
+    if (!response) {
+      return;
+    }
+
+    const { total_task_count } = response;
+
     this.setState({ showNoVeteransToAssignError: total_task_count === 0 });
   }
 
