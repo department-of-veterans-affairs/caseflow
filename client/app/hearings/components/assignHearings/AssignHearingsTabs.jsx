@@ -13,21 +13,19 @@ import QUEUE_CONFIG, {
 import TabWindow from '../../../components/TabWindow';
 import UpcomingHearingsTable from './UpcomingHearingsTable';
 
-const AvailableVeteransTable = ({ style = {}, selectedHearingDay, ...props }) => {
-  return (
-    <span {...style}>
-      <AssignHearingsTable selectedHearingDay={selectedHearingDay} {...props} />
-    </span>
-  );
-};
+// Gets the tab index based off the tab parameter in the query string.
+// The indexes are based on the ordering of the tabs in the AssignHearingsTabs component.
+const getCurrentTabIndex = () => {
+  const tabParam = getQueryParams(window.location.search)[QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM];
 
-AvailableVeteransTable.propTypes = {
-  style: PropTypes.object,
-  selectedHearingDay: PropTypes.shape({
-    id: PropTypes.number,
-    scheduledFor: PropTypes.string
-  })
-};
+  if (tabParam === LEGACY_ASSIGN_HEARINGS_TAB_NAME) {
+    return 1;
+  } else if (tabParam === QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME) {
+    return 2;
+  }
+
+  return 0;
+}
 
 export class AssignHearingsTabs extends React.PureComponent {
 
@@ -39,24 +37,13 @@ export class AssignHearingsTabs extends React.PureComponent {
     return docketCutoffLineStyle(indexOfLine, endOfNextMonth.format('MMMM YYYY'));
   }
 
-  getCurrentTabIndex() {
-    const tabParam = getQueryParams(window.location.search)[QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM];
-
-    if (tabParam === LEGACY_ASSIGN_HEARINGS_TAB_NAME) {
-      return 1;
-    } else if (tabParam === QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME) {
-      return 2;
-    }
-
-    return 0;
-  }
-
   render() {
     const {
       selectedHearingDay,
       selectedRegionalOffice,
       displayPowerOfAttorneyColumn,
-      room
+      room,
+      defaultTabIndex
     } = this.props;
 
     const hearingsForSelected = _.get(selectedHearingDay, 'hearings', {});
@@ -73,7 +60,7 @@ export class AssignHearingsTabs extends React.PureComponent {
         }
         <TabWindow
           name="scheduledHearings-tabwindow"
-          defaultPage={this.getCurrentTabIndex()}
+          defaultPage={defaultTabIndex}
           tabs={[
             {
               label: 'Scheduled Veterans',
@@ -85,20 +72,22 @@ export class AssignHearingsTabs extends React.PureComponent {
             },
             {
               label: 'Legacy Veterans Waiting',
-              page: <AvailableVeteransTable
+              page: <AssignHearingsTable
                 selectedHearingDay={selectedHearingDay}
                 selectedRegionalOffice={selectedRegionalOffice}
                 displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
                 tabName={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
+                key={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
               />
             },
             {
               label: 'AMA Veterans Waiting',
-              page: <AvailableVeteransTable
+              page: <AssignHearingsTable
                 selectedHearingDay={selectedHearingDay}
                 selectedRegionalOffice={selectedRegionalOffice}
                 displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
                 tabName={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
+                key={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
               />
             }
           ]}
@@ -109,6 +98,7 @@ export class AssignHearingsTabs extends React.PureComponent {
 }
 
 AssignHearingsTabs.propTypes = {
+  defaultTabIndex: PropTypes.number,
   selectedHearingDay: PropTypes.shape({
     hearings: PropTypes.object,
     id: PropTypes.number,
@@ -128,6 +118,7 @@ AssignHearingsTabs.propTypes = {
 };
 
 AssignHearingsTabs.defaultProps = {
+  defaultTabIndex: getCurrentTabIndex(),
   powerOfAttorneyNamesForAppeals: {}
 };
 
