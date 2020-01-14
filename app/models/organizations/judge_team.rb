@@ -10,7 +10,7 @@ class JudgeTeam < Organization
         # Find the one, if any, we're the JudgeTeamLead for
         administered_judge_teams.detect { |jt| user == jt.judge }
       else
-        user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
+        user.administered_teams.detect { |team| team.is_a?(JudgeTeam) && team.judge.eql?(user) }
       end
     end
 

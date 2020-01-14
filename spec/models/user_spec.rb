@@ -289,7 +289,7 @@ describe User, :all_dbs do
     subject { user.selectable_organizations }
 
     context "when user is not a judge in vacols and does not have a judge team" do
-      it "assign cases is not returned" do
+      it "does not return assigned cases link for judge" do
         is_expected.to be_empty
       end
     end
@@ -297,7 +297,7 @@ describe User, :all_dbs do
     context "when user is a judge in vacols" do
       let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
-      it "assign cases is returned" do
+      it "returns assigned cases link for judge" do
         is_expected.to include(
           name: "Assign #{user.css_id}",
           url: format("queue/%<id>s/assign", id: user.id)
@@ -308,7 +308,7 @@ describe User, :all_dbs do
     context "when user has a judge team" do
       before { JudgeTeam.create_for_judge(user) }
 
-      it "assign cases is returned" do
+      it "returns assigned cases link for judge" do
         user.reload
         is_expected.to include(
           name: "Assign #{user.css_id}",
@@ -321,21 +321,26 @@ describe User, :all_dbs do
       let(:judge) { create(:user) }
       let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
 
-      before do
-        FeatureToggle.enable!(:use_judge_team_role)
-        OrganizationsUser.make_user_admin(user, judge_team)
-      end
-      after { FeatureToggle.disable!(:use_judge_team_role) }
+      before { OrganizationsUser.make_user_admin(user, judge_team) }
 
-      it "returns the judge team the user is an admin on" do
-        is_expected.to include(
-          name: "Assign #{judge.css_id}",
-          url: format("queue/%<id>s/assign", id: judge.id)
-        ), judge: judge, user: user, judge_team: judge_team, jt_judge: judge_team.judge
-        is_expected.not_to include(
-          name: "Assign #{user.css_id}",
-          url: format("queue/%<id>s/assign", id: user.id)
-        )
+      it "does not return assigned cases link for judge" do
+        is_expected.to be_empty
+      end
+
+      context "when special case movement is enabled" do
+        before { FeatureToggle.enable!(:judge_admin_scm) }
+        after { FeatureToggle.disable!(:judge_admin_scm) }
+
+        it "returns assigned cases link for judge" do
+          is_expected.to include(
+            name: "Assign #{judge.css_id}",
+            url: format("queue/%<id>s/assign", id: judge.id)
+          ), judge: judge, user: user, judge_team: judge_team, jt_judge: judge_team.judge
+          is_expected.not_to include(
+            name: "Assign #{user.css_id}",
+            url: format("queue/%<id>s/assign", id: user.id)
+          )
+        end
       end
     end
   end
