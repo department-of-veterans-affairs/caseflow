@@ -127,70 +127,62 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
-  modifyAdminRights = (user, adminFlag) => () => {
+  modifyUser = (user, flagName) => {
     this.setState({
-      changingAdminRights: { ...this.state.changingAdminRights,
+      [flagName]: { ...this.state[flagName],
         [user.id]: true }
     });
+  }
+
+  modifyUserSuccess = (response, user, flagName) => {
+    const updatedUser = response.body.users.data[0];
+    // Replace the existing version of the user so it has the updated attributes
+    const updatedUserList = this.state.organizationUsers.map((existingUser) => {
+      return (existingUser.id === updatedUser.id) ? updatedUser : existingUser;
+    });
+    this.setState({
+      organizationUsers: updatedUserList,
+      [flagName]: { ...this.state[flagName],
+        [user.id]: false }
+    });
+  }
+
+  modifyUserError = (title, body, user, flagName) => {
+    this.setState({
+      [flagName]: { ...this.state[flagName],
+        [user.id]: false },
+      error: {
+        title,
+        body
+      }
+    });
+  }
+
+  modifyAdminRights = (user, adminFlag) => () => {
+    const flagName = "changingAdminRights";
+
+    this.modifyUser(user, flagName);
 
     const payload = { data: { admin: adminFlag } };
 
     ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
-      const updatedUser = response.body.users.data[0];
-      
-      // Replace the existing version of the user so it has the correct admin priveleges.
-      const updatedUserList = this.state.organizationUsers.map((existingUser) => {
-        return (existingUser.id === updatedUser.id) ? updatedUser : existingUser;
-      });
-
-      this.setState({
-        organizationUsers: updatedUserList,
-        changingAdminRights: { ...this.state.changingAdminRights,
-          [user.id]: false }
-      });
+      this.modifyUserSuccess(response, user, flagName);
     }, (error) => {
-      this.setState({
-        changingAdminRights: { ...this.state.changingAdminRights,
-          [user.id]: false },
-        error: {
-          title: COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE,
-          body: error.message
-        }
-      });
+      this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName)
     });
   }
 
   modifyDecisionDrafting = (user, attorneyFlag) => () => {
-    this.setState({
-      changingDecisionDrafting: {
-        ...this.state.changingDecisionDrafting, [user.id]: true
-      }
-    });
+    const flagName = "changingDecisionDrafting";
+
+    this.modifyUser(user, flagName);
 
     const payload = { data: { attorney: attorneyFlag } };
     
     ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
-      const updatedUser = response.body.users.data[0];
-      
-      // Replace the existing version of the user so it has the correct attorney priveleges.
-      const updatedUserList = this.state.organizationUsers.map((existingUser) => {
-        return (existingUser.id === updatedUser.id) ? updatedUser : existingUser;
-      });
-
-      this.setState({
-        organizationUsers: updatedUserList,
-        changingDecisionDrafting: { ...this.state.changingDecisionDrafting,
-          [user.id]: false }
-      });
+      this.modifyUserSuccess(response, user, flagName)
     }, (error) => {
-      this.setState({
-        changingDecisionDrafting: { ...this.state.changingDecisionDrafting,
-          [user.id]: false },
-        error: {
-          title: COPY.USER_MANAGEMENT_DECISION_DRAFTING_CHANGE_ERROR_TITLE,
-          body: error.message
-        }
-      });
+      this.modifyUserError(COPY.USER_MANAGEMENT_DECISION_DRAFTING_CHANGE_ERROR_TITLE, error.message, user, flagName)
     });
   }
 
@@ -210,6 +202,30 @@ export default class OrganizationUsers extends React.PureComponent {
       return { options: this.dropdownOptions() };
     });
   }
+
+  decisionDraftingButton = (user, attorney) => 
+    <span {...buttonPaddingStyle}><Button
+    name={attorney ? COPY.USER_MANAGEMENT_DISABLE_DECISION_DRAFTING_BUTTON_TEXT : COPY.USER_MANAGEMENT_ENABLE_DECISION_DRAFTING_BUTTON_TEXT }
+    id={attorney ? `Disable-decision-drafting-${user.id}` : `Enable-decision-drafting-${user.id}`}
+    classNames={attorney ? ['usa-button-secondary'] : ['usa-button-primary']}
+    loading={this.state.changingDecisionDrafting[user.id]}
+    onClick={this.modifyDecisionDrafting(user, attorney ? false : true)} /></span>
+  
+  adminButton = (user, admin) => 
+    <span {...buttonPaddingStyle}><Button
+    name={admin ? COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT : COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT }
+    id={admin ? `Remove-admin-rights-${user.id}` : `Add-team-admin-${user.id}`}
+    classNames={admin ? ['usa-button-secondary'] : ['usa-button-primary']}
+    loading={this.state.changingAdminRights[user.id]}
+    onClick={this.modifyAdminRights(user, admin ? false : true)} /></span>
+
+  removeUserButton = (user) => 
+    <span {...buttonPaddingStyle}><Button
+    name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
+    id={`Remove-user-${user.id}`}
+    classNames={['usa-button-secondary']}
+    loading={this.state.removingUser[user.id]}
+    onClick={this.removeUser(user)} /></span>
   
   mainContent = () => {
     const listOfUsers = this.state.organizationUsers.map((user, i) => {
@@ -217,41 +233,14 @@ export default class OrganizationUsers extends React.PureComponent {
       let style = i === 0 ? topUserStyle : userStyle
       return <div {...style}>
         <li key={user.id}>{this.formatName(user)} 
-        { judge_team && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-        { judge_team && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-        { judge_team && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> } &nbsp;</li>
-            { judge_team && !judge && !attorney && 
-            <div {...buttonPaddingStyle}> <Button
-            name={COPY.USER_MANAGEMENT_ENABLE_DECISION_DRAFTING_BUTTON_TEXT}
-            id={`Enable-decision-drafting-${user.id}`}
-            classNames={['usa-button-primary']}
-            loading={this.state.changingDecisionDrafting[user.id]}
-            onClick={this.modifyDecisionDrafting(user, true)} /> </div>}
-            { judge_team && !judge && attorney && 
-            <div {...buttonPaddingStyle}> <Button
-            name={COPY.USER_MANAGEMENT_DISABLE_DECISION_DRAFTING_BUTTON_TEXT}
-            id={`Disable-decision-drafting-${user.id}`}
-            classNames={['usa-button-secondary']}
-            loading={this.state.changingDecisionDrafting[user.id]}
-            onClick={this.modifyDecisionDrafting(user, false)} /> </div>}
-            { !admin && <div {...buttonPaddingStyle}> <Button
-            name={COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
-            id={`Make-user-admin-${user.id}`}
-            classNames={['usa-button-primary']}
-            loading={this.state.changingAdminRights[user.id]}
-            onClick={this.modifyAdminRights(user, true)} /> </div>}
-            { admin && <div {...buttonPaddingStyle}> <Button
-            name={COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
-            id={`Remove-admin-rights-${user.id}`}
-            classNames={['usa-button-secondary']}
-            loading={this.state.changingAdminRights[user.id]}
-            onClick={this.modifyAdminRights(user, false)} /> </div>}
-            <div {...buttonPaddingStyle}> <Button
-            name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
-            id={`Remove-user-${user.id}`}
-            classNames={['usa-button-secondary']}
-            loading={this.state.removingUser[user.id]}
-            onClick={this.removeUser(user)} /> </div>
+          { judge_team && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+          { judge_team && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+          { judge_team && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> } &nbsp;</li>
+          { judge_team && !judge && !attorney && this.decisionDraftingButton(user, attorney) }
+          { judge_team && !judge && attorney && this.decisionDraftingButton(user, attorney) }
+          { !admin && this.adminButton(user, admin) }
+          { admin && this.adminButton(user, admin) }
+          { this.removeUserButton(user) }
         </div>;
     });
 
