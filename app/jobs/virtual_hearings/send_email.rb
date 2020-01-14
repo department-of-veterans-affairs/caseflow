@@ -43,6 +43,8 @@ class VirtualHearings::SendEmail
         mail_recipient: mail_recipients[recipient],
         virtual_hearing: virtual_hearing
       ).deliver_now
+    else
+      fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
   end
 
