@@ -5,7 +5,7 @@ RSpec.feature "Dispatch Stats Dashboard", :postgres, skip: "deprecated" do
     Timecop.freeze(Time.utc(2015, 1, 1, 17, 55, 0, rand(1000)))
   end
 
-  fcontext ".show#daily" do
+  context ".show#daily" do
     before do
       Rails.cache.clear
       DispatchStats.calculate_all!

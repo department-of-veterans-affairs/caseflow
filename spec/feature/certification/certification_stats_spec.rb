@@ -155,7 +155,7 @@ RSpec.feature "Certification Stats Dashboard", :postgres, skip: "deprecated" do
     expect(page).to have_content("Overall (median)")
   end
 
-  fscenario "Unauthorized user access" do
+  scenario "Unauthorized user access" do
     # Unauthenticated access
     User.unauthenticate!
     visit "/certification/stats"
