@@ -6,7 +6,7 @@ describe TaskActionRepository, :all_dbs do
     let(:users) { create_list(:user, 3) + create_list(:user, 2, :inactive) }
 
     before do
-      allow(organization).to receive(:users).and_return(users)
+      users.each { |user| organization.add_user(user) }
     end
 
     context "when assigned_to is an organization" do
