@@ -34,7 +34,7 @@ class DetailsInputs extends React.Component {
           <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing.jobCompleted &&
               <VirtualHearingLink
-                role={this.role}
+                role={this.role()}
                 showFullLink
                 isVirtual={isVirtual}
                 virtualHearing={virtualHearing}

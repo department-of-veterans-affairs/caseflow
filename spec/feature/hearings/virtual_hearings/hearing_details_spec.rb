@@ -108,4 +108,13 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_field("POA/Representative Email", with: "rep@testingEmail.com")
     end
   end
+
+  context "User has the correct link", focus: true do
+    let!(:virtual_hearing) { create(:virtual_hearing, :initialized, :active, :all_emails_sent, hearing: hearing) }
+
+    scenario "user has the host link" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      expect(page).to have_content(virtual_hearing.host_link)
+    end
+  end
 end
