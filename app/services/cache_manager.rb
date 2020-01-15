@@ -28,8 +28,7 @@ class CacheManager
       "SchedulePeriod-*-cached-*",
       "RoSchedulePeriod-*-cached-*",
       "RampElectionIntake-*-cached-*",
-      "Efolder-document-count-*",
-      "IntakeStats-last-calculated-timestamp"
+      "Efolder-document-count-*"
     ]
   }.freeze
 
