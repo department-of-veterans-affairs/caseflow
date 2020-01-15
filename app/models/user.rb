@@ -288,6 +288,14 @@ class User < ApplicationRecord
     orgs
   end
 
+  def is_judge?
+    if FeatureToggle.enabled?(:use_judge_team_role)
+      JudgeTeam.for_judge(self) || judge_in_vacols?
+    else
+      judge_in_vacols?
+    end
+  end
+
   def update_status!(new_status)
     transaction do
       if new_status.eql?(Constants.USER_STATUSES.inactive)
@@ -352,13 +360,14 @@ class User < ApplicationRecord
   end
 
   def user_inactivation
-    remove_user_from_auto_assign_orgs
+    remove_user_from_orgs
     JudgeTeam.for_judge(self)&.inactive!
   end
 
-  def remove_user_from_auto_assign_orgs
-    auto_assign_orgs = organizations.select(&:automatically_assign_to_member?)
-    auto_assign_orgs.each do |organization|
+  def remove_user_from_orgs
+    removal_orgs = organizations
+    removal_orgs = removal_orgs.reject { |org| org.is_a?(JudgeTeam) } if is_judge?
+    removal_orgs.each do |organization|
       OrganizationsUser.remove_user_from_organization(self, organization)
     end
   end

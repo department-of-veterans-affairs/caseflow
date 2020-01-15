@@ -703,10 +703,13 @@ describe User, :all_dbs do
         let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
         let(:user) { judge_team.judge }
 
+        before { allow(user).to receive(:is_judge?).and_return(true) }
+
         context "when marking the user inactive" do
           it "marks their JudgeTeam as inactive" do
             expect(subject).to eq true
             expect(judge_team.reload.status).to eq status
+            expect(judge_team.judge).to eq user
           end
         end
 
@@ -723,26 +726,84 @@ describe User, :all_dbs do
         end
       end
 
-      context "when the user is a member of an org that automatically assigns tasks" do
-        before do
-          create(:organization).add_user(user)
-          Colocated.singleton.add_user(user)
-        end
+      context "when the user is a member of many orgs" do
+        let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
+        let(:judge) { judge_team.judge }
+        # Colocated is an org that auto-assigns tasks (ie, it overrides next_assignee)
+        let(:other_orgs) { [Colocated.singleton, create(:organization)] }
 
         context "when marking the user inactive" do
-          it "only removes users from the auto assign organization" do
+          before do
+            judge_team.add_user(user)
+            other_orgs.each do |org|
+              org.add_user(user)
+              org.add_user(judge)
+            end
+          end
+
+          it "removes users from all organizations" do
+            expect(user.organizations.size).to eq 3
             expect(user.selectable_organizations.length).to eq 2
             expect(subject).to eq true
             expect(user.reload.status).to eq status
             expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
-            expect(user.selectable_organizations.length).to eq 1
-            expect(user.selectable_organizations).not_to include Colocated.singleton
+            expect(user.organizations.size).to eq 0
+            expect(user.selectable_organizations.length).to eq 0
+          end
+        end
+
+        context "when marking the admin inactive" do
+          before do
+            OrganizationsUser.make_user_admin(user, judge_team)
+            other_orgs.each do |org|
+              org.add_user(user)
+              org.add_user(judge)
+            end
+          end
+
+          it "removes admin from all organizations" do
+            expect(user.organizations.size).to eq 3
+            expect(user.selectable_organizations.length).to eq 2
+            expect(subject).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.organizations.size).to eq 0
+            expect(user.selectable_organizations.length).to eq 0
+          end
+        end
+
+        context "when marking the judge inactive" do
+          # let(:judge_team) { JudgeTeam.create_for_judge(user) }
+          let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
+          let(:user) { judge_team.judge }
+          before do
+            allow(user).to receive(:is_judge?).and_return(true)
+            other_orgs.each do |org|
+              org.add_user(user)
+            end
+          end
+
+          it "removes judge from all orgs except JudgeTeam" do
+            expect(user.is_judge?)
+            expect(user.organizations.size).to eq 3
+            expect(user.selectable_organizations.length).to eq 3
+            expect(user.update_status!(status)).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(judge_team.judge).to eq user
+            expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
+            expect(user.selectable_organizations.length).to eq 0
           end
         end
 
         context "when marking the user active" do
           let(:user) { create(:user, status: Constants.USER_STATUSES.inactive) }
           let(:status) { Constants.USER_STATUSES.active }
+          before do
+            other_orgs.each do |org|
+              org.add_user(user)
+            end
+          end
 
           it "does not remove the user from any organizations" do
             expect(user.selectable_organizations.length).to eq 2
