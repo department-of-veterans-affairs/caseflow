@@ -288,7 +288,12 @@ class User < ApplicationRecord
 
   def update_status!(new_status)
     transaction do
-      remove_user_from_auto_assign_orgs if new_status.eql?(Constants.USER_STATUSES.inactive)
+      if new_status.eql?(Constants.USER_STATUSES.inactive)
+        user_inactivation
+      elsif new_status.eql?(Constants.USER_STATUSES.active)
+        user_reactivation
+      end
+
       update!(status: new_status, status_updated_at: Time.zone.now)
     end
   end
@@ -334,6 +339,16 @@ class User < ApplicationRecord
   end
 
   private
+
+  def user_reactivation
+    # We do not automatically re-add organization membership for reactivated users
+    JudgeTeam.for_judge(self)&.active!
+  end
+
+  def user_inactivation
+    remove_user_from_auto_assign_orgs
+    JudgeTeam.for_judge(self)&.inactive!
+  end
 
   def remove_user_from_auto_assign_orgs
     auto_assign_orgs = organizations.select(&:automatically_assign_to_member?)
