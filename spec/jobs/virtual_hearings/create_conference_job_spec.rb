@@ -4,7 +4,12 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
   context ".perform" do
     let(:hearing) { create(:hearing, regional_office: "RO06") }
     let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
-    let(:create_job) { VirtualHearings::CreateConferenceJob.new(hearing_id: virtual_hearing.hearing_id) }
+    let(:create_job) do
+      VirtualHearings::CreateConferenceJob.new(
+        hearing_id: virtual_hearing.hearing_id,
+        hearing_type: virtual_hearing.hearing_type
+      )
+    end
     let(:fake_pexip) { Fakes::PexipService.new(status_code: 400) }
 
     subject { create_job.perform_now }

@@ -75,3 +75,16 @@ if migrations_on_large_tables.any?
     "This PR contains DB migrations on large tables. Be sure to set connection statement_timeout accordingly."
   )
 end
+
+contains_new_index = git.diff.flat_map do |chunk|
+  chunk.patch.lines.grep(/^\+\s*\w/).select do |added_line|
+    added_line.match?(/add_index/)
+  end
+end
+
+if contains_new_index.any?
+  warn(
+    "This PR contains DB migrations that use add_index. Prefer Caseflow::Migration with add_safe_index instead. " \
+    "See https://github.com/department-of-veterans-affairs/caseflow/wiki/Writing-DB-migrations#index-creation-should-go-in-its-own-migration-file"
+  )
+end
