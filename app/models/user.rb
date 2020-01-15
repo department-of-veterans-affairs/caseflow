@@ -262,7 +262,7 @@ class User < ApplicationRecord
   end
 
   def administered_teams
-    organizations_users.select(&:admin?).map(&:organization)
+    organizations_users.select(&:admin?).map(&:organization).compact
   end
 
   def administered_judge_teams
