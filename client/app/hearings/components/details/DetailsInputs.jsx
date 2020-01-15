@@ -21,7 +21,7 @@ class DetailsInputs extends React.Component {
   role = () => {
     const { user, hearing } = this.props;
 
-    return user.userId.toString() === hearing.judgeId || user.userCanBuildHearingSchedule ? 'host' : 'guest';
+    return user.userId.toString() === hearing.judgeId || user.userCanAssignHearingSchedule ? 'host' : 'guest';
   }
 
   renderVirtualHearingLinkSection() {
@@ -147,7 +147,7 @@ class DetailsInputs extends React.Component {
 DetailsInputs.propTypes = {
   user: PropTypes.shape({
     userId: PropTypes.number,
-    userCanBuildHearingSchedule: PropTypes.bool
+    userCanAssignHearingSchedule: PropTypes.bool
   }),
   hearing: PropTypes.shape({
     judgeId: PropTypes.string,
