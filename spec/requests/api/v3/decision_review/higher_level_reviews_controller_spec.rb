@@ -9,6 +9,11 @@ fdescribe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type:
     FeatureToggle.enable!(:api_v3)
 
     Timecop.freeze(post_ama_start_date)
+
+    # setup a rating
+    promulgation_date = receipt_date - 10.days
+    profile_date = (receipt_date - 8.days).to_datetime
+    generate_rating(veteran, promulgation_date, profile_date)
   end
 
   after { FeatureToggle.disable!(:api_v3) }
@@ -30,9 +35,6 @@ fdescribe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type:
     val = "ABC"
     create(:user, station_id: val, css_id: val, full_name: val)
   end
-
-  # TODO remove these lets that should be methods
-  let(:response_json) { JSON.parse(response.body) }
 
   let(:params) { ActionController::Parameters.new(data: data, included: included) }
 
@@ -70,11 +72,6 @@ fdescribe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type:
       }
     ]
   end
-
-  # TODO rating should be created in a `before` block
-  let(:promulgation_date) { receipt_date - 10.days }
-  let(:profile_date) { (receipt_date - 8.days).to_datetime }
-  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
 
   let(:contestable_issues) do
     ContestableIssueGenerator.new(
@@ -124,7 +121,7 @@ fdescribe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type:
 
       it "should return malformed_request error" do
         post_create({})
-        first_error_code_in_response = response_json["errors"][0]["code"]
+        first_error_code_in_response = JSON.parse(response.body)["errors"][0]["code"]
         expect(first_error_code_in_response).to eq expected_error_code
         expect(response).to have_http_status expected_error_status
       end
@@ -136,7 +133,8 @@ fdescribe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type:
       it "should return reserved_veteran_file_number error" do
         allow_any_instance_of(IntakeStartValidator).to receive(:file_number_reserved?).and_return(true)
         post_create
-        expect(response_json).to eq expected_error_json
+        response_body = JSON.parse(response.body)
+        expect(response_body).to eq expected_error_json
         expect(response).to have_http_status expected_error_status
       end
     end
