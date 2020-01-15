@@ -18,8 +18,14 @@ import COPY from '../../../../COPY.json';
 
 class DetailsInputs extends React.Component {
 
+  role = () => {
+    const { user, hearing } = this.props;
+
+    return user.userId.toString() === hearing.judgeId || user.userCanBuildHearingSchedule ? 'host' : 'guest';
+  }
+
   renderVirtualHearingLinkSection() {
-    const { isVirtual, hearing, virtualHearing, user } = this.props;
+    const { isVirtual, virtualHearing } = this.props;
 
     if (isVirtual && virtualHearing) {
       return (
@@ -28,7 +34,7 @@ class DetailsInputs extends React.Component {
           <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing.jobCompleted &&
               <VirtualHearingLink
-                role={user.userId.toString() === hearing.judgeId || user.userCanBuildHearingSchedule ? 'host' : 'guest'}
+                role={this.role}
                 showFullLink
                 isVirtual={isVirtual}
                 virtualHearing={virtualHearing}
