@@ -300,7 +300,7 @@ describe User, :all_dbs do
       it "assign cases is returned" do
         is_expected.to include(
           name: "Assign",
-          url: format("queue/%<id>s/assign", id: user.id)
+          url: format("/queue/%<id>s/assign", id: user.id)
         )
       end
     end
@@ -312,7 +312,7 @@ describe User, :all_dbs do
         user.reload
         is_expected.to include(
           name: "Assign",
-          url: format("queue/%<id>s/assign", id: user.id)
+          url: format("/queue/%<id>s/assign", id: user.id)
         )
       end
     end
