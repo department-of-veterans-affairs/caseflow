@@ -343,8 +343,7 @@ class User < ApplicationRecord
   private
 
   def inactive_judge_team
-    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.select(&:
-        ?).pluck(:organization_id))
+    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.select(&:admin?).pluck(:organization_id))
   end
 
   def user_reactivation
