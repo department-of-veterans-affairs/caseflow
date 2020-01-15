@@ -289,7 +289,7 @@ describe User, :all_dbs do
     subject { user.selectable_organizations }
 
     context "when user is not a judge in vacols and does not have a judge team" do
-      it "assign cases is not returned" do
+      it "does not return assigned cases link for judge" do
         is_expected.to be_empty
       end
     end
@@ -297,9 +297,9 @@ describe User, :all_dbs do
     context "when user is a judge in vacols" do
       let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
-      it "assign cases is returned" do
+      it "returns assigned cases link for judge" do
         is_expected.to include(
-          name: "Assign",
+          name: "Assign #{user.css_id}",
           url: format("queue/%<id>s/assign", id: user.id)
         )
       end
@@ -308,12 +308,42 @@ describe User, :all_dbs do
     context "when user has a judge team" do
       before { JudgeTeam.create_for_judge(user) }
 
-      it "assign cases is returned" do
+      it "returns assigned cases link for judge" do
         user.reload
         is_expected.to include(
-          name: "Assign",
+          name: "Assign #{user.css_id}",
           url: format("queue/%<id>s/assign", id: user.id)
         )
+      end
+    end
+
+    context "when the user is a judge team admin" do
+      let(:judge) { create(:user) }
+      let!(:judge_team) { create(:judge_team) }
+
+      before do
+        OrganizationsUser.make_user_admin(judge, judge_team)
+        OrganizationsUser.make_user_admin(user, judge_team)
+      end
+
+      it "does not return assigned cases link for judge" do
+        is_expected.to be_empty
+      end
+
+      context "when special case movement is enabled" do
+        before { FeatureToggle.enable!(:judge_admin_scm) }
+        after { FeatureToggle.disable!(:judge_admin_scm) }
+
+        it "returns assigned cases link for judge" do
+          is_expected.to include(
+            name: "Assign #{judge.css_id}",
+            url: format("queue/%<id>s/assign", id: judge.id)
+          )
+          is_expected.not_to include(
+            name: "Assign #{user.css_id}",
+            url: format("queue/%<id>s/assign", id: user.id)
+          )
+        end
       end
     end
   end

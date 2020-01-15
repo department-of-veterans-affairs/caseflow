@@ -262,7 +262,7 @@ class User < ApplicationRecord
   end
 
   def administered_teams
-    organizations_users.select(&:admin?).map(&:organization).compact
+    organizations_users.admin.map(&:organization).compact
   end
 
   def administered_judge_teams
@@ -275,11 +275,13 @@ class User < ApplicationRecord
 
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
+    judge_team_judges = (JudgeTeam.for_judge(self) || judge_in_vacols?) ? [self] : []
+    judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
 
-    if JudgeTeam.for_judge(self) || judge_in_vacols?
+    judge_team_judges.each do |judge|
       orgs << {
-        name: "Assign",
-        url: format("queue/%s/assign", id)
+        name: "Assign #{judge.css_id}",
+        url: format("queue/%s/assign", judge.id)
       }
     end
 
@@ -340,9 +342,13 @@ class User < ApplicationRecord
 
   private
 
+  def inactive_judge_team
+    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.admin.pluck(:organization_id))
+  end
+
   def user_reactivation
     # We do not automatically re-add organization membership for reactivated users
-    JudgeTeam.for_judge(self)&.active!
+    inactive_judge_team&.active!
   end
 
   def user_inactivation
