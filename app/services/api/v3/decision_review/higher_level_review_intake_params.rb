@@ -77,6 +77,7 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
 
   def veteran_file_number
     return @veteran_file_number if @veteran_file_number
+
     ssn = attributes.dig("veteran", "ssn").to_s.strip
     @veteran_file_number = BGSService.new.fetch_file_number_by_ssn(ssn) if ssn
   end
