@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
+fdescribe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
   include IntakeHelpers
 
   before do
@@ -20,9 +20,9 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   let(:veteran_ssn) { "64205050" }
 
-  let!(:veteran) { create(:veteran, ssn: veteran_ssn) }
+  let(:veteran) { create(:veteran, ssn: veteran_ssn) }
 
-  let!(:current_user) do
+  let(:current_user) do
     User.authenticate!(roles: ["Admin Intake"])
   end
 
@@ -71,6 +71,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     ]
   end
 
+  # TODO rating should be created in a `before` block
   let(:promulgation_date) { receipt_date - 10.days }
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
   let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
@@ -142,7 +143,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
   end
 
   describe "#show" do
-    let!(:higher_level_review) do
+    let(:higher_level_review) do
       processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(
         params,
         create(:user)
