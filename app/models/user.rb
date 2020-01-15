@@ -342,9 +342,13 @@ class User < ApplicationRecord
 
   private
 
+  def inactive_judge_team
+    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.select(&:admin?).pluck(:organization_id))
+  end
+
   def user_reactivation
     # We do not automatically re-add organization membership for reactivated users
-    JudgeTeam.for_judge(self)&.active!
+    inactive_judge_team&.active!
   end
 
   def user_inactivation
