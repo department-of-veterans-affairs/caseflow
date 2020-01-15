@@ -218,7 +218,7 @@ class AddIssueManager extends React.Component {
   };
 
   setupUnidentifiedIssuesModal = () => {
-    const { intakeData, formType, featureToggles } = this.props;
+    const { intakeData, formType, featureToggles, editPage } = this.props;
 
     return {
       component: UnidentifiedIssuesModal,
@@ -226,6 +226,7 @@ class AddIssueManager extends React.Component {
         intakeData,
         formType,
         featureToggles,
+        editPage,
         submitText: this.hasLegacyAppeals() && featureToggles.verifyUnidentifiedIssue ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSubmit: ({ currentIssue }) => {
@@ -304,7 +305,8 @@ AddIssueManager.propTypes = {
   featureToggles: PropTypes.object,
   intakeData: PropTypes.object,
   formType: PropTypes.string,
-  addIssue: PropTypes.func
+  addIssue: PropTypes.func,
+  editPage: PropTypes.bool
 };
 
 AddIssueManager.defaultProps = {

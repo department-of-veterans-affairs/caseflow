@@ -36,6 +36,36 @@ describe Task, :all_dbs do
     end
   end
 
+  describe ".post_dispatch_task?" do
+    let(:root_task) { create(:root_task) }
+    let(:appeal) { root_task.appeal }
+
+    subject { ama_task.post_dispatch_task? }
+
+    context "dispatch task is not complete" do
+      let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task, appeal: appeal) }
+      let(:ama_task) { create(:ama_task, parent: root_task, appeal: appeal) }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "dispatch task is complete" do
+      let!(:bva_task) { create(:bva_dispatch_task, :completed, parent: root_task, appeal: appeal) }
+
+      context "sibling task created before dispatch task completed" do
+        let(:ama_task) { create(:ama_task, created_at: bva_task.closed_at - 1, parent: root_task, appeal: appeal) }
+
+        it { is_expected.to be_falsey }
+      end
+
+      context "sibling task created after dispatch task completed" do
+        let(:ama_task) { create(:ama_task, created_at: bva_task.closed_at + 1, parent: root_task, appeal: appeal) }
+
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe ".when_child_task_completed" do
     let(:task) { create(:task, type: Task.name) }
     let(:child_status) { :assigned }
