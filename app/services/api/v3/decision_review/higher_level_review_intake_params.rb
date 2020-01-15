@@ -78,7 +78,7 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   def veteran_file_number
     return @veteran_file_number if @veteran_file_number
     ssn = attributes.dig("veteran", "ssn").to_s.strip
-    @veteran_file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+    @veteran_file_number = BGSService.new.fetch_file_number_by_ssn(ssn) if ssn
   end
 
   def attributes
@@ -187,7 +187,6 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
       [BOOL,           %w[data attributes legacyOptInApproved]],
       [[String],       %w[data attributes benefitType]],
       [OBJECT,         %w[data attributes veteran]],
-      # [[String],       %w[data attributes veteran fileNumberOrSsn]],
       [[String],       %w[data attributes veteran ssn]],
       [[String, nil],  %w[data attributes veteran addressLine1]],
       [[String, nil],  %w[data attributes veteran addressLine2]],

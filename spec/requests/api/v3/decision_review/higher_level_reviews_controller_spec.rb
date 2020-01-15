@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-fdescribe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
+describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: :request do
   include IntakeHelpers
 
   before do
