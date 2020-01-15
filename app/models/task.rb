@@ -303,6 +303,14 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
+  def post_dispatch_task?
+    dispatch_task = appeal.tasks.completed.find_by(type: [BvaDispatchTask.name, QualityReviewTask.name])
+
+    return false unless dispatch_task
+
+    created_at > dispatch_task.closed_at
+  end
+
   def children_attorney_tasks
     children.where(type: AttorneyTask.name)
   end
