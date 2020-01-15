@@ -484,6 +484,14 @@ describe User, :all_dbs do
         session["user"]["pg_user_id"] = user.id
         expect(subject).to eq user
       end
+
+      it "resets pg_user_id when it is not found" do
+        user = create(:user, css_id: css_id)
+        expect(User).to receive(:find_by_css_id).and_call_original
+        session["user"]["pg_user_id"] = user.id + 1000 # integer not found
+        expect(subject).to eq user
+        expect(session["user"]["pg_user_id"]).to eq user.id
+      end
     end
 
     context "returns nil when no user in session" do
@@ -659,6 +667,30 @@ describe User, :all_dbs do
         expect(subject).to eq true
         expect(user.reload.status).to eq status
         expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+      end
+
+      context "when the user is a judge with a JudgeTeam" do
+        let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
+        let(:user) { judge_team.judge }
+
+        context "when marking the user inactive" do
+          it "marks their JudgeTeam as inactive" do
+            expect(subject).to eq true
+            expect(judge_team.reload.status).to eq status
+          end
+        end
+
+        context "when making an inactive user active" do
+          let(:status) { Constants.USER_STATUSES.active }
+
+          before { user.update_status!(Constants.USER_STATUSES.inactive) }
+
+          it "marks their JudgeTeam as active" do
+            expect(judge_team.reload.status).to eq Constants.USER_STATUSES.inactive
+            expect(subject).to eq true
+            expect(judge_team.reload.status).to eq status
+          end
+        end
       end
 
       context "when the user is a member of an org that automatically assigns tasks" do
