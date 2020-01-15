@@ -83,7 +83,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     ).contestable_issues
   end
 
-  context 'contestable_issues' do
+  context "contestable_issues" do
     it { expect(contestable_issues).not_to be_empty }
   end
 
