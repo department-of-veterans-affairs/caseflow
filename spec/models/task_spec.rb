@@ -310,6 +310,7 @@ describe Task, :all_dbs do
       top_level_task.reload.cancel_task_and_child_subtasks
 
       expect(second_level_tasks[0].versions.count).to eq(initial_versions + 2)
+      expect(second_level_tasks[0].versions.last.object).to include("cancelled")
 
       [top_level_task, *second_level_tasks, *third_level_task].each do |task|
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)

@@ -538,7 +538,7 @@ class Task < ApplicationRecord
       status: Constants.TASK_STATUSES.cancelled,
       closed_at: Time.zone.now
     )
-    tasks.each { |task| task.paper_trail.save_with_version }
+    tasks.each { |task| task.reload.paper_trail.save_with_version }
   end
 
   def timeline_title
