@@ -347,7 +347,7 @@ PreppedCheckbox.propTypes = {
 export const StaticVirtualHearing = ({ hearing, user }) => (
   <div>
     <VirtualHearingLink
-      role={user.userId === hearing.judgeId ? 'host' : 'guest'}
+      role={user.userId === hearing.judgeId || user.userCanBuildHearingSchedule ?'host' : 'guest'}
       isVirtual={hearing.isVirtual}
       virtualHearing={hearing.virtualHearing}
     />

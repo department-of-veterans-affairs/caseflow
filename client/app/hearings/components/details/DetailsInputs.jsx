@@ -28,7 +28,7 @@ class DetailsInputs extends React.Component {
           <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing.jobCompleted &&
               <VirtualHearingLink
-                role={user.userId.toString() === hearing.judgeId ? 'host' : 'guest'}
+                role={user.userId.toString() === hearing.judgeId || user.userCanBuildHearingSchedule ? 'host' : 'guest'}
                 showFullLink
                 isVirtual={isVirtual}
                 virtualHearing={virtualHearing}
