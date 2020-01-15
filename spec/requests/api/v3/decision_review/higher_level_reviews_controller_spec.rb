@@ -33,7 +33,6 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   # TODO remove these lets that should be methods
   let(:response_json) { JSON.parse(response.body) }
-  let(:first_error_code_in_response) { response_json["errors"][0]["code"] }
 
   let(:params) { ActionController::Parameters.new(data: data, included: included) }
 
@@ -124,6 +123,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
       it "should return malformed_request error" do
         post_create({})
+        first_error_code_in_response = response_json["errors"][0]["code"]
         expect(first_error_code_in_response).to eq expected_error_code
         expect(response).to have_http_status expected_error_status
       end
