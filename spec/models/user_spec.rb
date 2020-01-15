@@ -699,6 +699,30 @@ describe User, :all_dbs do
         expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
       end
 
+      context "when the user is a judge with a JudgeTeam" do
+        let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
+        let(:user) { judge_team.judge }
+
+        context "when marking the user inactive" do
+          it "marks their JudgeTeam as inactive" do
+            expect(subject).to eq true
+            expect(judge_team.reload.status).to eq status
+          end
+        end
+
+        context "when making an inactive user active" do
+          let(:status) { Constants.USER_STATUSES.active }
+
+          before { user.update_status!(Constants.USER_STATUSES.inactive) }
+
+          it "marks their JudgeTeam as active" do
+            expect(judge_team.reload.status).to eq Constants.USER_STATUSES.inactive
+            expect(subject).to eq true
+            expect(judge_team.reload.status).to eq status
+          end
+        end
+      end
+
       context "when the user is a member of an org that automatically assigns tasks" do
         before do
           create(:organization).add_user(user)
