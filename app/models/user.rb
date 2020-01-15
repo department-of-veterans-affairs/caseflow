@@ -279,7 +279,7 @@ class User < ApplicationRecord
     if JudgeTeam.for_judge(self) || judge_in_vacols?
       orgs << {
         name: "Assign",
-        url: format("queue/%s/assign", id)
+        url: format("/queue/%s/assign", id)
       }
     end
 
