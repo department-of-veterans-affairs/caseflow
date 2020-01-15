@@ -13,17 +13,13 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
 
   after { FeatureToggle.disable!(:api_v3) }
 
-  let!(:api_key) { ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string }
+  let(:authorization_header) do
+    api_key = ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string
+    { "Authorization" => "Token #{api_key}" }
+  end
 
   let(:veteran_ssn) { "64205050" }
 
-  # let!(:veteran) do
-  #   veteran = Generators::Veteran.build(file_number: veteran_ssn,
-  #                             first_name: "Ed",
-  #                             last_name: "Merica")
-  #   veteran.ssn = veteran_ssn
-  #   veteran
-  # end
   let!(:veteran) { create(:veteran, ssn: veteran_ssn) }
 
   let!(:current_user) do
@@ -90,23 +86,23 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     ).contestable_issues
   end
 
-  context do
+  context 'contestable_issues' do
     it { expect(contestable_issues).not_to be_empty }
   end
 
   describe "#create" do
     before do
       allow(User).to receive(:api_user).and_return(mock_api_user)
-      before_post # TODO refactor?
-      post(
-        "/api/v3/decision_review/higher_level_reviews",
-        params: params,
-        as: :json,
-        headers: { "Authorization" => "Token #{api_key}" }
-      )
     end
 
-    let(:before_post) { nil }
+    def post_create(parameters = params)
+      post(
+        "/api/v3/decision_review/higher_level_reviews",
+        params: parameters,
+        as: :json,
+        headers: authorization_header
+      )
+    end
 
     let(:expected_error) { Api::V3::DecisionReview::IntakeError.new(expected_error_code) }
     let(:expected_error_render_hash) do
@@ -116,30 +112,29 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     let(:expected_error_status) { expected_error_render_hash[:status] }
 
     context "good request" do
-      let(:before_post) do
-        allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
-      end
-
       it "should return a 202 on success" do
+        allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
+        post_create
         expect(response).to have_http_status(202)
       end
     end
 
     context "params are missing" do
-      let(:params) { {} }
       let(:expected_error_code) { "malformed_request" }
 
       it "should return malformed_request error" do
+        post_create({})
         expect(first_error_code_in_response).to eq expected_error_code
         expect(response).to have_http_status expected_error_status
       end
     end
 
     context "using a reserved veteran file number while in prod" do
-      let(:before_post) { allow_any_instance_of(IntakeStartValidator).to receive(:file_number_reserved?).and_return(true) }
       let(:expected_error_code) { "reserved_veteran_file_number" }
 
       it "should return reserved_veteran_file_number error" do
+        allow_any_instance_of(IntakeStartValidator).to receive(:file_number_reserved?).and_return(true)
+        post_create
         expect(response_json).to eq expected_error_json
         expect(response).to have_http_status expected_error_status
       end
@@ -159,7 +154,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     def get_higher_level_review # rubocop:disable Naming/AccessorMethodName
       get(
         "/api/v3/decision_review/higher_level_reviews/#{higher_level_review.uuid}",
-        headers: { "Authorization" => "Token #{api_key}" }
+        headers: authorization_header
       )
     end
 
