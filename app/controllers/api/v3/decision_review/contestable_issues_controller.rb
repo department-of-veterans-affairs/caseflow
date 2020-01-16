@@ -30,8 +30,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
   end
 
   def set_veteran_from_header
-    file_number = BGSService.new.fetch_file_number_by_ssn(request.headers["ssn"])
-    @veteran = VeteranFinder.find_best_match(file_number) if file_number
+    @veteran = VeteranFinder.find_best_match(request.headers["ssn"])
     unless @veteran
       render_error(
         status: 404,
