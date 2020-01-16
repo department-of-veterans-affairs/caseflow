@@ -109,12 +109,14 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     end
   end
 
-  context "User has the correct link", focus: true do
+  context "User has the correct link" do
     let!(:virtual_hearing) { create(:virtual_hearing, :initialized, :active, :all_emails_sent, hearing: hearing) }
 
     scenario "user has the host link" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
-      expect(page).to have_content(virtual_hearing.host_link)
+
+      expect(page).to have_content(
+        "conference=#{virtual_hearing.alias}&pin=#{virtual_hearing.host_pin}#&join=1&role=host")
     end
   end
 end
