@@ -13,8 +13,7 @@ describe VirtualHearingMailer do
   end
   let(:virtual_hearing) { build(:virtual_hearing, hearing: hearing) }
 
-  shared_examples_for "it can send an email to a recipient with the title" do |title_key|
-    let(:title) { MailRecipient::RECIPIENT_TITLES[title_key] }
+  shared_examples_for "it can send an email to a recipient with the title" do
     let(:recipient) { MailRecipient.new(name: "LastName", email: "email@test.com", title: title) }
 
     describe "#cancellation" do
