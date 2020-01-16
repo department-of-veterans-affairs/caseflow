@@ -1364,8 +1364,17 @@ feature "Higher-Level Review", :all_dbs do
         end
 
         context "with unidentified issue on legacy opt-in" do
-          before { FeatureToggle.enable!(:verify_unidentified_issue) }
-          after { FeatureToggle.disable!(:verify_unidentified_issue) }
+          before do
+            FeatureToggle.enable!(:verify_unidentified_issue)
+            FeatureToggle.enable!(:unidentified_issue_decision_date)
+          end
+
+          after do
+            FeatureToggle.disable!(:verify_unidentified_issue)
+            FeatureToggle.enable!(:unidentified_issue_decision_date)
+          end
+
+          let(:decision_date) { 30.days.ago.to_date.mdY }
 
           scenario "show unidentified modal" do
             start_higher_level_review(veteran, legacy_opt_in_approved: true)
@@ -1417,6 +1426,46 @@ feature "Higher-Level Review", :all_dbs do
                    )).to_not be_nil
 
             expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
+          end
+
+          scenario "Verify checkbox on unidentified issues modal on edit page is enabled" do
+            start_higher_level_review(veteran, legacy_opt_in_approved: true)
+            visit "/intake/add_issues"
+            click_intake_add_issue
+            click_intake_no_matching_issues
+            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+
+            click_intake_no_matching_issues
+            expect(page).to have_content("Describe the issue to mark it as needing further review")
+            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            safe_click ".add-issue"
+
+            add_intake_rating_issue("ankylosis of hip")
+            click_intake_finish
+            click_on "correct the issues"
+            expect(page).to have_content("This issue has automatically closed the VACOLS issue")
+
+            click_intake_add_issue
+            click_intake_no_matching_issues
+
+            expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
+            click_intake_no_matching_issues
+            expect(find_field("Verify record of prior decision", visible: false)).to_not be_checked
+
+            find("label", text: "Verify record of prior decision").click
+            expect(page).to have_button("Next", disabled: true)
+            expect(page).not_to have_content("Decision date (optional)")
+            expect(page).not_to have_content("Notes (optional)")
+
+            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            fill_in "Decision date", with: decision_date
+            fill_in "Notes", with: "Testing unidentified issues"
+            click_on "Next"
+
+            expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+            expect(page).to have_content("impairment of hip")
+            add_intake_rating_issue("ankylosis of hip")
+            expect(page).to have_content("Testing unidentified issues")
           end
         end
       end
