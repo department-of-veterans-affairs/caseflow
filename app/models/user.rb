@@ -262,7 +262,7 @@ class User < ApplicationRecord
   end
 
   def administered_teams
-    organizations_users.admin.map(&:organization)
+    organizations_users.admin.map(&:organization).compact
   end
 
   def administered_judge_teams
@@ -347,7 +347,7 @@ class User < ApplicationRecord
   private
 
   def inactive_judge_team
-    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.select(&:admin?).pluck(:organization_id))
+    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.admin.pluck(:organization_id))
   end
 
   def user_reactivation

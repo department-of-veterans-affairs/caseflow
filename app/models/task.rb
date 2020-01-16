@@ -533,12 +533,15 @@ class Task < ApplicationRecord
     # by avoiding callbacks, we aren't saving PaperTrail versions
     # Manually save the state before and after.
     tasks = Task.open.where(id: descendant_ids)
-    tasks.each { |task| task.paper_trail.save_with_version }
-    tasks.update_all(
-      status: Constants.TASK_STATUSES.cancelled,
-      closed_at: Time.zone.now
-    )
-    tasks.each { |task| task.reload.paper_trail.save_with_version }
+
+    transaction do
+      tasks.each { |task| task.paper_trail.save_with_version }
+      tasks.update_all(
+        status: Constants.TASK_STATUSES.cancelled,
+        closed_at: Time.zone.now
+      )
+      tasks.each { |task| task.reload.paper_trail.save_with_version }
+    end
   end
 
   def timeline_title
