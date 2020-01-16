@@ -757,7 +757,9 @@ describe User, :all_dbs do
             expect(judge_team.judge).not_to eq user
             expect(judge_team.admins).to include user
             expect(user.organizations.size).to eq 3
-            expect(user.selectable_organizations.length).to eq 2
+            puts FeatureToggle.enabled?(:judge_admin_scm)
+            expect(user.selectable_organizations.length).to eq 3 if FeatureToggle.enabled?(:judge_admin_scm)
+            expect(user.selectable_organizations.length).to eq 2 if not FeatureToggle.enabled?(:judge_admin_scm)
             expect(subject).to eq true
             expect(user.reload.status).to eq status
             expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
