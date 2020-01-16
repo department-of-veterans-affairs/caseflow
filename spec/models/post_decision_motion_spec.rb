@@ -10,11 +10,13 @@ RSpec.describe PostDecisionMotion, type: :model do
   let(:motions_atty) { create(:user, full_name: "Motions attorney") }
   let(:appeal) { create(:appeal) }
   let(:orig_decision_issues) do
-    Array.new(3) do
+    Array.new(3) do |index|
       create(
         :decision_issue,
         decision_review: appeal,
-        disposition: "denied"
+        disposition: "denied",
+        description: "issue #{index}",
+        participant_id: appeal.veteran.participant_id
       )
     end
   end
@@ -46,10 +48,22 @@ RSpec.describe PostDecisionMotion, type: :model do
     let(:vacate_type) { "vacate_and_readjudication" }
 
     it "creates a request issue for every selected decision issue" do
-      expect(appeal.request_issues.length).to eq 0
-      post_decision_motion.create_request_issues_for_vacature
+      expect(appeal.request_issues.size).to eq 0
+      post_decision_motion.request_issues_for_vacature
       appeal.reload
-      expect(appeal.request_issues.length).to eq 3
+      expect(appeal.request_issues.size).to eq 3
+    end
+  end
+
+  context "handles creation of vacated decision issues" do
+    let(:disposition) { "granted" }
+    let(:vacate_type) { "vacate_and_readjudication" }
+
+    it "creates a vacated decision issue for every selected decision issue" do
+      expect(post_decision_motion.vacated_issues.size).to eq 3
+      post_decision_motion.vacated_decision_issues
+      appeal.reload
+      expect(appeal.decision_issues.size).to eq 6
     end
   end
 end

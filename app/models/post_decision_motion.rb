@@ -27,8 +27,12 @@ class PostDecisionMotion < ApplicationRecord
     DecisionIssue.find(vacated_decision_issue_ids)
   end
 
-  def create_request_issues_for_vacature
-    vacated_issues.map(&:create_contesting_request_issue!)
+  def request_issues_for_vacature
+    @request_issues_for_vacature ||= vacated_issues.map(&:create_contesting_request_issue!)
+  end
+
+  def vacated_decision_issues
+    @vacated_decision_issues ||= request_issues_for_vacature.map(&:create_vacated_decision_issue!)
   end
 
   private
