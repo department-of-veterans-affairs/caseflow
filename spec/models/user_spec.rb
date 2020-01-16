@@ -323,6 +323,8 @@ describe User, :all_dbs do
 
       before do
         OrganizationsUser.make_user_admin(user, judge_team)
+        allow(JudgeTeam).to receive(:for_judge).with(user).and_return(nil)
+        allow(user).to receive(:judge_in_vacols?).and_return(false)
       end
 
       it "does not return assigned cases link for judge" do
