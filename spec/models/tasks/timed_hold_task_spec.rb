@@ -233,4 +233,14 @@ describe TimedHoldTask, :postgres do
       expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
     end
   end
+
+  describe "when attempting to adopt a child by a timed hold task" do
+    let!(:child_task) { create(:task) }
+
+    subject { child_task.update!(parent: task) }
+
+    it "fails" do
+      expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
+    end
+  end
 end
