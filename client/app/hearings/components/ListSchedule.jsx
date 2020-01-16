@@ -19,7 +19,7 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
-import { LIST_SCHEDULE_VIEWS } from '../constants';
+import { LIST_SCHEDULE_VIEWS, VIDEO_HEARING } from '../constants';
 import DropdownButton from '../../components/DropdownButton';
 
 const downloadButtonStyling = css({
@@ -176,6 +176,13 @@ class ListSchedule extends React.Component {
         align: 'left',
         tableData: hearingScheduleRows,
         enableFilter: true,
+        filterValueTransform: (hearingType) => {
+          if (hearingType.toLowerCase().startsWith('video')) {
+            return VIDEO_HEARING;
+          }
+
+          return hearingType;
+        },
         anyFiltersAreSet: true,
         label: 'Filter by type',
         columnName: 'readableRequestType',

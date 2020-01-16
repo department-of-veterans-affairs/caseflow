@@ -37,6 +37,7 @@ describe Organization, :postgres do
     context "upon creation" do
       it "has a default value of 'active'" do
         expect(org.status).to eq("active")
+        expect(org.type).to eq(Organization.name)
       end
     end
 

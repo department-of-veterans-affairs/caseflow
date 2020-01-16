@@ -36,6 +36,7 @@ class AMOMetricsReportJob < CaseflowJob
     slack_service.send_notification(msg, self.class.to_s, SLACK_CHANNEL)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def build_report(async_stats)
     sc_stats = async_stats.stats[:supplemental_claims]
     hlr_stats = async_stats.stats[:higher_level_reviews]
@@ -46,8 +47,13 @@ class AMOMetricsReportJob < CaseflowJob
     report = []
     report << "AMO metrics report #{start_date} to #{end_date.to_date}"
     report << "Supplemental Claims #{sc_stats[:total]} established, median #{sc_med} average #{sc_avg}"
+    report << "Supplemental Claims newly stuck: #{sc_stats[:expired]}"
+    report << "Supplemental Claims total stuck: #{SupplementalClaim.expired_without_processing.with_error.count}"
     report << "Higher Level Reviews #{hlr_stats[:total]} established, median #{hlr_med} average #{hlr_avg}"
+    report << "Higher Level Reviews newly stuck: #{hlr_stats[:expired]}"
+    report << "Higher Level Reviews total stuck: #{HigherLevelReview.expired_without_processing.with_error.count}"
     report << async_stats.as_csv
     report.join("\n")
   end
+  # rubocop:enable Metrics/AbcSize
 end
