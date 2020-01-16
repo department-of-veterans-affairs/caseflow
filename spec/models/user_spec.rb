@@ -765,7 +765,7 @@ describe User, :all_dbs do
           let(:judge_team) { JudgeTeam.create_for_judge(user) }
           before { allow(user).to receive(:judge?).and_return(true) }
 
-          it "removes judge from all orgs except JudgeTeam" do
+          it "removes judge from all orgs except their own JudgeTeam" do
             expect(user.judge?)
             expect(judge_team.judge).to eq user
             expect(user.organizations.size).to eq 3
@@ -776,6 +776,25 @@ describe User, :all_dbs do
             expect(judge_team.judge).to eq user
             expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
             expect(user.selectable_organizations.length).to eq 0
+          end
+
+          context "when judge is a non-JudgeTeamLead in another JudgeTeam" do
+            let(:judge_team2) { JudgeTeam.create_for_judge(create(:user)) }
+            before { allow(user).to receive(:judge?).and_return(true) }
+            before { judge_team2.add_user(user) }
+
+            it "removes judge from all orgs (including JudgeTeams) except their own JudgeTeam" do
+              expect(user.judge?)
+              expect(judge_team.judge).to eq user
+              expect(user.organizations.size).to eq 4
+              expect(user.selectable_organizations.length).to eq 3
+              expect(user.update_status!(status)).to eq true
+              expect(user.reload.status).to eq status
+              expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+              expect(judge_team.judge).to eq user
+              expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
+              expect(user.selectable_organizations.length).to eq 0
+            end
           end
         end
 

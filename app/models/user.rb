@@ -362,9 +362,9 @@ class User < ApplicationRecord
 
   def remove_user_from_orgs
     removal_orgs = organizations
-    removal_orgs = removal_orgs.reject { |org| org.is_a?(JudgeTeam) && org.judge == self } if judge?
-    removal_orgs.each do |organization|
-      OrganizationsUser.remove_user_from_organization(self, organization)
+    my_judge_team = JudgeTeam.for_judge(self)
+    removal_orgs.each do |org|
+      OrganizationsUser.remove_user_from_organization(self, org) unless org == my_judge_team
     end
   end
 
