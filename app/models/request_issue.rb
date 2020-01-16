@@ -162,7 +162,7 @@ class RequestIssue < ApplicationRecord
       new(attrs).tap(&:validate_eligibility!)
     end
 
-    def new_decision_issue_from!
+    def create_vacated_decision_issue!
       DecisionIssue.create!(
         decision_review: decision_review,
         decision_review_type: decision_review_type,
