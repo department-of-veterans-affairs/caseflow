@@ -475,9 +475,9 @@ class RequestIssue < ApplicationRecord
     DecisionIssue.create!(
       decision_review: decision_review,
       decision_review_type: decision_review_type,
-      disposition: 'vacated',
+      disposition: "vacated",
       description: "The decision: #{description} has been vacated.",
-      caseflow_decision_date: Date.today,
+      caseflow_decision_date: Time.zone.today,
       benefit_type: benefit_type,
       participant_id: decision_review.veteran.participant_id
     )
