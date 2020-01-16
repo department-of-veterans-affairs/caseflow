@@ -728,12 +728,9 @@ describe User, :all_dbs do
 
       context "when the user is a member of many orgs" do
         let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
-        # Colocated is an org that auto-assigns tasks (ie, it overrides next_assignee)
         let(:other_orgs) { [Colocated.singleton, create(:organization)] }
 
-        before do
-          other_orgs.each { |org| org.add_user(user) }
-        end
+        before { other_orgs.each { |org| org.add_user(user) } }
 
         context "when marking the user inactive" do
           before { judge_team.add_user(user) }
