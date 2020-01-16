@@ -142,14 +142,14 @@ class Hearing < ApplicationRecord
   end
 
   def scheduled_for
-    DateTime.new.in_time_zone(regional_office_timezone).change(
-      year: hearing_day.scheduled_for.year,
-      month: hearing_day.scheduled_for.month,
-      day: hearing_day.scheduled_for.day,
-      hour: scheduled_time.hour,
-      min: scheduled_time.min,
-      sec: scheduled_time.sec
-    )
+    Time.utc(
+      hearing_day.scheduled_for.year,
+      hearing_day.scheduled_for.month,
+      hearing_day.scheduled_for.day,
+      scheduled_time.hour,
+      scheduled_time.min,
+      scheduled_time.sec
+    ).in_time_zone(regional_office_timezone)
   end
 
   def scheduled_for_past?
