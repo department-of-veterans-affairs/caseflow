@@ -35,9 +35,16 @@ class TaskTreeMetadata
     end
   end
 
-  # hash of column metadata, containing col widths and heading labels
+  # hash of column metadata, containing col widths and heading labels based on configuration and parameters
   def col_metadata
-    @col_metadata ||= derive_column_metadata(@func_hash.keys, rows.values, @col_labels)
+    @col_metadata ||= calculate_maxwidths(@func_hash.keys, rows.values).tap do |col_metadata|
+      if @col_labels
+        configure_headings_using_labels(@col_labels, col_metadata, @func_hash.keys)
+      else
+        configure_headings_using_transforms(col_metadata)
+      end
+      update_col_widths_to_fit_col_labels(col_metadata)
+    end
   end
 
   # returns string for appeal header row: appeal_label followed by column headings
@@ -64,6 +71,7 @@ class TaskTreeMetadata
   # number of characters TTY::Tree uses for indenting
   INDENT_SIZE = 4
 
+  # return the max length for strings of task names, considering tree depth indentation
   def calculate_max_name_length(task, depth = 0)
     task_label_length = (INDENT_SIZE * depth) + task.class.name.length
     task.children.map do |child|
@@ -71,28 +79,16 @@ class TaskTreeMetadata
     end.append(task_label_length).max
   end
 
+  # return all root-level tasks that are considered part of this appeal
   def appeal_children(appeal)
     roottask_ids = appeal.tasks.where(parent_id: nil).pluck(:id)
-    # Can the following be expressed using `where` so that it returns an AssociationRelation of Tasks?
+    # in some tests, parent tasks are (erroneously) not in the same appeal
     task_ids = appeal.tasks.reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id) if config.show_all_tasks
     roottask_ids |= task_ids if task_ids
     Task.where(id: roottask_ids.compact.sort)
   end
 
-  def derive_column_metadata(col_keys, row_values, col_labels)
-    calculate_maxwidths(col_keys, row_values).tap do |col_metadata|
-      # Set labels using specified col_labels or create heading labels using config's heading_transform
-      if col_labels
-        configure_headings_using_labels(col_labels, col_metadata, col_keys)
-      else
-        configure_headings_using_transform(col_metadata)
-      end
-
-      update_col_widths_to_fit_col_labels(col_metadata)
-    end
-  end
-
-  # Calculate column widths using rows only (not column heading labels)
+  # calculate column widths using rows only (not column heading labels)
   def calculate_maxwidths(keys, row_values)
     keys.each_with_object({}) do |key, col_md|
       max_col_width = row_values.map { |row| row[key]&.to_s&.size || 0 }.compact.max
@@ -106,7 +102,7 @@ class TaskTreeMetadata
     end
   end
 
-  def configure_headings_using_transform(col_metadata)
+  def configure_headings_using_transforms(col_metadata)
     transformer = config.heading_transform_funcs_hash[config.heading_transform]
     unless transformer
       Rails.logger.warn "Unknown heading transform: #{config.heading_transform}"

@@ -162,7 +162,7 @@ class TaskTreeRenderer
     { row_str => task.children.order(:id).map { |child| structure_task(child, metadata, depth + 1) } }
   end
 
-  # create column-aligned string concatenating all column values for a task row 
+  # create column-aligned string concatenating all column values for a task row
   def tree_task_attributes(columns, row)
     col_seperator_with_margins = config.cell_margin_char + config.col_sep + config.cell_margin_char
     values_str = columns.map do |key, col_obj|
