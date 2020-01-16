@@ -728,7 +728,7 @@ describe User, :all_dbs do
       end
 
       context "when the user is a member of many orgs" do
-        let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
+        let(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
         let(:other_orgs) { [Colocated.singleton, create(:organization)] }
 
         before { other_orgs.each { |org| org.add_user(user) } }
