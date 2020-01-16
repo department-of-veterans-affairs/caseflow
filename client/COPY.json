@@ -137,7 +137,7 @@
   "TRACKING_TASKS_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
-  "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign team cases",
+  "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign %s team cases",
   "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Your cases",
 
   "JUDGE_ADDRESS_MTV_TITLE": "Address %s's Motion to Vacate",
