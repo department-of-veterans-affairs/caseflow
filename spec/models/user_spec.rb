@@ -703,7 +703,7 @@ describe User, :all_dbs do
         let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
         let(:user) { judge_team.judge }
 
-        before { allow(user).to receive(:judge?).and_return(true) }
+        before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
 
         context "when marking the user inactive" do
           it "marks their JudgeTeam as inactive" do
@@ -763,7 +763,7 @@ describe User, :all_dbs do
 
         context "when marking the judge inactive" do
           let(:judge_team) { JudgeTeam.create_for_judge(user) }
-          before { allow(user).to receive(:judge?).and_return(true) }
+          before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
 
           it "removes judge from all orgs except their own JudgeTeam" do
             expect(user.judge?)
@@ -775,12 +775,13 @@ describe User, :all_dbs do
             expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
             expect(judge_team.judge).to eq user
             expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
-            expect(user.selectable_organizations.length).to eq 0
+            # Every judge in vacols should be able to see their assign page, even if they don't have a judge team
+            expect(user.selectable_organizations.length).to eq 1
           end
 
           context "when judge is a non-JudgeTeamLead in another JudgeTeam" do
             let(:judge_team2) { JudgeTeam.create_for_judge(create(:user)) }
-            before { allow(user).to receive(:judge?).and_return(true) }
+            before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
             before { judge_team2.add_user(user) }
 
             it "removes judge from all orgs (including JudgeTeams) except their own JudgeTeam" do
@@ -793,7 +794,8 @@ describe User, :all_dbs do
               expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
               expect(judge_team.judge).to eq user
               expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
-              expect(user.selectable_organizations.length).to eq 0
+              # Every judge in vacols should be able to see their assign page, even if they don't have a judge team
+              expect(user.selectable_organizations.length).to eq 1
             end
           end
         end

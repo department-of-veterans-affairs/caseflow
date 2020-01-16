@@ -289,7 +289,7 @@ class User < ApplicationRecord
   end
 
   def judge?
-    JudgeTeam.for_judge(self) || judge_in_vacols?
+    !!JudgeTeam.for_judge(self) || judge_in_vacols?
   end
 
   def update_status!(new_status)
