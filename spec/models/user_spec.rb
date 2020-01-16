@@ -747,7 +747,10 @@ describe User, :all_dbs do
         end
 
         context "when marking the admin inactive" do
-          before { OrganizationsUser.make_user_admin(user, judge_team) }
+          before do
+            OrganizationsUser.make_user_admin(user, judge_team)
+            allow(user).to receive(:judge_in_vacols?).and_return(false)
+          end
 
           it "removes admin from all organizations, including JudgeTeam" do
             expect(judge_team.admins).to include user
