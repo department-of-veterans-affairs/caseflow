@@ -11,7 +11,7 @@ describe TaskTreeRenderModule do
 
   context ".tree is called on an appeal" do
     it "returns all tasks for the appeal" do
-      # puts @appeal.tree
+      puts @appeal.tree
       rows_hash, metadata = @appeal.tree_hash
       expect(rows_hash.count).to eq 1
       expect(metadata.rows.count).to eq @appeal.tasks.count
@@ -74,8 +74,8 @@ describe TaskTreeRenderModule do
 
     it "highlights specified task with an asterisk, even if no columns are specified" do
       task_to_highlight = @appeal.tasks.sample
-      # @appeal.treee(:id, :status, highlight: task_to_highlight.id)
-      # task_to_highlight.treee(:id, :status, highlight: task_to_highlight.id)
+      @appeal.treee(:id, :status, highlight: task_to_highlight.id)
+      task_to_highlight.treee(:id, :status, highlight: task_to_highlight.id)
 
       _rows_hash, metadata = @appeal.root_task.tree_hash(highlight: task_to_highlight.id)
       check_for_highlight(metadata, task_to_highlight)
@@ -94,7 +94,7 @@ describe TaskTreeRenderModule do
     def tree1(obj, *atts, **kwargs)
       kwargs[:renderer] ||= TaskTreeRenderModule.new_renderer
       kwargs[:renderer].tap do |r|
-        r.compact
+        r.compact_mode
         r.config.default_atts = [:id, :status, :ASGN_TO, :UPD_DATE]
       end
       obj.tree(*atts, **kwargs)
@@ -103,14 +103,14 @@ describe TaskTreeRenderModule do
     def tree2(obj, *atts, **kwargs)
       kwargs.delete(:renderer) && fail("Use other approach to allow 'renderer' named parameter!")
       renderer = TaskTreeRenderModule.new_renderer.tap do |r|
-        r.compact
+        r.compact_mode
         r.config.default_atts = [:id, :status, :ASGN_TO, :UPD_DATE]
       end
       renderer.tree_str(obj, *atts, **kwargs)
     end
 
     it "prints all tasks" do
-      # puts tree2 @appeal, :id, :status
+      puts tree2 @appeal, :id, :status
       num_lines = @appeal.tasks.count + 1
       expect((tree1 @appeal).lines.count).to eq num_lines
       expect((tree2 @appeal, :id, :status).lines.count).to eq num_lines

@@ -25,18 +25,24 @@ class TaskTreeRenderer
                  (defined?(appeal.docket_name) && appeal.docket_name)
         "#{appeal.class.name} #{appeal.id} (#{docket}) "
       }
-      init_hashes
+      init_heading_transform_funcs
+      init_value_funcs
     end
 
     private
 
-    def init_hashes
+    # initialize build-in functions that format the column heading labels
+    def init_heading_transform_funcs
       @heading_transform_funcs_hash = {
         nochange_headings: ->(key, _col_obj) { key },
         upcase_headings: ->(key, _col_obj) { key.upcase },
         symbol_headings: ->(key, _col_obj) { ":#{key}" },
         clipped_upcase_headings: ->(key, col_obj) { key[0..[0, col_obj[:width] - 1].max].upcase }
       }
+    end
+
+    # initialize built-in functions that generate column values for each task
+    def init_value_funcs
       @value_funcs_hash = {
         ASGN_BY: lambda { |task|
           TaskTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
@@ -54,10 +60,11 @@ class TaskTreeRenderer
 
   def initialize
     @config = TreeRendererConfig.new
-    ansi
+    ansi_mode
   end
 
   class << self
+    # made available for use in lambdas in value_funcs_hash
     def send_chain(initial_obj, methods)
       methods.inject(initial_obj) do |obj, method|
         obj.respond_to?(method) ? obj.send(method) : nil
@@ -65,34 +72,35 @@ class TaskTreeRenderer
     end
   end
 
-  def ansi
+  def ansi_mode
     config.include_border = true
     config.col_sep = "│"
     config.top_chars = "┌──┐"
     config.bottom_chars = "└──┘"
     config.heading_fill_str = "─"
     config.cell_margin_char = " "
-    config
+    self
   end
 
-  def ascii
+  def ascii_mode
     config.include_border = true
     config.col_sep = "|"
     config.top_chars = "+--+"
     config.bottom_chars = "+--+"
     config.heading_fill_str = "-"
     config.cell_margin_char = " "
-    config
+    self
   end
 
-  def compact
+  def compact_mode
     config.include_border = false
     config.col_sep = " "
     config.heading_fill_str = " "
     config.cell_margin_char = ""
-    config
+    self
   end
 
+  # format obj into a string presented as a tree
   def tree_str(obj, *atts, **kwargs)
     fail "TTY::Tree does not work when config.col_sep='/'" if config.col_sep == "/"
 
@@ -110,6 +118,7 @@ class TaskTreeRenderer
 
   HIGHLIGHT_COL_KEY = " "
 
+  # create hash for TTY:Tree to generate formatted output, along with metadata
   def tree_hash(obj, *atts, col_labels: nil, highlight: nil)
     atts = config.default_atts unless atts.any?
     atts.prepend(HIGHLIGHT_COL_KEY) if highlight && !atts.include?(HIGHLIGHT_COL_KEY)
@@ -125,7 +134,7 @@ class TaskTreeRenderer
 
   private
 
-  # hash of lambdas that return string of the cell value
+  # hash of lambdas that return string for the cell value
   def derive_value_funcs_hash(atts, highlighted_task)
     atts.each_with_object({}) do |att, funcs_hash|
       if config.value_funcs_hash[att]
@@ -140,17 +149,20 @@ class TaskTreeRenderer
     end
   end
 
+  # create a hash entry for the appeal heading row and associated tasks
   def structure_appeal(metadata, depth = 0)
     row_str = metadata.appeal_heading_row
     { row_str => metadata.rootlevel_tasks.map { |task| structure_task(task, metadata, depth + 1) } }
   end
 
+  # create a hash entry for tasks and their child tasks, recursively
   def structure_task(task, metadata, depth = 0)
     row_str = task.class.name.ljust(metadata.max_name_length - (TaskTreeMetadata::INDENT_SIZE * depth)) +
               " " + tree_task_attributes(metadata.col_metadata, metadata.rows[task])
     { row_str => task.children.order(:id).map { |child| structure_task(child, metadata, depth + 1) } }
   end
 
+  # create column-aligned string concatenating all column values for a task row 
   def tree_task_attributes(columns, row)
     col_seperator_with_margins = config.cell_margin_char + config.col_sep + config.cell_margin_char
     values_str = columns.map do |key, col_obj|
