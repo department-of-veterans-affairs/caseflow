@@ -319,10 +319,9 @@ describe User, :all_dbs do
 
     context "when the user is a judge team admin" do
       let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
-      let(:judge) { judge_team.judge }
+      let!(:judge) { judge_team.judge }
 
       before do
-        OrganizationsUser.make_user_admin(judge, judge_team)
         OrganizationsUser.make_user_admin(user, judge_team)
       end
 
