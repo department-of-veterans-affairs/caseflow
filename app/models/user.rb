@@ -289,11 +289,7 @@ class User < ApplicationRecord
   end
 
   def judge?
-    if FeatureToggle.enabled?(:use_judge_team_role)
-      JudgeTeam.for_judge(self) || judge_in_vacols?
-    else
-      judge_in_vacols?
-    end
+    JudgeTeam.for_judge(self) || judge_in_vacols?
   end
 
   def update_status!(new_status)
@@ -366,7 +362,7 @@ class User < ApplicationRecord
 
   def remove_user_from_orgs
     removal_orgs = organizations
-    removal_orgs = removal_orgs.reject { |org| org.is_a?(JudgeTeam) } if judge?
+    removal_orgs = removal_orgs.reject { |org| org.is_a?(JudgeTeam) && org.judge == self } if judge?
     removal_orgs.each do |organization|
       OrganizationsUser.remove_user_from_organization(self, organization)
     end
