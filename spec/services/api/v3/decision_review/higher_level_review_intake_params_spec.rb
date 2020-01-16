@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
+fcontext Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
   include IntakeHelpers
 
   let(:hlr_intake_params) { Api::V3::DecisionReview::HigherLevelReviewIntakeParams.new(params) }
@@ -372,17 +372,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     # TODO this seems like it will change dramatically
     subject { hlr_intake_params.veteran_file_number }
 
-    it { is_expected.to eq ssn }
-
-    context "int" do
-      let(:ssn) { 12 }
-      it("always returns a string") { is_expected.to eq "12" }
-    end
-
-    context "padded string" do
-      let(:ssn) { "  hello  " }
-      it("removes padding") { is_expected.to eq "hello" }
-    end
+    it { is_expected.to eq veteran.file_number }
   end
 
   describe "#attributes" do
