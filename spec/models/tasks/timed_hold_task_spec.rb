@@ -223,4 +223,14 @@ describe TimedHoldTask, :postgres do
       expect(task.hide_from_task_snapshot).to eq(true)
     end
   end
+
+  describe "when attempting to create a child of a timed hold task" do
+    let(:child_task) { create(:task, parent: task) }
+
+    subject { child_task }
+
+    it "fails" do
+      expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
+    end
+  end
 end

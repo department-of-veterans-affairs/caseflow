@@ -24,6 +24,7 @@ class Task < ApplicationRecord
   validates :assigned_to, :appeal, :type, :status, presence: true
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
+  validate :parent_can_have_children
 
   before_create :set_assigned_at
   before_create :verify_org_task_unique
@@ -110,6 +111,10 @@ class Task < ApplicationRecord
     end
 
     def hide_from_queue_table_view
+      false
+    end
+
+    def cannot_have_children
       false
     end
 
@@ -670,6 +675,14 @@ class Task < ApplicationRecord
   def assignee_status_is_valid_on_create
     if parent&.child_must_have_active_assignee? && assigned_to.is_a?(User) && !assigned_to.active?
       fail Caseflow::Error::InvalidAssigneeStatusOnTaskCreate, assignee: assigned_to
+    end
+
+    true
+  end
+
+  def parent_can_have_children
+    if parent&.class&.cannot_have_children
+      fail Caseflow::Error::InvalidParentTask, message: "Child tasks cannot be created for #{parent.type}s"
     end
 
     true
