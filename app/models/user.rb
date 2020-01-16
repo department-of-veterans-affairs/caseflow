@@ -281,7 +281,7 @@ class User < ApplicationRecord
     judge_team_judges.each do |judge|
       orgs << {
         name: "Assign #{judge.css_id}",
-        url: format("queue/%s/assign", judge.id)
+        url: format("/queue/%s/assign", judge.id)
       }
     end
 
