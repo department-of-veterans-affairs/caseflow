@@ -962,6 +962,19 @@ describe RequestIssue, :all_dbs do
         expect(nonrating).to be(true)
       end
     end
+
+    context "when the contested issue is a rating decision issue" do
+      let(:contested_rating_issue_reference_id) { nil }
+      let(:other_request_issue) { create(:request_issue, :rating) }
+      let!(:decision_issue) { create(:decision_issue, request_issues: [other_request_issue]) }
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      it { is_expected.to be true }
+
+      it "nonrating? is false" do
+        expect(nonrating).to be(false)
+      end
+    end
   end
 
   context "#valid?" do
