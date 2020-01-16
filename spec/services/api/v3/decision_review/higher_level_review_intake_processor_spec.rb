@@ -104,7 +104,11 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
   describe "#higher_level_review" do
     it { expect(subject.run!.higher_level_review).to be_a(HigherLevelReview) }
 
-    context do
+    context(
+      "ensure that, after the HLR processor has run," \
+      " given only IDs to identify a contestable issue," \
+      " it correctly filled in the other fields"
+    ) do
       let(:request_issues) { subject.run!.higher_level_review.request_issues.to_a }
       let(:request_issue) { request_issues.first }
 
@@ -112,27 +116,8 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
 
       it { expect(request_issues.size).to be 1 }
 
-      it do
-        expect(
-          "rating_issue_reference_id" => request_issue[:contested_rating_issue_reference_id],
-          "rating_issue_diagnostic_code" => request_issue[:contested_rating_issue_diagnostic_code],
-          "rating_decision_reference_id" => request_issue[:contested_rating_decision_reference_id],
-          "decision_text" => request_issue[:contested_issue_description],
-          "is_unidentified" => request_issue[:is_unidentified],
-          "decision_date" => request_issue[:decision_date].strftime("%F"),
-          "benefit_type" => request_issue[:benefit_type],
-          "ramp_claim_id" => request_issue[:ramp_claim_id],
-          "contested_decision_issue_id" => request_issue[:contested_decision_issue_id]
-        ).to eq(
-          Api::V3::DecisionReview::ContestableIssueParams.new(
-            decision_review_class: HigherLevelReview,
-            veteran: veteran,
-            receipt_date: receipt_date,
-            benefit_type: benefit_type,
-            params: contestable_issue
-          ).intakes_controller_params.as_json
-        )
-      end
+      it { expect(request_issue[:contested_issue_description]).not_to be nil }
+      it { expect(request_issue[:decision_date].strftime("%F")).not_to be nil }
     end
   end
 end
