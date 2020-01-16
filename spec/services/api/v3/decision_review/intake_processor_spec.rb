@@ -97,7 +97,7 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
   let(:promulgation_date) { receipt_date - 10.days }
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
 
-  context 'contestable_issues' do
+  context "contestable_issues" do
     it { expect(contestable_issues).not_to be_empty }
   end
 
