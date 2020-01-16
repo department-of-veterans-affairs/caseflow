@@ -77,10 +77,9 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
   end
   let(:veteran) do
     create(:veteran,
-      ssn: ssn,
-      first_name: first_name,
-      last_name: last_name
-    )
+           ssn: ssn,
+           first_name: first_name,
+           last_name: last_name)
   end
   let(:ssn) { "64205050" }
   let(:first_name) { "Jane" }
@@ -218,7 +217,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     ]
   end
 
-  context 'contestable_issues' do
+  context "contestable_issues" do
     it { expect(contestable_issues).not_to be_empty }
   end
 
@@ -365,11 +364,9 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
 
       it { is_expected.to eq veteran }
     end
-
   end
 
   describe "#veteran_file_number" do
-    # TODO this seems like it will change dramatically
     subject { hlr_intake_params.veteran_file_number }
 
     it { is_expected.to eq veteran.file_number }
