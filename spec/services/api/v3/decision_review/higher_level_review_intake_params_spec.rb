@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-fcontext Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
+context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
   include IntakeHelpers
 
   let(:hlr_intake_params) { Api::V3::DecisionReview::HigherLevelReviewIntakeParams.new(params) }
