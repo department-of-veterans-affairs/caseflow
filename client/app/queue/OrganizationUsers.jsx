@@ -260,19 +260,20 @@ export default class OrganizationUsers extends React.PureComponent {
         onChange={this.addUser}
         async={this.asyncLoadUser} />
         <br/>
-      <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-      <div>
         <div>
-          <ul>
-            {this.state.organizationUsers.some((user) => user.attributes.judge_team) && 
-            <li><strong>{COPY.USER_MANAGEMENT_DECISION_DRAFTING_HEADING}</strong>{COPY.USER_MANAGEMENT_DECISION_DRAFTING_DESCRIPTION}</li>
-            }
-            <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li>
-            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</li>
-          </ul>
+          {this.state.organizationUsers.some((user) => user.attributes.judge_team) &&
+            <div>
+              <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
+              <ul>
+                <li><strong>{COPY.USER_MANAGEMENT_DECISION_DRAFTING_HEADING}</strong>{COPY.USER_MANAGEMENT_DECISION_DRAFTING_DESCRIPTION}</li>
+                
+                <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li>
+                <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</li>
+              </ul>
+            </div> 
+          }
+          <ul>{listOfUsers}</ul>
         </div>
-        <ul>{listOfUsers}</ul>
-      </div>
     </React.Fragment>;
   }
 
