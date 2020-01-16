@@ -103,5 +103,21 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
 
   describe "#higher_level_review" do
     it { expect(subject.run!.higher_level_review).to be_a(HigherLevelReview) }
+
+    context(
+      "ensure that, after the HLR processor has run," \
+      " given only IDs to identify a contestable issue," \
+      " it correctly filled in the other fields"
+    ) do
+      let(:request_issues) { subject.run!.higher_level_review.request_issues.to_a }
+      let(:request_issue) { request_issues.first }
+
+      it { expect(request_issues).to be_an Array }
+
+      it { expect(request_issues.size).to be 1 }
+
+      it { expect(request_issue[:contested_issue_description]).not_to be nil }
+      it { expect(request_issue[:decision_date].strftime("%F")).not_to be nil }
+    end
   end
 end
