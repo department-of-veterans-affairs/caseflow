@@ -728,20 +728,17 @@ describe User, :all_dbs do
 
       context "when the user is a member of many orgs" do
         let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
-        let(:judge) { judge_team.judge }
         # Colocated is an org that auto-assigns tasks (ie, it overrides next_assignee)
         let(:other_orgs) { [Colocated.singleton, create(:organization)] }
 
-        context "when marking the user inactive" do
-          before do
-            judge_team.add_user(user)
-            other_orgs.each do |org|
-              org.add_user(user)
-              org.add_user(judge)
-            end
-          end
+        before do
+          other_orgs.each { |org| org.add_user(user) }
+        end
 
-          it "removes users from all organizations" do
+        context "when marking the user inactive" do
+          before { judge_team.add_user(user) }
+
+          it "removes users from all organizations, including JudgeTeam" do
             expect(user.organizations.size).to eq 3
             expect(user.selectable_organizations.length).to eq 2
             expect(subject).to eq true
@@ -753,15 +750,10 @@ describe User, :all_dbs do
         end
 
         context "when marking the admin inactive" do
-          before do
-            OrganizationsUser.make_user_admin(user, judge_team)
-            other_orgs.each do |org|
-              org.add_user(user)
-              org.add_user(judge)
-            end
-          end
+          before { OrganizationsUser.make_user_admin(user, judge_team) }
 
-          it "removes admin from all organizations" do
+          it "removes admin from all organizations, including JudgeTeam" do
+            expect(judge_team.admins).to include user
             expect(user.organizations.size).to eq 3
             expect(user.selectable_organizations.length).to eq 2
             expect(subject).to eq true
@@ -774,12 +766,7 @@ describe User, :all_dbs do
 
         context "when marking the judge inactive" do
           let(:judge_team) { JudgeTeam.create_for_judge(user) }
-          before do
-            allow(user).to receive(:judge?).and_return(true)
-            other_orgs.each do |org|
-              org.add_user(user)
-            end
-          end
+          before { allow(user).to receive(:judge?).and_return(true) }
 
           it "removes judge from all orgs except JudgeTeam" do
             expect(user.judge?)
@@ -798,11 +785,6 @@ describe User, :all_dbs do
         context "when marking the user active" do
           let(:user) { create(:user, status: Constants.USER_STATUSES.inactive) }
           let(:status) { Constants.USER_STATUSES.active }
-          before do
-            other_orgs.each do |org|
-              org.add_user(user)
-            end
-          end
 
           it "does not remove the user from any organizations" do
             expect(user.selectable_organizations.length).to eq 2
