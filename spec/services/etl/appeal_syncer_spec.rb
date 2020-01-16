@@ -30,6 +30,12 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
 
         expect(ETL::Appeal.count).to eq(13)
       end
+
+      it "populates person attributes" do
+        subject
+
+        expect(ETL::Appeal.first.veteran_dob).to_not be_nil
+      end
     end
 
     context "sync tomorrow" do
