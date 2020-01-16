@@ -703,7 +703,7 @@ describe User, :all_dbs do
         let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
         let(:user) { judge_team.judge }
 
-        before { allow(user).to receive(:is_judge?).and_return(true) }
+        before { allow(user).to receive(:judge?).and_return(true) }
 
         context "when marking the user inactive" do
           it "marks their JudgeTeam as inactive" do
@@ -773,18 +773,17 @@ describe User, :all_dbs do
         end
 
         context "when marking the judge inactive" do
-          # let(:judge_team) { JudgeTeam.create_for_judge(user) }
-          let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
-          let(:user) { judge_team.judge }
+          let(:judge_team) { JudgeTeam.create_for_judge(user) }
           before do
-            allow(user).to receive(:is_judge?).and_return(true)
+            allow(user).to receive(:judge?).and_return(true)
             other_orgs.each do |org|
               org.add_user(user)
             end
           end
 
           it "removes judge from all orgs except JudgeTeam" do
-            expect(user.is_judge?)
+            expect(user.judge?)
+            expect(judge_team.judge).to eq user
             expect(user.organizations.size).to eq 3
             expect(user.selectable_organizations.length).to eq 3
             expect(user.update_status!(status)).to eq true

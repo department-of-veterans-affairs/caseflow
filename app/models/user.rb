@@ -288,7 +288,7 @@ class User < ApplicationRecord
     orgs
   end
 
-  def is_judge?
+  def judge?
     if FeatureToggle.enabled?(:use_judge_team_role)
       JudgeTeam.for_judge(self) || judge_in_vacols?
     else
@@ -366,7 +366,7 @@ class User < ApplicationRecord
 
   def remove_user_from_orgs
     removal_orgs = organizations
-    removal_orgs = removal_orgs.reject { |org| org.is_a?(JudgeTeam) } if is_judge?
+    removal_orgs = removal_orgs.reject { |org| org.is_a?(JudgeTeam) } if judge?
     removal_orgs.each do |organization|
       OrganizationsUser.remove_user_from_organization(self, organization)
     end
