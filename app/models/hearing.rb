@@ -146,9 +146,9 @@ class Hearing < ApplicationRecord
       hearing_day.scheduled_for.year,
       hearing_day.scheduled_for.month,
       hearing_day.scheduled_for.day,
-      scheduled_time.hour,
-      scheduled_time.min,
-      scheduled_time.sec
+      scheduled_time.utc.hour,
+      scheduled_time.utc.min,
+      scheduled_time.utc.sec
     ).in_time_zone(regional_office_timezone)
   end
 
