@@ -18,10 +18,10 @@ describe "Contestable Issue Generator", :postgres do
   let!(:future_rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: review.receipt_date + 1.day,
-      profile_date: review.receipt_date + 1.day,
+      promulgation_date: review.receipt_date + 5.days,
+      profile_date: review.receipt_date + 5.days,
       issues: [
-        { reference_id: "abc123", decision_text: "Rating issue" }
+        { reference_id: "abc123", decision_text: "Future Rating issue" }
       ]
     )
   end
@@ -105,6 +105,17 @@ describe "Contestable Issue Generator", :postgres do
           expect(subject.first.description).to eq "review decision issue"
         end
       end
+    end
+  end
+
+  describe "#contestable_issues with future ratings" do
+    subject { ContestableIssueGenerator.new(review).from_ratings }
+    before { FeatureToggle.enable!(:show_future_ratings) }
+    after { FeatureToggle.disable!(:show_future_ratings) }
+
+    it "when show_future_ratings feature toggle is enabled" do
+      expect(subject.count).to eq(3)
+      expect(subject.first.description).to eq "Future Rating issue"
     end
   end
 end
