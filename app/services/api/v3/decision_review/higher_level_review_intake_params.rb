@@ -38,12 +38,11 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
 
   CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES.slice("compensation")
 
-  attr_reader :intake_errors, :veteran_file_number
+  attr_reader :intake_errors
 
   def initialize(params)
     @params = params
-    ssn = attributes.dig("veteran", "ssn").to_s.strip
-    @veteran_file_number = BGSService.new.fetch_file_number_by_ssn(ssn) if ssn
+    @veteran_identifier = attributes.dig("veteran", "ssn").to_s.strip
     @intake_errors = []
     validate
   end
@@ -73,8 +72,12 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
     )
   end
 
+  def veteran_file_number
+    veteran.file_number
+  end
+
   def veteran
-    @veteran ||= VeteranFinder.find_best_match(veteran_file_number)
+    @veteran ||= VeteranFinder.find_best_match(@veteran_identifier)
   end
 
   def attributes

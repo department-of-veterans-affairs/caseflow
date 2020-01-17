@@ -81,7 +81,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
            first_name: first_name,
            last_name: last_name)
   end
-  let(:ssn) { "64205050" }
+  let(:ssn) { "642055050" }
   let(:first_name) { "Jane" }
   let(:last_name) { "Doe" }
   let(:vet_address_line_1) { nil }
