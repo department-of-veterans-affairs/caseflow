@@ -163,6 +163,8 @@ export default class TestUsers extends React.PureComponent {
               <div>
                 <p>Your session</p>
                 <pre>{JSON.stringify(this.props.userSession, null, 2)}</pre>
+                <p>Server timezone</p>
+                <pre>{JSON.stringify(this.props.timezone, null, 2)}</pre>
               </div>
             }
             { this.props.dependenciesFaked &&
@@ -258,5 +260,6 @@ TestUsers.propTypes = {
   userDisplayName: PropTypes.string,
   dropdownUrls: PropTypes.array,
   userSession: PropTypes.object.isRequired,
+  timezone: PropTypes.object,
   dependenciesFaked: PropTypes.bool
 };
