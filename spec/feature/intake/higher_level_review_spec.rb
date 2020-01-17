@@ -687,7 +687,7 @@ feature "Higher-Level Review", :all_dbs do
       end
     end
 
-    fcontext "Veteran with future ratings" do
+    context "Veteran with future ratings" do
       before { FeatureToggle.enable!(:show_future_ratings) }
       after { FeatureToggle.disable!(:show_future_ratings) }
 
