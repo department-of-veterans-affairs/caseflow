@@ -28,6 +28,7 @@ class ETL::Appeal < ETL::Record
       target.aod_granted = aod&.granted? || false
       target.aod_reason = aod&.reason
       target.aod_user_id = aod&.user_id
+      target.claimant_dob = person_attributes[:date_of_birth]
       target.claimant_first_name = person_attributes[:first_name]
       target.claimant_id = claimant&.id
       target.claimant_last_name = person_attributes[:last_name]
