@@ -11,19 +11,23 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     Timecop.freeze(post_ama_start_date)
 
     # setup a rating
+    rating
+  end
+
+  after { FeatureToggle.disable!(:api_v3) }
+
+  let(:rating) do
     promulgation_date = receipt_date - 10.days
     profile_date = (receipt_date - 8.days).to_datetime
     generate_rating(veteran, promulgation_date, profile_date)
   end
-
-  after { FeatureToggle.disable!(:api_v3) }
 
   let(:authorization_header) do
     api_key = ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string
     { "Authorization" => "Token #{api_key}" }
   end
 
-  let(:veteran_ssn) { "64205050" }
+  let(:veteran_ssn) { "642152050" }
 
   let(:veteran) { create(:veteran, ssn: veteran_ssn) }
 
@@ -152,13 +156,13 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
         "/api/v3/decision_review/higher_level_reviews",
         params: params,
         as: :json,
-        headers: { "Authorization" => "Token #{api_key}" }
+        headers: authorization_header
       )
       uuid = JSON.parse(response.body)["data"]["id"]
 
       get(
         "/api/v3/decision_review/higher_level_reviews/#{uuid}",
-        headers: { "Authorization" => "Token #{api_key}" }
+        headers: authorization_header
       )
 
       request_issue = JSON.parse(response.body)["included"].find { |obj| obj["type"] == "RequestIssue" }["attributes"]

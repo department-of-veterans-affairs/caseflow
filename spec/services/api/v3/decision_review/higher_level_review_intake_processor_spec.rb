@@ -40,7 +40,7 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
   let(:same_office) { false }
   let(:legacy_opt_in_approved) { true }
   let(:benefit_type) { "compensation" }
-  let(:ssn) { "55555555" }
+  let(:ssn) { "555555555" }
 
   let(:formatted_receipt_date) { receipt_date.strftime("%F") }
 
