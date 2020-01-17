@@ -441,14 +441,14 @@
 
   "USER_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow user management",
   "USER_MANAGEMENT_STATUS_PAGE_TITLE": "Caseflow user status management",
-  "USER_MANAGEMENT_PAGE_DESCRIPTION": "Making a user inactive will remove them from any organization that automatically assigns tasks to team members.",
+  "USER_MANAGEMENT_PAGE_DESCRIPTION": "Making a user inactive will remove them from organizations they are a member of. Inactive users cannot be assigned new tasks.",
   "USER_MANAGEMENT_STATUS_CHANGE_ERROR_TITLE": "Failed to modify user status",
   "USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT": "Make user active",
   "USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT": "Make user inactive",
   "USER_MANAGEMENT_ACTIVE_SUCCESS_TITLE": "Successfully made %s ACTIVE",
   "USER_MANAGEMENT_INACTIVE_SUCCESS_TITLE": "Successfully made %s INACTIVE",
-  "USER_MANAGEMENT_ACTIVE_SUCCESS_BODY": "%s will need to be added to organizations that automatically assign tasks to team members via the team management page",
-  "USER_MANAGEMENT_INACTIVE_SUCCESS_BODY": "%s has been removed from organizations that automatically assign tasks to team members. If this was a mistake, mark the user ACTIVE and add them to their organizations on the team management page",
+  "USER_MANAGEMENT_ACTIVE_SUCCESS_BODY": "%s can now be assigned new tasks and will need to be added to organizations via the team management page",
+  "USER_MANAGEMENT_INACTIVE_SUCCESS_BODY": "%s has been removed from organizations they were a member of. They will not be assigned any new tasks. If this was a mistake, mark the user ACTIVE and add them to organizations on the team management page",
   "USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE": "Error searching for user",
 
   "LOOKUP_PARTICIPANT_ID_MODAL_TITLE": "Look Up Participant ID",
