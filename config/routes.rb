@@ -137,6 +137,7 @@ Rails.application.routes.draw do
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
     resources :schedule_hearing_tasks, only: [:index]
+    resources :schedule_hearing_tasks_columns, only: [:index]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
