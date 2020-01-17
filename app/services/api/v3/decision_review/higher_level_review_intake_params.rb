@@ -39,6 +39,7 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES.slice("compensation")
 
   attr_reader :intake_errors
+  delegate :file_number, to: :veteran, prefix: true
 
   def initialize(params)
     @params = params
@@ -70,10 +71,6 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
     ActionController::Parameters.new(
       request_issues: contestable_issues.map(&:intakes_controller_params)
     )
-  end
-
-  def veteran_file_number
-    veteran.file_number
   end
 
   def veteran
