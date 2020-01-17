@@ -6,7 +6,7 @@ describe VirtualHearingMailer do
   let(:hearing) do
     build(
       :hearing,
-      scheduled_time: "6:30PM",
+      scheduled_time: "10:30AM",
       hearing_day: hearing_day,
       regional_office: regional_office
     )
@@ -68,7 +68,7 @@ describe VirtualHearingMailer do
 
     context "on east coast" do
       it "has the correct time in the confirmation email" do
-        expect(subject.html_part.body).to include("1:30pm EST")
+        expect(subject.html_part.body).to include("10:30am EST")
       end
     end
 
