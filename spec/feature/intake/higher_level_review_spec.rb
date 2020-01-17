@@ -1427,8 +1427,6 @@ feature "Higher-Level Review", :all_dbs do
 
             expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
           end
-<<<<<<< HEAD
-=======
 
           scenario "Verify checkbox on unidentified issues modal on edit page is enabled" do
             start_higher_level_review(veteran, legacy_opt_in_approved: true)
@@ -1469,7 +1467,6 @@ feature "Higher-Level Review", :all_dbs do
             add_intake_rating_issue("ankylosis of hip")
             expect(page).to have_content("Testing unidentified issues")
           end
->>>>>>> master
         end
       end
 
