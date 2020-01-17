@@ -150,7 +150,8 @@ class Hearing < ApplicationRecord
     # in the timezone of the regional office. To do that, it needs to consider
     # the fact that Rails will apply the local offset (EST) to the time
     # value before it is saved.
-    scheduled_for_est = scheduled_time.utc.in_time_zone("America/New_York")
+    system_tz = Time.now.getlocal.zone
+    scheduled_for_est = scheduled_time.utc.in_time_zone(system_tz)
 
     Time.use_zone(regional_office_timezone) do
       Time.zone.local(
