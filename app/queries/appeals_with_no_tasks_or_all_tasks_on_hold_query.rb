@@ -34,7 +34,7 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
   end
 
   def completed_dispatch_tasks(klass_name)
-    tasks_for(klass_name).where(type: [BvaDispatchTask.name, QualityReviewTask.name], status: completed)
+    tasks_for(klass_name).where(type: [BvaDispatchTask.name], status: completed)
   end
 
   def established_appeals

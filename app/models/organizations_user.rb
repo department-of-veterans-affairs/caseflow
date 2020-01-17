@@ -8,6 +8,8 @@ class OrganizationsUser < ApplicationRecord
 
   scope :non_admin, -> { where(admin: false) }
 
+  scope :admin, -> { where(admin: true) }
+
   # Deprecated: add_user_to_organization(user, organization)
   # Use instead: organization.add_user(user)
 

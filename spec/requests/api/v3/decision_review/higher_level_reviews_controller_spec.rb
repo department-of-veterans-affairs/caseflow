@@ -143,6 +143,34 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     end
   end
 
+  context(
+    "given a contestable issue that only has ID fields," \
+    " request issues were correctly populated in DB (contestable issue" \
+    " was properly looked up during create)"
+  ) do
+    it do
+      allow(User).to receive(:api_user).and_return(mock_api_user)
+
+      post(
+        "/api/v3/decision_review/higher_level_reviews",
+        params: params,
+        as: :json,
+        headers: { "Authorization" => "Token #{api_key}" }
+      )
+      uuid = JSON.parse(response.body)["data"]["id"]
+
+      get(
+        "/api/v3/decision_review/higher_level_reviews/#{uuid}",
+        headers: { "Authorization" => "Token #{api_key}" }
+      )
+
+      request_issue = JSON.parse(response.body)["included"].find { |obj| obj["type"] == "RequestIssue" }["attributes"]
+      rating_issue = rating.issues.find { |issue| issue.reference_id == request_issue["ratingIssueId"] }
+
+      expect(request_issue["description"]).to eq rating_issue.decision_text
+    end
+  end
+
   describe "#show" do
     let!(:higher_level_review) do
       processor = Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor.new(

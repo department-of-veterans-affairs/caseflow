@@ -140,56 +140,53 @@ describe Appeal, :all_dbs do
 
     subject { appeal.create_remand_supplemental_claims! }
 
-    let!(:remanded_decision_issue) do
+    let(:issues) { [request_issue] }
+    let(:request_issue) do
       create(
-        :decision_issue,
-        decision_review: appeal,
-        disposition: "remanded",
-        benefit_type: "compensation",
-        caseflow_decision_date: decision_date
+        :request_issue,
+        ineligible_reason: ineligible_reason,
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id
       )
     end
+    let(:ineligible_reason) { nil }
+    let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
+    let(:vacols_case) { create(:case, case_issues: [create(:case_issue)]) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
-    let!(:remanded_decision_issue_processed_in_caseflow) do
-      create(
-        :decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca",
-                         caseflow_decision_date: decision_date
-      )
+    context "when there is no associated legacy issue" do
+      it "does not create a legacy issue" do
+        subject
+
+        expect(request_issue.legacy_issues).to be_empty
+      end
     end
 
-    let(:decision_date) { 10.days.ago }
-    let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: appeal) }
+    context "when there is an associated legacy issue" do
+      let(:vacols_id) { legacy_appeal.vacols_id }
+      let(:vacols_sequence_id) { legacy_appeal.issues.first.vacols_sequence_id }
 
-    let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
+      context "when the veteran did not opt in their legacy issues" do
+        let(:ineligible_reason) { "legacy_issue_not_withdrawn" }
 
-    it "creates supplemental claim, request issues, and starts processing" do
-      subject
+        it "creates a legacy issue, but no opt-in" do
+          subject
 
-      remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)
+          expect(request_issue.legacy_issues.count).to eq 1
+          expect(request_issue.legacy_issue_optin).to be_nil
+        end
+      end
 
-      expect(remanded_supplemental_claims.count).to eq(2)
+      context "when legacy opt in is approved by the veteran" do
+        let(:ineligible_reason) { nil }
 
-      vbms_remand = remanded_supplemental_claims.find_by(benefit_type: "compensation")
-      expect(vbms_remand).to have_attributes(
-        receipt_date: decision_date.to_date
-      )
-      expect(vbms_remand.request_issues.count).to eq(1)
-      expect(vbms_remand.request_issues.first).to have_attributes(
-        contested_decision_issue: remanded_decision_issue
-      )
-      expect(vbms_remand.end_product_establishments.first).to be_committed
-      expect(vbms_remand.tasks).to be_empty
+        it "creates a legacy issue and an associated opt-in" do
+          subject
 
-      caseflow_remand = remanded_supplemental_claims.find_by(benefit_type: "nca")
-      expect(caseflow_remand).to have_attributes(
-        receipt_date: decision_date.to_date
-      )
-      expect(caseflow_remand.request_issues.count).to eq(1)
-      expect(caseflow_remand.request_issues.first).to have_attributes(
-        contested_decision_issue: remanded_decision_issue_processed_in_caseflow
-      )
-      expect(caseflow_remand.end_product_establishments).to be_empty
-      expect(caseflow_remand.tasks.first).to have_attributes(assigned_to: BusinessLine.find_by(url: "nca"))
+          expect(request_issue.legacy_issue_optin.legacy_issue).to eq(request_issue.legacy_issues.first)
+        end
+      end
     end
   end
 
