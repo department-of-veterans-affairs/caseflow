@@ -17,15 +17,8 @@ import { COLORS } from '../../../constants/AppConstants';
 import COPY from '../../../../COPY.json';
 
 class DetailsInputs extends React.Component {
-
-  role = () => {
-    const { user, hearing } = this.props;
-
-    return user.userId.toString() === hearing.judgeId || user.userCanAssignHearingSchedule ? 'host' : 'guest';
-  }
-
   renderVirtualHearingLinkSection() {
-    const { isVirtual, virtualHearing } = this.props;
+    const { isVirtual, virtualHearing, user, hearing } = this.props;
 
     if (isVirtual && virtualHearing) {
       return (
@@ -34,7 +27,8 @@ class DetailsInputs extends React.Component {
           <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing.jobCompleted &&
               <VirtualHearingLink
-                role={this.role()}
+                user={user}
+                hearing={hearing}
                 showFullLink
                 isVirtual={isVirtual}
                 virtualHearing={virtualHearing}
@@ -146,8 +140,7 @@ class DetailsInputs extends React.Component {
 
 DetailsInputs.propTypes = {
   user: PropTypes.shape({
-    userId: PropTypes.number,
-    userCanAssignHearingSchedule: PropTypes.bool
+    userId: PropTypes.number
   }),
   hearing: PropTypes.shape({
     judgeId: PropTypes.string,
