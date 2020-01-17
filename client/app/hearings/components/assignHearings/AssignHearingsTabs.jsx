@@ -25,7 +25,7 @@ const getCurrentTabIndex = () => {
   }
 
   return 0;
-}
+};
 
 export class AssignHearingsTabs extends React.PureComponent {
 
@@ -52,7 +52,7 @@ export class AssignHearingsTabs extends React.PureComponent {
     // Remove when pagination lands (#11757)
     return (
       <div className="usa-width-three-fourths">
-        {!_.isNil(selectedHearingDay) && 
+        {!_.isNil(selectedHearingDay) &&
           <h1>
             {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
               ${room} (${availableSlots} slots remaining)`}

@@ -235,7 +235,8 @@ export default class QueueTable extends React.PureComponent {
     const state = {
       cachedResponses: {},
       tasksFromApi: null,
-      loadingComponent: (useTaskPagesApi && paginationOptions.needsTaskRequest) && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
+      loadingComponent: (useTaskPagesApi && paginationOptions.needsTaskRequest) &&
+        <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
       ...paginationOptions
     };
 
