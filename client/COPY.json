@@ -448,7 +448,7 @@
   "USER_MANAGEMENT_ACTIVE_SUCCESS_TITLE": "Successfully made %s ACTIVE",
   "USER_MANAGEMENT_INACTIVE_SUCCESS_TITLE": "Successfully made %s INACTIVE",
   "USER_MANAGEMENT_ACTIVE_SUCCESS_BODY": "%s can now be assigned new tasks and will need to be added to organizations via the team management page",
-  "USER_MANAGEMENT_INACTIVE_SUCCESS_BODY": "%s has been removed from organizations they were a member of. They will not be assigned any new tasks. If this was a mistake, mark the user ACTIVE and add them to organizations on the team management page",
+  "USER_MANAGEMENT_INACTIVE_SUCCESS_BODY": "%s has been removed from organizations to which they belonged. They will no longer be assigned new tasks. If this was a mistake, mark the user ACTIVE and add them back to the proper organizations on those organizations' team management pages",
   "USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE": "Error searching for user",
 
   "LOOKUP_PARTICIPANT_ID_MODAL_TITLE": "Look Up Participant ID",
