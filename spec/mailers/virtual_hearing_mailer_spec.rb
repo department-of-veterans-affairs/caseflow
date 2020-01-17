@@ -19,6 +19,11 @@ describe VirtualHearingMailer do
   end
   let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
+  before do
+    # Freeze the time to when this fix is made to workaround a potential DST bug.
+    Timecop.freeze(Time.utc(2020, 1, 20, 16, 50, 0))
+  end
+
   shared_examples_for "it can send an email to a recipient with the title" do
     let(:recipient) { MailRecipient.new(name: "LastName", email: "email@test.com", title: title) }
 
