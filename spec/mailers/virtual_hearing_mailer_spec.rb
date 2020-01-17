@@ -6,7 +6,7 @@ describe VirtualHearingMailer do
   let(:hearing) do
     build(
       :hearing,
-      scheduled_time: "6:30PM", # This time is in UTC
+      scheduled_time: "6:30PM",
       hearing_day: hearing_day,
       regional_office: regional_office
     )
