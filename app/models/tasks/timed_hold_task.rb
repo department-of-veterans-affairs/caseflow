@@ -66,6 +66,10 @@ class TimedHoldTask < Task
     true
   end
 
+  def self.cannot_have_children
+    true
+  end
+
   private
 
   def verify_parent_task_presence

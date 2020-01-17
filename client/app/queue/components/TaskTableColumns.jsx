@@ -252,6 +252,6 @@ export const taskCompletedDateColumn = () => {
     name: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
     valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
     backendCanSort: true,
-    getSortValue: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null
+    getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
   };
 };
