@@ -23,7 +23,7 @@ describe CacheManager do
     it "removes cached Caseflow attributes" do
       expect(Rails.cache.exist?(ro_cache_key)).to be_falsey
       ro_schedule_period.start_confirming_schedule
-      
+
       expect(Rails.cache.exist?(ro_cache_key)).to be_truthy
       subject.clear(:caseflow)
       expect(Rails.cache.exist?(ro_cache_key)).to be_falsey
