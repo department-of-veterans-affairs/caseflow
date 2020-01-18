@@ -106,6 +106,10 @@ describe AppealSeries, :all_dbs do
         ]
       end
 
+      it "skips nil decision_date" do
+        binding.pry
+      end
+
       it { is_expected.to eq "1234567" }
     end
   end

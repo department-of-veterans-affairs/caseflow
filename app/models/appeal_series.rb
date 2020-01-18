@@ -171,7 +171,7 @@ class AppealSeries < ApplicationRecord
   end
 
   def latest_appeal_by_decision_date
-    appeals.max_by(&:decision_date)
+    appeals.select(&:decision_date).max_by(&:decision_date)
   end
 
   def fetch_docket
