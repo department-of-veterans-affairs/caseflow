@@ -289,7 +289,7 @@ describe User, :all_dbs do
     subject { user.selectable_organizations }
 
     context "when user is not a judge in vacols and does not have a judge team" do
-      it "assign cases is not returned" do
+      it "does not return assigned cases link for judge" do
         is_expected.to be_empty
       end
     end
@@ -297,10 +297,10 @@ describe User, :all_dbs do
     context "when user is a judge in vacols" do
       let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
-      it "assign cases is returned" do
+      it "returns assigned cases link for judge" do
         is_expected.to include(
-          name: "Assign",
-          url: format("queue/%<id>s/assign", id: user.id)
+          name: "Assign #{user.css_id}",
+          url: format("/queue/%<id>s/assign", id: user.id)
         )
       end
     end
@@ -308,12 +308,42 @@ describe User, :all_dbs do
     context "when user has a judge team" do
       before { JudgeTeam.create_for_judge(user) }
 
-      it "assign cases is returned" do
+      it "returns assigned cases link for judge" do
         user.reload
         is_expected.to include(
-          name: "Assign",
-          url: format("queue/%<id>s/assign", id: user.id)
+          name: "Assign #{user.css_id}",
+          url: format("/queue/%<id>s/assign", id: user.id)
         )
+      end
+    end
+
+    context "when the user is a judge team admin" do
+      let(:judge) { create(:user) }
+      let!(:judge_team) { create(:judge_team) }
+
+      before do
+        OrganizationsUser.make_user_admin(judge, judge_team)
+        OrganizationsUser.make_user_admin(user, judge_team)
+      end
+
+      it "does not return assigned cases link for judge" do
+        is_expected.to be_empty
+      end
+
+      context "when special case movement is enabled" do
+        before { FeatureToggle.enable!(:judge_admin_scm) }
+        after { FeatureToggle.disable!(:judge_admin_scm) }
+
+        it "returns assigned cases link for judge" do
+          is_expected.to include(
+            name: "Assign #{judge.css_id}",
+            url: format("/queue/%<id>s/assign", id: judge.id)
+          )
+          is_expected.not_to include(
+            name: "Assign #{user.css_id}",
+            url: format("/queue/%<id>s/assign", id: user.id)
+          )
+        end
       end
     end
   end
@@ -667,6 +697,30 @@ describe User, :all_dbs do
         expect(subject).to eq true
         expect(user.reload.status).to eq status
         expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+      end
+
+      context "when the user is a judge with a JudgeTeam" do
+        let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
+        let(:user) { judge_team.judge }
+
+        context "when marking the user inactive" do
+          it "marks their JudgeTeam as inactive" do
+            expect(subject).to eq true
+            expect(judge_team.reload.status).to eq status
+          end
+        end
+
+        context "when making an inactive user active" do
+          let(:status) { Constants.USER_STATUSES.active }
+
+          before { user.update_status!(Constants.USER_STATUSES.inactive) }
+
+          it "marks their JudgeTeam as active" do
+            expect(judge_team.reload.status).to eq Constants.USER_STATUSES.inactive
+            expect(subject).to eq true
+            expect(judge_team.reload.status).to eq status
+          end
+        end
       end
 
       context "when the user is a member of an org that automatically assigns tasks" do

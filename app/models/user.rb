@@ -262,7 +262,7 @@ class User < ApplicationRecord
   end
 
   def administered_teams
-    organizations_users.select(&:admin?).map(&:organization)
+    organizations_users.admin.map(&:organization)
   end
 
   def administered_judge_teams
@@ -275,11 +275,13 @@ class User < ApplicationRecord
 
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
+    judge_team_judges = (JudgeTeam.for_judge(self) || judge_in_vacols?) ? [self] : []
+    judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
 
-    if JudgeTeam.for_judge(self) || judge_in_vacols?
+    judge_team_judges.each do |judge|
       orgs << {
-        name: "Assign",
-        url: format("queue/%s/assign", id)
+        name: "Assign #{judge.css_id}",
+        url: format("/queue/%s/assign", judge.id)
       }
     end
 
@@ -288,7 +290,12 @@ class User < ApplicationRecord
 
   def update_status!(new_status)
     transaction do
-      remove_user_from_auto_assign_orgs if new_status.eql?(Constants.USER_STATUSES.inactive)
+      if new_status.eql?(Constants.USER_STATUSES.inactive)
+        user_inactivation
+      elsif new_status.eql?(Constants.USER_STATUSES.active)
+        user_reactivation
+      end
+
       update!(status: new_status, status_updated_at: Time.zone.now)
     end
   end
@@ -334,6 +341,20 @@ class User < ApplicationRecord
   end
 
   private
+
+  def inactive_judge_team
+    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.select(&:admin?).pluck(:organization_id))
+  end
+
+  def user_reactivation
+    # We do not automatically re-add organization membership for reactivated users
+    inactive_judge_team&.active!
+  end
+
+  def user_inactivation
+    remove_user_from_auto_assign_orgs
+    JudgeTeam.for_judge(self)&.inactive!
+  end
 
   def remove_user_from_auto_assign_orgs
     auto_assign_orgs = organizations.select(&:automatically_assign_to_member?)
