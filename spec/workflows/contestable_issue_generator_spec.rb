@@ -108,12 +108,11 @@ describe "Contestable Issue Generator", :postgres do
     end
 
     context "#contestable_issues with future ratings" do
-      subject { ContestableIssueGenerator.new(review).from_ratings }
       before { FeatureToggle.enable!(:show_future_ratings) }
       after { FeatureToggle.disable!(:show_future_ratings) }
 
       it "when show_future_ratings feature toggle is enabled" do
-        expect(subject.count).to eq(3)
+        expect(subject.count).to eq(4)
         expect(subject.first.description).to eq "Future Rating issue"
       end
     end

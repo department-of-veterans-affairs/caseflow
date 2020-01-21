@@ -14,24 +14,24 @@ class ContestableIssueGenerator
     contestable_rating_issues + contestable_decision_issues + contestable_rating_decisions
   end
 
-  def from_ratings
-    return [] unless receipt_date
-
-    issues = rating_issues
-
-    unless FeatureToggle.enabled?(:show_future_ratings, user: RequestStore[:current_user])
-      issues.reject! { |issue| issue.profile_date && issue.profile_date.to_date > receipt_date }
-    end
-
-    issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
-  end
-
   private
 
   attr_reader :review
 
   def contestable_rating_issues
     from_ratings.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
+  end
+
+  def from_ratings
+    return [] unless receipt_date
+
+    issues = rating_issues
+
+    unless FeatureToggle.enabled?(:show_future_ratings, user: RequestStore[:current_user])
+      issues = issues.reject { |issue| issue.profile_date && issue.profile_date.to_date > receipt_date }
+    end
+
+    issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
   end
 
   def contestable_rating_decisions
