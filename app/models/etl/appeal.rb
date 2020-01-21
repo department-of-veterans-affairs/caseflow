@@ -12,6 +12,7 @@ class ETL::Appeal < ETL::Record
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
     def merge_original_attributes_to_target(original, target)
       # memoize to save SQL calls
       veteran = original.veteran
@@ -25,6 +26,7 @@ class ETL::Appeal < ETL::Record
 
       target.appeal_id = original.id
       target.active_appeal = original.active?
+      target.aod_due_to_dob = person&.advanced_on_docket_based_on_age? || false
       target.aod_granted = aod&.granted? || false
       target.aod_reason = aod&.reason
       target.aod_user_id = aod&.user_id
@@ -65,5 +67,6 @@ class ETL::Appeal < ETL::Record
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 end
