@@ -691,6 +691,7 @@ describe User, :all_dbs do
       end
     end
 
+    ensure_stable do
     context "with a valid status" do
       let(:status) { Constants.USER_STATUSES.inactive }
 
@@ -820,6 +821,7 @@ describe User, :all_dbs do
           end
         end
       end
+    end
     end
   end
 end
