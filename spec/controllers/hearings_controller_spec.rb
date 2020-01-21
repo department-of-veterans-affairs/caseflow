@@ -294,12 +294,48 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
   end
 
   describe "#show" do
-    let!(:hearing) { create(:hearing, :with_tasks) }
+    let!(:hearing) { create(:hearing, :with_tasks, scheduled_time: "8:30AM") }
+
+    subject do
+      get :show, as: :json, params: { id: hearing.external_id }
+    end
 
     it "returns hearing details" do
-      get :show, as: :json, params: { id: hearing.external_id }
+      expect(subject.status).to eq 200
+    end
 
-      expect(response.status).to eq 200
+    it "returns correct hearing time in EST", :aggregate_failures do
+      body = JSON.parse(subject.body)
+
+      expect(body["data"]["regional_office_timezone"]).to eq("America/New_York")
+      expect(body["data"]["scheduled_time_string"]).to eq("08:30")
+
+      time = Time.zone.parse(body["data"]["scheduled_for"])
+
+      expect(time.zone).to eq("EST")
+      expect(time.hour).to eq(8)
+      expect(time.min).to eq(30)
+    end
+
+    context "for user on west coast" do
+      let!(:user) do
+        User.authenticate!(
+          user: create(:user, :judge, selected_regional_office: "RO43", station_id: 343)
+        )
+      end
+
+      it "returns correct hearing time in PST", :aggregate_failures do
+        body = JSON.parse(subject.body)
+
+        expect(body["data"]["regional_office_timezone"]).to eq("America/New_York")
+        expect(body["data"]["scheduled_time_string"]).to eq("08:30")
+
+        time = Time.zone.parse(body["data"]["scheduled_for"])
+
+        expect(time.zone).to eq("EST")
+        expect(time.hour).to eq(8)
+        expect(time.min).to eq(30)
+      end
     end
   end
 
