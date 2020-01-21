@@ -46,12 +46,12 @@ module VacolsHelper
   end
 
   def self.day_only_str(date_time)
-    Time.zone = "Eastern Time (US & Canada)"
-
-    Time.zone.local(
-      date_time.year,
-      date_time.month,
-      date_time.day
-    ).strftime("%Y-%m-%d")
+    Time.use_zone("America/New_York") do
+      Time.zone.local(
+        date_time.year,
+        date_time.month,
+        date_time.day
+      ).strftime("%Y-%m-%d")
+    end
   end
 end
