@@ -1,6 +1,8 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  config.time_zone = "America/New_York" if Rails.current_env == :uat
+
   # Code is not reloaded between requests.
   config.cache_classes = true
 
