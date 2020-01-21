@@ -22,6 +22,12 @@ class ContestableIssueGenerator
     from_ratings.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
   end
 
+  def contestable_rating_decisions
+    return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
+
+    from_rating_decisions.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
+  end
+
   def from_ratings
     return [] unless receipt_date
 
@@ -32,12 +38,6 @@ class ContestableIssueGenerator
     end
 
     issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
-  end
-
-  def contestable_rating_decisions
-    return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
-
-    from_rating_decisions.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
   end
 
   def contestable_decision_issues
