@@ -473,7 +473,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_vacated_decision_issue!
-    DecisionIssue.create!(
+    decision_issues.find_or_create_by!(
       decision_review: decision_review,
       decision_review_type: decision_review_type,
       disposition: "vacated",

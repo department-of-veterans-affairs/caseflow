@@ -43,25 +43,28 @@ RSpec.describe PostDecisionMotion, type: :model do
     lit_support_team.add_user(motions_atty)
   end
 
-  context "handles creation of request issues" do
+  context "#create_request_issues_for_vacatur" do
     let(:disposition) { "granted" }
     let(:vacate_type) { "vacate_and_readjudication" }
+    subject { post_decision_motion.create_request_issues_for_vacatur }
 
     it "creates a request issue for every selected decision issue" do
       expect(appeal.request_issues.size).to eq 0
-      post_decision_motion.request_issues_for_vacature
+      subject
       appeal.reload
       expect(appeal.request_issues.size).to eq 3
     end
   end
 
-  context "handles creation of vacated decision issues" do
+  context "#create_vacated_decision_issues" do
     let(:disposition) { "granted" }
     let(:vacate_type) { "vacate_and_readjudication" }
+    subject { post_decision_motion.create_vacated_decision_issues }
 
     it "creates a vacated decision issue for every selected decision issue" do
-      expect(post_decision_motion.vacated_issues.size).to eq 3
-      post_decision_motion.vacated_decision_issues
+      expect(post_decision_motion.decision_issues_for_vacatur.size).to eq 3
+      post_decision_motion.create_request_issues_for_vacatur
+      subject
       appeal.reload
       expect(appeal.decision_issues.size).to eq 6
     end

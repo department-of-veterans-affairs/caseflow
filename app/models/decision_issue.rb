@@ -160,7 +160,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def create_contesting_request_issue!
-    RequestIssue.create!(
+    RequestIssue.find_or_create_by!(
       decision_review: decision_review,
       decision_review_type: decision_review_type,
       contested_decision_issue_id: id,
