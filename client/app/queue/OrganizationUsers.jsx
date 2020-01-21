@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
@@ -14,9 +15,17 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY.json';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
-const userStyle = css({ margin: '2rem 0 3rem', borderBottom: '1rem solid gray', borderWidth: '1px' });
-const topUserStyle = css({ margin: '2rem 0 3rem', borderTop: '1rem solid gray', borderBottom: '1rem solid gray', borderWidth: '1px', paddingTop: '2.5rem'});
-const buttonPaddingStyle = css({ marginRight: '1rem', display: 'inline-block', height: '6rem' });
+const userStyle = css({ margin: '2rem 0 3rem',
+  borderBottom: '1rem solid gray',
+  borderWidth: '1px' });
+const topUserStyle = css({ margin: '2rem 0 3rem',
+  borderTop: '1rem solid gray',
+  borderBottom: '1rem solid gray',
+  borderWidth: '1px',
+  paddingTop: '2.5rem' });
+const buttonPaddingStyle = css({ marginRight: '1rem',
+  display: 'inline-block',
+  height: '6rem' });
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -31,7 +40,7 @@ export default class OrganizationUsers extends React.PureComponent {
       addingUser: null,
       removingUser: {},
       changingAdminRights: {},
-      changingDecisionDrafting: {},
+      changingDecisionDrafting: {}
     };
   }
 
@@ -75,7 +84,7 @@ export default class OrganizationUsers extends React.PureComponent {
     });
 
     ApiUtil.post(`/organizations/${this.props.organization}/users`, { data }).then((response) => {
-      
+
       this.setState({
         organizationUsers: [...this.state.organizationUsers, response.body.users.data[0]],
         remainingUsers: this.state.remainingUsers.filter((user) => user.id !== value.id),
@@ -140,6 +149,7 @@ export default class OrganizationUsers extends React.PureComponent {
     const updatedUserList = this.state.organizationUsers.map((existingUser) => {
       return (existingUser.id === updatedUser.id) ? updatedUser : existingUser;
     });
+
     this.setState({
       organizationUsers: updatedUserList,
       [flagName]: { ...this.state[flagName],
@@ -159,7 +169,7 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   modifyAdminRights = (user, adminFlag) => () => {
-    const flagName = "changingAdminRights";
+    const flagName = 'changingAdminRights';
 
     this.modifyUser(user, flagName);
 
@@ -168,21 +178,21 @@ export default class OrganizationUsers extends React.PureComponent {
     ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
       this.modifyUserSuccess(response, user, flagName);
     }, (error) => {
-      this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName)
+      this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
     });
   }
 
   modifyDecisionDrafting = (user, attorneyFlag) => () => {
-    const flagName = "changingDecisionDrafting";
+    const flagName = 'changingDecisionDrafting';
 
     this.modifyUser(user, flagName);
 
     const payload = { data: { attorney: attorneyFlag } };
-    
+
     ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
-      this.modifyUserSuccess(response, user, flagName)
+      this.modifyUserSuccess(response, user, flagName);
     }, (error) => {
-      this.modifyUserError(COPY.USER_MANAGEMENT_DECISION_DRAFTING_CHANGE_ERROR_TITLE, error.message, user, flagName)
+      this.modifyUserError(COPY.USER_MANAGEMENT_DECISION_DRAFTING_CHANGE_ERROR_TITLE, error.message, user, flagName);
     });
   }
 
@@ -203,45 +213,46 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
-  decisionDraftingButton = (user, attorney) => 
+  decisionDraftingButton = (user, attorney) =>
     <span {...buttonPaddingStyle}><Button
-    name={attorney ? COPY.USER_MANAGEMENT_DISABLE_DECISION_DRAFTING_BUTTON_TEXT : COPY.USER_MANAGEMENT_ENABLE_DECISION_DRAFTING_BUTTON_TEXT }
-    id={attorney ? `Disable-decision-drafting-${user.id}` : `Enable-decision-drafting-${user.id}`}
-    classNames={attorney ? ['usa-button-secondary'] : ['usa-button-primary']}
-    loading={this.state.changingDecisionDrafting[user.id]}
-    onClick={this.modifyDecisionDrafting(user, attorney ? false : true)} /></span>
-  
-  adminButton = (user, admin) => 
-    <span {...buttonPaddingStyle}><Button
-    name={admin ? COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT : COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT }
-    id={admin ? `Remove-admin-rights-${user.id}` : `Add-team-admin-${user.id}`}
-    classNames={admin ? ['usa-button-secondary'] : ['usa-button-primary']}
-    loading={this.state.changingAdminRights[user.id]}
-    onClick={this.modifyAdminRights(user, admin ? false : true)} /></span>
+      name={attorney ? COPY.USER_MANAGEMENT_DISABLE_DECISION_DRAFTING_BUTTON_TEXT : COPY.USER_MANAGEMENT_ENABLE_DECISION_DRAFTING_BUTTON_TEXT}
+      id={attorney ? `Disable-decision-drafting-${user.id}` : `Enable-decision-drafting-${user.id}`}
+      classNames={attorney ? ['usa-button-secondary'] : ['usa-button-primary']}
+      loading={this.state.changingDecisionDrafting[user.id]}
+      onClick={this.modifyDecisionDrafting(user, !attorney)} /></span>
 
-  removeUserButton = (user) => 
+  adminButton = (user, admin) =>
     <span {...buttonPaddingStyle}><Button
-    name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
-    id={`Remove-user-${user.id}`}
-    classNames={['usa-button-secondary']}
-    loading={this.state.removingUser[user.id]}
-    onClick={this.removeUser(user)} /></span>
-  
+      name={admin ? COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT : COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
+      id={admin ? `Remove-admin-rights-${user.id}` : `Add-team-admin-${user.id}`}
+      classNames={admin ? ['usa-button-secondary'] : ['usa-button-primary']}
+      loading={this.state.changingAdminRights[user.id]}
+      onClick={this.modifyAdminRights(user, !admin)} /></span>
+
+  removeUserButton = (user) =>
+    <span {...buttonPaddingStyle}><Button
+      name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
+      id={`Remove-user-${user.id}`}
+      classNames={['usa-button-secondary']}
+      loading={this.state.removingUser[user.id]}
+      onClick={this.removeUser(user)} /></span>
+
   mainContent = () => {
     const listOfUsers = this.state.organizationUsers.map((user, i) => {
-      const { judge_team, judge, attorney, admin } = user.attributes;
-      let style = i === 0 ? topUserStyle : userStyle
+      const { judgeTeam, judge, attorney, admin } = user.attributes;
+      const style = i === 0 ? topUserStyle : userStyle;
+
       return <div {...style}>
-        <li key={user.id}>{this.formatName(user)} 
-          { judge_team && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-          { judge_team && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-          { judge_team && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> } &nbsp;</li>
-          { judge_team && !judge && !attorney && this.decisionDraftingButton(user, attorney) }
-          { judge_team && !judge && attorney && this.decisionDraftingButton(user, attorney) }
-          { !admin && this.adminButton(user, admin) }
-          { admin && this.adminButton(user, admin) }
-          { this.removeUserButton(user) }
-        </div>;
+        <li key={user.id}>{this.formatName(user)}
+          { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+          { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> } &nbsp;</li>
+        { judgeTeam && !judge && !attorney && this.decisionDraftingButton(user, attorney) }
+        { judgeTeam && !judge && attorney && this.decisionDraftingButton(user, attorney) }
+        { !admin && this.adminButton(user, admin) }
+        { admin && this.adminButton(user, admin) }
+        { this.removeUserButton(user) }
+      </div>;
     });
 
     return <React.Fragment>
@@ -259,21 +270,20 @@ export default class OrganizationUsers extends React.PureComponent {
         value={null}
         onChange={this.addUser}
         async={this.asyncLoadUser} />
-        <br/>
-        <div>
-          {this.state.organizationUsers.some((user) => user.attributes.judge_team) &&
+      <br />
+      <div>
+        {this.state.organizationUsers.some((user) => user.attributes.judgeTeam) &&
             <div>
               <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
               <ul>
                 <li><strong>{COPY.USER_MANAGEMENT_DECISION_DRAFTING_HEADING}</strong>{COPY.USER_MANAGEMENT_DECISION_DRAFTING_DESCRIPTION}</li>
-                
                 <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li>
                 <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</li>
               </ul>
-            </div> 
-          }
-          <ul>{listOfUsers}</ul>
-        </div>
+            </div>
+        }
+        <ul>{listOfUsers}</ul>
+      </div>
     </React.Fragment>;
   }
 
