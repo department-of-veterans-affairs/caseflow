@@ -16,9 +16,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     verifyUnidentifiedIssue: {
       $set: Boolean(featureToggles.verifyUnidentifiedIssue)
-    },
-    showFutureRatings: {
-      $set: Boolean(featureToggles.showFutureRatings)
     }
   });
 };
@@ -29,8 +26,7 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) => (
     editContentionText: false,
     correctClaimReviews: false,
     unidentifiedIssueDecisionDate: false,
-    verifyUnidentifiedIssue: false,
-    showFutureRatings: false
+    verifyUnidentifiedIssue: false
   }, data.featureToggles)
 );
 
