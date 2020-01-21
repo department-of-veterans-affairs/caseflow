@@ -25,6 +25,18 @@ class PostDecisionMotionsController < ApplicationController
     render json: { tasks: ::WorkQueue::TaskSerializer.new(appeal_tasks, is_collection: true) }
   end
 
+  def create_issues
+    binding.pry
+    new_request_issues = post_decision_motion.create_request_issues_for_vacatur
+
+    new_decision_issues = post_decision_motion.create_vacated_decision_issues
+
+    render json: {
+      request_issues: Intake::RequestIssueSerializer.new(new_request_issues, is_collection: true),
+      decision_issues: Intake::DecisionIssueSerializer.new(new_decision_issues, is_collection: true)
+    }
+  end
+
   private
 
   def verify_task_access
@@ -39,5 +51,18 @@ class PostDecisionMotionsController < ApplicationController
 
   def motion_params
     params.permit(:disposition, :task_id, :vacate_type, :instructions, :assigned_to_id, vacated_decision_issue_ids: [])
+  end
+
+  def create_issues_params
+    params.permit(:id)
+  end
+
+  def motion_id
+    binding.pry
+    create_issues_params[:id]
+  end
+
+  def post_decision_motion
+    PostDecisionMotion.find(motion_id)
   end
 end

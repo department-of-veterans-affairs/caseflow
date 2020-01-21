@@ -5,6 +5,8 @@ describe PostDecisionMotionsController do
   let(:judge) { create(:user) }
   let(:judge_team) { JudgeTeam.create_for_judge(judge) }
 
+  let(:post_decision_motion) { create(:post_decision_motion) }
+
   before do
     User.authenticate!(roles: ["System Admin"])
     User.stub = judge
@@ -69,6 +71,30 @@ describe PostDecisionMotionsController do
         expect do
           post :create, params: params
         end.to raise_error(Caseflow::Error::NonexistentJudgeTeam)
+      end
+    end
+  end
+
+  describe "#create_issues" do
+    context "with a valid PostDecisionMotion id" do
+      it "returns a 200 response" do
+        allow(controller).to receive(:verify_authentication).and_return(true)
+
+        task = create_task_without_unnecessary_models
+        assigned_to = user
+        judge_team.add_user(user)
+
+        appeal = post_decision_motion.reload.task.appeal
+
+        
+        post :create_issues, params: { "id": post_decision_motion.id }
+
+        appeal.reload
+
+        binding.pry
+
+        expect(response).to be_success
+        expect(appeal.decision_issues.size).to eq(6)
       end
     end
   end
