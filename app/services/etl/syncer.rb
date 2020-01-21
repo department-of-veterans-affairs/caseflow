@@ -13,13 +13,16 @@ class ETL::Syncer
   end
 
   def call
-    target_class.transaction do
-      instances_needing_update.find_each do |original|
-        next if filter?(original)
-
-        target_class.sync_with_original(original).save!
+    synced = 0
+    instances_needing_update.find_in_batches.with_index do |originals, batch|
+      Rails.logger.debug("Starting batch #{batch} for #{target_class}")
+      target_class.transaction do
+        originals.reject { |original| filter?(original) }.each do |original|
+          synced += 1 if target_class.sync_with_original(original).save!
+        end
       end
     end
+    synced
   end
 
   def origin_class

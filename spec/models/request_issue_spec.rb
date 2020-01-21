@@ -558,6 +558,14 @@ describe RequestIssue, :all_dbs do
       end
     end
 
+    context "when request issue is ineligible" do
+      let(:closed_status) { "ineligible" }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
     context "when decision review is processed in caseflow" do
       it "calls EndProductCodeSelector" do
         expect_any_instance_of(EndProductCodeSelector).to receive(:call).once
@@ -634,7 +642,7 @@ describe RequestIssue, :all_dbs do
       end
 
       it "returns the review title of the request issue in active review" do
-        expect(ineligible_request_issue.ui_hash).to include(
+        expect(ineligible_request_issue.serialize).to include(
           title_of_active_review: request_issue_in_active_review.review_title
         )
       end
@@ -1532,19 +1540,6 @@ describe RequestIssue, :all_dbs do
                 expect(rating_request_issue.processed?).to eq(true)
                 expect(rating_request_issue.closed_at).to eq(Time.zone.now)
                 expect(rating_request_issue.closed_status).to eq("decided")
-              end
-            end
-
-            context "when syncing the end_product_establishment fails" do
-              before do
-                allow(end_product_establishment).to receive(
-                  :on_decision_issue_sync_processed
-                ).and_raise("DTA 040 failed")
-              end
-
-              it "does not processs" do
-                expect { subject }.to raise_error("DTA 040 failed")
-                expect(rating_request_issue.processed?).to eq(false)
               end
             end
           end

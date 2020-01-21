@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import COPY from '../../../COPY.json';
 import _ from 'lodash';
 
@@ -170,6 +170,11 @@ class VirtualHearingModal extends React.Component {
       vetEmailError: null,
       repEmailError: null
     };
+
+    if (this.props.type === 'change_to_virtual') {
+      this.props.update({ veteranEmail: this.props.hearing.veteranEmailAddress,
+        representativeEmail: this.props.hearing.representativeEmailAddress });
+    }
   }
 
   validateForm = () => {
@@ -178,10 +183,6 @@ class VirtualHearingModal extends React.Component {
 
     if (_.isEmpty(virtualHearing.veteranEmail)) {
       this.setState({ vetEmailError: INVALID_EMAIL_FORMAT });
-      isValid = false;
-    }
-    if (_.isEmpty(virtualHearing.representativeEmail)) {
-      this.setState({ repEmailError: INVALID_EMAIL_FORMAT });
       isValid = false;
     }
 
@@ -247,7 +248,9 @@ VirtualHearingModal.propTypes = {
     centralOfficeTimeString: PropTypes.string,
     location: PropTypes.shape({
       name: PropTypes.string
-    })
+    }),
+    veteranEmailAddress: PropTypes.string,
+    representativeEmailAddress: PropTypes.string
   }).isRequired,
   type: PropTypes.oneOf([
     'change_to_virtual', 'change_from_virtual',

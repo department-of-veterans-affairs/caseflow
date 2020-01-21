@@ -626,8 +626,8 @@ class SeedDB
       request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
-    es = "evidence_submission"
-    dr = "direct_review"
+    es = Constants.AMA_DOCKETS.evidence_submission
+    dr = Constants.AMA_DOCKETS.direct_review
     # Older style, tasks to be created later
     [
       { number_of_claimants: nil, veteran_file_number: "783740847", docket_type: es, request_issue_count: 3 },
@@ -876,7 +876,6 @@ class SeedDB
   def create_task_at_colocated(appeal, judge, attorney, trait = ColocatedTask.actions_assigned_to_colocated.sample.to_sym)
     parent = FactoryBot.create(
       :ama_judge_decision_review_task,
-      :on_hold,
       assigned_to: judge,
       appeal: appeal,
       parent: create_root_task(appeal)
@@ -884,7 +883,6 @@ class SeedDB
 
     atty_task = FactoryBot.create(
       :ama_attorney_task,
-      :on_hold,
       assigned_to: attorney,
       assigned_by: judge,
       parent: parent,
@@ -914,7 +912,6 @@ class SeedDB
   def create_task_at_attorney_review(appeal, judge, attorney)
     parent = FactoryBot.create(
       :ama_judge_decision_review_task,
-      :on_hold,
       assigned_to: judge,
       appeal: appeal,
       parent: create_root_task(appeal)
@@ -1008,7 +1005,6 @@ class SeedDB
     FactoryBot.create(:staff, :judge_role, user: judge)
     judge_task = FactoryBot.create(
       :ama_judge_decision_review_task,
-      :on_hold,
       assigned_to: judge,
       appeal: appeal,
       parent: root_task
@@ -1072,7 +1068,7 @@ class SeedDB
     create_colocated_legacy_tasks(attorney)
 
     FactoryBot.create_list(
-      :generic_task,
+      :ama_task,
       5,
       assigned_by: judge,
       assigned_to: Translation.singleton,

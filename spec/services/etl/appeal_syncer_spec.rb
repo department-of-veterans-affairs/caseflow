@@ -20,13 +20,22 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
   describe "#call" do
     subject { described_class.new.call }
 
+    before do
+      expect(ETL::Appeal.count).to eq(0)
+    end
+
     context "BVA status distribution" do
       it "has expected distribution" do
-        expect(ETL::Appeal.count).to eq(0)
-
         subject
 
         expect(ETL::Appeal.count).to eq(13)
+      end
+
+      it "populates person attributes" do
+        subject
+
+        expect(ETL::Appeal.first.veteran_dob).to_not be_nil
+        expect(ETL::Appeal.first.claimant_dob).to_not be_nil
       end
     end
 
@@ -34,8 +43,6 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       subject { described_class.new(since: Time.zone.tomorrow).call }
 
       it "does not sync" do
-        expect(ETL::Appeal.count).to eq(0)
-
         subject
 
         expect(ETL::Appeal.count).to eq(0)

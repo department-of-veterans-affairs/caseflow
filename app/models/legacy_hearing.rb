@@ -41,6 +41,7 @@ class LegacyHearing < ApplicationRecord
 
   delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
            :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
+           :veteran_email_address,
            to: :appeal,
            allow_nil: true
 
@@ -85,6 +86,10 @@ class LegacyHearing < ApplicationRecord
 
   def representative
     appeal&.representative_name
+  end
+
+  def representative_email_address
+    appeal&.representative_email_address
   end
 
   def assigned_to_vso?(user)

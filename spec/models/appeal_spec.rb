@@ -3,11 +3,11 @@
 describe Appeal, :all_dbs do
   include IntakeHelpers
 
-  let!(:appeal) { create(:appeal) }
-
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
+
+  let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze
 
   context "includes PrintsTaskTree concern" do
     context "#structure" do
@@ -18,6 +18,16 @@ describe Appeal, :all_dbs do
       it "returns the task structure" do
         expect_any_instance_of(RootTask).to receive(:structure).with(:id)
         expect(subject.key?(:"Appeal #{appeal.id} [id]")).to be_truthy
+      end
+    end
+
+    context "#structure_as_json" do
+      let!(:root_task) { create(:root_task, appeal: appeal) }
+
+      subject { appeal.structure_as_json(:id) }
+
+      it "returns the task tree as a hash" do
+        expect(subject).to eq(Appeal: { id: appeal.id, tasks: [{ RootTask: { id: root_task.id, tasks: [] } }] })
       end
     end
   end
@@ -67,66 +77,56 @@ describe Appeal, :all_dbs do
     end
   end
 
-  context "#create_remand_supplemental_claims!" do
-    before { setup_prior_claim_with_payee_code(appeal, veteran) }
+  context "#create_issues!" do
+    subject { appeal.create_issues!(issues) }
 
-    let(:veteran) { create(:veteran) }
-    let(:appeal) do
-      create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
-    end
-
-    subject { appeal.create_remand_supplemental_claims! }
-
-    let!(:remanded_decision_issue) do
+    let(:issues) { [request_issue] }
+    let(:request_issue) do
       create(
-        :decision_issue,
-        decision_review: appeal,
-        disposition: "remanded",
-        benefit_type: "compensation",
-        caseflow_decision_date: decision_date
+        :request_issue,
+        ineligible_reason: ineligible_reason,
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id
       )
     end
+    let(:ineligible_reason) { nil }
+    let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
+    let(:vacols_case) { create(:case, case_issues: [create(:case_issue)]) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
-    let!(:remanded_decision_issue_processed_in_caseflow) do
-      create(
-        :decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca",
-                         caseflow_decision_date: decision_date
-      )
+    context "when there is no associated legacy issue" do
+      it "does not create a legacy issue" do
+        subject
+
+        expect(request_issue.legacy_issues).to be_empty
+      end
     end
 
-    let(:decision_date) { 10.days.ago }
-    let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: appeal) }
+    context "when there is an associated legacy issue" do
+      let(:vacols_id) { legacy_appeal.vacols_id }
+      let(:vacols_sequence_id) { legacy_appeal.issues.first.vacols_sequence_id }
 
-    let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
+      context "when the veteran did not opt in their legacy issues" do
+        let(:ineligible_reason) { "legacy_issue_not_withdrawn" }
 
-    it "creates supplemental claim, request issues, and starts processing" do
-      subject
+        it "creates a legacy issue, but no opt-in" do
+          subject
 
-      remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)
+          expect(request_issue.legacy_issues.count).to eq 1
+          expect(request_issue.legacy_issue_optin).to be_nil
+        end
+      end
 
-      expect(remanded_supplemental_claims.count).to eq(2)
+      context "when legacy opt in is approved by the veteran" do
+        let(:ineligible_reason) { nil }
 
-      vbms_remand = remanded_supplemental_claims.find_by(benefit_type: "compensation")
-      expect(vbms_remand).to have_attributes(
-        receipt_date: decision_date.to_date
-      )
-      expect(vbms_remand.request_issues.count).to eq(1)
-      expect(vbms_remand.request_issues.first).to have_attributes(
-        contested_decision_issue: remanded_decision_issue
-      )
-      expect(vbms_remand.end_product_establishments.first).to be_committed
-      expect(vbms_remand.tasks).to be_empty
+        it "creates a legacy issue and an associated opt-in" do
+          subject
 
-      caseflow_remand = remanded_supplemental_claims.find_by(benefit_type: "nca")
-      expect(caseflow_remand).to have_attributes(
-        receipt_date: decision_date.to_date
-      )
-      expect(caseflow_remand.request_issues.count).to eq(1)
-      expect(caseflow_remand.request_issues.first).to have_attributes(
-        contested_decision_issue: remanded_decision_issue_processed_in_caseflow
-      )
-      expect(caseflow_remand.end_product_establishments).to be_empty
-      expect(caseflow_remand.tasks.first).to have_attributes(assigned_to: BusinessLine.find_by(url: "nca"))
+          expect(request_issue.legacy_issue_optin.legacy_issue).to eq(request_issue.legacy_issues.first)
+        end
+      end
     end
   end
 
@@ -646,10 +646,10 @@ describe Appeal, :all_dbs do
       let(:appeal) { create(:appeal) }
       let(:today) { Time.zone.today }
 
+      let(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
       before do
-        create(:root_task, :in_progress, appeal: appeal)
-        create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 21)
-        create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 21)
+        create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 21)
+        create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 21)
       end
 
       describe "when there are no other tasks" do
@@ -658,12 +658,16 @@ describe Appeal, :all_dbs do
         end
       end
 
-      describe "when there is an actionable task with an assignee" do
+      describe "when there is an actionable task with an assignee", skip: "flake" do
         let(:assignee) { create(:user) }
-        let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal) }
+        let!(:task) do
+          create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal, parent: root_task)
+        end
 
         it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
-          expect(appeal.assigned_to_location).to eq(assignee.css_id)
+          expect(appeal.assigned_to_location).to(
+            eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
+          )
         end
       end
     end
@@ -678,13 +682,13 @@ describe Appeal, :all_dbs do
 
       before do
         organization_root_task = create(:root_task, appeal: appeal_organization)
-        create(:generic_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
+        create(:ama_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
 
         user_root_task = create(:root_task, appeal: appeal_user)
-        create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+        create(:ama_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
 
         on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
-        create(:generic_task, :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
+        create(:ama_task, :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
 
         # These tasks are the most recently updated but should be ignored in the determination
         create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 20)

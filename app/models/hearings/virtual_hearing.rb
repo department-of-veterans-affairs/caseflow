@@ -42,7 +42,19 @@ class VirtualHearing < ApplicationRecord
       (representative_email.nil? || representative_email_sent)
   end
 
+  def guest_link
+    "#{base_url}?conference=#{alias_name}&pin=#{guest_pin}#&join=1&role=guest"
+  end
+
+  def host_link
+    "#{base_url}?conference=#{alias_name}&pin=#{host_pin}#&join=1&role=host"
+  end
+
   private
+
+  def base_url
+    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/webapp/"
+  end
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]

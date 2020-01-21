@@ -47,7 +47,8 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
       date: hearing.date,
       type: hearing.type,
       externalId: hearing.external_id,
-      disposition: hearing.disposition
+      disposition: hearing.disposition,
+      isVirtual: hearing.is_virtual
     }
   };
 };
@@ -240,10 +241,11 @@ export const prepareAppealHearingsForStore = (appeal) => appeal.attributes.heari
     date: hearing.date,
     type: hearing.type,
     externalId: hearing.external_id,
-    disposition: hearing.disposition
+    disposition: hearing.disposition,
+    isVirtual: hearing.is_virtual
   }));
 
-const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: Object }) => appeal.attributes.
+const prepareAppealAvailableHearingLocationsForStore = (appeal) => appeal.attributes.
   available_hearing_locations.map((ahl) => ({
     name: ahl.name,
     address: ahl.address,

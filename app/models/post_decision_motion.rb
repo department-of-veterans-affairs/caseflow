@@ -3,8 +3,6 @@
 class PostDecisionMotion < ApplicationRecord
   belongs_to :task, optional: false
 
-  # has_many :decision_issues as: :vacated_issues
-
   validates :disposition, presence: true
   validate :vacate_type_is_present_if_granted
   validate :vacated_issues_present_if_partial
@@ -18,7 +16,8 @@ class PostDecisionMotion < ApplicationRecord
   }
 
   enum vacate_type: {
-    straight_vacate_and_readjudication: "straight_vacate_and_readjudication",
+    straight_vacate: "straight_vacate",
+    vacate_and_readjudication: "vacate_and_readjudication",
     vacate_and_de_novo: "vacate_and_de_novo"
   }
 
@@ -26,6 +25,10 @@ class PostDecisionMotion < ApplicationRecord
     return [] unless vacated_decision_issue_ids
 
     DecisionIssue.find(vacated_decision_issue_ids)
+  end
+
+  def create_request_issues_for_vacature
+    vacated_issues.map(&:create_contesting_request_issue!)
   end
 
   private

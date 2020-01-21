@@ -65,13 +65,7 @@ class TaskActionRepository
     end
 
     def assign_to_user_data(task, user = nil)
-      users = if task.assigned_to.is_a?(Organization)
-                task.assigned_to.users
-              elsif task.parent&.assigned_to.is_a?(Organization)
-                task.parent.assigned_to.users.reject { |check_user| check_user == task.assigned_to }
-              else
-                []
-              end
+      users = potential_task_assignees(task)
 
       extras = if task.is_a?(HearingAdminActionTask)
                  {
@@ -206,10 +200,9 @@ class TaskActionRepository
         options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
           {
             label: value,
-            value: key
+            value: ColocatedTask.find_subclass_by_action(key).name
           }
-        end,
-        type: ColocatedTask.name
+        end
       }
     end
 
@@ -343,6 +336,17 @@ class TaskActionRepository
           label: user.full_name,
           value: user.id
         }
+      end
+    end
+
+    # Exclude users who aren't active or to whom the task is already assigned.
+    def potential_task_assignees(task)
+      if task.assigned_to.is_a?(Organization)
+        task.assigned_to.users.active
+      elsif task.parent&.assigned_to.is_a?(Organization)
+        task.parent.assigned_to.users.active.reject { |check_user| check_user == task.assigned_to }
+      else
+        []
       end
     end
   end

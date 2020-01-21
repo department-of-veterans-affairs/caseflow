@@ -73,9 +73,7 @@ class LegacyAppeal < ApplicationRecord
            to: :document_fetcher
 
   delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex,
-           to: :veteran,
-           prefix: true,
-           allow_nil: true
+           :email_address, to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products,
@@ -786,9 +784,10 @@ class LegacyAppeal < ApplicationRecord
 
   def cancel_open_caseflow_tasks!
     tasks.open.each do |task|
-      task.update!(status: Constants.TASK_STATUSES.cancelled)
-      task.instructions << "Task cancelled due to death dismissal"
-      task.save
+      task.update_with_instructions(
+        status: Constants.TASK_STATUSES.cancelled,
+        instructions: "Task cancelled due to death dismissal"
+      )
     end
   end
 

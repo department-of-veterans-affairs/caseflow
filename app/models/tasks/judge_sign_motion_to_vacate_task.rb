@@ -14,4 +14,8 @@ class JudgeSignMotionToVacateTask < JudgeTask
   def self.label
     COPY::JUDGE_SIGN_MOTION_TO_VACATE_TASK_LABEL
   end
+
+  def child_must_have_active_assignee?
+    false
+  end
 end

@@ -44,6 +44,8 @@ class Appeal < DecisionReview
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
+  alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
+
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
       appeal: self, use_efolder: true
@@ -66,11 +68,7 @@ class Appeal < DecisionReview
   end
 
   def ui_hash
-    super.merge(
-      docketType: docket_type,
-      isOutcoded: outcoded?,
-      formType: "appeal"
-    )
+    Intake::AppealSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def type
@@ -223,6 +221,7 @@ class Appeal < DecisionReview
            :date_of_birth,
            :age,
            :available_hearing_locations,
+           :email_address,
            :country, to: :veteran, prefix: true
 
   def veteran_if_exists
@@ -269,7 +268,7 @@ class Appeal < DecisionReview
   end
 
   def status
-    BVAAppealStatus.new(appeal: self)
+    @status ||= BVAAppealStatus.new(appeal: self)
   end
 
   def previously_selected_for_quality_review
@@ -285,7 +284,7 @@ class Appeal < DecisionReview
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
       issue.save!
-      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
+      issue.handle_legacy_issues!
     end
     request_issues.reload
   end

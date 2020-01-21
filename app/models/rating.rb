@@ -30,22 +30,8 @@ class Rating
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
 
-  def ui_hash
-    serialize
-  end
-
-  # If you change this method, you will need
-  # to clear cache in prod for your changes to
-  # take effect immediately.
-  # See DecisionReview#cached_serialized_timely_ratings.
   def serialize
-    {
-      participant_id: participant_id,
-      profile_date: profile_date,
-      promulgation_date: promulgation_date,
-      issues: issues.map(&:serialize),
-      decisions: decisions.map(&:serialize)
-    }
+    Intake::RatingSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def associated_end_products
@@ -152,7 +138,7 @@ class Rating
       end
 
       unsorted.sort_by(&:promulgation_date).reverse
-    rescue Savon::Error
+    rescue Savon::Error, BGS::ShareError
       []
     end
 

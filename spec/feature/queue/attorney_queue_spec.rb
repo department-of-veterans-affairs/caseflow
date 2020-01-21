@@ -34,7 +34,6 @@ RSpec.feature "Attorney queue", :all_dbs do
       let(:attorney_task) do
         create(
           :ama_attorney_task,
-          :on_hold,
           appeal: appeal,
           assigned_by: judge,
           assigned_to: attorney,
@@ -140,12 +139,13 @@ RSpec.feature "Attorney queue", :all_dbs do
           assigned_by: attorney
         )
       end
-      let(:colocated_person_task) { colocated_org_task.children.first }
+      let!(:colocated_person_task) { colocated_org_task.children.first }
 
       before do
+        Colocated.singleton.add_user(create(:user))
         reassign_params = {
           assigned_to_type: User.name,
-          assigned_to_id: ColocatedTaskDistributor.new.next_assignee.id
+          assigned_to_id: Colocated.singleton.next_assignee.id
         }
         colocated_person_task.reassign(reassign_params, colocated_person_task.assigned_to)
       end
@@ -166,13 +166,12 @@ RSpec.feature "Attorney queue", :all_dbs do
       let!(:colocated_org_task) do
         create(
           :colocated_task,
-          :on_hold,
           appeal: appeal,
           assigned_by: attorney
         )
       end
 
-      before { colocated_org_task.children.first.update!(assigned_to: attorney) }
+      before { colocated_org_task.children.first.update!(assigned_to: attorney, status: :on_hold) }
 
       it "displays a single row for the appeal in the attorney's on hold tab" do
         visit("/queue")

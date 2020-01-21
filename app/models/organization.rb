@@ -13,6 +13,13 @@ class Organization < ApplicationRecord
 
   before_save :clean_url
 
+  enum status: {
+    Constants.ORGANIZATION_STATUSES.active.to_sym => Constants.ORGANIZATION_STATUSES.active,
+    Constants.ORGANIZATION_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
+  }
+
+  default_scope { active }
+
   class << self
     def assignable(task)
       select { |org| org.can_receive_task?(task) }
@@ -25,6 +32,20 @@ class Organization < ApplicationRecord
     def default_active_tab
       Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
     end
+  end
+
+  def active!
+    self.status_updated_at = Time.zone.now
+    super
+  end
+
+  def inactive!
+    self.status_updated_at = Time.zone.now
+    super
+  end
+
+  def users_can_create_mail_task?
+    false
   end
 
   def can_bulk_assign_tasks?
@@ -48,7 +69,7 @@ class Organization < ApplicationRecord
   end
 
   def admins
-    organizations_users.includes(:user).select(&:admin?).map(&:user)
+    organizations_users.includes(:user).admin.map(&:user)
   end
 
   def non_admins
