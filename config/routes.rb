@@ -282,7 +282,6 @@ Rails.application.routes.draw do
 
   get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
-  get 'intake/stats(/:interval)', to: 'intake_stats#show', as: 'intake_stats'
   get 'stats', to: 'stats#show'
 
   match '/intake/:any' => 'intakes#index', via: [:get]
