@@ -711,7 +711,7 @@ describe User, :all_dbs do
           it "marks their JudgeTeam as inactive" do
             expect(subject).to eq true
             expect(judge_team.reload.status).to eq status
-            expect(judge_team.judge).to eq user
+            expect(judge_team.judge).to eq user if FeatureToggle.enabled?(:judge_admin_scm)
           end
         end
 
@@ -749,17 +749,17 @@ describe User, :all_dbs do
         end
 
         context "when marking the admin inactive" do
-          let(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
           before do
             OrganizationsUser.make_user_admin(user, judge_team)
             allow(user).to receive(:judge_in_vacols?).and_return(false)
           end
 
           it "removes admin from all organizations, including JudgeTeam" do
-            expect(judge_team.judge).not_to eq user
+            expect(judge_team.admins.size).to eq 2
+            expect(judge_team.judge).not_to eq user if FeatureToggle.enabled?(:judge_admin_scm)
             expect(judge_team.admins).to include user
             expect(user.organizations.size).to eq 3
-            expect(user.selectable_organizations.length).to eq 2
+            expect(user.selectable_organizations.length).to eq 2 if FeatureToggle.enabled?(:judge_admin_scm)
             expect(subject).to eq true
             expect(user.reload.status).to eq status
             expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
@@ -769,18 +769,18 @@ describe User, :all_dbs do
         end
 
         context "when marking the judge inactive" do
-          let(:judge_team) { JudgeTeam.create_for_judge(user) }
+          let!(:judge_team) { JudgeTeam.create_for_judge(user) }
           before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
 
           it "removes judge from all orgs except their own JudgeTeam" do
             expect(user.judge?)
-            expect(judge_team.judge).to eq user
+            expect(judge_team.judge).to eq user if FeatureToggle.enabled?(:judge_admin_scm)
             expect(user.organizations.size).to eq 3
             expect(user.selectable_organizations.length).to eq 3
             expect(user.update_status!(status)).to eq true
             expect(user.reload.status).to eq status
             expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
-            expect(judge_team.judge).to eq user
+            expect(judge_team.judge).to eq user if FeatureToggle.enabled?(:judge_admin_scm)
             expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
             # Every judge in vacols should be able to see their assign page, even if they don't have a judge team
             expect(user.selectable_organizations.length).to eq 1
@@ -793,13 +793,13 @@ describe User, :all_dbs do
 
             it "removes judge from all orgs (including JudgeTeams) except their own JudgeTeam" do
               expect(user.judge?)
-              expect(judge_team.judge).to eq user
+              expect(judge_team.judge).to eq user if FeatureToggle.enabled?(:judge_admin_scm)
               expect(user.organizations.size).to eq 4
               expect(user.selectable_organizations.length).to eq 3
               expect(user.update_status!(status)).to eq true
               expect(user.reload.status).to eq status
               expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
-              expect(judge_team.judge).to eq user
+              expect(judge_team.judge).to eq user if FeatureToggle.enabled?(:judge_admin_scm)
               expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
               # Every judge in vacols should be able to see their assign page, even if they don't have a judge team
               expect(user.selectable_organizations.length).to eq 1
