@@ -291,7 +291,8 @@ export const judgeDecisionReviewTasksSelector = createSelector(
     // eslint-disable-next-line no-undefined
     return [null, undefined, COPY.JUDGE_DECISION_REVIEW_TASK_LABEL,
       COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL,
-      COPY.JUDGE_DISPATCH_RETURN_TASK_LABEL].includes(task.label);
+      COPY.JUDGE_DISPATCH_RETURN_TASK_LABEL,
+      COPY.JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL].includes(task.label);
   })
 );
 
