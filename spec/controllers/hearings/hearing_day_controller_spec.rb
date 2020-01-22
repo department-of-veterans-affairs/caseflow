@@ -84,9 +84,7 @@ describe Hearings::HearingDayController, :all_dbs do
       end
 
       context "associated with a Legacy hearing" do
-        let(:legacy_hearing) do
-          create(:legacy_hearing, hearing_day: hearing_day, hearing_day_id: hearing_day.id)
-        end
+        let(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
         let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: legacy_hearing) }
 
         include_examples "route has expected request type", "Virtual"
@@ -96,7 +94,7 @@ describe Hearings::HearingDayController, :all_dbs do
         let(:hearings) do
           [
             create(:hearing, hearing_day: hearing_day),
-            create(:legacy_hearing, hearing_day: hearing_day, hearing_day_id: hearing_day.id)
+            create(:legacy_hearing, hearing_day: hearing_day)
           ]
         end
         let!(:virtual_hearing) do
