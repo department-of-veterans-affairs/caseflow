@@ -3,8 +3,8 @@
 class SpecialIssuesController < ApplicationController
   before_action :validate_access_to_appeal
 
-  rescue_from Caseflow::Error::UserRepositoryError do |e|
-    render(e.serialize_response)
+  rescue_from Caseflow::Error::UserRepositoryError do |error|
+    render(error.serialize_response)
   end
 
   def create
