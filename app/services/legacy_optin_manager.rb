@@ -43,10 +43,6 @@ class LegacyOptinManager
   end
 
   def legacy_issue_opt_ins
-    request_issues_with_legacy_opt_ins.map(&:legacy_issue_optin)
-  end
-
-  def request_issues_with_legacy_opt_ins
-    decision_review.request_issues.select(&:legacy_issue_optin)
+    decision_review.request_issues.map(&:legacy_issue_optins).flatten
   end
 end
