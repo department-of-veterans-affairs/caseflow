@@ -30,6 +30,7 @@ class HearingLocation < ApplicationRecord
   end
 
   def timezone
+    binding.pry
     key = vba_372? ? "VACO" : facility_id
     tz = Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[key]
 

@@ -83,7 +83,7 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
             [
               create(:hearing, regional_office: "VACO", hearing_day: hearing_day, scheduled_time: "9:30AM"),
               create(:hearing, regional_office: "RO59", hearing_day: hearing_day_in_hawaii, scheduled_time: "10:30AM"),
-              create(:hearing, regional_office: "RO59", hearing_day: hearing_day_in_hawaii, scheduled_time: "11:30AM")
+              create(:hearing, regional_office: "RO62", hearing_day: hearing_day_in_hawaii, scheduled_time: "11:30AM")
             ]
           end
           let!(:postponed_hearing) do
@@ -109,7 +109,6 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
             expect(response_body["hearings"][0]["timezone"]).to eq("America/New_York")
             expect(response_body["hearings"][1]["timezone"]).to eq("Pacific/Honolulu")
             expect(response_body["hearings"][2]["timezone"]).to eq("America/Chicago")
-            binding.pry
             expect(response_body["hearings"][0]["is_virtual"]).to eq(false)
 
             first_location = response_body["hearings"][0]["hearing_location"]

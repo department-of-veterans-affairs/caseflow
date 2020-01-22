@@ -33,7 +33,7 @@ class Api::V2::HearingSerializer
     hearing.hearing_location&.state || hearing.regional_office.state
   end
   attribute :timezone do |hearing|
-    hearing.hearing_location || hearing.regional_office_timezone
+    hearing.hearing_location.present? ? hearing.hearing_location&.timezone : hearing.regional_office.timezone
   end
   attribute :zip_code do |hearing|
     hearing.hearing_location&.zip_code || hearing.regional_office.zip_code

@@ -16,6 +16,7 @@ FactoryBot.define do
         hearing_location.city = facility_address["city"]
         hearing_location.state = facility_address["state"]
         hearing_location.zip_code = facility_address["zip"]
+        hearing_location.timezone = facility_address["timezone"]
       end
     end
   end
