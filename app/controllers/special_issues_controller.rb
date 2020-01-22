@@ -3,6 +3,10 @@
 class SpecialIssuesController < ApplicationController
   before_action :validate_access_to_appeal
 
+  rescue_from Caseflow::Error::UserRepositoryError do |e|
+    render(e.serialize_response)
+  end
+
   def create
     return record_not_found unless appeal
 
