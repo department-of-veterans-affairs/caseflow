@@ -44,7 +44,11 @@ class VideoHearingDayRequestTypeQuery
     @hearing_days
       .where(request_type: HearingDay::REQUEST_TYPES[:video])
       .joins("INNER JOIN hearings ON hearing_days.id = hearings.hearing_day_id")
-      .joins("LEFT OUTER JOIN virtual_hearings ON virtual_hearings.hearing_id = hearings.id")
+      .joins(<<-SQL)
+        LEFT OUTER JOIN virtual_hearings
+        ON virtual_hearings.hearing_id = hearings.id
+        AND virtual_hearings.hearing_type = 'Hearing'
+      SQL
       .group(:id)
       .select(
         "id",
@@ -57,7 +61,11 @@ class VideoHearingDayRequestTypeQuery
     @hearing_days
       .where(request_type: HearingDay::REQUEST_TYPES[:video])
       .joins("INNER JOIN legacy_hearings ON hearing_days.id = legacy_hearings.hearing_day_id")
-      .joins("LEFT OUTER JOIN virtual_hearings ON virtual_hearings.hearing_id = legacy_hearings.id")
+      .joins(<<-SQL)
+        LEFT OUTER JOIN virtual_hearings 
+        ON virtual_hearings.hearing_id = legacy_hearings.id
+        AND virtual_hearings.hearing_type = 'LegacyHearing'
+      SQL
       .group(:id)
       .select(
         "id",
