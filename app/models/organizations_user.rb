@@ -38,7 +38,7 @@ class OrganizationsUser < ApplicationRecord
 
   def self.modify_decision_drafting(user, organization)
     org_user = existing_record(user, organization)
-    return nil unless org_user.judge_team_role && FeatureToggle.enabled?(:judge_admin_scm)
+    return nil unless org_user&.judge_team_role && FeatureToggle.enabled?(:judge_admin_scm)
     if org_user.judge_team_role.is_a?(JudgeTeamLead)
       fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR
     elsif org_user.judge_team_role.is_a?(DecisionDraftingAttorney)

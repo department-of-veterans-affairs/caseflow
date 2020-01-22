@@ -36,7 +36,7 @@ class Organizations::UsersController < OrganizationsController
     if params.key?(:attorney)
       OrganizationsUser.modify_decision_drafting(user_to_modify, organization)
     end
-  
+
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
 
