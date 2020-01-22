@@ -11,6 +11,7 @@ detectors:
   BooleanParameter:
     exclude:
       - AsyncableJobsReporter#initialize
+      - CsvToS3Exporter#initialize
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Veteran
@@ -86,6 +87,7 @@ detectors:
   LongParameterList:
     exclude:
       - Address#initialize
+      - CsvToS3Exporter#initialize
       - ExternalApi::VBMSService#self.create_contentions!
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReview::ContestableIssueFinder#initialize
@@ -117,6 +119,7 @@ detectors:
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
+      - CsvToS3Exporter
       - DuplicateUserTask
       - LegacyAppealDispatch
       - Address
