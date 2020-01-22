@@ -35,6 +35,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
         subject
 
         expect(ETL::Appeal.first.veteran_dob).to_not be_nil
+        expect(ETL::Appeal.first.claimant_dob).to_not be_nil
       end
     end
 
