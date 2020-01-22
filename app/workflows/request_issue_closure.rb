@@ -9,7 +9,7 @@ class RequestIssueClosure < SimpleDelegator
 
     close!(status: :no_decision) do
       canceled!
-      legacy_issue_optin&.flag_for_rollback!
+      legacy_issue_optins.each(&:flag_for_rollback!)
     end
   end
 
