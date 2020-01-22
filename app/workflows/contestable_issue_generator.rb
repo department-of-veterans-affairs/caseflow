@@ -34,7 +34,7 @@ class ContestableIssueGenerator
     issues = rating_issues
 
     unless FeatureToggle.enabled?(:show_future_ratings, user: RequestStore[:current_user])
-     issues = issues.select { |issue| issue.profile_date && issue.profile_date.to_date <= receipt_date }
+      issues = issues.select { |issue| issue.profile_date && issue.profile_date.to_date <= receipt_date }
     end
 
     issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
