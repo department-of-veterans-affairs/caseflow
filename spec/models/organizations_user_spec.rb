@@ -51,7 +51,7 @@ describe OrganizationsUser, :postgres do
 
     it "toggles the judge team role" do
       expect(judge_team_org_user.judge_team_role.type).to eq(DecisionDraftingAttorney.name)
-      OrganizationsUser.modify_decision_drafting(judge_team_org_user, judge_team)
+      OrganizationsUser.modify_decision_drafting(user, judge_team)
       expect(judge_team_org_user.reload.judge_team_role.type).to eq(nil)
     end
   end
