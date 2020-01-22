@@ -8,7 +8,7 @@ FactoryBot.define do
 
     before(:create) do |post_decision_motion|
       appeal = post_decision_motion.task.appeal
-      return unless appeal.reload.decision_issues.size == 0
+      return unless appeal.reload.decision_issues.empty?
 
       3.times do |idx|
         create(

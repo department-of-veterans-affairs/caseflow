@@ -27,7 +27,6 @@ class PostDecisionMotionsController < ApplicationController
 
   def create_issues
     new_request_issues = post_decision_motion.create_request_issues_for_vacatur
-    binding.pry
 
     new_decision_issues = post_decision_motion.create_vacated_decision_issues
 
