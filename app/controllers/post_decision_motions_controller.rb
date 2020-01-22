@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PostDecisionMotionsController < ApplicationController
-  before_action :verify_task_access
+  before_action :verify_task_access, only: [:create, :return_to_lit_support]
 
   def create
     motion_updater = PostDecisionMotionUpdater.new(task, motion_params)
@@ -26,8 +26,8 @@ class PostDecisionMotionsController < ApplicationController
   end
 
   def create_issues
-    binding.pry
     new_request_issues = post_decision_motion.create_request_issues_for_vacatur
+    binding.pry
 
     new_decision_issues = post_decision_motion.create_vacated_decision_issues
 
@@ -58,7 +58,6 @@ class PostDecisionMotionsController < ApplicationController
   end
 
   def motion_id
-    binding.pry
     create_issues_params[:id]
   end
 

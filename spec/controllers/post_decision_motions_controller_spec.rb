@@ -77,24 +77,45 @@ describe PostDecisionMotionsController do
 
   describe "#create_issues" do
     context "with a valid PostDecisionMotion id" do
-      it "returns a 200 response" do
+      it "returns a 200 response and creates issues" do
         allow(controller).to receive(:verify_authentication).and_return(true)
 
-        task = create_task_without_unnecessary_models
-        assigned_to = user
+        create_task_without_unnecessary_models
         judge_team.add_user(user)
 
-        appeal = post_decision_motion.reload.task.appeal
+        appeal = post_decision_motion.task.appeal.reload
 
-        
-        post :create_issues, params: { "id": post_decision_motion.id }
+        expect(appeal.decision_issues.size).to eq(3)
+
+        post :create_issues, params: { id: post_decision_motion.id }
 
         appeal.reload
 
-        binding.pry
-
         expect(response).to be_success
+        expect(appeal.request_issues.size).to eq(3)
         expect(appeal.decision_issues.size).to eq(6)
+      end
+    end
+
+    context "with an invalid PostDecisionMotion id" do
+      it "returns a 404 response and doesn't create issues" do
+        allow(controller).to receive(:verify_authentication).and_return(true)
+
+        create_task_without_unnecessary_models
+        judge_team.add_user(user)
+
+        appeal = post_decision_motion.task.appeal.reload
+
+        expect(appeal.decision_issues.size).to eq(3)
+        expect(appeal.request_issues.size).to eq(3)
+
+        post :create_issues, params: { id: 9999 }
+
+        appeal.reload
+
+        expect(response.status).to eq 404
+        expect(appeal.request_issues.size).to eq(3)
+        expect(appeal.decision_issues.size).to eq(3)
       end
     end
   end

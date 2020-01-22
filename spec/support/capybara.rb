@@ -29,6 +29,9 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options.add_preference(:browser,
                                 disk_cache_dir: cache_directory)
 
+  chrome_options.add_extension("/Users/jcq/Downloads/React-Developer-Tools_v4.1.0.crx")
+  chrome_options.add_extension("/Users/jcq/Downloads/Redux-DevTools_v2.17.0.crx")
+
   options = {
     service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
     browser: :chrome,
