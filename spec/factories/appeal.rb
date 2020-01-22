@@ -98,8 +98,8 @@ FactoryBot.define do
     end
 
     trait :ready_for_distribution do
+      with_post_intake_tasks
       after(:create) do |appeal, _evaluator|
-        appeal.create_tasks_on_intake_success!
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
         distribution_tasks.each(&:ready_for_distribution!)
       end
@@ -108,11 +108,8 @@ FactoryBot.define do
     # Currently only creates realistic task trees for direct_review docket
     # Hearing and Evidence dockets have open branches
     trait :assigned_to_judge do
+      ready_for_distribution
       after(:create) do |appeal, evaluator|
-        appeal.create_tasks_on_intake_success!
-        distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
-        distribution_tasks.each(&:ready_for_distribution!)
-
         JudgeAssignTask.create!(appeal: appeal,
                                 parent: appeal.root_task,
                                 assigned_at: evaluator.active_task_assigned_at,
