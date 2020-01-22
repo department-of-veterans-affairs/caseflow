@@ -20,6 +20,17 @@ FactoryBot.define do
     end
 
     transient do
+      associated_attorney do
+        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
+        judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        attorney = User.find_or_create_by(css_id: "BVAEERDMAN", station_id: 101)
+        judge_team.add_user(attorney)
+
+        attorney
+      end
+    end
+
+   transient do
       associated_judge do
         judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
@@ -106,7 +117,7 @@ FactoryBot.define do
     end
 
     # Currently only creates realistic task trees for direct_review docket
-    # Hearing and Evidence dockets have open branches
+    # Hearing and Evidence dockets have incorrectly open task tree branches
     trait :assigned_to_judge do
       ready_for_distribution
       after(:create) do |appeal, evaluator|
@@ -117,6 +128,20 @@ FactoryBot.define do
         appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
       end
     end
+
+    # Currently only creates realistic task trees for direct_review docket
+    # Hearing and Evidence dockets have incorrectly open task tree branches
+    trait :at_attorney_drafting do
+      assigned_to_judge
+      after(:create) do |appeal, evaluator|
+        judge_assign_task = appeal.tasks.where(type: JudgeAssignTask.name).first
+        AttorneyTaskCreator.new(
+          judge_assign_task,
+          { appeal: judge_assign_task.appeal, assigned_to: evaluator.associated_attorney, assigned_by: judge_assign_task.assigned_to }
+        ).call
+      end
+    end
+
 
     trait :outcoded do
       after(:create) do |appeal, _evaluator|
