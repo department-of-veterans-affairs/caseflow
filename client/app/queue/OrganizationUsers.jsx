@@ -33,6 +33,7 @@ export default class OrganizationUsers extends React.PureComponent {
 
     this.state = {
       organizationName: null,
+      judgeTeam: null,
       organizationUsers: [],
       remainingUsers: [],
       loading: true,
@@ -48,6 +49,7 @@ export default class OrganizationUsers extends React.PureComponent {
     return ApiUtil.get(`/organizations/${this.props.organization}/users`).then((response) => {
       this.setState({
         organizationName: response.body.organization_name,
+        judgeTeam: response.body.judge_team,
         organizationUsers: response.body.organization_users.data,
         remainingUsers: [],
         loading: false
@@ -238,8 +240,9 @@ export default class OrganizationUsers extends React.PureComponent {
       onClick={this.removeUser(user)} /></span>
 
   mainContent = () => {
+    const judgeTeam = this.state.judgeTeam;
     const listOfUsers = this.state.organizationUsers.map((user, i) => {
-      const { judgeTeam, judge, attorney, admin } = user.attributes;
+      const { judge, attorney, admin } = user.attributes;
       const style = i === 0 ? topUserStyle : userStyle;
 
       return <div {...style}>
@@ -272,7 +275,7 @@ export default class OrganizationUsers extends React.PureComponent {
         async={this.asyncLoadUser} />
       <br />
       <div>
-        {this.state.organizationUsers.some((user) => user.attributes.judgeTeam) &&
+        {this.state.organizationUsers.some((user) => user.attributes.judge_team) &&
             <div>
               <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
               <ul>

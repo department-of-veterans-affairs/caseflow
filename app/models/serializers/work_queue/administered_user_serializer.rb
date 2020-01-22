@@ -16,9 +16,4 @@ class WorkQueue::AdministeredUserSerializer < WorkQueue::UserSerializer
       params[:organization].attorneys.include?(object)
     end
   end
-  attribute :judge_team do |object, params|
-    if FeatureToggle.enabled?(:judge_admin_scm) && params[:organization].type == JudgeTeam.name
-      true
-    end
-  end
 end

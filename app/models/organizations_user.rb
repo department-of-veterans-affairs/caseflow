@@ -14,8 +14,8 @@ class OrganizationsUser < ApplicationRecord
   # Use instead: organization.add_user(user)
 
   def self.make_user_admin(user, organization)
-    org_user = OrganizationsUser.existing_record(user, organization) || organization.add_user(user)
-    org_user.tap do |org_user|
+    organization_user = OrganizationsUser.existing_record(user, organization) || organization.add_user(user)
+    organization_user.tap do |org_user|
       org_user.update!(admin: true)
     end
   end
@@ -47,6 +47,5 @@ class OrganizationsUser < ApplicationRecord
       org_user.judge_team_role.update!(type: DecisionDraftingAttorney)
     end
   end
-
 end
 
