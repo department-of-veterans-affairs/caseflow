@@ -13,6 +13,8 @@ class CsvToS3Exporter
     @region = region
     @compress = compress
     @test = test
+
+    set_psql_url
   end
   # rubocop:enable Metrics/ParameterLists
 
@@ -63,13 +65,13 @@ class CsvToS3Exporter
     @tmp_file ||= Tempfile.new(csv_file).path # wrap in Tempfile so it cleans itself up
   end
 
-  def psql_url
+  def set_psql_url
     conf = ActiveRecord::Base.connection_config
-    "postgres://#{conf[:username]}:#{conf[:password]}@#{conf[:host]}/#{conf[:database]}"
+    ENV["POSTGRES_URL"] ||= "postgres://#{conf[:username]}:#{conf[:password]}@#{conf[:host]}/#{conf[:database]}"
   end
 
   def csv_cmd
-    "psql #{psql_url} -c '\\copy #{table} to #{tmp_file} with (format csv, header, force_quote *)'"
+    "psql \$POSTGRES_URL -c '\\copy #{table} to #{tmp_file} with (format csv, header, force_quote *)'"
   end
 
   def bucket_target
