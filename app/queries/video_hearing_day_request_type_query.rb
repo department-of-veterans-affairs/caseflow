@@ -13,7 +13,7 @@ class VideoHearingDayRequestTypeQuery
   end
 
   # Returns a hash of hearing day id to request type.
-  def call    
+  def call
     (counts_for_ama_hearings + counts_for_legacy_hearings)
       .group_by(&:id)
       .transform_values! do |counts|
@@ -53,7 +53,7 @@ class VideoHearingDayRequestTypeQuery
       .select(
         "id",
         VIRTUAL_HEARINGS_COUNT_STATEMENT,
-        "count(hearings.id) as hearings_count",
+        "count(hearings.id) as hearings_count"
       )
   end
 
@@ -70,7 +70,7 @@ class VideoHearingDayRequestTypeQuery
       .select(
         "id",
         VIRTUAL_HEARINGS_COUNT_STATEMENT,
-        "count(legacy_hearings.id) as hearings_count",
+        "count(legacy_hearings.id) as hearings_count"
       )
   end
 end
