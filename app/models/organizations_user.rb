@@ -48,4 +48,3 @@ class OrganizationsUser < ApplicationRecord
     end
   end
 end
-
