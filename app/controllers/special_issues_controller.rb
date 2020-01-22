@@ -3,6 +3,10 @@
 class SpecialIssuesController < ApplicationController
   before_action :validate_access_to_appeal
 
+  rescue_from Caseflow::Error::UserRepositoryError do
+    redirect_to "/unauthorized"
+  end
+
   def create
     return record_not_found unless appeal
 
@@ -28,7 +32,7 @@ class SpecialIssuesController < ApplicationController
   end
 
   def validate_access_to_appeal
-    redirect_to "/unauthorized" unless current_user.appeal_has_task_assigned_to_user?(appeal)
+    current_user.appeal_has_task_assigned_to_user?(appeal)
   end
 
   def special_issue_params
