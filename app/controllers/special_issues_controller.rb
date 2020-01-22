@@ -3,7 +3,7 @@
 class SpecialIssuesController < ApplicationController
   before_action :validate_access_to_appeal
 
-  rescue_from Caseflow::Error::UserRepositoryError do |error|
+  rescue_from Caseflow::Error::UserRepositoryError do
     redirect_to "/unauthorized"
   end
 
