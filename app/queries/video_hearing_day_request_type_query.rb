@@ -62,7 +62,7 @@ class VideoHearingDayRequestTypeQuery
       .where(request_type: HearingDay::REQUEST_TYPES[:video])
       .joins("INNER JOIN legacy_hearings ON hearing_days.id = legacy_hearings.hearing_day_id")
       .joins(<<-SQL)
-        LEFT OUTER JOIN virtual_hearings 
+        LEFT OUTER JOIN virtual_hearings
         ON virtual_hearings.hearing_id = legacy_hearings.id
         AND virtual_hearings.hearing_type = 'LegacyHearing'
       SQL
