@@ -7,14 +7,17 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
 
   queue_with_priority :high_priority
 
-  attr_reader :virtual_hearing
-
   retry_on Caseflow::Error::PexipApiError, attempts: 5 do |_job, exception|
-    capture_exception(exception, extra: { hearing_id: virtual_hearing.hearing_id })
+    extra = {
+      hearing_id: virtual_hearing.hearing_id,
+      hearing_type: virtual_hearing.hearing_type
+    }
+
+    capture_exception(exception, extra: extra)
   end
 
-  def perform(hearing_id:, email_type: :confirmation)
-    @virtual_hearing = VirtualHearing.where(hearing_id: hearing_id).order(created_at: :desc).first
+  def perform(hearing_id:, hearing_type:, email_type: :confirmation)
+    set_virtual_hearing(hearing_id, hearing_type)
 
     virtual_hearing.establishment.attempted!
 
@@ -32,6 +35,19 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
   end
 
   private
+
+  attr_reader :virtual_hearing
+
+  def set_virtual_hearing(hearing_id, hearing_type)
+    case hearing_type
+    when Hearing.name
+      @virtual_hearing = Hearing.find(hearing_id).virtual_hearing
+    when LegacyHearing.name
+      @virtual_hearing = LegacyHearing.find(hearing_id).virtual_hearing
+    else
+      fail ArgumentError, "Invalid hearing type supplied to job: `#{hearing_type}`"
+    end
+  end
 
   def create_conference
     assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?

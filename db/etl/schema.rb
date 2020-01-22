@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191218214351) do
+ActiveRecord::Schema.define(version: 20200116215235) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20191218214351) do
     t.datetime "appeal_created_at", null: false, comment: "appeals.created_at"
     t.bigint "appeal_id", null: false, comment: "ID of the Appeal"
     t.datetime "appeal_updated_at", null: false, comment: "appeals.updated_at"
+    t.date "claimant_dob", comment: "people.date_of_birth"
     t.string "claimant_first_name", comment: "people.first_name"
     t.bigint "claimant_id", comment: "claimants.id"
     t.string "claimant_last_name", comment: "people.last_name"
@@ -176,6 +177,7 @@ ActiveRecord::Schema.define(version: 20191218214351) do
   create_table "people", force: :cascade, comment: "Copy of People table" do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth"
+    t.string "email_address", comment: "Person email address, cached from BGS"
     t.string "first_name", limit: 50, comment: "Person first name, cached from BGS"
     t.string "last_name", limit: 50, comment: "Person last name, cached from BGS"
     t.string "middle_name", limit: 50, comment: "Person middle name, cached from BGS"

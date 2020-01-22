@@ -17,9 +17,8 @@ import { COLORS } from '../../../constants/AppConstants';
 import COPY from '../../../../COPY.json';
 
 class DetailsInputs extends React.Component {
-
   renderVirtualHearingLinkSection() {
-    const { isVirtual, hearing, virtualHearing, user } = this.props;
+    const { isVirtual, virtualHearing, user, hearing } = this.props;
 
     if (isVirtual && virtualHearing) {
       return (
@@ -28,7 +27,8 @@ class DetailsInputs extends React.Component {
           <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing.jobCompleted &&
               <VirtualHearingLink
-                role={user.userId.toString() === hearing.judgeId ? 'host' : 'guest'}
+                user={user}
+                hearing={hearing}
                 showFullLink
                 isVirtual={isVirtual}
                 virtualHearing={virtualHearing}
@@ -79,7 +79,7 @@ class DetailsInputs extends React.Component {
               onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
             />
             <TextField
-              name="POA/Representive Email"
+              name="POA/Representative Email"
               value={virtualHearing.representativeEmail}
               strongLabel
               className={[classnames('cf-form-textinput', 'cf-inline-field')]}

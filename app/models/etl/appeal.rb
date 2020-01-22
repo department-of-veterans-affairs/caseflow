@@ -20,14 +20,15 @@ class ETL::Appeal < ETL::Record
       aod = person&.advance_on_docket_motions&.last
 
       # avoid BGS call on sync for nil values
-      person_attributes = person&.attributes || {}
-      veteran_person_attributes = veteran&.person&.attributes || {}
+      person_attributes = (person&.attributes || {}).symbolize_keys
+      veteran_person_attributes = (veteran&.person&.attributes || {}).symbolize_keys
 
       target.appeal_id = original.id
       target.active_appeal = original.active?
       target.aod_granted = aod&.granted? || false
       target.aod_reason = aod&.reason
       target.aod_user_id = aod&.user_id
+      target.claimant_dob = person_attributes[:date_of_birth]
       target.claimant_first_name = person_attributes[:first_name]
       target.claimant_id = claimant&.id
       target.claimant_last_name = person_attributes[:last_name]

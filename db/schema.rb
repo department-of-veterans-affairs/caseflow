@@ -902,6 +902,7 @@ ActiveRecord::Schema.define(version: 20200102193042) do
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth"
+    t.string "email_address", comment: "Person email address, cached from BGS"
     t.string "first_name", comment: "Person first name, cached from BGS"
     t.string "last_name", comment: "Person last name, cached from BGS"
     t.string "middle_name", comment: "Person middle name, cached from BGS"

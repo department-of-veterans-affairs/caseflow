@@ -164,7 +164,11 @@ RSpec.feature "Motion to vacate", :all_dbs do
              instructions: ["Initial instructions"])
     end
     let!(:judge_address_motion_to_vacate_task) do
-      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
+      create(:judge_address_motion_to_vacate_task,
+             appeal: appeal,
+             assigned_to: judge,
+             assigned_at: Time.zone.now,
+             parent: vacate_motion_mail_task)
     end
     let!(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let!(:judge_notes) { "Here's why I made my decision..." }
@@ -181,6 +185,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    it "task shows up in judge's queue" do
+      User.authenticate!(user: judge)
+      visit "/queue"
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL)
+    end
 
     it "judge grants motion to vacate (vacate & readjudication)" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
