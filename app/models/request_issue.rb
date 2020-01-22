@@ -215,7 +215,7 @@ class RequestIssue < ApplicationRecord
     update!(end_product_establishment: epe) if epe
 
     RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?
-    handle_legacy_issues!
+    create_legacy_issue!
   end
 
   def end_product_code
@@ -558,21 +558,16 @@ class RequestIssue < ApplicationRecord
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
-  def handle_legacy_issues!
-    create_legacy_issue!
-    create_legacy_issue_optin!
-  end
-
-  private
-
   def create_legacy_issue!
     return unless vacols_id && vacols_sequence_id
 
     legacy_issues.create!(
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id
-    )
+    ).tap(&:create_optin!)
   end
+
+  private
 
   # When a request issue already has a rating in VBMS, prevent user from editing it.
   # LockedRatingError indicates that the matching rating issue could be locked,

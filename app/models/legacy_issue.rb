@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+##
+# Veterans may submit request issues on an AMA form that are already active issues on Legacy Appeals.  The user intaking the form tries to find matching legacy issues when adding a request issue, and if they find a match they connect the two.  One request issue can be connected to multiple legacy issues. If a match is found and the veteran did not select to opt their legacy issues into AMA, or the issue is not eligible to be opted into AMA, then the request issue is ineligible.  If it is eligible, an opt-in is created, which closes the issue in VACOLS so that it can continue to be processed only in AMA.
+
 class LegacyIssue < ApplicationRecord
   belongs_to :request_issue
   has_one :legacy_issue_optin

@@ -284,7 +284,7 @@ class Appeal < DecisionReview
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
       issue.save!
-      issue.handle_legacy_issues!
+      issue.create_legacy_issue!
     end
     request_issues.reload
   end
