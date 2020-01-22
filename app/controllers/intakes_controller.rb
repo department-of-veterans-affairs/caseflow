@@ -3,6 +3,9 @@
 class IntakesController < ApplicationController
   before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
 
+  # Approach 2 for associating schema with controller action
+  SCHEMAS = IntakesSchemas
+
   def index
     no_cache
 
@@ -31,6 +34,11 @@ class IntakesController < ApplicationController
   def destroy
     intake.cancel!(reason: params[:cancel_reason], other: params[:cancel_other])
     render json: {}
+  end
+
+  # Approach 1 for associating schema with controller action
+  def review_schema
+    IntakesSchemas.review
   end
 
   def review

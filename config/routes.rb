@@ -317,4 +317,6 @@ Rails.application.routes.draw do
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
   # :nocov:
+
+  get '/route_schemas' => 'route_schemas#index'
 end
