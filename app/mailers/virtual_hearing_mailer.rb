@@ -3,7 +3,8 @@
 class VirtualHearingMailer < ActionMailer::Base
   default from: "solutions@public.govdelivery.com"
   layout "virtual_hearing_mailer"
-  attr_reader :recipient, :virtual_hearing
+  helper VirtualHearings::ExternalLinkHelper
+  helper VirtualHearings::VeteranNameHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)
     @recipient = mail_recipient
