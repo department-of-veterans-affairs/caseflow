@@ -975,9 +975,9 @@ describe RequestIssue, :all_dbs do
       end
     end
 
-    context "when the contested issue is a rating decision issue" do
+    context "when the contested issue is a decision issue on an unidentified request issue" do
       let(:contested_rating_issue_reference_id) { nil }
-      let(:other_request_issue) { create(:request_issue, :rating) }
+      let(:other_request_issue) { unidentified_issue }
       let!(:decision_issue) { create(:decision_issue, request_issues: [other_request_issue]) }
       let(:contested_decision_issue_id) { decision_issue.id }
 
@@ -986,7 +986,7 @@ describe RequestIssue, :all_dbs do
       end
 
       it "nonrating? is false" do
-        expect(request_issue.nonrating?).to be(false)
+        expect(request_issue.nonrating?).to be false
       end
     end
   end
