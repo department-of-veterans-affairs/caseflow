@@ -46,19 +46,15 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:each) do |example|
-    unless example.metadata[:skip_db_cleaner]
-      DatabaseCleaner[:active_record, { connection: vacols }].start
-      DatabaseCleaner[:active_record, { connection: caseflow }].start
-    end
+  config.before(:each) do
+    DatabaseCleaner[:active_record, { connection: vacols }].start
+    DatabaseCleaner[:active_record, { connection: caseflow }].start
   end
 
-  config.append_after(:each) do |example|
-    unless example.metadata[:skip_db_cleaner]
-      DatabaseCleaner[:active_record, { connection: vacols }].clean
-      DatabaseCleaner[:active_record, { connection: caseflow }].clean
-      clean_application!
-    end
+  config.append_after(:each) do
+    DatabaseCleaner[:active_record, { connection: vacols }].clean
+    DatabaseCleaner[:active_record, { connection: caseflow }].clean
+    clean_application!
   end
 
   # ETL is never used in feature tests and there are only a few, so we tag those with :etl
