@@ -51,7 +51,7 @@ class RegionalOffice
     location_hash[:facility_locator_id]
   end
 
-  def address
+  def street_address
     facility_location_hash["address_1"]
   end
 
