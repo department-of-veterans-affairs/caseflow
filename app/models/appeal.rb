@@ -296,7 +296,10 @@ class Appeal < DecisionReview
   end
 
   def docket_number
-    super || (receipt_date ? "#{receipt_date.strftime('%y%m%d')}-#{id}" : "Missing Docket Number")
+    return stream_docket_number if stream_docket_number
+    return "Missing Docket Number" unless receipt_date
+
+    "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
   # Currently AMA only supports one claimant per decision review
