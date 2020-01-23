@@ -3,13 +3,14 @@
 describe CsvToS3Exporter do
   describe "#call", skip_db_cleaner: true do # skip cleaner so our data is available to psql CLI
     after do
+      DatabaseCleaner.clean
       File.unlink(temp_file)
       File.unlink(meta_file)
       fail "failed to clean up #{temp_file}" if File.exist?(temp_file)
       fail "failed to clean up #{meta_file}" if File.exist?(meta_file)
     end
 
-    let(:temp_file) { Tempfile.new.path }
+    let(:temp_file) { File.join(Rails.root, "tmp", "appeals-to-s3.csv") }
     let(:meta_file) { "#{temp_file}.meta" }
     let(:today) { Time.zone.today.iso8601 }
 
