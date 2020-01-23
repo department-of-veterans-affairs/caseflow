@@ -56,6 +56,23 @@ RSpec.configure do |config|
     end
   end
 
+  config.before(:each) do |example|
+    path = example.metadata[:file_path]
+    line_number = example.metadata[:line_number]
+
+    ActiveRecord::Base.connection.tables.each do |table|
+      next if %w[schema_migrations ar_internal_metadata vftypes issref].include?(table)
+
+      klass = table.singularize.camelize.constantize
+      count = klass.count
+      next if count.zero?
+
+      puts "#{klass.name} has #{count} records"
+      puts "current test is: #{path}:#{line_number}"
+      exit! 1
+    end
+  end
+
   config.before(:each) do
     @spec_time_zone = Time.zone
   end
