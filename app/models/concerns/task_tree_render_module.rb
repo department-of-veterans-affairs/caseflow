@@ -30,7 +30,7 @@ module TaskTreeRenderModule
                  (defined?(appeal.docket_name) && appeal.docket_name)
         "#{appeal.class.name} #{appeal.id} (#{docket}) "
       }
-      ttr.config.custom['show_all_tasks']=true
+      ttr.config.custom["show_all_tasks"] = true
     end
   end
 
@@ -62,26 +62,26 @@ module TaskTreeRenderModule
   ## The following are needed by ConsoleTreeRenderer
 
   # called by config.heading_label_template
-  def heading_object(config)
+  def heading_object(_config)
     is_a?(Task) ? appeal : self
   end
 
   # called by rows and used by config.value_funcs_hash
-  def row_objects(config)
+  def row_objects(_config)
     is_a?(Task) ? appeal.tasks : tasks
   end
 
-  def row_label(config)
+  def row_label(_config)
     self.class.name
   end
 
-  def row_children(config)
+  def row_children(_config)
     children.order(:id)
   end
 
   # returns RootTask and root-level tasks (which are not under that RootTask)
   def rootlevel_rows(config)
-    @rootlevel_rows ||= self.is_a?(Task) ? [self] : appeal_children(self, config)
+    @rootlevel_rows ||= is_a?(Task) ? [self] : appeal_children(self, config)
   end
 
   private
@@ -90,7 +90,7 @@ module TaskTreeRenderModule
   def appeal_children(appeal, config)
     roottask_ids = appeal.tasks.where(parent_id: nil).pluck(:id)
     # in some tests, parent tasks are (erroneously) not in the same appeal
-    task_ids = appeal.tasks.reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id) if config.custom['show_all_tasks']
+    task_ids = appeal.tasks.reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id) if config.custom["show_all_tasks"]
     roottask_ids |= task_ids if task_ids
     Task.where(id: roottask_ids.compact.sort)
   end

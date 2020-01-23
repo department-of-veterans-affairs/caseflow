@@ -3,7 +3,6 @@
 class ConsoleTreeRenderer
   attr_reader :config
 
-  # See descriptions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
   class TreeRendererConfig
     attr_accessor :highlight_char,
                   :default_atts,
@@ -21,7 +20,7 @@ class ConsoleTreeRenderer
       @func_error_char = "-"
       @heading_transform = :upcase_headings
       @default_atts = [:id, :created_at, :updated_at]
-      @heading_label_template = lambda { |headingObj|  "#{headingObj.class.name} #{headingObj} " }
+      @heading_label_template = ->(headingObj) { "#{headingObj.class.name} #{headingObj} " }
       @custom = {}
 
       # built-in functions that generate column values for each row
@@ -35,7 +34,6 @@ class ConsoleTreeRenderer
         clipped_upcase_headings: ->(key, col_obj) { key[0..[0, col_obj[:width] - 1].max].upcase }
       }
     end
-
   end
 
   def initialize
@@ -103,12 +101,12 @@ class ConsoleTreeRenderer
     atts = config.default_atts unless atts.any?
     atts.prepend(HIGHLIGHT_COL_KEY) if highlight_row && !atts.include?(HIGHLIGHT_COL_KEY)
 
-    highlight_row = obj unless highlight_row
+    highlight_row ||= obj
 
     # func_hash={ "colKey1"=>lambda(row), "colKey2"=>lambda2(row), ... }
     func_hash = derive_value_funcs_hash(atts, highlight_row)
     metadata = ConsoleTreeMetadata.new(obj, config, func_hash, col_labels)
-    tree_hash = obj == obj.heading_object(config) ? structure_heading_obj(metadata, obj) : structure_row(obj, metadata)
+    tree_hash = (obj == obj.heading_object(config)) ? structure_heading_obj(metadata, obj) : structure_row(obj, metadata)
     [tree_hash, metadata]
   end
 

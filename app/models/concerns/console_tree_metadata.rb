@@ -11,7 +11,7 @@ class ConsoleTreeMetadata
   # length of longest heading or row label (including indenting) when formatted as a tree
   def max_name_length
     @max_name_length ||= @obj.rootlevel_rows(config).map do |row|
-      calculate_max_name_length(row, @obj == @obj.heading_object(config) ? 1 : 0)
+      calculate_max_name_length(row, (@obj == @obj.heading_object(config)) ? 1 : 0)
     end.append(heading_label_str.size).max
   end
 
