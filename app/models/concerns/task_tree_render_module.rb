@@ -3,7 +3,7 @@
 # Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 module TaskTreeRenderModule
   def self.new_renderer
-    TaskTreeRenderer.new.tap do |ttr|
+    ConsoleTreeRenderer.new.tap do |ttr|
       ttr.config.value_funcs_hash.merge!(
         CRE_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
         CRE_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
@@ -14,14 +14,14 @@ module TaskTreeRenderModule
         ASGN_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
         ASGN_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
         ASGN_BY: lambda { |task|
-          TaskTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
+          ConsoleTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
+            ConsoleTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
+            ConsoleTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
         },
         ASGN_TO: lambda { |task|
-          TaskTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
+          ConsoleTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
+            ConsoleTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
+            ConsoleTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
         }
       )
       ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]

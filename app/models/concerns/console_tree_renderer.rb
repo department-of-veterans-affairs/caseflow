@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaskTreeRenderer
+class ConsoleTreeRenderer
   attr_reader :config
 
   # See descriptions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
@@ -107,7 +107,7 @@ class TaskTreeRenderer
 
     # func_hash={ "colKey1"=>lambda(row), "colKey2"=>lambda2(row), ... }
     func_hash = derive_value_funcs_hash(atts, highlight_row)
-    metadata = TaskTreeMetadata.new(obj, config, func_hash, col_labels)
+    metadata = ConsoleTreeMetadata.new(obj, config, func_hash, col_labels)
     tree_hash = obj == obj.heading_object(config) ? structure_heading_obj(metadata, obj) : structure_row(obj, metadata)
     [tree_hash, metadata]
   end
@@ -120,7 +120,7 @@ class TaskTreeRenderer
       if config.value_funcs_hash[att]
         funcs_hash[att.to_s] = config.value_funcs_hash[att]
       elsif att.is_a?(Array)
-        funcs_hash[att.to_s] = ->(row) { TaskTreeRenderer.send_chain(row, att)&.to_s }
+        funcs_hash[att.to_s] = ->(row) { ConsoleTreeRenderer.send_chain(row, att)&.to_s }
       elsif att == HIGHLIGHT_COL_KEY
         funcs_hash[HIGHLIGHT_COL_KEY] = ->(row) { (row == highlighted_row) ? config.highlight_char : " " }
       else
@@ -137,7 +137,7 @@ class TaskTreeRenderer
 
   # create a hash entry for rows and their child rows, recursively
   def structure_row(row, metadata, depth = 0)
-    row_str = row.row_label(config).ljust(metadata.max_name_length - (TaskTreeMetadata::INDENT_SIZE * depth)) +
+    row_str = row.row_label(config).ljust(metadata.max_name_length - (ConsoleTreeMetadata::INDENT_SIZE * depth)) +
               " " + tree_row_attributes(metadata.col_metadata, metadata.rows[row])
     { row_str => row.row_children(config).map { |child| structure_row(child, metadata, depth + 1) } }
   end
