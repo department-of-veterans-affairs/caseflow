@@ -4,14 +4,26 @@ class Api::V2::HearingSerializer
   include FastJsonapi::ObjectSerializer
 
   attribute :address do |hearing|
-    hearing.hearing_location&.street_address
+    if hearing.hearing_location.present?
+      hearing.hearing_location.street_address
+    else
+      hearing.regional_office.address
+    end
   end
   attribute :city do |hearing|
-    hearing.hearing_location&.city || hearing.regional_office.city
+    if hearing.hearing_location.present?
+      hearing.hearing_location.city
+    else
+      hearing.regional_office.city
+    end
   end
   attribute :appeal, &:appeal_external_id
   attribute :facility_id do |hearing|
-    hearing.hearing_location&.facility_id
+    if hearing.hearing_location.present?
+      hearing.hearing_location.facility_id
+    else
+      hearing.regional_office.facility_id
+    end
   end
   attribute :first_name, &:veteran_first_name
   attribute :last_name, &:veteran_last_name
@@ -19,7 +31,11 @@ class Api::V2::HearingSerializer
     hearing.appeal.veteran.participant_id
   end
   attribute :hearing_location do |hearing|
-    hearing.hearing_location&.name || hearing.regional_office.name
+    if hearing.hearing_location.present?
+      hearing.hearing_location.name
+    else
+      hearing.regional_office.name
+    end
   end
   attribute :is_virtual, &:virtual?
   attribute :room do |hearing|
@@ -30,12 +46,24 @@ class Api::V2::HearingSerializer
     hearing.appeal.veteran_ssn
   end
   attribute :state do |hearing|
-    hearing.hearing_location&.state || hearing.regional_office.state
+    if hearing.hearing_location.present?
+      hearing.hearing_location.state
+    else
+      hearing.regional_office.state
+    end
   end
   attribute :timezone do |hearing|
-    hearing.hearing_location&.timezone || hearing.regional_office.timezone
+    if hearing.hearing_location.present?
+      hearing.hearing_location.timezone
+    else
+      hearing.regional_office.timezone
+    end
   end
   attribute :zip_code do |hearing|
-    hearing.hearing_location&.zip_code
+    if hearing.hearing_location.present?
+      hearing.hearing_location.zip_code
+    else
+      hearing.regional_office.zip_code
+    end
   end
 end
