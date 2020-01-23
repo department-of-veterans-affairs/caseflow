@@ -704,10 +704,13 @@ describe User, :all_dbs do
         let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
         let(:user) { judge_team.judge }
 
+        before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
+
         context "when marking the user inactive" do
           it "marks their JudgeTeam as inactive" do
             expect(subject).to eq true
             expect(judge_team.reload.status).to eq status
+            expect(judge_team.judge).to eq user
           end
         end
 
@@ -724,20 +727,81 @@ describe User, :all_dbs do
         end
       end
 
-      context "when the user is a member of an org that automatically assigns tasks" do
-        before do
-          create(:organization).add_user(user)
-          Colocated.singleton.add_user(user)
-        end
+      context "when the user is a member of many orgs" do
+        let(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
+        let(:other_orgs) { [Colocated.singleton, create(:organization)] }
+
+        before { other_orgs.each { |org| org.add_user(user) } }
 
         context "when marking the user inactive" do
-          it "only removes users from the auto assign organization" do
+          before { judge_team.add_user(user) }
+
+          it "removes users from all organizations, including JudgeTeam" do
+            expect(user.organizations.size).to eq 3
             expect(user.selectable_organizations.length).to eq 2
             expect(subject).to eq true
             expect(user.reload.status).to eq status
             expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.organizations.size).to eq 0
+            expect(user.selectable_organizations.length).to eq 0
+          end
+        end
+
+        context "when marking the admin inactive" do
+          before do
+            OrganizationsUser.make_user_admin(user, judge_team)
+            allow(user).to receive(:judge_in_vacols?).and_return(false)
+          end
+
+          it "removes admin from all organizations, including JudgeTeam" do
+            expect(judge_team.judge).not_to eq user
+            expect(judge_team.admins).to include user
+            expect(user.organizations.size).to eq 3
+            expect(user.selectable_organizations.length).to eq 2
+            expect(subject).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.organizations.size).to eq 0
+            expect(user.selectable_organizations.length).to eq 0
+          end
+        end
+
+        context "when marking the judge inactive" do
+          let(:judge_team) { JudgeTeam.create_for_judge(user) }
+          before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
+
+          it "removes judge from all orgs except their own JudgeTeam" do
+            expect(user.judge?)
+            expect(judge_team.judge).to eq user
+            expect(user.organizations.size).to eq 3
+            expect(user.selectable_organizations.length).to eq 3
+            expect(user.update_status!(status)).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(judge_team.judge).to eq user
+            expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
+            # Every judge in vacols should be able to see their assign page, even if they don't have a judge team
             expect(user.selectable_organizations.length).to eq 1
-            expect(user.selectable_organizations).not_to include Colocated.singleton
+          end
+
+          context "when judge is a non-JudgeTeamLead in another JudgeTeam" do
+            let(:judge_team2) { JudgeTeam.create_for_judge(create(:user)) }
+            before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
+            before { judge_team2.add_user(user) }
+
+            it "removes judge from all orgs (including JudgeTeams) except their own JudgeTeam" do
+              expect(user.judge?)
+              expect(judge_team.judge).to eq user
+              expect(user.organizations.size).to eq 4
+              expect(user.selectable_organizations.length).to eq 3
+              expect(user.update_status!(status)).to eq true
+              expect(user.reload.status).to eq status
+              expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+              expect(judge_team.judge).to eq user
+              expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
+              # Every judge in vacols should be able to see their assign page, even if they don't have a judge team
+              expect(user.selectable_organizations.length).to eq 1
+            end
           end
         end
 
