@@ -332,8 +332,8 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
         time = Time.zone.parse(body["data"]["scheduled_for"])
 
-        expect(time.zone).to eq("EST")
-        expect(time.hour).to eq(8)
+        expect(time.zone).to eq("PST")
+        expect(time.hour).to eq(5)
         expect(time.min).to eq(30)
       end
     end
