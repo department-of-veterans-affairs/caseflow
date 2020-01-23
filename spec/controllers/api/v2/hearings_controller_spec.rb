@@ -113,7 +113,7 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
 
             first_location = response_body["hearings"][0]["hearing_location"]
             expect(first_location).to eq("Board of Veterans' Appeals CO Office")
-          
+
             expected_times = hearings.map(&:scheduled_for)
             scheduled_times = response_body["hearings"].map { |hearing| hearing["scheduled_for"] }
 
