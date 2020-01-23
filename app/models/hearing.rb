@@ -142,25 +142,20 @@ class Hearing < ApplicationRecord
   end
 
   def scheduled_for
-    # The server timezone is America/New_York. The server interprets
-    # the time as an EST time when it gets saved, but the scheduled time
-    # value is saved in UTC (e.g. 12:30 gets saved as 17:30).
-    #
-    # This method undoes all the time conversions, and returns the final value
-    # in the timezone of the regional office. To do that, it needs to consider
-    # the fact that Rails will apply the local offset (EST) to the time
-    # value before it is saved.
-    system_tz = Time.now.getlocal.zone
-    scheduled_for_est = scheduled_time.utc.in_time_zone(system_tz)
+    # The server timezone sets the TZ for the request based on the current user.
+    # This method gets the timezone of the user, and undoes any timezone conversions
+    # that Rails applies.
+    updater_tz = updated_by.timezone || Time.zone.name
+    scheduled_for_local_to_updater = scheduled_time.utc.in_time_zone(updater_tz)
 
     Time.use_zone(regional_office_timezone) do
       Time.zone.local(
         hearing_day.scheduled_for.year,
         hearing_day.scheduled_for.month,
         hearing_day.scheduled_for.day,
-        scheduled_for_est.hour,
-        scheduled_for_est.min,
-        scheduled_for_est.sec
+        scheduled_for_local_to_updater.hour,
+        scheduled_for_local_to_updater.min,
+        scheduled_for_local_to_updater.sec
       )
     end
   end
