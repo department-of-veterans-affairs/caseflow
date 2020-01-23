@@ -86,7 +86,18 @@ class HearingDay < ApplicationRecord
   end
 
   def to_hash
-    ::HearingDaySerializer.new(self).serializable_hash[:data][:attributes]
+    video_hearing_days_request_types = if request_type == REQUEST_TYPES[:video]
+                                         VideoHearingDayRequestTypeQuery
+                                           .new(HearingDay.where(id: id))
+                                           .call
+                                       else
+                                         {}
+                                       end
+
+    ::HearingDaySerializer.new(
+      self,
+      params: { video_hearing_days_request_types: video_hearing_days_request_types }
+    ).serializable_hash[:data][:attributes]
   end
 
   def hearing_day_full?
