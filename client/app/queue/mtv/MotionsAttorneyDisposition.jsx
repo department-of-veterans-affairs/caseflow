@@ -71,7 +71,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
 
         <p>{MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION}</p>
 
-        <p className="mtv-task-instructions">{task.instructions}</p>
+        {task.instructions && <p className="mtv-task-instructions">{task.instructions}</p>}
 
         <MTVDispositionSelection
           label={MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL}
