@@ -75,7 +75,7 @@ class CsvToS3Exporter
   end
 
   def bucket_target
-    "s3://#{bucket}/#{csv_file}"
+    "s3://#{bucket}/#{date}/#{csv_file}"
   end
 
   def s3_cp_cmd
