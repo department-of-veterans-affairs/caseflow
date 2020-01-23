@@ -29,15 +29,6 @@ class HearingLocation < ApplicationRecord
     addr["address_1"]
   end
 
-  def timezone
-    key = vba_372? ? "VACO" : facility_id
-    tz = Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[key]
-
-    return unless tz
-
-    tz["timezone"]
-  end
-
   private
 
   def vba_372?
