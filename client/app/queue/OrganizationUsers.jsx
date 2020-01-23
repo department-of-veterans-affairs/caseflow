@@ -275,7 +275,7 @@ export default class OrganizationUsers extends React.PureComponent {
         async={this.asyncLoadUser} />
       <br />
       <div>
-        {this.state.organizationUsers.some((user) => user.attributes.judge_team) &&
+        { judgeTeam &&
             <div>
               <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
               <ul>

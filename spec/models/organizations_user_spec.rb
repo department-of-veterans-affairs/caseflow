@@ -54,10 +54,10 @@ describe OrganizationsUser, :postgres do
         expect(judge_team_org_user.judge_team_role.type).to eq(DecisionDraftingAttorney.name)
         OrganizationsUser.modify_decision_drafting(user, judge_team)
         expect(judge_team_org_user.reload.judge_team_role.type).to eq(nil)
-      end 
+      end
     end
-    
-    context "when a user is not an attorney" do 
+
+    context "when a user is not an attorney" do
       before { judge_team_org_user.judge_team_role.update!(type: nil) }
       it "gives the user the attorney role" do
         OrganizationsUser.modify_decision_drafting(user, judge_team)

@@ -7,13 +7,13 @@ class WorkQueue::AdministeredUserSerializer < WorkQueue::UserSerializer
     params[:organization].user_is_admin?(object)
   end
   attribute :judge do |object, params|
-    if FeatureToggle.enabled?(:judge_admin_scm) && params[:organization].type == JudgeTeam.name
-      params[:organization].judge.eql?(object)
+    if params[:organization].type == JudgeTeam.name
+      params[:organization].judge&.eql?(object)
     end
   end
   attribute :attorney do |object, params|
-    if FeatureToggle.enabled?(:judge_admin_scm) && params[:organization].type == JudgeTeam.name
-      params[:organization].attorneys.include?(object)
+    if params[:organization].type == JudgeTeam.name
+      params[:organization].attorneys&.include?(object)
     end
   end
 end
