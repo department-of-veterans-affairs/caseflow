@@ -99,6 +99,17 @@ jobs:
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
       - run:
+          name: Install dependencies
+          command: |
+            wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+            sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+            sudo apt-get update
+            sudo apt-get install google-chrome-stable
+            bundle exec rake webdrivers:chromedriver:remove
+            bundle exec rake webdrivers:chromedriver:update
+            sudo apt-get install postgresql-client
+
+      - run:
           name: RSpec
           command: |
             mkdir -p ~/test-results/rspec
