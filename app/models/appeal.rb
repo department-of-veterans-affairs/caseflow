@@ -24,6 +24,12 @@ class Appeal < DecisionReview
   has_one :special_issue_list
   has_many :record_synced_by_job, as: :record
 
+  enum stream_type: {
+    "Original": "Original",
+    "Vacate": "Vacate",
+    "De Novo": "De Novo"
+  }
+
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
     validate :validate_receipt_date
