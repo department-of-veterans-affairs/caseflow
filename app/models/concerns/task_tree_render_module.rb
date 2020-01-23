@@ -12,8 +12,25 @@ module TaskTreeRenderModule
         CLO_DATE: ->(task) { task.updated_at&.strftime("%Y-%m-%d") },
         CLO_TIME: ->(task) { task.updated_at&.strftime("%H-%M-%S") },
         ASGN_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
-        ASGN_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") }
+        ASGN_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
+        ASGN_BY: lambda { |task|
+          TaskTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
+            TaskTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
+            TaskTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
+        },
+        ASGN_TO: lambda { |task|
+          TaskTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
+            TaskTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
+            TaskTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
+        }
       )
+      ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
+      ttr.config.heading_label_template = lambda { |appeal|
+        docket = (defined?(appeal.docket_type) && appeal.docket_type) ||
+                 (defined?(appeal.docket_name) && appeal.docket_name)
+        "#{appeal.class.name} #{appeal.id} (#{docket}) "
+      }
+      ttr.config.custom['show_all_tasks']=true
     end
   end
 
@@ -38,5 +55,39 @@ module TaskTreeRenderModule
   def tree_hash(*atts, **kwargs)
     renderer = kwargs.delete(:renderer) || global_renderer
     renderer.tree_hash(self, *atts, **kwargs)
+  end
+
+  # returns RootTask and root-level tasks (which are not under that RootTask)
+  def rootlevel_rows(config)
+    @rootlevel_rows ||= self.is_a?(Task) ? [self] : appeal_children(self, config)
+  end
+
+  # called by config.heading_label_template
+  def heading_object(config)
+    is_a?(Task) ? appeal : self
+  end
+
+  # called by rows and used by config.value_funcs_hash
+  def row_objects(config)
+    is_a?(Task) ? appeal.tasks : tasks
+  end
+
+  def row_label(config)
+    self.class.name
+  end
+
+  def row_children(config)
+    children.order(:id)
+  end
+
+  private
+
+  # return all root-level tasks that are considered part of this appeal
+  def appeal_children(appeal, config)
+    roottask_ids = appeal.tasks.where(parent_id: nil).pluck(:id)
+    # in some tests, parent tasks are (erroneously) not in the same appeal
+    task_ids = appeal.tasks.reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id) if config.custom['show_all_tasks']
+    roottask_ids |= task_ids if task_ids
+    Task.where(id: roottask_ids.compact.sort)
   end
 end

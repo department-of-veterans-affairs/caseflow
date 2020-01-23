@@ -9,8 +9,9 @@ describe TaskTreeRenderModule, :all_dbs do
     create(:ama_attorney_task, appeal: @appeal)
   end
 
-  context ".tree is called on an appeal" do
+  context "#tree is called on an appeal" do
     it "returns all tasks for the appeal" do
+      puts @appeal.tree
       rows_hash, metadata = @appeal.tree_hash
       expect(rows_hash.count).to eq 1
       expect(metadata.rows.count).to eq @appeal.tasks.count
@@ -55,7 +56,7 @@ describe TaskTreeRenderModule, :all_dbs do
     end
   end
 
-  context ".tree is called on a task" do
+  context "#tree is called on a task" do
     def check_for_highlight(metadata, task_to_highlight)
       highlight_char = @appeal.global_renderer.config.highlight_char
       expect(metadata.rows[task_to_highlight][" "]).to eq highlight_char
@@ -72,7 +73,9 @@ describe TaskTreeRenderModule, :all_dbs do
     end
 
     it "highlights specified task with an asterisk, even if no columns are specified" do
-      task_to_highlight = @appeal.tasks.sample
+      task_to_highlight = @appeal.tasks.find(2) #root_task #tasks.sample
+      @appeal.treee(:id, :status, highlight: task_to_highlight.id)
+      task_to_highlight.treee(:id, :status, highlight: task_to_highlight.id)
 
       _rows_hash, metadata = @appeal.root_task.tree_hash(highlight: task_to_highlight.id)
       check_for_highlight(metadata, task_to_highlight)
@@ -107,6 +110,7 @@ describe TaskTreeRenderModule, :all_dbs do
     end
 
     it "prints all tasks" do
+      puts tree2 @appeal, :id, :status
       num_lines = @appeal.tasks.count + 1
       expect((tree1 @appeal).lines.count).to eq num_lines
       expect((tree2 @appeal, :id, :status).lines.count).to eq num_lines

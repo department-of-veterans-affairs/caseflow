@@ -5,34 +5,29 @@ class TaskTreeRenderer
 
   # See descriptions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
   class TreeRendererConfig
-    attr_accessor :show_all_tasks, :highlight_char,
+    attr_accessor :highlight_char,
                   :default_atts,
                   :heading_transform, :heading_transform_funcs_hash,
-                  :appeal_label_template,
+                  :heading_label_template,
                   :value_funcs_hash,
                   :include_border,
                   :col_sep, :top_chars, :bottom_chars,
                   :heading_fill_str, :cell_margin_char, :func_error_char
 
+    attr_accessor :custom
+
     def initialize
-      @show_all_tasks = true
       @highlight_char = "*"
       @func_error_char = "-"
       @heading_transform = :upcase_headings
-      @default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
-      @appeal_label_template = lambda { |appeal|
-        docket = (defined?(appeal.docket_type) && appeal.docket_type) ||
-                 (defined?(appeal.docket_name) && appeal.docket_name)
-        "#{appeal.class.name} #{appeal.id} (#{docket}) "
-      }
-      init_heading_transform_funcs
-      init_value_funcs
-    end
+      @default_atts = [:id, :created_at, :updated_at]
+      @heading_label_template = lambda { |headingObj|  "#{headingObj.class.name} #{headingObj} " }
+      @custom = {}
 
-    private
+      # built-in functions that generate column values for each row
+      @value_funcs_hash = {}
 
-    # initialize build-in functions that format the column heading labels
-    def init_heading_transform_funcs
+      # initialize build-in functions that format the column heading labels
       @heading_transform_funcs_hash = {
         nochange_headings: ->(key, _col_obj) { key },
         upcase_headings: ->(key, _col_obj) { key.upcase },
@@ -41,21 +36,6 @@ class TaskTreeRenderer
       }
     end
 
-    # initialize built-in functions that generate column values for each task
-    def init_value_funcs
-      @value_funcs_hash = {
-        ASGN_BY: lambda { |task|
-          TaskTreeRenderer.send_chain(task, [:assigned_by, :type])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_by, :name])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_by, :css_id])&.to_s
-        },
-        ASGN_TO: lambda { |task|
-          TaskTreeRenderer.send_chain(task, [:assigned_to, :type])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_to, :name])&.to_s ||
-            TaskTreeRenderer.send_chain(task, [:assigned_to, :css_id])&.to_s
-        }
-      }
-    end
   end
 
   def initialize
@@ -104,9 +84,9 @@ class TaskTreeRenderer
   def tree_str(obj, *atts, **kwargs)
     fail "TTY::Tree does not work when config.col_sep='/'" if config.col_sep == "/"
 
-    task_tree_hash, metadata = tree_hash(obj, *atts, **kwargs)
-    table = TTY::Tree.new(task_tree_hash).render
-    table.prepend(metadata.appeal_heading_row + "\n") if obj.is_a? Task
+    tree_rows_hash, metadata = tree_hash(obj, *atts, **kwargs)
+    table = TTY::Tree.new(tree_rows_hash).render
+    table.prepend(metadata.heading_row_str + "\n") if obj.is_a? Task
 
     if config.include_border
       top_border(metadata.max_name_length, metadata.col_metadata) + "\n" +
@@ -123,47 +103,47 @@ class TaskTreeRenderer
     atts = config.default_atts unless atts.any?
     atts.prepend(HIGHLIGHT_COL_KEY) if highlight && !atts.include?(HIGHLIGHT_COL_KEY)
 
-    highlighted_task = highlight ? Task.find(highlight) : obj
+    highlighted_row = highlight ? Task.find(highlight) : obj
 
-    # func_hash={ "colKey1"=>lambda(task), "colKey2"=>lambda2(task), ... }
-    func_hash = derive_value_funcs_hash(atts, highlighted_task)
+    # func_hash={ "colKey1"=>lambda(row), "colKey2"=>lambda2(row), ... }
+    func_hash = derive_value_funcs_hash(atts, highlighted_row)
     metadata = TaskTreeMetadata.new(obj, config, func_hash, col_labels)
-    tree_hash = obj.is_a?(Task) ? structure_task(obj, metadata) : structure_appeal(metadata)
+    tree_hash = obj.is_a?(Task) ? structure_row(obj, metadata) : structure_heading_obj(metadata, obj)
     [tree_hash, metadata]
   end
 
   private
 
   # hash of lambdas that return string for the cell value
-  def derive_value_funcs_hash(atts, highlighted_task)
+  def derive_value_funcs_hash(atts, highlighted_row)
     atts.each_with_object({}) do |att, funcs_hash|
       if config.value_funcs_hash[att]
         funcs_hash[att.to_s] = config.value_funcs_hash[att]
       elsif att.is_a?(Array)
-        funcs_hash[att.to_s] = ->(task) { TaskTreeRenderer.send_chain(task, att)&.to_s }
+        funcs_hash[att.to_s] = ->(row) { TaskTreeRenderer.send_chain(row, att)&.to_s }
       elsif att == HIGHLIGHT_COL_KEY
-        funcs_hash[HIGHLIGHT_COL_KEY] = ->(task) { (task == highlighted_task) ? config.highlight_char : " " }
+        funcs_hash[HIGHLIGHT_COL_KEY] = ->(row) { (row == highlighted_row) ? config.highlight_char : " " }
       else
-        funcs_hash[att.to_s] = ->(task) { task.send(att)&.to_s || "" }
+        funcs_hash[att.to_s] = ->(row) { row.send(att)&.to_s || "" }
       end
     end
   end
 
-  # create a hash entry for the appeal heading row and associated tasks
-  def structure_appeal(metadata, depth = 0)
-    row_str = metadata.appeal_heading_row
-    { row_str => metadata.rootlevel_tasks.map { |task| structure_task(task, metadata, depth + 1) } }
+  # create a hash entry for the heading row and associated rows
+  def structure_heading_obj(metadata, obj)
+    row_str = metadata.heading_row_str
+    { row_str => obj.rootlevel_rows(config).map { |row| structure_row(row, metadata, 1) } }
   end
 
-  # create a hash entry for tasks and their child tasks, recursively
-  def structure_task(task, metadata, depth = 0)
-    row_str = task.class.name.ljust(metadata.max_name_length - (TaskTreeMetadata::INDENT_SIZE * depth)) +
-              " " + tree_task_attributes(metadata.col_metadata, metadata.rows[task])
-    { row_str => task.children.order(:id).map { |child| structure_task(child, metadata, depth + 1) } }
+  # create a hash entry for rows and their child rows, recursively
+  def structure_row(row, metadata, depth = 0)
+    row_str = row.row_label(config).ljust(metadata.max_name_length - (TaskTreeMetadata::INDENT_SIZE * depth)) +
+              " " + tree_row_attributes(metadata.col_metadata, metadata.rows[row])
+    { row_str => row.row_children(config).map { |child| structure_row(child, metadata, depth + 1) } }
   end
 
-  # create column-aligned string concatenating all column values for a task row
-  def tree_task_attributes(columns, row)
+  # create column-aligned string concatenating all column values for a row
+  def tree_row_attributes(columns, row)
     col_seperator_with_margins = config.cell_margin_char + config.col_sep + config.cell_margin_char
     values_str = columns.map do |key, col_obj|
       value = row[key]
