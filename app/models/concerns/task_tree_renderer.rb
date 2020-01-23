@@ -86,7 +86,7 @@ class TaskTreeRenderer
 
     tree_rows_hash, metadata = tree_hash(obj, *atts, **kwargs)
     table = TTY::Tree.new(tree_rows_hash).render
-    table.prepend(metadata.heading_row_str + "\n") if obj.is_a? Task
+    table.prepend(metadata.heading_row_str + "\n") if obj != obj.heading_object(config)
 
     if config.include_border
       top_border(metadata.max_name_length, metadata.col_metadata) + "\n" +
@@ -99,16 +99,16 @@ class TaskTreeRenderer
   HIGHLIGHT_COL_KEY = " "
 
   # create hash for TTY:Tree to generate formatted output, along with metadata
-  def tree_hash(obj, *atts, col_labels: nil, highlight: nil)
+  def tree_hash(obj, *atts, col_labels: nil, highlight_row: nil)
     atts = config.default_atts unless atts.any?
-    atts.prepend(HIGHLIGHT_COL_KEY) if highlight && !atts.include?(HIGHLIGHT_COL_KEY)
+    atts.prepend(HIGHLIGHT_COL_KEY) if highlight_row && !atts.include?(HIGHLIGHT_COL_KEY)
 
-    highlighted_row = highlight ? Task.find(highlight) : obj
+    highlight_row = obj unless highlight_row
 
     # func_hash={ "colKey1"=>lambda(row), "colKey2"=>lambda2(row), ... }
-    func_hash = derive_value_funcs_hash(atts, highlighted_row)
+    func_hash = derive_value_funcs_hash(atts, highlight_row)
     metadata = TaskTreeMetadata.new(obj, config, func_hash, col_labels)
-    tree_hash = obj.is_a?(Task) ? structure_row(obj, metadata) : structure_heading_obj(metadata, obj)
+    tree_hash = obj == obj.heading_object(config) ? structure_heading_obj(metadata, obj) : structure_row(obj, metadata)
     [tree_hash, metadata]
   end
 

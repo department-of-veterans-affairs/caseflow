@@ -48,19 +48,18 @@ module TaskTreeRenderModule
   end
 
   def tree(*atts, **kwargs)
+    kwargs[:highlight_row] = Task.find(kwargs.delete(:highlight)) if kwargs[:highlight]
     renderer = kwargs.delete(:renderer) || global_renderer
     renderer.tree_str(self, *atts, **kwargs)
   end
 
   def tree_hash(*atts, **kwargs)
+    kwargs[:highlight_row] = Task.find(kwargs.delete(:highlight)) if kwargs[:highlight]
     renderer = kwargs.delete(:renderer) || global_renderer
     renderer.tree_hash(self, *atts, **kwargs)
   end
 
-  # returns RootTask and root-level tasks (which are not under that RootTask)
-  def rootlevel_rows(config)
-    @rootlevel_rows ||= self.is_a?(Task) ? [self] : appeal_children(self, config)
-  end
+  ## The following are needed by ConsoleTreeRenderer
 
   # called by config.heading_label_template
   def heading_object(config)
@@ -78,6 +77,11 @@ module TaskTreeRenderModule
 
   def row_children(config)
     children.order(:id)
+  end
+
+  # returns RootTask and root-level tasks (which are not under that RootTask)
+  def rootlevel_rows(config)
+    @rootlevel_rows ||= self.is_a?(Task) ? [self] : appeal_children(self, config)
   end
 
   private
