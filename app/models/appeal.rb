@@ -72,7 +72,7 @@ class Appeal < DecisionReview
   end
 
   def type
-    "Original"
+    stream_type || "Original"
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -290,9 +290,7 @@ class Appeal < DecisionReview
   end
 
   def docket_number
-    return "Missing Docket Number" unless receipt_date
-
-    "#{receipt_date.strftime('%y%m%d')}-#{id}"
+    super || (receipt_date ? "#{receipt_date.strftime('%y%m%d')}-#{id}" : "Missing Docket Number")
   end
 
   # Currently AMA only supports one claimant per decision review
