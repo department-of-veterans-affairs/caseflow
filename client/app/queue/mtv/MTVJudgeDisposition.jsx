@@ -25,7 +25,7 @@ import { MTVTaskHeader } from './MTVTaskHeader';
 import TextField from '../../components/TextField';
 import { MTVIssueSelection } from './MTVIssueSelection';
 import StringUtil from '../../util/StringUtil';
-import { MissingDenialDraftAlert } from './MissingDenialDraftAlert';
+import { MissingDraftAlert } from './MissingDraftAlert';
 
 const vacateTypeText = (val) => {
   const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
@@ -141,7 +141,9 @@ export const MTVJudgeDisposition = ({
           />
         )}
 
-        {disposition && disposition === 'denied' && <MissingDenialDraftAlert to={returnToLitSupportLink} />}
+        {disposition && !isGrantType() && (
+          <MissingDraftAlert to={returnToLitSupportLink} disposition={disposition} />
+        )}
 
         {disposition && isGrantType() && (
           <RadioField
