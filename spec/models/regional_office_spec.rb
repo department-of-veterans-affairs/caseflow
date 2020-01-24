@@ -99,13 +99,13 @@ describe RegionalOffice do
     it "RO87 has nil address" do
       ro = RegionalOffice.find!("RO87")
 
-      expect(ro.address).to eq nil
+      expect(ro.street_address).to eq nil
     end
 
     it "RO46 has correct address" do
       ro = RegionalOffice.find!("RO46")
 
-      expect(ro.address).to eq "915 Second Avenue"
+      expect(ro.street_address).to eq "915 Second Avenue"
     end
   end
 
