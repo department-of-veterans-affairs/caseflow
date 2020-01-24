@@ -1,13 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class TextField extends React.Component {
+export class TextField extends React.Component {
+  onChange = (event) => {
+    if (this.props.onChange) {
+      // react-hook-form needs this to not be set
+      // formik requires this to return the event
+      return this.props.onChange(event);
 
-  onChange = (event) => this.props.onChange(event.target.value);
+      // Existing Caseflow behavior was to return the value
+      // this.props.onChange(event.target.value);
+    }
+  };
 
   render() {
-
     let {
+      inputRef,
       errorMessage,
       className,
       label,
@@ -30,14 +38,10 @@ export default class TextField extends React.Component {
       dateErrorMessage
     } = this.props;
 
-    let textInputClass = className.concat(
-      invisible ? ' cf-invisible' : ''
-    ).concat(
-      errorMessage ? 'usa-input-error' : ''
-    ).
-      concat(
-        dateErrorMessage ? 'cf-date-error' : ''
-      );
+    let textInputClass = className.
+      concat(invisible ? ' cf-invisible' : '').
+      concat(errorMessage ? 'usa-input-error' : '').
+      concat(dateErrorMessage ? 'cf-date-error' : '');
 
     // Use empty string instead of null or undefined,
     // otherwise React displays the following error:
@@ -46,55 +50,54 @@ export default class TextField extends React.Component {
     // Consider using the empty string to clear the component
     // or `undefined` for uncontrolled components."
     //
-    value = (value === null || typeof value === 'undefined') ? '' : value;
+    // value = value === null || typeof value === 'undefined' ? '' : value;
 
-    const labelContents =
+    const labelContents = (
       <span>
         {label || name}
         {required && <span className="cf-required">Required</span>}
         {optional && <span className="cf-optional">Optional</span>}
-      </span>;
+      </span>
+    );
 
     const ariaLabelObj = useAriaLabel ? { 'aria-label': name } : {};
 
-    return <div className={textInputClass.join(' ')}>
-      {dateErrorMessage && <span className="usa-input-error-message">{dateErrorMessage}</span>}
-      {label !== false &&
-        <label htmlFor={name}>
-          {
-            strongLabel ?
-              <strong>{labelContents}</strong> :
-              labelContents
-          }
-        </label>
-      }
-      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      {this.props.fixedInput ?
-        <p>{value}</p> :
-        <input
-          className={className}
-          name={name}
-          id={name}
-          onChange={this.onChange}
-          onKeyPress={onKeyPress}
-          type={type}
-          value={value}
-          readOnly={readOnly}
-          placeholder={placeholder}
-          title={title}
-          maxLength={maxLength}
-          max={max}
-          autoComplete={autoComplete}
-          {...ariaLabelObj}
-        />
-      }
+    return (
+      <div className={textInputClass.join(' ')}>
+        {dateErrorMessage && <span className="usa-input-error-message">{dateErrorMessage}</span>}
+        {label !== false && (
+          <label htmlFor={name}>{strongLabel ? <strong>{labelContents}</strong> : labelContents}</label>
+        )}
+        {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
+        {this.props.fixedInput ? (
+          <p>{value}</p>
+        ) : (
+          <input
+            ref={inputRef}
+            className={className}
+            name={name}
+            id={name}
+            onChange={this.onChange}
+            onKeyPress={onKeyPress}
+            type={type}
+            value={value}
+            readOnly={readOnly}
+            placeholder={placeholder}
+            title={title}
+            maxLength={maxLength}
+            max={max}
+            autoComplete={autoComplete}
+            {...ariaLabelObj}
+          />
+        )}
 
-      {(validationError) &&
-        <div className="cf-validation">
-          <span>{validationError}</span>
-        </div>
-      }
-    </div>;
+        {validationError && (
+          <div className="cf-validation">
+            <span>{validationError}</span>
+          </div>
+        )}
+      </div>
+    );
   }
 }
 
@@ -111,10 +114,7 @@ TextField.propTypes = {
   errorMessage: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   invisible: PropTypes.bool,
-  label: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   useAriaLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange(props) {
@@ -131,8 +131,7 @@ TextField.propTypes = {
   optional: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ])
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
+
+export default React.forwardRef((props, ref) => <TextField inputRef={ref} {...props} />);
