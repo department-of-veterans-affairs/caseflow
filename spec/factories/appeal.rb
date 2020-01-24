@@ -147,7 +147,7 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is ready for distribution by the ACD
-    ## Leaves incorrectly open & incomplete Hearing or Evidence Window task branches
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
     ## for those dockets
     trait :ready_for_distribution do
       with_post_intake_tasks
@@ -159,8 +159,8 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is assigned to a Judge for a decision
-    ## Leaves incorrectly open & incomplete Hearing or Evidence Window task branches
-    ## for those dockets
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets. Strongly suggest you provide a judge.
     trait :assigned_to_judge do
       ready_for_distribution
       after(:create) do |appeal, evaluator|
@@ -174,15 +174,19 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is assigned to an Attorney for decision drafting
-    ## Leaves incorrectly open & incomplete Hearing or Evidence Window task branches
-    ## for those dockets
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets. Strongly suggest you provide a judge and attorney.
     trait :at_attorney_drafting do
       assigned_to_judge
       after(:create) do |appeal, evaluator|
         judge_assign_task = appeal.tasks.where(type: JudgeAssignTask.name).first
         AttorneyTaskCreator.new(
           judge_assign_task,
-          { appeal: judge_assign_task.appeal, assigned_to: evaluator.associated_attorney, assigned_by: judge_assign_task.assigned_to }
+          {
+            appeal: judge_assign_task.appeal,
+            assigned_to: evaluator.associated_attorney,
+            assigned_by: judge_assign_task.assigned_to,
+          }
         ).call
       end
     end
