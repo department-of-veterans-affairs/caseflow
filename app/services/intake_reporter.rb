@@ -13,21 +13,21 @@ class IntakeReporter
 
   # rubocop:disable Metrics/AbcSize
   def report
-    establishment_durations = []
+    durations = []
     intakes.each do |intake|
-      establishment_durations << (intake.completed_at - intake.started_at).to_i
+      durations << (intake.completed_at - intake.started_at).to_i
 
-      appeal = intake.detail
-      next unless appeal
+      decision_review = intake.detail
+      next unless decision_review
 
-      summary[:rating_issue] += appeal.request_issues.rating_issue.count
-      summary[:rating_decision] += appeal.request_issues.rating_decision.count
-      summary[:nonrating] += appeal.request_issues.nonrating.count
-      summary[:decision_issue] += appeal.request_issues.decision_issue.count
-      summary[:unidentified] += appeal.request_issues.unidentified.count
-      summary[:ineligible] += appeal.request_issues.ineligible.count
+      summary[:rating_issue] += decision_review.request_issues.rating_issue.count
+      summary[:rating_decision] += decision_review.request_issues.rating_decision.count
+      summary[:nonrating] += decision_review.request_issues.nonrating.count
+      summary[:decision_issue] += decision_review.request_issues.decision_issue.count
+      summary[:unidentified] += decision_review.request_issues.unidentified.count
+      summary[:ineligible] += decision_review.request_issues.ineligible.count
     end
-    summary[:median_establishment_time] = median(establishment_durations)
+    summary[:median_intake_time] = median(durations)
     summary
   end
   # rubocop:enable Metrics/AbcSize
