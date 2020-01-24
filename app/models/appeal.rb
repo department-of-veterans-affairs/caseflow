@@ -30,6 +30,8 @@ class Appeal < DecisionReview
     "De Novo": "De Novo"
   }
 
+  before_save :set_stream_fields
+
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
     validate :validate_receipt_date
@@ -297,7 +299,7 @@ class Appeal < DecisionReview
 
   def docket_number
     return stream_docket_number if stream_docket_number
-    return "Missing Docket Number" unless receipt_date
+    return "Missing Docket Number" unless receipt_date && id.present?
 
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
@@ -422,6 +424,13 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def set_stream_fields
+    if receipt_date && id.present?
+      self.stream_docket_number ||= docket_number
+    end
+    self.stream_type ||= type
+  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state

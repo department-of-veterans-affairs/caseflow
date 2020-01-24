@@ -302,10 +302,10 @@ describe Appeal, :all_dbs do
   context "#docket_number" do
     context "when receipt_date is defined" do
       let(:appeal) do
-        create(:appeal, receipt_date: Time.new("2018", "04", "05").utc)
+        create(:appeal, id: 1234, receipt_date: Time.new("2018", "04", "05").utc)
       end
 
-      it "returns a docket number if receipt_date is defined" do
+      it "returns a docket number if id and receipt_date are defined" do
         expect(appeal.docket_number).to eq("180405-#{appeal.id}")
       end
     end
@@ -318,6 +318,21 @@ describe Appeal, :all_dbs do
       it "returns Missing Docket Number" do
         expect(appeal.docket_number).to eq("Missing Docket Number")
       end
+    end
+  end
+
+  context "#set_stream_fields" do
+    it "persists an accurate value for stream_docket_number to the database" do
+      appeal = Appeal.new(veteran_file_number: "1234")
+      appeal.save!
+      expect(appeal.stream_docket_number).to be_nil
+      appeal.receipt_date = Time.new("2020", "01", "24").utc
+      expect(appeal.docket_number).to eq("200124-#{appeal.id}")
+      appeal.save!
+      expect(appeal.stream_docket_number).to eq("200124-#{appeal.id}")
+      appeal.stream_docket_number = "something else"
+      appeal.save!
+      expect(Appeal.where(stream_docket_number: "something else").count).to eq(1)
     end
   end
 
