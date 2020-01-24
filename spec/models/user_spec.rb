@@ -754,7 +754,7 @@ describe User, :all_dbs do
           end
 
           it "removes admin from all organizations, including JudgeTeam" do
-            expect(judge_team.judge).not_to eq user
+            expect(judge_team.judge).not_to eq user if FeatureToggle.enabled?(:judge_admin_scm)
             expect(judge_team.admins).to include user
             expect(user.organizations.size).to eq 3
             expect(user.selectable_organizations.length).to eq 2
