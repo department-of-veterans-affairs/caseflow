@@ -89,10 +89,10 @@ describe RegionalOffice do
     end
   end
 
-  context ".address" do
+  context ".street_address" do
     RegionalOffice.all.each do |ro|
-      it "regional office (#{ro.key}) does not throw when address is called" do
-        expect { ro.address }.not_to raise_error
+      it "regional office (#{ro.key}) does not throw when street_address is called" do
+        expect { ro.street_address }.not_to raise_error
       end
     end
 
