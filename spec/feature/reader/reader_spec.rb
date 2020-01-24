@@ -496,7 +496,7 @@ RSpec.feature "Reader", :all_dbs do
       add_comment("A")
 
       click_on "Edit"
-      find("#editCommentBox-2").send_keys(:backspace)
+      find("#editCommentBox-2").send_keys(:delete)
       click_on "Save"
 
       # Delete modal should appear
