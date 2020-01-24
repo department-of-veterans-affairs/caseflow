@@ -5,6 +5,9 @@
 require "English"
 
 class CsvToS3Exporter
+  class ShellError < StandardError; end
+  class CsvError < StandardError; end
+
   # rubocop:disable Metrics/ParameterLists
   def initialize(table:, bucket:, region: "us-gov-west-1", date: Time.zone.today.iso8601, compress: true, test: false)
     @date = date
@@ -24,7 +27,7 @@ class CsvToS3Exporter
     rows_copied = rows.tr("COPY ", "").to_i
     line_count = run("wc -l #{tmp_file}")
     unless (rows_copied + 1) == line_count.strip.to_i
-      fail "CSV appears truncated. Expected #{rows_copied} but found #{line_count.strip}"
+      fail CsvError, "CSV appears truncated. Expected #{rows_copied} but found #{line_count.strip}"
     end
 
     checksum = run(checksum_cmd)
@@ -34,20 +37,20 @@ class CsvToS3Exporter
     meta
   end
 
-  private
-
-  attr_reader :table, :bucket, :date, :compress, :region, :test
-
   def run(cmd)
     Rails.logger.info(cmd)
     output = `#{cmd}`
 
     if $CHILD_STATUS != 0
-      fail "#{cmd} failed: #{$CHILD_STATUS} #{$ERROR_INFO}"
+      fail ShellError, "#{cmd} failed: #{$CHILD_STATUS} #{$ERROR_INFO}"
     end
 
     output
   end
+
+  private
+
+  attr_reader :table, :bucket, :date, :compress, :region, :test
 
   def test?
     !!test
