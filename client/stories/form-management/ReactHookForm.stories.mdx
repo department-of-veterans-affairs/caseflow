@@ -1,0 +1,51 @@
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { action } from '@storybook/addon-actions';
+
+import * as stories from './ReactHookForm.stories.js';
+
+<Meta title="Development/Form Management/React Hook Form" />
+
+# React Hook Form
+
+[React Hook Form](https://react-hook-form.com/) was released in 2019. It supports nearly all the same basic features as Formik, but focuses on performance and intuitive code.
+
+It only supports hooks, which means that it can only be used in functional components. Class-based form components would need to be rewritten as functional components or abstracted so that the form is within a functional
+
+```js
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+
+const validationSchema = yup.object().shape({
+  name: yup.string().required(),
+  email: yup
+    .string()
+    .email()
+    .required()
+});
+
+const { register, handleSubmit, errors } = useForm({ validationSchema });
+const onSubmit = data => console.log(data);
+
+return (
+  <form noValidate onSubmit={handleSubmit(onSubmit)}>
+    <TextField
+      ref={register}
+      name="name"
+      label="Name"
+      required
+      errorMessage={errors.name && errors.name.message}
+    />
+    <TextField
+      ref={register}
+      name="email"
+      label="Email"
+      required
+      errorMessage={errors.email && errors.email.message}
+    />
+
+    <Button type="submit">Submit</Button>
+  </form>
+);
+```
+
+<Story name="basic">{stories.basic()}</Story>

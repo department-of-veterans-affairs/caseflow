@@ -1,0 +1,131 @@
+import { useState } from 'react';
+
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { action } from '@storybook/addon-actions';
+
+import { useFormik } from 'formik';
+import { Formik } from 'formik';
+import * as yup from 'yup';
+
+import TextField from '../../app/components/TextField';
+import Button from '../../app/components/Button';
+
+export const defaultProps = {};
+
+<Meta title="Development/Form Management/Formik" />
+
+# Formik
+
+[Formik](https://jaredpalmer.com/formik/) was open sourced in 2017 and is used by a number of large companies.
+
+### Using Hooks
+React hooks can be used for a more concise syntax when the form is in a functional component.
+
+```js
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+```
+
+<Preview>
+  <Story name="Hooks">
+    {() => {
+      const validationSchema = yup.object().shape({
+        name: yup.string().required(),
+        email: yup
+          .string()
+          .email()
+          .required()
+      });
+      const { handleSubmit, handleChange, errors, values, touched } = useFormik(
+        {
+          initialValues: {
+            name: '',
+            email: ''
+          },
+          validationSchema,
+          onSubmit: values => console.log('onSubmit', values)
+        }
+      );
+      return (
+        <form noValidate onSubmit={handleSubmit}>
+          <TextField
+            id="name"
+            name="name"
+            label="Name"
+            onChange={handleChange}
+            value={values.name}
+            required
+            errorMessage={touched.name && errors.name}
+          />
+          <TextField
+            id="email"
+            name="email"
+            label="Email"
+            type="email"
+            onChange={handleChange}
+            value={values.email}
+            required
+            errorMessage={touched.email && errors.email}
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      );
+    }}
+  </Story>
+</Preview>
+
+---
+
+### Using Render Props
+This is the syntax that would need to be used for class-based components, since they don't support hooks.
+
+```js
+import { Formik } from 'formik';
+import * as yup from 'yup';
+```
+
+<Preview>
+  <Story name="Render Props">
+    {() => {
+      const validationSchema = yup.object().shape({
+        name: yup.string().required(),
+        email: yup
+          .string()
+          .email()
+          .required()
+      });
+      return (
+        <Formik
+          initialValues={{ name: '', email: '' }}
+          validationSchema={validationSchema}
+          onSubmit={values => console.log('onSubmit', values)}
+        >
+          {({ handleSubmit, handleChange, errors, values, touched }) => (
+            <form noValidate onSubmit={handleSubmit}>
+              <TextField
+                id="name"
+                name="name"
+                label="Name"
+                onChange={handleChange}
+                value={values.name}
+                required
+                errorMessage={touched.name && errors.name}
+              />
+              <TextField
+                id="email"
+                name="email"
+                label="Email"
+                type="email"
+                onChange={handleChange}
+                value={values.email}
+                required
+                errorMessage={touched.email && errors.email}
+              />
+              <Button type="submit">Submit</Button>
+            </form>
+          )}
+        </Formik>
+      );
+    }}
+  </Story>
+</Preview>
