@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'console_tree_renderer'
+
 # Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 module TaskTreeRenderModule
   def self.new_renderer
