@@ -41,6 +41,7 @@ module TaskTreeRenderModule
   end
 
   # for easy access to the global_renderer from an appeal or task instance
+  # :reek:UtilityFunction
   def global_renderer
     TaskTreeRenderModule.global_renderer
   end
@@ -49,12 +50,14 @@ module TaskTreeRenderModule
     puts tree(*atts, **kwargs) # rubocop: disable Rails/Output
   end
 
+  # :reek:FeatureEnvy
   def tree(*atts, **kwargs)
     kwargs[:highlight_row] = Task.find(kwargs.delete(:highlight)) if kwargs[:highlight]
     renderer = kwargs.delete(:renderer) || global_renderer
     renderer.tree_str(self, *atts, **kwargs)
   end
 
+  # :reek:FeatureEnvy
   def tree_hash(*atts, **kwargs)
     kwargs[:highlight_row] = Task.find(kwargs.delete(:highlight)) if kwargs[:highlight]
     renderer = kwargs.delete(:renderer) || global_renderer
