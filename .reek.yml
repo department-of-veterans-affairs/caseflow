@@ -148,6 +148,9 @@ detectors:
       - Fakes::PexipService
       - VBMSCaseflowLogger#log
       - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
+      - VirtualHearings::ExternalLinkHelper#external_link
+      - VirtualHearings::ExternalLinkHelper#phone_link
+      - VirtualHearings::VeteranNameHelper#formatted_veteran_name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

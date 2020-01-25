@@ -144,7 +144,7 @@
   "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate.\n\nIf you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.\n\nIf you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case. If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.",
   "JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL": "How will you address this motion to vacate?",
   "JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL": "What type of vacate?",
-  "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed denial document",
+  "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed %s document",
   "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues you will be granting",
   "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
   "JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL": "Which issues would you like to vacate?",
@@ -156,8 +156,8 @@
 
   "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
-  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your reivew for this motion?",
-  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be granted",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your review for this motion?",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be %s",
   "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
 
@@ -441,14 +441,14 @@
 
   "USER_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow user management",
   "USER_MANAGEMENT_STATUS_PAGE_TITLE": "Caseflow user status management",
-  "USER_MANAGEMENT_PAGE_DESCRIPTION": "Making a user inactive will remove them from any organization that automatically assigns tasks to team members.",
+  "USER_MANAGEMENT_PAGE_DESCRIPTION": "Marking a user inactive will remove them from all organizations they are a member of. Once marked inactive, a user cannot be assigned new tasks.",
   "USER_MANAGEMENT_STATUS_CHANGE_ERROR_TITLE": "Failed to modify user status",
   "USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT": "Make user active",
   "USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT": "Make user inactive",
   "USER_MANAGEMENT_ACTIVE_SUCCESS_TITLE": "Successfully made %s ACTIVE",
   "USER_MANAGEMENT_INACTIVE_SUCCESS_TITLE": "Successfully made %s INACTIVE",
-  "USER_MANAGEMENT_ACTIVE_SUCCESS_BODY": "%s will need to be added to organizations that automatically assign tasks to team members via the team management page",
-  "USER_MANAGEMENT_INACTIVE_SUCCESS_BODY": "%s has been removed from organizations that automatically assign tasks to team members. If this was a mistake, mark the user ACTIVE and add them to their organizations on the team management page",
+  "USER_MANAGEMENT_ACTIVE_SUCCESS_BODY": "%s can now be assigned new tasks and will need to be added to organizations via the team management page",
+  "USER_MANAGEMENT_INACTIVE_SUCCESS_BODY": "%s has been removed from organizations they were a member of. They will no longer be assigned new tasks. If this was a mistake, mark the user ACTIVE and add them back to the proper organizations on those organizations' team management pages",
   "USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE": "Error searching for user",
 
   "LOOKUP_PARTICIPANT_ID_MODAL_TITLE": "Look Up Participant ID",
@@ -618,7 +618,7 @@
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No rooms available for %s",
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected.",
 
-  "VIRTUAL_HEARING_REQUEST_TYPE": "Video, Virtual",
+  "VIRTUAL_HEARING_REQUEST_TYPE": "Virtual",
   "VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS": "Scheduling in progress",
 
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE": "Change to Virtual Hearing",
