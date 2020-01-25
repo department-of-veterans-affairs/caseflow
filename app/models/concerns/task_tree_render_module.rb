@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'console_tree_renderer'
+require "console_tree_renderer"
 
 # Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 module TaskTreeRenderModule
-  def self.new_renderer
+  def self.new_renderer # rubocop:disable all
     ConsoleTreeRenderer.new.tap do |ttr|
       ttr.config.value_funcs_hash.merge!(
         CRE_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
@@ -46,7 +46,7 @@ module TaskTreeRenderModule
   end
 
   def treee(*atts, **kwargs)
-    puts tree(*atts, **kwargs)
+    puts tree(*atts, **kwargs) # rubocop: disable Rails/Output
   end
 
   def tree(*atts, **kwargs)
@@ -91,8 +91,10 @@ module TaskTreeRenderModule
   # return all root-level tasks that are considered part of this appeal
   def appeal_children(appeal, config)
     roottask_ids = appeal.tasks.where(parent_id: nil).pluck(:id)
-    # in some tests, parent tasks are (erroneously) not in the same appeal
-    task_ids = appeal.tasks.reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id) if config.custom["show_all_tasks"]
+    if config.custom["show_all_tasks"]
+      # in some tests, parent tasks are (erroneously) not in the same appeal
+      task_ids = appeal.tasks.reject { |tsk| tsk.parent&.appeal_id == appeal.id }.pluck(:id)
+    end
     roottask_ids |= task_ids if task_ids
     Task.where(id: roottask_ids.compact.sort)
   end
