@@ -1071,39 +1071,39 @@ describe EndProductEstablishment, :postgres do
   end
 
   context "#on_decision_issue_sync_processed" do
-    subject { end_product_establishment.on_decision_issue_sync_processed }
+    subject { end_product_establishment.on_decision_issue_sync_processed(processing_request_issue) }
+    let(:processed_at) { Time.zone.now }
+
+    let(:processing_request_issue) do
+      create(:request_issue, decision_review: source)
+    end
 
     let!(:processed_request_issue) do
-      create(
-        :request_issue,
-        decision_review: source,
-        end_product_establishment: end_product_establishment,
-        decision_sync_processed_at: Time.zone.now
-      )
+      create(:request_issue, decision_review: source, decision_sync_processed_at: Time.zone.now)
     end
 
     let!(:closed_request_issue) do
-      create(:request_issue, :removed, end_product_establishment: end_product_establishment, decision_review: source)
+      create(:request_issue, :removed, decision_review: source)
     end
 
-    let!(:decision_issue) do
-      create(:decision_issue,
-             decision_review: source,
-             disposition: DecisionIssue::DTA_ERROR_PMR,
-             rating_issue_reference_id: "rating1",
-             end_product_last_action_date: 5.days.ago.to_date)
-    end
-
-    let!(:claimant) do
-      Claimant.create!(
-        decision_review: source,
-        participant_id: veteran.participant_id,
-        payee_code: "10"
-      )
-    end
-
-    context "when request issues are all synced or closed" do
+    context "when decision issues are all synced" do
       context "when source is a higher level review" do
+        let!(:claimant) do
+          Claimant.create!(
+            decision_review: source,
+            participant_id: veteran.participant_id,
+            payee_code: "10"
+          )
+        end
+
+        let!(:decision_issue) do
+          create(:decision_issue,
+                 decision_review: source,
+                 disposition: DecisionIssue::DTA_ERROR_PMR,
+                 rating_issue_reference_id: "rating1",
+                 end_product_last_action_date: 5.days.ago.to_date)
+        end
+
         it "creates a supplemental claim if dta errors exist" do
           subject
 
@@ -1126,7 +1126,7 @@ describe EndProductEstablishment, :postgres do
 
     context "when decision issues are not all synced" do
       let!(:not_processed_request_issue) do
-        create(:request_issue, decision_review: source, end_product_establishment: end_product_establishment)
+        create(:request_issue, decision_review: source)
       end
 
       it "does nothing" do
