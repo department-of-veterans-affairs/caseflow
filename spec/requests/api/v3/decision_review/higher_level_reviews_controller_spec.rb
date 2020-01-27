@@ -9,14 +9,11 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
     FeatureToggle.enable!(:api_v3)
 
     Timecop.freeze(post_ama_start_date)
-
-    # setup a rating
-    rating
   end
 
   after { FeatureToggle.disable!(:api_v3) }
 
-  let(:rating) do
+  let!(:rating) do
     promulgation_date = receipt_date - 10.days
     profile_date = (receipt_date - 8.days).to_datetime
     generate_rating(veteran, promulgation_date, profile_date)
