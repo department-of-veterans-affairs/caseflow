@@ -4,14 +4,14 @@ class Api::V2::HearingSerializer
   include FastJsonapi::ObjectSerializer
 
   attribute :address do |hearing|
-    hearing.hearing_location&.street_address
+    (hearing.hearing_location || hearing.regional_office).street_address
   end
   attribute :city do |hearing|
-    hearing.hearing_location&.city || hearing.regional_office.city
+    (hearing.hearing_location || hearing.regional_office).city
   end
   attribute :appeal, &:appeal_external_id
   attribute :facility_id do |hearing|
-    hearing.hearing_location&.facility_id
+    (hearing.hearing_location || hearing.regional_office).facility_id
   end
   attribute :first_name, &:veteran_first_name
   attribute :last_name, &:veteran_last_name
@@ -19,7 +19,7 @@ class Api::V2::HearingSerializer
     hearing.appeal.veteran.participant_id
   end
   attribute :hearing_location do |hearing|
-    hearing.hearing_location&.name || hearing.regional_office.name
+    (hearing.hearing_location || hearing.regional_office).name
   end
   attribute :is_virtual, &:virtual?
   attribute :room do |hearing|
@@ -30,10 +30,12 @@ class Api::V2::HearingSerializer
     hearing.appeal.veteran_ssn
   end
   attribute :state do |hearing|
-    hearing.hearing_location&.state || hearing.regional_office.state
+    (hearing.hearing_location || hearing.regional_office).state
   end
-  attribute :timezone, &:regional_office_timezone
+  attribute :timezone do |hearing|
+    (hearing.hearing_location || hearing.regional_office).timezone
+  end
   attribute :zip_code do |hearing|
-    hearing.hearing_location&.zip_code || hearing.regional_office.timezone
+    (hearing.hearing_location || hearing.regional_office).zip_code
   end
 end
