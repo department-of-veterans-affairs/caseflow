@@ -146,6 +146,9 @@ detectors:
       - Fakes::BGSService
       - Fakes::PexipService
       - VBMSCaseflowLogger#log
+      - Reporter#average
+      - Reporter#median
+      - Reporter#seconds_to_hms
       - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link

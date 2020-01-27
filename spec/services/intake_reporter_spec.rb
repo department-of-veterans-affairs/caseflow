@@ -19,7 +19,9 @@ describe IntakeReporter do
       let!(:sc_nonrating_issue) { create(:request_issue, :nonrating, decision_review: sc) }
       let!(:appeal_rating_decision) { create(:request_issue, :rating_decision, decision_review: appeal) }
 
-      subject { described_class.new(type: decision_review_type, start_date: Time.zone.yesterday, end_date: Time.zone.tomorrow) }
+      subject do
+        described_class.new(type: decision_review_type, start_date: Time.zone.yesterday, end_date: Time.zone.tomorrow)
+      end
 
       context "HLR" do
         let(:decision_review_type) { "HigherLevelReview" }
