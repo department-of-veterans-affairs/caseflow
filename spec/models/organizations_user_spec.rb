@@ -65,7 +65,7 @@ describe OrganizationsUser, :postgres do
       end
     end
   end
-  
+
   describe ".disable_decision_drafting" do
     before { FeatureToggle.enable!(:judge_admin_scm) }
     after { FeatureToggle.disable!(:judge_admin_scm) }

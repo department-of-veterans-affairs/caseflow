@@ -45,7 +45,7 @@ class OrganizationsUser < ApplicationRecord
       org_user.judge_team_role.update!(type: DecisionDraftingAttorney)
     end
   end
-  
+
   def self.disable_decision_drafting(user, organization)
     org_user = existing_record(user, organization)
     return nil unless org_user&.judge_team_role && FeatureToggle.enabled?(:judge_admin_scm)
