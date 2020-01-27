@@ -2,8 +2,6 @@
 
 # Mixin methods for *Reporter classes. Statistics, dates, etc.
 
-require "csv"
-
 module Reporter
   extend ActiveSupport::Concern
 
@@ -22,5 +20,9 @@ module Reporter
     return 0 if times.empty?
 
     times.sum.to_f / times.length
+  end
+
+  def percent(nominator, denominator)
+    ((nominator / denominator.to_f) * 100).round(2)
   end
 end

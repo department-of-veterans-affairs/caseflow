@@ -38,7 +38,7 @@ class RequestIssueReporter
           stat[:nonrating],
           stat[:decision_issue],
           stat[:unidentified],
-          ((total == 0) ? 0 : (stat[:unidentified].fdiv(total) * 100).round(2))
+          (total == 0) ? 0 : percent(stat[:unidentified], total)
         ]
       end
     end

@@ -111,7 +111,7 @@ class ClaimReviewAsyncStatsReporter
   end
 
   def percent_established_within_seven_days(completion_times, total)
-    ((established_within_seven_days(completion_times) / total.to_f) * 100).round(2)
+    percent(established_within_seven_days(completion_times), total)
   end
 
   def completion_times(claims)
