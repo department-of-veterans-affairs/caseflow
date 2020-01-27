@@ -8,7 +8,7 @@ export class TextField extends React.Component {
       // formik requires this to return the event
       return this.props.onChange(event);
 
-      // Existing Caseflow behavior was to return the value
+      // BREAKING CHANGE -- Existing Caseflow behavior was to return the value
       // this.props.onChange(event.target.value);
     }
   };
@@ -131,7 +131,8 @@ TextField.propTypes = {
   optional: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.elementType })])
 };
 
-export default React.forwardRef((props, ref) => <TextField inputRef={ref} {...props} />);
+export default React.forwardRef((props, ref) => <TextField {...props} inputRef={ref} />);
