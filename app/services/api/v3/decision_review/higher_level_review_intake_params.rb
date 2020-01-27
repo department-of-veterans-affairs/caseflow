@@ -75,12 +75,6 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
     @veteran ||= find_veteran
   end
 
-  def find_veteran
-    ssn = attributes.dig("veteran", "ssn").to_s.strip
-
-    ssn.present? ? VeteranFinder.find_best_match(ssn) : nil
-  end
-
   def attributes
     attributes? ? @params["data"]["attributes"] : {}
   end
@@ -294,6 +288,12 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   end
 
   private
+
+  def find_veteran
+    ssn = attributes.dig("veteran", "ssn").to_s.strip
+
+    ssn.present? ? VeteranFinder.find_best_match(ssn) : nil
+  end
 
   def validate
     if !shape_valid?

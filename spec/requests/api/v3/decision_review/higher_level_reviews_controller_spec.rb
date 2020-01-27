@@ -406,7 +406,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           request_issue_in_active_review = create(
             :request_issue,
             decision_date: Time.zone.today - 5.days,
-            decision_review: create(:higher_level_review, id: 10, veteran_file_number: veteran.ssn),
+            decision_review: create(:higher_level_review, id: 10, veteran_file_number: veteran.file_number),
             contested_rating_issue_reference_id: "hlr123",
             contention_reference_id: "2222",
             end_product_establishment: create(:end_product_establishment, :active),
@@ -416,7 +416,7 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           ineligible_request_issue = create(
             :request_issue,
             decision_date: Time.zone.today - 3.days,
-            decision_review: create(:higher_level_review, id: 11, veteran_file_number: veteran.ssn),
+            decision_review: create(:higher_level_review, id: 11, veteran_file_number: veteran.file_number),
             contested_rating_issue_reference_id: "hlr123",
             contention_reference_id: "3333",
             ineligible_reason: :duplicate_of_rating_issue_in_active_review,

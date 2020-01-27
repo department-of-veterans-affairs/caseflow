@@ -366,12 +366,6 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     end
   end
 
-  describe "#veteran_file_number" do
-    subject { hlr_intake_params.veteran_file_number }
-
-    it { is_expected.to eq veteran.file_number }
-  end
-
   describe "#attributes" do
     subject { hlr_intake_params.attributes }
 
