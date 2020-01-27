@@ -30,7 +30,7 @@ class Appeal < DecisionReview
     "De Novo": "De Novo"
   }
 
-  before_save :set_stream_fields
+  before_save :set_stream_docket_number_and_stream_type
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
@@ -425,7 +425,7 @@ class Appeal < DecisionReview
 
   private
 
-  def set_stream_fields
+  def set_stream_docket_number_and_stream_type
     if receipt_date && persisted?
       self.stream_docket_number ||= docket_number
     end

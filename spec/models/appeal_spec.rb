@@ -321,7 +321,7 @@ describe Appeal, :all_dbs do
     end
   end
 
-  context "#set_stream_fields" do
+  context "#set_stream_docket_number_and_stream_type" do
     it "persists an accurate value for stream_docket_number to the database" do
       appeal = Appeal.new(veteran_file_number: "1234")
       appeal.save!
