@@ -302,7 +302,7 @@ describe Appeal, :all_dbs do
   context "#docket_number" do
     context "when receipt_date is defined" do
       let(:appeal) do
-        create(:appeal, id: 1234, receipt_date: Time.new("2018", "04", "05").utc)
+        create(:appeal, receipt_date: Time.new("2018", "04", "05").utc)
       end
 
       it "returns a docket number if id and receipt_date are defined" do

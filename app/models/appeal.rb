@@ -299,7 +299,7 @@ class Appeal < DecisionReview
 
   def docket_number
     return stream_docket_number if stream_docket_number
-    return "Missing Docket Number" unless receipt_date && id.present?
+    return "Missing Docket Number" unless receipt_date && persisted?
 
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
@@ -426,7 +426,7 @@ class Appeal < DecisionReview
   private
 
   def set_stream_fields
-    if receipt_date && id.present?
+    if receipt_date && persisted?
       self.stream_docket_number ||= docket_number
     end
     self.stream_type ||= type
