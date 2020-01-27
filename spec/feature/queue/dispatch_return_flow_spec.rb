@@ -43,10 +43,40 @@ feature "BVA Dispatch Return Flow", :all_dbs do
     judge_checkout
   end
 
-  context "Test" do
-    it "test" do
-      expect(true).to eq(true)
+  scenario "An appeal at BVA Dispatch is sent back" do
+    step "BVA Dispatch user returns the case to the judge for correction" do
+      User.authenticate!(user: bva_dispatch_user)
+      visit("/queue")
+      click_on veteran_full_name
+      click_dropdown(prompt: "Select an action", text: "Return to judge")
+      fill_in("taskInstructions", with: "Returned from BVA Dispatch to correct error")
+      click_on "Submit"
+      expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
     end
+    step "Judge sends the case to the Attorney to fix the decision" do
+      User.authenticate!(user: judge_user)
+      visit("/queue")
+      click_on veteran_full_name
+      click_dropdown(prompt: "Select an action", text: "Return to attorney")
+      fill_in("taskInstructions", with: "Returned from BVA Dispatch to correct error")
+      click_on "Submit"
+      expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
+    end
+    step "Attorney returns the case to the judge" do
+      attorney_checkout
+      expect(page).to have_content("Thank you for drafting #{veteran_full_name}'s decision. It's been sent to #{judge_user.full_name} for review.")
+    end
+    step "Judge reviews the corrections and returns the case to BVA Dispatch" do
+      judge_checkout
+      sleep 5
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+    end
+    step "BVA Dispatch reviews the case" do
+      User.authenticate!(user: bva_dispatch_user)
+      visit("/queue")
+      expect(page).to have_content(veteran_full_name)
+    end
+    # ?maybe BVA checkout?
   end
 
 
@@ -85,5 +115,4 @@ def judge_checkout
     dummy_note = generate_words 5
     fill_in "additional-factors", with: dummy_note
     click_on "Continue"
-    expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 end
