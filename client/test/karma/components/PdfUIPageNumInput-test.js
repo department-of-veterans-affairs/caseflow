@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import TextField from '../../../app/components/TextField';
 
 import { PdfUIPageNumInput } from '../../../app/reader/PdfUIPageNumInput';
@@ -8,19 +8,12 @@ import { PdfUIPageNumInput } from '../../../app/reader/PdfUIPageNumInput';
 describe('PdfUIPageNumInput', () => {
   let wrapper;
 
-  const getInput = () => wrapper.find(TextField).dive().
-    find('input');
+  const getInput = () => wrapper.find(TextField).find('input');
 
   context('input value', () => {
-    wrapper = shallow(
-      <PdfUIPageNumInput
-        currentPage={1}
-        numPages={4}
-        docId={1}
-        jumpToPage={() => null}
-      />,
-      { lifecycleExperimental: true }
-    );
+    wrapper = mount(<PdfUIPageNumInput currentPage={1} numPages={4} docId={1} jumpToPage={() => null} />, {
+      lifecycleExperimental: true
+    });
 
     it('sets input value correctly', () => {
       const inputValue = 3;
@@ -38,7 +31,6 @@ describe('PdfUIPageNumInput', () => {
   });
 
   it('sets input value reset to current page if invalid', () => {
-
     wrapper.setProps({ currentPage: 3 });
     const input = getInput();
 
