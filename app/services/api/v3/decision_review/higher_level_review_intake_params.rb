@@ -39,11 +39,9 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES.slice("compensation")
 
   attr_reader :intake_errors
-  delegate :file_number, to: :veteran, prefix: true
 
   def initialize(params)
     @params = params
-    @veteran_identifier = attributes.dig("veteran", "ssn").to_s.strip
     @intake_errors = []
     validate
   end
@@ -74,7 +72,13 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   end
 
   def veteran
-    @veteran ||= VeteranFinder.find_best_match(@veteran_identifier)
+    @veteran ||= find_veteran
+  end
+
+  def find_veteran
+    ssn = attributes.dig("veteran", "ssn").to_s.strip
+
+    ssn.present? ? VeteranFinder.find_best_match(ssn) : nil
   end
 
   def attributes
