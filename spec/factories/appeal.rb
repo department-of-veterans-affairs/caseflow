@@ -2,7 +2,6 @@
 
 FactoryBot.define do
   factory :appeal do
-
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
@@ -182,11 +181,9 @@ FactoryBot.define do
         judge_assign_task = appeal.tasks.where(type: JudgeAssignTask.name).first
         AttorneyTaskCreator.new(
           judge_assign_task,
-          {
-            appeal: judge_assign_task.appeal,
-            assigned_to: evaluator.associated_attorney,
-            assigned_by: judge_assign_task.assigned_to,
-          }
+          appeal: judge_assign_task.appeal,
+          assigned_to: evaluator.associated_attorney,
+          assigned_by: judge_assign_task.assigned_to
         ).call
       end
     end
