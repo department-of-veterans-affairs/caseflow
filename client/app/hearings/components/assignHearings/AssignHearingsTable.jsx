@@ -2,15 +2,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import querystring from 'querystring';
+import ApiUtil from '../../../util/ApiUtil';
+import _ from 'lodash';
 
 import {
   AppealDocketTag,
   CaseDetailsInformation,
-  SuggestedHearingLocation,
+  SuggestedHearingLocation
 } from './AssignHearingsFields';
 import { NoVeteransToAssignMessage } from './Messages';
 import {
-  getFacilityType,
+  getFacilityType
 } from '../../../components/DataDropdowns/AppealHearingLocations';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
@@ -20,7 +22,7 @@ import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
 import QueueTable from '../../../queue/QueueTable';
 
 const TASKS_ENDPOINT = '/hearings/schedule_hearing_tasks';
-const FILTER_PARAM_KEY = `${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`;
+const COLUMNS_ENDPOINT = '/hearings/schedule_hearing_tasks_columns';
 
 export default class AssignHearingsTable extends React.PureComponent {
 
@@ -28,8 +30,26 @@ export default class AssignHearingsTable extends React.PureComponent {
     super(props);
 
     this.state = {
-      showNoVeteransToAssignError: false
+      showNoVeteransToAssignError: false,
+      colsFromApi: null
     };
+  }
+
+  componentDidMount() {
+    this.getColumnsFromApi();
+  }
+
+  getColumnsFromApi= () => {
+    const { tabName, selectedRegionalOffice } = this.props;
+    const qs = querystring.stringify({
+      [QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM]: tabName,
+      regional_office_key: selectedRegionalOffice
+    });
+
+    return ApiUtil.get(`${COLUMNS_ENDPOINT}?${qs}`).
+      then((response) => {
+        this.setState({ colsFromApi: response.body.columns });
+      });
   }
 
   getSuggestedHearingLocation = (locations) => {
@@ -62,6 +82,8 @@ export default class AssignHearingsTable extends React.PureComponent {
   getColumns = () => {
     // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
     const { selectedRegionalOffice, selectedHearingDay, displayPowerOfAttorneyColumn } = this.props;
+
+    const { colsFromApi } = this.state;
 
     if (_.isNil(selectedHearingDay)) {
       return [];
@@ -118,7 +140,8 @@ export default class AssignHearingsTable extends React.PureComponent {
         filterValueTransform: this.formatSuggestedHearingLocation,
         anyFiltersAreSet: true,
         enableFilter: true,
-        enableFilterTextTransform: false
+        enableFilterTextTransform: false,
+        filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'suggestedLocation').filter_options
       }
     ];
 
@@ -141,7 +164,8 @@ export default class AssignHearingsTable extends React.PureComponent {
             const { powerOfAttorneyNamesForAppeals } = this.props;
 
             return powerOfAttorneyNamesForAppeals[row.externalAppealId];
-          }
+          },
+          filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'powerOfAttorney').filter_options
         }
       );
     }
@@ -157,13 +181,13 @@ export default class AssignHearingsTable extends React.PureComponent {
       return;
     }
 
-    const { total_task_count } = response;
+    const { totalTaskCount } = response.total_task_count;
 
-    this.setState({ showNoVeteransToAssignError: total_task_count === 0 });
+    this.setState({ showNoVeteransToAssignError: totalTaskCount === 0 });
   }
 
   render = () => {
-    const { columns, tabName, selectedRegionalOffice } = this.props;
+    const { tabName, selectedRegionalOffice } = this.props;
     const qs = querystring.stringify({
       [QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM]: tabName,
       regional_office_key: selectedRegionalOffice
@@ -186,7 +210,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         slowReRendersAreOk
         bodyStyling={tableNumberStyling}
         useTaskPagesApi
-        taskPagesApiEndpoint={`${TASKS_ENDPOINT}${qs}`}
+        taskPagesApiEndpoint={`${TASKS_ENDPOINT}?${qs}`}
         enablePagination
         tabPaginationOptions={tabPaginationOptions}
       />
