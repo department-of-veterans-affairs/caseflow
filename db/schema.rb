@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200102193042) do
+ActiveRecord::Schema.define(version: 20200127223143) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -184,6 +184,8 @@ ActiveRecord::Schema.define(version: 20200102193042) do
     t.string "docket_type"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
+    t.string "power_of_attorney_name", comment: "'Firstname, Lastname' of power of attorney"
+    t.string "suggested_hearing_location", comment: "Suggested hearing location in 'City, State (Facility Type)' format"
     t.datetime "updated_at"
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
