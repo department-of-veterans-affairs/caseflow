@@ -18,7 +18,9 @@ feature "BVA Dispatch Return Flow", :all_dbs do
   let(:veteran_first_name) { "Dorothy" }
   let(:veteran_last_name) { "Slezak" }
   let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
-  let!(:veteran) { create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name, file_number: "989898989") }
+  let!(:veteran) do
+    create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name, file_number: "989898989")
+  end
 
   let!(:appeal) do
     create(
@@ -64,40 +66,40 @@ feature "BVA Dispatch Return Flow", :all_dbs do
     end
     step "Attorney returns the case to the judge" do
       attorney_checkout
-      expect(page).to have_content("Thank you for drafting #{veteran_full_name}'s decision. It's been sent to #{judge_user.full_name} for review.")
+      expect(page).to have_content(
+        "Thank you for drafting #{veteran_full_name}'s decision. "\
+        "It's been sent to #{judge_user.full_name} for review."
+      )
     end
     step "Judge reviews the corrections and returns the case to BVA Dispatch" do
       judge_checkout
       sleep 5
       expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
     end
-    step "BVA Dispatch reviews the case" do
+    step "BVA Dispatch has received the case" do
       User.authenticate!(user: bva_dispatch_user)
       visit("/queue")
       expect(page).to have_content(veteran_full_name)
     end
-    # ?maybe BVA checkout?
   end
-
-
 end
 
 def attorney_checkout
-    User.authenticate!(user: attorney_user)
-    visit "/queue"
-    click_on veteran_full_name
-    click_dropdown(prompt: "Select an action", text: "Decision ready for review")
+  User.authenticate!(user: attorney_user)
+  visit "/queue"
+  click_on veteran_full_name
+  click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-    click_on "+ Add decision"
-    fill_in "Text Box", with: "test"
+  click_on "+ Add decision"
+  fill_in "Text Box", with: "test"
 
-    find(".Select-control", text: "Select disposition").click
-    find("div", class: "Select-option", text: "Allowed").click
-    click_on "Save"
-    click_on "Continue"
-    fill_in "Document ID:", with: "12345-12345678"
-    fill_in "notes", with: "all done"
-    click_on "Continue"
+  find(".Select-control", text: "Select disposition").click
+  find("div", class: "Select-option", text: "Allowed").click
+  click_on "Save"
+  click_on "Continue"
+  fill_in "Document ID:", with: "12345-12345678"
+  fill_in "notes", with: "all done"
+  click_on "Continue"
 end
 
 def judge_checkout
