@@ -14,7 +14,8 @@ module Helpers::AppealHearingHelper
         facility_id: ahl.facility_id,
         facility_type: ahl.facility_type,
         classification: ahl.classification,
-        zip_code: ahl.zip_code
+        zip_code: ahl.zip_code,
+        formatted_facility_type: ahl.formatted_facility_type
       }
     end
   end
@@ -23,5 +24,10 @@ module Helpers::AppealHearingHelper
     appeal.hearings.map do |hearing|
       AppealHearingSerializer.new(hearing).serializable_hash[:data][:attributes]
     end
+  end
+
+  # returns the closest hearing location
+  def suggested_hearing_location(appeal)
+    available_hearing_locations(appeal).sort_by { |loc| loc[:distance] }.first
   end
 end

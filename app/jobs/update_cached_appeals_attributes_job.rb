@@ -5,6 +5,9 @@ BATCH_SIZE = 1000
 class UpdateCachedAppealsAttributesJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
+  # For suggested_hearing_location
+  include Helpers::AppealHearingHelper
+
   queue_with_priority :low_priority
 
   APP_NAME = "caseflow_job"
@@ -47,6 +50,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
         is_aod: appeal_aod_status.include?(appeal.id),
+        power_of_attorney_name: appeal.representative_name,
+        suggested_hearing_location: format_suggested_hearing_location(appeal),
         veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
@@ -59,6 +64,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                       :docket_number,
                       :is_aod,
                       :issue_count,
+                      :power_of_attorney_name,
+                      :suggested_hearing_location,
                       :veteran_name]
     CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
                                                                      columns: update_columns }
@@ -301,5 +308,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       # Matches how last names are split and sorted on the front end (see: TaskTable.detailsColumn.getSortValue)
       [veteran.file_number, "#{veteran.last_name.split(' ').last}, #{veteran.first_name}"]
     end.to_h
+  end
+
+  def format_suggested_hearing_location(appeal)
+    location = suggested_hearing_location(appeal)
+    # For filter values on the frontend (see: AppealHearingsTable)
+    "#{location[:city]}, #{location[:state]} #{location[:formatted_facility_type]}"
   end
 end
