@@ -51,8 +51,8 @@ describe OrganizationsUser, :postgres do
 
     context "when a user is a judge" do
       it "fails" do
-        expect { OrganizationsUser.enable_decision_drafting(judge, judge_team) }.
-        to raise_error(Caseflow::Error::ActionForbiddenError).with_message(COPY::JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR)
+        expect { OrganizationsUser.enable_decision_drafting(judge, judge_team) }
+        .to raise_error(Caseflow::Error::ActionForbiddenError).with_message(COPY::JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR)
       end
     end
 
@@ -82,8 +82,8 @@ describe OrganizationsUser, :postgres do
 
     context "when a user is a judge" do
       it "fails" do
-        expect { OrganizationsUser.enable_decision_drafting(judge, judge_team) }.
-        to raise_error(Caseflow::Error::ActionForbiddenError).with_message(COPY::JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR)
+        expect { OrganizationsUser.enable_decision_drafting(judge, judge_team) }
+        .to raise_error(Caseflow::Error::ActionForbiddenError).with_message(COPY::JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR)
       end
     end
 
