@@ -142,7 +142,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       approxDecisionDate: issue.approx_decision_date,
       decisionIssueId: issue.contested_decision_issue_id,
       titleOfActiveReview: issue.title_of_active_review,
-      rampClaimId: issue.ramp_claim_id
+      rampClaimId: issue.ramp_claim_id,
+      verifiedUnidentifiedIssue: issue.verified_unidentified_issue
     };
   }
   );
@@ -189,7 +190,8 @@ const formatUnidentifiedIssues = (state) => {
         untimely_exemption_notes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,
         vacols_id: issue.vacolsId,
-        vacols_sequence_id: issue.vacolsSequenceId
+        vacols_sequence_id: issue.vacolsSequenceId,
+        verified_unidentified_issue: issue.verifiedUnidentifiedIssue
       };
     });
 };
@@ -333,7 +335,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         ineligibleReason: issue.ineligibleReason,
         vacolsId: issue.vacolsId,
         vacolsSequenceId: issue.vacolsSequenceId,
-        vacolsIssue: issue.vacolsIssue
+        vacolsIssue: issue.vacolsIssue,
+        verifiedUnidentifiedIssue: issue.verifiedUnidentifiedIssue
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {

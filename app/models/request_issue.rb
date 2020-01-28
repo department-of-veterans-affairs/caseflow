@@ -189,7 +189,8 @@ class RequestIssue < ApplicationRecord
         ineligible_reason: data[:ineligible_reason],
         ineligible_due_to_id: data[:ineligible_due_to_id],
         edited_description: data[:edited_description],
-        correction_type: data[:correction_type]
+        correction_type: data[:correction_type],
+        verified_unidentified_issue: data[:verified_unidentified_issue]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -230,7 +231,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
-    !!associated_rating_issue? || previous_rating_issue? || !!associated_rating_decision?
+    !!associated_rating_issue? || previous_rating_issue? || !!associated_rating_decision? || verified_unidentified_issue
   end
 
   def nonrating?
@@ -277,7 +278,7 @@ class RequestIssue < ApplicationRecord
   # If the request issue is unidentified, we want to prompt the VBMS/SHARE user to correct the issue.
   # For that reason we use a special prompt message instead of the issue text.
   def contention_text
-    return UNIDENTIFIED_ISSUE_MSG if is_unidentified?
+    return UNIDENTIFIED_ISSUE_MSG if is_unidentified? && !verified_unidentified_issue
 
     Contention.new(description).text
   end
