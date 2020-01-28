@@ -313,6 +313,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def format_suggested_hearing_location(appeal)
     location = suggested_hearing_location(appeal)
     # For filter values on the frontend (see: AppealHearingsTable)
-    "#{location[:city]}, #{location[:state]} #{location[:formatted_facility_type]}"
+    location.nil? ? "" : "#{location[:city]}, #{location[:state]} #{location[:formatted_facility_type]}"
   end
 end

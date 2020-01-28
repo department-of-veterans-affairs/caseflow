@@ -15,13 +15,13 @@ class AvailableHearingLocations < ApplicationRecord
     when "va_benefits_facility"
       return "(BVA) " if loc.facility_id == "vba_372"
 
-      ro_or_vba
+      determine_vba_facility_type
     else
       ""
     end
   end
 
-  def ro_or_vba
+  def determine_vba_facility_type
     classification.include?("Regional") ? "(RO) " : "(VBA) "
   end
 end
