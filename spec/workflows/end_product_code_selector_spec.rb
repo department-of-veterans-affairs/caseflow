@@ -125,7 +125,7 @@ describe "Request Issue Correction Cleaner", :postgres do
         if ep_code[3] == "dta"
           let(:decision_review) { supplemental_claim }
           let(:drr) { send(ep_code[6]) }
-          let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
+          let(:contested_decision_issue) { create(:decision_issue, :nonrating, disposition: "remanded") }
         else
           let(:decision_review) { send(ep_code[6]) }
         end
