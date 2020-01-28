@@ -1,6 +1,9 @@
 class PopulateStreamFields < ActiveRecord::Migration[5.1]
   def up
     safety_assured do
+      change_table :appeals do |t|
+        t.change_default :stream_type, "Original"
+      end
       execute "UPDATE appeals SET stream_type='Original' WHERE stream_type IS NULL"
       execute <<-EOS.strip_heredoc
         UPDATE appeals
