@@ -60,7 +60,7 @@ class Organizations::UsersController < OrganizationsController
     @user_to_modify ||= User.find(params.require(:id))
   end
 
-  def adjust_admin_rights 
+  def adjust_admin_rights
     if params[:admin] == true
       OrganizationsUser.make_user_admin(user_to_modify, organization)
     else
@@ -73,7 +73,7 @@ class Organizations::UsersController < OrganizationsController
       OrganizationsUser.enable_decision_drafting(user_to_modify, organization)
     else
       OrganizationsUser.disable_decision_drafting(user_to_modify, organization)
-    end 
+    end
   end
 
   def organization_url
