@@ -186,7 +186,7 @@ class LegacyHearing < ApplicationRecord
 
   # pulls scheduled_for from hearing day instead of VACOLS
   def scheduled_for_past?
-    hearing_day.scheduled_for < DateTime.now.in_time_zone(regional_office_timezone)
+    hearing_day.scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
 
   def held_open?

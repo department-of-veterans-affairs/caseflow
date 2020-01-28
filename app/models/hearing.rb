@@ -153,7 +153,7 @@ class Hearing < ApplicationRecord
   end
 
   def scheduled_for_past?
-    scheduled_for < DateTime.now.in_time_zone(regional_office_timezone)
+    scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
 
   def time
