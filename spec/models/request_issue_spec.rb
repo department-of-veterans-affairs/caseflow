@@ -922,6 +922,11 @@ describe RequestIssue, :all_dbs do
       end
     end
 
+    context "verified unidentified issue returns true for rating" do
+      let(:verified_unidentified_issue) { true }
+      it { is_expected.to be true }
+    end
+
     context "where there is an associated rating decision" do
       let(:contested_rating_decision_reference_id) { "123" }
 

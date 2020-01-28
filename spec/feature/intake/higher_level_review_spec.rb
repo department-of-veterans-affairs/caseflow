@@ -1389,6 +1389,13 @@ feature "Higher-Level Review", :all_dbs do
             FeatureToggle.enable!(:unidentified_issue_decision_date)
           end
 
+          let(:rating_ep_claim_id) do
+            EndProductEstablishment.find_by(
+              source: higher_level_review,
+              code: "030HLRR"
+            ).reference_id
+          end
+
           let(:decision_date) { 30.days.ago.to_date.mdY }
 
           scenario "show unidentified modal" do
@@ -1481,6 +1488,27 @@ feature "Higher-Level Review", :all_dbs do
             expect(page).to have_content("impairment of hip")
             add_intake_rating_issue("ankylosis of hip")
             expect(page).to have_content("Testing unidentified issues")
+
+            higher_level_review = HigherLevelReview.find_by(
+              veteran_file_number: "123412345"
+            )
+
+            click_button("Save")
+            safe_click "#Unidentified-issue-button-id-1"
+            expect(page).to have_content("Number of issues has changed")
+            safe_click "#Number-of-issues-has-changed-button-id-1"
+
+            expect(page).to have_current_path(
+              "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
+            )
+
+            verified_issue = RequestIssue.find_by(verified_unidentified_issue: true,
+                                                  ineligible_reason: :legacy_appeal_not_eligible,
+                                                  vacols_id: "vacols1",
+                                                  vacols_sequence_id: "1")
+
+            expect(verified_issue).to_not be_nil
+            expect(page).to have_content("Contention: #{verified_issue.contention_text}")
           end
         end
       end
