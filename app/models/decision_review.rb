@@ -230,7 +230,7 @@ class DecisionReview < ApplicationRecord
       delay = rsc.receipt_date.future? ? (rsc.receipt_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
 
-      unless rsc.receipt_date.future?
+      unless rsc.processed? || rsc.receipt_date.future?
         rsc.start_processing_job!
       end
     end

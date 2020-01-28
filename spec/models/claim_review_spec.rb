@@ -421,22 +421,6 @@ describe ClaimReview, :postgres do
         it "does nothing" do
           expect { subject }.to_not change(DecisionReviewTask, :count)
         end
-
-        context "when the existing task is not open" do
-          it "creates a decision review task" do
-            drt = DecisionReviewTask.last
-            drt.completed!
-
-            expect { subject }.to change(DecisionReviewTask, :count).by(1)
-
-            expect(DecisionReviewTask.last).to have_attributes(
-              appeal: claim_review,
-              assigned_at: Time.zone.now,
-              assigned_to: BusinessLine.find_by(url: "vha"),
-              status: "assigned"
-            )
-          end
-        end
       end
 
       context "when the review only has ineligible issues" do
