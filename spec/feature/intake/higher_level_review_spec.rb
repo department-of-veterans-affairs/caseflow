@@ -1389,13 +1389,6 @@ feature "Higher-Level Review", :all_dbs do
             FeatureToggle.enable!(:unidentified_issue_decision_date)
           end
 
-          let(:rating_ep_claim_id) do
-            EndProductEstablishment.find_by(
-              source: higher_level_review,
-              code: "030HLRR"
-            ).reference_id
-          end
-
           let(:decision_date) { 30.days.ago.to_date.mdY }
 
           scenario "show unidentified modal" do
