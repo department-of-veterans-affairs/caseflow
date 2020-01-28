@@ -31,7 +31,7 @@ class CompleteCaseReview
   def create_quality_review_task
     # Some situations do not want to move onto the QR task
     # Where the appeal is a Legacy appeal
-    # We are in a non-Judge case review
+    # We are in attorney checkout instead of Judge
     # The case review is on a flow that already did QR creation
     return if case_review.appeal.is_a?(LegacyAppeal) ||
               !case_review.is_a?(JudgeCaseReview) ||
