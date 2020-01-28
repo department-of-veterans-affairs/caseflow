@@ -8,12 +8,12 @@
   </p>
 
   <h3>
-    <%= @virtual_hearing.hearing.appeal.veteran.name.to_s %>
+    <%= formatted_veteran_name(@virtual_hearing.hearing.appeal.veteran) %>
   </h3>
   <p>
     <a href="https://appeals.cf.ds.va.gov/queue/appeals/<%= @virtual_hearing.hearing.appeal.external_id %>">
       View the case details
-    </a>
+    </a> (Note: You must be logged in to the VA network to access case details.)
   </p>
 <% end %>
 
@@ -31,6 +31,10 @@
 
 <% content_for :help_desk do %>
   <%= render "virtual_hearing_mailer/sections/help_desk" %>
+<% end %>
+
+<% content_for :rescheduling_or_canceling_your_hearing do %>
+  <%= render "virtual_hearing_mailer/sections/rescheduling_or_canceling_your_hearing" %>
 <% end %>
 
 <%= content_for :signature do %>

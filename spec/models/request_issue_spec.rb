@@ -1542,6 +1542,19 @@ describe RequestIssue, :all_dbs do
                 expect(rating_request_issue.closed_status).to eq("decided")
               end
             end
+
+            context "when syncing the end_product_establishment fails" do
+              before do
+                allow(end_product_establishment).to receive(
+                  :on_decision_issue_sync_processed
+                ).and_raise("DTA 040 failed")
+              end
+
+              it "does not processs" do
+                expect { subject }.to raise_error("DTA 040 failed")
+                expect(rating_request_issue.processed?).to eq(false)
+              end
+            end
           end
 
           context "when no matching rating issues exist" do

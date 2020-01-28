@@ -3,7 +3,8 @@
 class VirtualHearingMailer < ActionMailer::Base
   default from: "solutions@public.govdelivery.com"
   layout "virtual_hearing_mailer"
-  attr_reader :recipient, :virtual_hearing
+  helper VirtualHearings::ExternalLinkHelper
+  helper VirtualHearings::VeteranNameHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)
     @recipient = mail_recipient
@@ -11,7 +12,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = cancellation_calendar_invite
 
-    mail(to: recipient.email, subject: "Updated location: Your hearing with the Board of Veterans' Appeals")
+    mail(to: recipient.email, subject: "Your Board hearing location has changed")
   end
 
   def confirmation(mail_recipient:, virtual_hearing: nil)
@@ -33,11 +34,13 @@ class VirtualHearingMailer < ActionMailer::Base
 
     mail(
       to: recipient.email,
-      subject: "Updated time: Your virtual hearing with the Board of Veterans' Appeals"
+      subject: "Your Board hearing time has changed"
     )
   end
 
   private
+
+  attr_reader :recipient, :virtual_hearing
 
   def confirmation_calendar_invite
     VirtualHearings::CalendarService.confirmation_calendar_invite(virtual_hearing, recipient, link)
@@ -59,9 +62,11 @@ class VirtualHearingMailer < ActionMailer::Base
   def confirmation_subject
     case recipient.title
     when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
-      "Confirmation: Your virtual hearing with the Board of Veterans' Appeals"
+      "Your Board hearing has been scheduled"
     when MailRecipient::RECIPIENT_TITLES[:judge]
-      "Confirmation: Your virtual hearing"
+      hearing_date = virtual_hearing.hearing.scheduled_for.to_formatted_s(:short_date)
+
+      "Confirmation: Your virtual hearing on #{hearing_date}"
     end
   end
 
