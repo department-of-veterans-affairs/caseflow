@@ -280,7 +280,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
           end
 
           context "when the target user is not an attorney" do
-            #make the attorney a non drafting team member
+            # make the attorney a non drafting team member
             before { OrganizationsUser.disable_decision_drafting(judge_team_member, judge_team) }
 
             it "gives the user the attorney role" do
@@ -301,7 +301,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
           let(:attorney_flag) { false }
 
           context "when the target user is not an attorney" do
-            #make the attorney a non drafting team member
+            # make the attorney a non drafting team member
             before { OrganizationsUser.disable_decision_drafting(judge_team_member, judge_team) }
 
             it "does nothing" do
