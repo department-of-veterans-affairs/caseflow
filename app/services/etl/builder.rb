@@ -10,6 +10,7 @@ class ETL::Builder
     DecisionIssue
     Organization
     OrganizationsUser
+    Person
     Task
     User
   ].freeze
