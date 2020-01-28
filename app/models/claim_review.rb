@@ -121,12 +121,12 @@ class ClaimReview < DecisionReview
   # Cancel an unprocessed job, add a job note, and send a message to the job user's inbox.
   # Currently this only happens manually by an engineer, and requires a message explaining
   # why the job was cancelled and describing any additional action necessary.
-  def cancel_with_note!(current_user:, note:)
-    fail Caseflow::Error::ActionForbiddenError, message: "Acting user must be specified" unless current_user
+  def cancel_with_note!(user: RequestStore[:current_user], note:)
+    fail Caseflow::Error::ActionForbiddenError, message: "Acting user must be specified" unless user
     fail Caseflow::Error::ActionForbiddenError, message: "Processed job cannot be cancelled" if processed?
 
     cancel_establishment!
-    AsyncableJobMessaging.new(job: self, current_user: current_user).add_job_cancellation_note(text: note)
+    AsyncableJobMessaging.new(job: self, user: user).add_job_cancellation_note(text: note)
   end
 
   def invalid_modifiers
@@ -276,8 +276,8 @@ class ClaimReview < DecisionReview
   end
 
   def create_decision_review_task!
-    return if tasks.open.any? { |task| task.is_a?(DecisionReviewTask) }
-    return if request_issues.active.empty?
+    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+    return if request_issues.active.blank?
 
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
   end

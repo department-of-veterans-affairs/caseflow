@@ -26,25 +26,6 @@ class VirtualHearingRepository
       virtual_hearings_for_ama_hearings + virtual_hearings_for_legacy_hearings
     end
 
-    def hearing_day_has_virtual_hearing?(hearing_day)
-      virtual_hearing_for_ama_hearing_exists = VirtualHearing
-        .where(hearing_type: Hearing.name)
-        .joins("INNER JOIN hearings ON hearings.id = virtual_hearings.hearing_id")
-        .where("hearings.hearing_day_id = :hearing_day_id", hearing_day_id: hearing_day.id)
-        .exists?
-
-      # Small optimization: avoids a second query, if there is already an AMA hearing!
-      return true if virtual_hearing_for_ama_hearing_exists
-
-      virtual_hearing_for_legacy_hearing_exists = VirtualHearing
-        .where(hearing_type: LegacyHearing.name)
-        .joins("INNER JOIN legacy_hearings ON legacy_hearings.id = virtual_hearings.hearing_id")
-        .where("legacy_hearings.hearing_day_id = :hearing_day_id", hearing_day_id: hearing_day.id)
-        .exists?
-
-      virtual_hearing_for_legacy_hearing_exists
-    end
-
     def cancelled_hearings_with_pending_emails
       VirtualHearing
         .cancelled

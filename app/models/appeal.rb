@@ -24,6 +24,14 @@ class Appeal < DecisionReview
   has_one :special_issue_list
   has_many :record_synced_by_job, as: :record
 
+  enum stream_type: {
+    "Original": "Original",
+    "Vacate": "Vacate",
+    "De Novo": "De Novo"
+  }
+
+  before_save :set_stream_docket_number_and_stream_type
+
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
     validate :validate_receipt_date
@@ -72,7 +80,7 @@ class Appeal < DecisionReview
   end
 
   def type
-    "Original"
+    stream_type || "Original"
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -290,7 +298,8 @@ class Appeal < DecisionReview
   end
 
   def docket_number
-    return "Missing Docket Number" unless receipt_date
+    return stream_docket_number if stream_docket_number
+    return "Missing Docket Number" unless receipt_date && persisted?
 
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
@@ -415,6 +424,13 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def set_stream_docket_number_and_stream_type
+    if receipt_date && persisted?
+      self.stream_docket_number ||= docket_number
+    end
+    self.stream_type ||= type
+  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state

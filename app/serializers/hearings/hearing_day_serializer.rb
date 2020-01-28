@@ -30,26 +30,28 @@ class HearingDaySerializer
   attribute :updated_at
 
   def self.get_readable_request_type(hearing_day, params)
-    if params.key?(:hearing_days_with_virtual_hearings) && !params[:hearing_days_with_virtual_hearings].nil?
-      # An optimization when serializing a collection of hearing days.
-      # See HearingDaysWithVirtualHearingsQuery for how to fetch these ids.
-      return COPY::VIRTUAL_HEARING_REQUEST_TYPE if params[:hearing_days_with_virtual_hearings].include?(hearing_day.id)
-    elsif VirtualHearingRepository.hearing_day_has_virtual_hearing?(hearing_day)
-      return COPY::VIRTUAL_HEARING_REQUEST_TYPE
+    if params[:video_hearing_days_request_types].nil?
+      fail ArgumentError, "params must have video_hearing_days_request_tyeps"
     end
+
+    # `video_hearing_days_request_types` should be constructed with
+    # VideoHearingDayRequestTypeQuery. It is an optimized way to get the request type
+    # for a video hearing day, which can vary depending on how many virtual hearings
+    # a video hearing day has.
+    request_type = params[:video_hearing_days_request_types][hearing_day.id]
+
+    return request_type if request_type.present?
 
     Hearing::HEARING_TYPES[hearing_day.request_type.to_sym]
   end
 
   def self.serialize_collection(hearing_days)
-    hearing_days_with_virtual_hearings = HearingDaysWithVirtualHearingsQuery.new.call
-      .map(&:id)
-      .to_set
+    video_hearing_days_request_types = VideoHearingDayRequestTypeQuery.new.call
 
     ::HearingDaySerializer.new(
       hearing_days,
       collection: true,
-      params: { hearing_days_with_virtual_hearings: hearing_days_with_virtual_hearings }
+      params: { video_hearing_days_request_types: video_hearing_days_request_types }
     ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
   end
 end
