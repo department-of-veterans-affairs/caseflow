@@ -250,10 +250,8 @@ export default class OrganizationUsers extends React.PureComponent {
           { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
           { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> } &nbsp;</li>
-        { judgeTeam && !judge && !attorney && this.decisionDraftingButton(user, attorney) }
-        { judgeTeam && !judge && attorney && this.decisionDraftingButton(user, attorney) }
-        { !admin && this.adminButton(user, admin) }
-        { admin && this.adminButton(user, admin) }
+        { judgeTeam && !judge && this.decisionDraftingButton(user, attorney) }
+        { this.adminButton(user, admin) }
         { this.removeUserButton(user) }
       </div>;
     });
