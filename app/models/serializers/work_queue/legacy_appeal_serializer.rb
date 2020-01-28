@@ -51,7 +51,7 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
   attribute(:suggested_hearing_location) { |object| suggested_hearing_location(object) }
-  
+
   attribute :docket_name do
     "legacy"
   end

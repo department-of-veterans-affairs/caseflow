@@ -28,6 +28,6 @@ module Helpers::AppealHearingHelper
 
   # returns the closest hearing location
   def suggested_hearing_location(appeal)
-    available_hearing_locations(appeal).sort_by { |loc| loc[:distance] }.first
+    available_hearing_locations(appeal).min_by { |loc| loc[:distance] }
   end
 end
