@@ -27,6 +27,7 @@ export const MTVDispositionSelection = ({ label = '', value: initialVal = null, 
       options={options}
       onChange={handleChange}
       value={value}
+      required
       className={['mtv-disposition-selection']}
     />
   );
