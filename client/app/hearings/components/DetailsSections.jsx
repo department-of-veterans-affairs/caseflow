@@ -31,6 +31,7 @@ class DetailsSections extends React.Component {
           requestType={requestType}
           isLegacy={isLegacy}
           hearing={hearing}
+          scheduledForIsPast={hearing.scheduledForIsPast}
           update={updateHearing}
           enableVirtualHearings={user.userCanScheduleVirtualHearings && requestType !== 'Central'}
           virtualHearing={virtualHearing}

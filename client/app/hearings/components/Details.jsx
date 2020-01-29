@@ -81,6 +81,7 @@ class HearingDetails extends React.Component {
         evidenceWindowWaived: hearing.evidenceWindowWaived || false,
         room: hearing.room,
         notes: hearing.notes,
+        scheduledForIsPast: hearing.scheduledForIsPast,
         // Transcription Request
         transcriptRequested: hearing.transcriptRequested,
         transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
