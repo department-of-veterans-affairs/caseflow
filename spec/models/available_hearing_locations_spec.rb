@@ -25,7 +25,23 @@ describe AvailableHearingLocations, :all_dbs do
     )
   end
 
-  describe "to_hash" do
+  let!(:location3) do
+    AvailableHearingLocations.create(
+      appeal: appeal,
+      city: "Chicago",
+      state: "IL",
+      distance: 1000,
+      facility_type: "vet_center"
+    )
+  end
+
+  let!(:location4) do
+    AvailableHearingLocations.create(
+      appeal: appeal
+    )
+  end
+
+  describe "#to_hash" do
     it "it serializes location correctly" do
       expect(location1.to_hash).to eq(
         name: nil,
@@ -46,8 +62,11 @@ describe AvailableHearingLocations, :all_dbs do
     it "correctly formats facility type" do
       expect(location1.formatted_facility_type).to eq("(BVA)")
       expect(location2.formatted_facility_type).to eq("(RO)")
+      expect(location3.formatted_facility_type).to eq("(Vet Center)")
+      expect(location4.formatted_facility_type).to eq("")
     end
   end
+
   describe "#determine_vba_facility_type" do
     it "determines correct vba facility" do
       expect(location2.determine_vba_facility_type).to eq("(RO)")
@@ -58,9 +77,6 @@ describe AvailableHearingLocations, :all_dbs do
     it "correctly formats location" do
       expect(location1.formatted_location).to eq(
         "#{location1.city}, #{location1.state} #{location1.formatted_facility_type}"
-      )
-      expect(location2.formatted_location).to eq(
-        "#{location2.city}, #{location2.state} #{location2.formatted_facility_type}"
       )
     end
   end
