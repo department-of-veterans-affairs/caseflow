@@ -4,9 +4,7 @@ module Helpers::AppealHearingHelper
   def available_hearing_locations(appeal)
     locations = appeal.available_hearing_locations || []
 
-    locations.map do |ahl|
-      ahl.to_hash
-    end
+    locations.map(&:to_hash)
   end
 
   def hearings(appeal)
@@ -16,6 +14,6 @@ module Helpers::AppealHearingHelper
   end
 
   def suggested_hearing_location(appeal)
-    appeal.suggested_hearing_location.to_hash
+    appeal.suggested_hearing_location&.to_hash
   end
 end
