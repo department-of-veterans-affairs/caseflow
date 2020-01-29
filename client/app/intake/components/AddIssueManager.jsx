@@ -53,13 +53,16 @@ class AddIssueManager extends React.Component {
         formType,
         onCancel: () => this.cancel(),
         onSubmit: ({ selectedContestableIssueIndex, currentIssue, notes }) => {
+          console.log('onSubmit', currentIssue);
           this.setState({ selectedContestableIssueIndex,
             currentIssue,
             notes }, () => {
+            console.log('after setState', this.state.currentIssue);
             if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
               this.setState({ currentModal: 'CorrectionTypeModal' });
             } else if (this.hasLegacyAppeals()) {
-              this.setState({ currentModal: 'LegacyOptInModal' });
+              this.setState({ currentModal: 'LegacyOptInModal',
+                addtlProps: { currentIssue } });
             } else if (this.requiresUntimelyExemption()) {
               this.setState({ currentModal: 'UntimelyExemptionModal',
                 addtlProps: { currentIssue } });
@@ -99,7 +102,8 @@ class AddIssueManager extends React.Component {
               const { currentIssue } = this.state;
 
               if (this.hasLegacyAppeals()) {
-                this.setState({ currentModal: 'LegacyOptInModal' });
+                this.setState({ currentModal: 'LegacyOptInModal',
+                  addtlProps: { currentIssue } });
               } else if (this.requiresUntimelyExemption()) {
                 this.setState({ currentModal: 'UntimelyExemptionModal',
                   addtlProps: { currentIssue } });
