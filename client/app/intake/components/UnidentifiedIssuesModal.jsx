@@ -166,7 +166,7 @@ class UnidentifiedIssuesModal extends React.Component {
           />
           {unidentifiedIssueDecisionDate && this.getDecisionDate()}
           <TextField name="Notes"
-            optional={!this.state.checkboxSelected}
+            optional={!this.state.verifiedUnidentifiedIssue}
             strongLabel
             value={this.state.notes}
             onChange={this.onNotesChange} />
