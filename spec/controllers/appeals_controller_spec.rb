@@ -487,9 +487,20 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
             .and_return([appeal.claimant[:representative]])
         end
 
-        it "returns a successful response" do
+        it "returns an error but does not send a message to Sentry" do
+          expect(Raven).to receive(:capture_exception).exactly(0).times
           subject
-          assert_response(:success)
+          expect(response.response_code).to eq(403)
+        end
+
+        context "when feature is enabled" do
+          before { FeatureToggle.enable!(:vso_calimant_representative) }
+          after { FeatureToggle.disable!(:vso_calimant_representative) }
+
+          it "returns a successful response" do
+            subject
+            assert_response(:success)
+          end
         end
       end
     end
