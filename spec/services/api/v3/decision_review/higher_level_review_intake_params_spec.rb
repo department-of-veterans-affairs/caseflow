@@ -62,7 +62,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
 
   let(:veteran_hash) do
     {
-      fileNumberOrSsn: file_number_or_ssn,
+      ssn: ssn,
       addressLine1: vet_address_line_1,
       addressLine2: vet_address_line_2,
       city: vet_city,
@@ -75,14 +75,13 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
       emailAddress: vet_email_address
     }
   end
-  let!(:veteran) do
-    Generators::Veteran.build(
-      file_number: file_number_or_ssn,
-      first_name: first_name,
-      last_name: last_name
-    )
+  let(:veteran) do
+    create(:veteran,
+           ssn: ssn,
+           first_name: first_name,
+           last_name: last_name)
   end
-  let(:file_number_or_ssn) { "64205050" }
+  let(:ssn) { "642055050" }
   let(:first_name) { "Jane" }
   let(:last_name) { "Doe" }
   let(:vet_address_line_1) { nil }
@@ -218,7 +217,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     ]
   end
 
-  context do
+  context "contestable_issues" do
     it { expect(contestable_issues).not_to be_empty }
   end
 
@@ -361,37 +360,9 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
     let(:veteran) { create(:veteran) }
 
     context "use ssn" do
-      let(:file_number_or_ssn) { veteran.ssn }
+      let(:ssn) { veteran.ssn }
 
-      it do
-        expect(file_number_or_ssn).to be_truthy
-        is_expected.to eq veteran
-      end
-    end
-
-    context "use file number" do
-      let(:file_number_or_ssn) { veteran.file_number }
-
-      it do
-        expect(file_number_or_ssn).to be_truthy
-        is_expected.to eq veteran
-      end
-    end
-  end
-
-  describe "#file_number_or_ssn" do
-    subject { hlr_intake_params.file_number_or_ssn }
-
-    it { is_expected.to eq file_number_or_ssn }
-
-    context "int" do
-      let(:file_number_or_ssn) { 12 }
-      it("always returns a string") { is_expected.to eq "12" }
-    end
-
-    context "padded string" do
-      let(:file_number_or_ssn) { "  hello  " }
-      it("removes padding") { is_expected.to eq "hello" }
+      it { is_expected.to eq veteran }
     end
   end
 
@@ -760,11 +731,11 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
       let(:contestable_issues) { [] }
       let(:rating) { nil }
       let(:veteran) { nil }
-      let(:file_number_or_ssn) { nil }
+      let(:ssn) { nil }
       it do
         is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"fileNumberOrSsn\"]" \
-            " should be a(n) string. Got: #{file_number_or_ssn.inspect}."
+          "[\"data\"][\"attributes\"][\"veteran\"][\"ssn\"]" \
+            " should be a(n) string. Got: #{ssn.inspect}."
         )
       end
     end
@@ -1121,7 +1092,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
         [bool,           %w[data attributes legacyOptInApproved]],
         [[String],       %w[data attributes benefitType]],
         [object,         %w[data attributes veteran]],
-        [[String],       %w[data attributes veteran fileNumberOrSsn]],
+        [[String],       %w[data attributes veteran ssn]],
         [[String, nil],  %w[data attributes veteran addressLine1]],
         [[String, nil],  %w[data attributes veteran addressLine2]],
         [[String, nil],  %w[data attributes veteran city]],
