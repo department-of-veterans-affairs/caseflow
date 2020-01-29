@@ -25,6 +25,23 @@ describe AvailableHearingLocations, :all_dbs do
     )
   end
 
+  describe "to_hash" do
+    it "it serializes location correctly" do
+      expect(location1.to_hash).to eq(
+        name: nil,
+        address: nil,
+        city: location1.city,
+        state: location1.state,
+        distance: location1.distance,
+        facility_id: location1.facility_id,
+        facility_type: location1.facility_type,
+        classification: nil,
+        zip_code: nil,
+        formatted_facility_type: location1.formatted_facility_type
+      )
+    end
+  end
+
   describe "#formatted_facility_type" do
     it "correctly formats facility type" do
       expect(location1.formatted_facility_type).to eq("(BVA)")

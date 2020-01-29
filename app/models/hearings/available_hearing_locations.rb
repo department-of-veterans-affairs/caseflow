@@ -18,7 +18,7 @@ class AvailableHearingLocations < ApplicationRecord
       formatted_facility_type: formatted_facility_type
     }
   end
-  
+
   # this will eventually replace getFacilityType in AppealHearingLocations
   # in upcoming pagination work
   def formatted_facility_type
