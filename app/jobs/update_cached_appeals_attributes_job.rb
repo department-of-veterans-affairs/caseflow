@@ -49,7 +49,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_number: appeal.docket_number,
         is_aod: appeal_aod_status.include?(appeal.id),
         power_of_attorney_name: appeal.representative_name,
-        suggested_hearing_location: suggested_hearing_location,
+        suggested_hearing_location: suggested_hearing_location(appeal),
         veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
