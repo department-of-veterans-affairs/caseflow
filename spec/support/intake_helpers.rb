@@ -207,6 +207,11 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
+  def select_intake_no_match
+    find_all("label", text: /^No VACOLS issues were found/, minimum: 1).first.click
+    safe_click ".add-issue"
+  end
+
   def get_claim_id(claim_review)
     EndProductEstablishment.find_by(source: claim_review).reference_id
   end
