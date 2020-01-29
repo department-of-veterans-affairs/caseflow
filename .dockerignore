@@ -19,6 +19,3 @@ client/yarn-error.log
 
 # Ignore vim swap files
 *.swp
-
-# Ignore hidden files
-.*
