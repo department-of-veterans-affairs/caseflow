@@ -414,12 +414,7 @@ SELECT
           FROM
             PUBLIC.appeals AS appeals
       ) SELECT
-          to_char (
-            (
-              DATE( appeal_task_status.receipt_date )
-            )
-            ,'yymmdd'
-          ) || '-' || appeal_task_status.id AS "docket_number"
+          appeal_task_status.stream_docket_number AS "docket_number"
           ,appeal_task_status. *
           ,CASE
             WHEN appeal_task_status.distribution_task_status IN (
