@@ -195,7 +195,8 @@ class DailyDocketRow extends React.Component {
       <HearingLocationDropdown {...inputProps} regionalOffice={regionalOffice} />
       <StaticHearingDay hearing={hearing} />
       <TimeRadioButtons {...inputProps} regionalOffice={regionalOffice}
-        readOnly={readOnly || (hearing.virtualHearing && !hearing.virtualHearing.jobCompleted)}
+        readOnly={(hearing.scheduledForIsPast || readOnly) ||
+          (hearing.virtualHearing && !hearing.virtualHearing.jobCompleted)}
         update={(values) => {
           this.update(values);
           if (values.scheduledTimeString !== null) {
@@ -326,7 +327,8 @@ DailyDocketRow.propTypes = {
     virtualHearing: PropTypes.object,
     isVirtual: PropTypes.bool,
     externalId: PropTypes.string,
-    disposition: PropTypes.string
+    disposition: PropTypes.string,
+    scheduledForIsPast: PropTypes.bool
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,

@@ -113,10 +113,7 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
 
             first_location = response_body["hearings"][0]["hearing_location"]
             expect(first_location).to eq("Board of Veterans' Appeals CO Office")
-          end
 
-          it do
-            response_body = JSON.parse(subject.body)
             expected_times = hearings.map(&:scheduled_for)
             scheduled_times = response_body["hearings"].map { |hearing| hearing["scheduled_for"] }
 
@@ -179,11 +176,13 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
           response
         end
 
-        it { expect(subject.status).to eq 200 }
-        it { expect(JSON.parse(subject.body)).to have_key("hearings") }
-        it { expect(JSON.parse(subject.body)["hearings"].size).to eq 2 }
-        it do
-          json_hearings = JSON.parse(subject.body)["hearings"]
+        it "returns a 200 and response has expected attributes and values", :aggregate_failures do
+          expect(subject.status).to eq 200
+          response_body = JSON.parse(subject.body)
+          expect(response_body).to have_key("hearings")
+
+          json_hearings = response_body["hearings"]
+          expect(json_hearings.size).to eq 2
           expect(json_hearings.map { |hearing| hearing["scheduled_for"] }).to all(start_with("2019-08-08"))
         end
       end

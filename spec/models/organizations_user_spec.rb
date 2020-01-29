@@ -41,4 +41,66 @@ describe OrganizationsUser, :postgres do
       expect(subject).to be_a(OrganizationsUser)
     end
   end
+
+  describe ".enable_decision_drafting" do
+    before { FeatureToggle.enable!(:judge_admin_scm) }
+    after { FeatureToggle.disable!(:judge_admin_scm) }
+    let(:judge) { create(:user) }
+    let(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let(:judge_team_org_user) { judge_team.add_user(user) }
+
+    context "when a user is a judge" do
+      it "fails" do
+        expect { OrganizationsUser.enable_decision_drafting(judge, judge_team) }
+          .to raise_error(Caseflow::Error::ActionForbiddenError).with_message(COPY::JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR)
+      end
+    end
+
+    context "when a user is an attorney" do
+      it "does nothing" do
+        expect(judge_team_org_user.judge_team_role.type).to eq(DecisionDraftingAttorney.name)
+        OrganizationsUser.enable_decision_drafting(user, judge_team)
+        expect(judge_team_org_user.reload.judge_team_role.type).to eq(DecisionDraftingAttorney.name)
+      end
+    end
+
+    context "when a user is not an attorney" do
+      before { judge_team_org_user.judge_team_role.update!(type: nil) }
+      it "gives the user the attorney role" do
+        OrganizationsUser.enable_decision_drafting(user, judge_team)
+        expect(judge_team_org_user.reload.judge_team_role.type).to eq(DecisionDraftingAttorney.name)
+      end
+    end
+  end
+
+  describe ".disable_decision_drafting" do
+    before { FeatureToggle.enable!(:judge_admin_scm) }
+    after { FeatureToggle.disable!(:judge_admin_scm) }
+    let(:judge) { create(:user) }
+    let(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let(:judge_team_org_user) { judge_team.add_user(user) }
+
+    context "when a user is a judge" do
+      it "fails" do
+        expect { OrganizationsUser.enable_decision_drafting(judge, judge_team) }
+          .to raise_error(Caseflow::Error::ActionForbiddenError).with_message(COPY::JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR)
+      end
+    end
+
+    context "when a user is not an attorney" do
+      before { judge_team_org_user.judge_team_role.update!(type: nil) }
+      it "does nothing" do
+        OrganizationsUser.disable_decision_drafting(user, judge_team)
+        expect(judge_team_org_user.reload.judge_team_role.type).to eq(nil)
+      end
+    end
+
+    context "when a user is an attorney" do
+      it "removes the attorney role" do
+        expect(judge_team_org_user.judge_team_role.type).to eq(DecisionDraftingAttorney.name)
+        OrganizationsUser.disable_decision_drafting(user, judge_team)
+        expect(judge_team_org_user.reload.judge_team_role.type).to eq(nil)
+      end
+    end
+  end
 end

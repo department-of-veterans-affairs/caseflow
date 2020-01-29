@@ -47,6 +47,18 @@ class RegionalOffice
     location_hash[:label]
   end
 
+  def facility_id
+    location_hash[:facility_locator_id]
+  end
+
+  def street_address
+    facility_location_hash["address_1"]
+  end
+
+  def zip_code
+    facility_location_hash["zip"]
+  end
+
   def to_h
     location_hash.merge(key: key)
   end
@@ -59,17 +71,20 @@ class RegionalOffice
     !!location_hash[:city]
   end
 
-  def self.city_state_by_key(ro_key)
-    regional_office = CITIES[ro_key]
-    if regional_office
-      "#{regional_office[:city]}, #{regional_office[:state]}"
-    end
-  end
-
   private
 
   def location_hash
     @location_hash ||= compute_location_hash
+  end
+
+  def facility_location_hash
+    if facility_id.present?
+      addr = Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[facility_id]
+
+      return addr if addr.present?
+    end
+
+    {}
   end
 
   def compute_location_hash
@@ -90,6 +105,21 @@ class RegionalOffice
       fail NotFoundError unless result.valid?
 
       result
+    end
+
+    def all
+      Enumerator.new do |iter|
+        CITIES.each_key { |ro_key| iter << RegionalOffice.new(ro_key) }
+        SATELLITE_OFFICES.each_key { |ro_key| iter << RegionalOffice.new(ro_key) }
+      end
+    end
+
+    def city_state_by_key(ro_key)
+      regional_office = RegionalOffice.find!(ro_key)
+
+      "#{regional_office.city}, #{regional_office.state}"
+    rescue NotFoundError
+      nil
     end
 
     def ros_with_hearings
