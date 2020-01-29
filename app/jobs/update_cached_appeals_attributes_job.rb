@@ -5,8 +5,6 @@ BATCH_SIZE = 1000
 class UpdateCachedAppealsAttributesJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
-  # For suggested_hearing_location
-  include Helpers::AppealHearingHelper
 
   queue_with_priority :low_priority
 
@@ -51,7 +49,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_number: appeal.docket_number,
         is_aod: appeal_aod_status.include?(appeal.id),
         power_of_attorney_name: appeal.representative_name,
-        suggested_hearing_location: appeal.available_hearing_locations&.min_by { |loc| loc.distance }&.formatted_location,
+        suggested_hearing_location: suggested_hearing_location,
         veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
@@ -310,9 +308,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end.to_h
   end
 
-  def format_suggested_hearing_location(appeal)
-    location = suggested_hearing_location(appeal)
-    # For filter values on the frontend (see: AppealHearingsTable)
-    location.nil? ? "" : "#{location[:city]}, #{location[:state]} #{location[:formatted_facility_type]}"
+  def suggested_hearing_location(appeal)
+    # get the closest hearing location in 'City, State, (Facility Type)' format
+    appeal.available_hearing_locations&.min_by { |loc| loc.distance }&.formatted_location
   end
 end
