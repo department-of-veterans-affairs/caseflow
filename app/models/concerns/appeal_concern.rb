@@ -45,6 +45,12 @@ module AppealConcern
     end
   end
 
+  def user_represents_claimant_not_veteran
+    return false unless FeatureToggle.enabled?(:vso_claimant_representative)
+
+    appellant_is_not_veteran && representatives.any? { |rep| rep.user_has_access?(current_user) }
+  end
+
   private
 
   # TODO: this is named "veteran_name_object" to avoid name collision, refactor

@@ -10,6 +10,7 @@ class ETL::Builder
     DecisionIssue
     Organization
     OrganizationsUser
+    Person
     Task
     User
   ].freeze
@@ -18,23 +19,24 @@ class ETL::Builder
 
   def initialize(since: checkpoint_time)
     @since = since
+    @built = 0
   end
 
-  attr_reader :since
+  attr_reader :since, :built
 
   def incremental
-    built = 0
     checkmark
     syncer_klasses.each do |klass|
-      built += klass.new(since: since).call
+      self.built += klass.new(since: since).call
     end
+    post_build_steps
     built
   end
 
   def full
-    built = 0
     checkmark
-    syncer_klasses.each { |klass| built += klass.new.call }
+    syncer_klasses.each { |klass| self.built += klass.new.call }
+    post_build_steps
     built
   end
 
@@ -43,6 +45,8 @@ class ETL::Builder
   end
 
   private
+
+  attr_writer :built
 
   def syncer_klasses
     ETL_KLASSES.map { |klass| "ETL::#{klass}Syncer".constantize }
@@ -63,5 +67,16 @@ class ETL::Builder
 
   def checkmark
     Rails.cache.write(CHECKPOINT_KEY, Time.zone.now.to_s)
+  end
+
+  def post_build_steps
+    mark_aod_for_today
+  end
+
+  def mark_aod_for_today
+    ETL::Appeal.active
+      .where("claimant_dob <= ?", 75.years.ago)
+      .where(aod_due_to_dob: false)
+      .update_all(aod_due_to_dob: true)
   end
 end
