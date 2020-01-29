@@ -226,6 +226,10 @@ class LegacyAppeal < ApplicationRecord
     !!appellant_first_name
   end
 
+  def veteran_is_not_claimant
+    appellant_is_not_veteran
+  end
+
   def veteran_if_exists
     @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
   end

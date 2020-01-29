@@ -482,7 +482,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         let!(:vso) { create(:vso, participant_id: appeal.claimant[:representative][:participant_id]) }
 
         before do
-          vso.add_user(user)
+          allow_any_instance_of(LegacyAppeal).to receive(:appellant_is_not_veteran).and_return(true)
           allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id)
             .and_return([appeal.claimant[:representative]])
         end

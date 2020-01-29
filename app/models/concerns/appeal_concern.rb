@@ -45,6 +45,10 @@ module AppealConcern
     end
   end
 
+  def user_represents_claimant_not_veteran
+    veteran_is_not_claimant && representatives.any? { |rep| rep.user_has_access?(current_user) }
+  end
+
   private
 
   # TODO: this is named "veteran_name_object" to avoid name collision, refactor
