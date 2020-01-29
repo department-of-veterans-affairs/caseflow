@@ -27,8 +27,13 @@ describe AvailableHearingLocations, :all_dbs do
 
   describe "#formatted_facility_type" do
     it "correctly formats facility type" do
-      expect(location1.formatted_facility_type).to eq("(BVA) ")
-      expect(location2.formatted_facility_type).to eq("(RO) ")
+      expect(location1.formatted_facility_type).to eq("(BVA)")
+      expect(location2.formatted_facility_type).to eq("(RO)")
+    end
+  end
+  describe "#determine_vba_facility_type" do
+    it "determines correct vba facility" do
+      expect(location2.determine_vba_facility_type).to eq("(RO)")
     end
   end
 

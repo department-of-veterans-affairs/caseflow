@@ -49,7 +49,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_number: appeal.docket_number,
         is_aod: appeal_aod_status.include?(appeal.id),
         power_of_attorney_name: appeal.representative_name,
-        suggested_hearing_location: suggested_hearing_location(appeal),
+        suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
         veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
@@ -306,10 +306,5 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       # Matches how last names are split and sorted on the front end (see: TaskTable.detailsColumn.getSortValue)
       [veteran.file_number, "#{veteran.last_name.split(' ').last}, #{veteran.first_name}"]
     end.to_h
-  end
-
-  def suggested_hearing_location(appeal)
-    # get the closest hearing location in 'City, State, (Facility Type)' format
-    appeal.available_hearing_locations&.min_by { |loc| loc.distance }&.formatted_location
   end
 end
