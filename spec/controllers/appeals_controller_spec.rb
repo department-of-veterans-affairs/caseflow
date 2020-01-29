@@ -494,8 +494,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         end
 
         context "when feature is enabled" do
-          before { FeatureToggle.enable!(:vso_calimant_representative) }
-          after { FeatureToggle.disable!(:vso_calimant_representative) }
+          before { FeatureToggle.enable!(:vso_claimant_representative) }
+          after { FeatureToggle.disable!(:vso_claimant_representative) }
 
           it "returns a successful response" do
             subject
