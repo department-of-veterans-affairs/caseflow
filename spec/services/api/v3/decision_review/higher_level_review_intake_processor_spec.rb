@@ -31,7 +31,7 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
       sameOffice: same_office,
       legacyOptInApproved: legacy_opt_in_approved,
       benefitType: benefit_type,
-      veteran: { fileNumberOrSsn: file_number_or_ssn }
+      veteran: { ssn: ssn }
     }
   end
 
@@ -40,7 +40,7 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
   let(:same_office) { false }
   let(:legacy_opt_in_approved) { true }
   let(:benefit_type) { "compensation" }
-  let(:file_number_or_ssn) { "55555555" }
+  let(:ssn) { "555555555" }
 
   let(:formatted_receipt_date) { receipt_date.strftime("%F") }
 
@@ -73,12 +73,11 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
 
   let(:decision_review_class) { HigherLevelReview }
 
-  let!(:veteran) do
-    Generators::Veteran.build(
-      file_number: file_number_or_ssn,
-      first_name: first_name,
-      last_name: last_name
-    )
+  let(:veteran) do
+    create(:veteran,
+           ssn: ssn,
+           first_name: first_name,
+           last_name: last_name)
   end
 
   let(:first_name) { "Samantha" }
@@ -88,14 +87,6 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
 
   let(:promulgation_date) { receipt_date - 10.days }
   let(:profile_date) { (receipt_date - 8.days).to_datetime }
-
-  #   before do
-  #     Timecop.freeze(post_ama_start_date)
-  #
-  #     [:establish_claim!, :create_contentions!, :associate_rating_request_issues!].each do |method|
-  #       allow(Fakes::VBMSService).to receive(method).and_call_original
-  #     end
-  #   end
 
   context do
     it { expect(contestable_issues).not_to be_empty }
