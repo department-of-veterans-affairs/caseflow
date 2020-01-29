@@ -103,18 +103,18 @@ def attorney_checkout
 end
 
 def judge_checkout
-    User.authenticate!(user: judge_user)
-    visit "/queue"
-    click_on "(#{appeal.veteran_file_number})"
-    click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-    click_on "Continue"
-    find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
-    text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
-    find("label", text: text_to_click).click
-    find("#logically_organized", visible: false).sibling("label").click
-    find("#issues_are_not_addressed", visible: false).sibling("label").click
+  User.authenticate!(user: judge_user)
+  visit "/queue"
+  click_on "(#{appeal.veteran_file_number})"
+  click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+  click_on "Continue"
+  find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+  text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
+  find("label", text: text_to_click).click
+  find("#logically_organized", visible: false).sibling("label").click
+  find("#issues_are_not_addressed", visible: false).sibling("label").click
 
-    dummy_note = generate_words 5
-    fill_in "additional-factors", with: dummy_note
-    click_on "Continue"
+  dummy_note = generate_words 5
+  fill_in "additional-factors", with: dummy_note
+  click_on "Continue"
 end
