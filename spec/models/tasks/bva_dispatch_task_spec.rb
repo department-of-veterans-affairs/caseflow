@@ -192,4 +192,13 @@ describe BvaDispatchTask, :all_dbs do
       end
     end
   end
+
+  describe "#available_actions" do
+    let(:bva_d_task) { create(:bva_dispatch_task) }
+
+    it "actions should not include 'Assign to Team'" do
+      expect(bva_d_task.available_actions(bva_d_task.assigned_to))
+        .not_to include(Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h)
+    end
+  end
 end
