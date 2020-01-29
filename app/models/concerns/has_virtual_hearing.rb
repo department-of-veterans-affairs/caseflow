@@ -13,7 +13,7 @@ module HasVirtualHearing
       VirtualHearing.statuses[:active]
     ].include? virtual_hearing&.status
   end
-  
+
   def was_virtual?
     !virtual_hearing.nil? && !virtual?
   end
