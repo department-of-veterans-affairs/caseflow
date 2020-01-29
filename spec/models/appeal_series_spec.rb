@@ -106,6 +106,13 @@ describe AppealSeries, :all_dbs do
         ]
       end
 
+      it "handles nil decision_date comparison" do
+        allow(appeals.first).to receive(:decision_date) { nil }
+        allow(appeals.last).to receive(:decision_date) { Time.zone.now }
+
+        expect(series.latest_appeal).to_not be_nil
+      end
+
       it { is_expected.to eq "1234567" }
     end
   end
