@@ -909,26 +909,29 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#rating?, #nonrating?" do
-    subject { request_issue.rating? }
-    let(:nonrating) { request_issue.nonrating? }
     let(:request_issue) { rating_request_issue }
 
     context "when there is an associated rating issue" do
       let(:contested_rating_issue_reference_id) { "123" }
-      it { is_expected.to be true }
+
+      it "rating? is true" do
+        expect(request_issue.rating?).to be true
+      end
 
       it "nonrating? is false" do
-        expect(nonrating).to be(false)
+        expect(request_issue.nonrating?).to be(false)
       end
     end
 
     context "where there is an associated rating decision" do
       let(:contested_rating_decision_reference_id) { "123" }
 
-      it { is_expected.to be true }
+      it "rating? is true" do
+        expect(request_issue.rating?).to be true
+      end
 
       it "nonrating? is false" do
-        expect(nonrating).to be(false)
+        expect(request_issue.nonrating?).to be(false)
       end
     end
 
@@ -944,22 +947,46 @@ describe RequestIssue, :all_dbs do
         )
       end
       let(:decision_issue) do
-        create(:decision_issue,
-               decision_review: previous_review,
-               request_issues: [original_request_issue])
+        create(
+          :decision_issue,
+          decision_review: previous_review,
+          request_issues: [original_request_issue]
+        )
       end
 
-      it { is_expected.to be true }
+      it "rating? is true" do
+        expect(request_issue.rating?).to be true
+      end
+
       it "nonrating? is false" do
-        expect(nonrating).to be(false)
+        expect(request_issue.nonrating?).to be(false)
       end
     end
 
     context "when it's a nonrating issue" do
       let(:request_issue) { nonrating_request_issue }
-      it { is_expected.to be_falsey }
+
+      it "rating? is falsey" do
+        expect(request_issue.rating?).to be_falsey
+      end
+
       it "nonrating? is true" do
-        expect(nonrating).to be(true)
+        expect(request_issue.nonrating?).to be(true)
+      end
+    end
+
+    context "when the contested issue is a decision issue on an unidentified request issue" do
+      let(:contested_rating_issue_reference_id) { nil }
+      let(:other_request_issue) { unidentified_issue }
+      let!(:decision_issue) { create(:decision_issue, request_issues: [other_request_issue]) }
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      it "rating is true" do
+        expect(request_issue.rating?).to be true
+      end
+
+      it "nonrating? is false" do
+        expect(request_issue.nonrating?).to be false
       end
     end
   end
