@@ -271,6 +271,10 @@ class Appeal < DecisionReview
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
 
+  def appellant_is_not_veteran
+    !!veteran_is_not_claimant
+  end
+
   def cavc
     "not implemented for AMA"
   end
