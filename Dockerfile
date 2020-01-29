@@ -19,6 +19,11 @@ RUN ln -s libclntsh.so.12.1 libclntsh.so
 
 WORKDIR /caseflow
 
+# Copy all the files
+COPY . .
+
+RUN pwd && ls -lsa
+
 # Build dependencies
 RUN apt -y update && \
     apt -y upgrade && \
@@ -28,14 +33,13 @@ RUN apt -y update && \
     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt -y update && \
-    curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_$(cat .nvmrc | cut -d "." -f 1).x | bash - && \
     apt install -y ${CASEFLOW} &&  \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get clean && apt-get autoclean && apt-get autoremove
 
-# Copy all the files
-COPY . .
+
 
 RUN bundle install && \
     cd client && \
