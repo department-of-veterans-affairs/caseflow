@@ -3,6 +3,8 @@
 # transformed Appeal model, with associations "flattened" for reporting.
 
 class ETL::Appeal < ETL::Record
+  scope :active, -> { where(active_appeal: true) }
+
   class << self
     def origin_primary_key
       :appeal_id

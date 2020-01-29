@@ -74,6 +74,9 @@ class ETL::Builder
   end
 
   def mark_aod_for_today
-    ETL::Appeal.where("claimant_dob <= ?", 75.years.ago).where(aod_due_to_dob: false).update_all(aod_due_to_dob: true)
+    ETL::Appeal.active
+      .where("claimant_dob <= ?", 75.years.ago)
+      .where(aod_due_to_dob: false)
+      .update_all(aod_due_to_dob: true)
   end
 end
