@@ -72,11 +72,7 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   end
 
   def veteran
-    VeteranFinder.find_best_match(file_number_or_ssn)
-  end
-
-  def file_number_or_ssn
-    attributes.dig("veteran", "fileNumberOrSsn").to_s.strip
+    @veteran ||= find_veteran
   end
 
   def attributes
@@ -185,7 +181,7 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
       [BOOL,           %w[data attributes legacyOptInApproved]],
       [[String],       %w[data attributes benefitType]],
       [OBJECT,         %w[data attributes veteran]],
-      [[String],       %w[data attributes veteran fileNumberOrSsn]],
+      [[String],       %w[data attributes veteran ssn]],
       [[String, nil],  %w[data attributes veteran addressLine1]],
       [[String, nil],  %w[data attributes veteran addressLine2]],
       [[String, nil],  %w[data attributes veteran city]],
@@ -292,6 +288,12 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
   end
 
   private
+
+  def find_veteran
+    ssn = attributes.dig("veteran", "ssn").to_s.strip
+
+    ssn.present? ? VeteranFinder.find_best_match(ssn) : nil
+  end
 
   def validate
     if !shape_valid?
