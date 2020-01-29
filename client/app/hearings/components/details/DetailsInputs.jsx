@@ -147,7 +147,8 @@ DetailsInputs.propTypes = {
     room: PropTypes.string,
     evidenceWindowWaived: PropTypes.bool,
     notes: PropTypes.string,
-    bvaPoc: PropTypes.string
+    bvaPoc: PropTypes.string,
+    scheduledForIsPast: PropTypes.bool
   }),
   update: PropTypes.func,
   readOnly: PropTypes.bool,
