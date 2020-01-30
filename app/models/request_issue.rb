@@ -230,7 +230,10 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
-    !!associated_rating_issue? || previous_rating_issue? || !!associated_rating_decision?
+    !!associated_rating_issue? ||
+      !!previous_rating_issue? ||
+      !!associated_rating_decision? ||
+      !!contested_decision_issue&.rating?
   end
 
   def nonrating?
@@ -394,12 +397,11 @@ class RequestIssue < ApplicationRecord
     transaction do
       return unless create_decision_issues
 
+      end_product_establishment.on_decision_issue_sync_processed(self)
       clear_error!
       close_decided_issue!
       processed!
     end
-
-    end_product_establishment.on_decision_issue_sync_processed
   end
 
   def vacols_issue

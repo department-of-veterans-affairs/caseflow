@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200116215235) do
+ActiveRecord::Schema.define(version: 20200121221718) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "appeals", force: :cascade, comment: "Denormalized BVA NODs" do |t|
     t.boolean "active_appeal", null: false, comment: "Calculated based on BVA status"
+    t.boolean "aod_due_to_dob", default: false, comment: "Calculated every day based on Claimant DOB"
     t.boolean "aod_granted", default: false, null: false, comment: "advance_on_docket_motions.granted"
     t.string "aod_reason", limit: 50, comment: "advance_on_docket_motions.reason"
     t.bigint "aod_user_id", comment: "advance_on_docket_motions.user_id"
@@ -56,11 +57,13 @@ ActiveRecord::Schema.define(version: 20200116215235) do
     t.string "veteran_name_suffix", comment: "veterans.name_suffix"
     t.string "veteran_participant_id", limit: 20, comment: "veterans.participant_id"
     t.index ["active_appeal"], name: "index_appeals_on_active_appeal"
+    t.index ["aod_due_to_dob"], name: "index_appeals_on_aod_due_to_dob"
     t.index ["aod_granted"], name: "index_appeals_on_aod_granted"
     t.index ["aod_user_id"], name: "index_appeals_on_aod_user_id"
     t.index ["appeal_created_at"], name: "index_appeals_on_appeal_created_at"
     t.index ["appeal_id"], name: "index_appeals_on_appeal_id"
     t.index ["appeal_updated_at"], name: "index_appeals_on_appeal_updated_at"
+    t.index ["claimant_dob"], name: "index_appeals_on_claimant_dob"
     t.index ["claimant_id"], name: "index_appeals_on_claimant_id"
     t.index ["claimant_participant_id"], name: "index_appeals_on_claimant_participant_id"
     t.index ["claimant_person_id"], name: "index_appeals_on_claimant_person_id"

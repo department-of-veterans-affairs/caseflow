@@ -192,8 +192,8 @@ class TasksController < ApplicationController
   def invalid_type_error
     render json: {
       "errors": [
-        "title": "Invalid Task Type Error",
-        "detail": "Task type is invalid, valid types: #{TASK_CLASSES_LOOKUP.keys}"
+        "title": "Invalid Task Type Error: #{(task_classes - valid_task_classes.keys).join(',')}",
+        "detail": "Should be one of the #{TASK_CLASSES_LOOKUP.count} valid types."
       ]
     }, status: :bad_request
   end

@@ -92,7 +92,7 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        if BGSService.new.can_access?(appeal.veteran_file_number)
+        if BGSService.new.can_access?(appeal.veteran_file_number) || appeal.user_represents_claimant_not_veteran
           id = params[:appeal_id]
           MetricsService.record("Get appeal information for ID #{id}",
                                 service: :queue,

@@ -59,6 +59,7 @@ class HearingSerializer
   attribute :representative_email_address
   attribute :room
   attribute :scheduled_for
+  attribute :scheduled_for_is_past, &:scheduled_for_past?
   attribute :scheduled_time
   attribute :scheduled_time_string
   attribute :summary
