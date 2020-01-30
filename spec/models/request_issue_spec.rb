@@ -924,8 +924,11 @@ describe RequestIssue, :all_dbs do
     end
 
     context "verified unidentified issue returns true for rating" do
-      let(:verified_unidentified_issue) { true }
-      it { is_expected.to be true }
+      let!(:request_issue) { create(:request_issue, verified_unidentified_issue: true) }
+
+      it "rating? is true" do
+        expect(request_issue.rating?).to be true
+      end
     end
 
     context "where there is an associated rating decision" do

@@ -22,7 +22,7 @@ class UnidentifiedIssuesModal extends React.Component {
     const { description, notes, decisionDate, verifiedUnidentifiedIssue } = this.state;
     const { formType, intakeData } = this.props;
     const currentIssue = {
-      isUnidentified: true,
+      isUnidentified: !verifiedUnidentifiedIssue,
       description,
       notes,
       decisionDate,
@@ -75,9 +75,9 @@ class UnidentifiedIssuesModal extends React.Component {
     const decisionDate = this.state.decisionDate && !this.errorOnDecisionDate(this.state.decisionDate);
     const notes = this.state.notes;
 
-    const checked = this.state.verifiedUnidentifiedIssue ? !(description && decisionDate && notes) : !description;
+    const requiredFieldsPresent = this.state.verifiedUnidentifiedIssue ? !(description && decisionDate && notes) : !description;
 
-    return checked;
+    return requiredFieldsPresent;
   }
 
   getModalButtons() {
