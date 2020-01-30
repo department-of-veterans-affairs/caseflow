@@ -137,8 +137,8 @@ describe ExternalApi::BGSService do
     end
   end
 
-  describe "#may_modify?" do
-    subject { bgs.may_modify?(vbms_id, veteran.participant_id) }
+  describe "#station_conflict?" do
+    subject { bgs.station_conflict?(vbms_id, veteran.participant_id) }
 
     before do
       allow(bgs_client).to receive(:people).and_return(bgs_people_service)
@@ -159,8 +159,8 @@ describe ExternalApi::BGSService do
         { ptcpnt_id: veteran.participant_id }
       end
 
-      it "returns true" do
-        expect(subject).to be_truthy
+      it "returns false" do
+        expect(subject).to be_falsey
       end
     end
 
@@ -172,8 +172,8 @@ describe ExternalApi::BGSService do
         }
       end
 
-      it "returns false" do
-        expect(subject).to be_falsey
+      it "returns true" do
+        expect(subject).to be_truthy
       end
     end
 
@@ -193,8 +193,8 @@ describe ExternalApi::BGSService do
         }
       end
 
-      it "returns true" do
-        expect(subject).to be_truthy
+      it "returns false" do
+        expect(subject).to be_falsey
       end
     end
 
@@ -203,8 +203,8 @@ describe ExternalApi::BGSService do
         allow(bgs_claimants_service).to receive(:find_flashes) { fail BGS::ShareError, "no access" }
       end
 
-      it "returns false" do
-        expect(subject).to be_falsey
+      it "returns true" do
+        expect(subject).to be_truthy
       end
     end
 
@@ -224,8 +224,8 @@ describe ExternalApi::BGSService do
         }
       end
 
-      it "returns false" do
-        expect(subject).to be_falsey
+      it "returns true" do
+        expect(subject).to be_truthy
       end
     end
   end
