@@ -119,6 +119,7 @@ const appealAttributesFromRawTask = (task) => ({
   type: task.attributes.appeal_type,
   externalId: task.attributes.external_appeal_id,
   docketName: task.attributes.docket_name,
+  docketRangeDate: task.attributes.docket_range_date,
   isLegacyAppeal: task.attributes.docket_name === 'legacy',
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,

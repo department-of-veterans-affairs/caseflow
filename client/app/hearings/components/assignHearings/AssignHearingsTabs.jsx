@@ -4,7 +4,6 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 
-import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import { getQueryParams } from '../../../util/QueryParamsUtil';
 import AssignHearingsTable from './AssignHearingsTable';
 import QUEUE_CONFIG, {
@@ -28,14 +27,6 @@ const getCurrentTabIndex = () => {
 };
 
 export class AssignHearingsTabs extends React.PureComponent {
-
-  amaDocketCutoffLineStyle = (appeals) => {
-    const endOfNextMonth = moment().add(1, 'months').
-      endOf('month');
-    const indexOfLine = getIndexOfDocketLine(appeals, endOfNextMonth);
-
-    return docketCutoffLineStyle(indexOfLine, endOfNextMonth.format('MMMM YYYY'));
-  }
 
   render() {
     const {

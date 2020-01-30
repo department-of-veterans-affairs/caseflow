@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import querystring from 'querystring';
-import ApiUtil from '../../../util/ApiUtil';
 import _ from 'lodash';
+import moment from 'moment';
 
 import {
   AppealDocketTag,
@@ -15,8 +13,10 @@ import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import {
   getFacilityType
 } from '../../../components/DataDropdowns/AppealHearingLocations';
+import { getIndexOfDocketLine } from './AssignHearingsDocketLine';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
+import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
 import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
@@ -32,7 +32,8 @@ export default class AssignHearingsTable extends React.PureComponent {
 
     this.state = {
       showNoVeteransToAssignError: false,
-      colsFromApi: null
+      colsFromApi: null,
+      amaDocketLineIndex: null
     };
   }
 
@@ -51,6 +52,22 @@ export default class AssignHearingsTable extends React.PureComponent {
       then((response) => {
         this.setState({ colsFromApi: response.body.columns });
       });
+  }
+
+  endOfNextMonth = () => (
+    moment().add(1, 'months').
+      endOf('month')
+  )
+
+  amaDocketCutoffLineIndex = (appeals) => {
+    const { tabName } = this.props;
+
+    // Docket line only applies to AMA docket.
+    if (tabName !== QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME) {
+      return null;
+    }
+
+    return getIndexOfDocketLine(appeals, this.endOfNextMonth());
   }
 
   getSuggestedHearingLocation = (locations) => {
@@ -182,9 +199,15 @@ export default class AssignHearingsTable extends React.PureComponent {
       return;
     }
 
-    const { totalTaskCount } = response.total_task_count;
+    const { tasks, total_task_count: totalTaskCount  } = response;
+    const amaDocketLineIndex = this.amaDocketCutoffLineIndex(
+      tasks.map((task) => task.appeal).filter((appeal) => !appeal.isLegacy)
+    );
 
-    this.setState({ showNoVeteransToAssignError: totalTaskCount === 0 });
+    this.setState({
+      showNoVeteransToAssignError: totalTaskCount === 0,
+      amaDocketLineIndex
+    });
   }
 
   render = () => {
