@@ -11,6 +11,7 @@ import {
   SuggestedHearingLocation
 } from './AssignHearingsFields';
 import { NoVeteransToAssignMessage } from './Messages';
+import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import {
   getFacilityType
 } from '../../../components/DataDropdowns/AppealHearingLocations';
@@ -41,12 +42,12 @@ export default class AssignHearingsTable extends React.PureComponent {
 
   getColumnsFromApi= () => {
     const { tabName, selectedRegionalOffice } = this.props;
-    const qs = querystring.stringify({
+    const qs = encodeQueryParams({
       [QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM]: tabName,
       regional_office_key: selectedRegionalOffice
     });
 
-    return ApiUtil.get(`${COLUMNS_ENDPOINT}?${qs}`).
+    return ApiUtil.get(`${COLUMNS_ENDPOINT}${qs}`).
       then((response) => {
         this.setState({ colsFromApi: response.body.columns });
       });
@@ -188,7 +189,7 @@ export default class AssignHearingsTable extends React.PureComponent {
 
   render = () => {
     const { tabName, selectedRegionalOffice } = this.props;
-    const qs = querystring.stringify({
+    const qs = encodeQueryParams({
       [QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM]: tabName,
       regional_office_key: selectedRegionalOffice
     });
@@ -210,7 +211,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         slowReRendersAreOk
         bodyStyling={tableNumberStyling}
         useTaskPagesApi
-        taskPagesApiEndpoint={`${TASKS_ENDPOINT}?${qs}`}
+        taskPagesApiEndpoint={`${TASKS_ENDPOINT}${qs}`}
         enablePagination
         tabPaginationOptions={tabPaginationOptions}
       />
