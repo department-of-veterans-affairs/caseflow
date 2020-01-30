@@ -47,6 +47,18 @@ class DetailsInputs extends React.Component {
     return null;
   }
 
+  showEmailFields = () => {
+    const { isVirtual, wasVirtual, virtualHearing } = this.props;
+
+    return (isVirtual || wasVirtual) && virtualHearing;
+  }
+
+  readOnlyEmails = () => {
+    const { readOnly, wasVirtual, virtualHearing } = this.props;
+
+    return readOnly || !virtualHearing.jobCompleted || wasVirtual;
+  }
+
   render() {
     const {
       hearing, update, readOnly, isLegacy, openVirtualHearingModal, updateVirtualHearing,
@@ -67,7 +79,7 @@ class DetailsInputs extends React.Component {
             {this.renderVirtualHearingLinkSection()}
           </div>
         }
-        {isVirtual && virtualHearing &&
+        {this.showEmailFields() &&
           <div {...rowThirds}>
             <TextField
               name="Veteran Email"
@@ -75,7 +87,7 @@ class DetailsInputs extends React.Component {
               strongLabel
               required
               className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-              readOnly={readOnly || !virtualHearing.jobCompleted}
+              readOnly={this.readOnlyEmails()}
               onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
             />
             <TextField
@@ -83,7 +95,7 @@ class DetailsInputs extends React.Component {
               value={virtualHearing.representativeEmail}
               strongLabel
               className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-              readOnly={readOnly || !virtualHearing.jobCompleted}
+              readOnly={this.readOnlyEmails()}
               onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
             />
           </div>
@@ -162,7 +174,8 @@ DetailsInputs.propTypes = {
     jobCompleted: PropTypes.bool
   }),
   enableVirtualHearings: PropTypes.bool,
-  isVirtual: PropTypes.bool
+  isVirtual: PropTypes.bool,
+  wasVirtual: PropTypes.bool
 };
 
 export default DetailsInputs;
