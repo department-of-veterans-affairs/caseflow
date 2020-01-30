@@ -10,6 +10,7 @@ class Appeal < DecisionReview
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
+  include AppealAvailableHearingLocations
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal

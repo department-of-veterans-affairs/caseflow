@@ -147,7 +147,7 @@ paths:
                                 The veteran's SSN.
                                 Example: "123456789"
                                 Format: 9 digit characters.
-                                Corresponds to both "2. VETERAN'S SOCIAL SECURITY NUMBER" and "3. VA FILE NUMBER" on form 20-0996.
+                                Corresponds to "2. VETERAN'S SOCIAL SECURITY NUMBER" on form 20-0996.
 
                             addressLine1:
                               type: string

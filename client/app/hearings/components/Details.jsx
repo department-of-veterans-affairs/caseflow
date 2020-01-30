@@ -276,7 +276,8 @@ class HearingDetails extends React.Component {
             openVirtualHearingModal={this.openVirtualHearingModal}
             requestType={this.props.hearing.readableRequestType}
             disabled={disabled}
-            isVirtual={this.props.hearing.isVirtual} />
+            isVirtual={this.props.hearing.isVirtual}
+            wasVirtual={this.props.hearing.wasVirtual} />
           <div>
             <a
               className="button-link"
