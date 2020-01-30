@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 20200121221718) do
 
   create_table "appeals", force: :cascade, comment: "Denormalized BVA NODs" do |t|
     t.boolean "active_appeal", null: false, comment: "Calculated based on BVA status"
-    t.boolean "aod_due_to_dob", comment: "Calculated every day based on Claimant DOB"
+    t.boolean "aod_due_to_dob", default: false, comment: "Calculated every day based on Claimant DOB"
     t.boolean "aod_granted", default: false, null: false, comment: "advance_on_docket_motions.granted"
     t.string "aod_reason", limit: 50, comment: "advance_on_docket_motions.reason"
     t.bigint "aod_user_id", comment: "advance_on_docket_motions.user_id"
