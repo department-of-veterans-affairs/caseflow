@@ -63,7 +63,7 @@ class DocketCoordinator
   #
   #   1. Ratio of time period to year:
   #
-  #        [     PeroidToYear  = Time in time period / Time in year ]
+  #        [     PeriodToYear  = Time in time period / Time in year ]
   #
   #   2. Decisions in next time period:
   #
