@@ -854,7 +854,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
           expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
-          add_intake_rating_issue("None of these match")
+          select_intake_no_match
 
           expect(page).to have_content("Description for Active Duty Adjustments")
 

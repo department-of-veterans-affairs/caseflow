@@ -409,7 +409,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         date: "01/01/2016",
         legacy_issues: true
       )
-      add_intake_rating_issue("None of these match")
+      select_intake_no_match
       add_untimely_exemption_response("No")
 
       expect_ineligible_issue(number_of_issues)
@@ -428,7 +428,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       click_intake_add_issue
       add_intake_rating_issue(ri_before_ama.contention_text)
-      add_intake_rating_issue("None of these match")
+      select_intake_no_match
       add_untimely_exemption_response("Yes")
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
