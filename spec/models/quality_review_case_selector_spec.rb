@@ -2,6 +2,7 @@
 
 describe QualityReviewCaseSelector, :all_dbs do
   describe ".reached_monthly_limit_in_quality_reviews?" do
+    subject { QualityReviewCaseSelector.reached_monthly_limit_in_quality_reviews? }
     context "when a realistic number of cases are completed" do
       # Pulled from prod with:
       # Task.where(
@@ -13,9 +14,7 @@ describe QualityReviewCaseSelector, :all_dbs do
       let(:complete_cases_count) { 850 }
       let!(:qr_tasks) do
         complete_cases_count.times do
-          if QualityReviewCaseSelector.select_case_for_quality_review?
-            QualityReviewTask.create(assigned_to: create(:user), appeal: create(:appeal), created_at: Time.zone.now)
-          end
+          create(:qr_task) if QualityReviewCaseSelector.select_case_for_quality_review?
         end
       end
 
@@ -25,14 +24,29 @@ describe QualityReviewCaseSelector, :all_dbs do
     end
 
     context "after reaching the monthly limit" do
-      let!(:qr_tasks) do
-        QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUAILITY_REVIEWS.times do
-          QualityReviewTask.create(assigned_to: create(:user), appeal: create(:appeal), created_at: Time.zone.now)
+      let!(:qr_tasks) { create_list(:qr_task, QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUAILITY_REVIEWS) }
+
+      it "returns true" do
+        expect(subject).to be(true)
+      end
+
+      context "but some tasks are cancelled" do
+        before do
+          allow_any_instance_of(BvaDispatch).to receive(:next_assignee).and_return(false)
+          qr_tasks.last.update!(status: Constants.TASK_STATUSES.cancelled)
+        end
+
+        it "returns false" do
+          expect(subject).to be(false)
         end
       end
 
-      it "returns true" do
-        expect(QualityReviewCaseSelector.reached_monthly_limit_in_quality_reviews?).to be(true)
+      context "but some tasks are assigned to users" do
+        before { qr_tasks.last.update!(assigned_to: create(:user)) }
+
+        it "returns false" do
+          expect(subject).to be(false)
+        end
       end
     end
   end
