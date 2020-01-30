@@ -36,10 +36,21 @@ describe IntakeStartValidator, :postgres do
       let(:intake) do
         AppealIntake.new(veteran_file_number: veteran.file_number, detail: review, user: user)
       end
+      subject { validate_error_code }
 
-      it "sets no error_code even if BGS shows a station conflict" do
+      it "sets an error_code if BGS shows a station conflict" do
         allow_any_instance_of(BGSService).to receive(:station_conflict?) { true }
-        expect(validate_error_code).to be nil
+        is_expected.to eq "veteran_not_modifiable"
+      end
+
+      context "appeals bypass same station check" do
+        before { FeatureToggle.enable!(:allow_same_station_appeals) }
+        after { FeatureToggle.disable!(:allow_same_station_appeals) }
+
+        it "sets no error_code even if BGS shows a station conflict" do
+          allow_any_instance_of(BGSService).to receive(:station_conflict?) { true }
+          is_expected.to be nil
+        end
       end
     end
 
