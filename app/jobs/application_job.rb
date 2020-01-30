@@ -33,6 +33,13 @@ class ApplicationJob < ActiveJob::Base
     end
   end
 
+  # Testing America/New_York TZ for all jobs in UAT.
+  around_perform do |job, block|
+    Time.use_zone("America/New_York") do
+      block.call
+    end
+  end if Rails.current_env == :uat
+
   before_perform do |job|
     # setup debug context
     Raven.tags_context(job: job.class.name, queue: job.queue_name)
