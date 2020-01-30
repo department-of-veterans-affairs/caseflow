@@ -31,10 +31,7 @@ describe QualityReviewCaseSelector, :all_dbs do
       end
 
       context "but some tasks are cancelled" do
-        before do
-          allow_any_instance_of(BvaDispatch).to receive(:next_assignee).and_return(false)
-          qr_tasks.last.update!(status: Constants.TASK_STATUSES.cancelled)
-        end
+        before { qr_tasks.last.update_columns(status: Constants.TASK_STATUSES.cancelled) }
 
         it "returns false" do
           expect(subject).to be(false)
