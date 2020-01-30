@@ -24,6 +24,8 @@ describe QualityReviewCaseSelector, :all_dbs do
     end
 
     context "after reaching the monthly limit" do
+      before { stub_const("QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUAILITY_REVIEWS", 5) }
+
       let!(:qr_tasks) { create_list(:qr_task, QualityReviewCaseSelector::MONTHLY_LIMIT_OF_QUAILITY_REVIEWS) }
 
       it "returns true" do
