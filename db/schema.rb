@@ -186,6 +186,8 @@ ActiveRecord::Schema.define(version: 20200128153700) do
     t.string "docket_type"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
+    t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
+    t.string "suggested_hearing_location", comment: "Suggested hearing location in 'City, State (Facility Type)' format"
     t.datetime "updated_at"
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"

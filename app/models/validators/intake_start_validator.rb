@@ -86,6 +86,14 @@ class IntakeStartValidator
   def user_may_modify_veteran_file?
     return true if intake.user == User.api_user
 
-    BGSService.new.may_modify?(veteran_file_number, veteran.participant_id)
+    bgs = BGSService.new
+    return false unless bgs.can_access?(veteran_file_number)
+
+    # BVA has indicated that station conflict policy doesn't apply to Appeals.
+    # See https://github.com/department-of-veterans-affairs/caseflow/issues/13165
+    # This bypass is behind the :allow_same_station_appeals feature toggle for now.
+    return true if FeatureToggle.enabled?(:allow_same_station_appeals) && intake.is_a?(AppealIntake)
+
+    !bgs.station_conflict?(veteran_file_number, veteran.participant_id)
   end
 end
