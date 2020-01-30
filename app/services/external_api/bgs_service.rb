@@ -190,20 +190,18 @@ class ExternalApi::BGSService
     end
   end
 
-  # can_access? reflects whether a user may read a veteran's records.
-  # may_modify? reflects whether a user may establish a new claim.
-  def may_modify?(vbms_id, veteran_participant_id)
-    return false unless can_access?(vbms_id)
-
+  # station_conflict? performs a few checks to determine if the current user
+  # has a same-station conflict with the veteran in question
+  def station_conflict?(vbms_id, veteran_participant_id)
     # sometimes find_flashes works
     begin
       client.claimants.find_flashes(vbms_id)
     rescue BGS::ShareError
-      return false
+      return true
     end
 
     # sometimes the station conflict logic works
-    !ExternalApi::BgsVeteranStationUserConflict.new(
+    ExternalApi::BgsVeteranStationUserConflict.new(
       veteran_participant_id: veteran_participant_id,
       client: client
     ).conflict?

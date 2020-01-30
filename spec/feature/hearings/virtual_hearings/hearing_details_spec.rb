@@ -120,4 +120,15 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       )
     end
   end
+
+  context "User can see disabled email fields after switching hearing back to video" do
+    let!(:virtual_hearing) { create(:virtual_hearing, :initialized, :cancelled, :all_emails_sent, hearing: hearing) }
+
+    scenario "email fields are visible but disabled" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      expect(page).to have_field("Veteran Email", readonly: true)
+      expect(page).to have_field("POA/Representative Email", readonly: true)
+    end
+  end
 end
