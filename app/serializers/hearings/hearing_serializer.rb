@@ -75,10 +75,11 @@ class HearingSerializer
   attribute :veteran_email_address
   attribute :is_virtual, &:virtual?
   attribute :virtual_hearing do |object|
-    if object.virtual?
+    if object.virtual? || object.was_virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
     end
   end
+  attribute :was_virtual, &:was_virtual?
   attribute :witness
   attribute :worksheet_issues
 end
