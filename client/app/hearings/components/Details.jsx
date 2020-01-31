@@ -1,22 +1,20 @@
-import React from 'react';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { css } from 'glamor';
-
-import CopyTextButton from '../../components/CopyTextButton';
-import Alert from '../../components/Alert';
-import Button from '../../components/Button';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import * as DateUtil from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
-import { deepDiff } from '../utils';
+import PropTypes from 'prop-types';
+import React from 'react';
 import _ from 'lodash';
 
-import DetailsSections from './DetailsSections';
-import DetailsOverview from './details/DetailsOverview';
+import { deepDiff } from '../utils';
 import { onChangeFormData, onReceiveAlerts } from '../../components/common/actions';
+import Alert from '../../components/Alert';
+import ApiUtil from '../../util/ApiUtil';
+import Button from '../../components/Button';
+import CopyTextButton from '../../components/CopyTextButton';
+import * as DateUtil from '../../util/DateUtil';
+import DetailsOverview from './details/DetailsOverview';
+import DetailsSections from './DetailsSections';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
 
@@ -67,6 +65,7 @@ class HearingDetails extends React.Component {
     virtualHearingModalOpen: true,
     virtualHearingModalType: type
   })
+
   closeVirtualHearingModal = () => this.setState({ virtualHearingModalOpen: false })
 
   getInitialFormData = () => {
