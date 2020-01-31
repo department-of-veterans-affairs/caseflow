@@ -1472,15 +1472,15 @@ feature "Higher-Level Review", :all_dbs do
             expect(page).not_to have_content("Decision date (optional)")
             expect(page).not_to have_content("Notes (optional)")
 
-            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            fill_in "Transcribe the issue as it's written on the form", with: "Verified issue"
             fill_in "Decision date", with: decision_date
-            fill_in "Notes", with: "Testing unidentified issues"
+            fill_in "Notes", with: "Testing verified unidentified issues"
             click_on "Next"
 
             expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
             expect(page).to have_content("impairment of hip")
-            add_intake_rating_issue("ankylosis of hip")
-            expect(page).to have_content("Testing unidentified issues")
+            add_intake_rating_issue("limitation of thigh motion")
+            expect(page).to have_content("Testing verified issues")
 
             higher_level_review = HigherLevelReview.find_by(
               veteran_file_number: "123412345"
@@ -1496,9 +1496,9 @@ feature "Higher-Level Review", :all_dbs do
             )
 
             verified_issue = RequestIssue.find_by(verified_unidentified_issue: true,
-                                                  ineligible_reason: :legacy_appeal_not_eligible,
                                                   vacols_id: "vacols1",
-                                                  vacols_sequence_id: "1")
+                                                  vacols_sequence_id: "1",
+                                                  is_unidentified: false)
 
             expect(verified_issue).to_not be_nil
             expect(page).to have_content("Contention: #{verified_issue.contention_text}")

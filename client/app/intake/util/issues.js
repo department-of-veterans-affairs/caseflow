@@ -316,13 +316,14 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
   
   return issues.map((issue, index) => {
-    if (issue.isUnidentified) {
+    if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {
+      const issueText = issue.isUnidentified ? `Unidentified issue: no issue matched for "${issue.description}"` : issue.description
       return {
         index,
         referenceId: issue.id,
-        text: `Unidentified issue: no issue matched for "${issue.description}"`,
+        text: issueText,
         notes: issue.notes,
-        isUnidentified: true,
+        isUnidentified: issue.isUnidentified,
         date: issue.decisionDate,
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
