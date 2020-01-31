@@ -385,17 +385,25 @@ describe Appeal, :all_dbs do
   end
 
   context "#set_stream_docket_number_and_stream_type" do
+    let(:appeal) { Appeal.new(veteran_file_number: "1234") }
+    let(:receipt_date) { Time.new("2020", "01", "24").utc }
+
     it "persists an accurate value for stream_docket_number to the database" do
-      appeal = Appeal.new(veteran_file_number: "1234")
       appeal.save!
       expect(appeal.stream_docket_number).to be_nil
-      appeal.receipt_date = Time.new("2020", "01", "24").utc
+      appeal.receipt_date = receipt_date
       expect(appeal.docket_number).to eq("200124-#{appeal.id}")
       appeal.save!
       expect(appeal.stream_docket_number).to eq("200124-#{appeal.id}")
       appeal.stream_docket_number = "something else"
       appeal.save!
       expect(Appeal.where(stream_docket_number: "something else").count).to eq(1)
+    end
+
+    it "persists a non-NULL value for stream_docket_number as soon as possible" do
+      appeal.receipt_date = receipt_date
+      appeal.save!
+      expect(Appeal.where(stream_docket_number: "200124-#{appeal.id}").count).to eq(1)
     end
   end
 
