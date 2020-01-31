@@ -10,11 +10,6 @@ class DetailsSections extends React.Component {
 
   constructor (props) {
     super(props);
-
-    this.state = {
-      modalOpen: false,
-      virtualModalType: null
-    };
   }
 
   render () {
@@ -79,7 +74,6 @@ DetailsSections.propTypes = {
   updateVirtualHearing: PropTypes.func,
   isLegacy: PropTypes.bool,
   requestType: PropTypes.string,
-  submit: PropTypes.func,
   openVirtualHearingModal: PropTypes.func,
   user: PropTypes.shape({
     userId: PropTypes.number,
