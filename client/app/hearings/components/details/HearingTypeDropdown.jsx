@@ -2,13 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 
-class HearingTypeDropdown extends React.Component {
+class HearingTypeDropdown extends React.PureComponent {
 
   constructor (props) {
     super(props);
 
-    const { requestType } = props;
+    const { requestType, virtualHearing } = props;
 
+    // This component should work with either a Video or Central hearing.
     this.HEARING_TYPE_OPTIONS = [
       {
         value: false,
@@ -19,31 +20,53 @@ class HearingTypeDropdown extends React.Component {
         label: 'Virtual'
       }
     ];
+
+    // A hearing is virtual if the virtual hearing is not set, or the status
+    // is cancelled.
+    const isVirtual = (
+      virtualHearing 
+        && virtualHearing.status 
+        && virtualHearing.status !== 'cancelled'
+    );
+    const initialState = this.getHearingTypeOption(isVirtual);
+
+    this.state = {
+      value: initialState
+    };
   }
 
-  getValue = () => {
-    const { virtualHearing } = this.props;
-
-    if (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') {
-      return this.HEARING_TYPE_OPTIONS[0];
-    }
-
-    return this.HEARING_TYPE_OPTIONS[1];
-  }
+  getHearingTypeOption = (value) => (
+    value ? this.HEARING_TYPE_OPTIONS[1] : this.HEARING_TYPE_OPTIONS[0]
+  );
 
   onChange = (option) => {
     const { updateVirtualHearing, openModal } = this.props;
-    const currentValue = this.getValue();
 
+    const { value: currentValue } = this.state;
+    const newValue = this.getHearingTypeOption(option.value);
+
+    // Value is not changing.
+    if (currentValue.value === newValue.value) {
+      return;
+    }
+
+    this.setState({ value: newValue });
+
+    // Value is changing.
+    //
     // if current value is true (a virtual hearing), then we will be sending cancellation emails,
     // if new value is true, then we will be sending confirmation emails
-    if ((currentValue.value || option.value) && currentValue.value !== option.value) {
-      const type = option.value ? 'change_to_virtual' : 'change_from_virtual';
+    if (currentValue.value !== newValue.value) {
+      const type = newValue.value ? 'change_to_virtual' : 'change_from_virtual';
 
       openModal({ type });
     }
 
-    if (currentValue.value && !option.value) {
+    // If the currentValue is true, that means the hearing is current a virtual hearing.
+    // If newValue is false, that means that the user selected the original request type.
+    const changeFromVirtualToVideo = currentValue.value && !newValue.value;
+
+    if (changeFromVirtualToVideo) {
       updateVirtualHearing({ status: 'cancelled' });
     }
   }
@@ -55,7 +78,7 @@ class HearingTypeDropdown extends React.Component {
         name="hearingType"
         strongLabel
         options={this.HEARING_TYPE_OPTIONS}
-        value={this.getValue()}
+        value={this.state.value}
         onChange={this.onChange}
         readOnly={this.props.readOnly}
       />
