@@ -446,6 +446,12 @@ class QueueApp extends React.PureComponent {
               />
 
               <PageRoute
+                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
+                title="Address Motion to Vacate | Caseflow"
+                render={this.routedAddressMotionToVacate}
+              />
+
+              <PageRoute
                 path="/team_management"
                 title="Team Management | Caseflow"
                 render={this.routedTeamManagement}
@@ -567,11 +573,6 @@ class QueueApp extends React.PureComponent {
                 path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`}
                 title="Assign to Pulac-Cerullo | Caseflow"
                 render={this.routedAssignToPulacCerullo}
-              />
-              <PageRoute
-                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
-                title="Address Motion to Vacate | Caseflow"
-                render={this.routedAddressMotionToVacate}
               />
               <PageRoute
                 exact
