@@ -75,7 +75,7 @@ class DetailsInputs extends React.Component {
               requestType={requestType}
               updateVirtualHearing={updateVirtualHearing}
               openModal={openVirtualHearingModal}
-              readOnly={hearing.scheduledForIsPast || (isVirtual && virtualHearing && !virtualHearing.jobCompleted)}
+              readOnly={hearing.scheduledForIsPast || (isVirtual && !virtualHearing.jobCompleted)}
             />
             {this.renderVirtualHearingLinkSection()}
           </div>
