@@ -10,6 +10,7 @@ class Appeal < DecisionReview
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
+  include AppealAvailableHearingLocations
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -270,6 +271,10 @@ class Appeal < DecisionReview
            :city,
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
+
+  def appellant_is_not_veteran
+    !!veteran_is_not_claimant
+  end
 
   def cavc
     "not implemented for AMA"

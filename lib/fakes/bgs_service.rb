@@ -188,10 +188,8 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
-  def may_modify?(vbms_id, _veteran_participant_id)
-    return false unless can_access?(vbms_id)
-
-    !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+  def station_conflict?(vbms_id, _veteran_participant_id)
+    (self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
   def can_access?(vbms_id)

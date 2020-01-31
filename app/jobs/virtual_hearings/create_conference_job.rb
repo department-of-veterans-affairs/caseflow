@@ -16,6 +16,19 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
     capture_exception(exception, extra: extra)
   end
 
+  before_perform do |job|
+    kwargs = job.arguments.first
+    hearing_id = kwargs[:hearing_id]
+    email_type = kwargs[:email_type] || :confirmation
+
+    Rails.logger.info(
+      "Creating Pexip conference for hearing (#{hearing_id}) and sending #{email_type} email"
+    )
+    Rails.logger.info(
+      "Timezones for #{self.class.name} are (zone: #{Time.zone.name}) (getlocal: #{Time.now.getlocal.zone})"
+    )
+  end
+
   def perform(hearing_id:, hearing_type:, email_type: :confirmation)
     set_virtual_hearing(hearing_id, hearing_type)
 

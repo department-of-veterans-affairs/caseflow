@@ -183,7 +183,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       after { FeatureToggle.disable!(:edit_contention_text) }
 
       let(:decision_review_remanded) { create(:higher_level_review) }
-      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
+      let(:contested_decision_issue) { create(:decision_issue, :nonrating, disposition: "remanded") }
 
       it "only allows users to edit contention text" do
         nonrating_dta_claim_id = EndProductEstablishment.find_by(

@@ -48,7 +48,31 @@ describe ETL::Builder, :etl, :all_dbs do
 
         expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
         expect(built).to be > 0
+        expect(builder.built).to eq(built)
       end
+    end
+
+    it "updates aod_due_to_dob regardless of whether Appeal has been modified" do
+      builder = described_class.new
+      built = builder.full
+      expect(built).to eq(88)
+      expect(ETL::Appeal.where(aod_due_to_dob: true).count).to eq(1)
+
+      # change dob for one active
+      ETL::Appeal.active.where(aod_due_to_dob: false)
+        .where("claimant_dob > ?", 76.years.ago).first
+        .update(claimant_dob: 76.years.ago)
+
+      # and for one inactive
+      ETL::Appeal.where(aod_due_to_dob: false)
+        .where(active_appeal: false)
+        .where("claimant_dob > ?", 76.years.ago).first
+        .update(claimant_dob: 76.years.ago)
+
+      builder = described_class.new(since: Time.zone.now + 1.day)
+      built = builder.incremental
+      expect(built).to eq(0)
+      expect(ETL::Appeal.where(aod_due_to_dob: true).count).to eq(2) # skips inactive
     end
   end
 
