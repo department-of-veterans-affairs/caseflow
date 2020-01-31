@@ -108,7 +108,8 @@ class RequestIssue < ApplicationRecord
       where(
         contested_rating_issue_reference_id: nil,
         contested_rating_decision_reference_id: nil,
-        is_unidentified: [nil, false]
+        is_unidentified: [nil, false],
+        verified_unidentified_issue: [nil, false]
       ).where.not(nonrating_issue_category: nil)
     end
 

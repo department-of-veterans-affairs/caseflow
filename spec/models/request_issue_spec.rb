@@ -929,6 +929,10 @@ describe RequestIssue, :all_dbs do
       it "rating? is true" do
         expect(request_issue.rating?).to be true
       end
+
+      it "nonrating? is false" do
+        expect(request_issue.nonrating?).to be(false)
+      end
     end
 
     context "where there is an associated rating decision" do

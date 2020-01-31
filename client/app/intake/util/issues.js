@@ -225,7 +225,8 @@ const formatRatingRequestIssues = (state) => {
 };
 
 const formatNonratingRequestIssues = (state) => {
-  return (state.addedIssues || []).filter((issue) => !issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
+  return (state.addedIssues || []).
+  filter((issue) => !issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
   map((issue) => {
     return {
       request_issue_id: issue.id,
