@@ -417,7 +417,7 @@ class QueueApp extends React.PureComponent {
               <PageRoute
                 exact
                 path={[
-                  '/queue/appeals/:appealId/tasks/:taskId/',
+                  '/queue/appeals/:appealId/tasks/:taskId',
                   ':checkoutFlow(draft_decision|dispatch_decision)/dispositions'
                 ].join('/')}
                 title={`Draft Decision | ${PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]}`}
