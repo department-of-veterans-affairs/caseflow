@@ -40,3 +40,8 @@ export const rowThirds = css({
     width: '33.333333333333%'
   }
 });
+
+export const fullWidth = css({
+  display: 'block',
+  maxWidth: '100%'
+});

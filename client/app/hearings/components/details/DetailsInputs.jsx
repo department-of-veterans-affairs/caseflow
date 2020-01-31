@@ -1,20 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 import classnames from 'classnames';
-import { rowThirds } from './style';
+
+import { COLORS } from '../../../constants/AppConstants';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
   HearingRoomDropdown
 } from '../../../components/DataDropdowns/index';
-import TextareaField from '../../../components/TextareaField';
+import { fullWidth, rowThirds } from './style';
+import COPY from '../../../../COPY.json';
 import Checkbox from '../../../components/Checkbox';
-import VirtualHearingLink from '../VirtualHearingLink';
 import HearingTypeDropdown from './HearingTypeDropdown';
 import TextField from '../../../components/TextField';
-import { COLORS } from '../../../constants/AppConstants';
-import COPY from '../../../../COPY.json';
+import TextareaField from '../../../components/TextareaField';
+import VirtualHearingLink from '../VirtualHearingLink';
 
 class DetailsInputs extends React.Component {
   renderVirtualHearingLinkSection() {
@@ -137,10 +138,7 @@ class DetailsInputs extends React.Component {
         <TextareaField
           name="Notes"
           strongLabel
-          styling={css({
-            display: 'block',
-            maxWidth: '100%'
-          })}
+          styling={fullWidth}
           disabled={readOnly}
           value={hearing.notes || ''}
           onChange={(notes) => update({ notes })}
