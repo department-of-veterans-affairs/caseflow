@@ -1457,6 +1457,7 @@ feature "Higher-Level Review", :all_dbs do
 
             add_intake_rating_issue("ankylosis of hip")
             click_intake_finish
+            expect(page).to have_content("correct the issues")
             click_on "correct the issues"
             expect(page).to have_content("This issue has automatically closed the VACOLS issue")
 
@@ -1480,7 +1481,7 @@ feature "Higher-Level Review", :all_dbs do
             expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
             expect(page).to have_content("impairment of hip")
             add_intake_rating_issue("limitation of thigh motion")
-            expect(page).to have_content("Testing verified issues")
+            expect(page).to have_content("Testing verified unidentified issues")
 
             higher_level_review = HigherLevelReview.find_by(
               veteran_file_number: "123412345"
@@ -1494,10 +1495,9 @@ feature "Higher-Level Review", :all_dbs do
             expect(page).to have_current_path(
               "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
             )
-
             verified_issue = RequestIssue.find_by(verified_unidentified_issue: true,
                                                   vacols_id: "vacols1",
-                                                  vacols_sequence_id: "1",
+                                                  unidentified_issue_text: "Verified issue",
                                                   is_unidentified: false)
 
             expect(verified_issue).to_not be_nil

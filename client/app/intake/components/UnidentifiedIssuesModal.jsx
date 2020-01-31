@@ -75,9 +75,12 @@ class UnidentifiedIssuesModal extends React.Component {
     const decisionDate = this.state.decisionDate && !this.errorOnDecisionDate(this.state.decisionDate);
     const notes = this.state.notes;
 
-    const requiredFieldsPresent = this.state.verifiedUnidentifiedIssue ? !(description && decisionDate && notes) : !description;
+    if (this.state.verifiedUnidentifiedIssue) {
+      return !(description && decisionDate && notes);
+    }
 
-    return requiredFieldsPresent;
+    return !description;
+
   }
 
   getModalButtons() {

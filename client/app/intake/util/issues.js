@@ -176,13 +176,13 @@ export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
 
 const formatUnidentifiedIssues = (state) => {
   return (state.addedIssues || []).
-    filter((issue) => issue.isUnidentified).
+    filter((issue) => issue.isUnidentified || issue.verifiedUnidentifiedIssue).
     map((issue) => {
       return {
         request_issue_id: issue.id,
         decision_text: issue.description,
         notes: issue.notes,
-        is_unidentified: true,
+        is_unidentified: issue.isUnidentified,
         decision_date: issue.decisionDate,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : issue.withdrawalDate,
         correction_type: issue.correctionType,
@@ -198,7 +198,7 @@ const formatUnidentifiedIssues = (state) => {
 
 const formatRatingRequestIssues = (state) => {
   return (state.addedIssues || []).
-    filter((issue) => issue.isRating && !issue.isUnidentified).
+    filter((issue) => issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
     map((issue) => {
       return {
         request_issue_id: issue.id,
@@ -225,7 +225,8 @@ const formatRatingRequestIssues = (state) => {
 };
 
 const formatNonratingRequestIssues = (state) => {
-  return (state.addedIssues || []).filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
+  return (state.addedIssues || []).filter((issue) => !issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
+  map((issue) => {
     return {
       request_issue_id: issue.id,
       contested_decision_issue_id: issue.decisionIssueId,
