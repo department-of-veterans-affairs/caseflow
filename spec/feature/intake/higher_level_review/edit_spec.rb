@@ -74,7 +74,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
   end
 
   before do
-    higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
+    higher_level_review.create_claimant!(participant_id: "5382910292", payee_code: "10")
 
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original

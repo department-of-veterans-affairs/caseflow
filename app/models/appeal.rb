@@ -84,6 +84,18 @@ class Appeal < DecisionReview
     stream_type || "Original"
   end
 
+  def create_stream(stream_type)
+    create!(slice(
+      :veteran_file_number,
+      :legacy_opt_in_approved,
+      :veteran_is_not_claimant,
+      :docket_type,
+      :docket_number
+    ).merge(stream_type: stream_type)).tap do |stream|
+      stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
+    end
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location

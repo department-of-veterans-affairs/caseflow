@@ -39,7 +39,7 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
 
   switch (disposition) {
   case 'granted':
-  case 'partial':
+  case 'partially_granted':
     parts.push(`This will be a ${vacateTypeText(vacateType)}`);
     parts.push(instructions);
     break;
@@ -53,7 +53,7 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
   return parts.join('\n');
 };
 
-const grantTypes = ['granted', 'partial'];
+const grantTypes = ['granted', 'partially_granted'];
 
 const dispositionStrings = {
   denied: 'denial',
@@ -113,7 +113,7 @@ export const MTVJudgeDisposition = ({
       !disposition ||
       !instructions ||
       (isGrantType() && !vacateType) ||
-      (disposition === 'partial' && !issueIds.length) ||
+      (disposition === 'partially_granted' && !issueIds.length) ||
       (disposition === 'dismissed' && !hyperlink)
     );
   };
@@ -140,7 +140,7 @@ export const MTVJudgeDisposition = ({
           value={disposition}
         />
 
-        {disposition && disposition === 'partial' && (
+        {disposition && disposition === 'partially_granted' && (
           <MTVIssueSelection
             issues={appeal.decisionIssues}
             onChange={({ issueIds: newIssueIds }) => setIssueIds(newIssueIds)}

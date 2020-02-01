@@ -8,9 +8,7 @@ class InitialTasksFactory
 
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
-    ActiveRecord::Base.transaction do
-      create_subtasks!
-    end
+    create_subtasks! if appeal.Original?
   end
 
   private
@@ -24,17 +22,19 @@ class InitialTasksFactory
   end
 
   def create_subtasks!
-    distribution_task = DistributionTask.create!(appeal: @appeal, parent: @root_task)
+    ActiveRecord::Base.transaction do
+      distribution_task = DistributionTask.create!(appeal: @appeal, parent: @root_task)
 
-    if @appeal.evidence_submission_docket?
-      EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
-    elsif @appeal.hearing_docket?
-      ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
-    else
-      vso_tasks = IhpTasksFactory.new(distribution_task).create_ihp_tasks!
-      # If the appeal is direct docket and there are no ihp tasks,
-      # then it is initially ready for distribution.
-      distribution_task.ready_for_distribution! if vso_tasks.empty?
+      if @appeal.evidence_submission_docket?
+        EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
+      elsif @appeal.hearing_docket?
+        ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
+      else
+        vso_tasks = IhpTasksFactory.new(distribution_task).create_ihp_tasks!
+        # If the appeal is direct docket and there are no ihp tasks,
+        # then it is initially ready for distribution.
+        distribution_task.ready_for_distribution! if vso_tasks.empty?
+      end
     end
   end
 end
