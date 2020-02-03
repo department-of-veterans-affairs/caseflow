@@ -1483,18 +1483,12 @@ feature "Higher-Level Review", :all_dbs do
             add_intake_rating_issue("limitation of thigh motion")
             expect(page).to have_content("Testing verified unidentified issues")
 
-            higher_level_review = HigherLevelReview.find_by(
-              veteran_file_number: "123412345"
-            )
-
             click_button("Save")
             safe_click "#Unidentified-issue-button-id-1"
             expect(page).to have_content("Number of issues has changed")
             safe_click "#Number-of-issues-has-changed-button-id-1"
 
-            expect(page).to have_current_path(
-              "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
-            )
+            expect(page).to have_content("Claim Issues Saved")
             verified_issue = RequestIssue.find_by(verified_unidentified_issue: true,
                                                   vacols_id: "vacols1",
                                                   unidentified_issue_text: "Verified issue",
