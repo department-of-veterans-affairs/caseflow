@@ -92,7 +92,7 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        if BGSService.new.can_access?(appeal.veteran_file_number) || appeal.user_represents_claimant_not_veteran
+        if BGSService.new.can_access?(appeal.veteran_file_number) || user_represents_claimant_not_veteran
           id = params[:appeal_id]
           MetricsService.record("Get appeal information for ID #{id}",
                                 service: :queue,
@@ -131,6 +131,12 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  def user_represents_claimant_not_veteran
+    return false unless FeatureToggle.enabled?(:vso_claimant_representative)
+
+    appeal.appellant_is_not_veteran && appeal.representatives.any? { |rep| rep.user_has_access?(current_user) }
+  end
 
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
   # :reek:FeatureEnvy
