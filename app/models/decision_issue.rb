@@ -21,16 +21,25 @@ class DecisionIssue < ApplicationRecord
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 
-  # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
-  # The characters an encoding is precise so don't change these unless you know they match VBMS values.
-  DTA_ERROR_PMR = "DTA Error - PMRs"
+  # NOTE: These are the string identifiers for remand dispositions returned from VBMS.
+  #       The characters and encoding are precise so don't change these unless you
+  #       know they match VBMS values.
+  DIFFERENCE_OF_OPINION = "Difference of Opinion"
+  DTA_ERROR = "DTA Error"
+  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO"
   DTA_ERROR_FED_RECS = "DTA Error - Fed Recs"
   DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs"
-  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO"
-  DTA_ERROR = "DTA Error"
-  REMAND = "remanded"
+  DTA_ERROR_PMR = "DTA Error - PMRs"
+  REMANDED = "remanded"
+
   REMAND_DISPOSITIONS = [
-    REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO, DTA_ERROR
+    DIFFERENCE_OF_OPINION,
+    DTA_ERROR,
+    DTA_ERROR_EXAM_MO,
+    DTA_ERROR_FED_RECS,
+    DTA_ERROR_OTHER_RECS,
+    DTA_ERROR_PMR,
+    REMANDED
   ].freeze
 
   # We are using default scope here because we'd like to soft delete decision issues
