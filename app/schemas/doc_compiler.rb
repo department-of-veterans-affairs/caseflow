@@ -13,9 +13,9 @@ class DocCompiler
   end
 
   def visit_set(nodes)
-    nodes.map do |node|
+    nodes.flat_map do |node|
       visit(node).map { |key, value| value.merge(name: key) }
-    end.flatten(1)
+    end
   end
 
   def visit_and(node)
@@ -31,7 +31,7 @@ class DocCompiler
 
   def visit_implication(node)
     _, right = node.map(&method(:visit))
-    right.values.first.merge!(optional: true)
+    right.values.first[:optional] = true
     right
   end
 
