@@ -192,9 +192,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(page).to have_content(COPY::JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL)
     end
 
-    fit "judge grants motion to vacate (vacate and readjudicate)" do
+    it "judge grants motion to vacate (vacate and readjudicate)" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
-      binding.pry
       find("label[for=disposition_granted]").click
       find("label[for=vacate-type_vacate_and_readjudication]").click
       fill_in("instructions", with: judge_notes)
@@ -212,7 +211,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("granted")
 
-      # Verify new appeal stream is created
+      verify_vacate_stream("vacate_and_readjudication")
     end
 
     it "judge grants motion to vacate (straight vacate)" do
@@ -234,7 +233,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("granted")
 
-      # Verify new appeal stream is created
+      verify_vacate_stream("straight_vacate")
     end
 
     it "judge grants motion to vacate (vacate & de novo)" do
@@ -258,7 +257,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion.vacated_decision_issue_ids.length).to eq(appeal.decision_issues.length)
       expect(motion.vacated_decision_issue_ids).to include(*appeal.decision_issues.map(&:id))
 
-      # Verify new appeal stream is created
+      verify_vacate_stream("vacate_and_de_novo")
     end
 
     it "judge grants partial vacatur (vacate & readjudication)" do
@@ -284,7 +283,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion.disposition).to eq("partially_granted")
       expect(motion.vacated_issues.length).to eq(issues_to_select.length)
 
-      # Verify new appeal stream is created
+      verify_vacate_stream("vacate_and_readjudication")
     end
 
     it "judge denies motion to vacate" do
@@ -442,6 +441,29 @@ RSpec.feature "Motion to vacate", :all_dbs do
     it "completes MTV workflow for dismissed disposition and closes relevant tasks" do
       complete_motion_to_vacate(user: motions_attorney, appeal: appeal, task: dismissed_motion_to_vacate_task)
     end
+  end
+
+  def verify_vacate_stream(vacate_type)
+    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "Vacate")
+    expect(vacate_stream).to_not be_nil
+    expect(vacate_stream.claimant.participant_id).to eq(appeal.claimant.participant_id)
+
+    # Check Task structure
+    instructions = format_judge_instructions(
+      notes: judge_notes,
+      disposition: "granted",
+      vacate_type: vacate_type
+    )
+    root_task = vacate_stream.root_task
+    jdrt = JudgeDecisionReviewTask.find_by(parent_id: root_task.id, assigned_to_id: judge.id)
+    attorney_task = AttorneyTask.find_by(
+      parent_id: jdrt.id,
+      assigned_to_id: drafting_attorney.id,
+      assigned_by_id: judge.id,
+      status: Constants.TASK_STATUSES.assigned,
+      instructions: [instructions]
+    )
+    expect(attorney_task).to_not be_nil
   end
 
   def send_to_judge(user:, appeal:, motions_attorney_task:)

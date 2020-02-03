@@ -1269,7 +1269,7 @@ feature "Higher-Level Review", :all_dbs do
       context "with legacy_opt_in_approved" do
         let(:receipt_date) { Time.zone.today }
 
-        fscenario "adding issues" do
+        scenario "adding issues" do
           start_higher_level_review(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
 
@@ -1304,7 +1304,7 @@ feature "Higher-Level Review", :all_dbs do
             date: (profile_date - untimely_days).mdY,
             legacy_issues: true
           )
-binding.pry
+
           expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
           add_intake_rating_issue("None of these match")

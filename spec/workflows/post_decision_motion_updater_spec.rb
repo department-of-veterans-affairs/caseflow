@@ -53,7 +53,6 @@ describe PostDecisionMotionUpdater, :all_dbs do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
           abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
-
         end
       end
 

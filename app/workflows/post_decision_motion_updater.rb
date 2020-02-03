@@ -27,6 +27,8 @@ class PostDecisionMotionUpdater
         vacate_stream = appeal.create_stream("Vacate")
         create_new_stream_tasks(vacate_stream)
       end
+
+      task.update(status: Constants.TASK_STATUSES.completed)
     end
   end
 
@@ -76,8 +78,6 @@ class PostDecisionMotionUpdater
       return
     end
     new_task.save
-
-    task.update(status: Constants.TASK_STATUSES.completed)
   end
 
   def create_abstract_task
@@ -94,7 +94,7 @@ class PostDecisionMotionUpdater
       parent: parent,
       assigned_by: judge_user,
       assigned_to: attorney_user,
-      instructions: [instructions]]
+      instructions: [instructions]
     )
   end
 
