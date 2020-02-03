@@ -1291,7 +1291,7 @@ feature "Higher-Level Review", :all_dbs do
           # Expect untimely exemption modal for untimely issue
           click_intake_add_issue
           add_intake_rating_issue("Untimely rating issue 1")
-          add_intake_rating_issue("None of these match")
+          select_intake_no_match
           add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Untimely rating issue 1")
@@ -1307,7 +1307,7 @@ feature "Higher-Level Review", :all_dbs do
 
           expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
-          add_intake_rating_issue("None of these match")
+          select_intake_no_match
           add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Description for Active Duty Adjustments")
