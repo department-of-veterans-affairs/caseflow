@@ -14,18 +14,19 @@ class UnidentifiedIssuesModal extends React.Component {
     this.state = {
       description: '',
       notes: '',
-      checkboxSelected: false
+      verifiedUnidentifiedIssue: false
     };
   }
 
   onAddIssue = () => {
-    const { description, notes, decisionDate } = this.state;
+    const { description, notes, decisionDate, verifiedUnidentifiedIssue } = this.state;
     const { formType, intakeData } = this.props;
     const currentIssue = {
-      isUnidentified: true,
+      isUnidentified: !verifiedUnidentifiedIssue,
       description,
       notes,
       decisionDate,
+      verifiedUnidentifiedIssue,
       timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
 
@@ -65,7 +66,7 @@ class UnidentifiedIssuesModal extends React.Component {
   };
 
   onCheckboxChange = (event) => {
-    this.setState({ checkboxSelected: event });
+    this.setState({ verifiedUnidentifiedIssue: event });
   };
 
   saveDisabled = () => {
@@ -74,9 +75,12 @@ class UnidentifiedIssuesModal extends React.Component {
     const decisionDate = this.state.decisionDate && !this.errorOnDecisionDate(this.state.decisionDate);
     const notes = this.state.notes;
 
-    const checked = this.state.checkboxSelected ? !(description && decisionDate && notes) : !description;
+    if (this.state.verifiedUnidentifiedIssue) {
+      return !(description && decisionDate && notes);
+    }
 
-    return checked;
+    return !description;
+
   }
 
   getModalButtons() {
@@ -119,7 +123,7 @@ class UnidentifiedIssuesModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
-            optional={!this.state.checkboxSelected}
+            optional={!this.state.verifiedUnidentifiedIssue}
           />
         </div>
 
@@ -140,7 +144,7 @@ class UnidentifiedIssuesModal extends React.Component {
         <Checkbox
           label={<strong>Verify record of prior decision</strong>}
           name="verify_prior_record"
-          value={this.state.checkboxSelected}
+          value={this.state.verifiedUnidentifiedIssue}
           onChange={this.onCheckboxChange}
         />
       </React.Fragment>
@@ -165,7 +169,7 @@ class UnidentifiedIssuesModal extends React.Component {
           />
           {unidentifiedIssueDecisionDate && this.getDecisionDate()}
           <TextField name="Notes"
-            optional={!this.state.checkboxSelected}
+            optional={!this.state.verifiedUnidentifiedIssue}
             strongLabel
             value={this.state.notes}
             onChange={this.onNotesChange} />
