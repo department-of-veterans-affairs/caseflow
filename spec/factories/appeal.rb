@@ -196,12 +196,14 @@ FactoryBot.define do
           appeal: appeal,
           parent: appeal.root_task,
           assigned_at: evaluator.active_task_assigned_at,
-          assigned_to: evaluator.associated_judge)
+          assigned_to: evaluator.associated_judge
+        )
         params = {
           disposition: "granted",
           vacate_type: "straight_vacate",
           instructions: "some instructions",
-          assigned_to_id: task.assigned_to.id}
+          assigned_to_id: task.assigned_to.id
+        }
         PostDecisionMotionUpdater.new(task, params).process
       end
     end

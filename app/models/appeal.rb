@@ -470,6 +470,6 @@ class Appeal < DecisionReview
   # Non-vacate Appeals are not expected to have a PDM, but this method makes a
   # best-effort attempt in either situation, and returns nil if none is found.
   def post_decision_motion
-    PostDecisionMotion.where(task: tasks).first
+    PostDecisionMotion.find_by(task: tasks)
   end
 end
