@@ -212,7 +212,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion.disposition).to eq("granted")
 
       visit_vacate_stream
-      binding.pry
     end
 
     it "judge grants motion to vacate (straight vacate)" do

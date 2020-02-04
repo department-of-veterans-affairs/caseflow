@@ -63,7 +63,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
         it "should create a vacate stream" do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
-          verify_vacate_stream(vacate_type)
+          verify_vacate_stream
         end
       end
 
@@ -73,7 +73,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
         it "should create straight vacate attorney task with correct structure" do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
-          verify_vacate_stream(vacate_type)
+          verify_vacate_stream
         end
 
         it "saves all decision issue IDs for full grant" do
@@ -91,7 +91,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
         it "should create vacate and de novo attorney task with correct structure" do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
-          verify_vacate_stream(vacate_type)
+          verify_vacate_stream
         end
       end
 
@@ -217,7 +217,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
     end
   end
 
-  def verify_vacate_stream(vacate_type)
+  def verify_vacate_stream
     vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "Vacate")
 
     expect(vacate_stream).to_not be_nil

@@ -86,7 +86,7 @@ class Appeal < DecisionReview
 
   def create_stream(stream_type)
     ActiveRecord::Base.transaction do
-      Appeal.create!(self.slice(
+      Appeal.create!(slice(
         :receipt_date,
         :veteran_file_number,
         :legacy_opt_in_approved,
