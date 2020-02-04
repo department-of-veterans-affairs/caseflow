@@ -9,7 +9,9 @@
   "UNASSIGNED_TASKS_TAB_NAME": "unassignedTab",
   "AMA_ASSIGN_HEARINGS_TAB_NAME": "amaAssignHearingsTab",
   "LEGACY_ASSIGN_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
-
+  "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
+  "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorney",
+  
   "COLUMNS": {
     "APPEAL_TYPE": {
       "filterable": true,
