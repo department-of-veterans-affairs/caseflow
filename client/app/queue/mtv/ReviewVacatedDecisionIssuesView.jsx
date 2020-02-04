@@ -1,15 +1,34 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
+
 import QueueFlowPage from '../components/QueueFlowPage';
 import AmaIssueList from '../../components/AmaIssueList';
 import DecisionIssues from '../components/DecisionIssues';
+import { MotionToVacateContext } from './MotionToVacateContext';
+import { RemoveDecisionIssueModal } from './RemoveDecisionIssueModal';
 
 const validateForm = () => true;
+const defaultState = { deleteModal: false,
+  issueId: null,
+  decisionIssue: null };
 
 export const ReviewVacatedDecisionIssuesView = ({ appeal }) => {
+  //   Not sure that we need this
   const issueErrors = {};
+
+  const [ctx, setCtx] = useContext(MotionToVacateContext);
+  const [state, setState] = useState(defaultState);
+
+  const handleDelete = (issueId, decisionIssue) => {
+    setState({
+      ...state,
+      deleteModal: true,
+      issueId,
+      decisionIssue
+    });
+  };
 
   return (
     <QueueFlowPage
@@ -17,28 +36,19 @@ export const ReviewVacatedDecisionIssuesView = ({ appeal }) => {
       //   getNextStepUrl={this.getNextStepUrl}
       //   getPrevStepUrl={this.getPrevStepUrl}
     >
-      <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
-      <p>{COPY.DECISION_ISSUE_PAGE_EXPLANATION}</p>
+      <h1>{COPY.MTV_CHECKOUT_REVIEW_VACATURES_TITLE}</h1>
+      <p>{COPY.MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION}</p>
       <hr />
       <AmaIssueList requestIssues={appeal.issues} errorMessages={issueErrors}>
         <DecisionIssues
           decisionIssues={appeal.decisionIssues}
-          openDecisionHandler={this.openDecisionHandler}
-          openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler}
+          //   openDecisionHandler={this.openDecisionHandler}
+          openDeleteAddedDecisionIssueHandler={handleDelete}
         />
       </AmaIssueList>
-      {/* {deleteAddedDecisionIssue && (
-        <Modal
-          buttons={this.deleteAddedDecisionIssueModalButtons}
-          closeHandler={this.handleModalClose}
-          title="Delete decision"
-        >
-          <span className="delete-decision-modal">
-            {COPY.DECISION_ISSUE_CONFIRM_DELETE}
-            {toDeleteHasConnectedIssue && COPY.DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES}
-          </span>
-        </Modal>
-      )}
+      {state.deleteModal && <RemoveDecisionIssueModal onCancel={() => setState({ ...state,
+        deleteModal: false })} />}
+      {/*
       {openRequestIssueId && (
         <Modal
           buttons={this.decisionModalButtons}

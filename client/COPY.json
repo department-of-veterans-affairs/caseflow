@@ -161,6 +161,9 @@
   "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
 
+  "MTV_CHECKOUT_REVIEW_VACATURES_TITLE": "Review vacated decision issues",
+  "MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION": "Review the prior decision issues here that have been marked for vacatur by the judge. Please remember to include them in your decision letter if you haven't already.",
+
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
   "STRAIGHT_VACATE_TASK_LABEL": "Straight Vacate",
