@@ -97,6 +97,12 @@ class Appeal < DecisionReview
     end
   end
 
+  def vacate_type
+    return nil unless vacate?
+
+    post_decision_motion&.vacate_type
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
@@ -459,5 +465,11 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  end
+
+  # Non-vacate Appeals are not expected to have a PDM, but this method makes a
+  # best-effort attempt in either situation, and returns nil if none is found.
+  def post_decision_motion
+    PostDecisionMotion.where(task: tasks).first
   end
 end
