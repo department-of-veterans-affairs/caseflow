@@ -73,8 +73,8 @@ import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
-import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
-import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
+// import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
+// import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 // import { ReturnToLitSupportModal } from './mtv/ReturnToLitSupportModal';
 // import { returnToLitSupport } from './mtv/mtvActions';
@@ -215,9 +215,9 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
-  routedSendMotionToVacateToJudge = () => <ReviewMotionToVacateView />;
+  // routedSendMotionToVacateToJudge = () => <ReviewMotionToVacateView />;
 
-  routedAddressMotionToVacate = (props) => <AddressMotionToVacateView {...props.match.params} />;
+  // routedAddressMotionToVacate = (props) => <AddressMotionToVacateView {...props.match.params} />;
 
   routedPulacCerulloReminder = (props) => {
     const { appealId, taskId } = props.match.params;
@@ -444,10 +444,10 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value}`}
               render={this.routedAssignToUser}
             />
-            <Route
+            {/* <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`}
               render={this.routedSendMotionToVacateToJudge}
-            />
+            /> */}
             <PageRoute
               exact
               path="/queue/appeals/:appealId"

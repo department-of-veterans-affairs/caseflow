@@ -3,7 +3,7 @@ import { Route, useParams, useHistory } from 'react-router';
 import PageRoute from '../../components/PageRoute';
 
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS.json';
-import { ReviewMotionToVacateView } from './ReviewMotionToVacateView';
+import ReviewMotionToVacateView from './ReviewMotionToVacateView';
 import { AddressMotionToVacateView } from './AddressMotionToVacateView';
 import { ReturnToLitSupportModal } from './ReturnToLitSupportModal';
 import { useDispatch } from 'react-redux';
