@@ -85,13 +85,15 @@ class Appeal < DecisionReview
   end
 
   def create_stream(stream_type)
-    Appeal.create!(self.slice(
-      :receipt_date,
-      :veteran_file_number,
-      :legacy_opt_in_approved,
-      :veteran_is_not_claimant
-    ).merge(stream_type: stream_type, stream_docket_number: docket_number)).tap do |stream|
-      stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
+    ActiveRecord::Base.transaction do
+      Appeal.create!(self.slice(
+        :receipt_date,
+        :veteran_file_number,
+        :legacy_opt_in_approved,
+        :veteran_is_not_claimant
+      ).merge(stream_type: stream_type, stream_docket_number: docket_number)).tap do |stream|
+        stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
+      end
     end
   end
 

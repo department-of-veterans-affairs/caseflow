@@ -28,6 +28,8 @@ class PostDecisionMotionUpdater
         create_new_stream_tasks(vacate_stream)
       end
 
+      return if errors.messages.any?
+
       task.update(status: Constants.TASK_STATUSES.completed)
     end
   end
@@ -102,9 +104,16 @@ class PostDecisionMotionUpdater
     InitialTasksFactory.new(stream).create_root_and_sub_tasks!
 
     jdrt = JudgeDecisionReviewTask.create!(appeal: stream, parent: stream.root_task, assigned_to: judge_user)
-    AttorneyTask.create!(
+    attorney_task = AttorneyTask.new(
       appeal: stream, parent: jdrt, assigned_by: judge_user, assigned_to: attorney_user, instructions: [instructions]
     )
+
+    unless attorney_task.valid?
+      errors.messages.merge!(attorney_task.errors.messages)
+      return
+    end
+
+    attorney_task.save
   end
 
   def task_class
@@ -128,7 +137,7 @@ class PostDecisionMotionUpdater
   end
 
   def attorney_user
-    @attorney_user ||= (denied_or_dismissed? ? prev_motions_attorney : User.find_by(id: params[:assigned_to_id]))
+    @attorney_user ||= denied_or_dismissed? ? prev_motions_attorney : User.find_by(id: params[:assigned_to_id])
   end
 
   def prev_motions_attorney

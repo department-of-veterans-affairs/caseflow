@@ -57,8 +57,8 @@ class CaseTitle extends React.PureComponent {
         <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
       </React.Fragment>
 
-      <span id="hide-view-cases" {...viewCasesStyling}>
-        <Link id="hide-view-cases" onClick={this.props.toggleVeteranCaseList}>
+      <span {...viewCasesStyling}>
+        <Link onClick={this.props.toggleVeteranCaseList}>
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
       </span>

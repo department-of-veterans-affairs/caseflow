@@ -192,7 +192,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(page).to have_content(COPY::JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL)
     end
 
-    it "judge grants motion to vacate (vacate and readjudicate)" do
+    it "judge grants motion to vacate (vacate & readjudication)" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_granted]").click
       find("label[for=vacate-type_vacate_and_readjudication]").click
@@ -211,7 +211,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("granted")
 
-      verify_vacate_stream("vacate_and_readjudication")
+      visit_vacate_stream
+      binding.pry
     end
 
     it "judge grants motion to vacate (straight vacate)" do
@@ -233,7 +234,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("granted")
 
-      verify_vacate_stream("straight_vacate")
+      visit_vacate_stream
     end
 
     it "judge grants motion to vacate (vacate & de novo)" do
@@ -257,7 +258,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion.vacated_decision_issue_ids.length).to eq(appeal.decision_issues.length)
       expect(motion.vacated_decision_issue_ids).to include(*appeal.decision_issues.map(&:id))
 
-      verify_vacate_stream("vacate_and_de_novo")
+      visit_vacate_stream
     end
 
     it "judge grants partial vacatur (vacate & readjudication)" do
@@ -283,7 +284,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion.disposition).to eq("partially_granted")
       expect(motion.vacated_issues.length).to eq(issues_to_select.length)
 
-      verify_vacate_stream("vacate_and_readjudication")
+      visit_vacate_stream
     end
 
     it "judge denies motion to vacate" do
@@ -443,27 +444,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
   end
 
-  def verify_vacate_stream(vacate_type)
+  def visit_vacate_stream
     vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "Vacate")
-    expect(vacate_stream).to_not be_nil
-    expect(vacate_stream.claimant.participant_id).to eq(appeal.claimant.participant_id)
-
-    # Check Task structure
-    instructions = format_judge_instructions(
-      notes: judge_notes,
-      disposition: "granted",
-      vacate_type: vacate_type
-    )
-    root_task = vacate_stream.root_task
-    jdrt = JudgeDecisionReviewTask.find_by(parent_id: root_task.id, assigned_to_id: judge.id)
-    attorney_task = AttorneyTask.find_by(
-      parent_id: jdrt.id,
-      assigned_to_id: drafting_attorney.id,
-      assigned_by_id: judge.id,
-      status: Constants.TASK_STATUSES.assigned,
-      instructions: [instructions]
-    )
-    expect(attorney_task).to_not be_nil
+    visit "/queue/appeals/#{vacate_stream.uuid}"
+    expect(page).to have_content("Vacate")
   end
 
   def send_to_judge(user:, appeal:, motions_attorney_task:)

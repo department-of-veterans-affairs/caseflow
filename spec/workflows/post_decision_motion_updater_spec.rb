@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 describe PostDecisionMotionUpdater, :all_dbs do
+  include QueueHelpers
+
   let(:lit_support_team) { LitigationSupport.singleton }
   let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
-  let(:attorney) { create(:user) }
+  let!(:attorney) { create(:user) }
+  let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
   let!(:judge_team) do
     JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }
   end
@@ -19,7 +22,15 @@ describe PostDecisionMotionUpdater, :all_dbs do
     end
   end
   let(:mtv_mail_task) { create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_atty) }
-  let(:task) { create(:judge_address_motion_to_vacate_task, :in_progress, parent: mtv_mail_task, assigned_to: judge) }
+  let(:task) do
+    create(
+      :judge_address_motion_to_vacate_task,
+      :in_progress,
+      parent: mtv_mail_task,
+      assigned_to: judge,
+      appeal: appeal
+    )
+  end
   let(:vacate_type) { nil }
   let(:disposition) { nil }
   let(:assigned_to_id) { nil }
@@ -44,15 +55,15 @@ describe PostDecisionMotionUpdater, :all_dbs do
   describe "#process" do
     context "when disposition is granted" do
       let(:disposition) { "granted" }
-      let(:assigned_to_id) { create(:user).id }
+      let(:assigned_to_id) { attorney.id }
 
       context "when vacate type is vacate and readjudication" do
         let(:vacate_type) { "vacate_and_readjudication" }
 
-        it "should create vacate and readjudication attorney task with correct structure" do
+        it "should create a vacate stream" do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
-          abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
+          verify_vacate_stream(vacate_type)
         end
       end
 
@@ -62,7 +73,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
         it "should create straight vacate attorney task with correct structure" do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
-          abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
+          verify_vacate_stream(vacate_type)
         end
 
         it "saves all decision issue IDs for full grant" do
@@ -80,7 +91,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
         it "should create vacate and de novo attorney task with correct structure" do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
-          abstract_task = AbstractMotionToVacateTask.find_by(parent: task.parent)
+          verify_vacate_stream(vacate_type)
         end
       end
 
@@ -93,20 +104,18 @@ describe PostDecisionMotionUpdater, :all_dbs do
           expect(subject.errors[:assigned_to].first).to eq "can't be blank"
           expect(task.reload.status).to eq Constants.TASK_STATUSES.in_progress
           expect(AbstractMotionToVacateTask.count).to eq 0
-          # Expect appeal stream to not be created
         end
       end
 
       context "when vacate type is missing" do
         let(:vacate_type) { nil }
-        let(:assigned_to_id) { create(:user).id }
+        let(:assigned_to_id) { attorney.id }
 
         it "should not create an attorney task" do
           subject.process
           expect(subject.errors[:vacate_type].first).to eq "is required for granted disposition"
           expect(task.reload.status).to eq Constants.TASK_STATUSES.in_progress
           expect(AbstractMotionToVacateTask.count).to eq 0
-          # Expect appeal stream to not be created
         end
       end
     end
@@ -206,5 +215,24 @@ describe PostDecisionMotionUpdater, :all_dbs do
         expect(org_task.status).to eq Constants.TASK_STATUSES.completed
       end
     end
+  end
+
+  def verify_vacate_stream(vacate_type)
+    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "Vacate")
+
+    expect(vacate_stream).to_not be_nil
+    expect(vacate_stream.claimant.participant_id).to eq(appeal.claimant.participant_id)
+
+    root_task = vacate_stream.root_task
+    jdrt = JudgeDecisionReviewTask.find_by(parent_id: root_task.id, assigned_to_id: judge.id)
+    attorney_task = AttorneyTask.find_by(
+      parent_id: jdrt.id,
+      assigned_to_id: attorney.id,
+      assigned_by_id: judge.id,
+      status: Constants.TASK_STATUSES.assigned,
+      instructions: [instructions]
+    )
+
+    expect(attorney_task).to_not be_nil
   end
 end
