@@ -499,6 +499,63 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
   end
 
+  describe "Attorney Completes Motion to Vacate Checkout Task" do
+    let(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
+
+    let(:orig_atty_task) do
+      create(:ama_attorney_task, :completed,
+             assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.day, parent: root_task)
+    end
+    let(:judge_review_task) do
+      create(:ama_judge_decision_review_task, :completed,
+             assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
+    end
+    let(:vacate_motion_mail_task) do
+      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+    end
+    let(:judge_address_motion_to_vacate_task) do
+      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
+    end
+    let(:abstract_motion_to_vacate_task) do
+      create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
+    end
+    let(:post_decision_motion) do
+      create(:post_decision_motion, task: judge_address_motion_to_vacate_task, disposition: "granted")
+    end
+    let!(:attorney_task) do
+      create(
+        :ama_attorney_task,
+        appeal: appeal,
+        assigned_by: judge,
+        assigned_to: drafting_attorney,
+        parent: root_task
+      )
+    end
+
+    before do
+      judge_team.add_user(drafting_attorney)
+      FeatureToggle.enable!(:review_motion_to_vacate)
+
+      judge_address_motion_to_vacate_task.update(status: Constants.TASK_STATUSES.completed)
+    end
+
+    after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    # TODO : flesh this out
+    it "completes 'Review Decision Issues' portion of MTV checkout for granted disposition" do
+      # mtv_checkout(user: drafting_attorney, appeal: appeal, task: attorney_task)
+      User.authenticate!(user: drafting_attorney)
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+
+      expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{attorney_task.id}/motion_to_vacate_checkout/draft_decision/vacatures")
+      binding.pry
+    end
+  end
+
   describe "Attorney Completes Denied / Dismissed Motion to Vacate Task" do
     let(:judge_team) { JudgeTeam.create_for_judge(judge) }
     let(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
