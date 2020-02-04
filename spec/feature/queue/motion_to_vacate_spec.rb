@@ -262,7 +262,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     it "judge grants partial vacatur (vacate & readjudication)" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
-      find("label[for=disposition_partial]").click
+      find("label[for=disposition_partially_granted]").click
       find("label[for=vacate-type_vacate_and_readjudication]").click
       fill_in("instructions", with: judge_notes)
 
