@@ -442,4 +442,48 @@ describe LegacyHearing, :all_dbs do
       end
     end
   end
+
+  context "#scheduled_for_past?" do
+    context "for a video hearing scheduled before 4/1/2019" do
+      let(:scheduled_for) do
+        Time.use_zone("America/New_York") { Time.zone.local(2018, 1, 1, 0, 0, 0) }
+      end
+
+      it "returns true" do
+        expect(hearing.scheduled_for_past?).to be(true)
+      end
+    end
+
+    context "for a video hearing scheduled after 4/1/2019" do
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          scheduled_for: scheduled_for,
+          regional_office: regional_office,
+          request_type: HearingDay::REQUEST_TYPES[:video]
+        )
+      end
+      let!(:hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
+
+      context "before today" do
+        let(:scheduled_for) do
+          Time.use_zone("America/New_York") { Time.zone.local(2019, 8, 8, 0, 0, 0) }
+        end
+
+        it "returns true" do
+          expect(hearing.scheduled_for_past?).to be(true)
+        end
+      end
+
+      context "for tomorrow" do
+        let(:scheduled_for) do
+          Time.use_zone("America/New_York") { Time.zone.tomorrow }
+        end
+
+        it "returns false" do
+          expect(hearing.scheduled_for_past?).to be(false)
+        end
+      end
+    end
+  end
 end
