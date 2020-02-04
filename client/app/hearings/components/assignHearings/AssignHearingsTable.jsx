@@ -116,6 +116,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         valueFunction: (_value, rowId) => <span>{rowId + 1}.</span>
       },
       {
+        name: 'caseDetails',
         header: 'Case Details',
         align: 'left',
         valueFunction: (row) => (
@@ -129,6 +130,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         )
       },
       {
+        name: 'type',
         header: 'Type(s)',
         align: 'left',
         valueFunction: (row) => renderAppealType({
@@ -137,6 +139,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         })
       },
       {
+        name: 'docketNum',
         header: 'Docket Number',
         align: 'left',
         valueFunction: (row) => (
@@ -144,7 +147,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         )
       },
       {
-        name: 'Suggested Location',
+        name: 'suggestedLocation',
         header: 'Suggested Location',
         align: 'left',
         columnName: 'suggestedLocation',
@@ -156,9 +159,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         ),
         label: 'Filter by location',
         filterValueTransform: this.formatSuggestedHearingLocation,
-        anyFiltersAreSet: true,
         enableFilter: true,
-        enableFilterTextTransform: false,
         filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'suggestedLocation').filter_options
       }
     ];
@@ -167,7 +168,7 @@ export default class AssignHearingsTable extends React.PureComponent {
     if (displayPowerOfAttorneyColumn) {
       columns.push(
         {
-          name: 'Power of Attorney',
+          name: 'powerOfAttorney',
           header: 'Power of Attorney (POA)',
           columnName: 'powerOfAttorney',
           valueFunction: (row) => (
@@ -194,18 +195,20 @@ export default class AssignHearingsTable extends React.PureComponent {
   // Callback when the QueueTable receives tasks from the API. If there are no
   // tasks for the table to display at all (not just for the current page),
   // update this component to show an error.
-  onPageLoaded = (response) => {
+  // Filtered indicates if any filters are active in which case
+  // we do not wanna show the error if tasks are returned.
+  onPageLoaded = (response, filtered = false) => {
     if (!response) {
       return;
     }
 
-    const { tasks, total_task_count: totalTaskCount  } = response;
+    const { tasks, total_task_count: totalTaskCount } = response;
     const amaDocketLineIndex = this.amaDocketCutoffLineIndex(
       tasks.map((task) => task.appeal).filter((appeal) => !appeal.isLegacy)
     );
 
     this.setState({
-      showNoVeteransToAssignError: totalTaskCount === 0,
+      showNoVeteransToAssignError: totalTaskCount === 0 && !filtered,
       amaDocketLineIndex
     });
   }

@@ -326,7 +326,8 @@ export default class QueueTable extends React.PureComponent {
   }
 
   updateFilteredByList = (newList) => {
-    this.setState({ filteredByList: newList }, this.updateAddressBar);
+    this.setState({ filteredByList: newList,
+      filtered: true }, this.updateAddressBar);
 
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
@@ -535,7 +536,7 @@ export default class QueueTable extends React.PureComponent {
         }
 
         if (this.props.tabPaginationOptions && this.props.tabPaginationOptions.onPageLoaded) {
-          this.props.tabPaginationOptions.onPageLoaded(responseFromCache);
+          this.props.tabPaginationOptions.onPageLoaded(responseFromCache, this.state.filtered);
         }
       }
     } else {
