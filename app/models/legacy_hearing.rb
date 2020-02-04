@@ -185,7 +185,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def scheduled_for_past?
-    # FIXME: scheduled_for date is inconsistent in many places.
+    # FIXME: scheduled_for date is inconsistent in many places. (#13273)
     # scheduled_for should either pulled from VACOLS or from the associated hearing_day,
     # but some method exclusively use the value from VACOLS. The hearing_day association to
     # legacy hearings was added in #11741.
