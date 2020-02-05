@@ -289,7 +289,7 @@ class User < ApplicationRecord
   end
 
   def member_of_organization?(org)
-    organizations.pluck(:id).include?(org&.id)
+    organizations.include?(org)
   end
 
   def judge?
