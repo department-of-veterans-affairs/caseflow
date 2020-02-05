@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 
 import QueueSelectorDropdown from './QueueSelectorDropdown';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 export default class QueueOrganizationDropdown extends React.Component {
   render = () => {

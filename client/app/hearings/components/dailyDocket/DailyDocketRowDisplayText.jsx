@@ -5,7 +5,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
 import { PreppedCheckbox } from './DailyDocketRowInputs';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 
 import moment from 'moment-timezone';
 

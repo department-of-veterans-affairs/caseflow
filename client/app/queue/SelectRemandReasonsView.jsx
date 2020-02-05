@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 import {
@@ -17,7 +17,7 @@ import {
   ISSUE_DISPOSITIONS,
   PAGE_TITLES
 } from './constants';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import QueueFlowPage from './components/QueueFlowPage';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });

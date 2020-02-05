@@ -25,7 +25,7 @@ import {
 import { tasksWithAppealsFromRawTasks } from './utils';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
-import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 
 const containerStyles = css({
   position: 'relative'
