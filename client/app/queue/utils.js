@@ -48,7 +48,8 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
       type: hearing.type,
       externalId: hearing.external_id,
       disposition: hearing.disposition,
-      isVirtual: hearing.is_virtual
+      isVirtual: hearing.is_virtual,
+      scheduledForIsPast: hearing.scheduled_for_is_past
     }
   };
 };

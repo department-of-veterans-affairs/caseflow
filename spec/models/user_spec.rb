@@ -747,17 +747,22 @@ describe User, :all_dbs do
           end
         end
 
-        context "when marking the admin inactive" do
+        context "when marking the admin inactive", skip: "flaky test" do
           before do
             OrganizationsUser.make_user_admin(user, judge_team)
             allow(user).to receive(:judge_in_vacols?).and_return(false)
           end
 
           it "removes admin from all organizations, including JudgeTeam" do
-            expect(judge_team.judge).not_to eq user if FeatureToggle.enabled?(:judge_admin_scm)
+            if FeatureToggle.enabled?(:judge_admin_scm)
+              expect(judge_team.judge).not_to eq user
+              expect(user.selectable_organizations.length).to eq 3
+            else
+              expect(user.selectable_organizations.length).to eq 2
+            end
+
             expect(judge_team.admins).to include user
             expect(user.organizations.size).to eq 3
-            expect(user.selectable_organizations.length).to eq 2
             expect(subject).to eq true
             expect(user.reload.status).to eq status
             expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s

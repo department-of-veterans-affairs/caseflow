@@ -53,6 +53,10 @@ class Person < ApplicationRecord
     end
   end
 
+  def advanced_on_docket_based_on_age?
+    date_of_birth && date_of_birth < 75.years.ago
+  end
+
   private
 
   def stale_attributes
@@ -72,9 +76,5 @@ class Person < ApplicationRecord
 
   def bgs_person
     @bgs_person ||= bgs.fetch_person_info(participant_id)
-  end
-
-  def advanced_on_docket_based_on_age?
-    date_of_birth && date_of_birth < 75.years.ago
   end
 end

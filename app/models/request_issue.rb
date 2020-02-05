@@ -108,7 +108,8 @@ class RequestIssue < ApplicationRecord
       where(
         contested_rating_issue_reference_id: nil,
         contested_rating_decision_reference_id: nil,
-        is_unidentified: [nil, false]
+        is_unidentified: [nil, false],
+        verified_unidentified_issue: [nil, false]
       ).where.not(nonrating_issue_category: nil)
     end
 
@@ -167,6 +168,7 @@ class RequestIssue < ApplicationRecord
     # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
+      issue_text = (data[:is_unidentified] || data[:verified_unidentified_issue]) ? data[:decision_text] : nil
 
       {
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
@@ -174,7 +176,7 @@ class RequestIssue < ApplicationRecord
         contested_rating_decision_reference_id: data[:rating_decision_reference_id],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:nonrating_issue_category] ? data[:decision_text] : nil,
-        unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
+        unidentified_issue_text: issue_text,
         decision_date: data[:decision_date],
         nonrating_issue_category: data[:nonrating_issue_category],
         benefit_type: data[:benefit_type],
@@ -189,7 +191,8 @@ class RequestIssue < ApplicationRecord
         ineligible_reason: data[:ineligible_reason],
         ineligible_due_to_id: data[:ineligible_due_to_id],
         edited_description: data[:edited_description],
-        correction_type: data[:correction_type]
+        correction_type: data[:correction_type],
+        verified_unidentified_issue: data[:verified_unidentified_issue]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -230,7 +233,11 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
-    !!associated_rating_issue? || previous_rating_issue? || !!associated_rating_decision?
+    !!associated_rating_issue? ||
+      !!previous_rating_issue? ||
+      !!associated_rating_decision? ||
+      !!contested_decision_issue&.rating? ||
+      verified_unidentified_issue
   end
 
   def nonrating?
@@ -271,13 +278,13 @@ class RequestIssue < ApplicationRecord
     return edited_description if edited_description.present?
     return contested_issue_description if contested_issue_description
     return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
-    return unidentified_issue_text if is_unidentified?
+    return unidentified_issue_text if is_unidentified? || verified_unidentified_issue
   end
 
   # If the request issue is unidentified, we want to prompt the VBMS/SHARE user to correct the issue.
   # For that reason we use a special prompt message instead of the issue text.
   def contention_text
-    return UNIDENTIFIED_ISSUE_MSG if is_unidentified?
+    return UNIDENTIFIED_ISSUE_MSG if is_unidentified? && !verified_unidentified_issue
 
     Contention.new(description).text
   end
@@ -394,12 +401,11 @@ class RequestIssue < ApplicationRecord
     transaction do
       return unless create_decision_issues
 
+      end_product_establishment.on_decision_issue_sync_processed(self)
       clear_error!
       close_decided_issue!
       processed!
     end
-
-    end_product_establishment.on_decision_issue_sync_processed
   end
 
   def vacols_issue

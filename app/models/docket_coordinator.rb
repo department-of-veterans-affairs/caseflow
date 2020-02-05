@@ -54,11 +54,32 @@ class DocketCoordinator
     @docket_proportions
   end
 
+  # Returns how many AMA hearings need to be scheduled in a given time period.
+  #
+  # Algorithm is as follows:
+  #
+  #   [   NonPriorityDecisionPerYear = Historical number ]
+  #   [ ProportionOfHearingsInDocket = Based off of number of pending appeals in the hearing docket ]
+  #
+  #   1. Ratio of time period to year:
+  #
+  #        [     PeriodToYear  = Time in time period / Time in year ]
+  #
+  #   2. Decisions in next time period:
+  #
+  #        [ DecisionsInPeriod = PeriodToYear * NonPriorityDecisionPerYear ]
+  #
+  #   3. Number of appeals to schedule for hearings in next time period:
+  #
+  #        [      TargetNumber = DecisionInPeriod * ProportionOfHearingsInDocket ]
+  #
   def target_number_of_ama_hearings(time_period)
-    decisions_in_days = time_period.to_f / 1.year.to_f * nonpriority_decisions_per_year
+    decisions_in_days = (time_period.to_f / 1.year.to_f) * nonpriority_decisions_per_year
     (decisions_in_days * docket_proportions[:hearing]).round
   end
 
+  # Determines which non-priority appeals to schedule for a hearing for a given
+  # time period in DAYS.
   def upcoming_appeals_in_range(time_period)
     target = target_number_of_ama_hearings(time_period)
     dockets[:hearing].appeals(priority: false).where(docket_range_date: nil).limit(target)

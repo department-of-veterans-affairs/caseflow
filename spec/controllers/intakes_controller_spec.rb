@@ -101,7 +101,7 @@ RSpec.describe IntakesController, :postgres do
     context "veteran in BGS but user may not modify" do
       before do
         Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
-        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+        allow_any_instance_of(Fakes::BGSService).to receive(:station_conflict?).and_return(true)
       end
 
       let(:file_number) { "999887777" }

@@ -140,6 +140,7 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - Helpers::AppealHearingHelper#suggested_hearing_location
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
       - OrganizationOnHoldTasksTab#name
@@ -147,6 +148,10 @@ detectors:
       - Fakes::BGSService
       - Fakes::PexipService
       - VBMSCaseflowLogger#log
+      - Reporter#average
+      - Reporter#median
+      - Reporter#seconds_to_hms
+      - Reporter#percent
       - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link

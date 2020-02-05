@@ -166,7 +166,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
       expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
       find("label", text: "intervertebral disc syndrome").click
-      find("label", text: "None of these match").click
+      find("label", text: /^No VACOLS issues were found/).click
       safe_click ".add-issue"
 
       expect(page).to have_content("Left knee granted\nDecision date")

@@ -30,7 +30,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
   end
 
   def set_veteran_from_header
-    @veteran = VeteranFinder.find_best_match(request.headers["veteranId"])
+    @veteran = VeteranFinder.find_best_match(request.headers["ssn"])
     unless @veteran
       render_error(
         status: 404,

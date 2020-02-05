@@ -10,6 +10,7 @@ class Appeal < DecisionReview
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
+  include AppealAvailableHearingLocations
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -29,6 +30,8 @@ class Appeal < DecisionReview
     "Vacate": "Vacate",
     "De Novo": "De Novo"
   }
+
+  before_save :set_stream_docket_number_and_stream_type
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
@@ -269,6 +272,10 @@ class Appeal < DecisionReview
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
 
+  def appellant_is_not_veteran
+    !!veteran_is_not_claimant
+  end
+
   def cavc
     "not implemented for AMA"
   end
@@ -297,7 +304,7 @@ class Appeal < DecisionReview
 
   def docket_number
     return stream_docket_number if stream_docket_number
-    return "Missing Docket Number" unless receipt_date
+    return "Missing Docket Number" unless receipt_date && persisted?
 
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
@@ -422,6 +429,13 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def set_stream_docket_number_and_stream_type
+    if receipt_date && persisted?
+      self.stream_docket_number ||= docket_number
+    end
+    self.stream_type ||= type
+  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state
