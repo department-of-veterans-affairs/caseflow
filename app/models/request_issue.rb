@@ -565,6 +565,16 @@ class RequestIssue < ApplicationRecord
     contested_decision_issue&.remanded?
   end
 
+  def remand_type
+    return unless remanded?
+    
+    if contested_decision_issue.disposition == DecisionIssue::DIFFERENCE_OF_OPINION
+      "difference_of_opinion"
+    else
+      "duty_to_assist"
+    end
+  end
+
   def title_of_active_review
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
