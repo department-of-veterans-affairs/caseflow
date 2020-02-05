@@ -17,10 +17,9 @@ import {
 import {
   setActiveOrganization
 } from './uiReducer/uiActions';
+import WindowUtil from '../util/WindowUtil';
 
 class OrganizationQueueLoadingScreen extends React.PureComponent {
-  reload = () => window.location.reload();
-
   createOrgQueueLoadPromise = () => {
     const requestOptions = {
       timeout: { response: getMinutesToMilliseconds(5) }
@@ -50,7 +49,7 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
   render = () => {
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load your cases.<br />
-      Please <a onClick={this.reload}>refresh the page</a> and try again.
+      Please <a onClick={WindowUtil.reloadWithPOST}>refresh the page</a> and try again.
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay

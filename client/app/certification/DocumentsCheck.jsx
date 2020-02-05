@@ -12,6 +12,7 @@ import NotFoundIcon from '../components/NotFoundIcon';
 import * as certificationActions from './actions/Certification';
 import Header from './Header';
 import CertificationProgressBar from './CertificationProgressBar';
+import WindowUtil from '../util/WindowUtil';
 
 export class DocumentsCheck extends React.Component {
   // TODO: updating state in UNSAFE_componentWillMount is
@@ -41,10 +42,6 @@ export class DocumentsCheck extends React.Component {
       match,
       toggleCancellationModal
     } = this.props;
-
-    let reloadPage = () => {
-      window.location.reload();
-    };
 
     if (certificationStatus === 'data_missing') {
       return <NotReady />;
@@ -92,7 +89,7 @@ export class DocumentsCheck extends React.Component {
           `/certifications/${match.params.vacols_id}/confirm_case_details` :
           ''
         }
-        onClickContinue={documentsMatch ? null : reloadPage} />
+        onClickContinue={documentsMatch ? null : WindowUtil.reloadWithPOST} />
     </div>;
   }
 }

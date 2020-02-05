@@ -15,6 +15,7 @@ import { appealsByCaseflowVeteranId } from './selectors';
 import { prepareAppealForStore } from './utils';
 
 import COPY from '../../COPY.json';
+import WindowUtil from '../util/WindowUtil';
 
 const containerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
@@ -69,7 +70,7 @@ class VeteranCasesView extends React.PureComponent {
 
     const failStatusMessageChildren = <div>
       Caseflow was unable to load cases.<br />
-      Please <a onClick={this.reload}>refresh the page</a> and try again.
+      Please <a onClick={WindowUtil.reloadWithPOST}>refresh the page</a> and try again.
     </div>;
 
     return <LoadingDataDisplay

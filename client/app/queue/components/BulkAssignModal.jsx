@@ -13,6 +13,7 @@ import { setActiveOrganization } from '../uiReducer/uiActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY.json';
+import WindowUtil from '../../util/WindowUtil';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -78,7 +79,7 @@ class BulkAssignModal extends React.PureComponent {
 
     return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
       this.props.history.push(`/organizations/${this.organizationUrl()}`);
-      window.location.reload();
+      WindowUtil.reloadWithPOST();
     }).
       catch(() => {
         // handle the error
