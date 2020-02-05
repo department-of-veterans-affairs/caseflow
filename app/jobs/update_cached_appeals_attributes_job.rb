@@ -103,7 +103,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_type: LegacyAppeal.name,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
-        docket_type: appeal.docket_name # "legacy"
+        docket_type: appeal.docket_name, # "legacy",
+        power_of_attorney_name: appeal.representative_name,
+        suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
     end
 
@@ -112,7 +114,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                       :closest_regional_office_city,
                                                                       :closest_regional_office_key,
                                                                       :vacols_id,
-                                                                      :docket_type
+                                                                      :docket_type,
+                                                                      :power_of_attorney_name,
+                                                                      :suggested_hearing_location
                                                                     ] }
   end
 
