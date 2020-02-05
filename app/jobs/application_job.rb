@@ -34,7 +34,7 @@ class ApplicationJob < ActiveJob::Base
   end
 
   # Testing America/New_York TZ for all jobs in UAT.
-  if !Rails.deploy_env?(:uat)
+  if Rails.deploy_env?(:uat)
     around_perform do |_job, block|
       Time.use_zone(Rails.configuration.time_zone) do
         block.call
