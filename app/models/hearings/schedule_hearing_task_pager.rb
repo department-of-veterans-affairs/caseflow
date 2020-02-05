@@ -16,10 +16,15 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
       appeal_type: appeal_type,
       regional_office_key: regional_office_key
     )
-    
-    @tasks_for_tab ||= tab.tasks.order(
-      "cached_appeal_attributes.is_aod DESC, cached_appeal_attributes.docket_number ASC"
-    )
+
+    @tasks_for_tab ||= tab.tasks.order(<<-SQL)
+      (CASE
+        WHEN cached_appeal_attributes.case_type = 'Court Remand' THEN 1
+        ELSE 0
+      END) DESC,
+      cached_appeal_attributes.is_aod DESC,
+      cached_appeal_attributes.docket_number ASC
+    SQL
   end
 
   def appeal_type
