@@ -130,5 +130,7 @@ DocumentsCheck.propTypes = {
   form9: PropTypes.object,
   ssocs: PropTypes.arrayOf(PropTypes.object),
   documentsMatch: PropTypes.bool,
-  match: PropTypes.object
+  match: PropTypes.object,
+  updateProgressBar: PropTypes.func,
+  toggleCancellationModal: PropTypes.func
 };

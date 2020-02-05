@@ -206,7 +206,8 @@ AssociatePage.propTypes = {
   backToDecisionReviewText: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
-  task: PropTypes.object.isRequired
+  task: PropTypes.object.isRequired,
+  loading: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
