@@ -97,7 +97,7 @@ describe TaskTreeRenderModule, :all_dbs do
     end
 
     def tree2(obj, *atts, **kwargs)
-      kwargs.delete(:renderer) && fail("Use other approach to allow 'renderer' named parameter!")
+      kwargs.delete(:renderer) && fail("Use `tree1` method to allow 'renderer' named parameter!")
       renderer = TaskTreeRenderModule.new_renderer.tap do |r|
         r.compact_mode
         r.config.default_atts = [:id, :status, :ASGN_TO, :UPD_DATE]
