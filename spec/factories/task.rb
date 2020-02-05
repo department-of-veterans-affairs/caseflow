@@ -343,6 +343,16 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_to { Bva.singleton }
       parent { create(:hearing_task, appeal: appeal) }
+
+      trait :with_cached_appeal_attributes do
+        after(:create) do |task|
+          if task.appeal_type == Appeal.name
+            UpdateCachedAppealsAttributesJob.new.cache_ama_appeals
+          else
+            UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals
+          end
+        end
+      end
     end
 
     factory :appeal_withdrawal_mail_task, class: AppealWithdrawalMailTask do

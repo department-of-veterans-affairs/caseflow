@@ -24,8 +24,10 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         bfcurloc: "CASEFLOW"
       )
     end
-    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-    let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
+    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "C") }
+    let!(:schedule_hearing_task) do
+      create(:schedule_hearing_task, :with_cached_appeal_attributes, appeal: legacy_appeal)
+    end
 
     let!(:veteran) { create(:veteran, file_number: "123454787") }
     let!(:hearing_location_dropdown_label) { "Hearing Location" }
@@ -101,7 +103,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
     let!(:schedule_hearing_task) do
       create(
-        :schedule_hearing_task, appeal: legacy_appeal
+        :schedule_hearing_task, :with_cached_appeal_attributes, appeal: legacy_appeal
       )
     end
     let!(:veteran) { create(:veteran, file_number: "123456789") }
@@ -170,6 +172,10 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
     let(:incarcerated_veteran_task_instructions) { "Incarcerated veteran task instructions" }
     let(:contested_claimant_task_instructions) { "Contested claimant task instructions" }
+
+    before :each do
+      UpdateCachedAppealsAttributesJob.new.cache_ama_appeals
+    end
 
     scenario "Can create multiple admin actions and reassign them" do
       visit "hearings/schedule/assign"
@@ -349,7 +355,9 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 30) }
     let!(:schedule_hearing_task1) do
       create(
-        :schedule_hearing_task, appeal: create(
+        :schedule_hearing_task,
+        :with_cached_appeal_attributes,
+        appeal: create(
           :legacy_appeal,
           vacols_case: create(
             :case, :central_office_hearing,
@@ -362,14 +370,17 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
               tinum: "1545678",
               titrnum: "123454787S"
             )
-          )
+          ),
+          closest_regional_office: "C"
         )
       )
     end
     let!(:veteran1) { create(:veteran, file_number: "123454787") }
     let!(:schedule_hearing_task2) do
       create(
-        :schedule_hearing_task, appeal: create(
+        :schedule_hearing_task,
+        :with_cached_appeal_attributes,
+        appeal: create(
           :legacy_appeal,
           vacols_case: create(
             :case,
@@ -384,14 +395,17 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
               tinum: "1645621",
               titrnum: "123454788S"
             )
-          )
+          ),
+          closest_regional_office: "C"
         )
       )
     end
     let!(:veteran2) { create(:veteran, file_number: "123454788") }
     let!(:schedule_hearing_task3) do
       create(
-        :schedule_hearing_task, appeal: create(
+        :schedule_hearing_task,
+        :with_cached_appeal_attributes,
+        appeal: create(
           :legacy_appeal,
           vacols_case: create(
             :case,
@@ -406,14 +420,16 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
               tinum: "1645678",
               titrnum: "323454787S"
             )
-          )
+          ),
+          closest_regional_office: "C"
         )
       )
     end
     let!(:veteran3) { create(:veteran, file_number: "323454787") }
     let!(:schedule_hearing_task4) do
       create(
-        :schedule_hearing_task, appeal: create(
+        :schedule_hearing_task,
+        :with_cached_appeal_attributes, appeal: create(
           :legacy_appeal,
           vacols_case: create(
             :case,
@@ -427,14 +443,17 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
               tinum: "1445678",
               titrnum: "123454789S"
             )
-          )
+          ),
+          closest_regional_office: "C"
         )
       )
     end
     let!(:veteran4) { create(:veteran, file_number: "123454789") }
     let!(:schedule_hearing_task5) do
       create(
-        :schedule_hearing_task, appeal: create(
+        :schedule_hearing_task,
+        :with_cached_appeal_attributes,
+        appeal: create(
           :legacy_appeal,
           vacols_case: create(
             :case,
@@ -448,7 +467,8 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
               tinum: "1445695",
               titrnum: "523454787S"
             )
-          )
+          ),
+          closest_regional_office: "C"
         )
       )
     end
@@ -474,7 +494,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
   context "With a full hearing day" do
     let(:appeal) { create(:appeal) }
-    let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, :with_cached_appeal_attributes, appeal: appeal) }
     let!(:hearing_day) do
       create(
         :hearing_day,
