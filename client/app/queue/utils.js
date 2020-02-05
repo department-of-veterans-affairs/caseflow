@@ -513,11 +513,6 @@ export const taskHasNewDocuments = (task, newDocsForAppeal) => {
 };
 
 export const taskIsOnHold = (task) => {
-  if (task.onHoldDuration && task.placedOnHoldAt) {
-    return moment().startOf('day').
-      diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
-  }
-
   return task.status === TASK_STATUSES.on_hold;
 };
 
@@ -527,7 +522,7 @@ export const taskHasCompletedHold = (task) => {
       diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
   }
 
-  return task.status === TASK_STATUSES.on_hold;
+  return taskIsOnHold(task);
 };
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
