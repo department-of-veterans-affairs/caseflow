@@ -149,7 +149,13 @@ SelectRemandReasonsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
+  let issues;
+
+  if (appeal && appeal.isLegacyAppeal) {
+    issues = appeal.issues;
+  } else if (appeal) {
+    issues = appeal.decisionIssues;
+  }
 
   return {
     appeal,
