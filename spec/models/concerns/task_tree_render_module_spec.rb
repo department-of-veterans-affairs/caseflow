@@ -72,7 +72,7 @@ describe TaskTreeRenderModule, :all_dbs do
     end
 
     it "highlights specified task with an asterisk, even if no columns are specified" do
-      task_to_highlight = @appeal.tasks.find(2) # root_task #tasks.sample
+      task_to_highlight = @appeal.tasks.sample
       _rows_hash, metadata = @appeal.root_task.tree_hash(highlight: task_to_highlight.id)
       check_for_highlight(metadata, task_to_highlight)
     end
