@@ -349,7 +349,7 @@ describe User, :all_dbs do
     end
   end
 
-  fcontext "#member_of_organization?" do
+  context "#member_of_organization?" do
     let(:org) { create(:organization) }
     let(:user) { create(:user) }
 
