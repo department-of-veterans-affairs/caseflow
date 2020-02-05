@@ -37,8 +37,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/console-tree-renderer.git
-  revision: 7f196fc1094400480cea3bc8b4c21720cd25a166
-  tag: v0.1.0
+  revision: 96258127e8f79796aa8159642a12855d9c2aeb04
+  branch: proper_gem
   specs:
     console_tree_renderer (0.1.0)
 
