@@ -288,6 +288,10 @@ class User < ApplicationRecord
     orgs
   end
 
+  def member_of_organization?(org)
+    organizations.include?(org)
+  end
+
   def judge?
     !!JudgeTeam.for_judge(self) || judge_in_vacols?
   end
