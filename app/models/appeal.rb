@@ -98,8 +98,6 @@ class Appeal < DecisionReview
   end
 
   def vacate_type
-    return nil unless vacate?
-
     post_decision_motion&.vacate_type
   end
 

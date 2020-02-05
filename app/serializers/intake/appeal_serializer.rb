@@ -9,6 +9,4 @@ class Intake::AppealSerializer < Intake::DecisionReviewSerializer
   attribute :form_type do
     "appeal"
   end
-  attribute :type
-  attribute :vacate_type, if: proc { |appeal| appeal.vacate? }
 end

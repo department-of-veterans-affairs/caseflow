@@ -189,7 +189,7 @@ FactoryBot.define do
     end
 
     trait :straight_vacated do
-      stream_type { "Vacate" }
+      stream_type { "vacate" }
 
       after(:create) do |appeal, evaluator|
         task = JudgeAddressMotionToVacateTask.create!(
