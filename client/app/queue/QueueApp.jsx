@@ -73,11 +73,8 @@ import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
-// import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
-// import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
+
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
-// import { ReturnToLitSupportModal } from './mtv/ReturnToLitSupportModal';
-// import { returnToLitSupport } from './mtv/mtvActions';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 
 class QueueApp extends React.PureComponent {
@@ -215,10 +212,6 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
-  // routedSendMotionToVacateToJudge = () => <ReviewMotionToVacateView />;
-
-  // routedAddressMotionToVacate = (props) => <AddressMotionToVacateView {...props.match.params} />;
-
   routedPulacCerulloReminder = (props) => {
     const { appealId, taskId } = props.match.params;
     const pulacRoute = `/queue/appeals/${appealId}/tasks/${taskId}/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`;
@@ -234,21 +227,6 @@ class QueueApp extends React.PureComponent {
   };
 
   routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
-
-  // routedReturnToLitSupport = (props) => {
-  //   const { taskId } = props.match.params;
-
-  //   return (
-  //     <ReturnToLitSupportModal
-  //       {...props.match.params}
-  //       onCancel={() => props.history.goBack()}
-  //       onSubmit={({ instructions }) => {
-  //         this.props.returnToLitSupport({ instructions,
-  //           task_id: taskId }, props);
-  //       }}
-  //     />
-  //   );
-  // };
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
@@ -546,23 +524,10 @@ class QueueApp extends React.PureComponent {
               title="Assign to Pulac-Cerullo | Caseflow"
               render={this.routedAssignToPulacCerullo}
             />
+
             {motionToVacateRoutes.page}
             {motionToVacateRoutes.modal}
-            {/* <PageRoute
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
-              title="Address Motion to Vacate | Caseflow"
-              render={this.routedAddressMotionToVacate}
-            />
-            <PageRoute
-              exact
-              path={[
-                '/queue/appeals/:appealId/tasks/:taskId',
-                TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value,
-                TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value
-              ].join('/')}
-              title="Return to Litigation Support | Caseflow"
-              render={this.routedReturnToLitSupport}
-            /> */}
+
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -668,8 +633,7 @@ QueueApp.propTypes = {
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
-  userCanViewHearingSchedule: PropTypes.bool,
-  // returnToLitSupport: PropTypes.func
+  userCanViewHearingSchedule: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -684,8 +648,7 @@ const mapDispatchToProps = (dispatch) =>
       setUserCssId,
       setUserIsVsoEmployee,
       setFeedbackUrl,
-      setOrganizations,
-      // returnToLitSupport
+      setOrganizations
     },
     dispatch
   );
