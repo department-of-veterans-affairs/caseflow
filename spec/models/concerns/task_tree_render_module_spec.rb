@@ -26,8 +26,8 @@ describe TaskTreeRenderModule, :all_dbs do
       _rows_hash, metadata = @appeal.tree_hash(:id, [:assigned_to, :type])
       expect(metadata.col_metadata.values.pluck(:label)).to eq ["ID", "[:ASSIGNED_TO, :TYPE]"]
       @appeal.tasks.each do |tsk|
-        if tsk.assigned_to.is_a?(Organization)
-          expect(metadata.rows[tsk]["[:assigned_to, :type]"]).to eq tsk.assigned_to&.type
+        if tsk.assigned_to&.is_a?(Organization)
+          expect(metadata.rows[tsk]["[:assigned_to, :type]"]).to eq tsk.assigned_to.type
         else
           expect(metadata.rows[tsk]["[:assigned_to, :type]"]).to eq ""
         end

@@ -5,7 +5,7 @@ require "console_tree_renderer"
 # Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 module TaskTreeRenderModule
   def self.new_renderer # rubocop:disable all
-    ConsoleTreeRenderer.new.tap do |ttr|
+    ConsoleTreeRenderer::ConsoleRenderer.new.tap do |ttr|
       ttr.config.value_funcs_hash.merge!(
         CRE_DATE: ->(task) { task.created_at&.strftime("%Y-%m-%d") },
         CRE_TIME: ->(task) { task.created_at&.strftime("%H-%M-%S") },
