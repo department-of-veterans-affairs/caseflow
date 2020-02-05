@@ -6,7 +6,7 @@ import _ from 'lodash';
 import BareList from '../components/BareList';
 import { boldText } from './constants';
 import Address from './components/Address';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const detailListStyling = css({
   paddingLeft: 0,

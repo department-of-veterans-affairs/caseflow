@@ -24,7 +24,7 @@ import {
   fullWidth,
   marginBottom
 } from './constants';
-import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 
 import Alert from '../components/Alert';
 import TabWindow from '../components/TabWindow';

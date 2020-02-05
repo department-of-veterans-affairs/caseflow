@@ -3,8 +3,8 @@
 import _ from 'lodash';
 import React from 'react';
 
-import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
-import COPY from '../../../COPY.json';
+import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES';
+import COPY from '../../../COPY';
 
 import { legacyIssue } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';

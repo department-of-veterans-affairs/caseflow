@@ -5,7 +5,7 @@ import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from './selector
 import { css } from 'glamor';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from './StickyNavContentArea';
 import { PulacCerulloReminderAlert } from './pulacCerullo/PulacCerulloReminderAlert';
 
