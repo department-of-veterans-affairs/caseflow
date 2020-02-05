@@ -248,7 +248,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
     scenario "Schedule Veteran for a video hearing with admin actions that can be put on hold and completed" do
       # Do the first part of the test in the past so we can wait for our hold to complete.
-      Timecop.travel(20.days.ago) do
+      Timecop.travel(17.days.ago) do
         visit "hearings/schedule/assign"
         expect(page).to have_content("Regional Office")
         click_dropdown(text: "Denver")
@@ -286,6 +286,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       end
 
       # Refresh the page in the present, and the hold should be completed.
+      TaskTimerJob.perform_now
       visit "/queue"
       click_on "Bob Smith"
 
