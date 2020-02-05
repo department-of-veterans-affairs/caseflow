@@ -349,11 +349,18 @@ describe User, :all_dbs do
     end
   end
 
-  context "#member_of_organization?" do
+  fcontext "#member_of_organization?" do
     let(:org) { create(:organization) }
     let(:user) { create(:user) }
 
     subject { user.member_of_organization?(org) }
+
+    context "when the organization does not exist" do
+      let(:org) { nil }
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
 
     context "when the current user is not a member of the organization" do
       it "returns false" do
