@@ -399,7 +399,8 @@ describe('ColocatedTaskListView', () => {
         id: '1',
         cssIdAssignee: 'BVALSPORER',
         placedOnHoldAt: moment().subtract(2, 'days'),
-        onHoldDuration: 30
+        onHoldDuration: 30,
+        status: 'on_hold'
       });
       const taskNotAssigned = amaTaskWith({
         ...task,
