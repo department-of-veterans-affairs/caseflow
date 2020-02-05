@@ -67,11 +67,11 @@ import UserManagement from './UserManagement';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
-import COPY from '../../COPY.json';
-import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
-import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
-import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
+import COPY from '../../COPY';
+import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
+import TASK_STATUSES from '../../constants/TASK_STATUSES';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
 import { FlashAlerts } from '../nonComp/components/Alerts';
 import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
 import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
