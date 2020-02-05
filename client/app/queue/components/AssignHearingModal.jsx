@@ -163,7 +163,7 @@ class AssignHearingModal extends React.PureComponent {
       this.getHearingType(),
       hearingDateStr
     );
-    const href = `/hearings/schedule/assign?roValue=${assignHearingForm.hearingDay.regionalOffice}`;
+    const href = `/hearings/schedule/assign?regional_office_key=${assignHearingForm.hearingDay.regionalOffice}`;
 
     const detail = (
       <p>
