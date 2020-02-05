@@ -7,8 +7,8 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import WindowUtil from '../util/WindowUtil';
 import { prepareAppealForStore, prepareAllTasksForStore } from './utils';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
-import COPY from '../../COPY.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
+import COPY from '../../COPY';
 import PropTypes from 'prop-types';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';

@@ -30,7 +30,7 @@ import {
   claimReviewsByCaseflowVeteranId
 } from './selectors';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const horizontalRuleStyling = css({
   border: 0,

@@ -14,7 +14,7 @@ import { onReceiveAppealDetails } from './QueueActions';
 import { appealsByCaseflowVeteranId } from './selectors';
 import { prepareAppealForStore } from './utils';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import WindowUtil from '../util/WindowUtil';
 
 const containerStyling = css({

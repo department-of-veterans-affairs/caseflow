@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 import { associateTasksWithAppeals } from './utils';
 
@@ -18,7 +18,7 @@ import {
   fetchAmaTasksOfUser
 } from './QueueActions';
 import { setUserId } from './uiReducer/uiActions';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import WindowUtil from '../util/WindowUtil';
 
 class QueueLoadingScreen extends React.PureComponent {
