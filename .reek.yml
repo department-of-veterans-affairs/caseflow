@@ -74,6 +74,8 @@ detectors:
       - VeteranAttributeCacher
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
+      - AssignHearing#power_of_attorney_name_options
+      - AssignHearing#suggested_location_options
   InstanceVariableAssumption:
     exclude:
       - Appeal

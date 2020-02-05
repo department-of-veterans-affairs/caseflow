@@ -34,14 +34,14 @@ class QueueFilterParameter
     filter_hash = Rack::Utils.parse_query(filter_string)
     values = []
     arr = filter_hash["val"].split(",")
-    if arr.include? (URI.escape(COPY::NULL_FILTER_LABEL))
+    if arr.include? URI.escape(COPY::NULL_FILTER_LABEL)
       arr.reject! { |item| item == URI.escape(COPY::NULL_FILTER_LABEL) }
       values += [nil]
     end
     arr.each_slice(2) do |loc|
       values << escaped_value(loc.join(","))
     end
-    
+
     new(column: filter_hash["col"], values: values)
   end
 
