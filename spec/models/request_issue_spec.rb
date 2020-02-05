@@ -166,6 +166,24 @@ describe RequestIssue, :all_dbs do
         let(:disposition) { "remanded" }
 
         it { is_expected.to eq true }
+
+        context "#remand_type" do
+          subject { rating_request_issue.remand_type }
+
+          it { is_expected.to eq "duty_to_assist" }
+
+          context "when the decision issue has a DTA disposition" do
+            let(:disposition) { "DTA Error" }
+
+            it { is_expected.to eq "duty_to_assist" }
+          end
+
+          context "when the decision issue has a difference of opinion disposition" do
+            let(:disposition) { "Difference of Opinion" }
+
+            it { is_expected.to eq "difference_of_opinion" }
+          end
+        end
       end
 
       context "when the decision issue does not have a remand disposition" do
