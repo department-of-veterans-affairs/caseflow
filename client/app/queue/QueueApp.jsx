@@ -73,11 +73,9 @@ import TASK_STATUSES from '../../constants/TASK_STATUSES';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
 import { FlashAlerts } from '../nonComp/components/Alerts';
-import AddressMotionToVacateView from './mtv/AddressMotionToVacateView';
-import ReviewMotionToVacateView from './mtv/ReviewMotionToVacateView';
+
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
-import { ReturnToLitSupportModal } from './mtv/ReturnToLitSupportModal';
-import { returnToLitSupport } from './mtv/mtvActions';
+import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -214,10 +212,6 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
-  routedSendMotionToVacateToJudge = () => <ReviewMotionToVacateView />;
-
-  routedAddressMotionToVacate = (props) => <AddressMotionToVacateView {...props.match.params} />;
-
   routedPulacCerulloReminder = (props) => {
     const { appealId, taskId } = props.match.params;
     const pulacRoute = `/queue/appeals/${appealId}/tasks/${taskId}/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`;
@@ -233,21 +227,6 @@ class QueueApp extends React.PureComponent {
   };
 
   routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
-
-  routedReturnToLitSupport = (props) => {
-    const { taskId } = props.match.params;
-
-    return (
-      <ReturnToLitSupportModal
-        {...props.match.params}
-        onCancel={() => props.history.goBack()}
-        onSubmit={({ instructions }) => {
-          this.props.returnToLitSupport({ instructions,
-            task_id: taskId }, props);
-        }}
-      />
-    );
-  };
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
@@ -446,12 +425,6 @@ class QueueApp extends React.PureComponent {
               />
 
               <PageRoute
-                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
-                title="Address Motion to Vacate | Caseflow"
-                render={this.routedAddressMotionToVacate}
-              />
-
-              <PageRoute
                 path="/team_management"
                 title="Team Management | Caseflow"
                 render={this.routedTeamManagement}
@@ -461,6 +434,8 @@ class QueueApp extends React.PureComponent {
                 title="User Management | Caseflow"
                 render={this.routedUserManagement}
               />
+
+              {motionToVacateRoutes.page}
             </Switch>
 
             {/* Modal routes are in their own Switch so they will display above the base routes */}
@@ -551,10 +526,6 @@ class QueueApp extends React.PureComponent {
                 path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value}`}
                 render={this.routedAssignToUser}
               />
-              <Route
-                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`}
-                render={this.routedSendMotionToVacateToJudge}
-              />
 
               <PageRoute
                 exact
@@ -573,16 +544,6 @@ class QueueApp extends React.PureComponent {
                 path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`}
                 title="Assign to Pulac-Cerullo | Caseflow"
                 render={this.routedAssignToPulacCerullo}
-              />
-              <PageRoute
-                exact
-                path={[
-                  '/queue/appeals/:appealId/tasks/:taskId',
-                  TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value,
-                  TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value
-                ].join('/')}
-                title="Return to Litigation Support | Caseflow"
-                render={this.routedReturnToLitSupport}
               />
               <PageRoute
                 exact
@@ -657,6 +618,8 @@ class QueueApp extends React.PureComponent {
               <Route path="/team_management/add_vso" render={this.routedAddVsoModal} />
               <Route path="/team_management/add_private_bar" render={this.routedAddPrivateBarModal} />
               <Route path="/team_management/lookup_participant_id" render={this.routedLookupParticipantIdModal} />
+
+              {motionToVacateRoutes.modal}
             </Switch>
           </div>
         </AppFrame>
@@ -688,8 +651,7 @@ QueueApp.propTypes = {
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
-  userCanViewHearingSchedule: PropTypes.bool,
-  returnToLitSupport: PropTypes.func
+  userCanViewHearingSchedule: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -704,8 +666,7 @@ const mapDispatchToProps = (dispatch) =>
       setUserCssId,
       setUserIsVsoEmployee,
       setFeedbackUrl,
-      setOrganizations,
-      returnToLitSupport
+      setOrganizations
     },
     dispatch
   );
