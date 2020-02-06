@@ -2,7 +2,7 @@
 
 class ExternalApi::VbmsDocumentsForAppeal < ExternalApi::VbmsRequestWithFileNumber
   def fetch
-    @documents = get_and_retry
+    @documents = request_with_retry
 
     Rails.logger.info("Document list length: #{documents.length}")
 

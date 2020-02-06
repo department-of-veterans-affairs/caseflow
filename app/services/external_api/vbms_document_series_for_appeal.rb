@@ -2,7 +2,7 @@
 
 class ExternalApi::VbmsDocumentSeriesForAppeal < ExternalApi::VbmsRequestWithFileNumber
   def fetch
-    get_and_retry
+    request_with_retry
   end
 
   protected

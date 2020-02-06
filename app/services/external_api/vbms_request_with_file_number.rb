@@ -23,7 +23,7 @@ class ExternalApi::VbmsRequestWithFileNumber
   # Implement in subclass
   def do_request(_file_number_or_claim_number); end
 
-  def get_and_retry
+  def request_with_retry
     DBService.release_db_connections
 
     begin
