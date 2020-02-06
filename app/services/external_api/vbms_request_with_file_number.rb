@@ -21,7 +21,7 @@ class ExternalApi::VbmsRequestWithFileNumber
   attr_reader :file_number, :vbms_client, :bgs_client
 
   # Implement in subclass
-  def do_request(_file_number_or_claim_number); end
+  def do_request(_ssn_or_claim_number); end
 
   def request_with_retry
     DBService.release_db_connections

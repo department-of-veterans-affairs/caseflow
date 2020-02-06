@@ -11,19 +11,19 @@ class ExternalApi::VbmsDocumentsForAppeal < ExternalApi::VbmsRequestWithFileNumb
 
   protected
 
-  def do_request(file_number_or_claim_number)
+  def do_request(ssn_or_claim_number)
     if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
       ExternalApi::VBMSService.call_and_log_service(
         service: vbms_paged_documents_service,
-        vbms_id: file_number_or_claim_number
+        vbms_id: ssn_or_claim_number
       )&.[](:documents) || []
     else
-      vbms_request = VBMS::Requests::FindDocumentVersionReference.new(file_number_or_claim_number)
+      vbms_request = VBMS::Requests::FindDocumentVersionReference.new(ssn_or_claim_number)
 
       ExternalApi::VBMSRequest.new(
         client: vbms_client,
         request: vbms_request,
-        id: file_number_or_claim_number
+        id: ssn_or_claim_number
       ).call
     end
   end
