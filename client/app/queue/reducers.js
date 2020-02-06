@@ -49,7 +49,7 @@ export const initialState = {
   tasksAssignedByBulk: {},
   pendingDistribution: null,
   attorneys: {},
-  non_judge_attorneys: {},
+  nonJudgeAttorneys: {},
   organizationId: null,
   organizations: [],
   loadingAppealDetail: {},
@@ -559,7 +559,7 @@ const errorLoadingAttorneys = (state, action) => {
 
 const receiveAllNonJudgeAttorneys = (state, action) => {
   return update(state, {
-    non_judge_attorneys: {
+    nonJudgeAttorneys: {
       $set: {
         data: action.payload.non_judge_attorneys
       }
@@ -569,7 +569,7 @@ const receiveAllNonJudgeAttorneys = (state, action) => {
 
 const errorLoadingNonJudgeAttorneys = (state, action) => {
   return update(state, {
-    non_judge_attorneys: {
+    nonJudgeAttorneys: {
       $set: {
         error: action.payload.error
       }
