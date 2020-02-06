@@ -9,7 +9,8 @@ class EndProduct
     "PEND" => "Pending",
     "CLR" => "Cleared",
     "CAN" => "Canceled",
-    "RW" => "Ready to work"
+    "RW" => "Ready to work",
+    "RFD" => "Ready for decision"
   }.freeze
 
   INACTIVE_STATUSES = %w[CAN CLR].freeze
@@ -238,8 +239,15 @@ class EndProduct
       gulf_war_registry: gulf_war_registry,
       claimant_participant_id: claimant_participant_id,
       limited_poa_code: limited_poa_code,
-      limited_poa_access: limited_poa_access
+      limited_poa_access: limited_poa_access,
+      status_type_code: set_status_type_code
     }
+  end
+
+  def set_status_type_code
+    if BoardGrantEffectuation::END_PRODUCT_CODES || EndProductCodeSelector::END_PRODUCT_CODES
+      STATUSES.key("Ready for decision")
+    end
   end
 
   def description
