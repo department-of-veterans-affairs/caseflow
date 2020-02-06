@@ -25,6 +25,12 @@ const itemNotFoundMsg = <div>
         We could not find the information you were looking for.<br />
         Please return to the previous page, check the information provided, and try again.</div>;
 
+const DEFAULT_UNKNOWN_ERROR_MSG = (
+  <div>
+    An unknown error occured.
+  </div>
+);
+
 class LoadingDataDisplay extends React.PureComponent {
   constructor() {
     super();
@@ -150,10 +156,7 @@ LoadingDataDisplay.propTypes = {
   children: PropTypes.node,
   createLoadPromise: PropTypes.func.isRequired,
   errorComponent: PropTypes.func,
-  failStatusMessageChildren: PropTypes.oneOfType([
-    PropTypes.element,
-    PropTypes.object
-  ]),
+  failStatusMessageChildren: PropTypes.node,
   failStatusMessageProps: PropTypes.object,
   loadingComponent: PropTypes.func,
   loadingComponentProps: PropTypes.object,
@@ -170,7 +173,7 @@ LoadingDataDisplay.defaultProps = {
   errorComponent: StatusMessage,
   loadingComponentProps: {},
   failStatusMessageProps: {},
-  failStatusMessageChildren: {}
+  failStatusMessageChildren: DEFAULT_UNKNOWN_ERROR_MSG
 };
 
 export default LoadingDataDisplay;
