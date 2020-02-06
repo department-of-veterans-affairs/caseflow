@@ -21,6 +21,7 @@ export class AssociatePage extends React.Component {
     };
   }
 
+  // eslint-disable-next-line camelcase
   UNSAFE_componentWillMount() {
     if (!this.props.endProducts.length) {
       this.props.history.goBack();
