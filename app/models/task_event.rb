@@ -14,9 +14,12 @@ class TaskEvent
     version.whodunnit ? User.find(version.whodunnit) : User.new
   end
 
+  def original
+    @original ||= reified
+  end
+
   def identifier
-    reified = version.reify
-    "#{reified.type} #{reified.id}"
+    "#{original.type} #{original.id}"
   end
 
   delegate :created_at, to: :version
