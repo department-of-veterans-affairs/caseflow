@@ -5,7 +5,7 @@ import { useRouteMatch, useParams, useHistory } from 'react-router-dom';
 
 import { taskById, appealWithDetailSelector } from '../selectors';
 import { MTVJudgeDisposition } from './MTVJudgeDisposition';
-import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS.json';
+import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS';
 import { submitMTVJudgeDecision } from './mtvActions';
 import { taskActionData } from '../utils';
 
