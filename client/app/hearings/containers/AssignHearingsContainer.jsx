@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import _ from 'lodash';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';

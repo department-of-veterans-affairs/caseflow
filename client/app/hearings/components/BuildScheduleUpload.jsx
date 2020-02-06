@@ -1,5 +1,5 @@
 import React from 'react';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
@@ -36,16 +36,16 @@ const inlineFormStyling = css({
 
 export default class BuildScheduleUpload extends React.Component {
 
-  getErrorMessage = (errors) => {
-    return <div className="usa-input-error">We have found the following errors with your upload. Please
-      check the file and dates and try again.
+  getErrorMessage = (errors) => (
+    <div className="usa-input-error">
+      We have found the following errors with your upload. Please check the file and dates and try again.
       <ul>
         {_.map(errors.replace('Validation failed: ', '').split(', '), (error, i) => {
           return <li key={i}>{error}</li>;
         })}
       </ul>
-    </div>;
-  };
+    </div>
+  );
 
   getRoCoDisplay = () => {
     return <div>{ SPREADSHEET_TYPES.RoSchedulePeriod.display }

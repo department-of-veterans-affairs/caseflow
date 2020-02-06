@@ -13,7 +13,7 @@ import {
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Tooltip from '../components/Tooltip';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
 import { showVeteranCaseList } from './uiReducer/uiActions';

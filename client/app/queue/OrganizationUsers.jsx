@@ -12,7 +12,7 @@ import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
 const userStyle = css({ margin: '2rem 0 3rem',

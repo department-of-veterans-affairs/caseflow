@@ -24,7 +24,7 @@ import {
   marginBottom,
   marginTop
 } from './constants';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import Button from '../components/Button';
 
 import { taskActionData, prepareAllTasksForStore } from './utils';

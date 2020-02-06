@@ -10,13 +10,13 @@ import {
   LEGACY_APPEAL_TYPES
 } from './constants';
 
-import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
-import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.json';
-import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
-import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION.json';
-import COPY from '../../COPY.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
+import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
+import TASK_STATUSES from '../../constants/TASK_STATUSES';
+import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
+import COPY from '../../COPY';
 import { formatDateStrUtc } from '../util/DateUtil';
 
 /**
@@ -513,11 +513,6 @@ export const taskHasNewDocuments = (task, newDocsForAppeal) => {
 };
 
 export const taskIsOnHold = (task) => {
-  if (task.onHoldDuration && task.placedOnHoldAt) {
-    return moment().startOf('day').
-      diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
-  }
-
   return task.status === TASK_STATUSES.on_hold;
 };
 
@@ -527,7 +522,7 @@ export const taskHasCompletedHold = (task) => {
       diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
   }
 
-  return task.status === TASK_STATUSES.on_hold;
+  return taskIsOnHold(task);
 };
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);

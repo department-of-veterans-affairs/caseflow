@@ -11,7 +11,7 @@ import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detailEditUrl, completedReview }) => {

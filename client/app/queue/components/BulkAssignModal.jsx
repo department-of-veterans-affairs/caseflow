@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -12,7 +13,8 @@ import { bulkAssignTasks } from '../QueueActions';
 import { setActiveOrganization } from '../uiReducer/uiActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
+import WindowUtil from '../../util/WindowUtil';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -62,23 +64,25 @@ class BulkAssignModal extends React.PureComponent {
     this.props.bulkAssignTasks(this.state.modal);
 
     const {
-      taskType: task_type,
-      numberOfTasks: task_count,
-      assignedUser: assigned_to_id,
-      regionalOffice: regional_office
+      taskType,
+      numberOfTasks,
+      assignedUser,
+      regionalOffice
     } = this.state.modal;
 
-    const data = { bulk_task_assignment: {
-      organization_url: this.organizationUrl(),
-      regional_office,
-      assigned_to_id,
-      task_type,
-      task_count }
+    const data = {
+      bulk_task_assignment: {
+        organization_url: this.organizationUrl(),
+        regional_office: regionalOffice,
+        assigned_to_id: assignedUser,
+        task_type: taskType,
+        task_count: numberOfTasks
+      }
     };
 
     return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
       this.props.history.push(`/organizations/${this.organizationUrl()}`);
-      window.location.reload();
+      WindowUtil.reloadWithPOST();
     }).
       catch(() => {
         // handle the error
@@ -216,6 +220,13 @@ class BulkAssignModal extends React.PureComponent {
   }
   ;
 }
+
+BulkAssignModal.propTypes = {
+  bulkAssignTasks: PropTypes.func,
+  highlightFormItems: PropTypes.bool,
+  history: PropTypes.object,
+  location: PropTypes.object
+};
 
 const mapStateToProps = (state) => {
   const {

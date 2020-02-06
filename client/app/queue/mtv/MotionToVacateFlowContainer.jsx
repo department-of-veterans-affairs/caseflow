@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams, useRouteMatch, Switch, Route } from 'react-router';
 import { taskById, appealWithDetailSelector } from '../selectors';
@@ -12,17 +11,21 @@ export const MotionToVacateFlowContainer = () => {
   const task = useSelector((state) => taskById(state, { taskId }));
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
 
+  // For linter while things are stubbed — remove once used
+  (() => ({ task,
+    appeal }))();
+
   return (
     <React.Fragment>
       <MotionToVacateContextProvider>
         {/* MTV Progress Bar (#13319) Here */}
 
         <Switch>
-          <Route path={`${path}/draft_decision/vacatures`}>
+          <Route path={`${path}/review_vacatures`}>
             {/* Insert component from #13007 here */}
             <ReviewVacatedDecisionIssuesView appeal={appeal} />
           </Route>
-          <Route path={`${path}/draft_decision/add_decisions`}>
+          <Route path={`${path}/add_decisions`}>
             {/* Insert component from #13071 here */}
             {/* <AddDecisionsView appeal={appeal} /> */}
             <></>
