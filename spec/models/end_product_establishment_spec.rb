@@ -315,7 +315,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "RFD"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user

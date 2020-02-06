@@ -247,6 +247,8 @@ class EndProduct
   def set_status_type_code
     if BoardGrantEffectuation::END_PRODUCT_CODES || EndProductCodeSelector::END_PRODUCT_CODES
       STATUSES.key("Ready for decision")
+    else
+      STATUSES.key("Pending")
     end
   end
 
