@@ -36,6 +36,7 @@ class UsersController < ApplicationController
 
   private
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def filter_by_role
     finder = UserFinder.new(role: params[:role])
     users = finder.users
@@ -57,6 +58,7 @@ class UsersController < ApplicationController
       render json: { non_judge_attorneys: (attorneys - judges) }
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def filter_by_css_id_or_name
     # the param name is css_id for convenience but we are more generous in what we search.

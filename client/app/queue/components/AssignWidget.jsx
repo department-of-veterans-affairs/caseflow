@@ -20,7 +20,7 @@ import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
 import QueueFlowModal from './QueueFlowModal';
@@ -116,8 +116,8 @@ class AssignWidget extends React.PureComponent {
       attorneysOfJudge,
       selectedAssignee,
       selectedAssigneeSecondary,
-      attorneys,
-      non_judge_attorneys,
+      // attorneys,
+      nonJudgeAttorneys,
       selectedTasks,
       savePending,
       distributionLoading
@@ -131,13 +131,13 @@ class AssignWidget extends React.PureComponent {
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
     let selectedOptionOther = null;
 
-    if (non_judge_attorneys.data) {
-      optionsOther = non_judge_attorneys.data.map(optionFromAttorney);
+    if (nonJudgeAttorneys.data) {
+      optionsOther = nonJudgeAttorneys.data.map(optionFromAttorney);
       placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
       selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
     }
 
-    if (non_judge_attorneys.error) {
+    if (nonJudgeAttorneys.error) {
       placeholderOther = COPY.ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
     }
 
@@ -221,7 +221,7 @@ AssignWidget.propTypes = {
     data: PropTypes.array,
     error: PropTypes.object
   }),
-  non_judge_attorneys: PropTypes.shape({
+  nonJudgeAttorneys: PropTypes.shape({
     data: PropTypes.array,
     error: PropTypes.object
   }),
@@ -232,7 +232,7 @@ AssignWidget.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  const { attorneysOfJudge, attorneys, non_judge_attorneys, pendingDistribution } = state.queue;
+  const { attorneysOfJudge, attorneys, nonJudgeAttorneys, pendingDistribution } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
   const { savePending } = state.ui.saveState;
 
@@ -241,7 +241,7 @@ const mapStateToProps = (state) => {
     selectedAssignee,
     selectedAssigneeSecondary,
     attorneys,
-    non_judge_attorneys,
+    nonJudgeAttorneys,
     distributionLoading: pendingDistribution !== null,
     savePending
   };
