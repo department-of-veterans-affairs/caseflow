@@ -15,6 +15,7 @@ import {
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
+  fetchAllNonJudgeAttorneys,
   fetchAmaTasksOfUser
 } from './QueueActions';
 import { setUserId } from './uiReducer/uiActions';
@@ -91,6 +92,7 @@ class QueueLoadingScreen extends React.PureComponent {
     }
 
     this.props.fetchAllAttorneys();
+    this.props.fetchAllNonJudgeAttorneys();
 
     return ApiUtil.get(`/users?role=Attorney&judge_id=${this.props.userId}`).
       then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
@@ -134,6 +136,7 @@ QueueLoadingScreen.propTypes = {
   appeals: PropTypes.object,
   children: PropTypes.node,
   fetchAllAttorneys: PropTypes.func,
+  fetchAllNonJudgeAttorneys: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
@@ -163,6 +166,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
+  fetchAllNonJudgeAttorneys,
   fetchAmaTasksOfUser,
   setUserId
 }, dispatch);

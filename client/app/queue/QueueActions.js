@@ -631,6 +631,25 @@ export const fetchAllAttorneys = () => (dispatch) =>
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
     catch((error) => dispatch(errorAllAttorneys(error)));
 
+const receiveAllNonJudgeAttorneys = (non_judge_attorneys) => ({
+  type: ACTIONS.RECEIVE_ALL_NON_JUDGE_ATTORNEYS,
+  payload: {
+    non_judge_attorneys
+  }
+});
+
+const errorAllNonJudgeAttorneys = (error) => ({
+  type: ACTIONS.ERROR_LOADING_NON_JUDGE_ATTORNEYS,
+  payload: {
+    error
+  }
+});
+
+export const fetchAllNonJudgeAttorneys = () => (dispatch) =>
+  ApiUtil.get('/users?role=non_judge_attorneys').
+    then((resp) => dispatch(receiveAllNonJudgeAttorneys(resp.body.non_judge_attorneys))).
+    catch((error) => dispatch(errorAllNonJudgeAttorneys(error)));
+
 export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => {

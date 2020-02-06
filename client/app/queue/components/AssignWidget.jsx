@@ -117,6 +117,7 @@ class AssignWidget extends React.PureComponent {
       selectedAssignee,
       selectedAssigneeSecondary,
       attorneys,
+      non_judge_attorneys,
       selectedTasks,
       savePending,
       distributionLoading
@@ -130,13 +131,15 @@ class AssignWidget extends React.PureComponent {
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
     let selectedOptionOther = null;
 
-    if (attorneys.data) {
-      optionsOther = attorneys.data.map(optionFromAttorney);
+    if (non_judge_attorneys.data) {
+      console.error(non_judge_attorneys)
+      console.error(typeof non_judge_attorneys.data)
+      optionsOther = non_judge_attorneys.data.map(optionFromAttorney);
       placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
       selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
     }
 
-    if (attorneys.error) {
+    if (non_judge_attorneys.error) {
       placeholderOther = COPY.ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
     }
 
@@ -166,6 +169,7 @@ class AssignWidget extends React.PureComponent {
               name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
               hideLabel
               searchable
+              // here
               options={optionsOther}
               placeholder={placeholderOther}
               onChange={(option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value })}
@@ -219,6 +223,10 @@ AssignWidget.propTypes = {
     data: PropTypes.array,
     error: PropTypes.object
   }),
+  non_judge_attorneys: PropTypes.shape({
+    data: PropTypes.array,
+    error: PropTypes.object
+  }),
   setSelectedAssignee: PropTypes.func,
   setSelectedAssigneeSecondary: PropTypes.func,
   selectedTasks: PropTypes.array,
@@ -226,7 +234,7 @@ AssignWidget.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  const { attorneysOfJudge, attorneys, pendingDistribution } = state.queue;
+  const { attorneysOfJudge, attorneys, non_judge_attorneys, pendingDistribution } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
   const { savePending } = state.ui.saveState;
 
@@ -235,6 +243,7 @@ const mapStateToProps = (state) => {
     selectedAssignee,
     selectedAssigneeSecondary,
     attorneys,
+    non_judge_attorneys,
     distributionLoading: pendingDistribution !== null,
     savePending
   };

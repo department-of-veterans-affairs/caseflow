@@ -49,6 +49,7 @@ export const initialState = {
   tasksAssignedByBulk: {},
   pendingDistribution: null,
   attorneys: {},
+  non_judge_attorneys: {},
   organizationId: null,
   organizations: [],
   loadingAppealDetail: {},
@@ -556,6 +557,26 @@ const errorLoadingAttorneys = (state, action) => {
   });
 };
 
+const receiveAllNonJudgeAttorneys = (state, action) => {
+  return update(state, {
+    non_judge_attorneys: {
+      $set: {
+        data: action.payload.non_judge_attorneys
+      }
+    }
+  });
+};
+
+const errorLoadingNonJudgeAttorneys = (state, action) => {
+  return update(state, {
+    non_judge_attorneys: {
+      $set: {
+        error: action.payload.error
+      }
+    }
+  });
+};
+
 const setTaskAttrs = (state, action) => {
   const { uniqueId } = action.payload;
   const taskType = uniqueId in state.amaTasks ? 'amaTasks' : 'tasks';
@@ -706,6 +727,8 @@ export const workQueueReducer = createReducer({
   [ACTIONS.SET_PENDING_DISTRIBUTION]: setPendingDistribution,
   [ACTIONS.RECEIVE_ALL_ATTORNEYS]: receiveAllAttorneys,
   [ACTIONS.ERROR_LOADING_ATTORNEYS]: errorLoadingAttorneys,
+  [ACTIONS.RECEIVE_ALL_NON_JUDGE_ATTORNEYS]: receiveAllNonJudgeAttorneys,
+  [ACTIONS.ERROR_LOADING_NON_JUDGE_ATTORNEYS]: errorLoadingNonJudgeAttorneys,
   [ACTIONS.SET_TASK_ATTRS]: setTaskAttrs,
   [ACTIONS.SET_APPEAL_ATTRS]: setAppealAttrs,
   [ACTIONS.SET_SPECIAL_ISSUE]: setSpecialIssue,

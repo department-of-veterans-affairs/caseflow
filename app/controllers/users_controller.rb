@@ -44,13 +44,17 @@ class UsersController < ApplicationController
     when Constants::USER_ROLE_TYPES["judge"]
       render json: { judges: users }
     when Constants::USER_ROLE_TYPES["attorney"]
-      return render json: { attorneys: json_attorneys(Judge.new(judge).attorneys) } if params[:judge_id]
+      return render json: { attorneys: json_attorneys(Judge.new(judge).attorneys) } if params[:judge_id]  # /users?role=Attorney&judge_id=3
 
       render json: { attorneys: users }
     when Constants::USER_ROLE_TYPES["hearing_coordinator"]
       render json: { coordinators: users }
     when "non_judges"
       render json: { non_judges: json_users(users) }
+    when "non_judge_attorneys"
+      attorneys = UserFinder.new(role: Constants::USER_ROLE_TYPES["attorney"]).users
+      judges = UserFinder.new(role: Constants::USER_ROLE_TYPES["judge"]).users
+      render json: { non_judge_attorneys: (attorneys - judges) }
     end
   end
 
