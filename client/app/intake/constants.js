@@ -1,5 +1,5 @@
-import INTAKE_FORM_NAMES from '../../constants/INTAKE_FORM_NAMES.json';
-import INTAKE_FORM_NAMES_SHORT from '../../constants/INTAKE_FORM_NAMES_SHORT.json';
+import INTAKE_FORM_NAMES from '../../constants/INTAKE_FORM_NAMES';
+import INTAKE_FORM_NAMES_SHORT from '../../constants/INTAKE_FORM_NAMES_SHORT';
 
 export const FORM_TYPES = {
   APPEAL: {
@@ -23,7 +23,7 @@ export const FORM_TYPES = {
     category: 'decisionReview',
     formName: 'supplementalClaim'
   },
-   RAMP_REFILING: {
+  RAMP_REFILING: {
     key: 'ramp_refiling',
     name: INTAKE_FORM_NAMES.ramp_refiling,
     category: 'ramp',
@@ -65,7 +65,7 @@ export const CORRECTION_TYPE_OPTIONS = [
     displayText: 'Local Quality Error' },
   { value: 'national_quality_error',
     displayText: 'National Quality Error' }
-]
+];
 
 export const BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE = [
   { value: 'false',

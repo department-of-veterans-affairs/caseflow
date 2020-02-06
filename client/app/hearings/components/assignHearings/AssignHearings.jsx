@@ -8,7 +8,7 @@ import moment from 'moment';
 import { COLORS } from '../../../constants/AppConstants';
 import AssignHearingsTabs from './AssignHearingsTabs';
 import StatusMessage from '../../../components/StatusMessage';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 
 const sectionNavigationListStyling = css({
   '& > li': {

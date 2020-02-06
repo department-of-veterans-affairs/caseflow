@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import LoadingScreen from './LoadingScreen';
 import StatusMessage from './StatusMessage';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',

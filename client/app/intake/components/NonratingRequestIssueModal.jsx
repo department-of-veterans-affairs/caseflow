@@ -10,7 +10,7 @@ import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
-import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
+import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
 

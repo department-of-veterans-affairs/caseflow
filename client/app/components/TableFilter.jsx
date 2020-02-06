@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
 import { css, hover } from 'glamor';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import FilterIcon from './FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ApiUtil from '../util/ApiUtil';
 import Button from '../components/Button';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';

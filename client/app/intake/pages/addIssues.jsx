@@ -36,7 +36,7 @@ import {
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
