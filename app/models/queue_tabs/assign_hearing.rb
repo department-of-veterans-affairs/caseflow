@@ -14,14 +14,27 @@ class AssignHearing
   end
 
   def tasks
-    @tasks ||= ScheduleHearingTask
-      .includes(*task_includes)
-      .active
-      .where(appeal_type: appeal_type)
+    @tasks ||=
+      if appeal_type == Appeal.name
+        scheduled_hearing_tasks.joins(
+          "INNER JOIN appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
+        ).where("appeals.closest_regional_office = ?", regional_office_key)
+      else
+        scheduled_hearing_tasks.joins(
+          "INNER JOIN legacy_appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'LegacyAppeal'"
+        ).where("legacy_appeals.closest_regional_office = ?", regional_office_key)
+      end
   end
 
   def to_hash
     { columns: columns }
+  end
+
+  def scheduled_hearing_tasks
+    ScheduleHearingTask
+      .includes(*task_includes)
+      .active
+      .where(appeal_type: appeal_type)
   end
 
   # return filter options for columns
@@ -63,17 +76,5 @@ class AssignHearing
       :children,
       :parent
     ]
-  end
-
-  def join_with_appeals
-    if appeal_type == Appeal.name
-      joins(
-        "INNER JOIN legacy_appeals ONlegacy_appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
-      ).where("appeals.closest_regional_office = ?", regional_office_key)
-    else
-      joins(
-        "INNER JOINlegacy_appeals ON legacy_appeals.id = appeal_id AND tasks.appeal_type = 'LegacyAppeal'"
-      ).where("legacy_appeals.closest_regional_office = ?", regional_office_key)
-    end
   end
 end

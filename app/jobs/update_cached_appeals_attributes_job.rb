@@ -94,6 +94,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     values_to_cache = legacy_appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
@@ -119,6 +120,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                       :suggested_hearing_location
                                                                     ] }
   end
+  # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
@@ -127,7 +129,12 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       vacols_folders = VACOLS::Folder
         .where(ticknum: batch_vacols_ids)
         .pluck(:ticknum, :tinum, :ticorkey)
-        .map { |folder| vacols_id: folder[0], docket_number: folder[1], correspondent_id: folder[2] }
+        .map do |folder|
+        {
+          vacols_id: folder[0],
+          docket_number: folder[1],
+          correspondent_id: folder[2]
+        }
       end
 
       vacols_cases = case_fields_for_vacols_ids(batch_vacols_ids)
