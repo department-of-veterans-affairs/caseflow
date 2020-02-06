@@ -125,7 +125,6 @@ RSpec.shared_examples "Change hearing disposition" do
 
     before do
       HearingsManagement.singleton.add_user(hearing_mgmt_user)
-      cache_appeals
     end
 
     context "changing hearing disposition" do
@@ -208,9 +207,7 @@ RSpec.shared_examples "Change hearing disposition" do
       let!(:association_2) do
         create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
       end
-      let!(:schedule_hearing_task) do 
-        create(:schedule_hearing_task, :with_cached_appeal_attributes, parent: hearing_task_2, appeal: appeal)
-      end
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
       let(:instructions_text) { "This hearing is postponed, but it should be held." }
 
       before do
@@ -430,7 +427,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
   let(:hearing_disposition) { nil }
 
   describe "with AMA appeal" do
-    let!(:appeal) do
+    let(:appeal) do
       create(
         :appeal,
         :hearing_docket,
@@ -443,7 +440,6 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
     end
     let(:waiting_button_text) { "AMA Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.uuid}" }
-    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
 
     include_examples "Change hearing disposition"
   end
@@ -451,7 +447,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
   describe "with Legacy appeal" do
     let(:case_hearing_disposition) { :disposition_nil }
     let(:vacols_case) { create(:case, :status_active, :aod, bfcorlid: "#{veteran.file_number}S") }
-    let!(:appeal) do
+    let(:appeal) do
       create(
         :legacy_appeal,
         closest_regional_office: regional_office_code,
@@ -466,7 +462,6 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
     end
     let(:waiting_button_text) { "Legacy Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.vacols_id}" }
-    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     include_examples "Change hearing disposition"
   end
