@@ -1,0 +1,52 @@
+# frozen_string_literal: true
+
+# Metric ID: 1709076050
+# Metric definition:
+#  (Number of appeals transferred to the Board using Caseflow /
+#   Total number of appeals transferred to the Board
+#  (manual certifications of paper appeals and Caseflow certifications)
+#  )
+
+class Metrics::CertificationUsage < Metrics::Base
+  include Reporter
+
+  def call
+    {
+      certified_total: certified_total,
+      certified_paperless: certified_paperless,
+      certified_with_caseflow: certified_with_caseflow,
+      metric: percent(certified_with_caseflow, certified_total)
+    }
+  end
+
+  private
+
+  def certifications_query
+    VACOLS::Case.joins(:folder).includes(:folder).where(%{
+      -- date range
+      bf41stat >= ? AND bf41stat <= ? AND
+      -- Original
+      bfac = '1'
+    }, start_date, end_date)
+  end
+
+  def certifications
+    @certifications ||= certifications_query.to_a
+  end
+
+  def certified_total
+    @certified_total ||= certifications.count
+  end
+
+  def certified_paperless
+    @certified_paperless ||= certifications.select(&:paperless?).count
+  end
+
+  def certified_with_caseflow
+    @certified_with_caseflow ||= certifications.select(&:certified_with_caseflow?).count
+  end
+
+  def regional_office_codes
+    RegionalOffice::ROS.reject { |ro| ro !~ /^RO/ }
+  end
+end
