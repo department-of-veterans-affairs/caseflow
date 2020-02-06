@@ -1,83 +1,41 @@
 # frozen_string_literal: true
 
-class ExternalApi::VbmsDocumentsForAppeal
-  def initialize(file_number:, vbms_client: init_vbms_client, bgs_client: init_bgs_client)
-    @file_number = file_number
-    @vbms_client = vbms_client
-    @bgs_client = bgs_client
-  end
-
+class ExternalApi::VbmsDocumentsForAppeal < ExternalApi::VbmsRequestWithFileNumber
   def fetch
-    DBService.release_db_connections
-
-    begin
-      fetch_veteran_file_number_docs
-    rescue VBMS::FilenumberDoesNotExist
-      raise if bgs_claim_number_nil_or_same_as_veteran_file_number?
-
-      fetch_bgs_claim_number_docs
-    end
+    @documents = get_and_retry
 
     Rails.logger.info("Document list length: #{documents.length}")
 
     result_hash
   end
 
+  protected
+
+  def do_request(file_number_or_claim_number)
+    if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
+      ExternalApi::VBMSService.call_and_log_service(
+       service: vbms_paged_documents_service,
+       vbms_id: file_number_or_claim_number
+      )&.[](:documents) || []
+    else
+      vbms_request = VBMS::Requests::FindDocumentVersionReference.new(file_number_or_claim_number)
+
+      ExternalApi::VBMSRequest.new(
+        client: vbms_client,
+        request: vbms_request,
+        id: file_number_or_claim_number
+      ).call
+    end
+  end
+
   private
 
-  attr_reader :file_number, :vbms_client, :bgs_client, :documents
-
-  def init_vbms_client
-    VBMS::Client.from_env_vars(
-      logger: VBMSCaseflowLogger.new,
-      env_name: ENV["CONNECT_VBMS_ENV"],
-      use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
-    )
-  end
-
-  def init_bgs_client
-    ExternalApi::BGSService.new
-  end
+  attr_reader :documents
 
   def vbms_paged_documents_service
     @vbms_paged_documents_service ||= VBMS::Service::PagedDocuments.new(client: vbms_client)
   end
 
-  def fetch_veteran_file_number_docs
-    @documents = if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
-                   resp = ExternalApi::VBMSService.call_and_log_service(
-                     service: vbms_paged_documents_service,
-                     vbms_id: file_number
-                   ) || {}
-                   resp[:documents] || []
-                 else
-                   ExternalApi::VBMSRequest.new(
-                     client: vbms_client,
-                     request: veteran_file_number_docs_request,
-                     id: file_number
-                   ).call
-                 end
-  end
-
-  def bgs_claim_number_nil_or_same_as_veteran_file_number?
-    bgs_claim_number.nil? || bgs_claim_number == file_number
-  end
-
-  def fetch_bgs_claim_number_docs
-    @documents = if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
-                   resp = ExternalApi::VBMSService.call_and_log_service(
-                     service: vbms_paged_documents_service,
-                     vbms_id: bgs_claim_number
-                   ) || {}
-                   resp[:documents] || []
-                 else
-                   ExternalApi::VBMSRequest.new(
-                     client: vbms_client,
-                     request: bgs_claim_number_docs_request,
-                     id: bgs_claim_number
-                   ).call
-                 end
-  end
 
   def result_hash
     {
@@ -85,17 +43,5 @@ class ExternalApi::VbmsDocumentsForAppeal
       manifest_vva_fetched_at: nil,
       documents: DocumentsFromVbmsDocuments.new(documents: documents, file_number: file_number).call
     }
-  end
-
-  def bgs_claim_number
-    @bgs_claim_number ||= bgs_client.fetch_veteran_info(file_number)[:claim_number]
-  end
-
-  def veteran_file_number_docs_request
-    VBMS::Requests::FindDocumentVersionReference.new(file_number)
-  end
-
-  def bgs_claim_number_docs_request
-    VBMS::Requests::FindDocumentVersionReference.new(bgs_claim_number)
   end
 end
