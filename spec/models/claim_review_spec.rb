@@ -977,7 +977,8 @@ describe ClaimReview, :postgres do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
             limited_poa_code: nil,
-            limited_poa_access: nil
+            limited_poa_access: nil,
+            status_type_code: "RFD"
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user

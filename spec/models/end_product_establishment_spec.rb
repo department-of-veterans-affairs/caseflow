@@ -123,7 +123,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "RFD"
           },
           veteran_hash: hash_including(address_line1: "Changed"),
           user: current_user
@@ -156,7 +157,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "RFD"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -186,7 +188,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "RFD"
             },
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -217,7 +220,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "RFD"
             ),
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
