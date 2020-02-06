@@ -17,7 +17,11 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
       regional_office_key: regional_office_key
     )
 
-    @tasks_for_tab ||= tab.tasks.order(<<-SQL)
+    @tasks_for_tab ||= tab.tasks
+  end
+
+  def sorted_tasks(tasks)
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause).order(<<-SQL)
       (CASE
         WHEN cached_appeal_attributes.case_type = 'Court Remand' THEN 1
         ELSE 0

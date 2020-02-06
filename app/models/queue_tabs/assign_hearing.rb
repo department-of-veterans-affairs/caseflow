@@ -18,10 +18,12 @@ class AssignHearing
       .includes(*task_includes)
       .active
       .where(appeal_type: appeal_type)
-      .joins(CachedAppeal.left_join_from_tasks_clause)
-      .where("cached_appeal_attributes.closest_regional_office_key = ?", regional_office_key)
+      .joins(
+        "INNER JOIN #{appeals} ON #{appeals}.id = appeal_id AND tasks.appeal_type = '#{appeal_type}'"
+      )
+      .where("#{appeals}.closest_regional_office = ?", regional_office_key)
   end
-
+  
   def to_hash
     { columns: columns }
   end
@@ -65,5 +67,9 @@ class AssignHearing
       :children,
       :parent
     ]
+  end
+
+  def appeals
+    appeals ||= appeal_type == Appeal.name ? "appeals" : "legacy_appeals"
   end
 end
