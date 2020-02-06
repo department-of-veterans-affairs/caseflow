@@ -14,16 +14,12 @@ class AssignHearing
   end
 
   def tasks
-    ScheduleHearingTask
+    @tasks ||= ScheduleHearingTask
       .includes(*task_includes)
       .active
       .where(appeal_type: appeal_type)
-      .joins(
-        "INNER JOIN #{appeals} ON #{appeals}.id = appeal_id AND tasks.appeal_type = '#{appeal_type}'"
-      )
-      .where("#{appeals}.closest_regional_office = ?", regional_office_key)
   end
-  
+
   def to_hash
     { columns: columns }
   end
@@ -33,16 +29,16 @@ class AssignHearing
     [
       {
         name: Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME,
-        filter_options: power_of_attorney_name_options(tasks)
+        filter_options: power_of_attorney_name_options
       },
       {
         name: Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME,
-        filter_options: suggested_location_options(tasks)
+        filter_options: suggested_location_options
       }
     ]
   end
 
-  def power_of_attorney_name_options(tasks)
+  def power_of_attorney_name_options
     tasks.joins(CachedAppeal.left_join_from_tasks_clause)
       .group(:power_of_attorney_name).count.each_pair.map do |option, count|
       label = QueueColumn.format_option_label(option, count)
@@ -50,7 +46,7 @@ class AssignHearing
     end
   end
 
-  def suggested_location_options(tasks)
+  def suggested_location_options
     tasks.joins(CachedAppeal.left_join_from_tasks_clause)
       .group(:suggested_hearing_location).count.each_pair.map do |option, count|
       label = QueueColumn.format_option_label(option, count)
@@ -69,7 +65,15 @@ class AssignHearing
     ]
   end
 
-  def appeals
-    appeals ||= appeal_type == Appeal.name ? "appeals" : "legacy_appeals"
+  def join_with_appeals
+    if appeal_type == Appeal.name
+      joins(
+        "INNER JOIN legacy_appeals ONlegacy_appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
+      ).where("appeals.closest_regional_office = ?", regional_office_key)
+    else
+      joins(
+        "INNER JOINlegacy_appeals ON legacy_appeals.id = appeal_id AND tasks.appeal_type = 'LegacyAppeal'"
+      ).where("legacy_appeals.closest_regional_office = ?", regional_office_key)
+    end
   end
 end

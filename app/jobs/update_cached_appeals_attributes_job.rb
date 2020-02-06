@@ -127,12 +127,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       vacols_folders = VACOLS::Folder
         .where(ticknum: batch_vacols_ids)
         .pluck(:ticknum, :tinum, :ticorkey)
-        .map do |folder|
-        {
-          vacols_id: folder[0],
-          docket_number: folder[1],
-          correspondent_id: folder[2]
-        }
+        .map { |folder| vacols_id: folder[0], docket_number: folder[1], correspondent_id: folder[2] }
       end
 
       vacols_cases = case_fields_for_vacols_ids(batch_vacols_ids)

@@ -74,8 +74,6 @@ detectors:
       - VeteranAttributeCacher
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
-      - AssignHearing#power_of_attorney_name_options
-      - AssignHearing#suggested_location_options
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -157,6 +155,7 @@ detectors:
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link
       - VirtualHearings::VeteranNameHelper#formatted_veteran_name
+      - ScheduleHearingTaskPager#sorted_tasks
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
