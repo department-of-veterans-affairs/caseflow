@@ -37,9 +37,9 @@ import {
   fullWidth,
   ISSUE_DESCRIPTION_MAX_LENGTH
 } from './constants';
-import COPY from '../../COPY.json';
-import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import COPY from '../../COPY';
+import ISSUE_INFO from '../../constants/ISSUE_INFO';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
 import QueueFlowPage from './components/QueueFlowPage';
 
 const marginTop = css({ marginTop: '5rem' });

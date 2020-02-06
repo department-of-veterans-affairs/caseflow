@@ -20,7 +20,7 @@ import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
 import QueueFlowModal from './QueueFlowModal';
