@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-## 
+##
 # A request that requires the veteran's file number.
 # The file number for a veteran can be a claim ID (8-digit) or the veteran's
 # SSN (9-digit). This class wraps logic to retry the request for both the veteran's
 # SSN and the claim ID (if different).
-# 
+#
 
 class ExternalApi::VbmsRequestWithFileNumber
   def initialize(file_number:, vbms_client: init_vbms_client, bgs_client: init_bgs_client)

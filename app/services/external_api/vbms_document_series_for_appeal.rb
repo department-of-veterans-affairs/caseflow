@@ -12,7 +12,7 @@ class ExternalApi::VbmsDocumentSeriesForAppeal < ExternalApi::VbmsRequestWithFil
       service = VBMS::Service::PagedDocuments.new(client: vbms_client)
 
       ExternalApi::VBMSService.call_and_log_service(
-        service: service, 
+        service: service,
         vbms_id: file_number_or_claim_number
       )&.[](:documents) || []
     else
@@ -21,7 +21,7 @@ class ExternalApi::VbmsDocumentSeriesForAppeal < ExternalApi::VbmsRequestWithFil
       ExternalApi::VBMSService.send_and_log_request(
         file_number_or_claim_number,
         request,
-        override_vbms_client = vbms_client
+        override_vbms_client: vbms_client
       )
     end
   end

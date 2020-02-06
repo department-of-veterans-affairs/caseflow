@@ -14,8 +14,8 @@ class ExternalApi::VbmsDocumentsForAppeal < ExternalApi::VbmsRequestWithFileNumb
   def do_request(file_number_or_claim_number)
     if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
       ExternalApi::VBMSService.call_and_log_service(
-       service: vbms_paged_documents_service,
-       vbms_id: file_number_or_claim_number
+        service: vbms_paged_documents_service,
+        vbms_id: file_number_or_claim_number
       )&.[](:documents) || []
     else
       vbms_request = VBMS::Requests::FindDocumentVersionReference.new(file_number_or_claim_number)
@@ -35,7 +35,6 @@ class ExternalApi::VbmsDocumentsForAppeal < ExternalApi::VbmsRequestWithFileNumb
   def vbms_paged_documents_service
     @vbms_paged_documents_service ||= VBMS::Service::PagedDocuments.new(client: vbms_client)
   end
-
 
   def result_hash
     {
