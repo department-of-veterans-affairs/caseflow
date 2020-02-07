@@ -3,6 +3,7 @@
 require "console_tree_renderer"
 
 # Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
+# :nocov:
 module TaskTreeRenderModule
   def self.new_renderer # rubocop:disable all
     ConsoleTreeRenderer::ConsoleRenderer.new.tap do |ttr|
@@ -102,3 +103,4 @@ module TaskTreeRenderModule
     Task.where(id: roottask_ids.compact.sort)
   end
 end
+# :nocov:
