@@ -138,7 +138,7 @@ class DecisionReview < ApplicationRecord
   end
 
   # Creates claimants for automatically generated decision reviews
-  def create_claimants!(participant_id:, payee_code:)
+  def create_claimant!(participant_id:, payee_code:)
     remove_claimants!
     claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code)
   end
