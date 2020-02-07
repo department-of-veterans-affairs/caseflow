@@ -931,4 +931,24 @@ describe Appeal, :all_dbs do
       end
     end
   end
+
+  describe "#vacate_type" do
+    subject { appeal.vacate_type }
+
+    context "Appeal is a vacatur and has a post-decision motion" do
+      let(:appeal) { create(:appeal, :straight_vacated) }
+
+      it "returns the post-decision motion's vacate type" do
+        expect(subject).to eq "straight_vacate"
+      end
+    end
+
+    context "Appeal is not a vacatur" do
+      let(:appeal) { create(:appeal) }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+  end
 end
