@@ -83,7 +83,7 @@ class PostDecisionMotionUpdater
   def handle_grant
     return unless grant_type?
 
-    vacate_stream = appeal.create_stream("Vacate")
+    vacate_stream = appeal.create_stream(:vacate)
     create_new_stream_tasks(vacate_stream)
   end
 
