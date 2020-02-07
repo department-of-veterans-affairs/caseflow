@@ -22,7 +22,8 @@ class PostDecisionMotionUpdater
     ActiveRecord::Base.transaction do
       return unless post_decision_motion
 
-      denied_or_dismissed? ? handle_denial_or_dismissal : handle_grant
+      handle_denial_or_dismissal
+      handle_grant
 
       return if errors.messages.any?
 
@@ -58,10 +59,10 @@ class PostDecisionMotionUpdater
     motion.save
   end
 
+  # We create an AbstractMotionToVacateTask as sibling to the JudgeAddressMotionToVacateTask
+  # to serve as parent for successive Denied or Dismissed tasks. It is created when associated with
+  # the new task in order to pass responsibility for validation to child task
   def handle_denial_or_dismissal
-    # We create an AbstractMotionToVacateTask as sibling to the JudgeAddressMotionToVacateTask
-    # to serve as parent for successive Denied or Dismissed tasks. It is created when associated with
-    # the new task in order to pass responsibility for validation to child task
     return unless denied_or_dismissed?
 
     abstract_task = create_abstract_task
