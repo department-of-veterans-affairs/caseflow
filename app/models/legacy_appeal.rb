@@ -15,6 +15,7 @@ class LegacyAppeal < ApplicationRecord
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
+  include AppealAvailableHearingLocations
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -73,9 +74,7 @@ class LegacyAppeal < ApplicationRecord
            to: :document_fetcher
 
   delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex,
-           to: :veteran,
-           prefix: true,
-           allow_nil: true
+           :email_address, to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products,

@@ -13,6 +13,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     unidentifiedIssueDecisionDate: {
       $set: Boolean(featureToggles.unidentifiedIssueDecisionDate)
+    },
+    verifyUnidentifiedIssue: {
+      $set: Boolean(featureToggles.verifyUnidentifiedIssue)
     }
   });
 };
@@ -22,7 +25,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) => (
     useAmaActivationDate: false,
     editContentionText: false,
     correctClaimReviews: false,
-    unidentifiedIssueDecisionDate: false
+    unidentifiedIssueDecisionDate: false,
+    verifyUnidentifiedIssue: false
   }, data.featureToggles)
 );
 

@@ -1,8 +1,9 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+
 import { getTime, getTimeInDifferentTimeZone } from '../../../util/DateUtil';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
-import _ from 'lodash';
 
 export const HearingTime = ({ hearing, isCentralOffice }) => {
   const { date, regionalOfficeTimezone } = hearing;

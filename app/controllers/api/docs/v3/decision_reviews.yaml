@@ -4,7 +4,7 @@ info:
   description: >+
     The Decision Reviews API allows you to interact with a Veteran’s Decision Review requests, also known as benefit appeals. This API provides a secure and efficient alternative to paper or fax document submissions. Veterans Benefits Administration or Board of Veterans Appeals can begin processing Decision Review requests submitted through this API immediately, which ultimately allows VA to provide Veterans with appeal decisions more quickly.
 
-    > * For more information on the Decision Review process, including the different types of Decision Reviews, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/). 
+    > * For more information on the Decision Review process, including the different types of Decision Reviews, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/).
 
     > * The Decision Reviews API supports the Appeals Modernization Act (AMA) process only. Appeals going through the legacy Appeal process cannot be managed through this API. Learn more about the AMA [here](https://benefits.va.gov/benefits/appeals.asp).
 
@@ -131,24 +131,23 @@ paths:
                           type: object
                           description: >-
                             The veteran whom this Higher-Level Review concerns.
-                            Use the field fileNumberOrSsn to identify the veteran.
+                            Use the field ssn to identify the veteran.
                             Optionally, you can update the veteran's current contact info using the other fields.
                             If any of these fields are present: [addressLine1, addressLine2, city, stateProvinceCode, zipPostalCode, countryCode],
                             all of these fields must be present: [addressLine1, addressLine2, city, stateProvinceCode, zipPostalCode].
                             NOTE: countryCode can be left out, and it will be assumed to be "US".
 
                           required:
-                            - fileNumberOrSsn
+                            - ssn
                           properties:
-                            fileNumberOrSsn:
+                            ssn:
                               type: string
-                              pattern: '^[0-9]{8,9}$'
+                              pattern: '^[0-9]{9}$'
                               description: >-
-                                The veteran's file number or SSN.
+                                The veteran's SSN.
                                 Example: "123456789"
-                                Format: 8 or 9 digit characters.
-                                Max length: 9 characters.
-                                Corresponds to both "1. VETERAN'S SOCIAL SECURITY NUMBER" and "2. VA FILE NUMBER" on form 20-0996.
+                                Format: 9 digit characters.
+                                Corresponds to "2. VETERAN'S SOCIAL SECURITY NUMBER" on form 20-0996.
 
                             addressLine1:
                               type: string
@@ -256,19 +255,6 @@ paths:
                       a veteran's contestable issues to select from, and include
                       the _ContestableIssue_ objects that you want to contest in this
                       array.
-                      When including a _ContestableIssue_ obtained from the
-                      `/contestable_issues` endpoint, use the `notes` field to provide
-                      additional information about contesting this issue.
-                      **Additionally**, a `legacyAppealIssues` array can be added to a
-                      _ContestableIssue_ object to associate a _LegacyAppealIssue_
-                      to a _ContestableIssue_. Associating a _LegacyAppealIssue_ to a
-                      _ContestableIssue_ pulls the _LegacyAppealIssue_ out of the legacy
-                      appeal system and into AMA. See the `legacyAppealIssues` array
-                      below for more info on opting-in legacy issues.
-                      _Note:_ Not all legacy issues are eligible for opt-in; see
-                      [benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf](https://www.benefits.va.gov/benefits/docs/apppeals_SOC-SSOC_Opt-in.pdf)
-                      for details.
-
                     required:
                       - type
                       - attributes
@@ -279,9 +265,6 @@ paths:
                       attributes:
                         type: object
                         properties:
-                          notes:
-                            type: string
-                            nullable: true
                           decisionIssueId:
                             type: integer
                             nullable: true
@@ -291,29 +274,6 @@ paths:
                           ratingDecisionIssueId:
                             type: string
                             nullable: true
-                          legacyAppealIssues:
-                            nullable: true
-                            type: array
-                            description: LegacyAppealIssues Array
-
-                            items:
-                              type: object
-                              description: >-
-                                OPTIONAL. _LegacyAppealIssues_ that you are associating
-                                with this _ContestableIssue_. At this time, 0 or 1
-                                _LegacyAppealIssues_ can be associated with a
-                                _ContestableIssue_. A _LegacyAppealIssue_  can only be
-                                associated once in a Higher-Level Review. To associate
-                                _LegacyAppealIssues_, `legacyOptInApproved` must be `true`.
-
-                              required:
-                                - legacyAppealId
-                                - legacyAppealIssueId
-                              properties:
-                                legacyAppealId:
-                                  type: string
-                                legacyAppealIssueId:
-                                  type: string
             examples:
               compensation:
                 value:
@@ -326,7 +286,7 @@ paths:
                       legacyOptInApproved: true
                       benefitType: compensation
                       veteran:
-                        fileNumberOrSsn: "123456789"
+                        ssn: "123456789"
                         addressLine1: 123 Street St
                         addressLine2: Apt 4
                         city: Chicago
@@ -341,38 +301,6 @@ paths:
                     - type: ContestableIssue
                       attributes:
                         decisionIssueId: 205
-              pension:
-                value:
-                  data:
-                    type: HigherLevelReview
-                    attributes:
-                      receiptDate: "2019-11-01"
-                      informalConference: false
-                      sameOffice: false
-                      legacyOptInApproved: true
-                      benefitType: pension
-                      veteran:
-                        fileNumberOrSsn: "123456789"
-                        addressLine1: 456 Street St
-                        addressLine2: Apt 7
-                        city: Kansas City
-                        stateProvinceCode: KS
-                        zipPostalCode: "66160"
-                        phoneNumber: "9133677100"
-                        emailAddress: someoneelse@example.com
-                      claimant:
-                        participantId: "33333333"
-                        payeeCode: "11"
-                  included:
-                    - type: ContestableIssue
-                      attributes:
-                        decisionIssueId: 206
-                    - type: ContestableIssue
-                      attributes:
-                        ratingIssueId: 80
-                        legacyAppealIssues:
-                          - legacyAppealId: 12345678
-                            legacyAppealIssueId: 1
       responses:
         '202':
           description: Accepted
@@ -416,27 +344,6 @@ paths:
                       }
                     ]
                   }
-#       '401':
-#         description: |-
-#           401 response
-#         content:
-#           application/vnd.api+json:
-#             schema:
-#               type: object
-#               properties:
-#                 errors:
-#                   $ref: "#/components/schemas/Errors"
-#             examples:
-#               unauthenticated:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "401",
-#                       "title":  "Unauthenticated",
-#                       "code":  "unauthenticated"
-#                     }
-#                   ]
-#                 }
         '403':
           description: |-
             403 response
@@ -479,26 +386,6 @@ paths:
                       }
                     ]
                   }
-#               issue_not_found:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "404",
-#                       "title":  "Issue not found",
-#                       "code":  "issue_not_found"
-#                     }
-#                   ]
-#                 }
-#               claimant_not_found:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "404",
-#                       "title":  "Claimant not found",
-#                       "code":  "claimant_not_found"
-#                     }
-#                   ]
-#                 }
         '409':
           description: |-
             409 response
@@ -531,126 +418,6 @@ paths:
                   errors:
                     $ref: "#/components/schemas/Errors"
               examples:
-#               payee_code_required:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Claimant payee code may not be blank",
-#                       "code":  "payee_code_required"
-#                     }
-#                   ]
-#                 }
-#               claimant_required:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Claimant participant id may not be blank",
-#                       "code":  "claimant_required"
-#                     }
-#                   ]
-#                 }
-#               claimant_address_required:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Claimant address required",
-#                       "code":  "claimant_address_required"
-#                     }
-#                   ]
-#                 }
-#               benefit_type_requires_payee_code:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Benefit type requires payee code",
-#                       "code":  "benefit_type_requires_payee_code"
-#                     }
-#                   ]
-#                 }
-#               duplicate_of_rating_issue_in_active_review:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Duplicate rating issue",
-#                       "code":  "duplicate_of_rating_issue_in_active_review"
-#                     }
-#                   ]
-#                 }
-#               claimant_ineligible:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Claimant Ineligible (not on original Benefit Claim or no POA)",
-#                       "code":  "claimant_ineligible"
-#                     }
-#                   ]
-#                 }
-#               untimely:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Issue is ineligible because it has a prior decision date that’s older than 372 days",
-#                       "code":  "untimely"
-#                     }
-#                   ]
-#                 }
-#               before_ama:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Issue is ineligible because it has a prior decision date before February 19, 2019",
-#                       "code":  "before_ama"
-#                     }
-#                   ]
-#                 }
-#               higher_level_review_to_higher_level_review:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Issue is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
-#                       "code":  "higher_level_review_to_higher_level_review"
-#                     }
-#                   ]
-#                 }
-#               appeal_to_higher_level_review:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Issue is ineligible because it was last processed as a Board Appeal which can't be followed by a Higher-Level Review",
-#                       "code":  "appeal_to_higher_level_review"
-#                     }
-#                   ]
-#                 }
-#               legacy_issue_not_withdrawn:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal but the claimant didn’t choose to withdraw their issue from the legacy system",
-#                       "code":  "legacy_issue_not_withdrawn"
-#                     }
-#                   ]
-#                 }
-#               legacy_appeal_not_eligible:
-#                 value: {
-#                   "errors": [
-#                     {
-#                       "status": "422",
-#                       "title":  "Issue is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility",
-#                       "code":  "legacy_appeal_not_eligible"
-#                     }
-#                   ]
-#                 }
                 incident_flash:
                   value: {
                     "errors": [
@@ -681,73 +448,33 @@ paths:
                       }
                     ]
                   }
-                request_issue_cannot_be_empty:
+                malformed_contestable_issues:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title": "A request issue cannot be empty",
-                        "code": "request_issue_cannot_be_empty"
+                        "title": "Malformed ContestableIssues",
+                        "code": "malformed_contestable_issues"
                       }
                     ]
                   }
-                request_issue_category_invalid_for_benefit_type:
+                contestable_issue_params_must_have_ids:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title": "Request issue category for specified benefit type",
-                        "code": "request_issue_category_invalid_for_benefit_type"
+                        "title": "A contestable issue must have at least one of the following: decisionIssueId, ratingIssueId, ratingDecisionIssueId",
+                        "code": "contestable_issue_params_must_have_ids"
                       }
                     ]
                   }
-                request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present:
+                could_not_find_contestable_issue:
                   value: {
                     "errors": [
                       {
                         "status": "422",
-                        "title": "If you specify a legacy appeal issue, you must specify which legacy appeal it belongs to (legacy_appeal_id)",
-                        "code": "request_issue_legacyAppealId_is_blank_when_legacyAppealIssueId_is_present"
-                      }
-                    ]
-                  }
-                request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title": "If you specify a legacy appeal, you must specify which issue (legacy_appeal_issue_id) of that appeal",
-                        "code": "request_issue_legacyAppealIssueId_is_blank_when_legacyAppealId_is_present"
-                      }
-                    ]
-                  }
-                request_issue_legacy_not_opted_in:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title": "To add a legacy issue, legacyOptInApproved must be true",
-                        "code": "request_issue_legacy_not_opted_in"
-                      }
-                    ]
-                  }
-                request_issue_malformed:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title": "Malformed RequestIssue",
-                        "code": "request_issue_malformed"
-                      }
-                    ]
-                  }
-                request_issue_must_have_at_least_one_ID_field:
-                  value: {
-                    "errors": [
-                      {
-                        "status": "422",
-                        "title": "A request issue must have at least one of the following: decisionIssueId, ratingIssueId, legacyAppealId, legacyAppealIssueId",
-                        "code": "request_issue_must_have_at_least_one_ID_field"
+                        "title": "Could not find ContestableIssue",
+                        "code": "could_not_find_contestable_issue"
                       }
                     ]
                   }
@@ -1227,12 +954,6 @@ paths:
                                 rampClaimId:
                                   type: string
                                   nullable: true
-                                legacyAppealId: # vacols_id
-                                  type: string
-                                  nullable: true
-                                legacyAppealIssueId: # vacols_sequence_id
-                                  type: integer
-                                  nullable: true
                                 decisionReviewTitle:
                                   type: string
                                   nullable: true
@@ -1286,10 +1007,10 @@ paths:
       tags:
         - Issues
       parameters:
-        - name: veteranId
+        - name: ssn
           in: header
           required: true
-          description: The file number or SSN of the veteran.
+          description: The SSN of the veteran.
           schema:
             type : string
         - name: receiptDate
@@ -1385,127 +1106,6 @@ paths:
                             isRating:
                               type: boolean
                               description: "Whether or not this is a RatingIssue"
-        '404':
-          description: Veteran not found
-          content:
-            application/vnd.api+json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    $ref: "#/components/schemas/Errors"
-              examples:
-                bad file number or SSN:
-                  value:
-                    errors:
-                      status: 404,
-                      code: veteran_not_found
-                      title: "Veteran not found"
-        '422':
-          description: Bad receipt date
-          content:
-            application/vnd.api+json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    $ref: "#/components/schemas/Errors"
-              examples:
-                bad receipt date:
-                  value:
-                    errors:
-                      status: 422,
-                      code: bad_receipt_date
-                      title: "Bad receipt date"
-        '500':
-          description: Unknown error
-          content:
-            application/vnd.api+json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    $ref: "#/components/schemas/Errors"
-              examples:
-                unknown error:
-                  value:
-                    errors:
-                      status: 500,
-                      code: unknown_error
-                      title: "Unknown error"
-  /legacy_appeal_issues:
-    get:
-      tags:
-        - Issues
-      parameters:
-        - name: veteranId
-          in: header
-          required: true
-          description: The file number or SSN of the veteran.
-          schema:
-            type : string
-        - name: receiptDate
-          in: header
-          required: true
-          description: (yyyy-mm-dd) In order to determine contestability of issues, the receipt date of a hypothetical Decision Review must be supplied.
-          schema:
-            type: string
-            format: date
-      summary: Returns all legacy appeal issues for a specific veteran.
-      description: >-
-        Returns all the legacy appeal issues for a veteran that could be added to
-        a Decision Review as of the `receiptDate`.  The `LegacyAppealIssue`
-        would be added to the `legacyAppealIssues` attribute of the
-        `contestableIssue` to which this legacy appeal will be associated.
-      responses:
-        '200':
-          description: JSON:API response returning all legacy appeal issues for a specific veteran.
-          content:
-            application/vnd.api+json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      description: "A legacy appeal issue. To opt-in these issues to AMA, you associate them with ContestableIssues when creating a DecisionReview (see the documentation for POST /higher_level_reviews for more details)."
-                      properties:
-                        type:
-                          type: string
-                          enum: ["LegacyAppealIssue"]
-                        attributes:
-                          type: object
-                          properties:
-                            legacyAppealId:
-                              type: string
-                            legacyAppealIssueId:
-                              type: string
-                            nodDate:
-                              type: string
-                              format: date
-                            description:
-                              type: array
-                              description: Derived from `codes` and `labels`.
-                              items:
-                                type: string
-                            codes:
-                              type: array
-                              description: Non-rating issue codes. [client/constants/ISSUE_INFO.json](https://github.com/department-of-veterans-affairs/caseflow/blob/master/client/constants/ISSUE_INFO.json)
-                              items:
-                                type: string
-                            labels:
-                              type: array
-                              description: Titles corresponding to each code in `codes`.
-                              items:
-                                type: string
-                            disposition:
-                              type: string
-                            closeDate:
-                              type: string
-                              format: date
-                            note:
-                              type: string
         '404':
           description: Veteran not found
           content:

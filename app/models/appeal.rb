@@ -10,6 +10,7 @@ class Appeal < DecisionReview
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
+  include AppealAvailableHearingLocations
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -23,6 +24,14 @@ class Appeal < DecisionReview
 
   has_one :special_issue_list
   has_many :record_synced_by_job, as: :record
+
+  enum stream_type: {
+    "original": "original",
+    "vacate": "vacate",
+    "de_novo": "de_novo"
+  }
+
+  before_save :set_stream_docket_number_and_stream_type
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
@@ -72,7 +81,20 @@ class Appeal < DecisionReview
   end
 
   def type
-    "Original"
+    stream_type&.titlecase || "Original"
+  end
+
+  def create_stream(stream_type)
+    ActiveRecord::Base.transaction do
+      Appeal.create!(slice(
+        :receipt_date,
+        :veteran_file_number,
+        :legacy_opt_in_approved,
+        :veteran_is_not_claimant
+      ).merge(stream_type: stream_type, stream_docket_number: docket_number)).tap do |stream|
+        stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
+      end
+    end
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -221,6 +243,7 @@ class Appeal < DecisionReview
            :date_of_birth,
            :age,
            :available_hearing_locations,
+           :email_address,
            :country, to: :veteran, prefix: true
 
   def veteran_if_exists
@@ -262,6 +285,10 @@ class Appeal < DecisionReview
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
 
+  def appellant_is_not_veteran
+    !!veteran_is_not_claimant
+  end
+
   def cavc
     "not implemented for AMA"
   end
@@ -283,13 +310,14 @@ class Appeal < DecisionReview
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
       issue.save!
-      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
+      issue.handle_legacy_issues!
     end
     request_issues.reload
   end
 
   def docket_number
-    return "Missing Docket Number" unless receipt_date
+    return stream_docket_number if stream_docket_number
+    return "Missing Docket Number" unless receipt_date && persisted?
 
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
@@ -414,6 +442,13 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def set_stream_docket_number_and_stream_type
+    if receipt_date && persisted?
+      self.stream_docket_number ||= docket_number
+    end
+    self.stream_type ||= type.parameterize.underscore.to_sym
+  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state

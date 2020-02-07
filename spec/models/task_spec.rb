@@ -36,6 +36,36 @@ describe Task, :all_dbs do
     end
   end
 
+  describe ".post_dispatch_task?" do
+    let(:root_task) { create(:root_task) }
+    let(:appeal) { root_task.appeal }
+
+    subject { ama_task.post_dispatch_task? }
+
+    context "dispatch task is not complete" do
+      let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task, appeal: appeal) }
+      let(:ama_task) { create(:ama_task, parent: root_task, appeal: appeal) }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "dispatch task is complete" do
+      let!(:bva_task) { create(:bva_dispatch_task, :completed, parent: root_task, appeal: appeal) }
+
+      context "sibling task created before dispatch task completed" do
+        let(:ama_task) { create(:ama_task, created_at: bva_task.closed_at - 1, parent: root_task, appeal: appeal) }
+
+        it { is_expected.to be_falsey }
+      end
+
+      context "sibling task created after dispatch task completed" do
+        let(:ama_task) { create(:ama_task, created_at: bva_task.closed_at + 1, parent: root_task, appeal: appeal) }
+
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
   describe ".when_child_task_completed" do
     let(:task) { create(:task, type: Task.name) }
     let(:child_status) { :assigned }
@@ -275,7 +305,12 @@ describe Task, :all_dbs do
     let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
 
     it "cancels all tasks and child subtasks" do
+      initial_versions = second_level_tasks[0].versions.count
+
       top_level_task.reload.cancel_task_and_child_subtasks
+
+      expect(second_level_tasks[0].versions.count).to eq(initial_versions + 2)
+      expect(second_level_tasks[0].versions.last.object).to include("cancelled")
 
       [top_level_task, *second_level_tasks, *third_level_task].each do |task|
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
@@ -1325,6 +1360,20 @@ describe Task, :all_dbs do
 
         task.update!(status: Constants.TASK_STATUSES.in_progress, started_at: two_weeks_ago)
         expect(task.started_at).to eq(two_weeks_ago)
+      end
+    end
+
+    context "when task is closed and is re-opened" do
+      let(:task) { create(:task, :cancelled) }
+
+      it "sets closed_at to nil" do
+        expect(task.cancelled?).to eq(true)
+        expect(task.closed_at).to_not be_nil
+
+        task.on_hold!
+
+        expect(task.on_hold?).to eq(true)
+        expect(task.closed_at).to be_nil
       end
     end
   end

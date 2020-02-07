@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import { getAppealValue } from './QueueActions';
 import { appealWithDetailSelector } from './selectors';
 import Address from './components/Address';
@@ -104,7 +104,7 @@ PowerOfAttorneyDetail.defaultProps = {
 const mapStateToProps = (state, ownProps) => {
   const loadingPowerOfAttorney = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'powerOfAttorney');
 
-  if (!loadingPowerOfAttorney) {
+  if (_.isUndefined(loadingPowerOfAttorney) || loadingPowerOfAttorney.loading) {
     return { loading: true };
   }
 
@@ -116,8 +116,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     powerOfAttorney: appeal.powerOfAttorney,
-    loading: loadingPowerOfAttorney ? loadingPowerOfAttorney.loading : null,
-    error: loadingPowerOfAttorney ? loadingPowerOfAttorney.error : null
+    loading: null,
+    error: loadingPowerOfAttorney.error
   };
 };
 

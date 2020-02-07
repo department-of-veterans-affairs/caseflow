@@ -48,6 +48,41 @@ describe RootTask, :postgres do
     end
   end
 
+  describe ".when_child_task_completed" do
+    let!(:root_task) { create(:root_task) }
+    let!(:appeal) { root_task.appeal }
+
+    context "when the Appeal has already been dispatched" do
+      let!(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
+      let!(:dispatch_task) do
+        create(:bva_dispatch_task, :completed, closed_at: Time.zone.now - 1, appeal: appeal, parent: root_task)
+      end
+      let!(:mail_task) { create(:reconsideration_motion_mail_task, appeal: appeal, parent: root_task) }
+
+      context "when there are non-closeable child tasks present" do
+        let!(:task) { create(:ama_task, appeal: appeal, parent: root_task) }
+
+        it "the RootTask does not close itself" do
+          expect(root_task).to be_on_hold
+
+          mail_task.completed!
+
+          expect(root_task).to be_on_hold
+        end
+      end
+
+      context "when all the child tasks are close-able" do
+        it "the RootTask closes itself" do
+          expect(root_task).to be_on_hold
+
+          mail_task.completed!
+
+          expect(root_task.reload).to be_completed
+        end
+      end
+    end
+  end
+
   describe ".set_assignee" do
     context "when retrieving an existing RootTask" do
       let!(:root_task) { create(:root_task, assigned_to: assignee) }

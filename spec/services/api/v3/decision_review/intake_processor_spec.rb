@@ -5,93 +5,18 @@ require "support/intake_helpers"
 describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
   include IntakeHelpers
 
-  before do
-    Timecop.freeze(post_ama_start_date)
-
-    [:establish_claim!, :create_contentions!, :associate_rating_request_issues!].each do |method|
-      allow(Fakes::VBMSService).to receive(method).and_call_original
-    end
+  subject do
+    Api::V3::DecisionReview::IntakeProcessor.new(
+      form_type: form_type,
+      params_class: params_class,
+      user: user,
+      params: params
+    )
   end
 
-  let(:veteran_file_number) { "55555555" }
-  let!(:veteran) do
-    Generators::Veteran.build(file_number: veteran_file_number,
-                              first_name: "Boo",
-                              last_name: "Radley")
-  end
-  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
-
-  let!(:current_user) do
-    User.authenticate!(roles: ["Admin Intake"])
-  end
-
-  let(:receipt_date) { Time.zone.today - 6.days }
-  let(:promulgation_date) { receipt_date - 10.days }
-  let(:profile_date) { (receipt_date - 8.days).to_datetime }
-
-  let(:informal_conference) { true }
-  let(:same_office) { false }
-  let(:legacy_opt_in_approved) { true }
-  let(:benefit_type) { "compensation" }
-  let(:attributes) do
-    {
-      receiptDate: receipt_date.strftime("%F"),
-      informalConference: informal_conference,
-      sameOffice: same_office,
-      legacyOptInApproved: legacy_opt_in_approved,
-      benefitType: benefit_type
-    }
-  end
-
-  let(:veteran_obj) do
-    {
-      data: {
-        type: "Veteran",
-        id: veteran_file_number
-      }
-    }
-  end
-  let(:claimant_obj) do
-    {
-      data: {
-        type: "Claimant",
-        id: 0 / 0.0,
-        meta: {
-          payeeCode: "x"
-        }
-      }
-    }
-  end
-  let(:relationships) { { veteran: veteran_obj, claimant: claimant_obj } }
-
-  let(:data) do
-    {
-      type: "HigherLevelReview",
-      attributes: attributes,
-      relationships: relationships
-    }
-  end
-
-  let(:category) { "Apportionment" }
-  let(:rating_issue_id) { 1 / 0.0 }
-  let(:decision_date) { Time.zone.today - 10.days }
-  let(:decision_text) { "Text." }
-  let(:notes) { "not sure if this is on file" }
-  let(:included) do
-    [
-      {
-        type: "RequestIssue",
-        attributes: {
-          category: category,
-          ratingIssueId: rating_issue_id,
-          decisionDate: decision_date.strftime("%F"),
-          decisionText: decision_text,
-          notes: notes
-        }
-      }
-    ]
-  end
-
+  let(:form_type) { "higher_level_review" }
+  let(:params_class) { Api::V3::DecisionReview::HigherLevelReviewIntakeParams }
+  let(:user) { current_user }
   let(:params) do
     ActionController::Parameters.new(
       data: data,
@@ -99,11 +24,81 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
     )
   end
 
-  let(:form_type) { "higher_level_review" }
+  let!(:current_user) { User.authenticate!(roles: ["Admin Intake"]) }
+  let(:data) do
+    {
+      type: "HigherLevelReview",
+      attributes: attributes
+    }
+  end
 
-  subject do
-    Api::V3::DecisionReview::IntakeProcessor
-      .new(params: params, user: current_user, form_type: form_type)
+  let(:type) { "ContestableIssue" }
+  let(:attributes) do
+    {
+      receiptDate: formatted_receipt_date,
+      informalConference: informal_conference,
+      sameOffice: same_office,
+      legacyOptInApproved: legacy_opt_in_approved,
+      benefitType: benefit_type,
+      veteran: { ssn: ssn }
+    }
+  end
+
+  let(:receipt_date) { Time.zone.today - 6.days }
+  let(:informal_conference) { true }
+  let(:same_office) { false }
+  let(:legacy_opt_in_approved) { true }
+  let(:benefit_type) { "compensation" }
+  let(:ssn) { "555555555" }
+
+  let(:formatted_receipt_date) { receipt_date.strftime("%F") }
+
+  let(:included) { [contestable_issue] }
+
+  let(:contestable_issue) do
+    {
+      type: "ContestableIssue",
+      attributes: {
+        ratingIssueId: rating_issue_id,
+        decisionIssueId: decision_issue_id,
+        ratingDecisionIssueId: rating_decision_issue_id
+      }
+    }
+  end
+
+  let(:rating_issue_id) { contestable_issues.first.rating_issue_reference_id }
+  let(:decision_issue_id) { contestable_issues.first.decision_issue&.id }
+  let(:rating_decision_issue_id) { contestable_issues.first.rating_decision_reference_id }
+
+  let(:contestable_issues) do
+    ContestableIssueGenerator.new(
+      decision_review_class.new(
+        veteran_file_number: veteran.file_number,
+        receipt_date: receipt_date,
+        benefit_type: benefit_type
+      )
+    ).contestable_issues
+  end
+
+  let(:decision_review_class) { HigherLevelReview }
+
+  let(:veteran) do
+    create(:veteran,
+           ssn: ssn,
+           first_name: first_name,
+           last_name: last_name)
+  end
+
+  let(:first_name) { "Samantha" }
+  let(:last_name) { "Smith" }
+
+  let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+
+  let(:promulgation_date) { receipt_date - 10.days }
+  let(:profile_date) { (receipt_date - 8.days).to_datetime }
+
+  context "contestable_issues" do
+    it { expect(contestable_issues).not_to be_empty }
   end
 
   context ".new" do
@@ -116,6 +111,7 @@ describe Api::V3::DecisionReview::IntakeProcessor, :all_dbs do
     end
 
     it "should have no errors" do
+      expect(subject.errors).to eq []
       expect(subject.errors?).to be false
     end
   end

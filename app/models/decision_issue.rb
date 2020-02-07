@@ -55,6 +55,10 @@ class DecisionIssue < ApplicationRecord
       where(disposition: REMAND_DISPOSITIONS)
     end
 
+    def not_denied
+      where.not(disposition: %w[Denied denied])
+    end
+
     def not_remanded
       where.not(disposition: REMAND_DISPOSITIONS)
     end
@@ -155,6 +159,21 @@ class DecisionIssue < ApplicationRecord
     request_issues.first
   end
 
+  def create_contesting_request_issue!
+    RequestIssue.create!(
+      decision_review: decision_review,
+      decision_review_type: decision_review_type,
+      contested_decision_issue_id: id,
+      contested_rating_issue_reference_id: rating_issue_reference_id,
+      contested_rating_issue_profile_date: rating_profile_date,
+      contested_issue_description: description,
+      nonrating_issue_category: nonrating_issue_category,
+      benefit_type: benefit_type,
+      decision_date: caseflow_decision_date,
+      veteran_participant_id: decision_review.veteran.participant_id
+    )
+  end
+
   private
 
   def fetch_diagnostic_code_status_description(diagnostic_code)
@@ -227,7 +246,7 @@ class DecisionIssue < ApplicationRecord
     )
     fail AppealDTAPayeeCodeError, decision_review.id unless dta_payee_code
 
-    sc.create_claimants!(
+    sc.create_claimant!(
       participant_id: decision_review.claimant_participant_id,
       payee_code: dta_payee_code
     )

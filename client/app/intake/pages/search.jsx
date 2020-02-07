@@ -13,7 +13,7 @@ import { invalidVeteranInstructions } from '../components/ErrorAlert';
 import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 const steps = [
   <span>

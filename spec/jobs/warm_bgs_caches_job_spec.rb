@@ -23,6 +23,7 @@ describe WarmBgsCachesJob, :all_dbs do
     end
     let!(:people) { create_list(:person, 5) }
 
+    # expecting this to create a Person
     let(:bgs_poa) { BgsPowerOfAttorney.new }
     let(:bgs_address_service) { BgsAddressService.new }
 
@@ -56,7 +57,7 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
       expect(@slack_msg).to be_nil
-      expect(@people_sync).to eq(5)
+      expect(@people_sync).to eq(6)
     end
 
     context "errors" do

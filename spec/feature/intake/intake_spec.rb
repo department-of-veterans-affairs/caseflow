@@ -202,7 +202,7 @@ feature "Intake", :all_dbs do
 
     context "Veteran is an employee at the same station as the User" do
       before do
-        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+        allow_any_instance_of(Fakes::BGSService).to receive(:station_conflict?).and_return(true)
       end
 
       scenario "Search for a Veteran that the user may not modify" do

@@ -22,8 +22,8 @@ import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regi
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
-import COPY from '../../../COPY.json';
-import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
+import COPY from '../../../COPY';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -197,7 +197,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   render = () => <QueueTable
-    columns={this.getQueueColumns}
+    columns={this.getQueueColumns()}
     rowObjects={this.props.tasks}
     getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}

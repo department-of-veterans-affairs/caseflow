@@ -32,7 +32,7 @@ describe ETL::Builder, :etl, :all_dbs do
 
         # use .to_s comparison since Rails.cache does not store .milliseconds
         expect(builder.last_built.to_s).to eq(Time.zone.now.to_s)
-        expect(built).to eq(75)
+        expect(built).to eq(88)
       end
 
       hour_from_now = Time.zone.now + 1.hour
@@ -48,7 +48,31 @@ describe ETL::Builder, :etl, :all_dbs do
 
         expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
         expect(built).to be > 0
+        expect(builder.built).to eq(built)
       end
+    end
+
+    it "updates aod_due_to_dob regardless of whether Appeal has been modified" do
+      builder = described_class.new
+      built = builder.full
+      expect(built).to eq(88)
+      expect(ETL::Appeal.where(aod_due_to_dob: true).count).to eq(1)
+
+      # change dob for one active
+      ETL::Appeal.active.where(aod_due_to_dob: false)
+        .where("claimant_dob > ?", 76.years.ago).first
+        .update(claimant_dob: 76.years.ago)
+
+      # and for one inactive
+      ETL::Appeal.where(aod_due_to_dob: false)
+        .where(active_appeal: false)
+        .where("claimant_dob > ?", 76.years.ago).first
+        .update(claimant_dob: 76.years.ago)
+
+      builder = described_class.new(since: Time.zone.now + 1.day)
+      built = builder.incremental
+      expect(built).to eq(0)
+      expect(ETL::Appeal.where(aod_due_to_dob: true).count).to eq(2) # skips inactive
     end
   end
 
@@ -61,10 +85,11 @@ describe ETL::Builder, :etl, :all_dbs do
 
         built = subject
 
-        expect(built).to eq(75)
+        expect(built).to eq(88)
         expect(ETL::Task.count).to eq(31)
         expect(ETL::Appeal.count).to eq(13)
         expect(ETL::User.all.count).to eq(23)
+        expect(ETL::Person.all.count).to eq(13)
         expect(ETL::OrganizationsUser.all.count).to eq(3)
         expect(ETL::Organization.all.count).to eq(5)
       end
@@ -80,10 +105,11 @@ describe ETL::Builder, :etl, :all_dbs do
 
         built = subject
 
-        expect(built).to eq(72)
+        expect(built).to eq(85)
         expect(ETL::Task.count).to eq(31)
         expect(ETL::Appeal.count).to eq(13)
         expect(ETL::User.all.count).to eq(22)
+        expect(ETL::Person.all.count).to eq(13)
         expect(ETL::OrganizationsUser.all.count).to eq(2)
         expect(ETL::Organization.all.count).to eq(4)
       end

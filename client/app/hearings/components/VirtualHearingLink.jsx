@@ -12,23 +12,29 @@ const ICON_POSITION_FIX = css({ position: 'relative',
 class VirtualHearingLink extends React.PureComponent {
 
   getPin() {
-    const { role, virtualHearing } = this.props;
+    const { virtualHearing } = this.props;
 
-    return role === 'host' ? virtualHearing.hostPin : virtualHearing.guestPin;
+    return this.role() === 'host' ? virtualHearing.hostPin : virtualHearing.guestPin;
   }
 
   getUrl() {
-    const { role, virtualHearing } = this.props;
+    const { virtualHearing } = this.props;
     const qs = querystring.stringify(
       {
         conference: virtualHearing.alias,
-        pin: this.getPin(),
+        pin: `${this.getPin()}#`,
         join: 1,
-        role
+        role: this.role()
       }
     );
 
-    return `https://${virtualHearing.clientHost}/webapp/?${qs}`;
+    return `https://${virtualHearing.clientHost}/webapp/?${decodeURIComponent(qs)}`;
+  }
+
+  role = () => {
+    const { user, hearing } = this.props;
+
+    return user.userId.toString() === hearing.judgeId || user.userCanAssignHearingSchedule ? 'host' : 'guest';
   }
 
   render() {
@@ -56,10 +62,16 @@ class VirtualHearingLink extends React.PureComponent {
 }
 
 VirtualHearingLink.propTypes = {
+  hearing: PropTypes.shape({
+    judgeId: PropTypes.number
+  }),
+  user: PropTypes.shape({
+    userId: PropTypes.number,
+    userCanAssignHearingSchedule: PropTypes.bool
+  }),
   isVirtual: PropTypes.bool,
   newWindow: PropTypes.bool,
   showFullLink: PropTypes.bool,
-  role: PropTypes.oneOf(['host', 'guest']).isRequired,
   virtualHearing: PropTypes.shape({
     clientHost: PropTypes.string,
     guestPin: PropTypes.number,

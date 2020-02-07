@@ -142,7 +142,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       approxDecisionDate: issue.approx_decision_date,
       decisionIssueId: issue.contested_decision_issue_id,
       titleOfActiveReview: issue.title_of_active_review,
-      rampClaimId: issue.ramp_claim_id
+      rampClaimId: issue.ramp_claim_id,
+      verifiedUnidentifiedIssue: issue.verified_unidentified_issue
     };
   }
   );
@@ -175,26 +176,29 @@ export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
 
 const formatUnidentifiedIssues = (state) => {
   return (state.addedIssues || []).
-    filter((issue) => issue.isUnidentified).
+    filter((issue) => issue.isUnidentified || issue.verifiedUnidentifiedIssue).
     map((issue) => {
       return {
         request_issue_id: issue.id,
         decision_text: issue.description,
         notes: issue.notes,
-        is_unidentified: true,
+        is_unidentified: issue.isUnidentified,
         decision_date: issue.decisionDate,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : issue.withdrawalDate,
         correction_type: issue.correctionType,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
-        ineligibleReason: issue.ineligible_reason
+        ineligibleReason: issue.ineligibleReason,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId,
+        verified_unidentified_issue: issue.verifiedUnidentifiedIssue
       };
     });
 };
 
 const formatRatingRequestIssues = (state) => {
   return (state.addedIssues || []).
-    filter((issue) => issue.isRating && !issue.isUnidentified).
+    filter((issue) => issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
     map((issue) => {
       return {
         request_issue_id: issue.id,
@@ -221,7 +225,9 @@ const formatRatingRequestIssues = (state) => {
 };
 
 const formatNonratingRequestIssues = (state) => {
-  return (state.addedIssues || []).filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
+  return (state.addedIssues || []).
+  filter((issue) => !issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
+  map((issue) => {
     return {
       request_issue_id: issue.id,
       contested_decision_issue_id: issue.decisionIssueId,
@@ -312,13 +318,14 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
   
   return issues.map((issue, index) => {
-    if (issue.isUnidentified) {
+    if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {
+      const issueText = issue.isUnidentified ? `Unidentified issue: no issue matched for "${issue.description}"` : issue.description
       return {
         index,
         referenceId: issue.id,
-        text: `Unidentified issue: no issue matched for "${issue.description}"`,
+        text: issueText,
         notes: issue.notes,
-        isUnidentified: true,
+        isUnidentified: issue.isUnidentified,
         date: issue.decisionDate,
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
@@ -329,6 +336,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,
+        vacolsId: issue.vacolsId,
+        vacolsSequenceId: issue.vacolsSequenceId,
+        vacolsIssue: issue.vacolsIssue,
+        verifiedUnidentifiedIssue: issue.verifiedUnidentifiedIssue
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {

@@ -14,7 +14,11 @@ class QualityReviewCaseSelector
     end
 
     def reached_monthly_limit_in_quality_reviews?
-      QualityReviewTask.created_this_month.size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
+      QualityReviewTask
+        .not_cancelled
+        .created_this_month
+        .where(assigned_to_type: Organization.name)
+        .size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
     end
   end
 end

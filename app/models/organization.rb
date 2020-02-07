@@ -69,7 +69,7 @@ class Organization < ApplicationRecord
   end
 
   def admins
-    organizations_users.includes(:user).select(&:admin?).map(&:user)
+    organizations_users.includes(:user).admin.map(&:user)
   end
 
   def non_admins

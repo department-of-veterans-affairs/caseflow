@@ -16,11 +16,13 @@ detectors:
       - Veteran
   ControlParameter:
     exclude:
+      - ExternalApi::VBMSService#self.send_and_log_request
       - Fakes::BGSService
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
+      - VBMSCaseflowLogger#log
       - Veteran
   UncommunicativeVariableName:
     exclude:
@@ -29,6 +31,7 @@ detectors:
   UncommunicativeParameterName:
     exclude:
       - Address
+      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   DataClump:
     exclude:
       - HearingSerializerBase
@@ -66,6 +69,8 @@ detectors:
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
       - UserReporter#report_user_related_records
+      - User#current_case_assignments_with_views
+      - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
@@ -75,17 +80,24 @@ detectors:
       - Task
       - CaseflowJob
       - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
+      - User
   IrresponsibleModule:
     enabled: false
   LongParameterList:
     exclude:
       - Address#initialize
+      - ExternalApi::VBMSService#self.create_contentions!
       - LegacyDocket#new_distributed_case
+      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   ManualDispatch:
     exclude:
-      - Api::V3::DecisionReview::IntakeParams
-      - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
       - Api::V3::DecisionReview::IntakeError#potential_error_code
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#attributes?
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#params?
+      - Api::V3::DecisionReview::IntakeError#error_code
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
   MissingSafeMethod:
     enabled: false
   NestedIterators:
@@ -110,6 +122,9 @@ detectors:
       - Address
       - ExternalApi::PexipService
       - InvalidAssigneeStatusOnTaskCreate
+      - Api::V3::DecisionReview::ContestableIssueFinder
+      - Api::V3::DecisionReview::ContestableIssueParams
+      - Api::V3::DecisionReview::IntakeError
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -124,13 +139,22 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - Helpers::AppealHearingHelper#suggested_hearing_location
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - Fakes::BGSService
       - Fakes::PexipService
+      - VBMSCaseflowLogger#log
+      - Reporter#average
+      - Reporter#median
+      - Reporter#seconds_to_hms
+      - Reporter#percent
       - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
+      - VirtualHearings::ExternalLinkHelper#external_link
+      - VirtualHearings::ExternalLinkHelper#phone_link
+      - VirtualHearings::VeteranNameHelper#formatted_veteran_name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

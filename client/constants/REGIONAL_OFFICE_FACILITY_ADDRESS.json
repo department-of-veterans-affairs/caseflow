@@ -5,7 +5,8 @@
       "address_3" : null,
       "city" : "Boston",
       "state" : "MA",
-      "zip" : "02203"
+      "zip" : "02203",
+      "timezone" : "America/New_York"
    },
    "vba_304" : {
       "address_1" : "380 Westminster St",
@@ -13,7 +14,8 @@
       "address_3" : null,
       "city" : "Providence",
       "state" : "RI",
-      "zip" : "02903"
+      "zip" : "02903",
+      "timezone" : "America/New_York"
    },
    "vba_306" : {
       "address_1" : "245 W Houston Street",
@@ -21,7 +23,8 @@
       "address_3" : null,
       "city" : "New York",
       "state" : "NY",
-      "zip" : "10014"
+      "zip" : "10014",
+      "timezone" : "America/New_York"
    },
    "vba_306b" : {
       "address_1" : "113 Holland Avenue",
@@ -29,7 +32,8 @@
       "address_3" : null,
       "city" : "Albany",
       "state" : "NY",
-      "zip" : "12208"
+      "zip" : "12208",
+      "timezone" : "America/New_York"
    },
    "vba_307" : {
       "address_1" : "130 South Elmwood Ave",
@@ -37,7 +41,8 @@
       "address_3" : null,
       "city" : "Buffalo",
       "state" : "NY",
-      "zip" : "14202"
+      "zip" : "14202",
+      "timezone" : "America/New_York"
    },
    "vba_308" : {
       "address_1" : "555 Willard Ave",
@@ -45,7 +50,8 @@
       "address_3" : null,
       "city" : "Newington",
       "state" : "CT",
-      "zip" : "06111"
+      "zip" : "06111",
+      "timezone" : "America/New_York"
    },
    "vba_309" : {
       "address_1" : "20 Washington Place",
@@ -53,7 +59,8 @@
       "address_3" : null,
       "city" : "Newark",
       "state" : "NJ",
-      "zip" : "07102"
+      "zip" : "07102",
+      "timezone" : "America/New_York"
    },
    "vba_310" : {
       "address_1" : "5000 Wissahickon Ave.",
@@ -61,7 +68,8 @@
       "address_3" : null,
       "city" : "Philadelphia",
       "state" : "PA",
-      "zip" : "19144"
+      "zip" : "19144",
+      "timezone" : "America/New_York"
    },
    "vba_311" : {
       "address_1" : "1000 Liberty Avenue",
@@ -69,7 +77,8 @@
       "address_3" : null,
       "city" : "Pittsburgh",
       "state" : "PA",
-      "zip" : "15222"
+      "zip" : "15222",
+      "timezone" : "America/New_York"
    },
    "vba_313" : {
       "address_1" : "31 Hopkins Plaza",
@@ -77,7 +86,8 @@
       "address_3" : null,
       "city" : "Baltimore",
       "state" : "MD",
-      "zip" : "21201"
+      "zip" : "21201",
+      "timezone" : "America/New_York"
    },
    "vba_314" : {
       "address_1" : "210 Franklin Rd, SW",
@@ -85,7 +95,8 @@
       "address_3" : null,
       "city" : "Roanoke",
       "state" : "VA",
-      "zip" : "24011"
+      "zip" : "24011",
+      "timezone" : "America/New_York"
    },
    "vba_315" : {
       "address_1" : "640 4th Avenue",
@@ -93,7 +104,8 @@
       "address_3" : null,
       "city" : "Huntington",
       "state" : "WV",
-      "zip" : "25701"
+      "zip" : "25701",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vba_316" : {
       "address_1" : "1700 Clairmont Road",
@@ -101,7 +113,8 @@
       "address_3" : null,
       "city" : "Decatur",
       "state" : "GA",
-      "zip" : "30033"
+      "zip" : "30033",
+      "timezone" : "America/New_York"
    },
    "vba_317" : {
       "address_1" : "9500 Bay Pines Blvd.",
@@ -109,7 +122,8 @@
       "address_3" : null,
       "city" : "St. Petersburg",
       "state" : "FL",
-      "zip" : "33744"
+      "zip" : "33744",
+      "timezone" : "America/New_York"
    },
    "vba_317a" : {
       "address_1" : "7305 N. Military Trail",
@@ -117,7 +131,8 @@
       "address_3" : null,
       "city" : "West Palm Beach",
       "state" : "FL",
-      "zip" : "33410"
+      "zip" : "33410",
+      "timezone" : "America/New_York"
    },
    "vba_318" : {
       "address_1" : "251 N. Main Street",
@@ -125,7 +140,8 @@
       "address_3" : null,
       "city" : "Winston-Salem",
       "state" : "NC",
-      "zip" : "27155"
+      "zip" : "27155",
+      "timezone" : "America/New_York"
    },
    "vba_319" : {
       "address_1" : "6437 Garners Ferry Rd",
@@ -133,7 +149,8 @@
       "address_3" : null,
       "city" : "Columbia",
       "state" : "SC",
-      "zip" : "29209"
+      "zip" : "29209",
+      "timezone" : "America/New_York"
    },
    "vba_320" : {
       "address_1" : "110 9th Avenue, South",
@@ -141,7 +158,8 @@
       "address_3" : null,
       "city" : "Nashville",
       "state" : "TN",
-      "zip" : "37203"
+      "zip" : "37203",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vba_321" : {
       "address_1" : "1250 Poydras Street",
@@ -149,7 +167,8 @@
       "address_3" : null,
       "city" : "New Orleans",
       "state" : "LA",
-      "zip" : "70113"
+      "zip" : "70113",
+      "timezone" : "America/Chicago"
    },
    "vba_321b" : {
       "address_1" : "3341 Youree Drive",
@@ -157,7 +176,8 @@
       "address_3" : null,
       "city" : "Shreveport",
       "state" : "LA",
-      "zip" : "71105"
+      "zip" : "71105",
+      "timezone" : "America/Chicago"
    },
    "vba_322" : {
       "address_1" : "345 Perry Hill Rd",
@@ -165,7 +185,8 @@
       "address_3" : null,
       "city" : "Montgomery",
       "state" : "AL",
-      "zip" : "36109"
+      "zip" : "36109",
+      "timezone" : "America/Chicago"
    },
    "vba_323" : {
       "address_1" : "1600 E. Woodrow Wilson Ave.",
@@ -173,7 +194,8 @@
       "address_3" : null,
       "city" : "Jackson",
       "state" : "MS",
-      "zip" : "39216"
+      "zip" : "39216",
+      "timezone" : "America/Chicago"
    },
    "vba_325" : {
       "address_1" : "1240 E. 9th Street",
@@ -181,7 +203,8 @@
       "address_3" : null,
       "city" : "Cleveland",
       "state" : "OH",
-      "zip" : "44199"
+      "zip" : "44199",
+      "timezone" : "America/New_York"
    },
    "vba_325b" : {
       "address_1" : "36 East Seventh Street",
@@ -189,7 +212,8 @@
       "address_3" : null,
       "city" : "Cincinnati",
       "state" : "OH",
-      "zip" : "45202"
+      "zip" : "45202",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vba_326" : {
       "address_1" : "575 N Pennsylvania St",
@@ -197,7 +221,8 @@
       "address_3" : null,
       "city" : "Indianapolis",
       "state" : "IN",
-      "zip" : "46204"
+      "zip" : "46204",
+      "timezone" : "America/Indiana/Indianapolis"
    },
    "vba_327" : {
       "address_1" : "321 W Main St",
@@ -205,7 +230,8 @@
       "address_3" : null,
       "city" : "Louisville",
       "state" : "KY",
-      "zip" : "40202"
+      "zip" : "40202",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vba_328" : {
       "address_1" : "2122 W. Taylor Street",
@@ -213,7 +239,8 @@
       "address_3" : null,
       "city" : "Chicago",
       "state" : "IL",
-      "zip" : "60612"
+      "zip" : "60612",
+      "timezone" : "America/Chicago"
    },
    "vba_329" : {
       "address_1" : "477 Michigan Avenue",
@@ -221,7 +248,8 @@
       "address_3" : null,
       "city" : "Detroit",
       "state" : "MI",
-      "zip" : "48226"
+      "zip" : "48226",
+      "timezone" : "America/New_York"
    },
    "vba_330" : {
       "address_1" : "5400 W. National Ave.",
@@ -229,7 +257,8 @@
       "address_3" : null,
       "city" : "Milwaukee",
       "state" : "WI",
-      "zip" : "53214"
+      "zip" : "53214",
+      "timezone" : "America/Chicago"
    },
    "vba_331" : {
       "address_1" : "9700 Page Ave.",
@@ -237,7 +266,8 @@
       "address_3" : null,
       "city" : "ST. Louis",
       "state" : "MO",
-      "zip" : "63132"
+      "zip" : "63132",
+      "timezone" : "America/Chicago"
    },
    "vba_333" : {
       "address_1" : "210 Walnut Street",
@@ -245,7 +275,8 @@
       "address_3" : null,
       "city" : "Des Moines",
       "state" : "IA",
-      "zip" : "50309"
+      "zip" : "50309",
+      "timezone" : "America/Chicago"
    },
    "vba_334" : {
       "address_1" : "3800 Village Drive",
@@ -253,7 +284,8 @@
       "address_3" : null,
       "city" : "Lincoln",
       "state" : "NE",
-      "zip" : "68501"
+      "zip" : "68501",
+      "timezone" : "America/Chicago"
    },
    "vba_335" : {
       "address_1" : "1 Federal Drive",
@@ -261,7 +293,8 @@
       "address_3" : null,
       "city" : "St. Paul",
       "state" : "MN",
-      "zip" : "55111"
+      "zip" : "55111",
+      "timezone" : "America/Chicago"
    },
    "vba_339" : {
       "address_1" : "155 Van Gordon Street",
@@ -269,7 +302,8 @@
       "address_3" : null,
       "city" : "Lakewood",
       "state" : "CO",
-      "zip" : "80228"
+      "zip" : "80228",
+      "timezone" : "America/Denver"
    },
    "vba_340" : {
       "address_1" : "500 Gold Ave., SW",
@@ -277,7 +311,8 @@
       "address_3" : null,
       "city" : "Albuquerque",
       "state" : "NM",
-      "zip" : "87102"
+      "zip" : "87102",
+      "timezone" : "America/Denver"
    },
    "vba_341" : {
       "address_1" : "550 Foothill Drive",
@@ -285,7 +320,8 @@
       "address_3" : null,
       "city" : "Salt Lake City",
       "state" : "UT",
-      "zip" : "84158"
+      "zip" : "84158",
+      "timezone" : "America/Denver"
    },
    "vba_343" : {
       "address_1" : "1301 Clay Street",
@@ -293,7 +329,8 @@
       "address_3" : null,
       "city" : "Oakland",
       "state" : "CA",
-      "zip" : "94612"
+      "zip" : "94612",
+      "timezone" : "America/Los_Angeles"
    },
    "vba_343f" : {
       "address_1" : "3046 Prospect Park",
@@ -301,7 +338,8 @@
       "address_3" : null,
       "city" : "Rancho Cordova",
       "state" : "CA",
-      "zip" : "95670"
+      "zip" : "95670",
+      "timezone" : "America/Los_Angeles"
    },
    "vba_344" : {
       "address_1" : "11000 Wilshire Blvd.",
@@ -309,7 +347,8 @@
       "address_3" : null,
       "city" : "Los Angeles",
       "state" : "CA",
-      "zip" : "90024"
+      "zip" : "90024",
+      "timezone" : "America/Los_Angeles"
    },
    "vba_345" : {
       "address_1" : "3333 North Central Avenue",
@@ -317,7 +356,8 @@
       "address_3" : null,
       "city" : "Phoenix",
       "state" : "AZ",
-      "zip" : "85012"
+      "zip" : "85012",
+      "timezone" : "America/Denver"
    },
    "vba_346" : {
       "address_1" : "915 Second Avenue",
@@ -325,7 +365,8 @@
       "address_3" : null,
       "city" : "Seattle",
       "state" : "WA",
-      "zip" : "98174"
+      "zip" : "98174",
+      "timezone" : "America/Los_Angeles"
    },
    "vba_347" : {
       "address_1" : "444 W. Fort Street",
@@ -333,7 +374,8 @@
       "address_3" : null,
       "city" : "Boise",
       "state" : "ID",
-      "zip" : "83702"
+      "zip" : "83702",
+      "timezone" : "America/Los_Angeles"
    },
    "vba_348" : {
       "address_1" : "100 SW Main Street",
@@ -341,7 +383,8 @@
       "address_3" : null,
       "city" : "Portland",
       "state" : "OR",
-      "zip" : "97204"
+      "zip" : "97204",
+      "timezone" : "America/Los_Angeles"
    },
    "vba_349" : {
       "address_1" : "701 Clay Avenue",
@@ -349,7 +392,8 @@
       "address_3" : null,
       "city" : "Waco",
       "state" : "TX",
-      "zip" : "76799"
+      "zip" : "76799",
+      "timezone" : "America/Chicago"
    },
    "vba_349i" : {
       "address_1" : "5001 N. Piedras Street",
@@ -357,7 +401,8 @@
       "address_3" : null,
       "city" : "El Paso",
       "state" : "TX",
-      "zip" : "79930"
+      "zip" : "79930",
+      "timezone" : "America/Chicago"
    },
    "vba_350" : {
       "address_1" : "2200 Fort Roots Drive",
@@ -365,7 +410,8 @@
       "address_3" : null,
       "city" : "North Little Rock",
       "state" : "AR",
-      "zip" : "72114"
+      "zip" : "72114",
+      "timezone" : "America/Chicago"
    },
    "vba_351" : {
       "address_1" : "125 South Main Street",
@@ -373,7 +419,8 @@
       "address_3" : null,
       "city" : "Muskogee",
       "state" : "OK",
-      "zip" : "74401"
+      "zip" : "74401",
+      "timezone" : "America/Chicago"
    },
    "vba_354" : {
       "address_1" : "5460 Reno Corporate Dr.",
@@ -381,7 +428,8 @@
       "address_3" : null,
       "city" : "Reno",
       "state" : "NV",
-      "zip" : "89511"
+      "zip" : "89511",
+      "timezone" : "America/Los_Angeles"
    },
    "vba_354a" : {
       "address_1" : "6900 North Pecos Rd",
@@ -389,7 +437,8 @@
       "address_3" : null,
       "city" : "North Las Vegas",
       "state" : "NV",
-      "zip" : "89086"
+      "zip" : "89086",
+      "timezone" : "America/Los_Angeles"
    },
    "vba_355" : {
       "address_1" : "50 Carr 165",
@@ -397,7 +446,8 @@
       "address_3" : null,
       "city" : "Guaynabo",
       "state" : "PR",
-      "zip" : "00968"
+      "zip" : "00968",
+      "timezone" : "America/Puerto_Rico"
    },
    "vba_358" : {
       "address_1" : "1501 Roxas Boulevard",
@@ -405,7 +455,8 @@
       "address_3" : null,
       "city" : "Pasay City",
       "state" : "PH",
-      "zip" : "01302"
+      "zip" : "01302",
+      "timezone" : "Asia/Manila"
    },
    "vba_362" : {
       "address_1" : "6900 Almeda Road",
@@ -413,7 +464,8 @@
       "address_3" : null,
       "city" : "Houston",
       "state" : "TX",
-      "zip" : "77030"
+      "zip" : "77030",
+      "timezone" : "America/Chicago"
    },
    "vba_372" : {
       "address_1" : "1722 I Street, N.W.",
@@ -421,7 +473,8 @@
       "address_3" : null,
       "city" : "Washington",
       "state" : "DC",
-      "zip" : "20421"
+      "zip" : "20421",
+      "timezone" : "America/New_York"
    },
    "VACO" : {
       "address_1" : "425 I Street, N.W.",
@@ -429,7 +482,8 @@
       "address_3" : null,
       "city" : "Washington",
       "state" : "DC",
-      "zip" : "20001"
+      "zip" : "20001",
+      "timezone": "America/New_York"
    },
    "vba_373" : {
       "address_1" : "275 Chestnut Street",
@@ -437,7 +491,8 @@
       "address_3" : null,
       "city" : "Manchester",
       "state" : "NH",
-      "zip" : "03101"
+      "zip" : "03101",
+      "timezone" : "America/New_York"
    },
    "vba_377" : {
       "address_1" : "8810 Rio San Diego Drive",
@@ -445,7 +500,8 @@
       "address_3" : null,
       "city" : "San Diego",
       "state" : "CA",
-      "zip" : "92108"
+      "zip" : "92108",
+      "timezone" : "America/Los_Angeles"
    },
    "vba_402" : {
       "address_1" : "810 Eastern Ave",
@@ -453,7 +509,8 @@
       "address_3" : null,
       "city" : "Augusta",
       "state" : "ME",
-      "zip" : "04330"
+      "zip" : "04330",
+      "timezone" : "America/New_York"
    },
    "vba_405" : {
       "address_1" : "163 Veterans Drive",
@@ -461,7 +518,8 @@
       "address_3" : null,
       "city" : "White River Junction",
       "state" : "VT",
-      "zip" : "05009"
+      "zip" : "05009",
+      "timezone" : "America/New_York"
    },
    "vba_436" : {
       "address_1" : "3633 Veterans Drive",
@@ -469,7 +527,8 @@
       "address_3" : null,
       "city" : "Fort Harrison",
       "state" : "MT",
-      "zip" : "59636"
+      "zip" : "59636",
+      "timezone" : "America/Denver"
    },
    "vba_437" : {
       "address_1" : "2101 Elm Street N",
@@ -477,7 +536,8 @@
       "address_3" : null,
       "city" : "Fargo",
       "state" : "ND",
-      "zip" : "58102"
+      "zip" : "58102",
+      "timezone" : "America/Chicago"
    },
    "vba_438" : {
       "address_1" : "2501 W 22nd Street",
@@ -485,7 +545,8 @@
       "address_3" : null,
       "city" : "Sioux Falls",
       "state" : "SD",
-      "zip" : "57105"
+      "zip" : "57105",
+      "timezone" : "America/Chicago"
    },
    "vba_442" : {
       "address_1" : "2360 E. Pershing Blvd.",
@@ -493,7 +554,8 @@
       "address_3" : null,
       "city" : "Cheyenne",
       "state" : "WY",
-      "zip" : "82001"
+      "zip" : "82001",
+      "timezone" : "America/Denver"
    },
    "vba_452" : {
       "address_1" : "5500 E Kellogg",
@@ -501,7 +563,8 @@
       "address_3" : null,
       "city" : "Wichita",
       "state" : "KS",
-      "zip" : "67218"
+      "zip" : "67218",
+      "timezone" : "America/Chicago"
    },
    "vba_459" : {
       "address_1" : "459 Patterson Road",
@@ -509,7 +572,8 @@
       "address_3" : null,
       "city" : "Honolulu",
       "state" : "HI",
-      "zip" : "96819"
+      "zip" : "96819",
+      "timezone" : "Pacific/Honolulu"
    },
    "vba_459h" : {
       "address_1" : "770 East Sunset Blvd.",
@@ -517,7 +581,8 @@
       "address_3" : null,
       "city" : "Tamuning",
       "state" : "GU",
-      "zip" : "96913"
+      "zip" : "96913",
+      "timezone" : "Pacific/Honolulu"
    },
    "vba_459i" : {
       "address_1" : "154 Waianuenue Ave.",
@@ -525,7 +590,8 @@
       "address_3" : null,
       "city" : "Hilo",
       "state" : "HI",
-      "zip" : "96720"
+      "zip" : "96720",
+      "timezone" : "Pacific/Honolulu"
    },
    "vba_460" : {
       "address_1" : "1601 Kirkwood Hwy",
@@ -533,7 +599,8 @@
       "address_3" : null,
       "city" : "Wilmington",
       "state" : "DE",
-      "zip" : "19805"
+      "zip" : "19805",
+      "timezone" : "America/New_York"
    },
    "vba_463" : {
       "address_1" : "1201 N. Muldoon Street",
@@ -541,7 +608,8 @@
       "address_3" : null,
       "city" : "Anchorage",
       "state" : "AK",
-      "zip" : "99504"
+      "zip" : "99504",
+      "timezone" : "America/Anchorage"
    },
    "vc_0523V" : {
       "address_1" : "2119 West Lincoln Avenue",
@@ -549,7 +617,8 @@
       "address_3" : null,
       "city" : "Yakima",
       "state" : "WA",
-      "zip" : "98902"
+      "zip" : "98902",
+      "timezone" : "America/Los_Angeles"
    },
    "vc_0616V" : {
       "address_1" : "Ottoville Road",
@@ -557,7 +626,8 @@
       "address_3" : null,
       "city" : "Pago Pago",
       "state" : "AS",
-      "zip" : "96799"
+      "zip" : "96799",
+      "timezone" : "Pacific/Honolulu"
    },
    "vc_0633V" : {
       "address_1" : "4485 Pahe'e Street",
@@ -565,7 +635,8 @@
       "address_3" : null,
       "city" : "Lihue",
       "state" : "HI",
-      "zip" : "96765"
+      "zip" : "96765",
+      "timezone" : "Pacific/Honolulu"
    },
    "vc_0634V" : {
       "address_1" : "157 Ma's Street",
@@ -573,7 +644,8 @@
       "address_3" : null,
       "city" : "Kahului",
       "state" : "HI",
-      "zip" : "96732"
+      "zip" : "96732",
+      "timezone" : "Pacific/Honolulu"
    },
    "vc_0636V" : {
       "address_1" : "Hale Ku'i Plaza, 73-4976 Kamanu Street",
@@ -581,7 +653,8 @@
       "address_3" : null,
       "city" : "Kailua-Kona",
       "state" : "HI",
-      "zip" : "96740"
+      "zip" : "96740",
+      "timezone" : "Pacific/Honolulu"
    },
    "vc_0701V" : {
       "address_1" : "2203 McKinley Road",
@@ -589,7 +662,8 @@
       "address_3" : null,
       "city" : "Johnson City",
       "state" : "TN",
-      "zip" : "37604"
+      "zip" : "37604",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vc_0719V" : {
       "address_1" : "1407 Union Avenue",
@@ -597,7 +671,8 @@
       "address_3" : null,
       "city" : "Memphis",
       "state" : "TN",
-      "zip" : "38104"
+      "zip" : "38104",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vc_0720V" : {
       "address_1" : "1645 Downtown West Blvd #28",
@@ -605,7 +680,8 @@
       "address_3" : null,
       "city" : "Knoxville",
       "state" : "TN",
-      "zip" : "37919"
+      "zip" : "37919",
+      "timezone" : "America/Chicago"
    },
    "vha_402GA" : {
       "address_1" : "163 Van Buren Road",
@@ -613,7 +689,8 @@
       "address_3" : "Suite 6",
       "city" : "Caribou",
       "state" : "ME",
-      "zip" : "04736-3567"
+      "zip" : "04736-3567",
+      "timezone" : "America/New_York"
    },
    "vha_402HB" : {
       "address_1" : "35 State Hospital Street",
@@ -621,7 +698,8 @@
       "address_3" : null,
       "city" : "Bangor",
       "state" : "ME",
-      "zip" : "04401-8816"
+      "zip" : "04401-8816",
+      "timezone" : "America/New_York"
    },
    "vha_438GA" : {
       "address_1" : "1850 Royal Avenue",
@@ -629,7 +707,8 @@
       "address_3" : null,
       "city" : "Spirit Lake",
       "state" : "IA",
-      "zip" : "51360-1092"
+      "zip" : "51360-1092",
+      "timezone" : "America/Chicago"
    },
    "vha_438GC" : {
       "address_1" : "380 West Anchor Drive",
@@ -637,7 +716,8 @@
       "address_3" : null,
       "city" : "Dakota Dunes",
       "state" : "SD",
-      "zip" : "57049-5273"
+      "zip" : "57049-5273",
+      "timezone" : "America/Chicago"
    },
    "vha_459GH" : {
       "address_1" : "Marina Heights Business Park - Garapan",
@@ -645,7 +725,8 @@
       "address_3" : "MH-II Building Suite 100 and 206",
       "city" : "Saipan",
       "state" : "MP",
-      "zip" : "96950-9998"
+      "zip" : "96950-9998",
+      "timezone" : "Pacific/Honolulu"
    },
    "vha_460HE" : {
       "address_1" : "1909 New Road",
@@ -653,7 +734,8 @@
       "address_3" : null,
       "city" : "Northfield",
       "state" : "NJ",
-      "zip" : "08225-1537"
+      "zip" : "08225-1537",
+      "timezone" : "America/New_York"
    },
    "vha_538GB" : {
       "address_1" : "840 Gallia Street",
@@ -661,7 +743,8 @@
       "address_3" : null,
       "city" : "Portsmouth",
       "state" : "OH",
-      "zip" : "45662-4232"
+      "zip" : "45662-4232",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_539" : {
       "address_1" : "3200 Vine Street",
@@ -669,7 +752,8 @@
       "address_3" : null,
       "city" : "Cincinnati",
       "state" : "OH",
-      "zip" : "45220-2213"
+      "zip" : "45220-2213",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_542" : {
       "address_1" : "1400 Black Horse Hill Road",
@@ -677,7 +761,8 @@
       "address_3" : null,
       "city" : "Coatesville",
       "state" : "PA",
-      "zip" : "19320-2096"
+      "zip" : "19320-2096",
+      "timezone" : "America/New_York"
    },
    "vha_556GD" : {
       "address_1" : "8207 22nd Avenue",
@@ -685,7 +770,8 @@
       "address_3" : null,
       "city" : "Kenosha",
       "state" : "WI",
-      "zip" : "53143-6206"
+      "zip" : "53143-6206",
+      "timezone" : "America/Chicago"
    },
    "vha_568" : {
       "address_1" : "113 Comanche Road",
@@ -693,7 +779,8 @@
       "address_3" : null,
       "city" : "Fort Meade",
       "state" : "SD",
-      "zip" : "57741-1002"
+      "zip" : "57741-1002",
+      "timezone" : "America/Chicago"
    },
    "vha_568A4" : {
       "address_1" : "500 North Fifth Street",
@@ -701,7 +788,8 @@
       "address_3" : null,
       "city" : "Hot Springs",
       "state" : "SD",
-      "zip" : "57747-1480"
+      "zip" : "57747-1480",
+      "timezone" : "America/Chicago"
    },
    "vha_585" : {
       "address_1" : "325 East H Street",
@@ -709,7 +797,8 @@
       "address_3" : null,
       "city" : "Iron Mountain",
       "state" : "MI",
-      "zip" : "49801-4760"
+      "zip" : "49801-4760",
+      "timezone" : "America/Chicago"
    },
    "vha_585GC" : {
       "address_1" : "1110 10th Avenue",
@@ -717,7 +806,8 @@
       "address_3" : "Suite 101",
       "city" : "Menominee",
       "state" : "MI",
-      "zip" : "49858-3058"
+      "zip" : "49858-3058",
+      "timezone" : "America/Chicago"
    },
    "vha_595" : {
       "address_1" : "1700 South Lincoln Avenue",
@@ -725,7 +815,8 @@
       "address_3" : null,
       "city" : "Lebanon",
       "state" : "PA",
-      "zip" : "17042-7529"
+      "zip" : "17042-7529",
+      "timezone" : "America/New_York"
    },
    "vha_596" : {
       "address_1" : "2250 Leestown Road",
@@ -733,7 +824,8 @@
       "address_3" : null,
       "city" : "Lexington",
       "state" : "KY",
-      "zip" : "40511-1052"
+      "zip" : "40511-1052",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_596GA" : {
       "address_1" : "300 Medpark Drive",
@@ -741,7 +833,8 @@
       "address_3" : null,
       "city" : "Somerset",
       "state" : "KY",
-      "zip" : "42503-3479"
+      "zip" : "42503-3479",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_596GB" : {
       "address_1" : "333 Beacon Hill Road",
@@ -749,7 +842,8 @@
       "address_3" : "Suite 100",
       "city" : "Morehead",
       "state" : "KY",
-      "zip" : "40351-6182"
+      "zip" : "40351-6182",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_596GC" : {
       "address_1" : "210 Black Gold Boulevard",
@@ -757,7 +851,8 @@
       "address_3" : "Suite 107",
       "city" : "Hazard",
       "state" : "KY",
-      "zip" : "41701-2620"
+      "zip" : "41701-2620",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_596GD" : {
       "address_1" : "209 Pauline Drive",
@@ -765,7 +860,8 @@
       "address_3" : null,
       "city" : "Berea",
       "state" : "KY",
-      "zip" : "40403-8889"
+      "zip" : "40403-8889",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_603GF" : {
       "address_1" : "619 West Main Street",
@@ -773,7 +869,8 @@
       "address_3" : null,
       "city" : "Clarkson",
       "state" : "KY",
-      "zip" : "42726-7044"
+      "zip" : "42726-7044",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_607" : {
       "address_1" : "2500 Overlook Terrace",
@@ -781,7 +878,8 @@
       "address_3" : null,
       "city" : "Madison",
       "state" : "WI",
-      "zip" : "53705-2254"
+      "zip" : "53705-2254",
+      "timezone" : "America/Chicago"
    },
    "vha_607GC" : {
       "address_1" : "2419 Morse Street",
@@ -789,7 +887,8 @@
       "address_3" : "Suite 120",
       "city" : "Janesville",
       "state" : "WI",
-      "zip" : "53545-0221"
+      "zip" : "53545-0221",
+      "timezone" : "America/Chicago"
    },
    "vha_607GD" : {
       "address_1" : "1670 South Boulevard",
@@ -797,7 +896,8 @@
       "address_3" : null,
       "city" : "Baraboo",
       "state" : "WI",
-      "zip" : "53913-2937"
+      "zip" : "53913-2937",
+      "timezone" : "America/Chicago"
    },
    "vha_607GE" : {
       "address_1" : "215 Corporate Drive",
@@ -805,7 +905,8 @@
       "address_3" : "Suite B",
       "city" : "Beaver Dam",
       "state" : "WI",
-      "zip" : "53916-3124"
+      "zip" : "53916-3124",
+      "timezone" : "America/Chicago"
    },
    "vha_618BY" : {
       "address_1" : "3520 Tower Avenue",
@@ -813,7 +914,8 @@
       "address_3" : null,
       "city" : "Superior",
       "state" : "WI",
-      "zip" : "54880-5335"
+      "zip" : "54880-5335",
+      "timezone" : "America/Chicago"
    },
    "vha_618GE" : {
       "address_1" : "475 Chippewa Mall Drive",
@@ -821,7 +923,8 @@
       "address_3" : "Suite 418",
       "city" : "Chippewa Falls",
       "state" : "WI",
-      "zip" : "54729-5047"
+      "zip" : "54729-5047",
+      "timezone" : "America/Chicago"
    },
    "vha_618GH" : {
       "address_1" : "15954 Rivers Edge Drive",
@@ -829,7 +932,8 @@
       "address_3" : "Suite 103",
       "city" : "Hayward",
       "state" : "WI",
-      "zip" : "54843-7800"
+      "zip" : "54843-7800",
+      "timezone" : "America/Chicago"
    },
    "vha_618GM" : {
       "address_1" : "2700A College Drive",
@@ -837,7 +941,8 @@
       "address_3" : null,
       "city" : "Rice Lake",
       "state" : "WI",
-      "zip" : "54868-2449"
+      "zip" : "54868-2449",
+      "timezone" : "America/Chicago"
    },
    "vha_626GC" : {
       "address_1" : "600 US 31 West Bypass",
@@ -845,7 +950,8 @@
       "address_3" : "Suite 12",
       "city" : "Bowling Green",
       "state" : "KY",
-      "zip" : "42101-4905"
+      "zip" : "42101-4905",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_626GF" : {
       "address_1" : "6098 Debra Road",
@@ -853,7 +959,8 @@
       "address_3" : "6200 Building, Suite 5200",
       "city" : "Chattanooga",
       "state" : "TN",
-      "zip" : "37411-5702"
+      "zip" : "37411-5702",
+      "timezone" : "America/Chicago"
    },
    "vha_626GH" : {
       "address_1" : "851 South Willow Avenue",
@@ -861,7 +968,8 @@
       "address_3" : "Suite 108",
       "city" : "Cookeville",
       "state" : "TN",
-      "zip" : "38501-4223"
+      "zip" : "38501-4223",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_626GJ" : {
       "address_1" : "1002 South Virginia Street",
@@ -869,7 +977,8 @@
       "address_3" : "Second Floor",
       "city" : "Hopkinsville",
       "state" : "KY",
-      "zip" : "42240-3579"
+      "zip" : "42240-3579",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_636" : {
       "address_1" : "4101 Woolworth Avenue",
@@ -877,7 +986,8 @@
       "address_3" : null,
       "city" : "Omaha",
       "state" : "NE",
-      "zip" : "68105-1850"
+      "zip" : "68105-1850",
+      "timezone" : "America/Chicago"
    },
    "vha_636GD" : {
       "address_1" : "101 Iowa Avenue West",
@@ -885,7 +995,8 @@
       "address_3" : null,
       "city" : "Marshalltown",
       "state" : "IA",
-      "zip" : "50158-4768"
+      "zip" : "50158-4768",
+      "timezone" : "America/Chicago"
    },
    "vha_636GF" : {
       "address_1" : "2826 West Locust Street",
@@ -893,7 +1004,8 @@
       "address_3" : null,
       "city" : "Davenport",
       "state" : "IA",
-      "zip" : "52804-3354"
+      "zip" : "52804-3354",
+      "timezone" : "America/Chicago"
    },
    "vha_636GH" : {
       "address_1" : "945 Tower Park Drive",
@@ -901,7 +1013,8 @@
       "address_3" : null,
       "city" : "Waterloo",
       "state" : "IA",
-      "zip" : "50701-9098"
+      "zip" : "50701-9098",
+      "timezone" : "America/Chicago"
    },
    "vha_636GJ" : {
       "address_1" : "2600 Dodge Street",
@@ -909,7 +1022,8 @@
       "address_3" : "Suite A1",
       "city" : "Dubuque",
       "state" : "IA",
-      "zip" : "52003-7159"
+      "zip" : "52003-7159",
+      "timezone" : "America/Chicago"
    },
    "vha_648GA" : {
       "address_1" : "2650 Northeast Courtney Drive",
@@ -917,7 +1031,8 @@
       "address_3" : null,
       "city" : "Bend",
       "state" : "OR",
-      "zip" : "97701-7639"
+      "zip" : "97701-7639",
+      "timezone" : "America/Los_Angeles"
    },
    "vha_653GA" : {
       "address_1" : "2191 Marion Street",
@@ -925,7 +1040,8 @@
       "address_3" : null,
       "city" : "North Bend",
       "state" : "OR",
-      "zip" : "97459-2314"
+      "zip" : "97459-2314",
+      "timezone" : "America/Los_Angeles"
    },
    "vha_653GB" : {
       "address_1" : "840 Railroad Street",
@@ -933,7 +1049,8 @@
       "address_3" : null,
       "city" : "Brookings",
       "state" : "OR",
-      "zip" : "97415-9702"
+      "zip" : "97415-9702",
+      "timezone" : "America/Los_Angeles"
    },
    "vha_657GJ" : {
       "address_1" : "6211 East Waterford Boulevard",
@@ -941,7 +1058,8 @@
       "address_3" : null,
       "city" : "Evansville",
       "state" : "IN",
-      "zip" : "47715-2869"
+      "zip" : "47715-2869",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_657GL" : {
       "address_1" : "2620 Perkins Creek Drive",
@@ -949,7 +1067,8 @@
       "address_3" : null,
       "city" : "Paducah",
       "state" : "KY",
-      "zip" : "42001-7494"
+      "zip" : "42001-7494",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_657GO" : {
       "address_1" : "926 Veterans Drive",
@@ -957,7 +1076,8 @@
       "address_3" : null,
       "city" : "Hanson",
       "state" : "KY",
-      "zip" : "42413-9401"
+      "zip" : "42413-9401",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_657GP" : {
       "address_1" : "3400 New Hartford Road",
@@ -965,7 +1085,8 @@
       "address_3" : null,
       "city" : "Owensboro",
       "state" : "KY",
-      "zip" : "42303-1705"
+      "zip" : "42303-1705",
+      "timezone" : "America/Kentucky/Louisville"
    },
    "vha_660GA" : {
       "address_1" : "500 South 11th Avenue",
@@ -973,7 +1094,8 @@
       "address_3" : null,
       "city" : "Pocatello",
       "state" : "ID",
-      "zip" : "83201-4835"
+      "zip" : "83201-4835",
+      "timezone" : "America/Boise"
    },
    "vha_663GC" : {
       "address_1" : "307 South 13th Street",
@@ -981,7 +1103,8 @@
       "address_3" : "Suite 200",
       "city" : "Mount Vernon",
       "state" : "WA",
-      "zip" : "98274-4100"
+      "zip" : "98274-4100",
+      "timezone" : "America/Los_Angeles"
    },
    "vha_663GE" : {
       "address_1" : "1114 Georgiana Street",
@@ -989,7 +1112,8 @@
       "address_3" : null,
       "city" : "Port Angeles",
       "state" : "WA",
-      "zip" : "98362-4212"
+      "zip" : "98362-4212",
+      "timezone" : "America/Los_Angeles"
    },
    "vha_666GB" : {
       "address_1" : "4140 South Poplar Street",
@@ -997,7 +1121,8 @@
       "address_3" : null,
       "city" : "Casper",
       "state" : "WY",
-      "zip" : "82601-6104"
+      "zip" : "82601-6104",
+      "timezone" : "America/Denver"
    },
    "vha_668" : {
       "address_1" : "4815 North Assembly Street",
@@ -1005,7 +1130,8 @@
       "address_3" : null,
       "city" : "Spokane",
       "state" : "WA",
-      "zip" : "99205-6185"
+      "zip" : "99205-6185",
+      "timezone" : "America/Boise"
    },
    "vha_668GB" : {
       "address_1" : "915 West Emma Avenue",
@@ -1013,7 +1139,8 @@
       "address_3" : null,
       "city" : "Coeur d'Alene",
       "state" : "ID",
-      "zip" : "83814-2531"
+      "zip" : "83814-2531",
+      "timezone" : "America/Boise"
    },
    "vha_671BY" : {
       "address_1" : "5788 Eckert Road",
@@ -1021,7 +1148,8 @@
       "address_3" : null,
       "city" : "San Antonio",
       "state" : "TX",
-      "zip" : "78240-3900"
+      "zip" : "78240-3900",
+      "timezone" : "America/Chicago"
    },
    "vha_676" : {
       "address_1" : "500 East Veterans Street",
@@ -1029,7 +1157,8 @@
       "address_3" : null,
       "city" : "Tomah",
       "state" : "WI",
-      "zip" : "54660-3105"
+      "zip" : "54660-3105",
+      "timezone" : "America/Chicago"
    },
    "vha_676GA" : {
       "address_1" : "515 South 32 Avenue",
@@ -1037,7 +1166,8 @@
       "address_3" : null,
       "city" : "Wausau",
       "state" : "WI",
-      "zip" : "54401-4074"
+      "zip" : "54401-4074",
+      "timezone" : "America/Chicago"
    },
    "vha_676GC" : {
       "address_1" : "2600 State Road",
@@ -1045,7 +1175,8 @@
       "address_3" : null,
       "city" : "La Crosse",
       "state" : "WI",
-      "zip" : "54601-6157"
+      "zip" : "54601-6157",
+      "timezone" : "America/Chicago"
    },
    "vha_676GD" : {
       "address_1" : "555 West Grand Avenue",
@@ -1053,7 +1184,8 @@
       "address_3" : "Suite B-2",
       "city" : "Wisconsin Rapids",
       "state" : "WI",
-      "zip" : "54495-2736"
+      "zip" : "54495-2736",
+      "timezone" : "America/Chicago"
    },
    "vha_676GE" : {
       "address_1" : "8 Johnson Street",
@@ -1061,7 +1193,8 @@
       "address_3" : null,
       "city" : "Owen",
       "state" : "WI",
-      "zip" : "54460-9534"
+      "zip" : "54460-9534",
+      "timezone" : "America/Chicago"
    },
    "vha_687" : {
       "address_1" : "77 Wainwright Drive",
@@ -1069,7 +1202,8 @@
       "address_3" : null,
       "city" : "Walla Walla",
       "state" : "WA",
-      "zip" : "99362-3975"
+      "zip" : "99362-3975",
+      "timezone" : "America/Los_Angeles"
    },
    "vha_687GC" : {
       "address_1" : "202 12th Street",
@@ -1077,7 +1211,8 @@
       "address_3" : null,
       "city" : "La Grande",
       "state" : "OR",
-      "zip" : "97850-2879"
+      "zip" : "97850-2879",
+      "timezone" : "America/Los_Angeles"
    },
    "vha_692" : {
       "address_1" : "8495 Crater Lake Highway",
@@ -1085,7 +1220,8 @@
       "address_3" : null,
       "city" : "White City",
       "state" : "OR",
-      "zip" : "97503-3011"
+      "zip" : "97503-3011",
+      "timezone" : "America/Los_Angeles"
    },
    "vha_692GA" : {
       "address_1" : "2225 North Eldorado Boulevard",
@@ -1093,7 +1229,8 @@
       "address_3" : null,
       "city" : "Klamath Falls",
       "state" : "OR",
-      "zip" : "97601-6417"
+      "zip" : "97601-6417",
+      "timezone" : "America/Los_Angeles"
    },
    "vha_693" : {
       "address_1" : "1111 East End Boulevard",
@@ -1101,7 +1238,8 @@
       "address_3" : null,
       "city" : "Wilkes-Barre",
       "state" : "PA",
-      "zip" : "18711-0030"
+      "zip" : "18711-0030",
+      "timezone" : "America/New_York"
    },
    "vha_695BY" : {
       "address_1" : "10 Tri-Park Way",
@@ -1109,7 +1247,8 @@
       "address_3" : null,
       "city" : "Appleton",
       "state" : "WI",
-      "zip" : "54914-1658"
+      "zip" : "54914-1658",
+      "timezone" : "America/Chicago"
    },
    "vha_695GA" : {
       "address_1" : "21425 Spring Street",
@@ -1117,7 +1256,8 @@
       "address_3" : null,
       "city" : "Union Grove",
       "state" : "WI",
-      "zip" : "53182-9707"
+      "zip" : "53182-9707",
+      "timezone" : "America/Chicago"
    },
    "vha_695GD" : {
       "address_1" : "2851 University Avenue",
@@ -1125,7 +1265,8 @@
       "address_3" : null,
       "city" : "Green Bay",
       "state" : "WI",
-      "zip" : "54311-5855"
+      "zip" : "54311-5855",
+      "timezone" : "America/Chicago"
    },
    "vha_740GB" : {
       "address_1" : "901 East Hackberry Avenue",
@@ -1133,7 +1274,8 @@
       "address_3" : null,
       "city" : "McAllen",
       "state" : "TX",
-      "zip" : "78501-6502"
+      "zip" : "78501-6502",
+      "timezone" : "America/Chicago"
    },
    "vha_757" : {
       "address_1" : "420 North James Road",
@@ -1141,6 +1283,7 @@
       "address_3" : null,
       "city" : "Columbus",
       "state" : "OH",
-      "zip" : "43219-1834"
+      "zip" : "43219-1834",
+      "timezone" : "America/New_York"
    }
 }

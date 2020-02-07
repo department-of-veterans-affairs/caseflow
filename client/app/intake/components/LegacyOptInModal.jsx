@@ -15,6 +15,10 @@ import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 
 const NO_MATCH_TEXT = 'None of these match';
+const noneMatchOpt = (issue) => ({
+  displayText: `No VACOLS issues were found matching the issue: ${issue?.description}`,
+  value: 'no_match'
+});
 
 class LegacyOptInModal extends React.Component {
   constructor(props) {
@@ -22,15 +26,15 @@ class LegacyOptInModal extends React.Component {
     this.state = {
       vacolsId: null,
       vacolsSequenceId: null,
-      radioKey: '',
+      radioVal: '',
       eligibleForSocOptIn: null
     };
   }
 
   radioOnChange = (value) => {
     // legacy opt in are keyed off of a combo of both vacolsId & vacolsSequenceId
-    // NO_MATCH_TEXT does not have a vacolsSequenceId
-    if (value === NO_MATCH_TEXT) {
+    // "No match" does not have a vacolsSequenceId
+    if (value === 'no_match') {
       this.setState({
         vacolsId: null,
         eligibleForSocOptIn: null,
@@ -53,7 +57,7 @@ class LegacyOptInModal extends React.Component {
     }
 
     this.setState({
-      radioKey: value
+      radioVal: value
     });
   };
 
@@ -88,21 +92,11 @@ class LegacyOptInModal extends React.Component {
 
   getLegacyAppealsSections(intakeData) {
     return intakeData.legacyAppeals.map((legacyAppeal, index) => {
-      const radioOptions = legacyAppeal.issues.map((issue) => {
-        return {
-          displayText: issue.description,
-          value: `${issue.vacols_id}-${issue.vacols_sequence_id}`,
-          disabled: Boolean(this.findOptinIssue(issue, intakeData.addedIssues))
-        };
-      });
-
-      // on the last issue add a radio button for "None of these match"
-      if (index === intakeData.legacyAppeals.length - 1) {
-        radioOptions.push({
-          displayText: NO_MATCH_TEXT,
-          value: NO_MATCH_TEXT
-        });
-      }
+      const radioOptions = legacyAppeal.issues.map((issue) => ({
+        displayText: issue.description,
+        value: `${issue.vacols_id}-${issue.vacols_sequence_id}`,
+        disabled: Boolean(this.findOptinIssue(issue, intakeData.addedIssues))
+      }));
 
       return (
         <RadioField
@@ -111,7 +105,7 @@ class LegacyOptInModal extends React.Component {
           name="rating-radio"
           options={radioOptions}
           key={`${index}legacy-opt-in`}
-          value={this.state.radioKey}
+          value={this.state.radioVal}
           onChange={this.radioOnChange}
         />
       );
@@ -129,7 +123,7 @@ class LegacyOptInModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: !this.state.radioKey
+        disabled: !this.state.radioVal
       }
     ];
 
@@ -145,7 +139,7 @@ class LegacyOptInModal extends React.Component {
   }
 
   render() {
-    const { intakeData, onCancel } = this.props;
+    const { intakeData, currentIssue, onCancel } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -155,6 +149,15 @@ class LegacyOptInModal extends React.Component {
           <div>
             <h2>Does issue {issueNumber} match any of these VACOLS issues?</h2>
             {this.getLegacyAppealsSections(intakeData)}
+            <RadioField
+              vertical
+              label={<h3>{NO_MATCH_TEXT}</h3>}
+              name="rating-radio"
+              options={[noneMatchOpt(currentIssue)]}
+              key="none-match"
+              value={this.state.radioVal}
+              onChange={this.radioOnChange}
+            />
           </div>
         </Modal>
       </div>
@@ -168,7 +171,10 @@ LegacyOptInModal.propTypes = {
   onCancel: PropTypes.func,
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
-  skipText: PropTypes.string
+  skipText: PropTypes.string,
+  intakeData: PropTypes.object,
+  currentIssue: PropTypes.object,
+  formType: PropTypes.string
 };
 
 LegacyOptInModal.defaultProps = {

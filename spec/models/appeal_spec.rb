@@ -9,6 +9,25 @@ describe Appeal, :all_dbs do
 
   let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze
 
+  context "#create_stream" do
+    let(:stream_type) { "vacate" }
+    let!(:appeal) { create(:appeal, number_of_claimants: 1) }
+
+    subject { appeal.create_stream(stream_type) }
+
+    it "creates a new appeal stream with data from the original appeal" do
+      expect(subject).to have_attributes(
+        receipt_date: appeal.receipt_date,
+        veteran_file_number: appeal.veteran_file_number,
+        legacy_opt_in_approved: appeal.legacy_opt_in_approved,
+        veteran_is_not_claimant: appeal.veteran_is_not_claimant,
+        stream_docket_number: appeal.docket_number,
+        stream_type: stream_type
+      )
+      expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
+    end
+  end
+
   context "includes PrintsTaskTree concern" do
     context "#structure" do
       let!(:root_task) { create(:root_task, appeal: appeal) }
@@ -73,6 +92,59 @@ describe Appeal, :all_dbs do
         expect(VeteranRecordRequest).to_not receive(:create!)
 
         subject
+      end
+    end
+  end
+
+  context "#create_issues!" do
+    subject { appeal.create_issues!(issues) }
+
+    let(:issues) { [request_issue] }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        ineligible_reason: ineligible_reason,
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id
+      )
+    end
+    let(:ineligible_reason) { nil }
+    let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
+    let(:vacols_case) { create(:case, case_issues: [create(:case_issue)]) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    context "when there is no associated legacy issue" do
+      it "does not create a legacy issue" do
+        subject
+
+        expect(request_issue.legacy_issues).to be_empty
+      end
+    end
+
+    context "when there is an associated legacy issue" do
+      let(:vacols_id) { legacy_appeal.vacols_id }
+      let(:vacols_sequence_id) { legacy_appeal.issues.first.vacols_sequence_id }
+
+      context "when the veteran did not opt in their legacy issues" do
+        let(:ineligible_reason) { "legacy_issue_not_withdrawn" }
+
+        it "creates a legacy issue, but no opt-in" do
+          subject
+
+          expect(request_issue.legacy_issues.count).to eq 1
+          expect(request_issue.legacy_issue_optin).to be_nil
+        end
+      end
+
+      context "when legacy opt in is approved by the veteran" do
+        let(:ineligible_reason) { nil }
+
+        it "creates a legacy issue and an associated opt-in" do
+          subject
+
+          expect(request_issue.legacy_issue_optin.legacy_issue).to eq(request_issue.legacy_issues.first)
+        end
       end
     end
   end
@@ -315,7 +387,7 @@ describe Appeal, :all_dbs do
         create(:appeal, receipt_date: Time.new("2018", "04", "05").utc)
       end
 
-      it "returns a docket number if receipt_date is defined" do
+      it "returns a docket number if id and receipt_date are defined" do
         expect(appeal.docket_number).to eq("180405-#{appeal.id}")
       end
     end
@@ -328,6 +400,21 @@ describe Appeal, :all_dbs do
       it "returns Missing Docket Number" do
         expect(appeal.docket_number).to eq("Missing Docket Number")
       end
+    end
+  end
+
+  context "#set_stream_docket_number_and_stream_type" do
+    it "persists an accurate value for stream_docket_number to the database" do
+      appeal = Appeal.new(veteran_file_number: "1234")
+      appeal.save!
+      expect(appeal.stream_docket_number).to be_nil
+      appeal.receipt_date = Time.new("2020", "01", "24").utc
+      expect(appeal.docket_number).to eq("200124-#{appeal.id}")
+      appeal.save!
+      expect(appeal.stream_docket_number).to eq("200124-#{appeal.id}")
+      appeal.stream_docket_number = "something else"
+      appeal.save!
+      expect(Appeal.where(stream_docket_number: "something else").count).to eq(1)
     end
   end
 
@@ -656,10 +743,10 @@ describe Appeal, :all_dbs do
       let(:appeal) { create(:appeal) }
       let(:today) { Time.zone.today }
 
+      let(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
       before do
-        create(:root_task, :in_progress, appeal: appeal)
-        create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 21)
-        create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 21)
+        create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 21)
+        create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 21)
       end
 
       describe "when there are no other tasks" do
@@ -670,10 +757,14 @@ describe Appeal, :all_dbs do
 
       describe "when there is an actionable task with an assignee", skip: "flake" do
         let(:assignee) { create(:user) }
-        let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal) }
+        let!(:task) do
+          create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal, parent: root_task)
+        end
 
         it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
-          expect(appeal.assigned_to_location).to eq(assignee.css_id)
+          expect(appeal.assigned_to_location).to(
+            eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
+          )
         end
       end
     end

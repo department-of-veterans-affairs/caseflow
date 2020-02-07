@@ -2515,9 +2515,7 @@ describe LegacyAppeal, :all_dbs do
       end
 
       context "if the only active case is a RootTask" do
-        before do
-          create(:root_task, appeal: appeal)
-        end
+        let!(:root_task) { create(:root_task, appeal: appeal) }
 
         it "returns Case storage" do
           expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
@@ -2526,10 +2524,10 @@ describe LegacyAppeal, :all_dbs do
 
       context "if there are active TrackVeteranTask, TimedHoldTask, and RootTask" do
         let(:today) { Time.zone.today }
+        let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
         before do
-          create(:root_task, :in_progress, appeal: appeal)
-          create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 11)
-          create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 11)
+          create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
+          create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
         end
 
         describe "when there are no other tasks" do
@@ -2540,10 +2538,14 @@ describe LegacyAppeal, :all_dbs do
 
         describe "when there is an assigned actionable task" do
           let(:task_assignee) { create(:user) }
-          let!(:task) { create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal) }
+          let!(:task) do
+            create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal, parent: root_task)
+          end
 
-          it "returns the actionable task's label", skip: "flake" do
-            expect(appeal.assigned_to_location).to eq(task_assignee.css_id)
+          it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
+            expect(appeal.assigned_to_location).to(
+              eq(task_assignee.css_id), appeal.structure_render(:id, :status, :assigned_to_id, :created_at, :updated_at)
+            )
           end
         end
       end

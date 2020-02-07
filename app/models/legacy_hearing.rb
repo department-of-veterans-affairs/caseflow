@@ -41,6 +41,7 @@ class LegacyHearing < ApplicationRecord
 
   delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
            :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
+           :veteran_email_address,
            to: :appeal,
            allow_nil: true
 
@@ -85,6 +86,10 @@ class LegacyHearing < ApplicationRecord
 
   def representative
     appeal&.representative_name
+  end
+
+  def representative_email_address
+    appeal&.representative_email_address
   end
 
   def assigned_to_vso?(user)
@@ -177,6 +182,24 @@ class LegacyHearing < ApplicationRecord
 
   def scheduled_pending?
     scheduled_for && !closed?
+  end
+
+  def scheduled_for_past?
+    # FIXME: scheduled_for date is inconsistent in many places.
+    # (https://github.com/department-of-veterans-affairs/caseflow/issues/13273)
+    # scheduled_for should either pulled from VACOLS or from the associated hearing_day,
+    # but some method exclusively use the value from VACOLS. The hearing_day association to
+    # legacy hearings was added in #11741.
+    # (https://github.com/department-of-veterans-affairs/caseflow/pull/11741)
+    scheduled_date = if hearing_day_id_refers_to_vacols_row?
+                       # Handles conversion of a VACOLS time (EST) to the timezone of the RO
+                       time.local_time
+                     else
+                       # Hearing Day scheduled_for is in the timezone of the RO
+                       hearing_day.scheduled_for
+                     end
+
+    scheduled_date < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
 
   def held_open?
