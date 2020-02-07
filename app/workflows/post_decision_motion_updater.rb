@@ -57,6 +57,7 @@ class PostDecisionMotionUpdater
     end
 
     motion.save
+    motion
   end
 
   # We create an AbstractMotionToVacateTask as sibling to the JudgeAddressMotionToVacateTask
@@ -85,6 +86,8 @@ class PostDecisionMotionUpdater
 
     vacate_stream = appeal.create_stream(:vacate)
     create_new_stream_tasks(vacate_stream)
+    post_decision_motion.create_request_issues_for_vacatur
+    post_decision_motion.create_vacated_decision_issues
   end
 
   def create_abstract_task

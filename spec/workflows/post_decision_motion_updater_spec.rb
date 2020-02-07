@@ -12,7 +12,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
   end
   let(:motions_atty) { create(:user, full_name: "Motions attorney") }
   let(:appeal) { create(:appeal) }
-  let(:orig_decision_issues) do
+  let!(:orig_decision_issues) do
     Array.new(3) do
       create(
         :decision_issue,
@@ -65,6 +65,8 @@ describe PostDecisionMotionUpdater, :all_dbs do
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
           verify_vacate_stream
         end
+
+        it "should create decision issues on new vacate"
       end
 
       context "when vacate type is straight vacate" do
@@ -74,6 +76,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
           verify_vacate_stream
+          verify_decision_issues_created
         end
 
         it "saves all decision issue IDs for full grant" do
@@ -92,6 +95,8 @@ describe PostDecisionMotionUpdater, :all_dbs do
           subject.process
           expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
           verify_vacate_stream
+          verify_vacate_stream
+          verify_decision_issues_created
         end
       end
 
@@ -217,9 +222,11 @@ describe PostDecisionMotionUpdater, :all_dbs do
     end
   end
 
-  def verify_vacate_stream
-    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
+  def vacate_stream
+    Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
+  end
 
+  def verify_vacate_stream
     expect(vacate_stream).to_not be_nil
     expect(vacate_stream.claimant.participant_id).to eq(appeal.claimant.participant_id)
 
@@ -234,5 +241,14 @@ describe PostDecisionMotionUpdater, :all_dbs do
     )
 
     expect(attorney_task).to_not be_nil
+  end
+
+  def verify_decision_issues_created
+    motion = PostDecisionMotion.first
+    request_issues = vacate_stream.request_issues
+    expect(request_issues.size).to eq(motion.decision_issues_for_vacatur.size)
+
+    decision_issues = vacate_stream.decision_issues
+    expect(decision_issues.size).to eq(motion.decision_issues_for_vacatur.size)
   end
 end

@@ -160,7 +160,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def create_contesting_request_issue!
-    vacate_appeal_stream = Appeal.find_by(stream_type: "Vacate", stream_docket_number: decision_review.docket_number)
+    vacate_appeal_stream = Appeal.find_by(stream_type: "vacate", stream_docket_number: decision_review.docket_number)
     RequestIssue.find_or_create_by!(
       decision_review: vacate_appeal_stream,
       decision_review_type: decision_review_type,
