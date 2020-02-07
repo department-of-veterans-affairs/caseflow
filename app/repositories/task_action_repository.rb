@@ -324,9 +324,7 @@ class TaskActionRepository
     def review_decision_draft(task, user)
       action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
       action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
-
-      # TODO: Update this to access task.appeal.stream_type == vacate
-      action = Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.ama?
+      action = Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
