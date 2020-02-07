@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PostDecisionMotionsController < ApplicationController
-  before_action :verify_task_access
+  before_action :verify_task_access, only: [:create, :return_to_lit_support]
 
   def create
     motion_updater = PostDecisionMotionUpdater.new(task, motion_params)
@@ -39,5 +39,9 @@ class PostDecisionMotionsController < ApplicationController
 
   def motion_params
     params.permit(:disposition, :task_id, :vacate_type, :instructions, :assigned_to_id, vacated_decision_issue_ids: [])
+  end
+
+  def post_decision_motion
+    PostDecisionMotion.find(motion_id)
   end
 end

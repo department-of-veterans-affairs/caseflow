@@ -9,12 +9,15 @@ RSpec.describe PostDecisionMotion, type: :model do
   end
   let(:motions_atty) { create(:user, full_name: "Motions attorney") }
   let(:appeal) { create(:appeal) }
+  let(:vacate_stream) { appeal.create_stream(:vacate) }
   let(:orig_decision_issues) do
-    Array.new(3) do
+    Array.new(3) do |index|
       create(
         :decision_issue,
         decision_review: appeal,
-        disposition: "denied"
+        disposition: "denied",
+        description: "issue #{index}",
+        participant_id: appeal.veteran.participant_id
       )
     end
   end
@@ -41,15 +44,34 @@ RSpec.describe PostDecisionMotion, type: :model do
     lit_support_team.add_user(motions_atty)
   end
 
-  context "handles creation of request issues" do
+  context "#create_request_issues_for_vacatur" do
     let(:disposition) { "granted" }
     let(:vacate_type) { "vacate_and_readjudication" }
+    subject { post_decision_motion.create_request_issues_for_vacatur }
 
     it "creates a request issue for every selected decision issue" do
-      expect(appeal.request_issues.length).to eq 0
-      post_decision_motion.create_request_issues_for_vacature
-      appeal.reload
-      expect(appeal.request_issues.length).to eq 3
+      expect(vacate_stream.request_issues.size).to eq 0
+      subject
+      vacate_stream.reload
+      expect(vacate_stream.request_issues.size).to eq 3
+    end
+  end
+
+  context "#create_vacated_decision_issues" do
+    let(:disposition) { "granted" }
+    let(:vacate_type) { "vacate_and_readjudication" }
+    subject { post_decision_motion.create_vacated_decision_issues }
+
+    before do
+      vacate_stream.reload
+    end
+
+    it "creates a vacated decision issue for every selected decision issue" do
+      expect(post_decision_motion.decision_issues_for_vacatur.size).to eq 3
+      post_decision_motion.create_request_issues_for_vacatur
+      subject
+      vacate_stream.reload
+      expect(vacate_stream.decision_issues.size).to eq 3
     end
   end
 end

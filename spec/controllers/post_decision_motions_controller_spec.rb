@@ -5,6 +5,8 @@ describe PostDecisionMotionsController do
   let(:judge) { create(:user) }
   let(:judge_team) { JudgeTeam.create_for_judge(judge) }
 
+  let(:post_decision_motion) { create(:post_decision_motion) }
+
   before do
     User.authenticate!(roles: ["System Admin"])
     User.stub = judge
