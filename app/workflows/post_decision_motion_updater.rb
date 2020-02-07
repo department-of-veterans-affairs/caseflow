@@ -22,11 +22,8 @@ class PostDecisionMotionUpdater
     ActiveRecord::Base.transaction do
       return unless post_decision_motion
 
-      create_new_tasks if denied_or_dismissed?
-      if grant_type?
-        vacate_stream = appeal.create_stream("Vacate")
-        create_new_stream_tasks(vacate_stream)
-      end
+      handle_denial_or_dismissal
+      handle_grant
 
       return if errors.messages.any?
 
@@ -62,7 +59,8 @@ class PostDecisionMotionUpdater
     motion.save
   end
 
-  def create_new_tasks
+  def handle_denial_or_dismissal
+    return unless denied_or_dismissed?
     # We create an AbstractMotionToVacateTask as sibling to the JudgeAddressMotionToVacateTask
     # to serve as parent for successive Denied or Dismissed tasks. It is created when associated with
     # the new task in order to pass responsibility for validation to child task
@@ -80,6 +78,13 @@ class PostDecisionMotionUpdater
       return
     end
     new_task.save
+  end
+
+  def handle_grant
+    return unless grant_type?
+
+    vacate_stream = appeal.create_stream("Vacate")
+    create_new_stream_tasks(vacate_stream)
   end
 
   def create_abstract_task

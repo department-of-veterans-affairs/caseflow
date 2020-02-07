@@ -218,7 +218,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
   end
 
   def verify_vacate_stream
-    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "Vacate")
+    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
 
     expect(vacate_stream).to_not be_nil
     expect(vacate_stream.claimant.participant_id).to eq(appeal.claimant.participant_id)

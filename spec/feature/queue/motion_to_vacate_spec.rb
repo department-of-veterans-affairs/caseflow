@@ -444,7 +444,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
   end
 
   def visit_vacate_stream
-    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "Vacate")
+    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
     visit "/queue/appeals/#{vacate_stream.uuid}"
     expect(page).to have_content("Vacate")
   end

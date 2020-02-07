@@ -10,7 +10,7 @@ describe Appeal, :all_dbs do
   let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze
 
   context "#create_stream" do
-    let(:stream_type) { "Vacate" }
+    let(:stream_type) { "vacate" }
     let!(:appeal) { create(:appeal, number_of_claimants: 1) }
 
     subject { appeal.create_stream(stream_type) }

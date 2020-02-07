@@ -26,9 +26,9 @@ class Appeal < DecisionReview
   has_many :record_synced_by_job, as: :record
 
   enum stream_type: {
-    "Original": "Original",
-    "Vacate": "Vacate",
-    "De Novo": "De Novo"
+    "original": "original",
+    "vacate": "vacate",
+    "de_novo": "de_novo"
   }
 
   before_save :set_stream_docket_number_and_stream_type
@@ -81,7 +81,7 @@ class Appeal < DecisionReview
   end
 
   def type
-    stream_type || "Original"
+    stream_type&.titlecase || "Original"
   end
 
   def create_stream(stream_type)
@@ -447,7 +447,7 @@ class Appeal < DecisionReview
     if receipt_date && persisted?
       self.stream_docket_number ||= docket_number
     end
-    self.stream_type ||= type
+    self.stream_type ||= type.parameterize.underscore.to_sym
   end
 
   def maybe_create_translation_task
