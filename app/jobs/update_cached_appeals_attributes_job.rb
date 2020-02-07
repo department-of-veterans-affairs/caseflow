@@ -94,6 +94,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     values_to_cache = legacy_appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
@@ -103,7 +104,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_type: LegacyAppeal.name,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
-        docket_type: appeal.docket_name # "legacy"
+        docket_type: appeal.docket_name, # "legacy"
+        power_of_attorney_name: appeal.representative_name,
+        suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
     end
 
@@ -112,10 +115,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                       :closest_regional_office_city,
                                                                       :closest_regional_office_key,
                                                                       :vacols_id,
-                                                                      :docket_type
+                                                                      :docket_type,
+                                                                      :power_of_attorney_name,
+                                                                      :suggested_hearing_location
                                                                     ] }
   end
-
+  # rubocop:enable Metrics/MethodLength
+  
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(all_vacols_ids)
