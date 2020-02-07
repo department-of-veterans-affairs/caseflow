@@ -8,8 +8,8 @@ import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
 
-import COPY from '../../COPY.json';
-import USER_STATUSES from '../../constants/USER_STATUSES.json';
+import COPY from '../../COPY';
+import USER_STATUSES from '../../constants/USER_STATUSES';
 import TextField from '../components/TextField';
 
 const buttonPaddingStyle = css({ margin: '0 1rem' });

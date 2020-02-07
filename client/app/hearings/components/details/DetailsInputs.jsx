@@ -14,7 +14,7 @@ import VirtualHearingLink from '../VirtualHearingLink';
 import HearingTypeDropdown from './HearingTypeDropdown';
 import TextField from '../../../components/TextField';
 import { COLORS } from '../../../constants/AppConstants';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 
 class DetailsInputs extends React.Component {
   renderVirtualHearingLinkSection() {

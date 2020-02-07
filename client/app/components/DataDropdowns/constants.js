@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST.json';
+import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST';
 
 export const HEARING_ROOM_OPTIONS = [
   {

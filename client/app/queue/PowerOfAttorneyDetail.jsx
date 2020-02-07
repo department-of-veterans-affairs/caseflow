@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import { getAppealValue } from './QueueActions';
 import { appealWithDetailSelector } from './selectors';
 import Address from './components/Address';

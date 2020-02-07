@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { onReceiveAmaTasks } from './QueueActions';
 import QueueFlowModal from './components/QueueFlowModal';
 import { requestSave } from './uiReducer/uiActions';
-import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
+import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
 import { taskById } from './selectors';
 import { withRouter } from 'react-router-dom';
 
