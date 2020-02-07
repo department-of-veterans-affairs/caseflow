@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-describe TaskTreeRenderModule, :skip => true do
+describe TaskTreeRenderModule do
+  before { skip("Trying to get tests to pass") }
   before(:all) do
     @appeal = create(:appeal, :with_post_intake_tasks)
     root = @appeal.root_task
