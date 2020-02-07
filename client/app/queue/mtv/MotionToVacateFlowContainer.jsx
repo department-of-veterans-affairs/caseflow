@@ -4,37 +4,7 @@ import { useParams, useRouteMatch, Switch, Route, generatePath } from 'react-rou
 import { appealWithDetailSelector } from '../selectors';
 import { MotionToVacateContextProvider } from './MotionToVacateContext';
 import { ReviewVacatedDecisionIssuesView } from './ReviewVacatedDecisionIssuesView';
-
-export const views = {
-  review_vacatures: { title: 'Review vacated decision issues' },
-  add_decisions: { title: 'Add decisions' },
-  submit: { title: 'Submit draft decision for review' }
-};
-
-// This is cumbersome... perhaps it would be better modeled as finite state machine..?
-export const getSteps = ({ type, vacateType }) => {
-  switch (vacateType?.toLowerCase()) {
-  case 'straight_vacate':
-  case 'vacate_and_de_novo':
-    return ['review_vacatures', 'submit'];
-  case 'vacate_and_readjudicate':
-    return ['review_vacatures', 'add_decisions', 'submit'];
-  default:
-    return type?.toLowerCase() === 'de_novo' ? ['add_decisions', 'submit'] : [];
-  }
-};
-
-const getNextStep = (current, steps) => {
-  const idx = steps.indexOf(current);
-
-  return idx < steps.length - 1 ? steps[idx + 1] : null;
-};
-
-const getPrevStep = (current, steps) => {
-  const idx = steps.indexOf(current);
-
-  return idx > 0 ? steps(idx - 1) : null;
-};
+import { getSteps, getNextStep, getPrevStep } from './mtvCheckoutSteps';
 
 export const MotionToVacateFlowContainer = () => {
   const { path } = useRouteMatch();
@@ -48,7 +18,7 @@ export const MotionToVacateFlowContainer = () => {
 
   // TODO -- Replace with real line ^^ when params exist
   const steps = useMemo(() => getSteps({ type: 'vacate',
-    vacateType: 'straight_vacate' }));
+    vacateType: 'vacate_and_readjudicate' }));
 
   const initialState = {
     // cloning the individual issues
@@ -68,11 +38,13 @@ export const MotionToVacateFlowContainer = () => {
             {/* Insert component from #13007 here */}
             <ReviewVacatedDecisionIssuesView appeal={appeal} />
           </Route>
+
           <Route path={`${path}/add_decisions`}>
             {/* Insert component from #13071 here */}
             {/* <AddDecisionsView appeal={appeal} /> */}
             <h1>add_decisions</h1>
           </Route>
+
           <Route path={`${path}/submit`}>
             {/* Insert component from #13071 here */}
             {/* <AddDecisionsView appeal={appeal} /> */}
