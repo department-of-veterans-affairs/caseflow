@@ -281,7 +281,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("partially_granted")
-      expect(motion.vacated_issues.length).to eq(issues_to_select.length)
+      expect(motion.decision_issues_for_vacatur.length).to eq(issues_to_select.length)
 
       visit_vacate_stream
     end
