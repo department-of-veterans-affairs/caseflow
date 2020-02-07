@@ -459,8 +459,19 @@ class EndProductEstablishment < ApplicationRecord
       gulf_war_registry: false,
       station_of_jurisdiction: station,
       limited_poa_code: limited_poa_code,
-      limited_poa_access: limited_poa_access
+      limited_poa_access: limited_poa_access,
+      status_type_code: set_status_type_code
     )
+  end
+
+  def set_status_type_code
+    ready_for_decision_codes = EndProduct::EFFECTUATION_CODES.merge(EndProduct::REMAND_CODES)
+
+    if ready_for_decision_codes.include?(:code)
+      EndProduct::STATUSES.key("Ready for decision")
+    else
+      EndProduct::STATUSES.key("Pending")
+    end
   end
 
   def fetch_result

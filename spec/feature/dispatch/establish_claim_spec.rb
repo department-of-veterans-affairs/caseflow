@@ -793,7 +793,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
             claimant_participant_id: nil,
             limited_poa_code: nil,
             limited_poa_access: nil,
-            status_type_code: "RFD"
+            status_type_code: nil
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash,
           user: RequestStore[:current_user]
@@ -875,7 +875,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
               claimant_participant_id: nil,
               limited_poa_code: nil,
               limited_poa_access: nil,
-              status_type_code: "RFD"
+              status_type_code: nil
             },
             veteran_hash: task.appeal.veteran.to_vbms_hash,
             user: RequestStore[:current_user]

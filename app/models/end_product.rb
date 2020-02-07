@@ -24,7 +24,10 @@ class EndProduct
     "040HDER" => "Supplemental Claim Rating DTA",
     "040HDENR" => "Supplemental Claim Nonrating DTA",
     "040HDERPMC" => "PMC HLR DTA Error - Rating",
-    "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating",
+    "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating"
+  }.freeze
+
+  REMAND_CODES = {
     "040BDENR" => "Board DTA Error - Non-Rating",
     "040BDER" => "Board DTA Error - Rating",
     "040BDENRPMC" => "PMC Board DTA Error - Non-Rating",
@@ -148,6 +151,7 @@ class EndProduct
     .merge(DTA_CODES)
     .merge(EFFECTUATION_CODES)
     .merge(CORRECTION_REVIEW_CODES)
+    .merge(REMAND_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
@@ -240,16 +244,8 @@ class EndProduct
       claimant_participant_id: claimant_participant_id,
       limited_poa_code: limited_poa_code,
       limited_poa_access: limited_poa_access,
-      status_type_code: set_status_type_code
+      status_type_code: status_type_code
     }
-  end
-
-  def set_status_type_code
-    if BoardGrantEffectuation::END_PRODUCT_CODES || EndProductCodeSelector::END_PRODUCT_CODES
-      STATUSES.key("Ready for decision")
-    else
-      STATUSES.key("Pending")
-    end
   end
 
   def description

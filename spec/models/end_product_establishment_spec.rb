@@ -105,7 +105,6 @@ describe EndProductEstablishment, :postgres do
         # first fetch Veteran's info
         expect(veteran.to_vbms_hash).to include(address_line1: "1234 FAKE ST")
         Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
-
         subject
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -124,7 +123,7 @@ describe EndProductEstablishment, :postgres do
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
             limited_poa_access: true,
-            status_type_code: "RFD"
+            status_type_code: "PEND"
           },
           veteran_hash: hash_including(address_line1: "Changed"),
           user: current_user
@@ -158,7 +157,7 @@ describe EndProductEstablishment, :postgres do
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
             limited_poa_access: true,
-            status_type_code: "RFD"
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -189,7 +188,7 @@ describe EndProductEstablishment, :postgres do
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
               limited_poa_access: true,
-              status_type_code: "RFD"
+              status_type_code: "PEND"
             },
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -221,7 +220,7 @@ describe EndProductEstablishment, :postgres do
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
               limited_poa_access: true,
-              status_type_code: "RFD"
+              status_type_code: "PEND"
             ),
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user

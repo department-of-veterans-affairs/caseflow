@@ -403,7 +403,7 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
           claimant_participant_id: veteran.participant_id,
           limited_poa_code: nil,
           limited_poa_access: nil,
-          status_type_code: "RFD"
+          status_type_code: "PEND"
         },
         veteran_hash: intake.veteran.to_vbms_hash,
         user: current_user

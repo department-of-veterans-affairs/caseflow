@@ -632,7 +632,7 @@ describe ClaimReview, :postgres do
             claimant_participant_id: veteran_participant_id,
             limited_poa_code: nil,
             limited_poa_access: nil,
-            status_type_code: "RFD"
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -940,7 +940,7 @@ describe ClaimReview, :postgres do
             claimant_participant_id: veteran_participant_id,
             limited_poa_code: nil,
             limited_poa_access: nil,
-            status_type_code: "RFD"
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -978,7 +978,7 @@ describe ClaimReview, :postgres do
             claimant_participant_id: veteran_participant_id,
             limited_poa_code: nil,
             limited_poa_access: nil,
-            status_type_code: "RFD"
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user

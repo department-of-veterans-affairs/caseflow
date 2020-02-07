@@ -266,7 +266,7 @@ describe EndProduct do
         claimant_participant_id: "1234",
         limited_poa_code: nil,
         limited_poa_access: nil,
-        status_type_code: "RFD"
+        status_type_code: nil
       )
     end
   end
