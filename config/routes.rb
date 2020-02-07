@@ -301,7 +301,6 @@ Rails.application.routes.draw do
   end
 
   post "post_decision_motions/return", to: "post_decision_motions#return_to_lit_support"
-  post "post_decision_motions/:id/create_issues", to: "post_decision_motions#create_issues"
   post "post_decision_motions", to: "post_decision_motions#create"
 
   # :nocov:
