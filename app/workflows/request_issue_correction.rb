@@ -33,6 +33,7 @@ class RequestIssueCorrection
     vacols_sequence_id
     veteran_participant_id
     edited_description
+    verified_unidentified_issue
   ].freeze
 
   def call

@@ -246,7 +246,7 @@ class DecisionIssue < ApplicationRecord
     )
     fail AppealDTAPayeeCodeError, decision_review.id unless dta_payee_code
 
-    sc.create_claimants!(
+    sc.create_claimant!(
       participant_id: decision_review.claimant_participant_id,
       payee_code: dta_payee_code
     )

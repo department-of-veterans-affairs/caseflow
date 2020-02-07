@@ -5,9 +5,9 @@ import {
   taskIsOnHold
 } from './utils';
 
-import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
+import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 export const selectedTasksSelector = (state, userId) => {
   return _.map(

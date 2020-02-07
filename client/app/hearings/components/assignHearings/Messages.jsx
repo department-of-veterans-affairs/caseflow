@@ -1,6 +1,6 @@
 import React from 'react';
 
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 import StatusMessage from '../../../components/StatusMessage';
 
 export const NoUpcomingHearingDayMessage = () => (

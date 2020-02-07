@@ -12,6 +12,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   METRIC_GROUP_NAME = UpdateCachedAppealsAttributesJob.name.underscore
 
   def perform
+    RequestStore.store[:current_user] = User.system_user
     ama_appeals_start = Time.zone.now
     cache_ama_appeals
     datadog_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)

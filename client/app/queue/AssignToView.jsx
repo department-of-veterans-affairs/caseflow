@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 import { taskById, appealWithDetailSelector } from './selectors';
 

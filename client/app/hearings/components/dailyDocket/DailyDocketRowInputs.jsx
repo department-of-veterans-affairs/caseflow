@@ -15,7 +15,7 @@ import VirtualHearingLink from '../VirtualHearingLink';
 
 import { DISPOSITION_OPTIONS } from '../../constants';
 import { COLORS } from '../../../constants/AppConstants';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 
 const staticSpacing = css({ marginTop: '5px' });
 

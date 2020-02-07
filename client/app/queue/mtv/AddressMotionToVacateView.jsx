@@ -1,20 +1,25 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { useRouteMatch, useParams, useHistory } from 'react-router-dom';
 
 import { taskById, appealWithDetailSelector } from '../selectors';
 import { MTVJudgeDisposition } from './MTVJudgeDisposition';
-import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS.json';
+import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS';
 import { submitMTVJudgeDecision } from './mtvActions';
 import { taskActionData } from '../utils';
 
-export const AddressMotionToVacateView = (props) => {
-  const { task, appeal } = props;
+export const AddressMotionToVacateView = () => {
+  const { taskId, appealId } = useParams();
+  const match = useRouteMatch();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-  const { selected, options } = taskActionData(props);
+  const task = useSelector((state) => taskById(state, { taskId }));
+  const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
+
+  const { selected, options } = taskActionData({ task,
+    match });
 
   const attyOptions = options.map(({ value, label }) => ({
     label: label + (selected && value === selected.id ? ' (Orig. Attorney)' : ''),
@@ -22,7 +27,7 @@ export const AddressMotionToVacateView = (props) => {
   }));
 
   const handleSubmit = (result) => {
-    props.submitMTVJudgeDecision(result, props);
+    dispatch(submitMTVJudgeDecision(result, { history }));
   };
 
   return (
@@ -32,40 +37,9 @@ export const AddressMotionToVacateView = (props) => {
       selectedAttorney={selected}
       appeal={appeal}
       onSubmit={handleSubmit}
-      returnToLitSupportLink={`${props.match.url}/${JUDGE_RETURN_TO_LIT_SUPPORT.value}`}
+      returnToLitSupportLink={`${match.url}/${JUDGE_RETURN_TO_LIT_SUPPORT.value}`}
     />
   );
 };
 
-AddressMotionToVacateView.propTypes = {
-  task: PropTypes.object,
-  appeal: PropTypes.object,
-  submitMTVJudgeDecision: PropTypes.func,
-  match: PropTypes.shape({
-    url: PropTypes.string
-  })
-};
-
-const mapStateToProps = (state, { match }) => {
-  const { taskId, appealId } = match.params;
-
-  return {
-    task: taskById(state, { taskId }),
-    appeal: appealWithDetailSelector(state, { appealId })
-  };
-};
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      submitMTVJudgeDecision
-    },
-    dispatch
-  );
-
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(AddressMotionToVacateView)
-);
+export default AddressMotionToVacateView;

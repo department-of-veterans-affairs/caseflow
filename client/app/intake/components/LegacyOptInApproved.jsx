@@ -1,6 +1,6 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
-import { INTAKE_LEGACY_OPT_IN_MESSAGE } from '../../../COPY.json';
+import { INTAKE_LEGACY_OPT_IN_MESSAGE } from '../../../COPY';
 import PropTypes from 'prop-types';
 
 const radioOptions = [

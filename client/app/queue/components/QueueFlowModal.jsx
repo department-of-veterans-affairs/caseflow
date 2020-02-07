@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from '../../components/Modal';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
