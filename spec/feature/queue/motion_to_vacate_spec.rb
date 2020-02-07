@@ -551,8 +551,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
-      expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{attorney_task.id}/motion_to_vacate_checkout/draft_decision/vacatures")
-      binding.pry
+      expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{attorney_task.id}/motion_to_vacate_checkout/review_vacatures")
     end
   end
 
