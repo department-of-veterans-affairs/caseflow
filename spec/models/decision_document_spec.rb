@@ -245,7 +245,7 @@ describe DecisionDocument, :postgres do
               claimant_participant_id: claimant_participant_id,
               limited_poa_code: nil,
               limited_poa_access: nil,
-              status_type_code: "RFD"
+              status_type_code: "PEND"
             },
             veteran_hash: decision_document.appeal.veteran.to_vbms_hash,
             user: User.system_user

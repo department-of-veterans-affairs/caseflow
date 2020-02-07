@@ -232,6 +232,30 @@ describe EndProductEstablishment, :postgres do
       end
     end
 
+    fcontext "board grant or remand claim " do
+      let(:ep_status_code) { "RFD" }
+      let(:claim_type_code) { "030BGR" }
+      let (:modifier) { "030" }
+
+      # let!(:effectuation) { create(:board_grant_effectuation) }
+
+      let!(:end_product) do
+        Generators::EndProduct.build(
+          veteran_file_number: veteran_file_number,
+          bgs_attrs: { status_type_code: ep_status_code, claim_type_code: claim_type_code, modifier: modifier }
+        )
+      end
+
+      context "show ready for decision" do
+        subject { end_product.status_type_code }
+
+        it "creates an ep with status_type_code of rfd" do
+          subject
+          expect(end_product.status_type_code).to eq("RFD")
+        end
+      end
+    end
+
     context "when there are no open modifiers" do
       before do
         %w[030 031 032].each do |modifier|
@@ -319,7 +343,7 @@ describe EndProductEstablishment, :postgres do
             suppress_acknowledgement_letter: false,
             limited_poa_code: "ABC",
             limited_poa_access: true,
-            status_type_code: "RFD"
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
