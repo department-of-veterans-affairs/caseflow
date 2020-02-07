@@ -15,7 +15,8 @@ class Metrics::CertificationUsage < Metrics::Base
       certified_total: certified_total,
       certified_paperless: certified_paperless,
       certified_with_caseflow: certified_with_caseflow,
-      metric: percent(certified_with_caseflow, certified_total)
+      total_metric: percent(certified_with_caseflow, certified_total),
+      paperless_metric: percent(certified_with_caseflow, certified_paperless)
     }
   end
 
