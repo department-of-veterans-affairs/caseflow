@@ -14,7 +14,7 @@ import VirtualHearingLink from '../VirtualHearingLink';
 import HearingTypeDropdown from './HearingTypeDropdown';
 import TextField from '../../../components/TextField';
 import { COLORS } from '../../../constants/AppConstants';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 
 class DetailsInputs extends React.Component {
   renderVirtualHearingLinkSection() {
@@ -54,9 +54,9 @@ class DetailsInputs extends React.Component {
   }
 
   readOnlyEmails = () => {
-    const { readOnly, wasVirtual, virtualHearing } = this.props;
+    const { readOnly, wasVirtual, virtualHearing, hearing } = this.props;
 
-    return readOnly || !virtualHearing.jobCompleted || wasVirtual;
+    return readOnly || !virtualHearing.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
   }
 
   render() {

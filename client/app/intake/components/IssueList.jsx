@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { FORM_TYPES } from '../constants';
 import AddedIssue from './AddedIssue';
 import Button from '../../components/Button';

@@ -10,7 +10,7 @@ import {
   MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL,
   MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL,
   MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL
-} from '../../../COPY.json';
+} from '../../../COPY';
 import { MTVDispositionSelection } from './MTVDispositionSelection';
 import TextareaField from '../../components/TextareaField';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -19,7 +19,7 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
-import { DISPOSITION_TEXT } from '../../../constants/MOTION_TO_VACATE.json';
+import { DISPOSITION_TEXT } from '../../../constants/MOTION_TO_VACATE';
 import { sprintf } from 'sprintf-js';
 
 const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
