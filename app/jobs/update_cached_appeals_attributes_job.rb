@@ -121,7 +121,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                     ] }
   end
   # rubocop:enable Metrics/MethodLength
-  
+
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(all_vacols_ids)
