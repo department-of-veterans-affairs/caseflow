@@ -389,7 +389,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def close_request_issues_with_no_decision!
     return unless status_cleared?
-    return unless result.claim_type_code =~ /^400/
+    return unless result.claim_type_code.include?("400")
 
     request_issues.each { |ri| RequestIssueClosure.new(ri).with_no_decision! }
   end
