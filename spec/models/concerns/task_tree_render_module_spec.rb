@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe TaskTreeRenderModule, :all_dbs, :skip => true do
+describe TaskTreeRenderModule, :skip => true do
   before(:all) do
     @appeal = create(:appeal, :with_post_intake_tasks)
     root = @appeal.root_task
