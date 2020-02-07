@@ -34,13 +34,15 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       it "populates person attributes" do
         subject
 
-        expect(ETL::Appeal.first.veteran_dob).to_not be_nil
-        expect(ETL::Appeal.first.claimant_dob).to_not be_nil
+        appeal = ETL::Appeal.first
+        expect(appeal.veteran_dob).to_not be_nil
+        expect(appeal.claimant_dob).to_not be_nil
+        expect(appeal.aod_due_to_dob).to_not be_nil
       end
     end
 
     context "sync tomorrow" do
-      subject { described_class.new(since: Time.zone.tomorrow).call }
+      subject { described_class.new(since: Time.zone.now + 1.day).call }
 
       it "does not sync" do
         subject

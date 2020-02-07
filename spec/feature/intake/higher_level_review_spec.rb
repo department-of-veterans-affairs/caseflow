@@ -687,6 +687,21 @@ feature "Higher-Level Review", :all_dbs do
       end
     end
 
+    context "Veteran with future ratings" do
+      before { FeatureToggle.enable!(:show_future_ratings) }
+      after { FeatureToggle.disable!(:show_future_ratings) }
+
+      scenario "when show_future_ratings featuretoggle is enabled " do
+        start_higher_level_review(veteran)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        expect(page).to have_content("Future rating issue 1")
+
+        higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
+        expect(higher_level_review.receipt_date).to eq(receipt_date)
+      end
+    end
+
     scenario "Add Issues modal uses promulgation date" do
       start_higher_level_review(veteran)
       visit "/intake/add_issues"
@@ -1276,7 +1291,7 @@ feature "Higher-Level Review", :all_dbs do
           # Expect untimely exemption modal for untimely issue
           click_intake_add_issue
           add_intake_rating_issue("Untimely rating issue 1")
-          add_intake_rating_issue("None of these match")
+          select_intake_no_match
           add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Untimely rating issue 1")
@@ -1292,7 +1307,7 @@ feature "Higher-Level Review", :all_dbs do
 
           expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
-          add_intake_rating_issue("None of these match")
+          select_intake_no_match
           add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Description for Active Duty Adjustments")
@@ -1442,6 +1457,7 @@ feature "Higher-Level Review", :all_dbs do
 
             add_intake_rating_issue("ankylosis of hip")
             click_intake_finish
+            expect(page).to have_content("correct the issues")
             click_on "correct the issues"
             expect(page).to have_content("This issue has automatically closed the VACOLS issue")
 
@@ -1457,15 +1473,29 @@ feature "Higher-Level Review", :all_dbs do
             expect(page).not_to have_content("Decision date (optional)")
             expect(page).not_to have_content("Notes (optional)")
 
-            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            fill_in "Transcribe the issue as it's written on the form", with: "Verified issue"
             fill_in "Decision date", with: decision_date
-            fill_in "Notes", with: "Testing unidentified issues"
+            fill_in "Notes", with: "Testing verified unidentified issues"
             click_on "Next"
 
             expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
             expect(page).to have_content("impairment of hip")
-            add_intake_rating_issue("ankylosis of hip")
-            expect(page).to have_content("Testing unidentified issues")
+            add_intake_rating_issue("limitation of thigh motion")
+            expect(page).to have_content("Testing verified unidentified issues")
+
+            click_button("Save")
+            safe_click "#Unidentified-issue-button-id-1"
+            expect(page).to have_content("Number of issues has changed")
+            safe_click "#Number-of-issues-has-changed-button-id-1"
+
+            expect(page).to have_content("Claim Issues Saved")
+            verified_issue = RequestIssue.find_by(verified_unidentified_issue: true,
+                                                  vacols_id: "vacols1",
+                                                  unidentified_issue_text: "Verified issue",
+                                                  is_unidentified: false)
+
+            expect(verified_issue).to_not be_nil
+            expect(page).to have_content("Contention: #{verified_issue.contention_text}")
           end
         end
       end

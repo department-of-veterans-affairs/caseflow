@@ -672,6 +672,14 @@ class Task < ApplicationRecord
     return if will_save_change_to_attribute?(timestamp_to_update)
 
     self[timestamp_to_update] = Time.zone.now
+
+    nullify_closed_at_if_reopened if closed_at.present?
+  end
+
+  def nullify_closed_at_if_reopened
+    return unless self.class.open_statuses.include?(status_change_to_be_saved&.last)
+
+    self.closed_at = nil
   end
 
   def status_is_valid_on_create

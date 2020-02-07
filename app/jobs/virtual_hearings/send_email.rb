@@ -27,6 +27,8 @@ class VirtualHearings::SendEmail
     virtual_hearing.save!
   end
 
+  private
+
   def send_email(recipient)
     case type.to_s
     when "confirmation"

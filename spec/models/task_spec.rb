@@ -1362,6 +1362,20 @@ describe Task, :all_dbs do
         expect(task.started_at).to eq(two_weeks_ago)
       end
     end
+
+    context "when task is closed and is re-opened" do
+      let(:task) { create(:task, :cancelled) }
+
+      it "sets closed_at to nil" do
+        expect(task.cancelled?).to eq(true)
+        expect(task.closed_at).to_not be_nil
+
+        task.on_hold!
+
+        expect(task.on_hold?).to eq(true)
+        expect(task.closed_at).to be_nil
+      end
+    end
   end
 
   describe "task timer relationship" do

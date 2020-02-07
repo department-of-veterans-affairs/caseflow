@@ -5,7 +5,7 @@ import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
 import moment from 'moment-timezone';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import _ from 'lodash';
 
 const getCentralOfficeTime = (hearing) => {

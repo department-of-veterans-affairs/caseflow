@@ -11,7 +11,7 @@ FactoryBot.define do
     hearing_day do
       create(:hearing_day,
              regional_office: regional_office,
-             scheduled_for: Time.zone.now,
+             scheduled_for: Time.zone.today,
              judge: judge,
              request_type: regional_office.nil? ? "C" : "V")
     end

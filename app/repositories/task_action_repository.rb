@@ -69,7 +69,7 @@ class TaskActionRepository
 
       extras = if task.is_a?(HearingAdminActionTask)
                  {
-                   redirect_after: "/organizations/#{HearingAdmin.singleton.url}",
+                   redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
                else

@@ -349,6 +349,33 @@ describe User, :all_dbs do
     end
   end
 
+  context "#member_of_organization?" do
+    let(:org) { create(:organization) }
+    let(:user) { create(:user) }
+
+    subject { user.member_of_organization?(org) }
+
+    context "when the organization does not exist" do
+      let(:org) { nil }
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the current user is not a member of the organization" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the user is a member of the organization" do
+      before { org.add_user(user) }
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
   context "#when BGS data is setup" do
     let(:participant_id) { "123456" }
     let(:vso_participant_id) { "123456" }
@@ -747,17 +774,22 @@ describe User, :all_dbs do
           end
         end
 
-        context "when marking the admin inactive" do
+        context "when marking the admin inactive", skip: "flaky test" do
           before do
             OrganizationsUser.make_user_admin(user, judge_team)
             allow(user).to receive(:judge_in_vacols?).and_return(false)
           end
 
           it "removes admin from all organizations, including JudgeTeam" do
-            expect(judge_team.judge).not_to eq user
+            if FeatureToggle.enabled?(:judge_admin_scm)
+              expect(judge_team.judge).not_to eq user
+              expect(user.selectable_organizations.length).to eq 3
+            else
+              expect(user.selectable_organizations.length).to eq 2
+            end
+
             expect(judge_team.admins).to include user
             expect(user.organizations.size).to eq 3
-            expect(user.selectable_organizations.length).to eq 2
             expect(subject).to eq true
             expect(user.reload.status).to eq status
             expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s

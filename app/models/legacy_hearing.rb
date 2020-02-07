@@ -184,6 +184,24 @@ class LegacyHearing < ApplicationRecord
     scheduled_for && !closed?
   end
 
+  def scheduled_for_past?
+    # FIXME: scheduled_for date is inconsistent in many places.
+    # (https://github.com/department-of-veterans-affairs/caseflow/issues/13273)
+    # scheduled_for should either pulled from VACOLS or from the associated hearing_day,
+    # but some method exclusively use the value from VACOLS. The hearing_day association to
+    # legacy hearings was added in #11741.
+    # (https://github.com/department-of-veterans-affairs/caseflow/pull/11741)
+    scheduled_date = if hearing_day_id_refers_to_vacols_row?
+                       # Handles conversion of a VACOLS time (EST) to the timezone of the RO
+                       time.local_time
+                     else
+                       # Hearing Day scheduled_for is in the timezone of the RO
+                       hearing_day.scheduled_for
+                     end
+
+    scheduled_date < DateTime.yesterday.in_time_zone(regional_office_timezone)
+  end
+
   def held_open?
     hold_open && hold_open > 0
   end

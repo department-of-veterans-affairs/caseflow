@@ -4,9 +4,9 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import moment from 'moment';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
+import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID';
 
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 import AssignHearingsTable from './AssignHearingsTable';
 import UpcomingHearingsTable from './UpcomingHearingsTable';
 import TabWindow from '../../../components/TabWindow';

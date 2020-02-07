@@ -296,10 +296,10 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def on_decision_issue_sync_processed
-    return unless request_issues.all? { |issue| issue.closed? || issue.processed? }
-
-    source.on_decision_issues_sync_processed
+  def on_decision_issue_sync_processed(processing_request_issue)
+    if decision_issues_sync_complete?(processing_request_issue)
+      source.on_decision_issues_sync_processed
+    end
   end
 
   def status
@@ -360,6 +360,11 @@ class EndProductEstablishment < ApplicationRecord
     source.all_contention_records(self)
   end
 
+  def decision_issues_sync_complete?(processing_request_issue)
+    other_request_issues = request_issues.all.reject { |i| i.id == processing_request_issue.id }
+    other_request_issues.all? { |i| i.closed? || i.processed? }
+  end
+
   def potential_decision_ratings
     Rating.fetch_in_range(participant_id: veteran.participant_id,
                           start_date: established_at.to_date,
@@ -384,7 +389,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def close_request_issues_with_no_decision!
     return unless status_cleared?
-    return unless result.claim_type_code =~ /^400/
+    return unless result.claim_type_code.include?("400")
 
     request_issues.each { |ri| RequestIssueClosure.new(ri).with_no_decision! }
   end

@@ -138,7 +138,7 @@ class DecisionReview < ApplicationRecord
   end
 
   # Creates claimants for automatically generated decision reviews
-  def create_claimants!(participant_id:, payee_code:)
+  def create_claimant!(participant_id:, payee_code:)
     remove_claimants!
     claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code)
   end
@@ -230,7 +230,7 @@ class DecisionReview < ApplicationRecord
       delay = rsc.receipt_date.future? ? (rsc.receipt_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
 
-      unless rsc.receipt_date.future?
+      unless rsc.processed? || rsc.receipt_date.future?
         rsc.start_processing_job!
       end
     end

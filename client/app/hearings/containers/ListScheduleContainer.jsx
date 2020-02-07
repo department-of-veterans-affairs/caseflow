@@ -25,7 +25,7 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../../components/Alert';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import {
   formatDateStr,
   getMinutesToMilliseconds
