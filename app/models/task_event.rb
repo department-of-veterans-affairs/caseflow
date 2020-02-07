@@ -15,7 +15,7 @@ class TaskEvent
   end
 
   def original
-    @original ||= reified
+    @original ||= version.reify
   end
 
   def identifier
