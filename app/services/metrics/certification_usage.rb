@@ -23,12 +23,12 @@ class Metrics::CertificationUsage < Metrics::Base
   private
 
   def certifications_query
-    VACOLS::Case.joins(:folder).includes(:folder).where(%{
+    VACOLS::Case.joins(:folder).includes(:folder).where(%(
       -- date range
       bf41stat >= ? AND bf41stat <= ? AND
       -- Original
       bfac = '1'
-    }, start_date, end_date)
+    ), start_date, end_date)
   end
 
   def certifications
@@ -47,7 +47,8 @@ class Metrics::CertificationUsage < Metrics::Base
     @certified_with_caseflow ||= certifications.select(&:certified_with_caseflow?).count
   end
 
+  # currently unused, but leaving here in case we need/want to report by RO.
   def regional_office_codes
-    RegionalOffice::ROS.reject { |ro| ro !~ /^RO/ }
+    RegionalOffice::ROS.select { |ro| ro =~ /^RO/ }
   end
 end
