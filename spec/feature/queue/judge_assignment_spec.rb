@@ -23,7 +23,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   end
 
   context "Acting judge can see team and other users load" do
-    let!(:vacols_user_one) { create(:staff, :attorney_judge_role, user: judge_one.user) }
+    let!(:vacols_user_one_acting_judge) { create(:staff, :attorney_judge_role, user: judge_one.user) }
 
     scenario "visits 'Assign' view" do
       visit "/queue"
@@ -39,7 +39,11 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       safe_click ".Select"
       click_dropdown(text: "Other")
       safe_click ".dropdown-Other"
-      expect(page.find(".dropdown-Other")).to have_content judge_two.user.full_name
+      # expect attorneys and acting judges but not judges
+      expect(page.find(".dropdown-Other")).to have_content judge_one.user.full_name
+      expect(page.find(".dropdown-Other")).to have_no_content judge_two.user.full_name
+      expect(page.find(".dropdown-Other")).to have_content attorney_one.full_name
+      expect(page.find(".dropdown-Other")).to have_content attorney_two.full_name
     end
   end
 
@@ -267,27 +271,6 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       click_on("Submit")
       expect(page).to have_content("Assigned 1 case")
-    end
-  end
-
-  describe "Assigning an ama appeal to a judge from the case details page the old way" do
-    before do
-      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
-    end
-
-    it "should disallow us from assign an ama appeal to a judge from the 'Assign to attorney' action'" do
-      visit("/queue/appeals/#{appeal_one.external_id}")
-
-      click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
-      click_dropdown(prompt: "Select a user", text: "Other")
-      safe_click ".dropdown-Other"
-      click_dropdown({ text: judge_two.user.full_name }, page.find(".dropdown-Other"))
-
-      click_on("Submit")
-
-      expect(page).to have_content(COPY::ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE)
-      expect(page).to have_content(COPY::ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK)
-      expect(page).to have_content(COPY::ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL)
     end
   end
 
