@@ -31,7 +31,7 @@ class UserFinder
     when Constants::USER_ROLE_TYPES["judge"]
       Judge.list_all
     when Constants::USER_ROLE_TYPES["attorney"]
-      Attorney.list_all
+      Attorney.list_all_excluding_judges
     when Constants::USER_ROLE_TYPES["hearing_coordinator"]
       User.list_hearing_coordinators
     when "non_judges"
