@@ -42,7 +42,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
     end
 
     context "sync tomorrow" do
-      subject { described_class.new(since: Time.zone.tomorrow).call }
+      subject { described_class.new(since: Time.zone.now + 1.day).call }
 
       it "does not sync" do
         subject

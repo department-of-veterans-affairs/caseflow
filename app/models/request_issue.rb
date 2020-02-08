@@ -478,6 +478,18 @@ class RequestIssue < ApplicationRecord
     )
   end
 
+  def create_vacated_decision_issue!
+    decision_issues.find_or_create_by!(
+      decision_review: decision_review,
+      decision_review_type: decision_review_type,
+      disposition: "vacated",
+      description: "The decision: #{description} has been vacated.",
+      caseflow_decision_date: Time.zone.today,
+      benefit_type: benefit_type,
+      participant_id: decision_review.veteran.participant_id
+    )
+  end
+
   def requires_record_request_task?
     eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
