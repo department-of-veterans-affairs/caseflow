@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe AttorneyRepository, :all_dbs do
-  let(:staff_count) { 3 }
-
-
   before(:all) do
     judges = create_list(:staff, 3, :judge_role)
     acting_judges = create_list(:staff, 3, :attorney_judge_role)
