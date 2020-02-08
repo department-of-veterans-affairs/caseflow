@@ -62,6 +62,28 @@ describe EndProductEstablishment, :postgres do
     VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
+  context "#status_type_code" do
+    subject { end_product_establishment.status_type_code }
+
+    it "returns pending" do
+      expect(subject).to eq("PEND")
+    end
+
+    context "board grant effectuation" do
+      let(:code) { "030BGR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
+
+    context "board remand" do
+      let(:code) { "040BDENR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
+  end
+
   context "#perform!" do
     subject { end_product_establishment.perform! }
 
@@ -228,30 +250,6 @@ describe EndProductEstablishment, :postgres do
           expect(end_product_establishment.reload).to have_attributes(
             modifier: "032"
           )
-        end
-      end
-    end
-
-    fcontext "board grant or remand claim " do
-      let(:ep_status_code) { "RFD" }
-      let(:claim_type_code) { "030BGR" }
-      let (:modifier) { "030" }
-
-      # let!(:effectuation) { create(:board_grant_effectuation) }
-
-      let!(:end_product) do
-        Generators::EndProduct.build(
-          veteran_file_number: veteran_file_number,
-          bgs_attrs: { status_type_code: ep_status_code, claim_type_code: claim_type_code, modifier: modifier }
-        )
-      end
-
-      context "show ready for decision" do
-        subject { end_product.status_type_code }
-
-        it "creates an ep with status_type_code of rfd" do
-          subject
-          expect(end_product.status_type_code).to eq("RFD")
         end
       end
     end

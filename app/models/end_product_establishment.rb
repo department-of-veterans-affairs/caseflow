@@ -326,9 +326,8 @@ class EndProductEstablishment < ApplicationRecord
 
   def status_type_code
     ready_for_decision_codes = EndProduct::EFFECTUATION_CODES.merge(EndProduct::REMAND_CODES)
-    binding.pry
 
-    if ready_for_decision_codes.include?(:code)
+    if ready_for_decision_codes.include?(code)
       EndProduct::STATUSES.key("Ready for decision")
     else
       EndProduct::STATUSES.key("Pending")
