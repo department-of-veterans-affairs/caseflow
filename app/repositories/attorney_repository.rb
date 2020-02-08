@@ -9,6 +9,7 @@ class AttorneyRepository
     User.batch_find_by_css_id_or_create_with_default_station_id(css_ids)
   end
 
+  # returns attorneys and acting judges (who are normally attorneys)
   def self.find_all_having_attorney_ids_excluding_judges
     attys_and_acting_judges = VACOLS::Staff.where(sactive: "A").where.not(sdomainid: nil)
       .where.not(sattyid: nil).where(svlj: [nil, "A"]).pluck("UPPER(sdomainid)")

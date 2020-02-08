@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class JudgeRepository
-  # :nocov:
   # includes acting judges, who are normally attorneys
   def self.find_all_judges
     css_ids = judge_records.where.not(sdomainid: nil).pluck("UPPER(sdomainid)")
@@ -26,8 +25,14 @@ class JudgeRepository
     VACOLS::Staff.where(svlj: %w[J A], sactive: "A")
   end
 
+  # :nocov:
+  # excludes acting judges
   def self.judges
     VACOLS::Staff.where(svlj: "J", sactive: "A")
+  end
+
+  def self.acting_judges
+    VACOLS::Staff.where(svlj: "A", sactive: "A")
   end
   # :nocov:
 end
