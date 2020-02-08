@@ -8,7 +8,7 @@ describe JudgeRepository, :all_dbs do
   let!(:attorneys) { create_list(:staff, staff_count, :attorney_role) }
   let!(:misc_staff) { create_list(:staff, staff_count, sactive: "I") }
 
-  context ".find_all_having_attorney_ids", skip: "flake" do
+  context ".find_all_having_attorney_ids" do
     subject { AttorneyRepository.find_all_having_attorney_ids }
 
     it "should return only active attorneys, judges, and acting judges" do
@@ -16,5 +16,11 @@ describe JudgeRepository, :all_dbs do
     end
   end
 
-  # TODO: test find_all_having_attorney_ids_excluding_judges
+  context ".find_all_having_attorney_ids_excluding_judges" do
+    subject { AttorneyRepository.find_all_having_attorney_ids_excluding_judges }
+
+    it "should return only active attorneys, judges, and acting judges" do
+      expect(subject.length).to eq(acting_judges.count + attorneys.count)
+    end
+  end
 end
