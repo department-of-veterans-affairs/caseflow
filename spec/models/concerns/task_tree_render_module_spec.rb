@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe TaskTreeRenderModule do
-  before do
+  before(:all) do
     @appeal = create(:appeal, :with_post_intake_tasks)
     root = @appeal.root_task
     create(:ama_judge_task, appeal: @appeal, parent: root, created_at: 1.day.ago)
