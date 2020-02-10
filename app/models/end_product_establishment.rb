@@ -324,6 +324,7 @@ class EndProductEstablishment < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
   end
 
+  # In order to expedite processing, EPs originating from the board are set to "Ready for Decision"
   def status_type_code
     ready_for_decision_codes = EndProduct::EFFECTUATION_CODES.merge(EndProduct::REMAND_CODES)
 
@@ -474,8 +475,6 @@ class EndProductEstablishment < ApplicationRecord
     )
   end
 
-  # In order to expedite processing, EPs originating from the board are set to "Ready for Decision"
-  
   def fetch_result
     return nil unless reference_id
 
