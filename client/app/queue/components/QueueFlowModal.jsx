@@ -41,7 +41,8 @@ class QueueFlowModal extends React.PureComponent {
     this.props.highlightInvalidFormItems(false);
     this.setState({ loading: true });
 
-    this.props.submit().then(() => {
+    const promise=this.props.submit()
+    promise && promise.then(() => {
       this.setState({ loading: false });
       if (!this.props.error) {
         this.closeHandler();
@@ -99,7 +100,7 @@ QueueFlowModal.propTypes = {
   title: PropTypes.string,
   button: PropTypes.string,
   pathAfterSubmit: PropTypes.string,
-  submit: PropTypes.func,
+  submit: PropTypes.func, // should return a promise on which .then() can be called
   success: PropTypes.object,
   validateForm: PropTypes.func,
   reloadPageAfterSubmit: PropTypes.bool
