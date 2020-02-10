@@ -111,8 +111,8 @@ We are using 2-factor authentication with Github so, for example, when you acces
 You can manually go through the following steps.
 Alternatively, if you have a Mac, you can download and run the following scripts:
 
-  - [dev_env_setup_step1.sh](docs/dev_env_setup_step1.sh)
-  - [dev_env_setup_step2.sh](docs/dev_env_setup_step2.sh)
+  - [dev_env_setup_step1.sh](scripts/dev_env_setup_step1.sh)
+  - [dev_env_setup_step2.sh](scripts/dev_env_setup_step2.sh)
 
 Remember to follow the instructions printed at the end of the scripts.
 If an error occurs, it is okay to run the scripts multiple times after the error is corrected.

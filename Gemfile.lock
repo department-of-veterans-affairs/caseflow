@@ -36,6 +36,13 @@ GIT
       xmlenc
 
 GIT
+  remote: https://github.com/department-of-veterans-affairs/console-tree-renderer.git
+  revision: 9cb9fbb6fab16ea5ed4b26f7d5a7204085c4e183
+  branch: proper_gem
+  specs:
+    console_tree_renderer (0.1.0)
+
+GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
   revision: 136e263aafaf6512ad552ac67a4a8b26d1222f16
   ref: 136e263aafaf6512ad552ac67a4a8b26d1222f16
@@ -587,6 +594,7 @@ DEPENDENCIES
   capybara-screenshot
   caseflow!
   connect_vbms!
+  console_tree_renderer!
   danger (~> 5.10)
   database_cleaner
   derailed_benchmarks

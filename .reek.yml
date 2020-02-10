@@ -36,6 +36,7 @@ detectors:
     exclude:
       - HearingSerializerBase
       - LegacyDocket
+      - TaskTreeRenderModule
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
