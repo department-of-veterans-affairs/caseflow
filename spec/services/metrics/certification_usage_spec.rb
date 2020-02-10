@@ -39,8 +39,8 @@ describe Metrics::CertificationUsage, :all_dbs do
     it "reports total and paperless metrics" do
       expect(subject).to eq(
         certified_total: 25,
-        certified_paperless: 15,
-        certified_with_caseflow: 15,
+        certified_paperless: 15, # paperless_cases + paperless_not_caseflow_cases
+        certified_with_caseflow: 15, # paperless_cases + paper_cases
         total_metric: 60.0,
         paperless_metric: 100.0
       )
