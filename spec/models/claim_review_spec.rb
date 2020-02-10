@@ -1027,9 +1027,10 @@ describe ClaimReview, :postgres do
   end
 
   describe "#search_table_ui_hash" do
-    let!(:claimants) { [create(:claimant), create(:claimant)] }
     let!(:appeal) { create(:appeal) }
-    let!(:sc) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number, claimants: claimants) }
+    let!(:sc) do
+      create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number, number_of_claimants: 2)
+    end
 
     it "returns review type" do
       expect([*sc].map(&:search_table_ui_hash)).to include(hash_including(
