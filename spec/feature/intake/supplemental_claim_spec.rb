@@ -216,7 +216,8 @@ feature "Supplemental Claim Intake", :all_dbs do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293",
         limited_poa_code: nil,
-        limited_poa_access: nil
+        limited_poa_access: nil,
+        status_type_code: "PEND"
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
@@ -247,7 +248,8 @@ feature "Supplemental Claim Intake", :all_dbs do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293",
         limited_poa_code: nil,
-        limited_poa_access: nil
+        limited_poa_access: nil,
+        status_type_code: "PEND"
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
