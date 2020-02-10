@@ -15,9 +15,6 @@ const defaultState = { deleteModal: false,
   decisionIssue: null };
 
 export const ReviewVacatedDecisionIssuesView = ({ appeal }) => {
-  //   Not sure that we need this
-  const issueErrors = {};
-
   const [ctx, setCtx] = useContext(MotionToVacateContext);
   const [state, setState] = useState(defaultState);
 
@@ -61,7 +58,7 @@ export const ReviewVacatedDecisionIssuesView = ({ appeal }) => {
       <h1>{COPY.MTV_CHECKOUT_REVIEW_VACATURES_TITLE}</h1>
       <p>{COPY.MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION}</p>
       <hr />
-      <AmaIssueList requestIssues={appeal.issues} errorMessages={issueErrors}>
+      <AmaIssueList requestIssues={appeal.issues} errorMessages={{}}>
         <DecisionIssues
           decisionIssues={ctx.decisionIssues}
           //   openDecisionHandler={this.openDecisionHandler}

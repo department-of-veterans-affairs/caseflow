@@ -14,11 +14,7 @@ export const MotionToVacateFlowContainer = () => {
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
 
-  // const steps = useMemo(() => getSteps(appeal, [appeal.type, appeal.vacateType]));
-
-  // TODO -- Replace with real line ^^ when params exist
-  const steps = useMemo(() => getSteps({ type: 'vacate',
-    vacateType: 'vacate_and_readjudicate' }));
+  const steps = useMemo(() => getSteps(appeal, [appeal.type, appeal.vacateType]));
 
   const initialState = {
     // cloning the individual issues
