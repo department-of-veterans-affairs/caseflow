@@ -388,6 +388,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
   describe "Attorney Completes Motion to Vacate Checkout Task" do
     let(:judge_team) { JudgeTeam.create_for_judge(judge) }
     let(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
+    let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: drafting_attorney.css_id) }
 
     let(:orig_atty_task) do
       create(:ama_attorney_task, :completed,
@@ -406,18 +407,21 @@ RSpec.feature "Motion to vacate", :all_dbs do
     let(:abstract_motion_to_vacate_task) do
       create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
     end
-    let(:post_decision_motion) do
-      create(:post_decision_motion, task: judge_address_motion_to_vacate_task, disposition: "granted")
+
+    let(:post_decision_motion_params) do
+      {
+        instructions: "I am granting this",
+        disposition: "granted",
+        vacate_type: "straight_vacate",
+        assigned_to_id: drafting_attorney
+      }
     end
-    let!(:attorney_task) do
-      create(
-        :ama_attorney_task,
-        appeal: appeal,
-        assigned_by: judge,
-        assigned_to: drafting_attorney,
-        parent: root_task
-      )
+    let(:post_decision_motion_updater) do
+      PostDecisionMotionUpdater.new(judge_address_motion_to_vacate_task, post_decision_motion_params)
     end
+    let!(:post_decision_motion) { post_decision_motion_updater.process }
+    let(:vacate_stream) { Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate") }
+    let(:attorney_task) { AttorneyTask.find_by(assigned_to: drafting_attorney) }
 
     before do
       judge_team.add_user(drafting_attorney)
@@ -428,16 +432,20 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
 
-    # TODO : flesh this out
-    it "completes 'Review Decision Issues' portion of MTV checkout for granted disposition" do
-      # mtv_checkout(user: drafting_attorney, appeal: appeal, task: attorney_task)
+    it "correctly displays 'Review Decision Issues' portion of MTV checkout for granted disposition" do
       User.authenticate!(user: drafting_attorney)
-      visit "/queue/appeals/#{appeal.uuid}"
+
+      visit "/queue/appeals/#{vacate_stream.uuid}"
 
       find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
-      expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{attorney_task.id}/motion_to_vacate_checkout/review_vacatures")
+      path = [
+        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+        "motion_to_vacate_checkout/review_vacatures"
+      ].join("/")
+
+      expect(page.current_path).to eq(path)
     end
   end
 

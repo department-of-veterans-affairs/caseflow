@@ -28,6 +28,7 @@ class PostDecisionMotionUpdater
       return if errors.messages.any?
 
       task.update(status: Constants.TASK_STATUSES.completed)
+      post_decision_motion
     end
   end
 
