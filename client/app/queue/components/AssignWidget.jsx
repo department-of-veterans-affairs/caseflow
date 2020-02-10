@@ -46,11 +46,7 @@ class AssignWidget extends React.PureComponent {
       return false;
     }
 
-    if (selectedAssignee !== OTHER) {
-      return true;
-    }
-
-    if (!selectedAssigneeSecondary) {
+    if (selectedAssignee == OTHER && !selectedAssigneeSecondary) {
       this.props.showErrorMessage(
         { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
           detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
@@ -66,7 +62,7 @@ class AssignWidget extends React.PureComponent {
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
 
-    if(this.props.isModal) {
+    if (this.props.isModal) {
       // QueueFlowModal will call validateForm
     } else {
       if(!this.validateForm()) {
@@ -76,9 +72,9 @@ class AssignWidget extends React.PureComponent {
 
     if (selectedAssignee == OTHER) {
       return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
-    } else {
-      return this.assignTasks(selectedTasks, selectedAssignee);
     }
+
+    return this.assignTasks(selectedTasks, selectedAssignee);
   }
 
   assignTasks = (selectedTasks, assigneeId) => {
@@ -207,9 +203,9 @@ class AssignWidget extends React.PureComponent {
         }
       </div>
     </React.Fragment>;
+
     return this.props.isModal ? <QueueFlowModal title={COPY.ASSIGN_WIDGET_MODAL_TITLE}
-                                                submit={this.submit}
-                                                validateForm={this.validateForm}>
+      submit={this.submit} validateForm={this.validateForm}>
       {Widget}
     </QueueFlowModal> : Widget;
   }
