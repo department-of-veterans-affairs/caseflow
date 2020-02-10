@@ -30,12 +30,12 @@
   ],
   "PARTIAL_GRANT_OPTION": {
     "displayText": "Grant partial vacatur",
-    "value": "partial",
+    "value": "partially_granted",
     "help": "e.g. if you do not want to vacate all the issues the veteran is requesting"
   },
   "DISPOSITION_TEXT": {
     "granted": "grant or partial vacatur",
-    "partial": "partial vacatur",
+    "partially_granted": "partial vacatur",
     "denied": "denial of all issues for vacatur",
     "dismissed": "dismissal"
   }

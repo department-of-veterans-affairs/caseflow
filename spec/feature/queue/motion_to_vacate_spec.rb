@@ -211,19 +211,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("granted")
 
-      # Verify new task creation
-      instructions = format_judge_instructions(
-        notes: judge_notes,
-        disposition: "granted",
-        vacate_type: "vacate_and_readjudication"
-      )
-      new_task = VacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
-      expect(new_task).to_not be_nil
-      expect(new_task.label).to eq COPY::VACATE_AND_READJUDICATION_TASK_LABEL
-      expect(new_task.available_actions(motions_attorney)).to include(
-        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
-      )
-      expect(new_task.instructions.join("")).to eq(instructions)
+      visit_vacate_stream
     end
 
     it "judge grants motion to vacate (straight vacate)" do
@@ -245,19 +233,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("granted")
 
-      # Verify new task creation
-      instructions = format_judge_instructions(
-        notes: judge_notes,
-        disposition: "granted",
-        vacate_type: "straight_vacate"
-      )
-      new_task = StraightVacateTask.find_by(assigned_to: drafting_attorney)
-      expect(new_task).to_not be_nil
-      expect(new_task.label).to eq COPY::STRAIGHT_VACATE_TASK_LABEL
-      expect(new_task.available_actions(motions_attorney)).to include(
-        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
-      )
-      expect(new_task.instructions.join("")).to eq(instructions)
+      visit_vacate_stream
     end
 
     it "judge grants motion to vacate (vacate & de novo)" do
@@ -281,24 +257,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(motion.vacated_decision_issue_ids.length).to eq(appeal.decision_issues.length)
       expect(motion.vacated_decision_issue_ids).to include(*appeal.decision_issues.map(&:id))
 
-      # Verify new task creation
-      instructions = format_judge_instructions(
-        notes: judge_notes,
-        disposition: "granted",
-        vacate_type: "vacate_and_de_novo"
-      )
-      new_task = VacateAndDeNovoTask.find_by(assigned_to: drafting_attorney)
-      expect(new_task).to_not be_nil
-      expect(new_task.label).to eq COPY::VACATE_AND_DE_NOVO_TASK_LABEL
-      expect(new_task.available_actions(motions_attorney)).to include(
-        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
-      )
-      expect(new_task.instructions.join("")).to eq(instructions)
+      visit_vacate_stream
     end
 
     it "judge grants partial vacatur (vacate & readjudication)" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
-      find("label[for=disposition_partial]").click
+      find("label[for=disposition_partially_granted]").click
       find("label[for=vacate-type_vacate_and_readjudication]").click
       fill_in("instructions", with: judge_notes)
 
@@ -317,21 +281,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to_not be_nil
       expect(motion.disposition).to eq("partially_granted")
-      expect(motion.vacated_issues.length).to eq(issues_to_select.length)
+      expect(motion.decision_issues_for_vacatur.length).to eq(issues_to_select.length)
 
-      # Verify new task creation
-      instructions = format_judge_instructions(
-        notes: judge_notes,
-        disposition: "partial",
-        vacate_type: "vacate_and_readjudication"
-      )
-      new_task = VacateAndReadjudicationTask.find_by(assigned_to: drafting_attorney)
-      expect(new_task).to_not be_nil
-      expect(new_task.label).to eq COPY::VACATE_AND_READJUDICATION_TASK_LABEL
-      expect(new_task.available_actions(motions_attorney)).to include(
-        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
-      )
-      expect(new_task.instructions.join("")).to eq(instructions)
+      visit_vacate_stream
     end
 
     it "judge denies motion to vacate" do
@@ -433,72 +385,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
   end
 
-  describe "JudgeSignMotionToVacateTask" do
-    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
-    let!(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
-
-    let!(:orig_atty_task) do
-      create(:ama_attorney_task, :completed,
-             assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.day, parent: root_task)
-    end
-    let!(:judge_review_task) do
-      create(:ama_judge_decision_review_task, :completed,
-             assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
-    end
-    let!(:vacate_motion_mail_task) do
-      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
-    end
-    let!(:judge_address_motion_to_vacate_task) do
-      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
-    end
-    let!(:abstract_motion_to_vacate_task) do
-      create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
-    end
-    let!(:judge_sign_motion_to_vacate_task) do
-      create(
-        :judge_sign_motion_to_vacate_task,
-        appeal: appeal,
-        assigned_to: judge,
-        parent: abstract_motion_to_vacate_task
-      )
-    end
-
-    before do
-      create(:staff, :judge_role, sdomainid: judge.css_id)
-      lit_support_team.add_user(motions_attorney)
-      judge_team.add_user(drafting_attorney)
-      ["John Doe", "Jane Doe"].map do |name|
-        judge_team.add_user(create(:user, full_name: name))
-      end
-      FeatureToggle.enable!(:review_motion_to_vacate)
-
-      vacate_motion_mail_task.update(status: Constants.TASK_STATUSES.completed)
-      judge_address_motion_to_vacate_task.update(status: Constants.TASK_STATUSES.completed)
-    end
-
-    after { FeatureToggle.disable!(:review_motion_to_vacate) }
-
-    context "triggers PulacCerulloReminderModal" do
-      it "judge sends to dispatch" do
-        judge_send_to_dispatch(user: judge, appeal: appeal)
-
-        find("label[for=hasCavc_no]").click
-        click_button(text: "Submit")
-
-        expect(page).to have_content("Add decisions")
-      end
-
-      it "judge sends to Lit Support for Pulac Cerullo" do
-        judge_send_to_dispatch(user: judge, appeal: appeal)
-
-        find("label[for=hasCavc_yes]").click
-        click_button(text: "Submit")
-
-        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_TITLE)
-      end
-    end
-  end
-
   describe "Attorney Completes Denied / Dismissed Motion to Vacate Task" do
     let(:judge_team) { JudgeTeam.create_for_judge(judge) }
     let(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
@@ -555,6 +441,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
     it "completes MTV workflow for dismissed disposition and closes relevant tasks" do
       complete_motion_to_vacate(user: motions_attorney, appeal: appeal, task: dismissed_motion_to_vacate_task)
     end
+  end
+
+  def visit_vacate_stream
+    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
+    visit "/queue/appeals/#{vacate_stream.uuid}"
+    expect(page).to have_content("Vacate")
   end
 
   def send_to_judge(user:, appeal:, motions_attorney_task:)
