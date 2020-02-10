@@ -144,7 +144,10 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       scenario "Schedule Veteran for video error" do
         visit "queue/appeals/#{legacy_appeal.vacols_id}"
         click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
-        expect(page).to have_css(".usa-alert-error", text: "Mapping service is temporarily unavailable. Please try again later.")
+        expect(page).to have_css(
+          ".usa-alert-error",
+          text: "Mapping service is temporarily unavailable. Please try again later."
+        )
       end
     end
   end
