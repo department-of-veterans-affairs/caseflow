@@ -30,6 +30,7 @@ const OTHER = 'OTHER';
 class AssignWidget extends React.PureComponent {
   validateForm = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
+
     if (!selectedAssignee) {
       this.props.showErrorMessage(
         { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
@@ -46,7 +47,7 @@ class AssignWidget extends React.PureComponent {
       return false;
     }
 
-    if (selectedAssignee == OTHER && !selectedAssigneeSecondary) {
+    if (selectedAssignee === OTHER && !selectedAssigneeSecondary) {
       this.props.showErrorMessage(
         { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
           detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
@@ -59,18 +60,17 @@ class AssignWidget extends React.PureComponent {
 
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
+
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
 
     if (this.props.isModal) {
       // QueueFlowModal will call validateForm
-    } else {
-      if(!this.validateForm()) {
-        return;
-      }
+    } else if (!this.validateForm()) {
+      return;
     }
 
-    if (selectedAssignee == OTHER) {
+    if (selectedAssignee === OTHER) {
       return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
     }
 
