@@ -38,7 +38,8 @@ class RootTask < Task
     if active?
       update!(status: :on_hold)
     elsif !self.class.creatable_tasks_types_when_on_hold.include?(child_task.type) && !on_hold?
-      Raven.capture_message("Created child task for RootTask #{id} but did not update RootTask status")
+      Raven.capture_message("Created child task #{child_task&.id} for RootTask #{id} " \
+        "but did not update RootTask status")
     end
   end
 
