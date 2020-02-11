@@ -14,7 +14,7 @@ const defaultState = { deleteModal: false,
   issueId: null,
   decisionIssue: null };
 
-export const ReviewVacatedDecisionIssuesView = ({ appeal }) => {
+export const ReviewVacatedDecisionIssuesView = ({ appeal, allowDelete = false }) => {
   const [ctx, setCtx] = useContext(MotionToVacateContext);
   const [state, setState] = useState(defaultState);
 
@@ -61,8 +61,7 @@ export const ReviewVacatedDecisionIssuesView = ({ appeal }) => {
       <AmaIssueList requestIssues={appeal.issues} errorMessages={{}}>
         <DecisionIssues
           decisionIssues={ctx.decisionIssues}
-          //   openDecisionHandler={this.openDecisionHandler}
-          openDeleteAddedDecisionIssueHandler={handleDelete}
+          openDeleteAddedDecisionIssueHandler={allowDelete ? handleDelete : null}
         />
       </AmaIssueList>
       {state.deleteModal && <RemoveDecisionIssueModal onCancel={onCancelDelete} onSubmit={onDeleteSubmit} />}
@@ -71,5 +70,6 @@ export const ReviewVacatedDecisionIssuesView = ({ appeal }) => {
 };
 
 ReviewVacatedDecisionIssuesView.propTypes = {
-  appeal: PropTypes.object.isRequired
+  appeal: PropTypes.object.isRequired,
+  allowDelete: PropTypes.bool
 };
