@@ -2,13 +2,13 @@
 
 FactoryBot.define do
   factory :post_decision_motion do
-    task { create(:judge_address_motion_to_vacate_task) }
+    appeal { create(:appeal) }
     disposition { "granted" }
     vacate_type { "straight_vacate" }
 
     before(:create) do |post_decision_motion|
-      appeal = post_decision_motion.task.appeal
-      return unless appeal.reload.decision_issues.empty?
+      appeal = post_decision_motion.appeal
+      next unless appeal.reload.decision_issues.empty?
 
       3.times do |idx|
         create(

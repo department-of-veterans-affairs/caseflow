@@ -936,7 +936,8 @@ describe Appeal, :all_dbs do
     subject { appeal.vacate_type }
 
     context "Appeal is a vacatur and has a post-decision motion" do
-      let(:appeal) { create(:appeal, :straight_vacated) }
+      let(:original) { create(:appeal, :with_straight_vacate_stream) }
+      let(:appeal) { Appeal.vacate.find_by(stream_docket_number: original.docket_number) }
 
       it "returns the post-decision motion's vacate type" do
         expect(subject).to eq "straight_vacate"

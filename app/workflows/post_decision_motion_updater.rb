@@ -7,6 +7,8 @@
 class PostDecisionMotionUpdater
   include ActiveModel::Model
 
+  class InvalidMotionUpdaterArguments < StandardError; end
+
   attr_reader :task, :params, :disposition, :instructions
 
   def initialize(task, params)
@@ -16,20 +18,24 @@ class PostDecisionMotionUpdater
     @instructions = @params[:instructions]
   end
 
-  delegate :appeal, to: :task
+  delegate :appeal, to: :task, prefix: "original"
 
   def process
     ActiveRecord::Base.transaction do
-      return unless post_decision_motion
+      if post_decision_motion
+        handle_denial_or_dismissal
+        handle_grant
+      end
 
-      handle_denial_or_dismissal
-      handle_grant
-
-      return if errors.messages.any?
+      raise InvalidMotionUpdaterArguments if errors.messages.any?
 
       task.update(status: Constants.TASK_STATUSES.completed)
       post_decision_motion
     end
+  rescue InvalidMotionUpdaterArguments
+    # Slightly leaky abstraction: vacate_stream may have already been created and
+    # committed to DB before we realize the transaction should be rolled back.
+    @vacate_stream&.destroy!
   end
 
   private
@@ -38,9 +44,23 @@ class PostDecisionMotionUpdater
     @post_decision_motion ||= create_motion
   end
 
+  def vacate_stream
+    return nil unless grant_type?
+
+    @vacate_stream ||= original_appeal.create_stream(:vacate)
+  end
+
+  def appeal
+    if denied_or_dismissed?
+      original_appeal
+    elsif grant_type?
+      vacate_stream
+    end
+  end
+
   def create_motion
     motion = PostDecisionMotion.new(
-      task: task,
+      appeal: appeal,
       disposition: disposition,
       vacate_type: params[:vacate_type]
     )
@@ -49,7 +69,7 @@ class PostDecisionMotionUpdater
       motion.vacated_decision_issue_ids = params[:vacated_decision_issue_ids]
     elsif disposition == "granted"
       # For full grant, auto populate all decision issue IDs
-      motion.vacated_decision_issue_ids = appeal.decision_issues.map(&:id)
+      motion.vacated_decision_issue_ids = original_appeal.decision_issues.map(&:id)
     end
 
     unless motion.valid?
@@ -85,7 +105,6 @@ class PostDecisionMotionUpdater
   def handle_grant
     return unless grant_type?
 
-    vacate_stream = appeal.create_stream(:vacate)
     create_new_stream_tasks(vacate_stream)
     post_decision_motion.create_request_issues_for_vacatur
     post_decision_motion.create_vacated_decision_issues

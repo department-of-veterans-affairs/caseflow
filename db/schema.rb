@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_28_153700) do
+ActiveRecord::Schema.define(version: 2020_02_06_161309) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -906,7 +906,7 @@ ActiveRecord::Schema.define(version: 2020_01_28_153700) do
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth"
-    t.string "email_address"
+    t.string "email_address", comment: "Person email address, cached from BGS"
     t.string "first_name", comment: "Person first name, cached from BGS"
     t.string "last_name", comment: "Person last name, cached from BGS"
     t.string "middle_name", comment: "Person middle name, cached from BGS"
@@ -918,6 +918,7 @@ ActiveRecord::Schema.define(version: 2020_01_28_153700) do
   end
 
   create_table "post_decision_motions", comment: "Stores the disposition and associated task of post-decisional motions handled by the Litigation Support Team: Motion for Reconsideration, Motion to Vacate, and Clear and Unmistakeable Error.", force: :cascade do |t|
+    t.bigint "appeal_id"
     t.datetime "created_at", null: false
     t.string "disposition", comment: "Possible options are Grant, Deny, Withdraw, and Dismiss"
     t.bigint "task_id"
@@ -1402,6 +1403,7 @@ ActiveRecord::Schema.define(version: 2020_01_28_153700) do
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "legacy_issue_optins", "legacy_issues"
   add_foreign_key "organizations_users", "users"
+  add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"

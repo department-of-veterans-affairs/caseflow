@@ -104,10 +104,12 @@ describe PostDecisionMotionUpdater, :all_dbs do
         let(:vacate_type) { "vacate_and_de_novo" }
         let(:assigned_to_id) { nil }
 
-        it "should not create an attorney task" do
+        it "should not create a motion, vacate stream, or attorney task" do
           subject.process
           expect(subject.errors[:assigned_to].first).to eq "can't be blank"
           expect(task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+          expect(Appeal.vacate.count).to eq 0
+          expect(PostDecisionMotion.count).to eq 0
           expect(AbstractMotionToVacateTask.count).to eq 0
         end
       end
@@ -116,10 +118,12 @@ describe PostDecisionMotionUpdater, :all_dbs do
         let(:vacate_type) { nil }
         let(:assigned_to_id) { attorney.id }
 
-        it "should not create an attorney task" do
+        it "should not create a motion, vacate stream, or attorney task" do
           subject.process
           expect(subject.errors[:vacate_type].first).to eq "is required for granted disposition"
           expect(task.reload.status).to eq Constants.TASK_STATUSES.in_progress
+          expect(Appeal.vacate.count).to eq 0
+          expect(PostDecisionMotion.count).to eq 0
           expect(AbstractMotionToVacateTask.count).to eq 0
         end
       end
