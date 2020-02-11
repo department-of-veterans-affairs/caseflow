@@ -31,7 +31,6 @@ export const MotionToVacateFlowContainer = () => {
 
         <Switch>
           <Route path={`${path}/review_vacatures`}>
-            {/* Insert component from #13007 here */}
             <ReviewVacatedDecisionIssuesView appeal={appeal} />
           </Route>
 
@@ -42,7 +41,7 @@ export const MotionToVacateFlowContainer = () => {
           </Route>
 
           <Route path={`${path}/submit`}>
-            {/* Insert component from #13071 here */}
+            {/* Insert component from #13385 here */}
             {/* <AddDecisionsView appeal={appeal} /> */}
             <h1>submit</h1>
           </Route>
