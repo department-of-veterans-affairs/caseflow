@@ -7,7 +7,7 @@ import querystring from 'querystring';
 
 import { COLORS } from '../../constants/AppConstants';
 import { ExternalLink } from '../../components/RenderFunctions';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 const ICON_POSITION_FIX = css({ position: 'relative',
   top: 1 });
