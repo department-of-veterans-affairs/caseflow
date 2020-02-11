@@ -402,7 +402,11 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
     end
     let(:judge_address_motion_to_vacate_task) do
-      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
+      create(:judge_address_motion_to_vacate_task,
+             appeal: appeal,
+             assigned_to: judge,
+             parent: vacate_motion_mail_task,
+             status: Constants.TASK_STATUSES.completed)
     end
     let(:abstract_motion_to_vacate_task) do
       create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
@@ -426,8 +430,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
     before do
       judge_team.add_user(drafting_attorney)
       FeatureToggle.enable!(:review_motion_to_vacate)
-
-      judge_address_motion_to_vacate_task.update(status: Constants.TASK_STATUSES.completed)
     end
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
