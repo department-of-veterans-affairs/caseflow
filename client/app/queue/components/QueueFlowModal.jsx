@@ -99,6 +99,7 @@ QueueFlowModal.propTypes = {
   title: PropTypes.string,
   button: PropTypes.string,
   pathAfterSubmit: PropTypes.string,
+  // submit should return a promise on which .then() can be called
   submit: PropTypes.func,
   success: PropTypes.object,
   validateForm: PropTypes.func,

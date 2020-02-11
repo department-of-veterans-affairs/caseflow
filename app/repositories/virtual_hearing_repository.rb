@@ -29,13 +29,13 @@ class VirtualHearingRepository
     def cancelled_hearings_with_pending_emails
       VirtualHearing
         .cancelled
-        .where(<<-SQL, false, false, false)
+        .where(<<-SQL)
           (
-            virtual_hearings.judge_email_sent = ?
-            OR virtual_hearings.veteran_email_sent = ?
+            NOT virtual_hearings.judge_email_sent
+            OR NOT virtual_hearings.veteran_email_sent
             OR (
               NOT virtual_hearings.representative_email = null
-              AND virtual_hearings.representative_email = ?
+              AND NOT virtual_hearings.representative_email_sent
             )
           )
         SQL
