@@ -1,10 +1,13 @@
 import { css } from 'glamor';
-import React from 'react';
-import PropTypes from 'prop-types';
-import querystring from 'querystring';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import PropTypes from 'prop-types';
+import React from 'react';
+
+import querystring from 'querystring';
+
 import { COLORS } from '../../constants/AppConstants';
 import { ExternalLink } from '../../components/RenderFunctions';
+import COPY from '../../../COPY.json';
 
 const ICON_POSITION_FIX = css({ position: 'relative',
   top: 1 });
@@ -52,7 +55,7 @@ class VirtualHearingLink extends React.PureComponent {
         target={newWindow ? '_blank' : '_self'}
         disabled={!virtualHearing.jobCompleted}
       >
-        <strong>{showFullLink ? href : 'Virtual Hearing Link'}</strong>
+        <strong>{showFullLink ? href : COPY.VIRTUAL_HEARING_LINK_LABEL}</strong>
         <span {...ICON_POSITION_FIX}>
           &nbsp;<ExternalLink fill={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
         </span>

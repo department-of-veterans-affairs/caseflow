@@ -23,7 +23,7 @@ class DetailsInputs extends React.Component {
     if (isVirtual && virtualHearing) {
       return (
         <div>
-          <strong>Virtual Hearing Link</strong>
+          <strong>{COPY.VIRTUAL_HEARING_LINK_LABEL}</strong>
           <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing.jobCompleted &&
               <VirtualHearingLink
