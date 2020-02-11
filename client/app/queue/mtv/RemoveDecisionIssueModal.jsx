@@ -16,10 +16,7 @@ export const RemoveDecisionIssueModal = ({ onCancel, onSubmit }) => {
 
   return (
     <Modal buttons={buttons} closeHandler={onCancel} title="Delete decision">
-      <span className="delete-decision-modal">
-        {COPY.DECISION_ISSUE_CONFIRM_DELETE}
-        {/* {toDeleteHasConnectedIssue && COPY.DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES} */}
-      </span>
+      <span className="delete-decision-modal">{COPY.MTV_CHECKOUT_CONFIRM_REMOVE_DECISION_ISSUE}</span>
     </Modal>
   );
 };
