@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useParams, useRouteMatch, Switch, Route } from 'react-router';
 import { taskById, appealWithDetailSelector } from '../selectors';
 import { MotionToVacateContextProvider } from './MotionToVacateContext';
+import { AddDecisionIssuesView } from './AddDecisionIssuesView';
 
 export const MotionToVacateFlowContainer = () => {
   const { path } = useRouteMatch();
@@ -26,9 +27,7 @@ export const MotionToVacateFlowContainer = () => {
             <></>
           </Route>
           <Route path={`${path}/add_decisions`}>
-            {/* Insert component from #13071 here */}
-            {/* <AddDecisionsView appeal={appeal} /> */}
-            <></>
+            <AddDecisionIssuesView appeal={appeal} />
           </Route>
         </Switch>
       </MotionToVacateContextProvider>
