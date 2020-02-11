@@ -22,12 +22,8 @@ class PostDecisionMotionUpdater
 
   def process
     ActiveRecord::Base.transaction do
-      if post_decision_motion
-        handle_denial_or_dismissal
-        handle_grant
-      end
-
-      raise InvalidMotionUpdaterArguments if errors.messages.any?
+      create_new_models
+      fail InvalidMotionUpdaterArguments if errors.messages.any?
 
       task.update(status: Constants.TASK_STATUSES.completed)
       post_decision_motion
@@ -35,7 +31,7 @@ class PostDecisionMotionUpdater
   rescue InvalidMotionUpdaterArguments
     # Slightly leaky abstraction: vacate_stream may have already been created and
     # committed to DB before we realize the transaction should be rolled back.
-    @vacate_stream&.destroy!
+    vacate_stream&.destroy!
   end
 
   private
@@ -50,17 +46,17 @@ class PostDecisionMotionUpdater
     @vacate_stream ||= original_appeal.create_stream(:vacate)
   end
 
-  def appeal
-    if denied_or_dismissed?
-      original_appeal
-    elsif grant_type?
-      vacate_stream
+  def create_new_models
+    if post_decision_motion
+      handle_denial_or_dismissal
+      handle_grant
     end
   end
 
   def create_motion
     motion = PostDecisionMotion.new(
-      appeal: appeal,
+      appeal: vacate_stream,
+      task: task,
       disposition: disposition,
       vacate_type: params[:vacate_type]
     )
@@ -93,8 +89,7 @@ class PostDecisionMotionUpdater
       return
     end
 
-    new_task = create_new_task(abstract_task)
-
+    new_task = create_denial_or_dismissal_task(abstract_task)
     unless new_task.valid?
       errors.messages.merge!(new_task.errors.messages)
       return
@@ -112,15 +107,15 @@ class PostDecisionMotionUpdater
 
   def create_abstract_task
     AbstractMotionToVacateTask.new(
-      appeal: appeal,
+      appeal: original_appeal,
       parent: task.parent,
       assigned_to: judge_user
     )
   end
 
-  def create_new_task(parent)
+  def create_denial_or_dismissal_task(parent)
     task_class.new(
-      appeal: appeal,
+      appeal: original_appeal,
       parent: parent,
       assigned_by: judge_user,
       assigned_to: attorney_user,

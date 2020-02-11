@@ -245,6 +245,9 @@ describe PostDecisionMotionUpdater, :all_dbs do
     )
 
     expect(attorney_task).to_not be_nil
+
+    motion = PostDecisionMotion.first
+    expect(motion.appeal).to eq(vacate_stream)
   end
 
   def verify_decision_issues_created

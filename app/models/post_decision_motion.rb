@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class PostDecisionMotion < ApplicationRecord
-  self.ignored_columns = ["task_id"]
-
-  belongs_to :appeal, optional: false
+  belongs_to :appeal
+  belongs_to :task, optional: false
 
   validates :disposition, presence: true
   validate :vacate_type_is_present_if_granted

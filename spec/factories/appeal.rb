@@ -192,8 +192,18 @@ FactoryBot.define do
 
     trait :with_straight_vacate_stream do
       after(:create) do |appeal, evaluator|
-        mail_task = create(:vacate_motion_mail_task, appeal: appeal, parent: appeal.root_task, assigned_to: evaluator.associated_judge)
-        addr_task = create(:judge_address_motion_to_vacate_task, appeal: appeal, parent: mail_task, assigned_to: evaluator.associated_judge)
+        mail_task = create(
+          :vacate_motion_mail_task,
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: evaluator.associated_judge
+        )
+        addr_task = create(
+          :judge_address_motion_to_vacate_task,
+          appeal: appeal,
+          parent: mail_task,
+          assigned_to: evaluator.associated_judge
+        )
         params = {
           disposition: "granted",
           vacate_type: "straight_vacate",
