@@ -2,11 +2,11 @@
 
 describe ETL::OrganizationSyncer, :etl do
   describe "#call" do
-    let!(:org1) { create(:organization, updated_at: 3.days.ago) }
+    let!(:org1) { create(:organization, updated_at: 3.days.ago.round) }
     let!(:org2) { create(:organization) }
 
     context "2 org records, one needing sync" do
-      subject { described_class.new(since: 2.days.ago).call }
+      subject { described_class.new(since: 2.days.ago.round).call }
 
       it "syncs 1 record" do
         expect(ETL::Organization.all.count).to eq(0)
@@ -31,7 +31,7 @@ describe ETL::OrganizationSyncer, :etl do
     end
 
     context "origin Org record changes" do
-      subject { described_class.new(since: 2.days.ago).call }
+      subject { described_class.new(since: 2.days.ago.round).call }
 
       before do
         described_class.new.call

@@ -5,17 +5,17 @@ describe ETL::UserSyncer, :etl do
     let!(:vacols_user1) { create(:staff, :judge_role) }
     let!(:vacols_user2) { create(:staff, :attorney_judge_role) }
     let!(:user1) { create(:user, css_id: vacols_user1.sdomainid) }
-    let!(:user2) { create(:user, css_id: vacols_user2.sdomainid, updated_at: 3.days.ago) }
+    let!(:user2) { create(:user, css_id: vacols_user2.sdomainid, updated_at: 3.days.ago.round) }
     let!(:user3) { create(:user) }
 
     before do
-      Timecop.travel(3.days.ago) do
+      Timecop.travel(3.days.ago.round) do
         CachedUser.sync_from_vacols
       end
     end
 
     context "3 User records, 2 needing sync" do
-      subject { described_class.new(since: 2.days.ago).call }
+      subject { described_class.new(since: 2.days.ago.round).call }
 
       it "syncs 2 records" do
         expect(ETL::User.all.count).to eq(0)
@@ -30,7 +30,7 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "VACOLS attribute changes" do
-      subject { described_class.new(since: 2.days.ago).call }
+      subject { described_class.new(since: 2.days.ago.round).call }
 
       before do
         described_class.new.call
@@ -61,7 +61,7 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "origin User record changes" do
-      subject { described_class.new(since: 2.days.ago).call }
+      subject { described_class.new(since: 2.days.ago.round).call }
 
       before do
         described_class.new.call
