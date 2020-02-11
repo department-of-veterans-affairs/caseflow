@@ -127,7 +127,8 @@ class AppealHearingLocationsDropdown extends React.Component {
     const {
       name, label, onChange, readOnly, placeholder, errorMessage,
       appealHearingLocations: { isFetching, options, errorMsg } } = this.props;
-    const errorMessageText = errorMessage || errorMsg;
+    const validationErrorMessage = errorMessage;
+    const serviceErrorMessage = errorMsg;
 
     return (
       <React.Fragment>
@@ -139,8 +140,9 @@ class AppealHearingLocationsDropdown extends React.Component {
           value={this.getSelectedOption()}
           onChange={(option) => onChange((option || {}).value, (option || {}).label)}
           options={options}
+          errorMessage={validationErrorMessage}
           placeholder={placeholder} />
-        {!isFetching && errorMessageText && <Alert type="error" message={errorMessageText} />}
+        {!isFetching && serviceErrorMessage && <Alert type="error" message={serviceErrorMessage} />}
       </React.Fragment>
     );
   }
