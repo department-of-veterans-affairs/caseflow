@@ -128,6 +128,10 @@ RSpec.shared_examples "Change hearing disposition" do
     end
 
     context "changing hearing disposition" do
+      before do
+        cache_appeals
+      end
+
       scenario "change hearing disposition to postponed" do
         step "visit the hearing admin organization queue and click on the veteran's name" do
           visit "/organizations/#{HearingAdmin.singleton.url}"
@@ -212,6 +216,7 @@ RSpec.shared_examples "Change hearing disposition" do
 
       before do
         User.authenticate!(user: hearing_mgmt_user)
+        cache_appeals
       end
 
       scenario "correct the hearing disposition to held" do
@@ -440,6 +445,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
     end
     let(:waiting_button_text) { "AMA Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.uuid}" }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
 
     include_examples "Change hearing disposition"
   end
@@ -462,6 +468,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
     end
     let(:waiting_button_text) { "Legacy Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.vacols_id}" }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     include_examples "Change hearing disposition"
   end

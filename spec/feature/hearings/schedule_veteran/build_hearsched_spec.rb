@@ -32,8 +32,14 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     let(:appellant_appeal_link_text) do
       "#{legacy_appeal.appellant[:first_name]} #{legacy_appeal.appellant[:last_name]} | #{veteran.file_number}"
     end
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
+
+    before do
+      cache_appeals
+    end
 
     def navigate_to_schedule_veteran_modal
+      cache_appeals
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Central")
@@ -105,8 +111,10 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       )
     end
     let!(:veteran) { create(:veteran, file_number: "123456789") }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     scenario "Schedule Veteran for video" do
+      cache_appeals
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver, CO")
@@ -141,7 +149,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         allow(VADotGovService).to receive(:get_distance).and_return(facilities_response)
       end
 
-      scenario "Schedule Veteran for video erro" do
+      scenario "Schedule Veteran for video error" do
         visit "queue/appeals/#{legacy_appeal.vacols_id}"
         click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
         expect(page).to have_content("Mapping service is temporarily unavailable. Please try again later.")
@@ -170,6 +178,11 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
     let(:incarcerated_veteran_task_instructions) { "Incarcerated veteran task instructions" }
     let(:contested_claimant_task_instructions) { "Contested claimant task instructions" }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
+
+    before do
+      cache_appeals
+    end
 
     scenario "Can create multiple admin actions and reassign them" do
       visit "hearings/schedule/assign"
@@ -458,8 +471,10 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       )
     end
     let!(:veteran5) { create(:veteran, file_number: "523454787") }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     scenario "Verify docket order is CVAC, AOD, then regular." do
+      cache_appeals
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Central")
