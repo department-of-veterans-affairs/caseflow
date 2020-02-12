@@ -64,7 +64,7 @@ describe TaskTreeRenderModule do
     end
 
     it "highlights self task with an asterisk" do
-      task_to_highlight = appeal.tasks.sample # TODO: do we need .sample ?
+      task_to_highlight = appeal.tasks.sample
       _rows_hash, metadata = task_to_highlight.tree_hash(" ", :id, :status)
       check_for_highlight(metadata, task_to_highlight)
     end

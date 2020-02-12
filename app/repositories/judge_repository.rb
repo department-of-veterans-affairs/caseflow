@@ -3,7 +3,7 @@
 class JudgeRepository
   # :nocov:
   def self.find_all_judges
-    css_ids = judge_records.where.not(sdomainid: nil).pluck("UPPER(sdomainid)")
+    css_ids = judge_records.where.not(sdomainid: nil).pluck(:sdomainid).map(&:upcase)
 
     User.batch_find_by_css_id_or_create_with_default_station_id(css_ids)
   end
