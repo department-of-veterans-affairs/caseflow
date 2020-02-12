@@ -1,16 +1,7 @@
 import React from 'react';
-import { css } from 'glamor';
-import QueueTable from '../../../queue/QueueTable';
 import PropTypes from 'prop-types';
-
-const tableNumberStyling = css({
-  '& tr > td:first-child': {
-    paddingRight: 0
-  },
-  '& td:nth-child(2)': {
-    paddingLeft: 0
-  }
-});
+import QueueTable from '../../../queue/QueueTable';
+import { tableNumberStyling } from './styles';
 
 class AssignHearingsTable extends React.Component {
 

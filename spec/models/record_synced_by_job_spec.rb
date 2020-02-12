@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe RecordSyncedByJob, :postgres do
   context ".next_records_to_process" do
     let(:appeal_without_sync) { create(:appeal) }

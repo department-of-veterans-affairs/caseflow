@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe BvaDispatchTask, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
@@ -18,7 +15,7 @@ describe BvaDispatchTask, :all_dbs do
     context "when valid root_task passed as argument" do
       let(:root_task) { create(:root_task) }
       before do
-        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(create(:user))
       end
 
       it "should create a BvaDispatchTask assigned to a User with a parent task assigned to the BvaDispatch org" do
@@ -35,7 +32,7 @@ describe BvaDispatchTask, :all_dbs do
     context "when organization-level BvaDispatchTask already exists" do
       let(:root_task) { create(:root_task) }
       before do
-        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(create(:user))
         BvaDispatchTask.create_from_root_task(root_task)
       end
 
@@ -64,7 +61,7 @@ describe BvaDispatchTask, :all_dbs do
     let!(:di) { create(:decision_issue, decision_review: root_task.appeal, request_issues: [request_issue]) }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
+      BvaDispatch.singleton.add_user(user)
     end
 
     context "when single BvaDispatchTask exists for user and appeal combination" do
@@ -193,6 +190,15 @@ describe BvaDispatchTask, :all_dbs do
           expect(decision_document.submitted_at).to eq(Time.zone.now)
         end
       end
+    end
+  end
+
+  describe "#available_actions" do
+    let(:bva_d_task) { create(:bva_dispatch_task) }
+
+    it "actions should not include 'Assign to Team'" do
+      expect(bva_d_task.available_actions(bva_d_task.assigned_to))
+        .not_to include(Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h)
     end
   end
 end

@@ -1,9 +1,17 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
+require "models/concerns/has_virtual_hearing_examples"
 
 describe LegacyHearing, :all_dbs do
+  it_should_behave_like "a model that can have a virtual hearing" do
+    let(:instance_of_class) do
+      create(
+        :legacy_hearing,
+        hearing_day: create(:hearing_day, regional_office: "RO42", request_type: HearingDay::REQUEST_TYPES[:video])
+      )
+    end
+  end
+
   before do
     RequestStore[:current_user] = create(:user, css_id: "Test user", station_id: "101")
   end
@@ -367,7 +375,12 @@ describe LegacyHearing, :all_dbs do
   context "#hearing_day" do
     context "associated hearing day exists" do
       let(:hearing_day) { create(:hearing_day) }
-      let(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
+      let(:legacy_hearing) do
+        # hearing_day_id is set to nil because the tests are testing if it
+        # gets populated correctly. hearing_day is used by the factory to initialize
+        # a case hearing in vacols.
+        create(:legacy_hearing, hearing_day: hearing_day, hearing_day_id: nil)
+      end
 
       context "and hearing day id refers to a row in Caseflow" do
         it "get hearing day returns the associated hearing day successfully" do
@@ -419,13 +432,57 @@ describe LegacyHearing, :all_dbs do
       let(:legacy_hearing) do
         create(
           :legacy_hearing,
-          hearing_day: nil,
+          hearing_day_id: nil,
           case_hearing: create(:case_hearing, vdkey: "123456")
         )
       end
 
       it "get hearing day returns nil" do
         expect(legacy_hearing.hearing_day).to eq nil
+      end
+    end
+  end
+
+  context "#scheduled_for_past?" do
+    context "for a video hearing scheduled before 4/1/2019" do
+      let(:scheduled_for) do
+        Time.use_zone("America/New_York") { Time.zone.local(2018, 1, 1, 0, 0, 0) }
+      end
+
+      it "returns true" do
+        expect(hearing.scheduled_for_past?).to be(true)
+      end
+    end
+
+    context "for a video hearing scheduled after 4/1/2019" do
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          scheduled_for: scheduled_for,
+          regional_office: regional_office,
+          request_type: HearingDay::REQUEST_TYPES[:video]
+        )
+      end
+      let!(:hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
+
+      context "before today" do
+        let(:scheduled_for) do
+          Time.use_zone("America/New_York") { Time.zone.local(2019, 8, 8, 0, 0, 0) }
+        end
+
+        it "returns true" do
+          expect(hearing.scheduled_for_past?).to be(true)
+        end
+      end
+
+      context "for tomorrow" do
+        let(:scheduled_for) do
+          Time.use_zone("America/New_York") { Time.zone.tomorrow }
+        end
+
+        it "returns false" do
+          expect(hearing.scheduled_for_past?).to be(false)
+        end
       end
     end
   end

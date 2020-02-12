@@ -147,7 +147,7 @@ export const tasks = [
               value: 5
             }
           ],
-          type: 'GenericTask'
+          type: 'Task'
         }
       },
       {
@@ -199,7 +199,7 @@ export const tasks = [
         }
       },
       {
-        label: 'Notify OGC of Pulac-Cerullo',
+        label: 'Notify Litigation Support of CAVC jurisdictional conflict',
         value: 'modal/assign_to_pulac_cerullo',
         func: 'assign_to_pulac_cerullo_data',
         data: {

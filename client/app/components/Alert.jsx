@@ -20,11 +20,15 @@ export default class Alert extends React.Component {
     return attrs;
   }
 
+  messageDiv() {
+    let message = this.props.children || this.props.message;
+
+    return <div className="usa-alert-text">{message}</div>;
+  }
+
   render() {
     let {
       fixed,
-      children,
-      message,
       title,
       type,
       styling,
@@ -42,8 +46,7 @@ export default class Alert extends React.Component {
     return <div className={className} {...this.getRole()} {...styling}>
       <div className="usa-alert-body">
         <h2 className="usa-alert-heading">{title}</h2>
-        { children ? <div className="usa-alert-text">{children}</div> :
-          <div className="usa-alert-text">{message}</div>}
+        { this.messageDiv() }
       </div>
     </div>;
   }
@@ -55,6 +58,8 @@ Alert.defaultProps = {
 
 Alert.propTypes = {
   children: PropTypes.node,
+  fixed: PropTypes.string,
+  lowerMargin: PropTypes.bool,
   message: PropTypes.node,
   title: PropTypes.string,
   type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,

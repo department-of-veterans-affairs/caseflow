@@ -7,7 +7,8 @@ export const initialState = {
     hearingCoordinators: {},
     regionalOffices: {}
   },
-  forms: {}
+  forms: {},
+  alerts: []
 };
 
 const dropdownsReducer = (state = {}, action = {}) => {
@@ -52,10 +53,11 @@ const formsReducer = (state = {}, action = {}) => {
   case ACTIONS.CHANGE_FORM_DATA:
     return update(state, {
       [action.payload.formName]: {
-        $set: {
-          ...formState,
-          ...action.payload.formData
-        }
+        $set: action.payload.formData === null ?
+          {} : {
+            ...formState,
+            ...action.payload.formData
+          }
       }
     });
   default:
@@ -65,6 +67,21 @@ const formsReducer = (state = {}, action = {}) => {
 
 const commonComponentsReducer = (state = initialState, action = {}) => {
   switch (action.type) {
+  case ACTIONS.RECEIVE_ALERTS:
+    return update(state, {
+      alerts: {
+        $set: [
+          ...state.alerts,
+          ...action.payload.alerts
+        ]
+      }
+    });
+  case ACTIONS.REMOVE_ALERTS_WITH_TIMESTAMP:
+    return update(state, {
+      alerts: {
+        $set: state.alerts.filter((alert) => action.payload.timestamps.indexOf(alert.timestamp) === -1)
+      }
+    });
   case ACTIONS.RECEIVE_REGIONAL_OFFICES:
     return update(state, {
       regionalOffices: {

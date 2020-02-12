@@ -1,12 +1,37 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe HearingRepository, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2017, 10, 4))
     Time.zone = "America/Chicago"
+  end
+
+  context ".fetch_hearings_for_parent" do
+    let(:hearing_date) { Time.utc(2019, 5, 2) }
+    let(:case_hearing) { create(:case_hearing, hearing_date: hearing_date) }
+
+    subject { HearingRepository.fetch_hearings_for_parents(case_hearing.vdkey) }
+
+    it "should have one record" do
+      expect(subject[case_hearing.vdkey].size).to eq(1)
+    end
+
+    it "should be the expected row" do
+      expect(subject[case_hearing.vdkey][0].vacols_id).to eq(case_hearing.id.to_s)
+    end
+
+    context "for case with nil folder number" do
+      let(:case_hearing) { create(:case_hearing, hearing_date: hearing_date, folder_nr: nil) }
+
+      it "should be empty" do
+        expect(subject).to eq({})
+      end
+
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/12321
+      it "should not raise error" do
+        expect { subject }.not_to raise_error
+      end
+    end
   end
 
   context ".slot_new_hearing" do

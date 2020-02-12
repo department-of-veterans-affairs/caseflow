@@ -2,6 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+
 import {
   setSavePending,
   resetSaveState,
@@ -18,7 +20,7 @@ import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
 import QueueFlowModal from './QueueFlowModal';
@@ -26,18 +28,15 @@ import QueueFlowModal from './QueueFlowModal';
 const OTHER = 'OTHER';
 
 class AssignWidget extends React.PureComponent {
-  submit = () => {
+  validateForm = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
-
-    this.props.resetSuccessMessages();
-    this.props.resetErrorMessages();
 
     if (!selectedAssignee) {
       this.props.showErrorMessage(
         { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
           detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
 
-      return;
+      return false;
     }
 
     if (selectedTasks.length === 0) {
@@ -45,22 +44,37 @@ class AssignWidget extends React.PureComponent {
         { title: COPY.ASSIGN_WIDGET_NO_TASK_TITLE,
           detail: COPY.ASSIGN_WIDGET_NO_TASK_DETAIL });
 
-      return;
+      return false;
     }
 
-    if (selectedAssignee !== OTHER) {
-      return this.assignTasks(selectedTasks, selectedAssignee);
-    }
-
-    if (!selectedAssigneeSecondary) {
+    if (selectedAssignee === OTHER && !selectedAssigneeSecondary) {
       this.props.showErrorMessage(
         { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
           detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
 
+      return false;
+    }
+
+    return true;
+  }
+
+  submit = () => {
+    const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
+
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
+
+    if (this.props.isModal) {
+      // QueueFlowModal will call validateForm
+    } else if (!this.validateForm()) {
       return;
     }
 
-    return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+    if (selectedAssignee === OTHER) {
+      return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+    }
+
+    return this.assignTasks(selectedTasks, selectedAssignee);
   }
 
   assignTasks = (selectedTasks, assigneeId) => {
@@ -80,7 +94,7 @@ class AssignWidget extends React.PureComponent {
 
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
-            verb: this.props.assignedVerb || 'Assigned',
+            verb: 'Assigned',
             numCases: selectedTasks.length,
             casePlural: pluralize('case', selectedTasks.length)
           })
@@ -90,7 +104,8 @@ class AssignWidget extends React.PureComponent {
 
         const errorDetail = this.props.isModal && userId ?
           <React.Fragment>
-            <Link to={`/queue/${userId}/assign`}>{COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL}</Link>
+            <Link to={`/queue/${userId}/assign`}>{COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK}</Link>
+            {COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL}
           </React.Fragment> : COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL;
 
         return this.props.showErrorMessage({
@@ -189,15 +204,43 @@ class AssignWidget extends React.PureComponent {
       </div>
     </React.Fragment>;
 
-    return this.props.isModal ? <QueueFlowModal title={COPY.ASSIGN_WIDGET_MODAL_TITLE} submit={this.submit}>
+    return this.props.isModal ? <QueueFlowModal title={COPY.ASSIGN_WIDGET_MODAL_TITLE}
+      submit={this.submit} validateForm={this.validateForm}>
       {Widget}
     </QueueFlowModal> : Widget;
   }
 }
 
+AssignWidget.propTypes = {
+  previousAssigneeId: PropTypes.string,
+  userId: PropTypes.number,
+  setSavePending: PropTypes.func,
+  onTaskAssignment: PropTypes.func,
+  resetSaveState: PropTypes.func,
+  showSuccessMessage: PropTypes.func,
+  isModal: PropTypes.bool,
+  showErrorMessage: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  requestDistribution: PropTypes.func,
+  attorneysOfJudge: PropTypes.array,
+  selectedAssignee: PropTypes.string,
+  selectedAssigneeSecondary: PropTypes.string,
+  savePending: PropTypes.bool,
+  distributionLoading: PropTypes.bool,
+  attorneys: PropTypes.shape({
+    data: PropTypes.array,
+    error: PropTypes.object
+  }),
+  setSelectedAssignee: PropTypes.func,
+  setSelectedAssigneeSecondary: PropTypes.func,
+  selectedTasks: PropTypes.array,
+  showRequestCasesButton: PropTypes.bool
+};
+
 const mapStateToProps = (state) => {
   const { attorneysOfJudge, attorneys, pendingDistribution } = state.queue;
-  const { selectedAssignee, selectedAssigneeSecondary, featureToggles } = state.ui;
+  const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
   const { savePending } = state.ui.saveState;
 
   return {
@@ -206,8 +249,7 @@ const mapStateToProps = (state) => {
     selectedAssigneeSecondary,
     attorneys,
     distributionLoading: pendingDistribution !== null,
-    savePending,
-    featureToggles
+    savePending
   };
 };
 

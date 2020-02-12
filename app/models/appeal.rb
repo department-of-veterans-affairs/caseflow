@@ -10,6 +10,7 @@ class Appeal < DecisionReview
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
+  include AppealAvailableHearingLocations
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -23,6 +24,14 @@ class Appeal < DecisionReview
 
   has_one :special_issue_list
   has_many :record_synced_by_job, as: :record
+
+  enum stream_type: {
+    "original": "original",
+    "vacate": "vacate",
+    "de_novo": "de_novo"
+  }
+
+  before_save :set_stream_docket_number_and_stream_type
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
@@ -39,8 +48,12 @@ class Appeal < DecisionReview
               RootTask.name, Task.closed_statuses, 1)
   }
 
+  scope :established, -> { where.not(established_at: nil) }
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
+
+  alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -64,15 +77,28 @@ class Appeal < DecisionReview
   end
 
   def ui_hash
-    super.merge(
-      docketType: docket_type,
-      isOutcoded: outcoded?,
-      formType: "appeal"
-    )
+    Intake::AppealSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def type
-    "Original"
+    stream_type&.titlecase || "Original"
+  end
+
+  def create_stream(stream_type)
+    ActiveRecord::Base.transaction do
+      Appeal.create!(slice(
+        :receipt_date,
+        :veteran_file_number,
+        :legacy_opt_in_approved,
+        :veteran_is_not_claimant
+      ).merge(stream_type: stream_type, stream_docket_number: docket_number)).tap do |stream|
+        stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
+      end
+    end
+  end
+
+  def vacate_type
+    post_decision_motion&.vacate_type
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -80,16 +106,40 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_tasks = tasks.active.visible_in_queue_table_view
-    return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
-
-    on_hold_tasks = tasks.on_hold.visible_in_queue_table_view
-    return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
+    recently_updated_task = Task.any_recently_updated(
+      tasks.active.visible_in_queue_table_view,
+      tasks.on_hold.visible_in_queue_table_view
+    )
+    return recently_updated_task.assigned_to_label if recently_updated_task
 
     # this condition is no longer needed since we only want active or on hold tasks
-    return most_recently_assigned_to_label(tasks) if tasks.any?
+    return tasks.most_recently_updated&.assigned_to_label if tasks.any?
 
-    fetch_status.to_s.titleize
+    decorated_with_status.fetch_status.to_s.titleize
+  end
+
+  def program
+    decorated_with_status.program
+  end
+
+  def distributed_to_a_judge?
+    decorated_with_status.distributed_to_a_judge?
+  end
+
+  def decorated_with_status
+    AppealStatusApiDecorator.new(self)
+  end
+
+  def active_request_issues_or_decision_issues
+    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
+  end
+
+  def fetch_all_decision_issues
+    return decision_issues unless decision_issues.remanded.any?
+    # only include the remanded issues if they are still being worked on
+    return decision_issues if active_remanded_claims?
+
+    super
   end
 
   def attorney_case_reviews
@@ -197,6 +247,7 @@ class Appeal < DecisionReview
            :date_of_birth,
            :age,
            :available_hearing_locations,
+           :email_address,
            :country, to: :veteran, prefix: true
 
   def veteran_if_exists
@@ -216,7 +267,7 @@ class Appeal < DecisionReview
   end
 
   def advanced_on_docket?
-    claimants.any? { |claimant| claimant.advanced_on_docket?(receipt_date) }
+    claimant&.advanced_on_docket?(receipt_date)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -227,9 +278,7 @@ class Appeal < DecisionReview
            :last_name,
            :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
-  def appellant
-    claimants.first
-  end
+  alias appellant claimant
 
   delegate :first_name,
            :last_name,
@@ -240,12 +289,16 @@ class Appeal < DecisionReview
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
 
+  def appellant_is_not_veteran
+    !!veteran_is_not_claimant
+  end
+
   def cavc
     "not implemented for AMA"
   end
 
   def status
-    nil
+    @status ||= BVAAppealStatus.new(appeal: self)
   end
 
   def previously_selected_for_quality_review
@@ -261,22 +314,28 @@ class Appeal < DecisionReview
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
       issue.save!
-      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
+      issue.handle_legacy_issues!
     end
     request_issues.reload
   end
 
   def docket_number
-    return "Missing Docket Number" unless receipt_date
+    return stream_docket_number if stream_docket_number
+    return "Missing Docket Number" unless receipt_date && persisted?
 
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
-  # For now power_of_attorney returns the first claimant's power of attorney
+  # Currently AMA only supports one claimant per decision review
   def power_of_attorney
-    claimants.first&.power_of_attorney
+    claimant&.power_of_attorney
   end
-  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney, allow_nil: true
+
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
     claimants.map(&:power_of_attorney)
@@ -320,252 +379,6 @@ class Appeal < DecisionReview
     RootTask.find_by(appeal: self)
   end
 
-  # needed for appeal status api
-  def appeal_status_id
-    "A#{id}"
-  end
-
-  def linked_review_ids
-    Array.wrap(appeal_status_id)
-  end
-
-  def active_status?
-    # For the appeal status api, and Appeal is considered open
-    # as long as there are active remand claim or effectuation
-    # tracked in VBMS.
-    active? || active_effectuation_ep? || active_remanded_claims?
-  end
-
-  def active_effectuation_ep?
-    decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
-  end
-
-  def location
-    if active_effectuation_ep? || active_remanded_claims?
-      "aoj"
-    else
-      "bva"
-    end
-  end
-
-  def fetch_status
-    if active?
-      fetch_pre_decision_status
-    else
-      fetch_post_decision_status
-    end
-  end
-
-  def fetch_pre_decision_status
-    if pending_schedule_hearing_task?
-      :pending_hearing_scheduling
-    elsif hearing_pending?
-      :scheduled_hearing
-    elsif evidence_submission_hold_pending?
-      :evidentiary_period
-    elsif at_vso?
-      :at_vso
-    elsif distributed_to_a_judge?
-      :decision_in_progress
-    else
-      :on_docket
-    end
-  end
-
-  def fetch_post_decision_status
-    if remand_supplemental_claims.any?
-      active_remanded_claims? ? :ama_remand : :post_bva_dta_decision
-    elsif effectuation_ep? && !active_effectuation_ep?
-      :bva_decision_effectuation
-    elsif decision_issues.any?
-      # there is a period of time where there are decision issues but no
-      # decision document and the decisions issues do not have decision date yet
-      # wait until the document is available before showing there is a decision
-      decision_document ? :bva_decision : :decision_in_progress
-    elsif withdrawn?
-      :withdrawn
-    else
-      :other_close
-    end
-  end
-
-  def fetch_details_for_status
-    case fetch_status
-    when :bva_decision
-      {
-        issues: api_issues_for_status_details_issues(decision_issues)
-      }
-    when :ama_remand
-      {
-        issues: api_issues_for_status_details_issues(decision_issues)
-      }
-    when :post_bva_dta_decision
-      post_bva_dta_decision_status_details
-    when :bva_decision_effectuation
-      {
-        bva_decision_date: decision_event_date,
-        aoj_decision_date: decision_effectuation_event_date
-      }
-    when :pending_hearing_scheduling
-      {
-        type: "video"
-      }
-    when :scheduled_hearing
-      api_scheduled_hearing_status_details
-    when :decision_in_progress
-      {
-        decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
-      }
-    else
-      {}
-    end
-  end
-
-  def post_bva_dta_decision_status_details
-    issue_list = remanded_sc_decision_issues
-    {
-      issues: api_issues_for_status_details_issues(issue_list),
-      bva_decision_date: decision_event_date,
-      aoj_decision_date: remand_decision_event_date
-    }
-  end
-
-  def api_issues_for_status_details_issues(issue_list)
-    issue_list.map do |issue|
-      {
-        description: issue.api_status_description,
-        disposition: issue.api_status_disposition
-      }
-    end
-  end
-
-  def api_scheduled_hearing_status_details
-    {
-      type: api_scheduled_hearing_type,
-      date: scheduled_hearing.scheduled_for.to_date,
-      location: scheduled_hearing.try(:hearing_location).try(&:name)
-    }
-  end
-
-  def scheduled_hearing
-    # Appeal Status api assumes that there can be multiple hearings that have happened in the past but only
-    # one that is currently scheduled. Will get this by getting the hearing whose scheduled date is in the future.
-    @scheduled_hearing ||= hearings.find { |hearing| hearing.scheduled_for >= Time.zone.today }
-  end
-
-  def api_scheduled_hearing_type
-    return unless scheduled_hearing
-
-    hearing_types_for_status_details = {
-      V: "video",
-      C: "central_office"
-    }.freeze
-
-    hearing_types_for_status_details[scheduled_hearing.request_type.to_sym]
-  end
-
-  def remanded_sc_decision_issues
-    issue_list = []
-    remand_supplemental_claims.each do |sc|
-      sc.decision_issues.map do |di|
-        issue_list << di
-      end
-    end
-
-    issue_list
-  end
-
-  def pending_schedule_hearing_task?
-    tasks.open.where(type: ScheduleHearingTask.name).any?
-  end
-
-  def hearing_pending?
-    scheduled_hearing.present?
-  end
-
-  def evidence_submission_hold_pending?
-    tasks.open.where(type: EvidenceSubmissionWindowTask.name).any?
-  end
-
-  def at_vso?
-    # This task is always open, this can be used once that task is completed
-    # tasks.open.where(type: InformalHearingPresentationTask.name).any?
-  end
-
-  def distributed_to_a_judge?
-    tasks.any? { |t| t.is_a?(JudgeTask) }
-  end
-
-  def alerts
-    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
-  end
-
-  def aoj
-    return if request_issues.empty?
-
-    return "other" unless all_request_issues_same_aoj?
-
-    request_issues.first.api_aoj_from_benefit_type
-  end
-
-  def all_request_issues_same_aoj?
-    request_issues.all? do |ri|
-      ri.api_aoj_from_benefit_type == request_issues.first.api_aoj_from_benefit_type
-    end
-  end
-
-  def program
-    return if request_issues.empty?
-
-    if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
-      request_issues.first.benefit_type
-    else
-      "multiple"
-    end
-  end
-
-  def docket_hash
-    return unless active_status?
-    return if location == "aoj"
-
-    {
-      type: fetch_docket_type,
-      month: Date.parse(receipt_date.to_s).change(day: 1),
-      switchDueDate: docket_switch_deadline,
-      eligibleToSwitch: eligible_to_switch_dockets?
-    }
-  end
-
-  def fetch_docket_type
-    api_values = {
-      "direct_review" => "directReview",
-      "hearing" => "hearingRequest",
-      "evidence_submission" => "evidenceSubmission"
-    }
-
-    api_values[docket_name]
-  end
-
-  def docket_switch_deadline
-    return unless receipt_date
-    return unless request_issues.active_or_ineligible.any?
-    return if request_issues.active_or_ineligible.any? { |ri| ri.decision_or_promulgation_date.nil? }
-
-    oldest = request_issues.active_or_ineligible.min_by(&:decision_or_promulgation_date)
-    deadline_from_oldest_request_issue = oldest.decision_or_promulgation_date + 365.days
-    deadline_from_receipt = receipt_date + 60.days
-
-    [deadline_from_receipt, deadline_from_oldest_request_issue].max
-  end
-
-  def eligible_to_switch_dockets?
-    return false unless docket_switch_deadline
-
-    # TODO: false if hearing already taken place, to be implemented
-    # https://github.com/department-of-veterans-affairs/caseflow/issues/9205
-    Time.zone.today < docket_switch_deadline
-  end
-
   def processed_in_caseflow?
     true
   end
@@ -574,63 +387,22 @@ class Appeal < DecisionReview
     false
   end
 
-  def first_distributed_to_judge_date
-    judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
-    return unless judge_tasks.any?
-
-    judge_tasks.min_by(&:created_at).created_at.to_date
-  end
-
-  def effectuation_ep?
-    decision_document&.end_product_establishments&.any?
-  end
-
-  def decision_effectuation_event_date
-    return unless effectuation_ep?
-    return if active_effectuation_ep?
-
-    decision_document.end_product_establishments.first.last_synced_at.to_date
-  end
-
-  def other_close_event_date
-    return if active_status?
-    return if decision_issues.any?
-
-    root_task.closed_at&.to_date
-  end
-
-  def events
-    @events ||= AppealEvents.new(appeal: self).all
-  end
-
-  def active_request_issues_or_decision_issues
-    decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
-  end
-
-  def fetch_all_decision_issues
-    return decision_issues unless decision_issues.remanded.any?
-    # only include the remanded issues if they are still being worked on
-    return decision_issues if active_remanded_claims?
-
-    super
-  end
-
-  def cavc_due_date
-    decision_event_date + 120.days if decision_event_date
-  end
-
-  def available_review_options
-    return ["cavc"] if request_issues.any? { |ri| ri.benefit_type == "fiduciary" }
-
-    %w[supplemental_claim cavc]
-  end
-
   def cancel_active_tasks
     AppealActiveTaskCancellation.new(self).call
   end
 
   def address
-    @address ||= Address.new(appellant.address) if appellant.address.present?
+    if appellant.address.present?
+      @address ||= Address.new(
+        address_line_1: appellant.address_line_1,
+        address_line_2: appellant.address_line_2,
+        address_line_3: appellant.address_line_3,
+        city: appellant.city,
+        country: appellant.country,
+        state: appellant.state,
+        zip: appellant.zip
+      )
+    end
   end
 
   # we always want to show ratings on intake
@@ -668,10 +440,18 @@ class Appeal < DecisionReview
     AppealsWithNoTasksOrAllTasksOnHoldQuery.new.ama_appeal_stuck?(self)
   end
 
+  def eligible_for_death_dismissal?(_user)
+    # Death dismissal processing is only for VACOLs/Legacy appeals
+    false
+  end
+
   private
 
-  def most_recently_assigned_to_label(tasks)
-    tasks.order(:created_at).last&.assigned_to_label
+  def set_stream_docket_number_and_stream_type
+    if receipt_date && persisted?
+      self.stream_docket_number ||= docket_number
+    end
+    self.stream_type ||= type.parameterize.underscore.to_sym
   end
 
   def maybe_create_translation_task
@@ -683,5 +463,11 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  end
+
+  # Non-vacate Appeals are not expected to have a PDM, but this method makes a
+  # best-effort attempt in either situation, and returns nil if none is found.
+  def post_decision_motion
+    PostDecisionMotion.find_by(task: tasks)
   end
 end

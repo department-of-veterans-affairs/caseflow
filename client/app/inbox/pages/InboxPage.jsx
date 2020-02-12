@@ -123,6 +123,9 @@ class InboxMessagesPage extends React.PureComponent {
     return <div className="cf-inbox-table">
       <h1>Inbox</h1>
       <hr />
+      <div>
+        Messages will remain in the intake box for 120 days. After such time, messages will be removed.
+      </div>
       <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
       <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
     </div>;

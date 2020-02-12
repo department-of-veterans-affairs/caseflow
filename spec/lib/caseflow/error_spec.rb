@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Caseflow::Error" do
   describe "ActionForbiddenError" do
     let(:error_type) { Caseflow::Error::ActionForbiddenError }

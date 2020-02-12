@@ -51,7 +51,7 @@ class MailTask < Task
           )
         end
 
-        params = modify_params(params)
+        params = modify_params_for_create(params)
         create_child_task(parent_task, user, params)
       end
     end
@@ -95,7 +95,7 @@ class MailTask < Task
   end
 
   def create_twin_of_type(params)
-    task_type = Object.const_get(params[:action])
+    task_type = Object.const_get(params[:type])
     parent_task = task_type.create!(
       appeal: appeal,
       parent: parent,

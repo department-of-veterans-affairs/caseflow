@@ -19,21 +19,15 @@ class Relationship
     end
   end
 
-  def ui_hash
-    {
-      participant_id: participant_id,
-      first_name: first_name,
-      last_name: last_name,
-      relationship_type: relationship_type,
-      default_payee_code: default_payee_code
-    }
+  def serialize
+    Intake::RelationshipSerializer.new(self).serializable_hash[:data][:attributes]
   end
-
-  private
 
   def default_payee_code
     previous_claim_payee_code || payee_code_by_relationship_type
   end
+
+  private
 
   def previous_claim_payee_code
     @previous_claim_payee_code ||= latest_end_product.try(:payee_code)

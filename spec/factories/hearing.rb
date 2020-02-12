@@ -11,7 +11,7 @@ FactoryBot.define do
     hearing_day do
       create(:hearing_day,
              regional_office: regional_office,
-             scheduled_for: Time.zone.now,
+             scheduled_for: Time.zone.today,
              judge: judge,
              request_type: regional_office.nil? ? "C" : "V")
     end
@@ -23,6 +23,7 @@ FactoryBot.define do
     scheduled_time { "8:30AM" }
     created_by { create(:user) }
     updated_by { create(:user) }
+    virtual_hearing { nil }
 
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|

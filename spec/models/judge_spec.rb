@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe Judge, :postgres do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
@@ -35,13 +32,14 @@ describe Judge, :postgres do
 
     before do
       attorneys.each do |u|
-        OrganizationsUser.add_user_to_organization(u, judge_team)
+        judge_team.add_user(u)
       end
     end
 
     subject { judge.attorneys }
 
     it "returns a list of the judge's attorneys" do
+      judge.user.reload
       expect(subject).to match_array attorneys
     end
   end

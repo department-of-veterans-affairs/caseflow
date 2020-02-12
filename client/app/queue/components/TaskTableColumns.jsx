@@ -9,13 +9,13 @@ import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 
-import { taskHasCompletedHold, hasDASRecord, collapseColumn, actionNameOfTask, regionalOfficeCity,
-  renderAppealType } from '../utils';
+import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
+import { DateString } from '../../util/DateUtil';
 
-import COPY from '../../../COPY.json';
-import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
-import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import COPY from '../../../COPY';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
+import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS';
+import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS';
 
 import {
   CATEGORIES,
@@ -25,7 +25,7 @@ import {
 export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-    name: QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
     enableFilter: true,
     tableData: tasks,
     columnName: 'appeal.docketName',
@@ -59,7 +59,7 @@ export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
 export const hearingBadgeColumn = () => {
   return {
     header: '',
-    name: QUEUE_CONFIG.HEARING_BADGE_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
     valueFunction: (task) => <HearingBadge task={task} />
   };
 };
@@ -67,7 +67,7 @@ export const hearingBadgeColumn = () => {
 export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   return {
     header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
-    name: QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
     valueFunction: (task) => <CaseDetailsLink
       task={task}
       appeal={task.appeal}
@@ -86,7 +86,7 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
 export const taskColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-    name: QUEUE_CONFIG.TASK_TYPE_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
     enableFilter: true,
     tableData: tasks,
     columnName: 'label',
@@ -95,16 +95,16 @@ export const taskColumn = (tasks, filterOptions) => {
     filterOptions,
     label: 'Filter by task',
     valueName: 'label',
-    valueFunction: (task) => actionNameOfTask(task),
+    valueFunction: (task) => task.label,
     backendCanSort: true,
-    getSortValue: (task) => actionNameOfTask(task)
+    getSortValue: (task) => task.label
   };
 };
 
 export const regionalOfficeColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
-    name: QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name,
     enableFilter: true,
     tableData: tasks,
     columnName: 'closestRegionalOffice.location_hash.city',
@@ -122,7 +122,7 @@ export const regionalOfficeColumn = (tasks, filterOptions) => {
 export const issueCountColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
-    name: QUEUE_CONFIG.ISSUE_COUNT_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
     valueFunction: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null,
     span: collapseColumn(requireDasRecord),
     backendCanSort: true,
@@ -133,7 +133,7 @@ export const issueCountColumn = (requireDasRecord) => {
 export const typeColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-    name: QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
     enableFilter: true,
     tableData: tasks,
     columnName: 'appeal.caseType',
@@ -159,7 +159,7 @@ export const typeColumn = (tasks, filterOptions, requireDasRecord) => {
 export const assignedToColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-    name: QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name,
     backendCanSort: true,
     enableFilter: true,
     tableData: tasks,
@@ -175,7 +175,7 @@ export const assignedToColumn = (tasks, filterOptions) => {
 export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
-    name: QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name,
     span: collapseColumn(requireDasRecord),
     valueFunction: (task) => {
       if (!hasDASRecord(task, requireDasRecord)) {
@@ -193,10 +193,12 @@ export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
   };
 };
 
+export const readerLinkColumnWithNewDocsIcon = (requireDasRecord) => readerLinkColumn(requireDasRecord, true);
+
 export const daysWaitingColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-    name: QUEUE_CONFIG.DAYS_WAITING_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
@@ -217,7 +219,7 @@ export const daysWaitingColumn = (requireDasRecord) => {
 export const daysOnHoldColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
-    name: QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.TASK_HOLD_LENGTH.name,
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case was placed on hold</React.Fragment>,
     align: 'center',
@@ -236,10 +238,20 @@ export const daysOnHoldColumn = (requireDasRecord) => {
 export const completedToNameColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
-    name: QUEUE_CONFIG.TASK_ASSIGNER_COLUMN,
+    name: QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name,
     backendCanSort: true,
     valueFunction: (task) =>
       task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
     getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+  };
+};
+
+export const taskCompletedDateColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
+    valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
+    backendCanSort: true,
+    getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
   };
 };

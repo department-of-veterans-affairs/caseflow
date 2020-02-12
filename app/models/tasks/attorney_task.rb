@@ -14,7 +14,7 @@ class AttorneyTask < Task
   validate :assigned_to_role_is_valid
   validate :child_attorney_tasks_are_completed, on: :create
 
-  after_update :send_back_to_judge_assign, if: :task_just_cancelled?
+  after_update :send_back_to_judge_assign, if: :attorney_task_just_cancelled?
 
   def available_actions(user)
     # Both the judge who assigned this task and the judge who is assigned the parent review task get these actions
@@ -63,8 +63,8 @@ class AttorneyTask < Task
     errors.add(:assigned_by, "has to be a judge") if assigned_by && !assigned_by.judge_in_vacols?
   end
 
-  def task_just_cancelled?
-    saved_change_to_attribute?("status") && cancelled?
+  def attorney_task_just_cancelled?
+    type.eql?(AttorneyTask.name) && saved_change_to_attribute?("status") && cancelled?
   end
 
   def send_back_to_judge_assign

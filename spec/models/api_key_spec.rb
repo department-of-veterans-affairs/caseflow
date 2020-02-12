@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe ApiKey, :postgres do
   context ".create!" do
     subject { ApiKey.create!(consumer_name: "CaseSlow") }

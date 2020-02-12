@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe NoShowHearingTask, :postgres do
   let(:appeal) { create(:appeal, :hearing_docket) }
   let(:root_task) { create(:root_task, appeal: appeal) }
@@ -28,7 +25,7 @@ describe NoShowHearingTask, :postgres do
       let!(:hearings_management_user) { create(:hearings_coordinator) }
 
       before do
-        OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)
+        HearingsManagement.singleton.add_user(hearings_management_user)
       end
 
       it "has actions available to the hearings managment org member" do
@@ -40,7 +37,7 @@ describe NoShowHearingTask, :postgres do
       let(:hearing_admin_user) { create(:user, station_id: 101) }
 
       before do
-        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+        HearingAdmin.singleton.add_user(hearing_admin_user)
       end
 
       it "has one action available to the hearing admin user" do

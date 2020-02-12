@@ -101,7 +101,7 @@ module IntakeHelpers
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      docket_type: "evidence_submission",
+      docket_type: Constants.AMA_DOCKETS.evidence_submission,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
@@ -204,6 +204,11 @@ module IntakeHelpers
     # find_all with 'minimum' will wait like find() does.
     find_all("label", text: description, minimum: 1).first.click
     fill_in("Notes", with: note) if note
+    safe_click ".add-issue"
+  end
+
+  def select_intake_no_match
+    find_all("label", text: /^No VACOLS issues were found/, minimum: 1).first.click
     safe_click ".add-issue"
   end
 
@@ -462,7 +467,7 @@ module IntakeHelpers
   end
 
   def setup_prior_claim_with_payee_code(decision_review, veteran, prior_payee_code = "10")
-    same_claimant = decision_review.claimants.first
+    same_claimant = decision_review.claimant
 
     Generators::EndProduct.build(
       veteran_file_number: veteran.file_number,
@@ -719,6 +724,7 @@ module IntakeHelpers
           diagnostic_text: "Right arm broken",
           diagnostic_type: "Bone",
           disability_id: "123",
+          disability_date: receipt_date - 5.years - 2.days,
           type_name: "Not Service Connected"
         }
       ]
@@ -781,8 +787,7 @@ module IntakeHelpers
     safe_click ".close-modal"
 
     # remove original decision issue
-    click_remove_intake_issue_by_text("currently contesting decision issue")
-    click_remove_issue_confirmation
+    click_remove_intake_issue_dropdown("currently contesting decision issue")
 
     # add new decision issue
     click_intake_add_issue
@@ -845,8 +850,7 @@ module IntakeHelpers
     expect(page).to have_content(contested_decision_issues.second.description)
     expect(page).to have_content("PTSD denied")
 
-    click_remove_intake_issue_by_text("PTSD denied")
-    click_remove_issue_confirmation
+    click_remove_intake_issue_dropdown("PTSD denied")
 
     click_intake_add_issue
     add_intake_rating_issue("Issue with legacy issue not withdrawn")
@@ -877,7 +881,7 @@ module IntakeHelpers
   # rubocop:enable Metrics/AbcSize
 
   def select_agree_to_withdraw_legacy_issues(withdraw)
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+    within_fieldset("Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?") do
       find("label", text: withdraw ? "Yes" : "N/A", match: :prefer_exact).click
     end
   end

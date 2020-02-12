@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe EndProductEstablishment, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -65,6 +62,28 @@ describe EndProductEstablishment, :postgres do
     VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
+  context "#status_type_code" do
+    subject { end_product_establishment.status_type_code }
+
+    it "returns pending" do
+      expect(subject).to eq("PEND")
+    end
+
+    context "board grant effectuation" do
+      let(:code) { "030BGR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
+
+    context "board remand" do
+      let(:code) { "040BDENR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
+  end
+
   context "#perform!" do
     subject { end_product_establishment.perform! }
 
@@ -108,7 +127,6 @@ describe EndProductEstablishment, :postgres do
         # first fetch Veteran's info
         expect(veteran.to_vbms_hash).to include(address_line1: "1234 FAKE ST")
         Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
-
         subject
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -126,7 +144,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: hash_including(address_line1: "Changed"),
           user: current_user
@@ -159,7 +178,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -189,7 +209,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "PEND"
             },
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -220,7 +241,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "PEND"
             ),
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -318,7 +340,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -807,6 +830,32 @@ describe EndProductEstablishment, :postgres do
 
         it "re-raises error" do
           expect { subject }.to raise_error(BGS::ShareError)
+        end
+      end
+
+      context "when the claim_type_code has changed outside of Caseflow" do
+        let(:claim_type_code) { "040SCNR" }
+
+        it "creates a record of the change in end product code updates" do
+          subject
+
+          epcu = end_product_establishment.end_product_code_updates.first
+
+          expect(end_product_establishment.code).to eq "030HLRR"
+          expect(epcu.code).to eq "040SCNR"
+          expect(epcu.created_at).to eq(Time.zone.now)
+        end
+
+        context "when the new claim_type_code has already been saved" do
+          it "does not create a new record" do
+            end_product_establishment.end_product_code_updates.create(code: "040SCNR", created_at: 1.hour.ago)
+
+            subject
+
+            epcus = end_product_establishment.end_product_code_updates
+            expect(epcus.count).to eq 1
+            expect(epcus.first.created_at).to eq 1.hour.ago
+          end
         end
       end
 

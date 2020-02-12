@@ -1,5 +1,7 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
+import { INTAKE_LEGACY_OPT_IN_MESSAGE } from '../../../COPY';
+import PropTypes from 'prop-types';
 
 const radioOptions = [
   { value: 'false',
@@ -19,7 +21,7 @@ export default class LegacyOptInApproved extends React.PureComponent {
     return <div className="cf-legacy-opt-in">
       <RadioField
         name="legacy-opt-in"
-        label="Did they agree to withdraw their issues from the legacy system?"
+        label={INTAKE_LEGACY_OPT_IN_MESSAGE}
         strongLabel
         vertical
         options={radioOptions}
@@ -30,3 +32,9 @@ export default class LegacyOptInApproved extends React.PureComponent {
     </div>;
   }
 }
+
+LegacyOptInApproved.propTypes = {
+  errorMessage: PropTypes.string,
+  onChange: PropTypes.func,
+  value: PropTypes.string
+};

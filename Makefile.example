@@ -42,7 +42,7 @@
 whats-next:  ## TODO
 	scripts/whats-next
 
-ready:  ## TODO
+ready:  ## Helper command that watches the docker containers to finish start up
 	h=`docker-compose ps | grep healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep healthy`; echo $$h; sleep 1; done
 
 up:  ## Start the docker containers
@@ -61,10 +61,14 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -rf public/assets
 	rm -rf tmp/capybara
 
-vacols:  ## TODO
+realclean: clean ## TODO
+	rm -rf client/node_modules
+	rm -f client/package-lock.json
+
+facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 
-facols:  ## TODO
+facols:  ## Connect directly to the FACOLS oracle database, requires sqlplus
 	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
@@ -76,30 +80,44 @@ lint:  ## Run linter for javascript and ruby
 jslint:  ## Run linter for javascript
 	cd client && yarn run lint
 
-security:  ## TODO
+security:  ## Runs brakeman vulnerability scan
 	bundle exec rake security
 
 check: test lint  ## Run tests and lint
 
-logs:  ## TODO
+logs:  ## Follow the docker logs
 	docker-compose logs -f
 
-db:  ## TODO
+db:  ## Connect to your dev postgres (caseflow) db
 	bundle exec rails dbconsole
 
 c:  ## Start rails console
 	bundle exec rails console
 
-migrate:  ## Migrate rails database
+etl-migrate:	## Migrate ETL database
+	DB=etl bundle exec rake db:migrate
+
+etl-test-prepare:
+	DB=etl bundle exec rake db:test:prepare
+
+etl-rollback:	## Rollback ETL database
+	DB=etl bundle exec rake db:rollback
+
+db-migrate:	## Migrate main Caseflow db
 	bundle exec rake db:migrate
 
-rollback:  ## Rollback rails database
+db-rollback:	## Rollback main Caseflow db
 	bundle exec rake db:rollback
 
-fresh:  ## TODO
+migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
+
+rollback: etl-rollback db-rollback	## Rollback all Rails databases
+
+fresh:  ## https://github.com/imsky/git-fresh
 	git fresh
 
 reset:  ## Resets databases
+	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
 	bundle exec rails runner scripts/enable_features_dev.rb
 
@@ -116,7 +134,7 @@ update: fresh install migrate  ## TODO
 client-test:  ## Runs javascript tests
 	cd client && yarn run build:test
 
-one-test:  ## TODO
+one-test:  ## run the test passed in
 	bundle exec rspec $$T
 
 unsafe:  ## TODO

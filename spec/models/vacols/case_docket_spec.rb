@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe VACOLS::CaseDocket, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)

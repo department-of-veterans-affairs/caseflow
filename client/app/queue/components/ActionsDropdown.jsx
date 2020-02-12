@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -13,7 +14,7 @@ import {
 import {
   dropdownStyling
 } from '../constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class ActionsDropdown extends React.PureComponent {
   changeRoute = (option) => {
@@ -48,10 +49,17 @@ class ActionsDropdown extends React.PureComponent {
   }
 }
 
+ActionsDropdown.propTypes = {
+  appealId: PropTypes.string,
+  task: PropTypes.object,
+  history: PropTypes.func,
+  resetDecisionOptions: PropTypes.func,
+  stageAppeal: PropTypes.func
+};
+
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.appeals[ownProps.appealId],
-  changedAppeals: _.keys(state.queue.stagedChanges.appeals),
-  featureToggles: state.ui.featureToggles
+  changedAppeals: _.keys(state.queue.stagedChanges.appeals)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

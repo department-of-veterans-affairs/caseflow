@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe VeteranRecordRequest, :postgres do
   let(:task) { create(:veteran_record_request_task) }
 

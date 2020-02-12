@@ -3,16 +3,8 @@ import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import { INTAKE_CORRECTION_TYPE_MODAL_TITLE, INTAKE_CORRECTION_TYPE_MODAL_COPY } from '../../../COPY.json';
-
-const correctionTypeOptions = [
-  { value: 'control',
-    displayText: 'Control' },
-  { value: 'local_quality_error',
-    displayText: 'Local Quality Error' },
-  { value: 'national_quality_error',
-    displayText: 'National Quality Error' }
-];
+import { INTAKE_CORRECTION_TYPE_MODAL_TITLE, INTAKE_CORRECTION_TYPE_MODAL_COPY } from '../../../COPY';
+import { CORRECTION_TYPE_OPTIONS } from '../constants';
 
 class CorrectionTypeModal extends React.Component {
   constructor(props) {
@@ -77,7 +69,7 @@ class CorrectionTypeModal extends React.Component {
               required
               hideLabel
               name="correctionType"
-              options={correctionTypeOptions}
+              options={CORRECTION_TYPE_OPTIONS}
               value={this.state.correctionType}
               onChange={(val) => this.handleSelect(val)}
             />
@@ -93,7 +85,9 @@ CorrectionTypeModal.propTypes = {
   onSubmit: PropTypes.func,
   cancelText: PropTypes.string,
   submitText: PropTypes.string,
-  issueIndex: PropTypes.number
+  issueIndex: PropTypes.number,
+  onSkip: PropTypes.number,
+  skipText: PropTypes.string
 };
 
 CorrectionTypeModal.defaultProps = {

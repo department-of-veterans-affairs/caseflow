@@ -7,7 +7,7 @@
     flash: flash,
     serverJobs: {
       job: job.asyncable_ui_hash,
-      notes: job.job_notes.newest_first.map(&:ui_hash),
+      notes: job.job_notes.newest_first.map(&:serialize),
       models: AsyncableJobs.models.map(&:name),
       fetchedAt: Time.zone.now,
       asyncableJobKlass: allowed_params[:asyncable_job_klass]

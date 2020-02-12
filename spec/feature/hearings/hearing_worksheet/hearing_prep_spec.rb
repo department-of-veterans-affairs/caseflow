@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
   let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
-  let!(:legacy_hearing) { create(:legacy_hearing, user: current_user) }
+  let!(:legacy_hearing) do
+    create(
+      :legacy_hearing,
+      user: current_user,
+      hearing_day: create(:hearing_day, regional_office: "RO42", request_type: HearingDay::REQUEST_TYPES[:video])
+    )
+  end
 
   scenario "Hearing worksheet page displays worksheet information" do
     visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
@@ -83,6 +86,7 @@ RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
     expect(page).to have_content("This is a note")
     expect(page).to have_content("This is a disposition")
     expect(page).to_not have_content("Service Connection")
+    expect(HearingView.where(hearing: legacy_hearing).count).to eq(1)
   end
 
   context "Multiple appeal streams" do

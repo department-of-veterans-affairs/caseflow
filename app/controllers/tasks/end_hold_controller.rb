@@ -14,4 +14,8 @@ class Tasks::EndHoldController < TasksController
   def task
     @task ||= Task.find(params[:task_id])
   end
+
+  def create_params
+    params.merge(type: task.type)
+  end
 end

@@ -9,27 +9,23 @@ import Alert from '../../../components/Alert';
 import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
 import Button from '../../../components/Button';
 import StatusMessage from '../../../components/StatusMessage';
-import { getHearingAppellantName } from './DailyDocketRowDisplayText';
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
 import { isPreviouslyScheduledHearing } from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
 import { encodeQueryParams } from '../../../util/QueryParamsUtil';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
+import UserAlerts from '../../../components/UserAlerts';
 
 const alertStyling = css({
   marginBottom: '30px'
 });
 
 const Alerts = ({
-  saveSuccessful, displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket, dailyDocketServerError
+  displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket, dailyDocketServerError
 }) => (
   <React.Fragment>
-    {saveSuccessful &&
-      <Alert type="success"
-        styling={alertStyling}
-        title={`You have successfully updated ${getHearingAppellantName(saveSuccessful)}'s hearing.`} />}
-
+    <UserAlerts />
     {displayLockSuccessMessage &&
       <Alert type="success"
         styling={alertStyling}
@@ -202,14 +198,14 @@ export default class DailyDocket extends React.Component {
         </div>
       </div>
 
-      {hasDocketHearings &&
-        <DailyDocketRows
-          hearings={docketHearings}
-          readOnly={user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule}
-          saveHearing={this.props.saveHearing}
-          openDispositionModal={this.openDispositionModal}
-          regionalOffice={regionalOffice}
-          user={user} />}
+      <DailyDocketRows
+        hearings={this.props.hearings}
+        hidePreviouslyScheduled
+        readOnly={user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule}
+        saveHearing={this.props.saveHearing}
+        openDispositionModal={this.openDispositionModal}
+        regionalOffice={regionalOffice}
+        user={user} />
 
       {!hasDocketHearings &&
         <div {...css({ marginTop: '75px' })}>
@@ -223,6 +219,7 @@ export default class DailyDocket extends React.Component {
         <div {...css({ marginTop: '75px' })}>
           <h1>Previously Scheduled</h1>
           <DailyDocketRows
+            hidePreviouslyScheduled={false}
             hearings={prevHearings}
             regionalOffice={regionalOffice}
             user={user}

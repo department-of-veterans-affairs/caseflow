@@ -7,8 +7,8 @@ import RadioField from '../../components/RadioField';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import Alert from '../../components/Alert';
 import { css } from 'glamor';
-import COPY from '../../../COPY.json';
-import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
+import COPY from '../../../COPY';
+import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
 import {
   headerStyling,
   errorStylingNoTopMargin,
@@ -40,10 +40,13 @@ const getDisplayOptions = (opts) =>
     label
   }));
 
-export const JudgeCaseQuality = ({ highlight = false, qualityAlertRef = null, onChange }) => {
-  const complexityLabel = useRef();
-  const qualityLabel = useRef();
-  const deficientQualityAlert = useRef(qualityAlertRef);
+export const JudgeCaseQuality = ({
+  highlight = false,
+  complexityLabelRef = useRef(null),
+  qualityAlertRef = useRef(null),
+  qualityLabelRef = useRef(null),
+  onChange
+}) => {
   const [quality, setQuality] = useState(null);
   const [complexity, setComplexity] = useState(null);
   const [factorsNotConsidered, setFactorsNotConsidered] = useState({});
@@ -61,11 +64,17 @@ export const JudgeCaseQuality = ({ highlight = false, qualityAlertRef = null, on
         positive_feedback: postiveFeedback
       });
     }
-  }, [quality, complexity, factorsNotConsidered, areasForImprovement, postiveFeedback]);
+  }, [
+    quality,
+    complexity,
+    factorsNotConsidered,
+    areasForImprovement,
+    postiveFeedback
+  ]);
 
   return (
     <React.Fragment>
-      <h2 {...headerStyling} ref={complexityLabel}>
+      <h2 {...headerStyling} ref={complexityLabelRef}>
         {COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL}
       </h2>
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD}</h3>
@@ -80,7 +89,7 @@ export const JudgeCaseQuality = ({ highlight = false, qualityAlertRef = null, on
         options={complexityOpts}
       />
       <hr {...hrStyling} />
-      <h2 {...headerStyling} ref={qualityLabel}>
+      <h2 {...headerStyling} ref={qualityLabelRef}>
         {COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL}
       </h2>
       <h3>{COPY.JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD}</h3>
@@ -114,17 +123,27 @@ export const JudgeCaseQuality = ({ highlight = false, qualityAlertRef = null, on
         </div>
       </div>
       {qualityIsDeficient(quality) && (
-        <Alert ref={deficientQualityAlert} type="info" scrollOnAlert={false} styling={qualityOfWorkAlertStyling}>
-          Please provide more details about <b>quality of work</b>.{' '}
-          If none of these apply to this case, please share{' '}
-          <b>additional comments</b> below.
+        <Alert
+          ref={qualityAlertRef}
+          type="info"
+          scrollOnAlert={false}
+          styling={qualityOfWorkAlertStyling}
+        >
+          Please provide more details about <b>quality of work</b>. If none of
+          these apply to this case, please share <b>additional comments</b> below.
         </Alert>
       )}
       <div {...css(setWidth('100%'), marginTop(4))}>
-        <h3 {...css(headerStyling, { float: qualityIsDeficient(quality) ? 'left' : '' })}>
+        <h3
+          {...css(headerStyling, {
+            float: qualityIsDeficient(quality) ? 'left' : ''
+          })}
+        >
           {COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
         </h3>
-        {qualityIsDeficient(quality) && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
+        {qualityIsDeficient(quality) && (
+          <span {...css(subH3Styling, redText)}>Choose at least one</span>
+        )}
       </div>
       <div className="" {...fullWidth}>
         <h4>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_NOT_CONSIDERED}</h4>
@@ -144,7 +163,9 @@ export const JudgeCaseQuality = ({ highlight = false, qualityAlertRef = null, on
         />
       </div>
       <div className="" {...fullWidth}>
-        <h4>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_AREAS_FOR_IMPROVEMENT}</h4>
+        <h4>
+          {COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_AREAS_FOR_IMPROVEMENT}
+        </h4>
         <CheckboxGroup
           hideLabel
           vertical
@@ -155,7 +176,11 @@ export const JudgeCaseQuality = ({ highlight = false, qualityAlertRef = null, on
               [event.target.getAttribute('id')]: event.target.checked
             }))
           }
-          errorState={highlight && qualityIsDeficient(quality) && isEmpty(areasForImprovement)}
+          errorState={
+            highlight &&
+            qualityIsDeficient(quality) &&
+            isEmpty(areasForImprovement)
+          }
           options={getDisplayOptions('areas_for_improvement')}
           styling={fullWidthCheckboxLabels}
         />
@@ -167,6 +192,7 @@ export const JudgeCaseQuality = ({ highlight = false, qualityAlertRef = null, on
 JudgeCaseQuality.propTypes = {
   onChange: PropTypes.func,
   highlight: PropTypes.bool,
-  qualityAlertRef: PropTypes.shape({ current: PropTypes.elementType }),
-  qualityLabelRef: PropTypes.shape({ current: PropTypes.elementType })
+  complexityLabelRef: PropTypes.object,
+  qualityAlertRef: PropTypes.object,
+  qualityLabelRef: PropTypes.object
 };

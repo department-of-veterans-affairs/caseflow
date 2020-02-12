@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe User, :all_dbs do
   let(:css_id) { "TomBrady" }
   let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
@@ -72,7 +69,7 @@ describe User, :all_dbs do
     let!(:other_users) { create_list(:user, 5) }
     before do
       users.each do |user|
-        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        HearingsManagement.singleton.add_user(user)
       end
     end
     it "returns a list of hearing coordinators" do
@@ -292,7 +289,7 @@ describe User, :all_dbs do
     subject { user.selectable_organizations }
 
     context "when user is not a judge in vacols and does not have a judge team" do
-      it "assign cases is not returned" do
+      it "does not return assigned cases link for judge" do
         is_expected.to be_empty
       end
     end
@@ -300,10 +297,10 @@ describe User, :all_dbs do
     context "when user is a judge in vacols" do
       let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 
-      it "assign cases is returned" do
+      it "returns assigned cases link for judge" do
         is_expected.to include(
-          name: "Assign",
-          url: format("queue/%<id>s/assign", id: user.id)
+          name: "Assign #{user.css_id}",
+          url: format("/queue/%<id>s/assign", id: user.id)
         )
       end
     end
@@ -311,11 +308,70 @@ describe User, :all_dbs do
     context "when user has a judge team" do
       before { JudgeTeam.create_for_judge(user) }
 
-      it "assign cases is returned" do
+      it "returns assigned cases link for judge" do
+        user.reload
         is_expected.to include(
-          name: "Assign",
-          url: format("queue/%<id>s/assign", id: user.id)
+          name: "Assign #{user.css_id}",
+          url: format("/queue/%<id>s/assign", id: user.id)
         )
+      end
+    end
+
+    context "when the user is a judge team admin" do
+      let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
+      let!(:judge) { judge_team.judge }
+
+      before do
+        OrganizationsUser.make_user_admin(user, judge_team)
+        allow(JudgeTeam).to receive(:for_judge).with(user).and_return(nil)
+        allow(user).to receive(:judge_in_vacols?).and_return(false)
+      end
+
+      it "does not return assigned cases link for judge" do
+        is_expected.to be_empty
+      end
+
+      context "when special case movement is enabled" do
+        before { FeatureToggle.enable!(:judge_admin_scm) }
+        after { FeatureToggle.disable!(:judge_admin_scm) }
+
+        it "returns assigned cases link for judge" do
+          is_expected.to include(
+            name: "Assign #{judge.css_id}",
+            url: format("/queue/%<id>s/assign", id: judge.id)
+          )
+          is_expected.not_to include(
+            name: "Assign #{user.css_id}",
+            url: format("/queue/%<id>s/assign", id: user.id)
+          )
+        end
+      end
+    end
+  end
+
+  context "#member_of_organization?" do
+    let(:org) { create(:organization) }
+    let(:user) { create(:user) }
+
+    subject { user.member_of_organization?(org) }
+
+    context "when the organization does not exist" do
+      let(:org) { nil }
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the current user is not a member of the organization" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the user is a member of the organization" do
+      before { org.add_user(user) }
+      it "returns true" do
+        expect(subject).to eq(true)
       end
     end
   end
@@ -406,7 +462,7 @@ describe User, :all_dbs do
 
     context "when appeal has task assigned to user" do
       let(:appeal) { create(:appeal) }
-      let!(:task) { create(:task, type: "GenericTask", appeal: appeal, assigned_to: user) }
+      let!(:task) { create(:task, appeal: appeal, assigned_to: user) }
 
       it "should return true" do
         expect(user.appeal_has_task_assigned_to_user?(appeal)).to eq(true)
@@ -485,6 +541,14 @@ describe User, :all_dbs do
         expect(User).to_not receive(:find_by_css_id)
         session["user"]["pg_user_id"] = user.id
         expect(subject).to eq user
+      end
+
+      it "resets pg_user_id when it is not found" do
+        user = create(:user, css_id: css_id)
+        expect(User).to receive(:find_by_css_id).and_call_original
+        session["user"]["pg_user_id"] = user.id + 1000 # integer not found
+        expect(subject).to eq user
+        expect(session["user"]["pg_user_id"]).to eq user.id
       end
     end
 
@@ -566,7 +630,7 @@ describe User, :all_dbs do
     let(:user) { create(:user) }
 
     context "when user belongs to one organization but is not an admin" do
-      before { OrganizationsUser.add_user_to_organization(user, org) }
+      before { org.add_user(user) }
       it "should return an empty list" do
         expect(user.administered_teams).to eq([])
       end
@@ -584,7 +648,7 @@ describe User, :all_dbs do
       let(:admin_orgs) { create_list(:organization, 3) }
 
       before do
-        member_orgs.each { |o| OrganizationsUser.add_user_to_organization(user, o) }
+        member_orgs.each { |o| o.add_user(user) }
         admin_orgs.each { |o| OrganizationsUser.make_user_admin(user, o) }
       end
       it "should return a list of all teams user is an admin for" do
@@ -605,7 +669,32 @@ describe User, :all_dbs do
     end
 
     context "when the user is a member of some organizations" do
-      before { OrganizationsUser.add_user_to_organization(user, create(:organization)) }
+      before { create(:organization).add_user(user) }
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe ".can_withdraw_issues?" do
+    let(:user) { create(:user) }
+
+    subject { user.can_withdraw_issues? }
+
+    context "when the current user is not a member of Case-review Organization" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+      context "when the user is at a regional office" do
+        before { allow(user).to receive(:regional_office).and_return("RO85") }
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+    end
+
+    context "when the user is a member of Case review Organization" do
+      before { BvaIntake.singleton.add_user(user) }
       it "returns true" do
         expect(subject).to eq(true)
       end
@@ -636,6 +725,131 @@ describe User, :all_dbs do
         expect(subject).to eq true
         expect(user.reload.status).to eq status
         expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+      end
+
+      context "when the user is a judge with a JudgeTeam" do
+        let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
+        let(:user) { judge_team.judge }
+
+        before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
+
+        context "when marking the user inactive" do
+          it "marks their JudgeTeam as inactive" do
+            expect(subject).to eq true
+            expect(judge_team.reload.status).to eq status
+            expect(judge_team.judge).to eq user
+          end
+        end
+
+        context "when making an inactive user active" do
+          let(:status) { Constants.USER_STATUSES.active }
+
+          before { user.update_status!(Constants.USER_STATUSES.inactive) }
+
+          it "marks their JudgeTeam as active" do
+            expect(judge_team.reload.status).to eq Constants.USER_STATUSES.inactive
+            expect(subject).to eq true
+            expect(judge_team.reload.status).to eq status
+          end
+        end
+      end
+
+      context "when the user is a member of many orgs" do
+        let(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
+        let(:other_orgs) { [Colocated.singleton, create(:organization)] }
+
+        before { other_orgs.each { |org| org.add_user(user) } }
+
+        context "when marking the user inactive" do
+          before { judge_team.add_user(user) }
+
+          it "removes users from all organizations, including JudgeTeam" do
+            expect(user.organizations.size).to eq 3
+            expect(user.selectable_organizations.length).to eq 2
+            expect(subject).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.organizations.size).to eq 0
+            expect(user.selectable_organizations.length).to eq 0
+          end
+        end
+
+        context "when marking the admin inactive", skip: "flaky test" do
+          before do
+            OrganizationsUser.make_user_admin(user, judge_team)
+            allow(user).to receive(:judge_in_vacols?).and_return(false)
+          end
+
+          it "removes admin from all organizations, including JudgeTeam" do
+            if FeatureToggle.enabled?(:judge_admin_scm)
+              expect(judge_team.judge).not_to eq user
+              expect(user.selectable_organizations.length).to eq 3
+            else
+              expect(user.selectable_organizations.length).to eq 2
+            end
+
+            expect(judge_team.admins).to include user
+            expect(user.organizations.size).to eq 3
+            expect(subject).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.organizations.size).to eq 0
+            expect(user.selectable_organizations.length).to eq 0
+          end
+        end
+
+        context "when marking the judge inactive" do
+          let(:judge_team) { JudgeTeam.create_for_judge(user) }
+          before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
+
+          it "removes judge from all orgs except their own JudgeTeam" do
+            expect(user.judge?)
+            expect(judge_team.judge).to eq user
+            expect(user.organizations.size).to eq 3
+            expect(user.selectable_organizations.length).to eq 3
+            expect(user.update_status!(status)).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(judge_team.judge).to eq user
+            expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
+            # Every judge in vacols should be able to see their assign page, even if they don't have a judge team
+            expect(user.selectable_organizations.length).to eq 1
+          end
+
+          context "when judge is a non-JudgeTeamLead in another JudgeTeam" do
+            let(:judge_team2) { JudgeTeam.create_for_judge(create(:user)) }
+            before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
+            before { judge_team2.add_user(user) }
+
+            it "removes judge from all orgs (including JudgeTeams) except their own JudgeTeam" do
+              expect(user.judge?)
+              expect(judge_team.judge).to eq user
+              expect(user.organizations.size).to eq 4
+              expect(user.selectable_organizations.length).to eq 3
+              expect(user.update_status!(status)).to eq true
+              expect(user.reload.status).to eq status
+              expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+              expect(judge_team.judge).to eq user
+              expect(user.organizations.size).to eq 0 # 0 since judge_team is inactive
+              # Every judge in vacols should be able to see their assign page, even if they don't have a judge team
+              expect(user.selectable_organizations.length).to eq 1
+            end
+          end
+        end
+
+        context "when marking the user active" do
+          let(:user) { create(:user, status: Constants.USER_STATUSES.inactive) }
+          let(:status) { Constants.USER_STATUSES.active }
+
+          it "does not remove the user from any organizations" do
+            expect(user.selectable_organizations.length).to eq 2
+            expect(subject).to eq true
+            expect(user.reload.status).to eq status
+            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(user.selectable_organizations.length).to eq 2
+            expect(user.selectable_organizations).to include Colocated.singleton
+          end
+        end
       end
     end
   end

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.feature "User organization", :postgres do
   let(:role) { "org_role" }
   let!(:user) { User.authenticate!(user: create(:user, roles: [role])) }
@@ -12,7 +9,7 @@ RSpec.feature "User organization", :postgres do
   let!(:user_without_role) { create(:user, full_name: "without role") }
 
   context "When user is in the organization but not an admin" do
-    before { OrganizationsUser.add_user_to_organization(user, organization) }
+    before { organization.add_user(user) }
 
     scenario "Adds and removes users from the organization" do
       visit organization.user_admin_path
@@ -53,6 +50,7 @@ RSpec.feature "User organization", :postgres do
       expect(page).to have_content(format(COPY::USER_MANAGEMENT_PAGE_TITLE, organization.name))
 
       find(".Select-control", text: COPY::USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT).click
+      fill_in("Add user", with: user_with_role.css_id)
       expect(page).to have_content(user_with_role.full_name)
       expect(page).to_not have_content(user_without_role.full_name)
 
@@ -70,7 +68,7 @@ RSpec.feature "User organization", :postgres do
     context "when there are many users in the organization" do
       let(:other_org_user) { create(:user) }
       before do
-        OrganizationsUser.add_user_to_organization(other_org_user, organization)
+        organization.add_user(other_org_user)
       end
 
       it "allows us to change admin rights for users in the organization" do
@@ -79,7 +77,7 @@ RSpec.feature "User organization", :postgres do
         page.assert_selector("button", text: COPY::USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 1)
         expect(organization.user_is_admin?(other_org_user)).to eq(false)
 
-        click_on("Make-user-admin-#{other_org_user.id}")
+        click_on("Add-team-admin-#{other_org_user.id}")
 
         # Now that both members of the organization are admins we should see this text twice.
         page.assert_selector("button", text: COPY::USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 2)
@@ -96,7 +94,7 @@ RSpec.feature "User organization", :postgres do
       let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
 
       before do
-        OrganizationsUser.add_user_to_organization(user, judgeteam)
+        judgeteam.add_user(user)
       end
 
       it "Organization task list view shows queue switcher dropdown" do
@@ -133,7 +131,7 @@ RSpec.feature "User organization", :postgres do
   context "When organization is a BusinessLine" do
     let!(:organization) { create(:business_line, url: "lob", name: "LOB") }
 
-    before { OrganizationsUser.add_user_to_organization(user, organization) }
+    before { organization.add_user(user) }
 
     scenario "Redirects to /decision_reviews equivalent" do
       visit organization.path

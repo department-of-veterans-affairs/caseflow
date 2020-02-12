@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<%= render "layouts/head" %>
+<body class="cf-app-<%= application %>">
+  <div class="cf-content">
+    <%= yield %>
+  </div>
+</body>
+</html>
+<% if Rails.application.config.build_version %>
+    <!-- <%= Rails.application.config.build_version.to_s.html_safe %> -->
+<% end %>

@@ -1,6 +1,7 @@
 import { css } from 'glamor';
 import _ from 'lodash';
 import * as React from 'react';
+import PropTypes from 'prop-types';
 
 import Tooltip from './Tooltip';
 import { COLORS } from '../constants/AppConstants';
@@ -24,8 +25,13 @@ const DocketTypeBadge = ({ name, number }) => {
   const docketName = name === 'hearing' ? 'hearing_request' : name;
 
   return <Tooltip id={`badge-${number}`} text={_.startCase(_.toLower(docketName))} position="bottom">
-    <span {...badgeStyling}>{_.toUpper(docketName.charAt(0))}</span>
+    <span {...badgeStyling} aria-label={_.startCase(_.toLower(docketName))}>{_.toUpper(docketName.charAt(0))}</span>
   </Tooltip>;
+};
+
+DocketTypeBadge.propTypes = {
+  name: PropTypes.string,
+  number: PropTypes.number
 };
 
 export default DocketTypeBadge;

@@ -1,22 +1,19 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe TaskActionRepository, :all_dbs do
   describe "#assign_to_user_data" do
     let(:organization) { create(:organization, name: "Organization") }
-    let(:users) { create_list(:user, 3) }
+    let(:users) { create_list(:user, 3) + create_list(:user, 2, :inactive) }
 
     before do
-      allow(organization).to receive(:users).and_return(users)
+      users.each { |user| organization.add_user(user) }
     end
 
     context "when assigned_to is an organization" do
-      let(:task) { create(:generic_task, assigned_to: organization) }
+      let(:task) { create(:ama_task, assigned_to: organization) }
 
-      it "should return all members" do
-        match_users = users.map { |u| { label: u.full_name, value: u.id } }
+      it "should return all active members" do
+        match_users = users.reject(&:inactive?).map { |u| { label: u.full_name, value: u.id } }
         expect(TaskActionRepository.assign_to_user_data(task)[:options]).to match_array match_users
       end
 
@@ -26,17 +23,17 @@ describe TaskActionRepository, :all_dbs do
     end
 
     context "when assigned_to's parent is an organization" do
-      let(:parent) { create(:generic_task, assigned_to: organization) }
-      let(:task) { create(:generic_task, assigned_to: users.first, parent: parent) }
+      let(:parent) { create(:ama_task, assigned_to: organization) }
+      let(:task) { create(:ama_task, assigned_to: users.first, parent: parent) }
 
       it "should return all members except user" do
-        user_output = users[1..users.length - 1].map { |u| { label: u.full_name, value: u.id } }
+        user_output = users[1..users.length - 1].reject(&:inactive?).map { |u| { label: u.full_name, value: u.id } }
         expect(TaskActionRepository.assign_to_user_data(task)[:options]).to match_array(user_output)
       end
     end
 
     context "when assigned_to is a user" do
-      let(:task) { create(:generic_task, assigned_to: users.first) }
+      let(:task) { create(:ama_task, assigned_to: users.first) }
 
       it "should return all members except user" do
         expect(TaskActionRepository.assign_to_user_data(task)[:options]).to match_array([])
@@ -68,14 +65,14 @@ describe TaskActionRepository, :all_dbs do
       let(:attorney_names) { ["Jesse Abrecht", "Brenda Akery", "Crystal Andregg"] }
 
       before do
-        OrganizationsUser.add_user_to_organization(attorney, judge_team)
+        judge_team.add_user(attorney)
 
         attorney_names.each do |attorney_name|
           another_attorney_on_the_team = create(
             :user, station_id: User::BOARD_STATION_ID, full_name: attorney_name
           )
           create(:staff, :attorney_role, user: another_attorney_on_the_team)
-          OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judge_team)
+          judge_team.add_user(another_attorney_on_the_team)
         end
       end
 
@@ -97,7 +94,7 @@ describe TaskActionRepository, :all_dbs do
           other_teams_attorneys.each do |atty_user|
             create(:staff, :attorney_role, user: atty_user)
             other_judge_team = JudgeTeam.create_for_judge(create(:user))
-            OrganizationsUser.add_user_to_organization(atty_user, other_judge_team)
+            other_judge_team.add_user(atty_user)
           end
         end
 
@@ -112,7 +109,7 @@ describe TaskActionRepository, :all_dbs do
   end
 
   describe "#cancel_task_data" do
-    let(:task) { create(:generic_task, assigned_by_id: assigner_id) }
+    let(:task) { create(:ama_task, assigned_by_id: assigner_id) }
     subject { TaskActionRepository.cancel_task_data(task) }
 
     context "when the task has no assigner" do

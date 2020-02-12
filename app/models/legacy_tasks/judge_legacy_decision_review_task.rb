@@ -10,6 +10,8 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
   end
 
   def available_actions(current_user, _role)
+    # This must check judge_in_vacols? rather than role as judge, otherwise acting
+    # VLJs cannot check out
     return [] if current_user != assigned_to || !current_user.judge_in_vacols?
 
     [

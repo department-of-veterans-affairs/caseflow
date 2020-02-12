@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe JudgeRepository, :all_dbs do
   let(:staff_count) { 3 }
 

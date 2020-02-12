@@ -40,7 +40,9 @@ class Api::V2::Appeals
   def all_reviews_and_appeals
     hlr_json = ::V2::HLRStatusSerializer.new(hlrs, is_collection: true).serializable_hash
     sc_json = ::V2::SCStatusSerializer.new(supplemental_claims, is_collection: true).serializable_hash
-    appeal_json = ::V2::AppealStatusSerializer.new(appeals, is_collection: true).serializable_hash
+    appeal_json = ::V2::AppealStatusSerializer.new(
+      appeals.map(&:decorated_with_status), is_collection: true
+    ).serializable_hash
     legacy_appeal_json = ::V2::LegacyAppealStatusSerializer.new(legacy_appeals, is_collection: true).serializable_hash
 
     { data: hlr_json[:data] + sc_json[:data] + appeal_json[:data] + legacy_appeal_json[:data] }

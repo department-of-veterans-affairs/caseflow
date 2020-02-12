@@ -58,7 +58,7 @@ class RampRefilingIntake < Intake
       receipt_date: detail.receipt_date,
       election_receipt_date: detail.election_receipt_date,
       appeal_docket: detail.appeal_docket,
-      issues: ramp_elections_with_decisions.map(&:issues).flatten.map(&:ui_hash),
+      issues: ramp_elections_with_decisions.map(&:issues).flatten.map(&:serialize),
       end_product_description: detail.end_product_description
     )
   end

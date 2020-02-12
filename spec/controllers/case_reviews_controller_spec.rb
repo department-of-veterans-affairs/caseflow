@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
   before do
     Fakes::Initializer.load!
@@ -41,20 +38,27 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
                 "document_id": "12345678.1234",
                 "overtime": true,
                 "note": "something",
-                "issues": [{ "description": "wonderful life",
-                             "benefit_type": "pension",
-                             "diagnostic_code": "5001",
-                             "request_issue_ids": [request_issue1.id, request_issue3.id] },
-                           { "disposition": "remanded", "description": "great moments",
-                             "benefit_type": "vha",
-                             "diagnostic_code": "5001",
-                             "request_issue_ids": [request_issue2.id],
-                             "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
+                "issues": [
+                  {
+                    "description": "wonderful life",
+                    "benefit_type": "pension",
+                    "diagnostic_code": "5001",
+                    "request_issue_ids": [request_issue1.id, request_issue3.id]
+                  },
+                  {
+                    "disposition": "remanded",
+                    "description": "great moments",
+                    "benefit_type": "vha",
+                    "diagnostic_code": "5001",
+                    "request_issue_ids": [request_issue2.id],
+                    "remand_reasons": [{ "code": "va_records", "post_aoj": true }]
+                  }
+                ]
               }
             end
 
             it "should not be successful" do
-              post :complete, params: { task_id: task.id, tasks: params }
+              post :complete, params: { task_id: task.id, tasks: params }, as: :json
               expect(response.status).to eq 400
               response_body = JSON.parse(response.body)
               msg = "Validation failed: Disposition can't be blank, Disposition is not included in the list"
@@ -162,7 +166,7 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
 
         before do
           # Add somebody to the BVA dispatch team so automatic task assignment for AMA cases succeeds.
-          OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+          BvaDispatch.singleton.add_user(create(:user))
         end
 
         context "when all parameters are present to send to sign a decision" do

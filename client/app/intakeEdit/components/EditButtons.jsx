@@ -11,7 +11,7 @@ import { issueCountSelector } from '../../intake/selectors';
 import { requestIssuesUpdate } from '../actions/edit';
 import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../intake/constants';
 import SaveAlertConfirmModal from './SaveAlertConfirmModal';
-import { validateDate } from '../../intake/util/issues';
+import PropTypes from 'prop-types';
 
 class SaveButtonUnconnected extends React.Component {
   constructor(props) {
@@ -117,9 +117,11 @@ class SaveButtonUnconnected extends React.Component {
 
     const withdrawDateError = new Date(withdrawalDate) < new Date(receiptDate) || new Date(withdrawalDate) > new Date();
 
+    const validateWithdrawDateError = withdrawalDate && !withdrawDateError;
+
     const withdrawDateValid = _.every(
       addedIssues, (issue) => !issue.withdrawalPending
-    ) || (validateDate(withdrawalDate) && !withdrawDateError);
+    ) || validateWithdrawDateError;
 
     const saveDisabled = _.isEqual(
       addedIssues, originalIssues
@@ -197,6 +199,23 @@ class SaveButtonUnconnected extends React.Component {
   }
 }
 
+SaveButtonUnconnected.propTypes = {
+  addedIssues: PropTypes.array,
+  originalIssues: PropTypes.array,
+  requestStatus: PropTypes.object,
+  veteranValid: PropTypes.bool,
+  processedInCaseflow: PropTypes.bool,
+  withdrawalDate: PropTypes.string,
+  receiptDate: PropTypes.string,
+  requestIssuesUpdate: PropTypes.func,
+  formType: PropTypes.string,
+  claimId: PropTypes.string,
+  history: PropTypes.object,
+  state: PropTypes.shape({
+    addedIssues: PropTypes.array
+  })
+};
+
 const SaveButton = connect(
   (state) => ({
     claimId: state.claimId,
@@ -237,6 +256,12 @@ class CancelEditButtonUnconnected extends React.PureComponent {
   }
 }
 
+CancelEditButtonUnconnected.propTypes = {
+  history: PropTypes.object,
+  formType: PropTypes.string,
+  claimId: PropTypes.string
+};
+
 const CancelEditButton = connect(
   (state) => ({
     formType: state.formType,
@@ -260,3 +285,7 @@ export default class EditButtons extends React.PureComponent {
       <IssueCounterConnected />
     </div>
 }
+
+EditButtons.propTypes = {
+  history: PropTypes.object
+};

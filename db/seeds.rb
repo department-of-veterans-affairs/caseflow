@@ -61,7 +61,7 @@ class SeedDB
     special_case_movement_user = User.create(css_id: "BVAGGREEN",
                                              station_id: 101,
                                              full_name: "Rosalie SpecialCaseMovement Dunkle")
-    OrganizationsUser.add_user_to_organization(special_case_movement_user, SpecialCaseMovementTeam.singleton)
+    SpecialCaseMovementTeam.singleton.add_user(special_case_movement_user)
     special_case_movement_admin = User.create(css_id: "BVAGAQUA",
                                               station_id: 101,
                                               full_name: "Bryan SpecialCaseMovementAdmin Beekman")
@@ -110,7 +110,7 @@ class SeedDB
     u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
     existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
     Functions.grant!("System Admin", users: existing_sysadmins + [u.css_id])
-    OrganizationsUser.add_user_to_organization(u, Bva.singleton)
+    Bva.singleton.add_user(u)
   end
 
   def create_judge_teams
@@ -118,20 +118,20 @@ class SeedDB
       judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
       judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
       h[:attorneys].each do |css_id|
-        OrganizationsUser.add_user_to_organization(User.find_or_create_by(css_id: css_id, station_id: 101), judge_team)
+        judge_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
       end
     end
   end
 
   def create_transcription_team
     transcription_member = User.find_or_create_by(css_id: "TRANSCRIPTION_USER", station_id: 101)
-    OrganizationsUser.add_user_to_organization(transcription_member, TranscriptionTeam.singleton)
+    TranscriptionTeam.singleton.add_user(transcription_member)
   end
 
   def create_hearings_user_and_tasks
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
-    OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
-    OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
+    HearingsManagement.singleton.add_user(hearings_member)
+    HearingAdmin.singleton.add_user(hearings_member)
 
     create_different_hearings_tasks
     create_change_hearing_disposition_task
@@ -139,7 +139,7 @@ class SeedDB
 
   def create_edit_hearings_user
     hearings_user = User.create(css_id: "BVAYELLOW", station_id: 101, full_name: "Build and Edit Hearing Schedule", roles: ["Edit HearSched", "Build HearSched"])
-    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(hearings_user)
   end
 
   def create_different_hearings_tasks
@@ -201,11 +201,11 @@ class SeedDB
   def create_colocated_users
     secondary_user = FactoryBot.create(:user, full_name: "Secondary VLJ support staff", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: secondary_user, sdept: "DSP")
-    OrganizationsUser.add_user_to_organization(secondary_user, Colocated.singleton)
+    Colocated.singleton.add_user(secondary_user)
 
     user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
-    OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+    Colocated.singleton.add_user(user)
 
     admin = User.create(css_id: "VLJ_SUPPORT_ADMIN", station_id: 101, full_name: "VLJ Support admin", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: admin, sdept: "DSP")
@@ -226,12 +226,16 @@ class SeedDB
         full_name: "#{name} - VSO user",
         roles: %w[VSO]
       )
-      OrganizationsUser.add_user_to_organization(u, vso)
+      vso.add_user(u)
 
       # Assign one IHP task to each member of the VSO team and leave some IHP tasks assigned to the organization.
       [true, false].each do |assign_to_user|
         a = FactoryBot.create(:appeal)
         root_task = FactoryBot.create(:root_task, appeal: a)
+        FactoryBot.create(
+          :hearing,
+          appeal: a
+        )
         ihp_task = FactoryBot.create(
           :informal_hearing_presentation_task,
           parent: root_task,
@@ -266,7 +270,7 @@ class SeedDB
         full_name: "#{name} - VSO user",
         roles: %w[VSO]
       )
-      OrganizationsUser.add_user_to_organization(u, vso)
+      vso.add_user(u)
 
       a = FactoryBot.create(:appeal)
       root_task = FactoryBot.create(:root_task, appeal: a)
@@ -283,18 +287,18 @@ class SeedDB
     nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{n}", full_name: "NCA team member #{n}")
-      OrganizationsUser.add_user_to_organization(u, nca)
+      nca.add_user(u)
     end
 
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member #{n}")
-      OrganizationsUser.add_user_to_organization(u, Translation.singleton)
+      Translation.singleton.add_user(u)
     end
   end
 
   def create_qr_user
     qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "Quality Reviewer")
-    OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
+    QualityReview.singleton.add_user(qr_user)
 
     # Create QR tasks; one assigned just to the QR org and three assigned both to the org and a QR user.
     create_task_at_quality_review
@@ -305,7 +309,7 @@ class SeedDB
 
   def create_aod_user_and_tasks
     u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
-    OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
+    AodTeam.singleton.add_user(u)
 
     root_task = FactoryBot.create(:root_task)
     mail_task = ::AodMotionMailTask.create!(
@@ -322,27 +326,27 @@ class SeedDB
 
   def create_privacy_user
     u = User.create!(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Privacy and FOIA team member")
-    OrganizationsUser.add_user_to_organization(u, PrivacyTeam.singleton)
+    PrivacyTeam.singleton.add_user(u)
   end
 
   def create_lit_support_user
     u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Litigation Support team member")
-    OrganizationsUser.add_user_to_organization(u, LitigationSupport.singleton)
+    LitigationSupport.singleton.add_user(u)
   end
 
   def create_pulac_cerullo_user
     u = User.create!(station_id: 101, css_id: "BVAKSOSNA", full_name: "KATHLEEN SOSNA")
-    OrganizationsUser.add_user_to_organization(u, PulacCerullo.singleton)
+    PulacCerullo.singleton.add_user(u)
   end
 
   def create_mail_team_user
     u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Mail team member")
-    OrganizationsUser.add_user_to_organization(u, MailTeam.singleton)
+    MailTeam.singleton.add_user(u)
   end
 
   def create_bva_dispatch_user_with_tasks
     u = User.find_by(css_id: "BVAGWHITE")
-    OrganizationsUser.add_user_to_organization(u, BvaDispatch.singleton)
+    BvaDispatch.singleton.add_user(u)
 
     [42, 66, 13].each do |rand_seed|
       create_task_at_bva_dispatch(rand_seed)
@@ -622,8 +626,8 @@ class SeedDB
       request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
-    es = "evidence_submission"
-    dr = "direct_review"
+    es = Constants.AMA_DOCKETS.evidence_submission
+    dr = Constants.AMA_DOCKETS.direct_review
     # Older style, tasks to be created later
     [
       { number_of_claimants: nil, veteran_file_number: "783740847", docket_type: es, request_issue_count: 3 },
@@ -667,6 +671,23 @@ class SeedDB
       )
     end
 
+    # Create AMA tasks ready for distribution
+    (1..30).each do |num|
+      vet_file_number = "3213213%02d" % num
+      FactoryBot.create(
+        :appeal,
+        :ready_for_distribution,
+        number_of_claimants: 1,
+        active_task_assigned_at: Time.zone.now,
+        veteran_file_number: vet_file_number,
+        docket_type: Constants.AMA_DOCKETS.direct_review,
+        closest_regional_office: "RO17",
+        request_issues: FactoryBot.create_list(
+          :request_issue, 2, :nonrating, notes: notes
+        )
+      )
+    end
+
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
     LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
     LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
@@ -692,7 +713,7 @@ class SeedDB
       same_office: false,
       benefit_type: "compensation"
     )
-    higher_level_review.create_claimants!(
+    higher_level_review.create_claimant!(
       participant_id: "5382910292",
       payee_code: "10"
     )
@@ -855,7 +876,6 @@ class SeedDB
   def create_task_at_colocated(appeal, judge, attorney, trait = ColocatedTask.actions_assigned_to_colocated.sample.to_sym)
     parent = FactoryBot.create(
       :ama_judge_decision_review_task,
-      :on_hold,
       assigned_to: judge,
       appeal: appeal,
       parent: create_root_task(appeal)
@@ -863,7 +883,6 @@ class SeedDB
 
     atty_task = FactoryBot.create(
       :ama_attorney_task,
-      :on_hold,
       assigned_to: attorney,
       assigned_by: judge,
       parent: parent,
@@ -893,7 +912,6 @@ class SeedDB
   def create_task_at_attorney_review(appeal, judge, attorney)
     parent = FactoryBot.create(
       :ama_judge_decision_review_task,
-      :on_hold,
       assigned_to: judge,
       appeal: appeal,
       parent: create_root_task(appeal)
@@ -987,7 +1005,6 @@ class SeedDB
     FactoryBot.create(:staff, :judge_role, user: judge)
     judge_task = FactoryBot.create(
       :ama_judge_decision_review_task,
-      :on_hold,
       assigned_to: judge,
       appeal: appeal,
       parent: root_task
@@ -1005,7 +1022,7 @@ class SeedDB
     )
 
     judge_team = JudgeTeam.create_for_judge(judge)
-    OrganizationsUser.add_user_to_organization(atty, judge_team)
+    judge_team.add_user(atty)
 
     appeal.request_issues.each do |request_issue|
       FactoryBot.create(
@@ -1051,7 +1068,7 @@ class SeedDB
     create_colocated_legacy_tasks(attorney)
 
     FactoryBot.create_list(
-      :generic_task,
+      :ama_task,
       5,
       assigned_by: judge,
       assigned_to: Translation.singleton,
@@ -1072,6 +1089,25 @@ class SeedDB
       :with_post_intake_tasks,
       docket_type: Constants.AMA_DOCKETS.direct_review
     )
+
+    create_tasks_at_acting_judge
+  end
+
+  def create_tasks_at_acting_judge
+    attorney = User.find_by(css_id: "BVASCASPER1")
+    judge = User.find_by(css_id: "BVAAABSHIRE")
+
+    acting_judge = FactoryBot.create(:user, css_id: "BVAACTING", station_id: 101, full_name: "AVLJ - Acting judge")
+    FactoryBot.create(:staff, :attorney_judge_role, user: acting_judge)
+
+    JudgeTeam.create_for_judge(acting_judge)
+    JudgeTeam.for_judge(judge).add_user(acting_judge)
+
+    create_appeal_at_judge_assignment(judge: acting_judge)
+    create_task_at_attorney_review(FactoryBot.create(:appeal), judge, acting_judge)
+    create_task_at_attorney_review(FactoryBot.create(:appeal), acting_judge, attorney)
+    create_task_at_judge_review(FactoryBot.create(:appeal), judge, acting_judge)
+    create_task_at_judge_review(FactoryBot.create(:appeal), acting_judge, attorney)
   end
 
   def create_board_grant_tasks
@@ -1121,6 +1157,8 @@ class SeedDB
     cm = CacheManager.new
     CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
     Fakes::EndProductStore.new.clear!
+    Fakes::RatingStore.new.clear!
+    Fakes::VeteranStore.new.clear!
   end
 
   def setup_dispatch
@@ -1223,34 +1261,72 @@ class SeedDB
     end
   end
 
-  def seed
-    clean_db
-    # Annotations and tags don't come from VACOLS, so our seeding should
-    # create them in all envs
-    create_annotations
-    create_tags
-    create_users
-    create_ama_appeals
-    create_hearing_days
-    create_veterans_ready_for_hearing
-    create_tasks
-    create_higher_level_review_tasks
+  def create_inbox_messages
+    user = User.find_by_css_id "BVAYELLOW"
 
-    setup_dispatch
-    create_previously_held_hearing_data
-    create_legacy_issues_eligible_for_opt_in
+    veteran1 = FactoryBot.create(:veteran)
+    veteran2 = FactoryBot.create(:veteran)
 
-    create_higher_level_reviews_and_supplemental_claims
+    appeal1 = FactoryBot.create(:appeal, veteran_file_number: veteran1.file_number)
+    appeal2 = FactoryBot.create(
+      :legacy_appeal,
+      vacols_case: FactoryBot.create(:case),
+      vbms_id: "#{veteran2.file_number}S"
+    )
 
-    create_ama_hearing_appeals
-    create_board_grant_tasks
-    create_veteran_record_request_tasks
+    message1 = <<~MSG
+      <a href="/queue/appeals/#{appeal1.uuid}">Veteran ID #{veteran1.file_number}</a> - Virtual hearing not scheduled
+      Caseflow is having trouble contacting the virtual hearing scheduler.
+      For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
+    MSG
 
-    create_intake_users
+    message2 = <<~MSG
+      <a href="/queue/appeals/#{appeal2.vacols_id}">Veteran ID #{veteran2.file_number}</a> - Hearing time not updated
+      Caseflow is having trouble contacting the virtual hearing scheduler.
+      For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
+    MSG
 
+    Message.create(text: message1, detail: appeal1, user: user)
+    Message.create(text: message2, detail: appeal2, user: user)
+  end
+
+  def perform_seeding_jobs
     # Active Jobs which populate tables based on seed data
     FetchHearingLocationsForVeteransJob.perform_now
     UpdateCachedAppealsAttributesJob.perform_now
+    NightlySyncsJob.perform_now
+  end
+
+  def call_and_log_seed_step(step)
+    Rails.logger.debug("Starting seed step #{step}")
+    send(step)
+    Rails.logger.debug("Finished seed step #{step}")
+  end
+
+  def seed
+    call_and_log_seed_step :clean_db
+
+    # Annotations and tags don't come from VACOLS, so our seeding should
+    # create them in all envs
+    call_and_log_seed_step :create_annotations
+    call_and_log_seed_step :create_tags
+
+    call_and_log_seed_step :create_users
+    call_and_log_seed_step :create_ama_appeals
+    call_and_log_seed_step :create_hearing_days
+    call_and_log_seed_step :create_veterans_ready_for_hearing
+    call_and_log_seed_step :create_tasks
+    call_and_log_seed_step :create_higher_level_review_tasks
+    call_and_log_seed_step :setup_dispatch
+    call_and_log_seed_step :create_previously_held_hearing_data
+    call_and_log_seed_step :create_legacy_issues_eligible_for_opt_in
+    call_and_log_seed_step :create_higher_level_reviews_and_supplemental_claims
+    call_and_log_seed_step :create_ama_hearing_appeals
+    call_and_log_seed_step :create_board_grant_tasks
+    call_and_log_seed_step :create_veteran_record_request_tasks
+    call_and_log_seed_step :create_intake_users
+    call_and_log_seed_step :create_inbox_messages
+    call_and_log_seed_step :perform_seeding_jobs
 
     return if Rails.env.development?
 

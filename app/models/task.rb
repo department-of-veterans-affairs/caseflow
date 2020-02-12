@@ -23,6 +23,8 @@ class Task < ApplicationRecord
 
   validates :assigned_to, :appeal, :type, :status, presence: true
   validate :status_is_valid_on_create, on: :create
+  validate :assignee_status_is_valid_on_create, on: :create
+  validate :parent_can_have_children
 
   before_create :set_assigned_at
   before_create :verify_org_task_unique
@@ -101,15 +103,18 @@ class Task < ApplicationRecord
       end
     end
 
-    def modify_params(params)
+    def modify_params_for_create(params)
       if params.key?(:instructions) && !params[:instructions].is_a?(Array)
         params[:instructions] = [params[:instructions]]
       end
-      params.delete(:action)
       params
     end
 
     def hide_from_queue_table_view
+      false
+    end
+
+    def cannot_have_children
       false
     end
 
@@ -137,8 +142,12 @@ class Task < ApplicationRecord
       return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
     end
 
-    def most_recently_assigned
+    def most_recently_updated
       order(:updated_at).last
+    end
+
+    def any_recently_updated(*tasks_arrays)
+      tasks_arrays.find(&:any?)&.most_recently_updated
     end
 
     def create_from_params(params, user)
@@ -148,7 +157,7 @@ class Task < ApplicationRecord
 
       verify_user_can_create!(user, parent_task)
 
-      params = modify_params(params)
+      params = modify_params_for_create(params)
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
       child
@@ -299,6 +308,14 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
+  def post_dispatch_task?
+    dispatch_task = appeal.tasks.completed.find_by(type: [BvaDispatchTask.name, QualityReviewTask.name])
+
+    return false unless dispatch_task
+
+    created_at > dispatch_task.closed_at
+  end
+
   def children_attorney_tasks
     children.where(type: AttorneyTask.name)
   end
@@ -321,7 +338,7 @@ class Task < ApplicationRecord
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i || on_hold_duration
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def update_task_type(params)
@@ -373,10 +390,14 @@ class Task < ApplicationRecord
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    params["instructions"] = flattened_instructions(params)
-    update!(params)
+    update_with_instructions(params)
 
     [self]
+  end
+
+  def update_with_instructions(params)
+    params[:instructions] = flattened_instructions(params)
+    update!(params)
   end
 
   def flattened_instructions(params)
@@ -438,7 +459,11 @@ class Task < ApplicationRecord
 
   def when_child_task_created(child_task)
     cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
-    update!(status: :on_hold) if !on_hold?
+
+    if !on_hold?
+      Raven.capture_message("Closed task #{id} re-opened because child task created") if !open?
+      update!(status: :on_hold)
+    end
   end
 
   def task_is_assigned_to_users_organization?(user)
@@ -469,14 +494,16 @@ class Task < ApplicationRecord
     sibling = dup.tap do |task|
       task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
       task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-      task.instructions = [instructions, reassign_params[:instructions]].flatten
+      task.instructions = flattened_instructions(reassign_params)
       task.status = Constants.TASK_STATUSES.assigned
       task.save!
     end
 
-    update!(status: Constants.TASK_STATUSES.cancelled)
+    # Preserve the open children and status of the old task
+    children.open.update_all(parent_id: sibling.id)
+    sibling.update!(status: status)
 
-    children.open.each { |task| task.update!(parent_id: sibling.id) }
+    update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
     [sibling, self, sibling.children].flatten
   end
@@ -505,24 +532,25 @@ class Task < ApplicationRecord
 
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
+    # it would be better if we could allow the callbacks to happen sanely
     descendant_ids = descendants.pluck(:id)
-    Task.open.where(id: descendant_ids).update_all(
-      status: Constants.TASK_STATUSES.cancelled,
-      closed_at: Time.zone.now
-    )
+
+    # by avoiding callbacks, we aren't saving PaperTrail versions
+    # Manually save the state before and after.
+    tasks = Task.open.where(id: descendant_ids)
+
+    transaction do
+      tasks.each { |task| task.paper_trail.save_with_version }
+      tasks.update_all(
+        status: Constants.TASK_STATUSES.cancelled,
+        closed_at: Time.zone.now
+      )
+      tasks.each { |task| task.reload.paper_trail.save_with_version }
+    end
   end
 
   def timeline_title
     "#{type} completed"
-  end
-
-  def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if old_style_hold_expired?
-  end
-
-  def old_style_hold_expired?
-    !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
-      (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
   end
 
   def serializer_class
@@ -531,6 +559,10 @@ class Task < ApplicationRecord
 
   def assigned_to_label
     assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
+  end
+
+  def child_must_have_active_assignee?
+    true
   end
 
   private
@@ -640,11 +672,35 @@ class Task < ApplicationRecord
     return if will_save_change_to_attribute?(timestamp_to_update)
 
     self[timestamp_to_update] = Time.zone.now
+
+    nullify_closed_at_if_reopened if closed_at.present?
+  end
+
+  def nullify_closed_at_if_reopened
+    return unless self.class.open_statuses.include?(status_change_to_be_saved&.last)
+
+    self.closed_at = nil
   end
 
   def status_is_valid_on_create
     if status != Constants.TASK_STATUSES.assigned
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+    end
+
+    true
+  end
+
+  def assignee_status_is_valid_on_create
+    if parent&.child_must_have_active_assignee? && assigned_to.is_a?(User) && !assigned_to.active?
+      fail Caseflow::Error::InvalidAssigneeStatusOnTaskCreate, assignee: assigned_to
+    end
+
+    true
+  end
+
+  def parent_can_have_children
+    if parent&.class&.cannot_have_children
+      fail Caseflow::Error::InvalidParentTask, message: "Child tasks cannot be created for #{parent.type}s"
     end
 
     true

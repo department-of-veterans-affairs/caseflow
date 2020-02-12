@@ -1,0 +1,20 @@
+  <% if ENV["PUBLIC_SENTRY_DSN"] %>
+    <script src="https://cdn.ravenjs.com/3.27.0/raven.min.js"></script>
+    <script>
+      Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>", {
+        release: "<%= Rails.application.config.build_version[:commit][0..6] %>",
+        dataCallback: function(data) {
+          if (Raven.caseflowAppName) {
+            data.fingerprint = ["{{ default }}", Raven.caseflowAppName]
+          }
+          return data;
+        }
+      }).install();
+      <% if current_user && current_user.authenticated? %>
+        Raven.setUserContext({
+          email: "<%= current_user.email %>",
+          id: "<%= current_user.id %>"
+        });
+      <% end %>
+    </script>
+  <% end %>

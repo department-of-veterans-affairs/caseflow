@@ -9,8 +9,8 @@ import { getDisplayTime } from './DailyDocketRowDisplayText';
 import { isPreviouslyScheduledHearing, sortHearings } from '../../utils';
 import { getDate } from '../../../util/DateUtil';
 import { openPrintDialogue } from '../../../util/PrintUtil';
-import AOD_CODE_TO_LABEL_MAP from '../../../../constants/AOD_CODE_TO_LABEL_MAP.json';
-import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.json';
+import AOD_CODE_TO_LABEL_MAP from '../../../../constants/AOD_CODE_TO_LABEL_MAP';
+import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 
 export class DailyDocketPrinted extends React.Component {
 
@@ -62,6 +62,11 @@ export class DailyDocketPrinted extends React.Component {
             <strong>Veteran:</strong> {veteranName}<br />
             <strong>Representative:</strong> {representativeName}<br />
             <strong>Location:</strong> {hearing.readableLocation}<br />
+            {hearing.readableRequestType !== 'Central' &&
+              <span>
+                <strong>Type:</strong> {hearing.isVirtual ? 'Virtual' : hearing.readableRequestType}<br />
+              </span>
+            }
             {hearing.notes &&
               <span><strong>Notes:</strong> {hearing.notes}</span>
             }

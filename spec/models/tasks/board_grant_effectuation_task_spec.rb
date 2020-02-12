@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe BoardGrantEffectuationTask, :postgres do
   let(:trait) { :assigned }
   let(:task) { create(:board_grant_effectuation_task, trait) }

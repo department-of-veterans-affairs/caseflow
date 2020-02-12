@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe Representative, :postgres do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
@@ -277,7 +274,12 @@ describe Representative, :postgres do
   describe ".queue_tabs" do
     it "returns the expected 4 tabs" do
       expect(vso.queue_tabs.map(&:class)).to eq(
-        [TrackingTasksTab, UnassignedTasksTab, AssignedTasksTab, CompletedTasksTab]
+        [
+          OrganizationTrackingTasksTab,
+          OrganizationUnassignedTasksTab,
+          OrganizationAssignedTasksTab,
+          OrganizationCompletedTasksTab
+        ]
       )
     end
   end

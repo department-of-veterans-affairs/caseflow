@@ -1,5 +1,5 @@
-import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
-import moment from 'moment';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
+import moment from 'moment-timezone';
 import _ from 'lodash';
 
 export const isPreviouslyScheduledHearing = (hearing) => (
@@ -41,6 +41,25 @@ export const filterIssuesOnAppeal = (issues, appealId) => (
     value()
 );
 
+// assumes objects have identical properties
+export const deepDiff = (firstObj, secondObj) => {
+  const changedObject = _.reduce(firstObj, (result, firstVal, key) => {
+    const secondVal = secondObj[key];
+
+    if (_.isEqual(firstVal, secondVal)) {
+      result[key] = null;
+    } else if (_.isObject(firstVal) && _.isObject(secondVal)) {
+      result[key] = deepDiff(firstVal, secondVal);
+    } else {
+      result[key] = secondVal;
+    }
+
+    return result;
+  }, {});
+
+  return _.pickBy(changedObject, (val) => val !== null);
+};
+
 export const filterCurrentIssues = (issues) => (
   _.omitBy(issues, (issue) => (
     // Omit if destroyed, or HAS NON-REMAND DISPOSITION FROM VACOLS
@@ -57,3 +76,12 @@ export const filterPriorIssues = (issues) => (
     /* eslint-enable no-underscore-dangle */
   ))
 );
+
+export const VIRTUAL_HEARING_HOST = 'host';
+export const VIRTUAL_HEARING_GUEST = 'guest';
+
+export const virtualHearingRoleForUser = (user, hearing) => (
+  user.userCanAssignHearingSchedule || user.userId.toString() === hearing.judgeId ?
+    VIRTUAL_HEARING_HOST :
+    VIRTUAL_HEARING_GUEST
+)

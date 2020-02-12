@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Quality Review workflow", :all_dbs do
   let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Javitz") }
   let!(:judge_staff) { create(:staff, :judge_role, user: judge_user) }
@@ -68,10 +65,10 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         )
       end
 
-      OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+      BvaDispatch.singleton.add_user(create(:user))
 
       create(:staff, user: qr_user)
-      OrganizationsUser.add_user_to_organization(qr_user, quality_review_organization)
+      quality_review_organization.add_user(qr_user)
       User.authenticate!(user: qr_user)
     end
 
@@ -228,7 +225,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
     let(:user) do
       create(:user).tap do |user|
-        OrganizationsUser.add_user_to_organization(user, QualityReview.singleton)
+        QualityReview.singleton.add_user(user)
       end
     end
 
@@ -238,7 +235,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       step "assign task to current user" do
         visit("/queue/appeals/#{appeal.uuid}")
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
-        click_dropdown(text: user.full_name)
+        click_dropdown({ text: user.full_name }, find(".cf-modal-body"))
         fill_in("instructions", with: "assigning to QR team member")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
         expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))

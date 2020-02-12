@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe LegacyAppeal, :all_dbs do
   before do
     Timecop.freeze(post_ama_start_date)
@@ -29,7 +26,7 @@ describe LegacyAppeal, :all_dbs do
       end
 
       context "the appeal has more than one parentless task" do
-        before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+        before { Colocated.singleton.add_user(create(:user)) }
 
         let!(:colocated_task) { create(:colocated_task, appeal: appeal, parent: nil) }
 
@@ -40,6 +37,31 @@ describe LegacyAppeal, :all_dbs do
           expect(subject[:"LegacyAppeal #{appeal.id} [id]"].count).to eq 2
         end
       end
+    end
+  end
+
+  describe "#activated?" do
+    let(:vacols_case) { create(:case, case_status) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    subject { legacy_appeal.activated? }
+
+    context "status is Active" do
+      let(:case_status) { :status_active }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "status is Motion" do
+      let(:case_status) { :status_motion }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "status is Complete" do
+      let(:case_status) { :status_complete }
+
+      it { is_expected.to eq(false) }
     end
   end
 
@@ -60,6 +82,18 @@ describe LegacyAppeal, :all_dbs do
         expect(legacy_appeal.sanitized_vbms_id).to eq(ssn)
         expect(legacy_appeal.veteran_file_number).to eq(legacy_appeal.veteran.file_number)
         expect(@datadog_called).to eq(true)
+      end
+
+      context "Veteran record has SSN value in file_number column" do
+        before do
+          veteran.update!(file_number: veteran.ssn)
+          create(:veteran, ssn: ssn, file_number: file_number, participant_id: veteran.participant_id)
+        end
+
+        it "returns the file_number value from BGS" do
+          expect(legacy_appeal.veteran_file_number).to eq(file_number)
+          expect(legacy_appeal.veteran).to_not eq(veteran)
+        end
       end
     end
   end
@@ -2356,6 +2390,105 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context "#cancel_open_caseflow_tasks!" do
+    let(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
+    let(:vacols_case2) { create(:case, bfcurloc: "CASEFLOW") }
+    let(:appeal2) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case2) }
+    let(:vacols_case3) { create(:case, bfcurloc: "CASEFLOW") }
+    let(:appeal3) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case3) }
+
+    context "if there are no Caseflow tasks on the legacy appeal" do
+      it "throws no errors" do
+        expect { appeal.cancel_open_caseflow_tasks! }.not_to raise_error
+      end
+    end
+
+    context "if there are Caseflow tasks on the legacy appeal" do
+      context "multiple open caseflow tasks" do
+        it "cancels all the open tasks" do
+          appeal2.cancel_open_caseflow_tasks!
+
+          expect(appeal2.tasks.open.count).to eq(0)
+          expect(appeal2.tasks.closed.count).to eq(3)
+          expect(appeal3.tasks.open.count).to eq(3)
+        end
+
+        context "when a note has instructions" do
+          it "should append a note to the canceled tasks" do
+            task = appeal2.tasks.first
+            task.update(instructions: ["Existing instructions"])
+            appeal2.cancel_open_caseflow_tasks!
+            expect(task.reload.instructions)
+              .to eq(["Existing instructions", "Task cancelled due to death dismissal"])
+          end
+        end
+      end
+
+      context "open and closed caseflow tasks" do
+        it "doesn't affect the already closed tasks" do
+          appeal3.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+          original_closed_at = appeal3.root_task.closed_at
+
+          appeal3.cancel_open_caseflow_tasks!
+
+          expect(appeal3.root_task.closed_at).to eq(original_closed_at)
+        end
+      end
+    end
+  end
+
+  context "#eligible_for_death_dismissal?" do
+    let(:correspondent) { create(:correspondent, sfnod: 4.days.ago) }
+    let(:vacols_case) { create(:case, correspondent: correspondent) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:colocated_user) { create(:user) }
+    let(:attorney) { create(:user) }
+    let(:colocated_admin) { create(:user) }
+    let(:user) { colocated_admin }
+
+    before do
+      OrganizationsUser.make_user_admin(colocated_admin, Colocated.singleton)
+      Colocated.singleton.add_user(colocated_user)
+      User.authenticate!(user: colocated_admin)
+    end
+
+    subject { appeal.eligible_for_death_dismissal?(user) }
+
+    context "an appeal has a notice of death" do
+      context "it has open colocated tasks" do
+        let!(:colocated_task) { create(:colocated_task, appeal: appeal, assigned_by: attorney) }
+        context "user is colocated admin" do
+          it "returns eligible" do
+            expect(subject).to eq(true)
+          end
+        end
+
+        context "user is not colocated admin" do
+          let(:user) { colocated_user }
+          it "returns not eligible" do
+            expect(subject).to eq(false)
+          end
+        end
+      end
+
+      context "it has no open colocated tasks" do
+        let!(:colocated_task) {}
+        it "returns not eligible" do
+          expect(subject).to eq(false)
+        end
+      end
+    end
+
+    context "an appeal has no final notice of death" do
+      let!(:colocated_task) { create(:colocated_task, appeal: appeal, assigned_by: attorney) }
+      let(:correspondent) { create(:correspondent) }
+
+      it "returns not eligible" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   context "#assigned_to_location" do
     context "if the case is complete" do
       let!(:vacols_case) { create(:case, :status_complete) }
@@ -2382,22 +2515,53 @@ describe LegacyAppeal, :all_dbs do
       end
 
       context "if the only active case is a RootTask" do
-        before do
-          create(:root_task, appeal: appeal)
-        end
+        let!(:root_task) { create(:root_task, appeal: appeal) }
 
         it "returns Case storage" do
           expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
         end
       end
 
+      context "if there are active TrackVeteranTask, TimedHoldTask, and RootTask" do
+        let(:today) { Time.zone.today }
+        let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
+        before do
+          create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
+          create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
+        end
+
+        describe "when there are no other tasks" do
+          it "returns Case storage because it does not include nonactionable tasks in its determinations" do
+            expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+          end
+        end
+
+        describe "when there is an assigned actionable task" do
+          let(:task_assignee) { create(:user) }
+          let!(:task) do
+            create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal, parent: root_task)
+          end
+
+          it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
+            expect(appeal.assigned_to_location).to(
+              eq(task_assignee.css_id), appeal.structure_render(:id, :status, :assigned_to_id, :created_at, :updated_at)
+            )
+          end
+        end
+      end
+
       context "if there is an assignee" do
         context "if the most recent assignee is an organization" do
           let(:organization) { create(:organization) }
+          let(:today) { Time.zone.today }
 
           before do
             organization_root_task = create(:root_task, appeal: appeal)
-            create(:generic_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
+            create(:ama_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
+
+            # These tasks are the most recently updated but should be ignored in the determination
+            create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 10)
+            create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 10)
           end
 
           it "it returns the organization name" do
@@ -2410,7 +2574,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             user_root_task = create(:root_task, appeal: appeal)
-            create(:generic_task, assigned_to: user, appeal: appeal, parent: user_root_task)
+            create(:ama_task, assigned_to: user, appeal: appeal, parent: user_root_task)
           end
 
           it "it returns the id" do
@@ -2423,7 +2587,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             on_hold_root = create(:root_task, appeal: appeal, updated_at: pre_ama - 1)
-            create(:generic_task, :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
+            create(:ama_task, :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
           end
 
           it "it returns something" do

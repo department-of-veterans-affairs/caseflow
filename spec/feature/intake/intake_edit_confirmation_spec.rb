@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "Intake Edit Confirmation", :postgres do
   include IntakeHelpers
 
@@ -13,6 +10,7 @@ feature "Intake Edit Confirmation", :postgres do
   let(:rating_reference_id) { "def456" }
 
   describe "when editing a decision review" do
+    let(:veteran) { create(:veteran) }
     let!(:rating) do
       Generators::Rating.build(
         participant_id: decision_review.veteran.participant_id,
@@ -20,7 +18,8 @@ feature "Intake Edit Confirmation", :postgres do
         promulgation_date: decision_review.receipt_date - 2.months,
         issues: [
           { decision_text: "Left knee granted" },
-          { reference_id: rating_reference_id, decision_text: "PTSD denied" }
+          { reference_id: rating_reference_id, decision_text: "PTSD denied" },
+          { reference_id: "issue_on_another_review", decision_text: "Issue on another review" }
         ]
       )
     end
@@ -65,8 +64,7 @@ feature "Intake Edit Confirmation", :postgres do
             click_intake_add_issue
             click_intake_no_matching_issues
             add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).mdY)
-            click_remove_intake_issue(1)
-            click_remove_issue_confirmation
+            click_remove_intake_issue_dropdown("PTSD denied")
             click_edit_submit
 
             expect(page).to have_current_path("/#{edit_path}/confirmation")
@@ -96,6 +94,30 @@ feature "Intake Edit Confirmation", :postgres do
             expect(page).to have_current_path("/#{edit_path}/confirmation")
             expect(page).to have_content(COPY::UNIDENTIFIED_ALERT)
           end
+
+          context "when user cancels an ep and adds an ineligible issue" do
+            let!(:request_issue_on_another_review) do
+              create(
+                :request_issue,
+                contested_rating_issue_reference_id: "issue_on_another_review",
+                contested_rating_issue_profile_date: rating.profile_date,
+                decision_review: create(:supplemental_claim, veteran_file_number: decision_review.veteran.file_number),
+                contested_issue_description: "Issue on another review"
+              )
+            end
+
+            it "does not include ineligible issues as having an EP (shows EP as canceled)" do
+              visit edit_path
+              click_intake_add_issue
+              add_intake_rating_issue("Issue on another review")
+              click_remove_intake_issue_dropdown("PTSD denied")
+              click_edit_submit
+
+              expect(page).to have_current_path("/#{edit_path}/confirmation")
+              expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
+              expect(page).to have_content("Issue on another review is ineligible")
+            end
+          end
         end
       end
 
@@ -109,8 +131,7 @@ feature "Intake Edit Confirmation", :postgres do
           click_intake_no_matching_issues
           add_intake_nonrating_issue(date: (decision_review.receipt_date - 2.years).mdY)
           add_untimely_exemption_response("Yes")
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
+          click_remove_intake_issue_dropdown("PTSD denied")
           click_edit_submit
 
           expect(page).to have_current_path("/#{edit_path}/confirmation")

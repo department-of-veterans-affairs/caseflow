@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Judge checkout flow", :all_dbs do
   let(:attorney_user) { create(:default_user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
@@ -14,7 +11,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
   before do
     # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
     # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
-    OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+    BvaDispatch.singleton.add_user(create(:user))
   end
 
   context "given a valid ama appeal with single issue" do
@@ -204,7 +201,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         case_quality_opts[2].click
         # areas of improvement
         areas_of_improvement = page.find_all(
-          :xpath, "//fieldset[@class='checkbox-wrapper-Identify areas for improvement cf-form-checkboxes']//label"
+          :xpath, "//fieldset[contains(@class, 'checkbox-wrapper-Identify areas for improvement')]//label"
         )
         areas_of_improvement[0].double_click
         areas_of_improvement[5].double_click

@@ -55,6 +55,10 @@ class DecisionIssue < ApplicationRecord
       where(disposition: REMAND_DISPOSITIONS)
     end
 
+    def not_denied
+      where.not(disposition: %w[Denied denied])
+    end
+
     def not_remanded
       where.not(disposition: REMAND_DISPOSITIONS)
     end
@@ -105,14 +109,8 @@ class DecisionIssue < ApplicationRecord
     REMAND_DISPOSITIONS.include?(disposition)
   end
 
-  def ui_hash
-    {
-      id: id,
-      requestIssueId: request_issues&.first&.id,
-      description: description,
-      disposition: disposition,
-      approxDecisionDate: approx_decision_date
-    }
+  def serialize
+    Intake::DecisionIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def find_or_create_remand_supplemental_claim!
@@ -161,6 +159,22 @@ class DecisionIssue < ApplicationRecord
     request_issues.first
   end
 
+  def create_contesting_request_issue!
+    vacate_appeal_stream = Appeal.find_by(stream_type: "vacate", stream_docket_number: decision_review.docket_number)
+    RequestIssue.find_or_create_by!(
+      decision_review: vacate_appeal_stream,
+      decision_review_type: decision_review_type,
+      contested_decision_issue_id: id,
+      contested_rating_issue_reference_id: rating_issue_reference_id,
+      contested_rating_issue_profile_date: rating_profile_date,
+      contested_issue_description: description,
+      nonrating_issue_category: nonrating_issue_category,
+      benefit_type: benefit_type,
+      decision_date: caseflow_decision_date,
+      veteran_participant_id: decision_review.veteran.participant_id
+    )
+  end
+
   private
 
   def fetch_diagnostic_code_status_description(diagnostic_code)
@@ -202,13 +216,13 @@ class DecisionIssue < ApplicationRecord
 
   def prior_payee_code
     latest_ep = decision_review.veteran
-      .find_latest_end_product_by_claimant(decision_review.claimants.first)
+      .find_latest_end_product_by_claimant(decision_review.claimant)
 
     latest_ep&.payee_code
   end
 
   def dta_payee_code
-    decision_review.payee_code || prior_payee_code || decision_review.claimants.first.bgs_payee_code
+    decision_review.payee_code || prior_payee_code || decision_review.claimant.bgs_payee_code
   end
 
   def find_remand_supplemental_claim
@@ -233,7 +247,7 @@ class DecisionIssue < ApplicationRecord
     )
     fail AppealDTAPayeeCodeError, decision_review.id unless dta_payee_code
 
-    sc.create_claimants!(
+    sc.create_claimant!(
       participant_id: decision_review.claimant_participant_id,
       payee_code: dta_payee_code
     )

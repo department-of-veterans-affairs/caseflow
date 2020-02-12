@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Log in as User", :postgres do
   before do
     User.create(station_id: "283", css_id: "ANNE MERICA")

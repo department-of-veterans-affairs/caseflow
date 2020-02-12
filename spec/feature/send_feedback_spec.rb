@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Send feedback", :all_dbs do
   let!(:current_user) { User.authenticate! }
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }

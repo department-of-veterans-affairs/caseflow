@@ -32,8 +32,11 @@ Rails.application.routes.draw do
     end
     namespace :v3 do
       namespace :decision_review do
-        resources :higher_level_reviews, only: :create
+        resources :higher_level_reviews, only: [:create, :show]
+        resources :supplemental_claims, only: [:create, :show]
+        resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
+        resources :contestable_issues, only: [:index]
       end
     end
     namespace :docs do
@@ -125,6 +128,8 @@ Rails.application.routes.draw do
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
+  get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
+
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
@@ -151,6 +156,8 @@ Rails.application.routes.draw do
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
+
+  post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
   resources :hearings, only: [:update, :show]
 
@@ -207,10 +214,11 @@ Rails.application.routes.draw do
     patch "/messages/:id", to: "inbox#update"
   end
 
-  resources :users, only: [:index]
+  resources :users, only: [:index, :update]
   resources :users, only: [:index] do
     get 'represented_organizations', on: :member
   end
+  get 'user', to: 'users#search_by_css_id'
   get 'user_info/represented_organizations'
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
@@ -230,9 +238,12 @@ Rails.application.routes.draw do
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
 
+  resources :user_management, only: [:index]
+
   get '/search', to: 'appeals#show_case_list'
 
   resources :legacy_tasks, only: [:create, :update]
+  post '/legacy_tasks/assign_to_judge', to: 'legacy_tasks#assign_to_judge'
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule
@@ -271,7 +282,6 @@ Rails.application.routes.draw do
 
   get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
-  get 'intake/stats(/:interval)', to: 'intake_stats#show', as: 'intake_stats'
   get 'stats', to: 'stats#show'
 
   match '/intake/:any' => 'intakes#index', via: [:get]
@@ -290,6 +300,7 @@ Rails.application.routes.draw do
     get code, :to => "errors#show", :status_code => code
   end
 
+  post "post_decision_motions/return", to: "post_decision_motions#return_to_lit_support"
   post "post_decision_motions", to: "post_decision_motions#create"
 
   # :nocov:

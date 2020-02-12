@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-require "support/vacols_database_cleaner"
-
 describe VaDotGovAddressValidator do
   include HearingHelpers
 

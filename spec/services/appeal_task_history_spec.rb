@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe AppealTaskHistory, :postgres do
   let(:appeal) { create(:appeal, :with_post_intake_tasks) }
   let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks) }
@@ -11,7 +8,7 @@ describe AppealTaskHistory, :postgres do
   let(:user) { create(:user) }
 
   before do
-    PaperTrail.whodunnit = user.id
+    PaperTrail.request.whodunnit = user.id
     Timecop.freeze(Time.zone.now) # don't bother tracking timestamp changes in specs
   end
 

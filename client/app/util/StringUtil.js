@@ -1,7 +1,7 @@
 import _ from 'lodash';
+import React from 'react';
 
 const StringUtil = {
-
   camelCaseToDashCase(variable) {
     // convert key from camelCase to dash-case
     return variable.replace(/([A-Z])/g, ($1) => `-${$1.toLowerCase()}`);
@@ -20,7 +20,8 @@ const StringUtil = {
   // 'VACOLS - 123, User' becomes 'vacolsUser'
   convertToCamelCase(phrase = '') {
     // Code courtesy of Stack Overflow, Question 2970525
-    return phrase.toLowerCase().
+    return phrase.
+      toLowerCase().
       replace(/[^a-zA-Z ]/g, '').
       replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
         if (Number(match) === 0) {
@@ -55,7 +56,8 @@ const StringUtil = {
   },
   // convert snake_case to Capitalized Words
   snakeCaseToCapitalized(variable) {
-    return variable.replace(/_/g, ' ').
+    return variable.
+      replace(/_/g, ' ').
       split(' ').
       map((word) => {
         return word[0].toUpperCase() + word.substr(1);
@@ -77,6 +79,24 @@ const StringUtil = {
   // convert (Capitalized) Words to lowercase, snake_case, remove punctuation
   parameterize(str) {
     return str.toLowerCase().replace(/\W+/g, '_');
+  },
+
+  // Replace newline ("\n") characters with React-friendly <br /> elements
+  nl2br(str) {
+    if (typeof str !== 'string') {
+      return str;
+    }
+
+    const arr = str.split(/\r\n|\r|\n/g);
+
+    return arr.map((txt, idx) => {
+      return (
+        <React.Fragment key={idx}>
+          {txt}
+          {idx < (arr.length - 1) ? <br /> : null}
+        </React.Fragment>
+      );
+    });
   }
 };
 

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "RAMP Election Intake", :all_dbs do
   include IntakeHelpers
 
@@ -275,7 +272,8 @@ feature "RAMP Election Intake", :all_dbs do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: veteran.participant_id,
         limited_poa_code: nil,
-        limited_poa_access: nil
+        limited_poa_access: nil,
+        status_type_code: "PEND"
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user

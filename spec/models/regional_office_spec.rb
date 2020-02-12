@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe RegionalOffice do
   let(:regional_office) { RegionalOffice.new(regional_office_key) }
   let(:regional_office_key) { nil }
@@ -52,6 +50,70 @@ describe RegionalOffice do
       expect(subject.length).to eq(2)
       expect(subject.first).to have_attributes(key: "RO11", city: "Pittsburgh")
       expect(subject.last).to have_attributes(key: "RO71", city: "Pittsburgh Foreign Cases")
+    end
+  end
+
+  context ".city_state_by_key" do
+    let(:key) { "RO01" }
+
+    subject { RegionalOffice.city_state_by_key(key) }
+
+    context "invalid key" do
+      let(:key) { "RO10000" }
+
+      it "is nil" do
+        expect(subject).to eq nil
+      end
+    end
+
+    context "valid key" do
+      it "returns the correct city and state" do
+        expect(subject).to eq "Boston, MA"
+      end
+    end
+  end
+
+  context ".valid?" do
+    RegionalOffice.all.each do |ro|
+      it "regional office (#{ro.key}) is valid?" do
+        expect(ro.valid?).to eq true
+      end
+    end
+  end
+
+  context ".facility_id" do
+    RegionalOffice.all.each do |ro|
+      it "regional office (#{ro.key}) does not throw when facility id is called" do
+        expect { ro.facility_id }.not_to raise_error
+      end
+    end
+  end
+
+  context ".street_address" do
+    RegionalOffice.all.each do |ro|
+      it "regional office (#{ro.key}) does not throw when street_address is called" do
+        expect { ro.street_address }.not_to raise_error
+      end
+    end
+
+    it "RO87 has nil address" do
+      ro = RegionalOffice.find!("RO87")
+
+      expect(ro.street_address).to eq nil
+    end
+
+    it "RO46 has correct address" do
+      ro = RegionalOffice.find!("RO46")
+
+      expect(ro.street_address).to eq "915 Second Avenue"
+    end
+  end
+
+  context ".zip_code" do
+    RegionalOffice.all.each do |ro|
+      it "regional office (#{ro.key}) does not throw when zip_code is called" do
+        expect { ro.zip_code }.not_to raise_error
+      end
     end
   end
 end

@@ -20,9 +20,9 @@ import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
 import { taskById } from '../selectors';
 
-import COPY from '../../../COPY.json';
-import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
-import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
+import COPY from '../../../COPY';
+import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
+import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES';
 import {
   marginBottom,
   marginTop,
@@ -56,7 +56,8 @@ class EvaluateDecisionView extends React.PureComponent {
       comment: ''
     };
 
-    this.deficientQualityAlert = React.createRef();
+    this.complexityLabel = React.createRef();
+    this.qualityAlert = React.createRef();
     this.qualityLabel = React.createRef();
   }
 
@@ -79,20 +80,20 @@ class EvaluateDecisionView extends React.PureComponent {
     const { areas_for_improvement, factors_not_considered, complexity, quality } = this.state;
 
     if (!complexity) {
-      this.scrollTo(this.complexityLabel);
+      this.scrollTo(this.complexityLabel.current);
 
       return false;
     }
 
     if (!quality) {
-      this.scrollTo(this.qualityLabel);
+      this.scrollTo(this.qualityLabel.current);
 
       return false;
     }
 
     // eslint-disable-next-line camelcase
     if (qualityIsDeficient(this.state.quality) && _.every([areas_for_improvement, factors_not_considered], _.isEmpty)) {
-      this.scrollTo(this.deficientQualityAlert);
+      this.scrollTo(this.qualityAlert.current);
 
       return false;
     }
@@ -223,7 +224,8 @@ class EvaluateDecisionView extends React.PureComponent {
         <hr {...hrStyling} />
         <JudgeCaseQuality
           highlight={highlight}
-          qualityAlertRef={this.deficientQualityAlert}
+          complexityLabelRef={this.complexityLabel}
+          qualityAlertRef={this.qualityAlert}
           qualityLabelRef={this.qualityLabel}
           onChange={(values) => this.handleCaseQualityChange(values)}
         />

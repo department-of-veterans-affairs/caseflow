@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
 require "support/api_helpers"
-require "rails_helper"
 
 describe "Appeals API v2", :all_dbs, type: :request do
   include ApiHelpers
@@ -360,7 +358,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
              veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
              request_issues: [request_issue1, request_issue2],
-             docket_type: "evidence_submission")
+             docket_type: Constants.AMA_DOCKETS.evidence_submission)
     end
 
     let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal) }
@@ -515,7 +513,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       create(:appeal,
              veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
-             docket_type: "evidence_submission")
+             docket_type: Constants.AMA_DOCKETS.evidence_submission)
     end
 
     before do

@@ -2,6 +2,7 @@
 
 require "bgs"
 require "fakes/end_product_store"
+require "fakes/rating_store"
 
 # rubocop:disable Metrics/ClassLength
 class Fakes::BGSService
@@ -13,8 +14,6 @@ class Fakes::BGSService
   cattr_accessor :power_of_attorney_records
   cattr_accessor :address_records
   cattr_accessor :ssn_not_found
-  cattr_accessor :rating_records
-  cattr_accessor :rating_profile_records
   cattr_accessor :manage_claimant_letter_v2_requests
   cattr_accessor :generate_tracked_items_requests
   attr_accessor :client
@@ -42,7 +41,7 @@ class Fakes::BGSService
     end
 
     def veteran_records_created?
-      veteran_store.all_keys.any?
+      veteran_store.all_veteran_file_numbers.include?("872958715") # known file_number from local/vacols//bgs_setup.csv
     end
 
     def all_grants
@@ -81,9 +80,8 @@ class Fakes::BGSService
     def clean!
       self.ssn_not_found = false
       self.inaccessible_appeal_vbms_ids = []
-      self.rating_records = {}
-      self.rating_profile_records = {}
       end_product_store.clear!
+      rating_store.clear!
       veteran_store.clear!
       self.manage_claimant_letter_v2_requests = nil
       self.generate_tracked_items_requests = nil
@@ -97,8 +95,14 @@ class Fakes::BGSService
       @veteran_store ||= Fakes::VeteranStore.new
     end
 
+    def rating_store
+      @rating_store ||= Fakes::RatingStore.new
+    end
+
     delegate :store_end_product_record, to: :end_product_store
     delegate :store_veteran_record, to: :veteran_store
+    delegate :store_rating_record, to: :rating_store
+    delegate :store_rating_profile_record, to: :rating_store
 
     def get_veteran_record(file_number)
       veteran_store.fetch_and_inflate(file_number)
@@ -119,6 +123,10 @@ class Fakes::BGSService
 
   def get_veteran_record(file_number)
     self.class.get_veteran_record(file_number)
+  end
+
+  def get_rating_record(participant_id)
+    self.class.rating_store.fetch_and_inflate(participant_id) || {}
   end
 
   def cancel_end_product(file_number, end_product_code, end_product_modifier)
@@ -148,7 +156,8 @@ class Fakes::BGSService
         birth_date: "Sun, 05 Sep 1943 00:00:00 -0500",
         first_name: "Bob",
         middle_name: "Billy",
-        last_name: "Vance"
+        last_name: "Vance",
+        email_address: "bob.vance@caseflow.gov"
       }
     elsif participant_id == "1129318238"
       {
@@ -156,23 +165,31 @@ class Fakes::BGSService
         first_name: "Cathy",
         middle_name: "",
         last_name: "Smith",
-        name_suffix: "Jr."
+        name_suffix: "Jr.",
+        email_address: "cathy.smith@caseflow.gov"
+      }
+    elsif participant_id == "600153863"
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        fist_name: "Clarence",
+        middle_name: "",
+        last_name: "Darrow",
+        email_address: "clarence.darrow@caseflow.gov"
       }
     else
       {
         birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
         first_name: "Tom",
         middle_name: "Edward",
-        last_name: "Brady"
+        last_name: "Brady",
+        email_address: "tom.brady@caseflow.gov"
       }
     end
   end
   # rubocop:enable Metrics/MethodLength
 
-  def may_modify?(vbms_id, _veteran_participant_id)
-    return false unless can_access?(vbms_id)
-
-    !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+  def station_conflict?(vbms_id, _veteran_participant_id)
+    (self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
   def can_access?(vbms_id)
@@ -266,20 +283,25 @@ class Fakes::BGSService
     default_claimant_info
   end
 
-  def fetch_file_number_by_ssn(ssn)
+  def fetch_person_by_ssn(ssn)
     return if ssn_not_found
 
     self.class.veteran_store.all_veteran_file_numbers.each do |file_number|
       record = get_veteran_record(file_number)
-      if record[:ssn].to_s == ssn.to_s
-        return file_number
-      end
+      return record if record[:ssn].to_s == ssn.to_s
     end
-    nil # i.e. not found
+    nil # not found
+  end
+
+  def fetch_file_number_by_ssn(ssn)
+    return if ssn_not_found
+
+    person = fetch_person_by_ssn(ssn)
+    return person[:file_number] if person
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
-    ratings = (self.class.rating_records || {})[participant_id]
+    ratings = get_rating_record(participant_id)[:ratings] || []
 
     # mimic errors
     if participant_id == "locked_rating"
@@ -289,16 +311,16 @@ class Fakes::BGSService
     end
 
     # Simulate the error bgs throws if participant doesn't exist or doesn't have any ratings
-    unless ratings
-      fail Savon::Error, "java.lang.IndexOutOfBoundsException: Index: 0, Size: 0"
+    if ratings.blank?
+      fail BGS::NoRatingsExistForVeteran, "No Ratings exist for this Veteran"
     end
 
     build_ratings_in_range(ratings, start_date, end_date)
   end
 
   def build_ratings_in_range(all_ratings, start_date, end_date)
-    ratings = all_ratings.select do |r|
-      start_date <= r[:prmlgn_dt] && end_date >= r[:prmlgn_dt]
+    ratings = all_ratings.select do |rating|
+      start_date <= rating[:prmlgn_dt] && end_date >= rating[:prmlgn_dt]
     end
 
     # BGS returns the data not as an array if there is only one rating
@@ -308,10 +330,8 @@ class Fakes::BGSService
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)
-    self.class.rating_profile_records ||= {}
-    self.class.rating_profile_records[participant_id] ||= {}
-
-    rating_profile = self.class.rating_profile_records[participant_id][profile_date]
+    normed_date_key = Fakes::RatingStore.normed_profile_date_key(profile_date).to_sym
+    rating_profile = (get_rating_record(participant_id)[:profiles] || {})[normed_date_key]
 
     # Simulate the error bgs throws if rating profile doesn't exist
     unless rating_profile

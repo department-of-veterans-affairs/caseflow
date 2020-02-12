@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
 import { PreppedCheckbox } from './DailyDocketRowInputs';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const hearingPropTypes = PropTypes.shape({
   appealExternalId: PropTypes.string,
@@ -25,7 +26,8 @@ const hearingPropTypes = PropTypes.shape({
   readableRequestType: PropTypes.string,
   regionalOfficeName: PropTypes.string,
   currentIssueCount: PropTypes.number,
-  paperCase: PropTypes.bool
+  paperCase: PropTypes.bool,
+  isVirtual: PropTypes.bool
 });
 
 export const getDisplayTime = (scheduledTimeString, timezone) => {
@@ -79,6 +81,8 @@ AppellantInformation.propTypes = {
   hearing: hearingPropTypes
 };
 
+const firstParagraphStyle = css({ marginTop: 0 });
+
 const HearingTime = ({ hearing }) => {
   const localTime = getDisplayTime(
     hearing.scheduledTimeString,
@@ -87,16 +91,32 @@ const HearingTime = ({ hearing }) => {
   const coTime = getDisplayTime(hearing.centralOfficeTimeString, 'America/New_York');
 
   if (hearing.readableRequestType === 'Central') {
-    return <div>{coTime}<br />
-      {hearing.regionalOfficeName}
-    </div>;
+    return (
+      <div>
+        <p {...firstParagraphStyle}>
+          <b>{hearing.readableRequestType}</b>
+        </p>
+        <p>
+          {coTime}<br />
+          {hearing.regionalOfficeName}
+        </p>
+      </div>
+    );
   }
 
-  return <div>{coTime} /<br />
-    {localTime} <br />
-    {hearing.regionalOfficeName}
-    <p>{hearing.currentIssueCount} issues</p>
-  </div>;
+  return (
+    <div>
+      <p {...firstParagraphStyle}>
+        <b>{hearing.isVirtual ? 'Virtual' : hearing.readableRequestType}</b>
+      </p>
+      <p>
+        {coTime} /<br />
+        {localTime} <br />
+        {hearing.regionalOfficeName}
+      </p>
+      <p>{hearing.currentIssueCount} issues</p>
+    </div>
+  );
 };
 
 HearingTime.propTypes = {

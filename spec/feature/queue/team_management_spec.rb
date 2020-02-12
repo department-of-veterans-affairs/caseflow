@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Team management page", :postgres do
   let(:user) { create(:user) }
 
   before do
-    OrganizationsUser.add_user_to_organization(user, Bva.singleton)
+    Bva.singleton.add_user(user)
     User.authenticate!(user: user)
   end
 

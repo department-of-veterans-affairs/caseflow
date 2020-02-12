@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe RequestIssue, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -74,8 +71,9 @@ describe RequestIssue, :all_dbs do
     ]
   end
 
-  let(:rating_request_issue_attrs) do
-    {
+  let!(:rating_request_issue) do
+    create(
+      :request_issue,
       decision_review: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
       contested_rating_decision_reference_id: contested_rating_decision_reference_id,
@@ -93,18 +91,12 @@ describe RequestIssue, :all_dbs do
       closed_status: closed_status,
       ineligible_reason: ineligible_reason,
       edited_description: edited_description
-    }
-  end
-
-  let!(:rating_request_issue) do
-    create(
-      :request_issue,
-      rating_request_issue_attrs
     )
   end
 
-  let(:nonrating_request_issue_attrs) do
-    {
+  let!(:nonrating_request_issue) do
+    create(
+      :request_issue,
       decision_review: review,
       nonrating_issue_description: "a nonrating request issue description",
       contested_issue_description: nonrating_contested_issue_description,
@@ -114,13 +106,15 @@ describe RequestIssue, :all_dbs do
       end_product_establishment: end_product_establishment,
       contention_reference_id: nonrating_contention_reference_id,
       benefit_type: benefit_type
-    }
+    )
   end
 
-  let!(:nonrating_request_issue) do
+  let!(:rating_decision_request_issue) do
     create(
       :request_issue,
-      nonrating_request_issue_attrs
+      :rating_decision,
+      contested_rating_issue_profile_date: profile_date,
+      decision_review: review
     )
   end
 
@@ -131,7 +125,8 @@ describe RequestIssue, :all_dbs do
       :request_issue,
       decision_review: review,
       unidentified_issue_text: "an unidentified issue",
-      is_unidentified: true
+      is_unidentified: true,
+      decision_date: 5.days.ago
     )
   end
 
@@ -150,6 +145,45 @@ describe RequestIssue, :all_dbs do
           closed_at: Time.zone.now,
           closed_status: "ineligible"
         )
+      end
+    end
+  end
+
+  context "#remanded?" do
+    subject { rating_request_issue.remanded? }
+
+    context "when not contesting a decision issue" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when contesting a decision issue" do
+      let!(:decision_issue) { create(:decision_issue, decision_review: another_review, disposition: disposition) }
+      let(:another_review) { create(:higher_level_review) }
+      let(:disposition) { nil }
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      context "when the decision issue has a remanded disposition" do
+        let(:disposition) { "remanded" }
+
+        it { is_expected.to eq true }
+      end
+
+      context "when the decision issue does not have a remand disposition" do
+        let(:disposition) { "granted" }
+
+        it { is_expected.to be_falsey }
+
+        context "when the decision issue is from a remand supplemental claim" do
+          let(:another_review) { create(:supplemental_claim, decision_review_remanded: create(:appeal)) }
+
+          it { is_expected.to be_falsey }
+
+          context "when the decision issue from the same review (it is a correction)" do
+            let(:review) { another_review }
+
+            it { is_expected.to eq true }
+          end
+        end
       end
     end
   end
@@ -301,10 +335,27 @@ describe RequestIssue, :all_dbs do
     subject { RequestIssue.rating }
 
     it "filters by rating issues" do
-      expect(subject.length).to eq(2)
+      expect(subject.length).to eq(3)
 
       expect(subject.find_by(id: rating_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: rating_decision_request_issue.id)).to_not be_nil
       expect(subject.find_by(id: unidentified_issue.id)).to_not be_nil
+    end
+  end
+
+  context ".rating_issue" do
+    subject { RequestIssue.rating_issue }
+
+    it "filters by rating_issue issues" do
+      expect(subject.length).to eq(1)
+    end
+  end
+
+  context ".rating_decision" do
+    subject { RequestIssue.rating_decision }
+
+    it "filters by rating_decision issues" do
+      expect(subject.length).to eq(1)
     end
   end
 
@@ -437,7 +488,7 @@ describe RequestIssue, :all_dbs do
         let(:disposition) { "DTA Error" }
 
         it "includes an array of the contention reference IDs from the decision issues request issues" do
-          expect(subject).to eq([101, 121])
+          expect(subject).to match_array([101, 121])
         end
       end
     end
@@ -502,6 +553,14 @@ describe RequestIssue, :all_dbs do
 
     context "when decision review is not processed in caseflow" do
       let(:benefit_type) { "education" }
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "when request issue is ineligible" do
+      let(:closed_status) { "ineligible" }
+
       it "returns nil" do
         expect(subject).to be_nil
       end
@@ -583,7 +642,7 @@ describe RequestIssue, :all_dbs do
       end
 
       it "returns the review title of the request issue in active review" do
-        expect(ineligible_request_issue.ui_hash).to include(
+        expect(ineligible_request_issue.serialize).to include(
           title_of_active_review: request_issue_in_active_review.review_title
         )
       end
@@ -850,26 +909,41 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#rating?, #nonrating?" do
-    subject { request_issue.rating? }
-    let(:nonrating) { request_issue.nonrating? }
     let(:request_issue) { rating_request_issue }
 
     context "when there is an associated rating issue" do
       let(:contested_rating_issue_reference_id) { "123" }
-      it { is_expected.to be true }
+
+      it "rating? is true" do
+        expect(request_issue.rating?).to be true
+      end
 
       it "nonrating? is false" do
-        expect(nonrating).to be(false)
+        expect(request_issue.nonrating?).to be(false)
+      end
+    end
+
+    context "verified unidentified issue returns true for rating" do
+      let!(:request_issue) { create(:request_issue, verified_unidentified_issue: true) }
+
+      it "rating? is true" do
+        expect(request_issue.rating?).to be true
+      end
+
+      it "nonrating? is false" do
+        expect(request_issue.nonrating?).to be(false)
       end
     end
 
     context "where there is an associated rating decision" do
       let(:contested_rating_decision_reference_id) { "123" }
 
-      it { is_expected.to be true }
+      it "rating? is true" do
+        expect(request_issue.rating?).to be true
+      end
 
       it "nonrating? is false" do
-        expect(nonrating).to be(false)
+        expect(request_issue.nonrating?).to be(false)
       end
     end
 
@@ -885,22 +959,46 @@ describe RequestIssue, :all_dbs do
         )
       end
       let(:decision_issue) do
-        create(:decision_issue,
-               decision_review: previous_review,
-               request_issues: [original_request_issue])
+        create(
+          :decision_issue,
+          decision_review: previous_review,
+          request_issues: [original_request_issue]
+        )
       end
 
-      it { is_expected.to be true }
+      it "rating? is true" do
+        expect(request_issue.rating?).to be true
+      end
+
       it "nonrating? is false" do
-        expect(nonrating).to be(false)
+        expect(request_issue.nonrating?).to be(false)
       end
     end
 
     context "when it's a nonrating issue" do
       let(:request_issue) { nonrating_request_issue }
-      it { is_expected.to be_falsey }
+
+      it "rating? is falsey" do
+        expect(request_issue.rating?).to be_falsey
+      end
+
       it "nonrating? is true" do
-        expect(nonrating).to be(true)
+        expect(request_issue.nonrating?).to be(true)
+      end
+    end
+
+    context "when the contested issue is a decision issue on an unidentified request issue" do
+      let(:contested_rating_issue_reference_id) { nil }
+      let(:other_request_issue) { unidentified_issue }
+      let!(:decision_issue) { create(:decision_issue, request_issues: [other_request_issue]) }
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      it "rating is true" do
+        expect(request_issue.rating?).to be true
+      end
+
+      it "nonrating? is false" do
+        expect(request_issue.nonrating?).to be false
       end
     end
   end
@@ -1006,6 +1104,13 @@ describe RequestIssue, :all_dbs do
       nonrating_request_issue.validate_eligibility!
 
       expect(nonrating_request_issue.untimely?).to eq(true)
+    end
+
+    it "flags unidentified request issue as untimely when decision date is older than receipt_date" do
+      unidentified_issue.decision_date = receipt_date - 450
+      unidentified_issue.validate_eligibility!
+
+      expect(unidentified_issue.untimely?).to eq(true)
     end
 
     it "flags rating request issue as untimely when promulgation_date is year+ older than receipt_date" do

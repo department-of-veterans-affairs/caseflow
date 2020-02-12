@@ -10,8 +10,9 @@ import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
-import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
-import { validateDate, validateDateNotInFuture } from '../util/issues';
+import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
+import { validateDateNotInFuture, isTimely } from '../util/issues';
+import { formatDateStr } from '../../util/DateUtil';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -80,11 +81,7 @@ class NonratingRequestIssueModal extends React.Component {
 
   errorOnDecisionDate = (value) => {
     if (value.length === 10) {
-      let error = validateDate(value) ? null : 'Please enter a valid decision date.';
-
-      if (!error) {
-        error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
-      }
+      const error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
 
       return error;
     }
@@ -114,23 +111,8 @@ class NonratingRequestIssueModal extends React.Component {
     }
   };
 
-  isTimely = () => {
-    if (this.props.formType === 'supplemental_claim') {
-      return true;
-    }
-
-    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
-
-    // we must do our own date math for nonrating request issues.
-    // we assume the timezone of the browser for all these.
-    const decisionDate = new Date(this.state.decisionDate);
-    const receiptDate = new Date(this.props.intakeData.receiptDate);
-    const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
-
-    return lessThanOneYear;
-  };
-
   onAddIssue = () => {
+    const { formType, intakeData } = this.props;
     const {
       benefitType,
       category: { value: category },
@@ -150,7 +132,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason,
       decisionReviewTitle,
       isRating: false,
-      timely: this.isTimely()
+      timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
 
     this.props.onSubmit({ currentIssue });
@@ -199,7 +181,7 @@ class NonratingRequestIssueModal extends React.Component {
       }).
       map((issue) => {
         return {
-          displayText: `${issue.category}: ${issue.description}, decided ${issue.decisionDate}`,
+          displayText: `${issue.category}: ${issue.description}, decided ${formatDateStr(issue.decisionDate)}`,
           value: issue.id,
           disabled: false
         };
@@ -248,6 +230,7 @@ class NonratingRequestIssueModal extends React.Component {
             value={decisionDate}
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
+            type="date"
           />
         </div>
 
@@ -311,7 +294,12 @@ NonratingRequestIssueModal.propTypes = {
   onCancel: PropTypes.func,
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
-  skipText: PropTypes.string
+  skipText: PropTypes.string,
+  intakeData: PropTypes.object,
+  formType: PropTypes.string,
+  activeNonratingRequestIssues: PropTypes.object,
+  receiptDate: PropTypes.string,
+  addedIssues: PropTypes.array
 };
 
 NonratingRequestIssueModal.defaultProps = {

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.describe HearingsApplicationController, :postgres, type: :controller do
   context "when user is not authenticated" do
     it "redirects" do

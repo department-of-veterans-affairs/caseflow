@@ -7,6 +7,7 @@ class ClaimReview < DecisionReview
   include HasBusinessLine
 
   has_many :end_product_establishments, as: :source
+  has_many :messages, as: :detail
 
   with_options if: :saving_review do
     validate :validate_receipt_date
@@ -23,7 +24,6 @@ class ClaimReview < DecisionReview
   self.abstract_class = true
 
   class NoEndProductsRequired < StandardError; end
-  class NotYetProcessed < StandardError; end
 
   class << self
     def find_by_uuid_or_reference_id!(claim_id)
@@ -40,31 +40,29 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def ui_hash
-    super.merge(
-      asyncJobUrl: async_job_url,
-      benefitType: benefit_type,
-      payeeCode: payee_code,
-      hasClearedRatingEp: cleared_rating_ep?,
-      hasClearedNonratingEp: cleared_nonrating_ep?
-    )
+  def serialize
+    Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def validate_prior_to_edit
-    fail NotYetProcessed unless processed?
+    if processed?
+      # force sync on initial edit call so that we have latest EP status.
+      # This helps prevent us editing something that recently closed upstream.
+      sync_end_product_establishments!
 
-    # force sync on initial edit call so that we have latest EP status.
-    # This helps prevent us editing something that recently closed upstream.
-    sync_end_product_establishments!
-
-    verify_contentions
+      verify_contentions
+    end
 
     # this will raise any errors for missing data
-    ui_hash
+    serialize
   end
 
   def async_job_url
     "/asyncable_jobs/#{self.class}/jobs/#{id}"
+  end
+
+  def label
+    "#{self.class} #{id} (Veteran #{veteran_file_number})"
   end
 
   def finalized_decision_issues_before_receipt_date
@@ -87,7 +85,7 @@ class ClaimReview < DecisionReview
   def add_user_to_business_line!
     return unless processed_in_caseflow?
 
-    OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
+    business_line.add_user(RequestStore.store[:current_user])
   end
 
   def create_business_line_tasks!
@@ -108,6 +106,27 @@ class ClaimReview < DecisionReview
     process_legacy_issues!
     clear_error!
     processed!
+  end
+
+  def processed!
+    super
+    AsyncableJobMessaging.new(job: self).handle_job_success
+  end
+
+  def update_error!(err)
+    super
+    AsyncableJobMessaging.new(job: self).handle_job_failure
+  end
+
+  # Cancel an unprocessed job, add a job note, and send a message to the job user's inbox.
+  # Currently this only happens manually by an engineer, and requires a message explaining
+  # why the job was cancelled and describing any additional action necessary.
+  def cancel_with_note!(user: RequestStore[:current_user], note:)
+    fail Caseflow::Error::ActionForbiddenError, message: "Acting user must be specified" unless user
+    fail Caseflow::Error::ActionForbiddenError, message: "Processed job cannot be cancelled" if processed?
+
+    cancel_establishment!
+    AsyncableJobMessaging.new(job: self, user: user).add_job_cancellation_note(text: note)
   end
 
   def invalid_modifiers
@@ -233,18 +252,18 @@ class ClaimReview < DecisionReview
     processed_in_vbms? && !try(:decision_review_remanded?)
   end
 
+  def cleared_rating_ep?
+    processed? && cleared_end_products.any?(&:rating?)
+  end
+
+  def cleared_nonrating_ep?
+    processed? && cleared_end_products.any?(&:nonrating?)
+  end
+
   private
 
   def cleared_end_products
     @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
-  end
-
-  def cleared_rating_ep?
-    cleared_end_products.any?(&:rating?)
-  end
-
-  def cleared_nonrating_ep?
-    cleared_end_products.any?(&:nonrating?)
   end
 
   def verify_contentions

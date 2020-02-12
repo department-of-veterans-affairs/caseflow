@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-
 describe StatusSerializer, :all_dbs do
   def status_hash(object)
     StatusSerializer.new(object).serializable_hash[:data][:attributes]
@@ -16,7 +14,7 @@ describe StatusSerializer, :all_dbs do
 
     context "appeal not assigned" do
       it "is on docket" do
-        status = status_hash(appeal)
+        status = status_hash(appeal.decorated_with_status)
         expect(status[:type]).to eq(:on_docket)
         expect(status[:details]).to be_empty
       end
@@ -28,7 +26,7 @@ describe StatusSerializer, :all_dbs do
       end
 
       it "is waiting for hearing to be scheduled" do
-        status = status_hash(appeal)
+        status = status_hash(appeal.decorated_with_status)
         expect(status[:type]).to eq(:pending_hearing_scheduling)
         expect(status[:details][:type]).to eq("video")
       end
@@ -78,7 +76,7 @@ describe StatusSerializer, :all_dbs do
       end
 
       it "status is scheduled_hearing with hearing details" do
-        status = status_hash(appeal)
+        status = status_hash(appeal.decorated_with_status)
         expect(status[:type]).to eq(:scheduled_hearing)
         expect(status[:details][:type]).to eq("video")
         expect(status[:details][:date]).to eq(hearing_scheduled_for.to_date)
@@ -99,7 +97,7 @@ describe StatusSerializer, :all_dbs do
       end
 
       it "is in evidentiary period " do
-        status = status_hash(appeal)
+        status = status_hash(appeal.decorated_with_status)
         expect(status[:type]).to eq(:evidentiary_period)
         expect(status[:details]).to be_empty
       end
@@ -119,7 +117,7 @@ describe StatusSerializer, :all_dbs do
       end
 
       it "waiting for a decision" do
-        status = status_hash(appeal)
+        status = status_hash(appeal.decorated_with_status)
         expect(status[:type]).to eq(:decision_in_progress)
         expect(status[:details][:decision_timeliness]).to eq([1, 2])
       end
@@ -137,7 +135,7 @@ describe StatusSerializer, :all_dbs do
       end
 
       it "status is still in progress since because no decision document" do
-        status = status_hash(appeal)
+        status = status_hash(appeal.decorated_with_status)
         expect(status[:type]).to eq(:decision_in_progress)
         expect(status[:details][:decision_timeliness]).to eq([1, 2])
       end
@@ -146,7 +144,7 @@ describe StatusSerializer, :all_dbs do
         let!(:decision_document) { create(:decision_document, appeal: appeal) }
 
         it "status is bva_decision" do
-          status = status_hash(appeal)
+          status = status_hash(appeal.decorated_with_status)
           expect(status[:type]).to eq(:bva_decision)
           expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
           expect(status[:details][:issues].first[:disposition]).to eq("allowed")
@@ -172,7 +170,7 @@ describe StatusSerializer, :all_dbs do
       end
 
       it "effectuation had an ep" do
-        status = status_hash(appeal)
+        status = status_hash(appeal.decorated_with_status)
         expect(status[:type]).to eq(:bva_decision_effectuation)
         expect(status[:details][:bva_decision_date].to_date).to eq((receipt_date + 60.days).to_date)
         expect(status[:details][:aoj_decision_date].to_date).to eq((receipt_date + 100.days).to_date)
@@ -198,7 +196,7 @@ describe StatusSerializer, :all_dbs do
       it "it has status ama_remand" do
         appeal.create_remand_supplemental_claims!
         appeal.remand_supplemental_claims.each(&:reload)
-        status = status_hash(appeal)
+        status = status_hash(appeal.decorated_with_status)
         expect(status[:type]).to eq(:ama_remand)
         expect(status[:details][:issues].count).to eq(2)
       end
@@ -267,7 +265,7 @@ describe StatusSerializer, :all_dbs do
       context "they are all complete" do
         let!(:remanded_sc_task) { create(:task, :completed, appeal: remanded_sc) }
         it "has post_bva_dta_decision status,shows the latest decision date, and remand dedision issues" do
-          status = status_hash(appeal)
+          status = status_hash(appeal.decorated_with_status)
           expect(status[:type]).to eq(:post_bva_dta_decision)
           expect(status[:details][:issues]).to include(
             { description: "Partial loss of upper jaw", disposition: "granted" },
@@ -281,7 +279,7 @@ describe StatusSerializer, :all_dbs do
       context "they are not all complete" do
         let!(:remanded_sc_task) { create(:task, :in_progress, appeal: remanded_sc) }
         it "has ama_remand status, no decision dates, and shows appeals decision issues" do
-          status = status_hash(appeal)
+          status = status_hash(appeal.decorated_with_status)
           expect(status[:type]).to eq(:ama_remand)
           expect(status[:details][:issues]).to include(
             { description: "Dental or oral condition", disposition: "allowed" },

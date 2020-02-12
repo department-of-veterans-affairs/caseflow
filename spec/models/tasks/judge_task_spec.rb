@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe JudgeTask, :all_dbs do
   let(:judge) { create(:user) }
   let(:judge2) { create(:user) }
@@ -116,7 +113,7 @@ describe JudgeTask, :all_dbs do
       subject { JudgeQualityReviewTask.create_from_params(params, qr_user) }
 
       before do
-        OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
+        QualityReview.singleton.add_user(qr_user)
       end
 
       it "the parent task should change to an 'on hold' status" do
@@ -127,7 +124,41 @@ describe JudgeTask, :all_dbs do
     end
   end
 
-  describe ".udpate_from_params" do
+  describe ".create" do
+    context "creating a second JudgeDecisionReviewTask" do
+      let(:root_task) { create(:root_task) }
+      let!(:jdrt) do
+        create(:ama_judge_decision_review_task, appeal: root_task.appeal, parent: root_task, assigned_to: judge)
+      end
+
+      subject { JudgeDecisionReviewTask.create!(appeal: root_task.appeal, parent: root_task, assigned_to: judge) }
+
+      Task.open_statuses.each do |o_status|
+        context "when an open (#{o_status}) JudgeDecisionReviewTask already exists" do
+          it "should fail creation of second JudgeDecisionReviewTask" do
+            expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+            jdrt.update(status: o_status)
+            expect { subject }.to raise_error(Caseflow::Error::DuplicateUserTask)
+            expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+          end
+        end
+      end
+
+      Task.closed_statuses.each do |c_status|
+        context "when a closed (#{c_status}) JudgeDecisionReviewTask exists" do
+          it "should create new active JudgeDecisionReviewTask" do
+            jdrt.update(status: c_status)
+            expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+            expect { subject }.to_not raise_error
+            expect(root_task.appeal.tasks.count).to eq(3), root_task.appeal.tasks.to_a.to_s
+            expect(root_task.appeal.tasks.where(type: JudgeDecisionReviewTask.name).count).to eq(2)
+          end
+        end
+      end
+    end
+  end
+
+  describe ".update_from_params" do
     context "updating a JudgeQualityReviewTask" do
       let(:existing_instructions) { "existing instructions" }
       let(:existing_status) { :assigned }

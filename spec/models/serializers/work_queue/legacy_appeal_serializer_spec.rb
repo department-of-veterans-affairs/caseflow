@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe WorkQueue::LegacyAppealSerializer, :all_dbs do
   let(:user) { create(:user) }
   let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }

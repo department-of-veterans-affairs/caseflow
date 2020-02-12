@@ -1,0 +1,33 @@
+<head>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+
+  <title>
+    <% if @new_window_title %>
+      <%= @new_window_title %>
+    <% elsif content_for?(:new_window_title) %>
+      <%= yield :new_window_title %>
+    <% else %>
+      Caseflow <%= logo_name %>
+    <% end %>
+  </title>
+
+  <script>
+    <%= render "layouts/head_new_relic" %>
+    <%= render "layouts/head_google_analytics" %>
+  </script>
+  <%= render "layouts/head_sentry" %>
+
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+
+  <%= env_javascript_include_tag(static: ['webpack-bundle'],
+                                 hot: ['http://localhost:3500/webpack-bundle.js']) %>
+
+  <%= csrf_meta_tags %>
+
+  <% if content_for?(:head) %><%= yield :head %><% end %>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <%= favicon_link_tag %>
+
+</head>

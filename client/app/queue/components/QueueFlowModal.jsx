@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from '../../components/Modal';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -99,6 +99,7 @@ QueueFlowModal.propTypes = {
   title: PropTypes.string,
   button: PropTypes.string,
   pathAfterSubmit: PropTypes.string,
+  // submit should return a promise on which .then() can be called
   submit: PropTypes.func,
   success: PropTypes.object,
   validateForm: PropTypes.func,

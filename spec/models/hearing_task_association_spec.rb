@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe HearingTaskAssociation, :all_dbs do
   describe "uniqueness validation" do
     let(:hearing) { nil }

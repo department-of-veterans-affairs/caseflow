@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe HearingAdminActionTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
@@ -13,7 +10,7 @@ describe HearingAdminActionTask, :postgres do
     let(:task_params) { { appeal: appeal, parent_id: parent_task.id } }
 
     before do
-      OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(hearings_management_user)
       RequestStore[:current_user] = hearings_management_user
     end
 
@@ -51,7 +48,7 @@ describe HearingAdminActionTask, :postgres do
       let(:hearing_admin_user) { create(:user, station_id: 101) }
 
       before do
-        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+        HearingAdmin.singleton.add_user(hearing_admin_user)
       end
 
       it "has no actions available to the hearing admin user" do

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe DocumentFetcher, :postgres do
   let(:appeal) { Generators::LegacyAppeal.build }
   let(:document_service) { DocumentFetcher.new(appeal: appeal, use_efolder: true) }

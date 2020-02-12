@@ -24,6 +24,10 @@ class ApplicationBaseController < ActionController::Base
     end
   end
 
+  def info_for_paper_trail
+    { request_id: request.uuid }
+  end
+
   private
 
   def check_out_of_service

@@ -132,7 +132,6 @@ class Document < ApplicationRecord
   end
 
   def fetch_content
-    Rails.logger.warn("Document.fetch_content is deprecated. Called from #{Kernel.caller.first}")
     content = S3Service.fetch_content(S3_BUCKET_NAME + "/" + file_name)
     content && Rails.logger.info("File #{vbms_document_id} fetched from S3")
     content || fetch_and_cache_document_from_vbms

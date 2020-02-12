@@ -7,7 +7,7 @@ import ReactMarkdown from 'react-markdown';
 
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
-// import Checkbox from '../../components/Checkbox';  // enable once supported
+import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 
 class NewNoteForm extends React.PureComponent {
@@ -16,7 +16,7 @@ class NewNoteForm extends React.PureComponent {
 
     this.state = {
       saveInProgress: false,
-      checkboxSelected: false,
+      checkboxSelected: true,
       newNote: ''
     };
   }
@@ -69,18 +69,13 @@ class NewNoteForm extends React.PureComponent {
   }
 
   sendToUserCheckbox = () => {
-    return <span />;
-
-    // enable once server supports it
-  /*
     return <Checkbox
       label="Send as message to user"
       name="send_to_intake_user"
       value={this.isCheckboxChecked()}
       onChange={this.onCheckboxChange}
-      disabled={this.isSaveDisabled()}
+      disabled={this.state.saveInProgress}
     />;
-  */
   }
 
   render = () => {
@@ -94,7 +89,7 @@ class NewNoteForm extends React.PureComponent {
       />
       <div className="comment-save-button-container">
         <span className="cf-right-side">
-          { this.sendToUserCheckbox() }
+          { this.props.job.user && this.sendToUserCheckbox() }
           <Button
             name="save"
             disabled={this.isSaveDisabled()}

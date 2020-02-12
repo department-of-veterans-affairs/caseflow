@@ -3,6 +3,7 @@
 class BgsPowerOfAttorney
   include ActiveModel::Model
   include AssociatedBgsRecord
+  include BgsService
 
   attr_accessor :file_number
   attr_accessor :claimant_participant_id
@@ -13,10 +14,13 @@ class BgsPowerOfAttorney
     @representative_address ||= load_bgs_address!
   end
 
+  delegate :email_address,
+           to: :person, prefix: :representative
+
   private
 
-  def bgs
-    BGSService.new
+  def person
+    @person ||= Person.find_or_create_by(participant_id: participant_id)
   end
 
   def fetch_bgs_record

@@ -1,31 +1,31 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe JudgeAssignTasksController, :all_dbs do
   describe "POST /judge_assign_tasks" do
-    context "when cases will be assigned to an attorney" do
-      let!(:attorney) { create(:user) }
-      let!(:judge) { create(:user) }
-      let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-      let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
+    let!(:attorney) { create(:user) }
+    let!(:judge) { create(:user) }
+    let!(:second_judge) { create(:user) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
+    let!(:second_judge_staff) { create(:staff, :judge_role, sdomainid: second_judge.css_id) }
 
-      let!(:assign_tasks) { create_list(:ama_judge_task, 3, assigned_to: judge, parent: create(:root_task)) }
-      let!(:params) do
-        assign_tasks.map do |assign_task|
-          {
-            external_id: assign_task.appeal.external_id,
-            parent_id: assign_task.id,
-            assigned_to_id: attorney.id
-          }
-        end
+    let!(:assign_tasks) { create_list(:ama_judge_task, 3, assigned_to: judge, parent: create(:root_task)) }
+    let!(:assignee) { attorney }
+    let!(:params) do
+      assign_tasks.map do |assign_task|
+        {
+          external_id: assign_task.appeal.external_id,
+          parent_id: assign_task.id,
+          assigned_to_id: assignee.id
+        }
       end
+    end
 
-      before { User.authenticate!(user: judge) }
+    before { User.authenticate!(user: judge) }
 
-      subject { post :create, params: { tasks: params } }
+    subject { post :create, params: { tasks: params } }
 
+    context "when cases will be assigned to an attorney" do
       it "returns the newly created tasks along with their new parents and old parents" do
         subject
 
@@ -56,6 +56,35 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
         expect(assign_tasks.all? do |assign_task|
           assign_task["attributes"]["status"].eql? Constants.TASK_STATUSES.completed
         end).to eq true
+      end
+    end
+
+    context "when cases will be assigned to an acting judge" do
+      let!(:second_judge_staff) { create(:staff, :attorney_judge_role, sdomainid: second_judge.css_id) }
+      let!(:assignee) { second_judge }
+
+      it "returns the newly created tasks" do
+        subject
+
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+
+        attorney_tasks = response_body.select { |task| task["attributes"]["type"].eql? AttorneyTask.name }
+        expect(attorney_tasks.count).to eq 3
+        attorney_tasks.each do |attorney_task|
+          expect(attorney_task["attributes"]["assigned_to"]["id"]).to eq second_judge.id
+        end
+      end
+    end
+
+    context "when attempting to assign cases to a judge" do
+      let!(:assignee) { second_judge }
+
+      it "raises an error" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(ActiveRecord::RecordInvalid)
+          expect(error.message).to eq("Validation failed: Assigned to has to be an attorney")
+        end
       end
     end
   end

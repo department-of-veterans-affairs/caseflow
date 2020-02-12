@@ -1,54 +1,57 @@
-import { css } from 'glamor';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  appealWithDetailSelector,
-  taskSnapshotTasksForAppeal
-} from './selectors';
+import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from './selectors';
+import { css } from 'glamor';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
-import COPY from '../../COPY.json';
-import {
-  sectionSegmentStyling,
-  sectionHeadingStyling,
-  anchorJumpLinkStyling
-} from './StickyNavContentArea';
+import COPY from '../../COPY';
+import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from './StickyNavContentArea';
+import { PulacCerulloReminderAlert } from './pulacCerullo/PulacCerulloReminderAlert';
 
 const tableStyling = css({
   width: '100%',
   marginTop: '0px'
 });
 
-export class TaskSnapshot extends React.PureComponent {
+const alertStyling = css({
+  borderBottom: 'none',
+  marginBottom: 0
+});
 
-  render = () => {
-    const {
-      appeal,
-      hideDropdown,
-      tasks
-    } = this.props;
+export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
+  const sectionBody = tasks.length ? (
+    <table {...tableStyling}>
+      <tbody>{<TaskRows appeal={appeal} taskList={tasks} timeline={false} hideDropdown={hideDropdown} />}</tbody>
+    </table>
+  ) : (
+    COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
+  );
 
-    let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
-
-    if (tasks.length) {
-      sectionBody = <table {...tableStyling}>
-        <tbody>
-          { <TaskRows appeal={appeal} taskList={tasks} timeline={false} hideDropdown={hideDropdown} /> }
-        </tbody>
-      </table>;
-    }
-
-    return <div className="usa-grid" id="currently-active-tasks" {...css({ marginTop: '3rem' })}>
+  return (
+    <div className="usa-grid" id="currently-active-tasks" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
-        <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
-        { <AddNewTaskButton appealId={appeal.externalId} /> }
+        <a id="our-elemnt" {...anchorJumpLinkStyling}>
+          {COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}
+        </a>
+        {<AddNewTaskButton appealId={appeal.externalId} />}
       </h2>
-      <div {...sectionSegmentStyling}>
-        { sectionBody }
-      </div>
-    </div>;
-  };
-}
+      {showPulacCerulloAlert && (
+        <div {...sectionSegmentStyling} {...alertStyling}>
+          <PulacCerulloReminderAlert />
+        </div>
+      )}
+      <div {...sectionSegmentStyling}>{sectionBody}</div>
+    </div>
+  );
+};
+
+TaskSnapshot.propTypes = {
+  tasks: PropTypes.array,
+  appeal: PropTypes.object,
+  hideDropdown: PropTypes.bool,
+  showPulacCerulloAlert: PropTypes.bool
+};
 
 const mapStateToProps = (state, ownProps) => {
   return {

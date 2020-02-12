@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
+require "models/concerns/has_virtual_hearing_examples"
 
 describe Hearing, :postgres do
+  it_should_behave_like "a model that can have a virtual hearing" do
+    let(:instance_of_class) { create(:hearing, regional_office: "RO42") }
+  end
+
   context "create" do
     let!(:hearing_day) { create(:hearing_day) }
 

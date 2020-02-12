@@ -11,6 +11,7 @@
 class EndProductEstablishment < ApplicationRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
+  has_many :end_product_code_updates
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -205,6 +206,8 @@ class EndProductEstablishment < ApplicationRecord
       handle_canceled_ep!
       close_request_issues_with_no_decision!
     end
+
+    save_updated_end_product_code!
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
@@ -321,6 +324,17 @@ class EndProductEstablishment < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
   end
 
+  # In order to expedite processing, EPs originating from the board are set to "Ready for Decision"
+  def status_type_code
+    ready_for_decision_codes = EndProduct::EFFECTUATION_CODES.merge(EndProduct::REMAND_CODES)
+
+    if ready_for_decision_codes.include?(code)
+      EndProduct::STATUSES.key("Ready for decision")
+    else
+      EndProduct::STATUSES.key("Pending")
+    end
+  end
+
   private
 
   def status_type
@@ -386,7 +400,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def close_request_issues_with_no_decision!
     return unless status_cleared?
-    return unless result.claim_type_code =~ /^400/
+    return unless result.claim_type_code.include?("400")
 
     request_issues.each { |ri| RequestIssueClosure.new(ri).with_no_decision! }
   end
@@ -456,7 +470,8 @@ class EndProductEstablishment < ApplicationRecord
       gulf_war_registry: false,
       station_of_jurisdiction: station,
       limited_poa_code: limited_poa_code,
-      limited_poa_access: limited_poa_access
+      limited_poa_access: limited_poa_access,
+      status_type_code: status_type_code
     )
   end
 
@@ -476,6 +491,14 @@ class EndProductEstablishment < ApplicationRecord
     return unless source&.respond_to?(:on_sync)
 
     source.on_sync(self)
+  end
+
+  def save_updated_end_product_code!
+    if code != result.claim_type_code
+      return if result.claim_type_code == end_product_code_updates.last&.code
+
+      end_product_code_updates.create(code: result.claim_type_code)
+    end
   end
 
   def create_contentions_in_vbms(contentions)

@@ -24,6 +24,7 @@ import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
+      userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
@@ -35,6 +36,7 @@ export default class HearingsApp extends React.PureComponent {
     } = this.props;
 
     return {
+      userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
@@ -59,10 +61,17 @@ export default class HearingsApp extends React.PureComponent {
   };
 
   routeForListScheduleContainer = () => <ListScheduleContainer user={this.userPermissionProps()} />;
-  routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
+  routeForAssignHearingsContainer = () => (
+    // Remove `displayPowerOfAttorneyColumn` prop when pagination lands. (#11757)
+    // Also remove where this gets set in the view. (#11757)
+    <AssignHearingsContainer
+      {...this.propsForAssignHearingsContainer()}
+      displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumnOnAssignHearings}
+    />
+  );
   routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
   routeForHearingDetails = ({ match: { params }, history }) =>
-    <HearingDetailsContainer hearingId={params.hearingId} history={history} {...this.userPermissionProps()} />;
+    <HearingDetailsContainer hearingId={params.hearingId} history={history} user={this.userPermissionProps()} />;
   routeForHearingWorksheet = () => ({ match: { params } }) =>
     <HearingWorksheetContainer hearingId={params.hearingId} />;
   routeForPrintedHearingWorksheets = (props) => {
@@ -172,6 +181,7 @@ HearingsApp.propTypes = {
   applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
+  userCanScheduleVirtualHearings: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   userCanBuildHearingSchedule: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,
@@ -180,5 +190,7 @@ HearingsApp.propTypes = {
   userInHearingOrTranscriptionOrganization: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
-  userCssId: PropTypes.string
+  userCssId: PropTypes.string,
+  // Remove when pagination lands. (#11757)
+  displayPowerOfAttorneyColumnOnAssignHearings: PropTypes.bool
 };

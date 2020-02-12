@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe RoundRobinTaskDistributor, :all_dbs do
   let(:assignee_pool_size) { 6 }
   let!(:assignee_pool) { create_list(:user, assignee_pool_size) }
@@ -69,7 +66,7 @@ describe RoundRobinTaskDistributor, :all_dbs do
       end
 
       context "the assignee_pool contains items that aren't Users" do
-        let!(:assignee_pool) { create_list(:user, assignee_pool_size).pluck(:css_id) }
+        let!(:assignee_pool) { create_list(:organization, assignee_pool_size) }
 
         it "raises an error" do
           expect { round_robin_distributor.next_assignee }.to(raise_error) do |error|
@@ -93,6 +90,28 @@ describe RoundRobinTaskDistributor, :all_dbs do
       it "should have evenly distributed tasks to each assignee" do
         assignee_pool.each do |user|
           expect(Task.where(assigned_to: user).count).to eq(iterations)
+        end
+      end
+    end
+
+    context "the assignee_pool has inactive users" do
+      let(:iterations) { 4 }
+      let(:total_distribution_count) { iterations * assignee_pool_size }
+      let(:number_of_inactive_users) { assignee_pool_size / 2 }
+
+      before do
+        assignee_pool.take(number_of_inactive_users).each(&:inactive!)
+        total_distribution_count.times do
+          create(:task, assigned_to: round_robin_distributor.next_assignee)
+        end
+      end
+
+      it "should have evenly distributed tasks to each assignee" do
+        assignee_pool.select(&:active?).each do |user|
+          expect(Task.where(assigned_to: user).count).to eq(iterations * 2)
+        end
+        assignee_pool.select(&:inactive?).each do |user|
+          expect(Task.where(assigned_to: user).count).to eq(0)
         end
       end
     end

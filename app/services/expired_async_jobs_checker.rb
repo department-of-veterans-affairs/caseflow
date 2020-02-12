@@ -6,7 +6,7 @@ class ExpiredAsyncJobsChecker < DataIntegrityChecker
     job_reporter = AsyncableJobsReporter.new(jobs: jobs)
     return unless jobs.count > 0
 
-    add_to_report "Expired Jobs: #{jobs.count} expired unfinished asyncable jobs exist in the queue."
+    add_to_report "[INFO] Expired Jobs: #{jobs.count} expired unfinished asyncable jobs exist in the queue."
     add_to_report job_reporter.summarize
   end
 end

@@ -8,7 +8,7 @@ import moment from 'moment';
 import { COLORS } from '../../../constants/AppConstants';
 import AssignHearingsTabs from './AssignHearingsTabs';
 import StatusMessage from '../../../components/StatusMessage';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -101,6 +101,7 @@ export default class AssignHearings extends React.Component {
       </div>;
     }
 
+    // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
     return (
       <React.Fragment>
         {<UpcomingHearingDaysNav
@@ -114,6 +115,7 @@ export default class AssignHearings extends React.Component {
             selectedHearingDay={selectedHearingDay}
             appealsReadyForHearing={appealsReadyForHearing}
             room={room}
+            displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumn}
           />}
       </React.Fragment>
     );
@@ -131,5 +133,7 @@ AssignHearings.propTypes = {
   ]),
   appealsReadyForHearing: PropTypes.object,
   userId: PropTypes.number,
-  onReceiveTasks: PropTypes.func
+  onReceiveTasks: PropTypes.func,
+  // Remove when pagination lands (#11757)
+  displayPowerOfAttorneyColumn: PropTypes.bool
 };

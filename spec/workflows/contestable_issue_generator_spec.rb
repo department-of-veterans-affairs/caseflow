@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe "Contestable Issue Generator", :postgres do
   let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
   let(:review) { hlr }
@@ -21,10 +18,21 @@ describe "Contestable Issue Generator", :postgres do
   let!(:future_rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: review.receipt_date + 1.day,
-      profile_date: review.receipt_date + 1.day,
+      promulgation_date: review.receipt_date + 5.days,
+      profile_date: review.receipt_date + 5.days,
       issues: [
-        { reference_id: "abc123", decision_text: "Rating issue" }
+        { reference_id: "abc123", decision_text: "Future Rating issue" }
+      ]
+    )
+  end
+
+  let!(:today_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: review.receipt_date,
+      profile_date: review.receipt_date,
+      issues: [
+        { reference_id: "def456", decision_text: "Rating issue" }
       ]
     )
   end
@@ -70,7 +78,7 @@ describe "Contestable Issue Generator", :postgres do
       after { FeatureToggle.disable!(:correct_claim_reviews) }
 
       it "returns decision issues from the same review" do
-        expect(subject.count).to eq(3)
+        expect(subject.count).to eq(4)
         expect(subject.select { |issue| issue.description == "review decision issue" }.empty?).to be false
       end
     end
@@ -96,6 +104,23 @@ describe "Contestable Issue Generator", :postgres do
           expect(subject.count).to eq(1)
           expect(subject.first.description).to eq "review decision issue"
         end
+      end
+    end
+
+    context "#contestable_issues with future ratings" do
+      before { FeatureToggle.enable!(:show_future_ratings) }
+      after { FeatureToggle.disable!(:show_future_ratings) }
+
+      it "when show_future_ratings feature toggle is enabled" do
+        expect(subject.count).to eq(4)
+        expect(subject.first.description).to eq "Future Rating issue"
+      end
+    end
+
+    context "#contestable_issues with no future ratings" do
+      it "when show_future_ratings feature toggle is not enabled" do
+        expect(subject.count).to eq(3)
+        expect(subject.first.description).to eq "Rating issue"
       end
     end
   end

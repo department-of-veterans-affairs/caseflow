@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe JudgeSchedulePeriod, :all_dbs do
   let(:judge_schedule_period) { create(:judge_schedule_period) }
   let(:single_nonavail_date_judge_schedule_period) { create(:single_nonavail_date_judge_schedule_period) }
@@ -38,13 +35,13 @@ describe JudgeSchedulePeriod, :all_dbs do
     subject { judge_schedule_period.algorithm_assignments }
     it "verifying the algorithm output" do
       expect(subject.count).to eq(3)
-      expect(subject[0].key?(:id)).to be_truthy
-      expect(subject[0].key?(:request_type)).to be_truthy
-      expect(subject[0].key?(:scheduled_for)).to be_truthy
-      expect(subject[0].key?(:room)).to be_truthy
-      expect(subject[0].key?(:regional_office)).to be_truthy
-      expect(subject[0].key?(:judge_id)).to be_truthy
-      expect(subject[0].key?(:judge_name)).to be_truthy
+      expect(subject[0].id).to be_truthy
+      expect(subject[0].request_type).to be_truthy
+      expect(subject[0].scheduled_for).to be_truthy
+      expect(subject[0].room).to be_truthy
+      expect(subject[0].regional_office).to be_truthy
+      expect(subject[0].judge_id).to be_truthy
+      expect(subject[0].judge.full_name).to be_truthy
     end
   end
 
@@ -68,16 +65,16 @@ describe JudgeSchedulePeriod, :all_dbs do
     it "evenly splits the week between two judges" do
       expect(subject.count).to eq(hearing_days.count)
       judge_860 = subject.reduce(0) do |sum, hearing_day|
-        sum += 1 unless hearing_day[:judge_id] != "860"
+        sum += 1 unless hearing_day.judge_id != 860
         sum
       end
       judge_861 = subject.reduce(0) do |sum, hearing_day|
-        sum += 1 unless hearing_day[:judge_id] != "861"
+        sum += 1 unless hearing_day.judge_id != 861
         sum
       end
       not_july_31 = false
       subject.each do |hearing_day|
-        hearing_day[:hearing_date] == Date.new(2018, 7, 31) && hearing_day[:judge_id] == "860"
+        hearing_day[:hearing_date] == Date.new(2018, 7, 31) && hearing_day.judge_id == 860
       end
       expect(not_july_31).to be_falsey
       expect(judge_860 + judge_861).to eq(hearing_days.count)
@@ -109,11 +106,11 @@ describe JudgeSchedulePeriod, :all_dbs do
     it "verify period is covered by both judges" do
       expect(subject.count).to eq(hearing_days.count)
       judge_860 = subject.reduce(0) do |sum, hearing_day|
-        sum += 1 unless hearing_day[:judge_id] != "860"
+        sum += 1 unless hearing_day.judge_id != 860
         sum
       end
       judge_861 = subject.reduce(0) do |sum, hearing_day|
-        sum += 1 unless hearing_day[:judge_id] != "861"
+        sum += 1 unless hearing_day.judge_id != 861
         sum
       end
       expect(judge_860).to eq(3)
@@ -156,11 +153,11 @@ describe JudgeSchedulePeriod, :all_dbs do
     it "evenly splits the week between two judges" do
       expect(subject.count).to eq(hearing_days.count)
       judge_860 = subject.reduce(0) do |sum, hearing_day|
-        sum += 1 unless hearing_day[:judge_id] != "860"
+        sum += 1 unless hearing_day.judge_id != 860
         sum
       end
       judge_861 = subject.reduce(0) do |sum, hearing_day|
-        sum += 1 unless hearing_day[:judge_id] != "861"
+        sum += 1 unless hearing_day.judge_id != 861
         sum
       end
       expect(judge_860).to eq(2)
@@ -198,11 +195,11 @@ describe JudgeSchedulePeriod, :all_dbs do
       # two rooms
       expect(subject.count).to eq(hearing_days.count * 2)
       judge_860 = subject.reduce(0) do |sum, hearing_day|
-        sum += 1 unless hearing_day[:judge_id] != "860"
+        sum += 1 unless hearing_day.judge_id != 860
         sum
       end
       judge_861 = subject.reduce(0) do |sum, hearing_day|
-        sum += 1 unless hearing_day[:judge_id] != "861"
+        sum += 1 unless hearing_day.judge_id != 861
         sum
       end
       expect(judge_860).to eq(2)

@@ -16,14 +16,14 @@ import PropTypes from 'prop-types';
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, daysWaitingColumn,
-  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn } from
+  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn,
+  taskCompletedDateColumn } from
   './TaskTableColumns';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
-import { DateString } from '../../util/DateUtil';
-import COPY from '../../../COPY.json';
-import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
+import COPY from '../../../COPY';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -112,7 +112,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   caseDueDateColumn = () => {
     return this.props.includeDueDate ? {
       header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
-      name: QUEUE_CONFIG.TASK_DUE_DATE_COLUMN,
+      name: QUEUE_CONFIG.COLUMNS.TASK_DUE_DATE.name,
       tooltip: <React.Fragment>Calendar days this case <br /> has been assigned to you</React.Fragment>,
       align: 'center',
       valueFunction: (task) => {
@@ -143,13 +143,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   completedDateColumn = () => {
-    return this.props.includeCompletedDate ? {
-      header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
-      name: QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN,
-      valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
-      backendCanSort: true,
-      getSortValue: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null
-    } : null;
+    return this.props.includeCompletedDate ? taskCompletedDateColumn() : null;
   }
 
   caseCompletedToNameColumn = () => {
@@ -203,7 +197,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   render = () => <QueueTable
-    columns={this.getQueueColumns}
+    columns={this.getQueueColumns()}
     rowObjects={this.props.tasks}
     getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}

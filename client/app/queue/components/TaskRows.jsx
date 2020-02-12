@@ -1,17 +1,17 @@
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import Button from '../../components/Button';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { taskIsOnHold, sortTaskList } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 
 export const grayLineStyling = css({
@@ -157,26 +157,13 @@ class TaskRows extends React.PureComponent {
       <dd>{assignor}</dd></div> : null;
   }
 
-  getActionName = (task) => {
-    const {
-      label
-    } = task;
-
-    // First see if there is a constant to convert the label, otherwise sentence-ify it
-    if (CO_LOCATED_ADMIN_ACTIONS[label]) {
-      return CO_LOCATED_ADMIN_ACTIONS[label];
-    }
-
-    return StringUtil.snakeCaseToSentence(label);
-  }
-
   taskLabelListItem = (task) => {
     if (task.closedAt) {
       return null;
     }
 
     return task.label ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt>
-      <dd>{this.getActionName(task)}</dd></div> : null;
+      <dd>{task.label}</dd></div> : null;
   }
 
   taskInstructionsWithLineBreaks = (task) => {
@@ -186,7 +173,7 @@ class TaskRows extends React.PureComponent {
 
     return <React.Fragment key={`${task.uniqueId} fragment`}>
       {task.instructions.map((text) => <React.Fragment key={`${task.uniqueId} span`}>
-        <span key={`${task.uniqueId} instructions`}>{text}</span><br /></React.Fragment>)}
+        <span key={`${task.uniqueId} instructions`}>{StringUtil.nl2br(text)}</span><br /></React.Fragment>)}
     </React.Fragment>;
   }
 
@@ -223,8 +210,8 @@ class TaskRows extends React.PureComponent {
   showActionsSection = (task) => (task && !this.props.hideDropdown);
 
   mapDecisionDateToSortableObject = (appeal) => {
-    // if there's no decision date, then this object should be at the top 
-    // of the case timeline, thus the negative infinity default 
+    // if there's no decision date, then this object should be at the top
+    // of the case timeline, thus the negative infinity default
     return {
       isDecisionDate: true,
       createdAt: appeal.decisionDate || Number.NEGATIVE_INFINITY
@@ -318,5 +305,12 @@ class TaskRows extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+TaskRows.propTypes = {
+  appeal: PropTypes.object,
+  hideDropdown: PropTypes.bool,
+  taskList: PropTypes.array,
+  timeline: PropTypes.bool
+};
 
 export default TaskRows;

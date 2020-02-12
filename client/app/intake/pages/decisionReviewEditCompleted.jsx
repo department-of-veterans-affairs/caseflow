@@ -10,7 +10,7 @@ import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import END_PRODUCT_CODES from '../../../constants/END_PRODUCT_CODES.json';
+import END_PRODUCT_CODES from '../../../constants/END_PRODUCT_CODES';
 
 const leadMessageList = ({ veteran, formName, requestIssues, addedIssues, detailEditUrl }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -94,7 +94,9 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     };
 
     const beforeEps = _.uniq(_.map(beforeIssues, 'endProductCode'));
-    const afterEps = _.uniq(_.map(afterIssues.filter((ri) => !ri.withdrawalDate), 'endProductCode'));
+    const afterEps = _.uniq(_.map(afterIssues.filter(
+      (ri) => !ri.withdrawalDate && !ri.ineligibleReason), 'endProductCode')
+    );
     const allChangedEps = _.uniq(_.map(updatedIssues, 'endProductCode'));
     const removedEps = _.difference(beforeEps, afterEps);
     const establishedEps = _.difference(allChangedEps, beforeEps);

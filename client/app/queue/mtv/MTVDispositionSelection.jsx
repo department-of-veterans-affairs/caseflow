@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import RadioField from '../../components/RadioField';
 
-import { DISPOSITION_OPTIONS } from '../../../constants/MOTION_TO_VACATE.json';
+import { DISPOSITION_OPTIONS, PARTIAL_GRANT_OPTION } from '../../../constants/MOTION_TO_VACATE';
 
-export const MTVDispositionSelection = ({ label = '', value: initialVal = null, onChange }) => {
+// In certain cases (judge view) we want to include a "partial grant" option
+const [grant, ...rest] = DISPOSITION_OPTIONS;
+const optsWithPartial = [grant, PARTIAL_GRANT_OPTION, ...rest];
+
+export const MTVDispositionSelection = ({ label = '', value: initialVal = null, onChange, allowPartial = false }) => {
   const [value, setValue] = useState(initialVal);
 
   const handleChange = (val) => {
@@ -14,13 +18,16 @@ export const MTVDispositionSelection = ({ label = '', value: initialVal = null, 
     }
   };
 
+  const options = allowPartial ? optsWithPartial : DISPOSITION_OPTIONS;
+
   return (
     <RadioField
       name="disposition"
       label={label}
-      options={DISPOSITION_OPTIONS}
+      options={options}
       onChange={handleChange}
       value={value}
+      required
       className={['mtv-disposition-selection']}
     />
   );
@@ -29,5 +36,6 @@ export const MTVDispositionSelection = ({ label = '', value: initialVal = null, 
 MTVDispositionSelection.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.string,
-  label: PropTypes.string
+  label: PropTypes.string,
+  allowPartial: PropTypes.bool
 };

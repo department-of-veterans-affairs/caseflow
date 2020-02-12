@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe HearingsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:legacy_hearing) { create(:legacy_hearing) }
+  let(:ama_hearing) { create(:hearing) }
 
   describe "PATCH update" do
-    it "should be successful" do
-      params = { notes: "Test",
-                 hold_open: 30,
-                 transcript_requested: false,
-                 aod: :granted,
-                 disposition: :held,
-                 hearing_location_attributes: {
-                   facility_id: "vba_301"
-                 },
-                 prepped: true }
+    it "should be successful", :aggregate_failures do
+      params = {
+        notes: "Test",
+        hold_open: 30,
+        transcript_requested: false,
+        aod: :granted,
+        disposition: :held,
+        hearing_location_attributes: {
+          facility_id: "vba_301"
+        },
+        prepped: true
+      }
       patch :update, as: :json, params: { id: legacy_hearing.external_id, hearing: params }
       expect(response.status).to eq 200
-      response_body = JSON.parse(response.body)
+      response_body = JSON.parse(response.body)["data"]
       expect(response_body["notes"]).to eq "Test"
       expect(response_body["hold_open"]).to eq 30
       expect(response_body["transcript_requested"]).to eq false
@@ -34,24 +34,256 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
     context "when updating an ama hearing" do
       let!(:hearing) { create(:hearing, :with_tasks) }
 
-      it "should update an ama hearing" do
-        params = { notes: "Test",
-                   transcript_requested: false,
-                   disposition: :held,
-                   hearing_location_attributes: {
-                     facility_id: "vba_301"
-                   },
-                   prepped: true,
-                   evidence_window_waived: true }
+      it "should update an ama hearing", :aggregate_failures do
+        params = {
+          notes: "Test",
+          transcript_requested: false,
+          disposition: :held,
+          hearing_location_attributes: {
+            facility_id: "vba_301"
+          },
+          prepped: true,
+          evidence_window_waived: true
+        }
         patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
         expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
+        response_body = JSON.parse(response.body)["data"]
         expect(response_body["notes"]).to eq "Test"
         expect(response_body["transcript_requested"]).to eq false
         expect(response_body["disposition"]).to eq "held"
         expect(response_body["prepped"]).to eq true
         expect(response_body["location"]["facility_id"]).to eq "vba_301"
         expect(response_body["evidence_window_waived"]).to eq true
+      end
+    end
+
+    context "when updating an existing hearing to a virtual hearing" do
+      let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
+      let(:hearing) { create(:hearing, regional_office: "RO42", judge: judge) }
+      let(:virtual_hearing_params) { {} }
+
+      subject do
+        hearing_params = {
+          notes: "Notes",
+          virtual_hearing_attributes: virtual_hearing_params
+        }
+        patch_params = {
+          id: hearing.external_id,
+          hearing: hearing_params
+        }
+
+        patch :update, as: :json, params: patch_params
+        response
+      end
+
+      context "without any params", :aggregate_failures do
+        it "returns 200 status code" do
+          expect(subject.status).to eq(200)
+        end
+        it "hearing was not changed " do
+          expect(hearing.virtual?).to eq(false)
+        end
+      end
+
+      context "without any veteran email" do
+        let(:virtual_hearing_params) do
+          {
+            representative_email: "new_representative_email@caseflow.gov"
+          }
+        end
+
+        it "returns 400 status code" do
+          expect(subject.status).to eq(400)
+        end
+
+        context "with hearing that already has a virtual hearing" do
+          let(:hearing) { create(:hearing, regional_office: "RO42") }
+          let!(:virtual_hearing) do
+            create(
+              :virtual_hearing,
+              hearing: hearing,
+              veteran_email: "existing_veteran_email@caseflow.gov",
+              veteran_email_sent: true,
+              judge_email: "existing_judge_email@caseflow.gov",
+              judge_email_sent: true
+            )
+          end
+
+          it "returns expected status and has the expected side effects", :aggregate_failures do
+            expect(subject.status).to eq(200)
+            virtual_hearing.reload
+            expect(virtual_hearing.veteran_email).to eq("existing_veteran_email@caseflow.gov")
+            expect(virtual_hearing.veteran_email_sent).to eq(true)
+            expect(virtual_hearing.judge_email).to eq("existing_judge_email@caseflow.gov")
+            expect(virtual_hearing.judge_email_sent).to eq(true)
+            expect(virtual_hearing.representative_email).to eq("new_representative_email@caseflow.gov")
+          end
+        end
+      end
+
+      context "with invalid emails" do
+        let(:virtual_hearing_params) do
+          {
+            veteran_email: "veteran",
+            judge_email: "!@#$%",
+            representative_email: "representative_email"
+          }
+        end
+
+        it "returns 400 status code" do
+          expect(subject.status).to eq(400)
+        end
+      end
+
+      context "with all email params" do
+        let(:virtual_hearing_params) do
+          {
+            veteran_email: "new_veteran_email@caseflow.gov",
+            representative_email: "new_representative_email@caseflow.gov"
+          }
+        end
+
+        it "returns expected status and has expected side effects", :aggregate_failures do
+          expect(subject.status).to eq(200)
+          expect(VirtualHearing.first).to_not eq(nil)
+          expect(VirtualHearing.first.hearing_id).to eq(hearing.id)
+          expect(VirtualHearing.first.veteran_email).to eq("new_veteran_email@caseflow.gov")
+          expect(VirtualHearing.first.judge_email).to eq("new_judge_email@caseflow.gov")
+          expect(VirtualHearing.first.representative_email).to eq("new_representative_email@caseflow.gov")
+        end
+
+        it "kicks off CreateConferenceJob and updates virtual_hearing table", :aggregate_failures do
+          subject
+          expect(VirtualHearing.first.establishment.submitted?).to eq(true)
+          expect(VirtualHearing.first.status).to eq("active")
+          expect(VirtualHearing.first.conference_id).to_not eq(nil)
+          expect(VirtualHearing.first.veteran_email_sent).to eq(true)
+          expect(VirtualHearing.first.judge_email_sent).to eq(true)
+          expect(VirtualHearing.first.representative_email_sent).to eq(true)
+        end
+
+        context "with hearing that already has a virtual hearing" do
+          let(:hearing) { create(:hearing, regional_office: "RO42") }
+
+          let!(:virtual_hearing) do
+            create(
+              :virtual_hearing,
+              hearing: hearing,
+              veteran_email: "existing_veteran_email@caseflow.gov",
+              representative_email: "existing_rep_email@casfelow.gov"
+            )
+          end
+
+          it "returns expected status and updates the existing hearing", :aggregate_failures do
+            expect(subject.status).to eq(200)
+            virtual_hearing.reload
+            expect(virtual_hearing.veteran_email).to eq("new_veteran_email@caseflow.gov")
+            expect(virtual_hearing.representative_email).to eq("new_representative_email@caseflow.gov")
+          end
+        end
+      end
+
+      context "with the status param and existing virtual hearing" do
+        let(:hearing) { create(:hearing, regional_office: "RO42") }
+
+        let!(:virtual_hearing) do
+          create(
+            :virtual_hearing,
+            :all_emails_sent,
+            hearing: hearing,
+            conference_id: "000000"
+          )
+        end
+        let(:virtual_hearing_params) do
+          {
+            status: "cancelled"
+          }
+        end
+
+        it "returns the expected status and updates the virtual hearing", :aggregate_failures do
+          expect(subject.status).to eq(200)
+          virtual_hearing.reload
+          expect(virtual_hearing.cancelled?).to eq(true)
+        end
+      end
+    end
+
+    context "when updating the judge of an existing virtual hearing" do
+      let(:new_judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
+      let(:hearing) { create(:hearing, regional_office: "RO42") }
+      let!(:virtual_hearing) do
+        create(
+          :virtual_hearing,
+          hearing: hearing,
+          veteran_email: "existing_veteran_email@caseflow.gov",
+          veteran_email_sent: true,
+          judge_email: "existing_judge_email@caseflow.gov",
+          judge_email_sent: true,
+          representative_email: "existing_representative_email@caseflow.gov",
+          representative_email_sent: true
+        )
+      end
+
+      before do
+        # Stub out the job starting, so we can check to make sure the email
+        # sent flags are set properly.
+        allow(VirtualHearings::CreateConferenceJob).to receive(:perform_now)
+      end
+
+      subject do
+        patch_params = {
+          id: hearing.external_id,
+          hearing: {
+            judge_id: new_judge.id
+          }
+        }
+
+        patch :update, as: :json, params: patch_params
+        response
+      end
+
+      it "updates the judge's email on the virtual hearing", :aggregate_failures do
+        expect(subject.status).to eq(200)
+
+        virtual_hearing.reload
+
+        expect(virtual_hearing.hearing.judge_id).to eq(new_judge.id)
+        expect(virtual_hearing.judge_email).to eq(new_judge.email)
+
+        expect(virtual_hearing.judge_email_sent).to eq(false)
+        expect(virtual_hearing.veteran_email_sent).to eq(true)
+        expect(virtual_hearing.representative_email_sent).to eq(true)
+      end
+    end
+
+    context "when updating the AOD" do
+      it "should return a 200 if empty aod" do
+        params = {
+          id: ama_hearing.external_id,
+          advance_on_docket_motion: {},
+          hearing: { notes: "Test" }
+        }
+        patch :update, as: :json, params: params
+        expect(response.status).to eq 200
+      end
+
+      it "should return a 200 and update aod if provided", :aggregate_failures, skip: "flake AOD present" do
+        params = {
+          id: ama_hearing.external_id,
+          advance_on_docket_motion: {
+            user_id: user.id,
+            person_id: ama_hearing.appeal.appellant.id,
+            reason: AdvanceOnDocketMotion.reasons[:age],
+            granted: true
+          },
+          hearing: { notes: "Test" }
+        }
+        patch :update, as: :json, params: params
+        expect(response.status).to eq 200
+        ama_hearing.reload
+        expect(ama_hearing.advance_on_docket_motion.person.id).to eq ama_hearing.appeal.appellant.id
+        expect(ama_hearing.advance_on_docket_motion.reason).to eq AdvanceOnDocketMotion.reasons[:age]
+        expect(ama_hearing.advance_on_docket_motion.granted).to eq true
       end
     end
 
@@ -113,7 +345,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         allow(VADotGovService).to receive(:get_distance).and_return(facilities_response)
       end
 
-      it "returns an error response" do
+      it "returns an error response", :aggregate_failures do
         get :find_closest_hearing_locations,
             as: :json,
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }
@@ -137,7 +369,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           .and_return(valid_address_response)
       end
 
-      it "returns an error response" do
+      it "returns an error response", :aggregate_failures do
         get :find_closest_hearing_locations,
             as: :json,
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }

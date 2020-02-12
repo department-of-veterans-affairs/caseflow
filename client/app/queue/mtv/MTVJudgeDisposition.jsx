@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 
+import { MTVDispositionSelection } from './MTVDispositionSelection';
+import TextareaField from '../../components/TextareaField';
+import RadioField from '../../components/RadioField';
 import {
   JUDGE_ADDRESS_MTV_TITLE,
   JUDGE_ADDRESS_MTV_DESCRIPTION,
@@ -11,17 +14,19 @@ import {
   JUDGE_ADDRESS_MTV_HYPERLINK_LABEL,
   JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL,
   JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL
-} from '../../../COPY.json';
-import { MTVDispositionSelection } from './MTVDispositionSelection';
-import TextareaField from '../../components/TextareaField';
-import RadioField from '../../components/RadioField';
-import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE.json';
+} from '../../../COPY';
+import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE';
+import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 import TextField from '../../components/TextField';
+import { MTVIssueSelection } from './MTVIssueSelection';
+import StringUtil from '../../util/StringUtil';
+import { MissingDraftAlert } from './MissingDraftAlert';
+import { sprintf } from 'sprintf-js';
 
 const vacateTypeText = (val) => {
   const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
@@ -34,6 +39,7 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
 
   switch (disposition) {
   case 'granted':
+  case 'partially_granted':
     parts.push(`This will be a ${vacateTypeText(vacateType)}`);
     parts.push(instructions);
     break;
@@ -47,17 +53,26 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
   return parts.join('\n');
 };
 
+const grantTypes = ['granted', 'partially_granted'];
+
+const dispositionStrings = {
+  denied: 'denial',
+  dismissed: 'dismissal'
+};
+
 export const MTVJudgeDisposition = ({
   attorneys,
   selectedAttorney,
   task,
   appeal,
   onSubmit = () => null,
-  submitting = false
+  submitting = false,
+  returnToLitSupportLink = JUDGE_RETURN_TO_LIT_SUPPORT.value
 }) => {
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
 
   const [disposition, setDisposition] = useState(null);
+  const [issueIds, setIssueIds] = useState([]);
   const [vacateType, setVacateType] = useState(null);
   const [instructions, setInstructions] = useState('');
   const [hyperlink, setHyperlink] = useState(null);
@@ -74,26 +89,33 @@ export const MTVJudgeDisposition = ({
     const result = {
       task_id: task.taskId,
       instructions: formattedInstructions,
-      assigned_to_id: attorneyId,
       disposition,
       vacate_type: vacateType
     };
 
+    if (issueIds.length) {
+      result.vacated_decision_issue_ids = issueIds;
+    }
+
+    if (attorneyId) {
+      result.assigned_to_id = attorneyId;
+    }
+
     onSubmit(result);
   };
 
+  const isGrantType = () => {
+    return disposition && grantTypes.includes(disposition);
+  };
+
   const isValid = () => {
-    if (
+    return !(
       !disposition ||
       !instructions ||
-      !attorneyId ||
-      (disposition === 'granted' && !vacateType) ||
-      (disposition !== 'granted' && !hyperlink)
-    ) {
-      return false;
-    }
-
-    return true;
+      (isGrantType() && !vacateType) ||
+      (disposition === 'partially_granted' && !issueIds.length) ||
+      (disposition === 'dismissed' && !hyperlink)
+    );
   };
 
   return (
@@ -101,12 +123,16 @@ export const MTVJudgeDisposition = ({
       <AppSegment filledBackground>
         <MTVTaskHeader title={JUDGE_ADDRESS_MTV_TITLE} task={task} appeal={appeal} />
 
-        <p>{JUDGE_ADDRESS_MTV_DESCRIPTION}</p>
+        <p>{StringUtil.nl2br(JUDGE_ADDRESS_MTV_DESCRIPTION)}</p>
 
+        <h3>Motion Attorney's Notes</h3>
         <p className="mtv-task-instructions">{task.instructions}</p>
+
+        <div className="cf-help-divider" />
 
         <MTVDispositionSelection
           label={JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL}
+          allowPartial
           onChange={(val) => {
             setVacateType(null);
             setDisposition(val);
@@ -114,7 +140,16 @@ export const MTVJudgeDisposition = ({
           value={disposition}
         />
 
-        {disposition && disposition === 'granted' && (
+        {disposition && disposition === 'partially_granted' && (
+          <MTVIssueSelection
+            issues={appeal.decisionIssues}
+            onChange={({ issueIds: newIssueIds }) => setIssueIds(newIssueIds)}
+          />
+        )}
+
+        {disposition && !isGrantType() && <MissingDraftAlert to={returnToLitSupportLink} disposition={disposition} />}
+
+        {disposition && isGrantType() && (
           <RadioField
             name="vacate_type"
             label={JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL}
@@ -126,13 +161,13 @@ export const MTVJudgeDisposition = ({
           />
         )}
 
-        {disposition && disposition !== 'granted' && (
+        {disposition && !isGrantType() && (
           <TextField
             name="hyperlink"
-            label={JUDGE_ADDRESS_MTV_HYPERLINK_LABEL}
+            label={sprintf(JUDGE_ADDRESS_MTV_HYPERLINK_LABEL, dispositionStrings[disposition])}
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
-            required
+            required={disposition === 'dismissed'}
             className={['mtv-review-hyperlink']}
           />
         )}
@@ -145,16 +180,18 @@ export const MTVJudgeDisposition = ({
           className={['mtv-decision-instructions']}
         />
 
-        <SearchableDropdown
-          name="attorney"
-          label={JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL}
-          searchable
-          options={attorneys}
-          placeholder="Select attorney"
-          onChange={(option) => option && setAttorneyId(option.value)}
-          value={attorneyId}
-          styling={css({ width: '30rem' })}
-        />
+        {disposition && isGrantType() && (
+          <SearchableDropdown
+            name="attorney"
+            label={JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL}
+            searchable
+            options={attorneys}
+            placeholder="Select attorney"
+            onChange={(option) => option && setAttorneyId(option.value)}
+            value={attorneyId}
+            styling={css({ width: '30rem' })}
+          />
+        )}
       </AppSegment>
       <div className="controls cf-app-segment">
         <Button
@@ -183,5 +220,6 @@ MTVJudgeDisposition.propTypes = {
   task: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
   attorneys: PropTypes.array.isRequired,
-  selectedAttorney: PropTypes.object
+  selectedAttorney: PropTypes.object,
+  returnToLitSupportLink: PropTypes.string
 };

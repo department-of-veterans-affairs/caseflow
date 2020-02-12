@@ -85,8 +85,8 @@ jobs:
       - run:
           name: Database setup
           command: |
-            ~/project/ci-bin/capture-log "bundle exec rake db:create"
-            ~/project/ci-bin/capture-log "bundle exec rake db:schema:load"
+            ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate:redo"
+            ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate:redo"
 
       - run:
           name: Wait for FACOLS to be ready
@@ -104,7 +104,7 @@ jobs:
             mkdir -p ~/test-results/rspec
             testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by=timings)
             echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
-            ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
+            ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format documentation --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
 
       - store_test_results:
           name: Store test results as summary
@@ -254,7 +254,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/mocha
             pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js test/node"
+            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --require ./test/node/register.js --require ./test/node/setup.js 'test/node/**/*-test.js'"
 
       - run:
           name: Karma

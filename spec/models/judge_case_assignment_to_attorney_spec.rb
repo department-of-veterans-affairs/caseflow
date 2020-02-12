@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe JudgeCaseAssignmentToAttorney, :all_dbs do
   let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }

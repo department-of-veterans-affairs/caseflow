@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 feature "Supplemental Claim Edit issues", :all_dbs do
   include IntakeHelpers
 
@@ -68,7 +65,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   let(:contested_decision_issue) { nil }
 
   before do
-    supplemental_claim.create_claimants!(participant_id: "5382910292", payee_code: "10")
+    supplemental_claim.create_claimant!(participant_id: "5382910292", payee_code: "10")
 
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
 
@@ -108,79 +105,6 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
-  context "when there is a non-rating end product" do
-    let!(:nonrating_request_issue) do
-      RequestIssue.create!(
-        decision_review: supplemental_claim,
-        nonrating_issue_category: "Military Retired Pay",
-        nonrating_issue_description: "nonrating description",
-        benefit_type: benefit_type,
-        decision_date: 1.month.ago,
-        contested_decision_issue: contested_decision_issue
-      )
-    end
-
-    before do
-      supplemental_claim.create_issues!([nonrating_request_issue])
-      supplemental_claim.establish!
-    end
-
-    context "when it is created due to a DTA error" do
-      let(:decision_review_remanded) { create(:higher_level_review) }
-      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
-
-      it "cannot be edited" do
-        nonrating_dta_claim_id = EndProductEstablishment.find_by(
-          source: supplemental_claim,
-          code: "040HDENR"
-        ).reference_id
-
-        visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
-        expect(page).to have_content("Issues Not Editable")
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "cannot be edited" do
-          nonrating_dta_claim_id = EndProductEstablishment.find_by(
-            source: supplemental_claim,
-            code: "040HDENRPMC"
-          ).reference_id
-
-          visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
-          expect(page).to have_content("Issues Not Editable")
-        end
-      end
-    end
-
-    it "shows the Supplemental Claim Edit page with a nonrating claim id" do
-      nonrating_ep_claim_id = EndProductEstablishment.find_by(
-        source: supplemental_claim,
-        code: "040SCNR"
-      ).reference_id
-      visit "supplemental_claims/#{nonrating_ep_claim_id}/edit"
-
-      expect(page).to have_content("Military Retired Pay")
-
-      click_intake_add_issue
-      click_intake_no_matching_issues
-      add_intake_nonrating_issue(
-        category: "Active Duty Adjustments",
-        description: "A description!",
-        date: profile_date.mdY
-      )
-
-      safe_click("#button-submit-update")
-
-      expect(page).to have_content("The review originally had 1 issue but now has 2.")
-      safe_click ".confirm"
-
-      expect(page).to have_current_path(
-        "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
-      )
-    end
-  end
-
   context "when the rating issue is locked" do
     let(:url_path) { "supplemental_claims" }
     let(:decision_review) { supplemental_claim }
@@ -210,6 +134,83 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
   end
 
+  context "when there is a non-rating end product" do
+    let!(:nonrating_request_issue) do
+      RequestIssue.create!(
+        decision_review: supplemental_claim,
+        nonrating_issue_category: "Military Retired Pay",
+        nonrating_issue_description: "nonrating description",
+        benefit_type: benefit_type,
+        decision_date: 1.month.ago,
+        contested_decision_issue: contested_decision_issue
+      )
+    end
+
+    before do
+      supplemental_claim.create_issues!([nonrating_request_issue])
+      supplemental_claim.establish!
+    end
+
+    it "shows the Supplemental Claim Edit page with a nonrating claim id" do
+      nonrating_ep_claim_id = EndProductEstablishment.find_by(
+        source: supplemental_claim,
+        code: "040SCNR"
+      ).reference_id
+      visit "supplemental_claims/#{nonrating_ep_claim_id}/edit"
+
+      expect(page).to have_content("Military Retired Pay")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: "A description!",
+        date: profile_date.mdY
+      )
+
+      safe_click("#button-submit-update")
+
+      expect(page).to have_content("The review originally had 1 issue but now has 2.")
+      safe_click ".confirm"
+
+      expect(page).to have_current_path(
+        "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
+      )
+    end
+
+    context "when it is created due to a DTA error" do
+      before { FeatureToggle.enable!(:edit_contention_text) }
+      after { FeatureToggle.disable!(:edit_contention_text) }
+
+      let(:decision_review_remanded) { create(:higher_level_review) }
+      let(:contested_decision_issue) { create(:decision_issue, :nonrating, disposition: "remanded") }
+
+      it "only allows users to edit contention text" do
+        nonrating_dta_claim_id = EndProductEstablishment.find_by(
+          source: supplemental_claim,
+          code: "040HDENR"
+        ).reference_id
+
+        visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
+
+        expect(page).to have_content("Edit Issues")
+
+        # User cannot add issues
+        expect(page).to_not have_css("#button-add-issue")
+
+        # User cannot remove issues
+        expect(page).to_not have_css(".remove-issue")
+
+        # User can edit contention text
+        edit_contention_text("Military Retired Pay", "New description")
+        expect(page).to have_content("New description")
+        click_edit_submit
+
+        expect(RequestIssue.where(edited_description: "New description")).to_not be_nil
+      end
+    end
+  end
+
   context "when there is a rating end product" do
     before { FeatureToggle.enable!(:contestable_rating_decisions) }
     after { FeatureToggle.disable!(:contestable_rating_decisions) }
@@ -234,30 +235,34 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
 
     context "when it is created due to a DTA error" do
+      before { FeatureToggle.enable!(:edit_contention_text) }
+      after { FeatureToggle.disable!(:edit_contention_text) }
+
       let(:decision_review_remanded) { create(:higher_level_review) }
       let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
 
-      it "cannot be edited" do
+      it "only allows users to edit contention text" do
         rating_dta_claim_id = EndProductEstablishment.find_by(
           source: supplemental_claim,
           code: "040HDER"
         ).reference_id
 
         visit "supplemental_claims/#{rating_dta_claim_id}/edit"
-        expect(page).to have_content("Issues Not Editable")
-      end
 
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "cannot be edited" do
-          rating_dta_claim_id = EndProductEstablishment.find_by(
-            source: supplemental_claim,
-            code: "040HDERPMC"
-          ).reference_id
+        expect(page).to have_content("Edit Issues")
 
-          visit "supplemental_claims/#{rating_dta_claim_id}/edit"
-          expect(page).to have_content("Issues Not Editable")
-        end
+        # User cannot add issues
+        expect(page).to_not have_css("#button-add-issue")
+
+        # User cannot remove issues
+        expect(page).to_not have_css(".remove-issue")
+
+        # User can edit contention text
+        edit_contention_text("PTSD denied", "New description")
+        expect(page).to have_content("New description")
+        click_edit_submit
+
+        expect(RequestIssue.where(edited_description: "New description")).to_not be_nil
       end
     end
 
@@ -290,12 +295,9 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
       expect(page).to have_content("2. Left knee granted")
       expect(page).to_not have_content("Notes:")
-      click_remove_intake_issue("1")
+      click_remove_intake_issue_dropdown("PTSD denied")
 
       # expect a pop up
-      expect(page).to have_content("Are you sure you want to remove this issue?")
-      click_remove_issue_confirmation
-
       expect(page).not_to have_content("PTSD denied")
 
       # re-add to proceed
@@ -454,8 +456,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
       expect(page).to have_button("Save", disabled: false)
 
-      click_remove_intake_issue("2")
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown("Left knee granted")
 
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_button("Save", disabled: true)
@@ -490,8 +491,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
+      click_remove_intake_issue_dropdown("PTSD denied")
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
 
@@ -567,12 +567,11 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       end
     end
 
-    context "when withdraw decision reviews is enabled" do
+    context "when a user can withdraw issues" do
       before do
-        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        BvaIntake.singleton.add_user(current_user)
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
-      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
 
       scenario "remove an issue with dropdown" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
@@ -690,6 +689,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       it "disallows editing" do
         visit "#{url_path}/#{decision_review.uuid}/edit"
 
+        expect(page).to have_content("Review not editable")
         expect(page).to have_content("Review not yet established in VBMS. Check the job page for details.")
         expect(page).to have_link("the job page")
 
@@ -717,7 +717,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
   context "when remove decision reviews is enabled for supplemental_claim" do
     before do
-      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+      non_comp_org.add_user(current_user)
 
       # skip the sync call since all edit requests require resyncing
       # currently, we're not mocking out vbms and bgs
@@ -757,10 +757,10 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       scenario "cancel all active tasks when all request issues are removed" do
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
         # remove all request issues
-        supplemental_claim.request_issues.length.times do
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-        end
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
+        click_remove_intake_issue_dropdown("Apportionment")
 
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
@@ -778,8 +778,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       scenario "no active tasks cancelled when request issues remain" do
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
         # only cancel 1 of the 2 request issues
-        click_remove_intake_issue(1)
-        click_remove_issue_confirmation
+        click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
@@ -798,8 +797,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         before do
           education_org = create(:business_line, name: "Education", url: "education")
-          OrganizationsUser.add_user_to_organization(current_user, education_org)
-          FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+          education_org.add_user(current_user)
         end
 
         let(:withdraw_date) { 1.day.ago.to_date.mdY }
@@ -845,8 +843,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
             description: "Description for Accrued",
             date: 1.day.ago.to_date.mdY
           )
-          click_remove_intake_issue_dropdown(1)
-          click_withdraw_intake_issue_dropdown(2)
+          click_remove_intake_issue_dropdown("Apportionment")
+          click_withdraw_intake_issue_dropdown("Apportionment")
           fill_in "withdraw-date", with: withdraw_date
           click_edit_submit
 
@@ -858,9 +856,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       context "when review has no active tasks" do
         scenario "no tasks are cancelled when all request issues are removed" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-          click_edit_submit_and_confirm
+          click_remove_intake_issue_dropdown("Apportionment")
 
           expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
           expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)

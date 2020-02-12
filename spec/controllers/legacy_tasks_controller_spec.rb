@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
   before do
     Fakes::Initializer.load!
@@ -264,6 +261,104 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           expect(body["task"]["data"]["attributes"]["task_id"]).to eq task_id
         end
       end
+    end
+  end
+
+  describe "Das Deprecation" do
+    before do
+      FeatureToggle.enable!(:legacy_das_deprecation)
+      User.authenticate!(user: judge)
+    end
+
+    after { FeatureToggle.disable!(:legacy_das_deprecation) }
+    let(:task_type) { :attorney_task }
+    let!(:vacols_case) { create(:case) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    let(:judge) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
+
+    let(:attorney1) { create(:user) }
+    let!(:vacols_attorney1) { create(:staff, :attorney_role, user: attorney1) }
+
+    let(:attorney2) { create(:user) }
+    let!(:vacols_attorney2) { create(:staff, :attorney_role, user: attorney2) }
+
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let!(:judge_assign_task) { JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge) }
+
+    subject { post :create, params: { tasks: params } }
+
+    let(:params) do
+      {
+        "appeal_id": appeal.id,
+        "assigned_to_id": attorney1.id,
+        "assigned_by_id": judge.id,
+        "user_id": judge.id
+      }
+    end
+    describe "AttorneyTask" do
+      it "is created succesfully" do
+        subject
+
+        expect(response.status).to eq 200
+
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.first["attributes"]["type"]).to eq AttorneyTask.name
+        expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
+        expect(response_body.first["attributes"]["docket_number"]).to eq appeal.docket_number
+        expect(response_body.first["attributes"]["appeal_type"]).to eq LegacyAppeal.name
+
+        attorney_task = AttorneyTask.find_by(appeal: appeal)
+        expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
+        expect(attorney_task.assigned_to).to eq attorney1
+
+        judge_assign_task = JudgeAssignTask.find_by(appeal: appeal)
+        expect(judge_assign_task.status).to eq Constants.TASK_STATUSES.completed
+      end
+
+      it "reassigns succesfully" do
+        subject
+
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+
+        patch :update, params: {
+          tasks: {
+            "appeal_id": appeal.id,
+            "assigned_to_id": attorney2.id,
+            "assigned_by_id": judge
+          },
+          id: response_body.first["id"]
+        }
+
+        expect(response.status).to eq 200
+
+        response_body = JSON.parse(response.body)["task"]["data"]
+        expect(response_body["attributes"]["assigned_to"]["id"]).to eq attorney2.id
+      end
+    end
+  end
+
+  describe "POST legacy_tasks/assign_to_judge" do
+    let(:assigning_judge) { create(:user) }
+    let(:assignee_judge) { create(:user) }
+    let(:assigning_judge_staff) { create(:staff, :judge_role, sdomainid: assigning_judge.css_id) }
+    let!(:assignee_judge_staff) { create(:staff, :judge_role, sdomainid: assignee_judge.css_id) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, staff: assigning_judge_staff)) }
+    let(:params) { { "appeal_id": appeal.id, "assigned_to_id": assignee_judge.id } }
+
+    before do
+      User.stub = assigning_judge
+    end
+
+    it "should be successful" do
+      allow(QueueRepository).to receive(:update_location_to_judge).with(
+        appeal.vacols_id,
+        assignee_judge
+      ).and_return(true)
+
+      patch :assign_to_judge, params: { tasks: params }
+      expect(response.status).to eq 200
     end
   end
 end

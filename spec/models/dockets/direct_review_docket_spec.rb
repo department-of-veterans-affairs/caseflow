@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe DirectReviewDocket, :postgres do
   context "#due_count" do
     subject { DirectReviewDocket.new.due_count }

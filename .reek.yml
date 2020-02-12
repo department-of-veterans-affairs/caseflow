@@ -7,62 +7,98 @@ detectors:
       - BulkTaskAssignment
       - Hearing#override_full_hearing_day_validation
       - QueueConfig
+      - RatingDecision
   BooleanParameter:
     exclude:
+      - AsyncableJobsReporter#initialize
       - HearingRepository#slot_new_hearing
+      - LegacyDocket#distribute_appeals
       - Veteran
   ControlParameter:
     exclude:
+      - ExternalApi::VBMSService#self.send_and_log_request
+      - Fakes::BGSService
       - HearingRepository#slot_new_hearing
+      - LegacyDocket#distribute_appeals
       - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
+      - VBMSCaseflowLogger#log
       - Veteran
   UncommunicativeVariableName:
     exclude:
       - Address
-  LongParameterList:
-    exclude:
-      - Address
+      - Fakes::PersistentStore#convert_dates_from
   UncommunicativeParameterName:
     exclude:
       - Address
+      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   DataClump:
     exclude:
       - HearingSerializerBase
+      - LegacyDocket
+      - TaskTreeRenderModule
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
     exclude:
+      - AMOMetricsReportJob#build_report
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
+      - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
+      - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - Fakes::EndProductStore
+      - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
+      - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
+      - LegacyDocket#count
+      - RedistributedCase#legacy_appeal_relevant_tasks
+      - LegacyAppeal#cancel_open_caseflow_tasks!
       - MonthlyMetricsReportJob#build_report
+      - RequestIssue#find_or_create_decision_issue_from_rating_issue
+      - RequestIssue#special_issues
+      - RequestIssueReporter#as_csv
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - UserReporter#report_user_related_records
+      - User#current_case_assignments_with_views
+      - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
       - WarmBgsCachesJob
+      - ExternalApi::PexipService#send_pexip_request
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
       - CaseflowJob
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
+      - User
   IrresponsibleModule:
     enabled: false
+  LongParameterList:
+    exclude:
+      - Address#initialize
+      - ExternalApi::VBMSService#self.create_contentions!
+      - LegacyDocket#new_distributed_case
+      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
   ManualDispatch:
     exclude:
-      - Api::V3::DecisionReview::IntakeParams
-      - Api::V3::DecisionReview::RequestIssueParams#shape_valid?
       - Api::V3::DecisionReview::IntakeError#potential_error_code
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#attributes?
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#params?
+      - Api::V3::DecisionReview::IntakeError#error_code
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
+      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
   MissingSafeMethod:
     enabled: false
   NestedIterators:
@@ -74,13 +110,22 @@ detectors:
   RepeatedConditional:
     exclude:
       - HearingLocation
+      - JudgeTeam
       - QueueConfig
       - RequestIssue
+      - BulkTaskReassignment
+      - Task
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
+      - DuplicateUserTask
       - LegacyAppealDispatch
       - Address
+      - ExternalApi::PexipService
+      - InvalidAssigneeStatusOnTaskCreate
+      - Api::V3::DecisionReview::ContestableIssueFinder
+      - Api::V3::DecisionReview::ContestableIssueParams
+      - Api::V3::DecisionReview::IntakeError
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -88,12 +133,29 @@ detectors:
   UtilityFunction:
     public_methods_only: true
     exclude:
+      - ClaimReviewAsyncStatsReporter#seconds_to_hms
+      - ETL::Syncer#filter?
+      - ETL::TaskSyncer#filter?
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - Helpers::AppealHearingHelper#suggested_hearing_location
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
-      - OnHoldTasksTab#name
+      - LegacyDocket#age_of_n_oldest_priority_appeals
+      - OrganizationOnHoldTasksTab#name
+      - OrganizationTrackingTasksTab#column_names
+      - Fakes::BGSService
+      - Fakes::PexipService
+      - VBMSCaseflowLogger#log
+      - Reporter#average
+      - Reporter#median
+      - Reporter#seconds_to_hms
+      - Reporter#percent
+      - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
+      - VirtualHearings::ExternalLinkHelper#external_link
+      - VirtualHearings::ExternalLinkHelper#phone_link
+      - VirtualHearings::VeteranNameHelper#formatted_veteran_name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
@@ -112,4 +174,5 @@ directories:
 # Directories and files below will not be scanned at all
 exclude_paths:
   - db/migrate
+  - db/etl/migrate
   - spec

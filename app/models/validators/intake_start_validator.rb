@@ -29,6 +29,8 @@ class IntakeStartValidator
       intake.error_code = :veteran_not_modifiable
     elsif veteran.incident_flash?
       intake.error_code = :incident_flash
+    elsif duplicate_veteran_records_in_corpdb
+      intake.error_code = :veteran_has_duplicate_records_in_corpdb
     end
   end
 
@@ -50,9 +52,20 @@ class IntakeStartValidator
   end
 
   def set_veteran_accessible_error
-    return unless !veteran.accessible?
+    return if veteran.accessible?
 
     intake.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+  end
+
+  def duplicate_veteran_records_in_corpdb
+    return false unless FeatureToggle.enabled?(:alert_duplicate_veterans, user: RequestStore[:current_user])
+
+    pids = DuplicateVeteranParticipantIDFinder.new(veteran: veteran).call
+    if pids.count > 1
+      intake.store_error_data(pids: pids)
+      return true
+    end
+    false
   end
 
   def duplicate_intake_in_progress
@@ -71,6 +84,16 @@ class IntakeStartValidator
   end
 
   def user_may_modify_veteran_file?
-    BGSService.new.may_modify?(veteran_file_number, veteran.participant_id)
+    return true if intake.user == User.api_user
+
+    bgs = BGSService.new
+    return false unless bgs.can_access?(veteran_file_number)
+
+    # BVA has indicated that station conflict policy doesn't apply to Appeals.
+    # See https://github.com/department-of-veterans-affairs/caseflow/issues/13165
+    # This bypass is behind the :allow_same_station_appeals feature toggle for now.
+    return true if FeatureToggle.enabled?(:allow_same_station_appeals) && intake.is_a?(AppealIntake)
+
+    !bgs.station_conflict?(veteran_file_number, veteran.participant_id)
   end
 end

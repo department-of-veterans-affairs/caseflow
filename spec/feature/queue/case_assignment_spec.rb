@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Case Assignment flows", :all_dbs do
   let(:attorney_user) { create(:user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
@@ -28,7 +25,7 @@ RSpec.feature "Case Assignment flows", :all_dbs do
 
     before do
       u = create(:user)
-      OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+      Colocated.singleton.add_user(u)
 
       User.authenticate!(user: attorney_user)
     end

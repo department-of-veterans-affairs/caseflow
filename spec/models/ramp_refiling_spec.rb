@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe RampRefiling, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -306,7 +303,7 @@ describe RampRefiling, :postgres do
 
         context "when another option" do
           let(:option_selected) { "appeal" }
-          let(:appeal_docket) { "hearing" }
+          let(:appeal_docket) { Constants.AMA_DOCKETS.hearing }
           it { is_expected.to be true }
         end
       end
@@ -324,7 +321,7 @@ describe RampRefiling, :postgres do
     context "appeal docket" do
       context "if option selected isn't appeal" do
         let(:option_selected) { "supplemental_claim" }
-        let(:appeal_docket) { "hearing" }
+        let(:appeal_docket) { Constants.AMA_DOCKETS.hearing }
 
         it "sets appeal_docket to nil" do
           is_expected.to be true
@@ -345,7 +342,7 @@ describe RampRefiling, :postgres do
         end
 
         context "when set to valid value" do
-          let(:appeal_docket) { "hearing" }
+          let(:appeal_docket) { Constants.AMA_DOCKETS.hearing }
 
           it { is_expected.to be true }
         end

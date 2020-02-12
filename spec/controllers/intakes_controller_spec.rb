@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.describe IntakesController, :postgres do
   before do
     Fakes::Initializer.load!
@@ -104,7 +101,7 @@ RSpec.describe IntakesController, :postgres do
     context "veteran in BGS but user may not modify" do
       before do
         Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
-        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+        allow_any_instance_of(Fakes::BGSService).to receive(:station_conflict?).and_return(true)
       end
 
       let(:file_number) { "999887777" }
@@ -119,11 +116,10 @@ RSpec.describe IntakesController, :postgres do
   end
 
   describe "#complete" do
-    # TODO: this is just testing the current implementation; should make this more behavioral
     it "should call complete! and return a 200" do
-      intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
-      intake.save!
-      allow_any_instance_of(Intake).to receive(:complete!)
+      intake = create(:intake, user_id: current_user.id, started_at: Time.zone.now)
+      allow(controller).to receive(:intake) { intake }
+      allow(intake).to receive(:complete!) { true }
       post :complete, params: { id: intake.id }
       expect(response.status).to eq(200)
     end

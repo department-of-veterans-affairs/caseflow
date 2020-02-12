@@ -16,51 +16,54 @@ class Hearings::HearingDayController < HearingsApplicationController
       end
 
       format.json do
-        start_date = validate_start_date(params[:start_date])
-        end_date = validate_end_date(params[:end_date])
-        regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
-        user = list_all_upcoming_hearing_days? ? nil : current_user
-        hearing_days = HearingDayRange.new(start_date, end_date, regional_office).list_upcoming_hearing_days(user)
+        if hearing_day_range.valid?
+          serialized_hearing_days = ::HearingDaySerializer.serialize_collection(hearing_days_in_range_for_user)
 
-        render json: {
-          hearings: json_hearing_days(hearing_days.map(&:to_hash)),
-          startDate: start_date,
-          endDate: end_date
-        }
+          render json: {
+            hearings: serialized_hearing_days,
+            startDate: hearing_day_range.start_date,
+            endDate: hearing_day_range.end_date
+          }
+        else
+          hearing_day_range_invalid
+        end
       end
     end
   end
 
   def show
     render json: {
-      hearing_day: json_hearing_day(hearing_day.to_hash).merge(
+      hearing_day: hearing_day.to_hash.merge(
         hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
       )
     }
   end
 
   def index_with_hearings
-    regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
+    if hearing_day_range.valid?
+      hearing_days_with_hearings = hearing_day_range.open_hearing_days_with_hearings_hash(current_user.id)
 
-    hearing_days_with_hearings = HearingDayRange.new(
-      Time.zone.today.beginning_of_day,
-      Time.zone.today.beginning_of_day + 182.days,
-      regional_office
-    ).open_hearing_days_with_hearings_hash(current_user.id)
-
-    render json: { hearing_days: json_hearing_days(hearing_days_with_hearings) }
+      render json: { hearing_days: hearing_days_with_hearings }
+    else
+      hearing_day_range_invalid
+    end
   end
 
-  # Create a hearing schedule day
   def create
-    return no_available_rooms unless rooms_are_available
+    return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
-    hearing = HearingDay.create_hearing_day(create_params)
-    return invalid_record_error(hearing) if hearing.nil?
+    hearing_day = HearingDay.create(
+      create_params.merge(room: hearing_day_rooms.available_room)
+    )
 
+    render json: { hearing: hearing_day.to_hash }, status: :created
+  rescue ActiveRecord::RecordInvalid => error
     render json: {
-      hearing: json_hearing_day(hearing)
-    }, status: :created
+      "errors": [
+        "title": error.class.to_s,
+        "detail": error.message
+      ]
+    }, status: :bad_request
   end
 
   def update
@@ -77,15 +80,59 @@ class Hearings::HearingDayController < HearingsApplicationController
   private
 
   def hearing_day
-    @hearing_day ||= HearingDay.find(hearing_day_id)
+    @hearing_day ||= HearingDay.find(params[:id])
   end
 
-  def hearing_day_id
-    params[:id]
+  def hearing_day_range
+    @hearing_day_range ||= HearingDayRange.new(
+      range_start_date, range_end_date, params[:regional_office]
+    )
   end
 
-  def list_all_upcoming_hearing_days?
+  ## action is either index or index_with_hearings
+  def default_range_start_date
+    default = Time.zone.today.beginning_of_day
+    default -= 30.days if params[:action] == "index"
+    default
+  end
+
+  def range_start_date
+    params[:start_date].nil? ? default_range_start_date : Date.parse(params[:start_date])
+  rescue ArgumentError
+    nil
+  end
+
+  def default_range_end_date
+    default = Time.zone.today.beginning_of_day
+    default += ((params[:action] == "index") ? 365.days : 182.days)
+    default
+  end
+
+  def range_end_date
+    params[:end_date].nil? ? default_range_end_date : Date.parse(params[:end_date])
+  rescue ArgumentError
+    nil
+  end
+
+  def hearing_days_in_range_for_user
+    if return_all_upcoming_hearing_days?
+      hearing_day_range.load_days
+    else
+      hearing_day_range.load_days_for_user(current_user)
+    end
+  end
+
+  def return_all_upcoming_hearing_days?
     ActiveRecord::Type::Boolean.new.deserialize(params[:show_all]) && current_user&.roles&.include?("Hearing Prep")
+  end
+
+  def hearing_day_rooms
+    @hearing_day_rooms ||= HearingDayRoomAssignment.new(
+      request_type: params[:request_type],
+      assign_room: params[:assign_room],
+      scheduled_for: params[:scheduled_for],
+      room: params[:room]
+    )
   end
 
   def update_params
@@ -111,20 +158,6 @@ class Hearings::HearingDayController < HearingsApplicationController
       .merge(created_by: current_user, updated_by: current_user)
   end
 
-  def validate_start_date(start_date)
-    start_date.nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(start_date)
-  end
-
-  def validate_end_date(end_date)
-    end_date.nil? ? (Time.zone.today.beginning_of_day + 365.days) : Date.parse(end_date)
-  end
-
-  def invalid_record_error(hearing)
-    render json: {
-      "errors": ["title": COPY::INVALID_RECORD_ERROR_TITLE, "detail": hearing.errors.full_messages.join(" ,")]
-    }, status: :bad_request
-  end
-
   def record_not_found
     render json: {
       "errors": [
@@ -134,97 +167,27 @@ class Hearings::HearingDayController < HearingsApplicationController
     }, status: :not_found
   end
 
-  def json_hearing_days(hearings)
-    hearings.each_with_object([]) do |hearing, result|
-      result << json_hearing_day(hearing)
-    end
-  end
-
-  def json_hearing_day(hearing)
-    hearing.as_json.each_with_object({}) do |(key, value), converted|
-      converted[key] = if key == "room"
-                         HearingDayMapper.label_for_room(value)
-                       elsif key == "regional_office" && !value.nil?
-                         converted["regional_office_key"] = value
-                         HearingDayMapper.city_for_regional_office(value)
-                       else
-                         value
-                       end
-    end
-  end
-
-  def rooms_are_available
-    # Coming from Add Hearing Day modal but no room required
-    if do_not_assign_room
-      params.delete(:assign_room)
-      params[:room] = ""
-      return true
-    end
-    # Return if coming from regular create from RO algorithm
-    # where no assign_room variable is included in params
-    return true unless params.key?(:assign_room)
-
-    # Coming from Add Hearing Day modal and room required
-    params.delete(:assign_room)
-    params[:room] = available_room if !available_room.nil?
-    !available_room.nil?
-  end
-
-  def available_room
-    if params[:request_type] == HearingDay::REQUEST_TYPES[:central]
-      select_co_available_room
-    else
-      select_video_available_room
-    end
-  end
-
-  def do_not_assign_room
-    params.key?(:assign_room) && (!params[:assign_room] || params[:assign_room] == "false")
-  end
-
-  def select_co_available_room
-    hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], request_type: params[:request_type])
-      .group(:room).count
-    room_count = hearing_count_by_room["2"]
-    "2" unless !(room_count.nil? || room_count == 0)
-  end
-
-  def select_video_available_room
-    hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], request_type: params[:request_type])
-      .group(:room).count
-    available_room = nil
-    (1..HearingRooms::ROOMS.size).each do |hearing_room|
-      hearing_room_str = hearing_room.to_s
-      room_count = hearing_count_by_room[hearing_room_str]
-      if hearing_room != 2 && (room_count.nil? || room_count == 0)
-        available_room = hearing_room_str
-        break
+  def hearing_day_range_invalid
+    render json: {
+      "errors": hearing_day_range.errors.messages.map do |_key, message|
+        {
+          title: "Hearing Day Range Request is Invalid",
+          details: message
+        }
       end
-    end
-    available_room
-  end
-
-  def no_available_rooms_error
-    if params[:request_type] == HearingDay::REQUEST_TYPES[:central]
-      {
-        "title": COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE %
-          Date.parse(params[:scheduled_for]).strftime("%m/%d/%Y"),
-        "detail": COPY::ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL,
-        "status": 400
-      }
-    else
-      {
-        "title": COPY::ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE %
-          Date.parse(params[:scheduled_for]).strftime("%m/%d/%Y"),
-        "detail": COPY::ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL,
-        "status": 400
-      }
-    end
+    }, status: :bad_request
   end
 
   def no_available_rooms
+    key = (params[:request_type] == HearingDay::REQUEST_TYPES[:central]) ? "CO" : "VIDEO"
+
     render json: {
-      "errors": [no_available_rooms_error]
+      "errors": [
+        "title": COPY.const_get("ADD_HEARING_DAY_MODAL_#{key}_HEARING_ERROR_MESSAGE_TITLE") %
+                 Date.parse(params[:scheduled_for]).strftime("%m/%d/%Y"),
+        "detail": COPY.const_get("ADD_HEARING_DAY_MODAL_#{key}_HEARING_ERROR_MESSAGE_DETAIL"),
+        "status": 400
+      ]
     }, status: :not_found
   end
 end

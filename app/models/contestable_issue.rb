@@ -105,6 +105,10 @@ class ContestableIssue
     conflicting_request_issue.try(:review_title)
   end
 
+  def timely?
+    approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
+  end
+
   private
 
   def contested_by_request_issue
@@ -153,9 +157,5 @@ class ContestableIssue
       contesting_decision_review.id,
       contesting_decision_review.class.name
     ).active
-  end
-
-  def timely?
-    approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
   end
 end

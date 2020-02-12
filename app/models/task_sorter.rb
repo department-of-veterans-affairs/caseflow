@@ -14,7 +14,7 @@ class TaskSorter
     super
 
     # Default to sorting by AOD, case type, and docket number.
-    @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN)
+    @column ||= QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
     @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
     @tasks ||= Task.none
 

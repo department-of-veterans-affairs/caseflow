@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe DistributionTask, :postgres do
   describe "ready_for_distribution" do
     before do
@@ -16,15 +13,12 @@ describe DistributionTask, :postgres do
     let(:distribution_task) do
       create(
         :distribution_task,
-        :on_hold,
         appeal: create(:appeal),
         assigned_to: Bva.singleton
       )
     end
 
     it "is set to assigned and ready for distribution is tracked when all child tasks are completed" do
-      expect(distribution_task.ready_for_distribution?).to eq(false)
-
       child_task = create(:informal_hearing_presentation_task, parent: distribution_task)
       expect(distribution_task.ready_for_distribution?).to eq(false)
 
@@ -56,8 +50,8 @@ describe DistributionTask, :postgres do
     end
 
     before do
-      OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
-      OrganizationsUser.add_user_to_organization(scm_user, scm_org)
+      MailTeam.singleton.add_user(user)
+      scm_org.add_user(scm_user)
     end
 
     it "with regular user has no actions" do

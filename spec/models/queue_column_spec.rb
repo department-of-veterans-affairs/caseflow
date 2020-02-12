@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe QueueColumn, :all_dbs do
   describe ".from_name" do
     subject { QueueColumn.from_name(column_name) }
@@ -111,7 +108,10 @@ describe QueueColumn, :all_dbs do
       end
 
       it "returns an array that includes AOD option" do
-        option = QueueColumn.filter_option_hash("is_aod", QueueColumn.format_option_label("AOD", aod_count))
+        option = QueueColumn.filter_option_hash(
+          Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key,
+          QueueColumn.format_option_label("AOD", aod_count)
+        )
         expect(subject).to include(option)
       end
 

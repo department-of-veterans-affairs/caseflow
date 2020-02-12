@@ -236,7 +236,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, dry_run = false)
-    fail DocketNumberCentennialLoop if Time.zone.now.year >= 2030
+    fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
     # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
     # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding

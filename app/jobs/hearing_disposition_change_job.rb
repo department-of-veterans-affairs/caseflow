@@ -9,6 +9,11 @@ class HearingDispositionChangeJob < CaseflowJob
   application_attr :hearing_schedule
 
   def perform
+    complete_hearing_disposition_tasks
+    lock_hearing_days
+  end
+
+  def complete_hearing_disposition_tasks
     start_time = Time.zone.now
     error_count = 0
     hearing_ids = []
@@ -83,6 +88,13 @@ class HearingDispositionChangeJob < CaseflowJob
       # we should never reach this, but will investigate if we do
       :unknown_disposition
     end
+  end
+
+  def lock_hearing_days
+    HearingDay
+      .where("scheduled_for < ?", 1.day.ago.to_date)
+      .where(lock: [false, nil])
+      .update_all(lock: true)
   end
 
   def log_info(start_time, task_count_for, error_count, hearing_ids, err = nil)

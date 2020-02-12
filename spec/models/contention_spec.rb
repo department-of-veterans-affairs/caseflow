@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe Contention do
   let(:utf8_text) do
     "The claim of entitlement to compensation under 38 U.S.C. § 1151 for " \

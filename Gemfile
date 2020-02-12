@@ -8,24 +8,33 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "dfe3035db0ebe957066f24ac93706d14fd0e7a8b"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "136e263aafaf6512ad552ac67a4a8b26d1222f16"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "5c2ce310db01efb9180dca88780422e4865151af"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "6cc4243fac69e0aa6bc6a55293c165d848d5c06f"
+gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", branch: "proper_gem" # tag: "v0.1.0"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
+gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
+gem "icalendar"
 gem "kaminari"
-# active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
-gem "loofah", ">= 2.2.3"
+# active_model_serializers has a default dependency on loofah 2.2.2 which security vulnerabilities
+# (CVE-2018-16468 and CVE-2019-15587)
+gem "loofah", ">= 2.3.1"
 gem "moment_timezone-rails"
+# Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
+# https://github.com/ankane/multiverse#upgrading-to-rails-6
+gem "multiverse"
 gem "newrelic_rpm"
 # nokogiri versions before 1.10.4 are vulnerable to CVE-2019-5477.
 # https://github.com/sparklemotion/nokogiri/issues/1915
-gem "nokogiri", "~> 1.10.4"
-gem "paper_trail", "8.1.2"
+# nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
+# https://github.com/sparklemotion/nokogiri/issues/1943
+gem "nokogiri", "~> 1.10.5"
+gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
 # soft delete gem
@@ -41,7 +50,7 @@ gem "puma", "~> 3.12.0"
 # rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
 # Explicitly define rack version here to avoid that.
 gem "rack", "~> 2.0.6"
-gem "rails", "5.1.6.2"
+gem "rails", "5.2.4.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -64,10 +73,11 @@ gem "therubyracer", platforms: :ruby
 gem "tty-tree"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
+gem "validates_email_format_of"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter"
+  gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
   gem "ruby-oci8", "~> 2.2"
 end
 
@@ -99,12 +109,14 @@ group :test, :development, :demo do
   gem "rubocop-performance"
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
-  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "mb-update-capybara-click"
+  gem "single_cov"
+  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
   gem "timecop"
   gem "webdrivers"
 end
 
 group :development do
+  gem "anbt-sql-formatter"
   gem "bummr", require: false
   gem "derailed_benchmarks"
   gem "dotenv-rails"
