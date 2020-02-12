@@ -12,18 +12,17 @@ import { AddDecisionIssueModal } from './AddDecisionIssueModal';
 const validateForm = () => true;
 const defaultState = {
   addIssueModal: false,
-  deleteModal: false,
   requestIssueId: null,
   decisionIssue: null
 };
 
-export const AddDecisionIssuesView = ({ appeal, allowDelete = false }) => {
+export const AddDecisionIssuesView = ({ appeal }) => {
   const [ctx, setCtx] = useContext(MotionToVacateContext);
   const [state, setState] = useState(defaultState);
 
   const closeModals = () => setState({ ...defaultState });
 
-  const openAddIssueModal = (requestIssueId) => {
+  const openAddIssueModal = (requestIssueId) => () => {
     setState({
       ...state,
       addIssueModal: true,
@@ -40,24 +39,6 @@ export const AddDecisionIssuesView = ({ appeal, allowDelete = false }) => {
     closeModals();
   };
 
-  const handleDelete = (requestIssueId, decisionIssue) => {
-    setState({
-      ...state,
-      deleteModal: true,
-      requestIssueId,
-      decisionIssue
-    });
-  };
-
-  const onDeleteSubmit = ({ decisionIssue }) => {
-    setCtx({
-      ...ctx,
-      decisionIssues: [...ctx.decisionIssues, decisionIssue]
-    });
-
-    closeModals();
-  };
-
   return (
     <QueueFlowPage
       validateForm={validateForm}
@@ -65,18 +46,13 @@ export const AddDecisionIssuesView = ({ appeal, allowDelete = false }) => {
       getNextStepUrl={() => ctx.getNextUrl('review_vacatures')}
       getPrevStepUrl={() => ctx.getPrevUrl('review_vacatures')}
     >
-      <h1>{COPY.MTV_CHECKOUT_REVIEW_VACATURES_TITLE}</h1>
-      <p>{COPY.MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION}</p>
+      <h1>{COPY.MTV_CHECKOUT_ADD_DECISIONS_TITLE}</h1>
+      <p>{COPY.MTV_CHECKOUT_ADD_DECISIONS_EXPLANATION}</p>
       <hr />
       <AmaIssueList requestIssues={appeal.issues} errorMessages={{}}>
-        <DecisionIssues
-          decisionIssues={ctx.decisionIssues}
-          openDecisionHandler={openAddIssueModal}
-          openDeleteAddedDecisionIssueHandler={allowDelete ? handleDelete : null}
-        />
+        <DecisionIssues decisionIssues={ctx.decisionIssues} openDecisionHandler={openAddIssueModal} hideEdit />
       </AmaIssueList>
       {state.addIssueModal && <AddDecisionIssueModal onCancel={closeModals} onSubmit={onAddIssueSubmit} />}
-      {state.deleteModal && <RemoveDecisionIssueModal onCancel={closeModals} onSubmit={onDeleteSubmit} />}
     </QueueFlowPage>
   );
 };
