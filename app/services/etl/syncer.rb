@@ -26,18 +26,31 @@ class ETL::Syncer
         originals.reject { |original| filter?(original) }.each do |original|
           target = target_class.sync_with_original(original)
           if target.persisted?
-            inserted += 1
-          else
             updated += 1
+          else
+            inserted += 1
           end
           target.save!
           saved += 1
         end
         rejected += (possible - saved)
       end
-      build_record.update!(status: :complete, rows_inserted: inserted, rows_updated: updated, rows_rejected: rejected)
+      build_record.update!(
+        status: :complete,
+        finished_at: Time.zone.now,
+        rows_inserted: inserted,
+        rows_updated: updated,
+        rows_rejected: rejected
+      )
     rescue StandardError => error
-      build_record.update!(comments: error, status: :error, finished_at: Time.zone.now)
+      build_record.update!(
+        rows_inserted: inserted,
+        rows_updated: updated,
+        rows_rejected: rejected,
+        comments: error,
+        status: :error,
+        finished_at: Time.zone.now
+      )
     end
     build_record
   end

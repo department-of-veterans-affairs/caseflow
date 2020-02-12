@@ -14,6 +14,7 @@ describe ETL::TaskSyncer, :etl, :all_dbs do
       it "has expected distribution" do
         subject
 
+        expect(Task.count).to eq(31)
         expect(ETL::Task.count).to eq(31)
       end
     end
@@ -25,9 +26,13 @@ describe ETL::TaskSyncer, :etl, :all_dbs do
       end
 
       it "skips orphans" do
-        subject
+        etl_build_table = subject
 
+        expect(Task.count).to eq(32)
         expect(ETL::Task.count).to eq(31)
+        expect(etl_build_table).to be_complete
+        expect(etl_build_table.rows_rejected).to eq(1)
+        expect(etl_build_table.rows_updated).to eq(31)
       end
     end
   end

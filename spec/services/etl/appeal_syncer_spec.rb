@@ -57,9 +57,11 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       let!(:appeal) { create(:appeal, established_at: nil) }
 
       it "skips non-established Appeals" do
-        subject
+        etl_build_table = subject
 
         expect(ETL::Appeal.count).to eq(13)
+        expect(etl_build_table.rows_rejected).to eq(0) # not part of .filter so we can't know about it.
+        expect(etl_build_table.rows_inserted).to eq(13)
       end
     end
 
@@ -75,7 +77,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       end
 
       it "syncs" do
-        subject
+        subject # no error proves the test passes
 
         expect(ETL::Appeal.count).to eq(14)
       end

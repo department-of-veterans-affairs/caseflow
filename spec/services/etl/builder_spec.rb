@@ -26,16 +26,17 @@ describe ETL::Builder, :etl, :all_dbs do
 
   describe "#last_built" do
     it "returns timestamp of last build" do
-      Timecop.freeze(Time.zone.now) do
+      Timecop.freeze(Time.zone.now.round) do
         builder = described_class.new
         build = builder.full
 
         # use .to_s comparison since Rails.cache does not store .milliseconds
         expect(builder.last_built.to_s).to eq(Time.zone.now.to_s)
         expect(build.built).to eq(88)
+        expect(build.build_for("appeals").rows_inserted).to eq(13)
       end
 
-      hour_from_now = Time.zone.now + 1.hour
+      hour_from_now = Time.zone.now.round + 1.hour
 
       Timecop.freeze(hour_from_now) do
         builder = described_class.new
@@ -49,6 +50,8 @@ describe ETL::Builder, :etl, :all_dbs do
         expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
         expect(build.built).to be > 0
         expect(builder.built).to eq(build.built)
+        expect(build.build_for("appeals").rows_inserted).to eq(0)
+        expect(build.build_for("appeals").rows_updated).to eq(1)
       end
     end
 
@@ -83,9 +86,20 @@ describe ETL::Builder, :etl, :all_dbs do
       it "syncs all records" do
         described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
 
+        expect(ETL::Appeal.count).to eq(0)
+
         build = subject
 
+        expect(build).to be_a(ETL::Build)
+        expect(build).to be_complete
+        expect(build.finished_at).to eq(Time.zone.now)
         expect(build.built).to eq(88)
+        expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
+        expect(build.build_for("appeals").rows_inserted).to eq(13)
+        expect(build.build_for("appeals").rows_updated).to eq(0)
+        expect(build.build_for("users").rows_updated).to eq(0)
+        expect(build.build_for("users").rows_inserted).to eq(23)
+
         expect(ETL::Task.count).to eq(31)
         expect(ETL::Appeal.count).to eq(13)
         expect(ETL::User.all.count).to eq(23)
@@ -105,7 +119,16 @@ describe ETL::Builder, :etl, :all_dbs do
 
         build = subject
 
+        expect(build).to be_a(ETL::Build)
+        expect(build).to be_complete
+        expect(build.finished_at).to eq(Time.zone.now)
         expect(build.built).to eq(85)
+        expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
+        expect(build.build_for("appeals").rows_inserted).to eq(13)
+        expect(build.build_for("appeals").rows_updated).to eq(0)
+        expect(build.build_for("users").rows_inserted).to eq(22)
+        expect(build.build_for("users").rows_rejected).to eq(0)
+
         expect(ETL::Task.count).to eq(31)
         expect(ETL::Appeal.count).to eq(13)
         expect(ETL::User.all.count).to eq(22)
