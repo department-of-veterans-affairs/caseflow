@@ -195,7 +195,7 @@ class EndProductEstablishment < ApplicationRecord
     # load contentions now, in case "source" needs them.
     # this VBMS call is slow and will cause the transaction below
     # to timeout in some cases.
-    contentions unless status_canceled?
+    contentions unless result.status_type_code == EndProduct::STATUSES.key("Canceled")
 
     transaction do
       update!(
