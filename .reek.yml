@@ -44,6 +44,7 @@ detectors:
       - AMOMetricsReportJob#build_report
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - AppealAvailableHearingLocations#suggested_hearing_location
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
       - AssignJudgeteamRoles#process
