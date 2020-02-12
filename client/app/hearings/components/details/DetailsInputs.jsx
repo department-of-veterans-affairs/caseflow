@@ -21,9 +21,9 @@ import VirtualHearingLink from '../VirtualHearingLink';
 class DetailsInputs extends React.Component {
   renderVirtualHearingLinkSection() {
     const { isVirtual, virtualHearing, user, hearing } = this.props;
-    const virtualHearingLabel = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST
-      ? COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL
-      : COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
+    const virtualHearingLabel = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
+      COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
+      COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
     if (isVirtual && virtualHearing) {
       return (
