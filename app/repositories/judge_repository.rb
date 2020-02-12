@@ -20,19 +20,11 @@ class JudgeRepository
     end
   end
 
-  # includes acting judges
+  # returns judges and acting judges
+  # svlj="J" indicates judges
+  # svlj="A" indicates acting judges, who are normally attorneys
+  # svlj=nil indicates attorney
   def self.judge_records
     VACOLS::Staff.where(svlj: %w[J A], sactive: "A")
   end
-
-  # :nocov:
-  # excludes acting judges
-  def self.judges
-    VACOLS::Staff.where(svlj: "J", sactive: "A")
-  end
-
-  def self.acting_judges
-    VACOLS::Staff.where(svlj: "A", sactive: "A")
-  end
-  # :nocov:
 end
