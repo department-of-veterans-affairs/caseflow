@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddEtlBuildTables < ActiveRecord::Migration[5.2]
   def change
     create_table :etl_builds, comment: "ETL build metadata for each job" do |t|
