@@ -10,7 +10,6 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
     super(args)
   end
 
-  # Sorting by docket number within each category of appeal: AOD and normal.
   def tasks_for_tab
     tab = AssignHearing.new(
       appeal_type: appeal_type,
@@ -20,8 +19,9 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
     @tasks_for_tab ||= tab.tasks
   end
 
+  # Sorting by docket number within each category of appeal: AOD and normal.
   def sorted_tasks(tasks)
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).order(<<-SQL)
+    tasks.order(<<-SQL)
       (CASE
         WHEN cached_appeal_attributes.case_type = 'Court Remand' THEN 1
         ELSE 0

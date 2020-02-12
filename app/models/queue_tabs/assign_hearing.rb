@@ -13,28 +13,20 @@ class AssignHearing
     @regional_office_key = regional_office_key
   end
 
+  # return schedule hearing tasks joined with CachedAppeal selected
+  # by regional office
   def tasks
     @tasks ||=
-      if appeal_type == Appeal.name
-        scheduled_hearing_tasks.joins(
-          "INNER JOIN appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
-        ).where("appeals.closest_regional_office = ?", regional_office_key)
-      else
-        scheduled_hearing_tasks.joins(
-          "INNER JOIN legacy_appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'LegacyAppeal'"
-        ).where("legacy_appeals.closest_regional_office = ?", regional_office_key)
-      end
+      ScheduleHearingTask
+        .includes(*task_includes)
+        .active
+        .where(appeal_type: appeal_type)
+        .joins(CachedAppeal.left_join_from_tasks_clause)
+        .where("cached_appeal_attributes.closest_regional_office_key = ?", regional_office_key)
   end
 
   def to_hash
     { columns: columns }
-  end
-
-  def scheduled_hearing_tasks
-    ScheduleHearingTask
-      .includes(*task_includes)
-      .active
-      .where(appeal_type: appeal_type)
   end
 
   # return filter options for columns
