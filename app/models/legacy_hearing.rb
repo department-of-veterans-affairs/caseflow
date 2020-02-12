@@ -196,7 +196,7 @@ class LegacyHearing < ApplicationRecord
                        time.local_time
                      else
                        # Hearing Day scheduled_for is in the timezone of the RO
-                       hearing_day.scheduled_for
+                       hearing_day&.scheduled_for || time.local_time
                      end
 
     scheduled_date < DateTime.yesterday.in_time_zone(regional_office_timezone)
