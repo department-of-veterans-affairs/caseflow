@@ -23,6 +23,7 @@ class Appeal < DecisionReview
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
+  has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
 
   enum stream_type: {
@@ -98,6 +99,8 @@ class Appeal < DecisionReview
   end
 
   def vacate_type
+    return nil unless vacate?
+
     post_decision_motion&.vacate_type
   end
 
@@ -463,11 +466,5 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
-  end
-
-  # Non-vacate Appeals are not expected to have a PDM, but this method makes a
-  # best-effort attempt in either situation, and returns nil if none is found.
-  def post_decision_motion
-    PostDecisionMotion.find_by(task: tasks)
   end
 end
