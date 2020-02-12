@@ -37,8 +37,8 @@ describe AttorneyRepository, :all_dbs do
     end
   end
 
-  context ".find_all_having_attorney_ids_excluding_judges" do
-    subject { AttorneyRepository.find_all_having_attorney_ids_excluding_judges }
+  context ".find_all_attorneys" do
+    subject { AttorneyRepository.find_all_attorneys }
 
     it "should return only active attorneys and acting judges" do
       expect(subject.pluck(:css_id)).to include("ATTY0AR", "ATTY1AR", "ATTY2AR",
