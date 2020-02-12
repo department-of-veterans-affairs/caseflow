@@ -37,7 +37,7 @@ class AvailableHearingLocations < ApplicationRecord
   end
 
   def determine_vba_facility_type
-    classification&.include?("Regional") ? "(RO)" : "(VBA)"
+    (classification&.include?("Regional")) ? "(RO)" : "(VBA)"
   end
 
   def formatted_location
