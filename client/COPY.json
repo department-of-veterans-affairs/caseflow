@@ -680,5 +680,8 @@
     }
   },
 
+  "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Virtual Hearing Link",
+  "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
+
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }
