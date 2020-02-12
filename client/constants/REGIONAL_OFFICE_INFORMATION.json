@@ -40,7 +40,7 @@
     "city": "White River Junction",
     "state": "VT",
     "timezone": "America/New_York",
-    "hold_hearings": true,
+    "hold_hearings": false,
     "facility_locator_id": "vba_405",
     "alternate_locations": ["vba_373"]
   },
@@ -690,7 +690,7 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_373",
-    "alternate_locations": ["vba_405"]
+    "alternate_locations": null
   },
   "RO74": {
     "label": null,
