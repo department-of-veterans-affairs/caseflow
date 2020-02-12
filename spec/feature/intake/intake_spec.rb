@@ -286,8 +286,7 @@ feature "Intake", :all_dbs do
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
-        expect(page).to have_content("This Veteran has a duplicate record in CorpDB")
-        expect(page).to have_content("[#{participant_id1}, #{participant_id2}]")
+        expect(page).to have_content("This Veteran has a duplicate record in the Corporate database")
       end
     end
 
