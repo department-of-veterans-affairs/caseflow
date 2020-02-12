@@ -631,7 +631,8 @@ describe ClaimReview, :postgres do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
             limited_poa_code: nil,
-            limited_poa_access: nil
+            limited_poa_access: nil,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -938,7 +939,8 @@ describe ClaimReview, :postgres do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
             limited_poa_code: nil,
-            limited_poa_access: nil
+            limited_poa_access: nil,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -975,7 +977,8 @@ describe ClaimReview, :postgres do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
             limited_poa_code: nil,
-            limited_poa_access: nil
+            limited_poa_access: nil,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -1024,9 +1027,10 @@ describe ClaimReview, :postgres do
   end
 
   describe "#search_table_ui_hash" do
-    let!(:claimants) { [create(:claimant), create(:claimant)] }
     let!(:appeal) { create(:appeal) }
-    let!(:sc) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number, claimants: claimants) }
+    let!(:sc) do
+      create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number, number_of_claimants: 2)
+    end
 
     it "returns review type" do
       expect([*sc].map(&:search_table_ui_hash)).to include(hash_including(

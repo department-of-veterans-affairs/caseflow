@@ -52,6 +52,10 @@
     "value": "address_motion_to_vacate",
     "func": "address_motion_to_vacate_data"
   },
+  "REVIEW_VACATE_DECISION": {
+    "label": "Decision ready for review",
+    "value": "motion_to_vacate_checkout/review_vacatures"
+  },
   "SIGN_MOTION_TO_VACATE": {
     "label": "Sign Motion to Vacate",
     "value": "sign_motion_to_vacate",
