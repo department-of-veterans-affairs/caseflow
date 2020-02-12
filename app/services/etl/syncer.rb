@@ -12,18 +12,36 @@ class ETL::Syncer
     @since = since
   end
 
-  def call
-    synced = 0
+  # rubocop:disable Metrics/MethodLength
+  def call(etl_build)
+    inserted = 0
+    updated = 0
+    rejected = 0
+    create_build_record(etl_build)
     instances_needing_update.find_in_batches.with_index do |originals, batch|
       Rails.logger.debug("Starting batch #{batch} for #{target_class}")
       target_class.transaction do
+        possible = originals.length
+        saved = 0
         originals.reject { |original| filter?(original) }.each do |original|
-          synced += 1 if target_class.sync_with_original(original).save!
+          target = target_class.sync_with_original(original)
+          if target.persisted?
+            inserted += 1
+          else
+            updated += 1
+          end
+          target.save!
+          saved += 1
         end
+        rejected += (possible - saved)
       end
+      build_record.update!(status: :complete, rows_inserted: inserted, rows_updated: updated, rows_rejected: rejected)
+    rescue StandardError => error
+      build_record.update!(comments: error, status: :error, finished_at: Time.zone.now)
     end
-    synced
+    build_record
   end
+  # rubocop:enable Metrics/MethodLength
 
   def origin_class
     fail "Must override abstract method origin_class"
@@ -39,7 +57,16 @@ class ETL::Syncer
 
   private
 
-  attr_reader :since
+  attr_reader :since, :build_record
+
+  def create_build_record(etl_build)
+    @build_record = ETL::BuildTable.create(
+      etl_build: etl_build,
+      table_name: target_class.table_name,
+      started_at: Time.zone.now,
+      status: :running
+    )
+  end
 
   def incremental?
     !!since

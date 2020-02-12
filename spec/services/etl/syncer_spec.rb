@@ -30,18 +30,22 @@ describe ETL::Syncer, :etl do
     before do
       dummy_target = double("dummy")
       allow(dummy_target).to receive(:save!) { @dummy_saved = true }
+      allow(dummy_target).to receive(:persisted?) { true }
       allow(DummyEtlClass).to receive(:sync_with_original) { dummy_target }
     end
+
+    let(:etl_build) { ETL::Build.create }
 
     context "one stale origin class instance needing sync" do
       let!(:user) { create(:user) }
 
-      subject { MySyncer.new.call }
+      subject { MySyncer.new.call(etl_build) }
 
       it "saves a new target class instance" do
         subject
         expect(DummyEtlClass).to have_received(:sync_with_original).once
         expect(@dummy_saved).to eq(true)
+        expect(etl_build.built).to eq(1)
       end
     end
   end

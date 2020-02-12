@@ -19,25 +19,30 @@ class ETL::Builder
 
   def initialize(since: checkpoint_time)
     @since = since
-    @built = 0
   end
 
-  attr_reader :since, :built
+  attr_reader :since, :build_record
 
   def incremental
     checkmark
+    create_build_record
     syncer_klasses.each do |klass|
-      self.built += klass.new(since: since).call
+      klass.new(since: since).call(build_record)
     end
     post_build_steps
-    built
+    update_build_record
   end
 
   def full
     checkmark
-    syncer_klasses.each { |klass| self.built += klass.new.call }
+    create_build_record
+    syncer_klasses.each { |klass| klass.new.call }
     post_build_steps
-    built
+    update_build_record
+  end
+
+  def built
+    build_record.reload.built
   end
 
   def last_built
@@ -46,7 +51,14 @@ class ETL::Builder
 
   private
 
-  attr_writer :built
+  def create_build_record
+    @build_record = ETL::Build.create(started_at: Time.zone.now, status: :running)
+  end
+
+  def update_build_record
+    build_record.update!(finished_at: Time.zone.now, status: :complete)
+    build_record
+  end
 
   def syncer_klasses
     ETL_KLASSES.map { |klass| "ETL::#{klass}Syncer".constantize }
