@@ -7,6 +7,7 @@ import querystring from 'querystring';
 
 import { COLORS } from '../../constants/AppConstants';
 import { ExternalLink } from '../../components/RenderFunctions';
+import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../utils';
 import COPY from '../../../COPY';
 
 const ICON_POSITION_FIX = css({ position: 'relative',
@@ -17,7 +18,7 @@ class VirtualHearingLink extends React.PureComponent {
   getPin() {
     const { virtualHearing } = this.props;
 
-    return this.role() === 'host' ? virtualHearing.hostPin : virtualHearing.guestPin;
+    return this.role() === VIRTUAL_HEARING_HOST ? virtualHearing.hostPin : virtualHearing.guestPin;
   }
 
   getUrl() {
@@ -37,25 +38,37 @@ class VirtualHearingLink extends React.PureComponent {
   role = () => {
     const { user, hearing } = this.props;
 
-    return user.userId.toString() === hearing.judgeId || user.userCanAssignHearingSchedule ? 'host' : 'guest';
+    return virtualHearingRoleForUser(user, hearing);
+  }
+
+  label = () => {
+    const { showFullLink } = this.props;
+
+    if (showFullLink) {
+      return this.getUrl();
+    }
+
+    if (this.role() === VIRTUAL_HEARING_HOST) {
+      return COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL;
+    }
+
+    return COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
   }
 
   render() {
-    const { isVirtual, newWindow, showFullLink, virtualHearing } = this.props;
+    const { isVirtual, newWindow, virtualHearing } = this.props;
 
     if (!isVirtual) {
       return null;
     }
 
-    const href = this.getUrl();
-
     return (
       <Link
-        href={href}
+        href={this.getUrl()}
         target={newWindow ? '_blank' : '_self'}
         disabled={!virtualHearing.jobCompleted}
       >
-        <strong>{showFullLink ? href : COPY.VIRTUAL_HEARING_LINK_LABEL}</strong>
+        <strong>{this.label()}</strong>
         <span {...ICON_POSITION_FIX}>
           &nbsp;<ExternalLink fill={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
         </span>
