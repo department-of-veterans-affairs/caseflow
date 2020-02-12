@@ -31,8 +31,8 @@ describe AttorneyRepository, :all_dbs do
 
     it "should return only active attorneys, judges, and acting judges" do
       expect(subject).to include("ATTY0AR", "ATTY1AR", "ATTY2AR",
-                                                "ACTING0AR", "ACTING1AR", "ACTING2AR",
-                                                "JUDGE1AR", "JUDGE2AR")
+                                 "ACTING0AR", "ACTING1AR", "ACTING2AR",
+                                 "JUDGE1AR", "JUDGE2AR")
       expect(subject).not_to include("JUDGE0AR", "MISC0AR", "MISC1AR", "MISC2AR")
     end
   end
