@@ -9,7 +9,7 @@ class AttorneyRepository
     # returns CSS_IDs of those with attorney_ids, including attorneys and judges
     def find_all_having_attorney_ids
       VACOLS::Staff.where(sactive: "A").where.not(sdomainid: nil).where.not(sattyid: nil)
-        .pluck("sdomainid").map(&:upcase)
+        .pluck(:sdomainid).map(&:upcase)
     end
 
     private
@@ -17,7 +17,7 @@ class AttorneyRepository
     # returns CSS_IDs of attorneys and acting judges (who are normally attorneys)
     def find_all_having_attorney_ids_excluding_judges
       VACOLS::Staff.where(sactive: "A").where.not(sdomainid: nil).where.not(sattyid: nil)
-        .where(svlj: [nil, "A"]).pluck("sdomainid").map(&:upcase)
+        .where(svlj: [nil, "A"]).pluck(:sdomainid).map(&:upcase)
     end
   end
 end
