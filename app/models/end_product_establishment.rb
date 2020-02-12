@@ -195,15 +195,14 @@ class EndProductEstablishment < ApplicationRecord
     # load contentions now, in case "source" needs them.
     # this VBMS call is slow and will cause the transaction below
     # to timeout in some cases.
-    contentions
+    contentions unless status_canceled?
 
     transaction do
       update!(
         synced_status: result.status_type_code,
         last_synced_at: Time.zone.now
       )
-      sync_source!
-      handle_canceled_ep!
+      status_canceled? ? handle_canceled_ep! : sync_source!
       close_request_issues_with_no_decision!
     end
 
