@@ -21,7 +21,7 @@ class ETL::Builder
     @since = since
   end
 
-  attr_reader :since, :build_record
+  attr_reader :since
 
   def incremental
     checkmark
@@ -47,11 +47,11 @@ class ETL::Builder
     Time.zone.parse(checkpoint)
   end
 
-  private
-
   def build_record
     @build_record ||= ETL::Build.create(started_at: Time.zone.now, status: :running)
   end
+
+  private
 
   def update_build_record
     build_record.update!(finished_at: Time.zone.now, status: :complete)

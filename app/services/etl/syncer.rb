@@ -13,6 +13,7 @@ class ETL::Syncer
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def call(etl_build)
     inserted = 0
     updated = 0
@@ -55,6 +56,7 @@ class ETL::Syncer
     build_record
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def origin_class
     fail "Must override abstract method origin_class"
