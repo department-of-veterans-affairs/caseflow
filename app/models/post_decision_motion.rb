@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class PostDecisionMotion < ApplicationRecord
+  belongs_to :appeal
   belongs_to :task, optional: false
 
   validates :disposition, presence: true
