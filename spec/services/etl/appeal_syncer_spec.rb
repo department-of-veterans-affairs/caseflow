@@ -5,6 +5,8 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
 
   include_context "AMA Tableau SQL"
 
+  let(:etl_build) { ETL::Build.create }
+
   describe "#origin_class" do
     subject { described_class.new.origin_class }
 
@@ -18,7 +20,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
   end
 
   describe "#call" do
-    subject { described_class.new.call }
+    subject { described_class.new.call(etl_build) }
 
     before do
       expect(ETL::Appeal.count).to eq(0)
@@ -42,7 +44,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
     end
 
     context "sync tomorrow" do
-      subject { described_class.new(since: Time.zone.now + 1.day).call }
+      subject { described_class.new(since: Time.zone.now + 1.day).call(etl_build) }
 
       it "does not sync" do
         subject

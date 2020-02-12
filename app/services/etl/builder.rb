@@ -25,7 +25,6 @@ class ETL::Builder
 
   def incremental
     checkmark
-    create_build_record
     syncer_klasses.each do |klass|
       klass.new(since: since).call(build_record)
     end
@@ -35,8 +34,7 @@ class ETL::Builder
 
   def full
     checkmark
-    create_build_record
-    syncer_klasses.each { |klass| klass.new.call }
+    syncer_klasses.each { |klass| klass.new.call(build_record) }
     post_build_steps
     update_build_record
   end
@@ -51,8 +49,8 @@ class ETL::Builder
 
   private
 
-  def create_build_record
-    @build_record = ETL::Build.create(started_at: Time.zone.now, status: :running)
+  def build_record
+    @build_record ||= ETL::Build.create(started_at: Time.zone.now, status: :running)
   end
 
   def update_build_record

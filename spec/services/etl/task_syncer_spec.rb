@@ -5,8 +5,10 @@ describe ETL::TaskSyncer, :etl, :all_dbs do
 
   include_context "AMA Tableau SQL"
 
+  let(:etl_build) { ETL::Build.create }
+
   describe "#call" do
-    subject { described_class.new.call }
+    subject { described_class.new.call(etl_build) }
 
     context "BVA status distribution" do
       it "has expected distribution" do

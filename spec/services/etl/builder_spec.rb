@@ -28,11 +28,11 @@ describe ETL::Builder, :etl, :all_dbs do
     it "returns timestamp of last build" do
       Timecop.freeze(Time.zone.now) do
         builder = described_class.new
-        built = builder.full
+        build = builder.full
 
         # use .to_s comparison since Rails.cache does not store .milliseconds
         expect(builder.last_built.to_s).to eq(Time.zone.now.to_s)
-        expect(built).to eq(88)
+        expect(build.built).to eq(88)
       end
 
       hour_from_now = Time.zone.now + 1.hour
@@ -44,18 +44,18 @@ describe ETL::Builder, :etl, :all_dbs do
 
         Appeal.last.touch # at least one thing changed
 
-        built = builder.incremental
+        build = builder.incremental
 
         expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
-        expect(built).to be > 0
-        expect(builder.built).to eq(built)
+        expect(build.built).to be > 0
+        expect(builder.built).to eq(build.built)
       end
     end
 
     it "updates aod_due_to_dob regardless of whether Appeal has been modified" do
       builder = described_class.new
-      built = builder.full
-      expect(built).to eq(88)
+      build = builder.full
+      expect(build.built).to eq(88)
       expect(ETL::Appeal.where(aod_due_to_dob: true).count).to eq(1)
 
       # change dob for one active
@@ -70,8 +70,8 @@ describe ETL::Builder, :etl, :all_dbs do
         .update(claimant_dob: 76.years.ago.round)
 
       builder = described_class.new(since: Time.zone.now + 1.day)
-      built = builder.incremental
-      expect(built).to eq(0)
+      build = builder.incremental
+      expect(build.built).to eq(0)
       expect(ETL::Appeal.where(aod_due_to_dob: true).count).to eq(2) # skips inactive
     end
   end
@@ -83,9 +83,9 @@ describe ETL::Builder, :etl, :all_dbs do
       it "syncs all records" do
         described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
 
-        built = subject
+        build = subject
 
-        expect(built).to eq(88)
+        expect(build.built).to eq(88)
         expect(ETL::Task.count).to eq(31)
         expect(ETL::Appeal.count).to eq(13)
         expect(ETL::User.all.count).to eq(23)
@@ -103,9 +103,9 @@ describe ETL::Builder, :etl, :all_dbs do
       it "syncs only records that have changed" do
         described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
 
-        built = subject
+        build = subject
 
-        expect(built).to eq(85)
+        expect(build.built).to eq(85)
         expect(ETL::Task.count).to eq(31)
         expect(ETL::Appeal.count).to eq(13)
         expect(ETL::User.all.count).to eq(22)
