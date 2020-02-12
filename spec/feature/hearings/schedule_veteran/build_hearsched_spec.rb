@@ -118,8 +118,8 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
       find("label", text: "8:30 am").click
-      expect(page).not_to have_content("Could not find hearing locations for this veteran", wait: 30)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
+      expect(page).not_to have_content("Could not find hearing locations for this veteran")
       click_button("Schedule")
       click_on "Back to Schedule Veterans"
       expect(page).to have_content("Schedule Veterans")
@@ -141,10 +141,13 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         allow(VADotGovService).to receive(:get_distance).and_return(facilities_response)
       end
 
-      scenario "Schedule Veteran for video erro" do
+      scenario "Schedule Veteran for video error" do
         visit "queue/appeals/#{legacy_appeal.vacols_id}"
         click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
-        expect(page).to have_content("Mapping service is temporarily unavailable. Please try again later.")
+        expect(page).to have_css(
+          ".usa-alert-error",
+          text: "Mapping service is temporarily unavailable. Please try again later."
+        )
       end
     end
   end
