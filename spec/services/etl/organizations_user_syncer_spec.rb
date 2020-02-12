@@ -3,13 +3,13 @@
 describe ETL::OrganizationsUserSyncer, :etl do
   describe "#call" do
     let!(:org_user1) { create(:organizations_user, user: user, organization: org1) }
-    let!(:org_user2) { create(:organizations_user, user: user, organization: org2, updated_at: 3.days.ago) }
+    let!(:org_user2) { create(:organizations_user, user: user, organization: org2, updated_at: 3.days.ago.round) }
     let(:org1) { create(:organization) }
     let(:org2) { create(:organization) }
     let(:user) { create(:user) }
 
     context "2 org_user records, one needing sync" do
-      subject { described_class.new(since: 2.days.ago).call }
+      subject { described_class.new(since: 2.days.ago.round).call }
 
       it "syncs 1 record" do
         expect(ETL::OrganizationsUser.all.count).to eq(0)
@@ -34,7 +34,7 @@ describe ETL::OrganizationsUserSyncer, :etl do
     end
 
     context "origin record changes" do
-      subject { described_class.new(since: 2.days.ago).call }
+      subject { described_class.new(since: 2.days.ago.round).call }
 
       before do
         described_class.new.call
