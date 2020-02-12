@@ -37,10 +37,11 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/console-tree-renderer.git
-  revision: 9cb9fbb6fab16ea5ed4b26f7d5a7204085c4e183
-  branch: proper_gem
+  revision: f0db3565b74d28af3b27f960463e280b4296cafe
+  tag: v0.1.1
   specs:
     console_tree_renderer (0.1.0)
+      tty-tree (~> 0.3.0)
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
