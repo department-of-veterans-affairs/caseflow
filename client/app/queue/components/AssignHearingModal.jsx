@@ -188,13 +188,12 @@ class AssignHearingModal extends React.PureComponent {
   render = () => {
     const { appeal, openHearing } = this.props;
     const { showErrorMessages, showFullHearingDayWarning } = this.state;
-    const { address_line_1, city, state, zip } = appeal.appellantAddress || {};
+    const { address_line_1: addressLine1, city, state, zip } = appeal.appellantAddress || {};
 
     if (openHearing) {
       return null;
     }
 
-    /* eslint-disable camelcase */
     return (
       <QueueFlowModal
         submit={this.submit}
@@ -214,7 +213,7 @@ class AssignHearingModal extends React.PureComponent {
           }
           <p>
             Veteran Address<br />
-            {address_line_1}<br />
+            {addressLine1}<br />
             {`${city}, ${state} ${zip}`}
           </p>
           <AssignHearingForm
