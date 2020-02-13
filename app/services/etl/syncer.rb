@@ -52,6 +52,8 @@ class ETL::Syncer
         status: :error,
         finished_at: Time.zone.now
       )
+      # re-raise so sentry and parent build record know.
+      raise error
     end
     build_record
   end

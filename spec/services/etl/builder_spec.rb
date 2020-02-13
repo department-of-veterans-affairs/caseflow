@@ -163,18 +163,21 @@ describe ETL::Builder, :etl, :all_dbs do
       allow(ETL::Appeal).to receive(:merge_original_attributes_to_target) { raise error }
     end
 
-    subject { described_class.new.full }
+    subject { described_class.new }
 
     let(:error) { StandardError.new("oops!") }
 
     it "captures error string and sets status" do
-      build = subject
+      builder = subject
 
+      expect { builder.full }.to raise_error(error)
+
+      build = builder.build_record
       expect(build).to be_error
       expect(build.comments).to eq("oops!")
       expect(build.build_for("appeals")).to be_error
       expect(build.build_for("appeals").comments).to eq("oops!")
-      expect(build.build_for("tasks")).to be_complete
+      expect(build.build_for("tasks")).to be_nil # we did not finish
     end
   end
 end

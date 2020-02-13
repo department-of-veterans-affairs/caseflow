@@ -30,6 +30,9 @@ class ETL::Builder
     end
     post_build_steps
     update_build_record
+  rescue StandardError => error
+    update_build_record
+    raise error
   end
 
   def full
@@ -37,6 +40,9 @@ class ETL::Builder
     syncer_klasses.each { |klass| klass.new.call(build_record) }
     post_build_steps
     update_build_record
+  rescue StandardError => error
+    update_build_record
+    raise error
   end
 
   def built
