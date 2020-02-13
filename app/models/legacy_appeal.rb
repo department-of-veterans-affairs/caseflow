@@ -708,6 +708,21 @@ class LegacyAppeal < ApplicationRecord
     type == "Court Remand"
   end
 
+  # Adding anything to this to_hash can trigger a lazy load which slows down
+  # welcome gate dramatically. Don't add anything to it without also adding it to
+  # the query in VACOLS::CaseAssignment.
+  def to_hash(viewed: nil, issues: nil, hearings: nil)
+    serializable_hash(
+      methods: [:veteran_full_name, :veteran_first_name, :veteran_last_name, :docket_number, :type, :cavc, :aod],
+      includes: [:vbms_id, :vacols_id]
+    ).tap do |hash|
+      hash["viewed"] = viewed
+      hash["issues"] = issues ? issues.map(&:attributes) : nil
+      hash["regional_office"] = regional_office_hash
+      hash["hearings"] = hearings
+    end
+  end
+
   def matchable_to_request_issue?(receipt_date)
     issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
   end
