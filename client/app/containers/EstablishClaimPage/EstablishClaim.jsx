@@ -327,7 +327,7 @@ export class EstablishClaim extends React.Component {
         this.props.submitDecisionPageSuccess();
       },
       (error) => {
-        const errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] || CREATE_EP_ERRORS.default;
+        const errorMessage = CREATE_EP_ERRORS[error.response.body?.error_code] || CREATE_EP_ERRORS.default;
 
         this.setState({
           loading: false
