@@ -23,8 +23,6 @@ describe ETL::Builder, :etl, :all_dbs do
     Timecop.travel(3.days.ago.round) do
       CachedUser.sync_from_vacols
     end
-
-    #Timecop.freeze(Time.zone.now)
   end
 
   after do
