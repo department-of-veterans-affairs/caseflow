@@ -60,8 +60,8 @@ export const AddDecisionIssuesView = ({ appeal }) => {
     <QueueFlowPage
       validateForm={validateForm}
       appealId={appeal.externalId}
-      getNextStepUrl={() => ctx.getNextUrl('review_vacatures')}
-      getPrevStepUrl={() => ctx.getPrevUrl('review_vacatures')}
+      getNextStepUrl={() => ctx.getNextUrl('add_decisions')}
+      getPrevStepUrl={() => ctx.getPrevUrl('add_decisions')}
     >
       <h1>{COPY.MTV_CHECKOUT_ADD_DECISIONS_TITLE}</h1>
       <p>{COPY.MTV_CHECKOUT_ADD_DECISIONS_EXPLANATION}</p>

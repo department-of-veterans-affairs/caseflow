@@ -26,5 +26,5 @@ export const getNextStep = (current, steps) => {
 export const getPrevStep = (current, steps) => {
   const idx = steps.indexOf(current);
 
-  return idx > 0 ? steps(idx - 1) : null;
+  return idx > 0 ? steps[idx - 1] : null;
 };

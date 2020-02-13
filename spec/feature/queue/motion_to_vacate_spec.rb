@@ -440,6 +440,20 @@ RSpec.feature "Motion to vacate", :all_dbs do
     context "Vacate & Readjudicate" do
       let(:vacate_type) { "vacate_and_readjudication" }
 
+      let(:review_decisions_path) do
+        [
+          "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+          "motion_to_vacate_checkout/review_vacatures"
+        ].join("/")
+      end
+
+      let(:add_decisions_path) do
+        [
+          "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+          "motion_to_vacate_checkout/add_decisions"
+        ].join("/")
+      end
+
       it "correctly handles checkout flow" do
         User.authenticate!(user: drafting_attorney)
 
@@ -448,13 +462,19 @@ RSpec.feature "Motion to vacate", :all_dbs do
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
-        path = [
-          "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
-          "motion_to_vacate_checkout/review_vacatures"
-        ].join("/")
+        expect(page.current_path).to eq(review_decisions_path)
 
-        binding.pry
-        expect(page.current_path).to eq(path)
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(add_decisions_path)
+
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(review_decisions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(add_decisions_path)
       end
     end
   end
