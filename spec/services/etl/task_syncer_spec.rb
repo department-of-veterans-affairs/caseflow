@@ -32,7 +32,8 @@ describe ETL::TaskSyncer, :etl, :all_dbs do
         expect(ETL::Task.count).to eq(31)
         expect(etl_build_table).to be_complete
         expect(etl_build_table.rows_rejected).to eq(1)
-        expect(etl_build_table.rows_updated).to eq(31)
+        expect(etl_build_table.rows_inserted).to eq(31)
+        expect(etl_build_table.rows_updated).to eq(0)
       end
     end
   end
