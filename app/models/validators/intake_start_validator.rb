@@ -92,7 +92,7 @@ class IntakeStartValidator
     # BVA has indicated that station conflict policy doesn't apply to Appeals.
     # See https://github.com/department-of-veterans-affairs/caseflow/issues/13165
     # This bypass is behind the :allow_same_station_appeals feature toggle for now.
-    return true if FeatureToggle.enabled?(:allow_same_station_appeals) && intake.is_a?(AppealIntake)
+    return true if FeatureToggle.enabled?(:allow_same_station_appeals, user: intake.user) && intake.is_a?(AppealIntake)
 
     !bgs.station_conflict?(veteran_file_number, veteran.participant_id)
   end
