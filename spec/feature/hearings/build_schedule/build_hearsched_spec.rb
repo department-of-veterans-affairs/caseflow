@@ -20,7 +20,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       expect(CoNonAvailability.count).to eq(4)
       expect(Allocation.count).to eq(55)
       allocation_count = Allocation.all.map(&:allocated_days).inject(:+).ceil
-      expect(allocation_count).to eq(350)
+      expect(allocation_count).to eq(343)
       click_on "Confirm assignments"
       click_on "Confirm upload"
       expect(page).not_to have_content("We are uploading to VACOLS.", wait: 30)
