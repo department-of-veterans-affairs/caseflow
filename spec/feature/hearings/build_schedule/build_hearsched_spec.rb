@@ -18,7 +18,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       expect(SchedulePeriod.count).to eq(1)
       expect(RoNonAvailability.count).to eq(216)
       expect(CoNonAvailability.count).to eq(4)
-      expect(Allocation.count).to eq(56)
+      expect(Allocation.count).to eq(55)
       allocation_count = Allocation.all.map(&:allocated_days).inject(:+).ceil
       expect(allocation_count).to eq(350)
       click_on "Confirm assignments"
