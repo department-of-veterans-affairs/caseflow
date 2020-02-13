@@ -2,7 +2,7 @@
 
 describe IntakeStartValidator, :postgres do
   context "#validate" do
-    let(:user) { create(:user) }
+    let(:user) { create(:user, station_id: "283") }
 
     let(:veteran) { create(:veteran) }
 
@@ -32,24 +32,35 @@ describe IntakeStartValidator, :postgres do
       expect(validate_error_code).to eq "veteran_not_modifiable"
     end
 
-    context "intaking an Appeal" do
+    context "intaking an Appeal with a same-station conflict" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:station_conflict?) { true }
+      end
+
       let(:intake) do
         AppealIntake.new(veteran_file_number: veteran.file_number, detail: review, user: user)
       end
       subject { validate_error_code }
 
-      it "sets an error_code if BGS shows a station conflict" do
-        allow_any_instance_of(BGSService).to receive(:station_conflict?) { true }
-        is_expected.to eq "veteran_not_modifiable"
+      context "intake user is on the MailTeam" do
+        it "sets a veteran_not_modifiable error code" do
+          MailTeam.singleton.add_user(user)
+          is_expected.to eq "veteran_not_modifiable"
+        end
       end
 
-      context "appeals bypass same station check" do
-        before { FeatureToggle.enable!(:allow_same_station_appeals) }
-        after { FeatureToggle.disable!(:allow_same_station_appeals) }
+      context "intake user is at Station 101" do
+        let(:user) { create(:user, station_id: User::BOARD_STATION_ID) }
 
-        it "sets no error_code even if BGS shows a station conflict" do
-          allow_any_instance_of(BGSService).to receive(:station_conflict?) { true }
-          is_expected.to be nil
+        it "sets a veteran_not_modifiable error code" do
+          is_expected.to eq "veteran_not_modifiable"
+        end
+
+        context "intake user at Station 101 is also on the MailTeam" do
+          it "sets no error_code" do
+            MailTeam.singleton.add_user(user)
+            is_expected.to be nil
+          end
         end
       end
     end
