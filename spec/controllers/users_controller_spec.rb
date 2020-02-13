@@ -61,11 +61,11 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     context "when judge ID is not passed" do
       subject { get :index, params: { role: "Attorney" } }
 
-      it "should return a list of all attorneys and judges" do
+      it "should return a list of all attorneys, excluding judges" do
         subject
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq(team_member_count + solo_count + 2)
+        expect(response_body["attorneys"].size).to eq(team_member_count + solo_count + 1)
       end
     end
   end
