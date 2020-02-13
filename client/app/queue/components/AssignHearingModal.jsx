@@ -233,7 +233,7 @@ AssignHearingModal.propTypes = {
     appellantAddress: PropTypes.object,
     externalId: PropTypes.string,
     isLegacyAppeal: PropTypes.bool,
-    regionalOffice: PropTypes.string,
+    regionalOffice: PropTypes.object,
     veteranFullName: PropTypes.string
   }),
   assignHearingForm: PropTypes.shape({
