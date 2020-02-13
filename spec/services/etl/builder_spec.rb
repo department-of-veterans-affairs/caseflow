@@ -25,6 +25,7 @@ describe ETL::Builder, :etl, :all_dbs do
   end
 
   describe "#last_built" do
+  ensure_stable do
     it "returns timestamp of last build" do
       Timecop.freeze(Time.zone.now.round) do
         builder = described_class.new
@@ -41,19 +42,27 @@ describe ETL::Builder, :etl, :all_dbs do
       Timecop.freeze(hour_from_now) do
         builder = described_class.new
 
-        expect(builder.last_built).to eq((Time.zone.now - 1.hour).to_s)
+        expect(builder.last_built).to eq((Time.zone.now.round - 1.hour).to_s)
 
-        Appeal.last.touch # at least one thing changed
+        binding.pry
+
+        # "touch" a known appeal with known number of associations
+        distributed_to_judge.touch
+
+        binding.pry
 
         build = builder.incremental
 
+        binding.pry
+
         expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
-        expect(build.built).to be > 0
+        #expect(build.built).to eq(1)
         expect(builder.built).to eq(build.built)
         expect(build.build_for("appeals").rows_inserted).to eq(0)
         expect(build.build_for("appeals").rows_updated).to eq(1)
       end
     end
+  end
 
     it "updates aod_due_to_dob regardless of whether Appeal has been modified" do
       builder = described_class.new

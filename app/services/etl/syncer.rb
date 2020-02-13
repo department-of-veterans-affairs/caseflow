@@ -18,9 +18,9 @@ class ETL::Syncer
     inserted = 0
     updated = 0
     rejected = 0
-    create_build_record(etl_build)
     instances_needing_update.find_in_batches.with_index do |originals, batch|
       Rails.logger.debug("Starting batch #{batch} for #{target_class}")
+      create_build_record(etl_build) # create inside the loop so we reflect what we actually update
       target_class.transaction do
         possible = originals.length
         saved = 0
@@ -75,7 +75,7 @@ class ETL::Syncer
   attr_reader :since, :build_record
 
   def create_build_record(etl_build)
-    @build_record = ETL::BuildTable.create(
+    @build_record ||= ETL::BuildTable.create(
       etl_build: etl_build,
       table_name: target_class.table_name,
       started_at: Time.zone.now,
