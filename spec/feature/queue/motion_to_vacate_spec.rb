@@ -411,11 +411,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
     end
 
+    let(:vacate_type) { "straight_vacate" }
+
     let(:post_decision_motion_params) do
       {
         instructions: "I am granting this",
         disposition: "granted",
-        vacate_type: "straight_vacate",
+        vacate_type: vacate_type,
         assigned_to_id: drafting_attorney
       }
     end
@@ -435,20 +437,25 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
 
-    it "correctly displays 'Review Decision Issues' portion of MTV checkout for granted disposition" do
-      User.authenticate!(user: drafting_attorney)
+    context "Vacate & Readjudicate" do
+      let(:vacate_type) { "vacate_and_readjudication" }
 
-      visit "/queue/appeals/#{vacate_stream.uuid}"
+      it "correctly handles checkout flow" do
+        User.authenticate!(user: drafting_attorney)
 
-      find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+        visit "/queue/appeals/#{vacate_stream.uuid}"
 
-      path = [
-        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
-        "motion_to_vacate_checkout/review_vacatures"
-      ].join("/")
+        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
-      expect(page.current_path).to eq(path)
+        path = [
+          "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+          "motion_to_vacate_checkout/review_vacatures"
+        ].join("/")
+
+        binding.pry
+        expect(page.current_path).to eq(path)
+      end
     end
   end
 
