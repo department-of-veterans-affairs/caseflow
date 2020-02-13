@@ -11,7 +11,6 @@ class LegacyAppeal < ApplicationRecord
   include AssociatedVacolsModel
   include BgsService
   include CachedAttributes
-  include AddressMapper
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
@@ -703,21 +702,6 @@ class LegacyAppeal < ApplicationRecord
     type == "Court Remand"
   end
 
-  # Adding anything to this to_hash can trigger a lazy load which slows down
-  # welcome gate dramatically. Don't add anything to it without also adding it to
-  # the query in VACOLS::CaseAssignment.
-  def to_hash(viewed: nil, issues: nil, hearings: nil)
-    serializable_hash(
-      methods: [:veteran_full_name, :veteran_first_name, :veteran_last_name, :docket_number, :type, :cavc, :aod],
-      includes: [:vbms_id, :vacols_id]
-    ).tap do |hash|
-      hash["viewed"] = viewed
-      hash["issues"] = issues ? issues.map(&:attributes) : nil
-      hash["regional_office"] = regional_office_hash
-      hash["hearings"] = hearings
-    end
-  end
-
   def matchable_to_request_issue?(receipt_date)
     issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
   end
@@ -961,17 +945,6 @@ class LegacyAppeal < ApplicationRecord
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length.between?(3, 9)
 
       fail Caseflow::Error::InvalidFileNumber
-    end
-
-    # Because SSN is not accurate in VACOLS, we pull the file
-    # number from BGS for the SSN and use that to look appeals
-    # up in VACOLS
-    def vbms_id_for_ssn(ssn)
-      file_number = bgs.fetch_file_number_by_ssn(ssn)
-
-      fail ActiveRecord::RecordNotFound unless file_number
-
-      convert_file_number_to_vacols(file_number)
     end
 
     # Returns a hash of appeals with appeal_id as keys and
