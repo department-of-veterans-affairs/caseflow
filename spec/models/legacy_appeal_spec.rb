@@ -2104,13 +2104,7 @@ describe LegacyAppeal, :all_dbs do
              snamef: "Bobby",
              snamemi: "F",
              snamel: "Veteran",
-             ssalut: "",
-             saddrst1: "123 K St. NW",
-             saddrst2: "Suite 456",
-             saddrcty: "Washington",
-             saddrstt: "DC",
-             saddrcnty: nil,
-             saddrzip: "20001")
+             ssalut: "")
     end
     let!(:representative) do
       create(:representative,
@@ -2126,6 +2120,21 @@ describe LegacyAppeal, :all_dbs do
              repzip: "10000")
     end
     let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "T") }
+    let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
+
+    before do
+      BGSService.address_records = {
+        veteran.participant_id => {
+          addrs_one_txt: "123 K St. NW",
+          addrs_two_txt: "Suite 456",
+          addrs_three_txt: nil,
+          city_nm: "Washington",
+          postal_cd: "DC",
+          cntry_nm: nil,
+          zip_prefix_nbr: "20001"
+        }
+      }
+    end
 
     context "when veteran is the appellant and addresses are included" do
       it "the veteran is returned with addresses" do
@@ -2137,6 +2146,7 @@ describe LegacyAppeal, :all_dbs do
           address: {
             address_line_1: "123 K St. NW",
             address_line_2: "Suite 456",
+            address_line_3: nil,
             city: "Washington",
             state: "DC",
             country: nil,
@@ -2177,6 +2187,7 @@ describe LegacyAppeal, :all_dbs do
           address: {
             address_line_1: "123 K St. NW",
             address_line_2: "Suite 456",
+            address_line_3: nil,
             city: "Washington",
             state: "DC",
             country: nil,
@@ -2207,15 +2218,29 @@ describe LegacyAppeal, :all_dbs do
                snamef: "Bobby",
                snamemi: "F",
                snamel: "Veteran",
-               saddrst1: "123 K St. NW",
-               saddrst2: "Suite 456",
-               saddrcty: "Washington",
-               saddrstt: "DC",
-               saddrcnty: nil,
-               saddrzip: "20001",
                sspare1: "Claimant",
                sspare2: "Tommy",
-               sspare3: "G")
+               sspare3: "G",
+               ssn: "123456789")
+      end
+
+      before do
+        # Creating a veteran has a side effect of populating `BGSService.veteran_store`.
+        # BGS should be setup to return the appellant's participant ID from their SSN.
+        create(:veteran, ssn: appeal.appellant_ssn, participant_id: "12345")
+
+        # BGS will have the appellant's address.
+        BGSService.address_records = {
+          "12345" => {
+            addrs_one_txt: "456 K St. NW",
+            addrs_two_txt: "Suite 789",
+            addrs_three_txt: nil,
+            city_nm: "Washington",
+            postal_cd: "DC",
+            cntry_nm: nil,
+            zip_prefix_nbr: "20001"
+          }
+        }
       end
 
       it "the appellant is returned" do
@@ -2225,8 +2250,9 @@ describe LegacyAppeal, :all_dbs do
           last_name: "Claimant",
           name_suffix: nil,
           address: {
-            address_line_1: "123 K St. NW",
-            address_line_2: "Suite 456",
+            address_line_1: "456 K St. NW",
+            address_line_2: "Suite 789",
+            address_line_3: nil,
             city: "Washington",
             state: "DC",
             country: nil,
