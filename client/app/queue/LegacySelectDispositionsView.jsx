@@ -26,7 +26,7 @@ import {
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS
 } from './constants';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { getUndecidedIssues } from './utils';
 import QueueFlowPage from './components/QueueFlowPage';
 

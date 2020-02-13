@@ -161,6 +161,10 @@
   "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
 
+  "MTV_CHECKOUT_REVIEW_VACATURES_TITLE": "Review vacated decision issues",
+  "MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION": "Review the prior decision issues here that have been marked for vacatur by the judge. Please remember to include them in your decision letter if you haven't already.",
+  "MTV_CHECKOUT_CONFIRM_REMOVE_DECISION_ISSUE": "Are you sure you want to remove this decision?",
+
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
   "STRAIGHT_VACATE_TASK_LABEL": "Straight Vacate",
@@ -675,6 +679,9 @@
       "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
     }
   },
+
+  "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Virtual Hearing Link",
+  "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }

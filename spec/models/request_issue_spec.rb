@@ -566,7 +566,7 @@ describe RequestIssue, :all_dbs do
         let(:disposition) { "DTA Error" }
 
         it "includes an array of the contention reference IDs from the decision issues request issues" do
-          expect(subject).to eq([101, 121])
+          expect(subject).to match_array([101, 121])
         end
       end
     end

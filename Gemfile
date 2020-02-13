@@ -13,7 +13,8 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "a97a56f72d4a08f634c7f569fdcc83615362a8b2"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "6cc4243fac69e0aa6bc6a55293c165d848d5c06f"
+gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
@@ -49,7 +50,7 @@ gem "puma", "~> 3.12.0"
 # rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
 # Explicitly define rack version here to avoid that.
 gem "rack", "~> 2.0.6"
-gem "rails", "5.1.6.2"
+gem "rails", "5.2.4.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -76,7 +77,7 @@ gem "validates_email_format_of"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter"
+  gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
   gem "ruby-oci8", "~> 2.2"
 end
 

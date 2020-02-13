@@ -8,8 +8,8 @@ import { requestSave } from '../uiReducer/uiActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import TextareaField from '../../components/TextareaField';
-import COPY from '../../../COPY.json';
-import TASK_ACTIONS from '../../../constants/TASK_ACTIONS.json';
+import COPY from '../../../COPY';
+import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 import { sprintf } from 'sprintf-js';
 import {
   appealWithDetailSelector,

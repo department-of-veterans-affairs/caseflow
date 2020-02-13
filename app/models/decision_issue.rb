@@ -170,8 +170,9 @@ class DecisionIssue < ApplicationRecord
   end
 
   def create_contesting_request_issue!
-    RequestIssue.create!(
-      decision_review: decision_review,
+    vacate_appeal_stream = Appeal.find_by(stream_type: "vacate", stream_docket_number: decision_review.docket_number)
+    RequestIssue.find_or_create_by!(
+      decision_review: vacate_appeal_stream,
       decision_review_type: decision_review_type,
       contested_decision_issue_id: id,
       contested_rating_issue_reference_id: rating_issue_reference_id,
@@ -256,7 +257,7 @@ class DecisionIssue < ApplicationRecord
     )
     fail AppealDTAPayeeCodeError, decision_review.id unless dta_payee_code
 
-    sc.create_claimants!(
+    sc.create_claimant!(
       participant_id: decision_review.claimant_participant_id,
       payee_code: dta_payee_code
     )

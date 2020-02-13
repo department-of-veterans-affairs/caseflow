@@ -52,6 +52,7 @@ FactoryBot.define do
         judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
         attorney = User.find_or_create_by(css_id: "BVAEERDMAN", station_id: 101)
         judge_team.add_user(attorney)
+        create(:staff, :attorney_role, sdomainid: attorney.css_id)
 
         attorney
       end
@@ -61,6 +62,7 @@ FactoryBot.define do
       associated_judge do
         judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        create(:staff, :judge_role, sdomainid: judge.css_id)
 
         judge
       end
@@ -185,6 +187,30 @@ FactoryBot.define do
           assigned_to: evaluator.associated_attorney,
           assigned_by: judge_assign_task.assigned_to
         ).call
+      end
+    end
+
+    trait :with_straight_vacate_stream do
+      after(:create) do |appeal, evaluator|
+        mail_task = create(
+          :vacate_motion_mail_task,
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: evaluator.associated_judge
+        )
+        addr_task = create(
+          :judge_address_motion_to_vacate_task,
+          appeal: appeal,
+          parent: mail_task,
+          assigned_to: evaluator.associated_judge
+        )
+        params = {
+          disposition: "granted",
+          vacate_type: "straight_vacate",
+          instructions: "some instructions",
+          assigned_to_id: evaluator.associated_attorney.id
+        }
+        PostDecisionMotionUpdater.new(addr_task, params).process
       end
     end
   end

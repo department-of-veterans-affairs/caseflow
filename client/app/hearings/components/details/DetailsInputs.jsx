@@ -1,29 +1,34 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 import classnames from 'classnames';
-import { rowThirds } from './style';
+
+import { COLORS } from '../../../constants/AppConstants';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
   HearingRoomDropdown
 } from '../../../components/DataDropdowns/index';
-import TextareaField from '../../../components/TextareaField';
+import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../../utils';
+import { rowThirds } from './style';
+import COPY from '../../../../COPY';
 import Checkbox from '../../../components/Checkbox';
-import VirtualHearingLink from '../VirtualHearingLink';
 import HearingTypeDropdown from './HearingTypeDropdown';
 import TextField from '../../../components/TextField';
-import { COLORS } from '../../../constants/AppConstants';
-import COPY from '../../../../COPY.json';
+import TextareaField from '../../../components/TextareaField';
+import VirtualHearingLink from '../VirtualHearingLink';
 
 class DetailsInputs extends React.Component {
   renderVirtualHearingLinkSection() {
     const { isVirtual, virtualHearing, user, hearing } = this.props;
+    const virtualHearingLabel = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
+      COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
+      COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
     if (isVirtual && virtualHearing) {
       return (
         <div>
-          <strong>Virtual Hearing Link</strong>
+          <strong>{virtualHearingLabel}</strong>
           <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing.jobCompleted &&
               <VirtualHearingLink
