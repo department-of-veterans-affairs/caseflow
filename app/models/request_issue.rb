@@ -567,7 +567,11 @@ class RequestIssue < ApplicationRecord
 
   def remand_type
     return unless remanded?
-    
+
+    # if this request issue is a correction for a decision issue, use the original issue's remand type
+    # instead of the contested decision issue's disposition
+    return previous_request_issue&.remand_type if decision_correction?
+
     if contested_decision_issue.disposition == DecisionIssue::DIFFERENCE_OF_OPINION
       "difference_of_opinion"
     else
