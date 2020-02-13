@@ -54,7 +54,12 @@ class ETL::Builder
   private
 
   def update_build_record
-    build_record.update!(finished_at: Time.zone.now, status: :complete)
+    status = build_record.reload.etl_build_tables.any?(&:error?) ? :error : :complete
+    comments = nil
+    if status == :error
+      comments = build_record.etl_build_tables.error.map(&:comments).join("\n")
+    end
+    build_record.update!(finished_at: Time.zone.now, status: status, comments: comments)
     build_record
   end
 
