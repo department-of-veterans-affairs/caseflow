@@ -76,7 +76,9 @@ class ETL::Builder
   end
 
   def checkmark
-    Rails.cache.write(CHECKPOINT_KEY, Time.zone.now.to_s)
+    now = Time.zone.now.to_s
+    Rails.logger.info("ETL::Builder.checkmark #{now}")
+    Rails.cache.write(CHECKPOINT_KEY, now)
   end
 
   def post_build_steps

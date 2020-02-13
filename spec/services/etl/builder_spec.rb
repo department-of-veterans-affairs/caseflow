@@ -17,52 +17,60 @@ describe ETL::Builder, :etl, :all_dbs do
   let(:user) { create(:user) }
 
   before do
+    @safe_mode_started_on = Timecop.safe_mode?
+    Timecop.safe_mode = true # must use blocks
+
     Timecop.travel(3.days.ago.round) do
       CachedUser.sync_from_vacols
     end
 
-    Timecop.freeze(Time.zone.now)
+    #Timecop.freeze(Time.zone.now)
+  end
+
+  after do
+    Timecop.safe_mode = false if @safe_mode_started_on
   end
 
   describe "#last_built" do
-  ensure_stable do
     it "returns timestamp of last build" do
-      Timecop.freeze(Time.zone.now.round) do
+      # start first build with 1 second delay so we don't bump up against
+      # a rounding error on the fixtures created via "AMA Tableau SQL"
+      first_build_time = Time.zone.now.round + 1.second
+
+      Timecop.freeze(first_build_time) do
+        # perform first full build
         builder = described_class.new
         build = builder.full
 
         # use .to_s comparison since Rails.cache does not store .milliseconds
-        expect(builder.last_built.to_s).to eq(Time.zone.now.to_s)
+        expect(builder.last_built.to_s).to eq(first_build_time.to_s)
         expect(build.built).to eq(88)
         expect(build.build_for("appeals").rows_inserted).to eq(13)
-      end
 
-      hour_from_now = Time.zone.now.round + 1.hour
+        last_build_time = builder.last_built
+        hour_from_now = last_build_time + 1.hour
 
-      Timecop.freeze(hour_from_now) do
-        builder = described_class.new
+        # time travel forward and do an incremental build.
+        # only one known thing (an appeal) should change.
+        Timecop.travel(hour_from_now) do
+          builder = described_class.new
 
-        expect(builder.last_built).to eq((Time.zone.now.round - 1.hour).to_s)
+          expect(builder.last_built).to eq(last_build_time)
 
-        binding.pry
+          # "touch" a known appeal with known number of associations
+          distributed_to_judge.touch
 
-        # "touch" a known appeal with known number of associations
-        distributed_to_judge.touch
+          build = builder.incremental
 
-        binding.pry
-
-        build = builder.incremental
-
-        binding.pry
-
-        expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
-        #expect(build.built).to eq(1)
-        expect(builder.built).to eq(build.built)
-        expect(build.build_for("appeals").rows_inserted).to eq(0)
-        expect(build.build_for("appeals").rows_updated).to eq(1)
+          expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
+          expect(build.built).to eq(1)
+          expect(builder.built).to eq(build.built)
+          expect(build.tables).to eq(["appeals"])
+          expect(build.build_for("appeals").rows_inserted).to eq(0)
+          expect(build.build_for("appeals").rows_updated).to eq(1)
+        end
       end
     end
-  end
 
     it "updates aod_due_to_dob regardless of whether Appeal has been modified" do
       builder = described_class.new
