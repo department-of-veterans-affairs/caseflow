@@ -43,9 +43,12 @@ describe IntakeStartValidator, :postgres do
         is_expected.to eq "veteran_not_modifiable"
       end
 
-      context "appeals bypass same station check" do
-        before { FeatureToggle.enable!(:allow_same_station_appeals) }
-        after { FeatureToggle.disable!(:allow_same_station_appeals) }
+      context "user is on the MailTeam at Station 101" do
+        let(:user) do
+          user = create(:user, station_id: User::BOARD_STATION_ID)
+          MailTeam.singleton.add_user(user)
+          user
+        end
 
         it "sets no error_code even if BGS shows a station conflict" do
           allow_any_instance_of(BGSService).to receive(:station_conflict?) { true }
