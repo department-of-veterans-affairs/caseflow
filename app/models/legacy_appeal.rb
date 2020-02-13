@@ -226,6 +226,12 @@ class LegacyAppeal < ApplicationRecord
     !!appellant_first_name
   end
 
+  def person_for_appellant
+    return nil unless appellant_ssn.present?
+
+    bgs.fetch_person_by_ssn(appellant_ssn)
+  end
+
   def veteran_if_exists
     @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
   end
@@ -802,7 +808,15 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def bgs_address_service
-    @bgs_address_service ||= BgsAddressService.new(participant_id: representative_participant_id)
+    participant_id = if appellant_is_not_veteran
+                       person_for_appellant&.[](:ptcpnt_id)
+                     else
+                       veteran&.participant_id
+                     end
+
+    return nil unless participant_id.present?
+
+    @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
   end
 
   def location_code_is_caseflow?
