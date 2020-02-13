@@ -8,16 +8,16 @@ describe ETL::Builder, :etl, :all_dbs do
   let!(:vacols_user1) { create(:staff, :judge_role) }
   let!(:vacols_user2) { create(:staff, :attorney_judge_role) }
   let!(:user1) { create(:user, css_id: vacols_user1.sdomainid) }
-  let!(:user2) { create(:user, css_id: vacols_user2.sdomainid, updated_at: 3.days.ago) }
+  let!(:user2) { create(:user, css_id: vacols_user2.sdomainid, updated_at: 3.days.ago.round) }
   let!(:user3) { create(:user) }
-  let!(:org1) { create(:organization, updated_at: 3.days.ago) }
+  let!(:org1) { create(:organization, updated_at: 3.days.ago.round) }
   let!(:org2) { create(:organization) }
   let!(:org_user1) { create(:organizations_user, user: user, organization: org1) }
-  let!(:org_user2) { create(:organizations_user, user: user, organization: org2, updated_at: 3.days.ago) }
+  let!(:org_user2) { create(:organizations_user, user: user, organization: org2, updated_at: 3.days.ago.round) }
   let(:user) { create(:user) }
 
   before do
-    Timecop.travel(3.days.ago) do
+    Timecop.travel(3.days.ago.round) do
       CachedUser.sync_from_vacols
     end
 
@@ -60,14 +60,14 @@ describe ETL::Builder, :etl, :all_dbs do
 
       # change dob for one active
       ETL::Appeal.active.where(aod_due_to_dob: false)
-        .where("claimant_dob > ?", 76.years.ago).first
-        .update(claimant_dob: 76.years.ago)
+        .where("claimant_dob > ?", 76.years.ago.round).first
+        .update(claimant_dob: 76.years.ago.round)
 
       # and for one inactive
       ETL::Appeal.where(aod_due_to_dob: false)
         .where(active_appeal: false)
-        .where("claimant_dob > ?", 76.years.ago).first
-        .update(claimant_dob: 76.years.ago)
+        .where("claimant_dob > ?", 76.years.ago.round).first
+        .update(claimant_dob: 76.years.ago.round)
 
       builder = described_class.new(since: Time.zone.now + 1.day)
       built = builder.incremental
@@ -97,7 +97,7 @@ describe ETL::Builder, :etl, :all_dbs do
   end
 
   describe "#incremental" do
-    subject { described_class.new(since: 2.days.ago).incremental }
+    subject { described_class.new(since: 2.days.ago.round).incremental }
 
     context "BVA status distribution" do
       it "syncs only records that have changed" do
