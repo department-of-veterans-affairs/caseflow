@@ -227,7 +227,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def person_for_appellant
-    return nil unless appellant_ssn.present?
+    return nil if appellant_ssn.blank?
 
     bgs.fetch_person_by_ssn(appellant_ssn)
   end
@@ -814,7 +814,7 @@ class LegacyAppeal < ApplicationRecord
                        veteran&.participant_id
                      end
 
-    return nil unless participant_id.present?
+    return nil if participant_id.blank?
 
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
   end
