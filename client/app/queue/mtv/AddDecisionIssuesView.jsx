@@ -8,6 +8,7 @@ import AmaIssueList from '../../components/AmaIssueList';
 import DecisionIssues from '../components/DecisionIssues';
 import { MotionToVacateContext } from './MotionToVacateContext';
 import { AddDecisionIssueModal } from './AddDecisionIssueModal';
+import uuid from 'uuid';
 
 const validateForm = () => true;
 const defaultState = {
@@ -31,9 +32,25 @@ export const AddDecisionIssuesView = ({ appeal }) => {
   };
 
   const onAddIssueSubmit = () => {
+    const requestIssue = appeal?.issues?.find((issue) => issue.id === ctx.requestIssueId);
+
+    // Avoid potential errors, though this should never happen
+    if (!requestIssue) {
+      return;
+    }
+
+    const newDecisionIssue = {
+      id: `temporary-id-${uuid.v4()}`,
+      description: '',
+      disposition: requestIssue.closed_status,
+      benefit_type: requestIssue.program,
+      diagnostic_code: requestIssue.diagnostic_code,
+      request_issue_ids: [ctx.requestIssueId]
+    };
+
     setCtx({
       ...ctx,
-      decisionIssues: ctx.decisionIssues.filter((issue) => issue.id !== state.requestIssueId)
+      decisionIssues: [...ctx.decisionIssues, newDecisionIssue]
     });
 
     closeModals();
