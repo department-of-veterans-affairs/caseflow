@@ -4,10 +4,19 @@ FactoryBot.define do
   factory :legacy_appeal do
     transient do
       vacols_case { nil }
+      veteran_address { nil }
     end
 
     vacols_id { vacols_case&.bfkey || "123456" }
     vbms_id { vacols_case&.bfcorlid }
+
+    after(:create) do |appeal, evaluator|
+      if evaluator.veteran_address.present?
+        veteran = create(:veteran, file_number: appeal.sanitized_vbms_id)
+
+        (BGSService.address_records ||= {}).update(veteran.participant_id => evaluator.veteran_address)
+      end
+    end
 
     trait :with_schedule_hearing_tasks do
       after(:create) do |appeal, _evaluator|

@@ -8,9 +8,10 @@ describe LegacyAppeal, :all_dbs do
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
+  let(:veteran_address) { nil }
 
   let(:appeal) do
-    create(:legacy_appeal, vacols_case: vacols_case)
+    create(:legacy_appeal, vacols_case: vacols_case, veteran_address: veteran_address)
   end
 
   context "includes PrintsTaskTree concern" do
@@ -2120,19 +2121,15 @@ describe LegacyAppeal, :all_dbs do
              repzip: "10000")
     end
     let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "T") }
-    let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
-
-    before do
-      BGSService.address_records = {
-        veteran.participant_id => {
-          addrs_one_txt: "123 K St. NW",
-          addrs_two_txt: "Suite 456",
-          addrs_three_txt: nil,
-          city_nm: "Washington",
-          postal_cd: "DC",
-          cntry_nm: nil,
-          zip_prefix_nbr: "20001"
-        }
+    let(:veteran_address) do
+      {
+        addrs_one_txt: "123 K St. NW",
+        addrs_two_txt: "Suite 456",
+        addrs_three_txt: nil,
+        city_nm: "Washington",
+        postal_cd: "DC",
+        cntry_nm: nil,
+        zip_prefix_nbr: "20001"
       }
     end
 
