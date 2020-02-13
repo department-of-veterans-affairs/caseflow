@@ -99,28 +99,30 @@ describe ETL::Builder, :etl, :all_dbs do
 
     context "BVA status distribution" do
       it "syncs all records" do
-        described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
+        Timecop.freeze(Time.zone.now.round) do
+          described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
 
-        expect(ETL::Appeal.count).to eq(0)
+          expect(ETL::Appeal.count).to eq(0)
 
-        build = subject
+          build = subject
 
-        expect(build).to be_a(ETL::Build)
-        expect(build).to be_complete
-        expect(build.finished_at).to eq(Time.zone.now)
-        expect(build.built).to eq(88)
-        expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
-        expect(build.build_for("appeals").rows_inserted).to eq(13)
-        expect(build.build_for("appeals").rows_updated).to eq(0)
-        expect(build.build_for("users").rows_updated).to eq(0)
-        expect(build.build_for("users").rows_inserted).to eq(23)
+          expect(build).to be_a(ETL::Build)
+          expect(build).to be_complete
+          expect(build.finished_at).to eq(Time.zone.now)
+          expect(build.built).to eq(88)
+          expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
+          expect(build.build_for("appeals").rows_inserted).to eq(13)
+          expect(build.build_for("appeals").rows_updated).to eq(0)
+          expect(build.build_for("users").rows_updated).to eq(0)
+          expect(build.build_for("users").rows_inserted).to eq(23)
 
-        expect(ETL::Task.count).to eq(31)
-        expect(ETL::Appeal.count).to eq(13)
-        expect(ETL::User.all.count).to eq(23)
-        expect(ETL::Person.all.count).to eq(13)
-        expect(ETL::OrganizationsUser.all.count).to eq(3)
-        expect(ETL::Organization.all.count).to eq(5)
+          expect(ETL::Task.count).to eq(31)
+          expect(ETL::Appeal.count).to eq(13)
+          expect(ETL::User.all.count).to eq(23)
+          expect(ETL::Person.all.count).to eq(13)
+          expect(ETL::OrganizationsUser.all.count).to eq(3)
+          expect(ETL::Organization.all.count).to eq(5)
+        end
       end
     end
   end
@@ -130,26 +132,28 @@ describe ETL::Builder, :etl, :all_dbs do
 
     context "BVA status distribution" do
       it "syncs only records that have changed" do
-        described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
+        Timecop.freeze(Time.zone.now.round) do
+          described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
 
-        build = subject
+          build = subject
 
-        expect(build).to be_a(ETL::Build)
-        expect(build).to be_complete
-        expect(build.finished_at).to eq(Time.zone.now)
-        expect(build.built).to eq(85)
-        expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
-        expect(build.build_for("appeals").rows_inserted).to eq(13)
-        expect(build.build_for("appeals").rows_updated).to eq(0)
-        expect(build.build_for("users").rows_inserted).to eq(22)
-        expect(build.build_for("users").rows_rejected).to eq(0)
+          expect(build).to be_a(ETL::Build)
+          expect(build).to be_complete
+          expect(build.finished_at).to eq(Time.zone.now)
+          expect(build.built).to eq(85)
+          expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
+          expect(build.build_for("appeals").rows_inserted).to eq(13)
+          expect(build.build_for("appeals").rows_updated).to eq(0)
+          expect(build.build_for("users").rows_inserted).to eq(22)
+          expect(build.build_for("users").rows_rejected).to eq(0)
 
-        expect(ETL::Task.count).to eq(31)
-        expect(ETL::Appeal.count).to eq(13)
-        expect(ETL::User.all.count).to eq(22)
-        expect(ETL::Person.all.count).to eq(13)
-        expect(ETL::OrganizationsUser.all.count).to eq(2)
-        expect(ETL::Organization.all.count).to eq(4)
+          expect(ETL::Task.count).to eq(31)
+          expect(ETL::Appeal.count).to eq(13)
+          expect(ETL::User.all.count).to eq(22)
+          expect(ETL::Person.all.count).to eq(13)
+          expect(ETL::OrganizationsUser.all.count).to eq(2)
+          expect(ETL::Organization.all.count).to eq(4)
+        end
       end
     end
   end
