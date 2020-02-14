@@ -10,6 +10,9 @@ module.exports = {
     'react/prop-types': [1, { ignore: [],
       customValidators: [] }]
   },
+  plugins: [
+    'nullishCoalescingOperator'
+  ],
   settings: {
     react: {
       version: '16.12'
