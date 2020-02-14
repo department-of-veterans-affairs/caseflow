@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import COPY from '../../../COPY';
@@ -21,36 +21,39 @@ export const AddDecisionIssuesView = ({ appeal }) => {
   const [ctx, setCtx] = useContext(MotionToVacateContext);
   const [state, setState] = useState(defaultState);
 
+  const connectedRequestIssues = useMemo(
+    () =>
+      appeal.issues.filter((issue) => {
+        return ctx.decisionIssue && ctx.decisionIssue.request_issue_ids.includes(issue.id);
+      }),
+    [ctx.decisionIssue, appeal.issues]
+  );
+
   const closeModals = () => setState({ ...defaultState });
 
-  const openAddIssueModal = (requestIssueId) => () => {
-    setState({
-      ...state,
-      addIssueModal: true,
-      requestIssueId
-    });
-  };
-
-  const onAddIssueSubmit = () => {
-    const requestIssue = appeal?.issues?.find((issue) => issue.id === ctx.requestIssueId);
-
-    // Avoid potential errors, though this should never happen
-    if (!requestIssue) {
-      return;
-    }
-
+  const openAddIssueModal = (requestIssueId, decisionIssue) => () => {
+    const requestIssue = appeal?.issues?.find((issue) => issue.id === requestIssueId);
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
       description: '',
       disposition: requestIssue.closed_status,
       benefit_type: requestIssue.program,
       diagnostic_code: requestIssue.diagnostic_code,
-      request_issue_ids: [ctx.requestIssueId]
+      request_issue_ids: [requestIssueId]
     };
 
+    setState({
+      ...state,
+      addIssueModal: true,
+      requestIssueId,
+      decisionIssue: decisionIssue || newDecisionIssue
+    });
+  };
+
+  const onAddIssueSubmit = () => {
     setCtx({
       ...ctx,
-      decisionIssues: [...ctx.decisionIssues, newDecisionIssue]
+      decisionIssues: [...ctx.decisionIssues, ctx.decisionIssue]
     });
 
     closeModals();
@@ -69,7 +72,15 @@ export const AddDecisionIssuesView = ({ appeal }) => {
       <AmaIssueList requestIssues={appeal.issues} errorMessages={{}}>
         <DecisionIssues decisionIssues={ctx.decisionIssues} openDecisionHandler={openAddIssueModal} hideEdit />
       </AmaIssueList>
-      {state.addIssueModal && <AddDecisionIssueModal onCancel={closeModals} onSubmit={onAddIssueSubmit} />}
+      {state.addIssueModal && (
+        <AddDecisionIssueModal
+          appeal={appeal}
+          decisionIssue={state.decisionIssue}
+          connectedRequestIssues={connectedRequestIssues}
+          onCancel={closeModals}
+          onSubmit={onAddIssueSubmit}
+        />
+      )}
     </QueueFlowPage>
   );
 };
