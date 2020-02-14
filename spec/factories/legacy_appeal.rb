@@ -64,7 +64,7 @@ FactoryBot.define do
     end
 
     trait :with_veteran_address do
-      veteran_address {
+      veteran_address do
         {
           addrs_one_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1,
           addrs_two_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_2,
@@ -74,7 +74,7 @@ FactoryBot.define do
           postal_cd: FakeConstants.BGS_SERVICE.DEFAULT_STATE,
           zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
         }
-      }
+      end
     end
   end
 end
