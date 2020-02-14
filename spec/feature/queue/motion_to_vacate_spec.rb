@@ -475,6 +475,17 @@ RSpec.feature "Motion to vacate", :all_dbs do
         safe_click "#button-next-button"
 
         expect(page.current_path).to eq(add_decisions_path)
+
+        # Add a first decision issue
+        all("button", text: "+ Add decision", count: 3)[0].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
+
+        click_on "Add Issue"
       end
     end
   end
