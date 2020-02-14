@@ -160,7 +160,7 @@ describe ETL::Builder, :etl, :all_dbs do
 
   describe "error handling" do
     before do
-      allow(ETL::Appeal).to receive(:merge_original_attributes_to_target) { raise error }
+      allow(ETL::Appeal).to receive(:merge_original_attributes_to_target) { fail error }
     end
 
     subject { described_class.new }
