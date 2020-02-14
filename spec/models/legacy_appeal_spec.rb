@@ -9,9 +9,15 @@ describe LegacyAppeal, :all_dbs do
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
   let(:veteran_address) { nil }
+  let(:appellant_address) { nil }
 
   let(:appeal) do
-    create(:legacy_appeal, vacols_case: vacols_case, veteran_address: veteran_address)
+    create(
+      :legacy_appeal,
+      vacols_case: vacols_case,
+      veteran_address: veteran_address,
+      appellant_address: appellant_address
+    )
   end
 
   context "includes PrintsTaskTree concern" do
@@ -2220,23 +2226,15 @@ describe LegacyAppeal, :all_dbs do
                sspare3: "G",
                ssn: "123456789")
       end
-
-      before do
-        # Creating a veteran has a side effect of populating `BGSService.veteran_store`.
-        # BGS should be setup to return the appellant's participant ID from their SSN.
-        create(:veteran, ssn: appeal.appellant_ssn, participant_id: "12345")
-
-        # BGS will have the appellant's address.
-        BGSService.address_records = {
-          "12345" => {
-            addrs_one_txt: "456 K St. NW",
-            addrs_two_txt: "Suite 789",
-            addrs_three_txt: nil,
-            city_nm: "Washington",
-            postal_cd: "DC",
-            cntry_nm: nil,
-            zip_prefix_nbr: "20001"
-          }
+      let(:appellant_address) do
+        {
+          addrs_one_txt: "456 K St. NW",
+          addrs_two_txt: "Suite 789",
+          addrs_three_txt: nil,
+          city_nm: "Washington",
+          postal_cd: "DC",
+          cntry_nm: nil,
+          zip_prefix_nbr: "20001"
         }
       end
 

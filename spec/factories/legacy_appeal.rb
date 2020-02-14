@@ -5,6 +5,7 @@ FactoryBot.define do
     transient do
       vacols_case { nil }
       veteran_address { nil }
+      appellant_address { nil }
     end
 
     vacols_id { vacols_case&.bfkey || "123456" }
@@ -15,6 +16,14 @@ FactoryBot.define do
         veteran = create(:veteran, file_number: appeal.sanitized_vbms_id)
 
         (BGSService.address_records ||= {}).update(veteran.participant_id => evaluator.veteran_address)
+      end
+
+      if evaluator.appellant_address.present?
+        # Creating a veteran has a side effect of populating `BGSService.veteran_store`.
+        # BGS should be setup to return the appellant's participant ID from their SSN.
+        appellant = create(:veteran, ssn: appeal.appellant_ssn)
+
+        (BGSService.address_records ||= {}).update(appellant.participant_id => evaluator.appellant_address)
       end
     end
 
