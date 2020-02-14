@@ -17,16 +17,9 @@ describe ETL::Builder, :etl, :all_dbs do
   let(:user) { create(:user) }
 
   before do
-    @safe_mode_started_on = Timecop.safe_mode?
-    Timecop.safe_mode = true # must use blocks
-
     Timecop.travel(3.days.ago.round) do
       CachedUser.sync_from_vacols
     end
-  end
-
-  after do
-    Timecop.safe_mode = false if @safe_mode_started_on
   end
 
   describe "#last_built" do
