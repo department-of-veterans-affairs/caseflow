@@ -24,9 +24,9 @@ export const AddDecisionIssuesView = ({ appeal }) => {
   const connectedRequestIssues = useMemo(
     () =>
       appeal.issues.filter((issue) => {
-        return ctx.decisionIssue && ctx.decisionIssue.request_issue_ids.includes(issue.id);
+        return state?.decisionIssue?.request_issue_ids?.includes(issue.id);
       }),
-    [ctx.decisionIssue, appeal.issues]
+    [state.decisionIssue, appeal.issues]
   );
 
   const closeModals = () => setState({ ...defaultState });
@@ -50,10 +50,10 @@ export const AddDecisionIssuesView = ({ appeal }) => {
     });
   };
 
-  const onAddIssueSubmit = () => {
+  const onAddIssueSubmit = (decisionIssue) => {
     setCtx({
       ...ctx,
-      decisionIssues: [...ctx.decisionIssues, ctx.decisionIssue]
+      decisionIssues: [...ctx.decisionIssues, decisionIssue]
     });
 
     closeModals();

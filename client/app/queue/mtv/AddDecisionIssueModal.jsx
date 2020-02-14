@@ -9,6 +9,11 @@ import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
+import cx from 'classnames';
+import styles from './AddDecisionIssueModal.module.scss';
+
+const isValid = ({ disposition, description }) => disposition && description;
+
 export const AddDecisionIssueModal = ({
   connectedRequestIssues,
   appeal,
@@ -17,20 +22,30 @@ export const AddDecisionIssueModal = ({
   onSubmit
 }) => {
   const [decisionIssue, setDecisionIssue] = useState(initialDecisionIssue);
+  const [highlight, setHighlight] = useState(false);
 
   const buttons = [
-    { classNames: ['cf-modal-link', 'cf-btn-link'],
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: onCancel },
-    { classNames: ['usa-button', 'usa-button-primary'],
+      onClick: onCancel
+    },
+    {
+      classNames: ['usa-button', 'usa-button-primary'],
       name: 'Add Issue',
-      onClick: onSubmit }
+      onClick: () => {
+        setHighlight(false);
+        if (isValid(decisionIssue)) {
+          return onSubmit?.(decisionIssue);
+        }
+
+        setHighlight(true);
+      }
+    }
   ];
 
   return (
     <Modal buttons={buttons} closeHandler={onCancel} title="Add decision">
-      <span className="add-decision-modal">{COPY.DECISION_ISSUE_MODAL_TITLE}</span>
-
       <div>
         {COPY.CONTESTED_ISSUE}
         <ul>
@@ -40,16 +55,16 @@ export const AddDecisionIssueModal = ({
         </ul>
       </div>
 
-      {/* {!editingExistingIssue && (
+      {
         <React.Fragment>
           <h3>{COPY.DECISION_ISSUE_MODAL_TITLE}</h3>
-          <p {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
+          <p className={styles.h3Sibling}>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
         </React.Fragment>
-      )} */}
+      }
 
       <h3>{COPY.DECISION_ISSUE_MODAL_DISPOSITION}</h3>
       <SelectIssueDispositionDropdown
-        // highlight={highlightModal}
+        highlight={highlight}
         issue={decisionIssue}
         appeal={appeal}
         updateIssue={({ disposition }) => {
@@ -61,9 +76,7 @@ export const AddDecisionIssueModal = ({
       <br />
       <h3>{COPY.DECISION_ISSUE_MODAL_DESCRIPTION}</h3>
       <TextareaField
-        // labelStyling={textAreaStyle}
-        // styling={textAreaStyle}
-        // errorMessage={highlightModal && !decisionIssue.description ? 'This field is required' : null}
+        errorMessage={highlight && !decisionIssue.description ? 'This field is required' : null}
         label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
         name="Text Box"
         onChange={(description) => {
@@ -78,34 +91,36 @@ export const AddDecisionIssueModal = ({
         placeholder={COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}
         hideLabel
         value={decisionIssue.diagnostic_code}
-        options={Object.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((key) => ({ label: key,
-          value: key }))}
+        options={Object.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((key) => ({
+          label: key,
+          value: key
+        }))}
         onChange={(diagnosticCode) =>
-          setDecisionIssue({ ...decisionIssue,
-            diagnostic_code: diagnosticCode?.value || '' })
+          setDecisionIssue({
+            ...decisionIssue,
+            diagnostic_code: diagnosticCode?.value || ''
+          })
         }
       />
-      {/* <h3>{COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}</h3>
+      <h3>{COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}</h3>
       <SearchableDropdown
         name="Benefit type"
         placeholder={COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}
         hideLabel
         value={decisionIssue.benefit_type}
-        options={_.map(BENEFIT_TYPES, (value, key) => ({ label: value,
-          value: key }))}
+        options={Object.entries(BENEFIT_TYPES).map(([key, value]) => ({
+          label: value,
+          value: key
+        }))}
         onChange={(benefitType) =>
-          this.setState({
-            decisionIssue: {
-              ...decisionIssue,
-              benefit_type: benefitType.value
-            }
+          setDecisionIssue({
+            ...decisionIssue,
+            benefit_type: benefitType?.value
           })
         }
       />
       <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
-      <p {...exampleDiv} {...paragraphH3SiblingStyle}>
-        {COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}
-      </p>
+      <p className={cx(styles.example, styles.h3Sibling)}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
       <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE}</h3>
       <SearchableDropdown
         name="Issues"
@@ -119,32 +134,12 @@ export const AddDecisionIssueModal = ({
             value: issue.id
           }))}
         onChange={(issue) =>
-          this.setState({
-            decisionIssue: {
-              ...decisionIssue,
-              request_issue_ids: [...decisionIssue.request_issue_ids, issue.value]
-            }
+          setDecisionIssue({
+            ...decisionIssue,
+            request_issue_ids: [...decisionIssue.request_issue_ids, issue.value]
           })
         }
       />
-      {this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, openRequestIssueId).map((issue) => (
-        <div key={issue.id} {...connectedIssueDiv}>
-          <span>{issue.description}</span>
-          <Button
-            classNames={['cf-btn-link']}
-            onClick={() =>
-              this.setState({
-                decisionIssue: {
-                  ...decisionIssue,
-                  request_issue_ids: decisionIssue.request_issue_ids.filter((id) => id !== issue.id)
-                }
-              })
-            }
-          >
-            Remove
-          </Button>
-        </div>
-      ))} */}
     </Modal>
   );
 };
