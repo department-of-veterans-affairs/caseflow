@@ -322,21 +322,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
     context "for legacy appeals" do
       let!(:vacols_case) { create(:case) }
-      let!(:legacy_appeal) do
-        create(
-          :legacy_appeal,
-          vacols_case: vacols_case,
-          veteran_address: {
-            addrs_one_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1,
-            addrs_two_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_2,
-            addrs_three_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_3,
-            city_nm: FakeConstants.BGS_SERVICE.DEFAULT_CITY,
-            cntry_nm: FakeConstants.BGS_SERVICE.DEFAULT_COUNTRY,
-            postal_cd: FakeConstants.BGS_SERVICE.DEFAULT_STATE,
-            zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
-          }
-        )
-      end
+      let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran_address, vacols_case: vacols_case) }
 
       it "returns an address" do
         get :find_closest_hearing_locations,
