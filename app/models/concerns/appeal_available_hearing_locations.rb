@@ -3,8 +3,14 @@
 module AppealAvailableHearingLocations
   extend ActiveSupport::Concern
 
+  # :nocov:
   def suggested_hearing_location
     # return the closest hearing location
-    available_hearing_locations&.min_by { |loc| loc.distance }
+    available_hearing_locations&.min_by do |loc|
+      next if loc.distance.nil?
+
+      loc.distance
+    end
   end
+  # :nocov:
 end
