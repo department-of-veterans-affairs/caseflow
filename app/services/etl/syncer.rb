@@ -74,9 +74,11 @@ class ETL::Syncer
 
   private
 
-  attr_reader :since, :build_record
+  attr_reader :since
 
-  def build_record(etl_build)
+  def build_record(etl_build = nil)
+    return if etl_build.nil? && @build_record.nil?
+
     @build_record ||= ETL::BuildTable.create(
       etl_build: etl_build,
       table_name: target_class.table_name,

@@ -24,11 +24,11 @@ describe ETL::Builder, :etl, :all_dbs do
 
   describe "#last_built" do
     it "returns timestamp of last build" do
-      # start first build with 1 second delay so we don't bump up against
+      # start first build with small delay so we don't bump up against
       # a rounding error on the fixtures created via "AMA Tableau SQL"
-      first_build_time = Time.zone.now.round + 1.second
+      first_build_time = Time.zone.now.round + 5.seconds
 
-      Timecop.freeze(first_build_time) do
+      Timecop.travel(first_build_time) do
         # perform first full build
         builder = described_class.new
         build = builder.full
