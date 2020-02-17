@@ -66,7 +66,7 @@ module AssociatedBgsRecord
     if error.ignorable?
       fetch_bgs_record
     else
-      fail error # re-raise if we can't try again
+      raise error # re-raise if we can't try again
     end
   end
 
