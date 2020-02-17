@@ -11,6 +11,7 @@ class WarmBgsCachesJob < CaseflowJob
     warm_participant_caches
     warm_veteran_attribute_caches
     warm_people_caches
+    datadog_report_runtime("warm_bgs_caches_job")
   end
 
   private
@@ -25,14 +26,17 @@ class WarmBgsCachesJob < CaseflowJob
   end
 
   def warm_participant_caches
+    start_time = Time.zone.now
     RegionalOffice::CITIES.each_key do |ro_id|
       warm_ro_participant_caches([ro_id].flatten) # could be array or string
     rescue StandardError => error
       Raven.capture_exception(error)
     end
+    datadog_report_time_segment(segment: "warm_participant_caches", start_time: start_time)
   end
 
   def warm_ro_participant_caches(ro_ids)
+    start_time = Time.zone.now
     ro_ids.each do |ro_id|
       regional_office = HearingDayMapper.validate_regional_office(ro_id)
 
@@ -45,6 +49,7 @@ class WarmBgsCachesJob < CaseflowJob
       # Ensure errors are sent to Sentry, but don't block the job from continuing.
       Raven.capture_exception(error)
     end
+    datadog_report_time_segment(segment: "warm_ro_participant_caches", start_time: start_time)
   end
 
   def warm_veteran_attribute_caches
@@ -55,6 +60,7 @@ class WarmBgsCachesJob < CaseflowJob
     stop_date = (Time.zone.now + 2.weeks).to_date
     date_to_cache = Time.zone.today
     veterans_updated = 0
+    start_time = Time.zone.now
     while date_to_cache <= stop_date
       begin
         veterans_updated += warm_veterans_for_hearings_on_day(date_to_cache)
@@ -65,6 +71,7 @@ class WarmBgsCachesJob < CaseflowJob
         Raven.capture_exception(error)
       end
     end
+    datadog_report_time_segment(segment: "warm_veteran_attribute_caches", start_time: start_time)
   end
 
   def warm_veterans_for_hearings_on_day(date_to_cache)
