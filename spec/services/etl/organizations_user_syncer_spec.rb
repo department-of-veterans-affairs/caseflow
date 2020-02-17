@@ -7,9 +7,10 @@ describe ETL::OrganizationsUserSyncer, :etl do
     let(:org1) { create(:organization) }
     let(:org2) { create(:organization) }
     let(:user) { create(:user) }
+    let(:etl_build) { ETL::Build.create }
 
     context "2 org_user records, one needing sync" do
-      subject { described_class.new(since: 2.days.ago.round).call }
+      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
 
       it "syncs 1 record" do
         expect(ETL::OrganizationsUser.all.count).to eq(0)
@@ -22,7 +23,7 @@ describe ETL::OrganizationsUserSyncer, :etl do
     end
 
     context "2 org records, full sync" do
-      subject { described_class.new.call }
+      subject { described_class.new.call(etl_build) }
 
       it "syncs all records" do
         expect(ETL::OrganizationsUser.all.count).to eq(0)
@@ -34,10 +35,10 @@ describe ETL::OrganizationsUserSyncer, :etl do
     end
 
     context "origin record changes" do
-      subject { described_class.new(since: 2.days.ago.round).call }
+      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
 
       before do
-        described_class.new.call
+        described_class.new.call(etl_build)
       end
 
       let(:new_admin) { true }
