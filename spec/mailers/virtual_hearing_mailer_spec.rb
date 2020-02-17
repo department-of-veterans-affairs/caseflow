@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 describe VirtualHearingMailer do
+  # New York City regional office
   let(:regional_office) { "RO06" }
   let(:hearing_day) do
     create(
@@ -18,6 +19,7 @@ describe VirtualHearingMailer do
     )
   end
   let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+  let(:title) { nil }
 
   before do
     # Freeze the time to when this fix is made to workaround a potential DST bug.

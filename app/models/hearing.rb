@@ -142,20 +142,33 @@ class Hearing < ApplicationRecord
   end
 
   def scheduled_for
-    # The server timezone sets the TZ for the request based on the current user.
-    # This method gets the timezone of the user, and undoes any timezone conversions
-    # that Rails applies.
-    updater_tz = updated_by.timezone || Time.zone.name
-    scheduled_for_local_to_updater = scheduled_time.utc.in_time_zone(updater_tz)
+    # returns the date and time a hearing is scheduled for in the regional office's
+    # time zone
+    #
+    # When a hearing is scheduled, we save the hearing time to the scheduled_time
+    # field. The time is converted to UTC upon save *relative to the timezone of
+    # the user who saved it*, not relative to the timezone of the RO where the
+    # veteran will attend the hearing. For example, if a user in New York
+    # schedules an 8:30am hearing for a veteran in Los Angeles, the time will be
+    # saved as 13:30 (with the eastern time +5 offset added) rather than 16:30
+    # (with the pacific time +8 offset added).
+    #
+    # So when we need to display the time the hearing is scheduled for, we have
+    # to explicitly convert it to the time zone of the person who scheduled it,
+    # then assemble and return a TimeWithZone object cast to the regional
+    # office's time zone.
+
+    updated_by_timezone = updated_by.timezone || Time.zone.name
+    scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
 
     Time.use_zone(regional_office_timezone) do
       Time.zone.local(
         hearing_day.scheduled_for.year,
         hearing_day.scheduled_for.month,
         hearing_day.scheduled_for.day,
-        scheduled_for_local_to_updater.hour,
-        scheduled_for_local_to_updater.min,
-        scheduled_for_local_to_updater.sec
+        scheduled_time_in_updated_by_timezone.hour,
+        scheduled_time_in_updated_by_timezone.min,
+        scheduled_time_in_updated_by_timezone.sec
       )
     end
   end
