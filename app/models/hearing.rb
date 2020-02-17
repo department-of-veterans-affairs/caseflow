@@ -158,7 +158,7 @@ class Hearing < ApplicationRecord
     # then assemble and return a TimeWithZone object cast to the regional
     # office's time zone.
 
-    updated_by_timezone = updated_by.timezone || Time.zone.name
+    updated_by_timezone = updated_by&.timezone || Time.zone.name
     scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
 
     Time.use_zone(regional_office_timezone) do
