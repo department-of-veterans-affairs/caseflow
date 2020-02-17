@@ -55,10 +55,20 @@ module AssociatedBgsRecord
   end
 
   def bgs_record
-    @bgs_record ||= (fetch_bgs_record || :not_found)
+    @bgs_record ||= (try_and_retry_bgs_record || :not_found)
   end
 
   private
+
+  def try_and_retry_bgs_record
+    fetch_bgs_record
+  rescue BGS::ShareError => error
+    if error.ignorable?
+      fetch_bgs_record
+    else
+      fail error # re-raise if we can't try again
+    end
+  end
 
   def load_bgs_record!
     return if !accessible? || !found? || @bgs_record_loaded
