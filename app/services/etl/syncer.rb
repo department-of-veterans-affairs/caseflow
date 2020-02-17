@@ -12,18 +12,53 @@ class ETL::Syncer
     @since = since
   end
 
-  def call
-    synced = 0
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def call(etl_build)
+    inserted = 0
+    updated = 0
+    rejected = 0
     instances_needing_update.find_in_batches.with_index do |originals, batch|
       Rails.logger.debug("Starting batch #{batch} for #{target_class}")
+      build_record(etl_build) # create inside the loop so we reflect what we actually update
       target_class.transaction do
+        possible = originals.length
+        saved = 0
         originals.reject { |original| filter?(original) }.each do |original|
-          synced += 1 if target_class.sync_with_original(original).save!
+          target = target_class.sync_with_original(original)
+          if target.persisted?
+            updated += 1
+          else
+            inserted += 1
+          end
+          target.save!
+          saved += 1
         end
+        rejected += (possible - saved)
       end
+      build_record.update!(
+        status: :complete,
+        finished_at: Time.zone.now,
+        rows_inserted: inserted,
+        rows_updated: updated,
+        rows_rejected: rejected
+      )
+    rescue StandardError => error
+      build_record.update!(
+        rows_inserted: inserted,
+        rows_updated: updated,
+        rows_rejected: rejected,
+        comments: error,
+        status: :error,
+        finished_at: Time.zone.now
+      )
+      # re-raise so sentry and parent build record know.
+      raise error
     end
-    synced
+    build_record
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def origin_class
     fail "Must override abstract method origin_class"
@@ -40,6 +75,17 @@ class ETL::Syncer
   private
 
   attr_reader :since
+
+  def build_record(etl_build = nil)
+    return if etl_build.nil? && @build_record.nil?
+
+    @build_record ||= ETL::BuildTable.create(
+      etl_build: etl_build,
+      table_name: target_class.table_name,
+      started_at: Time.zone.now,
+      status: :running
+    )
+  end
 
   def incremental?
     !!since

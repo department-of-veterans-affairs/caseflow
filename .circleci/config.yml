@@ -19,6 +19,7 @@ jobs:
       - image: circleci/postgres:9.6
         environment:
           - POSTGRES_USER: root
+            POSTGRES_PASSWORD: password
             POSTGRES_DB: caseflow_certification_test
 
       # This is our homespun VACOLS container. An oracle db with some special sauce.
