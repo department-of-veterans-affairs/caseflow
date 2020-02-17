@@ -77,7 +77,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       end
 
       it "syncs" do
-        subject # no error proves the test passes
+        expect { subject }.to_not raise_error
 
         expect(ETL::Appeal.count).to eq(14)
       end
