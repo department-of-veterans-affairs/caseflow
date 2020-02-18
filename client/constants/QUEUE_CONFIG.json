@@ -10,7 +10,7 @@
   "AMA_ASSIGN_HEARINGS_TAB_NAME": "amaAssignHearingsTab",
   "LEGACY_ASSIGN_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
-  "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorney",
+  "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
   
   "COLUMNS": {
     "APPEAL_TYPE": {
