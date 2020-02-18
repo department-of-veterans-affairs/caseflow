@@ -22,9 +22,11 @@ assignees: ''
 
 ## Approach
 <!-- Has our agreed upon default approach for tackling flaky tests. -->
-Time box this investigation and fix. 
-Remember that if a test has been skipped for a decent amount of time, it may no longer map to the exact code. 
-If you reach the end of your time box and don't feel like the solution is in sight, 
+Time box this investigation and fix.
+
+Remember that if a test has been skipped for a decent amount of time, it may no longer map to the exact code.
+
+If you reach the end of your time box and don't feel like the solution is in sight:
   - document the work you've done, including dead ends and research
   - skip the test in the code
   - file a follow on ticket 
