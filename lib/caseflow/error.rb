@@ -45,6 +45,12 @@ module Caseflow::Error
     end
   end
 
+  class MissingBusinessLine < StandardError
+    def initialize
+      @message = "No Business Line found"
+    end
+  end
+
   class InvalidParameter < SerializableError
     def initialize(args = {})
       @code = args[:code] || 400

@@ -428,6 +428,10 @@ class Appeal < DecisionReview
     business_lines = issues_needing_tasks.map(&:business_line).uniq
 
     business_lines.each do |business_line|
+      if business_line.nil? || business_line.name.blank?
+        fail Caseflow::Error::MissingBusinessLine
+      end
+
       next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
 
       VeteranRecordRequest.create!(
