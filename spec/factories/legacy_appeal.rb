@@ -13,9 +13,8 @@ FactoryBot.define do
 
     after(:create) do |appeal, evaluator|
       if evaluator.veteran_address.present?
-        veteran = Veteran
-          .create_with(attributes_for(:veteran))
-          .find_or_create_by(file_number: appeal.sanitized_vbms_id)
+        vbms_id = appeal.sanitized_vbms_id
+        veteran = Veteran.find_by(file_number: vbms_id) || create(:veteran, file_number: vbms_id)
 
         (BGSService.address_records ||= {}).update(veteran.participant_id => evaluator.veteran_address)
       end
@@ -49,9 +48,13 @@ FactoryBot.define do
 
     trait :with_veteran do
       after(:create) do |legacy_appeal, evaluator|
-        veteran = Veteran
-          .create_with(attributes_for(:veteran, first_name: "Bob", last_name: "Smith"))
-          .find_or_create_by(file_number: legacy_appeal.veteran_file_number)
+        file_number = legacy_appeal.veteran_file_number
+        veteran = Veteran.find_by(file_number: legacy_appeal.veteran_file_number) || create(
+          :veteran,
+          first_name: "Bob",
+          last_name: "Smith",
+          file_number: file_number
+        )
 
         if evaluator.vacols_case
           evaluator.vacols_case.correspondent.snamef = veteran.first_name
