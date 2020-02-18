@@ -1924,6 +1924,52 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context ".to_hash" do
+    let(:vacols_case) do
+      create(:case, :aod, :type_cavc_remand, bfregoff: "RO13", folder: create(:folder, tinum: "13 11-265"))
+    end
+    context "when issues parameter is nil and contains additional attributes" do
+      subject { appeal.to_hash(viewed: true, issues: nil) }
+
+      it "includes viewed boolean in hash" do
+        expect(subject["viewed"]).to be_truthy
+      end
+
+      it "issues is null in hash" do
+        expect(subject["issues"]).to be_nil
+      end
+
+      it "includes aod, cavc, regional_office and docket_number" do
+        expect(subject["aod"]).to be_truthy
+        expect(subject["cavc"]).to be_truthy
+        expect(subject["regional_office"][:key]).to eq("RO13")
+        expect(subject["docket_number"]).to eq("13 11-265")
+      end
+    end
+
+    context "when issues and viewed attributes are provided" do
+      subject { appeal.to_hash(viewed: true, issues: issues) }
+
+      let!(:labels) do
+        ["Compensation", "Service connection", "Other", "Left knee", "Right knee"]
+      end
+
+      let!(:issues) do
+        [Generators::Issue.build(disposition: :allowed,
+                                 codes: %w[02 15 03 04 05],
+                                 labels: labels)]
+      end
+
+      it "includes viewed boolean in hash" do
+        expect(subject["viewed"]).to be_truthy
+      end
+
+      it "includes issues in hash" do
+        expect(subject["issues"]).to eq(issues.map(&:attributes))
+      end
+    end
+  end
+
   context "#vbms_id" do
     let(:appeal) { LegacyAppeal.new(vacols_id: "12345", vbms_id: "6789") }
     context "when vbms_id exists in the caseflow DB" do
