@@ -2,7 +2,7 @@
 name: Design task
 about: Template for a new Caseflow design task
 title: ''
-labels: ''
+labels: design
 assignees: ''
 
 ---
