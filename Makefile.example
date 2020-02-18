@@ -78,6 +78,9 @@ build: clean
 	mkdir -p local/sqs/conf
 	bundle exec rake local:build
 
+destroy: clean
+	bundle exec rake local:destroy
+
 lint:  ## Run linter for javascript and ruby
 	bundle exec rake lint
 
