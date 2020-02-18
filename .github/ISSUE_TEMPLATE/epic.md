@@ -2,7 +2,7 @@
 name: Epic
 about: Template for a new Caseflow epic
 title: ''
-labels: epic
+labels: ''
 assignees: ''
 
 ---
