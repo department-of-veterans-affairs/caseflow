@@ -27,6 +27,7 @@ export const SubmitVacatedDecisionsView = ({ appeal }) => {
       taskId={taskId}
       checkoutFlow={DECISION_TYPES.DRAFT_DECISION}
       nextStep="/queue"
+      prevUrl={ctx.getPrevUrl('submit')}
     />
   );
 };
