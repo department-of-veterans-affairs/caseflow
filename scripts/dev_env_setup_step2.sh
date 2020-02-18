@@ -1,11 +1,7 @@
 #!/bin/bash
 
 # Continuation of Developer Setup at
-# https://github.com/department-of-veterans-affairs/caseflow/blob/master/README.md#clone-this-repo
-
-echo "==> Cloning Caseflow from GitHub"
-git clone https://github.com/department-of-veterans-affairs/caseflow.git
-cd caseflow
+# https://github.com/department-of-veterans-affairs/caseflow/blob/master/README.md#install-ruby-dependencies
 
 echo "==> Installing Ruby dependencies"
 rbenv install $(cat .ruby-version)
@@ -40,13 +36,9 @@ You must do the following manually:
 
 AWS access is needed starting at this point.
 If you need to get AWS access, follow these instructions:
-   https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Engineers-New-Hire-and-On-boarding#first-days
+   https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/New-Hires
 "
 
-echo '1. Configure issue_mfa.sh by following instructions at:
-   https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Utility-Applications
-'
-
-echo '2. Continue the set up manually from "Database environment setup":
+echo 'Finish the manual set up from "Database environment setup":
    https://github.com/department-of-veterans-affairs/caseflow/blob/master/README.md#database-environment-setup
 '
