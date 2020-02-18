@@ -104,7 +104,7 @@ AssignHearingsTabs.propTypes = {
   selectedRegionalOffice: PropTypes.string,
   room: PropTypes.string,
   // Appeal ID => Attorney Name Array
-  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string),
+  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string)
 };
 
 AssignHearingsTabs.defaultProps = {

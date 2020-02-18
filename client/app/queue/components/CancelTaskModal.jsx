@@ -33,7 +33,9 @@ class CancelTaskModal extends React.Component {
 
     const hearingScheduleLink = taskActionData(this.props).back_to_hearing_schedule ?
       <p>
-        <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>Back to Hearing Schedule </Link>
+        <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
+          Back to Hearing Schedule
+        </Link>
       </p> : null;
     const successMsg = {
       title: taskActionData(this.props).message_title,

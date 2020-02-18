@@ -77,7 +77,7 @@ export default class AssignHearingsTable extends React.PureComponent {
 
     const { city, state } = suggestedLocation;
     const formattedFacilityType = suggestedLocation.formatted_facility_type;
-    
+
     return `${city}, ${state} ${formattedFacilityType}`;
   }
 

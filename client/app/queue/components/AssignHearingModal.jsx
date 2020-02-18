@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -185,6 +186,7 @@ class AssignHearingModal extends React.PureComponent {
     };
   };
 
+  /* eslint-disable camelcase */
   render = () => {
     const { appeal, openHearing } = this.props;
     const { showErrorMessages, showFullHearingDayWarning } = this.state;
@@ -194,7 +196,6 @@ class AssignHearingModal extends React.PureComponent {
       return null;
     }
 
-    /* eslint-disable camelcase */
     return (
       <QueueFlowModal
         submit={this.submit}
@@ -226,6 +227,44 @@ class AssignHearingModal extends React.PureComponent {
     );
   }
 }
+
+AssignHearingModal.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string,
+    appellantAddress: PropTypes.string,
+    regionalOffice: PropTypes.shape({
+      key: PropTypes.string
+    }),
+    isLegacyAppeal: PropTypes.bool,
+    veteranFullName: PropTypes.string
+  }),
+  hearingDay: PropTypes.shape({
+    regionalOffice: PropTypes.string,
+    hearingDate: PropTypes.string
+  }),
+  openHearing: PropTypes.object,
+  selectedRegionalOffice: PropTypes.string,
+  showErrorMessage: PropTypes.func,
+  assignHearingForm: PropTypes.shape({
+    apiFormattedValues: PropTypes.shape({
+      with_admin_action_klass: PropTypes.bool,
+      admin_action_instructions: PropTypes.string
+    }),
+    errorMessages: PropTypes.shape({
+      hasErrorMessages: PropTypes.bool
+    }),
+    hearingDay: PropTypes.shape({
+      regionalOffice: PropTypes.string,
+      hearingDate: PropTypes.string
+    })
+  }),
+  history: PropTypes.shape({
+    goBack: PropTypes.func
+  }),
+  scheduleHearingTask: PropTypes.object,
+  requestPatch: PropTypes.func,
+  onReceiveAppealDetails: PropTypes.func
+};
 
 const mapStateToProps = (state, ownProps) => ({
   scheduleHearingTask: scheduleHearingTasksForAppeal(state, { appealId: ownProps.appealId })[0],
