@@ -18,7 +18,7 @@ FactoryBot.define do
         (BGSService.address_records ||= {}).update(veteran.participant_id => evaluator.veteran_address)
       end
 
-      if evaluator.appellant_address.present?
+      if evaluator.appellant_address.present? && appeal.appellant_ssn.present?
         # Creating a veteran has a side effect of populating `BGSService.veteran_store`.
         # BGS should be setup to return the appellant's participant ID from their SSN.
         appellant = create(:veteran, ssn: appeal.appellant_ssn)
