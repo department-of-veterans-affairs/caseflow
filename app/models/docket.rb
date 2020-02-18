@@ -119,7 +119,7 @@ class Docket
     def ordered_by_distribution_ready_date
       joins(:tasks)
         .group("appeals.id")
-        .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
+        .order(Arel.sql("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)"))
     end
 
     def non_ihp
