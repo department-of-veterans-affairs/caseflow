@@ -104,8 +104,6 @@ AssignHearingsTabs.propTypes = {
   room: PropTypes.string,
   // Appeal ID => Attorney Name Array
   powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string),
-  // Remove when pagination lands (#11757)
-  displayPowerOfAttorneyColumn: PropTypes.bool
 };
 
 AssignHearingsTabs.defaultProps = {

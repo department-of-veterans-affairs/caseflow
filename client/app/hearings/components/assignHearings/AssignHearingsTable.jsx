@@ -9,10 +9,10 @@ import {
   SuggestedHearingLocation
 } from './AssignHearingsFields';
 import { NoVeteransToAssignMessage } from './Messages';
-import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import {
-  getFacilityType
-} from '../../../components/DataDropdowns/AppealHearingLocations';
+  encodeQueryParams,
+  getQueryParams
+} from '../../../util/QueryParamsUtil';
 import { getIndexOfDocketLine } from './AssignHearingsDocketLine';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
@@ -41,7 +41,7 @@ export default class AssignHearingsTable extends React.PureComponent {
     this.getColumnsFromApi();
   }
 
-  getColumnsFromApi= () => {
+  getColumnsFromApi = () => {
     const { tabName, selectedRegionalOffice } = this.props;
     const qs = encodeQueryParams({
       [QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM]: tabName,
@@ -70,36 +70,22 @@ export default class AssignHearingsTable extends React.PureComponent {
     return getIndexOfDocketLine(appeals, this.endOfNextMonth());
   }
 
-  getSuggestedHearingLocation = (locations) => {
-    if (!locations || locations.length === 0) {
-      return '';
-    }
-
-    /* Sort available locations before selecting top one. */
-    const sortedLocations = _.orderBy(locations, ['distance'], ['asc']);
-
-    /* Select first entry which should be shortest distance. */
-    const location = sortedLocations[0];
-
-    return location;
-  };
-
   formatSuggestedHearingLocation = (suggestedLocation) => {
     if (_.isNull(suggestedLocation) || _.isUndefined(suggestedLocation)) {
       return null;
     }
 
     const { city, state } = suggestedLocation;
-
-    return `${city}, ${state} ${getFacilityType(location)}`;
+    const formattedFacilityType = suggestedLocation.formatted_facility_type;
+    
+    return `${city}, ${state} ${formattedFacilityType}`;
   }
 
   /*
    * Gets the list of columns to populate the QueueTable with.
    */
   getColumns = () => {
-    // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
-    const { selectedRegionalOffice, selectedHearingDay, displayPowerOfAttorneyColumn } = this.props;
+    const { selectedRegionalOffice, selectedHearingDay } = this.props;
 
     const { colsFromApi } = this.state;
 
@@ -150,10 +136,10 @@ export default class AssignHearingsTable extends React.PureComponent {
         name: 'suggestedLocation',
         header: 'Suggested Location',
         align: 'left',
-        columnName: 'suggestedLocation',
+        columnName: 'Suggested Location',
         valueFunction: (row) => (
           <SuggestedHearingLocation
-            suggestedLocation={this.getSuggestedHearingLocation(row.availableHearingLocations)}
+            suggestedLocation={row.suggestedHearingLocation}
             format={this.formatSuggestedHearingLocation}
           />
         ),
@@ -161,33 +147,27 @@ export default class AssignHearingsTable extends React.PureComponent {
         filterValueTransform: this.formatSuggestedHearingLocation,
         enableFilter: true,
         filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'suggestedLocation').filter_options
+      },
+      {
+        name: 'powerOfAttorneyName',
+        header: 'Power of Attorney (POA)',
+        columnName: 'Power of Attorney',
+        valueFunction: (row) => (
+          <PowerOfAttorneyDetail
+            key={`poa-${row.externalAppealId}-detail`}
+            appealId={row.externalAppealId}
+            displayNameOnly
+          />
+        ),
+        enableFilter: true,
+        filterValueTransform: (_value, row) => {
+          const { powerOfAttorneyNamesForAppeals } = this.props;
+
+          return powerOfAttorneyNamesForAppeals[row.externalAppealId];
+        },
+        filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'powerOfAttorneyName').filter_options
       }
     ];
-
-    // Put this in the `push` above when pagination lands (#11757)
-    if (displayPowerOfAttorneyColumn) {
-      columns.push(
-        {
-          name: 'powerOfAttorney',
-          header: 'Power of Attorney (POA)',
-          columnName: 'powerOfAttorney',
-          valueFunction: (row) => (
-            <PowerOfAttorneyDetail
-              key={`poa-${row.externalAppealId}-detail`}
-              appealId={row.externalAppealId}
-              displayNameOnly
-            />
-          ),
-          enableFilter: true,
-          filterValueTransform: (_value, row) => {
-            const { powerOfAttorneyNamesForAppeals } = this.props;
-
-            return powerOfAttorneyNamesForAppeals[row.externalAppealId];
-          },
-          filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'powerOfAttorney').filter_options
-        }
-      );
-    }
 
     return columns;
   }
@@ -196,7 +176,7 @@ export default class AssignHearingsTable extends React.PureComponent {
   // tasks for the table to display at all (not just for the current page),
   // update this component to show an error.
   // Filtered indicates if any filters are active in which case
-  // we do not wanna show the error if tasks are returned.
+  // we do not wanna show the error if no tasks are returned.
   onPageLoaded = (response, filtered = false) => {
     if (!response) {
       return;
@@ -220,9 +200,20 @@ export default class AssignHearingsTable extends React.PureComponent {
       regional_office_key: selectedRegionalOffice
     });
     const tabPaginationOptions = {
-      [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: 1,
       onPageLoaded: this.onPageLoaded
     };
+
+    // Clicked prop indicates if the tab was clicked by user.
+    // If not clicked, then the page was reloaded in which
+    // case we want to read page number from query string.
+    // Otherwise, we do not pass anything since QueueTable sets
+    // default page to be 1.
+    if (!this.props.clicked) {
+      const queryParams = getQueryParams(window.location.search);
+
+      tabPaginationOptions[[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]] =
+        Number(queryParams[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]) || 1;
+    }
 
     if (this.state.showNoVeteransToAssignError) {
       return <NoVeteransToAssignMessage />;
@@ -247,8 +238,7 @@ export default class AssignHearingsTable extends React.PureComponent {
 
 AssignHearingsTable.propTypes = {
   columns: PropTypes.array,
-  // Remove when pagination lands (#11757)
-  displayPowerOfAttorneyColumn: PropTypes.bool,
+  clicked: PropTypes.bool,
   // Appeal ID => Attorney Name Array
   powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string),
   selectedHearingDay: PropTypes.shape({
