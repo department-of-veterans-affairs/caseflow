@@ -48,6 +48,9 @@ ready:  ## Helper command that watches the docker containers to finish start up
 up:  ## Start the docker containers
 	docker-compose up -d
 
+down:	## Stop the docker containers
+	docker-compose down
+
 run: up ready  ## Start rails server and frontend server
 	foreman start
 
@@ -72,7 +75,11 @@ facols:  ## Connect directly to the FACOLS oracle database, requires sqlplus
 	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
-	bundle exec rake local:destroy local:build
+	mkdir -p local/sqs/conf
+	bundle exec rake local:build
+
+destroy: clean
+	bundle exec rake local:destroy
 
 lint:  ## Run linter for javascript and ruby
 	bundle exec rake lint

@@ -7,6 +7,7 @@ describe ETL::UserSyncer, :etl do
     let!(:user1) { create(:user, css_id: vacols_user1.sdomainid) }
     let!(:user2) { create(:user, css_id: vacols_user2.sdomainid, updated_at: 3.days.ago.round) }
     let!(:user3) { create(:user) }
+    let(:etl_build) { ETL::Build.create }
 
     before do
       Timecop.travel(3.days.ago.round) do
@@ -15,7 +16,7 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "3 User records, 2 needing sync" do
-      subject { described_class.new(since: 2.days.ago.round).call }
+      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
 
       it "syncs 2 records" do
         expect(ETL::User.all.count).to eq(0)
@@ -30,10 +31,10 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "VACOLS attribute changes" do
-      subject { described_class.new(since: 2.days.ago.round).call }
+      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
 
       before do
-        described_class.new.call
+        described_class.new.call(etl_build)
         user2.vacols_user.svlj = "J"
         user2.vacols_user.save!
       end
@@ -49,7 +50,7 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "3 User records, full sync" do
-      subject { described_class.new.call }
+      subject { described_class.new.call(etl_build) }
 
       it "syncs all records" do
         expect(ETL::User.all.count).to eq(0)
@@ -61,10 +62,10 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "origin User record changes" do
-      subject { described_class.new(since: 2.days.ago.round).call }
+      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
 
       before do
-        described_class.new.call
+        described_class.new.call(etl_build)
       end
 
       let(:new_name) { "foobar" }
