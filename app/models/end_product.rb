@@ -24,7 +24,7 @@ class EndProduct
     "930AMADONR" => "AMA Difference of Opinion - NR",
     "930DORPMC" => "PMC AMA Difference of Opinion - Rating",
     "930DONRPMC" => "PMC AMA Difference of Opinion - NR"
-  }
+  }.freeze
 
   RAMP_CODES = {
     "682HLRRRAMP" => "Higher-Level Review Rating",

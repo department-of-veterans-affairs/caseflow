@@ -143,7 +143,7 @@ describe "Request Issue Correction Cleaner", :postgres do
           let(:decision_review) { supplemental_claim }
           let(:drr) { send(ep_code[7]) }
 
-          disposition = ep_code[4] == "duty_to_assist" ? "remanded" : "Difference of Opinion"
+          disposition = (ep_code[4] == "duty_to_assist") ? "remanded" : "Difference of Opinion"
           let(:contested_decision_issue) { create(:decision_issue, :nonrating, disposition: disposition) }
         else
           let(:decision_review) { send(ep_code[7]) }
