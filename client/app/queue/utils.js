@@ -103,7 +103,8 @@ const taskAttributesFromRawTask = (task) => {
     hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
     hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
     hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
-    availableHearingLocations: task.attributes.available_hearing_locations
+    availableHearingLocations: task.attributes.available_hearing_locations,
+    suggestedHearingLocation: task.attributes.suggested_hearing_location
   };
 };
 
