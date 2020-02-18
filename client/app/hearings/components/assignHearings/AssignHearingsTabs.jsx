@@ -6,9 +6,7 @@ import moment from 'moment';
 
 import { getQueryParams } from '../../../util/QueryParamsUtil';
 import AssignHearingsTable from './AssignHearingsTable';
-import QUEUE_CONFIG, {
-  LEGACY_ASSIGN_HEARINGS_TAB_NAME
-} from '../../../../constants/QUEUE_CONFIG.json';
+import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
 import TabWindow from '../../../components/TabWindow';
 import UpcomingHearingsTable from './UpcomingHearingsTable';
 
@@ -17,7 +15,7 @@ import UpcomingHearingsTable from './UpcomingHearingsTable';
 const getCurrentTabIndex = () => {
   const tabParam = getQueryParams(window.location.search)[QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM];
 
-  if (tabParam === LEGACY_ASSIGN_HEARINGS_TAB_NAME) {
+  if (tabParam === QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME) {
     return 1;
   } else if (tabParam === QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME) {
     return 2;
@@ -27,12 +25,14 @@ const getCurrentTabIndex = () => {
 };
 
 export class AssignHearingsTabs extends React.PureComponent {
+  onTabChange = (tabNumber) => {
+    this.setState({ clickedTab: tabNumber });
+  }
 
   render() {
     const {
       selectedHearingDay,
       selectedRegionalOffice,
-      displayPowerOfAttorneyColumn,
       room,
       defaultTabIndex
     } = this.props;
@@ -52,6 +52,7 @@ export class AssignHearingsTabs extends React.PureComponent {
         <TabWindow
           name="scheduledHearings-tabwindow"
           defaultPage={defaultTabIndex}
+          onChange={this.onTabChange}
           tabs={[
             {
               label: 'Scheduled Veterans',
@@ -66,9 +67,9 @@ export class AssignHearingsTabs extends React.PureComponent {
               page: <AssignHearingsTable
                 selectedHearingDay={selectedHearingDay}
                 selectedRegionalOffice={selectedRegionalOffice}
-                displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
                 tabName={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
                 key={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
+                clicked={this.state && this.state.clickedTab === 1}
               />
             },
             {
@@ -76,9 +77,9 @@ export class AssignHearingsTabs extends React.PureComponent {
               page: <AssignHearingsTable
                 selectedHearingDay={selectedHearingDay}
                 selectedRegionalOffice={selectedRegionalOffice}
-                displayPowerOfAttorneyColumn={displayPowerOfAttorneyColumn}
                 tabName={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
                 key={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
+                clicked={this.state && this.state.clickedTab === 2}
               />
             }
           ]}
