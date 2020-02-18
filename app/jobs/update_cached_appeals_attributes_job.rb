@@ -201,6 +201,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
+    Raven.capture_exception(err)
+
     slack_service.send_notification(msg)
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
