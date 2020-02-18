@@ -551,11 +551,20 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         expect(page.current_path).to eq(submit_decisions_path)
 
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(add_decisions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
         expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
         expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
         expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
 
-        expect(page).to have_content("Submit Draft Decision for Review")
         fill_in "Document ID:", with: valid_document_id
         expect(page).to have_content(judge.full_name)
         fill_in "notes", with: "all done"
