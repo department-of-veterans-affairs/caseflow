@@ -500,7 +500,7 @@ class Task < ApplicationRecord
     end
 
     # Preserve the open children and status of the old task
-    children.open.update_all(parent_id: sibling.id)
+    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: sibling.id) }
     sibling.update!(status: status)
 
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
@@ -563,6 +563,10 @@ class Task < ApplicationRecord
 
   def child_must_have_active_assignee?
     true
+  end
+
+  def stays_with_reassigned_parent?
+    open?
   end
 
   private
