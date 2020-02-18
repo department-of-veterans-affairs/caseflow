@@ -50,7 +50,7 @@ RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :contro
     let(:address) { "Fake Address" }
     let!(:veteran1) { create(:veteran) }
     let!(:veteran2) { create(:veteran) }
-    let!(:veteran3) { create(:veteran)}
+    let!(:veteran3) { create(:veteran) }
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     before do
@@ -74,7 +74,7 @@ RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :contro
 
     it "processes request successfully" do
       subject
-      
+
       expect(response).to have_http_status(:success)
     end
 
@@ -82,7 +82,7 @@ RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :contro
       subject
 
       expect(JSON.parse(response.body).keys).to match_array(
-        ["tasks", "tasks_per_page", "task_page_count", "total_task_count"]
+        %w[tasks tasks_per_page task_page_count total_task_count]
       )
     end
 

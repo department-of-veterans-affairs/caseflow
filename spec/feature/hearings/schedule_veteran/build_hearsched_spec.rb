@@ -557,22 +557,22 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
     let(:unassigned_count) { 3 }
     let(:regional_office) { "RO39" }
-    
+
     def create_ama_appeals
-      appeal1 = create(
+      appeal_one = create(
         :appeal,
         closest_regional_office: regional_office,
         veteran: create(:veteran, participant_id: 1)
       )
       AvailableHearingLocations.create(
-        appeal: appeal1,
+        appeal: appeal_one,
         city: "Los Angeles",
         state: "CA",
         distance: 89,
         facility_type: "vet_center"
       )
       AvailableHearingLocations.create(
-        appeal: appeal1,
+        appeal: appeal_one,
         facility_id: "vba_372",
         city: "San Jose",
         state: "CA",
@@ -580,7 +580,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         facility_type: "va_benefits_facility"
       )
       AvailableHearingLocations.create(
-        appeal: appeal1,
+        appeal: appeal_one,
         city: "San Francisco",
         state: "CA",
         distance: 76,
@@ -588,20 +588,20 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         facility_type: "va_benefits_facility"
       )
 
-      appeal2 = create(
+      appeal_two = create(
         :appeal,
         closest_regional_office: regional_office,
         veteran: create(:veteran, participant_id: 2)
       )
       AvailableHearingLocations.create(
-        appeal: appeal2,
+        appeal: appeal_two,
         city: "Los Angeles",
         state: "CA",
         distance: 23,
         facility_type: "vet_center"
       )
       AvailableHearingLocations.create(
-        appeal: appeal2,
+        appeal: appeal_two,
         facility_id: "vba_372",
         city: "San Jose",
         state: "CA",
@@ -609,7 +609,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         facility_type: "va_benefits_facility"
       )
       AvailableHearingLocations.create(
-        appeal: appeal2,
+        appeal: appeal_two,
         city: "San Francisco",
         state: "CA",
         distance: 76,
@@ -617,20 +617,20 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         facility_type: "va_benefits_facility"
       )
 
-      appeal3 = create(
+      appeal_three = create(
         :appeal,
         closest_regional_office: regional_office,
         veteran: create(:veteran, participant_id: 3)
       )
       AvailableHearingLocations.create(
-        appeal: appeal3,
+        appeal: appeal_three,
         city: "Los Angeles",
         state: "CA",
         distance: 89,
         facility_type: "vet_center"
       )
       AvailableHearingLocations.create(
-        appeal: appeal3,
+        appeal: appeal_three,
         facility_id: "vba_372",
         city: "San Jose",
         state: "CA",
@@ -638,16 +638,16 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         facility_type: "va_benefits_facility"
       )
       AvailableHearingLocations.create(
-        appeal: appeal3,
+        appeal: appeal_three,
         city: "San Francisco",
         state: "CA",
         distance: 13,
         classification: "Regional Office",
         facility_type: "va_benefits_facility"
       )
-      create(:schedule_hearing_task, appeal: appeal1)
-      create(:schedule_hearing_task, appeal: appeal2)
-      create(:schedule_hearing_task, appeal: appeal3)
+      create(:schedule_hearing_task, appeal: appeal_one)
+      create(:schedule_hearing_task, appeal: appeal_two)
+      create(:schedule_hearing_task, appeal: appeal_three)
     end
 
     def navigate_to_ama_tab
@@ -669,8 +669,8 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         "&#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
       end
 
-      it "shows correct number of tasks" do     
-        20.times do 
+      it "shows correct number of tasks" do
+        20.times do
           appeal = create(:appeal, closest_regional_office: "RO39")
           create(:schedule_hearing_task, appeal: appeal)
         end
@@ -715,15 +715,15 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     context "Filter by PowerOfAttorneyName column" do
       before do
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["1"]).and_return(
-          {"1"=> {:representative_type=>"Attorney", :representative_name=>"Attorney One", :participant_id=>"1"}}
+          "1": { representative_type: "Attorney", representative_name: "Attorney One", participant_id: "1" }
         )
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["2"]).and_return(
-          {"2"=> {:representative_type=>"Attorney", :representative_name=>"Attorney Two", :participant_id=>"2"}}
+          "2": { representative_type: "Attorney", representative_name: "Attorney Two", participant_id: "2" }
         )
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["3"]).and_return(
-          {"3"=> {:representative_type=>"Attorney", :representative_name=>"Attorney Three", :participant_id=>"3"}}
+          "3": { representative_type: "Attorney", representative_name: "Attorney Three", participant_id: "3" }
         )
-        
+
         create_ama_appeals
         cache_appeals
         navigate_to_ama_tab
@@ -752,7 +752,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       context "For Suggested Hearing Location column" do
         let(:unassigned_count) { 10 }
         before do
-          unassigned_count.times do 
+          unassigned_count.times do
             appeal = create(:appeal, closest_regional_office: "RO39")
             create(:schedule_hearing_task, appeal: appeal)
           end
