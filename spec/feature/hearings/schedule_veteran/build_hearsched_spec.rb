@@ -543,4 +543,239 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       expect(page).to have_content("No upcoming hearing days")
     end
   end
+
+  context "Pagination for Assign Hearings Table" do
+    let!(:hearing_day) do
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        scheduled_for: Time.zone.today + 60.days,
+        regional_office: "RO39"
+      )
+    end
+
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
+    let(:unassigned_count) { 3 }
+    let(:regional_office) { "RO39" }
+    
+    def create_ama_appeals
+      appeal1 = create(
+        :appeal,
+        closest_regional_office: regional_office,
+        veteran: create(:veteran, participant_id: 1)
+      )
+      AvailableHearingLocations.create(
+        appeal: appeal1,
+        city: "Los Angeles",
+        state: "CA",
+        distance: 89,
+        facility_type: "vet_center"
+      )
+      AvailableHearingLocations.create(
+        appeal: appeal1,
+        facility_id: "vba_372",
+        city: "San Jose",
+        state: "CA",
+        distance: 34,
+        facility_type: "va_benefits_facility"
+      )
+      AvailableHearingLocations.create(
+        appeal: appeal1,
+        city: "San Francisco",
+        state: "CA",
+        distance: 76,
+        classification: "Regional Office",
+        facility_type: "va_benefits_facility"
+      )
+
+      appeal2 = create(
+        :appeal,
+        closest_regional_office: regional_office,
+        veteran: create(:veteran, participant_id: 2)
+      )
+      AvailableHearingLocations.create(
+        appeal: appeal2,
+        city: "Los Angeles",
+        state: "CA",
+        distance: 23,
+        facility_type: "vet_center"
+      )
+      AvailableHearingLocations.create(
+        appeal: appeal2,
+        facility_id: "vba_372",
+        city: "San Jose",
+        state: "CA",
+        distance: 34,
+        facility_type: "va_benefits_facility"
+      )
+      AvailableHearingLocations.create(
+        appeal: appeal2,
+        city: "San Francisco",
+        state: "CA",
+        distance: 76,
+        classification: "Regional Office",
+        facility_type: "va_benefits_facility"
+      )
+
+      appeal3 = create(
+        :appeal,
+        closest_regional_office: regional_office,
+        veteran: create(:veteran, participant_id: 3)
+      )
+      AvailableHearingLocations.create(
+        appeal: appeal3,
+        city: "Los Angeles",
+        state: "CA",
+        distance: 89,
+        facility_type: "vet_center"
+      )
+      AvailableHearingLocations.create(
+        appeal: appeal3,
+        facility_id: "vba_372",
+        city: "San Jose",
+        state: "CA",
+        distance: 34,
+        facility_type: "va_benefits_facility"
+      )
+      AvailableHearingLocations.create(
+        appeal: appeal3,
+        city: "San Francisco",
+        state: "CA",
+        distance: 13,
+        classification: "Regional Office",
+        facility_type: "va_benefits_facility"
+      )
+      create(:schedule_hearing_task, appeal: appeal1)
+      create(:schedule_hearing_task, appeal: appeal2)
+      create(:schedule_hearing_task, appeal: appeal3)
+    end
+
+    def navigate_to_ama_tab
+      visit "hearings/schedule/assign"
+      expect(page).to have_content("Regional Office")
+      click_dropdown(text: "Denver")
+      expect(page).to have_content("AMA Veterans Waiting")
+      click_button("AMA Veterans Waiting")
+    end
+
+    context "Specify page number" do
+      let(:unassigned_count) { 20 }
+      let(:default_cases_for_page) { 15 }
+      let(:page_no) { 2 }
+      let(:query_string) do
+        "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}="\
+        "#{Constants.QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}"\
+        "&regional_office_key=#{regional_office}"\
+        "&#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
+      end
+
+      it "shows correct number of tasks" do     
+        20.times do 
+          appeal = create(:appeal, closest_regional_office: "RO39")
+          create(:schedule_hearing_task, appeal: appeal)
+        end
+        cache_appeals
+
+        visit "hearings/schedule/assign/?#{query_string}"
+
+        expect(page).to have_content(
+          "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
+        )
+        page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
+      end
+    end
+
+    context "Filter by SuggestedHearingLocation column" do
+      before do
+        create_ama_appeals
+        cache_appeals
+        navigate_to_ama_tab
+      end
+
+      it "filters are correct, and filter as expected" do
+        step "check if there are the right number of rows for the ama tab" do
+          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+        end
+
+        step "check if the filter options are as expected" do
+          page.find(".unselected-filter-icon-inner", match: :first).click
+          expect(page).to have_content("#{Appeal.first.suggested_hearing_location.formatted_location} (1)")
+          expect(page).to have_content("#{Appeal.second.suggested_hearing_location.formatted_location} (1)")
+          expect(page).to have_content("#{Appeal.third.suggested_hearing_location.formatted_location} (1)")
+        end
+
+        step "clicking on a filter reduces the number of results by the expect amount" do
+          page.find("label", text: "#{Appeal.first.suggested_hearing_location.formatted_location} (1)").click
+          expect(find("tbody").find_all("tr").length).to eq(1)
+        end
+      end
+    end
+
+    context "Filter by PowerOfAttorneyName column" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["1"]).and_return(
+          {"1"=> {:representative_type=>"Attorney", :representative_name=>"Attorney One", :participant_id=>"1"}}
+        )
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["2"]).and_return(
+          {"2"=> {:representative_type=>"Attorney", :representative_name=>"Attorney Two", :participant_id=>"2"}}
+        )
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["3"]).and_return(
+          {"3"=> {:representative_type=>"Attorney", :representative_name=>"Attorney Three", :participant_id=>"3"}}
+        )
+        
+        create_ama_appeals
+        cache_appeals
+        navigate_to_ama_tab
+      end
+
+      it "filters are correct, and filter as expected" do
+        step "check if there are the right number of rows for the ama tab" do
+          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+        end
+
+        step "check if the filter options are as expected" do
+          page.find_all("path.unselected-filter-icon-inner")[1].click
+          expect(page).to have_content("#{Appeal.first.representative_name} (1)")
+          expect(page).to have_content("#{Appeal.second.representative_name} (1)")
+          expect(page).to have_content("#{Appeal.third.representative_name} (1)")
+        end
+
+        step "clicking on a filter reduces the number of results by the expect amount" do
+          page.find("label", text: "#{Appeal.first.representative_name} (1)").click
+          expect(find("tbody").find_all("tr").length).to eq(1)
+        end
+      end
+    end
+
+    context "Filter by <<blank>> value" do
+      context "For Suggested Hearing Location column" do
+        let(:unassigned_count) { 10 }
+        before do
+          unassigned_count.times do 
+            appeal = create(:appeal, closest_regional_office: "RO39")
+            create(:schedule_hearing_task, appeal: appeal)
+          end
+          cache_appeals
+          navigate_to_ama_tab
+        end
+
+        it "shows zero tasks" do
+          step "check if there are the right number of rows for the ama tab" do
+            expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+          end
+
+          step "check if the filter options are as expected" do
+            page.find(".unselected-filter-icon-inner", match: :first).click
+            expect(page).to have_content("#{COPY::NULL_FILTER_LABEL} (#{unassigned_count})")
+          end
+
+          step "clicking on filter shows expected tasks" do
+            page.find("label", text: "#{COPY::NULL_FILTER_LABEL} (#{unassigned_count})").click
+            expect(page).not_to have_selector("tbody")
+          end
+        end
+      end
+    end
+  end
 end
