@@ -94,7 +94,6 @@ export default class AssignHearings extends React.Component {
       return <NoUpcomingHearingDayMessage />;
     }
 
-    // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
     return (
       <React.Fragment>
         <UpcomingHearingDaysNav
@@ -105,7 +104,6 @@ export default class AssignHearings extends React.Component {
           selectedRegionalOffice={selectedRegionalOffice}
           selectedHearingDay={selectedHearingDay}
           room={room}
-          displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumn}
         />
       </React.Fragment>
     );
@@ -120,7 +118,5 @@ AssignHearings.propTypes = {
     PropTypes.string,
     PropTypes.object
   ]),
-  userId: PropTypes.number,
-  // Remove when pagination lands (#11757)
-  displayPowerOfAttorneyColumn: PropTypes.bool
+  userId: PropTypes.number
 };
