@@ -54,7 +54,7 @@ RSpec.describe Hearings::ScheduleHearingTasksColumnsController, :all_dbs, type: 
       cache_appeals
       subject
 
-      expect(JSON.parse(response.body)["columns"].first["name"]).to eq("powerOfAttorney")
+      expect(JSON.parse(response.body)["columns"].first["name"]).to eq("powerOfAttorneyName")
       expect(JSON.parse(response.body)["columns"].first["filter_options"]).to match_array(
         [{ "value" => URI.escape(URI.escape(appeal.representative_name)),
            "displayText" => "#{appeal.representative_name} (1)" }]
