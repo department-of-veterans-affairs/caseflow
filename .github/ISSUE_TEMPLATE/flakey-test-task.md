@@ -1,5 +1,5 @@
 ---
-name: Flakey test task
+name: Flaky test task
 about: Template for a new task to investigate and fix a flaky test
 title: "[Flaky Test] "
 labels: Flaky test, tech-improvement
@@ -14,7 +14,9 @@ assignees: ''
 <!-- A place for additional information such as links to Slack chats, Sentry alerts, data IDs, research links -->
 
  - Circle CI Error:  [ <!--CircleCI Failure alert text --> ](<!-- link to circleCI flake -->)
- - The test has <!-- been skipped --> <!--not been skipped --> in the code
+ - Has the test already been skipped in the code?
+   - [ ] Skipped
+   - [ ] Not Skipped
  - Related Flakes
     + <!-- list any suspected related flaky test GH issues / CI links -->
 
