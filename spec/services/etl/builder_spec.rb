@@ -20,42 +20,53 @@ describe ETL::Builder, :etl, :all_dbs do
     Timecop.travel(3.days.ago.round) do
       CachedUser.sync_from_vacols
     end
-
-    Timecop.freeze(Time.zone.now)
   end
 
   describe "#last_built" do
     it "returns timestamp of last build" do
-      Timecop.freeze(Time.zone.now) do
+      # start first build with small delay so we don't bump up against
+      # a rounding error on the fixtures created via "AMA Tableau SQL"
+      first_build_time = Time.zone.now.round + 5.seconds
+
+      Timecop.travel(first_build_time) do
+        # perform first full build
         builder = described_class.new
-        built = builder.full
+        build = builder.full
 
         # use .to_s comparison since Rails.cache does not store .milliseconds
-        expect(builder.last_built.to_s).to eq(Time.zone.now.to_s)
-        expect(built).to eq(88)
-      end
+        expect(builder.last_built.to_s).to eq(first_build_time.to_s)
+        expect(build.built).to eq(88)
+        expect(build.build_for("appeals").rows_inserted).to eq(13)
 
-      hour_from_now = Time.zone.now + 1.hour
+        last_build_time = builder.last_built
+        hour_from_now = last_build_time + 1.hour
 
-      Timecop.freeze(hour_from_now) do
-        builder = described_class.new
+        # time travel forward and do an incremental build.
+        # only one known thing (an appeal) should change.
+        Timecop.travel(hour_from_now) do
+          builder = described_class.new
 
-        expect(builder.last_built).to eq((Time.zone.now - 1.hour).to_s)
+          expect(builder.last_built).to eq(last_build_time)
 
-        Appeal.last.touch # at least one thing changed
+          # "touch" a known appeal with known number of associations
+          distributed_to_judge.touch
 
-        built = builder.incremental
+          build = builder.incremental
 
-        expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
-        expect(built).to be > 0
-        expect(builder.built).to eq(built)
+          expect(builder.last_built.to_s).to eq(hour_from_now.to_s)
+          expect(build.built).to eq(1)
+          expect(builder.built).to eq(build.built)
+          expect(build.tables).to eq(["appeals"])
+          expect(build.build_for("appeals").rows_inserted).to eq(0)
+          expect(build.build_for("appeals").rows_updated).to eq(1)
+        end
       end
     end
 
     it "updates aod_due_to_dob regardless of whether Appeal has been modified" do
       builder = described_class.new
-      built = builder.full
-      expect(built).to eq(88)
+      build = builder.full
+      expect(build.built).to eq(88)
       expect(ETL::Appeal.where(aod_due_to_dob: true).count).to eq(1)
 
       # change dob for one active
@@ -70,8 +81,8 @@ describe ETL::Builder, :etl, :all_dbs do
         .update(claimant_dob: 76.years.ago.round)
 
       builder = described_class.new(since: Time.zone.now + 1.day)
-      built = builder.incremental
-      expect(built).to eq(0)
+      build = builder.incremental
+      expect(build.built).to eq(0)
       expect(ETL::Appeal.where(aod_due_to_dob: true).count).to eq(2) # skips inactive
     end
   end
@@ -81,17 +92,30 @@ describe ETL::Builder, :etl, :all_dbs do
 
     context "BVA status distribution" do
       it "syncs all records" do
-        described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
+        Timecop.freeze(Time.zone.now.round) do
+          described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
 
-        built = subject
+          expect(ETL::Appeal.count).to eq(0)
 
-        expect(built).to eq(88)
-        expect(ETL::Task.count).to eq(31)
-        expect(ETL::Appeal.count).to eq(13)
-        expect(ETL::User.all.count).to eq(23)
-        expect(ETL::Person.all.count).to eq(13)
-        expect(ETL::OrganizationsUser.all.count).to eq(3)
-        expect(ETL::Organization.all.count).to eq(5)
+          build = subject
+
+          expect(build).to be_a(ETL::Build)
+          expect(build).to be_complete
+          expect(build.finished_at).to eq(Time.zone.now)
+          expect(build.built).to eq(88)
+          expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
+          expect(build.build_for("appeals").rows_inserted).to eq(13)
+          expect(build.build_for("appeals").rows_updated).to eq(0)
+          expect(build.build_for("users").rows_updated).to eq(0)
+          expect(build.build_for("users").rows_inserted).to eq(23)
+
+          expect(ETL::Task.count).to eq(31)
+          expect(ETL::Appeal.count).to eq(13)
+          expect(ETL::User.all.count).to eq(23)
+          expect(ETL::Person.all.count).to eq(13)
+          expect(ETL::OrganizationsUser.all.count).to eq(3)
+          expect(ETL::Organization.all.count).to eq(5)
+        end
       end
     end
   end
@@ -101,18 +125,52 @@ describe ETL::Builder, :etl, :all_dbs do
 
     context "BVA status distribution" do
       it "syncs only records that have changed" do
-        described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
+        Timecop.freeze(Time.zone.now.round) do
+          described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
 
-        built = subject
+          build = subject
 
-        expect(built).to eq(85)
-        expect(ETL::Task.count).to eq(31)
-        expect(ETL::Appeal.count).to eq(13)
-        expect(ETL::User.all.count).to eq(22)
-        expect(ETL::Person.all.count).to eq(13)
-        expect(ETL::OrganizationsUser.all.count).to eq(2)
-        expect(ETL::Organization.all.count).to eq(4)
+          expect(build).to be_a(ETL::Build)
+          expect(build).to be_complete
+          expect(build.finished_at).to eq(Time.zone.now)
+          expect(build.built).to eq(85)
+          expect(build.tables).to include("appeals", "people", "tasks", "users", "organizations")
+          expect(build.build_for("appeals").rows_inserted).to eq(13)
+          expect(build.build_for("appeals").rows_updated).to eq(0)
+          expect(build.build_for("users").rows_inserted).to eq(22)
+          expect(build.build_for("users").rows_rejected).to eq(0)
+
+          expect(ETL::Task.count).to eq(31)
+          expect(ETL::Appeal.count).to eq(13)
+          expect(ETL::User.all.count).to eq(22)
+          expect(ETL::Person.all.count).to eq(13)
+          expect(ETL::OrganizationsUser.all.count).to eq(2)
+          expect(ETL::Organization.all.count).to eq(4)
+        end
       end
+    end
+  end
+
+  describe "error handling" do
+    before do
+      allow(ETL::Appeal).to receive(:merge_original_attributes_to_target) { fail error }
+    end
+
+    subject { described_class.new }
+
+    let(:error) { StandardError.new("oops!") }
+
+    it "captures error string and sets status" do
+      builder = subject
+
+      expect { builder.full }.to raise_error(error)
+
+      build = builder.build_record
+      expect(build).to be_error
+      expect(build.comments).to eq("oops!")
+      expect(build.build_for("appeals")).to be_error
+      expect(build.build_for("appeals").comments).to eq("oops!")
+      expect(build.build_for("tasks")).to be_nil # we did not finish
     end
   end
 end

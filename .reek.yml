@@ -82,6 +82,7 @@ detectors:
       - Task
       - CaseflowJob
       - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
+      - ETL::Syncer
       - User
   IrresponsibleModule:
     enabled: false
