@@ -488,7 +488,7 @@ describe RequestIssue, :all_dbs do
         let(:disposition) { "DTA Error" }
 
         it "includes an array of the contention reference IDs from the decision issues request issues" do
-          expect(subject).to eq([101, 121])
+          expect(subject).to match_array([101, 121])
         end
       end
     end
@@ -913,6 +913,18 @@ describe RequestIssue, :all_dbs do
 
     context "when there is an associated rating issue" do
       let(:contested_rating_issue_reference_id) { "123" }
+
+      it "rating? is true" do
+        expect(request_issue.rating?).to be true
+      end
+
+      it "nonrating? is false" do
+        expect(request_issue.nonrating?).to be(false)
+      end
+    end
+
+    context "verified unidentified issue returns true for rating" do
+      let!(:request_issue) { create(:request_issue, verified_unidentified_issue: true) }
 
       it "rating? is true" do
         expect(request_issue.rating?).to be true

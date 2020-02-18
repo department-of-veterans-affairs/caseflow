@@ -2,7 +2,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import moment from 'moment';
 
-import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
+import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID';
 
 export const docketCutoffLineStyle = (_index, scheduledForText) => {
   const isEmpty = _index < 0;

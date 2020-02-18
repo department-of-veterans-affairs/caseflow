@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
-import DATES from '../../../constants/DATES.json';
+import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
 
 export const getBlankOptionError = (responseErrorCodes, field) => (

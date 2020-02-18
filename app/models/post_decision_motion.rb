@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class PostDecisionMotion < ApplicationRecord
+  belongs_to :appeal
   belongs_to :task, optional: false
 
   validates :disposition, presence: true
@@ -21,14 +22,26 @@ class PostDecisionMotion < ApplicationRecord
     vacate_and_de_novo: "vacate_and_de_novo"
   }
 
-  def vacated_issues
+  def decision_issues_for_vacatur
     return [] unless vacated_decision_issue_ids
 
     DecisionIssue.find(vacated_decision_issue_ids)
   end
 
-  def create_request_issues_for_vacature
-    vacated_issues.map(&:create_contesting_request_issue!)
+  def request_issues_for_vacatur
+    @request_issues_for_vacatur ||= RequestIssue.where(contested_decision_issue_id: vacated_decision_issue_ids)
+  end
+
+  def create_request_issues_for_vacatur
+    decision_issues_for_vacatur.map(&:create_contesting_request_issue!)
+  end
+
+  def vacated_decision_issues
+    @vacated_decision_issues ||= request_issues_for_vacatur.map { |ri| ri.decision_issues.first }
+  end
+
+  def create_vacated_decision_issues
+    request_issues_for_vacatur.map(&:create_vacated_decision_issue!)
   end
 
   private

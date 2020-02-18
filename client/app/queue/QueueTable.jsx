@@ -14,7 +14,7 @@ import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
-import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 
 /**
  * This component can be used to easily build tables.

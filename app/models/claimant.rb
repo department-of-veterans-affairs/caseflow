@@ -71,7 +71,7 @@ class Claimant < ApplicationRecord
   end
 
   def bgs_record
-    @bgs_record ||= fetch_bgs_record
+    @bgs_record ||= try_and_retry_bgs_record
   end
 
   private

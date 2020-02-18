@@ -19,34 +19,55 @@ class ETL::Builder
 
   def initialize(since: checkpoint_time)
     @since = since
-    @built = 0
   end
 
-  attr_reader :since, :built
+  attr_reader :since
 
   def incremental
     checkmark
     syncer_klasses.each do |klass|
-      self.built += klass.new(since: since).call
+      klass.new(since: since).call(build_record)
     end
     post_build_steps
-    built
+    update_build_record
+  rescue StandardError => error
+    update_build_record
+    raise error
   end
 
   def full
     checkmark
-    syncer_klasses.each { |klass| self.built += klass.new.call }
+    syncer_klasses.each { |klass| klass.new.call(build_record) }
     post_build_steps
-    built
+    update_build_record
+  rescue StandardError => error
+    update_build_record
+    raise error
+  end
+
+  def built
+    build_record.reload.built
   end
 
   def last_built
     Time.zone.parse(checkpoint)
   end
 
+  def build_record
+    @build_record ||= ETL::Build.create(started_at: Time.zone.now, status: :running)
+  end
+
   private
 
-  attr_writer :built
+  def update_build_record
+    status = build_record.reload.etl_build_tables.any?(&:error?) ? :error : :complete
+    comments = nil
+    if status == :error
+      comments = build_record.etl_build_tables.error.map(&:comments).join("\n")
+    end
+    build_record.update!(finished_at: Time.zone.now, status: status, comments: comments)
+    build_record
+  end
 
   def syncer_klasses
     ETL_KLASSES.map { |klass| "ETL::#{klass}Syncer".constantize }
@@ -66,7 +87,9 @@ class ETL::Builder
   end
 
   def checkmark
-    Rails.cache.write(CHECKPOINT_KEY, Time.zone.now.to_s)
+    now = Time.zone.now.to_s
+    Rails.logger.info("ETL::Builder.checkmark #{now}")
+    Rails.cache.write(CHECKPOINT_KEY, now)
   end
 
   def post_build_steps

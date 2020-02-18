@@ -10,6 +10,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import ApiUtil from '../util/ApiUtil';
+import WindowUtil from '../util/WindowUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import {
   COLORS,
@@ -29,7 +30,7 @@ import {
   claimReviewsByCaseflowVeteranId
 } from './selectors';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const horizontalRuleStyling = css({
   border: 0,
@@ -102,7 +103,7 @@ class CaseListView extends React.PureComponent {
   render() {
     const failStatusMessageChildren = <div>
       Caseflow was unable to load cases.<br />
-      Please <a onClick={this.reload}>refresh the page</a> and try again.
+      Please <a onClick={WindowUtil.reloadWithPOST}>refresh the page</a> and try again.
     </div>;
 
     return <AppSegment filledBackground>

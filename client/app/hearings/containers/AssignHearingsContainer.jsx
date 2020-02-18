@@ -1,5 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import COPY from '../../../COPY';
+import _ from 'lodash';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';

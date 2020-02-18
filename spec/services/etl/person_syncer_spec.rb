@@ -2,11 +2,12 @@
 
 describe ETL::PersonSyncer, :etl do
   describe "#call" do
-    let!(:person1) { create(:person, updated_at: 3.days.ago) }
+    let!(:person1) { create(:person, updated_at: 3.days.ago.round) }
     let!(:person2) { create(:person) }
+    let(:etl_build) { ETL::Build.create }
 
     context "2 person records, one needing sync" do
-      subject { described_class.new(since: 2.days.ago).call }
+      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
 
       it "syncs 1 record" do
         expect(ETL::Person.all.count).to eq(0)
@@ -19,7 +20,7 @@ describe ETL::PersonSyncer, :etl do
     end
 
     context "2 person records, full sync" do
-      subject { described_class.new.call }
+      subject { described_class.new.call(etl_build) }
 
       it "syncs all records" do
         expect(ETL::Person.all.count).to eq(0)
@@ -31,10 +32,10 @@ describe ETL::PersonSyncer, :etl do
     end
 
     context "origin Person record changes" do
-      subject { described_class.new(since: 2.days.ago).call }
+      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
 
       before do
-        described_class.new.call
+        described_class.new.call(etl_build)
       end
 
       let(:new_last_name) { "foobar" }

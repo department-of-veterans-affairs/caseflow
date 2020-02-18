@@ -5,6 +5,10 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import { getQueryParams } from '../../../util/QueryParamsUtil';
+ 
+import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID';
+
+import COPY from '../../../../COPY';
 import AssignHearingsTable from './AssignHearingsTable';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
 import TabWindow from '../../../components/TabWindow';

@@ -12,10 +12,10 @@ import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
 
-import COPY from '../../../COPY.json';
-import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
-import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import COPY from '../../../COPY';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
+import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS';
+import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS';
 
 import {
   CATEGORIES,

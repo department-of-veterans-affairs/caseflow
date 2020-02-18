@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'glamor';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../../components/Alert';
@@ -92,7 +92,7 @@ export default class ReviewAssignments extends React.Component {
 
     if (this.props.schedulePeriodError) {
       let message = <span>Please confirm the information in the spreadsheet is valid and
-        <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
+      <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
         contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357
         or by creating a ticket
         via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
@@ -103,7 +103,7 @@ export default class ReviewAssignments extends React.Component {
           message = <span>You have allocated too many hearing days to the {spErrorDetails.details.ro_key},
           the maximum number of allocations is {spErrorDetails.details.max_allocation}.<br></br>
           Please check your spreadsheet and upload the file again using the "Go back" link below.<br></br>
-            <Link to="/schedule/build/upload"> Go back</Link>
+          <Link to="/schedule/build/upload"> Go back</Link>
           </span>;
         } else if (this.props.spErrorDetails.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
           title = 'We were unable to assign judges to the schedule.';

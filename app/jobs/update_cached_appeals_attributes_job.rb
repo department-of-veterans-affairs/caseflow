@@ -12,6 +12,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   METRIC_GROUP_NAME = UpdateCachedAppealsAttributesJob.name.underscore
 
   def perform
+    RequestStore.store[:current_user] = User.system_user
     ama_appeals_start = Time.zone.now
     cache_ama_appeals
     datadog_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
@@ -104,7 +105,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_type: LegacyAppeal.name,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
-        docket_type: appeal.docket_name, # "legacy",
+        docket_type: appeal.docket_name, # "legacy"
         power_of_attorney_name: appeal.representative_name,
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
@@ -199,6 +200,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
+
+    Raven.capture_exception(err)
 
     slack_service.send_notification(msg)
 

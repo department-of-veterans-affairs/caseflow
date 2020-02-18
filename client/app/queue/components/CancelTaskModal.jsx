@@ -14,7 +14,7 @@ import {
   requestPatch
 } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 
 class CancelTaskModal extends React.Component {

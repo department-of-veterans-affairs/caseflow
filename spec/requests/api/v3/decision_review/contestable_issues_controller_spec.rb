@@ -25,8 +25,8 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         "/api/v3/decision_review/contestable_issues",
         headers: {
           "Authorization" => "Token #{api_key}",
-          "ssn" => ssn,
-          "receiptDate" => date || receipt_date
+          "X-VA-SSN" => ssn,
+          "X-VA-Receipt-Date" => date || receipt_date
         }
       )
     end
