@@ -10,7 +10,7 @@ import {
   resetSuccessMessages,
   requestPatch
 } from '../uiReducer/uiActions';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
 import { fullWidth } from '../constants';
 import { formatDateStr } from '../../util/DateUtil';

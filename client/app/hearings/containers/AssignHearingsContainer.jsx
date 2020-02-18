@@ -7,7 +7,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
 
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { RegionalOfficeDropdown } from '../../components/DataDropdowns';
@@ -21,7 +20,6 @@ import { onRegionalOfficeChange } from '../../components/common/actions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 import AssignHearings from '../components/assignHearings/AssignHearings';
-import COPY from '../../../COPY.json';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 
 const centralOfficeStaticEntry = [{

@@ -19,7 +19,7 @@ import { tableNumberStyling } from './styles';
 import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
 import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
-import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
+import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
 import QueueTable from '../../../queue/QueueTable';
 
 const TASKS_ENDPOINT = '/hearings/schedule_hearing_tasks';
