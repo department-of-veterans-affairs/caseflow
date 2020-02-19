@@ -2,12 +2,8 @@
 
 require "rake"
 
-describe "task rake fixes", :all_dbs do
-  before do
-    Rake.application = Rake::Application.new
-    Rake.application.rake_require "tasks/fixes"
-    Rake::Task.define_task :environment
-  end
+describe "fixes", :all_dbs do
+  include_context "rake"
 
   describe "fixes:activate_stalled_hearing_tasks" do
     subject do

@@ -1,13 +1,7 @@
 # frozen_string_literal: true
 
-require "rake"
-
-describe "task rake tasks", :postgres do
-  before do
-    Rake.application = Rake::Application.new
-    Rake.application.rake_require "tasks/tasks"
-    Rake::Task.define_task :environment
-  end
+describe "tasks", :postgres do
+  include_context "rake"
 
   describe "tasks:change_type" do
     let(:from_task) { ScheduleHearingTask }
