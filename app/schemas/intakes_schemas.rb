@@ -6,9 +6,9 @@ class IntakesSchemas
       Dry::Schema.JSON do
         required(:receipt_date).filled(:date)
         required(:docket_type).value(included_in?: ["direct_review", "evidence_submission", "hearing"])
-        required(:claimant).value(:string)
+        required(:claimant).maybe(:string)
         required(:veteran_is_not_claimant).filled(:bool)
-        required(:payee_code).value(:string)
+        required(:payee_code).maybe(:string)
         required(:legacy_opt_in_approved).filled(:bool)
       end
     end

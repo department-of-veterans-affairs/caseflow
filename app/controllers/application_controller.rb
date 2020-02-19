@@ -8,7 +8,6 @@ class ApplicationController < ApplicationBaseController
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
   before_action :deny_vso_access, except: [:unauthorized, :feedback]
-  before_action :validate_schema
 
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
@@ -204,18 +203,6 @@ class ApplicationController < ApplicationBaseController
         station_id: current_user.station_id,
         regional_office: current_user.regional_office
       )
-    end
-  end
-
-  def validate_schema
-    # Approach 1 for associating schema with controller action
-    schema = try("#{action_name}_schema")
-    return if schema.nil?
-
-    result = schema.call(params.to_unsafe_h)
-    if result.failure?
-      error = result.errors.map { |msg| msg.path.join(".") + " #{msg.text}" }.join("; ")
-      raise StandardError.new(error)
     end
   end
 

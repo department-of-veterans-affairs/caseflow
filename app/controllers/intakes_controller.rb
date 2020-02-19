@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class IntakesController < ApplicationController
+  include ValidationConcern
+
   before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
 
   # Approach 2 for associating schema with controller action
