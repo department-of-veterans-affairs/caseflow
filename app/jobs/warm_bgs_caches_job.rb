@@ -11,7 +11,7 @@ class WarmBgsCachesJob < CaseflowJob
     warm_participant_caches
     warm_veteran_attribute_caches
     warm_people_caches
-    datadog_report_runtime("warm_bgs_caches_job")
+    datadog_report_runtime(metric_group_name: "warm_bgs_caches_job")
   end
 
   private
