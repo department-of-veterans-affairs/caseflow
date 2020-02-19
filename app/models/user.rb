@@ -462,6 +462,10 @@ class User < ApplicationRecord
       User.where(css_id: normalized_css_ids)
     end
 
+    def find_by_vacols_username(vacols_username)
+      User.joins(:vacols_user).where(cached_user_attributes: { slogid: vacols_username }).first
+    end
+
     def list_hearing_coordinators
       HearingsManagement.singleton.users
     end
