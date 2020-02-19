@@ -69,7 +69,7 @@ class TaskActionRepository
 
       extras = if task.is_a?(HearingAdminActionTask)
                  {
-                   redirect_after: "/organizations/#{HearingAdmin.singleton.url}",
+                   redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
                else
@@ -324,6 +324,7 @@ class TaskActionRepository
     def review_decision_draft(task, user)
       action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
       action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
+      action = Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.ama? && task.appeal.vacate?
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 import { clearCaseListSearch, appealsSearch, setCaseListSearch } from './CaseList/CaseListActions';
 

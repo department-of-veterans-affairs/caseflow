@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import Table from '../../components/Table';
 import { formatDateStr } from '../../util/DateUtil';
 import Button from '../../components/Button';

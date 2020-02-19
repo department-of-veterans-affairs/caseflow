@@ -24,6 +24,7 @@ class Task < ApplicationRecord
   validates :assigned_to, :appeal, :type, :status, presence: true
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
+  validate :parent_can_have_children
 
   before_create :set_assigned_at
   before_create :verify_org_task_unique
@@ -110,6 +111,10 @@ class Task < ApplicationRecord
     end
 
     def hide_from_queue_table_view
+      false
+    end
+
+    def cannot_have_children
       false
     end
 
@@ -495,7 +500,7 @@ class Task < ApplicationRecord
     end
 
     # Preserve the open children and status of the old task
-    children.open.update_all(parent_id: sibling.id)
+    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: sibling.id) }
     sibling.update!(status: status)
 
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
@@ -533,12 +538,15 @@ class Task < ApplicationRecord
     # by avoiding callbacks, we aren't saving PaperTrail versions
     # Manually save the state before and after.
     tasks = Task.open.where(id: descendant_ids)
-    tasks.each { |task| task.paper_trail.save_with_version }
-    tasks.update_all(
-      status: Constants.TASK_STATUSES.cancelled,
-      closed_at: Time.zone.now
-    )
-    tasks.each { |task| task.reload.paper_trail.save_with_version }
+
+    transaction do
+      tasks.each { |task| task.paper_trail.save_with_version }
+      tasks.update_all(
+        status: Constants.TASK_STATUSES.cancelled,
+        closed_at: Time.zone.now
+      )
+      tasks.each { |task| task.reload.paper_trail.save_with_version }
+    end
   end
 
   def timeline_title
@@ -555,6 +563,10 @@ class Task < ApplicationRecord
 
   def child_must_have_active_assignee?
     true
+  end
+
+  def stays_with_reassigned_parent?
+    open?
   end
 
   private
@@ -664,6 +676,14 @@ class Task < ApplicationRecord
     return if will_save_change_to_attribute?(timestamp_to_update)
 
     self[timestamp_to_update] = Time.zone.now
+
+    nullify_closed_at_if_reopened if closed_at.present?
+  end
+
+  def nullify_closed_at_if_reopened
+    return unless self.class.open_statuses.include?(status_change_to_be_saved&.last)
+
+    self.closed_at = nil
   end
 
   def status_is_valid_on_create
@@ -677,6 +697,14 @@ class Task < ApplicationRecord
   def assignee_status_is_valid_on_create
     if parent&.child_must_have_active_assignee? && assigned_to.is_a?(User) && !assigned_to.active?
       fail Caseflow::Error::InvalidAssigneeStatusOnTaskCreate, assignee: assigned_to
+    end
+
+    true
+  end
+
+  def parent_can_have_children
+    if parent&.class&.cannot_have_children
+      fail Caseflow::Error::InvalidParentTask, message: "Child tasks cannot be created for #{parent.type}s"
     end
 
     true

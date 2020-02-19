@@ -262,7 +262,7 @@ class User < ApplicationRecord
   end
 
   def administered_teams
-    organizations_users.admin.map(&:organization)
+    organizations_users.admin.map(&:organization).compact
   end
 
   def administered_judge_teams
@@ -275,7 +275,7 @@ class User < ApplicationRecord
 
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
-    judge_team_judges = (JudgeTeam.for_judge(self) || judge_in_vacols?) ? [self] : []
+    judge_team_judges = judge? ? [self] : []
     judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
 
     judge_team_judges.each do |judge|
@@ -286,6 +286,14 @@ class User < ApplicationRecord
     end
 
     orgs
+  end
+
+  def member_of_organization?(org)
+    organizations.include?(org)
+  end
+
+  def judge?
+    !!JudgeTeam.for_judge(self) || judge_in_vacols?
   end
 
   def update_status!(new_status)
@@ -343,7 +351,7 @@ class User < ApplicationRecord
   private
 
   def inactive_judge_team
-    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.select(&:admin?).pluck(:organization_id))
+    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.admin.pluck(:organization_id))
   end
 
   def user_reactivation
@@ -352,14 +360,15 @@ class User < ApplicationRecord
   end
 
   def user_inactivation
-    remove_user_from_auto_assign_orgs
+    remove_user_from_orgs
     JudgeTeam.for_judge(self)&.inactive!
   end
 
-  def remove_user_from_auto_assign_orgs
-    auto_assign_orgs = organizations.select(&:automatically_assign_to_member?)
-    auto_assign_orgs.each do |organization|
-      OrganizationsUser.remove_user_from_organization(self, organization)
+  def remove_user_from_orgs
+    removal_orgs = organizations
+    my_judge_team = JudgeTeam.for_judge(self)
+    removal_orgs.each do |org|
+      OrganizationsUser.remove_user_from_organization(self, org) unless org == my_judge_team
     end
   end
 

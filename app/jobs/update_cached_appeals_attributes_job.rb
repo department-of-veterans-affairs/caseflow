@@ -5,12 +5,14 @@ BATCH_SIZE = 1000
 class UpdateCachedAppealsAttributesJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
+
   queue_with_priority :low_priority
 
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = UpdateCachedAppealsAttributesJob.name.underscore
 
   def perform
+    RequestStore.store[:current_user] = User.system_user
     ama_appeals_start = Time.zone.now
     cache_ama_appeals
     datadog_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
@@ -47,6 +49,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
         is_aod: appeal_aod_status.include?(appeal.id),
+        power_of_attorney_name: appeal.representative_name,
+        suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
         veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
     end
@@ -59,6 +63,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                       :docket_number,
                       :is_aod,
                       :issue_count,
+                      :power_of_attorney_name,
+                      :suggested_hearing_location,
                       :veteran_name]
     CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
                                                                      columns: update_columns }
@@ -89,6 +95,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     values_to_cache = legacy_appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
@@ -98,7 +105,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         appeal_type: LegacyAppeal.name,
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
-        docket_type: appeal.docket_name # "legacy"
+        docket_type: appeal.docket_name, # "legacy"
+        power_of_attorney_name: appeal.representative_name,
+        suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
     end
 
@@ -107,9 +116,12 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                       :closest_regional_office_city,
                                                                       :closest_regional_office_key,
                                                                       :vacols_id,
-                                                                      :docket_type
+                                                                      :docket_type,
+                                                                      :power_of_attorney_name,
+                                                                      :suggested_hearing_location
                                                                     ] }
   end
+  # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
@@ -188,6 +200,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
+
+    Raven.capture_exception(err)
 
     slack_service.send_notification(msg)
 

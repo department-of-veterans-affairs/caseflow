@@ -713,7 +713,7 @@ class SeedDB
       same_office: false,
       benefit_type: "compensation"
     )
-    higher_level_review.create_claimants!(
+    higher_level_review.create_claimant!(
       participant_id: "5382910292",
       payee_code: "10"
     )

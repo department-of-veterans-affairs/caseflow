@@ -14,9 +14,9 @@ import {
   JUDGE_ADDRESS_MTV_HYPERLINK_LABEL,
   JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL,
   JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL
-} from '../../../COPY.json';
-import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE.json';
-import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS.json';
+} from '../../../COPY';
+import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE';
+import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
@@ -25,7 +25,8 @@ import { MTVTaskHeader } from './MTVTaskHeader';
 import TextField from '../../components/TextField';
 import { MTVIssueSelection } from './MTVIssueSelection';
 import StringUtil from '../../util/StringUtil';
-import { MissingDenialDraftAlert } from './MissingDenialDraftAlert';
+import { MissingDraftAlert } from './MissingDraftAlert';
+import { sprintf } from 'sprintf-js';
 
 const vacateTypeText = (val) => {
   const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
@@ -38,7 +39,7 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
 
   switch (disposition) {
   case 'granted':
-  case 'partial':
+  case 'partially_granted':
     parts.push(`This will be a ${vacateTypeText(vacateType)}`);
     parts.push(instructions);
     break;
@@ -52,7 +53,12 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
   return parts.join('\n');
 };
 
-const grantTypes = ['granted', 'partial'];
+const grantTypes = ['granted', 'partially_granted'];
+
+const dispositionStrings = {
+  denied: 'denial',
+  dismissed: 'dismissal'
+};
 
 export const MTVJudgeDisposition = ({
   attorneys,
@@ -107,8 +113,8 @@ export const MTVJudgeDisposition = ({
       !disposition ||
       !instructions ||
       (isGrantType() && !vacateType) ||
-      (disposition === 'partial' && !issueIds.length) ||
-      (!isGrantType() && !hyperlink)
+      (disposition === 'partially_granted' && !issueIds.length) ||
+      (disposition === 'dismissed' && !hyperlink)
     );
   };
 
@@ -134,14 +140,14 @@ export const MTVJudgeDisposition = ({
           value={disposition}
         />
 
-        {disposition && disposition === 'partial' && (
+        {disposition && disposition === 'partially_granted' && (
           <MTVIssueSelection
             issues={appeal.decisionIssues}
             onChange={({ issueIds: newIssueIds }) => setIssueIds(newIssueIds)}
           />
         )}
 
-        {disposition && disposition === 'denied' && <MissingDenialDraftAlert to={returnToLitSupportLink} />}
+        {disposition && !isGrantType() && <MissingDraftAlert to={returnToLitSupportLink} disposition={disposition} />}
 
         {disposition && isGrantType() && (
           <RadioField
@@ -158,10 +164,10 @@ export const MTVJudgeDisposition = ({
         {disposition && !isGrantType() && (
           <TextField
             name="hyperlink"
-            label={JUDGE_ADDRESS_MTV_HYPERLINK_LABEL}
+            label={sprintf(JUDGE_ADDRESS_MTV_HYPERLINK_LABEL, dispositionStrings[disposition])}
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
-            required
+            required={disposition === 'dismissed'}
             className={['mtv-review-hyperlink']}
           />
         )}

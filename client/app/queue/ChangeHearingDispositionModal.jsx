@@ -6,9 +6,9 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import moment from 'moment';
 
-import COPY from '../../COPY.json';
-import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
-import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
+import COPY from '../../COPY';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
+import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
 import {
   taskById,

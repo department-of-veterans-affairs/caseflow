@@ -833,22 +833,17 @@ describe Task, :all_dbs do
     end
 
     context "When old assignee reassigns task with several child tasks to a new user" do
-      let(:completed_children_cnt) { 4 }
-      let!(:completed_children) do
-        create_list(
-          :ama_task,
-          completed_children_cnt,
-          :completed,
-          parent_id: task.id
-        )
-      end
-      let(:incomplete_children_cnt) { 5 }
-      let!(:incomplete_children) { create_list(:ama_task, incomplete_children_cnt, parent_id: task.id) }
+      let(:task_type) { :ama_task }
+      let(:closed_children_count) { 2 }
+      let!(:completed_children) { create_list(task_type, closed_children_count / 2, :completed, parent_id: task.id) }
+      let!(:cancelled_children) { create_list(task_type, closed_children_count / 2, :cancelled, parent_id: task.id) }
+      let(:incomplete_children_count) { 2 }
+      let!(:incomplete_children) { create_list(task_type, incomplete_children_count, parent_id: task.id) }
 
       before { task.on_hold! }
 
       it "reassign method should return list with old and new tasks and incomplete child tasks" do
-        expect(subject.length).to eq(2 + incomplete_children_cnt)
+        expect(subject.length).to eq(2 + incomplete_children_count)
       end
 
       it "incomplete children tasks are adopted by new task and completed tasks are not" do
@@ -856,28 +851,49 @@ describe Task, :all_dbs do
         expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         new_task = task.parent.children.open.first
-        expect(new_task.children.length).to eq(incomplete_children_cnt)
+        expect(new_task.children.length).to eq(incomplete_children_count)
         expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
 
         task.reload
-        expect(task.children.length).to eq(completed_children_cnt)
+        expect(task.children.length).to eq(closed_children_count)
       end
 
       context "when the children are task timers" do
-        let(:incomplete_children_cnt) { 1 }
-        let!(:incomplete_children) { create_list(:timed_hold_task, incomplete_children_cnt, parent_id: task.id) }
+        let(:incomplete_children_count) { 1 }
+        let(:task_type) { :timed_hold_task }
 
         it "children timer tasks are adopted by new task and not cancelled" do
           expect { subject }.to_not raise_error
           expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
           new_task = task.parent.children.open.first
-          expect(new_task.children.length).to eq(incomplete_children_cnt)
+          expect(new_task.children.length).to eq(incomplete_children_count)
           expect(new_task.children.all?(&:assigned?)).to eq(true)
           expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
 
           task.reload
-          expect(task.children.length).to eq(completed_children_cnt)
+          expect(task.children.length).to eq(closed_children_count)
+        end
+      end
+
+      context "when the children are attorney tasks" do
+        let(:incomplete_children_count) { 1 }
+        let(:task_type) { :ama_attorney_task }
+
+        it "assigned AND completed child tasks are adopted by new task" do
+          expect { subject }.to_not raise_error
+          expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+
+          new_task = task.parent.children.open.first
+          expect(new_task.children.length).to eq(incomplete_children_count + closed_children_count / 2)
+          expect(new_task.children.map(&:status)).to match_array(
+            [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.completed]
+          )
+          expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+
+          task.reload
+          expect(task.children.length).to eq(closed_children_count / 2)
+          expect(task.children.map(&:status)).to match_array([Constants.TASK_STATUSES.cancelled])
         end
       end
     end
@@ -1360,6 +1376,20 @@ describe Task, :all_dbs do
 
         task.update!(status: Constants.TASK_STATUSES.in_progress, started_at: two_weeks_ago)
         expect(task.started_at).to eq(two_weeks_ago)
+      end
+    end
+
+    context "when task is closed and is re-opened" do
+      let(:task) { create(:task, :cancelled) }
+
+      it "sets closed_at to nil" do
+        expect(task.cancelled?).to eq(true)
+        expect(task.closed_at).to_not be_nil
+
+        task.on_hold!
+
+        expect(task.on_hold?).to eq(true)
+        expect(task.closed_at).to be_nil
       end
     end
   end

@@ -30,7 +30,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
   end
 
   def set_veteran_from_header
-    @veteran = VeteranFinder.find_best_match(request.headers["veteranId"])
+    @veteran = VeteranFinder.find_best_match(request.headers["X-VA-SSN"])
     unless @veteran
       render_error(
         status: 404,
@@ -41,7 +41,7 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
   end
 
   def set_receipt_date_from_header
-    @receipt_date = Date.iso8601(request.headers["receiptDate"])
+    @receipt_date = Date.iso8601(request.headers["X-VA-Receipt-Date"])
     if invalid_receipt_date? # veteran must be set before using this helper
       render_bad_receipt_date
     end

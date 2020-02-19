@@ -51,6 +51,7 @@ class LegacyHearingSerializer
   attribute :representative_email_address
   attribute :room
   attribute :scheduled_for
+  attribute :scheduled_for_is_past, &:scheduled_for_past?
   attribute :scheduled_time_string
   attribute :summary
   attribute :transcript_requested
@@ -71,9 +72,10 @@ class LegacyHearingSerializer
   end
   attribute :is_virtual, &:virtual?
   attribute :virtual_hearing do |object|
-    if object.virtual?
+    if object.virtual? || object.was_virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
     end
   end
+  attribute :was_virtual, &:was_virtual?
   attribute :witness
 end

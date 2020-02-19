@@ -59,7 +59,8 @@ class AddIssueManager extends React.Component {
             if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
               this.setState({ currentModal: 'CorrectionTypeModal' });
             } else if (this.hasLegacyAppeals()) {
-              this.setState({ currentModal: 'LegacyOptInModal' });
+              this.setState({ currentModal: 'LegacyOptInModal',
+                addtlProps: { currentIssue } });
             } else if (this.requiresUntimelyExemption()) {
               this.setState({ currentModal: 'UntimelyExemptionModal',
                 addtlProps: { currentIssue } });
@@ -99,7 +100,8 @@ class AddIssueManager extends React.Component {
               const { currentIssue } = this.state;
 
               if (this.hasLegacyAppeals()) {
-                this.setState({ currentModal: 'LegacyOptInModal' });
+                this.setState({ currentModal: 'LegacyOptInModal',
+                  addtlProps: { currentIssue } });
               } else if (this.requiresUntimelyExemption()) {
                 this.setState({ currentModal: 'UntimelyExemptionModal',
                   addtlProps: { currentIssue } });

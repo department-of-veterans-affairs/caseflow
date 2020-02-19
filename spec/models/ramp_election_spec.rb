@@ -130,7 +130,8 @@ describe RampElection, :postgres do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran.participant_id,
             limited_poa_code: nil,
-            limited_poa_access: nil
+            limited_poa_access: nil,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: nil

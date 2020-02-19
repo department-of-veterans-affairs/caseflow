@@ -13,7 +13,7 @@ import { invalidVeteranInstructions } from '../components/ErrorAlert';
 import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 const steps = [
   <span>
@@ -94,12 +94,9 @@ class Search extends React.PureComponent {
       veteran_has_duplicate_records_in_corpdb: {
         title: 'Duplicate veteran records',
         body: <React.Fragment key="alert-error-body">
-          {'This Veteran has a duplicate record in CorpDB. Please submit an incident in '}
-          { YourITLink }
-          {' requesting that the duplicate record be removed. Include the veteran\'s first ' +
-              'initial, last name, the last 4 digits of their file number or SSN, and the ' +
-              `following participant IDs: [${searchErrorData.pids}]. The ticket should be ` +
-              'routed to the PHI SME Compensation Corporate Records Group'}
+          {'This Veteran has a duplicate record in the Corporate database (CorpDB). Please ' +
+              'follow your locally established procedures for addressing duplicate records ' +
+              'to the assigned point-of-contact of the regional office.'}
         </React.Fragment>
       },
       veteran_not_accessible: {

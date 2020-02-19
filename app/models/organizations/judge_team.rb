@@ -23,7 +23,7 @@ class JudgeTeam < Organization
     end
 
     def use_judge_team_roles?
-      FeatureToggle.enabled?(:use_judge_team_role)
+      FeatureToggle.enabled?(:judge_admin_scm)
     end
   end
 

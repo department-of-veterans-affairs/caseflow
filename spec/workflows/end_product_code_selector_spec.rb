@@ -6,76 +6,93 @@
 # 0. EP code
 # 1. primary vs. 930 correction
 # 2. correction type (set to na if the EP is not for a 930 correction)
-# 3. dta vs. original
-# 4. benefit type
-# 5. issue type
-# 6. decision review type
+# 3. remand vs. original
+# 4. difference_of_opinion vs. duty_to_assist (set to na if EP is not a remand)
+# 5. benefit type
+# 6. issue type
+# 7. decision review type
 
 EP_CODES = [
-  %w[030HLRNR primary na original compensation nonrating higher_level_review],
-  %w[030HLRNRPMC primary na original pension nonrating higher_level_review],
-  %w[030HLRR primary na original compensation rating higher_level_review],
-  %w[030HLRRPMC primary na original pension rating higher_level_review],
-  %w[040SCNR primary na original compensation nonrating supplemental_claim],
-  %w[040SCNRPMC primary na original pension nonrating supplemental_claim],
-  %w[040SCR primary na original compensation rating supplemental_claim],
-  %w[040SCRPMC primary na original pension rating supplemental_claim],
-  %w[930AHCNRLPMC 930 local_quality_error original pension nonrating higher_level_review],
-  %w[930AHCNRLQE 930 local_quality_error original compensation nonrating higher_level_review],
-  %w[930AHCNRNPMC 930 national_quality_error original pension nonrating higher_level_review],
-  %w[930AHCNRNQE 930 national_quality_error original compensation nonrating higher_level_review],
-  %w[930AHCRLQPMC 930 local_quality_error original pension rating higher_level_review],
-  %w[930AHCRNQPMC 930 national_quality_error original pension rating higher_level_review],
-  %w[930AHNRCPMC 930 control original pension nonrating higher_level_review],
-  %w[930AMAHCRLQE 930 local_quality_error original compensation rating higher_level_review],
-  %w[930AMAHCRNQE 930 national_quality_error original compensation rating higher_level_review],
-  %w[930AMAHNRC 930 control original compensation nonrating higher_level_review],
-  %w[930AMAHRC 930 control original compensation rating higher_level_review],
-  %w[930AMAHRCPMC 930 control original pension rating higher_level_review],
-  %w[930AMASCRLQE 930 local_quality_error original compensation rating supplemental_claim],
-  %w[930AMASCRNQE 930 national_quality_error original compensation rating supplemental_claim],
-  %w[930AMASNRC 930 control original compensation nonrating supplemental_claim],
-  %w[930AMASRC 930 control original compensation rating supplemental_claim],
-  %w[930AMASRCPMC 930 control original pension rating supplemental_claim],
-  %w[930ASCNRLPMC 930 local_quality_error original pension nonrating supplemental_claim],
-  %w[930ASCNRLQE 930 local_quality_error original compensation nonrating supplemental_claim],
-  %w[930ASCNRNPMC 930 national_quality_error original pension nonrating supplemental_claim],
-  %w[930ASCNRNQE 930 national_quality_error original compensation nonrating supplemental_claim],
-  %w[930ASCRLQPMC 930 local_quality_error original pension rating supplemental_claim],
-  %w[930ASCRNQPMC 930 national_quality_error original pension rating supplemental_claim],
-  %w[930ASNRCPMC 930 control original pension nonrating supplemental_claim],
-  %w[040BDENR primary na dta compensation nonrating appeal],
-  %w[040BDENRPMC primary na dta pension nonrating appeal],
-  %w[040BDER primary na dta compensation rating appeal],
-  %w[040BDERPMC primary na dta pension rating appeal],
-  %w[040HDENR primary na dta compensation nonrating higher_level_review],
-  %w[040HDENRPMC primary na dta pension nonrating higher_level_review],
-  %w[040HDER primary na dta compensation rating higher_level_review],
-  %w[040HDERPMC primary na dta pension rating higher_level_review],
-  %w[930AMAHDENCL 930 local_quality_error dta compensation nonrating higher_level_review],
-  %w[930AMAHDENCN 930 national_quality_error dta compensation nonrating higher_level_review],
-  %w[930AMAHDENR 930 control dta compensation nonrating higher_level_review],
-  %w[930AMAHDER 930 control dta compensation rating higher_level_review],
-  %w[930AMAHDERCL 930 local_quality_error dta compensation rating higher_level_review],
-  %w[930AMAHDERCN 930 national_quality_error dta compensation rating higher_level_review],
-  %w[930AMARNRC 930 control dta compensation nonrating appeal],
-  %w[930AMARRC 930 control dta compensation rating appeal],
-  %w[930AMARRCLQE 930 local_quality_error dta compensation rating appeal],
-  %w[930AMARRCNQE 930 national_quality_error dta compensation rating appeal],
-  %w[930AMARRCPMC 930 control dta pension rating appeal],
-  %w[930ARNRCLPMC 930 local_quality_error dta pension nonrating appeal],
-  %w[930ARNRCLQE 930 local_quality_error dta compensation nonrating appeal],
-  %w[930ARNRCNPMC 930 national_quality_error dta pension nonrating appeal],
-  %w[930ARNRCNQE 930 national_quality_error dta compensation nonrating appeal],
-  %w[930ARNRCPMC 930 control dta pension nonrating appeal],
-  %w[930ARRCLQPMC 930 local_quality_error dta pension rating appeal],
-  %w[930ARRCNQPMC 930 national_quality_error dta pension rating appeal],
-  %w[930AHDENLPMC 930 local_quality_error dta pension nonrating higher_level_review],
-  %w[930AHDENNPMC 930 national_quality_error dta pension nonrating higher_level_review],
-  %w[930AHDENRPMC 930 control dta pension nonrating higher_level_review],
-  %w[930AHDERPMC 930 control dta pension rating higher_level_review],
-  %w[930AHDERLPMC 930 local_quality_error dta pension rating higher_level_review],
-  %w[930AHDERNPMC 930 national_quality_error dta pension rating higher_level_review]
+  %w[030HLRNR primary na original na compensation nonrating higher_level_review],
+  %w[030HLRNRPMC primary na original na pension nonrating higher_level_review],
+  %w[030HLRR primary na original na compensation rating higher_level_review],
+  %w[030HLRRPMC primary na original na pension rating higher_level_review],
+  %w[040SCNR primary na original na compensation nonrating supplemental_claim],
+  %w[040SCNRPMC primary na original na pension nonrating supplemental_claim],
+  %w[040SCR primary na original na compensation rating supplemental_claim],
+  %w[040SCRPMC primary na original na pension rating supplemental_claim],
+  %w[930AHCNRLPMC 930 local_quality_error original na pension nonrating higher_level_review],
+  %w[930AHCNRLQE 930 local_quality_error original na compensation nonrating higher_level_review],
+  %w[930AHCNRNPMC 930 national_quality_error original na pension nonrating higher_level_review],
+  %w[930AHCNRNQE 930 national_quality_error original na compensation nonrating higher_level_review],
+  %w[930AHCRLQPMC 930 local_quality_error original na pension rating higher_level_review],
+  %w[930AHCRNQPMC 930 national_quality_error original na pension rating higher_level_review],
+  %w[930AHNRCPMC 930 control original na pension nonrating higher_level_review],
+  %w[930AMAHCRLQE 930 local_quality_error original na compensation rating higher_level_review],
+  %w[930AMAHCRNQE 930 national_quality_error original na compensation rating higher_level_review],
+  %w[930AMAHNRC 930 control original na compensation nonrating higher_level_review],
+  %w[930AMAHRC 930 control original na compensation rating higher_level_review],
+  %w[930AMAHRCPMC 930 control original na pension rating higher_level_review],
+  %w[930AMASCRLQE 930 local_quality_error original na compensation rating supplemental_claim],
+  %w[930AMASCRNQE 930 national_quality_error original na compensation rating supplemental_claim],
+  %w[930AMASNRC 930 control original na compensation nonrating supplemental_claim],
+  %w[930AMASRC 930 control original na compensation rating supplemental_claim],
+  %w[930AMASRCPMC 930 control original na pension rating supplemental_claim],
+  %w[930ASCNRLPMC 930 local_quality_error original na pension nonrating supplemental_claim],
+  %w[930ASCNRLQE 930 local_quality_error original na compensation nonrating supplemental_claim],
+  %w[930ASCNRNPMC 930 national_quality_error original na pension nonrating supplemental_claim],
+  %w[930ASCNRNQE 930 national_quality_error original na compensation nonrating supplemental_claim],
+  %w[930ASCRLQPMC 930 local_quality_error original na pension rating supplemental_claim],
+  %w[930ASCRNQPMC 930 national_quality_error original na pension rating supplemental_claim],
+  %w[930ASNRCPMC 930 control original na pension nonrating supplemental_claim],
+  %w[040BDENR primary na remand duty_to_assist compensation nonrating appeal],
+  %w[040BDENRPMC primary na remand duty_to_assist pension nonrating appeal],
+  %w[040BDER primary na remand duty_to_assist compensation rating appeal],
+  %w[040BDERPMC primary na remand duty_to_assist pension rating appeal],
+  %w[040HDENR primary na remand duty_to_assist compensation nonrating higher_level_review],
+  %w[040HDENRPMC primary na remand duty_to_assist pension nonrating higher_level_review],
+  %w[040HDER primary na remand duty_to_assist compensation rating higher_level_review],
+  %w[040HDERPMC primary na remand duty_to_assist pension rating higher_level_review],
+  %w[040AMADONR primary na remand difference_of_opinion compensation nonrating higher_level_review],
+  %w[040ADONRPMC primary na remand difference_of_opinion pension nonrating higher_level_review],
+  %w[040AMADOR primary na remand difference_of_opinion compensation rating higher_level_review],
+  %w[040ADORPMC primary na remand difference_of_opinion pension rating higher_level_review],
+  %w[930AMAHDENCL 930 local_quality_error remand duty_to_assist compensation nonrating higher_level_review],
+  %w[930AMAHDENCN 930 national_quality_error remand duty_to_assist compensation nonrating higher_level_review],
+  %w[930AMAHDENR 930 control remand duty_to_assist compensation nonrating higher_level_review],
+  %w[930AMAHDER 930 control remand duty_to_assist compensation rating higher_level_review],
+  %w[930AMAHDERCL 930 local_quality_error remand duty_to_assist compensation rating higher_level_review],
+  %w[930AMAHDERCN 930 national_quality_error remand duty_to_assist compensation rating higher_level_review],
+  %w[930AMARNRC 930 control remand duty_to_assist compensation nonrating appeal],
+  %w[930AMARRC 930 control remand duty_to_assist compensation rating appeal],
+  %w[930AMARRCLQE 930 local_quality_error remand duty_to_assist compensation rating appeal],
+  %w[930AMARRCNQE 930 national_quality_error remand duty_to_assist compensation rating appeal],
+  %w[930AMARRCPMC 930 control remand duty_to_assist pension rating appeal],
+  %w[930ARNRCLPMC 930 local_quality_error remand duty_to_assist pension nonrating appeal],
+  %w[930ARNRCLQE 930 local_quality_error remand duty_to_assist compensation nonrating appeal],
+  %w[930ARNRCNPMC 930 national_quality_error remand duty_to_assist pension nonrating appeal],
+  %w[930ARNRCNQE 930 national_quality_error remand duty_to_assist compensation nonrating appeal],
+  %w[930ARNRCPMC 930 control remand duty_to_assist pension nonrating appeal],
+  %w[930ARRCLQPMC 930 local_quality_error remand duty_to_assist pension rating appeal],
+  %w[930ARRCNQPMC 930 national_quality_error remand duty_to_assist pension rating appeal],
+  %w[930AHDENLPMC 930 local_quality_error remand duty_to_assist pension nonrating higher_level_review],
+  %w[930AHDENNPMC 930 national_quality_error remand duty_to_assist pension nonrating higher_level_review],
+  %w[930AHDENRPMC 930 control remand duty_to_assist pension nonrating higher_level_review],
+  %w[930AHDERPMC 930 control remand duty_to_assist pension rating higher_level_review],
+  %w[930AHDERLPMC 930 local_quality_error remand duty_to_assist pension rating higher_level_review],
+  %w[930AHDERNPMC 930 national_quality_error remand duty_to_assist pension rating higher_level_review],
+  %w[930AMADONR 930 local_quality_error remand difference_of_opinion compensation nonrating higher_level_review],
+  %w[930AMADONR 930 national_quality_error remand difference_of_opinion compensation nonrating higher_level_review],
+  %w[930AMADONR 930 control remand difference_of_opinion compensation nonrating higher_level_review],
+  %w[930AMADOR 930 control remand difference_of_opinion compensation rating higher_level_review],
+  %w[930AMADOR 930 local_quality_error remand difference_of_opinion compensation rating higher_level_review],
+  %w[930AMADOR 930 national_quality_error remand difference_of_opinion compensation rating higher_level_review],
+  %w[930DONRPMC 930 local_quality_error remand difference_of_opinion pension nonrating higher_level_review],
+  %w[930DONRPMC 930 national_quality_error remand difference_of_opinion pension nonrating higher_level_review],
+  %w[930DONRPMC 930 control remand difference_of_opinion pension nonrating higher_level_review],
+  %w[930DORPMC 930 control remand difference_of_opinion pension rating higher_level_review],
+  %w[930DORPMC 930 local_quality_error remand difference_of_opinion pension rating higher_level_review],
+  %w[930DORPMC 930 national_quality_error remand difference_of_opinion pension rating higher_level_review]
 ].freeze
 
 describe "Request Issue Correction Cleaner", :postgres do
@@ -122,17 +139,19 @@ describe "Request Issue Correction Cleaner", :postgres do
           let(:correction_type) { ep_code[2] }
         end
 
-        if ep_code[3] == "dta"
+        if ep_code[3] == "remand"
           let(:decision_review) { supplemental_claim }
-          let(:drr) { send(ep_code[6]) }
-          let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
+          let(:drr) { send(ep_code[7]) }
+
+          disposition = (ep_code[4] == "duty_to_assist") ? "remanded" : "Difference of Opinion"
+          let(:contested_decision_issue) { create(:decision_issue, :nonrating, disposition: disposition) }
         else
-          let(:decision_review) { send(ep_code[6]) }
+          let(:decision_review) { send(ep_code[7]) }
         end
 
-        let(:benefit_type) { ep_code[4] }
+        let(:benefit_type) { ep_code[5] }
 
-        if ep_code[5] == "rating"
+        if ep_code[6] == "rating"
           let(:contested_rating_issue_reference_id) { "1" }
         else
           let(:nonrating_issue_category) { "Apportionment" }

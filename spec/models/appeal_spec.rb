@@ -9,6 +9,25 @@ describe Appeal, :all_dbs do
 
   let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze
 
+  context "#create_stream" do
+    let(:stream_type) { "vacate" }
+    let!(:appeal) { create(:appeal, number_of_claimants: 1) }
+
+    subject { appeal.create_stream(stream_type) }
+
+    it "creates a new appeal stream with data from the original appeal" do
+      expect(subject).to have_attributes(
+        receipt_date: appeal.receipt_date,
+        veteran_file_number: appeal.veteran_file_number,
+        legacy_opt_in_approved: appeal.legacy_opt_in_approved,
+        veteran_is_not_claimant: appeal.veteran_is_not_claimant,
+        stream_docket_number: appeal.docket_number,
+        stream_type: stream_type
+      )
+      expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
+    end
+  end
+
   context "includes PrintsTaskTree concern" do
     context "#structure" do
       let!(:root_task) { create(:root_task, appeal: appeal) }
@@ -368,7 +387,7 @@ describe Appeal, :all_dbs do
         create(:appeal, receipt_date: Time.new("2018", "04", "05").utc)
       end
 
-      it "returns a docket number if receipt_date is defined" do
+      it "returns a docket number if id and receipt_date are defined" do
         expect(appeal.docket_number).to eq("180405-#{appeal.id}")
       end
     end
@@ -381,6 +400,21 @@ describe Appeal, :all_dbs do
       it "returns Missing Docket Number" do
         expect(appeal.docket_number).to eq("Missing Docket Number")
       end
+    end
+  end
+
+  context "#set_stream_docket_number_and_stream_type" do
+    it "persists an accurate value for stream_docket_number to the database" do
+      appeal = Appeal.new(veteran_file_number: "1234")
+      appeal.save!
+      expect(appeal.stream_docket_number).to be_nil
+      appeal.receipt_date = Time.new("2020", "01", "24").utc
+      expect(appeal.docket_number).to eq("200124-#{appeal.id}")
+      appeal.save!
+      expect(appeal.stream_docket_number).to eq("200124-#{appeal.id}")
+      appeal.stream_docket_number = "something else"
+      appeal.save!
+      expect(Appeal.where(stream_docket_number: "something else").count).to eq(1)
     end
   end
 
@@ -894,6 +928,27 @@ describe Appeal, :all_dbs do
 
       it "returns true" do
         expect(appeal.stuck?).to eq(true)
+      end
+    end
+  end
+
+  describe "#vacate_type" do
+    subject { appeal.vacate_type }
+
+    context "Appeal is a vacatur and has a post-decision motion" do
+      let(:original) { create(:appeal, :with_straight_vacate_stream) }
+      let(:appeal) { Appeal.vacate.find_by(stream_docket_number: original.docket_number) }
+
+      it "returns the post-decision motion's vacate type" do
+        expect(subject).to eq "straight_vacate"
+      end
+    end
+
+    context "Appeal is not a vacatur" do
+      let(:appeal) { create(:appeal) }
+
+      it "returns nil" do
+        expect(subject).to be_nil
       end
     end
   end

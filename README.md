@@ -109,10 +109,11 @@ We are using 2-factor authentication with Github so, for example, when you acces
 ### Machine setup #######################################################
 
 You can manually go through the following steps.
-Alternatively, if you have a Mac, you can download and run the following scripts:
+Alternatively, if you have a Mac, you can clone this repo and run the following scripts:
 
-  - [dev_env_setup_step1.sh](docs/dev_env_setup_step1.sh)
-  - [dev_env_setup_step2.sh](docs/dev_env_setup_step2.sh)
+  - `git clone https://github.com/department-of-veterans-affairs/caseflow`
+  - [dev_env_setup_step1.sh](scripts/dev_env_setup_step1.sh)
+  - [dev_env_setup_step2.sh](scripts/dev_env_setup_step2.sh)
 
 Remember to follow the instructions printed at the end of the scripts.
 If an error occurs, it is okay to run the scripts multiple times after the error is corrected.
@@ -360,13 +361,14 @@ for clarity as to what is happening "behind the scenes."
 
 #### Database environment setup
 
+**Note:** You must have [AWS access granted & setup](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/New-Hires) prior to setting up your local environment as the database is not publicly accessible due to Oracle licensing.
+
 To rapidly set up your local development (and testing) environment, run:
 ```
 bundle exec rake local:build
 ```
 The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
-**Note:** You must have AWS access prior to setting up your local environment as the database is not publicly accessible due to Oracle licensing.
 
 ## Running dev Caseflow & Accessing dev DBs ##################
 

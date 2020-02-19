@@ -7,7 +7,7 @@ import WorksheetFooter from './WorksheetFooter';
 import WorksheetHeader from './WorksheetHeader';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import { getWorksheetTitle } from './HearingWorksheet';
-import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES.json';
+import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES';
 import { filterCurrentIssues, filterIssuesOnAppeal } from '../../utils';
 import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil';
 import { formatNameShort } from '../../../util/FormatUtil';
