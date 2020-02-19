@@ -466,6 +466,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         visit "/queue/appeals/#{vacate_stream.uuid}"
 
+        expect(vacate_stream.decision_issues.size).to eq(3)
+
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
@@ -517,6 +519,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
           "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
           "sent to #{judge.full_name} for review."
         )
+
+        expect(vacate_stream.decision_issues.size).to eq(4)
       end
     end
   end
