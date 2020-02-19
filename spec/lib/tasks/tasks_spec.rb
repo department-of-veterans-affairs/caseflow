@@ -3,7 +3,7 @@
 require "rake"
 
 describe "task rake tasks", :postgres do
-  before :all do
+  before do
     Rake.application = Rake::Application.new
     Rake.application.rake_require "tasks/tasks"
     Rake::Task.define_task :environment
