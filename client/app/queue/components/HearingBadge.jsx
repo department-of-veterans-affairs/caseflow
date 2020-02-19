@@ -52,7 +52,7 @@ class HearingBadge extends React.PureComponent {
         if (window.Raven) {
           window.Raven.captureException(error);
         }
-        console.log(error);
+        console.error(error);
       });
     }
   }
