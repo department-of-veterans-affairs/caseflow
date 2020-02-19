@@ -45,16 +45,16 @@ class SeedDB
   end
 
   def create_users
-    User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve AttorneyWithCases Casper")
+    User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases Casper")
     User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
-    User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron JudgeWithHearingsAndCases Abshire")
-    User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneysWithCases Erdman")
-    User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth JudgeHasCaseToAssign Becker")
-    User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith JudgeHasCaseToAssignNoTeam Keeling")
+    User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
+    User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases Erdman")
+    User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth Judge_CaseToAssign Becker")
+    User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
     User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
-    User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUserWithCases White")
-    User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUserWithoutCases Grey")
-    dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "Geoffrey BVADispatchAdminWithoutCases Black")
+    User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
+    User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
+    dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "Geoffrey BVADispatchAdmin_NoCases Black")
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
     bva_intake_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim BVAIntakeAdmin Blue")
     OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
@@ -203,7 +203,7 @@ class SeedDB
     FactoryBot.create(:staff, :colocated_role, user: secondary_user, sdept: "DSP")
     Colocated.singleton.add_user(secondary_user)
 
-    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Laura Co-locatedWithCases Sporer", roles: %w[Reader])
+    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Laura Co-located_Cases Sporer", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
     Colocated.singleton.add_user(user)
 
@@ -286,12 +286,12 @@ class SeedDB
   def create_org_queue_users
     nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
     %w[Parveen Chandra Sydney Tai Kennedy].each do |name|
-      u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{name}", full_name: "#{name} NCATeamMember Carter")
+      u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{name}", full_name: "#{name} NCAUser Carter")
       nca.add_user(u)
     end
 
     %w[Kun Casey Ariel Naomi Kelly].each do |name|
-      u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{name}", full_name: "#{name} TranslationTeamMember Cullen")
+      u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{name}", full_name: "#{name} TranslationUser Cullen")
       Translation.singleton.add_user(u)
     end
   end
@@ -302,13 +302,13 @@ class SeedDB
 
     # Create QR tasks; one assigned just to the QR org and three assigned both to the org and a QR user.
     create_task_at_quality_review
-    create_task_at_quality_review(qr_user, "Jane JudgeWithCaseAtQR Michael", "Joan AttorneyWithCaseAtQR Ly")
-    create_task_at_quality_review(qr_user, "Cosette JudgeWithCaseAtQR Zepeda", "Lian AttorneyWithCaseAtQR Arroyo")
-    create_task_at_quality_review(qr_user, "Huilen JudgeWithCaseAtQR Concepcion", "Ilva AttorneyWithCaseAtQR Urrutia")
+    create_task_at_quality_review(qr_user, "Jane Judge_CaseAtQR Michael", "Joan Attorney_CaseAtQR Ly")
+    create_task_at_quality_review(qr_user, "Cosette Judge_CaseAtQR Zepeda", "Lian Attorney_CaseAtQR Arroyo")
+    create_task_at_quality_review(qr_user, "Huilen Judge_CaseAtQR Concepcion", "Ilva Attorney_CaseAtQR Urrutia")
   end
 
   def create_aod_user_and_tasks
-    u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "Shiloh AODTeamMember Villar")
+    u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "Shiloh AODUser Villar")
     AodTeam.singleton.add_user(u)
 
     root_task = FactoryBot.create(:root_task)
@@ -325,12 +325,12 @@ class SeedDB
   end
 
   def create_privacy_user
-    u = User.create!(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Leighton PrivacyAndFOIATeamMember Naumov")
+    u = User.create!(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Leighton PrivacyAndFOIAUser Naumov")
     PrivacyTeam.singleton.add_user(u)
   end
 
   def create_lit_support_user
-    u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Kiran LitigationSupportTeamMember Rider")
+    u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Kiran LitigationSupportUser Rider")
     LitigationSupport.singleton.add_user(u)
   end
 
@@ -340,7 +340,7 @@ class SeedDB
   end
 
   def create_mail_team_user
-    u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Huan MailTeamMember Tiryaki")
+    u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Huan MailUser Tiryaki")
     MailTeam.singleton.add_user(u)
   end
 
@@ -927,7 +927,7 @@ class SeedDB
     )
   end
 
-  def create_task_at_quality_review(qr_user = nil, judge_name = "Madhu JudgeWithCaseAtQR Burnham", attorney_name = "Bailey AttorneyWithCaseAtQR Eoin")
+  def create_task_at_quality_review(qr_user = nil, judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin")
     vet = FactoryBot.create(
       :veteran,
       file_number: Faker::Number.number(digits: 9).to_s,
@@ -1001,7 +1001,7 @@ class SeedDB
     )
 
     root_task = appeal.root_task
-    judge = FactoryBot.create(:user, station_id: 101, full_name: "Apurva JudgeWithCaseAtDispatch Wakefield")
+    judge = FactoryBot.create(:user, station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
     FactoryBot.create(:staff, :judge_role, user: judge)
     judge_task = FactoryBot.create(
       :ama_judge_decision_review_task,
@@ -1010,7 +1010,7 @@ class SeedDB
       parent: root_task
     )
 
-    atty = FactoryBot.create(:user, station_id: 101, full_name: "Andy AttorneyWithCaseAtDispatch Belanger")
+    atty = FactoryBot.create(:user, station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
     FactoryBot.create(:staff, :attorney_role, user: atty)
     atty_task = FactoryBot.create(
       :ama_attorney_task,
@@ -1097,7 +1097,7 @@ class SeedDB
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
 
-    acting_judge = FactoryBot.create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris AVLJActingJudge Merle")
+    acting_judge = FactoryBot.create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
     FactoryBot.create(:staff, :attorney_judge_role, user: acting_judge)
 
     JudgeTeam.create_for_judge(acting_judge)
