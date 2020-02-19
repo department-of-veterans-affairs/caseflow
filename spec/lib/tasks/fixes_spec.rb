@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rake"
-
 describe "fixes", :all_dbs do
   include_context "rake"
 
