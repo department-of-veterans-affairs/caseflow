@@ -115,7 +115,7 @@ describe TaskTreeRenderModule do
 
   context "appeal root-level changes" do
     it "shows new root-level task" do
-      rows_hash, metadata = appeal.tree_hash
+      _, metadata = appeal.tree_hash
       expect(metadata.rows.count).to eq appeal.tasks.count
       initial_count = appeal.tasks.count + 3
       expect(appeal.tree.lines.count).to eq initial_count
@@ -125,7 +125,7 @@ describe TaskTreeRenderModule do
       expect(appeal.tree.lines.count).to eq initial_count + 1
     end
     it "doesn't show deleted root-level task" do
-      rows_hash, metadata = appeal.tree_hash
+      _, metadata = appeal.tree_hash
       expect(metadata.rows.count).to eq appeal.tasks.count
       initial_count = appeal.tasks.count + 3
       expect(appeal.tree.lines.count).to eq initial_count
