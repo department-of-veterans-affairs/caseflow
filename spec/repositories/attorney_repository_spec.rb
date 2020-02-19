@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AttorneyRepository, :all_dbs do
-  before(:all) do
+  before do
     judges = create_list(:staff, 3, :judge_role)
     acting_judges = create_list(:staff, 3, :attorney_judge_role)
     attorneys = create_list(:staff, 3, :attorney_role)
