@@ -112,4 +112,27 @@ describe TaskTreeRenderModule do
       expect { tree2 appeal, :id, :status, renderer: "any value" }.to raise_error(RuntimeError)
     end
   end
+
+  context "appeal root-level changes" do
+    it "shows new root-level task" do
+      _, metadata = appeal.tree_hash
+      expect(metadata.rows.count).to eq appeal.tasks.count
+      initial_count = appeal.tasks.count + 3
+      expect(appeal.tree.lines.count).to eq initial_count
+
+      create(:ama_judge_task, appeal: appeal, parent: nil, created_at: 1.day.ago.round)
+      appeal.reload
+      expect(appeal.tree.lines.count).to eq initial_count + 1
+    end
+    it "doesn't show deleted root-level task" do
+      _, metadata = appeal.tree_hash
+      expect(metadata.rows.count).to eq appeal.tasks.count
+      initial_count = appeal.tasks.count + 3
+      expect(appeal.tree.lines.count).to eq initial_count
+
+      ama_attorney_task_no_parent.delete
+      appeal.reload
+      expect(appeal.tree.lines.count).to eq initial_count - 1
+    end
+  end
 end
