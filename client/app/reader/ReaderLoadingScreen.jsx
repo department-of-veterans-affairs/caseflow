@@ -25,6 +25,9 @@ export class ReaderLoadingScreen extends React.Component {
         this.props.onReceiveDocs(documents, this.props.vacolsId);
         this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
         this.props.onReceiveAnnotations(annotations);
+      }, () => {
+        // allow HTTP errors to fall on the floor via the console.
+        console.error(new Error(`Problem with GET /reader/appeal/${this.props.vacolsId}/documents?json`));
       });
   }
 
