@@ -3,7 +3,7 @@
 require "rake"
 
 describe "task rake fixes", :all_dbs do
-  before :all do
+  before do
     Rake.application = Rake::Application.new
     Rake.application.rake_require "tasks/fixes"
     Rake::Task.define_task :environment
