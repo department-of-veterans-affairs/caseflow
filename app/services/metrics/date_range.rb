@@ -33,8 +33,8 @@ class Metrics::DateRange
   end
 
   # comparison operator
-  def ==(other_range)
-    start_date == other_range.start_date && end_date == other_range.end_date
+  def ==(other)
+    start_date == other.start_date && end_date == other.end_date
   end
 
   private
