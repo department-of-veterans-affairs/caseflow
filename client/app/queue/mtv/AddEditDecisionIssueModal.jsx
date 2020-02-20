@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
+import { upperFirst } from 'lodash';
+
 import COPY from '../../../COPY';
 import Modal from '../../components/Modal';
 import SelectIssueDispositionDropdown from '../components/SelectIssueDispositionDropdown';
@@ -10,14 +12,15 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DES
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import cx from 'classnames';
-import styles from './AddDecisionIssueModal.module.scss';
+import styles from './AddEditDecisionIssueModal.module.scss';
 
 const isValid = ({ disposition, description }) => disposition && description;
 
-export const AddDecisionIssueModal = ({
+export const AddEditDecisionIssueModal = ({
   connectedRequestIssues,
   appeal,
   decisionIssue: initialDecisionIssue,
+  operation = 'add',
   onCancel,
   onSubmit
 }) => {
@@ -32,7 +35,7 @@ export const AddDecisionIssueModal = ({
     },
     {
       classNames: ['usa-button', 'usa-button-primary'],
-      name: 'Add Issue',
+      name: `${operation === 'edit' ? 'Update' : 'Add'} Issue`,
       onClick: () => {
         setHighlight(false);
         if (isValid(decisionIssue)) {
@@ -44,8 +47,10 @@ export const AddDecisionIssueModal = ({
     }
   ];
 
+  const title = `${upperFirst(operation)} decision`;
+
   return (
-    <Modal buttons={buttons} closeHandler={onCancel} title="Add decision">
+    <Modal className={styles.modal} buttons={buttons} closeHandler={onCancel} title={title}>
       <div>
         {COPY.CONTESTED_ISSUE}
         <ul>
@@ -55,12 +60,12 @@ export const AddDecisionIssueModal = ({
         </ul>
       </div>
 
-      {
+      {operation === 'add' && (
         <React.Fragment>
           <h3>{COPY.DECISION_ISSUE_MODAL_TITLE}</h3>
           <p className={styles.h3Sibling}>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
         </React.Fragment>
-      }
+      )}
 
       <h3>{COPY.DECISION_ISSUE_MODAL_DISPOSITION}</h3>
       <SelectIssueDispositionDropdown
@@ -143,9 +148,10 @@ export const AddDecisionIssueModal = ({
     </Modal>
   );
 };
-AddDecisionIssueModal.propTypes = {
+AddEditDecisionIssueModal.propTypes = {
   appeal: PropTypes.object,
   decisionIssue: PropTypes.object,
+  operation: PropTypes.oneOf(['add', 'edit']),
   connectedRequestIssues: PropTypes.array,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func

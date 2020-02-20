@@ -7,15 +7,18 @@ import QueueFlowPage from '../components/QueueFlowPage';
 import AmaIssueList from '../../components/AmaIssueList';
 import DecisionIssues from '../components/DecisionIssues';
 import { MotionToVacateContext } from './MotionToVacateContext';
-import { AddDecisionIssueModal } from './AddDecisionIssueModal';
+import { AddEditDecisionIssueModal } from './AddEditDecisionIssueModal';
 import uuid from 'uuid';
 
 const validateForm = () => true;
 const defaultState = {
-  addIssueModal: false,
+  editIssueModal: false,
+  operation: 'add',
   requestIssueId: null,
   decisionIssue: null
 };
+
+const hideEdit = ({ decisionIssue }) => decisionIssue?.disposition === 'vacated';
 
 export const AddDecisionIssuesView = ({ appeal }) => {
   const [ctx, setCtx] = useContext(MotionToVacateContext);
@@ -31,12 +34,12 @@ export const AddDecisionIssuesView = ({ appeal }) => {
 
   const closeModals = () => setState({ ...defaultState });
 
-  const openAddIssueModal = (requestIssueId, decisionIssue) => () => {
+  const openEditIssueModal = (requestIssueId, decisionIssue) => () => {
     const requestIssue = appeal?.issues?.find((issue) => issue.id === requestIssueId);
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
       description: '',
-      disposition: requestIssue.closed_status,
+      disposition: '',
       benefit_type: requestIssue.program,
       diagnostic_code: requestIssue.diagnostic_code,
       request_issue_ids: [requestIssueId]
@@ -44,16 +47,20 @@ export const AddDecisionIssuesView = ({ appeal }) => {
 
     setState({
       ...state,
-      addIssueModal: true,
+      editIssueModal: true,
       requestIssueId,
-      decisionIssue: decisionIssue || newDecisionIssue
+      decisionIssue: decisionIssue || newDecisionIssue,
+      operation: decisionIssue ? 'edit' : 'add'
     });
   };
 
-  const onAddIssueSubmit = (decisionIssue) => {
+  const onIssueSubmit = (decisionIssue) => {
+    // Make sure we don't duplicate when editing
+    const issues = ctx.decisionIssues.filter((issue) => issue.id !== decisionIssue.id);
+
     setCtx({
       ...ctx,
-      decisionIssues: [...ctx.decisionIssues, decisionIssue]
+      decisionIssues: [...issues, decisionIssue]
     });
 
     closeModals();
@@ -70,15 +77,20 @@ export const AddDecisionIssuesView = ({ appeal }) => {
       <p>{COPY.MTV_CHECKOUT_ADD_DECISIONS_EXPLANATION}</p>
       <hr />
       <AmaIssueList requestIssues={appeal.issues} errorMessages={{}}>
-        <DecisionIssues decisionIssues={ctx.decisionIssues} openDecisionHandler={openAddIssueModal} hideEdit />
+        <DecisionIssues
+          decisionIssues={ctx.decisionIssues}
+          openDecisionHandler={openEditIssueModal}
+          hideEdit={hideEdit}
+        />
       </AmaIssueList>
-      {state.addIssueModal && (
-        <AddDecisionIssueModal
+      {state.editIssueModal && (
+        <AddEditDecisionIssueModal
           appeal={appeal}
           decisionIssue={state.decisionIssue}
           connectedRequestIssues={connectedRequestIssues}
+          operation={state.operation}
           onCancel={closeModals}
-          onSubmit={onAddIssueSubmit}
+          onSubmit={onIssueSubmit}
         />
       )}
     </QueueFlowPage>

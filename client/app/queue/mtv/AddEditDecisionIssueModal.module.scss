@@ -1,3 +1,11 @@
+.modal {
+  :global {
+    .cf-modal-body {
+      width: 800px;
+    }
+  }
+}
+
 .example {
   color: #5b616b; // as defined in AppConstants file
   font-style: italic;
