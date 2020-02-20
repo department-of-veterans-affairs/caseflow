@@ -47,6 +47,10 @@ class AttorneyTask < Task
     COPY::ATTORNEY_TASK_LABEL
   end
 
+  def stays_with_reassigned_parent?
+    super || completed?
+  end
+
   private
 
   def child_attorney_tasks_are_completed

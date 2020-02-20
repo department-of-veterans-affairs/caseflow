@@ -44,6 +44,7 @@ detectors:
       - AMOMetricsReportJob#build_report
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - AppealAvailableHearingLocations#suggested_hearing_location
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
       - AssignJudgeteamRoles#process
@@ -81,6 +82,7 @@ detectors:
       - Task
       - CaseflowJob
       - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
+      - ETL::Syncer
       - User
   IrresponsibleModule:
     enabled: false
@@ -143,6 +145,7 @@ detectors:
       - Helpers::AppealHearingHelper#suggested_hearing_location
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
+      - JudgeLegacyDecisionReviewTask#review_action
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - Fakes::BGSService

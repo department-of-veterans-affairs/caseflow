@@ -890,11 +890,13 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "when the end product is canceled" do
-        let(:status_type_code) { "CAN" }
+        before { allow(Fakes::VBMSService).to receive(:fetch_contentions).and_call_original }
+        let(:status_type_code) { EndProduct::STATUSES.key("Canceled") }
 
-        it "closes request issues and cancels establishment" do
+        it "closes request issues, cancels establishment, and doesn't fetch contentions" do
           subject
 
+          expect(Fakes::VBMSService).to_not have_received(:fetch_contentions)
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
           expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
