@@ -6,6 +6,9 @@
 
 class Metrics::HearingsShowRate < Metrics::Base
   def call
+    return 0 if hearings.count == 0
+    return 0 if hearings_by_disposition["held"].blank?
+
     hearings_by_disposition["held"] / (hearings.count.to_f - hearings_by_disposition["postponed"].to_f)
   end
 
