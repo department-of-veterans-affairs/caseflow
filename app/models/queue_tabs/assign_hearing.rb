@@ -25,9 +25,6 @@ class AssignHearing
         .where(appeal_type: appeal_type)
         .joins(CachedAppeal.left_join_from_tasks_clause)
 
-    # For legacy appeals, we need to only provide a central office hearing if they explicitly
-    # chose one. Likewise, we can't use DC if it's the closest regional office unless they
-    # chose a central office hearing.
     @tasks ||=
       if appeal_type == "LegacyAppeal"
         legacy_tasks(tasks)
@@ -36,6 +33,9 @@ class AssignHearing
       end
   end
 
+  # For legacy appeals, we need to only provide a central office hearing if they explicitly
+  # chose one. Likewise, we can't use DC if it's the closest regional office unless they
+  # chose a central office hearing.
   def legacy_tasks(tasks)
     central_office_ids = VACOLS::Case.where(bfhr: 1, bfcurloc: "CASEFLOW").pluck(:bfkey)
     central_office_legacy_appeal_ids = LegacyAppeal.where(vacols_id: central_office_ids).pluck(:id)
