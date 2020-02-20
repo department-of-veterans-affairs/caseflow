@@ -43,6 +43,19 @@ class IntakesController < ApplicationController
     IntakesSchemas.review
   end
 
+  # Approach 4a for associating schema with controller action
+  validates :review, using: IntakesSchemas.review
+
+  # Approach 4b for associating schema with controller action
+  validates :review, using: (Dry::Schema.JSON do
+    required(:receipt_date).filled(:date)
+    required(:docket_type).value(included_in?: ["direct_review", "evidence_submission", "hearing"])
+    required(:claimant).maybe(:string)
+    required(:veteran_is_not_claimant).filled(:bool)
+    required(:payee_code).maybe(:string)
+    required(:legacy_opt_in_approved).filled(:bool)
+  end)
+
   def review
     if intake.review!(params)
       render json: intake.ui_hash

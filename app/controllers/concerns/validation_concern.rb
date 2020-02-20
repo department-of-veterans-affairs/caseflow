@@ -9,9 +9,19 @@ module ValidationConcern
     before_action :validate_schema
   end
 
+  class_methods do
+    def validates(action_name, using:)
+      validation_schemas[action_name.to_sym] = using
+    end
+
+    def validation_schemas
+      @validation_schemas ||= {}
+    end
+  end
+
   def validate_schema
-    # Approach 1 for associating schema with controller action
-    schema = try("#{action_name}_schema")
+    # Approach 4 for associating schema with controller action
+    schema = self.class.validation_schemas[action_name.to_sym]
     return if schema.nil?
 
     result = schema.call(params.to_unsafe_h)
