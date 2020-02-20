@@ -174,7 +174,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       json = JSON.parse(response.body)
 
       # test for the 200 status-code
-      expect(response).to be_success
+      expect(response).to be_successful
 
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(2)
@@ -382,7 +382,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       json = JSON.parse(response.body)
 
       # test for the 200 status-code
-      expect(response).to be_success
+      expect(response).to be_successful
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(3)
 
@@ -533,7 +533,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       json = JSON.parse(response.body)
 
       # test for the 200 status-code
-      expect(response).to be_success
+      expect(response).to be_successful
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(0)
     end
@@ -609,7 +609,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       json = JSON.parse(response.body)
 
       # test for the 200 status-code
-      expect(response).to be_success
+      expect(response).to be_successful
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(1)
       expect(json["data"].first["type"]).to eq("higherLevelReview")
