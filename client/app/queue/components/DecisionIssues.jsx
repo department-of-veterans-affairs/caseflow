@@ -87,7 +87,7 @@ export default class DecisionIssues extends React.PureComponent {
                       />
                     </span>
                   )}
-                  {openDecisionHandler && !hideEdit && (
+                  {openDecisionHandler && !hideEdit({ decisionIssue }) && (
                     <span>
                       <Button
                         name="Edit"
@@ -153,9 +153,9 @@ DecisionIssues.propTypes = {
   }),
   openDecisionHandler: PropTypes.func,
   hearingWorksheet: PropTypes.object,
-  hideEdit: PropTypes.bool
+  hideEdit: PropTypes.func
 };
 
 DecisionIssues.defaultProps = {
-  hideEdit: false
+  hideEdit: () => false
 };
