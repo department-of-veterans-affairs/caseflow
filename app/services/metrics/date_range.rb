@@ -13,7 +13,7 @@ class Metrics::DateRange
       months = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9]
       # the fiscal year is the year of the last month
       months.map do |month|
-        month_start = Date.parse(month > 9 ? "#{year.to_i - 1}-#{month}-1" : "#{year}-#{month}-1")
+        month_start = Date.parse((month > 9) ? "#{year.to_i - 1}-#{month}-1" : "#{year}-#{month}-1")
         new(month_start, month_start.end_of_month)
       end
     end
