@@ -699,11 +699,14 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
       it "filters are correct, and filter as expected" do
         step "check if there are the right number of rows for the ama tab" do
+          expect(page).to have_content("Suggested Location")
           expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
         end
 
         step "check if the filter options are as expected" do
+          expect(page).to have_content("Suggested Location")
           page.find(".unselected-filter-icon-inner", match: :first).click
+          expect(page).to have_content("Clear Suggested location filter")
           expect(page).to have_content("#{Appeal.first.suggested_hearing_location.formatted_location} (1)")
           expect(page).to have_content("#{Appeal.second.suggested_hearing_location.formatted_location} (1)")
           expect(page).to have_content("#{Appeal.third.suggested_hearing_location.formatted_location} (1)")
@@ -716,30 +719,34 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       end
     end
 
-    context "Filter by PowerOfAttorneyName column" do
+    context "Filter by PowerOfAttorneyName column", focus: true do
+      # rubocop:disable Style/HashSyntax
       before do
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["1"]).and_return(
-          "1": { representative_type: "Attorney", representative_name: "Attorney One", participant_id: "1" }
+          "1" => { :representative_type => "Attorney", :representative_name => "Attorney 1", :participant_id => "1" }
         )
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["2"]).and_return(
-          "2": { representative_type: "Attorney", representative_name: "Attorney Two", participant_id: "2" }
+          "2" => { :representative_type => "Attorney", :representative_name => "Attorney 2", :participant_id => "2" }
         )
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["3"]).and_return(
-          "3": { representative_type: "Attorney", representative_name: "Attorney Three", participant_id: "3" }
+          "3" => { :representative_type => "Attorney", :representative_name => "Attorney 3", :participant_id => "3" }
         )
 
         create_ama_appeals
         cache_appeals
         navigate_to_ama_tab
       end
-
+      # rubocop:enable Style/HashSyntax
       it "filters are correct, and filter as expected" do
         step "check if there are the right number of rows for the ama tab" do
+          expect(page).to have_content("Power of Attorney (POA)")
           expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
         end
 
         step "check if the filter options are as expected" do
+          expect(page).to have_content("Power of Attorney (POA)")
           page.find_all("path.unselected-filter-icon-inner")[1].click
+          expect(page).to have_content("Clear Power of attorney filter")
           expect(page).to have_content("#{Appeal.first.representative_name} (1)")
           expect(page).to have_content("#{Appeal.second.representative_name} (1)")
           expect(page).to have_content("#{Appeal.third.representative_name} (1)")
@@ -748,36 +755,6 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         step "clicking on a filter reduces the number of results by the expect amount" do
           page.find("label", text: "#{Appeal.first.representative_name} (1)").click
           expect(find("tbody").find_all("tr").length).to eq(1)
-        end
-      end
-    end
-
-    context "Filter by <<blank>> value" do
-      context "For Suggested Hearing Location column" do
-        let(:unassigned_count) { 10 }
-        before do
-          unassigned_count.times do
-            appeal = create(:appeal, closest_regional_office: "RO39")
-            create(:schedule_hearing_task, appeal: appeal)
-          end
-          cache_appeals
-          navigate_to_ama_tab
-        end
-
-        it "shows zero tasks" do
-          step "check if there are the right number of rows for the ama tab" do
-            expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-          end
-
-          step "check if the filter options are as expected" do
-            page.find(".unselected-filter-icon-inner", match: :first).click
-            expect(page).to have_content("#{COPY::NULL_FILTER_LABEL} (#{unassigned_count})")
-          end
-
-          step "clicking on filter shows expected tasks" do
-            page.find("label", text: "#{COPY::NULL_FILTER_LABEL} (#{unassigned_count})").click
-            expect(page).not_to have_selector("tbody")
-          end
         end
       end
     end

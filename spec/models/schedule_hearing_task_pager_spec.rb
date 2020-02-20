@@ -2,7 +2,7 @@
 
 describe Hearings::ScheduleHearingTaskPager, :all_dbs do
   let(:assignee) { HearingsManagement.singleton }
-  let(:regional_office_key) { "C" }
+  let(:regional_office_key) { "RO18" }
   let(:legacy_task_pager) { Hearings::ScheduleHearingTaskPager.new(legacy_arguments) }
   let(:ama_task_pager) { Hearings::ScheduleHearingTaskPager.new(ama_arguments) }
   let(:legacy_arguments) do
@@ -61,7 +61,6 @@ describe Hearings::ScheduleHearingTaskPager, :all_dbs do
       :legacy_appeal,
       vacols_case: create(
         :case,
-        :central_office_hearing,
         :aod,
         :type_original,
         bfcorlid: "323454787S",
