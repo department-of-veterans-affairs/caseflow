@@ -32,6 +32,11 @@ class Metrics::DateRange
     @end_date.try(:to_date)
   end
 
+  # comparison operator
+  def ==(other_range)
+    start_date == other_range.start_date && end_date == other_range.end_date
+  end
+
   private
 
   def valid_start_date
