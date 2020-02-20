@@ -59,7 +59,7 @@ const noteDiv = css({
 
 export default class DecisionIssues extends React.PureComponent {
   static generateDecisionIssues = (requestIssue, props) => {
-    const { decisionIssues, openDecisionHandler, openDeleteAddedDecisionIssueHandler, hideEdit } = props;
+    const { decisionIssues, openDecisionHandler, openDeleteAddedDecisionIssueHandler, hideDelete, hideEdit } = props;
 
     return decisionIssues.
       filter((decisionIssue) => {
@@ -75,7 +75,7 @@ export default class DecisionIssues extends React.PureComponent {
               <div {...flexContainer}>
                 Decision
                 <div>
-                  {openDeleteAddedDecisionIssueHandler && (
+                  {openDeleteAddedDecisionIssueHandler && !hideDelete({ decisionIssue }) && (
                     <span>
                       <Button
                         name="Delete"
@@ -153,9 +153,11 @@ DecisionIssues.propTypes = {
   }),
   openDecisionHandler: PropTypes.func,
   hearingWorksheet: PropTypes.object,
+  hideDelete: PropTypes.func,
   hideEdit: PropTypes.func
 };
 
 DecisionIssues.defaultProps = {
+  hideDelete: () => false,
   hideEdit: () => false
 };
