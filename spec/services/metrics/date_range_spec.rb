@@ -19,4 +19,13 @@ describe Metrics::DateRange do
 
     it { expect(subject).to be_falsey }
   end
+
+  describe ".for_fiscal_year" do
+    context "FY 2020" do
+      it "contains range for 2019-10" do
+        ranges = described_class.for_fiscal_year("2020")
+        expect(ranges).to include(Metrics::DateRange.new(Date.new(2019, 10, 1), Date.new(2019, 10, 31)))
+      end
+    end
+  end
 end

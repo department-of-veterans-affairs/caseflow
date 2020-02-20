@@ -604,7 +604,7 @@ export default class QueueTable extends React.PureComponent {
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
           {...this.state} />
-        <FooterRow columns={columns} />
+        <FooterRow rowObjects={[]} columns={columns} />
       </table>;
 
     return <div className="cf-table-wrapper" ref={(div) => {

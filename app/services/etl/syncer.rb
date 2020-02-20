@@ -43,19 +43,19 @@ class ETL::Syncer
         rows_updated: updated,
         rows_rejected: rejected
       )
-    rescue StandardError => error
-      build_record.update!(
-        rows_inserted: inserted,
-        rows_updated: updated,
-        rows_rejected: rejected,
-        comments: error,
-        status: :error,
-        finished_at: Time.zone.now
-      )
-      # re-raise so sentry and parent build record know.
-      raise error
     end
     build_record
+  rescue StandardError => error
+    build_record(etl_build).update!(
+      rows_inserted: inserted,
+      rows_updated: updated,
+      rows_rejected: rejected,
+      comments: error,
+      status: :error,
+      finished_at: Time.zone.now
+    )
+    # re-raise so sentry and parent build record know.
+    raise error
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
