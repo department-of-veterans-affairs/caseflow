@@ -465,7 +465,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         User.authenticate!(user: drafting_attorney)
 
         visit "/queue/appeals/#{vacate_stream.uuid}"
-        
+
         verify_cavc_conflict_action
 
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
