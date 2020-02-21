@@ -51,12 +51,7 @@ export const AddDecisionIssuesView = ({ appeal }) => {
       decisionIssues: ctx.decisionIssues.filter((issue) => issue.id !== state?.decisionIssue?.id)
     });
 
-    setState({
-      ...state,
-      deleteModal: false,
-      issueId: null,
-      decisionIssue: null
-    });
+    closeModals();
   };
 
   const openEditIssueModal = (requestIssueId, decisionIssue) => () => {
