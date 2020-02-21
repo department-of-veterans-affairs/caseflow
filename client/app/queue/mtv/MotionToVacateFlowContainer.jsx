@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useParams, useRouteMatch, Switch, Route, generatePath } from 'react-router';
 import { appealWithDetailSelector } from '../selectors';
 import { MotionToVacateContextProvider } from './MotionToVacateContext';
+import { AddDecisionIssuesView } from './AddDecisionIssuesView';
 import { ReviewVacatedDecisionIssuesView } from './ReviewVacatedDecisionIssuesView';
 import { getSteps, getNextStep, getPrevStep } from './mtvCheckoutSteps';
 
@@ -14,7 +15,7 @@ export const MotionToVacateFlowContainer = () => {
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
 
-  const steps = useMemo(() => getSteps(appeal, [appeal.type, appeal.vacateType]));
+  const steps = useMemo(() => getSteps(appeal), [appeal.type, appeal.vacateType]);
 
   const initialState = {
     // cloning the individual issues
@@ -35,14 +36,12 @@ export const MotionToVacateFlowContainer = () => {
           </Route>
 
           <Route path={`${path}/add_decisions`}>
-            {/* Insert component from #13071 here */}
-            {/* <AddDecisionsView appeal={appeal} /> */}
-            <h1>add_decisions</h1>
+            <AddDecisionIssuesView appeal={appeal} />
           </Route>
 
           <Route path={`${path}/submit`}>
             {/* Insert component from #13385 here */}
-            {/* <AddDecisionsView appeal={appeal} /> */}
+            {/* <SubmitDecisionsView appeal={appeal} /> */}
             <h1>submit</h1>
           </Route>
         </Switch>

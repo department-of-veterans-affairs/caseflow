@@ -164,6 +164,9 @@
   "MTV_CHECKOUT_REVIEW_VACATURES_TITLE": "Review vacated decision issues",
   "MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION": "Review the prior decision issues here that have been marked for vacatur by the judge. Please remember to include them in your decision letter if you haven't already.",
   "MTV_CHECKOUT_CONFIRM_REMOVE_DECISION_ISSUE": "Are you sure you want to remove this decision?",
+  "MTV_CHECKOUT_ADD_DECISIONS_TITLE": "Add decisions",
+  "MTV_CHECKOUT_ADD_DECISIONS_EXPLANATION": "Add decisions to the items listed here that have been reissued because of the motion to vacate. Any decisions to add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
+
 
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
