@@ -43,7 +43,7 @@ whats-next:  ## TODO
 	scripts/whats-next
 
 ready:  ## Helper command that watches the docker containers to finish start up
-	h=`docker-compose ps | grep healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep healthy`; echo $$h; sleep 1; done
+	h=`docker-compose ps | grep -i healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep -i healthy`; echo $$h; sleep 1; done
 
 up:  ## Start the docker containers
 	docker-compose up -d
