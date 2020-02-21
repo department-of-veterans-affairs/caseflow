@@ -37,7 +37,7 @@ export const ReviewVacatedDecisionIssuesView = ({ appeal, allowDelete = false })
   const onDeleteSubmit = () => {
     setCtx({
       ...ctx,
-      decisionIssues: ctx.decisionIssues.filter((issue) => issue.id !== state.issueId)
+      decisionIssues: ctx.decisionIssues.filter((issue) => issue.id !== state?.decisionIssue?.id)
     });
 
     setState({
