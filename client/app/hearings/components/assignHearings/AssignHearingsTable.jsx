@@ -155,6 +155,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         label: 'Filter by location',
         filterValueTransform: this.formatSuggestedHearingLocation,
         enableFilter: true,
+        anyFiltersAreSet: true,
         filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'suggestedLocation').filter_options
       },
       {
@@ -169,6 +170,7 @@ export default class AssignHearingsTable extends React.PureComponent {
           />
         ),
         enableFilter: true,
+        anyFiltersAreSet: true,
         filterValueTransform: (_value, row) => {
           const { powerOfAttorneyNamesForAppeals } = this.props;
 
