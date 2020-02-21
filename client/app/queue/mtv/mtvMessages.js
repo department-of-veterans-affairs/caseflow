@@ -12,7 +12,7 @@ export const addressMTVSuccessAlert = ({ data, appeal }) => {
 
   switch (disposition) {
   case 'granted':
-  case 'partial':
+  case 'partially_granted':
     return {
       title: sprintf(JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED, veteranFullName),
       detail: sprintf(JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED)
