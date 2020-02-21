@@ -454,10 +454,19 @@ RSpec.feature "Motion to vacate", :all_dbs do
         ].join("/")
       end
 
+      let(:submit_decisions_path) do
+        [
+          "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+          "motion_to_vacate_checkout/submit"
+        ].join("/")
+      end
+
       it "correctly handles checkout flow" do
         User.authenticate!(user: drafting_attorney)
 
         visit "/queue/appeals/#{vacate_stream.uuid}"
+
+        expect(vacate_stream.decision_issues.size).to eq(3)
 
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
@@ -486,6 +495,32 @@ RSpec.feature "Motion to vacate", :all_dbs do
         find("div", class: "Select-option", text: "Allowed").click
 
         click_on "Add Issue"
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(add_decisions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+        fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge.full_name)
+        fill_in "notes", with: "all done"
+
+        click_on "Continue"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
+          "sent to #{judge.full_name} for review."
+        )
+
+        expect(vacate_stream.decision_issues.size).to eq(4)
       end
     end
   end
@@ -627,5 +662,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   def select_issue_for_vacature(issue_id)
     find(".checkbox-wrapper-issues").find("label[for=\"#{issue_id}\"]").click
+  end
+
+  def valid_document_id
+    "12345-12345678"
   end
 end
