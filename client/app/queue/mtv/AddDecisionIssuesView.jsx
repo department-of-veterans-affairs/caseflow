@@ -9,10 +9,12 @@ import DecisionIssues from '../components/DecisionIssues';
 import { MotionToVacateContext } from './MotionToVacateContext';
 import { AddEditDecisionIssueModal } from './AddEditDecisionIssueModal';
 import uuid from 'uuid';
+import { RemoveDecisionIssueModal } from './RemoveDecisionIssueModal';
 
 const validateForm = () => true;
 const defaultState = {
   editIssueModal: false,
+  deleteModal: false,
   operation: 'add',
   requestIssueId: null,
   decisionIssue: null
@@ -33,6 +35,29 @@ export const AddDecisionIssuesView = ({ appeal }) => {
   );
 
   const closeModals = () => setState({ ...defaultState });
+
+  const handleDelete = (issueId, decisionIssue) => {
+    setState({
+      ...state,
+      deleteModal: true,
+      issueId,
+      decisionIssue
+    });
+  };
+
+  const onDeleteSubmit = () => {
+    setCtx({
+      ...ctx,
+      decisionIssues: ctx.decisionIssues.filter((issue) => issue.id !== state?.decisionIssue?.id)
+    });
+
+    setState({
+      ...state,
+      deleteModal: false,
+      issueId: null,
+      decisionIssue: null
+    });
+  };
 
   const openEditIssueModal = (requestIssueId, decisionIssue) => () => {
     const requestIssue = appeal?.issues?.find((issue) => issue.id === requestIssueId);
@@ -80,6 +105,8 @@ export const AddDecisionIssuesView = ({ appeal }) => {
         <DecisionIssues
           decisionIssues={ctx.decisionIssues}
           openDecisionHandler={openEditIssueModal}
+          openDeleteAddedDecisionIssueHandler={handleDelete}
+          hideDelete={hideEdit}
           hideEdit={hideEdit}
         />
       </AmaIssueList>
@@ -93,6 +120,7 @@ export const AddDecisionIssuesView = ({ appeal }) => {
           onSubmit={onIssueSubmit}
         />
       )}
+      {state.deleteModal && <RemoveDecisionIssueModal onCancel={closeModals} onSubmit={onDeleteSubmit} />}
     </QueueFlowPage>
   );
 };
