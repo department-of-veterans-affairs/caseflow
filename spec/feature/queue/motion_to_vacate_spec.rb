@@ -307,8 +307,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
-      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name))
-      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED, "denied"))
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "denied"))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
       # Verify PostDecisionMotion is created; should ultimately also check new tasks
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -373,8 +373,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
-      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name))
-      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED, "dismissed"))
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "dismissed"))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
       # Verify PostDecisionMotion is created; should ultimately also check new tasks
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)

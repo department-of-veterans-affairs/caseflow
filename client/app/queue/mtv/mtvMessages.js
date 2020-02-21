@@ -20,8 +20,8 @@ export const addressMTVSuccessAlert = ({ data, appeal }) => {
   case 'denied':
   case 'dismissed':
     return {
-      title: sprintf(JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, veteranFullName),
-      detail: sprintf(JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED, disposition)
+      title: sprintf(JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, veteranFullName, disposition),
+      detail: JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED
     };
   default:
     return {
