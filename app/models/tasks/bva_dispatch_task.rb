@@ -28,9 +28,9 @@ class BvaDispatchTask < Task
 
     def outcode(appeal, params, user)
       if appeal.is_a?(Appeal)
-        if appeal.vacate? && appeal.vacate_type == vacate_and_de_novo
-          appeal.create_stream(:de_novo).tap do |_de_novo_stream|
-            appeal.decison_issues.map { |di| di.create_contesting_request_issue!(de_novo_strea) }
+        if appeal.vacate? && appeal.vacate_type == "vacate_and_de_novo"
+          appeal.create_stream(:de_novo).tap do |de_novo_stream|
+            appeal.decision_issues.map { |di| di.create_contesting_request_issue!(de_novo_stream) }
           end
         end
         AmaAppealDispatch.new(appeal: appeal, user: user, params: params).call

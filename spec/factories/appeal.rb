@@ -220,7 +220,7 @@ FactoryBot.define do
       end
     end
 
-    trait :with_vacate_and_de_novo_stream do
+    trait :for_vacate_and_de_novo_stream do
       after(:create) do |appeal, evaluator|
         mail_task = create(
           :vacate_motion_mail_task,

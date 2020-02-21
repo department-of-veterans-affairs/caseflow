@@ -26,25 +26,22 @@ describe Appeal, :all_dbs do
       )
       expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
     end
-  end
 
-  context "#create de_novo appeal stream" do
-    let(:stream_type) { "de_novo" }
-    let!(:appeal) { create(:appeal, :with_vacate_and_de_novo_stream, number_of_claimants: 1) }
+    context "#create de_novo appeal stream" do
+      let(:stream_type) { "de_novo" }
 
-    subject { appeal.create_stream(stream_type) }
-
-    it "creates a de_novo appeal stream with data from the original appeal" do
-      expect(subject).to have_attributes(
-        receipt_date: appeal.receipt_date,
-        veteran_file_number: appeal.veteran_file_number,
-        legacy_opt_in_approved: appeal.legacy_opt_in_approved,
-        veteran_is_not_claimant: appeal.veteran_is_not_claimant,
-        stream_docket_number: appeal.docket_number,
-        stream_type: stream_type
-      )
-      expect(Appeal.de_novo.find_by(stream_docket_number: appeal.docket_number)).to_not be_nil
-      expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
+      it "creates a de_novo appeal stream with data from the original appeal" do
+        expect(subject).to have_attributes(
+          receipt_date: appeal.receipt_date,
+          veteran_file_number: appeal.veteran_file_number,
+          legacy_opt_in_approved: appeal.legacy_opt_in_approved,
+          veteran_is_not_claimant: appeal.veteran_is_not_claimant,
+          stream_docket_number: appeal.docket_number,
+          stream_type: stream_type
+        )
+        expect(Appeal.de_novo.find_by(stream_docket_number: appeal.docket_number)).to_not be_nil
+        expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
+      end
     end
   end
 
