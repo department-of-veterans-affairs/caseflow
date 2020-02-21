@@ -50,7 +50,7 @@ class HearingBadge extends React.PureComponent {
       }).
         catch((err) => {
           // we don't care if the browser gave up for some reason.
-          if (err.message(/Request has been terminated/)) {
+          if (err.message.match(/Request has been terminated/)) {
             return;
           }
 
