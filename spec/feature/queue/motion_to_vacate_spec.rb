@@ -307,7 +307,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
-      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "denied"))
+      expect(page).to have_content(
+        format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "denied")
+      )
       expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
       # Verify PostDecisionMotion is created; should ultimately also check new tasks
@@ -373,7 +375,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
-      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "dismissed"))
+      expect(page).to have_content(
+        format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "dismissed")
+      )
       expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
       # Verify PostDecisionMotion is created; should ultimately also check new tasks
