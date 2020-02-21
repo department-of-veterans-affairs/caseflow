@@ -536,7 +536,7 @@ export default class QueueTable extends React.PureComponent {
         }
 
         if (this.props.tabPaginationOptions && this.props.tabPaginationOptions.onPageLoaded) {
-          this.props.tabPaginationOptions.onPageLoaded(responseFromCache, this.state.filtered);
+          this.props.tabPaginationOptions.onPageLoaded(responseFromCache, this.state.currentPage, this.state.filtered);
         }
       }
     } else {

@@ -81,6 +81,12 @@ export default class AssignHearingsTable extends React.PureComponent {
     return `${city}, ${state} ${formattedFacilityType}`;
   }
 
+  getCurrentPageNumberFromUrl() {
+    const queryParams = getQueryParams(window.location.search);
+
+    return Number(queryParams[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]) || 1;
+  }
+
   /*
    * Gets the list of columns to populate the QueueTable with.
    */
@@ -177,7 +183,7 @@ export default class AssignHearingsTable extends React.PureComponent {
   // update this component to show an error.
   // Filtered indicates if any filters are active in which case
   // we do not wanna show the error if no tasks are returned.
-  onPageLoaded = (response, filtered = false) => {
+  onPageLoaded = (response, currentPage, filtered = false) => {
     if (!response) {
       return;
     }
@@ -189,7 +195,9 @@ export default class AssignHearingsTable extends React.PureComponent {
 
     this.setState({
       showNoVeteransToAssignError: totalTaskCount === 0 && !filtered,
-      amaDocketLineIndex
+      // null index means do not display the line at all
+      // -1 index means display line at the very start of the list
+      amaDocketLineIndex: currentPage > 0 && amaDocketLineIndex === -1 ? null : amaDocketLineIndex
     });
   }
 
@@ -209,14 +217,19 @@ export default class AssignHearingsTable extends React.PureComponent {
     // Otherwise, we do not pass anything since QueueTable sets
     // default page to be 1.
     if (!this.props.clicked) {
-      const queryParams = getQueryParams(window.location.search);
-
-      tabPaginationOptions[[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]] =
-        Number(queryParams[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]) || 1;
+      tabPaginationOptions[[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]] = this.getCurrentPageNumberFromUrl();
     }
 
     if (this.state.showNoVeteransToAssignError) {
       return <NoVeteransToAssignMessage />;
+    }
+
+    var docketStyle = {};
+    if (this.state.amaDocketLineIndex != null) {
+      docketStyle = docketCutoffLineStyle(
+        this.state.amaDocketLineIndex,
+        this.endOfNextMonth().format('MMMM YYYY')
+      );
     }
 
     return (
@@ -231,6 +244,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         taskPagesApiEndpoint={`${TASKS_ENDPOINT}${qs}`}
         enablePagination
         tabPaginationOptions={tabPaginationOptions}
+        styling={docketStyle}
       />
     );
   }
