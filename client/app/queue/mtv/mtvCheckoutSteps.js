@@ -1,7 +1,7 @@
 export const views = {
-  review_vacatures: { title: 'Review vacated decision issues' },
-  add_decisions: { title: 'Add decisions' },
-  submit: { title: 'Submit draft decision for review' }
+  review_vacatures: { title: 'Review Vacated Decision Issues' },
+  add_decisions: { title: 'Add Decisions' },
+  submit: { title: 'Submit Draft Decision for Review' }
 };
 
 // This might be more elegantly modeled w/ a finite state machine lib like xstate
