@@ -13,7 +13,10 @@ import {
   encodeQueryParams,
   getQueryParams
 } from '../../../util/QueryParamsUtil';
-import { getIndexOfDocketLine } from './AssignHearingsDocketLine';
+import {
+  docketCutoffLineStyle,
+  getIndexOfDocketLine
+} from './AssignHearingsDocketLine';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
 import ApiUtil from '../../../util/ApiUtil';
@@ -81,7 +84,7 @@ export default class AssignHearingsTable extends React.PureComponent {
     return `${city}, ${state} ${formattedFacilityType}`;
   }
 
-  getCurrentPageNumberFromUrl() {
+  getCurrentPageNumberFromUrl = () => {
     const queryParams = getQueryParams(window.location.search);
 
     return Number(queryParams[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]) || 1;
@@ -224,8 +227,9 @@ export default class AssignHearingsTable extends React.PureComponent {
       return <NoVeteransToAssignMessage />;
     }
 
-    var docketStyle = {};
-    if (this.state.amaDocketLineIndex != null) {
+    let docketStyle = {};
+
+    if (this.state.amaDocketLineIndex !== null) {
       docketStyle = docketCutoffLineStyle(
         this.state.amaDocketLineIndex,
         this.endOfNextMonth().format('MMMM YYYY')

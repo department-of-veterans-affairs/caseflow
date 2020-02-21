@@ -719,7 +719,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       end
     end
 
-    context "Filter by PowerOfAttorneyName column", focus: true do
+    context "Filter by PowerOfAttorneyName column" do
       # rubocop:disable Style/HashSyntax
       before do
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["1"]).and_return(
