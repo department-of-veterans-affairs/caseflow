@@ -577,6 +577,20 @@ class RequestIssue < ApplicationRecord
     contested_decision_issue&.remanded?
   end
 
+  def remand_type
+    return unless remanded?
+
+    # if this request issue is a correction for a decision issue, use the original issue's remand type
+    # instead of the contested decision issue's disposition
+    return previous_request_issue&.remand_type if decision_correction?
+
+    if contested_decision_issue.disposition == DecisionIssue::DIFFERENCE_OF_OPINION
+      "difference_of_opinion"
+    else
+      "duty_to_assist"
+    end
+  end
+
   def title_of_active_review
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
