@@ -32,7 +32,7 @@ class AttorneyTask < Task
       Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
       Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-    ]
+    ].compact
   end
 
   def timeline_title
