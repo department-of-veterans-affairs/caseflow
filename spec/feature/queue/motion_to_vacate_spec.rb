@@ -575,6 +575,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
           "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
           "sent to #{judge.full_name} for review."
         )
+
+        expect(vacate_stream.decision_issues.size).to eq(4)
       end
     end
   end

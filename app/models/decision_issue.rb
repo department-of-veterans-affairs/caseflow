@@ -175,6 +175,7 @@ class DecisionIssue < ApplicationRecord
       decision_review: vacate_appeal_stream,
       decision_review_type: decision_review_type,
       contested_decision_issue_id: id,
+      contested_rating_issue_diagnostic_code: diagnostic_code,
       contested_rating_issue_reference_id: rating_issue_reference_id,
       contested_rating_issue_profile_date: rating_profile_date,
       contested_issue_description: description,
