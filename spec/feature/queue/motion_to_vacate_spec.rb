@@ -466,6 +466,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         visit "/queue/appeals/#{vacate_stream.uuid}"
 
+        check_cavc_alert
         verify_cavc_conflict_action
 
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -513,6 +514,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         visit "/queue/appeals/#{vacate_stream.uuid}"
 
+        check_cavc_alert
         verify_cavc_conflict_action
 
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
