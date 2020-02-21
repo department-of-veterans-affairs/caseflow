@@ -71,7 +71,7 @@ export const CaseDetailsView = (props) => {
     }
   }, []);
 
-  const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(tasks), [tasks]);
+  const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
 
   return (
     <React.Fragment>
