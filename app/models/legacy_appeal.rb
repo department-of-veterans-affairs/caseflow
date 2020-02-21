@@ -799,6 +799,10 @@ class LegacyAppeal < ApplicationRecord
     user_has_relevent_open_tasks && Colocated.singleton.user_is_admin?(user)
   end
 
+  def location_history
+    VACOLS::Priorloc.where(lockey: vacols_id).order(:locdout).pluck(:locdout, :locstto, :locstrcv)
+  end
+
   private
 
   def soc_date_eligible_for_opt_in?(receipt_date)
