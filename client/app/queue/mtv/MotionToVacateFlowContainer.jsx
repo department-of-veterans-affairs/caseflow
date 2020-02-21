@@ -7,6 +7,7 @@ import { AddDecisionIssuesView } from './AddDecisionIssuesView';
 import { ReviewVacatedDecisionIssuesView } from './ReviewVacatedDecisionIssuesView';
 import { getSteps, getNextStep, getPrevStep } from './mtvCheckoutSteps';
 import { SubmitVacatedDecisionsView } from './SubmitVacatedDecisionsView';
+import { MotionToVacateCheckoutProgressBar } from './MotionToVacateCheckoutProgressBar';
 
 export const MotionToVacateFlowContainer = () => {
   const { path } = useRouteMatch();
@@ -29,18 +30,19 @@ export const MotionToVacateFlowContainer = () => {
   return (
     <React.Fragment>
       <MotionToVacateContextProvider initialState={initialState}>
-        {/* MTV Progress Bar (#13319) Here */}
-
         <Switch>
           <Route path={`${path}/review_vacatures`}>
+            <MotionToVacateCheckoutProgressBar steps={steps} current="review_vacatures" />
             <ReviewVacatedDecisionIssuesView appeal={appeal} />
           </Route>
 
           <Route path={`${path}/add_decisions`}>
+            <MotionToVacateCheckoutProgressBar steps={steps} current="add_decisions" />
             <AddDecisionIssuesView appeal={appeal} />
           </Route>
 
           <Route path={`${path}/submit`}>
+            <MotionToVacateCheckoutProgressBar steps={steps} current="submit" />
             <SubmitVacatedDecisionsView appeal={appeal} />
           </Route>
         </Switch>
