@@ -463,7 +463,7 @@ class User < ApplicationRecord
     end
 
     def find_by_vacols_username(vacols_username)
-      User.joins(:vacols_user).where(cached_user_attributes: { slogid: vacols_username }).first
+      User.joins(:vacols_user).find_by(cached_user_attributes: { slogid: vacols_username })
     end
 
     def list_hearing_coordinators
