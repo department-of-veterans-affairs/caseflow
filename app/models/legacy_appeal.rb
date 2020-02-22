@@ -800,7 +800,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def location_history
-    VACOLS::Priorloc.where(lockey: vacols_id).order(:locdout).pluck(:locdout, :locstto, :locstrcv)
+    VACOLS::Priorloc.where(lockey: vacols_id).order(:locdout)
   end
 
   private

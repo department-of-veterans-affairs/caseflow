@@ -644,6 +644,36 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context "#location_history" do
+    let(:vacols_case) do
+      create(:case).tap { |vcase| vcase.update_vacols_location!(first_location) }
+    end
+
+    let(:first_location) { "96" }
+    let(:second_location) { "50" }
+    let(:third_location) { "81" }
+
+    before do
+      Timecop.return # undo the global freeze at the top of this file.
+                     # since VACOLS sets time internally via Oracle it does not respect Timecop.
+      vacols_case.update_vacols_location!(second_location)
+      sleep 1 # small hesitation so date column sorts correctly
+      vacols_case.update_vacols_location!(third_location)
+    end
+
+    subject { appeal.location_history.map { |priloc| [priloc.assigned_at, priloc.location, priloc.assigned_by] } }
+
+    let(:today) { Time.zone.today }
+
+    it "returns array of date, to_whom, by_whom" do
+      expect(subject).to eq([
+        [today, first_location, "DSUSER"],
+        [today, second_location, "DSUSER"],
+        [today, third_location, "DSUSER"]
+      ])
+    end
+  end
+
   context "#case_assignment_exists" do
     let(:vacols_case) do
       create(:case, :assigned)

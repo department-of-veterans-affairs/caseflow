@@ -6,7 +6,7 @@ class VacolsLocationBatchUpdater
   def initialize(location:, vacols_ids:, user_id:)
     @location = location
     @vacols_ids = vacols_ids
-    @user_id = (user_id || "DSUSER").upcase
+    @user_id = (user_id.present? ? user_id : "DSUSER").upcase
   end
 
   def call
