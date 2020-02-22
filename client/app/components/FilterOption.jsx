@@ -13,7 +13,8 @@ const listStyling = css({
   paddingLeft: 0
 });
 const listItemStyling = css({
-  padding: '1px'
+  padding: '1px',
+  position: 'relative'
 });
 
 const FilterOption = ({ options, setSelectedValue,
