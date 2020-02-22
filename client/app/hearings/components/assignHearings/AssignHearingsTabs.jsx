@@ -41,7 +41,6 @@ export class AssignHearingsTabs extends React.PureComponent {
     const hearingsForSelected = _.get(selectedHearingDay, 'hearings', {});
     const availableSlots = _.get(selectedHearingDay, 'totalSlots', 0) - Object.keys(hearingsForSelected).length;
 
-    // Remove when pagination lands (#11757)
     return (
       <div className="usa-width-three-fourths">
         {!_.isNil(selectedHearingDay) &&
