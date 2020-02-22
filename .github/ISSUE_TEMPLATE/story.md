@@ -16,7 +16,7 @@ Job story: When a [user] does [x], they need [y], so that [z]
 - [ ] Please put this work behind the feature toggle: [toggle name]
 - [ ] This feature should be accessible to the following user groups:
 - [ ] Include screenshot(s) in the Github issue if there are front-end changes
-- [ ] Update documentation:
+- [ ] Update documentation: [link]
 
 ## Release notes
 <!-- Write what should be included in release notes (Caseflow uses Headway), updated when the story is built, before it's deployed. -->

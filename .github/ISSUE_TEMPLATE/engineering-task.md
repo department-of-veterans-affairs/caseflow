@@ -11,7 +11,7 @@ assignees: ''
 
 
 ## Acceptance criteria
-- [ ] Update documentation:
+- [ ] Update documentation: [link]
 
 ## Background/context/resources
 
