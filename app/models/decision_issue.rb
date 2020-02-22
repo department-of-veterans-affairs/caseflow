@@ -169,9 +169,9 @@ class DecisionIssue < ApplicationRecord
     request_issues.first
   end
 
-  def create_contesting_request_issue!(review)
+  def create_contesting_request_issue!(appeal)
     RequestIssue.find_or_create_by!(
-      decision_review: review,
+      decision_review: appeal,
       decision_review_type: decision_review_type,
       contested_decision_issue_id: id,
       contested_rating_issue_diagnostic_code: diagnostic_code,
