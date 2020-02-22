@@ -188,6 +188,84 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#remand_type" do
+    subject { rating_request_issue.remand_type }
+
+    context "when not contesting a decision issue" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when contesting a decision issue" do
+      let!(:decision_issue) { create(:decision_issue, decision_review: another_review, disposition: disposition) }
+      let(:another_review) { create(:higher_level_review) }
+      let(:disposition) { nil }
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      context "when the decision issue has a remanded disposition" do
+        context "when the decision issue has a DTA disposition" do
+          let(:disposition) { "DTA Error" }
+
+          it { is_expected.to eq "duty_to_assist" }
+        end
+
+        context "when the decision issue has a difference of opinion disposition" do
+          let(:disposition) { "Difference of Opinion" }
+
+          it { is_expected.to eq "difference_of_opinion" }
+        end
+      end
+
+      context "when the decision issue does not have a remand disposition" do
+        let(:disposition) { "granted" }
+
+        it { is_expected.to be_falsey }
+
+        context "when the decision issue is from a remand supplemental claim" do
+          let(:another_review) { create(:supplemental_claim, decision_review_remanded: create(:appeal)) }
+
+          it { is_expected.to be_falsey }
+
+          context "when the decision issue from the same review (it is a correction)" do
+            let(:review) { another_review }
+
+            let(:original_request_issue) do
+              create(
+                :request_issue,
+                decision_review: create(:higher_level_review),
+                decision_issues: [original_decision_issue]
+              )
+            end
+            let(:original_decision_issue) { create(:decision_issue, disposition: original_disposition) }
+            let(:corrected_request_issue) do
+              create(:request_issue, decision_review: review, contested_decision_issue_id: original_decision_issue.id)
+            end
+
+            let!(:decision_issue) do
+              create(
+                :decision_issue,
+                decision_review: review,
+                disposition: disposition,
+                request_issues: [corrected_request_issue]
+              )
+            end
+
+            context "when the original disposition is DOO" do
+              let(:original_disposition) { DecisionIssue::DIFFERENCE_OF_OPINION }
+
+              it { is_expected.to eq "difference_of_opinion" }
+            end
+
+            context "when the original disposition is DTA" do
+              let(:original_disposition) { DecisionIssue::DTA_ERROR }
+
+              it { is_expected.to eq "duty_to_assist" }
+            end
+          end
+        end
+      end
+    end
+  end
+
   context "#contention" do
     let(:end_product_establishment) { create(:end_product_establishment, :active) }
     let!(:contention) do

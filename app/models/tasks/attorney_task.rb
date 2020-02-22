@@ -28,10 +28,11 @@ class AttorneyTask < Task
     return [] if assigned_to != user
 
     [
+      (Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
       Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
       Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-    ]
+    ].compact
   end
 
   def timeline_title
@@ -45,6 +46,10 @@ class AttorneyTask < Task
 
   def self.label
     COPY::ATTORNEY_TASK_LABEL
+  end
+
+  def stays_with_reassigned_parent?
+    super || completed?
   end
 
   private

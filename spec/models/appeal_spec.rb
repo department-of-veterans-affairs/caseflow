@@ -628,6 +628,19 @@ describe Appeal, :all_dbs do
       end
     end
 
+    context "request issue is missing benefit type" do
+      let!(:appeal) do
+        create(:appeal, request_issues: [
+                 create(:request_issue, benefit_type: "unknown"),
+                 create(:request_issue, :unidentified)
+               ])
+      end
+
+      it "raises MissingBusinessLine exception" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingBusinessLine)
+      end
+    end
+
     context "creating translation tasks" do
       let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
       let(:bgs_veteran_state) { nil }
