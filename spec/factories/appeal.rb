@@ -219,29 +219,5 @@ FactoryBot.define do
         PostDecisionMotionUpdater.new(addr_task, params).process
       end
     end
-
-    trait :for_vacate_and_de_novo_stream do
-      after(:create) do |appeal, evaluator|
-        mail_task = create(
-          :vacate_motion_mail_task,
-          appeal: appeal,
-          parent: appeal.root_task,
-          assigned_to: evaluator.associated_judge
-        )
-        addr_task = create(
-          :judge_address_motion_to_vacate_task,
-          appeal: appeal,
-          parent: mail_task,
-          assigned_to: evaluator.associated_judge
-        )
-        params = {
-          disposition: "granted",
-          vacate_type: "vacate_and_de_novo",
-          instructions: "some instructions",
-          assigned_to_id: evaluator.associated_attorney.id
-        }
-        PostDecisionMotionUpdater.new(addr_task, params).process
-      end
-    end
   end
 end
