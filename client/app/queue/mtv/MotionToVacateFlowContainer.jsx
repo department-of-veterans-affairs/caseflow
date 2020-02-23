@@ -3,8 +3,11 @@ import { useSelector } from 'react-redux';
 import { useParams, useRouteMatch, Switch, Route, generatePath } from 'react-router';
 import { appealWithDetailSelector } from '../selectors';
 import { MotionToVacateContextProvider } from './MotionToVacateContext';
+import { AddDecisionIssuesView } from './AddDecisionIssuesView';
 import { ReviewVacatedDecisionIssuesView } from './ReviewVacatedDecisionIssuesView';
 import { getSteps, getNextStep, getPrevStep } from './mtvCheckoutSteps';
+import { SubmitVacatedDecisionsView } from './SubmitVacatedDecisionsView';
+import { MotionToVacateCheckoutProgressBar } from './MotionToVacateCheckoutProgressBar';
 
 export const MotionToVacateFlowContainer = () => {
   const { path } = useRouteMatch();
@@ -14,7 +17,7 @@ export const MotionToVacateFlowContainer = () => {
 
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
 
-  const steps = useMemo(() => getSteps(appeal, [appeal.type, appeal.vacateType]));
+  const steps = useMemo(() => getSteps(appeal), [appeal.type, appeal.vacateType]);
 
   const initialState = {
     // cloning the individual issues
@@ -27,23 +30,20 @@ export const MotionToVacateFlowContainer = () => {
   return (
     <React.Fragment>
       <MotionToVacateContextProvider initialState={initialState}>
-        {/* MTV Progress Bar (#13319) Here */}
-
         <Switch>
           <Route path={`${path}/review_vacatures`}>
+            <MotionToVacateCheckoutProgressBar steps={steps} current="review_vacatures" />
             <ReviewVacatedDecisionIssuesView appeal={appeal} />
           </Route>
 
           <Route path={`${path}/add_decisions`}>
-            {/* Insert component from #13071 here */}
-            {/* <AddDecisionsView appeal={appeal} /> */}
-            <h1>add_decisions</h1>
+            <MotionToVacateCheckoutProgressBar steps={steps} current="add_decisions" />
+            <AddDecisionIssuesView appeal={appeal} />
           </Route>
 
           <Route path={`${path}/submit`}>
-            {/* Insert component from #13385 here */}
-            {/* <AddDecisionsView appeal={appeal} /> */}
-            <h1>submit</h1>
+            <MotionToVacateCheckoutProgressBar steps={steps} current="submit" />
+            <SubmitVacatedDecisionsView appeal={appeal} />
           </Route>
         </Switch>
       </MotionToVacateContextProvider>
