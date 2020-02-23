@@ -654,10 +654,14 @@ describe LegacyAppeal, :all_dbs do
     let(:third_location) { "81" }
 
     before do
-      Timecop.return # undo the global freeze at the top of this file.
-                     # since VACOLS sets time internally via Oracle it does not respect Timecop.
+      # undo the global freeze at the top of this file.
+      # since VACOLS sets time internally via Oracle it does not respect Timecop.
+      Timecop.return
+
       vacols_case.update_vacols_location!(second_location)
-      sleep 1 # small hesitation so date column sorts correctly
+
+      # small hesitation so date column sorts correctly
+      sleep 1
       vacols_case.update_vacols_location!(third_location)
     end
 
@@ -667,10 +671,10 @@ describe LegacyAppeal, :all_dbs do
 
     it "returns array of date, to_whom, by_whom" do
       expect(subject).to eq([
-        [today, first_location, "DSUSER"],
-        [today, second_location, "DSUSER"],
-        [today, third_location, "DSUSER"]
-      ])
+                              [today, first_location, "DSUSER"],
+                              [today, second_location, "DSUSER"],
+                              [today, third_location, "DSUSER"]
+                            ])
     end
   end
 
