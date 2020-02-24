@@ -78,7 +78,8 @@ class LegacyAppeal < ApplicationRecord
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products,
-           to: :veteran
+           to: :veteran,
+           allow_nil: true
 
   delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip,
            to: :bgs_address_service,
