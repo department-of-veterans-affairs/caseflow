@@ -34,7 +34,7 @@ class WarmBgsCachesJob < CaseflowJob
       claimant.representative_name # updates_cache
       claimant.update!(updated_at: Time.zone.now)
     end
-    datadog_report_time_segment(segment: "warn_poa_caches", start_time: start_time)
+    datadog_report_time_segment(segment: "warm_poa_caches", start_time: start_time)
   end
 
   def claimants_for_open_appeals
