@@ -29,7 +29,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def cache_ama_appeals
-    appeals = Appeal.where(id: open_appeals_from_tasks)
+    appeals = Appeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(Appeal.name))
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
     veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
     appeal_assignees_to_cache = assignees_for_caseflow_appeal_ids(appeals.pluck(:id), Appeal.name)
@@ -75,14 +75,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
-  def open_appeals_from_tasks
-    Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
+  def open_appeals_from_tasks(appeal_type)
+    Task.open.where(appeal_type: appeal_type).pluck(:appeal_id).uniq
   end
 
   def cache_legacy_appeals
     # Avoid lazy evaluation bugs by immediately plucking all VACOLS IDs. Lazy evaluation of the LegacyAppeal.find(...)
     # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
-    legacy_appeals = LegacyAppeal.where(id: Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
+    legacy_appeals = LegacyAppeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(LegacyAppeal.name))
     all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
     cache_postgres_data_start = Time.zone.now
