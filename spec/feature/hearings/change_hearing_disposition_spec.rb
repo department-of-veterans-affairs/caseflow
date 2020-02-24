@@ -157,7 +157,7 @@ RSpec.shared_examples "Change hearing disposition" do
           visit "hearings/schedule/assign"
           expect(page).to have_content("Regional Office")
           click_dropdown(text: "Denver")
-          click_button(waiting_button_text)
+          click_button(waiting_button_text, exact: true)
           click_on veteran_hearing_link_text
           expect(page).to have_content(ScheduleHearingTask.last.label)
         end
@@ -224,7 +224,7 @@ RSpec.shared_examples "Change hearing disposition" do
           visit "hearings/schedule/assign"
           expect(page).to have_content("Regional Office")
           click_dropdown(text: "Denver")
-          click_button(waiting_button_text)
+          click_button(waiting_button_text, exact: true)
           click_on veteran_hearing_link_text
           expect(page).to have_content(ScheduleHearingTask.last.label)
         end
