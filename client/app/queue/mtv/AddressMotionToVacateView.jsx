@@ -27,7 +27,12 @@ export const AddressMotionToVacateView = () => {
   }));
 
   const handleSubmit = (result) => {
-    dispatch(submitMTVJudgeDecision(result, { history }));
+    dispatch(
+      submitMTVJudgeDecision(result, {
+        history,
+        appeal
+      })
+    );
   };
 
   return (

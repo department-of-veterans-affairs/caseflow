@@ -81,7 +81,6 @@ describe PostDecisionMotionsController do
         post :create, params: params
 
         expect(response).to be_success
-        expect(flash[:success]).to be_present
       end
     end
   end

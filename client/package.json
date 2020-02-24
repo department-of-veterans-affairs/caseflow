@@ -81,7 +81,7 @@
     "pdfjs-dist": "1.10.97",
     "pluralize": "^7.0.0",
     "prop-types": "^15.7.2",
-    "rc-collapse": "^1.7.6",
+    "rc-collapse": "^1.11.8",
     "react": "^16.12.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-csv": "^1.1.1",
