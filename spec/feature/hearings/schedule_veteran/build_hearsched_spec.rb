@@ -701,7 +701,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         end
 
         step "check if the filter options are as expected" do
-          expect(page).to have_content("Suggested Location", wait: 30)
+          expect(page).to have_content("Suggested Location")
           expect(page).to have_selector(".unselected-filter-icon-inner", count: 2)
           page.find(".unselected-filter-icon-inner", match: :first).click
           expect(page).to have_content("#{Appeal.first.suggested_hearing_location.formatted_location} (1)")
@@ -713,7 +713,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
           page.find(
             "label",
             text: "#{Appeal.first.suggested_hearing_location.formatted_location} (1)",
-            exact: true
+            match: :prefer_exact
           ).click
           expect(find("tbody").find_all("tr").length).to eq(1)
         end
@@ -745,7 +745,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         end
 
         step "check if the filter options are as expected" do
-          expect(page).to have_content("Power of Attorney (POA)", wait: 30)
+          expect(page).to have_content("Power of Attorney (POA)")
           expect(page).to have_selector(".unselected-filter-icon-inner", count: 2)
           page.find_all(".unselected-filter-icon-inner")[1].click
           expect(page).to have_content("#{Appeal.first.representative_name} (1)")
@@ -754,7 +754,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         end
 
         step "clicking on a filter reduces the number of results by the expect amount" do
-          page.find("label", text: "#{Appeal.first.representative_name} (1)", exact: true).click
+          page.find("label", text: "#{Appeal.first.representative_name} (1)", match: :prefer_exact).click
           expect(find("tbody").find_all("tr").length).to eq(1)
         end
       end
