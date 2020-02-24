@@ -82,7 +82,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeals
     # Avoid lazy evaluation bugs by immediately plucking all VACOLS IDs. Lazy evaluation of the LegacyAppeal.find(...)
     # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
-    legacy_appeals = LegacyAppeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(LegacyAppeal.name))
+    legacy_appeals = LegacyAppeal.includes(:available_hearing_locations)
+      .where(id: open_appeals_from_tasks(LegacyAppeal.name))
     all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
     cache_postgres_data_start = Time.zone.now
