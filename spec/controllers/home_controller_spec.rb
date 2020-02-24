@@ -14,18 +14,32 @@ RSpec.describe HomeController, :postgres, type: :controller do
     context "when visitor is logged in" do
       let!(:current_user) { User.authenticate! }
 
-      it "should set timezone in session if is not set" do
+      it "should set timezone in session if is not set and restore it" do
+        initial_time_zone = Time.zone
         expect(@request.session[:timezone]).to eq nil
-        get :index
-        expect(Time.zone.name).to eq current_user.timezone
-        expect(@request.session[:timezone]).to eq current_user.timezone
+
+        RSpec::Mocks.with_temporary_scope do
+          get :index
+          allow(Time).to receive(:zone=).and_call_original
+          allow(Time).to receive(:zone=).with(current_user.timezone).once
+          expect(@request.session[:timezone]).to eq current_user.timezone
+        end
+
+        expect(Time.zone).to eq initial_time_zone
       end
 
-      it "should use session's value if is already set" do
+      it "should use session's value if is already set and restore it" do
+        initial_time_zone = Time.zone
         @request.session[:timezone] = "America/Chicago"
-        get :index
-        expect(Time.zone.name).to eq "America/Chicago"
-        expect(@request.session[:timezone]).to eq "America/Chicago"
+
+        RSpec::Mocks.with_temporary_scope do
+          allow(Time).to receive(:zone=).and_call_original
+          allow(Time).to receive(:zone=).with("America/Chicago").once
+          get :index
+          expect(@request.session[:timezone]).to eq "America/Chicago"
+        end
+        
+        expect(Time.zone).to eq initial_time_zone
       end
     end
 
