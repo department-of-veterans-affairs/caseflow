@@ -11,6 +11,7 @@ class WarmBgsCachesJob < CaseflowJob
     warm_participant_caches
     warm_veteran_attribute_caches
     warm_people_caches
+    warm_poa_caches
     datadog_report_runtime(metric_group_name: "warm_bgs_caches_job")
   end
 
@@ -28,10 +29,12 @@ class WarmBgsCachesJob < CaseflowJob
     # UpdateCachedAppealsAttributesJob cares about.
     # assuming we have 40k open appeals/claimants at any given time,
     # and we cache each one for 30 days, we want to cache about 1400 a day.
+    start_time = Time.zone.now
     oldest_claimants_for_open_appeals.limit(1400).each do |claimant|
       claimant.representative_name # updates_cache
       claimant.update!(updated_at: Time.zone.now)
     end
+    datadog_report_time_segment(segment: "warn_poa_caches", start_time: start_time)
   end
 
   def claimants_for_open_appeals
