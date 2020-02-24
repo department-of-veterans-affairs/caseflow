@@ -72,7 +72,6 @@ export default class TabWindow extends React.Component {
           }>
             {tabs.map((tab, i) =>
               <button
-                value={tab.tabName && tab.tabName}
                 className={this.getTabClassName(i, this.state.currentPage, tab.disable)}
                 key={i}
                 id={`${this.getTabGroupName(name)}-tab-${i}`}
