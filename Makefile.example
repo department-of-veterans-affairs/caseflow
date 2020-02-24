@@ -54,6 +54,12 @@ down:	## Stop the docker containers
 run: up ready  ## Start rails server and frontend server
 	foreman start
 
+run-backend: up ready  ## Start rails server without the frontend
+	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
+
+run-frontend: ## Start just the frontend server
+	cd client && yarn run dev:hot
+
 test: clean  ## Run test suite
 	bundle exec rake
 
