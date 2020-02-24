@@ -39,7 +39,6 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
 
     def navigate_to_schedule_veteran_modal
-      cache_appeals
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Central")
@@ -50,7 +49,6 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
     end
-
     scenario "address from BGS is displayed in schedule veteran modal" do
       navigate_to_schedule_veteran_modal
 
@@ -60,7 +58,6 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         "#{FakeConstants.BGS_SERVICE.DEFAULT_STATE} #{FakeConstants.BGS_SERVICE.DEFAULT_ZIP}"
       )
     end
-
     scenario "Schedule Veteran for central hearing" do
       navigate_to_schedule_veteran_modal
       # Wait for the contents of the dropdown to finish loading before clicking into the dropdown.
@@ -704,7 +701,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         end
 
         step "check if the filter options are as expected" do
-          expect(page).to have_content("Suggested Location")
+          expect(page).to have_content("Suggested Location", wait: 30)
           page.find(".unselected-filter-icon-inner", match: :first).click
           expect(page).to have_content("Clear Suggested location filter")
           expect(page).to have_content("#{Appeal.first.suggested_hearing_location.formatted_location} (1)")
@@ -744,7 +741,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         end
 
         step "check if the filter options are as expected" do
-          expect(page).to have_content("Power of Attorney (POA)")
+          expect(page).to have_content("Power of Attorney (POA)", wait: 30)
           page.find_all("path.unselected-filter-icon-inner")[1].click
           expect(page).to have_content("Clear Power of attorney filter")
           expect(page).to have_content("#{Appeal.first.representative_name} (1)")

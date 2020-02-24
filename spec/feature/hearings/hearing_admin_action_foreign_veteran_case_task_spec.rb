@@ -95,9 +95,9 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
 
         it "case shows up in schedule veterans list" do
           allow_any_instance_of(HearingDayRange).to receive(:load_days).and_return([create(:hearing_day)])
-          cache_appeals
 
           visit("/hearings/schedule/assign?regional_office_key=RO17")
+          cache_appeals
 
           click_button("AMA Veterans Waiting")
 
