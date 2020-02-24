@@ -35,6 +35,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     appeal_assignees_to_cache = assignees_for_caseflow_appeal_ids(appeals.pluck(:id), Appeal.name)
 
     appeal_aod_status = aod_status_for_appeals(appeals)
+    representative_names = representative_names_for_appeals(appeals)
 
     appeals_to_cache = appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
@@ -49,7 +50,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
         is_aod: appeal_aod_status.include?(appeal.id),
-        power_of_attorney_name: appeal.representative_name,
+        power_of_attorney_name: representative_names[appeal.id],
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
         veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
@@ -219,6 +220,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       "(advance_on_docket_motions.granted = true and advance_on_docket_motions.created_at > appeals.receipt_date) "\
       "or people.date_of_birth < (current_date - interval '75 years')"
     ).pluck(:id)
+  end
+
+  def representative_names_for_appeals(appeals)
+    # builds a hash of appeal_id => rep name
+    Claimant.where(decision_review_id: appeals, decision_review_type: Appeal.name).map do |claimant|
+      [claimant.decision_review_id, claimant.representative_name]
+    end.to_h
   end
 
   def assignees_for_caseflow_appeal_ids(appeal_ids, appeal_type)

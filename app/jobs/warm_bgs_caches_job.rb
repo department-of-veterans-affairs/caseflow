@@ -16,6 +16,36 @@ class WarmBgsCachesJob < CaseflowJob
 
   private
 
+  def warm_poa_caches
+    # we average about 10k Claimant rows created a week.
+    # we very rarely update the Claimant record after we create it.
+    # so we can use the Claimant.updated_at to reflect how recently we've
+    # warmed our local POA cache.
+    # we keep our daily batch modestly sized to avoid taxing BGS
+    # but large enough to satisfy UpdateCachedAppealsAttributesJob
+    # which relies on our local POA cache.
+    # we only care about Appeal Claimants because that's all
+    # UpdateCachedAppealsAttributesJob cares about.
+    # assuming we have 40k open appeals/claimants at any given time,
+    # and we cache each one for 30 days, we want to cache about 1400 a day.
+    oldest_claimants_for_open_appeals.limit(1400).each do |claimant|
+      claimant.representative_name # updates_cache
+      claimant.update!(updated_at: Time.zone.now)
+    end
+  end
+
+  def claimants_for_open_appeals
+    Claimant.where(decision_review_type: Appeal.name, decision_review_id: open_appeals_from_tasks)
+  end
+
+  def oldest_claimants_for_open_appeals
+    claimants_for_open_appeals.order(updated_at: :asc)
+  end
+
+  def open_appeals_from_tasks
+    Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
+  end
+
   def warm_people_caches
     Person.where(first_name: nil, last_name: nil)
       .order(created_at: :desc)
