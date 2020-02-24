@@ -205,6 +205,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED, appeal.veteran_full_name))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED)
 
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -227,6 +229,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED, appeal.veteran_full_name))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED)
 
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -249,6 +253,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED, appeal.veteran_full_name))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED)
 
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -276,6 +282,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED, appeal.veteran_full_name))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED)
 
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -299,6 +307,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(
+        format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "denied")
+      )
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
       # Verify PostDecisionMotion is created; should ultimately also check new tasks
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -363,6 +375,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(
+        format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "dismissed")
+      )
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
       # Verify PostDecisionMotion is created; should ultimately also check new tasks
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -466,6 +482,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         visit "/queue/appeals/#{vacate_stream.uuid}"
 
+        check_cavc_alert
+        verify_cavc_conflict_action
+
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
@@ -510,6 +529,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
         User.authenticate!(user: drafting_attorney)
 
         visit "/queue/appeals/#{vacate_stream.uuid}"
+
+        check_cavc_alert
+        verify_cavc_conflict_action
 
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
