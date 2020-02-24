@@ -23,4 +23,14 @@ class VACOLS::Priorloc < VACOLS::Record
   def assigned_by
     locstout
   end
+
+  def summary
+    {
+      assigned_by: assigned_by,
+      assigned_at: assigned_at,
+      location: location,
+      date_in: location_date_in,
+      date_out: location_date_out
+    }
+  end
 end

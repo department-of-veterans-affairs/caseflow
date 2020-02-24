@@ -675,6 +675,11 @@ describe LegacyAppeal, :all_dbs do
                               [today, second_location, "DSUSER"],
                               [today, third_location, "DSUSER"]
                             ])
+      expect(appeal.location_history.last.summary).to eq(location: third_location,
+                                                         assigned_at: today,
+                                                         assigned_by: "DSUSER",
+                                                         date_in: today,
+                                                         date_out: nil)
     end
   end
 
