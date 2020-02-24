@@ -36,7 +36,8 @@ export default class AssignHearingsTable extends React.PureComponent {
     this.state = {
       showNoVeteransToAssignError: false,
       colsFromApi: null,
-      amaDocketLineIndex: null
+      amaDocketLineIndex: null,
+      rowOffset: 0
     };
   }
 
@@ -108,7 +109,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         align: 'left',
         // Since this column isn't tied to anything in the input row, _value will
         // always be undefined.
-        valueFunction: (_value, rowId) => <span>{rowId + 1}.</span>
+        valueFunction: (_value, rowId) => <span>{rowId + this.state.rowOffset}.</span>
       },
       {
         name: 'caseDetails',
@@ -193,7 +194,7 @@ export default class AssignHearingsTable extends React.PureComponent {
       return;
     }
 
-    const { tasks, total_task_count: totalTaskCount } = response;
+    const { tasks, total_task_count: totalTaskCount, tasks_per_page: tasksPerPage } = response;
     const amaDocketLineIndex = this.amaDocketCutoffLineIndex(
       tasks.map((task) => task.appeal).filter((appeal) => !appeal.isLegacy)
     );
@@ -202,7 +203,8 @@ export default class AssignHearingsTable extends React.PureComponent {
       showNoVeteransToAssignError: totalTaskCount === 0 && !filtered,
       // null index means do not display the line at all
       // -1 index means display line at the very start of the list
-      amaDocketLineIndex: currentPage > 0 && amaDocketLineIndex === -1 ? null : amaDocketLineIndex
+      amaDocketLineIndex: currentPage > 0 && amaDocketLineIndex === -1 ? null : amaDocketLineIndex,
+      rowOffset: (tasksPerPage * currentPage) + 1
     });
   }
 
