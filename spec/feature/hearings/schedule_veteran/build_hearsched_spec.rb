@@ -42,7 +42,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Central")
-      click_button("Legacy Veterans Waiting")
+      click_button("Legacy Veterans Waiting", exact: true)
       click_link appellant_appeal_link_text
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
       expect(page).to have_content("Currently active tasks", wait: 30)
@@ -64,12 +64,12 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       expect(page).to have_content(hearing_location_dropdown_label)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       find("label", text: "9:00 am").click
-      click_button("Schedule")
+      click_button("Schedule", exact: true)
       click_on "Back to Schedule Veterans"
       expect(page).to have_content("Schedule Veterans")
-      click_button("Scheduled Veterans")
+      click_button("Scheduled Veterans", exact: true)
       expect(VACOLS::Case.where(bfcorlid: "123454787S"))
-      click_button("Legacy Veterans Waiting")
+      click_button("Legacy Veterans Waiting", exact: true)
       expect(page).not_to have_content("123454787S")
       expect(page).to have_content("There are no schedulable veterans")
       expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
@@ -115,7 +115,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver, CO")
-      click_button("Legacy Veterans Waiting")
+      click_button("Legacy Veterans Waiting", exact: true)
       appeal_link = page.find(:xpath, "//tbody/tr/td[2]/a")
       appeal_link.click
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
@@ -125,12 +125,12 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       find("label", text: "8:30 am").click
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       expect(page).not_to have_content("Could not find hearing locations for this veteran")
-      click_button("Schedule")
+      click_button("Schedule", exact: true)
       click_on "Back to Schedule Veterans"
       expect(page).to have_content("Schedule Veterans")
-      click_button("Scheduled Veterans")
+      click_button("Scheduled Veterans", exact: true)
       expect(VACOLS::Case.where(bfcorlid: "123456789S"))
-      click_button("Legacy Veterans Waiting")
+      click_button("Legacy Veterans Waiting", exact: true)
       expect(page).not_to have_content("123456789S")
       expect(page).to have_content("There are no schedulable veterans")
       expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
@@ -188,7 +188,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
-      click_button("AMA Veterans Waiting")
+      click_button("AMA Veterans Waiting", exact: true)
       click_on "Bob Smith"
 
       # Case details screen
@@ -265,7 +265,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         visit "hearings/schedule/assign"
         expect(page).to have_content("Regional Office")
         click_dropdown(text: "Denver")
-        click_button("AMA Veterans Waiting")
+        click_button("AMA Veterans Waiting", exact: true)
         click_on "Bob Smith"
 
         # Case details screen
@@ -313,7 +313,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
-      click_button("AMA Veterans Waiting")
+      click_button("AMA Veterans Waiting", exact: true)
 
       click_on "Bob Smith"
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
@@ -335,7 +335,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_on "Back to Schedule Veterans"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
-      click_button("AMA Veterans Waiting")
+      click_button("AMA Veterans Waiting", exact: true)
       expect(page).to have_content("There are no schedulable veterans")
     end
 
@@ -343,7 +343,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
-      click_button("AMA Veterans Waiting")
+      click_button("AMA Veterans Waiting", exact: true)
       click_on "Bob Smith"
 
       click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
@@ -479,7 +479,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Central")
-      click_button("Legacy Veterans Waiting")
+      click_button("Legacy Veterans Waiting", exact: true)
       table_row = page.find("tr", id: "table-row-0")
       expect(table_row).to have_content("1545678", wait: 30)
       table_row = page.find("tr", id: "table-row-1")
@@ -531,7 +531,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         name: "appealHearingLocation"
       )
       click_dropdown(text: "10:00 am", name: "optionalHearingTime1")
-      click_button("Schedule")
+      click_button("Schedule", exact: true)
 
       expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
     end
@@ -656,7 +656,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
       expect(page).to have_content("AMA Veterans Waiting")
-      click_button("AMA Veterans Waiting")
+      click_button("AMA Veterans Waiting", exact: true)
     end
 
     context "Specify page number" do
@@ -702,15 +702,19 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
         step "check if the filter options are as expected" do
           expect(page).to have_content("Suggested Location", wait: 30)
+          expect(page).to have_selector(".unselected-filter-icon-inner", count: 2)
           page.find(".unselected-filter-icon-inner", match: :first).click
-          expect(page).to have_content("Clear Suggested location filter")
           expect(page).to have_content("#{Appeal.first.suggested_hearing_location.formatted_location} (1)")
           expect(page).to have_content("#{Appeal.second.suggested_hearing_location.formatted_location} (1)")
           expect(page).to have_content("#{Appeal.third.suggested_hearing_location.formatted_location} (1)")
         end
 
         step "clicking on a filter reduces the number of results by the expect amount" do
-          page.find("label", text: "#{Appeal.first.suggested_hearing_location.formatted_location} (1)").click
+          page.find(
+            "label",
+            text: "#{Appeal.first.suggested_hearing_location.formatted_location} (1)",
+            exact: true
+          ).click
           expect(find("tbody").find_all("tr").length).to eq(1)
         end
       end
@@ -742,15 +746,15 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
         step "check if the filter options are as expected" do
           expect(page).to have_content("Power of Attorney (POA)", wait: 30)
-          page.find_all("path.unselected-filter-icon-inner")[1].click
-          expect(page).to have_content("Clear Power of attorney filter")
+          expect(page).to have_selector(".unselected-filter-icon-inner", count: 2)
+          page.find_all(".unselected-filter-icon-inner")[1].click
           expect(page).to have_content("#{Appeal.first.representative_name} (1)")
           expect(page).to have_content("#{Appeal.second.representative_name} (1)")
           expect(page).to have_content("#{Appeal.third.representative_name} (1)")
         end
 
         step "clicking on a filter reduces the number of results by the expect amount" do
-          page.find("label", text: "#{Appeal.first.representative_name} (1)").click
+          page.find("label", text: "#{Appeal.first.representative_name} (1)", exact: true).click
           expect(find("tbody").find_all("tr").length).to eq(1)
         end
       end

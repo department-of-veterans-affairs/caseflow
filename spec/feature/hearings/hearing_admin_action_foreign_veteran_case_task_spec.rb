@@ -99,7 +99,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
           visit("/hearings/schedule/assign?regional_office_key=RO17")
           cache_appeals
 
-          click_button("AMA Veterans Waiting")
+          click_button("AMA Veterans Waiting", exact: true)
 
           expect(page).to have_content appeal.veteran_file_number
         end
