@@ -424,10 +424,11 @@ class Appeal < DecisionReview
   end
 
   def create_business_line_tasks!
-    issues_needing_tasks = request_issues.select(&:requires_record_request_task?)
-    business_lines = issues_needing_tasks.map(&:business_line).uniq
+    business_lines_needing_assignment.each do |business_line|
+      if business_line.nil? || business_line.name.blank?
+        fail Caseflow::Error::MissingBusinessLine
+      end
 
-    business_lines.each do |business_line|
       next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
 
       VeteranRecordRequest.create!(
@@ -449,6 +450,10 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def business_lines_needing_assignment
+    request_issues.select(&:requires_record_request_task?).map(&:business_line).uniq
+  end
 
   def set_stream_docket_number_and_stream_type
     if receipt_date && persisted?

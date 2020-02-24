@@ -47,7 +47,20 @@ class HearingBadge extends React.PureComponent {
     if (!this.props.mostRecentlyHeldHearingForAppeal && !this.props.hearing && this.props.externalId) {
       ApiUtil.get(`/appeals/${this.props.externalId}/hearings`).then((response) => {
         this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, response.body);
-      });
+      }).
+        catch((err) => {
+          // we don't care if the browser gave up for some reason.
+          if (err.message.match(/Request has been terminated/)) {
+            return;
+          }
+
+          const error = new Error(`There was an error getting hearings for appeal ${this.props.externalId} ${err}`);
+
+          if (window.Raven) {
+            window.Raven.captureException(error);
+          }
+          console.error(error);
+        });
     }
   }
 

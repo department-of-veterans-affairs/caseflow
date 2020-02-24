@@ -205,6 +205,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED, appeal.veteran_full_name))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED)
 
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -227,6 +229,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED, appeal.veteran_full_name))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED)
 
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -249,6 +253,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED, appeal.veteran_full_name))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED)
 
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -276,6 +282,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED, appeal.veteran_full_name))
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED)
 
       # Verify PostDecisionMotion is created
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -299,6 +307,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(
+        format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "denied")
+      )
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
       # Verify PostDecisionMotion is created; should ultimately also check new tasks
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -363,6 +375,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(
+        format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "dismissed")
+      )
+      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
       # Verify PostDecisionMotion is created; should ultimately also check new tasks
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
@@ -411,11 +427,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
       create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
     end
 
+    let(:vacate_type) { "straight_vacate" }
+
     let(:post_decision_motion_params) do
       {
         instructions: "I am granting this",
         disposition: "granted",
-        vacate_type: "straight_vacate",
+        vacate_type: vacate_type,
         assigned_to_id: drafting_attorney
       }
     end
@@ -426,6 +444,27 @@ RSpec.feature "Motion to vacate", :all_dbs do
     let(:vacate_stream) { Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate") }
     let(:attorney_task) { AttorneyTask.find_by(assigned_to: drafting_attorney) }
 
+    let(:review_decisions_path) do
+      [
+        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+        "motion_to_vacate_checkout/review_vacatures"
+      ].join("/")
+    end
+
+    let(:add_decisions_path) do
+      [
+        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+        "motion_to_vacate_checkout/add_decisions"
+      ].join("/")
+    end
+
+    let(:submit_decisions_path) do
+      [
+        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+        "motion_to_vacate_checkout/submit"
+      ].join("/")
+    end
+
     before do
       judge_team.add_user(drafting_attorney)
       FeatureToggle.enable!(:review_motion_to_vacate)
@@ -435,20 +474,132 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
 
-    it "correctly displays 'Review Decision Issues' portion of MTV checkout for granted disposition" do
-      User.authenticate!(user: drafting_attorney)
+    context "Straight Vacate" do
+      let(:vacate_type) { "straight_vacate" }
 
-      visit "/queue/appeals/#{vacate_stream.uuid}"
+      it "correctly handles checkout flow" do
+        User.authenticate!(user: drafting_attorney)
 
-      find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+        visit "/queue/appeals/#{vacate_stream.uuid}"
 
-      path = [
-        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
-        "motion_to_vacate_checkout/review_vacatures"
-      ].join("/")
+        check_cavc_alert
+        verify_cavc_conflict_action
 
-      expect(page.current_path).to eq(path)
+        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+
+        expect(page.current_path).to eq(review_decisions_path)
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Submit Draft Decision for Review")
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(review_decisions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Submit Draft Decision for Review")
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+        fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge.full_name)
+        fill_in "notes", with: "all done"
+
+        click_on "Continue"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
+          "sent to #{judge.full_name} for review."
+        )
+      end
+    end
+
+    context "Vacate & Readjudicate" do
+      let(:vacate_type) { "vacate_and_readjudication" }
+
+      it "correctly handles checkout flow" do
+        User.authenticate!(user: drafting_attorney)
+
+        visit "/queue/appeals/#{vacate_stream.uuid}"
+
+        check_cavc_alert
+        verify_cavc_conflict_action
+
+        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+
+        expect(page.current_path).to eq(review_decisions_path)
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Add Decisions")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(add_decisions_path)
+
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(review_decisions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(add_decisions_path)
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+
+        # Add a first decision issue
+        all("button", text: "+ Add decision", count: 3)[0].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
+
+        click_on "Add Issue"
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(add_decisions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
+
+        fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge.full_name)
+        fill_in "notes", with: "all done"
+
+        click_on "Continue"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
+          "sent to #{judge.full_name} for review."
+        )
+
+        expect(vacate_stream.decision_issues.size).to eq(4)
+      end
     end
   end
 
@@ -589,5 +740,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   def select_issue_for_vacature(issue_id)
     find(".checkbox-wrapper-issues").find("label[for=\"#{issue_id}\"]").click
+  end
+
+  def valid_document_id
+    "12345-12345678"
   end
 end

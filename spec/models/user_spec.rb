@@ -42,6 +42,22 @@ describe User, :all_dbs do
     end
   end
 
+  context ".find_by_vacols_username" do
+    subject { described_class.find_by_vacols_username(vacols_username) }
+
+    let(:vacols_username) { vacols_user.slogid }
+    let(:vacols_user) { create(:staff) }
+    let!(:caseflow_user) { create(:user, css_id: vacols_user.sdomainid) }
+
+    before do
+      CachedUser.sync_from_vacols
+    end
+
+    it "returns the User corresponding to the VACOLS account" do
+      expect(subject).to eq(caseflow_user)
+    end
+  end
+
   context ".batch_find_by_css_id_or_create_with_default_station_id" do
     subject { User.batch_find_by_css_id_or_create_with_default_station_id(css_ids) }
 

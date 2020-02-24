@@ -11,7 +11,6 @@ class PostDecisionMotionsController < ApplicationController
       render json: { errors: [detail: motion_updater.errors.full_messages.join(", ")] }, status: :bad_request
       return
     end
-    flash[:success] = "Disposition saved!"
     render json: {}
   end
 

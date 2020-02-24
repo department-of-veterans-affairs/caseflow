@@ -87,7 +87,7 @@ module TaskTreeRenderModule
 
   # returns RootTask and root-level tasks (which are not under that RootTask)
   def rootlevel_rows(config)
-    @rootlevel_rows ||= is_a?(Task) ? [self] : appeal_children(self, config)
+    is_a?(Task) ? [self] : appeal_children(self, config)
   end
 
   private

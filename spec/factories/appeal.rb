@@ -48,9 +48,13 @@ FactoryBot.define do
 
     transient do
       associated_attorney do
-        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", full_name: "BVAAABSHIRE", station_id: 101)
+        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101) do |user|
+          user.full_name = "BVAAABSHIRE"
+        end
         judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
-        attorney = User.find_or_create_by(css_id: "BVAEERDMAN", full_name: "BVAEERDMAN", station_id: 101)
+        attorney = User.find_or_create_by(css_id: "BVAEERDMAN", station_id: 101) do |user|
+          user.full_name = "BVAEERDMAN"
+        end
         judge_team.add_user(attorney)
         create(:staff, :attorney_role, sdomainid: attorney.css_id)
 
@@ -60,7 +64,9 @@ FactoryBot.define do
 
     transient do
       associated_judge do
-        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", full_name: "BVAAABSHIRE", station_id: 101)
+        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101) do |user|
+          user.full_name = "BVAAABSHIRE"
+        end
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
         create(:staff, :judge_role, sdomainid: judge.css_id)
 

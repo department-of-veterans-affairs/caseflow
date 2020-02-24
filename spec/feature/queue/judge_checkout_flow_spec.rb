@@ -175,48 +175,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         expect(page).to have_current_path("/queue/appeals/#{appeal_id}")
       end
     end
-
-    context "where work product is omo request" do
-      let(:work_product) { :omo_request }
-
-      scenario "completes assign to omo checkout flow" do
-        visit "/queue/appeals/#{appeal.vacols_id}"
-
-        click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_OMO.label)
-
-        expect(page).to have_content("Evaluate Decision")
-
-        radio_group_cls = "usa-fieldset-inputs cf-form-radio "
-        case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
-        case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
-
-        expect(case_quality_opts.first.text).to eq(
-          "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
-        )
-        expect(case_quality_opts.last.text).to eq(
-          "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
-        )
-
-        case_complexity_opts[0].click
-        case_quality_opts[2].click
-        # areas of improvement
-        areas_of_improvement = page.find_all(
-          :xpath, "//fieldset[contains(@class, 'checkbox-wrapper-Identify areas for improvement')]//label"
-        )
-        areas_of_improvement[0].double_click
-        areas_of_improvement[5].double_click
-
-        dummy_note = "lorem ipsum dolor sit amet"
-        fill_in "additional-factors", with: dummy_note
-
-        click_on "Continue"
-
-        expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
-        decass = VACOLS::Decass.find_by(defolder: appeal.vacols_id, deadtim: Time.zone.today)
-        expect(decass.decomp).to eq(VacolsHelper.local_date_with_utc_timezone)
-        expect(decass.deoq).to eq("3")
-      end
-    end
   end
 
   context "when an acting judge is checking out an AMA appeal" do
