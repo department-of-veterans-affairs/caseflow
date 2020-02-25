@@ -86,7 +86,7 @@ end
 
 describe HearingAdminActionVerifyAddressTask, :all_dbs do
   describe "Address Verify Workflow with Legacy Appeal" do
-    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let!(:appeal) { create(:legacy_appeal, :with_veteran_address, vacols_case: create(:case)) }
     let!(:appeal_id) { appeal.vacols_id }
 
     include_examples "Address Verify Task for Appeal"

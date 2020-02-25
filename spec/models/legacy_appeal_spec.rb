@@ -8,9 +8,16 @@ describe LegacyAppeal, :all_dbs do
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
+  let(:veteran_address) { nil }
+  let(:appellant_address) { nil }
 
   let(:appeal) do
-    create(:legacy_appeal, vacols_case: vacols_case)
+    create(
+      :legacy_appeal,
+      vacols_case: vacols_case,
+      veteran_address: veteran_address,
+      appellant_address: appellant_address
+    )
   end
 
   context "includes PrintsTaskTree concern" do
@@ -2189,13 +2196,7 @@ describe LegacyAppeal, :all_dbs do
              snamef: "Bobby",
              snamemi: "F",
              snamel: "Veteran",
-             ssalut: "",
-             saddrst1: "123 K St. NW",
-             saddrst2: "Suite 456",
-             saddrcty: "Washington",
-             saddrstt: "DC",
-             saddrcnty: nil,
-             saddrzip: "20001")
+             ssalut: "")
     end
     let!(:representative) do
       create(:representative,
@@ -2211,6 +2212,17 @@ describe LegacyAppeal, :all_dbs do
              repzip: "10000")
     end
     let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "T") }
+    let(:veteran_address) do
+      {
+        addrs_one_txt: "123 K St. NW",
+        addrs_two_txt: "Suite 456",
+        addrs_three_txt: nil,
+        city_nm: "Washington",
+        postal_cd: "DC",
+        cntry_nm: nil,
+        zip_prefix_nbr: "20001"
+      }
+    end
 
     context "when veteran is the appellant and addresses are included" do
       it "the veteran is returned with addresses" do
@@ -2222,6 +2234,7 @@ describe LegacyAppeal, :all_dbs do
           address: {
             address_line_1: "123 K St. NW",
             address_line_2: "Suite 456",
+            address_line_3: nil,
             city: "Washington",
             state: "DC",
             country: nil,
@@ -2262,6 +2275,7 @@ describe LegacyAppeal, :all_dbs do
           address: {
             address_line_1: "123 K St. NW",
             address_line_2: "Suite 456",
+            address_line_3: nil,
             city: "Washington",
             state: "DC",
             country: nil,
@@ -2292,15 +2306,21 @@ describe LegacyAppeal, :all_dbs do
                snamef: "Bobby",
                snamemi: "F",
                snamel: "Veteran",
-               saddrst1: "123 K St. NW",
-               saddrst2: "Suite 456",
-               saddrcty: "Washington",
-               saddrstt: "DC",
-               saddrcnty: nil,
-               saddrzip: "20001",
                sspare1: "Claimant",
                sspare2: "Tommy",
-               sspare3: "G")
+               sspare3: "G",
+               ssn: "123456789")
+      end
+      let(:appellant_address) do
+        {
+          addrs_one_txt: "456 K St. NW",
+          addrs_two_txt: "Suite 789",
+          addrs_three_txt: nil,
+          city_nm: "Washington",
+          postal_cd: "DC",
+          cntry_nm: nil,
+          zip_prefix_nbr: "20001"
+        }
       end
 
       it "the appellant is returned" do
@@ -2310,8 +2330,9 @@ describe LegacyAppeal, :all_dbs do
           last_name: "Claimant",
           name_suffix: nil,
           address: {
-            address_line_1: "123 K St. NW",
-            address_line_2: "Suite 456",
+            address_line_1: "456 K St. NW",
+            address_line_2: "Suite 789",
+            address_line_3: nil,
             city: "Washington",
             state: "DC",
             country: nil,
