@@ -46,13 +46,15 @@ class AppealRepository
     if id.is_a?(Array)
       id.in_groups_of(1000, false).map do |group|
         if ignore_misses
-          VACOLS::Case.includes(:correspondent, :case_issues, folder: [:outcoder]).where(bfkey: group)
+          VACOLS::Case.eager_load(:correspondent, :case_issues, folder: [:outcoder]).where(bfkey: group)
         else
-          VACOLS::Case.includes(:correspondent, :case_issues, folder: [:outcoder]).find(group)
+          VACOLS::Case.eager_load(:correspondent, :case_issues, folder: [:outcoder]).find(group)
         end
       end.flatten
     else
-      VACOLS::Case.includes(:correspondent, :case_issues, folder: [:outcoder]).find(id)
+      # using .includes() creates 4 SQL queries at ~ 90ms each (measured in production).
+      # using .eager_load() creates 2 SQL queries at ~ 90ms each
+      VACOLS::Case.eager_load(:correspondent, :case_issues, folder: [:outcoder]).find(id)
     end
   end
 
