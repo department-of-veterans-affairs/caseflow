@@ -163,6 +163,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         name: 'powerOfAttorneyName',
         header: 'Power of Attorney (POA)',
         columnName: 'Power of Attorney',
+        align: 'left',
         valueFunction: (row) => (
           <PowerOfAttorneyDetail
             key={`poa-${row.externalAppealId}-detail`}
@@ -170,6 +171,7 @@ export default class AssignHearingsTable extends React.PureComponent {
             displayNameOnly
           />
         ),
+        label: 'Filter by Power of Attorney',
         enableFilter: true,
         anyFiltersAreSet: true,
         filterValueTransform: (_value, row) => {
