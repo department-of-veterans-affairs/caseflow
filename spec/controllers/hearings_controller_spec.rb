@@ -314,12 +314,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
       expect(body["data"]["regional_office_timezone"]).to eq("America/New_York")
       expect(body["data"]["scheduled_time_string"]).to eq("08:30")
-
-      time = Time.zone.parse(body["data"]["scheduled_for"])
-
-      expect(time.zone).to eq("EST")
-      expect(time.hour).to eq(8)
-      expect(time.min).to eq(30)
+      expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000-05:00")
     end
 
     context "for user on west coast" do
@@ -330,17 +325,12 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         )
       end
 
-      it "returns correct hearing time in PST", :aggregate_failures do
+      it "returns correct hearing time in EST", :aggregate_failures do
         body = JSON.parse(subject.body)
 
         expect(body["data"]["regional_office_timezone"]).to eq("America/New_York")
         expect(body["data"]["scheduled_time_string"]).to eq("08:30")
-
-        time = Time.zone.parse(body["data"]["scheduled_for"])
-
-        expect(time.zone).to eq("PST")
-        expect(time.hour).to eq(5)
-        expect(time.min).to eq(30)
+        expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000-05:00")
       end
     end
   end
