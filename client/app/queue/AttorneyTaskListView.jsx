@@ -31,7 +31,6 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import TabWindow from '../components/TabWindow';
 import Alert from '../components/Alert';
 
-
 const containerStyles = css({
   position: 'relative'
 });
@@ -103,8 +102,6 @@ class AttorneyTaskListView extends React.PureComponent {
     <h1 {...fullWidth}>{config.table_title}</h1>
     <QueueOrganizationDropdown organizations={this.props.organizations} />
     <TabWindow name="tasks-tabwindow" tabs={this.tabsFromConfig(config)} />
-
-      moooooo
   </React.Fragment>;
 
   render = () => {
@@ -149,5 +146,9 @@ AttorneyTaskListView.propTypes = {
   hideSuccessMessage: PropTypes.func,
   clearCaseSelectSearch: PropTypes.func,
   queueConfig: PropTypes.object,
-  success: PropTypes.object
+  success: PropTypes.object,
+  resetSaveState: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  organizations: PropTypes.array
 };
