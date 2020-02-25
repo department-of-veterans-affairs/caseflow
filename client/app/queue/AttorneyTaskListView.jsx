@@ -5,17 +5,19 @@ import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
-import TabWindow from '../components/TabWindow';
-import TaskTable from './components/TaskTable';
+import PropTypes from 'prop-types';
+import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
+import {  hearingBadgeColumn, detailsColumn, taskColumn, docketNumberColumn, issueCountColumn, regionalOfficeColumn, typeColumn,
+  daysWaitingColumn, daysOnHoldColumn, readerLinkColumn, completedToNameColumn, taskCompletedDateColumn,
+  readerLinkColumnWithNewDocsIcon } from
+  './components/TaskTableColumns';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import Alert from '../components/Alert';
 
 import {
-  completeTasksByAssigneeCssIdSelector,
-  workableTasksByAssigneeCssIdSelector,
-  onHoldTasksForAttorney
+  newTasksByAssigneeCssIdSelector,
+  onHoldTasksByAssigneeCssIdSelector,
+  completeTasksByAssigneeCssIdSelector
 } from './selectors';
 
 import {
@@ -25,8 +27,15 @@ import {
   showErrorMessage
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
+import { fullWidth, marginBottom } from './constants';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 
-import { fullWidth } from './constants';
+import TabWindow from '../components/TabWindow';
+import TaskTable from './components/TaskTable';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Alert from '../components/Alert';
+
+
 import COPY from '../../COPY.json';
 
 const containerStyles = css({
@@ -42,97 +51,90 @@ class AttorneyTaskListView extends React.PureComponent {
 
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
-    this.props.resetErrorMessages();
-
-    if (_.some(
-      [...this.props.workableTasks, ...this.props.onHoldTasks, ...this.props.completedTasks],
-      (task) => !task.taskId)) {
-      this.props.showErrorMessage({
-        title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
-        detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
-      });
-    }
   };
 
-  render = () => {
-    const { messages, organizations } = this.props;
-    const noOpenTasks = !_.size([...this.props.workableTasks, ...this.props.onHoldTasks]);
-    const noCasesMessage = noOpenTasks ?
-      <p>
-        {COPY.NO_CASES_IN_QUEUE_MESSAGE}
-        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
-      </p> : '';
+  tasksForTab = (tabName) => {
+    const mapper = {
+      [QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME]: this.props.assignedTasks,
+      [QUEUE_CONFIG.INDIVIDUALLY_ON_HOLD_TASKS_TAB_NAME]: this.props.onHoldTasks,
+      [QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME]: this.props.completedTasks
+    };
 
-    const tabs = [
-      {
-        label: sprintf(
-          COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE,
-          this.props.workableTasks.length),
-        page: <TaskTableTab
-          description={COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}
-          tasks={this.props.workableTasks}
-          includeNewDocsIcon={false}
-          useOnHoldDate={false}
+    return mapper[tabName];
+  }
+
+  createColumnObject = (column, config, tasks) => {
+    const functionForColumn = {
+      [QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name]: hearingBadgeColumn(tasks),
+      [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(tasks, false, config.userRole),
+      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, false),
+      [QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name]: regionalOfficeColumn(tasks, false),
+      [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(tasks, false, false),
+      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
+      [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
+      [QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(tasks, false, false),
+      [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(false),
+      [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(false),
+      [QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name]: readerLinkColumn(false, true),
+      [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name]: readerLinkColumnWithNewDocsIcon(false)
+    };
+
+    return functionForColumn[column.name];
+  }
+
+  columnsFromConfig = (config, tabConfig, tasks) =>
+    (tabConfig.columns || []).map((column) => this.createColumnObject(column, config, tasks));
+
+  taskTableTabFactory = (tabConfig, config) => {
+    const tasks = this.tasksForTab(tabConfig.name);
+
+    return {
+      label: sprintf(tabConfig.label, tasks.length),
+      page: <React.Fragment>
+        <p className="cf-margin-top-0">{tabConfig.description}</p>
+        <QueueTable
+          key={tabConfig.name}
+          columns={this.columnsFromConfig(config, tabConfig, tasks)}
+          rowObjects={tasks}
+          getKeyForRow={(_rowNumber, task) => task.uniqueId}
+          enablePagination
         />
-      },
-      {
-        label: sprintf(
-          COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE,
-          this.props.onHoldTasks.length),
-        page: <TaskTableTab
-          description={COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}
-          tasks={this.props.onHoldTasks}
-          includeNewDocsIcon
-          useOnHoldDate
-        />
-      },
-      {
-        label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
-        page: <TaskTableTab
-          description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
-          tasks={this.props.completedTasks}
-          includeNewDocsIcon={false}
-          useOnHoldDate={false}
-        />
-      }
-    ];
+      </React.Fragment>
+    };
+  }
+
+  tabsFromConfig = (config) => (config.tabs || []).map((tabConfig) => this.taskTableTabFactory(tabConfig, config));
+
+
+  makeQueueComponents = (config) => <React.Fragment>
+    <h1 {...fullWidth}>{config.table_title}</h1>
+    <QueueOrganizationDropdown organizations={this.props.organizations} />
+    <TabWindow name="tasks-tabwindow" tabs={this.tabsFromConfig(config)} />
+
+      moooooo
+  </React.Fragment>;
+
+  render = () => {
+    const { success } = this.props;
 
     return <AppSegment filledBackground styling={containerStyles}>
-      <h1 {...fullWidth}>{COPY.ATTORNEY_QUEUE_TABLE_TITLE}</h1>
-      <QueueOrganizationDropdown organizations={organizations} />
-      {messages.error && <Alert type="error" title={messages.error.title}>
-        {messages.error.detail}
-      </Alert>}
-      {messages.success && <Alert type="success" title={messages.success.title}>
-        {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
-      </Alert>}
-      {noCasesMessage}
-      <TabWindow name="tasks-attorney-list" tabs={tabs} />
+      {success && <Alert type="success" title={success.title} message={success.detail} styling={marginBottom(1)} />}
+      {this.makeQueueComponents(this.props.queueConfig)}
     </AppSegment>;
   }
 }
 
 const mapStateToProps = (state) => {
-  const {
-    queue: {
-      stagedChanges: {
-        taskDecision
-      }
-    },
-    ui: {
-      messages,
-      organizations
-    }
-  } = state;
+  const { success } = state.ui.messages;
 
-  return ({
-    workableTasks: workableTasksByAssigneeCssIdSelector(state),
-    onHoldTasks: onHoldTasksForAttorney(state),
+  return {
+    success,
+    organizations: state.ui.organizations,
+    assignedTasks: newTasksByAssigneeCssIdSelector(state),
+    onHoldTasks: onHoldTasksByAssigneeCssIdSelector(state),
     completedTasks: completeTasksByAssigneeCssIdSelector(state),
-    messages,
-    organizations,
-    taskDecision
-  });
+    queueConfig: state.queue.queueConfig
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -147,20 +149,12 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView));
 
-const TaskTableTab = ({ description, tasks, includeNewDocsIcon, useOnHoldDate }) => <React.Fragment>
-  <p className="cf-margin-top-0" >{description}</p>
-  <TaskTable
-    includeHearingBadge
-    includeDetailsLink
-    includeTask
-    includeType
-    includeDocketNumber
-    includeIssueCount
-    includeDueDate
-    includeReaderLink
-    requireDasRecord
-    tasks={tasks}
-    includeNewDocsIcon={includeNewDocsIcon}
-    useOnHoldDate={useOnHoldDate}
-  />
-</React.Fragment>;
+AttorneyTaskListView.propTypes = {
+  assignedTasks: PropTypes.array,
+  completedTasks: PropTypes.array,
+  onHoldTasks: PropTypes.array,
+  hideSuccessMessage: PropTypes.func,
+  clearCaseSelectSearch: PropTypes.func,
+  queueConfig: PropTypes.object,
+  success: PropTypes.object
+}
