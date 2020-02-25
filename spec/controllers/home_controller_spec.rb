@@ -18,12 +18,10 @@ RSpec.describe HomeController, :postgres, type: :controller do
         initial_time_zone = Time.zone
         expect(@request.session[:timezone]).to eq nil
 
-        RSpec::Mocks.with_temporary_scope do
-          get :index
-          allow(Time).to receive(:zone=).and_call_original
-          allow(Time).to receive(:zone=).with(current_user.timezone).once
-          expect(@request.session[:timezone]).to eq current_user.timezone
-        end
+        get :index
+        allow(Time).to receive(:zone=).and_call_original
+        allow(Time).to receive(:zone=).with(current_user.timezone).once.and_call_original
+        expect(@request.session[:timezone]).to eq current_user.timezone
 
         expect(Time.zone).to eq initial_time_zone
       end
@@ -32,12 +30,10 @@ RSpec.describe HomeController, :postgres, type: :controller do
         initial_time_zone = Time.zone
         @request.session[:timezone] = "America/Chicago"
 
-        RSpec::Mocks.with_temporary_scope do
-          allow(Time).to receive(:zone=).and_call_original
-          allow(Time).to receive(:zone=).with("America/Chicago").once
-          get :index
-          expect(@request.session[:timezone]).to eq "America/Chicago"
-        end
+        allow(Time).to receive(:zone=).and_call_original
+        allow(Time).to receive(:zone=).with("America/Chicago").once.and_call_original
+        get :index
+        expect(@request.session[:timezone]).to eq "America/Chicago"
 
         expect(Time.zone).to eq initial_time_zone
       end
