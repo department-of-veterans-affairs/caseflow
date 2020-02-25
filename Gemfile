@@ -132,5 +132,7 @@ end
 
 group :test do
   gem "webmock"
+  # For CircleCI feature tests
+  gem "rspec-retry"
 end
 # rubocop:enable Metrics/LineLength
