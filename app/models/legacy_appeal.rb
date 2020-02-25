@@ -11,7 +11,6 @@ class LegacyAppeal < ApplicationRecord
   include AssociatedVacolsModel
   include BgsService
   include CachedAttributes
-  include AddressMapper
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
@@ -228,6 +227,12 @@ class LegacyAppeal < ApplicationRecord
     !!appellant_first_name
   end
 
+  def person_for_appellant
+    return nil if appellant_ssn.blank?
+
+    bgs.fetch_person_by_ssn(appellant_ssn)
+  end
+
   def veteran_if_exists
     @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
   end
@@ -346,7 +351,7 @@ class LegacyAppeal < ApplicationRecord
         middle_name: appellant_middle_initial,
         last_name: appellant_last_name,
         name_suffix: appellant_name_suffix,
-        address: get_address_from_corres_entry(case_record.correspondent),
+        address: appellant_address,
         representative: representative_to_hash
       }
     else
@@ -355,7 +360,7 @@ class LegacyAppeal < ApplicationRecord
         middle_name: veteran_middle_initial,
         last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
-        address: get_address_from_veteran_record(veteran) || get_address_from_corres_entry(case_record.correspondent),
+        address: appellant_address,
         representative: representative_to_hash
       }
     end
@@ -800,6 +805,10 @@ class LegacyAppeal < ApplicationRecord
     user_has_relevent_open_tasks && Colocated.singleton.user_is_admin?(user)
   end
 
+  def location_history
+    VACOLS::Priorloc.where(lockey: vacols_id).order(:locdout)
+  end
+
   private
 
   def soc_date_eligible_for_opt_in?(receipt_date)
@@ -819,7 +828,15 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def bgs_address_service
-    @bgs_address_service ||= BgsAddressService.new(participant_id: representative_participant_id)
+    participant_id = if appellant_is_not_veteran
+                       person_for_appellant&.[](:ptcpnt_id)
+                     else
+                       veteran&.participant_id
+                     end
+
+    return nil if participant_id.blank?
+
+    @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
   end
 
   def location_code_is_caseflow?
@@ -962,17 +979,6 @@ class LegacyAppeal < ApplicationRecord
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length.between?(3, 9)
 
       fail Caseflow::Error::InvalidFileNumber
-    end
-
-    # Because SSN is not accurate in VACOLS, we pull the file
-    # number from BGS for the SSN and use that to look appeals
-    # up in VACOLS
-    def vbms_id_for_ssn(ssn)
-      file_number = bgs.fetch_file_number_by_ssn(ssn)
-
-      fail ActiveRecord::RecordNotFound unless file_number
-
-      convert_file_number_to_vacols(file_number)
     end
 
     # Returns a hash of appeals with appeal_id as keys and
