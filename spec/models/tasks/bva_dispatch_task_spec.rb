@@ -139,10 +139,8 @@ describe BvaDispatchTask, :all_dbs do
           tasks = BvaDispatchTask.where(appeal: appeal, assigned_to: user)
           expect(tasks.length).to eq(1)
 
-          def de_novo_stream
-            Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "de_novo")
-          end
-
+          de_novo_stream =Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "de_novo")
+        
           expect(de_novo_stream).to_not be_nil
           request_issues = de_novo_stream.request_issues
           expect(request_issues.size).to eq(appeal.decision_issues.size)

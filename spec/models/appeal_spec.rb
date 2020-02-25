@@ -27,7 +27,7 @@ describe Appeal, :all_dbs do
       expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
     end
 
-    context "#create de_novo appeal stream" do
+    context "for de_novo appeal stream" do
       let(:stream_type) { "de_novo" }
 
       it "creates a de_novo appeal stream with data from the original appeal" do
