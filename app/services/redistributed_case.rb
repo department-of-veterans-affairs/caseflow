@@ -13,7 +13,7 @@ class RedistributedCase
     if ok_to_redistribute?
       rename_existing_distributed_case!
     else
-      alert_existing_distributed_case_not_unique
+      alert_existing_distributed_case_not_unique if throw_error?
       false
     end
   end
@@ -30,6 +30,10 @@ class RedistributedCase
 
     # be conservative; return false so that appeal is manually addressed
     false
+  end
+
+  def throw_error?
+    !legacy_appeal.location_code.eql? new_distribution.judge.vacols_user.slogid
   end
 
   private

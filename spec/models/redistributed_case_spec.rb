@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 describe RedistributedCase, :all_dbs do
-  let!(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
+  let(:vacols_location) { "CASEFLOW" }
+  let!(:vacols_case) { create(:case, bfcurloc: vacols_location) }
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
   let(:distribution) { Distribution.create!(judge: judge) }
   # legacy_appeal.vacols_id is set to legacy_appeal.case_record["bfkey"]
   subject { RedistributedCase.new(case_id: legacy_appeal.vacols_id, new_distribution: distribution) }
+
+  before do
+    CachedUser.sync_from_vacols
+  end
 
   context ".ok_to_redistribute?" do
     context "when there are no relevant tasks" do
@@ -69,6 +74,21 @@ describe RedistributedCase, :all_dbs do
         it "returns true" do
           expect(subject.ok_to_redistribute?).to eq false
         end
+      end
+    end
+  end
+
+  context ".throw_error?" do
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    context "when the case is not with the judge" do
+      it "returns true" do
+        expect(subject.throw_error?).to eq true
+      end
+    end
+    context "when the case is already with the judge" do
+      let(:vacols_location) { vacols_judge.slogid }
+      it "returns false" do
+        expect(subject.throw_error?).to eq false
       end
     end
   end
