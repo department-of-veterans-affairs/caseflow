@@ -1,17 +1,15 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import PropTypes from 'prop-types';
 import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
-import {  hearingBadgeColumn, detailsColumn, taskColumn, docketNumberColumn, issueCountColumn, regionalOfficeColumn, typeColumn,
+import { hearingBadgeColumn, detailsColumn, taskColumn, docketNumberColumn, regionalOfficeColumn, typeColumn,
   daysWaitingColumn, daysOnHoldColumn, readerLinkColumn, completedToNameColumn, taskCompletedDateColumn,
-  readerLinkColumnWithNewDocsIcon } from
-  './components/TaskTableColumns';
+  readerLinkColumnWithNewDocsIcon } from './components/TaskTableColumns';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -31,12 +29,8 @@ import { fullWidth, marginBottom } from './constants';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 
 import TabWindow from '../components/TabWindow';
-import TaskTable from './components/TaskTable';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
 
-
-import COPY from '../../COPY.json';
 
 const containerStyles = css({
   position: 'relative'
@@ -105,7 +99,6 @@ class AttorneyTaskListView extends React.PureComponent {
 
   tabsFromConfig = (config) => (config.tabs || []).map((tabConfig) => this.taskTableTabFactory(tabConfig, config));
 
-
   makeQueueComponents = (config) => <React.Fragment>
     <h1 {...fullWidth}>{config.table_title}</h1>
     <QueueOrganizationDropdown organizations={this.props.organizations} />
@@ -157,4 +150,4 @@ AttorneyTaskListView.propTypes = {
   clearCaseSelectSearch: PropTypes.func,
   queueConfig: PropTypes.object,
   success: PropTypes.object
-}
+};
