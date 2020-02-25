@@ -38,7 +38,7 @@ RSpec.describe HomeController, :postgres, type: :controller do
           get :index
           expect(@request.session[:timezone]).to eq "America/Chicago"
         end
-        
+
         expect(Time.zone).to eq initial_time_zone
       end
     end
