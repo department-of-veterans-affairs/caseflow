@@ -148,6 +148,10 @@
   "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues you will be granting",
   "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
   "JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL": "Which issues would you like to vacate?",
+  "JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED": "%s's Motion to Vacate has been marked for vacatur",
+  "JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED": "This task will be sent to the assigned attorney on your team",
+  "JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED": "%s's Motion to Vacate has been %s",
+  "JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED": "This task will be completed by the original motions attorney or placed in the team's queue",
 
   "RETURN_TO_LIT_SUPPORT_MODAL_TITLE": "Return to Litigation Support",
   "RETURN_TO_LIT_SUPPORT_MODAL_CONTENT": "Use this action to return the Motion to Vacate task to the previous Motions Attorney in case of a missing ruling letter draft.\n\nIf the previous attorney is inactive, this will return to the Litigation Support team queue for reassignment.",
@@ -164,6 +168,9 @@
   "MTV_CHECKOUT_REVIEW_VACATURES_TITLE": "Review vacated decision issues",
   "MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION": "Review the prior decision issues here that have been marked for vacatur by the judge. Please remember to include them in your decision letter if you haven't already.",
   "MTV_CHECKOUT_CONFIRM_REMOVE_DECISION_ISSUE": "Are you sure you want to remove this decision?",
+  "MTV_CHECKOUT_ADD_DECISIONS_TITLE": "Add decisions",
+  "MTV_CHECKOUT_ADD_DECISIONS_EXPLANATION": "Add decisions to the items listed here that have been reissued because of the motion to vacate. Any decisions to add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
+
 
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
