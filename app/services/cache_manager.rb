@@ -46,6 +46,10 @@ class CacheManager
     self.class.cache_store.keys
   end
 
+  def key_pattern_count(pattern)
+    self.class.cache_store.scan(0, match: pattern).first
+  end
+
   def clear(bucket)
     key_names = BUCKETS[bucket.to_sym]
     fail NoSuchBucket, bucket unless key_names
