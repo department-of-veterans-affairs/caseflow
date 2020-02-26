@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class User < ApplicationRecord
+class User < CaseflowRecord
   include BgsService
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"

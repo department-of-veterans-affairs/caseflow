@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DocumentsTag < ApplicationRecord
+class DocumentsTag < CaseflowRecord
   belongs_to :document
   belongs_to :tag
 

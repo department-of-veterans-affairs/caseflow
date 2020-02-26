@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DecisionIssue < ApplicationRecord
+class DecisionIssue < CaseflowRecord
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
   validates :disposition, presence: true
   validates :end_product_last_action_date, presence: true, unless: :processed_in_caseflow?

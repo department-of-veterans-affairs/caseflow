@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class HearingLocation < ApplicationRecord
+class HearingLocation < CaseflowRecord
   belongs_to :hearing, polymorphic: true
 
   # backwards compat data fix for "central" office.

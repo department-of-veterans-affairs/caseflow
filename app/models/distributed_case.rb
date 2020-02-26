@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DistributedCase < ApplicationRecord
+class DistributedCase < CaseflowRecord
   belongs_to :distribution
   belongs_to :task
 

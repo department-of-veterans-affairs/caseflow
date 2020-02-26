@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class Transcription < ApplicationRecord
+class Transcription < CaseflowRecord
   belongs_to :hearing
 end

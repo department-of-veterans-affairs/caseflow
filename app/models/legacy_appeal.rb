@@ -6,7 +6,7 @@
 # The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
 # Legacy appeals have VACOLS and BGS as dependencies.
 
-class LegacyAppeal < ApplicationRecord
+class LegacyAppeal < CaseflowRecord
   include AppealConcern
   include AssociatedVacolsModel
   include BgsService
