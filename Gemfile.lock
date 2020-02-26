@@ -533,6 +533,7 @@ GEM
       thor
     simplecov-html (0.10.2)
     single_cov (1.3.2)
+    skeema (0.0.2)
     socksify (1.7.1)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
@@ -662,6 +663,7 @@ DEPENDENCIES
   shoryuken (= 3.1.11)
   simplecov!
   single_cov
+  skeema
   sniffybara!
   stringex
   strong_migrations
