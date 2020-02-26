@@ -43,14 +43,15 @@ describe HearingTimeService, :all_dbs do
     describe "#local_time" do
       it "returns time object encoded in local time" do
         hearing_day = hearing.hearing_day
-        expected_time = Time.use_zone("America/Los_Angeles") {
+        expected_time = Time.use_zone("America/Los_Angeles") do
           Time.zone.now.change(
             year: hearing_day.scheduled_for.year,
             month: hearing_day.scheduled_for.month,
             day: hearing_day.scheduled_for.day,
             hour: 12,
-            min: 0)
-        }
+            min: 0
+          )
+        end
         expect(LegacyHearing.first.time.local_time).to eq(expected_time)
         expect(hearing.time.local_time).to eq(expected_time)
       end
