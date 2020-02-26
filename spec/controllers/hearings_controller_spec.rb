@@ -309,13 +309,17 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       expect(subject.status).to eq 200
     end
 
-    it "returns correct hearing time in EST", :aggregate_failures do
-      body = JSON.parse(subject.body)
+    shared_examples_for "returns the correct hearing time in EST" do
+      it "returns the correct hearing time in EST", :aggregate_failures do
+        body = JSON.parse(subject.body)
 
-      expect(body["data"]["regional_office_timezone"]).to eq("America/New_York")
-      expect(body["data"]["scheduled_time_string"]).to eq("08:30")
-      expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000-05:00")
+        expect(body["data"]["regional_office_timezone"]).to eq("America/New_York")
+        expect(body["data"]["scheduled_time_string"]).to eq("08:30")
+        expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000-05:00")
+      end
     end
+
+    it_should_behave_like "returns the correct hearing time in EST"
 
     context "for user on west coast" do
       # Oakland, CA regional office (pacific time)
@@ -325,13 +329,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         )
       end
 
-      it "returns correct hearing time in EST", :aggregate_failures do
-        body = JSON.parse(subject.body)
-
-        expect(body["data"]["regional_office_timezone"]).to eq("America/New_York")
-        expect(body["data"]["scheduled_time_string"]).to eq("08:30")
-        expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000-05:00")
-      end
+      it_should_behave_like "returns the correct hearing time in EST"
     end
   end
 
@@ -355,7 +353,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
     context "for legacy appeals" do
       let!(:vacols_case) { create(:case) }
-      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran_address, vacols_case: vacols_case) }
 
       it "returns an address" do
         # Baltimore, MD regional office (eastern time)
