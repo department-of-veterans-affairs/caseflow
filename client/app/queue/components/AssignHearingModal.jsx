@@ -1,31 +1,30 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { sprintf } from 'sprintf-js';
-import {
-  resetErrorMessages,
-  showErrorMessage,
-  showSuccessMessage,
-  resetSuccessMessages,
-  requestPatch
-} from '../uiReducer/uiActions';
-import COPY from '../../../COPY.json';
-import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
-import { fullWidth } from '../constants';
-import { formatDateStr } from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
 import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import PropTypes from 'prop-types';
+import * as React from 'react';
+import _ from 'lodash';
+
+import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
 import {
   appealWithDetailSelector,
   scheduleHearingTasksForAppeal
 } from '../selectors';
-import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
+import { formatDateStr } from '../../util/DateUtil';
+import { fullWidth } from '../constants';
+import { onReceiveAppealDetails } from '../QueueActions';
 import { prepareAppealForStore } from '../utils';
-import _ from 'lodash';
-import QueueFlowModal from './QueueFlowModal';
+import {
+  showErrorMessage,
+  requestPatch
+} from '../uiReducer/uiActions';
 import Alert from '../../components/Alert';
+import ApiUtil from '../../util/ApiUtil';
 import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
+import COPY from '../../../COPY';
+import QueueFlowModal from './QueueFlowModal';
 
 class AssignHearingModal extends React.PureComponent {
   constructor(props) {
@@ -188,13 +187,12 @@ class AssignHearingModal extends React.PureComponent {
   render = () => {
     const { appeal, openHearing } = this.props;
     const { showErrorMessages, showFullHearingDayWarning } = this.state;
-    const { address_line_1, city, state, zip } = appeal.appellantAddress || {};
+    const { address_line_1: addressLine1, city, state, zip } = appeal.appellantAddress || {};
 
     if (openHearing) {
       return null;
     }
 
-    /* eslint-disable camelcase */
     return (
       <QueueFlowModal
         submit={this.submit}
@@ -214,7 +212,7 @@ class AssignHearingModal extends React.PureComponent {
           }
           <p>
             Veteran Address<br />
-            {address_line_1}<br />
+            {addressLine1}<br />
             {`${city}, ${state} ${zip}`}
           </p>
           <AssignHearingForm
@@ -227,6 +225,41 @@ class AssignHearingModal extends React.PureComponent {
   }
 }
 
+AssignHearingModal.propTypes = {
+  openHearing: PropTypes.shape({
+    date: PropTypes.string
+  }),
+  appeal: PropTypes.shape({
+    appellantAddress: PropTypes.object,
+    externalId: PropTypes.string,
+    isLegacyAppeal: PropTypes.bool,
+    regionalOffice: PropTypes.object,
+    veteranFullName: PropTypes.string
+  }),
+  assignHearingForm: PropTypes.shape({
+    apiFormattedValues: PropTypes.object,
+    errorMessages: PropTypes.shape({
+      hasErrorMessages: PropTypes.bool
+    }),
+    hearingDay: PropTypes.shape({
+      hearingDate: PropTypes.string,
+      regionalOffice: PropTypes.string
+    })
+  }),
+  hearingDay: PropTypes.shape({
+    hearingDate: PropTypes.string,
+    regionalOffice: PropTypes.string
+  }),
+  scheduleHearingTask: PropTypes.shape({
+    taskId: PropTypes.string
+  }),
+  history: PropTypes.object,
+  onReceiveAppealDetails: PropTypes.func,
+  requestPatch: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+  selectedRegionalOffice: PropTypes.string
+};
+
 const mapStateToProps = (state, ownProps) => ({
   scheduleHearingTask: scheduleHearingTasksForAppeal(state, { appealId: ownProps.appealId })[0],
   openHearing: _.find(
@@ -235,19 +268,13 @@ const mapStateToProps = (state, ownProps) => ({
   ),
   assignHearingForm: state.components.forms.assignHearing,
   appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending,
   selectedRegionalOffice: state.components.selectedRegionalOffice,
-  regionalOfficeOptions: state.components.regionalOffices,
   hearingDay: state.ui.hearingDay
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage,
-  resetErrorMessages,
-  showSuccessMessage,
-  resetSuccessMessages,
   requestPatch,
-  onReceiveAmaTasks,
   onReceiveAppealDetails
 }, dispatch);
 
