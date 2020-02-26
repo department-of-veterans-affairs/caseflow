@@ -46,8 +46,10 @@ class CacheManager
     self.class.cache_store.keys
   end
 
-  def key_pattern_count(pattern)
-    self.class.cache_store.scan(0, match: pattern).first
+  def key_count(pattern)
+    count = 0
+    self.class.cache_store.scan_each(match: pattern) { count += 1 }
+    count
   end
 
   def clear(bucket)
