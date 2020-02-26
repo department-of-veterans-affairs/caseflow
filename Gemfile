@@ -131,8 +131,8 @@ group :development do
 end
 
 group :test do
-  gem "webmock"
-  # For CircleCI feature tests
+  # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
+  gem "webmock"
 end
 # rubocop:enable Metrics/LineLength
