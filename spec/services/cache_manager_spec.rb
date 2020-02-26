@@ -30,7 +30,7 @@ describe CacheManager do
     end
   end
 
-  describe "#key_pattern_count" do
+  describe "#key_count" do
     it "returns number of matches for pattern" do
       ro_schedule_period.start_confirming_schedule
 
