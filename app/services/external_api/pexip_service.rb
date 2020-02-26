@@ -3,7 +3,7 @@
 require "json"
 
 class ExternalApi::PexipService
-  CONFERENCES_ENDPOINT = "api/admin/configuration/v1/conference/"
+  CONFERENCES_ENDPOINT = "api/admin/configuration/v2/conference/"
 
   def initialize(host:, port: 443, user_name:, password:, client_host:)
     @host = host
