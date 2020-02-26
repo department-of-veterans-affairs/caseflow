@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import RadioField from '../../components/RadioField';
 
-import { DISPOSITION_OPTIONS, PARTIAL_GRANT_OPTION } from '../../../constants/MOTION_TO_VACATE.json';
+import { DISPOSITION_OPTIONS, PARTIAL_GRANT_OPTION } from '../../../constants/MOTION_TO_VACATE';
 
 // In certain cases (judge view) we want to include a "partial grant" option
 const [grant, ...rest] = DISPOSITION_OPTIONS;
@@ -27,6 +27,7 @@ export const MTVDispositionSelection = ({ label = '', value: initialVal = null, 
       options={options}
       onChange={handleChange}
       value={value}
+      required
       className={['mtv-disposition-selection']}
     />
   );

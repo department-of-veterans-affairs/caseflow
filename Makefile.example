@@ -43,13 +43,22 @@ whats-next:  ## TODO
 	scripts/whats-next
 
 ready:  ## Helper command that watches the docker containers to finish start up
-	h=`docker-compose ps | grep healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep healthy`; echo $$h; sleep 1; done
+	h=`docker-compose ps | grep -i healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep -i healthy`; echo $$h; sleep 1; done
 
 up:  ## Start the docker containers
 	docker-compose up -d
 
+down:	## Stop the docker containers
+	docker-compose down
+
 run: up ready  ## Start rails server and frontend server
 	foreman start
+
+run-backend: up ready  ## Start rails server without the frontend
+	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
+
+run-frontend: ## Start just the frontend server
+	cd client && yarn run dev:hot
 
 test: clean  ## Run test suite
 	bundle exec rake
@@ -72,7 +81,12 @@ facols:  ## Connect directly to the FACOLS oracle database, requires sqlplus
 	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
-	bundle exec rake local:destroy local:build
+	mkdir -p local/sqs/conf
+	bundle exec rake local:build
+	DB=etl bundle exec rake db:test:prepare
+
+destroy: clean
+	bundle exec rake local:destroy
 
 lint:  ## Run linter for javascript and ruby
 	bundle exec rake lint

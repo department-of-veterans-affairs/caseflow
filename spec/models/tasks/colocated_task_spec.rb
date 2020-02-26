@@ -365,7 +365,7 @@ describe ColocatedTask, :all_dbs do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
-        expect(colocated_admin_action.closed_at).to eq time6
+        expect(colocated_admin_action.closed_at).to be_nil
       end
     end
   end

@@ -69,7 +69,7 @@ class TaskActionRepository
 
       extras = if task.is_a?(HearingAdminActionTask)
                  {
-                   redirect_after: "/organizations/#{HearingAdmin.singleton.url}",
+                   redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
                else
@@ -324,6 +324,7 @@ class TaskActionRepository
     def review_decision_draft(task, user)
       action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
       action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
+      action = Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.ama? && task.appeal.vacate?
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
@@ -339,13 +340,12 @@ class TaskActionRepository
       end
     end
 
+    # Exclude users who aren't active or to whom the task is already assigned.
     def potential_task_assignees(task)
       if task.assigned_to.is_a?(Organization)
-        task.assigned_to.users.reject(&:inactive?)
+        task.assigned_to.users.active
       elsif task.parent&.assigned_to.is_a?(Organization)
-        task.parent.assigned_to.users.reject do |check_user|
-          check_user == task.assigned_to || check_user.inactive?
-        end
+        task.parent.assigned_to.users.active.reject { |check_user| check_user == task.assigned_to }
       else
         []
       end

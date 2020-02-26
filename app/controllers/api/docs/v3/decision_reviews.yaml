@@ -4,7 +4,7 @@ info:
   description: >+
     The Decision Reviews API allows you to interact with a Veteran’s Decision Review requests, also known as benefit appeals. This API provides a secure and efficient alternative to paper or fax document submissions. Veterans Benefits Administration or Board of Veterans Appeals can begin processing Decision Review requests submitted through this API immediately, which ultimately allows VA to provide Veterans with appeal decisions more quickly.
 
-    > * For more information on the Decision Review process, including the different types of Decision Reviews, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/). 
+    > * For more information on the Decision Review process, including the different types of Decision Reviews, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/).
 
     > * The Decision Reviews API supports the Appeals Modernization Act (AMA) process only. Appeals going through the legacy Appeal process cannot be managed through this API. Learn more about the AMA [here](https://benefits.va.gov/benefits/appeals.asp).
 
@@ -131,24 +131,23 @@ paths:
                           type: object
                           description: >-
                             The veteran whom this Higher-Level Review concerns.
-                            Use the field fileNumberOrSsn to identify the veteran.
+                            Use the field ssn to identify the veteran.
                             Optionally, you can update the veteran's current contact info using the other fields.
                             If any of these fields are present: [addressLine1, addressLine2, city, stateProvinceCode, zipPostalCode, countryCode],
                             all of these fields must be present: [addressLine1, addressLine2, city, stateProvinceCode, zipPostalCode].
                             NOTE: countryCode can be left out, and it will be assumed to be "US".
 
                           required:
-                            - fileNumberOrSsn
+                            - ssn
                           properties:
-                            fileNumberOrSsn:
+                            ssn:
                               type: string
-                              pattern: '^[0-9]{8,9}$'
+                              pattern: '^[0-9]{9}$'
                               description: >-
-                                The veteran's file number or SSN.
+                                The veteran's SSN.
                                 Example: "123456789"
-                                Format: 8 or 9 digit characters.
-                                Max length: 9 characters.
-                                Corresponds to both "1. VETERAN'S SOCIAL SECURITY NUMBER" and "2. VA FILE NUMBER" on form 20-0996.
+                                Format: 9 digit characters.
+                                Corresponds to "2. VETERAN'S SOCIAL SECURITY NUMBER" on form 20-0996.
 
                             addressLine1:
                               type: string
@@ -256,7 +255,6 @@ paths:
                       a veteran's contestable issues to select from, and include
                       the _ContestableIssue_ objects that you want to contest in this
                       array.
-
                     required:
                       - type
                       - attributes
@@ -276,7 +274,6 @@ paths:
                           ratingDecisionIssueId:
                             type: string
                             nullable: true
-
             examples:
               compensation:
                 value:
@@ -289,7 +286,7 @@ paths:
                       legacyOptInApproved: true
                       benefitType: compensation
                       veteran:
-                        fileNumberOrSsn: "123456789"
+                        ssn: "123456789"
                         addressLine1: 123 Street St
                         addressLine2: Apt 4
                         city: Chicago
@@ -957,12 +954,6 @@ paths:
                                 rampClaimId:
                                   type: string
                                   nullable: true
-                                legacyAppealId: # vacols_id
-                                  type: string
-                                  nullable: true
-                                legacyAppealIssueId: # vacols_sequence_id
-                                  type: integer
-                                  nullable: true
                                 decisionReviewTitle:
                                   type: string
                                   nullable: true
@@ -1016,13 +1007,13 @@ paths:
       tags:
         - Issues
       parameters:
-        - name: veteranId
+        - name: X-VA-SSN
           in: header
           required: true
-          description: The file number or SSN of the veteran.
+          description: The SSN of the veteran.
           schema:
             type : string
-        - name: receiptDate
+        - name: X-VA-Receipt-Date
           in: header
           required: true
           description: (yyyy-mm-dd) In order to determine contestability of issues, the receipt date of a hypothetical Decision Review must be supplied.

@@ -62,6 +62,28 @@ describe EndProductEstablishment, :postgres do
     VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
+  context "#status_type_code" do
+    subject { end_product_establishment.status_type_code }
+
+    it "returns pending" do
+      expect(subject).to eq("PEND")
+    end
+
+    context "board grant effectuation" do
+      let(:code) { "030BGR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
+
+    context "board remand" do
+      let(:code) { "040BDENR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
+  end
+
   context "#perform!" do
     subject { end_product_establishment.perform! }
 
@@ -105,7 +127,6 @@ describe EndProductEstablishment, :postgres do
         # first fetch Veteran's info
         expect(veteran.to_vbms_hash).to include(address_line1: "1234 FAKE ST")
         Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
-
         subject
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -123,7 +144,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: hash_including(address_line1: "Changed"),
           user: current_user
@@ -156,7 +178,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -186,7 +209,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "PEND"
             },
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -217,7 +241,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "PEND"
             ),
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -315,7 +340,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -864,11 +890,13 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "when the end product is canceled" do
-        let(:status_type_code) { "CAN" }
+        before { allow(Fakes::VBMSService).to receive(:fetch_contentions).and_call_original }
+        let(:status_type_code) { EndProduct::STATUSES.key("Canceled") }
 
-        it "closes request issues and cancels establishment" do
+        it "closes request issues, cancels establishment, and doesn't fetch contentions" do
           subject
 
+          expect(Fakes::VBMSService).to_not have_received(:fetch_contentions)
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
           expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)

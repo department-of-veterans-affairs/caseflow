@@ -43,11 +43,11 @@ class VirtualHearing < ApplicationRecord
   end
 
   def guest_link
-    "#{base_url}?conference=#{alias_name}&pin=#{guest_pin}&join=1&role=guest"
+    "#{base_url}?conference=#{alias_name}&pin=#{guest_pin}#&join=1&role=guest"
   end
 
   def host_link
-    "#{base_url}?conference=#{alias_name}&pin=#{host_pin}&join=1&role=host"
+    "#{base_url}?conference=#{alias_name}&pin=#{host_pin}#&join=1&role=host"
   end
 
   private

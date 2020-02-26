@@ -36,6 +36,7 @@ detectors:
     exclude:
       - HearingSerializerBase
       - LegacyDocket
+      - TaskTreeRenderModule
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
@@ -43,6 +44,7 @@ detectors:
       - AMOMetricsReportJob#build_report
       - Api::ApplicationController#on_external_error
       - Api::ApplicationController#upstream_known_error
+      - AppealAvailableHearingLocations#suggested_hearing_location
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
       - AssignJudgeteamRoles#process
@@ -69,6 +71,8 @@ detectors:
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
       - UserReporter#report_user_related_records
+      - User#current_case_assignments_with_views
+      - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
@@ -78,6 +82,8 @@ detectors:
       - Task
       - CaseflowJob
       - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
+      - ETL::Syncer
+      - User
   IrresponsibleModule:
     enabled: false
   LongParameterList:
@@ -136,14 +142,23 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - Helpers::AppealHearingHelper#suggested_hearing_location
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
+      - JudgeLegacyDecisionReviewTask#review_action
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - Fakes::BGSService
       - Fakes::PexipService
       - VBMSCaseflowLogger#log
+      - Reporter#average
+      - Reporter#median
+      - Reporter#seconds_to_hms
+      - Reporter#percent
       - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
+      - VirtualHearings::ExternalLinkHelper#external_link
+      - VirtualHearings::ExternalLinkHelper#phone_link
+      - VirtualHearings::VeteranNameHelper#formatted_veteran_name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

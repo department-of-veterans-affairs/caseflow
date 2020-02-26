@@ -1,7 +1,7 @@
 You have a Veteran scheduled for a virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals:
 
-<%= virtual_hearing.hearing.appeal.veteran.name.to_s %>
-View the case details: https://appeals.cf.ds.va.gov/queue/appeals/<%= virtual_hearing.hearing.appeal.external_id %>
+<%= formatted_veteran_name(virtual_hearing.hearing.appeal.veteran) %>
+View the case details: https://appeals.cf.ds.va.gov/queue/appeals/<%= virtual_hearing.hearing.appeal.external_id %> (Note: You must be logged in to the VA network to access case details.)
  
 Date and Time
 <%= formatted_date_time_for_zone(time_zone, start_time_utc) %>
@@ -11,4 +11,7 @@ We recommend joining 15 minutes before your hearing start time. Click on the lin
 <%= link %>
 
 Help Desk
-If you are experiencing technical difficulties, contact the National Telehealth Technology Help Desk (NTTHD) at 855-519-7116 to get support.
+If you are experiencing technical difficulties, call the VA Video Connect Helpdesk at 855-519-7116 and press 4 for Board of Veterans' Appeals support.
+
+Rescheduling or Canceling the Hearing
+If you need to reschedule or cancel your Veteran's virtual hearing, contact us by email at bvahearingteamhotline@va.gov

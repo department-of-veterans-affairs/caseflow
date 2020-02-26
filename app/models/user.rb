@@ -262,7 +262,7 @@ class User < ApplicationRecord
   end
 
   def administered_teams
-    organizations_users.select(&:admin?).map(&:organization)
+    organizations_users.admin.map(&:organization).compact
   end
 
   def administered_judge_teams
@@ -275,20 +275,35 @@ class User < ApplicationRecord
 
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
+    judge_team_judges = judge? ? [self] : []
+    judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
 
-    if JudgeTeam.for_judge(self) || judge_in_vacols?
+    judge_team_judges.each do |judge|
       orgs << {
-        name: "Assign",
-        url: format("queue/%s/assign", id)
+        name: "Assign #{judge.css_id}",
+        url: format("/queue/%s/assign", judge.id)
       }
     end
 
     orgs
   end
 
+  def member_of_organization?(org)
+    organizations.include?(org)
+  end
+
+  def judge?
+    !!JudgeTeam.for_judge(self) || judge_in_vacols?
+  end
+
   def update_status!(new_status)
     transaction do
-      remove_user_from_auto_assign_orgs if new_status.eql?(Constants.USER_STATUSES.inactive)
+      if new_status.eql?(Constants.USER_STATUSES.inactive)
+        user_inactivation
+      elsif new_status.eql?(Constants.USER_STATUSES.active)
+        user_reactivation
+      end
+
       update!(status: new_status, status_updated_at: Time.zone.now)
     end
   end
@@ -335,10 +350,25 @@ class User < ApplicationRecord
 
   private
 
-  def remove_user_from_auto_assign_orgs
-    auto_assign_orgs = organizations.select(&:automatically_assign_to_member?)
-    auto_assign_orgs.each do |organization|
-      OrganizationsUser.remove_user_from_organization(self, organization)
+  def inactive_judge_team
+    JudgeTeam.unscoped.inactive.find_by(id: organizations_users.admin.pluck(:organization_id))
+  end
+
+  def user_reactivation
+    # We do not automatically re-add organization membership for reactivated users
+    inactive_judge_team&.active!
+  end
+
+  def user_inactivation
+    remove_user_from_orgs
+    JudgeTeam.for_judge(self)&.inactive!
+  end
+
+  def remove_user_from_orgs
+    removal_orgs = organizations
+    my_judge_team = JudgeTeam.for_judge(self)
+    removal_orgs.each do |org|
+      OrganizationsUser.remove_user_from_organization(self, org) unless org == my_judge_team
     end
   end
 
@@ -410,16 +440,10 @@ class User < ApplicationRecord
 
       pg_user_id = user_session["pg_user_id"]
       css_id = user_session["id"]
-      station_id = user_session["station_id"]
-      user = pg_user_id ? find_by(id: pg_user_id) : find_by_css_id(css_id)
+      user_by_id = find_by_pg_user_id!(pg_user_id, session)
+      user = user_by_id || find_by_css_id(css_id)
 
-      attrs = {
-        station_id: station_id,
-        full_name: user_session["name"],
-        email: user_session["email"],
-        roles: user_session["roles"],
-        regional_office: session[:regional_office]
-      }
+      attrs = attrs_from_session(session, user_session)
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
       user.update!(attrs.merge(last_login_at: Time.zone.now))
@@ -436,6 +460,10 @@ class User < ApplicationRecord
       new_user_css_ids = normalized_css_ids - User.where(css_id: normalized_css_ids).pluck(:css_id)
       User.create(new_user_css_ids.map { |css_id| { css_id: css_id, station_id: User::BOARD_STATION_ID } })
       User.where(css_id: normalized_css_ids)
+    end
+
+    def find_by_vacols_username(vacols_username)
+      User.joins(:vacols_user).find_by(cached_user_attributes: { slogid: vacols_username })
     end
 
     def list_hearing_coordinators
@@ -460,6 +488,24 @@ class User < ApplicationRecord
     end
 
     private
+
+    def find_by_pg_user_id!(pg_user_id, session)
+      user_by_id = find_by(id: pg_user_id)
+      if !user_by_id && pg_user_id
+        session["user"]["pg_user_id"] = nil
+      end
+      user_by_id
+    end
+
+    def attrs_from_session(session, user_session)
+      {
+        station_id: user_session["station_id"],
+        full_name: user_session["name"],
+        email: user_session["email"],
+        roles: user_session["roles"],
+        regional_office: session[:regional_office]
+      }
+    end
 
     def prod_system_user
       find_or_initialize_by(station_id: "283", css_id: "CSFLOW")

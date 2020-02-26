@@ -14,7 +14,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string
     end
 
-    def get_issues(veteran_id: veteran.file_number, receipt_date: Time.zone.today)
+    def get_issues(ssn: veteran.ssn, receipt_date: Time.zone.today)
       date =
         if receipt_date.is_a? String
           receipt_date
@@ -25,8 +25,8 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         "/api/v3/decision_review/contestable_issues",
         headers: {
           "Authorization" => "Token #{api_key}",
-          "veteranId" => veteran_id,
-          "receiptDate" => date || receipt_date
+          "X-VA-SSN" => ssn,
+          "X-VA-Receipt-Date" => date || receipt_date
         }
       )
     end
@@ -238,7 +238,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     end
 
     it "should return a 404 when the veteran is not found" do
-      get_issues(veteran_id: "abcdefg")
+      get_issues(ssn: "abcdefg")
       expect(response).to have_http_status(:not_found)
     end
 

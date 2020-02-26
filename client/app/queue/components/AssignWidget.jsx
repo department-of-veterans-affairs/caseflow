@@ -20,7 +20,7 @@ import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
 import QueueFlowModal from './QueueFlowModal';
@@ -28,18 +28,15 @@ import QueueFlowModal from './QueueFlowModal';
 const OTHER = 'OTHER';
 
 class AssignWidget extends React.PureComponent {
-  submit = () => {
+  validateForm = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
-
-    this.props.resetSuccessMessages();
-    this.props.resetErrorMessages();
 
     if (!selectedAssignee) {
       this.props.showErrorMessage(
         { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
           detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
 
-      return;
+      return false;
     }
 
     if (selectedTasks.length === 0) {
@@ -47,22 +44,37 @@ class AssignWidget extends React.PureComponent {
         { title: COPY.ASSIGN_WIDGET_NO_TASK_TITLE,
           detail: COPY.ASSIGN_WIDGET_NO_TASK_DETAIL });
 
-      return;
+      return false;
     }
 
-    if (selectedAssignee !== OTHER) {
-      return this.assignTasks(selectedTasks, selectedAssignee);
-    }
-
-    if (!selectedAssigneeSecondary) {
+    if (selectedAssignee === OTHER && !selectedAssigneeSecondary) {
       this.props.showErrorMessage(
         { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
           detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
 
+      return false;
+    }
+
+    return true;
+  }
+
+  submit = () => {
+    const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
+
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
+
+    if (this.props.isModal) {
+      // QueueFlowModal will call validateForm
+    } else if (!this.validateForm()) {
       return;
     }
 
-    return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+    if (selectedAssignee === OTHER) {
+      return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+    }
+
+    return this.assignTasks(selectedTasks, selectedAssignee);
   }
 
   assignTasks = (selectedTasks, assigneeId) => {
@@ -192,7 +204,8 @@ class AssignWidget extends React.PureComponent {
       </div>
     </React.Fragment>;
 
-    return this.props.isModal ? <QueueFlowModal title={COPY.ASSIGN_WIDGET_MODAL_TITLE} submit={this.submit}>
+    return this.props.isModal ? <QueueFlowModal title={COPY.ASSIGN_WIDGET_MODAL_TITLE}
+      submit={this.submit} validateForm={this.validateForm}>
       {Widget}
     </QueueFlowModal> : Widget;
   }

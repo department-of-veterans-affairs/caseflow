@@ -9,11 +9,11 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       create(:hearing_day,
              request_type: HearingDay::REQUEST_TYPES[:video],
              regional_office: "RO18",
-             scheduled_for: Date.new(2019, 4, 15))
+             scheduled_for: Date.new(2020, 4, 15))
     end
 
     let!(:vacols_case) { create(:case, bfcorlid: "123456789S") }
-    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
     let!(:hearing_location) do
       create(:available_hearing_locations,
              appeal_id: legacy_appeal.id,

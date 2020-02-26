@@ -8,9 +8,16 @@ describe LegacyAppeal, :all_dbs do
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
+  let(:veteran_address) { nil }
+  let(:appellant_address) { nil }
 
   let(:appeal) do
-    create(:legacy_appeal, vacols_case: vacols_case)
+    create(
+      :legacy_appeal,
+      vacols_case: vacols_case,
+      veteran_address: veteran_address,
+      appellant_address: appellant_address
+    )
   end
 
   context "includes PrintsTaskTree concern" do
@@ -641,6 +648,45 @@ describe LegacyAppeal, :all_dbs do
     context "when is not in location" do
       let(:location_code) { "97" }
       it { is_expected.to be_falsey }
+    end
+  end
+
+  context "#location_history" do
+    let(:vacols_case) do
+      create(:case).tap { |vcase| vcase.update_vacols_location!(first_location) }
+    end
+
+    let(:first_location) { "96" }
+    let(:second_location) { "50" }
+    let(:third_location) { "81" }
+
+    before do
+      # undo the global freeze at the top of this file.
+      # since VACOLS sets time internally via Oracle it does not respect Timecop.
+      Timecop.return
+
+      vacols_case.update_vacols_location!(second_location)
+
+      # small hesitation so date column sorts correctly
+      sleep 1
+      vacols_case.update_vacols_location!(third_location)
+    end
+
+    subject { appeal.location_history.map { |priloc| [priloc.assigned_at, priloc.location, priloc.assigned_by] } }
+
+    let(:today) { Time.zone.today }
+
+    it "returns array of date, to_whom, by_whom" do
+      expect(subject).to eq([
+                              [today, first_location, "DSUSER"],
+                              [today, second_location, "DSUSER"],
+                              [today, third_location, "DSUSER"]
+                            ])
+      expect(appeal.location_history.last.summary).to eq(location: third_location,
+                                                         assigned_at: today,
+                                                         assigned_by: "DSUSER",
+                                                         date_in: nil,
+                                                         date_out: today)
     end
   end
 
@@ -2150,13 +2196,7 @@ describe LegacyAppeal, :all_dbs do
              snamef: "Bobby",
              snamemi: "F",
              snamel: "Veteran",
-             ssalut: "",
-             saddrst1: "123 K St. NW",
-             saddrst2: "Suite 456",
-             saddrcty: "Washington",
-             saddrstt: "DC",
-             saddrcnty: nil,
-             saddrzip: "20001")
+             ssalut: "")
     end
     let!(:representative) do
       create(:representative,
@@ -2172,6 +2212,17 @@ describe LegacyAppeal, :all_dbs do
              repzip: "10000")
     end
     let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "T") }
+    let(:veteran_address) do
+      {
+        addrs_one_txt: "123 K St. NW",
+        addrs_two_txt: "Suite 456",
+        addrs_three_txt: nil,
+        city_nm: "Washington",
+        postal_cd: "DC",
+        cntry_nm: nil,
+        zip_prefix_nbr: "20001"
+      }
+    end
 
     context "when veteran is the appellant and addresses are included" do
       it "the veteran is returned with addresses" do
@@ -2183,6 +2234,7 @@ describe LegacyAppeal, :all_dbs do
           address: {
             address_line_1: "123 K St. NW",
             address_line_2: "Suite 456",
+            address_line_3: nil,
             city: "Washington",
             state: "DC",
             country: nil,
@@ -2223,6 +2275,7 @@ describe LegacyAppeal, :all_dbs do
           address: {
             address_line_1: "123 K St. NW",
             address_line_2: "Suite 456",
+            address_line_3: nil,
             city: "Washington",
             state: "DC",
             country: nil,
@@ -2253,15 +2306,21 @@ describe LegacyAppeal, :all_dbs do
                snamef: "Bobby",
                snamemi: "F",
                snamel: "Veteran",
-               saddrst1: "123 K St. NW",
-               saddrst2: "Suite 456",
-               saddrcty: "Washington",
-               saddrstt: "DC",
-               saddrcnty: nil,
-               saddrzip: "20001",
                sspare1: "Claimant",
                sspare2: "Tommy",
-               sspare3: "G")
+               sspare3: "G",
+               ssn: "123456789")
+      end
+      let(:appellant_address) do
+        {
+          addrs_one_txt: "456 K St. NW",
+          addrs_two_txt: "Suite 789",
+          addrs_three_txt: nil,
+          city_nm: "Washington",
+          postal_cd: "DC",
+          cntry_nm: nil,
+          zip_prefix_nbr: "20001"
+        }
       end
 
       it "the appellant is returned" do
@@ -2271,8 +2330,9 @@ describe LegacyAppeal, :all_dbs do
           last_name: "Claimant",
           name_suffix: nil,
           address: {
-            address_line_1: "123 K St. NW",
-            address_line_2: "Suite 456",
+            address_line_1: "456 K St. NW",
+            address_line_2: "Suite 789",
+            address_line_3: nil,
             city: "Washington",
             state: "DC",
             country: nil,
@@ -2515,9 +2575,7 @@ describe LegacyAppeal, :all_dbs do
       end
 
       context "if the only active case is a RootTask" do
-        before do
-          create(:root_task, appeal: appeal)
-        end
+        let!(:root_task) { create(:root_task, appeal: appeal) }
 
         it "returns Case storage" do
           expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
@@ -2526,10 +2584,10 @@ describe LegacyAppeal, :all_dbs do
 
       context "if there are active TrackVeteranTask, TimedHoldTask, and RootTask" do
         let(:today) { Time.zone.today }
+        let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
         before do
-          create(:root_task, :in_progress, appeal: appeal)
-          create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 11)
-          create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 11)
+          create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
+          create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
         end
 
         describe "when there are no other tasks" do
@@ -2540,10 +2598,14 @@ describe LegacyAppeal, :all_dbs do
 
         describe "when there is an assigned actionable task" do
           let(:task_assignee) { create(:user) }
-          let!(:task) { create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal) }
+          let!(:task) do
+            create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal, parent: root_task)
+          end
 
-          it "returns the actionable task's label", skip: "flake" do
-            expect(appeal.assigned_to_location).to eq(task_assignee.css_id)
+          it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
+            expect(appeal.assigned_to_location).to(
+              eq(task_assignee.css_id), appeal.structure_render(:id, :status, :assigned_to_id, :created_at, :updated_at)
+            )
           end
         end
       end

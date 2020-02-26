@@ -5,6 +5,8 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
 
   include_context "AMA Tableau SQL"
 
+  let(:etl_build) { ETL::Build.create }
+
   describe "#origin_class" do
     subject { described_class.new.origin_class }
 
@@ -18,7 +20,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
   end
 
   describe "#call" do
-    subject { described_class.new.call }
+    subject { described_class.new.call(etl_build) }
 
     before do
       expect(ETL::Appeal.count).to eq(0)
@@ -30,10 +32,19 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
 
         expect(ETL::Appeal.count).to eq(13)
       end
+
+      it "populates person attributes" do
+        subject
+
+        appeal = ETL::Appeal.first
+        expect(appeal.veteran_dob).to_not be_nil
+        expect(appeal.claimant_dob).to_not be_nil
+        expect(appeal.aod_due_to_dob).to_not be_nil
+      end
     end
 
     context "sync tomorrow" do
-      subject { described_class.new(since: Time.zone.tomorrow).call }
+      subject { described_class.new(since: Time.zone.now + 1.day).call(etl_build) }
 
       it "does not sync" do
         subject
@@ -46,9 +57,11 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       let!(:appeal) { create(:appeal, established_at: nil) }
 
       it "skips non-established Appeals" do
-        subject
+        etl_build_table = subject
 
         expect(ETL::Appeal.count).to eq(13)
+        expect(etl_build_table.rows_rejected).to eq(0) # not part of .filter so we can't know about it.
+        expect(etl_build_table.rows_inserted).to eq(13)
       end
     end
 
@@ -64,7 +77,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       end
 
       it "syncs" do
-        subject
+        expect { subject }.to_not raise_error
 
         expect(ETL::Appeal.count).to eq(14)
       end

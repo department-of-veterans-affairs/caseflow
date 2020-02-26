@@ -7,7 +7,6 @@
 # - JudgeDispatchReturnTasks
 # - JudgeAssignTasks
 # - JudgeAddressMotionToVacateTasks
-# - JudgeSignMotionToVacateTasks
 
 class JudgeTask < Task
   def available_actions(user)

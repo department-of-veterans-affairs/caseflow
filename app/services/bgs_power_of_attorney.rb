@@ -17,6 +17,8 @@ class BgsPowerOfAttorney
   delegate :email_address,
            to: :person, prefix: :representative
 
+  CACHE_TTL = 30.days
+
   private
 
   def person
@@ -26,12 +28,12 @@ class BgsPowerOfAttorney
   def fetch_bgs_record
     if claimant_participant_id
       cache_key = "bgs-participant-poa-#{claimant_participant_id}"
-      Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+      Rails.cache.fetch(cache_key, expires_in: CACHE_TTL) do
         bgs.fetch_poas_by_participant_ids([claimant_participant_id])[claimant_participant_id]
       end
     else
       cache_key = "bgs-participant-poa-#{file_number}"
-      Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+      Rails.cache.fetch(cache_key, expires_in: CACHE_TTL) do
         bgs.fetch_poa_by_file_number(file_number)
       end
     end
@@ -40,6 +42,6 @@ class BgsPowerOfAttorney
   def load_bgs_address!
     return nil if !participant_id
 
-    BgsAddressService.new(participant_id: participant_id).fetch_bgs_record
+    BgsAddressService.new(participant_id: participant_id).address
   end
 end

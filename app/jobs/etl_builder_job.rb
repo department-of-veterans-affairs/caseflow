@@ -18,12 +18,12 @@ class ETLBuilderJob < CaseflowJob
   private
 
   def build_etl
-    built = ETL::Builder.new.incremental
+    etl_build = ETL::Builder.new.incremental
 
     datadog_report_runtime(metric_group_name: DATADOG_NAME)
 
     msg = "ETL failed to sync any records"
 
-    slack_service.send_notification(msg, self.class.to_s, SLACK_CHANNEL) if built == 0
+    slack_service.send_notification(msg, self.class.to_s, SLACK_CHANNEL) if etl_build.built == 0
   end
 end

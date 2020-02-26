@@ -5,9 +5,10 @@ import { bindActionCreators } from 'redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
+import WindowUtil from '../util/WindowUtil';
 import { prepareAppealForStore, prepareAllTasksForStore } from './utils';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
-import COPY from '../../COPY.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
+import COPY from '../../COPY';
 import PropTypes from 'prop-types';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
@@ -68,12 +69,10 @@ class CaseDetailLoadingScreen extends React.PureComponent {
     this.maybeLoadJudgeData()
   ]);
 
-  reload = () => window.location.reload();
-
   render = () => {
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load this case.<br />
-      Please <a onClick={this.reload}>refresh the page</a> and try again.
+      Please <a onClick={WindowUtil.reloadWithPOST}>refresh the page</a> and try again.
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay
