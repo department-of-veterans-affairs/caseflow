@@ -13,6 +13,7 @@ RSpec.describe HomeController, :postgres, type: :controller do
 
     context "when visitor is logged in" do
       let!(:current_user) do
+        # RO28 is the Chicago Regional Office
         User.authenticate!(user: create(:user, regional_office: "RO28", station_id: 328))
       end
 
