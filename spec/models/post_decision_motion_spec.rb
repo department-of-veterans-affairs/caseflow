@@ -54,7 +54,7 @@ RSpec.describe PostDecisionMotion, type: :model do
       expect(vacate_stream.request_issues.size).to eq 0
       subject
       vacate_stream.reload
-      expect(vacate_stream.request_issues.size).to eq 6
+      expect(vacate_stream.request_issues.size).to eq 3
     end
   end
 
@@ -72,7 +72,7 @@ RSpec.describe PostDecisionMotion, type: :model do
       post_decision_motion.create_request_issues_for_vacatur
       subject
       vacate_stream.reload
-      expect(vacate_stream.decision_issues.size).to eq 6
+      expect(vacate_stream.decision_issues.size).to eq 3
     end
   end
 end
