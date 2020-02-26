@@ -353,7 +353,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
     context "for legacy appeals" do
       let!(:vacols_case) { create(:case) }
-      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran_address, vacols_case: vacols_case) }
 
       it "returns an address" do
         # Baltimore, MD regional office (eastern time)
