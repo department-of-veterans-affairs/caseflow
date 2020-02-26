@@ -54,6 +54,10 @@ class User < ApplicationRecord
     selected_regional_office || regional_office
   end
 
+  def acting_judge_in_vacols?
+    attorney_in_vacols? && judge_in_vacols?
+  end
+
   def attorney_in_vacols?
     vacols_roles.include?("attorney")
   end
