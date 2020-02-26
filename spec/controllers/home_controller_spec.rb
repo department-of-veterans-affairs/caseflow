@@ -12,15 +12,17 @@ RSpec.describe HomeController, :postgres, type: :controller do
     end
 
     context "when visitor is logged in" do
-      let!(:current_user) { User.authenticate! }
+      let!(:current_user) do
+        User.authenticate!(user: create(:user, regional_office: "RO28", station_id: 328))
+      end
 
       it "should set timezone in session if is not set and restore it" do
         initial_time_zone = Time.zone
         expect(@request.session[:timezone]).to eq nil
 
-        get :index
         allow(Time).to receive(:zone=).and_call_original
-        allow(Time).to receive(:zone=).with(current_user.timezone).once.and_call_original
+        expect(Time).to receive(:zone=).with(current_user.timezone).once.and_call_original
+        get :index
         expect(@request.session[:timezone]).to eq current_user.timezone
 
         expect(Time.zone).to eq initial_time_zone
@@ -31,7 +33,7 @@ RSpec.describe HomeController, :postgres, type: :controller do
         @request.session[:timezone] = "America/Chicago"
 
         allow(Time).to receive(:zone=).and_call_original
-        allow(Time).to receive(:zone=).with("America/Chicago").once.and_call_original
+        expect(Time).to receive(:zone=).with("America/Chicago").once.and_call_original
         get :index
         expect(@request.session[:timezone]).to eq "America/Chicago"
 
