@@ -21,9 +21,6 @@ gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
 gem "kaminari"
-# active_model_serializers has a default dependency on loofah 2.2.2 which security vulnerabilities
-# (CVE-2018-16468 and CVE-2019-15587)
-gem "loofah", ">= 2.3.1"
 gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
@@ -33,7 +30,7 @@ gem "newrelic_rpm"
 # https://github.com/sparklemotion/nokogiri/issues/1915
 # nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
 # https://github.com/sparklemotion/nokogiri/issues/1943
-gem "nokogiri", "~> 1.10.5"
+gem "nokogiri", "~> 1.10.8"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
