@@ -4,6 +4,7 @@ require "rails_erd/domain"
 require "csv"
 
 namespace :doc do
+  # SQL is all psql-specific so we can't do VACOLS
   def table_comments
     sql = <<-SQL
       SELECT c.table_schema,c.table_name,c.column_name,pgd.description
@@ -54,6 +55,7 @@ namespace :doc do
   desc "Generate documentation for db schema"
   task schema: :environment do
     schema_name = ENV.fetch("SCHEMA") # die if not set
+    ENV.fetch("ERD_BASE") # we just want it defined explicitly for RailsERD::Domain.generate
 
     $VERBOSE = nil # turn off warnings about already initialized constants
     Rails.application.eager_load!
@@ -67,8 +69,14 @@ namespace :doc do
     csv_file = Rails.root.join("docs/schema/#{schema_name}.csv")
     CSV.open(csv_file, "wb") do |csv|
       csv << ["Table", "Column", "Type", "Required", "Primary Key", "Unique", "Index", "Description"]
+
       domain.entities.each do |entity|
+        next unless entity.model
+
+        next if entity.virtual? # only fronting actual tables
+
         table_name = entity.model.table_name
+
         csv << [table_name, nil, nil, nil, nil, nil, nil, comment_for_table(table_name)]
         entity.attributes.each do |attr|
           comment = comments.dig(table_name, attr.name)

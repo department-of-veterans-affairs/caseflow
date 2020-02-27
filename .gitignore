@@ -64,3 +64,6 @@ local/vacols/build_facols/*
 
 # makefile
 Makefile
+
+# ERD diagrams are not checked in
+*-erd.pdf
