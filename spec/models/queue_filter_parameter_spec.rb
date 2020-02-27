@@ -50,4 +50,34 @@ describe QueueFilterParameter do
       end
     end
   end
+
+  describe ".from_suggested_location_col_filter_string" do
+    let(:filter_string) { nil }
+
+    subject { QueueFilterParameter.from_suggested_location_col_filter_string(filter_string) }
+
+    context "input string contains valid column and value fields" do
+      let(:location_values) { ["New York, NY(RO)", "San Francisco, CA(VA)"] }
+      let(:all_location_values) { location_values }
+      let(:encoded_location_values) { URI.escape(URI.escape(all_location_values.join(","))) }
+      let(:filter_string) {
+        "col=#{Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME}&val=#{encoded_location_values}"
+      }
+
+      it "instantiates without error and returns the expected values" do
+        expect { subject }.to_not raise_error
+        expect(subject).to be_a(QueueFilterParameter)
+        expect(subject.values).to match_array all_location_values
+      end
+
+      context "input string includes a blank value field" do
+        let(:all_location_values) { location_values + [COPY::NULL_FILTER_LABEL] }
+
+        it "returns the expected values" do
+          expect(subject.values).to match_array location_values + [nil]
+        end
+      end
+    end
+  end
+
 end
