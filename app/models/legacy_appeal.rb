@@ -765,11 +765,7 @@ class LegacyAppeal < ApplicationRecord
 
   # Appellant's addressed wrapped as an instance of `Address`.
   def address
-    if appellant[:address].present?
-      @address ||= Address.new(
-        appellant[:address].slice(:address_line_1, :address_line_2, :address_line_3, :city, :zip, :country, :state)
-      )
-    end
+    @address ||= Address.new(appellant[:address]) if appellant[:address].present?
   end
 
   def paper_case?
