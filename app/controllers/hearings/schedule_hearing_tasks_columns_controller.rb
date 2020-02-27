@@ -15,7 +15,9 @@ class Hearings::ScheduleHearingTasksColumnsController < ApplicationController
       render json: tab.to_hash
     elsif allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM] ==
           Constants.QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME
-      tab = AssignHearingTab.new(appeal_type: LegacyAppeal.name, regional_office_key: allowed_params[:regional_office_key])
+      tab = AssignHearingTab.new(
+        appeal_type: LegacyAppeal.name, regional_office_key: allowed_params[:regional_office_key]
+      )
       render json: tab.to_hash
     else
       fail(
