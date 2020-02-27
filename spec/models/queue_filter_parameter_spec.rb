@@ -60,9 +60,9 @@ describe QueueFilterParameter do
       let(:location_values) { ["New York, NY(RO)", "San Francisco, CA(VA)"] }
       let(:all_location_values) { location_values }
       let(:encoded_location_values) { URI.escape(URI.escape(all_location_values.join(","))) }
-      let(:filter_string) {
+      let(:filter_string) do
         "col=#{Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME}&val=#{encoded_location_values}"
-      }
+      end
 
       it "instantiates without error and returns the expected values" do
         expect { subject }.to_not raise_error
@@ -79,5 +79,4 @@ describe QueueFilterParameter do
       end
     end
   end
-
 end
