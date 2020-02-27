@@ -11,7 +11,7 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
   end
 
   def tasks_for_tab
-    tab = AssignHearing.new(
+    tab = AssignHearingTab.new(
       appeal_type: appeal_type,
       regional_office_key: regional_office_key
     )

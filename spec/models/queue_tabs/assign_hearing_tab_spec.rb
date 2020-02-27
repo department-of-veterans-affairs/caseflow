@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AssignHearing do
+describe AssignHearingTab do
   let(:regional_office_key) { "RO18" }
   let(:cache_ama_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
   let(:cache_legacy_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
@@ -57,7 +57,7 @@ describe AssignHearing do
         end
 
         it "returns tasks for all relevant appeals in location 57" do
-          tasks = AssignHearing.new(appeal_type: LegacyAppeal.name, regional_office_key: regional_office_key).tasks
+          tasks = AssignHearingTab.new(appeal_type: LegacyAppeal.name, regional_office_key: regional_office_key).tasks
           expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(
             cases.pluck(:bfkey) + [c_number_case.bfkey]
           )
@@ -99,7 +99,7 @@ describe AssignHearing do
         end
 
         it "returns tasks for all CO hearings in location 57" do
-          tasks = AssignHearing.new(appeal_type: LegacyAppeal.name, regional_office_key: "C").tasks
+          tasks = AssignHearingTab.new(appeal_type: LegacyAppeal.name, regional_office_key: "C").tasks
           expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey))
         end
 
@@ -107,7 +107,7 @@ describe AssignHearing do
           AppealRepository.create_schedule_hearing_tasks
           cache_legacy_appeals
 
-          tasks = AssignHearing.new(appeal_type: LegacyAppeal.name, regional_office_key: regional_office_key).tasks
+          tasks = AssignHearingTab.new(appeal_type: LegacyAppeal.name, regional_office_key: regional_office_key).tasks
           expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(video_cases.pluck(:bfkey))
         end
       end
@@ -130,7 +130,7 @@ describe AssignHearing do
 
       it "returns tasks for all appeals associated with Veterans at regional office" do
         cache_ama_appeals
-        tasks = AssignHearing.new(appeal_type: Appeal.name, regional_office_key: regional_office_key).tasks
+        tasks = AssignHearingTab.new(appeal_type: Appeal.name, regional_office_key: regional_office_key).tasks
 
         expect(tasks.count).to eq(1)
         expect(tasks[0].id).to eq(schedule_hearing_task.id)
@@ -139,7 +139,7 @@ describe AssignHearing do
   end
 
   context "AMA appeals" do
-    let(:tab) { AssignHearing.new(params) }
+    let(:tab) { AssignHearingTab.new(params) }
     let(:assignee) { HearingsManagement.singleton }
     let(:params) do
       {

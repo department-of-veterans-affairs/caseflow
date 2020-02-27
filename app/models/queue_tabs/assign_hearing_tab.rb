@@ -5,7 +5,7 @@
 # Acts as a general tab for the two tabs for the table: amaAssignHearingTab,
 # and legacyAssignHearingTab which are paginated.
 
-class AssignHearing
+class AssignHearingTab
   include ActiveModel::Model
 
   attr_accessor :regional_office_key, :appeal_type
