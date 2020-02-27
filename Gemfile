@@ -121,7 +121,6 @@ group :development do
   gem "foreman"
   gem "meta_request"
   gem "rails-erd"
-  gem "skeema"
 end
 
 group :test do
