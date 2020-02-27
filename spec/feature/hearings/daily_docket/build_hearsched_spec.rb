@@ -71,7 +71,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     let!(:hearing) { create(:hearing, :with_tasks) }
     let!(:postponed_hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 3)) }
 
-    scenario "User can update fields" do
+    scenario "User can update fields", skip: "flake" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       find("textarea", id: "#{hearing.external_id}-notes").click.send_keys("This is a note about the hearing!")
       find("label", text: "9:00 am").click
