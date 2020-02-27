@@ -366,6 +366,8 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  alias appellant claimant
+
   # reptype C is a contested claimant
   def contested_claimants
     vacols_representatives.where(reptype: "C").map(&:as_claimant)
