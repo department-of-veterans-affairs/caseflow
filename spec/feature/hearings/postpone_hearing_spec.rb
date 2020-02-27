@@ -46,6 +46,7 @@ RSpec.feature "Postpone hearing", :all_dbs do
 
     scenario "and reschedule" do
       visit "/queue/appeals/#{appeal.external_id}"
+      fail "BAH"
 
       click_dropdown(text: Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h[:label])
       find("label", text: "Reschedule immediately").click
