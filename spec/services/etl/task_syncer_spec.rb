@@ -21,12 +21,14 @@ describe ETL::TaskSyncer, :etl, :all_dbs do
 
     context "orphaned Task" do
       let!(:orphaned_task) { create(:task) }
+      let(:etl_build_table) { ETL::BuildTable.where(table_name: "tasks").last }
+
       before do
         orphaned_task.appeal.delete # not destroy, to avoid callbacks
       end
 
       it "skips orphans" do
-        etl_build_table = subject
+        subject
 
         expect(Task.count).to eq(32)
         expect(ETL::Task.count).to eq(31)

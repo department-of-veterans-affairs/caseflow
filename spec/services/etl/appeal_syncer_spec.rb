@@ -55,9 +55,10 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
 
     context "Appeal is not yet established" do
       let!(:appeal) { create(:appeal, established_at: nil) }
+      let(:etl_build_table) { ETL::BuildTable.where(table_name: "appeals").last }
 
       it "skips non-established Appeals" do
-        etl_build_table = subject
+        subject
 
         expect(ETL::Appeal.count).to eq(13)
         expect(etl_build_table.rows_rejected).to eq(0) # not part of .filter so we can't know about it.
