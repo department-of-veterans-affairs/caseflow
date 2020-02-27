@@ -18,6 +18,10 @@ class ETL::Syncer
     inserted = 0
     updated = 0
     rejected = 0
+
+    # query can take up to 90 seconds
+    ActiveRecord::Base.connection.execute "SET statement_timeout = 90000"
+
     instances_needing_update.find_in_batches.with_index do |originals, batch|
       Rails.logger.debug("Starting batch #{batch} for #{target_class}")
       build_record(etl_build) # create inside the loop so we reflect what we actually update
@@ -56,6 +60,8 @@ class ETL::Syncer
     )
     # re-raise so sentry and parent build record know.
     raise error
+  ensure
+    ActiveRecord::Base.connection.execute "SET statement_timeout = 30000" # restore to 30 seconds
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
