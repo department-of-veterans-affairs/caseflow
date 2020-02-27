@@ -44,7 +44,9 @@ describe BvaDispatchTask, :all_dbs do
 
   describe ".outcode" do
     let(:user) { create(:user) }
-    let(:root_task) { create(:root_task) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:appeal) { create(:appeal, stream_type: stream_type) }
+    let(:stream_type) { "original" }
     let(:the_case) { create(:case) }
     let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: the_case) }
     let(:citation_number) { "A18123456" }
@@ -71,7 +73,6 @@ describe BvaDispatchTask, :all_dbs do
         allow(ProcessDecisionDocumentJob).to receive(:perform_later)
 
         BvaDispatchTask.outcode(root_task.appeal.reload, params, user)
-
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
         expect(tasks.length).to eq(1)
         task = tasks[0]
@@ -120,6 +121,29 @@ describe BvaDispatchTask, :all_dbs do
           expect(decision_document.document_type).to eq "BVA Decision"
           expect(decision_document.source).to eq "BVA"
           expect(decision_document.submitted_at).to eq(Time.zone.now)
+        end
+      end
+
+      context "when de_novo appeal stream" do
+        let(:stream_type) { "vacate" }
+        let!(:post_decision_motion) do
+          create(:post_decision_motion,
+                 appeal: appeal, vacate_type: "vacate_and_de_novo",
+                 task: create(:task))
+        end
+
+        it "should create de_novo appeal stream" do
+          allow(ProcessDecisionDocumentJob).to receive(:perform_later)
+
+          BvaDispatchTask.outcode(root_task.appeal, params, user)
+          tasks = BvaDispatchTask.where(appeal: appeal, assigned_to: user)
+          expect(tasks.length).to eq(1)
+
+          de_novo_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "de_novo")
+
+          expect(de_novo_stream).to_not be_nil
+          request_issues = de_novo_stream.request_issues
+          expect(request_issues.size).to eq(appeal.decision_issues.size)
         end
       end
 

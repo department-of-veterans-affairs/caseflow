@@ -54,6 +54,10 @@ class User < ApplicationRecord
     selected_regional_office || regional_office
   end
 
+  def acting_judge_in_vacols?
+    attorney_in_vacols? && judge_in_vacols?
+  end
+
   def attorney_in_vacols?
     vacols_roles.include?("attorney")
   end
@@ -460,6 +464,10 @@ class User < ApplicationRecord
       new_user_css_ids = normalized_css_ids - User.where(css_id: normalized_css_ids).pluck(:css_id)
       User.create(new_user_css_ids.map { |css_id| { css_id: css_id, station_id: User::BOARD_STATION_ID } })
       User.where(css_id: normalized_css_ids)
+    end
+
+    def find_by_vacols_username(vacols_username)
+      User.joins(:vacols_user).find_by(cached_user_attributes: { slogid: vacols_username })
     end
 
     def list_hearing_coordinators
