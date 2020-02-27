@@ -721,23 +721,22 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
 
     context "Filter by PowerOfAttorneyName column" do
-      # rubocop:disable Style/HashSyntax
       before do
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["1"]).and_return(
-          "1" => { :representative_type => "Attorney", :representative_name => "Attorney 1", :participant_id => "1" }
+          "1" => { representative_type: "Attorney", representative_name: "Attorney 1", participant_id: "1" }
         )
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["2"]).and_return(
-          "2" => { :representative_type => "Attorney", :representative_name => "Attorney 2", :participant_id => "2" }
+          "2" => { representative_type: "Attorney", representative_name: "Attorney 2", participant_id: "2" }
         )
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["3"]).and_return(
-          "3" => { :representative_type => "Attorney", :representative_name => "Attorney 3", :participant_id => "3" }
+          "3" => { representative_type: "Attorney", representative_name: "Attorney 3", participant_id: "3" }
         )
 
         create_ama_appeals
         cache_appeals
         navigate_to_ama_tab
       end
-      # rubocop:enable Style/HashSyntax
+
       it "filters are correct, and filter as expected" do
         step "check if there are the right number of rows for the ama tab" do
           expect(page).to have_content("Power of Attorney (POA)")
