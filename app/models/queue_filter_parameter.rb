@@ -28,7 +28,7 @@ class QueueFilterParameter
     # The from_string method does not work for suggestedLocation column
     # in assign hearings table because the row data has comma in it.
     # This method preserves the comma and returns correct filter params
-    # "col=suggestedLocation&val=New York, NY(RO), San Francisco, CA(VA)"
+    # "col=suggestedLocation&val=New%2520York,%2520NY(RO),San%2520Francisco,%2520CA(VA)"
     # ->
     # { "col": "suggestedLocation", "val": ["New York, NY(RO)", "San Francisco, CA(VA)"] }
     filter_hash = Rack::Utils.parse_query(filter_string)
