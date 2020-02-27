@@ -8,19 +8,19 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
   let(:etl_build) { ETL::Build.create }
 
   describe "#origin_class" do
-    subject { described_class.new.origin_class }
+    subject { described_class.new(etl_build: etl_build).origin_class }
 
     it { is_expected.to eq Appeal }
   end
 
   describe "#target_class" do
-    subject { described_class.new.target_class }
+    subject { described_class.new(etl_build: etl_build).target_class }
 
     it { is_expected.to eq ETL::Appeal }
   end
 
   describe "#call" do
-    subject { described_class.new.call(etl_build) }
+    subject { described_class.new(etl_build: etl_build).call }
 
     before do
       expect(ETL::Appeal.count).to eq(0)
@@ -44,7 +44,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
     end
 
     context "sync tomorrow" do
-      subject { described_class.new(since: Time.zone.now + 1.day).call(etl_build) }
+      subject { described_class.new(since: Time.zone.now + 1.day, etl_build: etl_build).call }
 
       it "does not sync" do
         subject

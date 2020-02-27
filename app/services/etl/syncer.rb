@@ -8,23 +8,27 @@
 # then sync and save the corresponding target_class instance.
 
 class ETL::Syncer
-  def initialize(since: nil)
-    @since = since
+  def initialize(since: nil, etl_build:)
+    @orig_since = since # different name since we calculate since()
+    @etl_build = etl_build
   end
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def call(etl_build)
+  def call
     inserted = 0
     updated = 0
     rejected = 0
 
     # query can take up to 90 seconds
-    ActiveRecord::Base.connection.execute "SET statement_timeout = 90000"
+    ETL::Record.connection.execute "SET statement_timeout = 90000"
 
     instances_needing_update.find_in_batches.with_index do |originals, batch|
       Rails.logger.debug("Starting batch #{batch} for #{target_class}")
-      build_record(etl_build) # create inside the loop so we reflect what we actually update
+
+      # create within loop so we ignore when instances is empty
+      build_record
+
       target_class.transaction do
         possible = originals.length
         saved = 0
@@ -48,9 +52,8 @@ class ETL::Syncer
         rows_rejected: rejected
       )
     end
-    build_record
   rescue StandardError => error
-    build_record(etl_build).update!(
+    build_record.update!(
       rows_inserted: inserted,
       rows_updated: updated,
       rows_rejected: rejected,
@@ -61,7 +64,7 @@ class ETL::Syncer
     # re-raise so sentry and parent build record know.
     raise error
   ensure
-    ActiveRecord::Base.connection.execute "SET statement_timeout = 30000" # restore to 30 seconds
+    ETL::Record.connection.execute "SET statement_timeout = 30000" # restore to 30 seconds
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
@@ -78,19 +81,33 @@ class ETL::Syncer
     false
   end
 
+  def since
+    return nil if @orig_since.nil?
+
+    # if it's a boolean true value, calculate based on last build_record
+    @since ||= if @orig_since == true
+                 calculate_since
+               else
+                 @orig_since
+               end
+  end
+
   private
 
-  attr_reader :since
+  attr_reader :orig_since, :etl_build
 
-  def build_record(etl_build = nil)
-    return if etl_build.nil? && @build_record.nil?
-
+  def build_record
     @build_record ||= ETL::BuildTable.create(
       etl_build: etl_build,
       table_name: target_class.table_name,
       started_at: Time.zone.now,
       status: :running
     )
+  end
+
+  def calculate_since
+    last_build = ETL::BuildTable.complete.where(table_name: target_class.table_name).order(created_at: :desc).first
+    last_build&.started_at
   end
 
   def incremental?

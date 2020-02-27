@@ -8,7 +8,7 @@ describe ETL::TaskSyncer, :etl, :all_dbs do
   let(:etl_build) { ETL::Build.create }
 
   describe "#call" do
-    subject { described_class.new.call(etl_build) }
+    subject { described_class.new(etl_build: etl_build).call }
 
     context "BVA status distribution" do
       it "has expected distribution" do
