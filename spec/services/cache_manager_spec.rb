@@ -29,4 +29,12 @@ describe CacheManager do
       expect(Rails.cache.exist?(ro_cache_key)).to be_falsey
     end
   end
+
+  describe "#key_count" do
+    it "returns number of matches for pattern" do
+      ro_schedule_period.start_confirming_schedule
+
+      expect(subject.key_count("RoSchedulePeriod-*")).to eq(1)
+    end
+  end
 end
