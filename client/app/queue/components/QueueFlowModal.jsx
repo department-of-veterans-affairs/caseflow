@@ -25,7 +25,10 @@ class QueueFlowModal extends React.PureComponent {
 
   cancelHandler = () => this.props.history.goBack();
 
-  closeHandler = () => this.props.history.replace(this.props.pathAfterSubmit);
+  closeHandler = (obj) => {
+    let pathAfterSubmit = (obj.pathAfterSubmit) ? obj.pathAfterSubmit : this.props.pathAfterSubmit;
+    this.props.history.replace(pathAfterSubmit);
+  }
 
   setLoading = (loading) => this.setState({ loading });
 
@@ -41,10 +44,10 @@ class QueueFlowModal extends React.PureComponent {
     this.props.highlightInvalidFormItems(false);
     this.setState({ loading: true });
 
-    this.props.submit().then(() => {
+    this.props.submit().then((obj) => {
       this.setState({ loading: false });
       if (!this.props.error) {
-        this.closeHandler();
+        this.closeHandler(obj);
       }
     }, () => {
       this.setState({ loading: false });

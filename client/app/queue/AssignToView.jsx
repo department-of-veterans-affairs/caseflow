@@ -102,8 +102,14 @@ class AssignToView extends React.Component {
 
     return this.props.
       requestSave('/tasks', payload, isPulacCerullo ? pulacCerulloSuccessMessage : assignTaskSuccessMessage).
-      then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
-      catch(() => {
+      then((resp) => {
+        let obj=this.props.onReceiveAmaTasks(resp.body.tasks.data);
+        if(taskType === 'SpecialCaseMovementTask') {
+          // Send SCM user to the judge's assign queue
+          obj.pathAfterSubmit = `/queue/${this.state.selectedValue}/assign?scm=true`;
+        }
+        return obj;
+      }).catch(() => {
         // handle the error from the frontend
       });
   };
