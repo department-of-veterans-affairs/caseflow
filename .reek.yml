@@ -28,6 +28,8 @@ detectors:
     exclude:
       - Address
       - Fakes::PersistentStore#convert_dates_from
+  UncommunicativeMethodName:
+    exclude:
       - LegacyAppeal#appellant_address_line_1
       - LegacyAppeal#appellant_address_line_2
   UncommunicativeParameterName:
