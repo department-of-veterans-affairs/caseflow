@@ -28,6 +28,8 @@ detectors:
     exclude:
       - Address
       - Fakes::PersistentStore#convert_dates_from
+      - LegacyAppeal#appellant_address_line_1
+      - LegacyAppeal#appellant_address_line_2
   UncommunicativeParameterName:
     exclude:
       - Address
@@ -113,6 +115,7 @@ detectors:
     exclude:
       - HearingLocation
       - JudgeTeam
+      - LegacyAppeal
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
