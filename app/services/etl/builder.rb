@@ -15,8 +15,6 @@ class ETL::Builder
     User
   ].freeze
 
-  CHECKPOINT_KEY = "etl-last-build-checkpoint"
-
   def initialize(since: checkpoint_time)
     @since = since
   end
@@ -24,9 +22,8 @@ class ETL::Builder
   attr_reader :since
 
   def incremental
-    checkmark
     syncer_klasses.each do |klass|
-      klass.new(since: since).call(build_record)
+      klass.new(since: true, etl_build: build_record).call
     end
     post_build_steps
     update_build_record
@@ -36,8 +33,7 @@ class ETL::Builder
   end
 
   def full
-    checkmark
-    syncer_klasses.each { |klass| klass.new.call(build_record) }
+    syncer_klasses.each { |klass| klass.new(etl_build: build_record).call }
     post_build_steps
     update_build_record
   rescue StandardError => error
@@ -50,7 +46,8 @@ class ETL::Builder
   end
 
   def last_built
-    Time.zone.parse(checkpoint)
+    # DO NOT memoize
+    ETL::Build.complete.order(created_at: :desc).first&.started_at
   end
 
   def build_record
@@ -75,21 +72,6 @@ class ETL::Builder
 
   def checkpoint_time
     @checkpoint_time ||= last_built || Time.zone.now
-  end
-
-  def checkpoint
-    # if more than 30 days pass w/o an incremental build,
-    # we want to trigger a full build automatically.
-    # the 30 day window is arbitrary, failsafe.
-    Rails.cache.fetch(CHECKPOINT_KEY, expires_in: 30.days) do
-      Time.zone.now.to_s
-    end
-  end
-
-  def checkmark
-    now = Time.zone.now.to_s
-    Rails.logger.info("ETL::Builder.checkmark #{now}")
-    Rails.cache.write(CHECKPOINT_KEY, now)
   end
 
   def post_build_steps
