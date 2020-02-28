@@ -61,6 +61,8 @@ describe BvaDispatchTask, :all_dbs do
     end
     let!(:request_issue) { create(:request_issue, decision_review: root_task.appeal) }
     let!(:di) { create(:decision_issue, decision_review: root_task.appeal, request_issues: [request_issue]) }
+    let!(:attorney) { create(:user) }
+    let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
 
     before do
       BvaDispatch.singleton.add_user(user)
@@ -126,10 +128,18 @@ describe BvaDispatchTask, :all_dbs do
 
       context "when de_novo appeal stream" do
         let(:stream_type) { "vacate" }
+        let!(:task) { create(:ama_judge_decision_review_task, appeal: appeal, assigned_to: judge) }
+        let!(:attorney_task) { create(:ama_attorney_task, parent: task, assigned_to: attorney, appeal: appeal) }
         let!(:post_decision_motion) do
           create(:post_decision_motion,
-                 appeal: appeal, vacate_type: "vacate_and_de_novo",
-                 task: create(:task))
+                 appeal: appeal,
+                 vacate_type: "vacate_and_de_novo",
+                 task: task)
+        end
+
+        before do
+          task.update!(status: "completed")
+          attorney_task.update!(status: "completed")
         end
 
         it "should create de_novo appeal stream" do
@@ -144,6 +154,9 @@ describe BvaDispatchTask, :all_dbs do
           expect(de_novo_stream).to_not be_nil
           request_issues = de_novo_stream.request_issues
           expect(request_issues.size).to eq(appeal.decision_issues.size)
+
+          judge_task = JudgeDecisionReviewTask.find_by(assigned_to: judge, appeal: de_novo_stream)
+          expect(judge_task).to_not be_nil
         end
       end
 
@@ -225,4 +238,22 @@ describe BvaDispatchTask, :all_dbs do
         .not_to include(Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h)
     end
   end
+
+  # def de_novo_stream
+  #   Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "de_novo")
+  # end
+
+  # def verify_de_novo_stream
+  #   expect(de_novo_stream).to_not be_nil
+
+  #   root_task = de_novo_stream.root_task
+  #   jdrt = JudgeDecisionReviewTask.find_by(parent_id: root_task.id, assigned_to_id: judge.id)
+  #   attorney_task = AttorneyTask.find_by(
+  #     parent_id: jdrt.id,
+  #     assigned_to_id: attorney.id,
+  #     assigned_by_id: judge.id
+  #   )
+
+  #   expect(attorney_task).to_not be_nil
+  # end
 end
