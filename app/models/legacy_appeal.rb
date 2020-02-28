@@ -248,7 +248,7 @@ class LegacyAppeal < ApplicationRecord
     appellant_address&.[](:state)
   end
 
-  def appellant_state
+  def appellant_zip
     appellant_address&.[](:zip)
   end
 
