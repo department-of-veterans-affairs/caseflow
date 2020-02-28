@@ -23,7 +23,6 @@ class RequestIssueCorrectionCleaner
   def request_issue_to_remove
     @request_issue_to_remove ||= begin
       request_issue = contested_decision_issue&.contesting_remand_request_issue
-
       request_issue unless request_issue == correction_request_issue
     end
   end
