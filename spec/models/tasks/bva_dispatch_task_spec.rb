@@ -238,22 +238,4 @@ describe BvaDispatchTask, :all_dbs do
         .not_to include(Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h)
     end
   end
-
-  # def de_novo_stream
-  #   Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "de_novo")
-  # end
-
-  # def verify_de_novo_stream
-  #   expect(de_novo_stream).to_not be_nil
-
-  #   root_task = de_novo_stream.root_task
-  #   jdrt = JudgeDecisionReviewTask.find_by(parent_id: root_task.id, assigned_to_id: judge.id)
-  #   attorney_task = AttorneyTask.find_by(
-  #     parent_id: jdrt.id,
-  #     assigned_to_id: attorney.id,
-  #     assigned_by_id: judge.id
-  #   )
-
-  #   expect(attorney_task).to_not be_nil
-  # end
 end
