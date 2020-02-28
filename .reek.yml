@@ -140,6 +140,7 @@ detectors:
   UtilityFunction:
     public_methods_only: true
     exclude:
+      - AddressMapper#get_address_from_veteran_record
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
       - ETL::Syncer#filter?
       - ETL::TaskSyncer#filter?

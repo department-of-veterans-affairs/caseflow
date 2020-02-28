@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module AddressMapper
-  private
-
   def get_address_from_bgs_address(bgs_address)
     return {} unless bgs_address
 
