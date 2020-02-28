@@ -19,7 +19,7 @@ class AmaAppealDispatch
 
     @success = valid?
 
-    outcode_appeal if successf
+    outcode_appeal if success
 
     FormResponse.new(success: success, errors: [errors.full_messages.join(", ")])
   end
