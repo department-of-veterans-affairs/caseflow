@@ -36,11 +36,11 @@ class DeNovoStreamCreator
   def attorney_user
     return unless judge_task
 
-    task = judge_task.children.find { |t| t.is_a?(AttorneyTask) && t.completed? }
+    task = judge_task.children.find { |attorney| attorney.is_a?(AttorneyTask) && attorney.completed? }
     task.assigned_to
   end
 
   def judge_task
-    appeal.tasks.find { |t| t.is_a?(JudgeDecisionReviewTask) && t.completed? }
+    appeal.tasks.find { |task| task.is_a?(JudgeDecisionReviewTask) && task.completed? }
   end
 end
