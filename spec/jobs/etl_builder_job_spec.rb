@@ -20,6 +20,10 @@ describe ETLBuilderJob, :etl, :all_dbs do
     subject { described_class.perform_now }
 
     context "when nothing has changed" do
+      before do
+        ETL::Builder.new.full
+      end
+
       it "sends alert to Slack" do
         Timecop.travel(Time.zone.now + 1.hour) { subject }
 

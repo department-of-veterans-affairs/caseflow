@@ -54,9 +54,9 @@ class ScheduleHearingTask < Task
     end
 
     # cancel my children, myself, and my hearing task ancestor
-    children.open.update_all(status: Constants.TASK_STATUSES.cancelled)
-    update!(status: Constants.TASK_STATUSES.cancelled)
-    ancestor_task_of_type(HearingTask)&.update!(status: Constants.TASK_STATUSES.cancelled)
+    children.open.update_all(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+    update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+    ancestor_task_of_type(HearingTask)&.update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
 
     # cancel the old HearingTask and create a new one associated with the same hearing
     new_hearing_task = hearing_task.cancel_and_recreate
