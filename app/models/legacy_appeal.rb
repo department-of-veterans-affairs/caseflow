@@ -11,6 +11,7 @@ class LegacyAppeal < ApplicationRecord
   include AssociatedVacolsModel
   include BgsService
   include CachedAttributes
+  include AddressMapper
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
@@ -78,11 +79,6 @@ class LegacyAppeal < ApplicationRecord
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products,
            to: :veteran,
-           allow_nil: true
-
-  delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip,
-           to: :bgs_address_service,
-           prefix: :appellant,
            allow_nil: true
 
   cache_attribute :aod do
@@ -219,8 +215,42 @@ class LegacyAppeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
-  def appellant
-    claimant
+  def appellant_address
+    appellant_address_from_bgs = bgs_address_service&.address
+
+    # Attempt to get the address from BGS, or fall back to VACOLS. These are expected
+    # to have the same hash keys.
+    if appellant_is_not_veteran
+      appellant_address_from_bgs || get_address_from_corres_entry(case_record.correspondent)
+    else
+      appellant_address_from_bgs ||
+        get_address_from_veteran_record(veteran) ||
+        get_address_from_corres_entry(case_record.correspondent)
+    end
+  end
+
+  def appellant_address_line_1
+    appellant_address&.[](:address_line_1)
+  end
+
+  def appellant_address_line_2
+    appellant_address&.[](:address_line_2)
+  end
+
+  def appellant_city
+    appellant_address&.[](:city)
+  end
+
+  def appellant_country
+    appellant_address&.[](:country)
+  end
+
+  def appellant_state
+    appellant_address&.[](:state)
+  end
+
+  def appellant_zip
+    appellant_address&.[](:zip)
   end
 
   def appellant_is_not_veteran
@@ -365,6 +395,8 @@ class LegacyAppeal < ApplicationRecord
       }
     end
   end
+
+  alias appellant claimant
 
   # reptype C is a contested claimant
   def contested_claimants
