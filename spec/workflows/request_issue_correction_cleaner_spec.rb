@@ -13,9 +13,14 @@ describe "Request Issue Correction Cleaner", :postgres do
   end
 
   let!(:remand_decision) { create(:decision_issue, decision_review: claim_review, disposition: "DTA Error") }
+  let(:contested_decision_issue) { remand_decision }
 
   let(:correction_request_issue) do
-    create(:request_issue, correction_type: "control", contested_decision_issue: remand_decision)
+    create(
+      :request_issue, decision_review: claim_review,
+      correction_type: "control",
+      contested_decision_issue: contested_decision_issue
+    )
   end
 
   describe "#remove_dta_request_issue" do
@@ -31,6 +36,29 @@ describe "Request Issue Correction Cleaner", :postgres do
         expect(dta_request_issue.closed_status).to eq("removed")
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(dta_request_issue.contention)
         expect(dta_request_issue.end_product_establishment.synced_status).to eq("CAN")
+      end
+
+      context "when the issue being corrected is on a DTA claim" do
+        let(:remand_supplemental_claim) { create(:supplemental_claim, decision_review_remanded: claim_review) }
+        let(:granted_decision_issue) do
+          create(:decision_issue, decision_review: remand_supplemental_claim, disposition: "granted")
+        end
+        let!(:correction_request_issue) do
+          create(
+            :request_issue, decision_review: remand_supplemental_claim,
+            correction_type: "control",
+            contested_decision_issue: granted_decision_issue
+          )
+        end
+
+        it "does not try to remove itself" do
+          dta_request_issue = granted_decision_issue.contesting_remand_request_issue
+          expect(dta_request_issue).to eql(correction_request_issue)
+
+          subject
+
+          expect(correction_request_issue.reload.closed_status).to be nil
+        end
       end
     end
 
