@@ -250,35 +250,45 @@ describe TaskFilter, :all_dbs do
     context "when filtering by case type" do
       let(:tasks_per_type) { 3 }
       let(:case_types) { VACOLS::Case::TYPES }
-      let(:type_1_tasks) { create_list(:task, tasks_per_type) }
-      let(:type_2_tasks) { create_list(:task, tasks_per_type) }
-      let(:type_3_tasks) { create_list(:task, tasks_per_type) }
-      let(:type_4_tasks) { create_list(:task, tasks_per_type) }
-      let(:type_5_tasks) { create_list(:task, tasks_per_type) }
+      let(:tasks_type_original) { create_list(:task, tasks_per_type) }
+      let(:tasks_type_supplemental) { create_list(:task, tasks_per_type) }
+      let(:tasks_type_post_remand) { create_list(:task, tasks_per_type) }
+      let(:tasks_type_reconsideration) { create_list(:task, tasks_per_type) }
+      let(:tasks_type_vacate) { create_list(:task, tasks_per_type) }
       let(:all_tasks) do
-        Task.where(id: (type_1_tasks + type_2_tasks + type_3_tasks + type_4_tasks + type_5_tasks).map(&:id).sort)
+        Task.where(
+          id: (
+            tasks_type_original +
+            tasks_type_supplemental +
+            tasks_type_post_remand +
+            tasks_type_reconsideration +
+            tasks_type_vacate
+          ).map(&:id).sort
+        )
       end
 
-      before do
-        all_tasks.each_with_index do |task, index|
+      def create_cached_appeals_for_tasks(tasks, case_type)
+        tasks.each_with_index do |task, index|
           create(
             :cached_appeal,
             appeal_type: task.appeal_type,
             appeal_id: task.appeal.id,
             is_aod: (index % tasks_per_type == 0),
-            case_type: case_types[(index / tasks_per_type + 1).to_s]
+            case_type: case_type
           )
         end
       end
 
+      before do
+        create_cached_appeals_for_tasks(tasks_type_original, case_types["1"])
+        create_cached_appeals_for_tasks(tasks_type_supplemental, case_types["2"])
+        create_cached_appeals_for_tasks(tasks_type_post_remand, case_types["3"])
+        create_cached_appeals_for_tasks(tasks_type_reconsideration, case_types["4"])
+        create_cached_appeals_for_tasks(tasks_type_vacate, case_types["5"])
+      end
+
       let(:aod_case_ids) do
-        [
-          type_1_tasks.first.id,
-          type_2_tasks.first.id,
-          type_3_tasks.first.id,
-          type_4_tasks.first.id,
-          type_5_tasks.first.id
-        ]
+        all_tasks.select { |task| CachedAppeal.find_by(appeal_id: task.appeal.id).is_aod }.map(&:id)
       end
 
       context "when filter_params is an empty array" do
@@ -301,7 +311,7 @@ describe TaskFilter, :all_dbs do
         let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']}"] }
 
         it "returns only tasks with Original case types" do
-          expect(subject.map(&:id)).to match_array(type_1_tasks.map(&:id))
+          expect(subject.map(&:id)).to match_array(tasks_type_original.map(&:id))
         end
       end
 
@@ -311,7 +321,7 @@ describe TaskFilter, :all_dbs do
         end
 
         it "returns tasks with Original or Supplemental case types", skip: "flakey" do
-          expect(subject.map(&:id)).to match_array(type_1_tasks.map(&:id) + type_2_tasks.map(&:id))
+          expect(subject.map(&:id)).to match_array(tasks_type_original.map(&:id) + tasks_type_supplemental.map(&:id))
         end
       end
 
@@ -321,7 +331,9 @@ describe TaskFilter, :all_dbs do
         end
 
         it "returns tasks with Original or Supplemental case types or AOD cases" do
-          expect(subject.map(&:id)).to match_array((type_1_tasks.map(&:id) + type_2_tasks.map(&:id)) | aod_case_ids)
+          expect(subject.map(&:id)).to match_array(
+            (tasks_type_original.map(&:id) + tasks_type_supplemental.map(&:id)) | aod_case_ids
+          )
         end
       end
 

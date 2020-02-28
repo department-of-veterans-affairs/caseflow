@@ -9,11 +9,7 @@ class AppealsUpdatedSinceQuery
   end
 
   def call
-    # query can take up to 90 seconds
-    ActiveRecord::Base.connection.execute "SET statement_timeout = 90000"
     build_query
-  ensure
-    ActiveRecord::Base.connection.execute "SET statement_timeout = 30000" # 30 seconds
   end
 
   private
