@@ -104,18 +104,22 @@ class AssignToView extends React.Component {
     return this.props.
       requestSave('/tasks', payload, isPulacCerullo ? pulacCerulloSuccessMessage : assignTaskSuccessMessage).
       then((resp) => {
-        let obj=this.props.onReceiveAmaTasks(resp.body.tasks.data);
-        if(taskType === 'SpecialCaseMovementTask') {
+        const obj = this.props.onReceiveAmaTasks(resp.body.tasks.data);
+
+        if (taskType === 'SpecialCaseMovementTask') {
           // Send SCM user to the judge's assign queue
           const queryParams = {
             scm: true,
             judge_css_id: this.state.selectedValueCssId
           };
           const qs = querystring.stringify(queryParams);
+
           obj.pathAfterSubmit = `/queue/${this.state.selectedValue}/assign?${qs}`;
         }
+
         return obj;
-      }).catch(() => {
+      }).
+      catch(() => {
         // handle the error from the frontend
       });
   };
@@ -225,7 +229,8 @@ class AssignToView extends React.Component {
               errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
               placeholder={this.determinePlaceholder(this.props, actionData)}
               value={this.state.selectedValue}
-              onChange={(option) => this.setState({ selectedValue: option ? option.value : null, selectedValueCssId: option ? option.cssId : null})}
+              onChange={(option) => this.setState({ selectedValue: option ? option.value : null,
+                selectedValueCssId: option ? option.cssId : null })}
               options={taskActionData(this.props).options}
             />
             <br />

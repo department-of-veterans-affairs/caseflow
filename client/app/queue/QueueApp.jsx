@@ -122,7 +122,7 @@ class QueueApp extends React.PureComponent {
 
   routedJudgeQueueList = (label) => ({ match, location }) => (
     <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} location={location}
-                        loadAttorneys={label === 'assign'} >
+      loadAttorneys={label === 'assign'} >
       {label === 'assign' ? (
         <JudgeAssignTaskListView {...this.props} match={match} />
       ) : (

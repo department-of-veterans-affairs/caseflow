@@ -90,6 +90,7 @@ JudgeAssignTaskListView.propTypes = {
   resetSaveState: PropTypes.func,
   clearCaseSelectSearch: PropTypes.func,
   match: PropTypes.object,
+  targetUserCssId: PropTypes.string,
   userId: PropTypes.number,
   unassignedTasksCount: PropTypes.number,
   organizations: PropTypes.array
