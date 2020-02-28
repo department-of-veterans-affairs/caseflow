@@ -17,9 +17,10 @@ describe "Request Issue Correction Cleaner", :postgres do
 
   let(:correction_request_issue) do
     create(
-      :request_issue, decision_review: claim_review,
-      correction_type: "control",
-      contested_decision_issue: contested_decision_issue
+      :request_issue,
+       decision_review: claim_review,
+       correction_type: "control",
+       contested_decision_issue: contested_decision_issue
     )
   end
 
@@ -46,8 +47,8 @@ describe "Request Issue Correction Cleaner", :postgres do
         let!(:correction_request_issue) do
           create(
             :request_issue, decision_review: remand_supplemental_claim,
-            correction_type: "control",
-            contested_decision_issue: granted_decision_issue
+             correction_type: "control",
+             contested_decision_issue: granted_decision_issue
           )
         end
 
