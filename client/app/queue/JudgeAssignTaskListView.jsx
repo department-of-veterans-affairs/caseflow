@@ -45,7 +45,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-          <h1>Assign {this.props.unassignedTasksCount} Cases</h1>
+          <h1>Assign {this.props.unassignedTasksCount} Cases for {this.props.targetUserCssId}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
         </div>
         <div className="usa-width-one-fourth">
@@ -103,6 +103,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
+    targetUserCssId: state.ui.targetUserCssId,
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
     tasksByUserId: getTasksByUserId(state),
     attorneysOfJudge
