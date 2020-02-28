@@ -28,6 +28,10 @@ detectors:
     exclude:
       - Address
       - Fakes::PersistentStore#convert_dates_from
+  UncommunicativeMethodName:
+    exclude:
+      - LegacyAppeal#appellant_address_line_1
+      - LegacyAppeal#appellant_address_line_2
   UncommunicativeParameterName:
     exclude:
       - Address
@@ -113,6 +117,7 @@ detectors:
     exclude:
       - HearingLocation
       - JudgeTeam
+      - LegacyAppeal
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
@@ -135,7 +140,9 @@ detectors:
   UtilityFunction:
     public_methods_only: true
     exclude:
+      - AddressMapper#get_address_from_veteran_record
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
+      - ETL::Builder#last_built
       - ETL::Syncer#filter?
       - ETL::TaskSyncer#filter?
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions

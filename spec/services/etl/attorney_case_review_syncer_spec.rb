@@ -29,7 +29,7 @@ describe ETL::AttorneyCaseReviewSyncer, :etl, :all_dbs do
       CachedUser.sync_from_vacols
     end
 
-    subject { described_class.new.call(etl_build) }
+    subject { described_class.new(etl_build: etl_build).call }
 
     context "LegacyAppeal" do
       let(:task_id) { "#{appeal.vacols_id}-2019-12-17" }

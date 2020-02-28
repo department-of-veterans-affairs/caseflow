@@ -33,7 +33,7 @@ class PostDecisionMotion < CaseflowRecord
   end
 
   def create_request_issues_for_vacatur
-    decision_issues_for_vacatur.map(&:create_contesting_request_issue!)
+    decision_issues_for_vacatur.map { |di| di.create_contesting_request_issue!(appeal) }
   end
 
   def vacated_decision_issues

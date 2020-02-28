@@ -11,7 +11,8 @@ module AddressMapper
       city: bgs_address[:city_nm],
       country: bgs_address[:cntry_nm],
       state: bgs_address[:postal_cd],
-      zip: bgs_address[:zip_prefix_nbr]
+      zip: bgs_address[:zip_prefix_nbr],
+      type: bgs_address[:ptcpnt_addrs_type_nm]
     }
   end
 
@@ -25,6 +26,20 @@ module AddressMapper
       state: corres_entry.saddrstt,
       country: corres_entry.saddrcnty,
       zip: corres_entry.saddrzip
+    }
+  end
+
+  def get_address_from_veteran_record(veteran)
+    return nil unless veteran
+
+    {
+      address_line_1: veteran.address_line1,
+      address_line_2: veteran.address_line2,
+      address_line_3: veteran.address_line3,
+      city: veteran.city,
+      state: veteran.state,
+      country: veteran.country,
+      zip: veteran.zip_code
     }
   end
 

@@ -11,7 +11,10 @@ const sendHistogram = () => {
     return;
   }
 
-  ApiUtil.post('/metrics/v1/histogram', { data: { histograms } });
+  ApiUtil.post('/metrics/v1/histogram', { data: { histograms } }).
+    catch((error) => {
+      console.error(error);
+    });
   histograms = [];
 };
 
