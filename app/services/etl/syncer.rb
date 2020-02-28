@@ -23,11 +23,11 @@ class ETL::Syncer
     # query can take up to 90 seconds
     ETL::Record.connection.execute "SET statement_timeout = 90000"
 
+    # create build record only if we intend to use it.
+    build_record if instances_needing_update.count > 0
+
     instances_needing_update.find_in_batches.with_index do |originals, batch|
       Rails.logger.debug("Starting batch #{batch} for #{target_class}")
-
-      # create within loop so we ignore when instances is empty
-      build_record
 
       target_class.transaction do
         possible = originals.length
