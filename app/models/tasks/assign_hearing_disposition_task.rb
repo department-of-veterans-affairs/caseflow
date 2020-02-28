@@ -76,7 +76,7 @@ class AssignHearingDispositionTask < Task
       )
     end
 
-    update!(status: Constants.TASK_STATUSES.cancelled)
+    update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
   end
 
   def postpone!
