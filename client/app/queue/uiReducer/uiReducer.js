@@ -152,9 +152,9 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       userCssId: { $set: action.payload.cssId }
     });
-  case ACTIONS.SET_JUDGE_CSS_ID:
+  case ACTIONS.SET_TARGET_USER_CSS_ID:
     return update(state, {
-      judgeCssId: { $set: action.payload.judgeCssId }
+      targetUserCssId: { $set: action.payload.targetUserCssId }
     });
   case ACTIONS.SET_USER_IS_VSO_EMPLOYEE:
     return update(state, {

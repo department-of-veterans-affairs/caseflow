@@ -18,12 +18,12 @@ import {
   fetchAllAttorneys,
   fetchAmaTasksOfUser
 } from './QueueActions';
-import { setUserId, setJudgeCssId } from './uiReducer/uiActions';
+import { setUserId, setTargetUserCssId } from './uiReducer/uiActions';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import WindowUtil from '../util/WindowUtil';
 
 class QueueLoadingScreen extends React.PureComponent {
-  maybeLoadAmaQueue = (isScmUser, judgeId, judgeRole) => {
+  maybeLoadAmaQueue = (targetUserId, targetUserRole) => {
     const {
       userId,
       appeals,
@@ -37,7 +37,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
     this.props.setUserId(userId);
 
-    return this.props.fetchAmaTasksOfUser(judgeId, judgeRole);
+    return this.props.fetchAmaTasksOfUser(targetUserId, targetUserRole);
   }
 
   // When navigating between team and individual queues the configs we get from the back-end could be stale and return
@@ -53,7 +53,7 @@ class QueueLoadingScreen extends React.PureComponent {
     return false;
   }
 
-  maybeLoadLegacyQueue = (isScmUser, judgeId, judgeRole) => {
+  maybeLoadLegacyQueue = (targetUserId, targetUserRole) => {
     const {
       userId,
       loadedUserId,
@@ -61,12 +61,12 @@ class QueueLoadingScreen extends React.PureComponent {
       appeals
     } = this.props;
 
-    if (judgeRole !== USER_ROLE_TYPES.attorney && judgeRole !== USER_ROLE_TYPES.judge) {
+    if (targetUserRole !== USER_ROLE_TYPES.attorney && targetUserRole !== USER_ROLE_TYPES.judge) {
       return Promise.resolve();
     }
 
-    const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === judgeId;
-    const urlToLoad = this.props.urlToLoad || `/queue/${judgeId}`;
+    const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === targetUserId;
+    const urlToLoad = this.props.urlToLoad || `/queue/${targetUserId}`;
 
     if (userQueueLoaded) {
       return Promise.resolve();
@@ -85,14 +85,14 @@ class QueueLoadingScreen extends React.PureComponent {
     });
   };
 
-  maybeLoadJudgeData = (isScmUser, judgeId) => {
+  maybeLoadJudgeData = (targetUserId) => {
     if (this.props.userRole !== USER_ROLE_TYPES.judge && !this.props.loadAttorneys) {
       return Promise.resolve();
     }
 
     this.props.fetchAllAttorneys();
 
-    return ApiUtil.get(`/users?role=Attorney&judge_id=${judgeId}`).
+    return ApiUtil.get(`/users?role=Attorney&judge_id=${targetUserId}`).
       then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }
 
@@ -100,16 +100,16 @@ class QueueLoadingScreen extends React.PureComponent {
     const queryString = querystring.parse(this.props.location.search.replace(/^\?/, ''));
     const isScmUser = queryString.scm && queryString.scm.toLowerCase() === 'true';
 
-    const judgeId = (isScmUser) ? this.props.match.params.userId : this.props.userId;
-    const judgeCssId = (isScmUser) ? queryString.judge_css_id : this.props.userCssId;
-    const judgeRole = (isScmUser) ? USER_ROLE_TYPES.judge : this.props.userRole;
+    const targetUserId = (isScmUser) ? this.props.match.params.userId : this.props.userId;
+    const targetUserCssId = (isScmUser) ? queryString.judge_css_id : this.props.userCssId;
+    const targetUserRole = (isScmUser) ? USER_ROLE_TYPES.judge : this.props.userRole;
 
-    this.props.setJudgeCssId(judgeCssId);
+    this.props.setTargetUserCssId(targetUserCssId);
 
     return Promise.all([
-      this.maybeLoadAmaQueue(isScmUser, judgeId, judgeRole),
-      this.maybeLoadLegacyQueue(isScmUser, judgeId, judgeRole),
-      this.maybeLoadJudgeData(isScmUser, judgeId)
+      this.maybeLoadAmaQueue(targetUserId, targetUserRole),
+      this.maybeLoadLegacyQueue(targetUserId, targetUserRole),
+      this.maybeLoadJudgeData(targetUserId)
     ]);
   }
 
@@ -152,7 +152,7 @@ QueueLoadingScreen.propTypes = {
   queueConfig: PropTypes.object,
   setAttorneysOfJudge: PropTypes.func,
   setUserId: PropTypes.func,
-  setJudgeCssId: PropTypes.func,
+  setTargetUserCssId: PropTypes.func,
   tasks: PropTypes.object,
   urlToLoad: PropTypes.string,
   userId: PropTypes.number,
@@ -178,7 +178,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchAllAttorneys,
   fetchAmaTasksOfUser,
   setUserId,
-  setJudgeCssId
+  setTargetUserCssId
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen));

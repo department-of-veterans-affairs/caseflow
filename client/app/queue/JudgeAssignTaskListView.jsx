@@ -103,7 +103,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    judgeCssId: state.ui.judgeCssId,
+    targetUserCssId: state.ui.targetUserCssId,
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
     tasksByUserId: getTasksByUserId(state),
     attorneysOfJudge

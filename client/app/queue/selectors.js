@@ -27,7 +27,7 @@ const getAmaTasks = (state) => state.queue.amaTasks;
 const getAppeals = (state) => state.queue.appeals;
 const getAppealDetails = (state) => state.queue.appealDetails;
 const getUserCssId = (state) => state.ui.userCssId;
-const getJudgeCssId = (state) => state.ui.judgeCssId;
+const getTargetUserCssId = (state) => state.ui.targetUserCssId;
 const getAppealId = (state, props) => props.appealId;
 const getActiveOrganizationId = (state) => state.ui.activeOrganization.id;
 const getTaskUniqueId = (state, props) => props.taskId;
@@ -298,8 +298,8 @@ export const judgeDecisionReviewTasksSelector = createSelector(
 );
 
 export const tasksByJudgeCssIdSelector = createSelector(
-  [tasksWithAppealSelector, getJudgeCssId],
-  (tasks, judgeCssId) => _.filter(tasks, (task) => task.assignedTo.cssId === judgeCssId)
+  [tasksWithAppealSelector, getTargetUserCssId],
+  (tasks, targetUserCssId) => _.filter(tasks, (task) => task.assignedTo.cssId === targetUserCssId)
 );
 
 export const workTasksByJudgeCssIdSelector = createSelector(
