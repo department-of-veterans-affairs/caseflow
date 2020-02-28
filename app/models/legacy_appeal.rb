@@ -11,6 +11,7 @@ class LegacyAppeal < ApplicationRecord
   include AssociatedVacolsModel
   include BgsService
   include CachedAttributes
+  include AddressMapper
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
