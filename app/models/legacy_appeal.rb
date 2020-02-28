@@ -215,7 +215,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def appellant_address
-    appellant_address_from_bgs = bgs_address_service.address
+    appellant_address_from_bgs = bgs_address_service&.address
 
     # Attempt to get the address from BGS, or fall back to VACOLS. These are expected
     # to have the same hash keys.
