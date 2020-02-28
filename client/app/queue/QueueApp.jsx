@@ -114,12 +114,15 @@ class QueueApp extends React.PureComponent {
     return <ColocatedTaskListView />;
   };
 
-  routedQueueList = () => (
-    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>{this.viewForUserRole()}</QueueLoadingScreen>
+  routedQueueList = ({ match, location }) => (
+    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} location={location}>
+      {this.viewForUserRole()}
+    </QueueLoadingScreen>
   );
 
-  routedJudgeQueueList = (label) => ({ match }) => (
-    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} loadAttorneys={label === 'assign'}>
+  routedJudgeQueueList = (label) => ({ match, location }) => (
+    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} location={location}
+                        loadAttorneys={label === 'assign'} >
       {label === 'assign' ? (
         <JudgeAssignTaskListView {...this.props} match={match} />
       ) : (
@@ -285,10 +288,11 @@ class QueueApp extends React.PureComponent {
   queueName = () => (this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases');
 
   propsForQueueLoadingScreen = () => {
-    const { userId, userRole } = this.props;
+    const { userId, userCssId, userRole } = this.props;
 
     return {
       userId,
+      userCssId,
       userRole
     };
   };

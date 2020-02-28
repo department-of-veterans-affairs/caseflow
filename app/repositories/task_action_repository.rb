@@ -335,7 +335,8 @@ class TaskActionRepository
       users.map do |user|
         {
           label: user.full_name,
-          value: user.id
+          value: user.id,
+          cssId: user.css_id
         }
       end
     end

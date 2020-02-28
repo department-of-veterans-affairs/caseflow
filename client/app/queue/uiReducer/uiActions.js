@@ -157,6 +157,11 @@ export const setUserId = (userId) => ({
   payload: { userId }
 });
 
+export const setJudgeCssId = (judgeCssId) => ({
+  type: ACTIONS.SET_JUDGE_CSS_ID,
+  payload: { judgeCssId }
+});
+
 export const setUserIsVsoEmployee = (userIsVsoEmployee) => ({
   type: ACTIONS.SET_USER_IS_VSO_EMPLOYEE,
   payload: { userIsVsoEmployee }

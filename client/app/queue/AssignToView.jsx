@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
+import querystring from 'querystring';
 
 import COPY from '../../COPY';
 
@@ -106,7 +107,12 @@ class AssignToView extends React.Component {
         let obj=this.props.onReceiveAmaTasks(resp.body.tasks.data);
         if(taskType === 'SpecialCaseMovementTask') {
           // Send SCM user to the judge's assign queue
-          obj.pathAfterSubmit = `/queue/${this.state.selectedValue}/assign?scm=true`;
+          const queryParams = {
+            scm: true,
+            judge_css_id: this.state.selectedValueCssId
+          };
+          const qs = querystring.stringify(queryParams);
+          obj.pathAfterSubmit = `/queue/${this.state.selectedValue}/assign?${qs}`;
         }
         return obj;
       }).catch(() => {
@@ -219,7 +225,7 @@ class AssignToView extends React.Component {
               errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
               placeholder={this.determinePlaceholder(this.props, actionData)}
               value={this.state.selectedValue}
-              onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
+              onChange={(option) => this.setState({ selectedValue: option ? option.value : null, selectedValueCssId: option ? option.cssId : null})}
               options={taskActionData(this.props).options}
             />
             <br />
