@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Reader::ClaimsFolderSearchesController < Reader::ApplicationController
+  protect_from_forgery with: :null_session
+  
   def create
     ClaimsFolderSearch.create(
       user: current_user,
