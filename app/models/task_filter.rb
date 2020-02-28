@@ -32,7 +32,7 @@ class TaskFilter
     return [] if filter_params.empty?
 
     filters = filter_params.map do |filter_string|
-      if filter_string.include?("col=suggestedLocation")
+      if filter_string.include?("col=#{Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME}")
         QueueFilterParameter.from_suggested_location_col_filter_string(filter_string)
       else
         QueueFilterParameter.from_string(filter_string)
