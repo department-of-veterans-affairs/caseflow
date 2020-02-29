@@ -145,8 +145,13 @@ install: bundle-install client-install  ## Installs all dependencies
 
 update: fresh install migrate  ## TODO
 
-client-test:  ## Runs javascript tests
+client-build-test client-test:  ## Builds webpack for tests
 	cd client && yarn run build:test
+
+client-build-demo client-demo: ## Builds webpack for local server
+	cd client && yarn run build:demo
+
+client-build-all client-all: client-test client-demo ## Builds webpack for both tests and local server
 
 one-test:  ## run the test passed in
 	bundle exec rspec $$T
