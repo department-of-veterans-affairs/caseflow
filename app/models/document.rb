@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Document < ApplicationRecord
+class Document < CaseflowRecord
   has_many :annotations
   has_many :document_views
   has_many :documents_tags

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RampClosedAppeal < ApplicationRecord
+class RampClosedAppeal < CaseflowRecord
   class NoReclosingBvaDecidedAppeals < StandardError; end
 
   belongs_to :ramp_election
