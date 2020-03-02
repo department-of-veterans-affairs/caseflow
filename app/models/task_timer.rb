@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaskTimer < ApplicationRecord
+class TaskTimer < CaseflowRecord
   belongs_to :task
   include Asyncable
 

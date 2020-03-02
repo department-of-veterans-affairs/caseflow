@@ -5,7 +5,7 @@ describe ETL::DecisionIssueSyncer, :etl, :all_dbs do
   let(:etl_build) { ETL::Build.create }
 
   describe "#call" do
-    subject { described_class.new.call(etl_build) }
+    subject { described_class.new(etl_build: etl_build).call }
 
     context "one decision issue" do
       it "syncs attributes" do

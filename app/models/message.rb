@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Message < ApplicationRecord
+class Message < CaseflowRecord
   belongs_to :user
   belongs_to :detail, polymorphic: true
 
