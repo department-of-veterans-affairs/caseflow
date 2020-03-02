@@ -33,9 +33,10 @@ class LegacyAppealsWithNoVacolsCase < DataIntegrityChecker
   def find_legacy_appeals_with_missing_case(vacols_ids)
     # skip any LegacyAppeal with all cancelled tasks since those we know about.
     vacols_ids = legacy_appeals_worth_investigating(vacols_ids)
+    vacols_ids_count = vacols_ids.count
 
-    Rails.logger.debug("Found #{vacols_ids.count} VACOLS cases worth investigating")
-    return if vacols_ids.count == 0
+    Rails.logger.debug("Found #{vacols_ids_count} VACOLS cases worth investigating")
+    return if vacols_ids_count == 0
 
     vacols_ids_found = VACOLS::Case.select(:bfkey).where(bfkey: [vacols_ids]).pluck(:bfkey)
     missing_from_vacols = vacols_ids - vacols_ids_found

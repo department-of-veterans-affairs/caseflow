@@ -21,7 +21,9 @@ describe LegacyAppealsWithNoVacolsCase do
       end
 
       context "when Legacy Appeal has only cancelled tasks" do
-        let!(:legacy_appeal) { create(:legacy_appeal, :with_judge_assign_task).tap { |legapp| legapp.tasks.each(&:cancelled!) } }
+        let!(:legacy_appeal) do
+          create(:legacy_appeal, :with_judge_assign_task).tap { |legapp| legapp.tasks.each(&:cancelled!) }
+        end
 
         it "reports zero missing cases" do
           subject.call
