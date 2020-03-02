@@ -4,7 +4,7 @@
 # and repository class. Eventually may persist data to
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
-class HearingDay < ApplicationRecord
+class HearingDay < CaseflowRecord
   acts_as_paranoid
 
   belongs_to :judge, class_name: "User"

@@ -3,7 +3,7 @@
 # BoardGrantEffectuation represents the work item of updating records in response to a granted issue on a Board appeal.
 # Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.
 
-class BoardGrantEffectuation < ApplicationRecord
+class BoardGrantEffectuation < CaseflowRecord
   include HasBusinessLine
   include Asyncable
   include DecisionSyncable

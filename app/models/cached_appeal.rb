@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CachedAppeal < ApplicationRecord
+class CachedAppeal < CaseflowRecord
   self.table_name = "cached_appeal_attributes"
 
   def self.left_join_from_tasks_clause
