@@ -378,7 +378,7 @@ GEM
       pry (~> 0.10)
     psych (3.1.0)
     public_suffix (3.1.1)
-    puma (3.12.3)
+    puma (3.12.4)
     rack (2.0.8)
     rack-contrib (2.1.0)
       rack (~> 2.0)
@@ -641,7 +641,7 @@ DEPENDENCIES
   pg
   pry
   pry-byebug
-  puma (~> 3.12.3)
+  puma (~> 3.12.4)
   rack (~> 2.0.6)
   rails (= 5.2.4.1)
   rails-erd
