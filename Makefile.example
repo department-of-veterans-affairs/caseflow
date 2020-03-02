@@ -77,8 +77,8 @@ realclean: clean ## TODO
 facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 
-facols:  ## Connect directly to the FACOLS oracle database, requires sqlplus
-	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
+facols:  ## Connect directly to the FACOLS oracle database
+	docker exec --tty -i VACOLS_DB sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
 	mkdir -p local/sqs/conf
