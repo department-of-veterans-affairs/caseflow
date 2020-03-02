@@ -73,7 +73,6 @@ class AttorneyTaskListView extends React.PureComponent {
         assignedTasks={this.props.assignedTasks}
         onHoldTasks={this.props.onHoldTasks}
         completedTasks={this.props.completedTasks}
-        attorneyQueue
       />
     </AppSegment>;
   }

@@ -11,6 +11,7 @@ import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, type
   taskCompletedDateColumn, daysOnHoldColumn, readerLinkColumn } from './components/TaskTableColumns';
 
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { fullWidth } from './constants';
 
 /**
@@ -19,7 +20,6 @@ import { fullWidth } from './constants';
  * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  * - @onHoldTasks {array[object]} array of task objects to appear in the on hold tab
  * - @completedTasks {array[object]} array of task objects to appear in the completed tab
- * - @attorneyQueue {boolean} (might be able to use role) Whether or not this queue is for an attorney
  **/
 
 class QueueTableBuilder extends React.PureComponent {
@@ -35,7 +35,7 @@ class QueueTableBuilder extends React.PureComponent {
   }
 
   createColumnObject = (column, config, tasks) => {
-    const { attorneyQueue } = this.props;
+    const attorneyQueue = config.userRole === USER_ROLE_TYPES.attorney;
     const functionForColumn = {
       [QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name]: hearingBadgeColumn(tasks),
       [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(tasks, attorneyQueue, config.userRole),
@@ -101,7 +101,6 @@ QueueTableBuilder.propTypes = {
   assignedTasks: PropTypes.array,
   onHoldTasks: PropTypes.array,
   completedTasks: PropTypes.array,
-  attorneyQueue: PropTypes.bool,
   config: PropTypes.shape({
     table_title: PropTypes.string
   })
