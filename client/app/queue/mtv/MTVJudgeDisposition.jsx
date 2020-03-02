@@ -118,7 +118,7 @@ export const MTVJudgeDisposition = ({
   };
 
   const labelText = <span>Upload the draft to your shared drive and add the location below,<br></br>
-              or encrypt it and email it to the VLJ who originally signed the case.</span>;
+              or encrypt it and email it to the motions attorney.</span>;
 
   return (
     <div className="address-motion-to-vacate">
