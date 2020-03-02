@@ -35,20 +35,21 @@ class QueueTableBuilder extends React.PureComponent {
   }
 
   createColumnObject = (column, config, tasks) => {
+    const { attorneyQueue } = this.props;
     const functionForColumn = {
       [QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name]: hearingBadgeColumn(tasks),
-      [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(tasks, false, config.userRole),
+      [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(tasks, attorneyQueue, config.userRole),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, false),
-      [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(tasks, false, false),
-      [QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(tasks, false, false),
-      [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(true),
-      [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(false),
-      [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name]: readerLinkColumnWithNewDocsIcon(this.props.attorneyQueue),
+      [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(tasks, false, attorneyQueue),
+      [QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(tasks, false, attorneyQueue),
+      [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(attorneyQueue),
+      [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(attorneyQueue),
+      [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name]: readerLinkColumnWithNewDocsIcon(attorneyQueue),
       [QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name]: regionalOfficeColumn(tasks, false),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
-      [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(false),
-      [QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name]: readerLinkColumn(false, true)
+      [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(attorneyQueue),
+      [QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name]: readerLinkColumn(attorneyQueue, true)
     };
 
     return functionForColumn[column.name];
