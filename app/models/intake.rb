@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Intake < ApplicationRecord
+class Intake < CaseflowRecord
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user

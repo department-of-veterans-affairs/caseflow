@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SchedulePeriod < ApplicationRecord
+class SchedulePeriod < CaseflowRecord
   validate :validate_schedule_period, on: :create
 
   class OverlappingSchedulePeriods < StandardError; end

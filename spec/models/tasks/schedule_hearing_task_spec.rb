@@ -133,6 +133,7 @@ describe ScheduleHearingTask, :all_dbs do
             schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+            expect(schedule_hearing_task.closed_at).to_not be_nil
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
             expect(vacols_case.bfha).to eq("5")
             expect(vacols_case.bfhr).to eq("5")
@@ -209,9 +210,13 @@ describe ScheduleHearingTask, :all_dbs do
       subject
 
       expect(hearing_task.reload.open?).to be_falsey
+      expect(hearing_task.closed_at).to_not be_nil
       expect(disposition_task.reload.open?).to be_falsey
+      expect(disposition_task.closed_at).to_not be_nil
       expect(hearing_task_2.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(hearing_task_2.closed_at).to_not be_nil
       expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(task.closed_at).to_not be_nil
       new_hearing_tasks = appeal.tasks.open.where(type: HearingTask.name)
       expect(new_hearing_tasks.count).to eq 1
       expect(new_hearing_tasks.first.hearing).to eq hearing

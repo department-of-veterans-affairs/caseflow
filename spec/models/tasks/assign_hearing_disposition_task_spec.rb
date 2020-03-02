@@ -32,12 +32,13 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls cancel!" do
-        expect(disposition_task).to receive(:cancel!).exactly(1).times
+        expect(disposition_task).to receive(:cancel!).exactly(1).times.and_call_original
 
         subject
 
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
+        expect(disposition_task.reload.closed_at).to_not be_nil
       end
     end
 
@@ -281,6 +282,8 @@ describe AssignHearingDispositionTask, :all_dbs do
 
             expect(disposition_task.reload.cancelled?).to be_truthy
             expect(hearing_task.reload.cancelled?).to be_truthy
+            expect(disposition_task.closed_at).to_not be_nil
+            expect(hearing_task.closed_at).to_not be_nil
             expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
             expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
             expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
