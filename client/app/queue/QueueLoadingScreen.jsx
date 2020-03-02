@@ -98,7 +98,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
   createLoadPromise = () => {
     const queryString = querystring.parse(this.props.location.search.replace(/^\?/, ''));
-    const isScmUser = queryString.scm && queryString.scm.toLowerCase() === 'true';
+    const isScmUser = queryString.scm?.toLowerCase() === 'true';
 
     const targetUserId = (isScmUser) ? this.props.match.params.userId : this.props.userId;
     const targetUserCssId = (isScmUser) ? queryString.judge_css_id : this.props.userCssId;

@@ -159,7 +159,7 @@ class TasksController < ApplicationController
     return true if user == current_user
 
     if !SpecialCaseMovementTeam.singleton.user_has_access?(current_user)
-      fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by SCM users."
+      fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by members of the Case Movement Team."
     end
   end
 
