@@ -48,7 +48,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
           <h1>Assign {this.props.unassignedTasksCount} Cases
-            {(userCssId==targetUserCssId) ? "" : ` for ${this.props.targetUserCssId}`}</h1>
+          {(userCssId === targetUserCssId) ? '' : ` for ${this.props.targetUserCssId}`}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
         </div>
         <div className="usa-width-one-fourth">
