@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class OrganizationsUser < ApplicationRecord
+class OrganizationsUser < CaseflowRecord
   belongs_to :organization
   belongs_to :user
 

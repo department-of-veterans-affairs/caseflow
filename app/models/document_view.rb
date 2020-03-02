@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DocumentView < ApplicationRecord
+class DocumentView < CaseflowRecord
   belongs_to :document
   belongs_to :user
 end
