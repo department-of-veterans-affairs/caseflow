@@ -373,7 +373,7 @@ describe('ColocatedTaskListView', () => {
       expect(columnTasks.text()).to.include(task.label);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
-      expect(daysWaiting.text()).to.equal('1');
+      expect(daysWaiting.text()).to.equal('1 days');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
       expect(documents.text()).to.include('Loading number of docs...');
 

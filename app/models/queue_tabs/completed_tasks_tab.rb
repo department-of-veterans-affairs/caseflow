@@ -21,7 +21,7 @@ class CompletedTasksTab < QueueTab
 
   # rubocop:disable Metrics/AbcSize
   def column_names
-    return attorney_column_names if assignee.attorney_in_vacols?
+    return QueueTab.attorney_column_names if assignee.attorney_in_vacols?
 
     [
       Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,

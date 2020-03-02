@@ -108,7 +108,8 @@ class QueueTab
   end
 end
 
-def attorney_column_names
+# rubocop:disable Metrics/AbcSize
+def self.attorney_column_names
   [
     Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
     Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
@@ -120,7 +121,7 @@ def attorney_column_names
     Constants.QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name
   ]
 end
-
+# rubocop:enable Metrics/AbcSize
 
 require_dependency "assigned_tasks_tab"
 require_dependency "completed_tasks_tab"
