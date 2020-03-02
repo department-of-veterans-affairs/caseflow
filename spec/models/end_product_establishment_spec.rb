@@ -57,6 +57,15 @@ describe EndProductEstablishment, :postgres do
       limited_poa_access: limited_poa_access
     )
   end
+  let(:orphaned_end_product) do
+    EndProduct.new(
+      claim_id: "1234",
+      claim_date: end_product_establishment.claim_date,
+      claim_type_code: end_product_establishment.code,
+      payee_code: end_product_establishment.payee_code,
+      status_type_code: "PEND"
+    )
+  end
 
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
@@ -266,6 +275,16 @@ describe EndProductEstablishment, :postgres do
 
       it "returns NoAvailableModifiers error" do
         expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
+      end
+    end
+
+    context "when a previous establishment attempt actually succeeded" do
+      it "recovers and saves the previous EP" do
+        allow(source).to receive(:previously_attempted?).and_return(true)
+        allow(end_product_establishment.veteran).to receive(:end_products).and_return([orphaned_end_product])
+        subject
+        expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
+        expect(end_product_establishment.reference_id).to eq(orphaned_end_product.claim_id)
       end
     end
 
