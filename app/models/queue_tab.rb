@@ -108,6 +108,20 @@ class QueueTab
   end
 end
 
+def attorney_column_names
+  [
+    Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+    Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+    Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+    Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+    Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    Constants.QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name
+  ]
+end
+
+
 require_dependency "assigned_tasks_tab"
 require_dependency "completed_tasks_tab"
 require_dependency "on_hold_tasks_tab"
