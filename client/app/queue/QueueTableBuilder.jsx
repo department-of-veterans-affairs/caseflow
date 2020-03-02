@@ -15,7 +15,7 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { fullWidth } from './constants';
 
 /**
- * This component can be used to easily build tables.
+ * This is used to create a queue table from a queue config
  * The required props are:
  * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  * - @onHoldTasks {array[object]} array of task objects to appear in the on hold tab
