@@ -6,7 +6,7 @@
 # For future work: some methods in app/repositories/user_repository.rb might be able to
 # take advantage of this table, rather than using the Redis cache of VACOLS::Staff.
 
-class CachedUser < ApplicationRecord
+class CachedUser < CaseflowRecord
   self.table_name = "cached_user_attributes"
   self.primary_key = "sdomainid"
 

@@ -8,7 +8,7 @@
 # end product when it was created. Exceptions are `synced_status` and `last_synced_at`, used to record
 # the current status of the EP when the EndProductEstablishment is synced.
 
-class EndProductEstablishment < ApplicationRecord
+class EndProductEstablishment < CaseflowRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
   has_many :end_product_code_updates

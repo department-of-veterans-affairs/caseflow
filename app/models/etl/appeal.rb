@@ -5,6 +5,8 @@
 class ETL::Appeal < ETL::Record
   scope :active, -> { where(active_appeal: true) }
 
+  has_many :tasks, -> { where(appeal_type: "Appeal") }, class_name: "ETL::Task", primary_key: "appeal_id"
+
   class << self
     def origin_primary_key
       :appeal_id

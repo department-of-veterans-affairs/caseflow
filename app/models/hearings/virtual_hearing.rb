@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VirtualHearing < ApplicationRecord
+class VirtualHearing < CaseflowRecord
   alias_attribute :alias_name, :alias
 
   belongs_to :hearing, polymorphic: true

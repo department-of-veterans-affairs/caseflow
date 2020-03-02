@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LegacyIssue < ApplicationRecord
+class LegacyIssue < CaseflowRecord
   belongs_to :request_issue
   has_one :legacy_issue_optin
 
