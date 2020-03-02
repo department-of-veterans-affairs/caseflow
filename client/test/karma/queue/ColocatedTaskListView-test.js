@@ -387,7 +387,7 @@ describe('ColocatedTaskListView', () => {
 
       const onHoldDaysWaiting = cells.at(12);
 
-      expect(onHoldDaysWaiting.text()).to.equal(daysOnHold.toString());
+      expect(onHoldDaysWaiting.text()).to.equal(`${daysOnHold.toString()} days`);
       expect(onHoldDaysWaiting.find('.cf-red-text').length).to.eq(1);
       expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning').length).to.eq(1);
     });
