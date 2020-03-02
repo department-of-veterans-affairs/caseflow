@@ -95,7 +95,6 @@ const mapStateToProps = (state) => {
     workableTasks: workableTasksByAssigneeCssIdSelector(state),
     onHoldTasks: onHoldTasksForAttorney(state),
     completedTasks: completeTasksByAssigneeCssIdSelector(state),
-    queueConfig: state.queue.queueConfig,
     success: messages.success,
     error: messages.error,
     organizations,
@@ -126,7 +125,6 @@ AttorneyTaskListView.propTypes = {
   showErrorMessage: PropTypes.func,
   onHoldTasks: PropTypes.array,
   organizations: PropTypes.array,
-  queueConfig: PropTypes.object,
   success: PropTypes.shape({
     title: PropTypes.string,
     detail: PropTypes.string
