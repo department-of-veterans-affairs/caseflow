@@ -43,7 +43,7 @@ class AttorneyTaskListView extends React.PureComponent {
     this.props.resetErrorMessages();
 
     if (_.some(
-      [...this.props.assignedTasks, ...this.props.onHoldTasks, ...this.props.completedTasks],
+      [...this.props.workableTasks, ...this.props.onHoldTasks, ...this.props.completedTasks],
       (task) => !task.taskId)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
@@ -54,7 +54,7 @@ class AttorneyTaskListView extends React.PureComponent {
 
   render = () => {
     const { error, success } = this.props;
-    const noOpenTasks = !_.size([...this.props.assignedTasks, ...this.props.onHoldTasks]);
+    const noOpenTasks = !_.size([...this.props.workableTasks, ...this.props.onHoldTasks]);
     const noCasesMessage = noOpenTasks ?
       <p>
         {COPY.NO_CASES_IN_QUEUE_MESSAGE}
@@ -70,7 +70,7 @@ class AttorneyTaskListView extends React.PureComponent {
       </Alert>}
       {noCasesMessage}
       <QueueTableBuilder
-        assignedTasks={this.props.assignedTasks}
+        assignedTasks={this.props.workableTasks}
         onHoldTasks={this.props.onHoldTasks}
         completedTasks={this.props.completedTasks}
       />
@@ -92,7 +92,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    assignedTasks: workableTasksByAssigneeCssIdSelector(state),
+    workableTasks: workableTasksByAssigneeCssIdSelector(state),
     onHoldTasks: onHoldTasksForAttorney(state),
     completedTasks: completeTasksByAssigneeCssIdSelector(state),
     queueConfig: state.queue.queueConfig,
@@ -116,7 +116,7 @@ const mapDispatchToProps = (dispatch) => ({
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView));
 
 AttorneyTaskListView.propTypes = {
-  assignedTasks: PropTypes.array,
+  workableTasks: PropTypes.array,
   clearCaseSelectSearch: PropTypes.func,
   completedTasks: PropTypes.array,
   hideSuccessMessage: PropTypes.func,
