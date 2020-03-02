@@ -26,7 +26,9 @@ class QueueFlowModal extends React.PureComponent {
   cancelHandler = () => this.props.history.goBack();
 
   closeHandler = (obj) => {
-    const pathAfterSubmit = (obj.pathAfterSubmit) ? obj.pathAfterSubmit : this.props.pathAfterSubmit;
+    // some rspecs fail because obj.pathAfterSubmit is set but wasn't used before this change
+    const SCM_FLAG=false
+    const pathAfterSubmit = (SCM_FLAG && obj.pathAfterSubmit) ? obj.pathAfterSubmit : this.props.pathAfterSubmit;
 
     this.props.history.replace(pathAfterSubmit);
   }
