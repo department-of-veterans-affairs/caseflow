@@ -3,7 +3,7 @@
 # Represents the action where a Caseflow user updates the request issues on
 # a review, typically to make a correction.
 
-class RequestIssuesUpdate < ApplicationRecord
+class RequestIssuesUpdate < CaseflowRecord
   include Asyncable
 
   belongs_to :user

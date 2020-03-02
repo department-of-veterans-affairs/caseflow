@@ -24,7 +24,7 @@ import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { appealWithDetailSelector, getAllTasksForAppeal } from './selectors';
@@ -71,7 +71,7 @@ export const CaseDetailsView = (props) => {
     }
   }, []);
 
-  const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(tasks), [tasks]);
+  const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
 
   return (
     <React.Fragment>

@@ -219,11 +219,11 @@ export class EstablishClaim extends React.Component {
       },
       (error) => {
         this.props.performEstablishClaimFailure();
-        const errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] || CREATE_EP_ERRORS.default;
+        const errorMessage = CREATE_EP_ERRORS[error.response.body?.error_code] || CREATE_EP_ERRORS.default;
 
         const nextModifier = this.validModifiers()[1];
 
-        if (error.response.body.error_code === 'duplicate_ep' && nextModifier) {
+        if (error.response.body?.error_code === 'duplicate_ep' && nextModifier) {
           this.props.onDuplicateEP(nextModifier);
         }
 

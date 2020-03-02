@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearing < ApplicationRecord
+class Hearing < CaseflowRecord
   include HasVirtualHearing
 
   belongs_to :hearing_day

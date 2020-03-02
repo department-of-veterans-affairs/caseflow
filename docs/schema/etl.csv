@@ -1,0 +1,188 @@
+Table,Column,Type,Required,Primary Key,Unique,Index,Description
+appeals,,,,,,,Denormalized BVA NODs
+appeals,active_appeal,boolean ∗,true,false,false,true,Calculated based on BVA status
+appeals,aod_due_to_dob,boolean,false,false,false,true,Calculated every day based on Claimant DOB
+appeals,aod_granted,boolean ∗,true,false,false,true,advance_on_docket_motions.granted
+appeals,aod_reason,string (50),false,false,false,,advance_on_docket_motions.reason
+appeals,aod_user_id,integer (8),false,false,false,true,advance_on_docket_motions.user_id
+appeals,appeal_created_at,datetime ∗,true,false,false,true,appeals.created_at
+appeals,appeal_id,integer (8) ∗ FK,true,false,false,true,ID of the Appeal
+appeals,appeal_updated_at,datetime ∗,true,false,false,true,appeals.updated_at
+appeals,claimant_dob,date,false,false,false,true,people.date_of_birth
+appeals,claimant_first_name,string,false,false,false,,people.first_name
+appeals,claimant_id,integer (8),false,false,false,true,claimants.id
+appeals,claimant_last_name,string,false,false,false,,people.last_name
+appeals,claimant_middle_name,string,false,false,false,,people.middle_name
+appeals,claimant_name_suffix,string,false,false,false,,people.name_suffix
+appeals,claimant_participant_id,string (20),false,false,false,true,claimants.participant_id
+appeals,claimant_payee_code,string (20),false,false,false,,claimants.payee_code
+appeals,claimant_person_id,integer (8),false,false,false,true,people.id
+appeals,closest_regional_office,string (20),false,false,false,,The code for the regional office closest to the Veteran on the appeal.
+appeals,created_at,datetime ∗,true,false,false,true,Creation timestamp for the ETL record
+appeals,decision_status_sort_key,integer ∗,true,false,false,true,Integer for sorting status in display order
+appeals,docket_number,string (50) ∗,true,false,false,,Docket number
+appeals,docket_range_date,date,false,false,false,,Date that appeal was added to hearing docket range.
+appeals,docket_type,string (50) ∗,true,false,false,true,Docket type
+appeals,established_at,datetime ∗,true,false,false,,Timestamp for when the appeal was intaken successfully
+appeals,id,integer (8) PK,true,true,false,,
+appeals,legacy_opt_in_approved,boolean,false,false,false,,Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review.
+appeals,poa_participant_id,string (20),false,false,false,true,Used to identify the power of attorney (POA)
+appeals,receipt_date,date ∗,true,false,false,true,Receipt date of the NOD form
+appeals,status,string (32) ∗,true,false,false,true,Calculated BVA status based on Tasks
+appeals,target_decision_date,date,false,false,false,,"If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
+appeals,updated_at,datetime ∗,true,false,false,true,Updated timestamp for the ETL record
+appeals,uuid,uuid ∗,true,false,false,true,The universally unique identifier for the appeal
+appeals,veteran_dob,date,false,false,false,,people.date_of_birth
+appeals,veteran_file_number,string (20) ∗,true,false,false,true,Veteran file number
+appeals,veteran_first_name,string,false,false,false,,veterans.first_name
+appeals,veteran_id,integer (8) ∗,true,false,false,true,veterans.id
+appeals,veteran_is_not_claimant,boolean,false,false,false,true,"Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
+appeals,veteran_last_name,string,false,false,false,,veterans.last_name
+appeals,veteran_middle_name,string,false,false,false,,veterans.middle_name
+appeals,veteran_name_suffix,string,false,false,false,,veterans.name_suffix
+appeals,veteran_participant_id,string (20),false,false,false,true,veterans.participant_id
+attorney_case_reviews,,,,,,,Denormalized attorney_case_reviews
+attorney_case_reviews,appeal_id,integer (8) ∗,true,false,false,true,tasks.appeal_id
+attorney_case_reviews,appeal_type,string ∗,true,false,false,true,tasks.appeal_type
+attorney_case_reviews,attorney_css_id,string (20) ∗,true,false,false,,users.css_id
+attorney_case_reviews,attorney_full_name,string (255) ∗,true,false,false,,users.full_name
+attorney_case_reviews,attorney_id,integer (8) ∗,true,false,false,true,attorney_case_reviews.attorney_id
+attorney_case_reviews,attorney_sattyid,string (20),false,false,false,,users.sattyid
+attorney_case_reviews,created_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+attorney_case_reviews,document_reference_id,string (50),false,false,false,,attorney_case_reviews.document_id
+attorney_case_reviews,document_type,string (20),false,false,false,true,attorney_case_reviews.document_type
+attorney_case_reviews,id,integer (8) PK,true,true,false,,
+attorney_case_reviews,note,text,false,false,false,,attorney_case_reviews.note
+attorney_case_reviews,overtime,boolean,false,false,false,,attorney_case_reviews.overtime
+attorney_case_reviews,review_created_at,datetime ∗,true,false,false,true,attorney_case_reviews.created_at
+attorney_case_reviews,review_id,integer (8) ∗,true,false,false,true,attorney_case_reviews.id
+attorney_case_reviews,review_updated_at,datetime ∗,true,false,false,true,attorney_case_reviews.updated_at
+attorney_case_reviews,reviewing_judge_css_id,string (20) ∗,true,false,false,,users.css_id
+attorney_case_reviews,reviewing_judge_full_name,string (255) ∗,true,false,false,,users.full_name
+attorney_case_reviews,reviewing_judge_id,integer (8) ∗,true,false,false,true,attorney_case_reviews.reviewing_judge_id
+attorney_case_reviews,reviewing_judge_sattyid,string (20),false,false,false,,users.sattyid
+attorney_case_reviews,task_id,string ∗,true,false,false,true,attorney_case_reviews.task_id
+attorney_case_reviews,untimely_evidence,boolean,false,false,false,,attorney_case_reviews.untimely_evidence
+attorney_case_reviews,updated_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+attorney_case_reviews,vacols_id,string,false,false,false,true,Substring attorney_case_reviews.task_id for Legacy Appeals
+attorney_case_reviews,work_product,string (20),false,false,false,,attorney_case_reviews.work_product
+etl_builds,,,,,,,ETL build metadata for each job
+etl_builds,comments,string,false,false,false,,Ad hoc comments (e.g. error message)
+etl_builds,created_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+etl_builds,finished_at,datetime,false,false,false,true,Build end time
+etl_builds,id,integer (8) PK,true,true,false,,
+etl_builds,started_at,datetime,false,false,false,true,Build start time (usually identical to created_at)
+etl_builds,status,string,false,false,false,true,"Enum value: running, complete, error"
+etl_builds,updated_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+etl_build_tables,,,,,,,"ETL table metadata, one for each table per-build"
+etl_build_tables,comments,string,false,false,false,,Ad hoc comments (e.g. error message)
+etl_build_tables,created_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+etl_build_tables,etl_build_id,integer (8) ∗ FK,true,false,false,true,PK of the etl_build
+etl_build_tables,finished_at,datetime,false,false,false,true,Build end time
+etl_build_tables,id,integer (8) PK,true,true,false,,
+etl_build_tables,rows_deleted,integer (8),false,false,false,,Number of rows deleted
+etl_build_tables,rows_inserted,integer (8),false,false,false,,Number of new rows
+etl_build_tables,rows_rejected,integer (8),false,false,false,,Number of rows skipped
+etl_build_tables,rows_updated,integer (8),false,false,false,,Number of rows changed
+etl_build_tables,started_at,datetime,false,false,false,true,Build start time (usually identical to created_at)
+etl_build_tables,status,string,false,false,false,true,"Enum value: running, complete, error"
+etl_build_tables,table_name,string,false,false,false,true,Name of the ETL table
+etl_build_tables,updated_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+decision_issues,,,,,,,Copy of decision_issues
+decision_issues,benefit_type,string (20),false,false,false,,decision_issues.benefit_type
+decision_issues,caseflow_decision_date,date,false,false,false,,decision_issues.caseflow_decision_date
+decision_issues,created_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+decision_issues,decision_review_id,integer (8),false,false,false,true,decision_issues.decision_review_id
+decision_issues,decision_review_type,string (20),false,false,false,true,decision_issues.decision_review_type
+decision_issues,decision_text,string,false,false,false,,decision_issues.decision_text
+decision_issues,description,string,false,false,false,,decision_issues.description
+decision_issues,diagnostic_code,string (20),false,false,false,,decision_issues.diagnostic_code
+decision_issues,disposition,string (50),false,false,false,true,decision_issues.disposition
+decision_issues,end_product_last_action_date,date,false,false,false,,decision_issues.end_product_last_action_date
+decision_issues,id,integer (8) PK,true,true,false,,
+decision_issues,issue_created_at,datetime,false,false,false,true,decision_issues.created_at
+decision_issues,issue_deleted_at,datetime,false,false,false,true,decision_issues.deleted_at
+decision_issues,issue_updated_at,datetime,false,false,false,true,decision_issues.updated_at
+decision_issues,participant_id,integer (8) ∗,true,false,false,true,decision_issues.participant_id
+decision_issues,rating_issue_reference_id,integer (8),false,false,false,true,decision_issues.rating_issue_reference_id
+decision_issues,rating_profile_date,datetime,false,false,false,,decision_issues.rating_profile_date
+decision_issues,rating_promulgation_date,datetime,false,false,false,,decision_issues.rating_promulgation_date
+decision_issues,updated_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+organizations,,,,,,,Copy of Organizations table
+organizations,created_at,datetime,false,false,false,true,
+organizations,id,integer (8) PK,true,true,false,,
+organizations,name,string,false,false,false,,
+organizations,participant_id,string,false,false,false,,Organizations BGS partipant id
+organizations,role,string,false,false,false,,"Role users in organization must have, if present"
+organizations,status,string,false,false,false,true,"Whether organization is active, inactive, or in some other Status."
+organizations,status_updated_at,datetime,false,false,false,,Track when organization status last changed.
+organizations,type,string,false,false,false,,Single table inheritance
+organizations,updated_at,datetime,false,false,false,true,
+organizations,url,string,false,false,false,true,Unique portion of the organization queue url
+organizations_users,,,,,,,Copy of OrganizationUsers table
+organizations_users,admin,boolean,false,false,false,,
+organizations_users,created_at,datetime,false,false,false,true,
+organizations_users,id,integer (8) PK,true,true,false,,
+organizations_users,organization_id,integer,false,false,false,true,
+organizations_users,updated_at,datetime,false,false,false,true,
+organizations_users,user_id,integer,false,false,false,true,
+people,,,,,,,Copy of People table
+people,created_at,datetime ∗,true,false,false,true,
+people,date_of_birth,date,false,false,false,,
+people,email_address,string,false,false,false,,"Person email address, cached from BGS"
+people,first_name,string (50),false,false,false,,"Person first name, cached from BGS"
+people,id,integer (8) PK,true,true,false,,
+people,last_name,string (50),false,false,false,,"Person last name, cached from BGS"
+people,middle_name,string (50),false,false,false,,"Person middle name, cached from BGS"
+people,name_suffix,string (20),false,false,false,,"Person name suffix, cached from BGS"
+people,participant_id,string (20) ∗,true,false,false,true,
+people,updated_at,datetime ∗,true,false,false,true,
+tasks,,,,,,,Denormalized Tasks with User/Organization
+tasks,appeal_id,integer (8) ∗ FK,true,false,false,true,tasks.appeal_id
+tasks,appeal_type,string ∗,true,false,false,true,tasks.appeal_type
+tasks,assigned_at,datetime,false,false,false,,tasks.assigned_at
+tasks,assigned_by_id,integer (8),false,false,false,,tasks.assigned_by_id
+tasks,assigned_by_user_css_id,string (20),false,false,false,,users.css_id
+tasks,assigned_by_user_full_name,string (255),false,false,false,,users.full_name
+tasks,assigned_by_user_sattyid,string (20),false,false,false,,users.sattyid
+tasks,assigned_to_id,integer (8) ∗,true,false,false,true,tasks.assigned_to_id
+tasks,assigned_to_org_name,string (255),false,false,false,,organizations.name
+tasks,assigned_to_org_type,string (50),false,false,false,,organizations.type
+tasks,assigned_to_type,string ∗,true,false,false,true,tasks.assigned_to_type
+tasks,assigned_to_user_css_id,string (20),false,false,false,,users.css_id
+tasks,assigned_to_user_full_name,string (255),false,false,false,,users.full_name
+tasks,assigned_to_user_sattyid,string (20),false,false,false,,users.sattyid
+tasks,closed_at,datetime,false,false,false,,tasks.closed_at
+tasks,created_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+tasks,id,integer (8) PK,true,true,false,,
+tasks,instructions,text,false,false,false,,tasks.instructions
+tasks,parent_id,integer (8),false,false,false,true,tasks.parent_id
+tasks,placed_on_hold_at,datetime,false,false,false,,tasks.placed_on_hold_at
+tasks,started_at,datetime,false,false,false,,tasks.started_at
+tasks,task_created_at,datetime,false,false,false,,tasks.created_at
+tasks,task_id,integer (8) ∗,true,false,false,true,tasks.id
+tasks,task_status,string (20) ∗,true,false,false,true,tasks.status
+tasks,task_type,string (50) ∗,true,false,false,true,tasks.type
+tasks,task_updated_at,datetime,false,false,false,,tasks.updated_at
+tasks,updated_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+users,,,,,,,Combined Caseflow/VACOLS user lookups
+users,created_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+users,css_id,string (20) ∗,true,false,false,,CSEM (Active Directory) username
+users,email,string (255),false,false,false,,CSEM email
+users,full_name,string (255),false,false,false,,CSEM full name
+users,id,integer (8) PK,true,true,false,,
+users,last_login_at,datetime,false,false,false,,
+users,roles,string,false,false,false,,
+users,sactive,string (1),false,false,false,,
+users,sattyid,string (20),false,false,false,,
+users,selected_regional_office,string (255),false,false,false,,CSEM regional office
+users,slogid,string (20),false,false,false,,
+users,smemgrp,string (8),false,false,false,,VACOLS cached_user_attributes.smemgrp
+users,stafkey,string (20),false,false,false,,
+users,station_id,string (20) ∗,true,false,false,,CSEM station
+users,status,string (20),false,false,false,true,Whether or not the user is an active user of caseflow
+users,status_updated_at,datetime,false,false,false,,When the user's status was last updated
+users,stitle,string (16),false,false,false,,VACOLS cached_user_attributes.stitle
+users,svlj,string (1),false,false,false,,
+users,updated_at,datetime ∗,true,false,false,true,Default created_at/updated_at for the ETL record
+users,user_id,integer ∗,true,false,false,,ID of the User

@@ -272,6 +272,17 @@ docker login -u dsvaappeals
 The password is in the DSVA 1Password account.
 Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
+You may need to adjust your base disk image size to accomodate FACOLS and restart docker. Example:
+
+```
+$ cat /etc/docker/daemon.json
+{
+  "debug": true,
+  "storage-opts" : [ "dm.basesize=256G" ]
+}
+$ systemctl restart docker
+```
+
 #### Install chromedriver
 
 Allows the feature tests to run locally.

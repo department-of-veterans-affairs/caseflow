@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Person < ApplicationRecord
+class Person < CaseflowRecord
   include BgsService
 
   has_many :advance_on_docket_motions

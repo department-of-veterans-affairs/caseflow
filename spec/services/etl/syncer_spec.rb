@@ -14,6 +14,9 @@ describe ETL::Syncer, :etl do
     end
   end
 
+  let(:etl_build) { ETL::Build.create }
+  subject { described_class.new(etl_build: etl_build) }
+
   describe "#origin_class" do
     it "raises error when called on abstract class" do
       expect { subject.origin_class }.to raise_error(RuntimeError)
@@ -34,12 +37,10 @@ describe ETL::Syncer, :etl do
       allow(DummyEtlClass).to receive(:sync_with_original) { dummy_target }
     end
 
-    let(:etl_build) { ETL::Build.create }
-
     context "one stale origin class instance needing sync" do
       let!(:user) { create(:user) }
 
-      subject { MySyncer.new.call(etl_build) }
+      subject { MySyncer.new(etl_build: etl_build).call }
 
       it "saves a new target class instance" do
         subject

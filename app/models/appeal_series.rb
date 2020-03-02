@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppealSeries < ApplicationRecord
+class AppealSeries < CaseflowRecord
   has_many :appeals, class_name: "LegacyAppeal", dependent: :nullify
 
   # Timeliness is returned as a range of integer months from 50 to 84.1%tile.
