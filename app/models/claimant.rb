@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Claimant < ApplicationRecord
+class Claimant < CaseflowRecord
   include AssociatedBgsRecord
 
   belongs_to :decision_review, polymorphic: true

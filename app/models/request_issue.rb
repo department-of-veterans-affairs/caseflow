@@ -6,7 +6,7 @@
 # be generated when a decision gets remanded or vacated.
 
 # rubocop:disable Metrics/ClassLength
-class RequestIssue < ApplicationRecord
+class RequestIssue < CaseflowRecord
   include Asyncable
   include HasBusinessLine
   include DecisionSyncable

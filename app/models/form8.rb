@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Form8 < ApplicationRecord
+class Form8 < CaseflowRecord
   include UploadableDocument
 
   FORM8_S3_SUB_BUCKET = "form_8"

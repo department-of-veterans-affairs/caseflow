@@ -61,6 +61,8 @@ describe BvaDispatchTask, :all_dbs do
     end
     let!(:request_issue) { create(:request_issue, decision_review: root_task.appeal) }
     let!(:di) { create(:decision_issue, decision_review: root_task.appeal, request_issues: [request_issue]) }
+    let!(:attorney) { create(:user) }
+    let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
 
     before do
       BvaDispatch.singleton.add_user(user)
@@ -126,10 +128,18 @@ describe BvaDispatchTask, :all_dbs do
 
       context "when de_novo appeal stream" do
         let(:stream_type) { "vacate" }
+        let!(:task) { create(:ama_judge_decision_review_task, appeal: appeal, assigned_to: judge) }
+        let!(:attorney_task) { create(:ama_attorney_task, parent: task, assigned_to: attorney, appeal: appeal) }
         let!(:post_decision_motion) do
           create(:post_decision_motion,
-                 appeal: appeal, vacate_type: "vacate_and_de_novo",
-                 task: create(:task))
+                 appeal: appeal,
+                 vacate_type: "vacate_and_de_novo",
+                 task: task)
+        end
+
+        before do
+          task.update!(status: "completed")
+          attorney_task.update!(status: "completed")
         end
 
         it "should create de_novo appeal stream" do
@@ -144,6 +154,9 @@ describe BvaDispatchTask, :all_dbs do
           expect(de_novo_stream).to_not be_nil
           request_issues = de_novo_stream.request_issues
           expect(request_issues.size).to eq(appeal.decision_issues.size)
+
+          judge_task = JudgeDecisionReviewTask.find_by(assigned_to: judge, appeal: de_novo_stream)
+          expect(judge_task).to_not be_nil
         end
       end
 

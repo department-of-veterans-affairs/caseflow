@@ -7,7 +7,7 @@
 # Example:
 #
 # RollbackRampElection.create!(ramp_election: ramp_election, user: user, reason: "A good reason")
-class RampElectionRollback < ApplicationRecord
+class RampElectionRollback < CaseflowRecord
   belongs_to :user
   belongs_to :ramp_election
 
