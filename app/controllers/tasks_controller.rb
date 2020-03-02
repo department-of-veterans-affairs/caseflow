@@ -3,7 +3,7 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :check_case_assign_access, only: [:index]
+  before_action :verify_view_access, only: [:index]
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
@@ -153,11 +153,13 @@ class TasksController < ApplicationController
     QueueConfig.new(assignee: user).to_hash
   end
 
-  def check_case_assign_access
+  def verify_view_access
     return true unless FeatureToggle.enabled?(:scm_view_judge_assign_queue)
 
-    if !(JudgeTeam.for_judge(current_user) || SpecialCaseMovementTeam.singleton.user_has_access?(current_user))
-      fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by Judges or SCM users."
+    return true if user == current_user
+
+    if !SpecialCaseMovementTeam.singleton.user_has_access?(current_user)
+      fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by SCM users."
     end
   end
 
