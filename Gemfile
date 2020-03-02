@@ -43,7 +43,7 @@ gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 3.12.0"
+gem "puma", "~> 3.12.3"
 # rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
 # Explicitly define rack version here to avoid that.
 gem "rack", "~> 2.0.6"
