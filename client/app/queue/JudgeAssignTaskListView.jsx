@@ -37,6 +37,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
   render = () => {
     const { userId,
+      userCssId,
+      targetUserCssId,
       attorneysOfJudge,
       organizations,
       match
@@ -45,7 +47,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-          <h1>Assign {this.props.unassignedTasksCount} Cases for {this.props.targetUserCssId}</h1>
+          <h1>Assign {this.props.unassignedTasksCount} Cases
+            {(userCssId==targetUserCssId) ? "" : ` for ${this.props.targetUserCssId}`}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
         </div>
         <div className="usa-width-one-fourth">
@@ -91,6 +94,7 @@ JudgeAssignTaskListView.propTypes = {
   clearCaseSelectSearch: PropTypes.func,
   match: PropTypes.object,
   targetUserCssId: PropTypes.string,
+  userCssId: PropTypes.string,
   userId: PropTypes.number,
   unassignedTasksCount: PropTypes.number,
   organizations: PropTypes.array
@@ -104,8 +108,9 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    targetUserCssId: state.ui.targetUserCssId,
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
+    userCssId: state.ui.userCssId,
+    targetUserCssId: state.ui.targetUserCssId,
     tasksByUserId: getTasksByUserId(state),
     attorneysOfJudge
   };
