@@ -84,6 +84,28 @@ describe TaskFilter, :all_dbs do
                               ])
       end
     end
+
+    context "filtering on suggested hearing location" do
+      let(:col) { Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME }
+      let(:unescaped_val) { "San Francisco, CA(VA)" }
+      let(:val) { URI.escape(URI.escape(unescaped_val)) }
+      let(:filter_params) { ["col=#{col}&val=#{val}"] }
+
+      it "calls the suggested location method on QueueFilterParameter" do
+        expect(QueueFilterParameter)
+          .to receive(:from_suggested_location_col_filter_string)
+          .once.with(filter_params.first)
+          .and_return({})
+        subject
+      end
+
+      it "returns the expected where_clase" do
+        expect(subject).to eq([
+                                "cached_appeal_attributes.suggested_hearing_location IN (?)",
+                                [unescaped_val]
+                              ])
+      end
+    end
   end
 
   describe ".filtered_tasks" do
@@ -397,6 +419,53 @@ describe TaskFilter, :all_dbs do
         it "returns tasks where the closest regional office is Boston or Washington" do
           expect(subject.map(&:id)).to match_array((first_user_tasks + second_user_tasks).map(&:id))
         end
+      end
+    end
+
+    context "filtering by suggested hearing location" do
+      let(:winston_salem_key) { "RO18" }
+      let(:oakland_key) { "RO43" }
+      let(:appeal1) { create(:appeal, closest_regional_office: winston_salem_key) }
+      let(:appeal2) { create(:appeal, closest_regional_office: oakland_key) }
+
+      let!(:hearing_location_nyc) do
+        create(
+          :available_hearing_locations,
+          appeal_id: appeal1.id,
+          appeal_type: appeal1.class.name,
+          city: "New York",
+          state: "NY",
+          facility_id: "vba_372",
+          facility_type: "va_benefits_facility",
+          distance: 9
+        )
+      end
+
+      let!(:hearing_location_sfo) do
+        create(
+          :available_hearing_locations,
+          appeal_id: appeal2.id,
+          appeal_type: appeal2.class.name,
+          city: "San Francisco",
+          state: "CA",
+          facility_type: "va_health_facility",
+          distance: 100
+        )
+      end
+
+      let!(:task1) { create(:schedule_hearing_task, appeal: appeal1) }
+      let!(:task2) { create(:schedule_hearing_task, appeal: appeal2) }
+      let(:all_tasks) { Task.where(id: [task1.id, task2.id]) }
+
+      let(:col) { Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME }
+      let(:unescaped_val) { hearing_location_sfo.formatted_location }
+      let(:val) { URI.escape(URI.escape(unescaped_val)) }
+      let(:filter_params) { ["col=#{col}&val=#{val}"] }
+
+      it "returns the correct task" do
+        UpdateCachedAppealsAttributesJob.new.cache_ama_appeals
+        expect(subject.count).to eq 1
+        expect(subject.first).to eq task2
       end
     end
   end
