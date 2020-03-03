@@ -74,7 +74,8 @@ FactoryBot.define do
           city_nm: FakeConstants.BGS_SERVICE.DEFAULT_CITY,
           cntry_nm: FakeConstants.BGS_SERVICE.DEFAULT_COUNTRY,
           postal_cd: FakeConstants.BGS_SERVICE.DEFAULT_STATE,
-          zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
+          zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP,
+          ptcpnt_addrs_type_nm: "Mailing"
         }
       end
     end

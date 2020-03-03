@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RecordSyncedByJob < ApplicationRecord
+class RecordSyncedByJob < CaseflowRecord
   belongs_to :record, polymorphic: true
 
   def self.next_records_to_process(records, limit)

@@ -19,8 +19,13 @@ class DocumentListHeader extends React.Component {
       { data: { query } },
       ENDPOINT_NAMES.CLAIMS_FOLDER_SEARCHES
     ).
-      then(_.noop).
-      catch(_.noop);
+      then(() => {
+        // no op
+      }).
+      catch((error) => {
+        // we don't care reporting via Raven.
+        console.error(error);
+      });
   }
 
   render() {

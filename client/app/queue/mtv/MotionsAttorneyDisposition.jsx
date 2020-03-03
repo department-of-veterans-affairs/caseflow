@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
-
 import {
   MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE,
   MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION,
@@ -55,14 +54,16 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
     if (
       !disposition ||
       !judgeId ||
-      (disposition === 'granted' && !instructions) ||
-      (disposition === 'denied' && !hyperlink)
+      (disposition === 'granted' && !instructions)
     ) {
       return false;
     }
 
     return true;
   };
+
+  const labelText = <span>Upload the draft to your shared drive and add the location below,<br></br>
+              or encrypt it and email it to the VLJ who originally signed the case.</span>;
 
   return (
     <div className="address-motion-to-vacate">
@@ -86,6 +87,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
           value={instructions}
           required={disposition === 'granted'}
           className={['mtv-review-instructions']}
+          strongLabel
         />
 
         {disposition && disposition === 'denied' && (
@@ -94,9 +96,10 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
             label={MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL}
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
-            required={disposition === 'denied'}
-            className={['mtv-review-hyperlink']}
-          />
+            optional
+            strongLabel
+            labelText={labelText}
+            className={['mtv-review-hyperlink']} />
         )}
 
         <SearchableDropdown
@@ -108,6 +111,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
           onChange={(option) => option && setJudgeId(option.value)}
           value={judgeId}
           styling={css({ width: '30rem' })}
+          strongLabel
         />
       </AppSegment>
       <div className="controls cf-app-segment">

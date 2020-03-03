@@ -3,6 +3,8 @@
 # transformed Task model, with denormalized User/Org attributes
 
 class ETL::Task < ETL::Record
+  belongs_to :appeal, foreign_key: :appeal_id, foreign_type: "ETL::Appeal"
+
   class << self
     def origin_primary_key
       :task_id

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class User < ApplicationRecord
+class User < CaseflowRecord
   include BgsService
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
@@ -52,6 +52,10 @@ class User < ApplicationRecord
 
   def users_regional_office
     selected_regional_office || regional_office
+  end
+
+  def acting_judge_in_vacols?
+    attorney_in_vacols? && judge_in_vacols?
   end
 
   def attorney_in_vacols?

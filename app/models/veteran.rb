@@ -4,7 +4,7 @@
 #
 # TODO: How do we deal with differences between the BGS vet values and the
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
-class Veteran < ApplicationRecord
+class Veteran < CaseflowRecord
   include AssociatedBgsRecord
 
   has_many :available_hearing_locations,

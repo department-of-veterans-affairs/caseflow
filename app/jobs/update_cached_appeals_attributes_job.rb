@@ -7,6 +7,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   include ActionView::Helpers::DateHelper
 
   queue_with_priority :low_priority
+  application_attr :queue
 
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = UpdateCachedAppealsAttributesJob.name.underscore
@@ -101,6 +102,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     values_to_cache = legacy_appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
+      # bypass PowerOfAttorney model completely and always prefer BGS cache
+      bgs_poa = BgsPowerOfAttorney.new(file_number: appeal.veteran_file_number)
       {
         vacols_id: appeal.vacols_id,
         appeal_id: appeal.id,
@@ -108,7 +111,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
         docket_type: appeal.docket_name, # "legacy"
-        power_of_attorney_name: appeal.representative_name,
+        power_of_attorney_name: bgs_poa.representative_name || appeal.representative_name,
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
     end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PostDecisionMotion < ApplicationRecord
+class PostDecisionMotion < CaseflowRecord
   belongs_to :appeal
   belongs_to :task, optional: false
 
@@ -33,7 +33,7 @@ class PostDecisionMotion < ApplicationRecord
   end
 
   def create_request_issues_for_vacatur
-    decision_issues_for_vacatur.map(&:create_contesting_request_issue!)
+    decision_issues_for_vacatur.map { |di| di.create_contesting_request_issue!(appeal) }
   end
 
   def vacated_decision_issues

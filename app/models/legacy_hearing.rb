@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LegacyHearing < ApplicationRecord
+class LegacyHearing < CaseflowRecord
   include CachedAttributes
   include AssociatedVacolsModel
   include AppealConcern
