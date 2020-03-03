@@ -157,6 +157,11 @@ export const setUserId = (userId) => ({
   payload: { userId }
 });
 
+export const setTargetUserCssId = (targetUserCssId) => ({
+  type: ACTIONS.SET_TARGET_USER_CSS_ID,
+  payload: { targetUserCssId }
+});
+
 export const setUserIsVsoEmployee = (userIsVsoEmployee) => ({
   type: ACTIONS.SET_USER_IS_VSO_EMPLOYEE,
   payload: { userIsVsoEmployee }
