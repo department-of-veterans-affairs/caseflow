@@ -1290,6 +1290,152 @@ class SeedDB
     Message.create(text: message2, detail: appeal2, user: user)
   end
 
+  ### Motions to Vacate setup ###
+  def create_decided_appeal(file_number)
+    veteran = FactoryBot.create(:veteran, file_number: file_number)
+    appeal = FactoryBot.create(
+      :appeal,
+      :outcoded,
+      number_of_claimants: 1,
+      veteran_file_number: veteran.file_number,
+      stream_type: "original"
+    )
+
+    mtv_judge = User.find_by(css_id: "BVAAABSHIRE")
+    drafting_attorney = User.find_by(css_id: "BVAEERDMAN")
+    jdrt = FactoryBot.create(:ama_judge_decision_review_task, :completed,
+             assigned_to: mtv_judge, assigned_by: nil, appeal: appeal, parent: appeal.root_task)
+
+    at = FactoryBot.create(:ama_attorney_task, :completed, assigned_by: mtv_judge,
+           assigned_to: drafting_attorney, appeal: appeal, parent: jdrt)
+
+    2.times do |idx|
+      FactoryBot.create(
+        :decision_issue,
+        :rating,
+        decision_review: appeal,
+        description: "I am rating decision issue #{idx}"
+      )
+    end
+
+    2.times do |idx|
+      FactoryBot.create(
+        :decision_issue,
+        :nonrating,
+        decision_review: appeal,
+        description: "I am nonrating decision issue #{idx}"
+      )
+    end
+
+    appeal
+  end
+
+  def create_motion_to_vacate_mail_task(appeal)
+    lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
+    mail_team_task = FactoryBot.create(:vacate_motion_mail_task, appeal: appeal, assigned_to: LitigationSupport.singleton, parent: appeal.root_task, status: "on_hold")
+    FactoryBot.create(:vacate_motion_mail_task, appeal: appeal, assigned_to: lit_support_user, assigned_by: LitigationSupport.singleton, parent: mail_team_task.root_task, status: "assigned", instructions: ["Initial instructions"])
+  end
+
+  def send_mtv_to_judge(appeal, judge, mail_task, recommendation)
+    mtv_judge = User.find_by(css_id: "BVAAABSHIRE")
+    FactoryBot.create(:judge_address_motion_to_vacate_task,
+      appeal: appeal,
+      assigned_to: judge,
+      assigned_at: Time.zone.now,
+      parent: mail_task,
+      instructions: "I recommend #{recommendation}."
+    )
+  end
+
+  def judge_addresses_mtv(jam_task, disposition, vacate_type, assigned_to)
+    params = {
+      disposition: disposition,
+      vacate_type: vacate_type,
+      assigned_to_id: assigned_to&.id,
+      instructions: "Instructions from the judge"
+    }
+    PostDecisionMotionUpdater.new(jam_task, params)
+  end
+
+  def setup_motion_to_vacate
+    lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
+    mtv_judge = User.find_by(css_id: "BVAAABSHIRE")
+    drafting_attorney = User.find_by(css_id: "BVAEERDMAN")
+
+    # MTV file numbers with a decided appeal
+    # From here a MailTeam user or LitigationSupport team member would create a motion to vacate task
+    ("000100000".."000100009").each{ |fn| create_decided_appeal(fn) }
+
+    # These are ready for the Lit Support user to send_to_judge
+    ("000100010".."000100012").each do |fn|
+      create_decided_appeal(fn).tap{ |a| create_assigned_motion_to_vacate_task(a) }
+    end
+
+    # These are ready to be addressed by the Judge
+    ("000100013".."000100015").each do |fn|
+      a = create_decided_appeal(fn)
+      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task.update!(status: "on_hold")
+      send_mtv_to_judge(a, mtv_judge, mtv_task, "denied")
+    end
+
+    ("000100016".."000100018").each do |fn|
+      a = create_decided_appeal(fn)
+      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task.update!(status: "on_hold")
+      send_mtv_to_judge(a, mtv_judge, mtv_task, "dismissed")
+    end
+
+    ("000100019".."000100021").each do |fn|
+      a = create_decided_appeal(fn)
+      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task.update!(status: "on_hold")
+      send_mtv_to_judge(a, mtv_judge, mtv_task, "granted")
+    end
+
+    ("000100022".."000100024").each do |fn|
+      a = create_decided_appeal(fn)
+      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "denied")
+      judge_addresses_mtv(jam_task, "denied", nil, lit_support_user)
+    end
+
+    ("000100025".."000100027").each do |fn|
+      a = create_decided_appeal(fn)
+      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "dismissed")
+      judge_addresses_mtv(jam_task, "dismissed", nil, lit_support_user)
+    end
+
+    ("000100028".."000100030").each do |fn|
+      a = create_decided_appeal(fn)
+      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "granted")
+      judge_addresses_mtv(jam_task, "granted", "straight_vacate", drafting_attorney)
+    end
+
+    ("000100031".."000100033").each do |fn|
+      a = create_decided_appeal(fn)
+      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "granted")
+      judge_addresses_mtv(jam_task, "granted", "vacate_and_readjudicate", drafting_attorney)
+    end
+
+    ("000100034".."000100036").each do |fn|
+      a = create_decided_appeal(fn)
+      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "granted")
+      judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
+    end
+  end
+
+  ### End Motions to Vacate setup ###
+
   def perform_seeding_jobs
     # Active Jobs which populate tables based on seed data
     FetchHearingLocationsForVeteransJob.perform_now
@@ -1327,6 +1473,7 @@ class SeedDB
     call_and_log_seed_step :create_intake_users
     call_and_log_seed_step :create_inbox_messages
     call_and_log_seed_step :perform_seeding_jobs
+    call_and_log_seed_step :setup_motion_to_vacate
 
     return if Rails.env.development?
 
