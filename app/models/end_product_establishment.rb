@@ -8,7 +8,7 @@
 # end product when it was created. Exceptions are `synced_status` and `last_synced_at`, used to record
 # the current status of the EP when the EndProductEstablishment is synced.
 
-class EndProductEstablishment < ApplicationRecord
+class EndProductEstablishment < CaseflowRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
   has_many :end_product_code_updates
@@ -49,6 +49,9 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def perform!(commit: false)
+    return if reference_id
+
+    save_recovered_end_product!
     return if reference_id
 
     fail InvalidEndProductError unless end_product_to_establish.valid?
@@ -455,6 +458,16 @@ class EndProductEstablishment < ApplicationRecord
     @cached_result ||= end_product_with_modifier
   end
 
+  # Fetch and cache an EP whose attributes match this EPE (or nil if none found)
+  # The complicated version of ||= is used because nil is a common value for this method.
+  def matching_established_end_product
+    return @matching_established_end_product if defined?(@matching_established_end_product)
+
+    @matching_established_end_product = veteran.end_products.find do |end_product|
+      matches_end_product?(end_product)
+    end
+  end
+
   def end_product_with_modifier(the_modifier = nil)
     the_modifier ||= modifier
     EndProduct.new(
@@ -486,6 +499,17 @@ class EndProductEstablishment < ApplicationRecord
     result
   end
 
+  def matches_end_product?(end_product)
+    return true if ep_created? && reference_id == end_product.claim_id
+    return false unless end_product.active? &&
+                        end_product.claim_type_code == code &&
+                        end_product.claim_date == claim_date &&
+                        end_product.payee_code == payee_code
+
+    # Call it a match once we confirm that other EPE has the same claim ID
+    EndProductEstablishment.find_by(reference_id: end_product.claim_id).nil?
+  end
+
   def sync_source!
     return unless source&.respond_to?(:on_sync)
 
@@ -497,6 +521,14 @@ class EndProductEstablishment < ApplicationRecord
       return if result.claim_type_code == end_product_code_updates.last&.code
 
       end_product_code_updates.create(code: result.claim_type_code)
+    end
+  end
+
+  def save_recovered_end_product!
+    return unless source.try(:previously_attempted?)
+
+    if matching_established_end_product.present?
+      update!(reference_id: matching_established_end_product.claim_id)
     end
   end
 

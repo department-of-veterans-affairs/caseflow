@@ -113,10 +113,12 @@ export const MTVJudgeDisposition = ({
       !disposition ||
       !instructions ||
       (isGrantType() && !vacateType) ||
-      (disposition === 'partially_granted' && !issueIds.length) ||
-      (disposition === 'dismissed' && !hyperlink)
+      (disposition === 'partially_granted' && !issueIds.length)
     );
   };
+
+  const labelText = <span>Upload the draft to your shared drive and add the location below,<br></br>
+              or encrypt it and email it to the motions attorney.</span>;
 
   return (
     <div className="address-motion-to-vacate">
@@ -167,8 +169,10 @@ export const MTVJudgeDisposition = ({
             label={sprintf(JUDGE_ADDRESS_MTV_HYPERLINK_LABEL, dispositionStrings[disposition])}
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
-            required={disposition === 'dismissed'}
+            optional
             className={['mtv-review-hyperlink']}
+            strongLabel
+            labelText={labelText}
           />
         )}
 
@@ -178,6 +182,7 @@ export const MTVJudgeDisposition = ({
           onChange={(val) => setInstructions(val)}
           value={instructions}
           className={['mtv-decision-instructions']}
+          strongLabel
         />
 
         {disposition && isGrantType() && (

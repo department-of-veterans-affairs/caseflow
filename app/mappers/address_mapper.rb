@@ -29,6 +29,20 @@ module AddressMapper
     }
   end
 
+  def get_address_from_veteran_record(veteran)
+    return nil unless veteran
+
+    {
+      address_line_1: veteran.address_line1,
+      address_line_2: veteran.address_line2,
+      address_line_3: veteran.address_line3,
+      city: veteran.city,
+      state: veteran.state,
+      country: veteran.country,
+      zip: veteran.zip_code
+    }
+  end
+
   def get_address_from_rep_entry(rep_entry)
     return {} unless rep_entry
 

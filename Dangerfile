@@ -24,6 +24,10 @@ if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/db\
   warn("This PR contains one or more db migrations, but the schema.rb is not modified.")
 end
 
+if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/docs\/schema/).none?
+  warn("This PR contains one or more db migrations. Did you forget to run 'make docs'?")
+end
+
 # We should not disable Rubocop rules unless there's a very good reason
 result = git.diff.flat_map do |chunk|
   chunk.patch.lines.grep(/^\+\s*\w/).select { |added_line| added_line.match?(/rubocop:disable/) }
