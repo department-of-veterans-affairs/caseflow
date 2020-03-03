@@ -59,7 +59,7 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
     end
   end
 
-  context "Non-SCM user cannot see judge assign queue page" do
+  context "Non-SCM user should not see judge assign queue page if they are not the judge" do
     context "logged in user is some user" do
       let(:current_user) { create(:user, full_name: "Odd ManOutthree") }
 
@@ -90,7 +90,7 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
     end
   end
 
-  context "Can view their queue" do
+  context "SCM user can view judge's queue" do
     let(:appeal) { create(:appeal) }
     let(:veteran) { appeal.veteran }
     let!(:root_task) { create(:root_task, appeal: appeal) }
@@ -100,7 +100,7 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
       create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
     end
 
-    context "there's another in-progress JudgeAssignTask" do
+    context "another in-progress JudgeAssignTask is added" do
       let!(:judge_task) do
         create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal, parent: root_task)
       end
