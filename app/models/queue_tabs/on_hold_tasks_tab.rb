@@ -12,7 +12,7 @@ class OnHoldTasksTab < QueueTab
   end
 
   def description
-    COPY::COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION
+    COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION
   end
 
   def tasks
