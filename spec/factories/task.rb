@@ -102,11 +102,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_to { create(:user) }
       days_on_hold { rand(1..100) }
-      parent { create(:ama_task) }
+      parent { create(:ama_task, appeal: appeal) }
     end
 
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
-      parent { create(:ama_task) }
+      parent { create(:ama_task, appeal: appeal) }
       assigned_to { Colocated.singleton }
 
       factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
@@ -383,7 +383,7 @@ FactoryBot.define do
     factory :ama_attorney_task, class: AttorneyTask do
       type { AttorneyTask.name }
       appeal { create(:appeal) }
-      parent { create(:ama_judge_decision_review_task) }
+      parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       assigned_by { create(:user) }
       assigned_to { create(:user) }
 
@@ -405,13 +405,13 @@ FactoryBot.define do
     factory :ama_attorney_rewrite_task, class: AttorneyRewriteTask do
       type { AttorneyRewriteTask.name }
       appeal { create(:appeal) }
-      parent { create(:ama_judge_decision_review_task) }
+      parent { create(:ama_judge_decision_review_task, appeal: appeal) }
     end
 
     factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
       type { AttorneyDispatchReturnTask.name }
       appeal { create(:appeal) }
-      parent { create(:ama_judge_decision_review_task) }
+      parent { create(:ama_judge_decision_review_task, appeal: appeal) }
     end
 
     factory :transcription_task, class: TranscriptionTask do
@@ -424,13 +424,13 @@ FactoryBot.define do
     factory :ama_vso_task, class: Task do
       type { Task.name }
       appeal { create(:appeal) }
-      parent { create(:root_task) }
+      parent { create(:root_task, appeal: appeal) }
     end
 
     factory :qr_task, class: QualityReviewTask do
       type { QualityReviewTask.name }
       appeal { create(:appeal) }
-      parent { create(:root_task) }
+      parent { create(:root_task, appeal: appeal) }
       assigned_by { nil }
       assigned_to { QualityReview.singleton }
     end
