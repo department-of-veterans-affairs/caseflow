@@ -151,7 +151,7 @@ feature "Task queue", :all_dbs do
 
     it "shows the right number of cases in each tab" do
       # Assigned tab
-      expect(page).to have_content(COPY::USER_QUEUE_PAGE_NEW_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
 
       # On Hold tab

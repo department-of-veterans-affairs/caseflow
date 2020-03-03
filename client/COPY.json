@@ -119,7 +119,7 @@
   "QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%d)",
 
   "USER_QUEUE_PAGE_TABLE_TITLE": "Your cases",
-  "USER_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "Cases assigned to you:",
+  "USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to you:",
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
 

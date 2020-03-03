@@ -1,5 +1,6 @@
 import * as React from 'react';
 import moment from 'moment';
+import pluralize from 'pluralize';
 import _ from 'lodash';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
@@ -203,11 +204,17 @@ export const daysWaitingColumn = (requireDasRecord) => {
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
     valueFunction: (task) => {
+      const daysSinceAssigned = moment().startOf('day').
+          diff(moment(task.assignedOn), 'days'),
+        daysSincePlacedOnHold = moment().startOf('day').
+          diff(task.placedOnHoldAt, 'days');
+
       return <React.Fragment>
-        <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>{moment().startOf('day').
-          diff(moment(task.assignedOn), 'days')} days</span>
-        { taskHasCompletedHold(task) ? <ContinuousProgressBar level={moment().startOf('day').
-          diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
+        <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
+          {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
+        </span>
+        { taskHasCompletedHold(task) &&
+          <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
       </React.Fragment>;
     },
     backendCanSort: true,
