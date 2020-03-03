@@ -350,6 +350,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
+      expect(page).to have_content(
+        format(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE, appeal.veteran_full_name)
+      )
+      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL)
 
       motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
       expect(motion).to be_nil
