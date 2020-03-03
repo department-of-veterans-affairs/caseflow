@@ -7,6 +7,7 @@ class DataIntegrityChecksJob < CaseflowJob
   CHECKERS = %w[
     DecisionReviewTasksForInactiveAppealsChecker
     ExpiredAsyncJobsChecker
+    LegacyAppealsWithNoVacolsCase
     OpenHearingTasksWithoutActiveDescendantsChecker
     OpenTasksWithClosedAtChecker
     ReviewsWithDuplicateEpErrorChecker

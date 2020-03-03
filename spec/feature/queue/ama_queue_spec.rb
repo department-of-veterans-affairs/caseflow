@@ -878,7 +878,7 @@ feature "AmaQueue", :all_dbs do
         )
         fill_in("taskInstructions", with: "instructions here")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
-        expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE)
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
 
       step "Use the back button to return to the team queue to retain data stored in front-end state" do
@@ -896,7 +896,7 @@ feature "AmaQueue", :all_dbs do
         )
         fill_in("taskInstructions", with: "instructions here")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
-        expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE)
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
     end
   end

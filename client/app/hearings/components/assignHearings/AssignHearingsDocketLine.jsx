@@ -52,9 +52,9 @@ export const docketCutoffLineStyle = (_index, scheduledForText) => {
 };
 
 const getAppealsInDocketRange = (appeals, endOfRange) => _.filter(appeals, (appeal) => (
-  moment(appeal.attributes.docketRangeDate).isBefore(endOfRange) ||
-  appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
-  appeal.attributes.aod
+  moment(appeal.docketRangeDate).isBefore(endOfRange) ||
+  appeal.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
+  appeal.aod
 ));
 
 export const getIndexOfDocketLine = (appeals, endOfRange) => {
