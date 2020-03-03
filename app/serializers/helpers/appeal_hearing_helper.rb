@@ -12,4 +12,8 @@ module Helpers::AppealHearingHelper
       AppealHearingSerializer.new(hearing).serializable_hash[:data][:attributes]
     end
   end
+
+  def suggested_hearing_location(appeal)
+    appeal.suggested_hearing_location&.to_hash
+  end
 end
