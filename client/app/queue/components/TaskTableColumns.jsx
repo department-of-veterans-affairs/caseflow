@@ -205,7 +205,7 @@ export const daysWaitingColumn = (requireDasRecord) => {
     valueFunction: (task) => {
       return <React.Fragment>
         <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>{moment().startOf('day').
-          diff(moment(task.assignedOn), 'days')}</span>
+          diff(moment(task.assignedOn), 'days')} days</span>
         { taskHasCompletedHold(task) ? <ContinuousProgressBar level={moment().startOf('day').
           diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
       </React.Fragment>;

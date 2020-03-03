@@ -373,7 +373,7 @@ describe('ColocatedTaskListView', () => {
       expect(columnTasks.text()).to.include(task.label);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
-      expect(daysWaiting.text()).to.equal('1');
+      expect(daysWaiting.text()).to.equal('1 days');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
       expect(documents.text()).to.include('Loading number of docs...');
 
@@ -387,7 +387,7 @@ describe('ColocatedTaskListView', () => {
 
       const onHoldDaysWaiting = cells.at(12);
 
-      expect(onHoldDaysWaiting.text()).to.equal(daysOnHold.toString());
+      expect(onHoldDaysWaiting.text()).to.equal(`${daysOnHold.toString()} days`);
       expect(onHoldDaysWaiting.find('.cf-red-text').length).to.eq(1);
       expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning').length).to.eq(1);
     });
