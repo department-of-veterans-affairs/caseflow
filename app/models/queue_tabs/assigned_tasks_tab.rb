@@ -12,7 +12,7 @@ class AssignedTasksTab < QueueTab
   end
 
   def description
-    COPY::USER_QUEUE_PAGE_NEW_TASKS_DESCRIPTION
+    COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION
   end
 
   def tasks
