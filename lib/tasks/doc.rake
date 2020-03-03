@@ -52,6 +52,11 @@ namespace :doc do
     indexes
   end
 
+  def pretty_boolean(bool)
+    return "x" if bool
+    nil
+  end
+
   desc "Generate documentation for db schema"
   task schema: :environment do
     schema_name = ENV.fetch("SCHEMA") # die if not set
@@ -68,7 +73,7 @@ namespace :doc do
 
     csv_file = Rails.root.join("docs/schema/#{schema_name}.csv")
     CSV.open(csv_file, "wb") do |csv|
-      csv << ["Table", "Column", "Type", "Required", "Primary Key", "Unique", "Index", "Description"]
+      csv << ["Table", "Column", "Type", "Required", "Primary Key", "Foreign Key", "Unique", "Index", "Description"]
 
       domain.entities.each do |entity|
         next unless entity.model
@@ -77,17 +82,18 @@ namespace :doc do
 
         table_name = entity.model.table_name
 
-        csv << [table_name, nil, nil, nil, nil, nil, nil, comment_for_table(table_name)]
+        csv << [table_name, nil, nil, nil, nil, nil, nil, nil, comment_for_table(table_name)]
         entity.attributes.each do |attr|
           comment = comments.dig(table_name, attr.name)
           csv << [
             table_name,
             attr.name,
             attr.type_description,
-            attr.mandatory?,
-            attr.primary_key?,
-            attr.unique?,
-            indexed?(table_name, attr.name),
+            pretty_boolean(attr.mandatory?),
+            pretty_boolean(attr.primary_key?),
+            pretty_boolean(attr.foreign_key?),
+            pretty_boolean(attr.unique?),
+            pretty_boolean(indexed?(table_name, attr.name)),
             comment
           ]
         end
