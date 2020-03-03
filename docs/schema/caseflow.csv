@@ -123,7 +123,7 @@ board_grant_effectuations,decision_sync_submitted_at,datetime,,,,,,Async job pro
 board_grant_effectuations,end_product_establishment_id,integer (8) FK,,,x,,x,The ID of the end product establishment created for this board grant effectuation.
 board_grant_effectuations,granted_decision_issue_id,integer (8) ∗ FK,x,,x,,x,The ID of the granted decision issue.
 board_grant_effectuations,id,integer (8) PK,x,x,,,,
-board_grant_effectuations,last_submitted_at,datetime,,,,,,Async job processing most recent start timestamp (TODO rename)
+board_grant_effectuations,last_submitted_at,datetime,,,,,,Async job processing most recent start timestamp
 board_grant_effectuations,updated_at,datetime,,,,,x,
 cached_appeal_attributes,,,,,,,,
 cached_appeal_attributes,appeal_id,integer,,,,,x,
