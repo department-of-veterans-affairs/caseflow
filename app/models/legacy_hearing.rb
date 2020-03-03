@@ -12,6 +12,10 @@ class LegacyHearing < ApplicationRecord
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
+
+  # scheduled_for is the correct hearing date and time in Eastern Time for travel
+  # board and video hearings, or in the user's time zone for central hearings; the
+  # transformation happens in HearingMapper.datetime_based_on_type
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id

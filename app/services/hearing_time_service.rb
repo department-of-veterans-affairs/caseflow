@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 # Service to handle hearing time updates consistently between VACOLS and Caseflow
-# using scheduled_time_string parameter.
-# scheduled_time_string is always local time
+# using scheduled_time_string parameter. scheduled_time_string is always in the
+# regional office's time zone, or in the central office's time zone if no regional
+# office is associated with the hearing.
 
 class HearingTimeService
   class << self
@@ -67,7 +68,8 @@ class HearingTimeService
 
   def local_time
     # returns the date and time a hearing is scheduled for in the regional
-    # office's time zone
+    # office's time zone; or the central office's time zone if no regional
+    # office is associated with the hearing.
 
     # for AMA hearings, return the hearing object's scheduled_for
     return @hearing.scheduled_for if @hearing.is_a?(Hearing)
@@ -78,7 +80,8 @@ class HearingTimeService
     # central office hearing (eastern time)
     regional_office_timezone = @hearing.regional_office_timezone || "America/New_York"
 
-    # scheduled_for returns hearing time in ET, convert back to local time
+    # convert the hearing time returned by LegacyHearing.scheduled_for
+    # to the regional office timezone
     @hearing.scheduled_for.in_time_zone(regional_office_timezone)
   end
 

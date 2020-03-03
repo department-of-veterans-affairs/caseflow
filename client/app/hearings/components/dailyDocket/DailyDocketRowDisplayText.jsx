@@ -30,6 +30,11 @@ const hearingPropTypes = PropTypes.shape({
   isVirtual: PropTypes.bool
 });
 
+// Convert a time string in 24-hour format ("13:30") to am/pm
+// format ("1:30 pm"). If a timezone is passed (expected in the
+// format "America/New_York"), abbreviate it and append it to the
+// returned string ("1:30 pm EST"). Does not cast the time into a
+// new time zone.
 export const getDisplayTime = (scheduledTimeString, timezone) => {
   const val = scheduledTimeString ? moment(scheduledTimeString, 'HH:mm').format('h:mm a') : '';
 
