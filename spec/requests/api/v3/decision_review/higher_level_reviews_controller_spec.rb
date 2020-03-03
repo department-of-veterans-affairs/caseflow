@@ -399,32 +399,38 @@ describe Api::V3::DecisionReview::HigherLevelReviewsController, :all_dbs, type: 
           expect(subject.first["ineligible"]).to be_nil
         end
 
-        it "should have an ineligible object" do
-          request_issue_in_active_review = create(
-            :request_issue,
-            decision_date: Time.zone.today - 5.days,
-            decision_review: create(:higher_level_review, id: 10, veteran_file_number: veteran.file_number),
-            contested_rating_issue_reference_id: "hlr123",
-            contention_reference_id: "2222",
-            end_product_establishment: create(:end_product_establishment, :active),
-            contention_removed_at: nil,
-            ineligible_reason: nil
-          )
-          ineligible_request_issue = create(
-            :request_issue,
-            decision_date: Time.zone.today - 3.days,
-            decision_review: create(:higher_level_review, id: 11, veteran_file_number: veteran.file_number),
-            contested_rating_issue_reference_id: "hlr123",
-            contention_reference_id: "3333",
-            ineligible_reason: :duplicate_of_rating_issue_in_active_review,
-            ineligible_due_to: request_issue_in_active_review
-          )
-          higher_level_review.request_issues = [request_issue_in_active_review, ineligible_request_issue]
-          ineligble_data = subject.find { |ri| ri["attributes"]["ineligible"] }["attributes"]["ineligible"]
+        context "HLR has ineligible request issues" do
+          let(:contested_issue_id) { "hlr123" }
+          let!(:request_issue_in_active_review) do
+            create(
+              :request_issue,
+              decision_date: Time.zone.today - 5.days,
+              decision_review: create(:higher_level_review, veteran_file_number: veteran.file_number),
+              contested_rating_issue_reference_id: contested_issue_id,
+              contention_reference_id: "2222",
+              contention_removed_at: nil,
+              ineligible_reason: nil
+            )
+          end
+          let!(:ineligible_request_issue) do
+            create(
+              :request_issue,
+              decision_date: Time.zone.today - 3.days,
+              decision_review: higher_level_review,
+              contested_rating_issue_reference_id: contested_issue_id,
+              contention_reference_id: "3333",
+              ineligible_reason: :duplicate_of_rating_issue_in_active_review,
+              ineligible_due_to: request_issue_in_active_review
+            )
+          end
 
-          expect(ineligble_data["reason"]).to eq ineligible_request_issue.ineligible_reason
-          expect(ineligble_data["dueToId"]).to eq ineligible_request_issue.ineligible_due_to_id
-          expect(ineligble_data["titleOfActiveReview"]).to eq ineligible_request_issue.title_of_active_review
+          it "should flag ineligible request issues" do
+            ineligble_data = subject.find { |ri| ri["attributes"]["ineligible"] }["attributes"]["ineligible"]
+
+            expect(ineligble_data["reason"]).to eq ineligible_request_issue.ineligible_reason
+            expect(ineligble_data["dueToId"]).to eq ineligible_request_issue.ineligible_due_to_id
+            expect(ineligble_data["titleOfActiveReview"]).to eq ineligible_request_issue.title_of_active_review
+          end
         end
       end
 

@@ -50,7 +50,6 @@ class WorkQueue::LegacyAppealSerializer
   attribute :closest_regional_office
 
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
-  attribute(:suggested_hearing_location) { |object| suggested_hearing_location(object) }
 
   attribute :docket_name do
     "legacy"

@@ -19,6 +19,17 @@ describe LegacyAppealsWithNoVacolsCase do
         expect(subject.report?).to be_truthy
         expect(subject.report).to eq("LegacyAppeal.find_by(vacols_id: '#{legacy_appeal.vacols_id}')")
       end
+
+      context "when Legacy Appeal has only cancelled tasks" do
+        let!(:legacy_appeal) do
+          create(:legacy_appeal, :with_judge_assign_task).tap { |legapp| legapp.tasks.each(&:cancelled!) }
+        end
+
+        it "reports zero missing cases" do
+          subject.call
+          expect(subject.report?).to be_falsey
+        end
+      end
     end
   end
 end
