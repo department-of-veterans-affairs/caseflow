@@ -2,7 +2,7 @@ import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { onReceiveAmaTasks } from '../QueueActions';
 import { showSuccessMessage } from '../uiReducer/uiActions';
-import { addressMTVSuccessAlert } from './mtvMessages';
+import { addressMTVSuccessAlert, returnToLitSupportAlert } from './mtvMessages';
 
 export const submitMTVAttyReviewStarted = () => ({
   type: Constants.MTV_SUBMIT_ATTY_REVIEW
@@ -103,7 +103,7 @@ export const returnToLitSupport = (data, ownProps) => {
   return async (dispatch) => {
     dispatch(returnMTVToLitSupportStarted());
 
-    const { history } = ownProps;
+    const { history, appeal } = ownProps;
 
     const url = '/post_decision_motions/return';
 
@@ -114,6 +114,8 @@ export const returnToLitSupport = (data, ownProps) => {
       } = res.body;
 
       dispatch(returnMTVToLitSupportSuccess());
+
+      dispatch(showSuccessMessage(returnToLitSupportAlert({ appeal })));
 
       if (history) {
         history.push('/queue');
