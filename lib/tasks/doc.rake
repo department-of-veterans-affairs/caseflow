@@ -54,6 +54,7 @@ namespace :doc do
 
   def pretty_boolean(bool)
     return "x" if bool
+
     nil
   end
 
