@@ -71,7 +71,7 @@ RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :contro
     it "processes request successfully" do
       subject
 
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
     end
 
     it "returns correct hash keys" do
