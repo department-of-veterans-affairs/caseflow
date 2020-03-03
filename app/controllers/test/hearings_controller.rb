@@ -6,7 +6,7 @@ class Test::HearingsController < ApplicationController
   # :nocov:
   def index
     if send_email?
-      # TODO: send email
+      Test::HearingsProfileJob.perform_later(send_to_user: current_user)
     end
 
     profile = HearingsProfileHelper.profile_data(current_user)
