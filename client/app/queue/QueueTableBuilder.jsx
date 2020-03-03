@@ -6,16 +6,16 @@ import { connect } from 'react-redux';
 import QueueTable from './QueueTable';
 import TabWindow from '../components/TabWindow';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
-import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, typeColumn, daysWaitingColumn,
-  readerLinkColumnWithNewDocsIcon, issueCountColumn, regionalOfficeColumn, completedToNameColumn,
-  taskCompletedDateColumn, daysOnHoldColumn, readerLinkColumn } from './components/TaskTableColumns';
+import { completedToNameColumn, daysOnHoldColumn, daysWaitingColumn, detailsColumn, docketNumberColumn,
+  hearingBadgeColumn, issueCountColumn, readerLinkColumn, readerLinkColumnWithNewDocsIcon, regionalOfficeColumn,
+  taskColumn, taskCompletedDateColumn, typeColumn } from './components/TaskTableColumns';
 
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { fullWidth } from './constants';
 
 /**
- * This is used to create a queue table from a queue config
+ * A component to create a queue table's tabs and columns from a queue config and the user's tasks
  * The required props are:
  * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  * - @onHoldTasks {array[object]} array of task objects to appear in the on hold tab
@@ -35,21 +35,21 @@ class QueueTableBuilder extends React.PureComponent {
   }
 
   createColumnObject = (column, config, tasks) => {
-    const attorneyQueue = config.userRole === USER_ROLE_TYPES.attorney;
+    const requireDasRecord = config.userRole === USER_ROLE_TYPES.attorney;
     const functionForColumn = {
+      [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(tasks, false, requireDasRecord),
+      [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(tasks, requireDasRecord, config.userRole),
+      [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(requireDasRecord),
+      [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(requireDasRecord),
+      [QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(tasks, false, requireDasRecord),
+      [QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name]: readerLinkColumn(requireDasRecord, true),
       [QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name]: hearingBadgeColumn(tasks),
-      [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(tasks, attorneyQueue, config.userRole),
-      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, false),
-      [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(tasks, false, attorneyQueue),
-      [QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(tasks, false, attorneyQueue),
-      [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(attorneyQueue),
-      [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(attorneyQueue),
-      [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name]: readerLinkColumnWithNewDocsIcon(attorneyQueue),
+      [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(requireDasRecord),
+      [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name]: readerLinkColumnWithNewDocsIcon(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name]: regionalOfficeColumn(tasks, false),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
-      [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(attorneyQueue),
-      [QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name]: readerLinkColumn(attorneyQueue, true)
+      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, false)
     };
 
     return functionForColumn[column.name];
