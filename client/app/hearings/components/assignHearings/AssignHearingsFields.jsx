@@ -54,10 +54,10 @@ HearingAppellantName.propTypes = {
 export const CaseDetailsInformation = ({ appeal }) => {
   let caseDetails;
 
-  if (appeal.appellantFullName) {
-    caseDetails = `${appeal.appellantFullName} | ${appeal.veteranFileNumber}`;
+  if (appeal.attributes.appellantFullName) {
+    caseDetails = `${appeal.attributes.appellantFullName} | ${appeal.attributes.veteranFileNumber}`;
   } else {
-    caseDetails = `${appeal.veteranFullName} | ${appeal.veteranFileNumber}`;
+    caseDetails = `${appeal.attributes.veteranFullName} | ${appeal.attributes.veteranFileNumber}`;
   }
 
   return <React.Fragment>{caseDetails}</React.Fragment>;
@@ -65,9 +65,11 @@ export const CaseDetailsInformation = ({ appeal }) => {
 
 CaseDetailsInformation.propTypes = {
   appeal: PropTypes.shape({
-    appellantFullName: PropTypes.string,
-    veteranFullName: PropTypes.string,
-    veteranFileNumber: PropTypes.string
+    attributes: PropTypes.shape({
+      appellantFullName: PropTypes.string,
+      veteranFullName: PropTypes.string,
+      veteranFileNumber: PropTypes.string
+    })
   })
 };
 
@@ -90,10 +92,10 @@ HearingDocketTag.propTypes = {
 };
 
 export const AppealDocketTag = ({ appeal }) => {
-  if (appeal.docketNumber) {
+  if (appeal.attributes.docketNumber) {
     return <div>
-      <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
-      {appeal.docketNumber}
+      <DocketTypeBadge name={appeal.attributes.docketName} number={appeal.attributes.docketNumber} />
+      {appeal.attributes.docketNumber}
     </div>;
   }
 
@@ -102,8 +104,10 @@ export const AppealDocketTag = ({ appeal }) => {
 
 AppealDocketTag.propTypes = {
   appeal: PropTypes.shape({
-    docketName: PropTypes.string,
-    docketNumber: PropTypes.string
+    attributes: PropTypes.shape({
+      docketName: PropTypes.string,
+      docketNumber: PropTypes.string
+    })
   })
 };
 
