@@ -120,11 +120,9 @@
   "QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
   "QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%d)",
 
-  "COLOCATED_QUEUE_PAGE_TABLE_TITLE": "Your cases",
-  "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "Assigned (%d)",
-  "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "Cases assigned to you:",
-  "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "Cases no longer on hold:",
-  "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
+  "USER_QUEUE_PAGE_TABLE_TITLE": "Your cases",
+  "USER_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "Cases assigned to you:",
+  "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
 
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
