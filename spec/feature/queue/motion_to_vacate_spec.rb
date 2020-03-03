@@ -115,6 +115,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
         send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
 
         find("label[for=disposition_denied]").click
+        expect(page).to have_content("Optional")
+        expect(page).to have_content("Upload the draft to your shared drive and add the location below")
         fill_in("hyperlink", with: hyperlink)
         fill_in("instructions", with: "Attorney context/instructions for judge")
         click_dropdown(text: judge2.display_name)
@@ -369,6 +371,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
     it "judge dismisses motion to vacate" do
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_dismissed]").click
+      expect(page).to have_content("Optional")
+      expect(page).to have_content("Upload the draft to your shared drive and add the location below")
       fill_in("instructions", with: judge_notes)
       fill_in("hyperlink", with: hyperlink)
 
