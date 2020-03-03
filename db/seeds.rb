@@ -1332,13 +1332,14 @@ class SeedDB
 
   def create_motion_to_vacate_mail_task(appeal)
     lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
-    mail_team_task = FactoryBot.create(:vacate_motion_mail_task, appeal: appeal, assigned_to: LitigationSupport.singleton, parent: appeal.root_task, status: "on_hold")
-    FactoryBot.create(:vacate_motion_mail_task, appeal: appeal, assigned_to: lit_support_user, assigned_by: LitigationSupport.singleton, parent: mail_team_task.root_task, status: "assigned", instructions: ["Initial instructions"])
+    mail_team_task = FactoryBot.create(:vacate_motion_mail_task, :on_hold, appeal: appeal, assigned_to: LitigationSupport.singleton, parent: appeal.root_task)
+    FactoryBot.create(:vacate_motion_mail_task, :assigned, appeal: appeal, assigned_to: lit_support_user, assigned_by: LitigationSupport.singleton, parent: mail_team_task.root_task, instructions: ["Initial instructions"])
   end
 
   def send_mtv_to_judge(appeal, judge, mail_task, recommendation)
     mtv_judge = User.find_by(css_id: "BVAAABSHIRE")
     FactoryBot.create(:judge_address_motion_to_vacate_task,
+      :assigned,
       appeal: appeal,
       assigned_to: judge,
       assigned_at: Time.zone.now,
@@ -1368,34 +1369,35 @@ class SeedDB
 
     # These are ready for the Lit Support user to send_to_judge
     ("000100010".."000100012").each do |fn|
-      create_decided_appeal(fn).tap{ |a| create_assigned_motion_to_vacate_task(a) }
+      create_decided_appeal(fn).tap{ |a| create_motion_to_vacate_mail_task(a) }
     end
 
     # These are ready to be addressed by the Judge
     ("000100013".."000100015").each do |fn|
       a = create_decided_appeal(fn)
-      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task = create_motion_to_vacate_mail_task(a)
       mtv_task.update!(status: "on_hold")
       send_mtv_to_judge(a, mtv_judge, mtv_task, "denied")
     end
 
     ("000100016".."000100018").each do |fn|
       a = create_decided_appeal(fn)
-      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task = create_motion_to_vacate_mail_task(a)
       mtv_task.update!(status: "on_hold")
       send_mtv_to_judge(a, mtv_judge, mtv_task, "dismissed")
     end
 
     ("000100019".."000100021").each do |fn|
       a = create_decided_appeal(fn)
-      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task = create_motion_to_vacate_mail_task(a)
       mtv_task.update!(status: "on_hold")
       send_mtv_to_judge(a, mtv_judge, mtv_task, "granted")
     end
 
+    # These are ready to be reviewed by the decision drafting attorney on the vacate stream
     ("000100022".."000100024").each do |fn|
       a = create_decided_appeal(fn)
-      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task = create_motion_to_vacate_mail_task(a)
       mtv_task.update!(status: "on_hold")
       jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "denied")
       judge_addresses_mtv(jam_task, "denied", nil, lit_support_user)
@@ -1403,7 +1405,7 @@ class SeedDB
 
     ("000100025".."000100027").each do |fn|
       a = create_decided_appeal(fn)
-      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task = create_motion_to_vacate_mail_task(a)
       mtv_task.update!(status: "on_hold")
       jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "dismissed")
       judge_addresses_mtv(jam_task, "dismissed", nil, lit_support_user)
@@ -1411,7 +1413,7 @@ class SeedDB
 
     ("000100028".."000100030").each do |fn|
       a = create_decided_appeal(fn)
-      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task = create_motion_to_vacate_mail_task(a)
       mtv_task.update!(status: "on_hold")
       jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "granted")
       judge_addresses_mtv(jam_task, "granted", "straight_vacate", drafting_attorney)
@@ -1419,7 +1421,7 @@ class SeedDB
 
     ("000100031".."000100033").each do |fn|
       a = create_decided_appeal(fn)
-      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task = create_motion_to_vacate_mail_task(a)
       mtv_task.update!(status: "on_hold")
       jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "granted")
       judge_addresses_mtv(jam_task, "granted", "vacate_and_readjudicate", drafting_attorney)
@@ -1427,10 +1429,28 @@ class SeedDB
 
     ("000100034".."000100036").each do |fn|
       a = create_decided_appeal(fn)
-      mtv_task = create_assigned_motion_to_vacate_task(a)
+      mtv_task = create_motion_to_vacate_mail_task(a)
       mtv_task.update!(status: "on_hold")
       jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "granted")
       judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
+    end
+
+    ("000100037".."000100039").each do |fn|
+      a = create_decided_appeal(fn)
+      mtv_task = create_motion_to_vacate_mail_task(a)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(a, mtv_judge, mtv_task, "granted")
+      judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
+      vacate_stream = Appeal.find_by(steam_type: "vacate", docket_number: a.stream_docket_number)
+      jdrt = vacate_stream.tasks.find_by(type: "JudgeDecisionReviewTask")
+      at = jdrt.children.find_by(type: "AttorneyTask")
+      [jdrt, at].each { |t| t.update!(status: "completed") }
+      root_task = vacate_stream.tasks.find_by(type: "RootTask")
+      BvaDispatchTask.create_from_root_task(root_task)
+      u = vacate_stream.reload.tasks.find_by(type: "BvaDispatchTask", assigned_to_type: "User").assigned_to
+      last_six=fn[-6..-1]
+      citation_number = "A19#{last_six}"
+      BvaDispatchTask.outcode(a.reload, { citation_number: citation_number, decision_date: Time.zone.now, redacted_document_location: "\\\\bvacofil1.dva.va.gov\\archdata$\\arch1901\\#{citation_number}.txt", file: last_six }, u)
     end
   end
 
