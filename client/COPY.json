@@ -109,8 +109,6 @@
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake, please email your judge to resolve the issue.",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
   "ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK": "View in Reader",
-  "ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to you.",
-  "ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, cases here will automatically return to the Assigned tab.",
   "ORGANIZATION_QUEUE_TABLE_TITLE": "%s cases",
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
@@ -120,11 +118,9 @@
   "QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
   "QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%d)",
 
-  "COLOCATED_QUEUE_PAGE_TABLE_TITLE": "Your cases",
-  "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "Assigned (%d)",
-  "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "Cases assigned to you:",
-  "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "Cases no longer on hold:",
-  "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
+  "USER_QUEUE_PAGE_TABLE_TITLE": "Your cases",
+  "USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to you:",
+  "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
 
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
