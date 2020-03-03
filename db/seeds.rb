@@ -1291,7 +1291,7 @@ class SeedDB
   end
 
   ### Motions to Vacate setup ###
-  def create_decided_appeal(file_number)
+  def create_decided_appeal(file_number, mtv_judge, drafting_attorney)
     veteran = FactoryBot.create(:veteran, file_number: file_number)
     appeal = FactoryBot.create(
       :appeal,
@@ -1301,13 +1301,11 @@ class SeedDB
       stream_type: "original"
     )
 
-    mtv_judge = User.find_by(css_id: "BVAAABSHIRE")
-    drafting_attorney = User.find_by(css_id: "BVAEERDMAN")
-    jdrt = FactoryBot.create(:ama_judge_decision_review_task, :completed,
+    jdr_task = FactoryBot.create(:ama_judge_decision_review_task, :completed,
              assigned_to: mtv_judge, assigned_by: nil, appeal: appeal, parent: appeal.root_task)
 
-    at = FactoryBot.create(:ama_attorney_task, :completed, assigned_by: mtv_judge,
-           assigned_to: drafting_attorney, appeal: appeal, parent: jdrt)
+    attorney_task = FactoryBot.create(:ama_attorney_task, :completed, assigned_by: mtv_judge,
+           assigned_to: drafting_attorney, appeal: appeal, parent: jdr_task)
 
     2.times do |idx|
       FactoryBot.create(
@@ -1367,92 +1365,95 @@ class SeedDB
 
     # MTV file numbers with a decided appeal
     # From here a MailTeam user or LitigationSupport team member would create a motion to vacate task
-    ("000100000".."000100009").each{ |fn| create_decided_appeal(fn) }
+    ("000100000".."000100009").each{ |fn| create_decided_appeal(file_number, mtv_judge, drafting_attorney) }
 
     # These are ready for the Lit Support user to send_to_judge
     ("000100010".."000100012").each do |fn|
-      create_decided_appeal(fn).tap{ |a| create_motion_to_vacate_mail_task(a) }
+      create_decided_appeal(file_number, mtv_judge, drafting_attorney).tap{ |a| create_motion_to_vacate_mail_task(a) }
     end
 
     # These are ready to be addressed by the Judge
     ("000100013".."000100015").each do |fn|
-      a = create_decided_appeal(fn)
-      mtv_task = create_motion_to_vacate_mail_task(a)
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
-      send_mtv_to_judge(a, mtv_judge, lit_support_user, mtv_task, "denied")
+      send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "denied")
     end
 
     ("000100016".."000100018").each do |fn|
-      a = create_decided_appeal(fn)
-      mtv_task = create_motion_to_vacate_mail_task(a)
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
-      send_mtv_to_judge(a, mtv_judge, lit_support_user, mtv_task, "dismissed")
+      send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "dismissed")
     end
 
     ("000100019".."000100021").each do |fn|
-      a = create_decided_appeal(fn)
-      mtv_task = create_motion_to_vacate_mail_task(a)
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
       send_mtv_to_judge(a, mtv_judge, lit_support_user, mtv_task, "granted")
     end
 
     # These are ready to be reviewed by the decision drafting attorney on the vacate stream
     ("000100022".."000100024").each do |fn|
-      a = create_decided_appeal(fn)
-      mtv_task = create_motion_to_vacate_mail_task(a)
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
-      jam_task = send_mtv_to_judge(a, mtv_judge, lit_support_user, mtv_task, "denied")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "denied")
       judge_addresses_mtv(jam_task, "denied", nil, lit_support_user)
     end
 
     ("000100025".."000100027").each do |fn|
-      a = create_decided_appeal(fn)
-      mtv_task = create_motion_to_vacate_mail_task(a)
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
-      jam_task = send_mtv_to_judge(a, mtv_judge, lit_support_user, mtv_task, "dismissed")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "dismissed")
       judge_addresses_mtv(jam_task, "dismissed", nil, lit_support_user)
     end
 
     ("000100028".."000100030").each do |fn|
-      a = create_decided_appeal(fn)
-      mtv_task = create_motion_to_vacate_mail_task(a)
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
-      jam_task = send_mtv_to_judge(a, mtv_judge, lit_support_user, mtv_task, "granted")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
       judge_addresses_mtv(jam_task, "granted", "straight_vacate", drafting_attorney)
     end
 
     ("000100031".."000100033").each do |fn|
-      a = create_decided_appeal(fn)
-      mtv_task = create_motion_to_vacate_mail_task(a)
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
-      jam_task = send_mtv_to_judge(a, mtv_judge, lit_support_user, mtv_task, "granted")
-      judge_addresses_mtv(jam_task, "granted", "vacate_and_readjudicate", drafting_attorney)
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
+      judge_addresses_mtv(jam_task, "granted", "vacate_and_readjudication", drafting_attorney)
     end
 
     ("000100034".."000100036").each do |fn|
-      a = create_decided_appeal(fn)
-      mtv_task = create_motion_to_vacate_mail_task(a)
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
-      jam_task = send_mtv_to_judge(a, mtv_judge, lit_support_user, mtv_task, "granted")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
       judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
     end
 
     ("000100037".."000100039").each do |fn|
-      a = create_decided_appeal(fn)
-      mtv_task = create_motion_to_vacate_mail_task(a)
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
-      jam_task = send_mtv_to_judge(a, mtv_judge,lit_support_user,  mtv_task, "granted")
-      judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
-      vacate_stream = Appeal.find_by(steam_type: "vacate", docket_number: a.stream_docket_number)
-      jdrt = vacate_stream.tasks.find_by(type: "JudgeDecisionReviewTask")
-      at = jdrt.children.find_by(type: "AttorneyTask")
-      [jdrt, at].each { |t| t.update!(status: "completed") }
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge,lit_support_user,  mtv_task, "granted")
+      post_decision_motion = judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
+      vacate_stream = post_decision_motion.appeal
+      jdr_task = vacate_stream.tasks.find_by(type: "JudgeDecisionReviewTask")
+      attorney_task = jdr_task.children.find_by(type: "AttorneyTask")
+      [jdr_task, attorney_task].each { |t| t.update!(status: "completed") }
       root_task = vacate_stream.tasks.find_by(type: "RootTask")
       BvaDispatchTask.create_from_root_task(root_task)
-      u = vacate_stream.reload.tasks.find_by(type: "BvaDispatchTask", assigned_to_type: "User").assigned_to
+      dispatch_user = vacate_stream.tasks.reload.find_by(type: "BvaDispatchTask", assigned_to_type: "User").assigned_to
       last_six=fn[-6..-1]
       citation_number = "A19#{last_six}"
-      BvaDispatchTask.outcode(a.reload, { citation_number: citation_number, decision_date: Time.zone.now, redacted_document_location: "\\\\bvacofil1.dva.va.gov\\archdata$\\arch1901\\#{citation_number}.txt", file: last_six }, u)
+      outcode_params = {
+        citation_number: citation_number, decision_date: Time.zone.now, redacted_document_location: "\\\\bvacofil1.dva.va.gov\\archdata$\\arch1901\\#{citation_number}.txt", file: last_six
+      }
+      BvaDispatchTask.outcode(vacate_stream.reload, outcode_params, dispatch_user)
     end
   end
 
