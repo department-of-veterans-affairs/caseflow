@@ -54,10 +54,6 @@ RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :contro
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     before do
-      BGSService.instance_methods(false).each do |method_name|
-        expect_any_instance_of(BGSService).not_to receive(method_name)
-      end
-
       AppealRepository.create_schedule_hearing_tasks.each do |appeal|
         appeal.update(closest_regional_office: closest_regional_office)
 
