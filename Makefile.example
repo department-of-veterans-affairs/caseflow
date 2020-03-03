@@ -145,8 +145,13 @@ install: bundle-install client-install  ## Installs all dependencies
 
 update: fresh install migrate  ## TODO
 
-client-test:  ## Runs javascript tests
+client-build-test client-test:  ## Builds webpack for tests
 	cd client && yarn run build:test
+
+client-build-demo client-demo: ## Builds webpack for local server
+	cd client && yarn run build:demo
+
+client-build-all client-all: client-test client-demo ## Builds webpack for both tests and local server
 
 one-test:  ## run the test passed in
 	bundle exec rspec $$T
@@ -163,8 +168,29 @@ clear-eps:  ## TODO
 karma:  ## TODO
 	cd client && node_modules/.bin/karma start
 
+erd-etl:	## Create ERD diagram for the ETL database
+	ERD_BASE=ETL::Record bundle exec erd --filename etl-erd --title 'ODS/ETL Data Model'
+
+erd-vacols:	## Create ERD diagram for the VACOLS database
+	ERD_BASE=VACOLS::Record bundle exec erd --filename vacols-erd --title 'VACOLS Data Model'
+
+erd-caseflow:	## Create ERD diagram for the Caseflow database
+	ERD_BASE=CaseflowRecord bundle exec erd --filename caseflow-erd --title 'Caseflow Data Model'
+
+erd: erd-etl erd-vacols erd-caseflow ## Create all ERD diagrams
+
+doc-schema-caseflow:	# Create docs/schema/caseflow.csv
+	ERD_BASE="CaseflowRecord" SCHEMA=caseflow bundle exec rake doc:schema
+
+doc-schema-etl:	# Create docs/schema/etl.csv
+	ERD_BASE="ETL::Record" SCHEMA=etl bundle exec rake doc:schema
+
+doc-schema:	doc-schema-caseflow doc-schema-etl	# Create all docs/schema csv files
+
+docs: erd doc-schema	# Build all documentation
+
 # Self-documented makefile from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:  ## Shows help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[\ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; { split($$1, C, " "); printf "\033[36m%-30s\033[0m %s\n", C[1], $$2}'
 
 .PHONY: test run clean lint check logs db update one-test client-test security build ready help

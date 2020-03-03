@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DecisionIssue < ApplicationRecord
+class DecisionIssue < CaseflowRecord
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
   validates :disposition, presence: true
   validates :end_product_last_action_date, presence: true, unless: :processed_in_caseflow?
@@ -169,10 +169,9 @@ class DecisionIssue < ApplicationRecord
     request_issues.first
   end
 
-  def create_contesting_request_issue!
-    vacate_appeal_stream = Appeal.find_by(stream_type: "vacate", stream_docket_number: decision_review.docket_number)
+  def create_contesting_request_issue!(appeal)
     RequestIssue.find_or_create_by!(
-      decision_review: vacate_appeal_stream,
+      decision_review: appeal,
       decision_review_type: decision_review_type,
       contested_decision_issue_id: id,
       contested_rating_issue_diagnostic_code: diagnostic_code,

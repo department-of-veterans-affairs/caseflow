@@ -32,7 +32,7 @@ RSpec.describe PostDecisionMotion, type: :model do
   let(:post_decision_motion) do
     create(
       :post_decision_motion,
-      appeal: appeal,
+      appeal: vacate_stream,
       task: task,
       disposition: disposition,
       vacate_type: vacate_type,

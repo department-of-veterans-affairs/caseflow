@@ -9,7 +9,7 @@
 #   - assigning a task to an individual
 
 # rubocop:disable Metrics/ClassLength
-class Task < ApplicationRecord
+class Task < CaseflowRecord
   has_paper_trail on: [:update, :destroy]
   acts_as_tree
 

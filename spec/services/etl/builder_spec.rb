@@ -27,10 +27,13 @@ describe ETL::Builder, :etl, :all_dbs do
       # start first build with small delay so we don't bump up against
       # a rounding error on the fixtures created via "AMA Tableau SQL"
       first_build_time = Time.zone.now.round + 5.seconds
+      ETL::Build.create(started_at: first_build_time)
 
       Timecop.travel(first_build_time) do
         # perform first full build
         builder = described_class.new
+        expect(builder.last_built).to be_nil
+
         build = builder.full
 
         # use .to_s comparison since Rails.cache does not store .milliseconds
@@ -121,7 +124,23 @@ describe ETL::Builder, :etl, :all_dbs do
   end
 
   describe "#incremental" do
-    subject { described_class.new(since: 2.days.ago.round).incremental }
+    let(:last_build_time) { 2.days.ago.round } # shared example creates things 3 days old
+
+    before do
+      # create meta for "previous" run
+      etl_build = ETL::Build.create(started_at: last_build_time)
+      described_class::ETL_KLASSES.each do |klass|
+        model = klass.constantize
+        ETL::BuildTable.create(
+          table_name: model.table_name,
+          started_at: last_build_time,
+          etl_build: etl_build
+        ).complete!
+      end
+      etl_build.complete!
+    end
+
+    subject { described_class.new(since: last_build_time).incremental }
 
     context "BVA status distribution" do
       it "syncs only records that have changed" do

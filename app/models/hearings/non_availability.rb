@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class NonAvailability < ApplicationRecord
+class NonAvailability < CaseflowRecord
   belongs_to :schedule_period
 end
