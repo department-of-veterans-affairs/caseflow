@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DecisionReview < ApplicationRecord
+class DecisionReview < CaseflowRecord
   include CachedAttributes
   include Asyncable
 

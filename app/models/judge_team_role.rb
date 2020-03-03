@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class JudgeTeamRole < ApplicationRecord
+class JudgeTeamRole < CaseflowRecord
   belongs_to :organizations_user, class_name: "::OrganizationsUser"
 
   has_one :user, through: :organizations_user

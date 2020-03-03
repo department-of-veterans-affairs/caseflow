@@ -24,7 +24,7 @@ class ETL::Syncer
     ETL::Record.connection.execute "SET statement_timeout = 90000"
 
     # create build record only if we intend to use it.
-    build_record if instances_needing_update.count > 0
+    build_record if instances_needing_update.any?
 
     instances_needing_update.find_in_batches.with_index do |originals, batch|
       Rails.logger.debug("Starting batch #{batch} for #{target_class}")
