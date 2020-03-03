@@ -2,12 +2,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 
-import TabWindow from '../components/TabWindow';
-import TaskTable from './components/TaskTable';
-import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
+import QueueTableBuilder from './QueueTableBuilder';
+
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
@@ -26,8 +25,7 @@ import {
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
-import { fullWidth } from './constants';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const containerStyles = css({
   position: 'relative'
@@ -55,7 +53,7 @@ class AttorneyTaskListView extends React.PureComponent {
   };
 
   render = () => {
-    const { messages, organizations } = this.props;
+    const { error, success } = this.props;
     const noOpenTasks = !_.size([...this.props.workableTasks, ...this.props.onHoldTasks]);
     const noCasesMessage = noOpenTasks ?
       <p>
@@ -63,51 +61,19 @@ class AttorneyTaskListView extends React.PureComponent {
         <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
       </p> : '';
 
-    const tabs = [
-      {
-        label: sprintf(
-          COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE,
-          this.props.workableTasks.length),
-        page: <TaskTableTab
-          description={COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}
-          tasks={this.props.workableTasks}
-          includeNewDocsIcon={false}
-          useOnHoldDate={false}
-        />
-      },
-      {
-        label: sprintf(
-          COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE,
-          this.props.onHoldTasks.length),
-        page: <TaskTableTab
-          description={COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}
-          tasks={this.props.onHoldTasks}
-          includeNewDocsIcon
-          useOnHoldDate
-        />
-      },
-      {
-        label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
-        page: <TaskTableTab
-          description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
-          tasks={this.props.completedTasks}
-          includeNewDocsIcon={false}
-          useOnHoldDate={false}
-        />
-      }
-    ];
-
     return <AppSegment filledBackground styling={containerStyles}>
-      <h1 {...fullWidth}>{COPY.ATTORNEY_QUEUE_TABLE_TITLE}</h1>
-      <QueueOrganizationDropdown organizations={organizations} />
-      {messages.error && <Alert type="error" title={messages.error.title}>
-        {messages.error.detail}
+      {error && <Alert type="error" title={error.title}>
+        {error.detail}
       </Alert>}
-      {messages.success && <Alert type="success" title={messages.success.title}>
-        {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
+      {success && <Alert type="success" title={success.title}>
+        {success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
       </Alert>}
       {noCasesMessage}
-      <TabWindow name="tasks-attorney-list" tabs={tabs} />
+      <QueueTableBuilder
+        assignedTasks={this.props.workableTasks}
+        onHoldTasks={this.props.onHoldTasks}
+        completedTasks={this.props.completedTasks}
+      />
     </AppSegment>;
   }
 }
@@ -129,7 +95,8 @@ const mapStateToProps = (state) => {
     workableTasks: workableTasksByAssigneeCssIdSelector(state),
     onHoldTasks: onHoldTasksForAttorney(state),
     completedTasks: completeTasksByAssigneeCssIdSelector(state),
-    messages,
+    success: messages.success,
+    error: messages.error,
     organizations,
     taskDecision
   });
@@ -147,20 +114,23 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView));
 
-const TaskTableTab = ({ description, tasks, includeNewDocsIcon, useOnHoldDate }) => <React.Fragment>
-  <p className="cf-margin-top-0" >{description}</p>
-  <TaskTable
-    includeHearingBadge
-    includeDetailsLink
-    includeTask
-    includeType
-    includeDocketNumber
-    includeIssueCount
-    includeDueDate
-    includeReaderLink
-    requireDasRecord
-    tasks={tasks}
-    includeNewDocsIcon={includeNewDocsIcon}
-    useOnHoldDate={useOnHoldDate}
-  />
-</React.Fragment>;
+AttorneyTaskListView.propTypes = {
+  workableTasks: PropTypes.array,
+  clearCaseSelectSearch: PropTypes.func,
+  completedTasks: PropTypes.array,
+  hideSuccessMessage: PropTypes.func,
+  resetSaveState: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+  onHoldTasks: PropTypes.array,
+  organizations: PropTypes.array,
+  success: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  })
+};

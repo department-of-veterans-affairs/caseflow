@@ -143,7 +143,7 @@ feature "Task queue", :all_dbs do
     end
 
     it "shows tabs on the queue page" do
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, vacols_tasks.length))
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count))
       expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
@@ -151,12 +151,12 @@ feature "Task queue", :all_dbs do
 
     it "shows the right number of cases in each tab" do
       # Assigned tab
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
 
       # On Hold tab
       find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count)).click
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_task_count)
       appeal = attorney_task.appeal
       expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")

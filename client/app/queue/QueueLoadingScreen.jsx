@@ -46,7 +46,7 @@ class QueueLoadingScreen extends React.PureComponent {
     const config = this.props.queueConfig;
 
     // If no queue config is in state (may be using attorney or judge queue) then it is not stale.
-    if (config && config.table_title && config.table_title !== COPY.COLOCATED_QUEUE_PAGE_TABLE_TITLE) {
+    if (config && config.table_title && config.table_title !== COPY.USER_QUEUE_PAGE_TABLE_TITLE) {
       return true;
     }
 
