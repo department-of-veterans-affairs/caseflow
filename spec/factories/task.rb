@@ -251,7 +251,7 @@ FactoryBot.define do
     factory :ama_task_base_factory do
       appeal
 
-      after :create do |task, _eval|
+      before :create do |task, _eval|
         task.update(type: task.class.name)
       end
 
