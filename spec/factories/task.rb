@@ -8,6 +8,16 @@ FactoryBot.define do
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
     type { Task.name }
 
+    after(:create) do |task, evaluator|
+      # binding.pry
+      puts "appeal #{evaluator.appeal.id}"
+      if task.parent && task.parent&.appeal_id != task.appeal_id
+        puts "Parent task #{task.parent&.id} is in different appeal than child task #{task.id}"
+        binding.pry
+        # fail "Parent task #{task.parent&.id} is in different appeal than child task #{task.id}"
+      end
+    end
+
     trait :assigned do
       status { Constants.TASK_STATUSES.assigned }
     end
@@ -58,16 +68,19 @@ FactoryBot.define do
       end
     end
 
+    factory :AMA_TASK do
+    appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
+
     factory :root_task, class: RootTask do
       type { RootTask.name }
-      appeal
+      # appeal
       assigned_by { nil }
       assigned_to { Bva.singleton }
     end
 
     factory :distribution_task, class: DistributionTask do
       type { DistributionTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_by { nil }
       assigned_to { Bva.singleton }
 
@@ -79,27 +92,26 @@ FactoryBot.define do
 
     factory :ama_task, class: Task do
       type { Task.name }
-      appeal { create(:appeal) }
     end
 
     factory :pulac_cerullo_task, class: PulacCerulloTask do
       type { PulacCerulloTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
     end
 
     factory :privacy_act_task, class: PrivacyActTask do
       type { PrivacyActTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
     end
 
     factory :foia_task, class: FoiaTask do
-      appeal
+      # appeal
       type { FoiaTask.name }
     end
 
     factory :timed_hold_task, class: TimedHoldTask do
       type { TimedHoldTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_to { create(:user) }
       days_on_hold { rand(1..100) }
       parent { create(:ama_task, appeal: appeal) }
@@ -110,7 +122,7 @@ FactoryBot.define do
       assigned_to { Colocated.singleton }
 
       factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
-        appeal { create(:appeal) }
+        # appeal { create(:appeal) }
       end
 
       trait :ihp do
@@ -289,100 +301,100 @@ FactoryBot.define do
 
     factory :ama_judge_task, class: JudgeAssignTask do
       type { JudgeAssignTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
     end
 
     factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
       type { AssignHearingDispositionTask.name }
       assigned_to { Bva.singleton }
-      appeal { create(:appeal) }
-      parent { create(:hearing_task) }
+      # appeal { create(:appeal) }
+      parent { create(:hearing_task, appeal: appeal) }
     end
 
     factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do
       type { ChangeHearingDispositionTask.name }
       assigned_to { HearingAdmin.singleton }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
     end
 
     factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
       type { JudgeDecisionReviewTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
     end
 
     factory :ama_judge_quality_review_task, class: JudgeQualityReviewTask do
       type { JudgeQualityReviewTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
     end
 
     factory :ama_judge_dispatch_return_task, class: JudgeDispatchReturnTask do
       type { JudgeDispatchReturnTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       parent { create(:root_task, appeal: appeal) }
     end
 
     factory :track_veteran_task, class: TrackVeteranTask do
       type { TrackVeteranTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
     end
 
     factory :translation_task, class: TranslationTask do
       type { TranslationTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
     end
 
     factory :hearing_task, class: HearingTask do
       type { HearingTask.name }
       assigned_to { Bva.singleton }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       parent { appeal.root_task || create(:root_task, appeal: appeal) }
     end
 
     factory :schedule_hearing_task, class: ScheduleHearingTask do
       type { ScheduleHearingTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_to { Bva.singleton }
       parent { create(:hearing_task, appeal: appeal) }
     end
 
     factory :appeal_withdrawal_mail_task, class: AppealWithdrawalMailTask do
       type { AppealWithdrawalMailTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_to { MailTeam.singleton }
       parent { create(:root_task, appeal: appeal) }
     end
 
     factory :appeal_withdrawal_bva_task, class: AppealWithdrawalMailTask do
       type { AppealWithdrawalMailTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_to { BvaIntake.singleton }
       parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
     end
 
     factory :returned_undeliverable_correspondence_mail_task, class: ReturnedUndeliverableCorrespondenceMailTask do
       type { ReturnedUndeliverableCorrespondenceMailTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_to { BvaDispatch.singleton }
       parent { create(:root_task, appeal: appeal) }
     end
 
     factory :no_show_hearing_task, class: NoShowHearingTask do
       type { NoShowHearingTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_to { HearingsManagement.singleton }
       parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 
     factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
       type { EvidenceSubmissionWindowTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_to { MailTeam.singleton }
       parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 
     factory :ama_attorney_task, class: AttorneyTask do
       type { AttorneyTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       assigned_by { create(:user) }
       assigned_to { create(:user) }
@@ -404,32 +416,32 @@ FactoryBot.define do
 
     factory :ama_attorney_rewrite_task, class: AttorneyRewriteTask do
       type { AttorneyRewriteTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       parent { create(:ama_judge_decision_review_task, appeal: appeal) }
     end
 
     factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
       type { AttorneyDispatchReturnTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       parent { create(:ama_judge_decision_review_task, appeal: appeal) }
     end
 
     factory :transcription_task, class: TranscriptionTask do
       type { TranscriptionTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       parent { create(:root_task, appeal: appeal) }
       assigned_to { TranscriptionTeam.singleton }
     end
 
     factory :ama_vso_task, class: Task do
       type { Task.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       parent { create(:root_task, appeal: appeal) }
     end
 
     factory :qr_task, class: QualityReviewTask do
       type { QualityReviewTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       parent { create(:root_task, appeal: appeal) }
       assigned_by { nil }
       assigned_to { QualityReview.singleton }
@@ -437,111 +449,111 @@ FactoryBot.define do
 
     factory :quality_review_task, class: QualityReviewTask do
       type { QualityReviewTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_by { nil }
     end
 
     factory :bva_dispatch_task, class: BvaDispatchTask do
       type { BvaDispatchTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_by { nil }
     end
 
     factory :hearing_admin_action_task, class: HearingAdminActionTask do
       type { HearingAdminActionTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_by { nil }
     end
 
     factory :hearing_admin_action_incarcerated_veteran_task, class: HearingAdminActionIncarceratedVeteranTask do
       type { HearingAdminActionIncarceratedVeteranTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_by { nil }
     end
 
     factory :hearing_admin_action_verify_address_task, class: HearingAdminActionVerifyAddressTask do
       type { HearingAdminActionVerifyAddressTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_by { nil }
     end
 
     factory :informal_hearing_presentation_task, class: InformalHearingPresentationTask do
       type { InformalHearingPresentationTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_by { nil }
     end
 
     factory :appeal_task, class: DecisionReviewTask do
       type { DecisionReviewTask.name }
-      appeal { create(:appeal, benefit_type: "education") }
+      # appeal { create(:appeal, benefit_type: "education") }
       assigned_by { nil }
     end
 
     factory :higher_level_review_task, class: DecisionReviewTask do
       type { DecisionReviewTask.name }
-      appeal { create(:higher_level_review, benefit_type: "education") }
+      # appeal { create(:higher_level_review, benefit_type: "education") }
       assigned_by { nil }
     end
 
     factory :board_grant_effectuation_task, class: BoardGrantEffectuationTask do
       type { BoardGrantEffectuationTask.name }
-      appeal { create(:appeal) }
+      # appeal { create(:appeal) }
       assigned_by { nil }
     end
 
     factory :veteran_record_request_task, class: VeteranRecordRequest do
       type { VeteranRecordRequest.name }
-      appeal { create(:appeal) }
-      parent { create(:root_task) }
+      # appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
       assigned_by { nil }
     end
 
     factory :aod_motion_mail_task, class: AodMotionMailTask do
       type { AodMotionMailTask.name }
-      appeal { create(:appeal) }
-      parent { create(:root_task) }
+      # appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
       assigned_to { MailTeam.singleton }
       assigned_by { nil }
     end
 
     factory :reconsideration_motion_mail_task, class: ReconsiderationMotionMailTask do
       type { ReconsiderationMotionMailTask.name }
-      appeal { create(:appeal) }
-      parent { create(:root_task) }
+      # appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
       assigned_to { MailTeam.singleton }
       assigned_by { nil }
     end
 
     factory :vacate_motion_mail_task, class: VacateMotionMailTask do
       type { VacateMotionMailTask.name }
-      appeal { create(:appeal) }
-      parent { create(:root_task) }
+      # appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
       assigned_to { LitigationSupport.singleton }
     end
 
     factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
       type { CongressionalInterestMailTask.name }
-      appeal { create(:appeal) }
-      parent { create(:root_task) }
+      # appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
       assigned_to { MailTeam.singleton }
       assigned_by { nil }
     end
 
     factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do
       type { JudgeAddressMotionToVacateTask.name }
-      appeal
+      # appeal
       association :parent, factory: :vacate_motion_mail_task
     end
 
     factory :abstract_motion_to_vacate_task, class: AbstractMotionToVacateTask do
       type { AbstractMotionToVacateTask.name }
-      appeal
+      # appeal
       association :parent, factory: :vacate_motion_mail_task
     end
 
     factory :denied_motion_to_vacate_task, class: DeniedMotionToVacateTask do
       type { DeniedMotionToVacateTask.name }
-      appeal
+      # appeal
       association :parent, factory: :abstract_motion_to_vacate_task
       assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
       assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
@@ -549,10 +561,11 @@ FactoryBot.define do
 
     factory :dismissed_motion_to_vacate_task, class: DismissedMotionToVacateTask do
       type { DismissedMotionToVacateTask.name }
-      appeal
+      # appeal
       association :parent, factory: :abstract_motion_to_vacate_task
       assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
       assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
+    end
     end
   end
 end
