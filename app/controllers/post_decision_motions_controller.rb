@@ -19,7 +19,6 @@ class PostDecisionMotionsController < ApplicationController
     mail_task.update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
 
     task.update!(status: Constants.TASK_STATUSES.cancelled)
-    flash[:success] = "Case returned to Litigation Support"
     appeal_tasks = mail_task.appeal.reload.tasks
     render json: { tasks: ::WorkQueue::TaskSerializer.new(appeal_tasks, is_collection: true) }
   end

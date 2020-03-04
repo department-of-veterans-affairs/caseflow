@@ -3,7 +3,7 @@
 # Tracks the progress of the job responsible for creating
 # the virtual hearing conference in Pexip, and sending out
 # emails to the participants of the conference.
-class VirtualHearingEstablishment < ApplicationRecord
+class VirtualHearingEstablishment < CaseflowRecord
   include Asyncable
 
   belongs_to :virtual_hearing

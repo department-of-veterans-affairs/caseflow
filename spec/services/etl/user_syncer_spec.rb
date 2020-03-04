@@ -16,7 +16,7 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "3 User records, 2 needing sync" do
-      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
+      subject { described_class.new(since: 2.days.ago.round, etl_build: etl_build).call }
 
       it "syncs 2 records" do
         expect(ETL::User.all.count).to eq(0)
@@ -31,10 +31,10 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "VACOLS attribute changes" do
-      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
+      subject { described_class.new(since: 2.days.ago.round, etl_build: etl_build).call }
 
       before do
-        described_class.new.call(etl_build)
+        described_class.new(etl_build: etl_build).call
         user2.vacols_user.svlj = "J"
         user2.vacols_user.save!
       end
@@ -50,7 +50,7 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "3 User records, full sync" do
-      subject { described_class.new.call(etl_build) }
+      subject { described_class.new(etl_build: etl_build).call }
 
       it "syncs all records" do
         expect(ETL::User.all.count).to eq(0)
@@ -62,10 +62,10 @@ describe ETL::UserSyncer, :etl do
     end
 
     context "origin User record changes" do
-      subject { described_class.new(since: 2.days.ago.round).call(etl_build) }
+      subject { described_class.new(since: 2.days.ago.round, etl_build: etl_build).call }
 
       before do
-        described_class.new.call(etl_build)
+        described_class.new(etl_build: etl_build).call
       end
 
       let(:new_name) { "foobar" }

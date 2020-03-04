@@ -2658,6 +2658,45 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context "#address" do
+    let(:appeal) do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: create(:case),
+        veteran_address: veteran_address
+      )
+    end
+
+    subject { appeal.address }
+
+    context "when veteran is the appellant" do
+      let(:veteran_address) do
+        {
+          addrs_one_txt: "123 K St. NW",
+          addrs_two_txt: "Suite 456",
+          addrs_three_txt: nil,
+          city_nm: "Washington",
+          postal_cd: "DC",
+          cntry_nm: nil,
+          zip_prefix_nbr: "20001",
+          ptcpnt_addrs_type_nm: "Mailing"
+        }
+      end
+
+      it "returns the veterans's address from BGS" do
+        expect(subject).not_to eq(nil)
+        expect(subject.address_line_1).to eq(veteran_address[:addrs_one_txt])
+        expect(subject.address_line_2).to eq(veteran_address[:addrs_two_txt])
+        expect(subject.address_line_3).to eq(veteran_address[:addrs_three_txt])
+        expect(subject.city).to eq(veteran_address[:city_nm])
+        expect(subject.state).to eq(veteran_address[:postal_cd])
+        expect(subject.country).to eq(veteran_address[:country])
+        expect(subject.zip).to eq(veteran_address[:zip_prefix_nbr])
+      end
+    end
+  end
+
   context "#representatives" do
     context "when there is no VSO" do
       before do

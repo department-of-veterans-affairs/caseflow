@@ -43,7 +43,9 @@ const FilterOption = ({ options, setSelectedValue,
 
 FilterOption.propTypes = {
   options: PropTypes.array.isRequired,
-  setSelectedValue: PropTypes.func.isRequired
+  setSelectedValue: PropTypes.func.isRequired,
+  dropdownFilterViewListStyle: PropTypes.object,
+  dropdownFilterViewListItemStyle: PropTypes.object
 };
 
 export default FilterOption;

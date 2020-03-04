@@ -12,20 +12,27 @@ class AnnotationController < ApplicationController
     # :nocov:
   end
 
+  # nocov till flakes are fixed
+  # :nocov:
   def create
     annotation = Annotation.create!(annotation_params.merge(user_id: current_user.id))
     render json: { id: annotation.id }
   end
+  # :nocov:
 
+  # :nocov:
   def destroy
     Annotation.find(params.require(:id)).destroy
     render json: {}
   end
+  # :nocov:
 
+  # :nocov:
   def update
     Annotation.find(params[:id]).update!(annotation_params)
     render json: {}
   end
+  # :nocov:
 
   def annotation_params
     params.require(:annotation).permit(:page, :x, :y, :comment, :relevant_date).merge(
