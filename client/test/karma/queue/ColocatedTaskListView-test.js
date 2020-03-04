@@ -55,6 +55,7 @@ describe('ColocatedTaskListView', () => {
     externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
     assignedOn: moment().subtract(47, 'hours').
       format(),
+    status: 'assigned',
     closedAt: null,
     assignedTo: {
       cssId: 'BVALSPORER',
@@ -333,13 +334,21 @@ describe('ColocatedTaskListView', () => {
         placedOnHoldAt: moment().subtract(daysOnHold, 'days'),
         onHoldDuration: daysOnHold - 1
       });
+      const noOnHoldDurationTask = amaTaskWith({
+        id: '7',
+        cssIdAssignee: 'BVALSPORER',
+        assignedOn: moment().subtract(daysOnHold + 0.5, 'days'),
+        placedOnHoldAt: moment().subtract(daysOnHold, 'days'),
+        stutus: 'on_hold'
+      });
       const appeal = appealTemplate;
 
       const tasks = {};
       const amaTasks = {
         [taskNewAssigned.id]: taskNewAssigned,
         [taskUnassigned.id]: taskUnassigned,
-        [completedHoldTask.id]: completedHoldTask
+        [completedHoldTask.id]: completedHoldTask,
+        [noOnHoldDurationTask.id]: noOnHoldDurationTask
       };
       const appeals = {
         [appeal.id]: appeal
@@ -357,10 +366,10 @@ describe('ColocatedTaskListView', () => {
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(14);
+      expect(cells).to.have.length(21);
       const wrappers = [];
 
-      for (let i = 0; i < cells.length / 2; i++) {
+      for (let i = 0; i < cells.length / 3; i++) {
         wrappers.push(cells.at(i));
       }
       const [hearings, caseDetails, columnTasks, types, docketNumber, daysWaiting, documents] = wrappers;
@@ -385,11 +394,17 @@ describe('ColocatedTaskListView', () => {
       expect(wrapper.find('td').at(6).
         text()).to.include('5');
 
-      const onHoldDaysWaiting = cells.at(12);
+      const completedHoldDaysWaiting = cells.at(12);
+
+      expect(completedHoldDaysWaiting.text()).to.equal(`${daysOnHold.toString()} days`);
+      expect(completedHoldDaysWaiting.find('.cf-red-text').length).to.eq(1);
+      expect(completedHoldDaysWaiting.find('.cf-continuous-progress-bar-warning').length).to.eq(1);
+
+      const onHoldDaysWaiting = cells.at(19);
 
       expect(onHoldDaysWaiting.text()).to.equal(`${daysOnHold.toString()} days`);
-      expect(onHoldDaysWaiting.find('.cf-red-text').length).to.eq(1);
-      expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning').length).to.eq(1);
+      expect(onHoldDaysWaiting.find('.cf-red-text').length).to.eq(0);
+      expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning').length).to.eq(0);
     });
   });
 
