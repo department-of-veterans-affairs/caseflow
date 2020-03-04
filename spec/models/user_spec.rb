@@ -5,11 +5,11 @@ describe User, :all_dbs do
   let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
   let(:user) { User.from_session(session) }
 
-  before(:all) do
+  before do
     Functions.client.del("System Admin")
   end
 
-  after(:all) do
+  after do
     Functions.delete_all_keys!
   end
 

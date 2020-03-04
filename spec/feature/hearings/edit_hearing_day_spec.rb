@@ -8,8 +8,8 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   end
 
   let!(:judge) do
-    create(:user, css_id: "BVAAABSHIRE", full_name: "Judge Abshire")
     create(:staff, :judge_role, sdomainid: "BVAAABSHIRE", snamel: "Abshire", snamef: "Judge")
+    create(:user, css_id: "BVAAABSHIRE", full_name: "Judge Abshire")
   end
 
   let!(:hearing_day) do

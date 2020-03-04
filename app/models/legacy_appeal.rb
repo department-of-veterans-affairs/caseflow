@@ -722,11 +722,11 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def pending_eps
-    end_products.select(&:dispatch_conflict?)
+    end_products&.select(&:dispatch_conflict?)
   end
 
   def non_canceled_end_products_within_30_days
-    end_products.select { |ep| ep.potential_match?(self) }
+    end_products&.select { |ep| ep.potential_match?(self) }
   end
 
   def api_supported?
