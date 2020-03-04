@@ -185,7 +185,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           end
 
           get :index, params: { user_id: user.id, role: "unknown" }
-          expect(response).to have_http_status(:success)
+          expect(response).to be_successful
 
           data = JSON.parse(response.body)["tasks"]["data"]
 
