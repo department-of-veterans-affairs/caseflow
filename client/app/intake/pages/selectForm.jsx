@@ -24,8 +24,8 @@ class SelectForm extends React.PureComponent {
     const rampEnabled = this.props.featureToggles.rampIntake;
     const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
 
-    const userCanIntakeAppeals = this.props.userCanIntakeAppeals;
     const restrictAppealIntakes = this.props.featureToggles.restrictAppealIntakes;
+    const userCanIntakeAppeals = this.props.userCanIntakeAppeals;
 
     if (restrictAppealIntakes && !userCanIntakeAppeals) {
       delete enabledFormTypes.APPEAL;

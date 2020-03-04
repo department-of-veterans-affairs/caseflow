@@ -63,12 +63,13 @@ feature "Intake", :all_dbs do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
-    fcontext "when restrict appeal intakes enabled" do
+    context "when restrict appeal intakes enabled" do
       before { FeatureToggle.enable!(:restrict_appeal_intakes) }
       after { FeatureToggle.disable!(:restrict_appeal_intakes) }
 
       it "does not allow user to intake appeals" do
         visit "/intake"
+        binding.pry
         expect(page).to_not have_content(Constants::INTAKE_FORM_NAMES["appeal"])
       end
 
