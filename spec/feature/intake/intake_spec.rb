@@ -69,7 +69,7 @@ feature "Intake", :all_dbs do
 
       it "does not allow user to intake appeals" do
         visit "/intake"
-        binding.pry
+
         expect(page).to_not have_content(Constants::INTAKE_FORM_NAMES["appeal"])
       end
 
@@ -78,6 +78,7 @@ feature "Intake", :all_dbs do
 
         it "allows the user to intake appeals" do
           visit "/intake"
+
           expect(page).to have_content(Constants::INTAKE_FORM_NAMES["appeal"])
         end
       end
