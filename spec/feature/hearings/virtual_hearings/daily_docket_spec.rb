@@ -60,7 +60,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     context "Hearing Coordinator view" do
       scenario "User has the host link" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        hearing.reload
 
         expect(page).to have_content(vlj_virtual_hearing_link)
         expect(page).to have_xpath "//a[contains(@href,'role=host')]"
@@ -71,7 +70,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
       scenario "User has the host link" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        hearing.reload
 
         expect(page).to have_content(vlj_virtual_hearing_link)
         expect(page).to have_xpath "//a[contains(@href,'role=host')]"
