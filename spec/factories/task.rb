@@ -251,18 +251,20 @@ FactoryBot.define do
     factory :ama_task_base_factory do
       appeal
 
+      after :create do |task, _eval|
+        task.update(type: task.class.name)
+      end
+
       factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym],
                                    parent: :colocated_task do
       end
 
       factory :root_task, class: RootTask do
-        type { RootTask.name }
         assigned_by { nil }
         assigned_to { Bva.singleton }
       end
 
       factory :distribution_task, class: DistributionTask do
-        type { DistributionTask.name }
         assigned_by { nil }
         assigned_to { Bva.singleton }
 
@@ -273,108 +275,87 @@ FactoryBot.define do
       end
 
       factory :ama_task, class: Task do
-        type { Task.name }
       end
 
       factory :pulac_cerullo_task, class: PulacCerulloTask do
-        type { PulacCerulloTask.name }
       end
 
       factory :privacy_act_task, class: PrivacyActTask do
-        type { PrivacyActTask.name }
       end
 
       factory :foia_task, class: FoiaTask do
-        type { FoiaTask.name }
       end
 
       factory :timed_hold_task, class: TimedHoldTask do
-        type { TimedHoldTask.name }
         assigned_to { create(:user) }
         days_on_hold { rand(1..100) }
         parent { create(:ama_task) }
       end
 
       factory :ama_judge_task, class: JudgeAssignTask do
-        type { JudgeAssignTask.name }
       end
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
-        type { AssignHearingDispositionTask.name }
         assigned_to { Bva.singleton }
         parent { create(:hearing_task) }
       end
 
       factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do
-        type { ChangeHearingDispositionTask.name }
         assigned_to { HearingAdmin.singleton }
       end
 
       factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
-        type { JudgeDecisionReviewTask.name }
       end
 
       factory :ama_judge_quality_review_task, class: JudgeQualityReviewTask do
-        type { JudgeQualityReviewTask.name }
       end
 
       factory :ama_judge_dispatch_return_task, class: JudgeDispatchReturnTask do
-        type { JudgeDispatchReturnTask.name }
         parent { create(:root_task, appeal: appeal) }
       end
 
       factory :track_veteran_task, class: TrackVeteranTask do
-        type { TrackVeteranTask.name }
       end
 
       factory :translation_task, class: TranslationTask do
-        type { TranslationTask.name }
       end
 
       factory :hearing_task, class: HearingTask do
-        type { HearingTask.name }
         assigned_to { Bva.singleton }
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
       end
 
       factory :schedule_hearing_task, class: ScheduleHearingTask do
-        type { ScheduleHearingTask.name }
         assigned_to { Bva.singleton }
         parent { create(:hearing_task, appeal: appeal) }
       end
 
       factory :appeal_withdrawal_mail_task, class: AppealWithdrawalMailTask do
-        type { AppealWithdrawalMailTask.name }
         assigned_to { MailTeam.singleton }
         parent { create(:root_task, appeal: appeal) }
       end
 
       factory :appeal_withdrawal_bva_task, class: AppealWithdrawalMailTask do
-        type { AppealWithdrawalMailTask.name }
         assigned_to { BvaIntake.singleton }
         parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
       end
 
       factory :returned_undeliverable_correspondence_mail_task, class: ReturnedUndeliverableCorrespondenceMailTask do
-        type { ReturnedUndeliverableCorrespondenceMailTask.name }
         assigned_to { BvaDispatch.singleton }
         parent { create(:root_task, appeal: appeal) }
       end
 
       factory :no_show_hearing_task, class: NoShowHearingTask do
-        type { NoShowHearingTask.name }
         assigned_to { HearingsManagement.singleton }
         parent { create(:assign_hearing_disposition_task, appeal: appeal) }
       end
 
       factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
-        type { EvidenceSubmissionWindowTask.name }
         assigned_to { MailTeam.singleton }
         parent { create(:assign_hearing_disposition_task, appeal: appeal) }
       end
 
       factory :ama_attorney_task, class: AttorneyTask do
-        type { AttorneyTask.name }
         parent { create(:ama_judge_decision_review_task) }
         assigned_by { create(:user) }
         assigned_to { create(:user) }
@@ -395,120 +376,99 @@ FactoryBot.define do
       end
 
       factory :ama_attorney_rewrite_task, class: AttorneyRewriteTask do
-        type { AttorneyRewriteTask.name }
         parent { create(:ama_judge_decision_review_task) }
       end
 
       factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
-        type { AttorneyDispatchReturnTask.name }
         parent { create(:ama_judge_decision_review_task) }
       end
 
       factory :transcription_task, class: TranscriptionTask do
-        type { TranscriptionTask.name }
         parent { create(:root_task, appeal: appeal) }
         assigned_to { TranscriptionTeam.singleton }
       end
 
       factory :ama_vso_task, class: Task do
-        type { Task.name }
         parent { create(:root_task) }
       end
 
       factory :qr_task, class: QualityReviewTask do
-        type { QualityReviewTask.name }
         parent { create(:root_task) }
         assigned_by { nil }
         assigned_to { QualityReview.singleton }
       end
 
       factory :quality_review_task, class: QualityReviewTask do
-        type { QualityReviewTask.name }
         assigned_by { nil }
       end
 
       factory :bva_dispatch_task, class: BvaDispatchTask do
-        type { BvaDispatchTask.name }
         assigned_by { nil }
       end
 
       factory :hearing_admin_action_task, class: HearingAdminActionTask do
-        type { HearingAdminActionTask.name }
         assigned_by { nil }
       end
 
       factory :hearing_admin_action_incarcerated_veteran_task, class: HearingAdminActionIncarceratedVeteranTask do
-        type { HearingAdminActionIncarceratedVeteranTask.name }
         assigned_by { nil }
       end
 
       factory :hearing_admin_action_verify_address_task, class: HearingAdminActionVerifyAddressTask do
-        type { HearingAdminActionVerifyAddressTask.name }
         assigned_by { nil }
       end
 
       factory :informal_hearing_presentation_task, class: InformalHearingPresentationTask do
-        type { InformalHearingPresentationTask.name }
         assigned_by { nil }
       end
 
       factory :board_grant_effectuation_task, class: BoardGrantEffectuationTask do
-        type { BoardGrantEffectuationTask.name }
         assigned_by { nil }
       end
 
       factory :veteran_record_request_task, class: VeteranRecordRequest do
-        type { VeteranRecordRequest.name }
         parent { create(:root_task) }
         assigned_by { nil }
       end
 
       factory :aod_motion_mail_task, class: AodMotionMailTask do
-        type { AodMotionMailTask.name }
         parent { create(:root_task) }
         assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
 
       factory :reconsideration_motion_mail_task, class: ReconsiderationMotionMailTask do
-        type { ReconsiderationMotionMailTask.name }
         parent { create(:root_task) }
         assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
 
       factory :vacate_motion_mail_task, class: VacateMotionMailTask do
-        type { VacateMotionMailTask.name }
         parent { create(:root_task) }
         assigned_to { LitigationSupport.singleton }
       end
 
       factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
-        type { CongressionalInterestMailTask.name }
         parent { create(:root_task) }
         assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
 
       factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do
-        type { JudgeAddressMotionToVacateTask.name }
         association :parent, factory: :vacate_motion_mail_task
       end
 
       factory :abstract_motion_to_vacate_task, class: AbstractMotionToVacateTask do
-        type { AbstractMotionToVacateTask.name }
         association :parent, factory: :vacate_motion_mail_task
       end
 
       factory :denied_motion_to_vacate_task, class: DeniedMotionToVacateTask do
-        type { DeniedMotionToVacateTask.name }
         association :parent, factory: :abstract_motion_to_vacate_task
         assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
         assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
       end
 
       factory :dismissed_motion_to_vacate_task, class: DismissedMotionToVacateTask do
-        type { DismissedMotionToVacateTask.name }
         association :parent, factory: :abstract_motion_to_vacate_task
         assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
         assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
