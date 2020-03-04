@@ -56,6 +56,10 @@
     "label": "Decision ready for review",
     "value": "motion_to_vacate_checkout/review_vacatures"
   },
+  "REVIEW_VACATE_RETURN_TO_JUDGE": {
+    "label": "Return to judge",
+    "value": "return_to_judge"
+  },
   "SIGN_MOTION_TO_VACATE": {
     "label": "Sign Motion to Vacate",
     "value": "sign_motion_to_vacate",
