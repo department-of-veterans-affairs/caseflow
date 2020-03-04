@@ -58,72 +58,9 @@ FactoryBot.define do
       end
     end
 
-    factory :appeal_task, class: DecisionReviewTask do
-      type { DecisionReviewTask.name }
-      appeal { create(:appeal, benefit_type: "education") }
-      assigned_by { nil }
-    end
-
-    factory :higher_level_review_task, class: DecisionReviewTask do
-      type { DecisionReviewTask.name }
-      appeal { create(:higher_level_review, benefit_type: "education") }
-      assigned_by { nil }
-    end
-
-    factory :root_task, class: RootTask do
-      type { RootTask.name }
-      appeal
-      assigned_by { nil }
-      assigned_to { Bva.singleton }
-    end
-
-    factory :distribution_task, class: DistributionTask do
-      type { DistributionTask.name }
-      appeal
-      assigned_by { nil }
-      assigned_to { Bva.singleton }
-
-      after(:create) do |task|
-        task.update(status: Constants.TASK_STATUSES.on_hold)
-        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
-      end
-    end
-
-    factory :ama_task, class: Task do
-      type { Task.name }
-      appeal
-    end
-
-    factory :pulac_cerullo_task, class: PulacCerulloTask do
-      type { PulacCerulloTask.name }
-      appeal
-    end
-
-    factory :privacy_act_task, class: PrivacyActTask do
-      type { PrivacyActTask.name }
-      appeal
-    end
-
-    factory :foia_task, class: FoiaTask do
-      appeal
-      type { FoiaTask.name }
-    end
-
-    factory :timed_hold_task, class: TimedHoldTask do
-      type { TimedHoldTask.name }
-      appeal
-      assigned_to { create(:user) }
-      days_on_hold { rand(1..100) }
-      parent { create(:ama_task) }
-    end
-
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
       parent { create(:ama_task) }
       assigned_to { Colocated.singleton }
-
-      factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
-        appeal
-      end
 
       trait :ihp do
         initialize_with { IhpColocatedTask.new(attributes) }
@@ -297,6 +234,70 @@ FactoryBot.define do
         #   /blob/2bf6503e7f0888abc3222caaba499d8e7db14ae4/app/models/tasks/colocated_task.rb#L134
         RootTask.create!(appeal: task.appeal) unless task.appeal.root_task
       end
+    end
+
+    factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym],
+                                 parent: :colocated_task do
+      appeal
+    end
+
+    factory :appeal_task, class: DecisionReviewTask do
+      type { DecisionReviewTask.name }
+      appeal { create(:appeal, benefit_type: "education") }
+      assigned_by { nil }
+    end
+
+    factory :higher_level_review_task, class: DecisionReviewTask do
+      type { DecisionReviewTask.name }
+      appeal { create(:higher_level_review, benefit_type: "education") }
+      assigned_by { nil }
+    end
+
+    factory :root_task, class: RootTask do
+      type { RootTask.name }
+      appeal
+      assigned_by { nil }
+      assigned_to { Bva.singleton }
+    end
+
+    factory :distribution_task, class: DistributionTask do
+      type { DistributionTask.name }
+      appeal
+      assigned_by { nil }
+      assigned_to { Bva.singleton }
+
+      after(:create) do |task|
+        task.update(status: Constants.TASK_STATUSES.on_hold)
+        task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
+      end
+    end
+
+    factory :ama_task, class: Task do
+      type { Task.name }
+      appeal
+    end
+
+    factory :pulac_cerullo_task, class: PulacCerulloTask do
+      type { PulacCerulloTask.name }
+      appeal
+    end
+
+    factory :privacy_act_task, class: PrivacyActTask do
+      type { PrivacyActTask.name }
+      appeal
+    end
+
+    factory :foia_task, class: FoiaTask do
+      appeal
+      type { FoiaTask.name }
+    end
+
+    factory :timed_hold_task, class: TimedHoldTask do
+      type { TimedHoldTask.name }
+      appeal
+      assigned_to { create(:user) }
+      days_on_hold { rand(1..100) }
+      parent { create(:ama_task) }
     end
 
     factory :ama_judge_task, class: JudgeAssignTask do
