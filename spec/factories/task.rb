@@ -13,7 +13,7 @@ FactoryBot.define do
       puts "appeal #{evaluator.appeal.id}"
       if task.parent && task.parent&.appeal_id != task.appeal_id
         puts "Parent task #{task.parent&.id} is in different appeal than child task #{task.id}"
-        binding.pry
+        # binding.pry
         # fail "Parent task #{task.parent&.id} is in different appeal than child task #{task.id}"
       end
     end
