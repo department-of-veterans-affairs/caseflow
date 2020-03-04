@@ -63,6 +63,25 @@ feature "Intake", :all_dbs do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
+    fcontext "when restrict appeal intakes enabled" do
+      before { FeatureToggle.enable!(:restrict_appeal_intakes) }
+      after { FeatureToggle.disable!(:restrict_appeal_intakes) }
+
+      it "does not allow user to intake appeals" do
+        visit "/intake"
+        expect(page).to_not have_content(Constants::INTAKE_FORM_NAMES["appeal"])
+      end
+
+      context "when the user is on the Mail Team" do
+        before { MailTeam.singleton.add_user(current_user) }
+
+        it "allows the user to intake appeals" do
+          visit "/intake"
+          expect(page).to have_content(Constants::INTAKE_FORM_NAMES["appeal"])
+        end
+      end
+    end
+
     context "user has unread Inbox messages" do
       before { FeatureToggle.enable!(:inbox, users: [current_user.css_id]) }
       after { FeatureToggle.disable!(:inbox) }

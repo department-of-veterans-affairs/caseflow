@@ -18,10 +18,18 @@ class SelectForm extends React.PureComponent {
   }
 
   render() {
-    const rampEnabled = this.props.featureToggles.rampIntake;
     const inboxFeature = this.props.featureToggles.inbox;
     const unreadMessages = this.props.unreadMessages;
+
+    const rampEnabled = this.props.featureToggles.rampIntake;
     const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
+
+    const userCanIntakeAppeals = this.props.userCanIntakeAppeals;
+    const restrictAppealIntakes = this.props.featureToggles.restrictAppealIntakes;
+
+    if (restrictAppealIntakes && !userCanIntakeAppeals) {
+      delete enabledFormTypes.APPEAL;
+    }
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,

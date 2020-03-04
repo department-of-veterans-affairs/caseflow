@@ -78,6 +78,7 @@ class IntakesController < ApplicationController
   def index_props
     {
       userDisplayName: current_user.display_name,
+      userCanIntakeAppeals: current_user.can_intake_appeals?,
       serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
       page: "Intake",
@@ -87,6 +88,7 @@ class IntakesController < ApplicationController
         inbox: FeatureToggle.enabled?(:inbox, user: current_user),
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
+        restrictAppealIntakes: FeatureToggle.enabled?(:restrict_appeal_intakes, user: current_user),
         editContentionText: FeatureToggle.enabled?(:edit_contention_text, user: current_user),
         unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user),
         verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user)
