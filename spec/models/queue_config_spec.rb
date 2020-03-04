@@ -62,7 +62,7 @@ describe QueueConfig, :postgres do
         let(:assignee) { user }
 
         it "is formatted as expected" do
-          expect(subject[:table_title]).to eq(COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE)
+          expect(subject[:table_title]).to eq(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
         end
       end
     end
@@ -256,8 +256,8 @@ describe QueueConfig, :postgres do
           it "displays the correct descriptions for the tabs" do
             tabs = subject
 
-            expect(tabs[0][:description]).to eq(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION)
-            expect(tabs[1][:description]).to eq(COPY::COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+            expect(tabs[0][:description]).to eq(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
+            expect(tabs[1][:description]).to eq(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
             expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
           end
         end
