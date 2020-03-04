@@ -289,7 +289,7 @@ FactoryBot.define do
       factory :timed_hold_task, class: TimedHoldTask do
         assigned_to { create(:user) }
         days_on_hold { rand(1..100) }
-        parent { create(:ama_task) }
+        parent { create(:ama_task, appeal: appeal) }
       end
 
       factory :ama_judge_task, class: JudgeAssignTask do
@@ -297,7 +297,7 @@ FactoryBot.define do
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
         assigned_to { Bva.singleton }
-        parent { create(:hearing_task) }
+        parent { create(:hearing_task, appeal: appeal) }
       end
 
       factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do
@@ -356,7 +356,7 @@ FactoryBot.define do
       end
 
       factory :ama_attorney_task, class: AttorneyTask do
-        parent { create(:ama_judge_decision_review_task) }
+        parent { create(:ama_judge_decision_review_task, appeal: appeal) }
         assigned_by { create(:user) }
         assigned_to { create(:user) }
 
@@ -376,11 +376,11 @@ FactoryBot.define do
       end
 
       factory :ama_attorney_rewrite_task, class: AttorneyRewriteTask do
-        parent { create(:ama_judge_decision_review_task) }
+        parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       end
 
       factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
-        parent { create(:ama_judge_decision_review_task) }
+        parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       end
 
       factory :transcription_task, class: TranscriptionTask do
@@ -389,11 +389,11 @@ FactoryBot.define do
       end
 
       factory :ama_vso_task, class: Task do
-        parent { create(:root_task) }
+        parent { create(:root_task, appeal: appeal) }
       end
 
       factory :qr_task, class: QualityReviewTask do
-        parent { create(:root_task) }
+        parent { create(:root_task, appeal: appeal) }
         assigned_by { nil }
         assigned_to { QualityReview.singleton }
       end
@@ -427,29 +427,29 @@ FactoryBot.define do
       end
 
       factory :veteran_record_request_task, class: VeteranRecordRequest do
-        parent { create(:root_task) }
+        parent { create(:root_task, appeal: appeal) }
         assigned_by { nil }
       end
 
       factory :aod_motion_mail_task, class: AodMotionMailTask do
-        parent { create(:root_task) }
+        parent { create(:root_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
 
       factory :reconsideration_motion_mail_task, class: ReconsiderationMotionMailTask do
-        parent { create(:root_task) }
+        parent { create(:root_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
 
       factory :vacate_motion_mail_task, class: VacateMotionMailTask do
-        parent { create(:root_task) }
+        parent { create(:root_task, appeal: appeal) }
         assigned_to { LitigationSupport.singleton }
       end
 
       factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
-        parent { create(:root_task) }
+        parent { create(:root_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
         assigned_by { nil }
       end
