@@ -262,7 +262,7 @@ FactoryBot.define do
     end
 
     factory :ama_task, class: Task do
-      appeal
+      appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
 
       before :create do |task, _eval|
         task.update(type: task.class.name)
