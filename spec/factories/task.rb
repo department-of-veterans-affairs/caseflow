@@ -9,13 +9,13 @@ FactoryBot.define do
     type { Task.name }
 
     after(:create) do |task, _evaluator|
-      if false && task.parent
+      if task.parent
         if task.parent&.appeal_id != task.appeal_id
-          fail "Parent task #{task.parent&.id} is in different appeal than child task #{task.id}"
+          puts "Warning: Parent task #{task.parent&.id} is in different appeal than child task #{task.id}"
         end
 
         if task.parent&.appeal_type != task.appeal_type
-          fail "Parent task #{task.parent&.id} has different appeal_type #{task.parent&.appeal_type} " \
+          puts "Warning: Parent task #{task.parent&.id} has different appeal_type #{task.parent&.appeal_type} " \
                "vs. child task #{task.id} #{task.appeal_type}"
         end
       end
