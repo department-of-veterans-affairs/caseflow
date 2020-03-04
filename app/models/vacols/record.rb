@@ -15,7 +15,7 @@ class VACOLS::Record < ApplicationRecord
   end
 
   def self.rounded_current_time
-    Time.use_zone("America/New_York") do
+    Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
       current_time = Time.zone.now
 
       # Round off hours, minutes, and seconds
