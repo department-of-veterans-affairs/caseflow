@@ -58,6 +58,18 @@ FactoryBot.define do
       end
     end
 
+    factory :appeal_task, class: DecisionReviewTask do
+      type { DecisionReviewTask.name }
+      appeal { create(:appeal, benefit_type: "education") }
+      assigned_by { nil }
+    end
+
+    factory :higher_level_review_task, class: DecisionReviewTask do
+      type { DecisionReviewTask.name }
+      appeal { create(:higher_level_review, benefit_type: "education") }
+      assigned_by { nil }
+    end
+
     factory :root_task, class: RootTask do
       type { RootTask.name }
       appeal
@@ -468,18 +480,6 @@ FactoryBot.define do
     factory :informal_hearing_presentation_task, class: InformalHearingPresentationTask do
       type { InformalHearingPresentationTask.name }
       appeal
-      assigned_by { nil }
-    end
-
-    factory :appeal_task, class: DecisionReviewTask do
-      type { DecisionReviewTask.name }
-      appeal { create(:appeal, benefit_type: "education") }
-      assigned_by { nil }
-    end
-
-    factory :higher_level_review_task, class: DecisionReviewTask do
-      type { DecisionReviewTask.name }
-      appeal { create(:higher_level_review, benefit_type: "education") }
       assigned_by { nil }
     end
 
