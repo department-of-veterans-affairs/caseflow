@@ -21,7 +21,7 @@ class ETL::Syncer
     rejected = 0
 
     # query can take up to 90 seconds
-    ETL::Record.connection.execute "SET statement_timeout = 90000"
+    CaseflowRecord.connection.execute "SET statement_timeout = 90000"
 
     # create build record only if we intend to use it.
     build_record if instances_needing_update.any?
@@ -64,7 +64,7 @@ class ETL::Syncer
     # re-raise so sentry and parent build record know.
     raise error
   ensure
-    ETL::Record.connection.execute "SET statement_timeout = 30000" # restore to 30 seconds
+    CaseflowRecord.connection.execute "SET statement_timeout = 30000" # restore to 30 seconds
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
