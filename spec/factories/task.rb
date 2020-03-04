@@ -248,7 +248,7 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
-    factory :ama_task_base_factory do
+    factory :ama_task, class: Task do
       appeal
 
       before :create do |task, _eval|
@@ -272,9 +272,6 @@ FactoryBot.define do
           task.update(status: Constants.TASK_STATUSES.on_hold)
           task.children.update_all(status: Constants.TASK_STATUSES.on_hold)
         end
-      end
-
-      factory :ama_task, class: Task do
       end
 
       factory :pulac_cerullo_task, class: PulacCerulloTask do
