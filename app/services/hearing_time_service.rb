@@ -6,6 +6,8 @@
 # office is associated with the hearing.
 
 class HearingTimeService
+  CENTRAL_OFFICE_TIMEZONE = "America/New_York"
+
   class << self
     def build_legacy_params_with_time(hearing, update_params)
       # takes hearing update_legacy_params from controller and adds
@@ -29,7 +31,7 @@ class HearingTimeService
     def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
       hour, min = scheduled_time_string.split(":")
       time = scheduled_for.to_datetime
-      Time.use_zone("America/New_York") do
+      Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
         Time.zone.now.change(
           year: time.year, month: time.month, day: time.day, hour: hour.to_i, min: min.to_i
         )
@@ -78,7 +80,7 @@ class HearingTimeService
 
     # if the hearing's regional_office_timezone is nil, assume this is a
     # central office hearing (eastern time)
-    regional_office_timezone = @hearing.regional_office_timezone || "America/New_York"
+    regional_office_timezone = @hearing.regional_office_timezone || CENTRAL_OFFICE_TIMEZONE
 
     # convert the hearing time returned by LegacyHearing.scheduled_for
     # to the regional office timezone
