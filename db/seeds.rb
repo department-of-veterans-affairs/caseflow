@@ -547,45 +547,6 @@ class SeedDB
     RequestStore[:current_user] = nil
   end
 
-  def create_legacy_case_with_open_schedule_hearing_task(ro_key)
-    case ro_key
-    when "RO17"
-      vacols_id = "2668454"
-    when "RO45"
-      vacols_id = "3261587"
-    when "C"
-      vacols_id = "3019752"
-    end
-
-    LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
-  end
-
-  def create_ama_case_with_open_schedule_hearing_task(ro_key)
-    vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(digits: 9).to_s,
-      first_name: Faker::Name.first_name,
-      last_name: Faker::Name.last_name
-    )
-
-    vet.save
-
-    FactoryBot.create(
-      :appeal,
-      :with_post_intake_tasks,
-      number_of_claimants: 1,
-      closest_regional_office: ro_key,
-      veteran_file_number: vet.file_number,
-      docket_type: Constants.AMA_DOCKETS.hearing
-    )
-  end
-
-  def create_veterans_ready_for_hearing
-    %w[C RO45 RO17].each do |ro_key|
-      create_legacy_case_with_open_schedule_hearing_task(ro_key)
-      create_ama_case_with_open_schedule_hearing_task(ro_key)
-    end
-  end
-
   def create_api_key
     ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
   end
@@ -1483,7 +1444,6 @@ class SeedDB
     call_and_log_seed_step :create_users
     call_and_log_seed_step :create_ama_appeals
     call_and_log_seed_step :create_hearing_days
-    call_and_log_seed_step :create_veterans_ready_for_hearing
     call_and_log_seed_step :create_tasks
     call_and_log_seed_step :create_higher_level_review_tasks
     call_and_log_seed_step :setup_dispatch
