@@ -23,8 +23,6 @@ describe Test::HearingsProfileJob, :postgres do
       }.to_json
     end
 
-    subject { job.perform_now(send_to_user: user) }
-
     it "calls HearingsProfileMailer with the expected arguments" do
       mailer = double(HearingsProfileMailer)
 
@@ -36,7 +34,18 @@ describe Test::HearingsProfileJob, :postgres do
         .to receive(:call)
         .with(email_address: email_address, mail_body: body_json)
         .and_return(mailer)
-      subject
+
+      job.perform_now(user)
+    end
+
+    context "calls HearingsProfileMailer with a limit over 20" do
+      it "calls HearingsProfileHelper with a limit of 20" do
+        expect(HearingsProfileHelper)
+          .to receive(:profile_data)
+          .with(user, limit: 20)
+
+        job.perform_now(user, limit: 100)
+      end
     end
   end
 end
