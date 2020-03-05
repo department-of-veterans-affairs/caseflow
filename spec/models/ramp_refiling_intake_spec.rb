@@ -311,7 +311,7 @@ describe RampRefilingIntake, :postgres do
             end
 
             context "the preexisting RAMP refilings only have cancelled EPs" do
-              let!(:other_refiling_epe) { create(:end_product_establishment, :canceled, source: preexisting_ramp_refiling) }
+              let!(:previous_epe) { create(:end_product_establishment, :canceled, source: preexisting_ramp_refiling) }
 
               it { is_expected.to eq(true) }
             end
