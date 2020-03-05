@@ -24,7 +24,7 @@ module HearingsProfileHelper
 
         break if legacy_hearings_details.count >= limit && ama_hearings_details.count >= limit
       rescue StandardError => error
-        Rails.logger.info "HearingsProfileHelper error: #{error.message}"
+        Rails.logger.error "HearingsProfileHelper error: #{error.message}"
       end
 
       {
