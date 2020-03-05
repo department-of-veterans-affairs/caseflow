@@ -5,10 +5,10 @@ class Test::HearingsController < ApplicationController
 
   def index
     if send_email?
-      Test::HearingsProfileJob.perform_later(current_user, **additional_params)
+      Test::HearingsProfileJob.perform_later(current_user, **config_params)
     end
 
-    profile = HearingsProfileHelper.profile_data(current_user, **additional_params)
+    profile = HearingsProfileHelper.profile_data(current_user, **config_params)
     render json: profile.merge(email: email_details)
   end
 
@@ -27,21 +27,24 @@ class Test::HearingsController < ApplicationController
     details
   end
 
-  def additional_params
+  # transform request params into formats to be passed on to other classes
+  def config_params
     return_params = {}
 
-    return_params[:limit] = limit if limit.present?
-    return_params[:after] = after if after.present?
+    return_params[:limit] = hearings_count_limit if hearings_count_limit.present?
+    return_params[:after] = scheduled_after_time if scheduled_after_time.present?
     return_params
   end
 
-  def limit
+  # don't collect more than {limit} of each kind of hearing
+  def hearings_count_limit
     if index_params[:limit].present?
       index_params[:limit].to_i
     end
   end
 
-  def after
+  # only collect hearings that are scheduled after this time
+  def scheduled_after_time
     if index_params[:after_year].present? && index_params[:after_month].present? && index_params[:after_day].present?
       Time.zone.local(index_params[:after_year], index_params[:after_month], index_params[:after_day])
     end
