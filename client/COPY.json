@@ -650,9 +650,9 @@
   "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE": "Update Email Address",
   "VIRTUAL_HEARING_CHANGE_HEARING_BUTTON": "Change and Send Email",
   "VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON": "Update and Send Email",
-  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Email notifications will be sent to the Veteran and POA / Representative",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO": "Emails will be sent to the Veteran and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
-  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
+  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Email notifications will be sent to the Veterana and POA / Representative",
   "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "An email notification for the virtual hearing will be sent to:",
   "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
 
@@ -664,24 +664,23 @@
   "VIRTUAL_HEARING_USER_ALERTS": {
     "HEARING_CHANGED_TO_VIRTUAL": {
       "TITLE": "We're scheduling %s's virtual hearing",
-      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran, POA / Representative, and VLJ are in progress.</li></ul>"
+      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran and POA / Representative are in progress.</li></ul>"
     },
     "HEARING_CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
-      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
     },
     "EMAILS_UPDATED": {
       "TITLE": "We're emailing the invite to %s's hearing",
       "MESSAGES": {
         "TO_VETERAN_AND_POA": "Emails to the Veteran and POA / Representative are in progress.",
         "TO_VETERAN": "Email to Veteran is in progress.",
-        "TO_POA": "Email to POA / Representative is in progress.",
-        "TO_VLJ": "Email to VLJ is in progress."
+        "TO_POA": "Email to POA / Representative is in progress."
       }
     },
     "HEARING_TIME_CHANGED": {
       "TITLE": "We're updating the hearing time of %s's hearing",
-      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
     }
   },
 
