@@ -143,37 +143,69 @@ class SeedDB
     HearingsManagement.singleton.add_user(hearings_user)
   end
 
+  def create_legacy_case_with_open_schedule_hearing_task(ro_key)
+    case ro_key
+    when "RO17"
+      vacols_id = "2668454"
+    when "RO45"
+      vacols_id = "3261587"
+    when nil
+      vacols_id = "3019752"
+    end
+
+    LegacyAppeal.find_or_create_by_vacols_id(vacols_id) if vacols_id.present?
+  end
+
   def create_different_hearings_tasks
-    10.times do
-      appeal = FactoryBot.create(
-        :appeal,
-        :hearing_docket,
-        closest_regional_office: ["RO17", "RO19", "RO31", nil].sample
-      )
-      root_task = FactoryBot.create(:root_task, appeal: appeal)
-      distribution_task = FactoryBot.create(
-        :distribution_task,
-        appeal: appeal,
-        parent: root_task
-      )
-      parent_hearing_task = FactoryBot.create(
-        :hearing_task,
-        parent: distribution_task,
-        appeal: appeal
-      )
-      FactoryBot.create(
-        :schedule_hearing_task,
-        :completed,
-        parent: parent_hearing_task,
-        appeal: appeal
-      )
-      disposition_task = FactoryBot.create(
-        :assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal
-      )
-      FactoryBot.create(
-        [:no_show_hearing_task, :evidence_submission_window_task].sample,
-        parent: disposition_task,
-        appeal: appeal
+    (%w[RO17 RO19 RO31 RO43 RO45] + [nil]).each do |regional_office|
+      puts "Regional Office #{regional_office}"
+
+      create_legacy_case_with_open_schedule_hearing_task(regional_office)
+
+      rand(10..30).times do
+        appeal = FactoryBot.create(
+          :appeal,
+          :hearing_docket,
+          claimants: [FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")],
+          closest_regional_office: regional_office
+        )
+        root_task = FactoryBot.create(:root_task, appeal: appeal)
+        distribution_task = FactoryBot.create(
+          :distribution_task,
+          appeal: appeal,
+          parent: root_task
+        )
+        parent_hearing_task = FactoryBot.create(
+          :hearing_task,
+          parent: distribution_task,
+          appeal: appeal
+        )
+
+        schedule_hearing_task_status = [:completed, :in_progress].sample
+
+        FactoryBot.create(
+          :schedule_hearing_task,
+          schedule_hearing_task_status,
+          parent: parent_hearing_task,
+          appeal: appeal
+        )
+
+        # For completed hearing tasks, generate additional tasks too.
+        if schedule_hearing_task_status == :completed
+          disposition_task = FactoryBot.create(
+            :assign_hearing_disposition_task,
+            parent: parent_hearing_task, 
+            appeal: appeal
+          )
+          FactoryBot.create(
+            [:no_show_hearing_task, :evidence_submission_window_task].sample,
+            parent: disposition_task,
+            appeal: appeal
+          )
+        end
+      end
+    end
+  end
 
   def create_ama_hearing(day)
     veteran = FactoryBot.create(
