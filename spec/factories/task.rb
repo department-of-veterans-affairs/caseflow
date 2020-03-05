@@ -249,18 +249,6 @@ FactoryBot.define do
       end
     end
 
-    factory :appeal_task, class: DecisionReviewTask do
-      type { DecisionReviewTask.name }
-      appeal { create(:appeal, benefit_type: "education") }
-      assigned_by { nil }
-    end
-
-    factory :higher_level_review_task, class: DecisionReviewTask do
-      type { DecisionReviewTask.name }
-      appeal { create(:higher_level_review, benefit_type: "education") }
-      assigned_by { nil }
-    end
-
     factory :ama_task, class: Task do
       appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
 
@@ -275,6 +263,16 @@ FactoryBot.define do
       factory :root_task, class: RootTask do
         assigned_by { nil }
         assigned_to { Bva.singleton }
+      end
+
+      factory :appeal_task, class: DecisionReviewTask do
+        appeal { create(:appeal, benefit_type: "education") }
+        assigned_by { nil }
+      end
+
+      factory :higher_level_review_task, class: DecisionReviewTask do
+        appeal { create(:higher_level_review, benefit_type: "education") }
+        assigned_by { nil }
       end
 
       factory :distribution_task, class: DistributionTask do
