@@ -5,8 +5,10 @@ FactoryBot.define do
     assigned_at { rand(30..35).days.ago }
     association :assigned_by, factory: :user
     association :assigned_to, factory: :user
-    appeal { create(:legacy_appeal, vacols_case: create(:case)) }
     type { Task.name }
+
+    # if a parent is specified, make sure to use that parent's appeal
+    appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:legacy_appeal, vacols_case: create(:case)) }
 
     after(:create) do |task, _evaluator|
       if task.parent
@@ -75,8 +77,6 @@ FactoryBot.define do
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
       # don't expect to have a parent for LegacyAppeals
       parent { nil }
-      # if a parent is specified, make sure to use that parent's appeal
-      appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:legacy_appeal, vacols_case: create(:case)) }
       assigned_to { Colocated.singleton }
 
       trait :ihp do
@@ -469,21 +469,21 @@ FactoryBot.define do
       end
 
       factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do
-        association :parent, factory: :vacate_motion_mail_task
+        parent { create(:vacate_motion_mail_task, appeal: appeal) }
       end
 
       factory :abstract_motion_to_vacate_task, class: AbstractMotionToVacateTask do
-        association :parent, factory: :vacate_motion_mail_task
+        parent { create(:vacate_motion_mail_task, appeal: appeal) }
       end
 
       factory :denied_motion_to_vacate_task, class: DeniedMotionToVacateTask do
-        association :parent, factory: :abstract_motion_to_vacate_task
+        parent { create(:abstract_motion_to_vacate_task, appeal: appeal) }
         assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
         assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
       end
 
       factory :dismissed_motion_to_vacate_task, class: DismissedMotionToVacateTask do
-        association :parent, factory: :abstract_motion_to_vacate_task
+        parent { create(:abstract_motion_to_vacate_task, appeal: appeal) }
         assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
         assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
       end
