@@ -170,6 +170,9 @@ class SeedDB
           claimants: [FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")],
           closest_regional_office: regional_office
         )
+
+        FactoryBot.create(:available_hearing_locations, regional_office, appeal: appeal)
+
         root_task = FactoryBot.create(:root_task, appeal: appeal)
         distribution_task = FactoryBot.create(
           :distribution_task,
