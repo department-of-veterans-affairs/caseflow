@@ -10,7 +10,7 @@ FactoryBot.define do
     trait "RO17" do
       address { "9500 Bay Pines Blvd." }
       city { "St. Petersburg" }
-      classification { "Regional Benefit Office"}
+      classification { "Regional Benefit Office" }
       facility_id { "vba_317" }
       facility_type { "va_benefits_facility" }
       name { "St. Petersburg Regional Benefit Office" }
@@ -21,7 +21,7 @@ FactoryBot.define do
     trait "RO19" do
       address { "6437 Garners Ferry Rd" }
       city { "Columbia" }
-      classification { "Regional Benefit Office"}
+      classification { "Regional Benefit Office" }
       facility_id { "vba_319" }
       facility_type { "va_benefits_facility" }
       name { "Columbia Regional Benefit Office" }
@@ -32,7 +32,7 @@ FactoryBot.define do
     trait "RO31" do
       address { "9700 Page Ave." }
       city { "ST. Louis" }
-      classification { "Regional Benefit Office"}
+      classification { "Regional Benefit Office" }
       facility_id { "vba_331" }
       facility_type { "va_benefits_facility" }
       name { "St. Louis Regional Benefit Office" }
@@ -43,7 +43,7 @@ FactoryBot.define do
     trait "RO43" do
       address { "1301 Clay Street North Tower, Rm. 1400" }
       city { "Oakland" }
-      classification { "Regional Benefit Office"}
+      classification { "Regional Benefit Office" }
       facility_id { "vba_343" }
       facility_type { "va_benefits_facility" }
       name { "Oakland Regional Benefit Office" }
@@ -54,7 +54,7 @@ FactoryBot.define do
     trait "RO45" do
       address { "3333 North Central Avenue" }
       city { "Phoenix" }
-      classification { "Regional Benefit Office"}
+      classification { "Regional Benefit Office" }
       facility_id { "vba_345" }
       facility_type { "va_benefits_facility" }
       name { "Phoenix Regional Benefit Office" }
