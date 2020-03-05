@@ -129,6 +129,7 @@ class SeedDB
     TranscriptionTeam.singleton.add_user(transcription_member)
   end
 
+  ### Hearings Setup ###
   def create_hearings_user_and_tasks
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
     HearingsManagement.singleton.add_user(hearings_member)
@@ -340,6 +341,7 @@ class SeedDB
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
     FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
   end
+  ### End Hearings Setup ###
 
   def create_colocated_users
     secondary_user = FactoryBot.create(:user, full_name: "Harper SecondaryVLJSupportStaff Tash", roles: %w[Reader])
