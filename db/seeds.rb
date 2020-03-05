@@ -74,6 +74,7 @@ class SeedDB
     create_transcription_team
     create_vso_users_and_tasks
     create_field_vso_and_users
+    create_pva_vso_users
     create_org_queue_users
     create_qr_user
     create_aod_user_and_tasks
@@ -367,6 +368,29 @@ class SeedDB
                                                                   assigned_to_type: User.name
                                                                 }], u)
       end
+    end
+  end
+
+  # Creates a VSO org for the PARALYZED VETERANS OF AMERICA VSO that the fake BGS
+  # service returns.
+  #
+  # Use the participant ID `CLAIMANT_WITH_PVA_AS_VSO` to tie this org to a
+  # claimant.
+  def create_pva_vso_users
+    vso = Vso.create(
+      name: "PARALYZED VETERANS OF AMERICA, INC.",
+      url: "paralyzed-veteran-of-america",
+      participant_id: "2452383"
+    )
+
+    %w[WINNIE].each do |name|
+      u = User.create(
+        css_id: "#{name}_VSO",
+        station_id: 101,
+        full_name: "#{name} VSOUser James",
+        roles: %w[VSO]
+      )
+      vso.add_user(u)
     end
   end
 
