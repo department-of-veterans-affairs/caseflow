@@ -6,7 +6,7 @@ class BaseHearingUpdateForm
 
   attr_accessor :bva_poc, :disposition,
                 :hearing, :hearing_location_attributes, :hold_open,
-                :judge_id, :military_service, :notes, :prepped,
+                :military_service, :notes, :prepped,
                 :representative_name, :room, :scheduled_time_string,
                 :summary, :transcript_requested, :virtual_hearing_attributes,
                 :witness
@@ -54,11 +54,10 @@ class BaseHearingUpdateForm
     # If any are true:
     #   1. Any virtual hearing attributes are set
     #   2. Hearing time is being changed
-    #   3. Judge is being changed
     return true if !virtual_hearing_attributes.blank?
 
     if hearing.virtual?
-      return scheduled_time_string.present? || judge_id.present?
+      return scheduled_time_string.present?
     end
 
     false
@@ -96,8 +95,7 @@ class BaseHearingUpdateForm
   def email_sent_flag(attr_key)
     attr_changed = virtual_hearing_attributes&.key?(:status) ||
                    virtual_hearing_attributes&.key?(attr_key) ||
-                   scheduled_time_string.present? ||
-                   (judge_id.present? && attr_key == :judge_email)
+                   scheduled_time_string.present?
 
     !attr_changed
   end
@@ -106,15 +104,10 @@ class BaseHearingUpdateForm
     # The email sent flag should always be set to false if any changes are made.
     emails_sent_updates = {
       veteran_email_sent: email_sent_flag(:veteran_email),
-      judge_email_sent: email_sent_flag(:judge_email),
       representative_email_sent: email_sent_flag(:representative_email)
     }.reject { |_k, email_sent| email_sent == true }
 
     updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
-
-    if judge_id.present?
-      updates[:judge_email] = hearing.judge&.email
-    end
 
     updates
   end
@@ -127,7 +120,6 @@ class BaseHearingUpdateForm
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
       new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
-      new_virtual_hearing.judge_email = hearing.judge&.email
       new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
       @virtual_hearing_created = true
     end
