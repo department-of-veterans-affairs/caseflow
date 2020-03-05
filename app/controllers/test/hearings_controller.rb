@@ -19,9 +19,9 @@ class Test::HearingsController < ApplicationController
   end
 
   def email_details
-    details = { email_sent: "false" }
+    details = { email_sent: false }
     if send_email?
-      details[:email_sent] = "true"
+      details[:email_sent] = true
       details[:email_address] = current_user.email
     end
     details

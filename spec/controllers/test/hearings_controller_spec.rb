@@ -65,7 +65,7 @@ describe Test::HearingsController, :postgres, type: :controller do
             expect(Test::HearingsProfileJob).to receive(:perform_later).once.with(current_user, {})
             get :index, params: { send_email: "true" }
             json_body = JSON.parse response.body
-            expect(json_body["email"]["email_sent"]).to eq "true"
+            expect(json_body["email"]["email_sent"]).to eq true
             expect(json_body["email"]["email_address"]).to eq email
           end
         end
@@ -75,7 +75,7 @@ describe Test::HearingsController, :postgres, type: :controller do
             expect(Test::HearingsProfileJob).to_not receive(:perform_later)
             get :index, params: { send_email: "something_else" }
             json_body = JSON.parse response.body
-            expect(json_body["email"]["email_sent"]).to eq "false"
+            expect(json_body["email"]["email_sent"]).to eq false
           end
         end
       end
