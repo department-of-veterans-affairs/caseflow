@@ -72,7 +72,8 @@ FactoryBot.define do
     end
 
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
-      parent { create(:ama_task) }
+      appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
+      parent { create(:ama_task, appeal) }
       assigned_to { Colocated.singleton }
 
       trait :ihp do
