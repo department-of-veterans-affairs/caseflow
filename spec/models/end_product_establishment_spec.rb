@@ -972,8 +972,8 @@ describe EndProductEstablishment, :postgres do
     end
   end
 
-  context "#status_canceled?" do
-    subject { end_product_establishment.status_canceled? }
+  context "#status_cancelled?" do
+    subject { end_product_establishment.status_cancelled? }
 
     context "returns true if canceled" do
       let(:synced_status) { "CAN" }
