@@ -330,7 +330,7 @@ class SeedDB
       participant_id: "2452415"
     )
 
-    %w[BILLIE MICHAEL WINNIE].each do |name|
+    %w[BILLIE MICHAEL].each do |name|
       u = User.create(
         css_id: "#{name}_VSO",
         station_id: 101,
