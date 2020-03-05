@@ -440,7 +440,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def close_after_end_product_canceled!
-    return unless end_product_establishment&.reload&.status_canceled?
+    return unless end_product_establishment&.reload&.status_cancelled?
 
     close!(status: :end_product_canceled) do
       legacy_issue_optin&.flag_for_rollback!

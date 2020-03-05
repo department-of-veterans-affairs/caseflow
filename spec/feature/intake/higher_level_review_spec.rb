@@ -461,6 +461,8 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_current_path("/intake/review_request")
   end
 
+  # this version is slightly different from what is in IntakeHelpers
+  # TODO it would be good to reconcile and save some duplication.
   def start_higher_level_review(
     test_veteran,
     is_comp: true,
@@ -692,12 +694,10 @@ feature "Higher-Level Review", :all_dbs do
       after { FeatureToggle.disable!(:show_future_ratings) }
 
       scenario "when show_future_ratings featuretoggle is enabled " do
-        start_higher_level_review(veteran)
+        higher_level_review, = start_higher_level_review(veteran)
         visit "/intake/add_issues"
         click_intake_add_issue
         expect(page).to have_content("Future rating issue 1")
-
-        higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
         expect(higher_level_review.receipt_date).to eq(receipt_date)
       end
     end
