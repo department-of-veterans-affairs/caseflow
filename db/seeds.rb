@@ -1422,7 +1422,6 @@ class SeedDB
 
   def perform_seeding_jobs
     # Active Jobs which populate tables based on seed data
-    FetchHearingLocationsForVeteransJob.perform_now
     UpdateCachedAppealsAttributesJob.perform_now
     NightlySyncsJob.perform_now
   end
