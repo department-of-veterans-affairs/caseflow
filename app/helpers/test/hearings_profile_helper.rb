@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module HearingsProfileHelper
+module Test::HearingsProfileHelper
   class << self
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
@@ -24,7 +24,7 @@ module HearingsProfileHelper
 
         break if legacy_hearings_details.count >= limit && ama_hearings_details.count >= limit
       rescue StandardError => error
-        Rails.logger.error "HearingsProfileHelper error: #{error.message}"
+        Rails.logger.error "Test::HearingsProfileHelper error: #{error.message}"
       end
 
       {

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe HearingsProfileMailer do
+describe Test::HearingsProfileMailer do
   let(:send_to_email_address) { "ann.gibson@example.com" }
   let(:body_json) do
     {
@@ -44,7 +44,7 @@ describe HearingsProfileMailer do
   end
 
   subject do
-    HearingsProfileMailer.call(email_address: send_to_email_address, mail_body: body_json)
+    Test::HearingsProfileMailer.call(email_address: send_to_email_address, mail_body: body_json)
   end
 
   it "delivers an email" do

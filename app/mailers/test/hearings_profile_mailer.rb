@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class HearingsProfileMailer < ActionMailer::Base
+class Test::HearingsProfileMailer < ActionMailer::Base
   default from: "solutions@public.govdelivery.com"
 
   def call(email_address:, mail_body:)

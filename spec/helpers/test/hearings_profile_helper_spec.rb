@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe HearingsProfileHelper do
+describe Test::HearingsProfileHelper do
   let(:hearing_keys) do
     [
       :id,
@@ -36,7 +36,7 @@ describe HearingsProfileHelper do
     create(:assign_hearing_disposition_task, parent: hearing_task3, appeal: legacy_hearing.appeal)
   end
 
-  subject { HearingsProfileHelper.profile_data(user, limit: 2, after: Time.zone.now - 1.day) }
+  subject { Test::HearingsProfileHelper.profile_data(user, limit: 2, after: Time.zone.now - 1.day) }
 
   context ".profile_data" do
     it "should return an object in the expected format" do

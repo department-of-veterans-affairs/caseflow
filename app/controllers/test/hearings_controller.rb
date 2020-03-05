@@ -8,7 +8,7 @@ class Test::HearingsController < ApplicationController
       Test::HearingsProfileJob.perform_later(current_user, **config_params)
     end
 
-    profile = HearingsProfileHelper.profile_data(current_user, **config_params)
+    profile = Test::HearingsProfileHelper.profile_data(current_user, **config_params)
     render json: profile.merge(email: email_details)
   end
 

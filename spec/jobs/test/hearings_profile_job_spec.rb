@@ -24,13 +24,13 @@ describe Test::HearingsProfileJob, :postgres do
     end
 
     it "calls HearingsProfileMailer with the expected arguments" do
-      mailer = double(HearingsProfileMailer)
+      mailer = double(Test::HearingsProfileMailer)
 
       allow(user).to receive(:timezone).and_return(user_timezone)
 
       expect(mailer).to receive(:deliver_now).once
 
-      expect(HearingsProfileMailer)
+      expect(Test::HearingsProfileMailer)
         .to receive(:call)
         .with(email_address: email_address, mail_body: body_json)
         .and_return(mailer)
@@ -40,7 +40,7 @@ describe Test::HearingsProfileJob, :postgres do
 
     context "calls HearingsProfileMailer with a limit over 20" do
       it "calls HearingsProfileHelper with a limit of 20" do
-        expect(HearingsProfileHelper)
+        expect(Test::HearingsProfileHelper)
           .to receive(:profile_data)
           .with(user, limit: 20)
 

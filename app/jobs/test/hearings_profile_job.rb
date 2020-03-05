@@ -7,9 +7,9 @@ class Test::HearingsProfileJob < ApplicationJob
     options = args.extract_options!
     # don't go over 20 of each appeal type for email
     options[:limit] = [options[:limit], 20].min if options[:limit].present?
-    HearingsProfileMailer.call(
+    Test::HearingsProfileMailer.call(
       email_address: send_to_user.email,
-      mail_body: HearingsProfileHelper.profile_data(send_to_user, **options).to_json
+      mail_body: Test::HearingsProfileHelper.profile_data(send_to_user, **options).to_json
     ).deliver_now
 
     Rails.logger.info("Sent hearings profile email to #{send_to_user.email}!")
