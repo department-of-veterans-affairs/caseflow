@@ -53,28 +53,14 @@ class VirtualHearingMailer < ActionMailer::Base
   end
 
   def calendar_invite_name
-    case recipient.title
-    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
-      "BoardHearing.ics"
-    when MailRecipient::RECIPIENT_TITLES[:judge]
-      "VirtualHearing.ics"
-    end
+    "BoardHearing.ics"
   end
 
   def confirmation_subject
-    case recipient.title
-    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
-      "Your Board hearing has been scheduled"
-    when MailRecipient::RECIPIENT_TITLES[:judge]
-      hearing_date = virtual_hearing.hearing.scheduled_for.to_formatted_s(:short_date)
-
-      "Confirmation: Your virtual hearing on #{hearing_date}"
-    end
+    "Your Board hearing has been scheduled"
   end
 
   def link
-    return virtual_hearing.host_link if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
-
     virtual_hearing.guest_link
   end
 
