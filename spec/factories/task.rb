@@ -261,6 +261,7 @@ FactoryBot.define do
 
       factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym],
                                    parent: :colocated_task do
+        parent { create(:ama_task) }
       end
 
       factory :root_task, class: RootTask do

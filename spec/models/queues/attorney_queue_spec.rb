@@ -21,6 +21,7 @@ describe AttorneyQueue, :all_dbs do
       let!(:action3) do
         create(
           :colocated_task,
+          :poa_clarification,
           appeal: appeal,
           assigned_by: user
         ).tap do |task|

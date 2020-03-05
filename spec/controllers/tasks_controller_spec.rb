@@ -634,16 +634,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     it "updates status to completed" do
       expect(admin_action.versions.length).to be 0
-      expect(admin_action.parent.versions.length).to be 1
       patch :update, params: { task: { status: Constants.TASK_STATUSES.completed }, id: admin_action.id }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["tasks"]["data"]
       expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
       expect(response_body.first["attributes"]["closed_at"]).to_not be nil
       expect(admin_action.reload.versions.length).to eq 1
-      expect(admin_action.parent.versions.length).to eq 2
       versions = PaperTrail::Version.where(request_id: admin_action.versions.first.request_id)
-      expect(versions.length).to eq 3
+      expect(versions.length).to eq 1
     end
 
     context "when some other user updates another user's task" do
