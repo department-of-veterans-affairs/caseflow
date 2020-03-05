@@ -18,6 +18,12 @@ FactoryBot.define do
     end
 
     after(:create) do |appeal, _evaluator|
+      if appeal.closest_regional_office.present?
+        create(:available_hearing_locations, appeal.closest_regional_office, appeal: appeal)
+      end
+    end
+
+    after(:create) do |appeal, _evaluator|
       appeal.request_issues.each do |issue|
         issue.decision_review = appeal
         issue.save
