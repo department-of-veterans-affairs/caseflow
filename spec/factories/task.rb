@@ -8,6 +8,20 @@ FactoryBot.define do
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
     type { Task.name }
 
+    after(:create) do |task, _evaluator|
+      if task.parent
+        if task.parent&.appeal_id != task.appeal_id
+          fail "Warning: Parent task #{task.parent&.id} is in a different appeal than child task #{task.id}"
+        end
+
+        # appeal_id may happen to be the same in the test env, so check the appeal_type as well
+        if task.parent&.appeal_type != task.appeal_type
+          fail "Warning: Parent task #{task.parent&.id} has different appeal_type #{task.parent&.appeal_type} " \
+               "than child task's appeal_type #{task.id} #{task.appeal_type}"
+        end
+      end
+    end
+
     trait :assigned do
       status { Constants.TASK_STATUSES.assigned }
     end
