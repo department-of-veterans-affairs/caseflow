@@ -674,19 +674,19 @@ describe LegacyAppeal, :all_dbs do
 
     subject { appeal.location_history.map { |priloc| [priloc.assigned_at, priloc.location, priloc.assigned_by] } }
 
-    let(:today) { Time.zone.now.utc.to_date } # NOT Time.zone.now because we want to act like Oracle SYSDATE
+    let(:oracle_sysdate) { Time.zone.now.utc.to_date } # NOT Time.zone.now because we want to act like Oracle SYSDATE
 
     it "returns array of date, to_whom, by_whom" do
       expect(subject).to eq([
-                              [today, first_location, "DSUSER"],
-                              [today, second_location, "DSUSER"],
-                              [today, third_location, "DSUSER"]
+                              [oracle_sysdate, first_location, "DSUSER"],
+                              [oracle_sysdate, second_location, "DSUSER"],
+                              [oracle_sysdate, third_location, "DSUSER"]
                             ])
       expect(appeal.location_history.last.summary).to eq(location: third_location,
-                                                         assigned_at: today,
+                                                         assigned_at: oracle_sysdate,
                                                          assigned_by: "DSUSER",
                                                          date_in: nil,
-                                                         date_out: today)
+                                                         date_out: oracle_sysdate)
     end
   end
 
