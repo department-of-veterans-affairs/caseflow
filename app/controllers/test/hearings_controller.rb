@@ -15,7 +15,7 @@ class Test::HearingsController < ApplicationController
   private
 
   def require_global_admin
-    head :unauthorized unless current_user.global_admin?
+    redirect_to "/unauthorized" unless current_user.global_admin?
   end
 
   def email_details

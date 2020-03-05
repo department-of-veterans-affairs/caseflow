@@ -13,7 +13,7 @@ describe Test::HearingsController, :postgres, type: :controller do
     context "user is not a Global Admin" do
       it "responds unauthorized" do
         get :index
-        expect(response.status).to eq 401
+        expect(response).to redirect_to "/unauthorized"
       end
     end
 
