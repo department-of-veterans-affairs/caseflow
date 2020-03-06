@@ -42,13 +42,6 @@ class Api::V3::DecisionReview::IntakeStatusesController < Api::V3::BaseControlle
     )
   end
 
-  def render_error(status:, code:, title:)
-    render(
-      json: { errors: [{ status: status, code: code, title: title }] },
-      status: status
-    )
-  end
-
   def render_intake_status_for_decision_review
     intake_status.processed? ? render_processed_intake_status : render_unprocessed_intake_status
   end

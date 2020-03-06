@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VirtualHearing < ApplicationRecord
+class VirtualHearing < CaseflowRecord
   alias_attribute :alias_name, :alias
 
   belongs_to :hearing, polymorphic: true
@@ -43,14 +43,18 @@ class VirtualHearing < ApplicationRecord
   end
 
   def guest_link
-    "https://#{ENV['PEXIP_CLIENT_HOST']}/webapp/?conference=#{alias_name}&pin=#{guest_pin}&join=1&role=guest"
+    "#{base_url}?conference=#{alias_name}&pin=#{guest_pin}#&join=1&role=guest"
   end
 
   def host_link
-    "https://#{ENV['PEXIP_CLIENT_HOST']}/webapp/?conference=#{alias_name}&pin=#{host_pin}&join=1&role=host"
+    "#{base_url}?conference=#{alias_name}&pin=#{host_pin}#&join=1&role=host"
   end
 
   private
+
+  def base_url
+    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/webapp/"
+  end
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]

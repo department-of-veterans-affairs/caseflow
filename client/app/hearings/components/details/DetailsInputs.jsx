@@ -1,34 +1,39 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
 import classnames from 'classnames';
-import { rowThirds } from './style';
+
+import { COLORS } from '../../../constants/AppConstants';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
   HearingRoomDropdown
 } from '../../../components/DataDropdowns/index';
-import TextareaField from '../../../components/TextareaField';
+import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../../utils';
+import { rowThirds } from './style';
+import COPY from '../../../../COPY';
 import Checkbox from '../../../components/Checkbox';
-import VirtualHearingLink from '../VirtualHearingLink';
 import HearingTypeDropdown from './HearingTypeDropdown';
 import TextField from '../../../components/TextField';
-import { COLORS } from '../../../constants/AppConstants';
-import COPY from '../../../../COPY.json';
+import TextareaField from '../../../components/TextareaField';
+import VirtualHearingLink from '../VirtualHearingLink';
 
 class DetailsInputs extends React.Component {
-
   renderVirtualHearingLinkSection() {
-    const { isVirtual, hearing, virtualHearing, user } = this.props;
+    const { isVirtual, virtualHearing, user, hearing } = this.props;
+    const virtualHearingLabel = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
+      COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
+      COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
     if (isVirtual && virtualHearing) {
       return (
         <div>
-          <strong>Virtual Hearing Link</strong>
+          <strong>{virtualHearingLabel}</strong>
           <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing.jobCompleted &&
               <VirtualHearingLink
-                role={user.userId.toString() === hearing.judgeId ? 'host' : 'guest'}
+                user={user}
+                hearing={hearing}
                 showFullLink
                 isVirtual={isVirtual}
                 virtualHearing={virtualHearing}
@@ -47,6 +52,18 @@ class DetailsInputs extends React.Component {
     return null;
   }
 
+  showEmailFields = () => {
+    const { isVirtual, wasVirtual, virtualHearing } = this.props;
+
+    return (isVirtual || wasVirtual) && virtualHearing;
+  }
+
+  readOnlyEmails = () => {
+    const { readOnly, wasVirtual, virtualHearing, hearing } = this.props;
+
+    return readOnly || !virtualHearing.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
+  }
+
   render() {
     const {
       hearing, update, readOnly, isLegacy, openVirtualHearingModal, updateVirtualHearing,
@@ -62,12 +79,12 @@ class DetailsInputs extends React.Component {
               requestType={requestType}
               updateVirtualHearing={updateVirtualHearing}
               openModal={openVirtualHearingModal}
-              readOnly={readOnly || (isVirtual && virtualHearing && !virtualHearing.jobCompleted)}
+              readOnly={hearing.scheduledForIsPast || (isVirtual && virtualHearing && !virtualHearing.jobCompleted)}
             />
             {this.renderVirtualHearingLinkSection()}
           </div>
         }
-        {isVirtual && virtualHearing &&
+        {this.showEmailFields() &&
           <div {...rowThirds}>
             <TextField
               name="Veteran Email"
@@ -75,15 +92,15 @@ class DetailsInputs extends React.Component {
               strongLabel
               required
               className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-              readOnly={readOnly || !virtualHearing.jobCompleted}
+              readOnly={this.readOnlyEmails()}
               onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
             />
             <TextField
-              name="POA/Representive Email"
+              name="POA/Representative Email"
               value={virtualHearing.representativeEmail}
               strongLabel
               className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-              readOnly={readOnly || !virtualHearing.jobCompleted}
+              readOnly={this.readOnlyEmails()}
               onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
             />
           </div>
@@ -147,7 +164,8 @@ DetailsInputs.propTypes = {
     room: PropTypes.string,
     evidenceWindowWaived: PropTypes.bool,
     notes: PropTypes.string,
-    bvaPoc: PropTypes.string
+    bvaPoc: PropTypes.string,
+    scheduledForIsPast: PropTypes.bool
   }),
   update: PropTypes.func,
   readOnly: PropTypes.bool,
@@ -162,7 +180,8 @@ DetailsInputs.propTypes = {
     jobCompleted: PropTypes.bool
   }),
   enableVirtualHearings: PropTypes.bool,
-  isVirtual: PropTypes.bool
+  isVirtual: PropTypes.bool,
+  wasVirtual: PropTypes.bool
 };
 
 export default DetailsInputs;

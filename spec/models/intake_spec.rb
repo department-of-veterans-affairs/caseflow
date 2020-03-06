@@ -648,7 +648,7 @@ describe Intake, :postgres do
       end
 
       before do
-        higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
+        higher_level_review.create_claimant!(participant_id: "5382910292", payee_code: "10")
       end
 
       it "clears expired intakes and creates new intake" do

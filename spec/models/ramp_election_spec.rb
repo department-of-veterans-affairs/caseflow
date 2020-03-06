@@ -130,7 +130,8 @@ describe RampElection, :postgres do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran.participant_id,
             limited_poa_code: nil,
-            limited_poa_access: nil
+            limited_poa_access: nil,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: nil
@@ -228,7 +229,7 @@ describe RampElection, :postgres do
           veteran_file_number: veteran_file_number,
           receipt_date: receipt_date,
           option_selected: option_selected,
-          appeal_docket: "hearing"
+          appeal_docket: Constants.AMA_DOCKETS.hearing
         ).tap do |refiling|
           RampIssue.create(review: refiling, source_issue_id: ramp_election.issues.first.id)
         end

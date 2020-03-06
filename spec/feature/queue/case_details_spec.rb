@@ -553,7 +553,7 @@ RSpec.feature "Case details", :all_dbs do
           :appeal,
           veteran_file_number: "500000102",
           receipt_date: 6.months.ago.to_date.mdY,
-          docket_type: "evidence_submission"
+          docket_type: Constants.AMA_DOCKETS.evidence_submission
         )
       end
 
@@ -708,7 +708,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on vet_name
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL, wait: 30)
         click_on "Caseflow"
-        expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION, wait: 30)
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, wait: 30)
         fontweight_visited = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
         expect(fontweight_visited).to be < fontweight_new
       end

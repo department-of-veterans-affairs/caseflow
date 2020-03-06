@@ -1,6 +1,8 @@
 import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { onReceiveAmaTasks } from '../QueueActions';
+import { showSuccessMessage } from '../uiReducer/uiActions';
+import { addressMTVSuccessAlert, returnToLitSupportAlert } from './mtvMessages';
 
 export const submitMTVAttyReviewStarted = () => ({
   type: Constants.MTV_SUBMIT_ATTY_REVIEW
@@ -59,11 +61,11 @@ export const submitMTVJudgeDecisionError = () => ({
   type: Constants.MTV_SUBMIT_JUDGE_DECISION_ERROR
 });
 
-export const submitMTVJudgeDecision = (data, ownProps) => {
+export const submitMTVJudgeDecision = (data, otherParams) => {
   return async (dispatch) => {
     dispatch(submitMTVJudgeDecisionStarted());
 
-    const { history } = ownProps;
+    const { history, appeal } = otherParams;
 
     const url = '/post_decision_motions';
 
@@ -71,6 +73,9 @@ export const submitMTVJudgeDecision = (data, ownProps) => {
       const res = await ApiUtil.post(url, { data });
 
       dispatch(submitMTVJudgeDecisionSuccess(res));
+
+      dispatch(showSuccessMessage(addressMTVSuccessAlert({ data,
+        appeal })));
 
       if (history) {
         history.push('/queue');
@@ -98,7 +103,7 @@ export const returnToLitSupport = (data, ownProps) => {
   return async (dispatch) => {
     dispatch(returnMTVToLitSupportStarted());
 
-    const { history } = ownProps;
+    const { history, appeal } = ownProps;
 
     const url = '/post_decision_motions/return';
 
@@ -109,6 +114,8 @@ export const returnToLitSupport = (data, ownProps) => {
       } = res.body;
 
       dispatch(returnMTVToLitSupportSuccess());
+
+      dispatch(showSuccessMessage(returnToLitSupportAlert({ appeal })));
 
       if (history) {
         history.push('/queue');

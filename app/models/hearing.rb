@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearing < ApplicationRecord
+class Hearing < CaseflowRecord
   include HasVirtualHearing
 
   belongs_to :hearing_day
@@ -38,6 +38,7 @@ class Hearing < ApplicationRecord
   delegate :veteran_age, to: :appeal
   delegate :veteran_gender, to: :appeal
   delegate :veteran_file_number, to: :appeal
+  delegate :veteran_email_address, to: :appeal
   delegate :docket_number, to: :appeal
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
@@ -125,6 +126,10 @@ class Hearing < ApplicationRecord
     appeal.representative_name
   end
 
+  def representative_email_address
+    appeal&.representative_email_address
+  end
+
   def claimant_id
     return nil if appeal.appellant.nil?
 
@@ -145,6 +150,10 @@ class Hearing < ApplicationRecord
       min: scheduled_time.min,
       sec: scheduled_time.sec
     )
+  end
+
+  def scheduled_for_past?
+    scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
 
   def time

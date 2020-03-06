@@ -204,8 +204,55 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(subject.status).to eq(200)
           virtual_hearing.reload
           expect(virtual_hearing.cancelled?).to eq(true)
-          expect(virtual_hearing.all_emails_sent?).to eq(true)
         end
+      end
+    end
+
+    context "when updating the judge of an existing virtual hearing" do
+      let(:new_judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
+      let(:hearing) { create(:hearing, regional_office: "RO42") }
+      let!(:virtual_hearing) do
+        create(
+          :virtual_hearing,
+          hearing: hearing,
+          veteran_email: "existing_veteran_email@caseflow.gov",
+          veteran_email_sent: true,
+          judge_email: "existing_judge_email@caseflow.gov",
+          judge_email_sent: true,
+          representative_email: "existing_representative_email@caseflow.gov",
+          representative_email_sent: true
+        )
+      end
+
+      before do
+        # Stub out the job starting, so we can check to make sure the email
+        # sent flags are set properly.
+        allow(VirtualHearings::CreateConferenceJob).to receive(:perform_now)
+      end
+
+      subject do
+        patch_params = {
+          id: hearing.external_id,
+          hearing: {
+            judge_id: new_judge.id
+          }
+        }
+
+        patch :update, as: :json, params: patch_params
+        response
+      end
+
+      it "updates the judge's email on the virtual hearing", :aggregate_failures do
+        expect(subject.status).to eq(200)
+
+        virtual_hearing.reload
+
+        expect(virtual_hearing.hearing.judge_id).to eq(new_judge.id)
+        expect(virtual_hearing.judge_email).to eq(new_judge.email)
+
+        expect(virtual_hearing.judge_email_sent).to eq(false)
+        expect(virtual_hearing.veteran_email_sent).to eq(true)
+        expect(virtual_hearing.representative_email_sent).to eq(true)
       end
     end
 
@@ -275,7 +322,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
     context "for legacy appeals" do
       let!(:vacols_case) { create(:case) }
-      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran_address, vacols_case: vacols_case) }
 
       it "returns an address" do
         get :find_closest_hearing_locations,

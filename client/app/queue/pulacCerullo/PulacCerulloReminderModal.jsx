@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import RadioField from '../../components/RadioField';
 import { CavcLinkInfo } from './CavcLinkInfo';
 

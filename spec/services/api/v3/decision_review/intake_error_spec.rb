@@ -1,168 +1,371 @@
 # frozen_string_literal: true
 
-context Api::V3::DecisionReview::IntakeError do
-  # :reek:UtilityFunction:
-  def valid_error_array_shape?(array)
-    array.is_a?(Array) &&
-      array.length == 3 &&
-      array.first.is_a?(Integer) &&
-      array.first >= 400 &&
-      array.second.is_a?(Symbol) &&
-      array.third.is_a?(String)
-  end
+describe Api::V3::DecisionReview::IntakeError do
+  describe ".first_error_code" do
+    subject { described_class.first_error_code(array) }
 
-  context "::KNOWN_ERRORS" do
-    subject { Api::V3::DecisionReview::IntakeError::KNOWN_ERRORS }
+    context do
+      let(:array) { [-1, nil, "hello", :goodbye] }
+      it { is_expected.to eq(-1) }
+    end
 
-    it "should be a non-empty array of arrays" \
-        ", and each array is 3 elements long: Integer >=400, Symbol, and String" do
-      expect(subject).to be_an Array
-      expect(subject).not_to be_empty
-      expect(subject).to all be_an Array
-      expect(subject.all? { |error_array| valid_error_array_shape?(error_array) }).to be true
+    context do
+      let(:array) { [nil, "banana", :apple] }
+      it { is_expected.to eq :banana }
+    end
+
+    context do
+      let(:array) { [false, []] }
+      it { is_expected.to eq [] }
+    end
+
+    context do
+      let(:array) { [nil, [], :this_error] }
+      it { is_expected.to eq [] }
+    end
+
+    context do
+      let(:array) { [{}, Struct.new(:error_code).new(-1)] }
+      it { is_expected.to eq({}) }
+    end
+
+    context do
+      let(:array) { [nil, false, Struct.new(:error_code).new(-1)] }
+      it { is_expected.to eq(-1) }
     end
   end
 
-  context "::UNKNOWN_ERROR" do
-    subject { Api::V3::DecisionReview::IntakeError::UNKNOWN_ERROR }
+  describe ".first_non_nil" do
+    subject { described_class.first_non_nil(array) }
 
-    it "should be an array that's 3 elements long: Integer >=400, Symbol, and String" do
-      expect(valid_error_array_shape?(subject)).to be true
+    context do
+      let(:array) { [false, nil] }
+      it { is_expected.to be false }
+    end
+
+    context do
+      let(:array) { [nil, nil, false] }
+      it { is_expected.to be false }
+    end
+
+    context do
+      let(:array) { [-1, false] }
+      it { is_expected.to be(-1) }
     end
   end
 
-  context "::KNOWN_ERRORS_BY_CODE" do
-    subject { Api::V3::DecisionReview::IntakeError::KNOWN_ERRORS_BY_CODE }
+  describe ".new_from_first_error_code" do
+    subject { described_class.new_from_first_error_code(array).passed_in_object }
 
-    it "has expected structure", :aggregate_failures do
-      expect(subject).to be_kind_of(Hash)
-      expect(subject).not_to be_empty
-      expect(subject.keys).to all be_a Symbol
+    context do
+      let(:array) { [-1, nil, "hello", :goodbye] }
+      it { is_expected.to eq(-1) }
     end
 
-    it "should have values that are arrays, 3 elements long: Integer >=400, Symbol, and String" do
-      expect(subject.values.all? { |error_array| valid_error_array_shape?(error_array) }).to be true
-    end
-  end
-
-  context ".potential_error_code" do
-    it "should return :hello" do
-      expect(Api::V3::DecisionReview::IntakeError.potential_error_code(:hello)).to eq(:hello)
+    context do
+      let(:array) { [nil, "banana", :apple] }
+      it { is_expected.to eq :banana }
     end
 
-    it "should return :hello" do
-      expect(Api::V3::DecisionReview::IntakeError.potential_error_code("hello")).to eq(:hello)
+    context do
+      let(:array) { [false, []] }
+      it { is_expected.to eq [] }
     end
 
-    it "should return nil" do
-      expect(Api::V3::DecisionReview::IntakeError.potential_error_code(26)).to eq(nil)
+    context do
+      let(:array) { [nil, [], :this_error] }
+      it { is_expected.to eq [] }
     end
 
-    klass = Struct.new(:error_code)
-    obj_with_string_error_code = klass.new("dog")
-    it "should return :dog" do
-      expect(Api::V3::DecisionReview::IntakeError.potential_error_code(obj_with_string_error_code)).to eq(:dog)
+    context do
+      let(:array) { [{}, Struct.new(:error_code).new(-1)] }
+      it { is_expected.to eq({}) }
     end
 
-    obj_with_false_error_code = klass.new(false)
-    it "should return nil" do
-      expect(Api::V3::DecisionReview::IntakeError.potential_error_code(obj_with_false_error_code)).to eq(nil)
+    context do
+      let(:array) { [nil, false, Struct.new(:error_code).new(-1)] }
+      it { is_expected.to eq(-1) }
     end
 
-    nested_obj = klass.new klass.new klass.new :russian_doll
-    it "should return nil" do
-      expect(Api::V3::DecisionReview::IntakeError.potential_error_code(nested_obj)).to eq(nil)
+    context "no error codes (nothing truthy)" do
+      let(:array) { [nil, nil, false] }
+      it { is_expected.to be false }
     end
   end
 
-  context ".find_first_potential_error_code" do
-    obj = Struct.new(:error_code).new("cat")
+  describe "::KNOWN_ERRORS" do
+    subject { described_class::KNOWN_ERRORS }
 
-    it "should return :hello" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.find_first_potential_error_code([:hello, obj])
-      ).to eq(:hello)
-    end
-
-    it "should return #{obj.error_code}" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.find_first_potential_error_code([777, obj])
-      ).to eq(obj.error_code.to_sym)
-    end
-
-    it "should return nil" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.find_first_potential_error_code([nil, false])
-      ).to eq(nil)
-    end
-  end
-
-  context ".from_first_potential_error_code_found" do
-    obj_with_invalid_code = Struct.new(:error_code).new("dog")
-    obj_with_valid_code = Struct.new(:error_code).new("intake_review_failed")
-    obj_that_returns_nil = Struct.new(:error_code).new(nil)
-
-    it "should be unknown" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found(
-          [obj_with_invalid_code, obj_with_valid_code]
-        ).code
-      ).to eq(:unknown_error)
-    end
-
-    it "should be :intake_review_failed" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found(
-          [obj_with_valid_code, obj_with_invalid_code]
-        ).code
-      ).to eq(:intake_review_failed)
-    end
-
-    it "should be :intake_review_failed" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([nil, obj_with_valid_code]).code
-      ).to eq(:intake_review_failed)
-    end
-
-    it "should be unknown" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([obj_that_returns_nil, nil]).code
-      ).to eq(:unknown_error)
-    end
-
-    it "should be unknown" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([nil, obj_that_returns_nil]).code
-      ).to eq(:unknown_error)
-    end
-
-    it "should be unknown" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found([nil, false]).code
-      ).to eq(:unknown_error)
-    end
-
-    it "should raise (array isn't supplied as argument)" do
-      expect do
-        Api::V3::DecisionReview::IntakeError.from_first_potential_error_code_found(nil).code
-      end.to raise_error(NoMethodError)
+    it { is_expected.to be_an Array }
+    it { is_expected.not_to be_empty }
+    it { is_expected.to all be_an Array }
+    it do
+      subject.all? do |error_array|
+        string = "    #{error_array.inspect}"
+        string = (string.length > 60) ? "#{string[0..60]}..." : string
+        puts string
+        puts "      has length 3"
+        expect(error_array.length).to be 3
+        puts "      first is an Integer"
+        expect(error_array.first).to be_an Integer
+        puts "      >= 400"
+        expect(error_array.first).to be >= 400
+        puts "      second is a Symbol"
+        expect(error_array.second).to be_a Symbol
+        puts "      third is a String"
+        expect(error_array.third).to be_a String
+      end
     end
   end
 
-  context ".new" do
-    obj_with_invalid_code = Struct.new(:error_code).new("cat")
-    obj_with_valid_code = Struct.new(:error_code).new("intake_start_failed")
+  describe "::UNKNOWN_ERROR" do
+    subject { described_class::UNKNOWN_ERROR }
 
-    it "should be unknown" do
-      expect(
-        Api::V3::DecisionReview::IntakeError.new(obj_with_invalid_code).as_json.values_at("status", "code", "title")
-      ).to eq(Api::V3::DecisionReview::IntakeError::UNKNOWN_ERROR.as_json)
+    it { is_expected.to be_an Array }
+    it { expect(subject.length).to be 3 }
+    it { expect(subject.first).to be_an Integer }
+    it { expect(subject.first).to be >= 400 }
+    it { expect(subject.second).to be_a Symbol }
+    it { expect(subject.third).to be_a String }
+  end
+
+  describe "::KNOWN_ERRORS_BY_CODE" do
+    subject { described_class::KNOWN_ERRORS_BY_CODE }
+
+    it { is_expected.to be_a Hash }
+    it { is_expected.not_to be_empty }
+    it do
+      subject.all? do |error_code, error_array|
+        puts "    #{error_code.inspect}"
+        puts "      is a Symbol"
+        expect(error_code).to be_a Symbol
+        string = "    #{error_array.inspect}"
+        string = (string.length > 60) ? "#{string[0..60]}..." : string
+        puts string
+        puts "      has length 3"
+        expect(error_array.length).to be 3
+        puts "      first is an Integer"
+        expect(error_array.first).to be_an Integer
+        puts "      >= 400"
+        expect(error_array.first).to be >= 400
+        puts "      second is a Symbol"
+        expect(error_array.second).to be_a Symbol
+        puts "      third is a String"
+        expect(error_array.third).to be_a String
+      end
+    end
+  end
+
+  context "known error" do
+    let(:error_array) { described_class::KNOWN_ERRORS.first }
+    let(:error_code) { error_array.second }
+    let(:intake_error) { described_class.new(error_code) }
+
+    describe("#status") { it { expect(intake_error.status).to eq error_array.first } }
+    describe("#code") { it { expect(intake_error.code).to eq error_code } }
+    describe("#title") { it { expect(intake_error.title).to eq error_array.third } }
+    describe("#error_code") { it { expect(intake_error.error_code).to eq error_code } }
+
+    context "unknown error" do
+      let(:error_code) { %w[h e l l o] }
+      let(:unknown_error) { described_class::UNKNOWN_ERROR }
+
+      describe("#status") { it { expect(intake_error.status).to eq unknown_error.first } }
+      describe("#code") { it { expect(intake_error.code).to eq unknown_error.second } }
+      describe("#title") { it { expect(intake_error.title).to eq unknown_error.third } }
+      describe("#error_code") { it { expect(intake_error.error_code).to eq error_code } }
+    end
+  end
+
+  describe "#detail" do
+    subject { described_class.new(error_code, detail).detail }
+
+    context "with a valid error code" do
+      let(:error_code) { described_class::KNOWN_ERRORS.first.second }
+
+      context "truthy detail" do
+        let(:detail) { "this" }
+        it { is_expected.to eq detail }
+      end
+
+      context "nil detail" do
+        let(:detail) { nil }
+        it { is_expected.to eq detail }
+      end
+
+      context "no detail passed in at all" do
+        subject { described_class.new(error_code).detail }
+        it { is_expected.to eq nil }
+      end
     end
 
-    it "should not raise" do
-      expect do
-        Api::V3::DecisionReview::IntakeError.new(obj_with_valid_code)
-      end.not_to raise_error
+    context "with an invalid error code" do
+      let(:error_code) { %w[h e l l o] }
+
+      context "truthy detail" do
+        let(:detail) { "this" }
+        it { is_expected.to eq detail }
+      end
+
+      context "nil detail" do
+        let(:detail) { nil }
+        it { is_expected.to eq detail }
+      end
+
+      context "no detail passed in at all" do
+        subject { described_class.new(error_code).detail }
+        it { is_expected.to eq nil }
+      end
+    end
+  end
+
+  describe "#passed_in_object" do
+    subject { described_class.new(object).passed_in_object }
+
+    context do
+      let(:object) { %w[h e l l o] }
+      it { is_expected.to be object }
+    end
+
+    context do
+      let(:object) { described_class::KNOWN_ERRORS.first.second }
+      it { is_expected.to be object }
+    end
+
+    context do
+      let(:object) { "hello" }
+      it { is_expected.to be object }
+    end
+
+    context do
+      let(:object) { Struct.new(:error_code).new("banana") }
+      it { is_expected.to be object }
+    end
+
+    context do
+      let(:object) { nil }
+      it { is_expected.to be object }
+    end
+  end
+
+  describe "#to_h" do
+    subject { described_class.new(error_code, detail).to_h }
+
+    context "unknown error" do
+      let(:error_code) { %w[h e l l o] }
+      let(:detail) { "Texas" }
+
+      let(:unknown_error) { described_class.new }
+
+      it do
+        is_expected.to eq(
+          status: unknown_error.status,
+          code: unknown_error.code,
+          title: unknown_error.title,
+          detail: detail
+        )
+      end
+
+      context "nil detail" do
+        let(:detail) { nil }
+        it do
+          is_expected.to eq(
+            status: unknown_error.status,
+            code: unknown_error.code,
+            title: unknown_error.title
+          )
+        end
+      end
+
+      context "no detail passed in at all" do
+        subject { described_class.new(error_code).to_h }
+        it do
+          is_expected.to eq(
+            status: unknown_error.status,
+            code: unknown_error.code,
+            title: unknown_error.title
+          )
+        end
+      end
+    end
+
+    context "known error" do
+      let(:error_code) { described_class::KNOWN_ERRORS.first.second }
+      let(:detail) { "Maine" }
+
+      let(:known_error) { described_class.new(error_code) }
+
+      it do
+        is_expected.to eq(
+          status: known_error.status,
+          code: known_error.code,
+          title: known_error.title,
+          detail: detail
+        )
+      end
+
+      context "nil detail" do
+        let(:detail) { nil }
+        it do
+          is_expected.to eq(
+            status: known_error.status,
+            code: known_error.code,
+            title: known_error.title
+          )
+        end
+      end
+
+      context "no detail passed in at all" do
+        subject { described_class.new(error_code).to_h }
+        it do
+          is_expected.to eq(
+            status: known_error.status,
+            code: known_error.code,
+            title: known_error.title
+          )
+        end
+      end
+    end
+  end
+
+  context do
+    let(:class_method) { described_class.error_code(val) }
+    let(:instance_method) { described_class.new(val).error_code }
+
+    let(:val) { :hello }
+    describe(".error_code") { it { expect(class_method).to eq val } }
+    describe("#error_code") { it { expect(instance_method).to eq val } }
+
+    context "not a symbol but can .to_sym" do
+      let(:val) { "banana" }
+      describe(".error_code") { it { expect(class_method).to eq val.to_sym } }
+      describe("#error_code") { it { expect(instance_method).to eq val.to_sym } }
+    end
+
+    context "not a symbol and CANNOT .to_sym" do
+      let(:val) { -1 }
+      describe(".error_code") { it { expect(class_method).to eq val } }
+      describe("#error_code") { it { expect(instance_method).to eq val } }
+    end
+
+    context "has an error_code method" do
+      let(:val) { Struct.new(:error_code).new(error_code) }
+
+      let(:error_code) { "strawberry" }
+      describe(".error_code") { it { expect(class_method).to eq error_code.to_sym } }
+      describe("#error_code") { it { expect(instance_method).to eq error_code.to_sym } }
+
+      context "error_code returns something that CANNOT .to_sym" do
+        let(:error_code) { -2 }
+        describe(".error_code") { it { expect(class_method).to eq error_code } }
+        describe("#error_code") { it { expect(instance_method).to eq error_code } }
+      end
+    end
+
+    context "nil" do
+      let(:val) { nil }
+      describe(".error_code") { it { expect(class_method).to eq val } }
+      describe("#error_code") { it { expect(instance_method).to eq val } }
     end
   end
 end

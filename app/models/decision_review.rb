@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DecisionReview < ApplicationRecord
+class DecisionReview < CaseflowRecord
   include CachedAttributes
   include Asyncable
 
@@ -17,7 +17,7 @@ class DecisionReview < ApplicationRecord
   has_one :intake, as: :detail
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
-    ratings_with_issues.map(&:serialize)
+    ratings_with_issues_or_decisions.map(&:serialize)
   end
 
   delegate :contestable_issues, to: :contestable_issue_generator
@@ -138,7 +138,7 @@ class DecisionReview < ApplicationRecord
   end
 
   # Creates claimants for automatically generated decision reviews
-  def create_claimants!(participant_id:, payee_code:)
+  def create_claimant!(participant_id:, payee_code:)
     remove_claimants!
     claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code)
   end
@@ -366,10 +366,10 @@ class DecisionReview < ApplicationRecord
     @active_matchable_legacy_appeals ||= matchable_legacy_appeals.select(&:active?)
   end
 
-  def ratings_with_issues
+  def ratings_with_issues_or_decisions
     return [] unless veteran
 
-    veteran.ratings.reject { |rating| rating.issues.empty? }
+    veteran.ratings.reject { |rating| rating.issues.empty? && rating.decisions.empty? }
 
     # return empty list when there are no ratings
   rescue Rating::BackfilledRatingError, Rating::LockedRatingError => error

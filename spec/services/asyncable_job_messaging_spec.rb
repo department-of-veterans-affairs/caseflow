@@ -6,7 +6,7 @@ describe AsyncableJobMessaging, :postgres do
     let(:job) { create(:higher_level_review, intake: create(:intake, user: owner)) }
     let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
     let(:text) { "contents of a new job note" }
-    let(:messaging) { AsyncableJobMessaging.new(job: job, current_user: user) }
+    let(:messaging) { AsyncableJobMessaging.new(job: job, user: user) }
 
     subject { messaging.add_job_note(text: text, send_to_intake_user: send_to_intake_user) }
 
@@ -55,7 +55,7 @@ describe AsyncableJobMessaging, :postgres do
     end
 
     context "when a failure first happens after 24 hours" do
-      it "sends a message to the job owner" do
+      it "sends a message to the job owner and adds a job note" do
         message_count = owner.messages.count
         Timecop.travel(Time.zone.now.tomorrow) do
           subject
@@ -65,6 +65,7 @@ describe AsyncableJobMessaging, :postgres do
         expect(owner.messages.last.text).to match(job.path)
         expect(owner.messages.last.text).not_to match("more details")
         expect(owner.messages.last.message_type).to eq "job_failing"
+        expect(job.job_notes.last.note).to match("unable to complete because of an error")
       end
     end
 
@@ -95,7 +96,7 @@ describe AsyncableJobMessaging, :postgres do
     end
 
     context "when a success happens after 24 hours of failure" do
-      it "sends a message to the job owner" do
+      it "sends a message to the job owner and adds a job note" do
         messaging.handle_job_failure
         Timecop.travel(Time.zone.now.tomorrow) do
           messaging.handle_job_failure
@@ -103,6 +104,7 @@ describe AsyncableJobMessaging, :postgres do
         end
         expect(owner.messages.last.text).to match("has successfully been processed")
         expect(owner.messages.last.text).to match(job.path)
+        expect(job.job_notes.last.note).to match("has successfully been processed")
       end
     end
   end
@@ -111,7 +113,7 @@ describe AsyncableJobMessaging, :postgres do
     let(:owner) { create(:default_user) }
     let(:job) { create(:higher_level_review, intake: create(:intake, user: owner)) }
     let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
-    let(:messaging) { AsyncableJobMessaging.new(job: job, current_user: user) }
+    let(:messaging) { AsyncableJobMessaging.new(job: job, user: user) }
 
     subject { messaging.add_job_cancellation_note(text: "some reason") }
 

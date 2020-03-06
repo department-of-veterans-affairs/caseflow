@@ -229,6 +229,16 @@ describe ColocatedTask, :all_dbs do
         expect(ColocatedTask.all.count).to eq 0
       end
     end
+
+    context "When trying to create an invalid task type" do
+      let(:type) { PreRoutingFoiaColocatedTask.name }
+      let(:params_list) { [{ assigned_by: attorney, type: type, appeal: appeal_1 }] }
+
+      it "throws an error" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError, /Cannot create task of type #{type}/)
+        expect(ColocatedTask.all.count).to eq 0
+      end
+    end
   end
 
   context ".update" do
@@ -355,7 +365,7 @@ describe ColocatedTask, :all_dbs do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
-        expect(colocated_admin_action.closed_at).to eq time6
+        expect(colocated_admin_action.closed_at).to be_nil
       end
     end
   end
@@ -528,6 +538,31 @@ describe ColocatedTask, :all_dbs do
 
       # Our AssociatedVacolsModels hold on to their VACOLS properties aggressively. Re-fetch the object to avoid that.
       expect(LegacyAppeal.find(appeal.id).location_code).to eq(initial_assigner.vacols_uniq_id)
+    end
+  end
+
+  describe "Reassign PreRoutingColocatedTask" do
+    let(:task_class) { PreRoutingFoiaColocatedTask }
+    let(:parent_task) do
+      PreRoutingFoiaColocatedTask.create(
+        assigned_by: attorney,
+        assigned_to: colocated_org,
+        parent: appeal_1.root_task,
+        appeal: appeal_1
+      )
+    end
+    let!(:child_task) { parent_task.children.first }
+    let(:reassign_params) { { assigned_to_type: User.name, assigned_to_id: Colocated.singleton.next_assignee.id } }
+
+    subject { child_task.reassign(reassign_params, attorney) }
+
+    it "allows the reassign" do
+      tasks = subject
+
+      expect(tasks.count).to eq 2
+      expect(child_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(parent_task.reload.children.open.first.assigned_to).not_to eq colocated_org.users.first
+      expect(parent_task.children.open.first.label).to eq task_class.label
     end
   end
 end

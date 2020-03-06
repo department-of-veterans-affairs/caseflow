@@ -11,6 +11,7 @@ FactoryBot.define do
         ro = evaluator.regional_office
         facility_id = RegionalOffice.facility_ids_for_ro(ro).first || "VACO"
         facility_address = Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[facility_id]
+        hearing_location.facility_id = facility_id
         hearing_location.name = Constants::REGIONAL_OFFICE_INFORMATION[ro]["label"]
         hearing_location.address = facility_address["address_1"]
         hearing_location.city = facility_address["city"]

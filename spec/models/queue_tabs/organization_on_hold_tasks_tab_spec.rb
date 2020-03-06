@@ -39,23 +39,22 @@ describe OrganizationOnHoldTasksTab, :postgres do
     subject { tab.tasks }
 
     context "when there are tasks assigned to the assignee and other folks" do
-      let!(:other_folks_tasks) { create_list(:generic_task, 11) }
-      let!(:assignee_active_tasks) { create_list(:generic_task, 4, :assigned, assigned_to: assignee) }
-      let!(:assignee_on_hold_tasks) { create_list(:generic_task, 3, :assigned, assigned_to: assignee) }
+      let!(:other_folks_tasks) { create_list(:ama_task, 11) }
+      let!(:assignee_active_tasks) { create_list(:ama_task, 4, :assigned, assigned_to: assignee) }
+      let!(:assignee_on_hold_tasks) { create_list(:ama_task, 3, :assigned, assigned_to: assignee) }
       let!(:on_hold_tasks_children) do
         assignee_on_hold_tasks.map do |task|
-          create_list(:generic_task, 2, parent_id: task.id)
-          task.update!(status: Constants.TASK_STATUSES.on_hold)
+          create(:ama_task, parent_id: task.id)
+          create(:timed_hold_task, parent_id: task.id)
+          task.descendants.each(&:on_hold!)
           task.children
         end.flatten
       end
 
-      before do
-        on_hold_tasks_children.each { |task| task.update!(status: Constants.TASK_STATUSES.on_hold) }
-      end
-
-      it "only returns the on hold tasks that are children of the assignee's on hold tasks" do
-        expect(subject).to match_array(on_hold_tasks_children)
+      it "returns on hold children of the assignee's on hold tasks and assignee tasks that are on a timed hold" do
+        expect(subject).to match_array(
+          [on_hold_tasks_children.select { |task| task.type.eql? Task.name }, assignee_on_hold_tasks].flatten
+        )
       end
 
       context "when the assignee is a user" do

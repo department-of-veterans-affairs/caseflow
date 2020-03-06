@@ -10,6 +10,7 @@ class ETL::User < ETL::Record
 
     private
 
+    # rubocop:disable Metrics/AbcSize
     def merge_original_attributes_to_target(original, target)
       target.created_at = original.created_at || original.vacols_user&.created_at
 
@@ -31,8 +32,11 @@ class ETL::User < ETL::Record
       target.slogid = original.vacols_user.slogid
       target.stafkey = original.vacols_user.stafkey
       target.svlj = original.vacols_user.svlj
+      target.stitle = original.vacols_user.stitle
+      target.smemgrp = original.vacols_user.smemgrp
 
       target
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UserQuota < ApplicationRecord
+class UserQuota < CaseflowRecord
   belongs_to :user
   belongs_to :team_quota
 

@@ -1,5 +1,5 @@
-import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
-import moment from 'moment';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
+import moment from 'moment-timezone';
 import _ from 'lodash';
 
 export const isPreviouslyScheduledHearing = (hearing) => (
@@ -76,3 +76,12 @@ export const filterPriorIssues = (issues) => (
     /* eslint-enable no-underscore-dangle */
   ))
 );
+
+export const VIRTUAL_HEARING_HOST = 'host';
+export const VIRTUAL_HEARING_GUEST = 'guest';
+
+export const virtualHearingRoleForUser = (user, hearing) => (
+  user.userCanAssignHearingSchedule || user.userId === hearing.judgeId ?
+    VIRTUAL_HEARING_HOST :
+    VIRTUAL_HEARING_GUEST
+)

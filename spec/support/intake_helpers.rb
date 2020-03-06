@@ -101,7 +101,7 @@ module IntakeHelpers
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      docket_type: "evidence_submission",
+      docket_type: Constants.AMA_DOCKETS.evidence_submission,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
@@ -204,6 +204,11 @@ module IntakeHelpers
     # find_all with 'minimum' will wait like find() does.
     find_all("label", text: description, minimum: 1).first.click
     fill_in("Notes", with: note) if note
+    safe_click ".add-issue"
+  end
+
+  def select_intake_no_match
+    find_all("label", text: /^No VACOLS issues were found/, minimum: 1).first.click
     safe_click ".add-issue"
   end
 

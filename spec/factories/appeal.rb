@@ -2,38 +2,20 @@
 
 FactoryBot.define do
   factory :appeal do
-    transient do
-      number_of_claimants { nil }
-    end
-
-    transient do
-      active_task_assigned_at { Time.zone.now }
-    end
-
-    sequence(:veteran_file_number, 500_000_000)
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
-
-    transient do
-      veteran do
-        Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
-      end
-    end
-
-    transient do
-      associated_judge do
-        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
-        JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
-
-        judge
-      end
-    end
-
-    uuid do
-      SecureRandom.uuid
-    end
-
     established_at { Time.zone.now }
     receipt_date { Time.zone.yesterday }
+    sequence(:veteran_file_number, 500_000_000)
+    uuid { SecureRandom.uuid }
+
+    after(:build) do |appeal, evaluator|
+      if evaluator.veteran
+        appeal.veteran_file_number = evaluator.veteran.file_number
+      end
+
+      Fakes::VBMSService.document_records ||= {}
+      Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
+    end
 
     after(:create) do |appeal, _evaluator|
       appeal.request_issues.each do |issue|
@@ -42,8 +24,79 @@ FactoryBot.define do
       end
     end
 
+    after(:create) do |appeal, evaluator|
+      if !appeal.claimants.empty?
+        appeal.claimants.each do |claimant|
+          claimant.decision_review = appeal
+          claimant.save
+        end
+      elsif evaluator.number_of_claimants
+        appeal.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: appeal)
+      else
+        appeal.claimants = [create(
+          :claimant,
+          participant_id: appeal.veteran.participant_id,
+          decision_review: appeal,
+          payee_code: "00"
+        )]
+      end
+    end
+
+    transient do
+      active_task_assigned_at { Time.zone.now }
+    end
+
+    transient do
+      associated_attorney do
+        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101) do |user|
+          user.full_name = "BVAAABSHIRE"
+        end
+        judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        attorney = User.find_or_create_by(css_id: "BVAEERDMAN", station_id: 101) do |user|
+          user.full_name = "BVAEERDMAN"
+        end
+        judge_team.add_user(attorney)
+        create(:staff, :attorney_role, sdomainid: attorney.css_id)
+
+        attorney
+      end
+    end
+
+    transient do
+      associated_judge do
+        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101) do |user|
+          user.full_name = "BVAAABSHIRE"
+        end
+        JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        create(:staff, :judge_role, sdomainid: judge.css_id)
+
+        judge
+      end
+    end
+
+    transient do
+      documents { [] }
+    end
+
+    transient do
+      number_of_claimants { nil }
+    end
+
+    transient do
+      veteran do
+        Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
+      end
+    end
+
     trait :hearing_docket do
       docket_type { Constants.AMA_DOCKETS.hearing }
+    end
+
+    trait :outcoded do
+      after(:create) do |appeal, _evaluator|
+        appeal.create_tasks_on_intake_success!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
     end
 
     trait :advanced_on_docket_due_to_age do
@@ -84,12 +137,6 @@ FactoryBot.define do
       end
     end
 
-    trait :with_post_intake_tasks do
-      after(:create) do |appeal, _evaluator|
-        appeal.create_tasks_on_intake_success!
-      end
-    end
-
     trait :with_schedule_hearing_tasks do
       after(:create) do |appeal, _evaluator|
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
@@ -97,22 +144,33 @@ FactoryBot.define do
       end
     end
 
-    trait :ready_for_distribution do
+    ## Appeal with a realistic task tree
+    ## Appeal has finished intake
+    trait :with_post_intake_tasks do
       after(:create) do |appeal, _evaluator|
         appeal.create_tasks_on_intake_success!
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is ready for distribution by the ACD
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets
+    trait :ready_for_distribution do
+      with_post_intake_tasks
+      after(:create) do |appeal, _evaluator|
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
         distribution_tasks.each(&:ready_for_distribution!)
       end
     end
 
-    # Currently only creates realistic task trees for direct_review docket
-    # Hearing and Evidence dockets have open branches
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to a Judge for a decision
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets. Strongly suggest you provide a judge.
     trait :assigned_to_judge do
+      ready_for_distribution
       after(:create) do |appeal, evaluator|
-        appeal.create_tasks_on_intake_success!
-        distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
-        distribution_tasks.each(&:ready_for_distribution!)
-
         JudgeAssignTask.create!(appeal: appeal,
                                 parent: appeal.root_task,
                                 assigned_at: evaluator.active_task_assigned_at,
@@ -121,41 +179,44 @@ FactoryBot.define do
       end
     end
 
-    trait :outcoded do
-      after(:create) do |appeal, _evaluator|
-        appeal.create_tasks_on_intake_success!
-        appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to an Attorney for decision drafting
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets. Strongly suggest you provide a judge and attorney.
+    trait :at_attorney_drafting do
+      assigned_to_judge
+      after(:create) do |appeal, evaluator|
+        judge_assign_task = appeal.tasks.where(type: JudgeAssignTask.name).first
+        AttorneyTaskCreator.new(
+          judge_assign_task,
+          appeal: judge_assign_task.appeal,
+          assigned_to: evaluator.associated_attorney,
+          assigned_by: judge_assign_task.assigned_to
+        ).call
       end
     end
 
-    transient do
-      documents { [] }
-    end
-
-    after(:build) do |appeal, evaluator|
-      if evaluator.veteran
-        appeal.veteran_file_number = evaluator.veteran.file_number
-      end
-
-      Fakes::VBMSService.document_records ||= {}
-      Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
-    end
-
-    after(:create) do |appeal, evaluator|
-      if !appeal.claimants.empty?
-        appeal.claimants.each do |claimant|
-          claimant.decision_review = appeal
-          claimant.save
-        end
-      elsif evaluator.number_of_claimants
-        appeal.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: appeal)
-      else
-        appeal.claimants = [create(
-          :claimant,
-          participant_id: appeal.veteran.participant_id,
-          decision_review: appeal,
-          payee_code: "00"
-        )]
+    trait :with_straight_vacate_stream do
+      after(:create) do |appeal, evaluator|
+        mail_task = create(
+          :vacate_motion_mail_task,
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: evaluator.associated_judge
+        )
+        addr_task = create(
+          :judge_address_motion_to_vacate_task,
+          appeal: appeal,
+          parent: mail_task,
+          assigned_to: evaluator.associated_judge
+        )
+        params = {
+          disposition: "granted",
+          vacate_type: "straight_vacate",
+          instructions: "some instructions",
+          assigned_to_id: evaluator.associated_attorney.id
+        }
+        PostDecisionMotionUpdater.new(addr_task, params).process
       end
     end
   end

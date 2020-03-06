@@ -119,7 +119,7 @@ describe AsyncableJobsController, :postgres, type: :controller do
         create(:decision_document, submitted_at: 7.days.ago, attempted_at: 7.days.ago)
       end
       let!(:task_timer) do
-        task = create(:generic_task)
+        task = create(:ama_task)
         TaskTimer.create!(task: task, submitted_at: 7.days.ago, attempted_at: 7.days.ago)
       end
 

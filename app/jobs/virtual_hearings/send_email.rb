@@ -27,23 +27,30 @@ class VirtualHearings::SendEmail
     virtual_hearing.save!
   end
 
+  private
+
   def send_email(recipient)
-    if type == :confirmation
+    case type.to_s
+    when "confirmation"
       VirtualHearingMailer.confirmation(
         mail_recipient: mail_recipients[recipient],
         virtual_hearing: virtual_hearing
       ).deliver_now
-    elsif type == :cancellation
+    when "cancellation"
       VirtualHearingMailer.cancellation(
         mail_recipient: mail_recipients[recipient],
         virtual_hearing: virtual_hearing
       ).deliver_now
-    elsif type == :updated_time_confirmation
+    when "updated_time_confirmation"
       VirtualHearingMailer.updated_time_confirmation(
         mail_recipient: mail_recipients[recipient],
         virtual_hearing: virtual_hearing
       ).deliver_now
+    else
+      fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
+
+    Rails.logger.info("Sent #{type} email to #{recipient}!")
   end
 
   def mail_recipients
@@ -51,17 +58,17 @@ class VirtualHearings::SendEmail
       veteran: MailRecipient.new(
         name: virtual_hearing.hearing.appeal.veteran&.first_name,
         email: virtual_hearing.veteran_email,
-        title: VirtualHearingMailer::RECIPIENT_TITLES[:veteran]
+        title: MailRecipient::RECIPIENT_TITLES[:veteran]
       ),
       judge: MailRecipient.new(
         name: virtual_hearing.hearing.judge&.full_name,
         email: virtual_hearing.judge_email,
-        title: VirtualHearingMailer::RECIPIENT_TITLES[:judge]
+        title: MailRecipient::RECIPIENT_TITLES[:judge]
       ),
       representative: MailRecipient.new(
         name: virtual_hearing.hearing.appeal.representative_name,
         email: virtual_hearing.representative_email,
-        title: VirtualHearingMailer::RECIPIENT_TITLES[:representative]
+        title: MailRecipient::RECIPIENT_TITLES[:representative]
       )
     }
   end

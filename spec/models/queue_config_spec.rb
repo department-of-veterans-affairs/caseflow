@@ -62,7 +62,7 @@ describe QueueConfig, :postgres do
         let(:assignee) { user }
 
         it "is formatted as expected" do
-          expect(subject[:table_title]).to eq(COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE)
+          expect(subject[:table_title]).to eq(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
         end
       end
     end
@@ -118,14 +118,14 @@ describe QueueConfig, :postgres do
         end
 
         context "when the organization uses the task pages API and has tasks assigned to it" do
-          let!(:unassigned_tasks) { create_list(:generic_task, 4, assigned_to: assignee) }
+          let!(:unassigned_tasks) { create_list(:ama_task, 4, assigned_to: assignee) }
           let!(:assigned_tasks) do
-            create_list(:generic_task, 2, parent: create(:generic_task, assigned_to: assignee))
+            create_list(:ama_task, 2, parent: create(:ama_task, assigned_to: assignee))
           end
           let!(:on_hold_tasks) do
-            create_list(:generic_task, 2, :on_hold, parent: create(:generic_task, assigned_to: assignee))
+            create_list(:ama_task, 2, :on_hold, parent: create(:ama_task, assigned_to: assignee))
           end
-          let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: assignee) }
+          let!(:completed_tasks) { create_list(:ama_task, 7, :completed, assigned_to: assignee) }
 
           before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
 
@@ -230,9 +230,9 @@ describe QueueConfig, :postgres do
         end
 
         context "when the user uses the task pages API and has tasks assigned to them" do
-          let!(:assigned_tasks) { create_list(:generic_task, 2, assigned_to: assignee) }
-          let!(:on_hold_tasks) { create_list(:generic_task, 5, :on_hold, assigned_to: assignee) }
-          let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: assignee) }
+          let!(:assigned_tasks) { create_list(:ama_task, 2, assigned_to: assignee) }
+          let!(:on_hold_tasks) { create_list(:ama_task, 5, :on_hold, assigned_to: assignee) }
+          let!(:completed_tasks) { create_list(:ama_task, 7, :completed, assigned_to: assignee) }
 
           before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
 
@@ -256,8 +256,8 @@ describe QueueConfig, :postgres do
           it "displays the correct descriptions for the tabs" do
             tabs = subject
 
-            expect(tabs[0][:description]).to eq(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION)
-            expect(tabs[1][:description]).to eq(COPY::COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+            expect(tabs[0][:description]).to eq(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
+            expect(tabs[1][:description]).to eq(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
             expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
           end
         end

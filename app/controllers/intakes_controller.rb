@@ -88,7 +88,8 @@ class IntakesController < ApplicationController
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
         editContentionText: FeatureToggle.enabled?(:edit_contention_text, user: current_user),
-        unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user)
+        unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user),
+        verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user)
       }
     }
   rescue StandardError => error

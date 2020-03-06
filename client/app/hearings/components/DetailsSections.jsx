@@ -20,7 +20,7 @@ class DetailsSections extends React.Component {
   render () {
     const {
       transcription, hearing, disabled, updateHearing, updateTranscription, updateVirtualHearing,
-      isLegacy, virtualHearing, user, requestType, openVirtualHearingModal
+      isLegacy, virtualHearing, user, requestType, openVirtualHearingModal, isVirtual, wasVirtual
     } = this.props;
 
     return (
@@ -31,12 +31,14 @@ class DetailsSections extends React.Component {
           requestType={requestType}
           isLegacy={isLegacy}
           hearing={hearing}
+          scheduledForIsPast={hearing.scheduledForIsPast}
           update={updateHearing}
           enableVirtualHearings={user.userCanScheduleVirtualHearings && requestType !== 'Central'}
           virtualHearing={virtualHearing}
           updateVirtualHearing={updateVirtualHearing}
           openVirtualHearingModal={openVirtualHearingModal}
-          isVirtual={this.props.isVirtual} />
+          isVirtual={isVirtual}
+          wasVirtual={wasVirtual} />
         <div className="cf-help-divider" />
         {!isLegacy &&
           <div>
@@ -83,7 +85,8 @@ DetailsSections.propTypes = {
     userId: PropTypes.number,
     userCanScheduleVirtualHearings: PropTypes.bool
   }),
-  isVirtual: PropTypes.bool
+  isVirtual: PropTypes.bool,
+  wasVirtual: PropTypes.bool
 };
 
 // These props are set through Redux

@@ -77,7 +77,7 @@ RSpec.feature "User organization", :postgres do
         page.assert_selector("button", text: COPY::USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 1)
         expect(organization.user_is_admin?(other_org_user)).to eq(false)
 
-        click_on("Make-user-admin-#{other_org_user.id}")
+        click_on("Add-team-admin-#{other_org_user.id}")
 
         # Now that both members of the organization are admins we should see this text twice.
         page.assert_selector("button", text: COPY::USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 2)

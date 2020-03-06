@@ -8,7 +8,7 @@ import {
   RETURN_TO_LIT_SUPPORT_MODAL_INSTRUCTIONS_LABEL,
   RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS,
   MODAL_CANCEL_BUTTON
-} from '../../../COPY.json';
+} from '../../../COPY';
 import TextareaField from '../../components/TextareaField';
 import StringUtil from '../../util/StringUtil';
 

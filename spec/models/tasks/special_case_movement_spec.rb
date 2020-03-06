@@ -63,7 +63,7 @@ describe SpecialCaseMovementTask, :postgres do
         let(:appeal) do
           create(:appeal,
                  :with_post_intake_tasks,
-                 docket_type: "evidence_submission")
+                 docket_type: Constants.AMA_DOCKETS.evidence_submission)
         end
         let(:dist_task) { appeal.tasks.open.where(type: DistributionTask.name).first }
 

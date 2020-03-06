@@ -10,19 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191217202614) do
+ActiveRecord::Schema.define(version: 2020_03_03_223155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "appeals", force: :cascade, comment: "Denormalized BVA NODs" do |t|
+  create_table "appeals", comment: "Denormalized BVA NODs", force: :cascade do |t|
     t.boolean "active_appeal", null: false, comment: "Calculated based on BVA status"
+    t.boolean "aod_due_to_dob", default: false, comment: "Calculated every day based on Claimant DOB"
     t.boolean "aod_granted", default: false, null: false, comment: "advance_on_docket_motions.granted"
     t.string "aod_reason", limit: 50, comment: "advance_on_docket_motions.reason"
     t.bigint "aod_user_id", comment: "advance_on_docket_motions.user_id"
     t.datetime "appeal_created_at", null: false, comment: "appeals.created_at"
     t.bigint "appeal_id", null: false, comment: "ID of the Appeal"
     t.datetime "appeal_updated_at", null: false, comment: "appeals.updated_at"
+    t.date "claimant_dob", comment: "people.date_of_birth"
     t.string "claimant_first_name", comment: "people.first_name"
     t.bigint "claimant_id", comment: "claimants.id"
     t.string "claimant_last_name", comment: "people.last_name"
@@ -55,11 +57,13 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.string "veteran_name_suffix", comment: "veterans.name_suffix"
     t.string "veteran_participant_id", limit: 20, comment: "veterans.participant_id"
     t.index ["active_appeal"], name: "index_appeals_on_active_appeal"
+    t.index ["aod_due_to_dob"], name: "index_appeals_on_aod_due_to_dob"
     t.index ["aod_granted"], name: "index_appeals_on_aod_granted"
     t.index ["aod_user_id"], name: "index_appeals_on_aod_user_id"
     t.index ["appeal_created_at"], name: "index_appeals_on_appeal_created_at"
     t.index ["appeal_id"], name: "index_appeals_on_appeal_id"
     t.index ["appeal_updated_at"], name: "index_appeals_on_appeal_updated_at"
+    t.index ["claimant_dob"], name: "index_appeals_on_claimant_dob"
     t.index ["claimant_id"], name: "index_appeals_on_claimant_id"
     t.index ["claimant_participant_id"], name: "index_appeals_on_claimant_participant_id"
     t.index ["claimant_person_id"], name: "index_appeals_on_claimant_person_id"
@@ -77,7 +81,7 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.index ["veteran_participant_id"], name: "index_appeals_on_veteran_participant_id"
   end
 
-  create_table "attorney_case_reviews", force: :cascade, comment: "Denormalized attorney_case_reviews" do |t|
+  create_table "attorney_case_reviews", comment: "Denormalized attorney_case_reviews", force: :cascade do |t|
     t.bigint "appeal_id", null: false, comment: "tasks.appeal_id"
     t.string "appeal_type", null: false, comment: "tasks.appeal_type"
     t.string "attorney_css_id", limit: 20, null: false, comment: "users.css_id"
@@ -115,7 +119,7 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.index ["vacols_id"], name: "index_attorney_case_reviews_on_vacols_id"
   end
 
-  create_table "decision_issues", force: :cascade, comment: "Copy of decision_issues" do |t|
+  create_table "decision_issues", comment: "Copy of decision_issues", force: :cascade do |t|
     t.string "benefit_type", limit: 20, comment: "decision_issues.benefit_type"
     t.date "caseflow_decision_date", comment: "decision_issues.caseflow_decision_date"
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
@@ -145,7 +149,43 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
 
-  create_table "organizations", force: :cascade, comment: "Copy of Organizations table" do |t|
+  create_table "etl_build_tables", comment: "ETL table metadata, one for each table per-build", force: :cascade do |t|
+    t.string "comments", comment: "Ad hoc comments (e.g. error message)"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.bigint "etl_build_id", null: false, comment: "PK of the etl_build"
+    t.datetime "finished_at", comment: "Build end time"
+    t.bigint "rows_deleted", comment: "Number of rows deleted"
+    t.bigint "rows_inserted", comment: "Number of new rows"
+    t.bigint "rows_rejected", comment: "Number of rows skipped"
+    t.bigint "rows_updated", comment: "Number of rows changed"
+    t.datetime "started_at", comment: "Build start time (usually identical to created_at)"
+    t.string "status", comment: "Enum value: running, complete, error"
+    t.string "table_name", comment: "Name of the ETL table"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["created_at"], name: "index_etl_build_tables_on_created_at"
+    t.index ["etl_build_id"], name: "index_etl_build_tables_on_etl_build_id"
+    t.index ["finished_at"], name: "index_etl_build_tables_on_finished_at"
+    t.index ["started_at"], name: "index_etl_build_tables_on_started_at"
+    t.index ["status"], name: "index_etl_build_tables_on_status"
+    t.index ["table_name"], name: "index_etl_build_tables_on_table_name"
+    t.index ["updated_at"], name: "index_etl_build_tables_on_updated_at"
+  end
+
+  create_table "etl_builds", comment: "ETL build metadata for each job", force: :cascade do |t|
+    t.string "comments", comment: "Ad hoc comments (e.g. error message)"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.datetime "finished_at", comment: "Build end time"
+    t.datetime "started_at", comment: "Build start time (usually identical to created_at)"
+    t.string "status", comment: "Enum value: running, complete, error"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["created_at"], name: "index_etl_builds_on_created_at"
+    t.index ["finished_at"], name: "index_etl_builds_on_finished_at"
+    t.index ["started_at"], name: "index_etl_builds_on_started_at"
+    t.index ["status"], name: "index_etl_builds_on_status"
+    t.index ["updated_at"], name: "index_etl_builds_on_updated_at"
+  end
+
+  create_table "organizations", comment: "Copy of Organizations table", force: :cascade do |t|
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
@@ -161,7 +201,7 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.index ["url"], name: "index_organizations_on_url", unique: true
   end
 
-  create_table "organizations_users", force: :cascade, comment: "Copy of OrganizationUsers table" do |t|
+  create_table "organizations_users", comment: "Copy of OrganizationUsers table", force: :cascade do |t|
     t.boolean "admin", default: false
     t.datetime "created_at"
     t.integer "organization_id"
@@ -173,9 +213,10 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
 
-  create_table "people", force: :cascade, comment: "Copy of People table" do |t|
+  create_table "people", comment: "Copy of People table", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth"
+    t.string "email_address", comment: "Person email address, cached from BGS"
     t.string "first_name", limit: 50, comment: "Person first name, cached from BGS"
     t.string "last_name", limit: 50, comment: "Person last name, cached from BGS"
     t.string "middle_name", limit: 50, comment: "Person middle name, cached from BGS"
@@ -187,7 +228,7 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.index ["updated_at"], name: "index_people_on_updated_at"
   end
 
-  create_table "tasks", force: :cascade, comment: "Denormalized Tasks with User/Organization" do |t|
+  create_table "tasks", comment: "Denormalized Tasks with User/Organization", force: :cascade do |t|
     t.bigint "appeal_id", null: false, comment: "tasks.appeal_id"
     t.string "appeal_type", null: false, comment: "tasks.appeal_type"
     t.datetime "assigned_at", comment: "tasks.assigned_at"
@@ -224,7 +265,7 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.index ["updated_at"], name: "index_tasks_on_updated_at"
   end
 
-  create_table "users", force: :cascade, comment: "Combined Caseflow/VACOLS user lookups" do |t|
+  create_table "users", comment: "Combined Caseflow/VACOLS user lookups", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.string "css_id", limit: 20, null: false, comment: "CSEM (Active Directory) username"
     t.string "email", limit: 255, comment: "CSEM email"
@@ -235,10 +276,12 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.string "sattyid", limit: 20
     t.string "selected_regional_office", limit: 255, comment: "CSEM regional office"
     t.string "slogid", limit: 20
+    t.string "smemgrp", limit: 8, comment: "VACOLS cached_user_attributes.smemgrp"
     t.string "stafkey", limit: 20
     t.string "station_id", limit: 20, null: false, comment: "CSEM station"
     t.string "status", limit: 20, default: "active", comment: "Whether or not the user is an active user of caseflow"
     t.datetime "status_updated_at", comment: "When the user's status was last updated"
+    t.string "stitle", limit: 16, comment: "VACOLS cached_user_attributes.stitle"
     t.string "svlj", limit: 1
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.integer "user_id", null: false, comment: "ID of the User"
@@ -246,6 +289,7 @@ ActiveRecord::Schema.define(version: 20191217202614) do
     t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["status"], name: "index_users_on_status"
     t.index ["updated_at"], name: "index_users_on_updated_at"
+    t.index ["user_id"], name: "index_users_on_user_id"
   end
 
 end

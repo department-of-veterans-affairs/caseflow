@@ -3,6 +3,10 @@
 # transformed Appeal model, with associations "flattened" for reporting.
 
 class ETL::Appeal < ETL::Record
+  scope :active, -> { where(active_appeal: true) }
+
+  has_many :tasks, -> { where(appeal_type: "Appeal") }, class_name: "ETL::Task", primary_key: "appeal_id"
+
   class << self
     def origin_primary_key
       :appeal_id
@@ -12,6 +16,7 @@ class ETL::Appeal < ETL::Record
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
     def merge_original_attributes_to_target(original, target)
       # memoize to save SQL calls
       veteran = original.veteran
@@ -20,14 +25,16 @@ class ETL::Appeal < ETL::Record
       aod = person&.advance_on_docket_motions&.last
 
       # avoid BGS call on sync for nil values
-      person_attributes = person&.attributes || {}
-      veteran_person_attributes = veteran&.person&.attributes || {}
+      person_attributes = (person&.attributes || {}).symbolize_keys
+      veteran_person_attributes = (veteran&.person&.attributes || {}).symbolize_keys
 
       target.appeal_id = original.id
       target.active_appeal = original.active?
+      target.aod_due_to_dob = person&.advanced_on_docket_based_on_age? || false
       target.aod_granted = aod&.granted? || false
       target.aod_reason = aod&.reason
       target.aod_user_id = aod&.user_id
+      target.claimant_dob = person_attributes[:date_of_birth]
       target.claimant_first_name = person_attributes[:first_name]
       target.claimant_id = claimant&.id
       target.claimant_last_name = person_attributes[:last_name]
@@ -64,5 +71,6 @@ class ETL::Appeal < ETL::Record
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 end

@@ -122,7 +122,7 @@ feature "Appeal Intake", :all_dbs do
 
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date.to_date).to eq(receipt_date.to_date)
-    expect(appeal.docket_type).to eq("evidence_submission")
+    expect(appeal.docket_type).to eq(Constants.AMA_DOCKETS.evidence_submission)
     expect(appeal.legacy_opt_in_approved).to eq(false)
     expect(appeal.claimant_participant_id).to eq(
       intake.veteran.participant_id
@@ -148,6 +148,7 @@ feature "Appeal Intake", :all_dbs do
     click_intake_finish
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been submitted.")
+    expect(page).not_to have_content("It may take up to 24 hours for the claim to establish")
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
     expect(page).to have_content("Issue: Active Duty Adjustments - Description for Active Duty Adjustments")
 
@@ -212,7 +213,7 @@ feature "Appeal Intake", :all_dbs do
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      docket_type: "evidence_submission",
+      docket_type: Constants.AMA_DOCKETS.evidence_submission,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
@@ -745,7 +746,7 @@ feature "Appeal Intake", :all_dbs do
         # Expect untimely exemption modal for untimely issue
         click_intake_add_issue
         add_intake_rating_issue("Untimely rating issue 1")
-        add_intake_rating_issue("None of these match")
+        select_intake_no_match
         add_untimely_exemption_response("Yes")
 
         expect(page).to have_content("Untimely rating issue 1")
@@ -761,7 +762,7 @@ feature "Appeal Intake", :all_dbs do
 
         expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
-        add_intake_rating_issue("None of these match")
+        select_intake_no_match
 
         expect(page).to have_content("Description for Active Duty Adjustments")
 

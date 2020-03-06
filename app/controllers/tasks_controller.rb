@@ -3,6 +3,7 @@
 class TasksController < ApplicationController
   include Errors
 
+  before_action :verify_view_access, only: [:index]
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
@@ -152,6 +153,16 @@ class TasksController < ApplicationController
     QueueConfig.new(assignee: user).to_hash
   end
 
+  def verify_view_access
+    return true unless FeatureToggle.enabled?(:scm_view_judge_assign_queue)
+
+    return true if user == current_user
+
+    if !SpecialCaseMovementTeam.singleton.user_has_access?(current_user)
+      fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by members of the Case Movement Team."
+    end
+  end
+
   def verify_task_access
     if current_user.vso_employee? && !task_classes.all?(InformalHearingPresentationTask.name.to_sym)
       fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
@@ -192,8 +203,8 @@ class TasksController < ApplicationController
   def invalid_type_error
     render json: {
       "errors": [
-        "title": "Invalid Task Type Error",
-        "detail": "Task type is invalid, valid types: #{TASK_CLASSES_LOOKUP.keys}"
+        "title": "Invalid Task Type Error: #{(task_classes - valid_task_classes.keys).join(',')}",
+        "detail": "Should be one of the #{TASK_CLASSES_LOOKUP.count} valid types."
       ]
     }, status: :bad_request
   end

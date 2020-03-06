@@ -3,9 +3,7 @@ module.exports = {
     browser: true,
     mocha: true
   },
-  extends: [
-    '@department-of-veterans-affairs/eslint-config-appeals'
-  ],
+  extends: ['@department-of-veterans-affairs/eslint-config-appeals'],
   rules: {
     'prefer-const': 'off',
     'max-statements': 'off',
@@ -14,7 +12,12 @@ module.exports = {
   },
   settings: {
     react: {
-      version: '16.2'
+      version: '16.12'
+    },
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.json']
+      }
     }
   },
   globals: {

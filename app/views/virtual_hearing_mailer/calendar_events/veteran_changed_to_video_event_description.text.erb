@@ -1,0 +1,8 @@
+You're scheduled for a hearing with a Veterans Law Judge of the Board of Veterans' Appeals. You will arrive at <%= hearing.hearing_location.name %> and the Judge will meet with you via video conference.
+
+Date and Time
+<%= formatted_date_time_for_zone(time_zone, start_time_utc) %>
+
+Location
+<%= hearing.hearing_location.name %>
+<%= hearing.hearing_location.address %>

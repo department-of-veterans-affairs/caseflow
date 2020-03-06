@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Search", :all_dbs do
+feature "Search", :all_dbs do
   let(:attorney_user) { create(:user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
@@ -39,20 +39,6 @@ RSpec.feature "Search", :all_dbs do
         click_on "button-clear-search"
 
         expect(page).to_not have_field("search", with: invalid_veteran_id)
-      end
-    end
-
-    context "when using AppealFinder" do
-      it "returns results upon valid input" do
-        res = AppealFinder.find_appeals_with_file_numbers(appeal.veteran_file_number)
-
-        expect(res.first.id).to eq(appeal.id)
-      end
-
-      it "returns nil when input is invalid format" do
-        res = AppealFinder.find_appeals_with_file_numbers(invalid_veteran_id)
-
-        expect(res).to be_empty
       end
     end
 
@@ -440,37 +426,6 @@ RSpec.feature "Search", :all_dbs do
       visit "/search"
       fill_in "searchBarEmptyList", with: search_term
       click_on "Search"
-    end
-
-    context "when using AppealFinder" do
-      it "returns results upon valid input" do
-        res = AppealFinder.find_appeal_by_docket_number(appeal.docket_number)
-
-        expect(res.id).to eq(appeal.id)
-      end
-
-      it "returns nil when docket number is invalid format" do
-        res = AppealFinder.find_appeal_by_docket_number(invalid_docket_number)
-
-        expect(res).to be_nil
-      end
-
-      it "returns nil when docket number can't be found" do
-        res = AppealFinder.find_appeal_by_docket_number("012345-000")
-
-        expect(res).to be_nil
-      end
-
-      it "hides results for VSO user w/o access" do
-        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
-        User.authenticate!(user: vso_user)
-        res = AppealFinder.new(user: vso_user).send(
-          :filter_appeals_for_vso_user,
-          appeals: Array.wrap(appeal),
-          veterans: Array.wrap(appeal.veteran)
-        )
-        expect(res).to be_empty
-      end
     end
 
     context "when using invalid docket number" do

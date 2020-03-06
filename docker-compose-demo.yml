@@ -30,7 +30,7 @@ services:
       - vacols-db-development
 
   appeals-postgres:
-    image: postgres:9.5
+    image: postgres:9.6
     container_name: appeals-db
     ports:
       - "5432:5432"
@@ -56,15 +56,25 @@ services:
     command: /bin/bash -c "./docker-bi"
 
   appeals-web:
-    image: nginx
+    image: linuxserver/letsencrypt
+    container_name: nginx-letsencrypt
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - TZ=America/New_York
+      - URL=caseflowdemo.com
+      - SUBDOMAINS=www,
+      - VALIDATION=http
     volumes:
-      - ${PWD}/local/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
-      - ${PWD}/local/nginx/conf.d:/etc/nginx/conf.d
+      - ./local/nginx/config:/config
     ports:
-      - "80:80"
+      - 80:80
+      - 443:443
     depends_on:
       - appeals-app
-    command: /bin/bash -c "exec nginx -g 'daemon off;'"
+    restart: unless-stopped
 
 volumes:
   postgresdata:

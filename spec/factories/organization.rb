@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :organization do
+    type { Organization.name }
+
     sequence(:name) { |n| "ORG_#{n}" }
     sequence(:url) { |n| "org_queue_#{n}" }
 

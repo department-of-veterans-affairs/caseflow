@@ -36,7 +36,7 @@ import {
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -290,6 +290,7 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            editPage={editPage}
             onComplete={() => {
               this.setState({ addingIssue: false });
             }}
@@ -433,7 +434,8 @@ export const EditAddIssuesPage = connect(
         withdrawIssue,
         setIssueWithdrawalDate,
         correctIssue,
-        undoCorrection
+        undoCorrection,
+        toggleUnidentifiedIssuesModal
       },
       dispatch
     )

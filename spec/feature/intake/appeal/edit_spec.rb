@@ -40,7 +40,7 @@ feature "Appeal Edit issues", :all_dbs do
     create(:appeal,
            veteran_file_number: veteran.file_number,
            receipt_date: receipt_date,
-           docket_type: "evidence_submission",
+           docket_type: Constants.AMA_DOCKETS.evidence_submission,
            veteran_is_not_claimant: false,
            legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
   end

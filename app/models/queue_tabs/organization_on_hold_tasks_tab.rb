@@ -16,7 +16,7 @@ class OrganizationOnHoldTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.on_hold.where(parent: on_hold_tasks)
+    on_hold_task_children_and_timed_hold_parents
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -33,4 +33,10 @@ class OrganizationOnHoldTasksTab < QueueTab
     ].compact
   end
   # rubocop:enable Metrics/AbcSize
+
+  private
+
+  def on_hold_task_children
+    super.on_hold
+  end
 end
