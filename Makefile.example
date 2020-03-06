@@ -132,7 +132,7 @@ fresh:  ## https://github.com/imsky/git-fresh
 
 reset:  ## Resets databases
 	DB=etl bundle exec rake db:drop db:create db:schema:load
-	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
+	bundle exec rake db:drop db:create db:schema:load local:vacols:seed spec:setup_vacols db:seed
 	bundle exec rails runner scripts/enable_features_dev.rb
 
 bundle-install:  ## Installs ruby dependencies
