@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  # By default, this task is created in a new Legacy appeal
   factory :task do
     assigned_at { rand(30..35).days.ago }
     association :assigned_by, factory: :user
@@ -13,12 +14,12 @@ FactoryBot.define do
     after(:create) do |task, _evaluator|
       if task.parent
         if task.parent&.appeal_id != task.appeal_id
-          fail "Warning: Parent task #{task.parent&.id} is in a different appeal than child task #{task.id}"
+          fail "Parent task #{task.parent&.id} is in a different appeal than child task #{task.id}"
         end
 
         # appeal_id may happen to be the same in the test env, so check the appeal_type as well
         if task.parent&.appeal_type != task.appeal_type
-          fail "Warning: Parent task #{task.parent&.id} has different appeal_type #{task.parent&.appeal_type} " \
+          fail "Parent task #{task.parent&.id} has different appeal_type #{task.parent&.appeal_type} " \
                "than child task's appeal_type #{task.id} #{task.appeal_type}"
         end
       end
@@ -74,6 +75,7 @@ FactoryBot.define do
       end
     end
 
+    # Colocated tasks for Legacy appeals
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
       # don't expect to have a parent for LegacyAppeals
       parent { nil }
@@ -253,6 +255,7 @@ FactoryBot.define do
       end
     end
 
+    # Tasks for AMA appeals
     factory :ama_task, class: Task do
       appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
 
