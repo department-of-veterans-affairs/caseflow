@@ -6,7 +6,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
   let!(:appeal) do
-    create(:appeal, receipt_date: receipt_date)
+    create(:appeal, :outcoded, receipt_date: receipt_date)
   end
   let!(:decision_issues) do
     3.times do |idx|
@@ -54,6 +54,21 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    context "When the appeal is not outcoded" do
+      let!(:appeal) do
+        create(:appeal, receipt_date: receipt_date)
+      end
+
+      it "does not show option to create a VacateMotionMailTask" do
+        User.authenticate!(user: mail_user)
+        visit "/queue/appeals/#{appeal.uuid}"
+        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
+        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        expect(page).to have_content(COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL)
+        expect(page).to_not have_content(COPY::VACATE_MOTION_MAIL_TASK_LABEL)
+      end
+    end
 
     it "gets assigned to Litigation Support" do
       # When mail team creates VacateMotionMailTask, it gets assigned to the lit support organization
