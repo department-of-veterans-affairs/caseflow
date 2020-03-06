@@ -284,7 +284,7 @@ class LegacyHearing < CaseflowRecord
   # See: https://github.com/department-of-veterans-affairs/caseflow/issues/12003
   def vacols_hearing_exists?
     begin
-      repository.load_vacols_data(self)
+      self.class.repository.load_vacols_data(self)
       true
     rescue Caseflow::Error::VacolsRecordNotFound => error
       capture_exception(error)
