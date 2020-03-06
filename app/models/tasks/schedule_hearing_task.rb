@@ -47,9 +47,14 @@ class ScheduleHearingTask < Task
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
-    if most_recent_closed_hearing_task_on_appeal&.disposition.blank?
+    hearing = most_recent_closed_hearing_on_appeal
+
+    if hearing&.disposition.blank?
       fail Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR
     end
+
+    # get the current hearing task for later use before it is cancelled.
+    hearing_task = hearing.hearing_task
 
     # cancel my children, myself, and my hearing task ancestor
     children.open.update_all(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
@@ -58,7 +63,7 @@ class ScheduleHearingTask < Task
 
     # cancel the old HearingTask and create a new one associated with the same hearing
     new_hearing_task = hearing_task.cancel_and_recreate
-    HearingTaskAssociation.create!(hearing: hearing_task.hearing, hearing_task: new_hearing_task)
+    HearingTaskAssociation.create!(hearing: hearing, hearing_task: new_hearing_task)
 
     # create a ChangeHearingDispositionTask on the new HearingTask
     new_hearing_task.create_change_hearing_disposition_task(instructions)
