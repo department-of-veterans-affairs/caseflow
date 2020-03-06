@@ -863,16 +863,17 @@ describe Task, :all_dbs do
         let(:task_type) { :timed_hold_task }
 
         it "children timer tasks are adopted by new task and not cancelled" do
+          task.reload
           expect { subject }.to_not raise_error
           expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
           new_task = task.parent.children.open.first
-          # Hunter?: 0 != 1 expect(new_task.children.length).to eq(incomplete_children_count)
+          expect(new_task.children.length).to eq(incomplete_children_count)
           expect(new_task.children.all?(&:assigned?)).to eq(true)
           expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
 
           task.reload
-          # Hunter?: 3 != 2 expect(task.children.length).to eq(closed_children_count)
+          expect(task.children.length).to eq(closed_children_count)
         end
       end
 
