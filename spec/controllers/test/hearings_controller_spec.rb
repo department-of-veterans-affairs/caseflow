@@ -101,6 +101,16 @@ describe Test::HearingsController, :postgres, type: :controller do
           get :index, params: { limit: "100" }
         end
       end
+
+      context "the include_eastern parameter is passed" do
+        it "sends include_eastern to HearingsProfileHelper" do
+          expect(Test::HearingsProfileHelper)
+            .to receive(:profile_data)
+            .once.with(current_user, include_eastern: true)
+            .and_return({})
+          get :index, params: { include_eastern: "true" }
+        end
+      end
     end
   end
 end

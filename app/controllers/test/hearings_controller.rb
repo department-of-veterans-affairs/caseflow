@@ -33,6 +33,7 @@ class Test::HearingsController < ApplicationController
 
     return_params[:limit] = hearings_count_limit if hearings_count_limit.present?
     return_params[:after] = scheduled_after_time if scheduled_after_time.present?
+    return_params[:include_eastern] = include_eastern if include_eastern.present?
     return_params
   end
 
@@ -52,11 +53,16 @@ class Test::HearingsController < ApplicationController
     nil
   end
 
+  # include central hearings and hearings at an RO in the eastern time zone
+  def include_eastern
+    index_params[:include_eastern]&.casecmp("true")&.zero?
+  end
+
   def send_email?
     index_params[:send_email]&.casecmp("true")&.zero? && current_user.email.present?
   end
 
   def index_params
-    params.permit(:send_email, :limit, :after_year, :after_month, :after_day)
+    params.permit(:send_email, :limit, :after_year, :after_month, :after_day, :include_eastern)
   end
 end

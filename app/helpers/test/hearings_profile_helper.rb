@@ -2,7 +2,7 @@
 
 module Test::HearingsProfileHelper
   class << self
-    attr_reader :limit, :after, :user
+    attr_reader :limit, :after, :include_eastern, :user
 
     def profile_data(current_user = nil, *args)
       configure_helper(current_user, args)
@@ -20,6 +20,7 @@ module Test::HearingsProfileHelper
       options = args.extract_options!
       @limit = options[:limit] || 20
       @after = options[:after] || Time.zone.local(2020, 4, 1)
+      @include_eastern = options[:include_eastern] || false
 
       @ama_hearings_details = []
       @legacy_hearings_details = []
@@ -65,12 +66,12 @@ module Test::HearingsProfileHelper
       !!(task.hearing&.regional_office&.timezone &.!= "America/New_York")
     end
 
-    def task_is_after_time?(task)
+    def hearing_is_scheduled_after_time?(task)
       task&.hearing&.scheduled_for &.> after
     end
 
     def qualified_hearing?(task)
-      timezone_outside_eastern?(task) && task_is_after_time?(task)
+      hearing_is_scheduled_after_time?(task) && (include_eastern || timezone_outside_eastern?(task))
     end
 
     def qualified_legacy_hearing?(task)
