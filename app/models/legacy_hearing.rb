@@ -298,6 +298,10 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  # Sometimes, hearings get deleted in VACOLS, but not in Caseflow. Caseflow ends up
+  # with dangling legacy hearings records.
+  #
+  # See: https://github.com/department-of-veterans-affairs/caseflow/issues/12003
   def vacols_hearing_exists?
     begin
       repository.load_vacols_data(self)
