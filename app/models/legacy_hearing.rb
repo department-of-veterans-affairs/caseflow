@@ -4,6 +4,7 @@ class LegacyHearing < CaseflowRecord
   include CachedAttributes
   include AssociatedVacolsModel
   include AppealConcern
+  include HasHearingTask
   include HasVirtualHearing
 
   # When these instance variable getters are called, first check if we've
@@ -25,9 +26,6 @@ class LegacyHearing < CaseflowRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
-  has_one :hearing_task_association,
-          -> { includes(:hearing_task).where(tasks: { status: Task.open_statuses }) },
-          as: :hearing
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location
@@ -61,24 +59,6 @@ class LegacyHearing < CaseflowRecord
 
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
-
-  def hearing_task?
-    !hearing_task_association.nil?
-  end
-
-  def disposition_task
-    if hearing_task?
-      hearing_task_association.hearing_task.children.detect { |child| child.type == AssignHearingDispositionTask.name }
-    end
-  end
-
-  def disposition_task_in_progress
-    disposition_task ? disposition_task.open_with_no_children? : false
-  end
-
-  def disposition_editable
-    disposition_task_in_progress || !hearing_task?
-  end
 
   def judge
     user
