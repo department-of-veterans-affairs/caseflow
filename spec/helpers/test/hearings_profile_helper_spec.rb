@@ -3,14 +3,15 @@
 describe Test::HearingsProfileHelper do
   let(:hearing_keys) do
     [
-      :id,
-      :type,
-      :external_id,
-      :created_by_timezone,
       :central_office_time_string,
-      :scheduled_time_string,
+      :created_by_timezone,
+      :external_id,
+      :regional_office_timezone,
+      :request_type,
       :scheduled_for,
-      :scheduled_time
+      :scheduled_time,
+      :scheduled_time_string,
+      :unique_id
     ]
   end
   let!(:user) { create(:user) }

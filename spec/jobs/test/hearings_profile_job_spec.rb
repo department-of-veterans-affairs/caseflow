@@ -11,10 +11,10 @@ describe Test::HearingsProfileJob, :postgres do
     let(:body_json) do
       {
         profile: {
+          config_time_zone: Rails.configuration.time_zone,
           current_user_css_id: user_css_id,
           current_user_timezone: user_timezone,
-          time_zone_name: Time.zone.name,
-          config_time_zone: Rails.configuration.time_zone
+          time_zone_name: Time.zone.name
         },
         hearings: {
           ama_hearings: [],

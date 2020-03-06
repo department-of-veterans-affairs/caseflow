@@ -84,23 +84,24 @@ module Test::HearingsProfileHelper
 
     def profile
       {
+        config_time_zone: Rails.configuration.time_zone,
         current_user_css_id: user&.css_id,
         current_user_timezone: user&.timezone,
-        time_zone_name: Time.zone.name,
-        config_time_zone: Rails.configuration.time_zone
+        time_zone_name: Time.zone.name
       }
     end
 
     def hearing_detail(hearing)
       {
-        id: hearing.id,
-        type: hearing.class.name,
-        external_id: hearing.external_id,
-        created_by_timezone: hearing.created_by&.timezone,
         central_office_time_string: hearing.central_office_time_string,
-        scheduled_time_string: hearing.scheduled_time_string,
+        created_by_timezone: hearing.created_by&.timezone,
+        external_id: hearing.external_id,
+        regional_office_timezone: hearing.regional_office&.timezone,
+        request_type: hearing.hearing_day&.request_type,
         scheduled_for: hearing.scheduled_for,
-        scheduled_time: hearing.scheduled_time
+        scheduled_time: hearing.scheduled_time,
+        scheduled_time_string: hearing.scheduled_time_string,
+        unique_id: "#{hearing.class.name.downcase}-#{hearing.id}"
       }
     end
 
