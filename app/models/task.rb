@@ -251,7 +251,7 @@ class Task < CaseflowRecord
     tasks = appeal.tasks.closed.order(closed_at: :desc).where(type: HearingTask.name)
     return tasks.first&.hearing if appeal.is_a?(Appeal)
 
-    tasks.map(&:hearing).select(&:vacols_hearing_exists?).first
+    tasks.map(&:hearing).detect(&:vacols_hearing_exists?)
   end
 
   def label
