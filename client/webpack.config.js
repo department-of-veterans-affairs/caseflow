@@ -2,9 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const _ = require('lodash');
 
-const env = process.env.NODE_ENV; // eslint-disable-line no-process-env
-const devBuild = env !== 'production';
-const generateSourceMap = env !== 'test';
+const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
 
 const config = {
   mode: devBuild ? 'development' : 'production',
@@ -55,13 +53,13 @@ const config = {
             loader: 'css-loader',
             options: {
               modules: true,
-              sourceMap: generateSourceMap
+              sourceMap: true
             }
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: generateSourceMap
+              sourceMap: true
             }
           }
         ]
@@ -76,13 +74,13 @@ const config = {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: generateSourceMap
+              sourceMap: true
             }
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: generateSourceMap
+              sourceMap: true
             }
           }
         ]
@@ -96,7 +94,7 @@ const config = {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: generateSourceMap,
+              sourceMap: true,
               url: false
             }
           }
@@ -112,15 +110,13 @@ const config = {
   }
 };
 
-if (env === 'production') {
+if (devBuild) {
+  console.log('Webpack dev build for Rails'); // eslint-disable-line no-console
+  config.devtool = 'eval-source-map';
+} else {
   console.log('Webpack production build for Rails'); // eslint-disable-line no-console
   console.log('Generating source maps...'); // eslint-disable-line no-console
   config.devtool = 'source-map';
-} else if (env === 'test') {
-  console.log('Webpack test build for Rails'); // eslint-disable-line no-console
-} else {
-  console.log('Webpack dev build for Rails'); // eslint-disable-line no-console
-  config.devtool = 'eval-source-map';
 }
 
 module.exports = config;
