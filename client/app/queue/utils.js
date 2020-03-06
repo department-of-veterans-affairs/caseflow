@@ -102,9 +102,7 @@ const taskAttributesFromRawTask = (task) => {
     timelineTitle: task.attributes.timeline_title,
     hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
     hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
-    hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
-    availableHearingLocations: task.attributes.available_hearing_locations,
-    suggestedHearingLocation: task.attributes.suggested_hearing_location
+    hideFromCaseTimeline: task.attributes.hide_from_case_timeline
   };
 };
 
@@ -120,7 +118,6 @@ const appealAttributesFromRawTask = (task) => ({
   type: task.attributes.appeal_type,
   externalId: task.attributes.external_appeal_id,
   docketName: task.attributes.docket_name,
-  docketRangeDate: task.attributes.docket_range_date,
   isLegacyAppeal: task.attributes.docket_name === 'legacy',
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,
@@ -526,7 +523,7 @@ export const taskHasCompletedHold = (task) => {
       diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
   }
 
-  return taskIsOnHold(task);
+  return false;
 };
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);

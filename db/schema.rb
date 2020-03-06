@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_06_161309) do
+ActiveRecord::Schema.define(version: 2020_03_03_223649) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -164,7 +164,7 @@ ActiveRecord::Schema.define(version: 2020_02_06_161309) do
     t.datetime "decision_sync_submitted_at", comment: "Async job processing start timestamp. See description for decision_sync_attempted_at for the decision sync job description."
     t.bigint "end_product_establishment_id", comment: "The ID of the end product establishment created for this board grant effectuation."
     t.bigint "granted_decision_issue_id", null: false, comment: "The ID of the granted decision issue."
-    t.datetime "last_submitted_at", comment: "Async job processing most recent start timestamp (TODO rename)"
+    t.datetime "last_submitted_at", comment: "Async job processing most recent start timestamp"
     t.datetime "updated_at"
     t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
     t.index ["contention_reference_id"], name: "index_board_grant_effectuations_on_contention_reference_id", unique: true
