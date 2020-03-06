@@ -25,8 +25,6 @@ ReactOnRails.configure do |config|
   # This will set NODE_ENV=development necessary for source maps in DEMO
   config.npm_build_production_command = if Rails.env.demo?
                                           "yarn run build:demo"
-                                        elsif Rails.env.test?
-                                          "yarn run build:test"
                                         else
                                           "yarn run build:production"
                                         end
