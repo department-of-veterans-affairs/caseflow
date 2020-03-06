@@ -799,7 +799,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 2
+        expect(response_body["tasks"].length).to eq 3
 
         colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "IhpColocatedTask" }
         expect(colocated_task).to_not be_nil
@@ -826,7 +826,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
-        expect(appeal.tasks.size).to eq 3
+        expect(appeal.tasks.size).to eq 5
       end
     end
   end
