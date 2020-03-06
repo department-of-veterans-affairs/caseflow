@@ -84,14 +84,20 @@ describe Test::HearingsController, :postgres, type: :controller do
         let(:after) { Time.zone.local(2020, 11, 8) }
 
         it "sends the date to HearingsProfileHelper" do
-          expect(Test::HearingsProfileHelper).to receive(:profile_data).once.with(current_user, after: after).and_return({})
+          expect(Test::HearingsProfileHelper)
+            .to receive(:profile_data)
+            .once.with(current_user, after: after)
+            .and_return({})
           get :index, params: { after_year: after.year, after_month: after.month, after_day: after.day }
         end
       end
 
       context "the limit parameter is passed" do
         it "sends the limit to HearingsProfileHelper" do
-          expect(Test::HearingsProfileHelper).to receive(:profile_data).once.with(current_user, limit: 100).and_return({})
+          expect(Test::HearingsProfileHelper)
+            .to receive(:profile_data)
+            .once.with(current_user, limit: 100)
+            .and_return({})
           get :index, params: { limit: "100" }
         end
       end
