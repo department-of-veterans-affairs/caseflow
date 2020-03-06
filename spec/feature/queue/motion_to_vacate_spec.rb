@@ -6,7 +6,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
   let!(:lit_support_team) { LitigationSupport.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
   let!(:appeal) do
-    create(:appeal, :outcoded, receipt_date: receipt_date)
+    create(:appeal, receipt_date: receipt_date)
   end
   let!(:decision_issues) do
     3.times do |idx|
@@ -20,7 +20,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       )
     end
   end
-  let!(:root_task) { create(:root_task, appeal: appeal) }
+  let!(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
   let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
   let!(:hyperlink) { "https://va.gov/fake-link-to-file" }
@@ -56,9 +56,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
 
     context "When the appeal is not outcoded" do
-      let!(:appeal) do
-        create(:appeal, receipt_date: receipt_date)
-      end
+      let!(:root_task) { create(:root_task, appeal: appeal) }
 
       it "does not show option to create a VacateMotionMailTask" do
         User.authenticate!(user: mail_user)
