@@ -1,4 +1,5 @@
 import {
+  MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE,
   JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED,
   JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED,
   JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED,
@@ -7,6 +8,15 @@ import {
   RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL
 } from '../../../COPY';
 import { sprintf } from 'sprintf-js';
+
+export const reviewMotionToVacateSuccessAlert = ({ appeal }) => {
+  const { veteranFullName } = appeal;
+
+  return {
+    title: sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, veteranFullName),
+    detail: ' '
+  };
+};
 
 export const addressMTVSuccessAlert = ({ data, appeal }) => {
   const { disposition } = data;
@@ -34,7 +44,6 @@ export const addressMTVSuccessAlert = ({ data, appeal }) => {
 };
 
 export const returnToLitSupportAlert = ({ appeal }) => {
-  console.log('returnToLitSupportAlert', appeal);
   const { veteranFullName } = appeal;
 
   return {

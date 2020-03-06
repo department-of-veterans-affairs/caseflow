@@ -2,7 +2,7 @@ import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { onReceiveAmaTasks } from '../QueueActions';
 import { showSuccessMessage } from '../uiReducer/uiActions';
-import { addressMTVSuccessAlert, returnToLitSupportAlert } from './mtvMessages';
+import { addressMTVSuccessAlert, returnToLitSupportAlert, reviewMotionToVacateSuccessAlert } from './mtvMessages';
 
 export const submitMTVAttyReviewStarted = () => ({
   type: Constants.MTV_SUBMIT_ATTY_REVIEW
@@ -20,13 +20,11 @@ export const submitMTVAttyReviewError = (error) => ({
   payload: error
 });
 
-export const submitMTVAttyReview = (newTask, ownProps) => {
+export const submitMTVAttyReview = ({ newTask, appeal, history }) => {
   return async (dispatch) => {
     dispatch(submitMTVAttyReviewStarted());
 
     const url = '/tasks';
-
-    const { history } = ownProps;
 
     const data = {
       tasks: [newTask]
@@ -35,9 +33,8 @@ export const submitMTVAttyReview = (newTask, ownProps) => {
     try {
       const res = await ApiUtil.post(url, { data });
 
-      if (history) {
-        history.push('/queue');
-      }
+      dispatch(showSuccessMessage(reviewMotionToVacateSuccessAlert({ appeal })));
+      history.push('/queue');
 
       dispatch(submitMTVAttyReviewSuccess(res));
     } catch (error) {
