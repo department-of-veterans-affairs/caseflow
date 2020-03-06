@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe LegacyWorkQueue, :all_dbs do
   context ".tasks_for_user" do
     let!(:user) { create(:user) }
@@ -10,7 +7,7 @@ describe LegacyWorkQueue, :all_dbs do
     let!(:appeals) do
       [
         create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)),
-        create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user))
+        create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user, document_id: "02255-00000002"))
       ]
     end
 
@@ -31,6 +28,16 @@ describe LegacyWorkQueue, :all_dbs do
       it "returns tasks" do
         expect(subject.length).to eq(2)
         expect(subject[0].class).to eq(JudgeLegacyDecisionReviewTask)
+      end
+    end
+
+    context "when it is an acting judge" do
+      let(:role) { :attorney_judge_role }
+
+      it "returns attorney tasks for the case without a document id, but judge task for the case with a document id" do
+        expect(subject.length).to eq(2)
+        expect(subject[0].class).to eq(AttorneyLegacyTask)
+        expect(subject[1].class).to eq(JudgeLegacyDecisionReviewTask)
       end
     end
   end

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Case details", :all_dbs do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
@@ -91,7 +88,7 @@ RSpec.feature "Case details", :all_dbs do
           .click_link
 
         expect(page).to have_content("Select an action")
-
+        expect(page).to have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
         expect(page).to have_content("Type: #{hearing.readable_request_type}")
         expect(page).to have_content("Date: #{hearing.scheduled_for.strftime('%-m/%-d/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
@@ -153,7 +150,7 @@ RSpec.feature "Case details", :all_dbs do
         let!(:vso_task) { create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
 
         before do
-          OrganizationsUser.add_user_to_organization(vso_user, vso)
+          vso.add_user(vso_user)
           allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
           User.authenticate!(user: vso_user)
         end
@@ -556,7 +553,7 @@ RSpec.feature "Case details", :all_dbs do
           :appeal,
           veteran_file_number: "500000102",
           receipt_date: 6.months.ago.to_date.mdY,
-          docket_type: "evidence_submission"
+          docket_type: Constants.AMA_DOCKETS.evidence_submission
         )
       end
 
@@ -711,7 +708,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on vet_name
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL, wait: 30)
         click_on "Caseflow"
-        expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION, wait: 30)
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, wait: 30)
         fontweight_visited = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
         expect(fontweight_visited).to be < fontweight_new
       end
@@ -725,7 +722,7 @@ RSpec.feature "Case details", :all_dbs do
 
     context "when the current user is a member of the AOD team" do
       before do
-        OrganizationsUser.add_user_to_organization(user, AodTeam.singleton)
+        AodTeam.singleton.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -769,8 +766,8 @@ RSpec.feature "Case details", :all_dbs do
       before do
         # Marking this task complete creates a BvaDispatchTask. Make sure there are members of that organization so
         # that the creation of that BvaDispatchTask succeeds.
-        OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
-        OrganizationsUser.add_user_to_organization(user, qr)
+        BvaDispatch.singleton.add_user(create(:user))
+        qr.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -922,7 +919,7 @@ RSpec.feature "Case details", :all_dbs do
              appeal: appeal,
              assigned_by: judge_user,
              assigned_to: attorney_user,
-             type: GenericTask,
+             type: Task,
              parent_id: root_task.id,
              started_at: rand(1..10).days.ago,
              instructions: [instructions_text])
@@ -991,7 +988,7 @@ RSpec.feature "Case details", :all_dbs do
       end
       let!(:legacy_task) do
         create(:task, :in_progress, appeal: legacy_appeal,
-                                    assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
+                                    assigned_by: judge_user, assigned_to: attorney_user, type: Task,
                                     parent_id: root_task.id, started_at: rand(1..10).days.ago)
       end
 
@@ -1126,7 +1123,7 @@ RSpec.feature "Case details", :all_dbs do
         judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
         bva_dispatcher = create(:user)
-        OrganizationsUser.add_user_to_organization(bva_dispatcher, BvaDispatch.singleton)
+        BvaDispatch.singleton.add_user(bva_dispatcher)
         BvaDispatchTask.create_from_root_task(root_task)
 
         params = {
@@ -1198,7 +1195,7 @@ RSpec.feature "Case details", :all_dbs do
       let(:user) { create(:user) }
 
       before do
-        OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton)
+        BvaIntake.singleton.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -1240,6 +1237,7 @@ RSpec.feature "Case details", :all_dbs do
 
       context "when the appeal is a legacy appeal" do
         let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+        let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
 
         # Assign a task to the current user so that a row appears on the queue page.
         let!(:task) { create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }

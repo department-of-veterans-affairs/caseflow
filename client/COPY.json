@@ -109,8 +109,6 @@
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake, please email your judge to resolve the issue.",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
   "ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK": "View in Reader",
-  "ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to you.",
-  "ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, cases here will automatically return to the Assigned tab.",
   "ORGANIZATION_QUEUE_TABLE_TITLE": "%s cases",
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
@@ -120,11 +118,9 @@
   "QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
   "QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%d)",
 
-  "COLOCATED_QUEUE_PAGE_TABLE_TITLE": "Your cases",
-  "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "Assigned (%d)",
-  "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "Cases assigned to you:",
-  "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "Cases no longer on hold:",
-  "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
+  "USER_QUEUE_PAGE_TABLE_TITLE": "Your cases",
+  "USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to you:",
+  "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
   "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
 
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
@@ -137,26 +133,46 @@
   "TRACKING_TASKS_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
-  "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign team cases",
+  "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign %s team cases",
   "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Your cases",
 
   "JUDGE_ADDRESS_MTV_TITLE": "Address %s's Motion to Vacate",
-  "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate and then assign it back to the appropriate attorney.",
+  "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate.\n\nIf you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.\n\nIf you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case. If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.",
   "JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL": "How will you address this motion to vacate?",
   "JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL": "What type of vacate?",
-  "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed denial document",
+  "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed %s document",
   "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues you will be granting",
   "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
+  "JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL": "Which issues would you like to vacate?",
+  "JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED": "%s's Motion to Vacate has been marked for vacatur",
+  "JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED": "This task will be sent to the assigned attorney on your team",
+  "JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED": "%s's Motion to Vacate has been %s",
+  "JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED": "This task will be completed by the original motions attorney or placed in the team's queue",
+
+  "RETURN_TO_LIT_SUPPORT_MODAL_TITLE": "Return to Litigation Support",
+  "RETURN_TO_LIT_SUPPORT_MODAL_CONTENT": "Use this action to return the Motion to Vacate task to the previous Motions Attorney in case of a missing ruling letter draft.\n\nIf the previous attorney is inactive, this will return to the Litigation Support team queue for reassignment.",
+  "RETURN_TO_LIT_SUPPORT_MODAL_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
+  "RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS": "I am missing a link to the draft ruling letter. Please resubmit so I can review and sign.",
+  "RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE": "%s's Motion to Vacate has been returned to Litigation Support",
+  "RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL": "This task will be completed by the original Motions Attorney or placed in the team's queue",
 
   "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
-  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your reivew for this motion?",
-  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be granted",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your review for this motion?",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be %s",
   "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
 
+  "MTV_CHECKOUT_REVIEW_VACATURES_TITLE": "Review vacated decision issues",
+  "MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION": "Review the prior decision issues here that have been marked for vacatur by the judge. Please remember to include them in your decision letter if you haven't already.",
+  "MTV_CHECKOUT_CONFIRM_REMOVE_DECISION_ISSUE": "Are you sure you want to remove this decision?",
+  "MTV_CHECKOUT_ADD_DECISIONS_TITLE": "Add decisions",
+  "MTV_CHECKOUT_ADD_DECISIONS_EXPLANATION": "Add decisions to the items listed here that have been reissued because of the motion to vacate. Any decisions to add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
+
+
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
-  "STRAIGHT_VACATE_AND_READJUDICATION_TASK_LABEL": "Straight Vacate and Readjudication",
+  "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
+  "STRAIGHT_VACATE_TASK_LABEL": "Straight Vacate",
   "DENIED_MOTION_TO_VACATE_TASK_LABEL": "Denied Motion to Vacate",
   "DISMISSED_MOTION_TO_VACATE_TASK_LABEL": "Dismissed Motion to Vacate",
 
@@ -223,15 +239,16 @@
   "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
   "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
-  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned.",
-  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL": "Please reassign tasks from your assign page",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned. Reassign tasks to a judge on the case details screen",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK": "Please assign tasks to an attorney from your assign page.",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL": " Reassign tasks to a judge in the action dropdown",
   "ASSIGN_WIDGET_LOADING": "Loading...",
   "ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER": "Select a user",
   "ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY": "Assignee",
   "ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY": "Other assignee",
   "ASSIGN_WIDGET_BUTTON_TEXT": "Assign %(numCases)s %(casePlural)s",
   "ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL": "Assign to:",
-  "ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL": "Enter the name of an attorney or judge:",
+  "ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL": "Enter the name of an attorney:",
   "ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS": "Error loading attorneys",
   "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
@@ -281,10 +298,14 @@
   "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
 
+  "MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE": "Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930. Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding of clear and unmistakable error, which would result in a brand new docket number being assigned. An updated docket number format will need to be in place for legacy appeals by 2030 in order to ensure that docket numbers are sorted correctly.",
+
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
-  "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to the assigner",
+  "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
   "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
+
+  "CANCEL_TASK_CONTACT_LIT_SUPPORT": "the Litigation Support team",
 
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE": "Assign Regional Office",
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL": "Assigning a Regional Office will place this case in the list of Veterans to be scheduled for the RO you choose. You will need to choose a location for the hearing when you schedule the Veteran.",
@@ -362,7 +383,15 @@
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
   "NOTIFY_OGC_OF": "Notify OGC of %s",
-  "PULAC_CERULLO_MODAL_BODY": "This case will be assigned to a person/team who will determine if it is a Pulac or Cerullo case. It will return to the 'Assigned' tab in your Queue when it can be worked again.",
+  "PULAC_CERULLO_MODAL_TITLE": "Notify Litigation Support of Conflict of Jurisdiction",
+  "PULAC_CERULLO_MODAL_BODY_1": "This case will be assigned to a person/team who will determine if it is a Pulac or Cerullo case. It will return to the 'Assigned' tab in your Queue when it can be worked again.",
+  "PULAC_CERULLO_MODAL_BODY_2": "It will return to your Queue when it can be worked again.",
+  "PULAC_CERULLO_SUCCESS_TITLE": "Case assigned to Litigation Support",
+  "PULAC_CERULLO_SUCCESS_DETAIL": "%s's case will return to your Queue when it can be worked again.",
+  "PULAC_CERULLO_REMINDER_MODAL_TITLE": "Check CAVC for Conflict of Jurisdiction",
+  "PULAC_CERULLO_REMINDER_MODAL_LABEL": "Does this decision have an NOA on file at CAVC?",
+  "PULAC_CERULLO_REMINDER_MODAL_OPT_FALSE": "No, continue sending to Dispatch",
+  "PULAC_CERULLO_REMINDER_MODAL_OPT_TRUE": "Yes, notify Litigation Support of jurisdictional conflict",
   "ASSIGN_TASK_SUCCESS_MESSAGE": "Task assigned to %s",
   "REASSIGN_TASK_SUCCESS_MESSAGE": "Task reassigned to %s",
   "HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can continue to assign tasks to yourself and others using this queue.",
@@ -419,23 +448,48 @@
   "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
   "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
 
+  "USER_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow user management",
+  "USER_MANAGEMENT_STATUS_PAGE_TITLE": "Caseflow user status management",
+  "USER_MANAGEMENT_PAGE_DESCRIPTION": "Marking a user inactive will remove them from all organizations they are a member of. Once marked inactive, a user cannot be assigned new tasks.",
+  "USER_MANAGEMENT_STATUS_CHANGE_ERROR_TITLE": "Failed to modify user status",
+  "USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT": "Make user active",
+  "USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT": "Make user inactive",
+  "USER_MANAGEMENT_ACTIVE_SUCCESS_TITLE": "Successfully made %s ACTIVE",
+  "USER_MANAGEMENT_INACTIVE_SUCCESS_TITLE": "Successfully made %s INACTIVE",
+  "USER_MANAGEMENT_ACTIVE_SUCCESS_BODY": "%s can now be assigned new tasks and will need to be added to organizations via the team management page",
+  "USER_MANAGEMENT_INACTIVE_SUCCESS_BODY": "%s has been removed from organizations they were a member of. They will no longer be assigned new tasks. If this was a mistake, mark the user ACTIVE and add them back to the proper organizations on those organizations' team management pages",
+  "USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE": "Error searching for user",
+
   "LOOKUP_PARTICIPANT_ID_MODAL_TITLE": "Look Up Participant ID",
   "LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL": "Select user",
   "LOOKUP_PARTICIPANT_ID_MODAL_NO_ORGS_MESSAGE": "User does not belong to any POA organizations.",
 
-  "USER_MANAGEMENT_PAGE_TITLE": "%s management page",
+  "USER_MANAGEMENT_PAGE_TITLE": "Team management for %s",
   "USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE": "Failed to load users",
   "USER_MANAGEMENT_INITIAL_LOAD_LOADING_MESSAGE": "Loading users...",
   "USER_MANAGEMENT_ADD_USER_ERROR_TITLE": "Failed to add user",
   "USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE": "Adding user",
   "USER_MANAGEMENT_REMOVE_USER_ERROR_TITLE": "Failed to remove user",
   "USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE": "Failed to modify user admin rights",
-  "USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Make user admin",
-  "USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Remove admin rights",
-  "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove user",
+  "USER_MANAGEMENT_DECISION_DRAFTING_CHANGE_ERROR_TITLE": "Failed to modify decision drafting status",
   "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME": "Add user",
-  "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL": "Add a user to the team:",
-  "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT": "Select user to add",
+  "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL": "Add new team members",
+  "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT": "User CSS ID to add",
+  "USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL": "Edit current team members",
+  "USER_MANAGEMENT_ADMIN_RIGHTS_HEADING": "Add team admin / Remove admin rights: ",
+  "USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION": "Determines which users have the same team admin rights as the Judge Team Lead to request, assign, and view atorneys' cases.",
+  "USER_MANAGEMENT_REMOVE_USER_HEADING": "Remove from team: ",
+  "USER_MANAGEMENT_REMOVE_USER_DESCRIPTION": "Remove a user from this judge team.",
+  "USER_MANAGEMENT_DECISION_DRAFTING_HEADING": "Enable / Disable decision drafting: ",
+  "USER_MANAGEMENT_DECISION_DRAFTING_DESCRIPTION": "Determine which team members are attorneys who draft decisions.  The Judge Team Lead and team admins can view the attorneys' case assignments, assign them new cases, and reassign their cases from the Assign Cases page.",
+  "USER_MANAGEMENT_JUDGE_LABEL": "Judge Team Lead",
+  "USER_MANAGEMENT_ATTORNEY_LABEL": "Decision-Drafting Attorney",
+  "USER_MANAGEMENT_ADMIN_LABEL": "Team Admin",
+  "USER_MANAGEMENT_DISABLE_DECISION_DRAFTING_BUTTON_TEXT": "Disable decision drafting",
+  "USER_MANAGEMENT_ENABLE_DECISION_DRAFTING_BUTTON_TEXT": "Enable decision drafting",
+  "USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Add team admin",
+  "USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Remove admin rights",
+  "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove from team",
 
   "ACCESS_DENIED_TITLE": "Additional access needed",
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
@@ -475,7 +529,6 @@
   "STATUS_INQUIRY_MAIL_TASK_LABEL": "Status inquiry",
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
   "REVIEW_MOTION_TO_VACATE_TASK_LABEL": "Review motion to vacate",
-
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
 
@@ -523,6 +576,8 @@
   "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
   "INVALID_SORT_COLUMN": "must be a QueueColumn",
   "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
+  "QUEUE_TAB_NON_USER_ASSIGNEE_MESSAGE": "must be a User",
+  "QUEUE_TAB_NON_ORGANIZATION_ASSIGNEE_MESSAGE": "must be an Organization",
   "TASK_PAGE_INVALID_SORT_ORDER": "must be either asc or desc",
   "TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE": "must contain only Users",
   "APPEAL_RECORD_SAVED_MESSAGE": "You can now begin intake for the next opt-in election.",
@@ -536,6 +591,7 @@
 
   "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
   "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
+  "INTAKE_LEGACY_OPT_IN_MESSAGE": "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?",
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
@@ -582,6 +638,55 @@
   "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL": "To manually add a CO hearing, please unselect, \"Assign Board Hearing Room,\" and then edit hearing day to change room number.",
 
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No rooms available for %s",
-  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected."
- 
+  "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected.",
+
+  "VIRTUAL_HEARING_REQUEST_TYPE": "Virtual",
+  "VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS": "Scheduling in progress",
+
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE": "Change to Virtual Hearing",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE": "Change to Video Hearing",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE": "Change to Central Hearing",
+  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE": "Change Hearing Time",
+  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE": "Update Email Address",
+  "VIRTUAL_HEARING_CHANGE_HEARING_BUTTON": "Change and Send Email",
+  "VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON": "Update and Send Email",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO": "Emails will be sent to the Veteran and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
+  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
+  "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "An email notification for the virtual hearing will be sent to:",
+  "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+
+  "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
+  "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
+
+  "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
+
+  "VIRTUAL_HEARING_USER_ALERTS": {
+    "HEARING_CHANGED_TO_VIRTUAL": {
+      "TITLE": "We're scheduling %s's virtual hearing",
+      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran, POA / Representative, and VLJ are in progress.</li></ul>"
+    },
+    "HEARING_CHANGED_FROM_VIRTUAL": {
+      "TITLE": "We're updating %s's hearing type",
+      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+    },
+    "EMAILS_UPDATED": {
+      "TITLE": "We're emailing the invite to %s's hearing",
+      "MESSAGES": {
+        "TO_VETERAN_AND_POA": "Emails to the Veteran and POA / Representative are in progress.",
+        "TO_VETERAN": "Email to Veteran is in progress.",
+        "TO_POA": "Email to POA / Representative is in progress.",
+        "TO_VLJ": "Email to VLJ is in progress."
+      }
+    },
+    "HEARING_TIME_CHANGED": {
+      "TITLE": "We're updating the hearing time of %s's hearing",
+      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+    }
+  },
+
+  "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Virtual Hearing Link",
+  "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
+
+  "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }

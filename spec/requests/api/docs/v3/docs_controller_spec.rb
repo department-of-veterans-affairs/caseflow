@@ -20,13 +20,13 @@ describe Api::Docs::V3::DocsController, type: :request do
         expect(hlr_doc).to include("post")
       end
     end
-    describe "/higher_level_reviews/intake_status/{uuid} documentation" do
+    describe "/intake_statuses/{uuid} documentation" do
       before(:each) do
         get "/api/docs/v3/decision_reviews"
       end
       let(:hlr_intake_status_doc) do
         json = JSON.parse(response.body)
-        json["paths"]["/higher_level_reviews/intake_status/{uuid}"]
+        json["paths"]["/intake_statuses/{uuid}"]
       end
       it "should have GET" do
         expect(hlr_intake_status_doc).to include("get")

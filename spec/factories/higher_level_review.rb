@@ -33,7 +33,7 @@ FactoryBot.define do
 
     after(:create) do |hlr, evaluator|
       if evaluator.number_of_claimants
-        hlr.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: hlr)
+        hlr.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: hlr, payee_code: "00")
       end
     end
   end

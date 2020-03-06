@@ -18,7 +18,7 @@ class BoardGrantEffectuationTask < DecisionReviewTask
 
   def appeal_ui_hash
     appeal.ui_hash.merge(
-      requestIssues: request_issues_by_benefit_type.map(&:ui_hash)
+      requestIssues: request_issues_by_benefit_type.map(&:serialize)
     )
   end
 

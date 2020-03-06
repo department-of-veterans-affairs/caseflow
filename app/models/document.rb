@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
-class Document < ApplicationRecord
+class Document < CaseflowRecord
   has_many :annotations
   has_many :document_views
   has_many :documents_tags
   has_many :tags, through: :documents_tags
-  has_paper_trail only: [:description, :category_case_summary, :category_medical, :category_other, :category_procedural]
+  has_paper_trail only: [:description,
+                         :category_case_summary,
+                         :category_medical,
+                         :category_other,
+                         :category_procedural],
+                  on: [:update, :destroy], save_changes: false
 
   self.inheritance_column = nil
 
@@ -127,7 +132,6 @@ class Document < ApplicationRecord
   end
 
   def fetch_content
-    Rails.logger.warn("Document.fetch_content is deprecated. Called from #{Kernel.caller.first}")
     content = S3Service.fetch_content(S3_BUCKET_NAME + "/" + file_name)
     content && Rails.logger.info("File #{vbms_document_id} fetched from S3")
     content || fetch_and_cache_document_from_vbms

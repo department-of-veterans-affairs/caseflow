@@ -3,19 +3,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
+import { connect } from 'react-redux';
 
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
-import { FULL_GRANT, INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR } from '../../establishClaim/constants';
-
-import bootstrapRedux from '../../establishClaim/reducers/bootstrap';
 import {
-  validModifiers,
-  getSpecialIssuesEmail,
-  getSpecialIssuesRegionalOffice
-} from '../../establishClaim/util';
+  FULL_GRANT,
+  INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR,
+  PERFORM_ESTABLISH_CLAIM_START,
+  PERFORM_ESTABLISH_CLAIM_FAILURE,
+  PERFORM_ESTABLISH_CLAIM_SUCCESS,
+  SUBMIT_DECISION_PAGE,
+  SUBMIT_DECISION_PAGE_SUCCESS,
+  SUBMIT_DECISION_PAGE_FAILURE
+} from '../../establishClaim/constants';
+
+// import bootstrapRedux from '../../establishClaim/reducers/bootstrap';
+import { validModifiers, getSpecialIssuesEmail, getSpecialIssuesRegionalOffice } from '../../establishClaim/util';
 import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
 import { formatDateStr } from '../../util/DateUtil';
@@ -51,52 +56,56 @@ export const END_PRODUCT_INFO = {
 const CREATE_EP_ERRORS = {
   duplicate_ep: {
     header: 'Unable to assign or create a new EP for this claim',
-    body: 'Please try to create this EP again. If you are still unable ' +
-          'to proceed, select Cancel at the bottom of the page to ' +
-          'release this claim, and process it outside of Caseflow.'
+    body:
+      'Please try to create this EP again. If you are still unable ' +
+      'to proceed, select Cancel at the bottom of the page to ' +
+      'release this claim, and process it outside of Caseflow.'
   },
   task_already_completed: {
     header: 'This task was already completed.',
-    body: <span>
-            Please return
-            to <a href="/dispatch/establish-claim/">Work History</a> to
-            establish the next claim.
-    </span>
+    body: (
+      <span>
+        Please return to <a href="/dispatch/establish-claim/">Work History</a> to establish the next claim.
+      </span>
+    )
   },
   missing_ssn: {
     header: 'The EP for this claim must be created outside Caseflow.',
-    body: <span>
-            This veteran does not have a social security number, so their
-            claim cannot be established in Caseflow.
-      <br />
-            Select Cancel at the bottom of the page to release this claim and
-            proceed to process it outside of Caseflow.
-    </span>
+    body: (
+      <span>
+        This veteran does not have a social security number, so their claim cannot be established in Caseflow.
+        <br />
+        Select Cancel at the bottom of the page to release this claim and proceed to process it outside of Caseflow.
+      </span>
+    )
   },
   bgs_info_invalid: {
     header: 'The EP for this claim must be created outside Caseflow.',
-    body: <span>
-            The veteran's profile in the corporate database is missing information
-            required by Caseflow.
-      <br />
-            Select Cancel at the bottom of the page to release this claim and
-            proceed to process it outside of Caseflow.
-    </span>
+    body: (
+      <span>
+        The veteran's profile in the corporate database is missing information required by Caseflow.
+        <br />
+        Select Cancel at the bottom of the page to release this claim and proceed to process it outside of Caseflow.
+      </span>
+    )
   },
   end_product_invalid: {
     header: 'The EP for this claim must be created outside Caseflow.',
-    body: <span>
-            Data associated with this claim has not passed our validation.
-            It's likely there is erroneous data associated with this claim.
-      <br />
-            Select Cancel at the bottom of the page to release this claim and
-            proceed to process it outside of Caseflow.
-    </span>
+    body: (
+      <span>
+        Data associated with this claim has not passed our validation. It's likely there is erroneous data associated
+        with this claim.
+        <br />
+        Select Cancel at the bottom of the page to release this claim and proceed to process it outside of Caseflow.
+      </span>
+    )
   },
   default: {
     header: 'System Error',
-    body: 'Something went wrong on our end. We were not able to create an End Product. ' +
-          'Please try again later.'
+    body: [
+      'Something went wrong on our end. We were not able to create an End Product. ',
+      'Please try again later.'
+    ].join('')
   }
 };
 
@@ -107,7 +116,7 @@ const BACK_TO_DECISION_REVIEW_TEXT = '< Back to Review Decision';
 // has been made. By establishing an EP, we ensure the appeal
 // has properly been "handed off" to the right party for adjusting
 // the veteran's benefits
-export default class EstablishClaim extends React.Component {
+export class EstablishClaim extends React.Component {
   constructor(props) {
     super(props);
     this.history = createHashHistory();
@@ -139,18 +148,17 @@ export default class EstablishClaim extends React.Component {
 
   containsRoutedSpecialIssues = () => {
     return specialIssueFilters.routedSpecialIssues().some((issue) => {
-      return this.store.getState().specialIssues[issue.specialIssue];
+      return this.props.specialIssues[issue.specialIssue];
     });
-  }
+  };
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
     return specialIssueFilters.routedOrRegionalSpecialIssues().some((issue) => {
-      return this.store.getState().specialIssues[issue.specialIssue || issue];
+      return this.props.specialIssues[issue.specialIssue || issue];
     });
-  }
+  };
 
   componentDidMount() {
-
     this.history.listen((location) => {
       // If we are on the note page and you try to move to
       // a previous page in the flow then we bump you back
@@ -176,10 +184,10 @@ export default class EstablishClaim extends React.Component {
 
   shouldReviewAfterEndProductCreate = () => {
     return this.containsRoutedOrRegionalOfficeSpecialIssues();
-  }
+  };
 
   handleFormPageSubmit = () => {
-    let { handleAlert, handleAlertClear, task } = this.props;
+    const { handleAlert, handleAlertClear, task } = this.props;
 
     handleAlertClear();
 
@@ -187,10 +195,12 @@ export default class EstablishClaim extends React.Component {
       loading: true
     });
 
-    let data = this.prepareData();
+    const data = this.prepareData();
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).
-      then(() => {
+    this.props.beginPerformEstablishClaim();
+
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/perform`, { data }).then(
+      () => {
         // Hold on to your hats... We want to show the note page if we either
         // have a VBMS note, VACOLS note, or both. We have a VBMS note whenever
         // there are routable special issues. We have a VACOLS note whenever
@@ -205,66 +215,59 @@ export default class EstablishClaim extends React.Component {
         } else {
           this.handleNotePageSubmit(null);
         }
-      }, (error) => {
-        let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
-                          CREATE_EP_ERRORS.default;
+        this.props.performEstablishClaimSuccess();
+      },
+      (error) => {
+        this.props.performEstablishClaimFailure();
+        const errorMessage = CREATE_EP_ERRORS[error.response.body?.error_code] || CREATE_EP_ERRORS.default;
 
-        let nextModifier = this.validModifiers()[1];
+        const nextModifier = this.validModifiers()[1];
 
-        if (error.response.body.error_code === 'duplicate_ep' && nextModifier) {
-          this.store.dispatch({
-            type: INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR,
-            payload: {
-              value: nextModifier
-            }
-          });
+        if (error.response.body?.error_code === 'duplicate_ep' && nextModifier) {
+          this.props.onDuplicateEP(nextModifier);
         }
 
         this.setState({
           loading: false
         });
 
-        handleAlert(
-          'error',
-          errorMessage.header,
-          errorMessage.body
-        );
-      });
-  }
+        handleAlert('error', errorMessage.header, errorMessage.body);
+      }
+    );
+  };
 
   getRoutingType = () => {
-    let stationOfJurisdiction = getStationOfJurisdiction(
-      this.store.getState().specialIssues,
-      this.props.task.appeal.station_key
-    );
+    let stationOfJurisdiction = getStationOfJurisdiction(this.props.specialIssues, this.props.task.appeal.station_key);
 
     return stationOfJurisdiction === '397' ? 'ARC' : 'Routed';
-  }
+  };
 
   getClaimTypeFromDecision = () => {
-    let decisionType = this.props.task.appeal.dispatch_decision_type;
-    let values = END_PRODUCT_INFO[this.getRoutingType()][decisionType];
+    const decisionType = this.props.task.appeal.dispatch_decision_type;
+    const values = END_PRODUCT_INFO[this.getRoutingType()][decisionType];
 
     if (!values) {
       throw new RangeError('Invalid decision type value');
     }
 
     return values;
-  }
+  };
 
   handlePageChange = (page) => {
     this.history.push(page);
     // Scroll to the top of the page on a page change
     window.scrollTo(0, 0);
-  }
+  };
 
   isDecisionPage() {
     return this.state.page === DECISION_PAGE;
   }
 
   shouldShowAssociatePage() {
-    return this.props.task.appeal.non_canceled_end_products_within_30_days &&
-      this.props.task.appeal.non_canceled_end_products_within_30_days.length > 0;
+    return (
+      this.props.task.appeal.non_canceled_end_products_within_30_days &&
+      this.props.task.appeal.non_canceled_end_products_within_30_days.length > 0
+    );
   }
 
   isAssociatePage() {
@@ -284,63 +287,61 @@ export default class EstablishClaim extends React.Component {
   }
 
   validModifiers = () => {
-    return validModifiers(
-      this.props.task.appeal.pending_eps,
-      this.props.task.appeal.dispatch_decision_type
-    );
-  }
+    return validModifiers(this.props.task.appeal.pending_eps, this.props.task.appeal.dispatch_decision_type);
+  };
 
-  hasAvailableModifers = () => this.validModifiers().length > 0
+  hasAvailableModifers = () => this.validModifiers().length > 0;
 
   handleDecisionPageSubmit = () => {
-    let { handleAlert } = this.props;
+    const { handleAlert } = this.props;
 
     this.setState({
       loading: true
     });
 
-    let data = ApiUtil.convertToSnakeCase({
+    this.props.submitDecisionPage();
+
+    const data = ApiUtil.convertToSnakeCase({
       specialIssues: this.prepareSpecialIssues()
     });
 
-    return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update-appeal`,
-      { data }).then(() => {
+    return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update-appeal`, { data }).then(
+      () => {
+        this.setState({
+          loading: false
+        });
 
-      this.setState({
-        loading: false
-      });
-
-      if (!this.willCreateEndProduct()) {
-        if (this.props.task.appeal.dispatch_decision_type === FULL_GRANT) {
-          this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
-          this.handlePageChange(EMAIL_PAGE);
+        if (!this.willCreateEndProduct()) {
+          if (this.props.task.appeal.dispatch_decision_type === FULL_GRANT) {
+            this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
+            this.handlePageChange(EMAIL_PAGE);
+          } else {
+            this.handlePageChange(NOTE_PAGE);
+          }
+        } else if (this.shouldShowAssociatePage()) {
+          this.handlePageChange(ASSOCIATE_PAGE);
         } else {
-          this.handlePageChange(NOTE_PAGE);
+          this.handlePageChange(FORM_PAGE);
         }
-      } else if (this.shouldShowAssociatePage()) {
-        this.handlePageChange(ASSOCIATE_PAGE);
-      } else {
-        this.handlePageChange(FORM_PAGE);
+
+        this.props.submitDecisionPageSuccess();
+      },
+      (error) => {
+        const errorMessage = CREATE_EP_ERRORS[error.response.body?.error_code] || CREATE_EP_ERRORS.default;
+
+        this.setState({
+          loading: false
+        });
+
+        this.props.submitDecisionPageFailure();
+
+        handleAlert('error', errorMessage.header, errorMessage.body);
       }
-
-    }, (error) => {
-      let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
-                          CREATE_EP_ERRORS.default;
-
-      this.setState({
-        loading: false
-      });
-
-      handleAlert(
-        'error',
-        errorMessage.header,
-        errorMessage.body
-      );
-    });
-  }
+    );
+  };
 
   handleNotePageSubmit = (vacolsNote) => {
-    let { handleAlert, handleAlertClear, task } = this.props;
+    const { handleAlert, handleAlertClear, task } = this.props;
 
     handleAlertClear();
 
@@ -351,45 +352,41 @@ export default class EstablishClaim extends React.Component {
     // We want to trim the vacols note to 280 char. As that is
     // a DB column constraint
 
-    let data = ApiUtil.convertToSnakeCase({
-      vacolsNote: (vacolsNote && vacolsNote.substring(0, 280))
+    const data = ApiUtil.convertToSnakeCase({
+      vacolsNote: vacolsNote && vacolsNote.substring(0, 280)
     });
 
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/review-complete`, { data }).
-      then(() => {
+    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/review-complete`, { data }).then(
+      () => {
         WindowUtil.reloadPage();
-      }, () => {
-        handleAlert(
-          'error',
-          'Error',
-          'There was an error while routing the current claim. Please try again later'
-        );
+      },
+      () => {
+        handleAlert('error', 'Error', 'There was an error while routing the current claim. Please try again later');
         this.setState({
           loading: false
         });
-      });
-  }
+      }
+    );
+  };
 
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
-  }
+  };
 
   handleBackToDecisionReview = () => {
     this.handlePageChange(DECISION_PAGE);
-  }
+  };
 
   formattedDecisionDate = () => {
     return formatDateStr(this.props.task.appeal.serialized_decision_date);
-  }
+  };
 
   prepareSpecialIssues() {
     // The database column names must be less than 63 characters
     // so we shorten all of the keys in our hash before we send
     // them to the backend.
     let shortenedObject = {};
-    let formValues = ApiUtil.convertToSnakeCase(
-      this.store.getState().specialIssues
-    );
+    let formValues = ApiUtil.convertToSnakeCase(this.props.specialIssues);
 
     Object.keys(formValues).forEach((key) => {
       shortenedObject[key.substring(0, 60)] = formValues[key];
@@ -399,11 +396,11 @@ export default class EstablishClaim extends React.Component {
   }
 
   prepareData() {
-    let claim = this.store.getState().establishClaimForm;
+    const claim = this.props.establishClaimForm;
 
     claim.date = this.formattedDecisionDate();
     claim.stationOfJurisdiction = getStationOfJurisdiction(
-      this.store.getState().specialIssues,
+      this.props.specialIssues,
       this.props.task.appeal.station_key
     );
 
@@ -426,7 +423,7 @@ export default class EstablishClaim extends React.Component {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue]) {
+      if (this.props.specialIssues[issue.specialIssue]) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
@@ -435,7 +432,7 @@ export default class EstablishClaim extends React.Component {
         });
       }
     });
-  }
+  };
 
   // This returns true if the flow will create an EP or assign to an existing EP
   willCreateEndProduct() {
@@ -448,7 +445,7 @@ export default class EstablishClaim extends React.Component {
     }
 
     specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.store.getState().specialIssues[issue.specialIssue]) {
+      if (this.props.specialIssues[issue.specialIssue]) {
         willCreateEndProduct = false;
       }
     });
@@ -456,27 +453,14 @@ export default class EstablishClaim extends React.Component {
     return willCreateEndProduct;
   }
 
-  // TODO: This is a workaround. We should just be using connect() instead of accessing
-  // the store directly, like we do everywhere else.
-  onReceiveStore = (store) => this.store = store;
-
   render() {
-    let {
-      pdfLink,
-      pdfjsLink
-    } = this.props;
-    let decisionType = this.props.task.appeal.dispatch_decision_type;
-
-    const { initialState, reducer } = bootstrapRedux(this.props);
+    const { pdfLink, pdfjsLink } = this.props;
+    const decisionType = this.props.task.appeal.dispatch_decision_type;
 
     return (
-      <ReduxBase store={this.store} initialState={initialState} reducer={reducer} getStoreRef={this.onReceiveStore}>
-        <div>
-          <EstablishClaimProgressBar
-            isReviewDecision={this.isDecisionPage()}
-            isRouteClaim={!this.isDecisionPage()}
-          />
-          { this.isDecisionPage() &&
+      <div>
+        <EstablishClaimProgressBar isReviewDecision={this.isDecisionPage()} isRouteClaim={!this.isDecisionPage()} />
+        {this.isDecisionPage() && (
           <EstablishClaimDecision
             loading={this.state.loading}
             decisionType={decisionType}
@@ -486,8 +470,8 @@ export default class EstablishClaim extends React.Component {
             pdfjsLink={pdfjsLink}
             task={this.props.task}
           />
-          }
-          { this.isAssociatePage() &&
+        )}
+        {this.isAssociatePage() && (
           <AssociatePage
             loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
@@ -501,8 +485,8 @@ export default class EstablishClaim extends React.Component {
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           />
-          }
-          { this.isFormPage() &&
+        )}
+        {this.isFormPage() && (
           <EstablishClaimForm
             loading={this.state.loading}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
@@ -515,8 +499,8 @@ export default class EstablishClaim extends React.Component {
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
           />
-          }
-          { this.isNotePage() &&
+        )}
+        {this.isNotePage() && (
           <EstablishClaimNote
             loading={this.state.loading}
             endProductCreated={this.state.endProductCreated}
@@ -529,43 +513,100 @@ export default class EstablishClaim extends React.Component {
             displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
           />
-          }
-          { this.isEmailPage() &&
+        )}
+        {this.isEmailPage() && (
           <EstablishClaimEmail
             appeal={this.props.task.appeal}
             handleAlertClear={this.props.handleAlertClear}
             handleAlert={this.props.handleAlert}
-            regionalOfficeEmail={
-              getSpecialIssuesEmail(
-                this.state.specialIssuesEmail,
-                this.props.task.appeal.regional_office_key
-              )
-            }
-            regionalOffice={
-              getSpecialIssuesRegionalOffice(
-                this.state.specialIssuesRegionalOffice,
-                this.props.task.appeal.regional_office_key,
-                this.props.regionalOfficeCities
-              )
-            }
+            regionalOfficeEmail={getSpecialIssuesEmail(
+              this.state.specialIssuesEmail,
+              this.props.task.appeal.regional_office_key
+            )}
+            regionalOffice={getSpecialIssuesRegionalOffice(
+              this.state.specialIssuesRegionalOffice,
+              this.props.task.appeal.regional_office_key,
+              this.props.regionalOfficeCities
+            )}
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             specialIssuesRegionalOffice={this.state.specialIssuesRegionalOffice}
             taskId={this.props.task.id}
           />
-          }
-          <CancelModal
-            handleAlertClear={this.props.handleAlertClear}
-            handleAlert={this.props.handleAlert}
-            taskId={this.props.task.id}
-          />
-        </div>
-      </ReduxBase>
+        )}
+        <CancelModal
+          handleAlertClear={this.props.handleAlertClear}
+          handleAlert={this.props.handleAlert}
+          taskId={this.props.task.id}
+        />
+      </div>
     );
   }
 }
 
 EstablishClaim.propTypes = {
   regionalOfficeCities: PropTypes.object.isRequired,
-  task: PropTypes.object.isRequired
+  task: PropTypes.object.isRequired,
+  pdfLink: PropTypes.string,
+  pdfjsLink: PropTypes.string,
+  handleAlert: PropTypes.func,
+  handleAlertClear: PropTypes.func,
+  specialIssues: PropTypes.object,
+  establishClaimForm: PropTypes.object,
+  onDuplicateEP: PropTypes.func,
+  submitDecisionPage: PropTypes.func,
+  submitDecisionPageSuccess: PropTypes.func,
+  submitDecisionPageFailure: PropTypes.func,
+  beginPerformEstablishClaim: PropTypes.func,
+  performEstablishClaimSuccess: PropTypes.func,
+  performEstablishClaimFailure: PropTypes.func
 };
+
+const mapStateToProps = (state) => ({
+  specialIssues: state.specialIssues,
+  establishClaimForm: state.establishClaimForm
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  // These would be better handled by refactoring API logic to a thunk
+  submitDecisionPage: () =>
+    dispatch({
+      type: SUBMIT_DECISION_PAGE
+    }),
+  submitDecisionPageSuccess: () =>
+    dispatch({
+      type: SUBMIT_DECISION_PAGE_SUCCESS
+    }),
+  submitDecisionPageFailure: () =>
+    dispatch({
+      type: SUBMIT_DECISION_PAGE_FAILURE
+    }),
+  beginPerformEstablishClaim: () => {
+    return dispatch({
+      type: PERFORM_ESTABLISH_CLAIM_START
+    });
+  },
+  performEstablishClaimSuccess: () => {
+    return dispatch({
+      type: PERFORM_ESTABLISH_CLAIM_SUCCESS
+    });
+  },
+  performEstablishClaimFailure: () =>
+    dispatch({
+      type: PERFORM_ESTABLISH_CLAIM_FAILURE
+    }),
+  onDuplicateEP: (nextModifier) => {
+    return dispatch({
+      type: INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR,
+      payload: {
+        value: nextModifier
+      }
+    });
+  },
+  dispatch
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EstablishClaim);

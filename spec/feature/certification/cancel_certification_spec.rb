@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Cancel certification", :all_dbs do
   let!(:current_user) { User.authenticate! }
 
@@ -29,11 +26,11 @@ RSpec.feature "Cancel certification", :all_dbs do
   context "As an authorized user" do
     let!(:current_user) { User.authenticate!(user: default_user) }
 
-    before(:all) do
+    before do
       FeatureToggle.enable!(:certification_v2)
     end
 
-    after(:all) do
+    after do
       FeatureToggle.disable!(:certification_v2)
     end
 

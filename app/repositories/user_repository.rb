@@ -63,14 +63,6 @@ class UserRepository
     end
     # :nocov:
 
-    def find_all_hearing_coordinators
-      coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
-
-      coordinator_records.select(&:sdomainid).map do |record|
-        User.find_by_css_id_or_create_with_default_station_id(record.sdomainid)
-      end
-    end
-
     private
 
     def cached_staff_record(css_id)

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe DecisionReview, :postgres do
   before do
     Time.zone = "UTC"
@@ -14,9 +11,16 @@ describe DecisionReview, :postgres do
   let(:higher_level_review) do
     create(:higher_level_review, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
   end
-
+  let(:decision_review_remanded) { nil }
+  let(:benefit_type) { "compensation" }
   let(:supplemental_claim) do
-    create(:supplemental_claim, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
+    create(
+      :supplemental_claim,
+      veteran_file_number: veteran.file_number,
+      receipt_date: receipt_date,
+      decision_review_remanded: decision_review_remanded,
+      benefit_type: benefit_type
+    )
   end
 
   let(:receipt_date) { Time.zone.today }
@@ -77,6 +81,36 @@ describe DecisionReview, :postgres do
              decision_review: appeal,
              caseflow_decision_date: profile_date + 3.days)
     ]
+  end
+
+  context "#can_contest_rating_issues?" do
+    subject { decision_review.can_contest_rating_issues? }
+
+    context "for an appeal" do
+      let(:decision_review) { appeal }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "for a claim review" do
+      let(:decision_review) { supplemental_claim }
+
+      context "when processed in vbms" do
+        it { is_expected.to eq(true) }
+
+        context "when the decision review is a remand supplemental claim" do
+          let(:decision_review_remanded) { create(:higher_level_review) }
+
+          it { is_expected.to eq(false) }
+        end
+      end
+
+      context "when processed in caseflow" do
+        let(:benefit_type) { "education" }
+
+        it { is_expected.to eq(false) }
+      end
+    end
   end
 
   context "#removed?" do
@@ -330,7 +364,7 @@ describe DecisionReview, :postgres do
     it "returns CSS id of the Intake user" do
       intake = create(:intake)
       review = intake.detail
-      expect(review.asyncable_user).to eq(review.intake.user.css_id)
+      expect(review.asyncable_user).to eq(review.intake.user)
     end
   end
 end

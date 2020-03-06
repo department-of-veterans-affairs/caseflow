@@ -16,7 +16,7 @@ import ReaderLink from './ReaderLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { pencilSymbol } from '../components/RenderFunctions';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 
@@ -257,11 +257,10 @@ CaseTitleDetails.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { featureToggles, userRole, canEditAod } = state.ui;
+  const { userRole, canEditAod } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    featureToggles,
     userRole,
     canEditAod,
     userIsVsoEmployee: state.ui.userIsVsoEmployee

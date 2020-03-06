@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { sprintf } from 'sprintf-js';
 
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
-import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.json';
+import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 
 export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay, dailyDocket }) => (
   <div>

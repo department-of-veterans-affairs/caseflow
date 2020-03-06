@@ -33,7 +33,7 @@ class HearingWorksheetPrintAllContainer extends React.Component {
 
     return Promise.all(getAllWorksheets).then((responses) => {
       this.setState({
-        worksheets: responses.map((response) => getWorksheetAppealsAndIssues(response.body))
+        worksheets: responses.map((response) => getWorksheetAppealsAndIssues(response.body.data))
       });
     });
   };

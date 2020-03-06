@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-
 describe DocumentSeriesIdAssigner, :postgres do
   describe "#call" do
     let(:appeal) do

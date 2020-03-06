@@ -1,21 +1,18 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
 import scrollToComponent from 'react-scroll-to-component';
 
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
-import COPY from '../../../COPY.json';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
+import COPY from '../../../COPY';
 import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import RadioField from '../../components/RadioField';
 
-import {
-  getIssueProgramDescription,
-  getIssueTypeDescription,
-  getIssueDiagnosticCodeLabel
-} from '../utils';
+import { getIssueProgramDescription, getIssueTypeDescription, getIssueDiagnosticCodeLabel } from '../utils';
 import {
   fullWidth,
   REMAND_REASONS,
@@ -49,9 +46,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
     const { appeal } = this.props;
 
-    const options = _.flatten(_.values(
-      appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS
-    ));
+    const options = _.flatten(_.values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
     const pairs = _.zip(
       _.map(options, 'id'),
       _.map(options, () => ({
@@ -79,32 +74,35 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     const chosenOptions = this.getChosenOptions();
 
     return chosenOptions.length >= 1 && _.every(chosenOptions, (opt) => !_.isNull(opt.post_aoj));
-  }
+  };
 
   // todo: make scrollTo util function that also sets focus
   // element focus info https://goo.gl/jCkoxP
-  scrollTo = (dest = this, opts) => scrollToComponent(dest, _.defaults(opts, {
-    align: 'top',
-    duration: 1500,
-    ease: 'outCube',
-    offset: -35
-  }));
+  scrollTo = (dest = this, opts) =>
+    scrollToComponent(
+      dest,
+      _.defaults(opts, {
+        align: 'top',
+        duration: 1500,
+        ease: 'outCube',
+        offset: -35
+      })
+    );
 
   componentDidMount = () => {
     const {
-      issue: {
-        id: issueId,
-        remand_reasons: remandReasons
-      },
+      issue: { id: issueId, remand_reasons: remandReasons },
       issues
     } = this.props;
 
-    _.each(remandReasons, (reason) => this.setState({
-      [reason.code]: {
-        checked: true,
-        post_aoj: reason.post_aoj.toString()
-      }
-    }));
+    _.each(remandReasons, (reason) =>
+      this.setState({
+        [reason.code]: {
+          checked: true,
+          post_aoj: reason.post_aoj.toString()
+        }
+      })
+    );
 
     if (_.map(issues, 'id').indexOf(issueId) > 0) {
       this.scrollTo();
@@ -153,42 +151,46 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         post_aoj: null
       }
     });
-  }
+  };
 
   getCheckbox = (option, onChange, values) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
     const { appeal } = this.props;
     const copyPrefix = appeal.isLegacyAppeal ? 'LEGACY' : 'AMA';
 
-    return <React.Fragment key={option.id}>
-      <Checkbox
-        name={rowOptId}
-        onChange={onChange}
-        value={values[option.id].checked}
-        label={option.label}
-        unpadded />
-      {values[option.id].checked && <RadioField
-        errorMessage={this.props.highlight && _.isNull(this.state[option.id].post_aoj) && 'Choose one'}
-        styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
-        name={rowOptId}
-        vertical
-        hideLabel
-        options={[{
-          displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
-          value: 'false'
-        }, {
-          displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
-          value: 'true'
-        }]}
-        value={this.state[option.id].post_aoj}
-        onChange={(postAoj) => this.setState({
-          [option.id]: {
-            checked: true,
-            post_aoj: postAoj
-          }
-        })}
-      />}
-    </React.Fragment>;
+    return (
+      <React.Fragment key={option.id}>
+        <Checkbox name={rowOptId} onChange={onChange} value={values[option.id].checked} label={option.label} unpadded />
+        {values[option.id].checked && (
+          <RadioField
+            errorMessage={this.props.highlight && _.isNull(this.state[option.id].post_aoj) && 'Choose one'}
+            styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
+            name={rowOptId}
+            vertical
+            hideLabel
+            options={[
+              {
+                displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
+                value: 'false'
+              },
+              {
+                displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
+                value: 'true'
+              }
+            ]}
+            value={this.state[option.id].post_aoj}
+            onChange={(postAoj) =>
+              this.setState({
+                [option.id]: {
+                  checked: true,
+                  post_aoj: postAoj
+                }
+              })
+            }
+          />
+        )}
+      </React.Fragment>
+    );
   };
 
   getCheckboxGroup = () => {
@@ -200,106 +202,107 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     };
 
     if (appeal.isLegacyAppeal) {
-      return <div {...flexContainer}>
-        <div {...flexColumn}>
-          <CheckboxGroup
-            label={<h3>Medical examination and opinion</h3>}
-            name="med-exam"
-            options={LEGACY_REMAND_REASONS.medicalExam}
-            {...checkboxGroupProps} />
-          <CheckboxGroup
-            label={<h3>Duty to assist records request</h3>}
-            name="duty-to-assist"
-            options={LEGACY_REMAND_REASONS.dutyToAssistRecordsRequest}
-            {...checkboxGroupProps} />
+      return (
+        <div {...flexContainer}>
+          <div {...flexColumn}>
+            <CheckboxGroup
+              label={<h3>Medical examination and opinion</h3>}
+              name="med-exam"
+              options={LEGACY_REMAND_REASONS.medicalExam}
+              {...checkboxGroupProps}
+            />
+            <CheckboxGroup
+              label={<h3>Duty to assist records request</h3>}
+              name="duty-to-assist"
+              options={LEGACY_REMAND_REASONS.dutyToAssistRecordsRequest}
+              {...checkboxGroupProps}
+            />
+          </div>
+          <div {...flexColumn}>
+            <CheckboxGroup
+              label={<h3>Duty to notify</h3>}
+              name="duty-to-notify"
+              options={LEGACY_REMAND_REASONS.dutyToNotify}
+              {...checkboxGroupProps}
+            />
+            <CheckboxGroup
+              label={<h3>Due process</h3>}
+              name="due-process"
+              options={LEGACY_REMAND_REASONS.dueProcess}
+              {...checkboxGroupProps}
+            />
+          </div>
         </div>
+      );
+    }
+
+    return (
+      <div {...flexContainer}>
         <div {...flexColumn}>
           <CheckboxGroup
             label={<h3>Duty to notify</h3>}
             name="duty-to-notify"
-            options={LEGACY_REMAND_REASONS.dutyToNotify}
-            {...checkboxGroupProps} />
+            options={REMAND_REASONS.dutyToNotify}
+            {...checkboxGroupProps}
+          />
           <CheckboxGroup
-            label={<h3>Due process</h3>}
-            name="due-process"
-            options={LEGACY_REMAND_REASONS.dueProcess}
-            {...checkboxGroupProps} />
+            label={<h3>Duty to assist</h3>}
+            name="duty-to-assist"
+            options={REMAND_REASONS.dutyToAssist}
+            {...checkboxGroupProps}
+          />
         </div>
-      </div>;
-    }
-
-    return <div {...flexContainer}>
-      <div {...flexColumn}>
-        <CheckboxGroup
-          label={<h3>Duty to notify</h3>}
-          name="duty-to-notify"
-          options={REMAND_REASONS.dutyToNotify}
-          {...checkboxGroupProps} />
-        <CheckboxGroup
-          label={<h3>Duty to assist</h3>}
-          name="duty-to-assist"
-          options={REMAND_REASONS.dutyToAssist}
-          {...checkboxGroupProps} />
+        <div {...flexColumn}>
+          <CheckboxGroup
+            label={<h3>Medical examination</h3>}
+            name="medical-exam"
+            options={REMAND_REASONS.medicalExam}
+            {...checkboxGroupProps}
+          />
+          <br />
+          <CheckboxGroup
+            label={<h3>Due Process</h3>}
+            name="due-process"
+            options={REMAND_REASONS.dueProcess}
+            {...checkboxGroupProps}
+          />
+        </div>
       </div>
-      <div {...flexColumn}>
-        <CheckboxGroup
-          label={<h3>Medical examination</h3>}
-          name="medical-exam"
-          options={REMAND_REASONS.medicalExam}
-          {...checkboxGroupProps} />
-        <br />
-        <CheckboxGroup
-          label={<h3>Due Process</h3>}
-          name="due-process"
-          options={REMAND_REASONS.dueProcess}
-          {...checkboxGroupProps} />
-      </div>
-
-    </div>;
-  }
+    );
+  };
 
   render = () => {
-    const {
-      issue,
-      issues,
-      idx,
-      highlight,
-      appeal
-    } = this.props;
+    const { issue, issues, idx, highlight, appeal } = this.props;
 
-    return <div key={`remand-reasons-${String(issue.id)}`}>
-      <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-        Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
-      </h2>
-      <div {...smallBottomMargin}>
-        {appeal.isLegacyAppeal ?
-          `Program: ${getIssueProgramDescription(issue)}` :
-          `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}` }
-      </div>
-      {!appeal.isLegacyAppeal &&
+    return (
+      <div key={`remand-reasons-${String(issue.id)}`}>
+        <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+          Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
+        </h2>
         <div {...smallBottomMargin}>
-          Issue description: {issue.description}
+          {appeal.isLegacyAppeal ?
+            `Program: ${getIssueProgramDescription(issue)}` :
+            `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}`}
         </div>
-      }
-      {appeal.isLegacyAppeal &&
-        <React.Fragment>
-          <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-          <div {...smallBottomMargin}>
-            Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
+        {!appeal.isLegacyAppeal && <div {...smallBottomMargin}>Issue description: {issue.description}</div>}
+        {appeal.isLegacyAppeal && (
+          <React.Fragment>
+            <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
+            <div {...smallBottomMargin}>Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}</div>
+            <div {...smallBottomMargin} ref={(node) => (this.elTopOfWarning = node)}>
+              Certified: {formatDateStr(appeal.certificationDate)}
+            </div>
+            <div {...smallBottomMargin}>Note: {issue.note}</div>
+          </React.Fragment>
+        )}
+        {highlight && !this.getChosenOptions().length && (
+          <div className="usa-input-error" {...css(redText, boldText, errorNoTopMargin)}>
+            Choose at least one
           </div>
-          <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
-            Certified: {formatDateStr(appeal.certificationDate)}
-          </div>
-          <div {...smallBottomMargin}>Note: {issue.note}</div>
-        </React.Fragment>}
-      {highlight && !this.getChosenOptions().length &&
-        <div className="usa-input-error"
-          {...css(redText, boldText, errorNoTopMargin)}>
-          Choose at least one
-        </div>
-      }
-      {this.getCheckboxGroup()}
-    </div>;
+        )}
+        {this.getCheckboxGroup()}
+      </div>
+    );
   };
 }
 
@@ -309,14 +312,26 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => [
-      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
-    ].includes(issue.disposition)),
+    issues: _.filter(issues, (issue) =>
+      [VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED].includes(issue.disposition)
+    ),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
 };
 
-export default (connect(
-  mapStateToProps, null, null, { withRef: true }
-)(IssueRemandReasonsOptions));
+IssueRemandReasonsOptions.propTypes = {
+  appeal: PropTypes.object,
+  issues: PropTypes.array,
+  issue: PropTypes.object,
+  issueId: PropTypes.number,
+  highlight: PropTypes.bool,
+  idx: PropTypes.number
+};
+
+export default connect(
+  mapStateToProps,
+  null,
+  null,
+  { forwardRef: true }
+)(IssueRemandReasonsOptions);

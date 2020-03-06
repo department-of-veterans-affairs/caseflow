@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Save Certification", :all_dbs do
   before do
     Form8.pdf_service = FakePdfService

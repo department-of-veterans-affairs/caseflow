@@ -52,6 +52,10 @@
     "value": "address_motion_to_vacate",
     "func": "address_motion_to_vacate_data"
   },
+  "REVIEW_VACATE_DECISION": {
+    "label": "Decision ready for review",
+    "value": "motion_to_vacate_checkout/review_vacatures"
+  },
   "SIGN_MOTION_TO_VACATE": {
     "label": "Sign Motion to Vacate",
     "value": "sign_motion_to_vacate",
@@ -111,13 +115,21 @@
     "label": "Ready for Dispatch",
     "value": "dispatch_decision/dispositions"
   },
+  "JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER": {
+    "label": "Ready for Dispatch",
+    "value": "modal/check_cavc"
+  },
+  "JUDGE_RETURN_TO_LIT_SUPPORT": {
+    "value": "modal/return_to_lit_support",
+    "func": "return_to_lit_support_data"
+  },
   "JUDGE_RETURN_TO_ATTORNEY": {
     "label": "Return to attorney",
     "value": "modal/return_to_attorney",
     "func": "return_to_attorney_data"
   },
   "LIT_SUPPORT_PULAC_CERULLO": {
-    "label": "Notify OGC of Pulac-Cerullo",
+    "label": "Notify Litigation Support of CAVC jurisdictional conflict",
     "value": "modal/assign_to_pulac_cerullo",
     "func": "assign_to_pulac_cerullo_data"
   },

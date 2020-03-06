@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe FoiaTask do
   describe ".available_actions" do
     subject { task.available_actions(user) }

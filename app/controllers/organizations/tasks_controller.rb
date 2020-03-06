@@ -20,19 +20,11 @@ class Organizations::TasksController < OrganizationsController
     return [] if queue_config[:use_task_pages_api]
 
     Rails.logger.debug("starting GenericQueue tasks")
-
-    # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
-    if organization.url == "hearings-management"
-      tasks = GenericQueue.new(user: organization, limit: 1000).tasks
-      Rails.logger.debug("starting AOD filter")
-      tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
-    else
-      GenericQueue.new(user: organization, limit: 1000).tasks
-    end
+    GenericQueue.new(user: organization, limit: 1000).tasks
   end
 
   def queue_config
-    QueueConfig.new(assignee: organization).to_hash_for_user(current_user)
+    QueueConfig.new(assignee: organization).to_hash
   end
 
   def organization_url
@@ -40,13 +32,10 @@ class Organizations::TasksController < OrganizationsController
   end
 
   def json_tasks(tasks)
-    Rails.logger.debug("starting AppealRepository.eager_load_legacy_appeals_for_tasks")
-    tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
-    params = { user: current_user }
-
-    Rails.logger.debug("starting AmaAndLegacyTaskSerializer")
-    AmaAndLegacyTaskSerializer.new(
-      tasks: tasks, params: params, ama_serializer: organization.ama_task_serializer
+    AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
+      tasks: tasks,
+      params: { user: current_user },
+      ama_serializer: organization.ama_task_serializer
     ).call
   end
 end

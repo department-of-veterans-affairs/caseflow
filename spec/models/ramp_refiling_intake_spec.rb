@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe RampRefilingIntake, :postgres do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
@@ -311,6 +308,12 @@ describe RampRefilingIntake, :postgres do
             it "adds ramp_refiling_already_processed and returns false" do
               expect(subject).to eq(false)
               expect(intake.error_code).to eq("ramp_refiling_already_processed")
+            end
+
+            context "the preexisting RAMP refilings only have cancelled EPs" do
+              let!(:previous_epe) { create(:end_product_establishment, :canceled, source: preexisting_ramp_refiling) }
+
+              it { is_expected.to eq(true) }
             end
           end
         end

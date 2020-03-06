@@ -13,8 +13,7 @@ FactoryBot.define do
 
     hearing_location do
       if regional_office.present?
-        venue = LegacyHearing.venues[regional_office]
-        HearingLocation.create(name: venue[:label])
+        create(:hearing_location, regional_office: regional_office)
       end
     end
 
@@ -25,6 +24,7 @@ FactoryBot.define do
         create(
           :case_hearing,
           user: user,
+          hearing_type: hearing_day.request_type,
           hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
           vdkey: hearing_day.id
         )
@@ -37,9 +37,11 @@ FactoryBot.define do
         [create(:case_issue), create(:case_issue)], bfregoff: regional_office, case_hearings: [case_hearing]))
     end
 
+    hearing_day_id { case_hearing.vdkey }
     vacols_id { case_hearing.hearing_pkseq }
     created_by { create(:user) }
     updated_by { create(:user) }
+    virtual_hearing { nil }
 
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|

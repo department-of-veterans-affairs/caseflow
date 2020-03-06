@@ -3,28 +3,34 @@
 import _ from 'lodash';
 import React from 'react';
 
-import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
-import COPY from '../../../COPY.json';
+import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES';
+import COPY from '../../../COPY';
 
 import { legacyIssue } from '../util/issues';
+import { formatDateStr } from '../../util/DateUtil';
+import { CORRECTION_TYPE_OPTIONS } from '../constants';
 
 class AddedIssue extends React.PureComponent {
   needsEligibilityCheck() {
     let { issue, requestIssues } = this.props;
 
     if (!requestIssues) {
-      return false;
+      return true;
     }
     if (issue.ineligibleReason) {
       return true;
     }
 
-    let existingRequestIssue = _.filter(
-      requestIssues,
-      { rating_issue_reference_id: issue.ratingIssueReferenceId }
-    )[0];
+    let existingRequestIssue;
 
-    if (!existingRequestIssue) {
+    if (issue.ratingIssueReferenceId) {
+      existingRequestIssue = _.filter(
+        requestIssues,
+        { rating_issue_reference_id: issue.ratingIssueReferenceId }
+      )[0];
+    }
+
+    if (!existingRequestIssue && issue.ratingDecisionReferenceId) {
       existingRequestIssue = _.filter(
         requestIssues,
         { rating_decision_reference_id: issue.ratingDecisionReferenceId }
@@ -44,10 +50,6 @@ class AddedIssue extends React.PureComponent {
     let errorMsg = '';
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
 
-    if (issue.isUnidentified) {
-      return { errorMsg,
-        cssKlasses: cssKlassesWithError.concat(['issue-unidentified']) };
-    }
     if (issue.titleOfActiveReview ||
       (issue.decisionReviewTitle && issue.ineligibleReason === 'duplicate_of_nonrating_issue_in_active_review')
     ) {
@@ -84,6 +86,12 @@ class AddedIssue extends React.PureComponent {
     }
   }
 
+  getCorrectionType = (issue) => {
+    const correction = _.find(CORRECTION_TYPE_OPTIONS, (opt) => opt.value === issue.correctionType);
+
+    return correction ? `This issue will be added to a 930 ${correction.displayText} EP for correction` : '';
+  }
+
   render() {
     let { issue, issueIdx } = this.props;
     let eligibleState = {
@@ -99,6 +107,10 @@ class AddedIssue extends React.PureComponent {
       }
     }
 
+    if (issue.isUnidentified) {
+      eligibleState.cssKlasses.push('issue-unidentified');
+    }
+
     if (issue.withdrawalPending || issue.withdrawalDate) {
       eligibleState.cssKlasses.push('withdrawn-issue');
     }
@@ -106,7 +118,7 @@ class AddedIssue extends React.PureComponent {
     return <div className={eligibleState.cssKlasses.join(' ')}>
       <span className="issue-num">{issueIdx + 1}.&nbsp;</span>
       { issue.editedDescription ? issue.editedDescription : issue.text } {eligibleState.errorMsg}
-      { issue.date && <span className="issue-date">Decision date: { issue.date }</span> }
+      { issue.date && <span className="issue-date">Decision date: {formatDateStr(issue.date)}</span> }
       { issue.notes && <span className="issue-notes">Notes:&nbsp;{ issue.notes }</span> }
       { issue.untimelyExemptionNotes &&
         <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
@@ -120,10 +132,10 @@ class AddedIssue extends React.PureComponent {
         </div>
       }
       { issue.withdrawalPending && <p>Withdrawal pending</p> }
-      { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
+      { issue.withdrawalDate && <p>Withdrawn on {formatDateStr(issue.withdrawalDate)}</p> }
       { issue.endProductCleared && <p>Status: Cleared, waiting for decision</p> }
       { issue.correctionType && <p className="correction-pending">
-          This issue will be added to a 930 EP for correction
+        {this.getCorrectionType(issue)}
       </p> }
     </div>;
   }

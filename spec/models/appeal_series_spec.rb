@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe AppealSeries, :all_dbs do
   before do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
@@ -107,6 +104,13 @@ describe AppealSeries, :all_dbs do
           create(:legacy_appeal, vacols_case: create(:case, :status_complete, bfkey: "1234567", bfdloout: 1.day.ago)),
           create(:legacy_appeal, vacols_case: create(:case, :status_complete, bfkey: "7654321", bfdloout: 2.days.ago))
         ]
+      end
+
+      it "handles nil decision_date comparison" do
+        allow(appeals.first).to receive(:decision_date) { nil }
+        allow(appeals.last).to receive(:decision_date) { Time.zone.now }
+
+        expect(series.latest_appeal).to_not be_nil
       end
 
       it { is_expected.to eq "1234567" }

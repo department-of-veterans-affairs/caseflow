@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe UpdateAppellantRepresentationJob, :all_dbs do
   context "when the job runs successfully" do
     let(:new_task_count) { 3 }

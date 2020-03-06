@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe AssignHearingDispositionTask, :all_dbs do
   describe "#update_from_params for ama appeal" do
     let(:appeal) { create(:appeal) }
@@ -19,7 +16,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     subject { disposition_task.update_from_params(params, user) }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(user)
     end
 
     describe "hearing disposition of cancelled" do
@@ -35,12 +32,13 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls cancel!" do
-        expect(disposition_task).to receive(:cancel!).exactly(1).times
+        expect(disposition_task).to receive(:cancel!).exactly(1).times.and_call_original
 
         subject
 
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
+        expect(disposition_task.reload.closed_at).to_not be_nil
       end
     end
 
@@ -284,6 +282,8 @@ describe AssignHearingDispositionTask, :all_dbs do
 
             expect(disposition_task.reload.cancelled?).to be_truthy
             expect(hearing_task.reload.cancelled?).to be_truthy
+            expect(disposition_task.closed_at).to_not be_nil
+            expect(hearing_task.closed_at).to_not be_nil
             expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
             expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
             expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
@@ -438,7 +438,6 @@ describe AssignHearingDispositionTask, :all_dbs do
           no_show_hearing_task = NoShowHearingTask.first
           expect(no_show_hearing_task).to_not be_nil
           expect(no_show_hearing_task.placed_on_hold_at).to_not be_nil
-          expect(no_show_hearing_task.old_style_hold_expired?).to be_falsey
           expect(no_show_hearing_task.reload.on_hold?).to be_truthy
           expect(no_show_hearing_task.calculated_on_hold_duration).to eq 25
           instructions_text = "Mail must be received within 14 days of the original hearing date."

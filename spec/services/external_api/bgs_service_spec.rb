@@ -5,6 +5,7 @@ describe ExternalApi::BGSService do
   let(:bgs_people_service) { double("people") }
   let(:bgs_security_service) { double("security") }
   let(:bgs_claimants_service) { double("claimants") }
+  let(:bgs_address_service) { double("address") }
   let(:bgs_client) { double("BGS::Services") }
   let(:bgs) { ExternalApi::BGSService.new(client: bgs_client) }
   let(:veteran_record) { { name: "foo", ssn: "123" } }
@@ -21,6 +22,93 @@ describe ExternalApi::BGSService do
 
   after do
     bgs.bust_fetch_veteran_info_cache(vbms_id)
+  end
+
+  describe "#find_address_by_participant_id" do
+    let(:veteran) { build(:veteran) }
+
+    subject { bgs.find_address_by_participant_id(veteran.participant_id) }
+
+    before do
+      allow(bgs).to receive(:find_address_by_participant_id).and_call_original
+      allow(bgs_client).to receive(:address).and_return(bgs_address_service)
+      allow(bgs_address_service).to receive(:find_all_by_participant_id) { address_records }
+    end
+
+    let(:address_records) do
+      [
+        {
+          addrs_one_txt: "123 MILES ST",
+          city_nm: "SHADY COVE",
+          cntry_nm: "USA",
+          efctv_dt: 7.days.ago,
+          postal_cd: "TX",
+          ptcpnt_addrs_type_nm: "FMS Payment",
+          zip_prefix_nbr: "76522"
+        },
+        {
+          addrs_one_txt: "456 Any Ave.",
+          city_nm: "Cypress Grove",
+          cntry_nm: "USA",
+          efctv_dt: 6.days.ago,
+          postal_cd: "TX",
+          ptcpnt_addrs_type_nm: "VRE Mailing",
+          zip_prefix_nbr: "12345"
+        },
+        {
+          addrs_one_txt: "999 The Place",
+          city_nm: "Sleepy Hollow",
+          cntry_nm: "USA",
+          efctv_dt: 5.days.ago,
+          postal_cd: "TX",
+          ptcpnt_addrs_type_nm: "Mailing",
+          zip_prefix_nbr: "66666"
+        }
+      ]
+    end
+
+    context "when no addresses exist" do
+      let(:address_records) {}
+
+      it "returns nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+
+    context "when multiple addresses exist" do
+      it "returns Mailing address" do
+        expect(subject[:address_line_1]).to eq("999 The Place")
+      end
+    end
+
+    context "when no Mailing address exists" do
+      let(:address_records) do
+        [
+          {
+            addrs_one_txt: "123 MILES ST",
+            city_nm: "SHADY COVE",
+            cntry_nm: "USA",
+            efctv_dt: 7.days.ago,
+            postal_cd: "TX",
+            ptcpnt_addrs_type_nm: "FMS Payment",
+            zip_prefix_nbr: "76522"
+          },
+          {
+            addrs_one_txt: "456 Any Ave.",
+            city_nm: "Cypress Grove",
+            cntry_nm: "USA",
+            efctv_dt: 6.days.ago,
+            postal_cd: "TX",
+            ptcpnt_addrs_type_nm: "VRE Mailing",
+            zip_prefix_nbr: "12345"
+          }
+        ]
+      end
+
+      it "returns most recent by effective date" do
+        expect(subject[:address_line_1]).to eq("456 Any Ave.")
+      end
+    end
   end
 
   describe "#fetch_veteran_info" do
@@ -49,8 +137,8 @@ describe ExternalApi::BGSService do
     end
   end
 
-  describe "#may_modify?" do
-    subject { bgs.may_modify?(vbms_id, veteran.participant_id) }
+  describe "#station_conflict?" do
+    subject { bgs.station_conflict?(vbms_id, veteran.participant_id) }
 
     before do
       allow(bgs_client).to receive(:people).and_return(bgs_people_service)
@@ -71,8 +159,8 @@ describe ExternalApi::BGSService do
         { ptcpnt_id: veteran.participant_id }
       end
 
-      it "returns true" do
-        expect(subject).to be_truthy
+      it "returns false" do
+        expect(subject).to be_falsey
       end
     end
 
@@ -84,8 +172,8 @@ describe ExternalApi::BGSService do
         }
       end
 
-      it "returns false" do
-        expect(subject).to be_falsey
+      it "returns true" do
+        expect(subject).to be_truthy
       end
     end
 
@@ -105,8 +193,8 @@ describe ExternalApi::BGSService do
         }
       end
 
-      it "returns true" do
-        expect(subject).to be_truthy
+      it "returns false" do
+        expect(subject).to be_falsey
       end
     end
 
@@ -115,8 +203,8 @@ describe ExternalApi::BGSService do
         allow(bgs_claimants_service).to receive(:find_flashes) { fail BGS::ShareError, "no access" }
       end
 
-      it "returns false" do
-        expect(subject).to be_falsey
+      it "returns true" do
+        expect(subject).to be_truthy
       end
     end
 
@@ -136,8 +224,8 @@ describe ExternalApi::BGSService do
         }
       end
 
-      it "returns false" do
-        expect(subject).to be_falsey
+      it "returns true" do
+        expect(subject).to be_truthy
       end
     end
   end

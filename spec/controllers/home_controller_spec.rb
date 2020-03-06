@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.describe HomeController, :postgres, type: :controller do
   describe "GET /" do
     context "when visitor is not logged in" do

@@ -28,7 +28,7 @@ const CANCEL_ERRORS = {
 export const CancelModal = ({
   cancelFeedback,
   errorMessage,
-  isCancelModalSubmitting,
+  isSubmittingCancelFeedback,
   isShowingCancelModal,
   handleChangeCancelFeedback,
   handleCancelSubmit,
@@ -42,7 +42,7 @@ export const CancelModal = ({
           onClick: handleCloseCancelModal
         },
         { classNames: ['usa-button', 'usa-button-secondary'],
-          loading: isCancelModalSubmitting,
+          loading: isSubmittingCancelFeedback,
           name: 'Stop processing claim',
           onClick: handleCancelSubmit
         }
@@ -73,17 +73,19 @@ export const CancelModal = ({
 CancelModal.propTypes = {
   cancelFeedback: PropTypes.string.isRequired,
   errorMessage: PropTypes.string,
-  isCancelModalSubmitting: PropTypes.bool.isRequired,
+  isSubmittingCancelFeedback: PropTypes.bool.isRequired,
   isShowingCancelModal: PropTypes.bool.isRequired,
   handleChangeCancelFeedback: PropTypes.func.isRequired,
   handleCancelSubmit: PropTypes.func.isRequired,
-  handleCloseCancelModal: PropTypes.func.isRequired
+  handleCloseCancelModal: PropTypes.func.isRequired,
+  handleAlert: PropTypes.func,
+  handleAlertClear: PropTypes.func
 };
 
 const mapStateToProps = (state) => {
   return {
     isShowingCancelModal: state.establishClaim.isShowingCancelModal,
-    isCancelModalSubmitting: state.establishClaim.isCancelModalSubmitting,
+    isSubmittingCancelFeedback: state.establishClaim.isSubmittingCancelFeedback,
     cancelFeedback: state.establishClaim.cancelFeedback,
     errorMessage: getCancelFeedbackErrorMessage(state.establishClaim)
   };

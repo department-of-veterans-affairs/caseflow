@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '../components/ReduxBase';
 import _ from 'lodash';
 
 import CertificationFrame from './CertificationFrame';

@@ -168,6 +168,7 @@ class EstablishClaim < Dispatch::Task
       appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
     rescue VBMS::ClientError => error
       Rails.logger.info "Failed EstablishClaim (id = #{id}), Error: #{error}"
+      Raven.capture_exception(error, extra: { establish_claim: id })
       return :failed
     end
 

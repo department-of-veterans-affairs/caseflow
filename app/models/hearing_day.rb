@@ -4,15 +4,13 @@
 # and repository class. Eventually may persist data to
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
-class HearingDay < ApplicationRecord
+class HearingDay < CaseflowRecord
   acts_as_paranoid
 
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
   belongs_to :updated_by, class_name: "User"
   has_many :hearings
-
-  validates :regional_office, absence: true, if: :central_office?
 
   class HearingDayHasChildrenRecords < StandardError; end
 
@@ -42,8 +40,29 @@ class HearingDay < ApplicationRecord
   before_update :assign_updated_by_user
   after_update :update_children_records
 
+  # Validates if the judge id maps to an actual record.
+  validates :judge, presence: true, if: -> { judge_id.present? }
+
+  validates :regional_office, absence: true, if: :central_office?
+  validates :regional_office,
+            inclusion: {
+              in: RegionalOffice.all.map(&:key),
+              message: "key (%{value}) is invalid"
+            },
+            unless: :central_office?
+
+  validates :request_type,
+            inclusion: {
+              in: REQUEST_TYPES.values,
+              message: "is invalid"
+            }
+
   def central_office?
     request_type == REQUEST_TYPES[:central]
+  end
+
+  def scheduled_for_as_date
+    scheduled_for.to_date
   end
 
   def confirm_no_children_records
@@ -82,14 +101,18 @@ class HearingDay < ApplicationRecord
   end
 
   def to_hash
-    serializable_hash(
-      methods: [
-        :judge_first_name,
-        :judge_last_name,
-        :readable_request_type,
-        :total_slots
-      ]
-    )
+    video_hearing_days_request_types = if request_type == REQUEST_TYPES[:video]
+                                         VideoHearingDayRequestTypeQuery
+                                           .new(HearingDay.where(id: id))
+                                           .call
+                                       else
+                                         {}
+                                       end
+
+    ::HearingDaySerializer.new(
+      self,
+      params: { video_hearing_days_request_types: video_hearing_days_request_types }
+    ).serializable_hash[:data][:attributes]
   end
 
   def hearing_day_full?
@@ -110,10 +133,6 @@ class HearingDay < ApplicationRecord
 
   def judge_last_name
     judge ? judge.full_name.split(" ").last : nil
-  end
-
-  def readable_request_type
-    Hearing::HEARING_TYPES[request_type.to_sym]
   end
 
   private
@@ -151,20 +170,17 @@ class HearingDay < ApplicationRecord
   end
 
   class << self
-    def create_hearing_day(hearing_hash)
-      create(hearing_hash).to_hash
-    end
-
     def create_schedule(scheduled_hearings)
       scheduled_hearings.each do |hearing_hash|
-        HearingDay.create_hearing_day(hearing_hash)
+        HearingDay.create(hearing_hash)
       end
     end
 
-    def update_schedule(updated_hearings)
-      updated_hearings.each do |hearing_hash|
-        hearing_to_update = HearingDay.find(hearing_hash[:id])
-        hearing_to_update.update!(judge: User.find_by_css_id_or_create_with_default_station_id(hearing_hash[:css_id]))
+    def update_schedule(updated_hearing_days)
+      updated_hearing_days.each do |hearing_day|
+        HearingDay.find(hearing_day.id).update!(
+          judge: User.find_by_css_id_or_create_with_default_station_id(hearing_day.judge.css_id)
+        )
       end
     end
 

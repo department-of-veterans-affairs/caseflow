@@ -28,7 +28,10 @@ class LegacyWorkQueue
         user = validate_or_create_user(user, task.assigned_to_css_id)
 
         task_class = AttorneyLegacyTask
-        if user&.vacols_roles&.first&.downcase == "judge" || (user&.judge_in_vacols? && appeal.attorney_case_review)
+        # If the user is a judge they are only assigned JudgeLegacyTasks
+        # If the user is an acting judge, assume any case that already has a decision doc is assigned to them as a judge
+        if user&.vacols_roles&.first&.downcase == "judge" ||
+           (user&.acting_judge_in_vacols? && appeal.vacols_case_review.document_id)
           task_class = JudgeLegacyTask
         end
 

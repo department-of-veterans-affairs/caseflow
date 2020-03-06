@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
 require "faker"
 
 describe FetchDocumentsForReaderUserJob, :all_dbs do
@@ -111,6 +109,17 @@ describe FetchDocumentsForReaderUserJob, :all_dbs do
         allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
           .and_raise(Caseflow::Error::ClientRequestError.new(code: 400, message: "error"))
 
+        expect { FetchDocumentsForReaderUserJob.perform_now(user) }.not_to raise_error
+      end
+    end
+
+    context "when efolder does not recognize the veteran file number" do
+      before do
+        allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
+          .and_raise(VBMS::FilenumberDoesNotExist.new(500, "error"))
+      end
+
+      it "does not raise error" do
         expect { FetchDocumentsForReaderUserJob.perform_now(user) }.not_to raise_error
       end
     end

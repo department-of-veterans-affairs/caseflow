@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe VeteranFinder, :postgres do
   before do
     Fakes::BGSService.store_veteran_record(file_number, veteran_record)
@@ -67,6 +64,35 @@ describe VeteranFinder, :postgres do
           expect(Veteran.find_by_file_number(file_number)).to be_nil
           expect(subject).to eq([])
         end
+      end
+    end
+  end
+
+  describe "#find_best_match" do
+    subject { described_class.find_best_match(ssn) }
+
+    context "2 Veteran records with same SSN and participant id" do
+      let(:ssn) { "123456789" }
+      let(:participant_id) { "999000" }
+      let!(:veteran1) { create(:veteran, ssn: ssn, file_number: ssn, participant_id: participant_id) }
+      let!(:veteran2) { create(:veteran, ssn: ssn, file_number: "1234", participant_id: participant_id) }
+
+      it "prefers the record with SSN != file number" do
+        expect(subject).to eq(veteran2)
+      end
+    end
+
+    context "SSN attribute nil" do
+      let(:ssn) { "123456789" }
+      let!(:veteran1) { create(:veteran, ssn: nil, file_number: ssn) }
+
+      before do
+        allow(VeteranFinder).to receive(:find_or_create_by_file_number_or_ssn) { [veteran1] }
+      end
+
+      it "does not query BGS" do
+        expect(veteran1).to_not receive(:bgs_record)
+        expect(subject).to eq(veteran1)
       end
     end
   end

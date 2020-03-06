@@ -173,7 +173,8 @@ class Fakes::VBMSService
 
     # generate new contentions and return list of all contentions on the claim.
     contentions.each do |contention|
-      Generators::Contention.build(text: contention[:description], claim_id: claim_id)
+      Generators::Contention.build(text: contention[:description],
+                                   claim_id: claim_id, type_code: contention[:contention_type])
     end
     Fakes::BGSService.end_product_store.inflated_contentions_for(claim_id)
   end

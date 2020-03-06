@@ -25,7 +25,10 @@ class Organizations::TaskPagesController < OrganizationsController
 
   def index
     render json: {
-      tasks: json_tasks(paged_tasks)
+      tasks: json_tasks(task_pager.paged_tasks),
+      task_page_count: task_pager.task_page_count,
+      total_task_count: task_pager.total_task_count,
+      tasks_per_page: TaskPager::TASKS_PER_PAGE
     }
   end
 
@@ -35,15 +38,15 @@ class Organizations::TaskPagesController < OrganizationsController
     params[:organization_url]
   end
 
-  def paged_tasks
-    TaskPager.new(
+  def task_pager
+    @task_pager ||= TaskPager.new(
       assignee: organization,
       tab_name: params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym],
       page: params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym],
       sort_order: params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
       sort_by: params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym],
       filters: params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM.to_sym]
-    ).paged_tasks
+    )
   end
 
   def json_tasks(tasks)

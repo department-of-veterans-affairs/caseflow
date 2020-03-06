@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class JudgeCaseReview < ApplicationRecord
+class JudgeCaseReview < CaseflowRecord
   include CaseReviewConcern
   include IssueUpdater
 
@@ -24,6 +24,9 @@ class JudgeCaseReview < ApplicationRecord
 
   # This comment in the GH issue will explain the numbers
   # https://github.com/department-of-veterans-affairs/caseflow/issues/6407#issuecomment-409271892
+  # LEGACY Limit and Probablity. See AMA at app/models/quality_review_case_selector.rb:5
+  # As of Dec 2019, we want AMA and Legacy to use the same cap. The percentages may differ. The
+  # goal is to get to the cap as steadily across the month as possible
   MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 137
   QUALITY_REVIEW_SELECTION_PROBABILITY = 0.032
 

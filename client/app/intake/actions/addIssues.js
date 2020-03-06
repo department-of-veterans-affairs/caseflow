@@ -87,19 +87,6 @@ export const addIssue = (currentIssue) => (dispatch) => {
   });
 };
 
-export const addUnidentifiedIssue = (description, notes, correctionType) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.ADD_ISSUE,
-    payload: {
-      isUnidentified: true,
-      description,
-      notes,
-      correctionType,
-      editable: true
-    }
-  });
-};
-
 export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 

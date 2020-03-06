@@ -40,7 +40,7 @@
     "city": "White River Junction",
     "state": "VT",
     "timezone": "America/New_York",
-    "hold_hearings": true,
+    "hold_hearings": false,
     "facility_locator_id": "vba_405",
     "alternate_locations": ["vba_373"]
   },
@@ -78,7 +78,9 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_309",
-    "alternate_locations": null
+    "alternate_locations": [
+      "vha_460HE"
+    ]
   },
   "RO10": {
     "label": "Philadelphia regional office",
@@ -91,8 +93,7 @@
       "vha_595",
       "vba_460",
       "vha_693",
-      "vha_542",
-      "vha_460HE"
+      "vha_542"
     ]
   },
   "RO11": {
@@ -156,7 +157,7 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_317",
-    "alternate_locations": ["vba_317a"]
+    "alternate_locations": ["vba_317a", "vc_0742V"]
   },
   "RO18": {
     "label": "Winston-Salem regional office",
@@ -192,7 +193,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_321",
-    "alternate_locations": ["vba_321b"]
+    "alternate_locations": ["vba_321b", "vha_502GA", "vha_502GB", "vha_502GE"]
   },
   "RO22": {
     "label": "Montgomery regional office",
@@ -690,7 +691,7 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_373",
-    "alternate_locations": ["vba_405"]
+    "alternate_locations": null
   },
   "RO74": {
     "label": null,
@@ -909,7 +910,7 @@
     "alternate_locations": null
   },
   "VACO": {
-    "label": null,
+    "label": "Board of Veterans' Appeals CO Office",
     "city": "Washington",
     "state": "DC",
     "timezone": "America/New_York",

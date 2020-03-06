@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "correcting issues", :postgres do
+  include IntakeHelpers
+
   context "deleting a request issue that has one decision issue" do
     it "deletes the decision issue" do
       appeal = appeal_with_one_decision_issue
       create_judge_decision_review_task_for(appeal)
-      first_request_issue = RequestIssue.find_by(notes: "first request issue")
+      first_request_issue = RequestIssue.find_by(contested_issue_description: "first description")
 
       visit_appeals_page_as_judge(appeal)
-      remove_request_issue_as_a_judge(first_request_issue)
+      remove_request_issue_as_a_judge(first_request_issue.description)
 
       expect(page).to have_link "Correct issues"
       expect(page).to_not have_content "first request issue"
@@ -27,10 +26,11 @@ feature "correcting issues", :postgres do
     it "deletes all decision issues" do
       appeal = appeal_with_multiple_decision_issues
       create_judge_decision_review_task_for(appeal)
-      request_issue = RequestIssue.find_by(notes: "with many decision issues")
+      request_issue = RequestIssue.find_by(contested_issue_description: "Many decision issues")
 
       visit_appeals_page_as_judge(appeal)
-      remove_request_issue_as_a_judge(request_issue)
+
+      remove_request_issue_as_a_judge(request_issue.description)
 
       expect(page).to have_link "Correct issues"
       expect(page).to_not have_content "with many decision issues"
@@ -52,8 +52,8 @@ feature "correcting issues", :postgres do
       expect(page).to have_content "decision with id 1"
       expect(page).to have_content "decision with id 2"
       page.go_back
-      request_issue = RequestIssue.find_by(notes: "with a shared decision issue")
-      remove_request_issue_as_a_judge(request_issue)
+      request_issue = RequestIssue.find_by(contested_issue_description: "shared decision issues")
+      remove_request_issue_as_a_judge(request_issue.description)
       expect(page).to have_link "Correct issues"
       expect(page).to_not have_content "with a shared decision issue"
       expect(DecisionIssue.pluck(:id)).to eq [1]
@@ -88,8 +88,12 @@ feature "correcting issues", :postgres do
       intake: create(:intake),
       number_of_claimants: 1,
       request_issues: [
-        create_request_issue(notes: "first request issue", decision_issues: [decision_issue(1)]),
-        create_request_issue(notes: "second request issue", decision_issues: [decision_issue(2)])
+        create_request_issue(notes: "first request issue",
+                             contested_issue_description: "first description",
+                             decision_issues: [decision_issue(1)]),
+        create_request_issue(notes: "second request issue",
+                             contested_issue_description: "second description",
+                             decision_issues: [decision_issue(2)])
       ]
     )
     DecisionIssue.find_each { |issue| issue.update(decision_review_id: Appeal.last.id) }
@@ -103,8 +107,12 @@ feature "correcting issues", :postgres do
       intake: create(:intake),
       number_of_claimants: 1,
       request_issues: [
-        create_request_issue(notes: "with many decision issues", decision_issues: multiple_decision_issues),
-        create_request_issue(notes: "with one decision issue", decision_issues: [decision_issue(3)])
+        create_request_issue(notes: "with many decision issues",
+                             contested_issue_description: "Many decision issues",
+                             decision_issues: multiple_decision_issues),
+        create_request_issue(notes: "with one decision issue",
+                             contested_issue_description: "One decision issue",
+                             decision_issues: [decision_issue(3)])
       ]
     )
     DecisionIssue.find_each { |issue| issue.update(decision_review_id: Appeal.last.id) }
@@ -119,19 +127,24 @@ feature "correcting issues", :postgres do
       intake: create(:intake),
       number_of_claimants: 1,
       request_issues: [
-        create_request_issue(notes: "with a shared decision issue", decision_issues: [shared_issue, unique_issue]),
-        create_request_issue(notes: "another shared decision issue", decision_issues: [shared_issue])
+        create_request_issue(notes: "with a shared decision issue",
+                             contested_issue_description: "shared decision issues",
+                             decision_issues: [shared_issue, unique_issue]),
+        create_request_issue(notes: "another shared decision issue",
+                             contested_issue_description: "another shared decision",
+                             decision_issues: [shared_issue])
       ]
     )
     DecisionIssue.find_each { |issue| issue.update(decision_review_id: Appeal.last.id) }
     appeal
   end
 
-  def create_request_issue(notes:, decision_issues:)
+  def create_request_issue(notes: nil, contested_issue_description: nil, decision_issues:)
     create(
       :request_issue,
       :rating,
       notes: notes,
+      contested_issue_description: contested_issue_description,
       decision_issues: decision_issues
     )
   end
@@ -154,13 +167,9 @@ feature "correcting issues", :postgres do
     click_link "(#{appeal.veteran_file_number})"
   end
 
-  def remove_request_issue_as_a_judge(request_issue)
+  def remove_request_issue_as_a_judge(description)
     click_link "Correct issues"
-    within("#issue-#{request_issue.id}") do
-      click_button "Remove"
-    end
-    click_on "Yes, remove issue"
-    click_on "Save"
-    click_button "Yes, save"
+    click_remove_intake_issue_dropdown(description)
+    click_edit_submit_and_confirm
   end
 end

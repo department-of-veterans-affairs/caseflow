@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
   let(:veteran) { create(:veteran) }
   let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }

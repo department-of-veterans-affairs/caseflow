@@ -58,7 +58,7 @@ class RampRefilingIntake < Intake
       receipt_date: detail.receipt_date,
       election_receipt_date: detail.election_receipt_date,
       appeal_docket: detail.appeal_docket,
-      issues: ramp_elections_with_decisions.map(&:issues).flatten.map(&:ui_hash),
+      issues: ramp_elections_with_decisions.map(&:issues).flatten.map(&:serialize),
       end_product_description: detail.end_product_description
     )
   end
@@ -85,13 +85,15 @@ class RampRefilingIntake < Intake
       self.error_code = :ramp_election_no_issues
     elsif ramp_refiling_already_processed?
       # For now caseflow does not support processing the multiple ramp refilings
-      # for the same veteran
+      # for the same veteran, unless previous ones have been cancelled
       self.error_code = :ramp_refiling_already_processed
     end
   end
 
   def ramp_refiling_already_processed?
-    !RampRefiling.where(veteran_file_number: veteran_file_number).empty?
+    duplicate_refilings = RampRefiling.where(veteran_file_number: veteran_file_number)
+    end_product_establishments = duplicate_refilings.map(&:end_product_establishment)
+    end_product_establishments.present? && !end_product_establishments.all?(&:status_cancelled?)
   end
 
   def find_or_build_initial_detail

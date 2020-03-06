@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
-import DATES from '../../../constants/DATES.json';
-import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
+import DATES from '../../../constants/DATES';
+import { formatDateStr } from '../../util/DateUtil';
 
 export const getBlankOptionError = (responseErrorCodes, field) => (
   (_.get(responseErrorCodes[field], 0) === 'blank') && 'Please select an option.'
@@ -47,8 +47,6 @@ export const isCorrection = (isRating, intakeData) => {
 
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
-    blank:
-      'Please enter a valid receipt date.',
     in_future:
       'Receipt date cannot be in the future.',
     before_ramp: 'Receipt Date cannot be earlier than RAMP start date, 11/01/2017.',
@@ -100,7 +98,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
   case 'appeal':
     return {
       docket_type: intakeData.docketType,
-      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      receipt_date: intakeData.receiptDate,
       claimant: intakeData.claimant,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
@@ -108,7 +106,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
     };
   case 'supplementalClaim':
     return {
-      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      receipt_date: intakeData.receiptDate,
       benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
@@ -120,7 +118,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       informal_conference: intakeData.informalConference,
       same_office: intakeData.sameOffice,
       benefit_type: intakeData.benefitType,
-      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      receipt_date: intakeData.receiptDate,
       claimant: intakeData.claimant,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
@@ -128,7 +126,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
     };
   default:
     return {
-      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      receipt_date: intakeData.receiptDate,
       claimant: intakeData.claimant,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,

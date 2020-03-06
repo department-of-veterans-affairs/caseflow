@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-
 describe IssueSerializer, :all_dbs do
   def issues_hash(object)
     IssueSerializer.new(object, is_collection: true).serializable_hash[:data].collect { |issue| issue[:attributes] }

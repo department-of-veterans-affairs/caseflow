@@ -53,7 +53,7 @@ p {
 }
 
 .cf-help-content,
- .cf-sg-content {
+.cf-sg-content {
   h1,
   h2,
   h3,
@@ -156,7 +156,7 @@ h2 {
   font-size: 24px;
   margin-bottom: 30px;
 
-  &[id="page-title"] {
+  &[id='page-title'] {
     margin-left: 0;
   }
 }
@@ -170,7 +170,6 @@ legend {
   font: inherit;
   white-space: normal;
 }
-
 
 dd {
   margin-left: 0;
@@ -192,7 +191,20 @@ dd {
 
 $styles: ('margin'), ('padding');
 $directions: ('top'), ('bottom'), ('left'), ('right');
-$rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8rem', '9rem', '10rem');
+$rems: (
+  '0',
+  '0rem',
+  '1rem',
+  '2rem',
+  '3rem',
+  '4rem',
+  '5rem',
+  '6rem',
+  '7rem',
+  '8rem',
+  '9rem',
+  '10rem'
+);
 
 @each $style in $styles {
   @each $direction in $directions {
@@ -208,16 +220,16 @@ $rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8r
 // Icons
 //-----------------------------------*/
 
-[class|=cf-icon] {
+[class|='cf-icon'] {
   display: inline-block;
-  height: .8em; // Should be an em
-  margin: 0 .1ex;
+  height: 0.8em; // Should be an em
+  margin: 0 0.1ex;
 }
 
 .cf-icon-missing {
-  vertical-align: -.15ex;
-  width: .8em;
-  height: .8em;
+  vertical-align: -0.15ex;
+  width: 0.8em;
+  height: 0.8em;
 
   path {
     fill: $color-secondary;
@@ -225,7 +237,7 @@ $rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8r
 }
 
 .cf-icon-found {
-  vertical-align: -.45ex;
+  vertical-align: -0.45ex;
   width: 1em;
   height: 1em;
 
@@ -279,14 +291,14 @@ $rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8r
   }
 
   svg {
-    margin-left: .25rem;
+    margin-left: 0.25rem;
     vertical-align: -1px;
   }
 }
 
 .cf-icon-appeal-id {
   display: inline-block;
-  margin-left: .25rem;
+  margin-left: 0.25rem;
   vertical-align: -1px;
 }
 
@@ -333,7 +345,7 @@ $rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8r
 
   &::after {
     background: url(#{$image-path}/arrow-down.svg) 50% 100% no-repeat;
-    background-size: .75em;
+    background-size: 0.75em;
     content: ' ';
     display: inline-block;
     height: 1rem;
@@ -351,7 +363,8 @@ $rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8r
 
   &.usa-button {
     &::after {
-      background: url(#{$image-url}/icons/icon-down-arrow.svg) 50% 100% no-repeat;
+      background: url(#{$image-url}/icons/icon-down-arrow.svg) 50% 100%
+        no-repeat;
     }
   }
 }
@@ -364,7 +377,7 @@ $rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8r
 
 .cf-dropdown-menu {
   @include unstyled-list();
-  @include transition (all 0.2s ease-in-out);
+  @include transition(all 0.2s ease-in-out);
   @extend %overlay;
   border: 1px solid $color-gray-lighter;
   box-shadow: $cf-drop-shadow;
@@ -398,12 +411,11 @@ $rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8r
     background-color: $color-gray-lighter;
     margin: 5px 20px;
   }
-
 }
 
 @media screen and (max-width: 1264px) {
   .cf-dropdown-menu {
-    right: .05rem;
+    right: 0.05rem;
   }
 }
 
@@ -428,7 +440,7 @@ svg title {
 
   &::before {
     content: ' ';
-    background: rgba($color-gray-dark, .4);
+    background: rgba($color-gray-dark, 0.4);
     position: fixed;
     height: inherit;
     width: inherit;
@@ -464,13 +476,13 @@ svg title {
 .cf-modal-close {
   background: transparent;
   height: 1.5rem;
-  padding: .1rem;
+  padding: 0.1rem;
   position: absolute;
   right: rem(10px);
   top: rem(10px);
   width: 1.5rem;
 
-  &[type="button"] {
+  &[type='button'] {
     margin-right: 0;
   }
 
@@ -553,13 +565,13 @@ svg title {
   background: $color-gray-light;
   margin: auto;
 
-  >div {
+  > div {
     height: 100%;
     border-radius: 2px;
     background: $color-gray-dark;
   }
 
-  >.cf-continuous-progress-bar-warning {
+  > .cf-continuous-progress-bar-warning {
     background: $color-secondary;
   }
 }
@@ -611,7 +623,6 @@ svg title {
   font-weight: normal;
   display: inline;
 }
-
 
 .cf-logo-name,
 .cf-application-title {
@@ -681,8 +692,8 @@ form {
 }
 
 //------ Buttons --------*/
-[type="submit"],
-[type="button"],
+[type='submit'],
+[type='button'],
 .usa-button {
   margin-top: 0;
   margin-bottom: 0;
@@ -779,7 +790,7 @@ form {
   }
 
   .cf-no-padding,
-    &.cf-no-padding {
+  &.cf-no-padding {
     padding: 0;
   }
 
@@ -822,12 +833,12 @@ form {
 }
 
 input {
-  &[type=number] {
+  &[type='number'] {
     display: inline;
   }
 }
 
-[type=checkbox]:disabled + label {
+[type='checkbox']:disabled + label {
   color: $color-gray-dark;
 }
 
@@ -842,7 +853,7 @@ input {
   }
 
   input {
-    &[type=number] {
+    &[type='number'] {
       width: 60px;
       height: 35px;
     }
@@ -850,7 +861,7 @@ input {
 
   .cf-form-int-input {
     input {
-      &[class*="cf-form-textinput"] {
+      &[class*='cf-form-textinput'] {
         margin: 0 12px;
         width: 3em;
         height: 36px;
@@ -863,7 +874,7 @@ input {
   color: $color-secondary;
   float: right;
   font-style: italic;
-  margin-left: .25em;
+  margin-left: 0.25em;
 }
 
 .cf-optional {
@@ -920,14 +931,14 @@ fieldset {
 
   label {
     max-width: 100%;
-   }
+  }
 }
 
 .cf-form-radio-inline {
   .cf-form-radio-option {
     float: left;
     padding-right: rem(30px);
-    margin: .5em 0;
+    margin: 0.5em 0;
   }
 }
 
@@ -937,6 +948,20 @@ fieldset {
 
   .usa-width-one-whole {
     margin-bottom: 0;
+  }
+
+  // Account for proper alignment of long labels so they don't wrap under the checkbox
+  &.cf-checkbox-group {
+    [type='checkbox'] + label {
+      padding-left: 3.02rem;
+      text-indent: -2rem;
+
+      &::before {
+        position: relative;
+        left: -0.6em;
+        margin-right: 0;
+      }
+    }
   }
 }
 
@@ -960,7 +985,7 @@ fieldset {
 }
 
 .usa-input-error {
-  [type="radio"] + label::before {
+  [type='radio'] + label::before {
     box-shadow: 0 0 0 2px $color-white, 0 0 0 3px $color-gray-medium;
   }
 }
@@ -1021,7 +1046,8 @@ fieldset {
   list-style-type: none;
 
   li {
-    background: url(#{$image-url}/icons/icon-check.svg) no-repeat left top transparent;
+    background: url(#{$image-url}/icons/icon-check.svg) no-repeat left top
+      transparent;
     background-size: 22px 17px;
     background-position-y: 7px;
     padding-left: 38px;
@@ -1048,7 +1074,7 @@ fieldset {
 }
 
 ul {
-  &[id=toc] {
+  &[id='toc'] {
     li {
       padding-bottom: 10px;
     }
@@ -1056,8 +1082,8 @@ ul {
 }
 
 .cf-icon-alert {
-  margin-right: .25em;
-  vertical-align: -.25ex;
+  margin-right: 0.25em;
+  vertical-align: -0.25ex;
   width: 1em;
   height: 1em;
 
@@ -1116,7 +1142,6 @@ ul {
 }
 
 button {
-
   // preload default loading button SVG
   .cf-loading-icon-back,
   .cf-loading-icon-front {
@@ -1125,26 +1150,28 @@ button {
       display: inline-block;
       width: 0;
       height: 0;
-      background: url(#{$image-url}/icons/loading-pill.svg) center center no-repeat;
+      background: url(#{$image-url}/icons/loading-pill.svg) center center
+        no-repeat;
     }
   }
 
   // preload app-specific loading button SVGs
   &.cf-cert,
   &.cf-dispatch,
-    .cf-loading-icon-front {
+  .cf-loading-icon-front {
     &::after {
       content: ' ';
       display: inline-block;
       width: 0;
       height: 0;
-      }
     }
+  }
 
   &.cf-cert {
     .cf-loading-icon-back {
       &::after {
-        background: url(#{$image-url}/icons/loading-pill-cf-cert.svg) center center no-repeat;
+        background: url(#{$image-url}/icons/loading-pill-cf-cert.svg) center
+          center no-repeat;
       }
     }
   }
@@ -1152,7 +1179,8 @@ button {
   &.cf-dispatch {
     .cf-loading-icon-back {
       &::after {
-        background: url(#{$image-url}/icons/loading-pill-cf-dispatch.svg) center center no-repeat;
+        background: url(#{$image-url}/icons/loading-pill-cf-dispatch.svg) center
+          center no-repeat;
       }
     }
   }
@@ -1178,7 +1206,7 @@ button {
         box-sizing: border-box;
         position: absolute;
         right: 0;
-        top: -.1rem;
+        top: -0.1rem;
         @include animation(spin 5s linear infinite);
       }
     }
@@ -1186,7 +1214,7 @@ button {
     .cf-loading-icon-front {
       &::after {
         @include animation(backwardspin 5s linear infinite);
-        opacity: .5;
+        opacity: 0.5;
       }
     }
   }
@@ -1195,7 +1223,7 @@ button {
 .usa-accordion-button {
   background-image: url(#{$image-path}/minus.svg);
 
-  &[aria-expanded=false] {
+  &[aria-expanded='false'] {
     background-image: url(#{$image-path}/plus.svg);
   }
 }

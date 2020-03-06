@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-require "support/database_cleaner"
-
 describe UserInfoController, :postgres, type: :controller do
   describe ".represented_organizations" do
     let(:user) { create(:user) }
@@ -56,6 +53,30 @@ describe UserInfoController, :postgres, type: :controller do
 
           expect(response.status).to eq(400)
           expect(response.body).to match(/css_id/)
+        end
+      end
+
+      context "when the css_id is of lower or mixed case" do
+        let(:params) do
+          { css_id: random_css_id.downcase, station_id: random_station_id }
+        end
+
+        it "uppercases the css_id before sending to BGS" do
+          bgs_client = instance_double("client")
+          bgs_service = ExternalApi::BGSService.new(client: bgs_client) # not fake. mock client instead.
+          security_service = instance_double("security")
+          org_service = instance_double("org")
+
+          allow(BGSService).to receive(:new) { bgs_service }
+          allow(bgs_client).to receive(:security) { security_service }
+          allow(bgs_client).to receive(:org) { org_service }
+
+          expect(security_service).to receive(:find_participant_id).with(
+            css_id: params[:css_id].upcase, station_id: params[:station_id]
+          )
+          expect(org_service).to receive(:find_poas_by_ptcpnt_id) { [] }
+
+          subject
         end
       end
 

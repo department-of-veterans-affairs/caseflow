@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Distribution < ApplicationRecord
+class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
   include AmaCaseDistribution
 
@@ -113,7 +113,7 @@ class Distribution < ApplicationRecord
   end
 
   def batch_size
-    team_batch_size = JudgeTeam.for_judge(judge)&.non_admin_users&.size
+    team_batch_size = JudgeTeam.for_judge(judge)&.attorneys&.size
 
     return ALTERNATIVE_BATCH_SIZE if team_batch_size.nil? || team_batch_size == 0
 
@@ -121,6 +121,6 @@ class Distribution < ApplicationRecord
   end
 
   def total_batch_size
-    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * CASES_PER_ATTORNEY
+    DecisionDraftingAttorney.users.size * CASES_PER_ATTORNEY
   end
 end

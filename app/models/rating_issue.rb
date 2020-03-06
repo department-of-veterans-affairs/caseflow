@@ -54,25 +54,8 @@ class RatingIssue
     end
   end
 
-  def ui_hash
-    serialize
-  end
-
-  # If you change this method, you will need to clear cache in prod for your changes to
-  # take effect immediately. See DecisionReview#cached_serialized_ratings
   def serialize
-    {
-      participant_id: participant_id,
-      reference_id: reference_id,
-      decision_text: decision_text,
-      promulgation_date: promulgation_date,
-      profile_date: profile_date,
-      ramp_claim_id: ramp_claim_id,
-      rba_contentions_data: rba_contentions_data,
-      associated_end_products: associated_end_products.map(&:serialize),
-      diagnostic_code: diagnostic_code,
-      benefit_type: benefit_type
-    }
+    Intake::RatingIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def decision_issue

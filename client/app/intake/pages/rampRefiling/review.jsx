@@ -13,7 +13,8 @@ import { setReceiptDate, setOptionSelected } from '../../actions/intake';
 import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
+import PropTypes from 'prop-types';
 
 class Review extends React.PureComponent {
   beginNextIntake = () => {
@@ -88,6 +89,7 @@ class Review extends React.PureComponent {
         onChange={this.props.setReceiptDate}
         errorMessage={receiptDateError}
         strongLabel
+        type="date"
       />
 
       <RadioField
@@ -114,6 +116,25 @@ class Review extends React.PureComponent {
     </div>;
   }
 }
+Review.propTypes = {
+  rampRefilingStatus: PropTypes.string,
+  veteranName: PropTypes.string,
+  optionSelected: PropTypes.string,
+  optionSelectedError: PropTypes.string,
+  hasInvalidOption: PropTypes.bool,
+  receiptDate: PropTypes.string,
+  receiptDateError: PropTypes.string,
+  appealDocket: PropTypes.string,
+  appealDocketError: PropTypes.string,
+  submitInvalidOptionError: PropTypes.string,
+  reviewIntakeError: PropTypes.string,
+  setAppealDocket: PropTypes.func,
+  setOptionSelected: PropTypes.func,
+  setReceiptDate: PropTypes.func,
+  requestState: PropTypes.string,
+  intakeId: PropTypes.string,
+  confirmIneligibleForm: PropTypes.func
+};
 
 export default connect(
   (state) => ({

@@ -19,8 +19,9 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
-import { LIST_SCHEDULE_VIEWS } from '../constants';
+import { LIST_SCHEDULE_VIEWS, VIDEO_HEARING } from '../constants';
 import DropdownButton from '../../components/DropdownButton';
+import WindowUtil from '../../util/WindowUtil';
 
 const downloadButtonStyling = css({
   marginTop: '60px'
@@ -92,6 +93,11 @@ SwitchViewDropdown.propTypes = { onSwitchView: PropTypes.func };
 
 class ListTable extends React.Component {
   render() {
+    const failStatusMessageChildren = <div>
+      It looks like Caseflow was unable to load the hearing schedule.<br />
+      Please <a onClick={WindowUtil.reloadWithPOST}>refresh the page</a> and try again.
+    </div>;
+
     return (
       <LoadingDataDisplay
         createLoadPromise={this.props.onApply}
@@ -101,7 +107,9 @@ class ListTable extends React.Component {
         }}
         failStatusMessageProps={{
           title: 'Unable to load the hearing schedule.'
-        }}>
+        }}
+        failStatusMessageChildren={failStatusMessageChildren}
+      >
         {this.props.user.userCanBuildHearingSchedule && <div style={{ marginBottom: 25 }}>
           <Button linkStyling
             onClick={this.props.openModal}>
@@ -176,6 +184,13 @@ class ListSchedule extends React.Component {
         align: 'left',
         tableData: hearingScheduleRows,
         enableFilter: true,
+        filterValueTransform: (hearingType) => {
+          if (hearingType.toLowerCase().startsWith('video')) {
+            return VIDEO_HEARING;
+          }
+
+          return hearingType;
+        },
         anyFiltersAreSet: true,
         label: 'Filter by type',
         columnName: 'readableRequestType',

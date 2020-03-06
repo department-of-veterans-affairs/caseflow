@@ -59,7 +59,8 @@ class AddIssueManager extends React.Component {
             if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
               this.setState({ currentModal: 'CorrectionTypeModal' });
             } else if (this.hasLegacyAppeals()) {
-              this.setState({ currentModal: 'LegacyOptInModal' });
+              this.setState({ currentModal: 'LegacyOptInModal',
+                addtlProps: { currentIssue } });
             } else if (this.requiresUntimelyExemption()) {
               this.setState({ currentModal: 'UntimelyExemptionModal',
                 addtlProps: { currentIssue } });
@@ -99,7 +100,8 @@ class AddIssueManager extends React.Component {
               const { currentIssue } = this.state;
 
               if (this.hasLegacyAppeals()) {
-                this.setState({ currentModal: 'LegacyOptInModal' });
+                this.setState({ currentModal: 'LegacyOptInModal',
+                  addtlProps: { currentIssue } });
               } else if (this.requiresUntimelyExemption()) {
                 this.setState({ currentModal: 'UntimelyExemptionModal',
                   addtlProps: { currentIssue } });
@@ -218,18 +220,29 @@ class AddIssueManager extends React.Component {
   };
 
   setupUnidentifiedIssuesModal = () => {
-    const { intakeData, formType } = this.props;
+    const { intakeData, formType, featureToggles, editPage } = this.props;
 
     return {
       component: UnidentifiedIssuesModal,
       props: {
         intakeData,
         formType,
+        featureToggles,
+        editPage,
+        submitText: this.hasLegacyAppeals() && featureToggles.verifyUnidentifiedIssue ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSubmit: ({ currentIssue }) => {
           if (isCorrection(true, this.props.intakeData)) {
             this.setState({ currentIssue,
               currentModal: 'CorrectionTypeModal' });
+          } else if (featureToggles.verifyUnidentifiedIssue && this.hasLegacyAppeals()) {
+            this.setState({ currentIssue,
+              currentModal: 'LegacyOptInModal',
+              addtlProps: { currentIssue } });
+          } else if (currentIssue.timely === false) {
+            this.setState({ currentIssue,
+              currentModal: 'UntimelyExemptionModal',
+              addtlProps: { currentIssue } });
           } else {
             // Just add
             this.props.addIssue(currentIssue);
@@ -290,7 +303,12 @@ class AddIssueManager extends React.Component {
 
 AddIssueManager.propTypes = {
   currentModal: PropTypes.string,
-  onComplete: PropTypes.func
+  onComplete: PropTypes.func,
+  featureToggles: PropTypes.object,
+  intakeData: PropTypes.object,
+  formType: PropTypes.string,
+  addIssue: PropTypes.func,
+  editPage: PropTypes.bool
 };
 
 AddIssueManager.defaultProps = {

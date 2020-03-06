@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
 require "mail_task"
 
 RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
@@ -11,7 +9,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
     let(:root_task) { create(:root_task) }
     let(:old_instructions) { "Some instructions" }
     let(:new_instructions) { "New instructions" }
-    let(:params) { { task: { action: new_task_type, instructions: new_instructions }, id: task.id } }
+    let(:params) { { task: { type: new_task_type, instructions: new_instructions }, id: task.id } }
 
     let(:task) { parent_task.children.first }
 
@@ -19,18 +17,18 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
 
     before do
       User.authenticate!(user: user)
-      OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+      Colocated.singleton.add_user(user)
     end
 
     context "with the correct parameters" do
       context "for a colocated task" do
-        let(:old_task_type) { :ihp }
-        let(:new_task_type) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last }
+        let(:old_task_type_trait) { :ihp }
+        let(:new_task_type) { OtherColocatedTask }
 
         let(:parent_task) do
           create(
             :ama_colocated_task,
-            old_task_type,
+            old_task_type_trait,
             appeal: root_task.appeal,
             parent_id: root_task.id,
             assigned_by: assigner,
@@ -45,7 +43,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
           expect(response_body.length).to eq 4
           expect(response_body.first["id"]).not_to eq task.id.to_s
-          expect(response_body.first["attributes"]["label"]).to eq Constants::CO_LOCATED_ADMIN_ACTIONS[new_task_type]
+          expect(response_body.first["attributes"]["label"]).to eq new_task_type.label
           expect(response_body.first["attributes"]["status"]).to eq task.status
           expect(response_body.first["attributes"]["instructions"]).to include old_instructions
           expect(response_body.first["attributes"]["instructions"]).to include new_instructions
@@ -56,7 +54,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           new_parent_id = Task.find(response_body.first["id"]).parent_id
           new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
           expect(new_parent["id"]).not_to eq parent_task.id.to_s
-          expect(new_parent["attributes"]["label"]).to eq Constants::CO_LOCATED_ADMIN_ACTIONS[new_task_type]
+          expect(new_parent["attributes"]["label"]).to eq new_task_type.label
           expect(new_parent["attributes"]["status"]).to eq parent_task.status
           expect(new_parent["attributes"]["instructions"]).to include old_instructions
           expect(new_parent["attributes"]["instructions"]).to include new_instructions
@@ -69,8 +67,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
         end
 
         context "that needs reassigning" do
-          let(:new_task_type) { :foia }
-          let(:new_task_class) { FoiaColocatedTask }
+          let(:new_task_type) { FoiaColocatedTask }
 
           it "should update successfully" do
             subject
@@ -91,7 +88,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
             new_parent_id = Task.find(response_body.first["id"]).parent_id
             new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
             expect(new_parent["id"]).not_to eq parent_task.id.to_s
-            expect(new_parent["attributes"]["label"]).to eq Constants::CO_LOCATED_ADMIN_ACTIONS[new_task_type.to_s]
+            expect(new_parent["attributes"]["label"]).to eq new_task_type.label
             expect(new_parent["attributes"]["status"]).to eq parent_task.status
             expect(new_parent["attributes"]["instructions"]).to include old_instructions
             expect(new_parent["attributes"]["instructions"]).to include new_instructions
@@ -173,7 +170,7 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
           let(:new_task_type) { CongressionalInterestMailTask }
 
           before do
-            OrganizationsUser.add_user_to_organization(create(:user), LitigationSupport.singleton)
+            LitigationSupport.singleton.add_user(create(:user))
           end
 
           it "should reassign the task when changing the type" do
@@ -208,11 +205,16 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
     end
 
     context "for a non supported task type" do
-      let(:params) do
-        {
-          task: { action: "other", instructions: new_instructions },
-          id: create(:ama_judge_task, parent: root_task).id
-        }
+      let(:new_task_type) { PreRoutingFoiaColocatedTask }
+      let(:parent_task) do
+        create(
+          :ama_colocated_task,
+          :ihp,
+          appeal: root_task.appeal,
+          parent_id: root_task.id,
+          assigned_by: assigner,
+          instructions: [old_instructions]
+        )
       end
 
       it "returns an error" do

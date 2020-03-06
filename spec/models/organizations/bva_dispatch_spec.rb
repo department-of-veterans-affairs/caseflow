@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe BvaDispatch, :postgres do
   let(:bva_dispatch_org) { BvaDispatch.singleton }
 
   before do
     create_list(:user, 6).each do |u|
-      OrganizationsUser.add_user_to_organization(u, bva_dispatch_org)
+      bva_dispatch_org.add_user(u)
     end
   end
 

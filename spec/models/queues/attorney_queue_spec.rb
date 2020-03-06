@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe AttorneyQueue, :all_dbs do
   context "#tasks" do
     let(:user) { create(:user) }
@@ -13,12 +10,14 @@ describe AttorneyQueue, :all_dbs do
 
     context "when colocated admin actions are on hold" do
       let!(:vlj_support_staff) do
-        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+        Colocated.singleton.add_user(create(:user))
         Colocated.singleton.users.first
       end
 
-      let!(:action1) { create(:colocated_task, assigned_by: user) }
-      let!(:action2) { create(:colocated_task, appeal: appeal, assigned_by: user) }
+      let(:org1) { Colocated.singleton }
+      let!(:action1) { create(:colocated_task, assigned_by: user, assigned_to: org1) }
+      let(:org2) { Colocated.singleton }
+      let!(:action2) { create(:colocated_task, appeal: appeal, assigned_by: user, assigned_to: org2) }
       let!(:action3) do
         create(
           :colocated_task,
@@ -33,8 +32,9 @@ describe AttorneyQueue, :all_dbs do
           task.children.first.update!(status: Constants.TASK_STATUSES.completed)
         end
       end
+      let(:org5) { Colocated.singleton }
       let!(:action5) do
-        create(:colocated_task, :in_progress, assigned_by: user)
+        create(:colocated_task, :in_progress, assigned_by: user, assigned_to: org5)
       end
 
       it "should return the list" do
@@ -43,11 +43,24 @@ describe AttorneyQueue, :all_dbs do
         expect(subject[1].status).to eq "on_hold"
         expect(subject[2].status).to eq "on_hold"
       end
+
+      context "admin actions are assigned to organizations other than Colocated" do
+        let(:org1) { PrivacyTeam.singleton }
+        let(:org2) { Translation.singleton }
+        let(:org5) { HearingsManagement.singleton }
+
+        it "returns the list" do
+          expect(subject.size).to eq 3
+          expect(subject[0].status).to eq "on_hold"
+          expect(subject[1].status).to eq "on_hold"
+          expect(subject[2].status).to eq "on_hold"
+        end
+      end
     end
 
     context "when complete and incomplete colocated admin actions exist for an appeal" do
       let!(:vlj_support_staff) do
-        OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+        Colocated.singleton.add_user(create(:user))
         Colocated.singleton.users.first
       end
 

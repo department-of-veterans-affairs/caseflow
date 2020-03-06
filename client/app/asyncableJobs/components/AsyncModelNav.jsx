@@ -31,12 +31,16 @@ export default class AsyncModelNav extends React.PureComponent {
   }
 
   render = () => {
+    const currentPath = this.props.asyncableJobKlass ?
+      `/asyncable_jobs/${this.props.asyncableJobKlass}/jobs` :
+      '/jobs';
 
     return <div>
       <strong>Last updated:</strong> {moment(this.props.fetchedAt).format(DATE_TIME_FORMAT)}
-      <div>
+      <div style={{ marginTop: '.5em' }}>
+        <a style={{ marginRight: '.5em' }} href="/jobs" className="cf-link-btn">All jobs</a>
         {this.modelNameLinks()}
-        <a style={{ float: 'right' }} href="/jobs" className="cf-link-btn">All jobs</a>
+        <a style={{ float: 'right' }} href={`${currentPath}.csv`} className="cf-link-btn">Download as CSV</a>
       </div>
     </div>;
   }
@@ -44,5 +48,6 @@ export default class AsyncModelNav extends React.PureComponent {
 
 AsyncModelNav.propTypes = {
   models: PropTypes.array,
-  fetchedAt: PropTypes.string
+  fetchedAt: PropTypes.string,
+  asyncableJobKlass: PropTypes.string
 };

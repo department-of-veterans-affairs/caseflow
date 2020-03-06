@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Judge checkout flow", :all_dbs do
   let(:attorney_user) { create(:default_user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
@@ -14,7 +11,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
   before do
     # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
     # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
-    OrganizationsUser.add_user_to_organization(create(:user), BvaDispatch.singleton)
+    BvaDispatch.singleton.add_user(create(:user))
   end
 
   context "given a valid ama appeal with single issue" do
@@ -176,48 +173,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         appeal_id = LegacyAppeal.last.vacols_id
 
         expect(page).to have_current_path("/queue/appeals/#{appeal_id}")
-      end
-    end
-
-    context "where work product is omo request" do
-      let(:work_product) { :omo_request }
-
-      scenario "completes assign to omo checkout flow" do
-        visit "/queue/appeals/#{appeal.vacols_id}"
-
-        click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_OMO.label)
-
-        expect(page).to have_content("Evaluate Decision")
-
-        radio_group_cls = "usa-fieldset-inputs cf-form-radio "
-        case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
-        case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
-
-        expect(case_quality_opts.first.text).to eq(
-          "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
-        )
-        expect(case_quality_opts.last.text).to eq(
-          "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
-        )
-
-        case_complexity_opts[0].click
-        case_quality_opts[2].click
-        # areas of improvement
-        areas_of_improvement = page.find_all(
-          :xpath, "//fieldset[@class='checkbox-wrapper-Identify areas for improvement cf-form-checkboxes']//label"
-        )
-        areas_of_improvement[0].double_click
-        areas_of_improvement[5].double_click
-
-        dummy_note = "lorem ipsum dolor sit amet"
-        fill_in "additional-factors", with: dummy_note
-
-        click_on "Continue"
-
-        expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
-        decass = VACOLS::Decass.find_by(defolder: appeal.vacols_id, deadtim: Time.zone.today)
-        expect(decass.decomp).to eq(VacolsHelper.local_date_with_utc_timezone)
-        expect(decass.deoq).to eq("3")
       end
     end
   end

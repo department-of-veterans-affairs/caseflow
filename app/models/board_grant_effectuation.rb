@@ -3,7 +3,7 @@
 # BoardGrantEffectuation represents the work item of updating records in response to a granted issue on a Board appeal.
 # Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.
 
-class BoardGrantEffectuation < ApplicationRecord
+class BoardGrantEffectuation < CaseflowRecord
   include HasBusinessLine
   include Asyncable
   include DecisionSyncable
@@ -31,7 +31,7 @@ class BoardGrantEffectuation < ApplicationRecord
   }.freeze
 
   delegate :contention_text, to: :granted_decision_issue
-  delegate :veteran, to: :appeal
+  delegate :veteran, :claimant, to: :appeal
 
   # don't need to try as frequently as default 3 hours
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
@@ -45,6 +45,10 @@ class BoardGrantEffectuation < ApplicationRecord
     update_from_matching_rating_issue!
     clear_error!
     processed!
+  end
+
+  def contention_type
+    Constants.CONTENTION_TYPES.default
   end
 
   private
@@ -130,12 +134,25 @@ class BoardGrantEffectuation < ApplicationRecord
       source: decision_document,
       veteran_file_number: veteran.file_number,
       claim_date: decision_document.decision_date,
-      payee_code: EndProduct::DEFAULT_PAYEE_CODE,
+      claimant_participant_id: claimant_participant_id,
+      payee_code: claimant_payee_code,
       code: end_product_code,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
       user: User.system_user
     )
+  end
+
+  def claimant_participant_id
+    claimant&.participant_id
+  end
+
+  def claimant_payee_code
+    if claimant&.payee_code.present?
+      claimant.payee_code
+    elsif appeal&.veteran_is_not_claimant
+      veteran&.relationship_with_participant_id(claimant.participant_id)&.default_payee_code
+    end || EndProduct::DEFAULT_PAYEE_CODE
   end
 
   def end_product_code

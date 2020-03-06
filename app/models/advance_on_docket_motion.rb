@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AdvanceOnDocketMotion < ApplicationRecord
+class AdvanceOnDocketMotion < CaseflowRecord
   belongs_to :person
   belongs_to :user
 
@@ -22,6 +22,12 @@ class AdvanceOnDocketMotion < ApplicationRecord
         created_at: appeal_receipt_date..DateTime::Infinity.new,
         person_id: person_id
       ).any?
+    end
+
+    def create_or_update_by_person_id(person_id, attrs)
+      motion = find_or_create_by(person_id: person_id)
+
+      motion.update(attrs)
     end
   end
 end

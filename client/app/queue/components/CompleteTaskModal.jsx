@@ -6,16 +6,11 @@ import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import TextareaField from '../../components/TextareaField';
 import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop } from '../constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
-import {
-  taskById,
-  appealWithDetailSelector
-} from '../selectors';
+import { taskById, appealWithDetailSelector } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
-import {
-  requestPatch
-} from '../uiReducer/uiActions';
+import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 
 import QueueFlowModal from './QueueFlowModal';
@@ -23,23 +18,22 @@ import QueueFlowModal from './QueueFlowModal';
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
 
-  return <React.Fragment>
-    {
-      taskConfiguration && taskConfiguration.modal_body
-    }
-    {
-      (!taskConfiguration || !taskConfiguration.modal_hide_instructions) &&
-      <TextareaField
-        label="Instructions:"
-        name="instructions"
-        id="completeTaskInstructions"
-        onChange={(value) => setState({ instructions: value })}
-        value={state.instructions}
-        styling={marginTop(4)}
-        maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-      />
-    }
-  </React.Fragment>;
+  return (
+    <React.Fragment>
+      {taskConfiguration && taskConfiguration.modal_body}
+      {(!taskConfiguration || !taskConfiguration.modal_hide_instructions) && (
+        <TextareaField
+          label="Instructions:"
+          name="instructions"
+          id="completeTaskInstructions"
+          onChange={(value) => setState({ instructions: value })}
+          value={state.instructions}
+          styling={marginTop(4)}
+          maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+        />
+      )}
+    </React.Fragment>
+  );
 };
 
 MarkTaskCompleteModal.propTypes = {
@@ -50,12 +44,7 @@ MarkTaskCompleteModal.propTypes = {
 
 const SendColocatedTaskModal = ({ appeal, teamName }) => (
   <React.Fragment>
-    {
-      sprintf(
-        COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY,
-        appeal.veteranFullName,
-        appeal.veteranFileNumber)
-    }&nbsp;
+    {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, appeal.veteranFullName, appeal.veteranFileNumber)}&nbsp;
     <strong>{teamName}</strong>.
   </React.Fragment>
 );
@@ -70,9 +59,9 @@ SendColocatedTaskModal.propTypes = {
 
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
   mark_task_complete: {
-    buildSuccessMsg: (appeal, { assignerName }) => ({
+    buildSuccessMsg: (appeal, { contact }) => ({
       title: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteranFullName),
-      detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assignerName)
+      detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, contact)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
     getContent: MarkTaskCompleteModal,
@@ -80,10 +69,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
   },
   send_colocated_task: {
     buildSuccessMsg: (appeal, { teamName }) => ({
-      title: sprintf(
-        COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION,
-        appeal.veteranFullName, teamName
-      )
+      title: sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION, appeal.veteranFullName, teamName)
     }),
     title: ({ teamName }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
     getContent: SendColocatedTaskModal,
@@ -98,8 +84,11 @@ class CompleteTaskModal extends React.Component {
       instructions: ''
     };
   }
+
   getTaskAssignerName = () => {
-    const { task: { assignedBy } } = this.props;
+    const {
+      task: { assignedBy }
+    } = this.props;
 
     // Tasks created by the application (tasks for quality review or dispatch) will not have assigners.
     // TODO: Amend copy to better explain what is going on instead of having a blank field where we expect
@@ -110,8 +99,13 @@ class CompleteTaskModal extends React.Component {
 
     return `${String.fromCodePoint(assignedBy.firstName.codePointAt(0))}. ${assignedBy.lastName}`;
   };
+
+  getTaskConfiguration = () => {
+    return taskActionData(this.props) || {};
+  };
+
   getContentArgs = () => ({
-    assignerName: this.getTaskAssignerName(),
+    contact: this.getTaskConfiguration().contact || this.getTaskAssignerName(),
     teamName: this.props.task.label,
     appeal: this.props.appeal,
     props: this.props,
@@ -120,10 +114,7 @@ class CompleteTaskModal extends React.Component {
   });
 
   submit = () => {
-    const {
-      task,
-      appeal
-    } = this.props;
+    const { task, appeal } = this.props;
     const payload = {
       data: {
         task: {
@@ -132,24 +123,28 @@ class CompleteTaskModal extends React.Component {
         }
       }
     };
-    const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].
-      buildSuccessMsg(appeal, this.getContentArgs());
+    const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(
+      appeal,
+      this.getContentArgs()
+    );
 
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
-      then((resp) => {
-        this.props.onReceiveAmaTasks(resp.body.tasks.data);
-      });
-  }
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
+      this.props.onReceiveAmaTasks(resp.body.tasks.data);
+    });
+  };
 
   render = () => {
-    return <QueueFlowModal
-      title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].title(this.getContentArgs())}
-      button={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buttonText}
-      submit={this.submit}
-    >
-      {this.props.task ? SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].
-        getContent(this.getContentArgs()) : null}
-    </QueueFlowModal>;
+    return (
+      <QueueFlowModal
+        title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].title(this.getContentArgs())}
+        button={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buttonText}
+        submit={this.submit}
+      >
+        {this.props.task ?
+          SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].getContent(this.getContentArgs()) :
+          null}
+      </QueueFlowModal>
+    );
   };
 }
 
@@ -177,9 +172,18 @@ const mapStateToProps = (state, ownProps) => ({
   saveState: state.ui.saveState.savePending
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch,
-  onReceiveAmaTasks
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      requestPatch,
+      onReceiveAmaTasks
+    },
+    dispatch
+  );
 
-export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(CompleteTaskModal)));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(CompleteTaskModal)
+);

@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe TimedHoldTask, :postgres do
   let(:task) { create(:timed_hold_task) }
 
   describe ".create!" do
-    let(:parent) { create(:generic_task) }
+    let(:parent) { create(:ama_task) }
     let(:appeal) { parent.appeal }
     let(:initial_args) do
       { appeal: appeal,
@@ -28,7 +25,7 @@ describe TimedHoldTask, :postgres do
 
     context "with parent_id argument instead of parent" do
       let(:args) do
-        initial_args.reject { |key, _| key == :parent }.merge(parent_id: create(:generic_task).id)
+        initial_args.reject { |key, _| key == :parent }.merge(parent_id: create(:ama_task).id)
       end
 
       it "creates task successfully" do
@@ -85,14 +82,14 @@ describe TimedHoldTask, :postgres do
         end
       end
 
-      context "when there is an active sibling TimedHoldTask and an active sibling GenericTask" do
-        let!(:existing_generic_task_sibling) { create(:generic_task, parent: parent, appeal: appeal) }
+      context "when there is an active sibling TimedHoldTask and an active sibling Task" do
+        let!(:existing_task_sibling) { create(:ama_task, parent: parent, appeal: appeal) }
         let!(:existing_timed_hold_task) { create(:timed_hold_task, **args, parent: parent.reload) }
 
-        it "cancels the TimedHoldTask but leaves the GenericTask alone" do
+        it "cancels the TimedHoldTask but leaves the Task alone" do
           expect(subject.open?).to be_truthy
           expect(parent.children.count).to eq(3)
-          expect(existing_generic_task_sibling.reload.open?).to eq(true)
+          expect(existing_task_sibling.reload.open?).to eq(true)
           expect(existing_timed_hold_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         end
       end
@@ -100,7 +97,7 @@ describe TimedHoldTask, :postgres do
   end
 
   describe ".create_from_parent" do
-    let(:parent) { create(:generic_task) }
+    let(:parent) { create(:ama_task) }
 
     let(:days_on_hold) { 4 }
     let(:assigned_by) { create(:user) }
@@ -156,7 +153,7 @@ describe TimedHoldTask, :postgres do
       end
 
       context "when the TimedHoldTask has a parent task assigned to an organization" do
-        let(:parent_task) { create(:generic_task, :on_hold) }
+        let(:parent_task) { create(:ama_task) }
         let(:task) { create(:timed_hold_task, trait, parent: parent_task) }
         it "sets the parent task status to assigned" do
           subject
@@ -188,7 +185,7 @@ describe TimedHoldTask, :postgres do
   context "start and end times" do
     let(:days_on_hold) { 18 }
     let(:user) { create(:user) }
-    let!(:parent) { create(:generic_task, assigned_to: user) }
+    let!(:parent) { create(:ama_task, assigned_to: user) }
     let!(:task) do
       TimedHoldTask.create!(appeal: parent.appeal, assigned_to: user, days_on_hold: days_on_hold, parent: parent)
     end
@@ -224,6 +221,26 @@ describe TimedHoldTask, :postgres do
   describe ".hide_from_task_snapshot" do
     it "is always hidden from task snapshot" do
       expect(task.hide_from_task_snapshot).to eq(true)
+    end
+  end
+
+  describe "when attempting to create a child of a timed hold task" do
+    let(:child_task) { create(:task, parent: task) }
+
+    subject { child_task }
+
+    it "fails" do
+      expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
+    end
+  end
+
+  describe "when attempting to adopt a child by a timed hold task" do
+    let!(:child_task) { create(:task) }
+
+    subject { child_task.update!(parent: task) }
+
+    it "fails" do
+      expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
     end
   end
 end

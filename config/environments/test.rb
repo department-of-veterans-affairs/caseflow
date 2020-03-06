@@ -66,15 +66,11 @@ Rails.application.configure do
     config.log_level = :error
   end
 
+  config.action_mailer.delivery_method = :test
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
-  #
-  ENV["CASEFLOW_FEEDBACK_URL"] = "test.feedback.url"
 
-  ENV["METRICS_USERNAME"] = "caseflow"
-  ENV["METRICS_PASSWORD"] = "caseflow"
-  ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
-  ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
   ENV["VA_DOT_GOV_API_URL"] = "https://staging-api.va.gov/"
 
   # For testing uncertification methods
@@ -82,9 +78,6 @@ Rails.application.configure do
   ENV["TEST_APPEAL_IDS"] = "123C,456D,678E"
   ENV["FULL_GRANT_IDS"] = "VACOLS123,VACOLS234,VACOLS345,VACOLS456"
   ENV["PARTIAL_AND_REMAND_IDS"] = "VACOLS321,VACOLS432,VACOLS543,VACOLS654"
-
-  # Allow health check to pushgateway
-  ENV["ENABLE_PUSHGATEWAY_HEALTHCHECK"] = "true"
 
   config.active_job.queue_adapter = :test
 end

@@ -6,21 +6,18 @@ class Organizations::UsersController < OrganizationsController
       format.html { render template: "queue/index" }
       format.json do
         organization_users = organization.users
-        remaining_users = User.where.not(id: organization_users.pluck(:id))
-
-        remaining_users = remaining_users.select { |user| user.roles.include?(organization.role) } if organization.role
 
         render json: {
           organization_name: organization.name,
-          organization_users: json_administered_users(organization_users),
-          remaining_users: json_users(remaining_users)
+          judge_team: FeatureToggle.enabled?(:judge_admin_scm) && organization.type == JudgeTeam.name,
+          organization_users: json_administered_users(organization_users)
         }
       end
     end
   end
 
   def create
-    OrganizationsUser.add_user_to_organization(user_to_modify, organization)
+    organization.add_user(user_to_modify)
 
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
@@ -29,11 +26,11 @@ class Organizations::UsersController < OrganizationsController
     no_cache
 
     if params.key?(:admin)
-      if params[:admin] == true
-        OrganizationsUser.make_user_admin(user_to_modify, organization)
-      else
-        OrganizationsUser.remove_admin_rights_from_user(user_to_modify, organization)
-      end
+      adjust_admin_rights
+    end
+
+    if params.key?(:attorney)
+      adjust_decision_drafting_ability
     end
 
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
@@ -61,6 +58,22 @@ class Organizations::UsersController < OrganizationsController
 
   def user_to_modify
     @user_to_modify ||= User.find(params.require(:id))
+  end
+
+  def adjust_admin_rights
+    if params[:admin] == true
+      OrganizationsUser.make_user_admin(user_to_modify, organization)
+    else
+      OrganizationsUser.remove_admin_rights_from_user(user_to_modify, organization)
+    end
+  end
+
+  def adjust_decision_drafting_ability
+    if params[:attorney] == true
+      OrganizationsUser.enable_decision_drafting(user_to_modify, organization)
+    else
+      OrganizationsUser.disable_decision_drafting(user_to_modify, organization)
+    end
   end
 
   def organization_url

@@ -128,11 +128,6 @@ export const hideModal = (modalType) => ({
   payload: { modalType }
 });
 
-export const setFeatureToggles = (featureToggles) => ({
-  type: ACTIONS.SET_FEATURE_TOGGLES,
-  payload: { featureToggles }
-});
-
 export const setUserRole = (userRole) => ({
   type: ACTIONS.SET_USER_ROLE,
   payload: { userRole }
@@ -160,6 +155,11 @@ export const setActiveOrganization = (id, name, isVso) => ({
 export const setUserId = (userId) => ({
   type: ACTIONS.SET_USER_ID,
   payload: { userId }
+});
+
+export const setTargetUserCssId = (targetUserCssId) => ({
+  type: ACTIONS.SET_TARGET_USER_CSS_ID,
+  payload: { targetUserCssId }
 });
 
 export const setUserIsVsoEmployee = (userIsVsoEmployee) => ({

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Intake < ApplicationRecord
+class Intake < CaseflowRecord
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
@@ -20,6 +20,7 @@ class Intake < ApplicationRecord
     invalid_file_number: "invalid_file_number",
     veteran_not_found: "veteran_not_found",
     veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
+    veteran_has_duplicate_records_in_corpdb: "veteran_has_duplicate_records_in_corpdb",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_modifiable: "veteran_not_modifiable",
     veteran_not_valid: "veteran_not_valid",
@@ -194,7 +195,7 @@ class Intake < ApplicationRecord
       veteran_form_name: veteran&.name&.formatted(:form),
       veteran_is_deceased: veteran&.deceased?,
       completed_at: completed_at,
-      relationships: veteran&.relationships&.map(&:ui_hash)
+      relationships: veteran&.relationships&.map(&:serialize)
     }
   end
 

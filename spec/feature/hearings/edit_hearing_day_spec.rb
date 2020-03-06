@@ -1,18 +1,15 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Edit a Hearing Day", :all_dbs do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
-    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(user)
     User.authenticate!(user: user)
   end
 
   let!(:judge) do
-    create(:user, css_id: "BVAAABSHIRE", full_name: "Judge Abshire")
     create(:staff, :judge_role, sdomainid: "BVAAABSHIRE", snamel: "Abshire", snamef: "Judge")
+    create(:user, css_id: "BVAAABSHIRE", full_name: "Judge Abshire")
   end
 
   let!(:hearing_day) do
@@ -27,13 +24,13 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   end
 
   before do
-    OrganizationsUser.add_user_to_organization(caseflow_coordinator, HearingsManagement.singleton)
+    HearingsManagement.singleton.add_user(caseflow_coordinator)
   end
 
   context "When editing a Hearing Day" do
     scenario "Verify initial fields present when modal opened" do
       visit "hearings/schedule"
-      find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+      find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
       expect(page).to have_content("Edit Hearing Day")
       expect(page).to have_content("No Veterans are scheduled for this hearing day.")
       find("button", text: "Edit Hearing Day").click
@@ -50,7 +47,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   scenario "Verify room dropdown enabled when checkbox clicked" do
     visit "hearings/schedule"
-    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+    find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
     expect(page).to have_content("Edit Hearing Day")
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
@@ -69,7 +66,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   scenario "Verify VLJ dropdown enabled when checkbox clicked" do
     visit "hearings/schedule"
-    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+    find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
     expect(page).to have_content("Edit Hearing Day")
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
@@ -88,7 +85,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   scenario "Verify Coordinator dropdown enabled when checkbox clicked" do
     visit "hearings/schedule"
-    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+    find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
     expect(page).to have_content("Edit Hearing Day")
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
@@ -109,7 +106,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   scenario "first option is 'None'" do
     visit "hearings/schedule"
-    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
+    find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
     find("button", text: "Edit Hearing Day").click
     find("label[for=roomEdit]").click
     click_dropdown(name: "room", index: 0)

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
 require "faker"
 
 describe TaskPager, :all_dbs do
@@ -73,7 +71,7 @@ describe TaskPager, :all_dbs do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:task_count) { TaskPager::TASKS_PER_PAGE + 3 }
 
-      before { create_list(:generic_task, task_count, assigned_to: assignee) }
+      before { create_list(:ama_task, task_count, assigned_to: assignee) }
 
       it "returns the correct number of tasks" do
         expect(subject.count).to eq(task_count)
@@ -84,14 +82,16 @@ describe TaskPager, :all_dbs do
   describe ".paged_tasks" do
     let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
-    let(:page) { 1 }
+    let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { create_list(:generic_task, TaskPager::TASKS_PER_PAGE + 1, assigned_to: assignee) }
+    before { create_list(:ama_task, task_count, assigned_to: assignee) }
 
     subject { TaskPager.new(arguments).paged_tasks }
 
     context "when the first page of tasks is requested" do
+      let(:page) { 1 }
+
       it "returns a full page of tasks" do
         expect(subject.count).to eq(TaskPager::TASKS_PER_PAGE)
       end
@@ -114,6 +114,41 @@ describe TaskPager, :all_dbs do
     end
   end
 
+  describe ".total_task_count" do
+    let(:assignee) { create(:organization) }
+    let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
+    let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
+    let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
+
+    before { create_list(:ama_task, task_count, assigned_to: assignee) }
+
+    subject { TaskPager.new(arguments).total_task_count }
+
+    context "when the first page of tasks is requested" do
+      let(:page) { 1 }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
+
+    context "when the page argument is nil" do
+      let(:page) { nil }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
+
+    context "when the second page of tasks is requested" do
+      let(:page) { 2 }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
+  end
+
   describe ".sorted_tasks" do
     let(:task_pager) { TaskPager.new(arguments) }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_by: sort_by, sort_order: sort_order } }
@@ -123,12 +158,12 @@ describe TaskPager, :all_dbs do
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:tasks) { task_pager.tasks_for_tab }
 
-    let!(:created_tasks) { create_list(:generic_task, 14, assigned_to: assignee) }
+    let!(:created_tasks) { create_list(:ama_task, 14, assigned_to: assignee) }
 
     subject { task_pager.sorted_tasks(tasks) }
 
     context "when sorting by closed_at date" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name }
       let(:tab_name) { Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME }
 
       before do
@@ -154,7 +189,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by days waiting" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name }
 
       before do
         created_tasks.each do |task|
@@ -170,7 +205,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by due date" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_DUE_DATE.name }
 
       before do
         created_tasks.each do |task|
@@ -186,7 +221,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by task type" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name }
       let!(:created_tasks) do
         Task.where(id: create_list(:colocated_task, task_types.length, assigned_to: assignee).pluck(:id))
       end
@@ -217,7 +252,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by days on hold" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.TASK_HOLD_LENGTH.name }
 
       before do
         created_tasks.each do |task|
@@ -233,7 +268,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by docket number column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name }
 
       before do
         created_tasks.each do |task|
@@ -248,7 +283,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by closest regional office column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name }
 
       before do
         regional_offices = RegionalOffice::ROS
@@ -271,7 +306,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by issue count column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name }
 
       before do
         issue_counts = (0..created_tasks.length).to_a.shuffle
@@ -289,12 +324,17 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by case details link column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name }
 
       before do
+        # not random, in order to have deterministic sort for testing.
+        first_initials = ("A".."Z").map(&:to_s)
+        last_initials = ("Z".."A").map(&:to_s)
+        middle_initials = ("a".."z").map(&:to_s)
+
         created_tasks.each do |task|
-          first_name = Faker::Name.unique.first_name
-          last_name = "#{Faker::Name.unique.first_name} #{Faker::Name.unique.first_name}"
+          first_name = first_initials.shift
+          last_name = "#{middle_initials.shift} #{last_initials.shift}"
           task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
           create(
             :cached_appeal,
@@ -317,7 +357,7 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by Appeal Type column" do
-      let(:sort_by) { Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN }
+      let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name }
       let!(:created_tasks) { [] }
 
       let(:legacy_appeal_1) { create(:legacy_appeal, vacols_case: create(:case, :type_original)) }
@@ -378,7 +418,7 @@ describe TaskPager, :all_dbs do
       end
 
       context "when filter includes TranslationTasks" do
-        let(:filters) { ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name}"] }
+        let(:filters) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}"] }
 
         it "returns only translation tasks assigned to the current organization" do
           expect(subject.map(&:id)).to_not match_array(task_pager.tasks_for_tab.map(&:id))
@@ -389,7 +429,7 @@ describe TaskPager, :all_dbs do
 
       context "when filter includes TranslationTasks and FoiaTasks" do
         let(:filters) do
-          ["col=#{Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name},#{FoiaTask.name}"]
         end
 
         it "returns all translation and FOIA tasks assigned to the current organization" do

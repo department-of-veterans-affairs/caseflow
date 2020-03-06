@@ -3,7 +3,6 @@
 ---- LIMITATIONS
 -- This report may under count or overcount appeals in error states or extraordinary states. 
 -- i.e. open root task with no active task; cases with multiple contridictory open tasks; etc.
--- ON HOLD and Waiting for Distribution will doublecount if the hold is with hearings or translation. This would properly be considered Waiting for Distribution.
 
 ---- Collecting each status & count
 -- It is possible for some tasks to be worked simultaneously within a category, so we count distinct appeal ids rather than total number of tasks.
@@ -15,6 +14,7 @@ WITH undistributed_appeals AS (select '1. Not distributed'::text as decision_sta
             WHERE tasks.type IN ('DistributionTask')
               AND tasks.appeal_type='Appeal'
               AND tasks.status IN  ('on_hold', 'assigned', 'in_progress')
+              AND tasks.appeal_id NOT IN (SELECT appeal_id FROM tasks WHERE tasks.appeal_type='Appeal' AND tasks.type = 'TimedHoldTask' AND tasks.status IN ('on_hold', 'assigned', 'in_progress'))
 -- The Appeal has been distributed to the judge, but not yet assigned to an attorney for working.
       ), distributed_to_judge AS (select '2. Distributed to judge'::text as decision_status, count(DISTINCT(appeal_id)) as num
             FROM tasks
@@ -69,13 +69,14 @@ WITH undistributed_appeals AS (select '1. Not distributed'::text as decision_sta
             WHERE tasks.type IN ('BvaDispatchTask', 'QualityReviewTask') 
               AND tasks.appeal_type='Appeal'
               AND tasks.status IN ('assigned', 'in_progress')
--- The Appeal dispatch is completed. Case is complete
+-- The Appeal dispatch is completed. Case is complete with no open tasks.
       ), decision_dispatched AS (select '8. Decision dispatched'::text as decision_status, count(DISTINCT(appeal_id)) as num
             FROM tasks
             JOIN public.appeals AS appeals ON tasks.appeal_id = appeals.id  
             WHERE tasks.type IN ('BvaDispatchTask') 
               AND tasks.appeal_type='Appeal'
               AND tasks.status IN ('completed')
+              AND tasks.appeal_id NOT IN (SELECT appeal_id FROM tasks WHERE tasks.appeal_type='Appeal' AND tasks.status IN ('on_hold', 'assigned', 'in_progress'))
 -- The Appeal is currently on a timed hold
       ), appeal_on_hold AS (select 'ON HOLD'::text as decision_status, count(1) as num
             FROM tasks

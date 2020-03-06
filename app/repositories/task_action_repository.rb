@@ -13,7 +13,7 @@ class TaskActionRepository
       {
         selected: nil,
         options: organizations,
-        type: GenericTask.name
+        type: task.type
       }
     end
 
@@ -22,14 +22,12 @@ class TaskActionRepository
     end
 
     def cancel_task_data(task, _user = nil)
+      assigner_name = task.assigned_by&.full_name || "the assigner"
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
+        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, assigner_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(
-          COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL,
-          task.assigned_by&.full_name || "the assigner"
-        )
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigner_name)
       }
     end
 
@@ -67,17 +65,11 @@ class TaskActionRepository
     end
 
     def assign_to_user_data(task, user = nil)
-      users = if task.assigned_to.is_a?(Organization)
-                task.assigned_to.users
-              elsif task.parent&.assigned_to.is_a?(Organization)
-                task.parent.assigned_to.users.reject { |check_user| check_user == task.assigned_to }
-              else
-                []
-              end
+      users = potential_task_assignees(task)
 
       extras = if task.is_a?(HearingAdminActionTask)
                  {
-                   redirect_after: "/organizations/#{HearingAdmin.singleton.url}",
+                   redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
                else
@@ -103,7 +95,7 @@ class TaskActionRepository
       {
         selected: nil,
         options: users_to_options(Judge.list_all),
-        type: task.type
+        type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask"
       }
     end
 
@@ -208,10 +200,9 @@ class TaskActionRepository
         options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
           {
             label: value,
-            value: key
+            value: ColocatedTask.find_subclass_by_action(key).name
           }
-        end,
-        type: ColocatedTask.name
+        end
       }
     end
 
@@ -224,19 +215,20 @@ class TaskActionRepository
     end
 
     def complete_data(task, _user = nil)
-      if task.is_a? NoShowHearingTask
-        {
-          modal_body: COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY
-        }
-      elsif task.is_a? HearingAdminActionTask
-        {
-          modal_body: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
-        }
-      else
-        {
-          modal_body: COPY::MARK_TASK_COMPLETE_COPY
-        }
+      params = {}
+      params[:modal_body] = if task.is_a? NoShowHearingTask
+                              COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY
+                            elsif task.is_a? HearingAdminActionTask
+                              COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
+                            else
+                              COPY::MARK_TASK_COMPLETE_COPY
+                            end
+
+      if defined? task.completion_contact
+        params[:contact] = task.completion_contact
       end
+
+      params
     end
 
     def schedule_veteran_data(_task, _user = nil)
@@ -332,6 +324,7 @@ class TaskActionRepository
     def review_decision_draft(task, user)
       action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
       action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
+      action = Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.ama? && task.appeal.vacate?
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
@@ -344,6 +337,17 @@ class TaskActionRepository
           label: user.full_name,
           value: user.id
         }
+      end
+    end
+
+    # Exclude users who aren't active or to whom the task is already assigned.
+    def potential_task_assignees(task)
+      if task.assigned_to.is_a?(Organization)
+        task.assigned_to.users.active
+      elsif task.parent&.assigned_to.is_a?(Organization)
+        task.parent.assigned_to.users.active.reject { |check_user| check_user == task.assigned_to }
+      else
+        []
       end
     end
   end

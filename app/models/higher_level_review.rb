@@ -14,11 +14,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def ui_hash
-    super.merge(
-      formType: "higher_level_review",
-      sameOffice: same_office,
-      informalConference: informal_conference
-    )
+    Intake::HigherLevelReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def on_decision_issues_sync_processed

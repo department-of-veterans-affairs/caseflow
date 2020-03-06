@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Login", :all_dbs do
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+  let(:station_id) { "405" }
+  let(:user_email) { "test@example.com" }
+  let(:roles) { ["Certify Appeal"] }
+  let!(:user) { create(:user, css_id: "ANNE MERICA", station_id: station_id) }
 
   before do
     @old_session = Fakes::AuthenticationService.user_session
     Fakes::AuthenticationService.user_session = {
-      "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "405", "email" => "test@example.com"
+      "id" => "ANNE MERICA", "roles" => roles, "station_id" => station_id, "email" => user_email
     }
   end
 
@@ -21,17 +22,17 @@ RSpec.feature "Login", :all_dbs do
     Rails.application.config.sso_service_disabled = false
   end
 
-  scenario "User whose station ID has one RO doesn't require login" do
-    user = User.create(css_id: "ANNE MERICA", station_id: "314")
-    Fakes::AuthenticationService.user_session = {
-      "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "314", "email" => "world@example.com"
-    }
-    visit "certifications/new/#{appeal.vacols_id}"
+  context "User whose station ID has one RO doesn't require login" do
+    let(:station_id) { "314" }
 
-    expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/check_documents")
-    expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO14)")
-    expect(user.reload.email).to eq "world@example.com"
-    expect(user.selected_regional_office).to be_nil
+    it "shows new certification" do
+      visit "certifications/new/#{appeal.vacols_id}"
+
+      expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/check_documents")
+      expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO14)")
+      expect(user.reload.email).to eq user_email
+      expect(user.selected_regional_office).to be_nil
+    end
   end
 
   def select_ro_from_dropdown
@@ -40,21 +41,13 @@ RSpec.feature "Login", :all_dbs do
   end
 
   context "VSO user has multple RO values" do
-    let(:user) { create(:user, css_id: "ANNE MERICA", station_id: "351") }
+    let(:station_id) { "351" }
     let(:organization) { create(:organization) }
-
-    before do
-      Fakes::AuthenticationService.user_session = {
-        "id" => user.css_id,
-        "roles" => ["VSO"],
-        "station_id" => user.station_id,
-        "email" => "world@example.com"
-      }
-    end
+    let(:roles) { ["VSO"] }
 
     context "User is in the Org they are trying to view" do
       before do
-        OrganizationsUser.add_user_to_organization(user, organization)
+        organization.add_user(user)
       end
 
       scenario "user is presented with RO selection page and redirects to initial location" do
@@ -137,13 +130,12 @@ RSpec.feature "Login", :all_dbs do
   # :nocov:
 
   scenario "email and selected regional office should be set on login" do
-    user = User.create(css_id: "ANNE MERICA", station_id: "405")
     visit "certifications/new/#{appeal.vacols_id}"
     select_ro_from_dropdown
     click_on "Log in"
     # Automatically wait for elements to disappear (but actually wait for asynchronous code to return)
     expect(page).not_to have_content("Logging in")
-    expect(user.reload.email).to eq "test@example.com"
+    expect(user.reload.email).to eq user_email
     expect(user.selected_regional_office).to eq "RO05"
   end
 

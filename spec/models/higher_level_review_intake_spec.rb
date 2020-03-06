@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe HigherLevelReviewIntake, :all_dbs do
   before do
     Time.zone = "Eastern Time (US & Canada)"
@@ -103,152 +100,6 @@ describe HigherLevelReviewIntake, :all_dbs do
     end
   end
 
-  context "#review!" do
-    subject { intake.review!(params) }
-
-    let(:receipt_date) { 1.day.ago }
-    let(:benefit_type) { "compensation" }
-    let(:informal_conference) { false }
-    let(:same_office) { false }
-    let(:claimant) { nil }
-    let(:payee_code) { nil }
-    let(:veteran_is_not_claimant) { false }
-    let(:legacy_opt_in_approved) { false }
-
-    let(:detail) do
-      HigherLevelReview.create!(
-        veteran_file_number: "64205555",
-        receipt_date: 3.days.ago
-      )
-    end
-
-    let(:params) do
-      ActionController::Parameters.new(
-        receipt_date: receipt_date,
-        benefit_type: benefit_type,
-        informal_conference: informal_conference,
-        same_office: same_office,
-        claimant: claimant,
-        payee_code: payee_code,
-        veteran_is_not_claimant: veteran_is_not_claimant,
-        legacy_opt_in_approved: legacy_opt_in_approved
-      )
-    end
-
-    context "Veteran is claimant" do
-      it "adds veteran to claimants" do
-        subject
-
-        expect(intake.detail.claimants.count).to eq 1
-        expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: intake.veteran.participant_id,
-          payee_code: nil,
-          decision_review: intake.detail
-        )
-      end
-    end
-
-    context "Claimant is different than Veteran" do
-      let(:claimant) { "1234" }
-      let(:payee_code) { "10" }
-      let(:veteran_is_not_claimant) { true }
-
-      it "adds other relationship to claimants" do
-        subject
-
-        expect(intake.detail.claimants.count).to eq 1
-        expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: "1234",
-          payee_code: "10",
-          decision_review: intake.detail
-        )
-      end
-
-      context "claimant is missing address" do
-        let(:empty_address) { { address_line_1: nil, address_line_2: nil, city: nil, state: nil, zip: nil } }
-
-        before do
-          allow_any_instance_of(BgsAddressService).to receive(:fetch_bgs_record).and_return(empty_address)
-        end
-
-        it "adds claimant address required error" do
-          expect(subject).to be_falsey
-          expect(detail.errors[:claimant]).to include("claimant_address_required")
-          expect(detail.claimants).to be_empty
-        end
-
-        context "when the benefit type is noncomp" do
-          let(:benefit_type) { "education" }
-
-          it "does not require address" do
-            expect(subject).to be_truthy
-            expect(intake.detail.claimants.count).to eq 1
-            expect(intake.detail.claimants.first).to have_attributes(
-              participant_id: "1234",
-              payee_code: nil,
-              decision_review: intake.detail
-            )
-          end
-        end
-      end
-
-      context "claimant is nil" do
-        let(:claimant) { nil }
-        let(:receipt_date) { 3.days.from_now }
-
-        it "is expected to add an error that claimant cannot be blank" do
-          expect(subject).to be_falsey
-          expect(detail.errors[:claimant]).to include("blank")
-          expect(detail.errors[:receipt_date]).to include("in_future")
-          expect(detail.claimants).to be_empty
-        end
-      end
-
-      context "And payee code is nil" do
-        let(:payee_code) { nil }
-        # Check that the decision_review validations still work
-        let(:receipt_date) { 3.days.from_now }
-
-        context "And benefit type is compensation" do
-          let(:benefit_type) { "compensation" }
-
-          it "is expected to add an error that payee_code cannot be blank" do
-            expect(subject).to be_falsey
-            expect(detail.errors[:payee_code]).to include("blank")
-            expect(detail.errors[:receipt_date]).to include("in_future")
-            expect(detail.claimants).to be_empty
-          end
-        end
-
-        context "And benefit type is pension" do
-          let(:benefit_type) { "pension" }
-
-          it "is expected to add an error that payee_code cannot be blank" do
-            expect(subject).to be_falsey
-            expect(detail.errors[:payee_code]).to include("blank")
-            expect(detail.errors[:receipt_date]).to include("in_future")
-            expect(detail.claimants).to be_empty
-          end
-        end
-      end
-
-      context "And benefit type is not compensation or pension" do
-        let(:benefit_type) { "fiduciary" }
-
-        it "sets payee_code to nil" do
-          subject
-
-          expect(intake.detail.claimants.count).to eq 1
-          expect(intake.detail.claimants.first).to have_attributes(
-            participant_id: "1234",
-            payee_code: nil,
-            decision_review: intake.detail
-          )
-        end
-      end
-    end
-  end
-
   context "#complete!" do
     subject { intake.complete!(params) }
 
@@ -323,7 +174,8 @@ describe HigherLevelReviewIntake, :all_dbs do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
-        contentions: [{ description: "decision text" }],
+        contentions: array_including(description: "decision text",
+                                     contention_type: Constants.CONTENTION_TYPES.higher_level_review),
         user: user,
         claim_date: detail.receipt_date.to_date
       )

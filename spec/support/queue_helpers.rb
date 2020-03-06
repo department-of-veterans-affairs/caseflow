@@ -17,7 +17,7 @@ module QueueHelpers
     parts = ["I am proceeding with a #{disposition_text[disposition.to_sym]}."]
 
     parts += case disposition
-             when "granted"
+             when "granted", "partial"
                ["This will be a #{vacate_types[vacate_type.to_sym]}", notes]
              else
                [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]

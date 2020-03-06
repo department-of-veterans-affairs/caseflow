@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RampIssue < ApplicationRecord
+class RampIssue < CaseflowRecord
   belongs_to :review, polymorphic: true
   belongs_to :source_issue, class_name: "RampIssue"
 
@@ -18,7 +18,7 @@ class RampIssue < ApplicationRecord
     Contention.new(description).text
   end
 
-  def ui_hash
-    { id: id, description: description }
+  def serialize
+    Intake::RampIssueSerializer.new(self).serializable_hash[:data][:attributes]
   end
 end

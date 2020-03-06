@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe QueueConfig, :postgres do
   describe ".new" do
     let(:arguments) { { assignee: assignee } }
@@ -42,11 +39,11 @@ describe QueueConfig, :postgres do
     end
   end
 
-  describe ".to_hash_for_user" do
+  describe ".to_hash" do
     let(:assignee) { create(:organization) }
     let(:user) { create(:user) }
 
-    subject { QueueConfig.new(assignee: assignee).to_hash_for_user(user) }
+    subject { QueueConfig.new(assignee: assignee).to_hash }
 
     describe "shape of the returned hash" do
       it "returns the correct top level keys in the response" do
@@ -65,24 +62,29 @@ describe QueueConfig, :postgres do
         let(:assignee) { user }
 
         it "is formatted as expected" do
-          expect(subject[:table_title]).to eq(COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE)
+          expect(subject[:table_title]).to eq(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
         end
       end
     end
 
     describe "active_tab" do
-      it "is always the unassigned tab" do
+      it "is the unassigned tab" do
         expect(subject[:active_tab]).to eq(Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME)
+      end
+
+      context "when assigned to a user" do
+        let(:assignee) { user }
+
+        it "is the assigned tab" do
+          expect(subject[:active_tab]).to eq(Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME)
+        end
       end
     end
 
     describe "tabs" do
       let(:assignee) { create(:organization) }
 
-      subject { QueueConfig.new(assignee: assignee).to_hash_for_user(user)[:tabs] }
-
-      before { FeatureToggle.enable!(:use_task_pages_api) }
-      after { FeatureToggle.disable!(:use_task_pages_api) }
+      subject { QueueConfig.new(assignee: assignee).to_hash[:tabs] }
 
       context "with a non-VSO organization assignee" do
         it "does not include a tab for tracking tasks" do
@@ -110,22 +112,20 @@ describe QueueConfig, :postgres do
 
         it "does not include the regional column in the list of columns for any tab" do
           subject.each do |tab|
-            expect(tab[:columns].map { |col| col[:name] }).to_not include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+            expect(tab[:columns].map { |col| col[:name] })
+              .to_not include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
           end
         end
 
         context "when the organization uses the task pages API and has tasks assigned to it" do
-          before { FeatureToggle.enable!(:use_task_pages_api) }
-          after { FeatureToggle.disable!(:use_task_pages_api) }
-
-          let!(:unassigned_tasks) { create_list(:generic_task, 4, assigned_to: assignee) }
+          let!(:unassigned_tasks) { create_list(:ama_task, 4, assigned_to: assignee) }
           let!(:assigned_tasks) do
-            create_list(:generic_task, 2, parent: create(:generic_task, assigned_to: assignee))
+            create_list(:ama_task, 2, parent: create(:ama_task, assigned_to: assignee))
           end
           let!(:on_hold_tasks) do
-            create_list(:generic_task, 2, :on_hold, parent: create(:generic_task, assigned_to: assignee))
+            create_list(:ama_task, 2, :on_hold, parent: create(:ama_task, assigned_to: assignee))
           end
-          let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: assignee) }
+          let!(:completed_tasks) { create_list(:ama_task, 7, :completed, assigned_to: assignee) }
 
           before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
 
@@ -155,7 +155,8 @@ describe QueueConfig, :postgres do
 
         it "includes the regional column in the list of columns for all tabs" do
           subject.each do |tab|
-            expect(tab[:columns].map { |col| col[:name] }).to include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+            expect(tab[:columns].map { |col| col[:name] })
+              .to include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
           end
         end
       end
@@ -187,9 +188,6 @@ describe QueueConfig, :postgres do
         end
 
         context "when the VSO has tracking tasks assigned to it" do
-          before { FeatureToggle.enable!(:use_task_pages_api) }
-          after { FeatureToggle.disable!(:use_task_pages_api) }
-
           let!(:tracking_tasks) { create_list(:track_veteran_task, 5, assigned_to: assignee) }
 
           it "returns the tasks in the tracking tasks tabs" do
@@ -227,17 +225,14 @@ describe QueueConfig, :postgres do
 
         it "does not include the regional column in the list of columns for any tab" do
           subject.each do |tab|
-            expect(tab[:columns]).to_not include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
+            expect(tab[:columns]).to_not include(Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name)
           end
         end
 
         context "when the user uses the task pages API and has tasks assigned to them" do
-          before { FeatureToggle.enable!(:use_task_pages_api) }
-          after { FeatureToggle.disable!(:use_task_pages_api) }
-
-          let!(:assigned_tasks) { create_list(:generic_task, 2, assigned_to: assignee) }
-          let!(:on_hold_tasks) { create_list(:generic_task, 5, :on_hold, assigned_to: assignee) }
-          let!(:completed_tasks) { create_list(:generic_task, 7, :completed, assigned_to: assignee) }
+          let!(:assigned_tasks) { create_list(:ama_task, 2, assigned_to: assignee) }
+          let!(:on_hold_tasks) { create_list(:ama_task, 5, :on_hold, assigned_to: assignee) }
+          let!(:completed_tasks) { create_list(:ama_task, 7, :completed, assigned_to: assignee) }
 
           before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
 
@@ -261,8 +256,8 @@ describe QueueConfig, :postgres do
           it "displays the correct descriptions for the tabs" do
             tabs = subject
 
-            expect(tabs[0][:description]).to eq(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION)
-            expect(tabs[1][:description]).to eq(COPY::COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+            expect(tabs[0][:description]).to eq(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
+            expect(tabs[1][:description]).to eq(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
             expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
           end
         end

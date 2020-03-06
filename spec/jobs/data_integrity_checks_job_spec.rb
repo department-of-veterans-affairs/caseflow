@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe DataIntegrityChecksJob do
   let(:expired_async_jobs_checker) { ExpiredAsyncJobsChecker.new }
   let(:open_hearing_tasks_without_active_descendants_checker) { OpenHearingTasksWithoutActiveDescendantsChecker.new }
   let(:untracked_legacy_appeals_checker) { UntrackedLegacyAppealsChecker.new }
+  let(:reviews_with_duplicate_ep_error_checker) { ReviewsWithDuplicateEpErrorChecker.new }
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
 
   before do
@@ -14,11 +13,13 @@ describe DataIntegrityChecksJob do
       open_hearing_tasks_without_active_descendants_checker
     )
     allow(UntrackedLegacyAppealsChecker).to receive(:new).and_return(untracked_legacy_appeals_checker)
+    allow(ReviewsWithDuplicateEpErrorChecker).to receive(:new).and_return(reviews_with_duplicate_ep_error_checker)
     allow(SlackService).to receive(:new).and_return(slack_service)
     [
       expired_async_jobs_checker,
       open_hearing_tasks_without_active_descendants_checker,
-      untracked_legacy_appeals_checker
+      untracked_legacy_appeals_checker,
+      reviews_with_duplicate_ep_error_checker
     ].each do |checker|
       allow(checker).to receive(:call).and_call_original
       allow(checker).to receive(:report?).and_call_original
@@ -42,6 +43,10 @@ describe DataIntegrityChecksJob do
       expect(untracked_legacy_appeals_checker).to have_received(:call).once
       expect(untracked_legacy_appeals_checker).to have_received(:report?).once
       expect(untracked_legacy_appeals_checker).to_not have_received(:report)
+
+      expect(reviews_with_duplicate_ep_error_checker).to have_received(:call).once
+      expect(reviews_with_duplicate_ep_error_checker).to have_received(:report?).once
+      expect(reviews_with_duplicate_ep_error_checker).to_not have_received(:report)
 
       expect(slack_service).to_not have_received(:send_notification)
     end

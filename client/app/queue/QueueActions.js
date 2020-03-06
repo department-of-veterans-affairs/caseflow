@@ -306,6 +306,20 @@ export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
   }
 };
 
+export const incrementTaskCountForAttorney = (attorney) => ({
+  type: ACTIONS.INCREMENT_TASK_COUNT_FOR_ATTORNEY,
+  payload: {
+    attorney
+  }
+});
+
+export const decrementTaskCountForAttorney = (attorney) => ({
+  type: ACTIONS.DECREMENT_TASK_COUNT_FOR_ATTORNEY,
+  payload: {
+    attorney
+  }
+});
+
 export const setAttorneysOfJudge = (attorneys) => ({
   type: ACTIONS.SET_ATTORNEYS_OF_JUDGE,
   payload: {
@@ -385,25 +399,47 @@ export const bulkAssignTasks =
     }
   });
 
+// isInitial is only used for das deprecation
+const dispatchOldTasks = (dispatch, oldTasks, resp) => {
+  // Ama request is batched
+  if (Array.isArray(oldTasks) || oldTasks.appealType === 'Appeal') {
+    dispatch(onReceiveAmaTasks(resp.tasks.data));
+  } else {
+    // For das deprecation, legacy_task_controller#create returns tasks, not a task
+    const tasks = resp.tasks ? resp.tasks.data : [resp.task.data];
+    const allTasks = prepareAllTasksForStore(tasks);
+
+    dispatch(onReceiveTasks({
+      tasks: allTasks.tasks,
+      amaTasks: allTasks.amaTasks
+    }));
+  }
+};
+
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
-}) => (dispatch) => Promise.all(tasks.map((oldTask) => {
-  let params, url;
+}) => (dispatch) => {
+  const amaTasks = tasks.filter((oldTask) => oldTask.appealType === 'Appeal');
+  const legacyTasks = tasks.filter((oldTask) => oldTask.appealType === 'LegacyAppeal');
 
-  if (oldTask.appealType === 'Appeal') {
-    url = '/judge_assign_tasks';
-    params = {
+  const amaParams = {
+    url: '/judge_assign_tasks',
+    taskIds: amaTasks.map((oldTask) => oldTask.uniqueId),
+    requestParams: {
       data: {
-        tasks: [{
+        tasks: amaTasks.map((oldTask) => ({
           external_id: oldTask.externalAppealId,
           parent_id: oldTask.taskId,
           assigned_to_id: assigneeId
-        }]
+        }))
       }
-    };
-  } else {
-    url = '/legacy_tasks';
-    params = {
+    }
+  };
+
+  const legacyParams = legacyTasks.map((oldTask) => ({
+    url: '/legacy_tasks',
+    taskIds: [oldTask.uniqueId],
+    requestParams: {
       data: {
         tasks: {
           assigned_to_id: assigneeId,
@@ -411,35 +447,33 @@ export const initialAssignTasksToUser = ({
           appeal_id: oldTask.appealId
         }
       }
-    };
-  }
+    }
+  }));
 
-  return ApiUtil.post(url, params).
-    then((resp) => resp.body).
-    then((resp) => {
-      if (oldTask.appealType === 'Appeal') {
-        const amaTasks = resp.tasks.data;
+  const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
 
-        dispatch(onReceiveAmaTasks(
-          amaTasks
-        ));
-      } else {
-        const task = resp.task.data;
-        const allTasks = prepareAllTasksForStore([task]);
+  return Promise.all(paramsArray.map((params) => {
+    const { requestParams, url, taskIds } = params;
 
-        dispatch(onReceiveTasks({
-          tasks: allTasks.tasks,
-          amaTasks: allTasks.amaTasks
-        }));
-      }
+    return ApiUtil.post(url, requestParams).
+      then((resp) => resp.body).
+      then((resp) => {
+        dispatchOldTasks(dispatch, requestParams.data.tasks, resp);
 
-      dispatch(setSelectionOfTaskOfUser({
-        userId: previousAssigneeId,
-        taskId: oldTask.uniqueId,
-        selected: false
-      }));
-    });
-}));
+        taskIds.forEach((taskId) => {
+          dispatch(setSelectionOfTaskOfUser({
+            userId: previousAssigneeId,
+            selected: false,
+            taskId
+          }));
+
+          dispatch(incrementTaskCountForAttorney({
+            id: assigneeId
+          }));
+        });
+      });
+  }));
+};
 
 export const reassignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
@@ -472,27 +506,44 @@ export const reassignTasksToUser = ({
   return ApiUtil.patch(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      if (oldTask.appealType === 'Appeal') {
-        const amaTasks = resp.tasks.data;
-
-        dispatch(onReceiveAmaTasks(
-          amaTasks
-        ));
-      } else {
-        const task = resp.task.data;
-        const allTasks = prepareAllTasksForStore([task]);
-
-        dispatch(onReceiveTasks({
-          tasks: allTasks.tasks,
-          amaTasks: allTasks.amaTasks
-        }));
-      }
+      dispatchOldTasks(dispatch, oldTask, resp);
 
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
         selected: false
       }));
+
+      dispatch(incrementTaskCountForAttorney({
+        id: assigneeId
+      }));
+
+      dispatch(decrementTaskCountForAttorney({
+        id: previousAssigneeId
+      }));
+    });
+}));
+
+export const legacyReassignToJudge = ({
+  tasks, assigneeId
+}, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
+  const params = {
+    data: {
+      tasks: {
+        assigned_to_id: assigneeId,
+        appeal_id: oldTask.appealId
+      }
+    }
+  };
+
+  return ApiUtil.post('/legacy_tasks/assign_to_judge', params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const allTasks = prepareAllTasksForStore([resp.task.data]);
+
+      dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
+
+      dispatch(showSuccessMessage(successMessage));
     });
 }));
 
@@ -582,7 +633,10 @@ export const fetchAllAttorneys = () => (dispatch) =>
 
 export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
-    then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
+    then((resp) => {
+      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
+      dispatch(setQueueConfig(resp.body.queue_config));
+    });
 
 export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,

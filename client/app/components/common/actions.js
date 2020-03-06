@@ -58,3 +58,24 @@ export const onChangeFormData = (formName, formData) => ({
     formData
   }
 });
+
+export const onReceiveAlerts = (alerts) => {
+  const timestamp = Date.now();
+
+  return {
+    type: ACTIONS.RECEIVE_ALERTS,
+    payload: {
+      alerts: alerts.map((alert) => ({
+        ...alert,
+        timestamp
+      }))
+    }
+  };
+};
+
+export const removeAlertsWithTimestamps = (timestamps) => ({
+  type: ACTIONS.REMOVE_ALERTS_WITH_TIMESTAMP,
+  payload: {
+    timestamps
+  }
+});

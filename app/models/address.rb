@@ -23,6 +23,11 @@ class Address
   end
 
   def full_address
-    "#{address_line_1}#{address_line_2}#{address_line_3}, #{city} #{state} #{zip}".squeeze.strip
+    addr = address_line_1.to_s
+    addr += " #{address_line_2}" unless address_line_2.blank?
+    addr += " #{address_line_3}" unless address_line_3.blank?
+    addr += ", #{city} #{state} #{zip}"
+
+    addr.strip
   end
 end

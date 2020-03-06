@@ -1,17 +1,18 @@
 # frozen_string_literal: true
 
-require "csv"
+# Summarize models (jobs) that consume the Asyncable concern.
 
 class AsyncableJobsReporter
   attr_reader :jobs
 
-  def initialize(jobs:)
+  def initialize(jobs:, verbose: false)
     @jobs = jobs
+    @verbose = verbose
   end
 
   def as_csv
     CSV.generate do |csv|
-      csv << %w[type id submitted last_submitted attempted_at error participant_id]
+      csv << %w[type id submitted last_submitted attempted error participant_id]
       jobs.each do |job|
         klass = job.class
         csv << [
@@ -20,7 +21,7 @@ class AsyncableJobsReporter
           job[klass.submitted_at_column],
           job[klass.last_submitted_at_column],
           job[klass.attempted_at_column],
-          sanitize_error(job),
+          job.sanitized_error,
           job.try(:veteran).try(:participant_id)
         ]
       end
@@ -40,7 +41,8 @@ class AsyncableJobsReporter
         summary[cls][age].keys.sort.each do |err|
           count = summary[cls][age][err]
           total += count
-          output << "#{cls} has #{count} jobs #{age} days old with error #{err}"
+          err_output = err.gsub(/^[#<]+|[,:]+$/, "")
+          output << "#{cls} has #{count} jobs #{age} days old with error #{err_output}" if verbose
         end
       end
       output << "#{cls} has #{total} total jobs in queue"
@@ -50,17 +52,14 @@ class AsyncableJobsReporter
 
   private
 
-  def sanitize_error(job)
-    # keep PII out of output
-    (job[job.class.error_column] || "none").gsub(/\s.+/s, "")
-  end
+  attr_reader :verbose
 
   def build_summary
     report = {}
     jobs.each do |job|
       cls = job.class.to_s
       age = ((Time.zone.now - job.sort_by_last_submitted_at) / 3600 / 24).ceil.to_s
-      err = sanitize_error(job)
+      err = job.sanitized_error
       report[cls] ||= {}
       report[cls][age] ||= { err => 0 }
       report[cls][age][err] ||= 0

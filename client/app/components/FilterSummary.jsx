@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const ALTERNATE_COLUMN_NAMES = {
   'appeal.caseType': 'Case Type',

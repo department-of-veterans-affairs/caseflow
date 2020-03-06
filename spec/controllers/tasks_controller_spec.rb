@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe TasksController, :all_dbs, type: :controller do
   before do
     Fakes::Initializer.load!
@@ -10,7 +7,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
   end
 
   let!(:vlj_support_staff) do
-    OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton)
+    Colocated.singleton.add_user(create(:user))
     Colocated.singleton.users.first
   end
 
@@ -32,9 +29,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
       let!(:task16) { create(:ama_attorney_task, :completed_in_the_past, assigned_to: user) }
-      let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
+      let!(:task14) { create(:ama_attorney_task, assigned_to: user) }
 
-      before { task3.update!(status: Constants.TASK_STATUSES.completed) }
+      before do
+        task3.update!(status: Constants.TASK_STATUSES.completed)
+        task14.update!(status: Constants.TASK_STATUSES.on_hold)
+      end
 
       it "should process the request successfully" do
         get :index, params: { user_id: user.id, role: "attorney" }
@@ -152,6 +152,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(response.status).to eq 200
       end
 
+      it "should return queue config" do
+        get :index, params: { user_id: user.id, role: "unknown" }
+        expect(response.status).to eq 200
+        queue_config = JSON.parse(response.body)["queue_config"]
+
+        expect(queue_config.keys).to match_array(%w[table_title active_tab tasks_per_page use_task_pages_api tabs])
+      end
+
       context "and theres a task to return" do
         let!(:vacols_case) do
           create(
@@ -168,7 +176,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "RO04")
         end
         let!(:task) do
-          create(:generic_task, assigned_to: user, appeal: legacy_appeal)
+          create(:ama_task, assigned_to: user, appeal: legacy_appeal)
         end
 
         it "does not make a BGS call" do
@@ -193,13 +201,13 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         let(:org_1_members) { create_list(:user, org_1_member_cnt) }
         let(:org_1_assignee) { org_1_members[0] }
         let(:org_1_non_assignee) { org_1_members[1] }
-        let!(:org_1_team_task) { create(:generic_task, assigned_to: org_1, parent: root_task) }
+        let!(:org_1_team_task) { create(:ama_task, assigned_to: org_1, parent: root_task) }
         let!(:org_1_member_task) do
-          create(:generic_task, assigned_to: org_1_assignee, parent: org_1_team_task)
+          create(:ama_task, assigned_to: org_1_assignee, parent: org_1_team_task)
         end
 
         before do
-          org_1_members.each { |u| OrganizationsUser.add_user_to_organization(u, org_1) }
+          org_1_members.each { |u| org_1.add_user(u) }
         end
 
         context "when user is assigned an individual task" do
@@ -226,7 +234,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
       context "when the task belongs to the user" do
         let(:no_role_user) { create(:user) }
-        let!(:task) { create(:generic_task, assigned_to: no_role_user) }
+        let!(:task) { create(:ama_task, assigned_to: no_role_user) }
         before { User.authenticate!(user: no_role_user) }
 
         context "when there are Organizations in the table" do
@@ -310,15 +318,15 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
       before do
         User.authenticate!(user: user)
-        OrganizationsUser.add_user_to_organization(user, vso)
+        vso.add_user(user)
         allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       end
 
-      context "when creating a generic task" do
+      context "when creating a task" do
         let(:params) do
           [{
             "external_id": appeal.external_id,
-            "type": GenericTask.name,
+            "type": Task.name,
             "assigned_to_id": user.id,
             "parent_id": root_task.id
           }]
@@ -328,6 +336,38 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           subject
 
           expect(response.status).to eq 403
+        end
+      end
+
+      context "when creating a mix of tasks" do
+        let(:ihp_org_task) do
+          create(
+            :informal_hearing_presentation_task,
+            appeal: appeal,
+            assigned_to: vso
+          )
+        end
+
+        let(:params) do
+          [{
+            "external_id": appeal.external_id,
+            "type": InformalHearingPresentationTask.name,
+            "assigned_to_id": user.id,
+            "parent_id": ihp_org_task.id
+          }, {
+            "external_id": appeal.external_id,
+            "type": Task.name,
+            "assigned_to_id": user.id,
+            "parent_id": root_task.id
+          }]
+        end
+
+        it "should not be successful" do
+          subject
+
+          expect(response.status).to eq 403
+          response_body = JSON.parse(response.body)["errors"].first["detail"]
+          expect(response_body).to eq "VSOs cannot create that task."
         end
       end
 
@@ -360,35 +400,33 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     context "Co-located admin action" do
       before do
         u = create(:user)
-        OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+        Colocated.singleton.add_user(u)
       end
 
       context "when current user is an attorney" do
         let(:role) { :attorney_role }
 
-        context "when multiple admin actions with task action field" do
+        context "when multiple admin actions with task type field" do
           let(:params) do
             [{
               "external_id": appeal.vacols_id,
-              "type": ColocatedTask.name,
-              "action": "address_verification",
+              "type": AddressVerificationColocatedTask.name,
               "instructions": "do this"
             },
              {
                "external_id": appeal.vacols_id,
-               "type": ColocatedTask.name,
-               "action": "missing_records",
+               "type": MissingRecordsColocatedTask.name,
                "instructions": "another one"
              }]
           end
 
           before do
             u = create(:user)
-            OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+            Colocated.singleton.add_user(u)
           end
 
           it "should be successful" do
-            expect(AppealRepository).to receive(:update_location!).exactly(1).times
+            expect(AppealRepository).to receive(:update_location!).exactly(2).times
 
             subject
 
@@ -415,61 +453,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           end
         end
 
-        context "when multiple admin actions with task label field" do
-          let(:params) do
-            [{
-              "external_id": appeal.vacols_id,
-              "type": ColocatedTask.name,
-              "label": "address_verification",
-              "instructions": "do this"
-            },
-             {
-               "external_id": appeal.vacols_id,
-               "type": ColocatedTask.name,
-               "label": "missing_records",
-               "instructions": "another one"
-             }]
-          end
-
-          before do
-            u = create(:user)
-            OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
-          end
-
-          it "should be successful" do
-            expect(AppealRepository).to receive(:update_location!).exactly(1).times
-
-            subject
-
-            expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq(4)
-            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
-            expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.first["attributes"]["label"]).to eq "Address verification"
-
-            expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-            expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.second["attributes"]["label"]).to eq "Address verification"
-            # assignee should be the same person
-            id = response_body.second["attributes"]["assigned_to"]["id"]
-            expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
-
-            expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-            expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
-            expect(response_body.last["attributes"]["label"]).to eq "Missing records"
-          end
-        end
-
-        context "when one admin action with task action field" do
+        context "when one admin action with task type field" do
           let(:params) do
             {
               "external_id": appeal.vacols_id,
-              "type": ColocatedTask.name,
-              "action": "address_verification",
+              "type": AddressVerificationColocatedTask.name,
               "instructions": "do this"
             }
           end
@@ -491,8 +479,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           let(:params) do
             {
               "external_id": appeal.vacols_id,
-              "type": ColocatedTask.name,
-              "label": "address_verification",
+              "type": AddressVerificationColocatedTask.name,
               "instructions": "do this"
             }
           end
@@ -514,8 +501,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           let(:params) do
             [{
               "external_id": 4_646_464,
-              "type": ColocatedTask.name,
-              "action": "address_verification"
+              "type": AddressVerificationColocatedTask.name
             }]
           end
 
@@ -560,7 +546,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
 
       before do
-        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        HearingsManagement.singleton.add_user(user)
       end
 
       it "creates tasks with the correct types" do
@@ -585,7 +571,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     context "When the current user is a member of the Mail team" do
       before do
         mail_team_user = create(:user)
-        OrganizationsUser.add_user_to_organization(mail_team_user, MailTeam.singleton)
+        MailTeam.singleton.add_user(mail_team_user)
         User.authenticate!(user: mail_team_user)
       end
 
@@ -639,10 +625,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     it "updates status to on_hold" do
-      patch :update, params: {
-        task: { status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60 },
-        id: admin_action.id
-      }
+      patch :update, params: { task: { status: Constants.TASK_STATUSES.on_hold }, id: admin_action.id }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["tasks"]["data"]
       expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
@@ -650,11 +633,17 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     it "updates status to completed" do
+      expect(admin_action.versions.length).to be 0
+      expect(admin_action.parent.versions.length).to be 1
       patch :update, params: { task: { status: Constants.TASK_STATUSES.completed }, id: admin_action.id }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["tasks"]["data"]
       expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
       expect(response_body.first["attributes"]["closed_at"]).to_not be nil
+      expect(admin_action.reload.versions.length).to eq 1
+      expect(admin_action.parent.versions.length).to eq 2
+      versions = PaperTrail::Version.where(request_id: admin_action.versions.first.request_id)
+      expect(versions.length).to eq 3
     end
 
     context "when some other user updates another user's task" do
@@ -713,7 +702,15 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
                vacols_case:
                create(:case, :assigned, bfcorlid: "0000000000S", user: judge_user))
       end
-      before { User.authenticate!(user: judge_user) }
+
+      before do
+        DatabaseRequestCounter.enable
+        User.authenticate!(user: judge_user)
+      end
+
+      after do
+        DatabaseRequestCounter.disable
+      end
 
       it "should return JudgeLegacyTasks" do
         get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "judge" }
@@ -727,6 +724,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
+
+        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(13)
       end
 
       context "when appeal is not assigned to current user" do
@@ -915,7 +914,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     let(:instructions) { "these are my detailed instructions." }
 
     before do
-      OrganizationsUser.add_user_to_organization(hearing_mgmt_user, HearingsManagement.singleton)
+      HearingsManagement.singleton.add_user(hearing_mgmt_user)
       User.authenticate!(user: hearing_mgmt_user)
     end
 

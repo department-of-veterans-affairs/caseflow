@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe EndProductEstablishment, :postgres do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -60,9 +57,40 @@ describe EndProductEstablishment, :postgres do
       limited_poa_access: limited_poa_access
     )
   end
+  let(:orphaned_end_product) do
+    EndProduct.new(
+      claim_id: "1234",
+      claim_date: end_product_establishment.claim_date,
+      claim_type_code: end_product_establishment.code,
+      payee_code: end_product_establishment.payee_code,
+      status_type_code: "PEND"
+    )
+  end
 
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
+  end
+
+  context "#status_type_code" do
+    subject { end_product_establishment.status_type_code }
+
+    it "returns pending" do
+      expect(subject).to eq("PEND")
+    end
+
+    context "board grant effectuation" do
+      let(:code) { "030BGR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
+
+    context "board remand" do
+      let(:code) { "040BDENR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
   end
 
   context "#perform!" do
@@ -108,7 +136,6 @@ describe EndProductEstablishment, :postgres do
         # first fetch Veteran's info
         expect(veteran.to_vbms_hash).to include(address_line1: "1234 FAKE ST")
         Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
-
         subject
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -126,7 +153,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: hash_including(address_line1: "Changed"),
           user: current_user
@@ -159,7 +187,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -189,7 +218,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "PEND"
             },
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -220,7 +250,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "PEND"
             ),
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -247,12 +278,34 @@ describe EndProductEstablishment, :postgres do
       end
     end
 
+    context "when a previous establishment attempt actually succeeded" do
+      it "recovers and saves the previous EP" do
+        allow(source).to receive(:previously_attempted?).and_return(true)
+        allow(end_product_establishment.veteran).to receive(:end_products).and_return([orphaned_end_product])
+        subject
+        expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
+        expect(end_product_establishment.reference_id).to eq(orphaned_end_product.claim_id)
+      end
+    end
+
     context "when existing EP has status CLR" do
+      let(:setups) do
+        [
+          { modifier: "030", last_action_date: 2.weeks.ago.mdY },
+          { modifier: "031", last_action_date: 2.weeks.ago.mdY },
+          { modifier: "032", last_action_date: 2.weeks.ago.mdY }
+        ]
+      end
+
       before do
-        %w[030 031 032].each do |modifier|
+        setups.each do |setup|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CLR" }
+            bgs_attrs: {
+              end_product_type_code: setup[:modifier],
+              last_action_date: setup[:last_action_date],
+              status_type_code: "CLR"
+            }
           )
         end
       end
@@ -262,6 +315,20 @@ describe EndProductEstablishment, :postgres do
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
+      end
+
+      context "when last action date is within the last two days" do
+        let(:setups) do
+          [
+            { modifier: "030", last_action_date: 1.day.ago.mdY },
+            { modifier: "031", last_action_date: 1.day.ago.mdY },
+            { modifier: "032", last_action_date: Time.zone.today.mdY }
+          ]
+        end
+
+        it "considers those EP modifiers as taken and returns a NoAvailableModifiers error" do
+          expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
+        end
       end
     end
 
@@ -292,7 +359,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -372,7 +440,7 @@ describe EndProductEstablishment, :postgres do
 
     let(:contentions) do
       request_issues.map do |issue|
-        contention = { description: issue.contention_text }
+        contention = { description: issue.contention_text, contention_type: issue.contention_type }
         issue.special_issues && contention[:special_issues] = issue.special_issues
         contention
       end.reverse
@@ -409,8 +477,10 @@ describe EndProductEstablishment, :postgres do
           claim_id: end_product_establishment.reference_id,
           contentions: array_including(
             { description: "this is a big decision",
-              special_issues: [{ code: "SSR", narrative: "Same Station Review" }] },
+              special_issues: [{ code: "SSR", narrative: "Same Station Review" }],
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review },
             description: "more decisionz",
+            contention_type: Constants.CONTENTION_TYPES.higher_level_review,
             special_issues: array_including(
               { code: "SSR", narrative: "Same Station Review" },
               code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
@@ -457,7 +527,8 @@ describe EndProductEstablishment, :postgres do
             claim_id: end_product_establishment.reference_id,
             contentions: array_including(
               description: "I am contesting a dta decision",
-              original_contention_ids: [101, 121]
+              original_contention_ids: [101, 121],
+              contention_type: Constants.CONTENTION_TYPES.higher_level_review
             ),
             user: current_user,
             claim_date: 2.days.ago.to_date
@@ -781,6 +852,32 @@ describe EndProductEstablishment, :postgres do
         end
       end
 
+      context "when the claim_type_code has changed outside of Caseflow" do
+        let(:claim_type_code) { "040SCNR" }
+
+        it "creates a record of the change in end product code updates" do
+          subject
+
+          epcu = end_product_establishment.end_product_code_updates.first
+
+          expect(end_product_establishment.code).to eq "030HLRR"
+          expect(epcu.code).to eq "040SCNR"
+          expect(epcu.created_at).to eq(Time.zone.now)
+        end
+
+        context "when the new claim_type_code has already been saved" do
+          it "does not create a new record" do
+            end_product_establishment.end_product_code_updates.create(code: "040SCNR", created_at: 1.hour.ago)
+
+            subject
+
+            epcus = end_product_establishment.end_product_code_updates
+            expect(epcus.count).to eq 1
+            expect(epcus.first.created_at).to eq 1.hour.ago
+          end
+        end
+      end
+
       context "when source exists" do
         context "when source implements on_sync" do
           let(:source) { create(:ramp_election) }
@@ -812,11 +909,13 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "when the end product is canceled" do
-        let(:status_type_code) { "CAN" }
+        before { allow(Fakes::VBMSService).to receive(:fetch_contentions).and_call_original }
+        let(:status_type_code) { EndProduct::STATUSES.key("Canceled") }
 
-        it "closes request issues and cancels establishment" do
+        it "closes request issues, cancels establishment, and doesn't fetch contentions" do
           subject
 
+          expect(Fakes::VBMSService).to_not have_received(:fetch_contentions)
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
           expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
@@ -873,8 +972,8 @@ describe EndProductEstablishment, :postgres do
     end
   end
 
-  context "#status_canceled?" do
-    subject { end_product_establishment.status_canceled? }
+  context "#status_cancelled?" do
+    subject { end_product_establishment.status_cancelled? }
 
     context "returns true if canceled" do
       let(:synced_status) { "CAN" }

@@ -29,6 +29,8 @@ tags
 
 # Ignore hidden files
 .*
+!.storybook
+!/.github
 !.codeclimate.yml
 !.dockerignore
 !.fasterer.yml
@@ -40,6 +42,9 @@ node_modules
 
 # Generated js bundles
 /app/assets/javascripts/*
+
+# Storybook
+storybook-static/
 
 # Generated public assets
 /public/assets/*
@@ -59,3 +64,6 @@ local/vacols/build_facols/*
 
 # makefile
 Makefile
+
+# ERD diagrams are not checked in
+*-erd.pdf

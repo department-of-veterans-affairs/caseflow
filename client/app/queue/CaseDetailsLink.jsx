@@ -6,13 +6,13 @@ import { css } from 'glamor';
 
 import { onReceiveAmaTasks } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
-import COPY from '../../COPY.json';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import COPY from '../../COPY';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class CaseDetailsLink extends React.PureComponent {
-  onClick = () => {
+  onClick = (...args) => {
     const { task, userRole } = this.props;
 
     // when searching for a case, we only load appeal info, no tasks
@@ -28,7 +28,7 @@ class CaseDetailsLink extends React.PureComponent {
       ApiUtil.patch(`/tasks/${task.taskId}`, payload);
     }
 
-    return this.props.onClick ? this.props.onClick(arguments) : true;
+    return this.props.onClick ? this.props.onClick(args) : true;
   }
 
   getLinkText = () => {

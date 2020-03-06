@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe DecisionDocument, :postgres do
   include IntakeHelpers
 
@@ -11,8 +8,10 @@ describe DecisionDocument, :postgres do
   end
 
   let(:veteran) { create(:veteran) }
+  let(:claimant_participant_id) { "2019111203" }
+  let(:claimant) { create(:claimant, participant_id: claimant_participant_id) }
   let(:appeal) do
-    create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
+    create(:appeal, claimants: [claimant], veteran_file_number: veteran.file_number)
   end
 
   let(:decision_document) do
@@ -243,9 +242,10 @@ describe DecisionDocument, :postgres do
               end_product_code: "030BGR",
               gulf_war_registry: false,
               suppress_acknowledgement_letter: false,
-              claimant_participant_id: nil, # decision_document.appeal.veteran.participant_id
+              claimant_participant_id: claimant_participant_id,
               limited_poa_code: nil,
-              limited_poa_access: nil
+              limited_poa_access: nil,
+              status_type_code: "RFD"
             },
             veteran_hash: decision_document.appeal.veteran.to_vbms_hash,
             user: User.system_user
@@ -257,8 +257,10 @@ describe DecisionDocument, :postgres do
             veteran_file_number: decision_document.appeal.veteran_file_number,
             claim_id: decision_document.end_product_establishments.last.reference_id,
             contentions: array_including(
-              { description: granted_issue.contention_text },
-              description: another_granted_issue.contention_text
+              { description: granted_issue.contention_text,
+                contention_type: Constants.CONTENTION_TYPES.default },
+              description: another_granted_issue.contention_text,
+              contention_type: Constants.CONTENTION_TYPES.default
             ),
             user: User.system_user,
             claim_date: decision_document.decision_date.to_date

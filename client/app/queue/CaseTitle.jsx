@@ -66,26 +66,31 @@ class CaseTitle extends React.PureComponent {
   }
 }
 
-const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
-  <h1 {...headerStyling}>{props.heading}</h1>
-  <ul {...listStyling}>
-    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
-  </ul>
-</div>;
-
-CaseTitle.propTypes = CaseTitleScaffolding.propTypes = {
+CaseTitle.propTypes = {
   appeal: PropTypes.object.isRequired,
   taskType: PropTypes.string,
   analyticsSource: PropTypes.string,
   veteranCaseListIsVisible: PropTypes.bool,
-  toggleVeteranCaseList: PropTypes.func,
-  heading: PropTypes.string,
-  children: PropTypes.node
+  toggleVeteranCaseList: PropTypes.func
 };
 
 CaseTitle.defaultProps = {
   taskType: 'Draft Decision',
   analyticsSource: 'queue_task'
+};
+
+const CaseTitleScaffolding = (props) => (
+  <div {...containingDivStyling}>
+    <h1 {...headerStyling}>{props.heading}</h1>
+    <ul {...listStyling}>
+      {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
+    </ul>
+  </div>
+);
+
+CaseTitleScaffolding.propTypes = {
+  heading: PropTypes.string,
+  children: PropTypes.node
 };
 
 const mapStateToProps = (state) => ({

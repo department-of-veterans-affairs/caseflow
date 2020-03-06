@@ -4,6 +4,7 @@ import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
@@ -12,7 +13,7 @@ import { invalidVeteranInstructions } from '../components/ErrorAlert';
 import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 const steps = [
   <span>
@@ -72,6 +73,7 @@ class Search extends React.PureComponent {
   getSearchErrorAlert = (searchErrorCode, searchErrorData) => {
     // The values in this switch statement need to be snake_case
     // because they're being matched to server response values.
+    const YourITLink = <Link href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</Link>;
     const searchErrors = {
       invalid_file_number: {
         title: 'Veteran ID not found',
@@ -88,6 +90,14 @@ class Search extends React.PureComponent {
       veteran_has_multiple_phone_numbers: {
         title: 'The Veteran has multiple active phone numbers',
         body: COPY.DUPLICATE_PHONE_NUMBER_MESSAGE
+      },
+      veteran_has_duplicate_records_in_corpdb: {
+        title: 'Duplicate veteran records',
+        body: <React.Fragment key="alert-error-body">
+          {'This Veteran has a duplicate record in the Corporate database (CorpDB). Please ' +
+              'follow your locally established procedures for addressing duplicate records ' +
+              'to the assigned point-of-contact of the regional office.'}
+        </React.Fragment>
       },
       veteran_not_accessible: {
         title: "You don't have permission to view this Veteran's information",
@@ -153,18 +163,15 @@ class Search extends React.PureComponent {
          'Please contact your management team if you need additional assistance.'
       },
       default: {
-        title: 'Something went wrong'
+        title: 'Something went wrong',
+        body: <React.Fragment key="alert-error-body">
+          {'Please try again. If the problem persists, please contact the Caseflow team ' +
+              'via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via '}
+          { YourITLink }
+          {`. Error code ${searchErrorCode}.`}
+        </React.Fragment>
       }
     };
-
-    searchErrors.default.body = <div>
-      <div>{`Error code ${searchErrorCode}.`}</div>
-      <div>
-        Please try again. If the problem persists, please contact the Caseflow team
-        via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
-        via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
-      </div>
-    </div>;
 
     const error = searchErrors[searchErrorCode] || searchErrors.default;
 

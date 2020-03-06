@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe Rating do
   before do
     Time.zone = "UTC"
@@ -419,6 +417,14 @@ describe Rating do
 
     it "returns rating objects for all ratings" do
       expect(subject.count).to eq(2)
+    end
+
+    context "on NoRatingsExistForVeteran error" do
+      subject { Rating.fetch_all("FOOBAR") }
+
+      it "returns empty array" do
+        expect(subject.count).to eq(0)
+      end
     end
   end
 end

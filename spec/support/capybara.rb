@@ -7,7 +7,7 @@ require "webdrivers"
 
 Webdrivers.logger.level = :DEBUG if ENV["DEBUG"]
 
-Sniffybara::Driver.configuration_file = File.expand_path("VA-axe-configuration.json", __dir__)
+Sniffybara::Driver.run_configuration_file = File.expand_path("VA-axe-run-configuration.json", __dir__)
 
 download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
 cache_directory = Rails.root.join("tmp/browser_cache_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
@@ -30,7 +30,7 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
                                 disk_cache_dir: cache_directory)
 
   options = {
-    port: 51_674,
+    service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
     browser: :chrome,
     options: chrome_options
   }
@@ -55,7 +55,7 @@ Capybara.register_driver(:sniffybara_headless) do |app|
   chrome_options.args << "--window-size=1200,1200"
 
   options = {
-    port: 51_674,
+    service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
     browser: :chrome,
     options: chrome_options
   }

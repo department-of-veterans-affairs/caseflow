@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe BatchUsersForReaderQuery, :postgres do
   describe "#process" do
     let!(:active_user1) do
@@ -26,7 +23,7 @@ describe BatchUsersForReaderQuery, :postgres do
     it "should return active user with expired or nil efolder_documents_fetched_at" do
       # should first process the user with nil efolder_documents_fetched_at
       # then should return users with the oldest efolder_documents_fetched_at
-      expect(subject).to eq([active_user4, active_user2, active_user1])
+      expect(subject.to_a).to eq([active_user4, active_user2, active_user1])
     end
   end
 end

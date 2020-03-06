@@ -172,6 +172,28 @@ class Test::UsersController < ApplicationController
   end
   helper_method :user_session
 
+  def veteran_records
+    return [] unless Rails.env.development?
+
+    Rails.cache.fetch("fake-veteran-profiles", expires_in: 24.hours) do
+      build_veteran_profile_records
+    end
+  end
+  helper_method :veteran_records
+
+  def build_veteran_profile_records
+    records = []
+    profiles = Fakes::VeteranStore.new.all_veteran_file_numbers.sort.map do |file_number|
+      VeteranProfile.new(veteran_file_number: file_number).call
+    end
+    profiles.each do |rec|
+      desc = VeteranProfile::KLASSES.map(&:to_s).map { |name| "#{name}: #{rec[name]}" }.join(", ")
+      desc += ", Ratings: #{rec['ratings'].keys.count}" if rec["ratings"].any?
+      records << { file_number: rec[:file_number], description: desc }
+    end
+    records
+  end
+
   def test_users
     return [] unless ApplicationController.dependencies_faked?
 

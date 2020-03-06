@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 class FakeTask < Dispatch::Task
   before_create do
     # Automatically set appeal to make test data setup easier

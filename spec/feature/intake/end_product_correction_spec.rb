@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 feature "End Product Correction (EP 930)", :postgres do
   include IntakeHelpers
 
@@ -117,6 +114,14 @@ feature "End Product Correction (EP 930)", :postgres do
           expect(page).to have_content("correct the issues")
           click_on "correct the issues"
           expect(page).to have_content("Edit Issues")
+        end
+
+        it "creates a correction issue and shows type selected" do
+          visit edit_path
+          click_correct_intake_issue_dropdown(request_issue_to_correct.description)
+          select_correction_type_from_modal("local_quality_error")
+          click_correction_type_modal_submit
+          expect(page).to have_content("This issue will be added to a 930 Local Quality Error EP for correction")
         end
       end
 
@@ -393,7 +398,7 @@ feature "End Product Correction (EP 930)", :postgres do
     end
   end
 
-  feature "with a dta supplemental claim" do
+  feature "with a remand supplemental claim" do
     before { enable_features }
     after { disable_features }
 
@@ -410,19 +415,36 @@ feature "End Product Correction (EP 930)", :postgres do
     let(:edit_path) { "#{claim_review_type.pluralize}/#{reference_id}/edit" }
     let(:ep_code) { "040SCR" }
 
-    context "when the end product is not yet cleared" do
-      let(:synced_status) { "PEND" }
-      it "prevents edit" do
-        visit edit_path
-        expect(page).to have_content("Issues Not Editable")
-      end
-    end
-
     context "when the end product is cleared" do
-      it "allows edit and shows the add issue button" do
-        visit edit_path
-        expect(page).to have_content("Edit Issues")
-        expect(page).to have_css("#button-add-issue")
+      context "when the review has no decision issues" do
+        it "does not allow the user to add issues" do
+          visit edit_path
+          expect(page).to have_content("Edit Issues")
+          expect(page).to_not have_css("#button-add-issue")
+        end
+      end
+
+      context "when the review has decision issues" do
+        let!(:decision_issue) do
+          create(:decision_issue,
+                 decision_review: claim_review,
+                 rating_profile_date: receipt_date + 1.day,
+                 end_product_last_action_date: receipt_date + 1.day,
+                 benefit_type: claim_review.benefit_type,
+                 decision_text: "decision issue",
+                 participant_id: veteran.participant_id)
+        end
+
+        it "only allows user to add the review's decision issues" do
+          visit edit_path
+          expect(page).to have_content("Edit Issues")
+          click_intake_add_issue
+          expect(page).to have_content("decision issue")
+          expect(page).to_not have_content("Left knee granted")
+
+          # Do not allow adding new nonrating issues
+          expect(page).to_not have_content("None of these match")
+        end
       end
     end
   end
@@ -451,13 +473,11 @@ end
 
 def correct_existing_request_issue(request_issue_to_correct)
   click_correct_intake_issue_dropdown(request_issue_to_correct.description)
-
   check_correction_type_modal_elements
   check_correction_type_modal_button_status(true)
   select_correction_type_from_modal("control")
   check_correction_type_modal_button_status(false)
   click_correction_type_modal_submit
-
   click_edit_submit
   confirm_930_modal
   correction_issue = request_issue_to_correct.reload.correction_request_issue
@@ -533,10 +553,8 @@ end
 
 def enable_features
   FeatureToggle.enable!(:correct_claim_reviews)
-  FeatureToggle.enable!(:withdraw_decision_review)
 end
 
 def disable_features
   FeatureToggle.disable!(:correct_claim_reviews)
-  FeatureToggle.disable!(:withdraw_decision_review)
 end

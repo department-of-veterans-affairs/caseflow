@@ -40,10 +40,50 @@ class Fakes::PersistentStore
     json_str = self.class.cache_store.get(key)
     return if json_str.nil? || json_str == "null"
 
-    json_str ? JSON.parse(json_str, symbolize_names: true) : nil
+    json_str ? decode_json(json_str) : nil
   end
 
   def deflate_and_store(key, payload)
     self.class.cache_store.set(key, payload.to_json)
   end
+
+  private
+
+  # we copied the ActiveSupport::JSON date parsing private method, since we want:
+  # * to symbolize keys,
+  # * all Times cast to UTC as DateTime objects.
+  def decode_json(json_str)
+    convert_dates_from(JSON.parse(json_str, symbolize_names: true))
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity
+  def convert_dates_from(data)
+    case data
+    when nil
+      nil
+    when ActiveSupport::JSON::DATE_REGEX
+      begin
+        Date.parse(data)
+      rescue ArgumentError
+        data
+      end
+    when ActiveSupport::JSON::DATETIME_REGEX
+      begin
+        Time.zone.parse(data).utc.to_datetime
+      rescue ArgumentError
+        data
+      end
+    when Array
+      data.map! { |d| convert_dates_from(d) }
+    when Hash
+      data.each do |key, value|
+        data[key] = convert_dates_from(value)
+      end
+    else
+      data
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
 end

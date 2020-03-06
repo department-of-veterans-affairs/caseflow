@@ -76,7 +76,7 @@ class AssignHearingDispositionTask < Task
       )
     end
 
-    update!(status: Constants.TASK_STATUSES.cancelled)
+    update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
   end
 
   def postpone!
@@ -110,7 +110,9 @@ class AssignHearingDispositionTask < Task
   private
 
   def update_children_status_after_closed
-    children.open.update_all(status: status)
+    update_args = { status: status }
+    update_args[:closed_at] = Time.zone.now if self.class.closed_statuses.include?(status)
+    children.open.update_all(update_args)
   end
 
   def cascade_closure_from_child_task?(_child_task)
@@ -132,7 +134,7 @@ class AssignHearingDispositionTask < Task
       )
     end
 
-    update!(instructions: flattened_instructions(params)) if params[:instructions].present?
+    update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
   end
 
   def update_hearing_disposition(disposition:)

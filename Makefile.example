@@ -42,14 +42,23 @@
 whats-next:  ## TODO
 	scripts/whats-next
 
-ready:  ## TODO
-	h=`docker-compose ps | grep healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep healthy`; echo $$h; sleep 1; done
+ready:  ## Helper command that watches the docker containers to finish start up
+	h=`docker-compose ps | grep -i healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep -i healthy`; echo $$h; sleep 1; done
 
 up:  ## Start the docker containers
 	docker-compose up -d
 
+down:	## Stop the docker containers
+	docker-compose down
+
 run: up ready  ## Start rails server and frontend server
 	foreman start
+
+run-backend: up ready  ## Start rails server without the frontend
+	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
+
+run-frontend: ## Start just the frontend server
+	cd client && yarn run dev:hot
 
 test: clean  ## Run test suite
 	bundle exec rake
@@ -58,16 +67,26 @@ clean:  ## Clean logs, compiled webpack assets, and temporary files
 	rm -f log/vacols.log
 	rm -f log/test.log
 	rm -f app/assets/javascripts/*webpack*
+	rm -rf public/assets
 	rm -rf tmp/capybara
 
-vacols:  ## TODO
+realclean: clean ## TODO
+	rm -rf client/node_modules
+	rm -f client/package-lock.json
+
+facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 
-facols:  ## TODO
-	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
+facols:  ## Connect directly to the FACOLS oracle database
+	docker exec --tty -i VACOLS_DB sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
-	bundle exec rake local:destroy local:build
+	mkdir -p local/sqs/conf
+	bundle exec rake local:build
+	DB=etl bundle exec rake db:test:prepare
+
+destroy: clean
+	bundle exec rake local:destroy
 
 lint:  ## Run linter for javascript and ruby
 	bundle exec rake lint
@@ -75,30 +94,44 @@ lint:  ## Run linter for javascript and ruby
 jslint:  ## Run linter for javascript
 	cd client && yarn run lint
 
-security:  ## TODO
+security:  ## Runs brakeman vulnerability scan
 	bundle exec rake security
 
 check: test lint  ## Run tests and lint
 
-logs:  ## TODO
+logs:  ## Follow the docker logs
 	docker-compose logs -f
 
-db:  ## TODO
+db:  ## Connect to your dev postgres (caseflow) db
 	bundle exec rails dbconsole
 
 c:  ## Start rails console
 	bundle exec rails console
 
-migrate:  ## Migrate rails database
+etl-migrate:	## Migrate ETL database
+	DB=etl bundle exec rake db:migrate
+
+etl-test-prepare:
+	DB=etl bundle exec rake db:test:prepare
+
+etl-rollback:	## Rollback ETL database
+	DB=etl bundle exec rake db:rollback
+
+db-migrate:	## Migrate main Caseflow db
 	bundle exec rake db:migrate
 
-rollback:  ## Rollback rails database
+db-rollback:	## Rollback main Caseflow db
 	bundle exec rake db:rollback
 
-fresh:  ## TODO
+migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
+
+rollback: etl-rollback db-rollback	## Rollback all Rails databases
+
+fresh:  ## https://github.com/imsky/git-fresh
 	git fresh
 
 reset:  ## Resets databases
+	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
 	bundle exec rails runner scripts/enable_features_dev.rb
 
@@ -112,10 +145,15 @@ install: bundle-install client-install  ## Installs all dependencies
 
 update: fresh install migrate  ## TODO
 
-client-test:  ## Runs javascript tests
+client-build-test client-test:  ## Builds webpack for tests
 	cd client && yarn run build:test
 
-one-test:  ## TODO
+client-build-demo client-demo: ## Builds webpack for local server
+	cd client && yarn run build:demo
+
+client-build-all client-all: client-test client-demo ## Builds webpack for both tests and local server
+
+one-test:  ## run the test passed in
 	bundle exec rspec $$T
 
 unsafe:  ## TODO
@@ -130,8 +168,29 @@ clear-eps:  ## TODO
 karma:  ## TODO
 	cd client && node_modules/.bin/karma start
 
+erd-etl:	## Create ERD diagram for the ETL database
+	ERD_BASE=ETL::Record bundle exec erd --filename etl-erd --title 'ODS/ETL Data Model'
+
+erd-vacols:	## Create ERD diagram for the VACOLS database
+	ERD_BASE=VACOLS::Record bundle exec erd --filename vacols-erd --title 'VACOLS Data Model'
+
+erd-caseflow:	## Create ERD diagram for the Caseflow database
+	ERD_BASE=CaseflowRecord bundle exec erd --filename caseflow-erd --title 'Caseflow Data Model'
+
+erd: erd-etl erd-vacols erd-caseflow ## Create all ERD diagrams
+
+doc-schema-caseflow:	# Create docs/schema/caseflow.csv
+	ERD_BASE="CaseflowRecord" SCHEMA=caseflow bundle exec rake doc:schema
+
+doc-schema-etl:	# Create docs/schema/etl.csv
+	ERD_BASE="ETL::Record" SCHEMA=etl bundle exec rake doc:schema
+
+doc-schema:	doc-schema-caseflow doc-schema-etl	# Create all docs/schema csv files
+
+docs: erd doc-schema	# Build all documentation
+
 # Self-documented makefile from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:  ## Shows help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[\ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; { split($$1, C, " "); printf "\033[36m%-30s\033[0m %s\n", C[1], $$2}'
 
 .PHONY: test run clean lint check logs db update one-test client-test security build ready help

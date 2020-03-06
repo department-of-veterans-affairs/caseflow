@@ -1,3 +1,6 @@
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
 import React from 'react';
 import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
@@ -11,7 +14,7 @@ import BaseContainer from './containers/BaseContainer';
 import { Certification } from './certification/Certification';
 
 // Dispatch
-import EstablishClaimContainer from './containers/EstablishClaimPage/EstablishClaimContainer';
+import EstablishClaimPage from './containers/EstablishClaimPage';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import CaseWorker from './containers/CaseWorker/CaseWorkerIndex';
 
@@ -42,7 +45,7 @@ const COMPONENTS = {
   // This is the older admin page that should eventually get merged into
   // the above EstablishClaimAdmin
   ManageEstablishClaim,
-  EstablishClaimContainer,
+  EstablishClaimPage,
   CaseWorker,
   Login,
   TestUsers,
@@ -77,25 +80,25 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   renderApp(component);
 
   if (module.hot) {
-    module.hot.accept([
-      './containers/BaseContainer',
-      './containers/EstablishClaimPage/EstablishClaimContainer',
-      './login/index',
-      './test/TestUsers',
-      './containers/stats/StatsContainer',
-      './certification/Certification',
-      './manageEstablishClaim/ManageEstablishClaim',
-      './hearings/index',
-      './establishClaimAdmin/index',
-      './queue/index',
-      './intakeManager/index',
-      './intakeEdit/index',
-      './nonComp/index'
-    ], () => renderApp(component));
+    module.hot.accept(
+      [
+        './containers/BaseContainer',
+        './containers/EstablishClaimPage/index',
+        './login/index',
+        './test/TestUsers',
+        './containers/stats/StatsContainer',
+        './certification/Certification',
+        './manageEstablishClaim/ManageEstablishClaim',
+        './hearings/index',
+        './establishClaimAdmin/index',
+        './queue/index',
+        './intakeManager/index',
+        './intakeEdit/index',
+        './nonComp/index'
+      ],
+      () => renderApp(component)
+    );
   }
 };
 
-_.forOwn(
-  COMPONENTS,
-  (component, name) => ReactOnRails.register({ [name]: componentWrapper(component) })
-);
+_.forOwn(COMPONENTS, (component, name) => ReactOnRails.register({ [name]: componentWrapper(component) }));

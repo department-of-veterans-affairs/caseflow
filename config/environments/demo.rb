@@ -59,6 +59,12 @@ Rails.application.configure do
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
+  config.action_mailer.delivery_method = :govdelivery_tms
+  config.action_mailer.govdelivery_tms_settings = {
+    auth_token: ENV["GOVDELIVERY_TOKEN"],
+    api_root: "https://#{ENV["GOVDELIVERY_SERVER"]}"
+  }
+
   # config.action_mailer.raise_delivery_errors = false
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
@@ -81,7 +87,4 @@ Rails.application.configure do
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
 
   config.google_analytics_account = "UA-74789258-5"
-
-  ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
-  ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
 end

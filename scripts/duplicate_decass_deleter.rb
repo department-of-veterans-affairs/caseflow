@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# bundle exec rails runner scripts/enable_features_dev.rb
+# bundle exec rails runner scripts/duplicate_decass_deleter.rb
+# bundle exec rails runner scripts/duplicate_decass_deleter.rb --nodry_run
 
 def sql_fmt(attribute)
   if attribute.nil?

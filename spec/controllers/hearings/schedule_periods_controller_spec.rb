@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
@@ -119,8 +116,8 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       # the schedule for the given date range.
       @controller = Hearings::HearingDayController.new
       get :index, params: { start_date: "2018-01-01", end_date: "2018-06-01" }, as: :json
-      expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearings"].size).to eq(434)
+      expect(response).to be_successful
+      expect(JSON.parse(response.body)["hearings"].size).to eq(427)
     end
 
     it "persist twice and second request should return an error" do

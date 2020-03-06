@@ -1,10 +1,16 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import EstablishClaim, { DECISION_PAGE, FORM_PAGE, NOTE_PAGE } from
-  '../../../app/containers/EstablishClaimPage/EstablishClaim';
+import EstablishClaim, {
+  DECISION_PAGE,
+  FORM_PAGE,
+  NOTE_PAGE
+} from '../../../app/containers/EstablishClaimPage/EstablishClaim';
 import * as Constants from '../../../app/establishClaim/constants';
 import { findElementById } from '../../helpers';
+import { WrappingComponent, store } from '../establishClaim/WrappingComponent';
+import bootstrapRedux from '../../../app/establishClaim/reducers/bootstrap';
+import { createStore } from 'redux';
 
 let func = function() {
   // empty function
@@ -15,19 +21,21 @@ describe('EstablishClaim', () => {
     let wrapper;
 
     beforeEach(() => {
-
       /* eslint-disable camelcase */
       const task = {
         appeal: {
           vbms_id: '516517691',
           dispatch_decision_type: 'Remand',
-          decisions: [{
-            label: null
-          }],
+          decisions: [
+            {
+              label: null
+            }
+          ],
           non_canceled_end_products_within_30_days: [],
           pending_eps: [],
           station_key: '397',
-          regional_office_key: 'RO11'
+          regional_office_key: 'RO11',
+          serialized_decision_date: '2019-01-01'
         },
         user: 'a'
       };
@@ -42,19 +50,24 @@ describe('EstablishClaim', () => {
         }
       };
 
-      wrapper = mount(<EstablishClaim
-        regionalOfficeCities={regionalOfficeCities}
-        pdfLink=""
-        pdfjsLink=""
-        handleAlert={func}
-        handleAlertClear={func}
-        task={task} />);
-
+      wrapper = mount(
+        <EstablishClaim
+          regionalOfficeCities={regionalOfficeCities}
+          pdfLink=""
+          pdfjsLink=""
+          handleAlert={func}
+          handleAlertClear={func}
+          task={task}
+        />,
+        {
+          wrappingComponent: WrappingComponent
+        }
+      );
     });
 
     context('EstablishClaimForm', () => {
       beforeEach(() => {
-        wrapper.instance().store.dispatch({
+        store.dispatch({
           type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
           payload: {
             field: 'stationOfJurisdiction',
@@ -62,7 +75,11 @@ describe('EstablishClaim', () => {
           }
         });
         // Force component to Form page
-        wrapper.setState({ page: FORM_PAGE });
+        wrapper.
+          find('EstablishClaim').
+          instance().
+          setState({ page: FORM_PAGE });
+        wrapper.update();
       });
 
       it('shows cancel modal', () => {
@@ -80,7 +97,11 @@ describe('EstablishClaim', () => {
 
     context('EstablishClaimDecision', () => {
       beforeEach(() => {
-        wrapper.setState({ page: DECISION_PAGE });
+        wrapper.
+          find('EstablishClaim').
+          instance().
+          setState({ page: DECISION_PAGE });
+        wrapper.update();
       });
 
       it('shows cancel model', () => {
@@ -97,48 +118,70 @@ describe('EstablishClaim', () => {
     });
 
     context('EstablishClaimNote', () => {
-      beforeEach(() => {
-        wrapper.instance().store.dispatch({
+      beforeEach((done) => {
+        store.dispatch({
           type: Constants.CHANGE_SPECIAL_ISSUE,
           payload: {
             specialIssue: 'mustardGas',
             value: true
           }
         });
-        wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
-        wrapper.setState({ page: NOTE_PAGE });
+        // wrapper.setState({ reviewForm: { decisionType: { value: 'Full Grant' } } });
+        wrapper.
+          find('EstablishClaim').
+          instance().
+          setState({ page: NOTE_PAGE }, () => {
+            setImmediate(() => {
+              wrapper.update();
+              done();
+            });
+          });
       });
 
       it('route claim button is disabled until checkbox is checked', () => {
         // button is disabled
-        expect(wrapper.find('.usa-button-disabled')).to.have.length(1);
+        expect(wrapper.find('.usa-button-disabled')).to.have.lengthOf(1);
 
         // click checkbox
         wrapper.find('#confirmNote').simulate('change', { target: { checked: true } });
 
-        // button is enabled
-        expect(wrapper.find('.usa-button-primary')).to.have.length(1);
+        // Ensure that state has had a chance to update
+        setImmediate(() => {
+          wrapper.update();
+
+          // button is enabled
+          expect(wrapper.find('.usa-button-primary')).to.have.lengthOf(1);
+        });
       });
     });
-
   });
 
   context('.getClaimTypeFromDecision', () => {
-    let task, wrapper;
+    let task;
 
     const mountApp = (decisionType, stationOfJurisdiction = '397') => {
       task.appeal.dispatch_decision_type = decisionType;
 
-      wrapper = mount(<EstablishClaim
-        regionalOfficeCities={{}}
-        pdfLink=""
-        pdfjsLink=""
-        handleAlert={func}
-        handleAlertClear={func}
-        task={task} />);
+      const { initialState, reducer } = bootstrapRedux();
+      const newStore = createStore(reducer, initialState);
+
+      const wrapper = mount(
+        <EstablishClaim
+          regionalOfficeCities={{}}
+          pdfLink=""
+          pdfjsLink=""
+          handleAlert={func}
+          handleAlertClear={func}
+          task={task}
+        />,
+        {
+          wrappingComponent: WrappingComponent,
+          wrappingComponentProps: { store: newStore }
+        }
+      );
 
       if (stationOfJurisdiction !== '397') {
-        wrapper.instance().store.dispatch({
+        newStore.dispatch({
           type: Constants.CHANGE_SPECIAL_ISSUE,
           payload: {
             specialIssue: 'mustardGas',
@@ -147,25 +190,28 @@ describe('EstablishClaim', () => {
         });
       }
 
-      wrapper.instance().store.dispatch({
+      newStore.dispatch({
         type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
         payload: {
           field: 'stationOfJurisdiction',
           value: stationOfJurisdiction
         }
       });
+
+      return wrapper;
     };
 
     beforeEach(() => {
-
       /* eslint-disable camelcase */
       task = {
         appeal: {
           vbms_id: '516517691',
           dispatch_decision_type: 'Remand',
-          decisions: [{
-            label: null
-          }],
+          decisions: [
+            {
+              label: null
+            }
+          ],
           non_canceled_end_products_within_30_days: [],
           pending_eps: []
         },
@@ -176,41 +222,71 @@ describe('EstablishClaim', () => {
 
     context('when ARC EP', () => {
       it('returns proper values for remand', () => {
-        mountApp('Remand');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070RMNDARC', 'ARC Remand (070)']);
+        const wrapper = mountApp('Remand');
+
+        expect(
+          wrapper.
+            find('EstablishClaim').
+            instance().
+            getClaimTypeFromDecision()
+        ).to.eql(['070RMNDARC', 'ARC Remand (070)']);
       });
 
       it('returns proper values for partial grant', () => {
-        mountApp('Partial Grant');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070RMBVAGARC', 'ARC Remand with BVA Grant']);
+        const wrapper = mountApp('Partial Grant');
+
+        expect(
+          wrapper.
+            find('EstablishClaim').
+            instance().
+            getClaimTypeFromDecision()
+        ).to.eql(['070RMBVAGARC', 'ARC Remand with BVA Grant']);
       });
 
       it('returns proper values for full grant', () => {
-        mountApp('Full Grant');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070BVAGRARC', 'ARC BVA Grant']);
+        const wrapper = mountApp('Full Grant');
+
+        expect(
+          wrapper.
+            find('EstablishClaim').
+            instance().
+            getClaimTypeFromDecision()
+        ).to.eql(['070BVAGRARC', 'ARC BVA Grant']);
       });
     });
 
     context('when Routed EP', () => {
       it('returns proper value for remand', () => {
-        mountApp('Remand', '301');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070RMND', 'Remand (070)']);
+        const wrapper = mountApp('Remand', '301');
+
+        expect(
+          wrapper.
+            find('EstablishClaim').
+            instance().
+            getClaimTypeFromDecision()
+        ).to.eql(['070RMND', 'Remand (070)']);
       });
 
       it('returns proper value for partial grant', () => {
-        mountApp('Partial Grant', '301');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070RMNDBVAG', 'Remand with BVA Grant (070)']);
+        const wrapper = mountApp('Partial Grant', '301');
+
+        expect(
+          wrapper.
+            find('EstablishClaim').
+            instance().
+            getClaimTypeFromDecision()
+        ).to.eql(['070RMNDBVAG', 'Remand with BVA Grant (070)']);
       });
 
       it('returns proper value for full grant', () => {
-        mountApp('Full Grant', '301');
-        expect(wrapper.instance().getClaimTypeFromDecision()).to.
-          eql(['070BVAGR', 'BVA Grant (070)']);
+        const wrapper = mountApp('Full Grant', '301');
+
+        expect(
+          wrapper.
+            find('EstablishClaim').
+            instance().
+            getClaimTypeFromDecision()
+        ).to.eql(['070BVAGR', 'BVA Grant (070)']);
       });
     });
   });

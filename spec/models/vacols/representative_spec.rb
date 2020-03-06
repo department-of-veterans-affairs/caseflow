@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe VACOLS::Representative, :all_dbs do
   let(:vacols_case) { create(:case_with_rep_table_record) }
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }

@@ -1,15 +1,12 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe Colocated, :postgres do
   let(:colocated_org) { Colocated.singleton }
   let(:appeal) { nil }
 
   before do
     create_list(:user, 6).each do |u|
-      OrganizationsUser.add_user_to_organization(u, colocated_org)
+      colocated_org.add_user(u)
     end
   end
 

@@ -108,7 +108,7 @@ class AddIssuesModal extends React.Component {
       }
     ];
 
-    if (this.props.onSkip) {
+    if (this.props.onSkip && !this.props.intakeData.isDtaError) {
       btns.push({
         classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
         name: this.props.skipText,
@@ -149,7 +149,8 @@ AddIssuesModal.propTypes = {
   onCancel: PropTypes.func,
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
-  skipText: PropTypes.string
+  skipText: PropTypes.string,
+  intakeData: PropTypes.object
 };
 
 AddIssuesModal.defaultProps = {

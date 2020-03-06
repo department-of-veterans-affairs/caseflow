@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 RSpec.describe "Session", :postgres, type: :request do
   let(:appeal) { Generators::LegacyAppeal.build(vacols_record: :ready_to_certify) }
 

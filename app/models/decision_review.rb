@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DecisionReview < ApplicationRecord
+class DecisionReview < CaseflowRecord
   include CachedAttributes
   include Asyncable
 
@@ -17,7 +17,7 @@ class DecisionReview < ApplicationRecord
   has_one :intake, as: :detail
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
-    ratings_with_issues.map(&:serialize)
+    ratings_with_issues_or_decisions.map(&:serialize)
   end
 
   delegate :contestable_issues, to: :contestable_issue_generator
@@ -56,10 +56,24 @@ class DecisionReview < ApplicationRecord
     def review_title
       to_s.underscore.titleize
     end
+
+    # Find the DecisionReview that has the given uuid, whether it's an Appeal, HigherLevelReview,
+    # etc. --any non-abstract descendant of DecisionReview.
+    # Purposely trying to not clobber find_by_uuid
+    def by_uuid(uuid)
+      concrete_descendants.find do |klass|
+        decision_review = klass.find_by_uuid(uuid)
+        break decision_review if decision_review
+      end
+    end
+
+    def concrete_descendants
+      @concrete_descendants ||= descendants.reject(&:abstract_class)
+    end
   end
 
   def asyncable_user
-    intake&.user&.css_id
+    intake&.user
   end
 
   def ama_activation_date
@@ -101,32 +115,8 @@ class DecisionReview < ApplicationRecord
     request_issues.withdrawn.map(&:withdrawal_date).compact.max
   end
 
-  def ui_hash
-    {
-      veteran: {
-        name: veteran&.name&.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran&.name&.formatted(:form),
-        ssn: veteran&.ssn
-      },
-      intakeUser: asyncable_user,
-      editIssuesUrl: caseflow_only_edit_issues_url,
-      processedAt: establishment_processed_at,
-      relationships: veteran&.relationships&.map(&:ui_hash),
-      claimant: claimant_participant_id,
-      veteranIsNotClaimant: veteran_is_not_claimant,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      legacyOptInApproved: legacy_opt_in_approved,
-      legacyAppeals: serialized_legacy_appeals,
-      ratings: serialized_ratings,
-      requestIssues: request_issues_ui_hash,
-      decisionIssues: decision_issues.map(&:ui_hash),
-      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
-      contestableIssuesByDate: contestable_issues.map(&:serialize),
-      veteranValid: veteran&.valid?(:bgs),
-      veteranInvalidFields: veteran_invalid_fields,
-      processedInCaseflow: processed_in_caseflow?
-    }
+  def serialize
+    Intake::DecisionReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def caseflow_only_edit_issues_url
@@ -147,25 +137,23 @@ class DecisionReview < ApplicationRecord
     @saving_review = true
   end
 
-  def create_claimants!(participant_id:, payee_code:)
+  # Creates claimants for automatically generated decision reviews
+  def create_claimant!(participant_id:, payee_code:)
     remove_claimants!
-    claimants.create_from_intake_data!(participant_id: participant_id, payee_code: payee_code)
+    claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code)
   end
 
   def remove_claimants!
-    claimants.destroy_all unless claimants.empty?
+    claimants.delete_all
+  end
+
+  # Currently AMA only supports one claimant per decision review
+  def claimant
+    claimants.last
   end
 
   def claimant_participant_id
-    return nil if claimants.empty?
-
-    claimants.first.participant_id
-  end
-
-  def claimant_not_veteran
-    # This is being replaced by veteran_is_not_claimant, but keeping it temporarily
-    # until data is backfilled
-    claimant_participant_id && claimant_participant_id != veteran.participant_id
+    claimant&.participant_id
   end
 
   def finalized_decision_issues_before_receipt_date
@@ -173,9 +161,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def payee_code
-    return nil if claimants.empty?
-
-    claimants.first.payee_code
+    claimant&.payee_code
   end
 
   def veteran
@@ -342,12 +328,6 @@ class DecisionReview < ApplicationRecord
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  private
-
-  def contestable_issue_generator
-    @contestable_issue_generator ||= ContestableIssueGenerator.new(self)
-  end
-
   def veteran_invalid_fields
     return unless intake
 
@@ -358,7 +338,13 @@ class DecisionReview < ApplicationRecord
   def request_issues_ui_hash
     request_issues.includes(
       :decision_review, :contested_decision_issue
-    ).active_or_ineligible_or_withdrawn.map(&:ui_hash)
+    ).active_or_ineligible_or_withdrawn.map(&:serialize)
+  end
+
+  private
+
+  def contestable_issue_generator
+    @contestable_issue_generator ||= ContestableIssueGenerator.new(self)
   end
 
   def can_contest_rating_issues?
@@ -380,10 +366,10 @@ class DecisionReview < ApplicationRecord
     @active_matchable_legacy_appeals ||= matchable_legacy_appeals.select(&:active?)
   end
 
-  def ratings_with_issues
+  def ratings_with_issues_or_decisions
     return [] unless veteran
 
-    veteran.ratings.reject { |rating| rating.issues.empty? }
+    veteran.ratings.reject { |rating| rating.issues.empty? && rating.decisions.empty? }
 
     # return empty list when there are no ratings
   rescue Rating::BackfilledRatingError, Rating::LockedRatingError => error

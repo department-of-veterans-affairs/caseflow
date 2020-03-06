@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import React from 'react';
-import _ from 'lodash';
+import _, { escapeRegExp } from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import {
@@ -10,14 +10,13 @@ import {
   LEGACY_APPEAL_TYPES
 } from './constants';
 
-import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
-import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.json';
-import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
-import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
-import COPY from '../../COPY.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
+import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
+import TASK_STATUSES from '../../constants/TASK_STATUSES';
+import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
+import COPY from '../../COPY';
 import { formatDateStrUtc } from '../util/DateUtil';
 
 /**
@@ -48,7 +47,9 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
       date: hearing.date,
       type: hearing.type,
       externalId: hearing.external_id,
-      disposition: hearing.disposition
+      disposition: hearing.disposition,
+      isVirtual: hearing.is_virtual,
+      scheduledForIsPast: hearing.scheduled_for_is_past
     }
   };
 };
@@ -241,10 +242,11 @@ export const prepareAppealHearingsForStore = (appeal) => appeal.attributes.heari
     date: hearing.date,
     type: hearing.type,
     externalId: hearing.external_id,
-    disposition: hearing.disposition
+    disposition: hearing.disposition,
+    isVirtual: hearing.is_virtual
   }));
 
-const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: Object }) => appeal.attributes.
+const prepareAppealAvailableHearingLocationsForStore = (appeal) => appeal.attributes.
   available_hearing_locations.map((ahl) => ({
     name: ahl.name,
     address: ahl.address,
@@ -282,7 +284,8 @@ export const prepareAppealForStore =
         veteranFullName: appeal.attributes.veteran_full_name,
         veteranFileNumber: appeal.attributes.veteran_file_number,
         isPaperCase: appeal.attributes.paper_case,
-        sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type
+        sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type,
+        vacateType: appeal.attributes.vacate_type
       };
 
       return accumulator;
@@ -511,11 +514,6 @@ export const taskHasNewDocuments = (task, newDocsForAppeal) => {
 };
 
 export const taskIsOnHold = (task) => {
-  if (task.onHoldDuration && task.placedOnHoldAt) {
-    return moment().startOf('day').
-      diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
-  }
-
   return task.status === TASK_STATUSES.on_hold;
 };
 
@@ -525,27 +523,33 @@ export const taskHasCompletedHold = (task) => {
       diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
   }
 
-  return task.status === TASK_STATUSES.on_hold;
+  return false;
 };
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
 
-export const taskActionData = (props) => {
-  if (!props.task) {
+export const taskActionData = ({ task, match }) => {
+  if (!task) {
     return {};
   }
 
-  const relevantAction = props.task.availableActions.
-    find((action) => props.history.location.pathname.endsWith(action.value));
+  const { path } = match;
+  const endsWith = (search, str) => {
+    const esc = escapeRegExp(search);
+
+    const pattern = new RegExp(`${esc}\\)?$`, 'gi');
+
+    return pattern.test(str);
+  };
+
+  const relevantAction = task.availableActions.find((action) => endsWith(action.value, path));
 
   if (relevantAction && relevantAction.data) {
-    return (relevantAction.data);
+    return relevantAction.data;
   }
 
   return null;
 };
-
-export const actionNameOfTask = (task) => CO_LOCATED_ADMIN_ACTIONS[task.label] || task.label;
 
 export const nullToFalse = (key, obj) => {
   if (obj[key] === null) {

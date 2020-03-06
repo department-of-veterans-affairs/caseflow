@@ -1,5 +1,5 @@
 import React from 'react';
-import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '../components/ReduxBase';
 import ManageEstablishClaim from './ManageEstablishClaim';
 import manageEstablishClaimReducer, { getManageEstablishClaimInitialState } from './reducers';
 

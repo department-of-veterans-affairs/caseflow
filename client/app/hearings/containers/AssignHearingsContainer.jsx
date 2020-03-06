@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import _ from 'lodash';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -92,7 +92,8 @@ class AssignHearingsContainer extends React.PureComponent {
 
     const requestUrl = `/cases_to_schedule/${roValue}`;
 
-    return ApiUtil.get(requestUrl).then((response) => {
+    return ApiUtil.get(requestUrl, { timeout: { response: getMinutesToMilliseconds(5) } }
+    ).then((response) => {
       const resp = ApiUtil.convertToCamelCase(response.body);
 
       this.props.onReceiveAppealsReadyForHearing(resp.data);
@@ -123,6 +124,7 @@ class AssignHearingsContainer extends React.PureComponent {
     const { selectedRegionalOffice } = this.props;
     const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
 
+    // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
     return (
       <AppSegment filledBackground>
         <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>
@@ -154,7 +156,8 @@ class AssignHearingsContainer extends React.PureComponent {
             selectedHearingDay={this.props.selectedHearingDay}
             appealsReadyForHearing={this.props.appealsReadyForHearing}
             userId={this.props.userId}
-            onReceiveTasks={this.props.onReceiveTasks} />
+            onReceiveTasks={this.props.onReceiveTasks}
+            displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumn} />
         </LoadingDataDisplay>}
       </AppSegment>
     );
@@ -179,7 +182,9 @@ AssignHearingsContainer.propTypes = {
   setUserCssId: PropTypes.func,
   upcomingHearingDays: PropTypes.object,
   userCssId: PropTypes.string,
-  userId: PropTypes.number
+  userId: PropTypes.number,
+  // Remove when pagination lands (#11757)
+  displayPowerOfAttorneyColumn: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

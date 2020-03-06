@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Attorney queue", :all_dbs do
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
@@ -11,7 +8,7 @@ RSpec.feature "Attorney queue", :all_dbs do
   let!(:vacols_attorney) { create(:staff, :attorney_role, user: attorney) }
 
   let!(:judge_team) do
-    JudgeTeam.create_for_judge(judge).tap { |jt| OrganizationsUser.add_user_to_organization(attorney, jt) }
+    JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }
   end
 
   before do
@@ -20,7 +17,7 @@ RSpec.feature "Attorney queue", :all_dbs do
 
   describe "assigning admin actions to VLJ support staff" do
     let!(:colocated_team) do
-      Colocated.singleton.tap { |org| OrganizationsUser.add_user_to_organization(create(:user), org) }
+      Colocated.singleton.tap { |org| org.add_user(create(:user)) }
     end
 
     context "for AMA appeals" do
@@ -37,7 +34,6 @@ RSpec.feature "Attorney queue", :all_dbs do
       let(:attorney_task) do
         create(
           :ama_attorney_task,
-          :on_hold,
           appeal: appeal,
           assigned_by: judge,
           assigned_to: attorney,
@@ -92,9 +88,7 @@ RSpec.feature "Attorney queue", :all_dbs do
           parent: judge_task
         )
       end
-      let!(:colocated_users) do
-        3.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
-      end
+      let!(:colocated_user) { Colocated.singleton.add_user(create(:user)) }
       let!(:colocated_org_task) do
         create(
           :colocated_task,
@@ -116,9 +110,7 @@ RSpec.feature "Attorney queue", :all_dbs do
 
     context "when a LegacyAppeal has a ColocatedTask" do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:colocated_users) do
-        3.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
-      end
+      let!(:colocated_user) { Colocated.singleton.add_user(create(:user)) }
       let!(:colocated_org_task) do
         create(
           :colocated_task,
@@ -133,15 +125,13 @@ RSpec.feature "Attorney queue", :all_dbs do
         click_on(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
         expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_org_task.label])
+        expect(page).to have_content(colocated_org_task.label)
       end
     end
 
     context "when a LegacyAppeal's ColocatedTask is re-assigned from one member of the VLJ support staff to another" do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:colocated_users) do
-        3.times { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
-      end
+      let!(:colocated_user) { Colocated.singleton.add_user(create(:user)) }
       let(:colocated_org_task) do
         create(
           :colocated_task,
@@ -149,12 +139,13 @@ RSpec.feature "Attorney queue", :all_dbs do
           assigned_by: attorney
         )
       end
-      let(:colocated_person_task) { colocated_org_task.children.first }
+      let!(:colocated_person_task) { colocated_org_task.children.first }
 
       before do
+        Colocated.singleton.add_user(create(:user))
         reassign_params = {
           assigned_to_type: User.name,
-          assigned_to_id: ColocatedTaskDistributor.new.next_assignee.id
+          assigned_to_id: Colocated.singleton.next_assignee.id
         }
         colocated_person_task.reassign(reassign_params, colocated_person_task.assigned_to)
       end
@@ -165,7 +156,31 @@ RSpec.feature "Attorney queue", :all_dbs do
         click_on(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
         expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_org_task.label])
+        expect(page).to have_content(colocated_org_task.label)
+      end
+    end
+
+    context "when the attorney has an on hold legacy ColocatedTask assigned to them" do
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:colocated_user) { Colocated.singleton.add_user(create(:user)) }
+      let!(:colocated_org_task) do
+        create(
+          :colocated_task,
+          appeal: appeal,
+          assigned_by: attorney
+        )
+      end
+
+      before { colocated_org_task.children.first.update!(assigned_to: attorney, status: :on_hold) }
+
+      it "displays a single row for the appeal in the attorney's on hold tab" do
+        visit("/queue")
+
+        click_on(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
+
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 0))
+        expect(page).to have_content(appeal.veteran_full_name)
+        expect(page).to have_content(colocated_org_task.label)
       end
     end
   end

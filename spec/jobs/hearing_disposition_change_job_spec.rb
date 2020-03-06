@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe HearingDispositionChangeJob, :all_dbs do
   def create_disposition_task_ancestry(disposition: nil, scheduled_for: nil, associated_hearing: true)
     appeal = create(:appeal)
@@ -41,6 +38,34 @@ describe HearingDispositionChangeJob, :all_dbs do
 
     create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
     create(:assign_hearing_disposition_task, appeal: appeal, parent: parent_hearing_task)
+  end
+
+  describe ".lock_hearing_days" do
+    subject { HearingDispositionChangeJob.new.lock_hearing_days }
+
+    let!(:user) { create(:user) }
+
+    let!(:lockable_hearing_day_ids) do
+      [
+        create(:hearing_day, scheduled_for: 30.days.ago),
+        create(:hearing_day, scheduled_for: 2.days.ago)
+      ].pluck(:id)
+    end
+
+    let!(:not_lockable_hearing_day_ids) do
+      [
+        create(:hearing_day, scheduled_for: 1.day.ago),
+        create(:hearing_day, scheduled_for: Time.zone.now),
+        create(:hearing_day, scheduled_for: 5.days.from_now)
+      ].pluck(:id)
+    end
+
+    it "locks hearing days from 1 day or longer ago" do
+      subject
+
+      expect(HearingDay.where(id: lockable_hearing_day_ids).all?(&:lock)).to eq true
+      expect(HearingDay.where(id: not_lockable_hearing_day_ids).any?(&:lock)).to eq false
+    end
   end
 
   describe ".assign_hearing_disposition_task" do

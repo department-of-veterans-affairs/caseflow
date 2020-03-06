@@ -1,5 +1,5 @@
 import React from 'react';
-import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '../components/ReduxBase';
 import { intakeEditReducer, mapDataToInitialState } from './reducers';
 import IntakeEditFrame from './IntakeEditFrame';
 

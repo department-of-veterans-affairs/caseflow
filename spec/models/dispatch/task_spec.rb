@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
 require "ostruct"
 
 class FakeTask < Dispatch::Task

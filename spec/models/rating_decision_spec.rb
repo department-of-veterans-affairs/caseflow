@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe RatingDecision do
   before do
     Time.zone = "UTC"
@@ -18,11 +16,13 @@ describe RatingDecision do
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:participant_id) { "1234567" }
   let(:begin_date) { profile_date + 30.days }
+  let(:converted_begin_date) { begin_date + 2.days }
   let(:disability_id) { "5678" }
+  let(:disability_date) { profile_date }
   let(:rating_issue_reference_id) { "123" }
   let(:original_denial_date) { promulgation_date - 7 }
 
-  context ".deserialize" do
+  describe ".deserialize" do
     subject { described_class.deserialize(rating_decision.serialize) }
 
     let(:rating_decision) do
@@ -32,6 +32,7 @@ describe RatingDecision do
         rating_sequence_number: "1234",
         rating_issue_reference_id: rating_issue_reference_id,
         disability_id: disability_id,
+        disability_date: disability_date,
         diagnostic_text: "tinnitus",
         diagnostic_code: "6260",
         begin_date: begin_date,
@@ -43,7 +44,7 @@ describe RatingDecision do
     it { is_expected.to be_a(described_class) }
   end
 
-  context ".from_bgs_disability" do
+  describe ".from_bgs_disability" do
     subject { described_class.from_bgs_disability(rating, bgs_record) }
 
     let(:decision_type_name) { "Service Connected" }
@@ -68,9 +69,11 @@ describe RatingDecision do
       {
         decn_tn: decision_type_name,
         dis_sn: disability_id,
+        dis_dt: disability_date,
         orig_denial_dt: original_denial_date,
         disability_evaluations: {
           begin_dt: begin_date,
+          conv_begin_dt: converted_begin_date,
           dgnstc_tc: "6260",
           dgnstc_tn: "Tinnitus",
           dgnstc_txt: "tinnitus",
@@ -171,7 +174,7 @@ describe RatingDecision do
       subject { described_class.from_bgs_disability(rating, bgs_record).contestable? }
 
       context "rating_issue? is true" do
-        it { is_expected.to eq(true) }
+        it { is_expected.to eq(false) }
       end
 
       context "rating_issue? is false" do
@@ -181,10 +184,50 @@ describe RatingDecision do
           it { is_expected.to eq(true) }
         end
 
-        context "promulgation date and original_denial_date are not close" do
-          let(:original_denial_date) { promulgation_date + 6.months }
+        context "promulgation date, profile date and disability_date are not close" do
+          let(:disability_date) { promulgation_date + 6.months }
 
-          it { is_expected.to eq(false) }
+          it { is_expected.to eq(true) }
+        end
+
+        context "profile date and disability date are close, promulgation date is not close" do
+          let(:promulgation_date) { disability_date + 6.months }
+
+          it { is_expected.to eq(true) }
+        end
+
+        context "profile date is near original_denial_date but not promulgation date" do
+          let(:original_denial_date) { promulgation_date - 6.months }
+          let(:profile_date) { promulgation_date - 6.months + 3.days }
+
+          it { is_expected.to eq(true) }
+        end
+
+        context "original_denial_date is pre-2005, disability date is near promulgation date" do
+          let(:original_denial_date) { Time.utc(2004, 1, 1, 12, 0, 0) }
+          let(:disability_date) { promulgation_date - 7.days }
+
+          it { is_expected.to eq(true) }
+        end
+      end
+    end
+
+    describe "#effective_date" do
+      context "decision is not a rating issue" do
+        let(:rating_issue_reference_id) { nil }
+        let(:original_denial_date) { Time.zone.today }
+        let(:begin_date) { Time.zone.tomorrow }
+
+        it "prefers the original_denial_date as the oldest date" do
+          expect(subject.effective_date).to eq(original_denial_date)
+        end
+
+        context "original_denial_date is nil" do
+          let(:original_denial_date) { nil }
+
+          it "defaults to begin_date" do
+            expect(subject.effective_date).to eq(begin_date)
+          end
         end
       end
     end
@@ -201,17 +244,10 @@ describe RatingDecision do
       context "decision is not a rating issue" do
         let(:rating_issue_reference_id) { nil }
         let(:original_denial_date) { Time.zone.today }
+        let(:begin_date) { Time.zone.tomorrow }
 
-        it "prefers the original_denial_date" do
-          expect(subject.decision_date).to eq(original_denial_date)
-        end
-
-        context "original_denial_date is nil" do
-          let(:original_denial_date) { nil }
-
-          it "defaults to begin_date" do
-            expect(subject.decision_date).to eq(begin_date)
-          end
+        it "uses the promulgation_date" do
+          expect(subject.decision_date).to eq(promulgation_date)
         end
       end
     end

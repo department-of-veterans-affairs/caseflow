@@ -4,7 +4,7 @@ class Representative < Organization
   after_initialize :set_role
 
   def user_has_access?(user)
-    return false unless user.roles.include?("VSO")
+    return false unless user.vso_employee?
 
     participant_ids = user.vsos_user_represents.map { |poa| poa[:participant_id] }
     participant_ids.include?(participant_id)
@@ -32,11 +32,7 @@ class Representative < Organization
   end
 
   def tracking_tasks_tab
-    ::TrackingTasksTab.new(assignee: self)
-  end
-
-  def ama_task_serializer
-    WorkQueue::OrganizationTaskSerializer
+    ::OrganizationTrackingTasksTab.new(assignee: self)
   end
 
   private

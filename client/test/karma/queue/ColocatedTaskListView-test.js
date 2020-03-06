@@ -5,10 +5,10 @@ import { Provider } from 'react-redux';
 import ColocatedTaskListView from '../../../app/queue/ColocatedTaskListView';
 import { createStore, applyMiddleware } from 'redux';
 import moment from 'moment';
+import pluralize from 'pluralize';
 import thunk from 'redux-thunk';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import rootReducer from '../../../app/queue/reducers';
-import { onReceiveQueue, receiveNewDocumentsForTask, errorFetchingDocumentCount, setAppealDocCount }
+import { onReceiveQueue, receiveNewDocumentsForTask, errorFetchingDocumentCount, setAppealDocCount, setQueueConfig }
   from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
@@ -48,7 +48,7 @@ describe('ColocatedTaskListView', () => {
 
   const getAmaTaskTemplate = () => ({
     uniqueId: '1',
-    type: 'GenericTask',
+    type: 'Task',
     isLegacy: false,
     appealType: 'Appeal',
     addedByCssId: null,
@@ -56,6 +56,7 @@ describe('ColocatedTaskListView', () => {
     externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
     assignedOn: moment().subtract(47, 'hours').
       format(),
+    status: 'assigned',
     closedAt: null,
     assignedTo: {
       cssId: 'BVALSPORER',
@@ -71,7 +72,7 @@ describe('ColocatedTaskListView', () => {
       pgId: 1
     },
     taskId: '8',
-    label: 'new_rep_arguments',
+    label: 'New rep arguments',
     documentId: null,
     workProduct: null,
     previousTaskAssignedOn: null,
@@ -117,6 +118,208 @@ describe('ColocatedTaskListView', () => {
 
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
+  const queueConfig = {
+    "active_tab": "assigned",
+    "table_title": "Your cases",
+    "tabs": [
+        {
+            "allow_bulk_assign": false,
+            "columns": [
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "hearingBadgeColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "detailsColumn"
+                },
+                {
+                    "filter_options": [
+                        {
+                            "displayText": "Stayed appeal (3)",
+                            "value": "StayedAppealColocatedTask"
+                        },
+                        {
+                            "displayText": "Hearing clarification (3)",
+                            "value": "HearingClarificationColocatedTask"
+                        },
+                        {
+                            "displayText": "New rep arguments (2)",
+                            "value": "NewRepArgumentsColocatedTask"
+                        },
+                        {
+                            "displayText": "Extension (2)",
+                            "value": "ExtensionColocatedTask"
+                        },
+                        {
+                            "displayText": "IHP (2)",
+                            "value": "IhpColocatedTask"
+                        },
+                        {
+                            "displayText": "Retired VLJ (2)",
+                            "value": "RetiredVljColocatedTask"
+                        },
+                        {
+                            "displayText": "Address verification (2)",
+                            "value": "AddressVerificationColocatedTask"
+                        }
+                    ],
+                    "filterable": true,
+                    "name": "taskColumn"
+                },
+                {
+                    "filter_options": [
+                        {
+                            "displayText": "Original (16)",
+                            "value": "Original"
+                        }
+                    ],
+                    "filterable": true,
+                    "name": "typeColumn"
+                },
+                {
+                    "filter_options": [
+                        {
+                            "displayText": "Evidence (14)",
+                            "value": "evidence_submission"
+                        },
+                        {
+                            "displayText": "Direct Review (1)",
+                            "value": "direct_review"
+                        },
+                        {
+                            "displayText": "Legacy (1)",
+                            "value": "legacy"
+                        }
+                    ],
+                    "filterable": true,
+                    "name": "docketNumberColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "daysWaitingColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "readerLinkColumn"
+                }
+            ],
+            "description": "Cases assigned to you:",
+            "label": "Assigned (%d)",
+            "name": "assigned_person",
+            "task_page_count": 2,
+            "task_page_endpoint_base_path": "task_pages?tab=assigned_person",
+            "tasks": [],
+            "total_task_count": 16
+        },
+        {
+            "allow_bulk_assign": false,
+            "columns": [
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "hearingBadgeColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "detailsColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": true,
+                    "name": "taskColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": true,
+                    "name": "typeColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": true,
+                    "name": "docketNumberColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "daysOnHoldColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "readerLinkWithNewDocIconColumn"
+                }
+            ],
+            "description": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
+            "label": "On hold (%d)",
+            "name": "on_hold_person",
+            "task_page_count": 0,
+            "task_page_endpoint_base_path": "task_pages?tab=on_hold_person",
+            "tasks": [],
+            "total_task_count": 0
+        },
+        {
+            "allow_bulk_assign": false,
+            "columns": [
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "hearingBadgeColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "detailsColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": true,
+                    "name": "taskColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": true,
+                    "name": "typeColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": true,
+                    "name": "docketNumberColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "completedDateColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "completedToNameColumn"
+                },
+                {
+                    "filter_options": [],
+                    "filterable": false,
+                    "name": "readerLinkColumn"
+                }
+            ],
+            "description": "Cases completed (last two weeks):",
+            "label": "Completed",
+            "name": "completed_person",
+            "task_page_count": 0,
+            "task_page_endpoint_base_path": "task_pages?tab=completed_person",
+            "tasks": [],
+            "total_task_count": 0
+        }
+    ],
+    "tasks_per_page": 15,
+    "use_task_pages_api": false
+};
+
   /* eslint-disable no-unused-expressions */
   describe('Assigned tab', () => {
     it('shows only new tasks and tasks with a completed hold', () => {
@@ -132,6 +335,7 @@ describe('ColocatedTaskListView', () => {
         placedOnHoldAt: moment().subtract(daysOnHold, 'days'),
         onHoldDuration: daysOnHold - 1
       });
+
       const appeal = appealTemplate;
 
       const tasks = {};
@@ -150,6 +354,7 @@ describe('ColocatedTaskListView', () => {
         amaTasks,
         appeals }));
       store.dispatch(setUserCssId(taskNewAssigned.assignedTo.cssId));
+      store.dispatch(setQueueConfig(queueConfig));
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
@@ -168,10 +373,10 @@ describe('ColocatedTaskListView', () => {
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
-      expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);
+      expect(columnTasks.text()).to.include(task.label);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
-      expect(daysWaiting.text()).to.equal('1');
+      expect(daysWaiting.text()).to.equal('1 day');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
       expect(documents.text()).to.include('Loading number of docs...');
 
@@ -185,7 +390,7 @@ describe('ColocatedTaskListView', () => {
 
       const onHoldDaysWaiting = cells.at(12);
 
-      expect(onHoldDaysWaiting.text()).to.equal(daysOnHold.toString());
+      expect(onHoldDaysWaiting.text()).to.equal(`${daysOnHold.toString()} ${pluralize('day', daysOnHold)}`);
       expect(onHoldDaysWaiting.find('.cf-red-text').length).to.eq(1);
       expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning').length).to.eq(1);
     });
@@ -193,11 +398,13 @@ describe('ColocatedTaskListView', () => {
 
   describe('On hold tab', () => {
     it('shows only on-hold tasks', () => {
+      const holdLength = 30;
       const task = amaTaskWith({
         id: '1',
         cssIdAssignee: 'BVALSPORER',
         placedOnHoldAt: moment().subtract(2, 'days'),
-        onHoldDuration: 30
+        onHoldDuration: holdLength,
+        status: 'on_hold'
       });
       const taskNotAssigned = amaTaskWith({
         ...task,
@@ -213,6 +420,13 @@ describe('ColocatedTaskListView', () => {
         id: '6',
         cssIdAssignee: task.assignedTo.cssId
       });
+      const noOnHoldDurationTask = amaTaskWith({
+        id: '7',
+        cssIdAssignee: 'BVALSPORER',
+        assignedOn: moment().subtract(holdLength + 0.5, 'days'),
+        placedOnHoldAt: moment().subtract(holdLength, 'days'),
+        status: 'on_hold'
+      });
       const appeal = appealTemplate;
       const appealWithNewDocs = {
         ...appeal,
@@ -225,7 +439,8 @@ describe('ColocatedTaskListView', () => {
         [task.id]: task,
         [taskNotAssigned.id]: taskNotAssigned,
         [taskWithNewDocs.id]: taskWithNewDocs,
-        [taskNew.id]: taskNew
+        [taskNew.id]: taskNew,
+        [noOnHoldDurationTask.id]: noOnHoldDurationTask
       };
       const appeals = {
         [appeal.id]: appeal,
@@ -241,19 +456,20 @@ describe('ColocatedTaskListView', () => {
         taskId: taskWithNewDocs.taskId,
         newDocuments: [{}]
       }));
+      store.dispatch(setQueueConfig(queueConfig));
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="On hold (2) tab window"]').simulate('click');
+      wrapper.find('[aria-label="On hold (3) tab window"]').simulate('click');
 
-      expect(wrapper.find('[aria-label="On hold (2) tab window"] #NEW').length).to.eq(0);
+      expect(wrapper.find('[aria-label="On hold (3) tab window"] #NEW').length).to.eq(0);
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(14);
+      expect(cells).to.have.length(21);
       const wrappers = [];
 
-      for (let i = 0; i < cells.length / 2; i++) {
+      for (let i = 0; i < cells.length / 3; i++) {
         wrappers.push(cells.at(i));
       }
       const [hearings, caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;
@@ -261,12 +477,17 @@ describe('ColocatedTaskListView', () => {
       expect(hearings.text()).to.include('');
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
-      expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);
+      expect(columnTasks.text()).to.include(task.label);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
-      expect(daysOnHold.text()).to.equal('1 of 30');
+      expect(daysOnHold.text()).to.equal(`1 of ${holdLength.toString()}`);
       expect(daysOnHold.find('.cf-continuous-progress-bar').length).to.eq(1);
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
+
+      const onHoldDaysWaiting = cells.at(19);
+
+      expect(onHoldDaysWaiting.find('.cf-red-text').length).to.eq(0);
+      expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning').length).to.eq(0);
     });
   });
 });

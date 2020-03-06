@@ -12,6 +12,7 @@ import _ from 'lodash';
 import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
+import Alert from '../../components/Alert';
 
 export const getFacilityType = (location) => {
   switch (location.facilityType) {
@@ -126,18 +127,23 @@ class AppealHearingLocationsDropdown extends React.Component {
     const {
       name, label, onChange, readOnly, placeholder, errorMessage,
       appealHearingLocations: { isFetching, options, errorMsg } } = this.props;
+    const validationErrorMessage = errorMessage;
+    const serviceErrorMessage = errorMsg;
 
     return (
-      <SearchableDropdown
-        name={name}
-        label={isFetching ? <LoadingLabel text="Finding hearing locations for veteran ..." /> : label}
-        strongLabel
-        readOnly={readOnly}
-        value={this.getSelectedOption()}
-        onChange={(option) => onChange((option || {}).value, (option || {}).label)}
-        options={options}
-        errorMessage={errorMessage || errorMsg}
-        placeholder={placeholder} />
+      <React.Fragment>
+        <SearchableDropdown
+          name={name}
+          label={isFetching ? <LoadingLabel text="Finding hearing locations for veteran ..." /> : label}
+          strongLabel
+          readOnly={readOnly}
+          value={this.getSelectedOption()}
+          onChange={(option) => onChange((option || {}).value, (option || {}).label)}
+          options={options}
+          errorMessage={validationErrorMessage}
+          placeholder={placeholder} />
+        {!isFetching && serviceErrorMessage && <Alert type="error" message={serviceErrorMessage} />}
+      </React.Fragment>
     );
   }
 }

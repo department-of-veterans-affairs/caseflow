@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
   before do
     Timecop.freeze(pre_ramp_start_date)
@@ -629,14 +626,14 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           )
         end
 
-        scenario "Assigning it to complete the claims establishment" do
+        scenario "Assigning it to complete the claims establishment", skip: "flakey hang" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
           click_on "Route claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-          click_on "Assign to Claim"
+          click_on "Assign to Claim" # unknown reason sometimes hangs here
 
           expect(page).to have_content("Success!")
 
@@ -795,7 +792,8 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
             suppress_acknowledgement_letter: true,
             claimant_participant_id: nil,
             limited_poa_code: nil,
-            limited_poa_access: nil
+            limited_poa_access: nil,
+            status_type_code: nil
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash,
           user: RequestStore[:current_user]
@@ -876,7 +874,8 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
               suppress_acknowledgement_letter: true,
               claimant_participant_id: nil,
               limited_poa_code: nil,
-              limited_poa_access: nil
+              limited_poa_access: nil,
+              status_type_code: nil
             },
             veteran_hash: task.appeal.veteran.to_vbms_hash,
             user: RequestStore[:current_user]

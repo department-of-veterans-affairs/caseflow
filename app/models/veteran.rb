@@ -4,7 +4,7 @@
 #
 # TODO: How do we deal with differences between the BGS vet values and the
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
-class Veteran < ApplicationRecord
+class Veteran < CaseflowRecord
   include AssociatedBgsRecord
 
   has_many :available_hearing_locations,
@@ -59,6 +59,10 @@ class Veteran < ApplicationRecord
   # TODO: get middle initial from BGS
   def name
     FullName.new(first_name, "", last_name)
+  end
+
+  def person
+    @person ||= Person.find_or_create_by(participant_id: participant_id)
   end
 
   def country_requires_zip?
@@ -148,6 +152,12 @@ class Veteran < ApplicationRecord
     @relationships ||= fetch_relationships
   end
 
+  def relationship_with_participant_id(match_id = nil)
+    relationships&.find do |relationship|
+      relationship.participant_id == match_id
+    end
+  end
+
   def incident_flash?
     bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
   end
@@ -172,31 +182,6 @@ class Veteran < ApplicationRecord
 
   def decision_issues
     DecisionIssue.where(participant_id: participant_id)
-  end
-
-  def accessible_appeals_for_poa(poa_participant_ids)
-    appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
-    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
-
-    poas = poas_for_appeals(appeals, legacy_appeals)
-
-    [
-      appeals.select do |appeal|
-        appeal.claimants.any? do |claimant|
-          poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
-        end
-      end,
-      legacy_appeals.select do |legacy_appeal|
-        poa_participant_ids.include?(poas[legacy_appeal.veteran.participant_id][:participant_id])
-      end
-    ].flatten
-  end
-
-  def poas_for_appeals(appeals, legacy_appeals)
-    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
-      .concat(legacy_appeals.map { |legacy_appeal| legacy_appeal.veteran.participant_id }.flatten)
-
-    bgs.fetch_poas_by_participant_ids(claimants_participant_ids.uniq)
   end
 
   def participant_id
@@ -227,10 +212,15 @@ class Veteran < ApplicationRecord
     raise response.error # rubocop:disable Style/SignalException
   end
 
+  def stale?
+    (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
+      email_address.nil?)
+  end
+
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil?)
+    is_stale = stale?
     is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
     is_stale
   end
@@ -254,7 +244,7 @@ class Veteran < ApplicationRecord
       end
       return found_locally if found_locally
 
-      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
       find_by_file_number_and_sync(file_number, sync_name: sync_name)
@@ -288,7 +278,7 @@ class Veteran < ApplicationRecord
       end
       return found_locally if found_locally
 
-      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
       find_or_create_by_file_number(file_number, sync_name: sync_name)
@@ -312,6 +302,8 @@ class Veteran < ApplicationRecord
     end
 
     def create_by_file_number(file_number)
+      fail "file_number must not be nil" if file_number.blank?
+
       veteran = Veteran.new(file_number: file_number)
 
       unless veteran.found?
@@ -321,15 +313,7 @@ class Veteran < ApplicationRecord
       return veteran unless veteran.accessible?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
-      veteran.tap do |v|
-        v.update!(
-          participant_id: v.ptcpnt_id || v.bgs_record[:participant_id],
-          first_name: v.bgs_record[:first_name],
-          last_name: v.bgs_record[:last_name],
-          middle_name: v.bgs_record[:middle_name],
-          name_suffix: v.bgs_record[:name_suffix]
-        )
-      end
+      veteran.tap(&:update_cached_attributes!)
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
@@ -383,11 +367,10 @@ class Veteran < ApplicationRecord
   end
 
   def fetch_relationships
-    relationships = bgs.find_all_relationships(
-      participant_id: participant_id
-    )
-    relationships_array = Array.wrap(relationships)
-    relationships_array.map { |relationship_hash| Relationship.from_bgs_hash(self, relationship_hash) }
+    relationship_hashes = Array.wrap(bgs.find_all_relationships(participant_id: participant_id))
+    relationship_hashes.map do |relationship_hash|
+      Relationship.from_bgs_hash(self, relationship_hash)
+    end
   end
 
   def period_of_service(service_attributes)
@@ -424,7 +407,7 @@ class Veteran < ApplicationRecord
   end
 
   def military_address?
-    !military_postal_type_code.blank?
+    military_postal_type_code.present?
   end
 
   def base_vbms_hash

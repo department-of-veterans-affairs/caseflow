@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.shared_examples "Address Verify Task Frontend Workflow" do
   let!(:user) { create(:hearings_coordinator) }
   let(:distribution_task) { create(:distribution_task, appeal: appeal) }
@@ -23,7 +20,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
 
     context "with a hearing admin member" do
       before do
-        OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+        HearingAdmin.singleton.add_user(user)
 
         User.authenticate!(user: user)
 
@@ -47,7 +44,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
         end
 
         it "Regional Office and notes are editable" do
-          click_dropdown(text: "Atlanta, GA")
+          click_dropdown({ text: "Atlanta, GA" }, find(".cf-modal-body"))
           fill_in("Notes", with: instructions_text)
         end
 
@@ -58,7 +55,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
         end
 
         it "can submit form with Regional Office and no notes" do
-          click_dropdown(text: "Atlanta, GA")
+          click_dropdown({ text: "Atlanta, GA" }, find(".cf-modal-body"))
 
           click_button("Confirm")
 
@@ -67,7 +64,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
         end
 
         it "can submit form with Regional Office and notes" do
-          click_dropdown(text: "Atlanta, GA")
+          click_dropdown({ text: "Atlanta, GA" }, find(".cf-modal-body"))
           fill_in("Notes", with: instructions_text)
 
           click_button("Confirm")

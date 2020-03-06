@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 class CompletedTasksTab < QueueTab
+  validate :assignee_is_user
+
   def label
     COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME
   end
 
   def description
@@ -14,19 +16,24 @@ class CompletedTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
+    recently_closed_tasks
   end
 
+  # rubocop:disable Metrics/AbcSize
   def column_names
+    return QueueTab.attorney_column_names if assignee.attorney_in_vacols?
+
     [
-      Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
-      Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
-      Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN,
-      show_regional_office_column ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
-      Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
-      Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
-      Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
-      Constants.QUEUE_CONFIG.DAYS_WAITING_COLUMN
+      Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      show_regional_office_column ? Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name : nil,
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name
     ].compact
   end
+  # rubocop:enable Metrics/AbcSize
 end

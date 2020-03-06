@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 RSpec.describe "Hearing Day", :all_dbs, type: :request do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 0, 0, 0))
@@ -27,17 +24,23 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   describe "Create a new hearing day (Add Hearing)" do
     let(:jan_hearing_days) do
       (1..6).each do |n|
-        create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video],
-                             scheduled_for: Date.new(2019, 4, 14), room: n.to_s)
+        create(
+          :hearing_day,
+          regional_office: "RO10",
+          request_type: HearingDay::REQUEST_TYPES[:video],
+          scheduled_for: Date.new(2019, 4, 14),
+          room: n.to_s
+        )
       end
     end
 
     it "Create new adhoc hearing day and automatically assign a room" do
       jan_hearing_days
 
-      post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:video],
+      post "/hearings/hearing_day", params: { regional_office: "RO10",
+                                              request_type: HearingDay::REQUEST_TYPES[:video],
                                               scheduled_for: "14-Apr-2019", assign_room: true }
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 4, 14))
       expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Video")
@@ -47,7 +50,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
     it "Create new adhoc hearing day and do not assign a room (room should be nil in DB)" do
       post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:central],
                                               scheduled_for: "17-Jan-2019", assign_room: false }
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 1, 17))
       expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Central")
@@ -57,7 +60,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
     it "Create new adhoc Central Office hearing day and assign room 2" do
       post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:central],
                                               scheduled_for: "17-Jan-2019", assign_room: true }
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 1, 17))
       expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Central")
@@ -66,15 +69,21 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
 
     let(:may_hearing_days) do
       (1..13).each do |n|
-        create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video],
-                             scheduled_for: Date.new(2019, 5, 14), room: n.to_s)
+        create(
+          :hearing_day,
+          regional_office: "RO10",
+          request_type: HearingDay::REQUEST_TYPES[:video],
+          scheduled_for: Date.new(2019, 5, 14),
+          room: n.to_s
+        )
       end
     end
 
     it "Create new adhoc hearing day but no rooms available. Confirm error message received." do
       may_hearing_days
 
-      post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:video],
+      post "/hearings/hearing_day", params: { regional_office: "RO10",
+                                              request_type: HearingDay::REQUEST_TYPES[:video],
                                               scheduled_for: "14-May-2019", assign_room: true }
       expect(response).to have_http_status(404)
       expect(JSON.parse(response.body)["errors"][0]["title"])
@@ -92,9 +101,10 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
     it "Create new adhoc hearing day on a full day. Room assignment not required, hence is empty string." do
       mar_hearing_days
 
-      post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:central],
+      post "/hearings/hearing_day", params: { regional_office: "RO10",
+                                              request_type: HearingDay::REQUEST_TYPES[:central],
                                               scheduled_for: "14-Mar-2019", assign_room: false }
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 3, 14))
       expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Central")
@@ -108,7 +118,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
 
     it "Assign a judge to a schedule day" do
       patch "/hearings/hearing_day/#{hearing_day.id}", params: { judge_id: judge.id }
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       expect(JSON.parse(response.body)["judge_id"]).to eq(judge.id)
     end
   end
@@ -125,7 +135,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
         "ACCEPT" => "application/json"
       }
       get "/hearings/hearing_day/" + hearing_day.id.to_s, headers: headers
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       expect(JSON.parse(response.body)["hearing_day"]["readable_request_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing_day"]["hearings"].count).to eq(1)
     end
@@ -138,14 +148,14 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
         [{ request_type: HearingDay::REQUEST_TYPES[:central], scheduled_for: "7-Jun-2019 09:00:00.000-4:00",
            room: "1" },
          { request_type: HearingDay::REQUEST_TYPES[:central], scheduled_for: "9-Jun-2019 13:00:00.000-4:00",
-           room: "3", judge_id: 105 },
+           room: "3", judge_id: create(:user, css_id: "BVARTONY") },
          { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "15-Jun-2019 08:30:00.000-4:00",
            regional_office: "RO27", room: "4" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
       Generators::Vacols::Staff.create(sattyid: "111")
-      Generators::Vacols::Staff.create(sattyid: "105", snamel: "Randall", snamef: "Tony")
+      Generators::Vacols::Staff.create(sattyid: "105", sdomainid: "BVARTONY", snamel: "Randall", snamef: "Tony")
     end
 
     it "Get hearings for specified date range" do
@@ -154,7 +164,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
         "ACCEPT" => "application/json"
       }
       get "/hearings/hearing_day", params: { start_date: "2019-01-01", end_date: "2019-06-15" }, headers: headers
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       expect(JSON.parse(response.body)["hearings"].size).to eq(3)
       # Passing locally, failing on Jenkins
       # expect(JSON.parse(response.body)["hearings"][1]["judge_last_name"]).to eq("Randall")
@@ -184,7 +194,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
       }
       get "/hearings/hearing_day", params: { regional_office: "RO17", start_date: "2019-01-01",
                                              end_date: "2019-12-31" }, headers: headers
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       expect(JSON.parse(response.body)["hearings"].size).to be(1)
     end
   end
@@ -208,7 +218,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
         "ACCEPT" => "application/json"
       }
       get "/hearings/schedule/assign/hearing_days", params: { regional_office: "RO04" }, headers: headers
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       expect(JSON.parse(response.body)["hearing_days"].size).to be(2)
     end
   end
@@ -218,7 +228,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
 
     it "Deletes the hearing day" do
       delete "/hearings/hearing_day/#{hearing_day.id}"
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
       expect(HearingDay.all.count).to eq(0)
       expect(HearingDay.with_deleted.count).to eq(1)
     end

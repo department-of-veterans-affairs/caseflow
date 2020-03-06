@@ -14,9 +14,6 @@
     flash: flash,
     buildDate: build_date,
     hasCaseDetailsRole: current_user.roles.include?('Case Details'),
-    userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
-    featureToggles: {
-      attorney_assignment_to_colocated: FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: current_user)
-    }
+    userCanViewHearingSchedule: current_user.can_view_hearing_schedule?
   }) %>
 <% end %>

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe ClaimEstablishment, :all_dbs do
   let(:vacols_remand_case) do
     create(:case_with_decision, :status_remand)

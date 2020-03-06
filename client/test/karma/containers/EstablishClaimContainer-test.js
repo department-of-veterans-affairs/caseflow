@@ -2,13 +2,16 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 
+import { WrappingComponent } from '../establishClaim/WrappingComponent';
 import EstablishClaimContainer from '../../../app/containers/EstablishClaimPage/EstablishClaimContainer';
 
 describe('EstablishClaimContainer', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<EstablishClaimContainer page="TestPage" otherProp="foo" />);
+    wrapper = mount(<EstablishClaimContainer page="TestPage" otherProp="foo" />, {
+      wrappingComponent: WrappingComponent
+    });
   });
 
   context('sub-page', () => {

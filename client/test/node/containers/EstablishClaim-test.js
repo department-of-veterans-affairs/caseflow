@@ -1,8 +1,11 @@
 import React from 'react';
+
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import EstablishClaim, { ASSOCIATE_PAGE } from
-  '../../../app/containers/EstablishClaimPage/EstablishClaim';
+
+import { WrappingComponent } from '../../karma/establishClaim/WrappingComponent';
+import { EstablishClaim, ASSOCIATE_PAGE } from '../../../app/containers/EstablishClaimPage/EstablishClaim';
+
 import { findElementById } from '../../helpers';
 
 let func = function() {
@@ -14,15 +17,16 @@ describe('EstablishClaim', () => {
     let wrapper;
 
     beforeEach(() => {
-
       /* eslint-disable camelcase */
       const task = {
         appeal: {
           vbms_id: '516517691',
           dispatch_decision_type: 'Remand',
-          decisions: [{
-            label: null
-          }],
+          decisions: [
+            {
+              label: null
+            }
+          ],
           non_canceled_end_products_within_30_days: [],
           pending_eps: [],
           station_key: '397',
@@ -41,14 +45,19 @@ describe('EstablishClaim', () => {
         }
       };
 
-      wrapper = mount(<EstablishClaim
-        regionalOfficeCities={regionalOfficeCities}
-        pdfLink=""
-        pdfjsLink=""
-        handleAlert={func}
-        handleAlertClear={func}
-        task={task} />);
-
+      wrapper = mount(
+        <EstablishClaim
+          regionalOfficeCities={regionalOfficeCities}
+          pdfLink=""
+          pdfjsLink=""
+          handleAlert={func}
+          handleAlertClear={func}
+          task={task}
+        />,
+        {
+          wrappingComponent: WrappingComponent
+        }
+      );
     });
 
     context('navigation', () => {

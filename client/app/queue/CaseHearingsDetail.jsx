@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -12,7 +13,7 @@ import {
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Tooltip from '../components/Tooltip';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
 import { showVeteranCaseList } from './uiReducer/uiActions';
@@ -27,12 +28,27 @@ const noTopBottomMargin = css({
   marginTop: 0,
   marginBottom: '1rem'
 });
+const hearingsListStyling = css(appealSummaryUlStyling, {
+  '> li': {
+    paddingBottom: '1.5rem',
+    paddingTop: '1rem',
+    borderBottom: '1px solid grey'
+  },
+  '> li:last-child': {
+    borderBottom: 0
+  }
+});
+const hearingElementsStyle = css({
+  '&:first-of-type': {
+    marginTop: '1rem'
+  }
+});
 
 class CaseHearingsDetail extends React.PureComponent {
   getHearingAttrs = (hearing, userIsVsoEmployee) => {
     const hearingAttrs = [{
       label: 'Type',
-      value: hearing.type
+      value: hearing.isVirtual ? 'Virtual' : hearing.type
     },
     {
       label: 'Disposition',
@@ -41,7 +57,7 @@ class CaseHearingsDetail extends React.PureComponent {
       </React.Fragment>
     }];
 
-    if (hearing.viewedByJudge && !userIsVsoEmployee) {
+    if (!userIsVsoEmployee) {
       hearingAttrs.push(
         {
           label: '',
@@ -89,11 +105,6 @@ class CaseHearingsDetail extends React.PureComponent {
     } = this.props;
     const orderedHearings = _.orderBy(hearings, 'date', 'asc');
     const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);
-    const hearingElementsStyle = css({
-      '&:first-of-type': {
-        marginTop: '1rem'
-      }
-    });
 
     if (orderedHearings.length > 1) {
       _.extend(hearingElementsStyle, marginLeft);
@@ -145,28 +156,44 @@ class CaseHearingsDetail extends React.PureComponent {
       valueFunction: this.getHearingInfo
     }];
 
-    return <React.Fragment>
-      {caseType === LEGACY_APPEAL_TYPES.POST_REMAND && completedHearingOnPreviousAppeal && <React.Fragment>
-        {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}&nbsp;
-        <a href="#" onClick={this.scrollToCaseList}>{COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK}</a>
-        {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
-      </React.Fragment>}
-      {Boolean(hearings.length) && <BareList
-        ListElementComponent="ul"
-        items={listElements.map(this.getDetailField)}
-        listStyle={css(appealSummaryUlStyling, {
-          '> li': {
-            paddingBottom: '1.5rem',
-            paddingTop: '1rem',
-            borderBottom: '1px solid grey'
-          },
-          '> li:last-child': {
-            borderBottom: 0
-          }
-        })} />}
-    </React.Fragment>;
+    return (
+      <React.Fragment>
+        {caseType === LEGACY_APPEAL_TYPES.POST_REMAND && completedHearingOnPreviousAppeal &&
+          <React.Fragment>
+            {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}&nbsp;
+            <a href="#" onClick={this.scrollToCaseList}>
+              {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK}
+            </a>
+            {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
+          </React.Fragment>
+        }
+        {!_.isEmpty(hearings) &&
+          <BareList
+            ListElementComponent="ul"
+            items={listElements.map(this.getDetailField)}
+            listStyle={hearingsListStyling}
+          />
+        }
+      </React.Fragment>
+    );
   };
 }
+
+CaseHearingsDetail.propTypes = {
+  appeal: PropTypes.shape({
+    hearings: PropTypes.arrayOf(
+      PropTypes.shape({
+        externalId: PropTypes.string,
+        type: PropTypes.string
+
+      })
+    ),
+    caseType: PropTypes.string,
+    completedHearingOnPreviousAppeal: PropTypes.bool
+  }),
+  showVeteranCaseList: PropTypes.func,
+  userIsVsoEmployee: PropTypes.bool
+};
 
 const mapStateToProps = (state) => {
   return { userIsVsoEmployee: state.ui.userIsVsoEmployee };

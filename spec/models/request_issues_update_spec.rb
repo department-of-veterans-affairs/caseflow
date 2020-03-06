@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe RequestIssuesUpdate, :all_dbs do
   before do
     Time.zone = "America/New_York"
@@ -275,9 +272,10 @@ describe RequestIssuesUpdate, :all_dbs do
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             hash_including(
               veteran_file_number: review.veteran_file_number,
-              contentions: [{
-                description: "Service connection for cancer was denied"
-              }]
+              contentions: array_including(
+                description: "Service connection for cancer was denied",
+                contention_type: Constants.CONTENTION_TYPES.higher_level_review
+              )
             )
           )
 
@@ -327,9 +325,12 @@ describe RequestIssuesUpdate, :all_dbs do
             expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
               hash_including(
                 veteran_file_number: review.veteran_file_number,
-                contentions: [{
-                  description: request_issue_to_correct.description
-                }]
+                contentions: array_including(
+                  hash_including(
+                    description: request_issue_to_correct.description,
+                    contention_type: Constants.CONTENTION_TYPES.higher_level_review
+                  )
+                )
               )
             )
             ep = EndProductEstablishment.find_by(code: "930AMAHRC", source: review)

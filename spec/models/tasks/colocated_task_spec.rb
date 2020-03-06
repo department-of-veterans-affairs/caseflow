@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/vacols_database_cleaner"
-require "rails_helper"
-
 describe ColocatedTask, :all_dbs do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
   let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
@@ -17,7 +14,7 @@ describe ColocatedTask, :all_dbs do
 
   before do
     colocated_members.each do |u|
-      OrganizationsUser.add_user_to_organization(u, colocated_org)
+      colocated_org.add_user(u)
     end
 
     RequestStore.store[:current_user] = attorney
@@ -31,8 +28,8 @@ describe ColocatedTask, :all_dbs do
       let!(:root_task3) { create(:root_task, appeal: appeal_3) }
       let!(:appeal_4) { create(:legacy_appeal, vacols_case: create(:case)) }
       let!(:root_task4) { create(:root_task, appeal: appeal_4) }
-      let(:task_params_1) { { assigned_by: attorney, action: :aoj, appeal: appeal_1 } }
-      let(:task_params_2) { { assigned_by: attorney, action: :poa_clarification, appeal: appeal_1 } }
+      let(:task_params_1) { { assigned_by: attorney, type: AojColocatedTask.name, appeal: appeal_1 } }
+      let(:task_params_2) { { assigned_by: attorney, type: PoaClarificationColocatedTask.name, appeal: appeal_1 } }
       let(:params_list) { [task_params_1, task_params_2] }
 
       context "creating one task" do
@@ -80,22 +77,22 @@ describe ColocatedTask, :all_dbs do
         expect(user_tasks.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
 
         record = ColocatedTask.create_many_from_params(
-          [{ assigned_by: attorney, action: :aoj, appeal: appeal_2 }], attorney
+          [{ assigned_by: attorney, type: AojColocatedTask.name, appeal: appeal_2 }], attorney
         )
         expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[1].css_id)
 
         record = ColocatedTask.create_many_from_params(
-          [{ assigned_by: attorney, action: :aoj, appeal: appeal_3 }], attorney
+          [{ assigned_by: attorney, type: AojColocatedTask.name, appeal: appeal_3 }], attorney
         )
         expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[2].css_id)
 
         record = ColocatedTask.create_many_from_params(
-          [{ assigned_by: attorney, action: :aoj, appeal: appeal_4 }], attorney
+          [{ assigned_by: attorney, type: AojColocatedTask.name, appeal: appeal_4 }], attorney
         )
         expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
 
         record = ColocatedTask.create_many_from_params(
-          [{ assigned_by: attorney, action: :poa_clarification, appeal: appeal_3 }], attorney
+          [{ assigned_by: attorney, type: PoaClarificationColocatedTask.name, appeal: appeal_3 }], attorney
         )
         expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[2].css_id)
       end
@@ -105,7 +102,7 @@ describe ColocatedTask, :all_dbs do
       let(:params_list) do
         [{
           assigned_by: attorney,
-          action: :aoj,
+          type: AojColocatedTask.name,
           parent: create(:ama_attorney_task),
           appeal: create(:appeal)
         }]
@@ -132,10 +129,11 @@ describe ColocatedTask, :all_dbs do
 
     context "when action is :schedule_hearing, :missing_hearing_transcripts, :foia, or :translation" do
       let(:params_list) do
-        [:schedule_hearing, :missing_hearing_transcripts, :foia, :translation].map do |action|
+        [ScheduleHearingColocatedTask, MissingHearingTranscriptsColocatedTask, FoiaColocatedTask,
+         TranslationColocatedTask].map do |colocated_subclass|
           {
             assigned_by: attorney,
-            action: action,
+            type: colocated_subclass.name,
             parent: create(:ama_attorney_task),
             appeal: create(:legacy_appeal, vacols_case: create(:case))
           }
@@ -168,7 +166,7 @@ describe ColocatedTask, :all_dbs do
     end
 
     context "when appeal is missing" do
-      let(:params_list) { [{ assigned_by: attorney, action: :aoj }] }
+      let(:params_list) { [{ assigned_by: attorney, type: AojColocatedTask.name }] }
 
       it "does not create a co-located task" do
         expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
@@ -184,7 +182,7 @@ describe ColocatedTask, :all_dbs do
           appeal: appeal_1,
           assigned_by: attorney,
           assigned_to: colocated_org,
-          action: :poa_clarification,
+          type: PoaClarificationColocatedTask.name,
           parent: parent,
           instructions: [instructions]
         }
@@ -222,12 +220,22 @@ describe ColocatedTask, :all_dbs do
     end
 
     context "when user is not a judge or an attorney" do
-      let(:params_list) { [{ assigned_by: attorney, action: :ihp, appeal: appeal_1 }] }
+      let(:params_list) { [{ assigned_by: attorney, type: IhpColocatedTask.name, appeal: appeal_1 }] }
 
       before { allow_any_instance_of(User).to receive(:attorney_in_vacols?).and_return(false) }
 
       it "throws an error" do
         expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError, /Current user cannot access this task/)
+        expect(ColocatedTask.all.count).to eq 0
+      end
+    end
+
+    context "When trying to create an invalid task type" do
+      let(:type) { PreRoutingFoiaColocatedTask.name }
+      let(:params_list) { [{ assigned_by: attorney, type: type, appeal: appeal_1 }] }
+
+      it "throws an error" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError, /Cannot create task of type #{type}/)
         expect(ColocatedTask.all.count).to eq 0
       end
     end
@@ -246,20 +254,20 @@ describe ColocatedTask, :all_dbs do
                                                 appeal_type: "LegacyAppeal",
                                                 assigned_by: attorney,
                                                 assigned_to: create(:user),
-                                                action: action,
+                                                type: colocated_subclass.name,
                                                 instructions: ["second"]
                                               }], attorney).last
       end
 
       context "when more than one task per appeal and not all colocated tasks are completed" do
-        let(:action) { :poa_clarification }
+        let(:colocated_subclass) { PoaClarificationColocatedTask }
         let!(:colocated_admin_action_2) do
           ColocatedTask.create_many_from_params([{
                                                   appeal: appeal_1,
                                                   appeal_type: "LegacyAppeal",
                                                   assigned_by: attorney,
                                                   assigned_to: create(:user),
-                                                  action: :poa_clarification
+                                                  type: PoaClarificationColocatedTask.name
                                                 }], attorney)
         end
 
@@ -270,7 +278,7 @@ describe ColocatedTask, :all_dbs do
       end
 
       context "when completing a translation task" do
-        let(:action) { :translation }
+        let(:colocated_subclass) { TranslationColocatedTask }
         it "should update location to the assigner in vacols" do
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
@@ -279,7 +287,7 @@ describe ColocatedTask, :all_dbs do
       end
 
       context "when completing a schedule hearing task" do
-        let(:action) { :schedule_hearing }
+        let(:colocated_subclass) { ScheduleHearingColocatedTask }
         it "should create a schedule hearing task" do
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           expect(appeal_1.root_task.children.empty?)
@@ -291,7 +299,7 @@ describe ColocatedTask, :all_dbs do
       context "when all colocated tasks are completed for this appeal" do
         let(:judge) { create(:user) }
         let!(:staff2) { create(:staff, :judge_role, sdomainid: judge.css_id) }
-        let(:action) { :poa_clarification }
+        let(:colocated_subclass) { PoaClarificationColocatedTask }
 
         let!(:task2) do
           AttorneyTask.create!(
@@ -325,13 +333,13 @@ describe ColocatedTask, :all_dbs do
 
         time3 = Time.utc(2015, 1, 5, 12, 0, 0)
         Timecop.freeze(time3)
-        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
+        colocated_admin_action.update(status: "on_hold")
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
 
         time4 = Time.utc(2015, 1, 6, 12, 0, 0)
         Timecop.freeze(time4)
-        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
+        colocated_admin_action.update(status: "on_hold")
         # neither dates should change
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
@@ -357,7 +365,7 @@ describe ColocatedTask, :all_dbs do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
-        expect(colocated_admin_action.closed_at).to eq time6
+        expect(colocated_admin_action.closed_at).to be_nil
       end
     end
   end
@@ -404,15 +412,15 @@ describe ColocatedTask, :all_dbs do
 
       before do
         colocated_org.users.delete_all
-        OrganizationsUser.add_user_to_organization(non_admin, colocated_org)
-        OrganizationsUser.add_user_to_organization(admin, colocated_org).update!(admin: true)
+        colocated_org.add_user(non_admin)
+        colocated_org.add_user(admin).update!(admin: true)
       end
 
       it "should assign all tasks to the non-admin user" do
         task_count.times do
           ColocatedTask.create_many_from_params([{
                                                   assigned_by: attorney,
-                                                  action: :aoj,
+                                                  type: AojColocatedTask.name,
                                                   parent: create(:ama_attorney_task),
                                                   appeal: create(:appeal)
                                                 }], attorney)
@@ -429,7 +437,7 @@ describe ColocatedTask, :all_dbs do
     let(:colocated_user) { create(:user) }
 
     before do
-      OrganizationsUser.add_user_to_organization(colocated_user, org)
+      org.add_user(colocated_user)
     end
 
     let(:org_task) { create(:colocated_task, assigned_by: attorney, assigned_to: org) }
@@ -445,7 +453,7 @@ describe ColocatedTask, :all_dbs do
       let(:org_colocated_task) do
         create(
           :colocated_task,
-          action,
+          task_type_trait,
           appeal: appeal_1,
           assigned_by: attorney
         )
@@ -460,7 +468,7 @@ describe ColocatedTask, :all_dbs do
         let(:location_code) { LegacyAppeal::LOCATION_CODES[:caseflow] }
 
         context "for AOJ ColocatedTask" do
-          let(:action) { :aoj }
+          let(:task_type_trait) { :aoj }
 
           it "assigns back to the assigner" do
             legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
@@ -469,7 +477,7 @@ describe ColocatedTask, :all_dbs do
         end
 
         context "for schedule hearing colocated task" do
-          let(:action) { :schedule_hearing }
+          let(:task_type_trait) { :schedule_hearing }
 
           it "should not create a schedule hearing task" do
             expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
@@ -482,7 +490,7 @@ describe ColocatedTask, :all_dbs do
       end
 
       context "when the location code is not CASEFLOW" do
-        let(:action) { ColocatedTask.actions_assigned_to_colocated.sample.to_sym }
+        let(:task_type_trait) { ColocatedTask.actions_assigned_to_colocated.sample.to_sym }
         let(:location_code) { "FAKELOC" }
 
         it "does not change the case's location_code" do
@@ -514,7 +522,7 @@ describe ColocatedTask, :all_dbs do
         assigned_by: initial_assigner
       )
     end
-    let(:colocated_task) { org_task.children.first }
+    let!(:colocated_task) { org_task.children.first }
 
     before do
       reassign_params = {
@@ -530,6 +538,31 @@ describe ColocatedTask, :all_dbs do
 
       # Our AssociatedVacolsModels hold on to their VACOLS properties aggressively. Re-fetch the object to avoid that.
       expect(LegacyAppeal.find(appeal.id).location_code).to eq(initial_assigner.vacols_uniq_id)
+    end
+  end
+
+  describe "Reassign PreRoutingColocatedTask" do
+    let(:task_class) { PreRoutingFoiaColocatedTask }
+    let(:parent_task) do
+      PreRoutingFoiaColocatedTask.create(
+        assigned_by: attorney,
+        assigned_to: colocated_org,
+        parent: appeal_1.root_task,
+        appeal: appeal_1
+      )
+    end
+    let!(:child_task) { parent_task.children.first }
+    let(:reassign_params) { { assigned_to_type: User.name, assigned_to_id: Colocated.singleton.next_assignee.id } }
+
+    subject { child_task.reassign(reassign_params, attorney) }
+
+    it "allows the reassign" do
+      tasks = subject
+
+      expect(tasks.count).to eq 2
+      expect(child_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(parent_task.reload.children.open.first.assigned_to).not_to eq colocated_org.users.first
+      expect(parent_task.children.open.first.label).to eq task_class.label
     end
   end
 end

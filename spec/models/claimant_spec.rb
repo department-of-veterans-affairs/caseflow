@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe Claimant, :postgres do
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
@@ -77,7 +74,7 @@ describe Claimant, :postgres do
     end
   end
 
-  context ".create_from_intake_data!" do
+  context ".create_without_intake!" do
     let(:appeal) { create(:appeal) }
     let(:date_of_birth) { "Sun, 05 Sep 1943 00:00:00 -0500" }
     let(:participant_id) { "1234" }
@@ -91,7 +88,7 @@ describe Claimant, :postgres do
     end
 
     it "saves date of birth" do
-      claimant = appeal.claimants.create_from_intake_data!(participant_id: participant_id, payee_code: "1")
+      claimant = appeal.claimants.create_without_intake!(participant_id: participant_id, payee_code: "1")
       expect(claimant.date_of_birth).to eq(date_of_birth.to_date)
       person = Person.find_by(participant_id: participant_id)
       expect(person).to_not eq nil

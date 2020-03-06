@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import ScrollLock from 'react-scrolllock';
@@ -14,22 +15,22 @@ export default class Modal extends React.Component {
     super(props);
     this.buttonIdPrefix = `${this.props.title.replace(/\s/g, '-')}-button-id-`;
   }
-
   handleTab = (event) => {
-    let lastButtonId = this.buttonIdPrefix + (this.props.buttons.length - 1);
+    let buttonsList = document.querySelectorAll('.cf-modal-controls button');
     let firstButton = document.getElementById(`${this.buttonIdPrefix}close`);
-    let lastButton = document.getElementById(lastButtonId);
+    // a more general selector for the last button in the modall
+    let endButton = buttonsList[buttonsList.length - 1];
 
     if (event.shiftKey) {
       if (firstButton === document.activeElement) {
         event.preventDefault();
-        lastButton.focus();
+        endButton.focus();
       }
-    } else if (lastButton === document.activeElement) {
+    } else if (endButton === document.activeElement) {
       event.preventDefault();
       firstButton.focus();
     }
-  }
+  };
 
   keyHandler = (event) => {
     if (event.key === 'Escape') {
@@ -39,12 +40,14 @@ export default class Modal extends React.Component {
     if (event.key === 'Tab') {
       this.handleTab(event);
     }
-  }
+  };
 
-  modalCloseFocus = (modalClose) => this.modalClose = modalClose
+  modalCloseFocus = (modalClose) => (this.modalClose = modalClose);
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyHandler);
+    // return focus to original target
+    // document.querySelector('.cf-btn-link').focus();
   }
 
   componentDidMount() {
@@ -67,21 +70,24 @@ export default class Modal extends React.Component {
         classNames = [...object.classNames, ...classNames];
       }
 
-      return <Button
-        name={object.name}
-        onClick={object.onClick}
-        classNames={classNames}
-        loading={object.loading}
-        disabled={object.disabled}
-        key={i}
-        id={this.buttonIdPrefix + i}
-      />;
+      return (
+        <Button
+          name={object.name}
+          onClick={object.onClick}
+          classNames={classNames}
+          loading={object.loading}
+          disabled={object.disabled}
+          key={i}
+          id={this.buttonIdPrefix + i}
+        />
+      );
     });
   }
 
   render() {
-    let {
+    const {
       children,
+      className,
       closeHandler,
       id,
       noDivider,
@@ -96,46 +102,41 @@ export default class Modal extends React.Component {
     if (!confirmButton && !cancelButton) {
       modalButtons = this.generateButtons();
     } else {
-      modalButtons = <div>
-        <span className="cf-push-right">
-          {confirmButton}
-        </span>
-        {cancelButton &&
-          <span className="cf-push-left">
-            {cancelButton}
-          </span>
-        }
-      </div>;
+      modalButtons = (
+        <div>
+          <span className="cf-push-right">{confirmButton}</span>
+          {cancelButton && <span className="cf-push-left">{cancelButton}</span>}
+        </div>
+      );
     }
 
-    return <section
-      className="cf-modal active"
-      id="modal_id"
-      role="alertdialog"
-      aria-labelledby="modal_id-title"
-      aria-describedby="modal_id-desc"
-    >
-      <ScrollLock />
-      <div className="cf-modal-body" id={id || ''} {...customStyles}>
-        <button
-          type="button"
-          id={`${this.buttonIdPrefix}close`}
-          className="cf-modal-close"
-          onClick={closeHandler}
-          ref={this.modalCloseFocus}
-        >
-          {closeSymbolHtml()}
-        </button>
-        <h1 id="modal_id-title">{title}</h1>
-        <div {...modalTextStyling}>
-          {children}
+    return (
+      <section
+        className={`cf-modal active ${className}`}
+        id="modal_id"
+        role="alertdialog"
+        aria-labelledby="modal_id-title"
+        aria-describedby="modal_id-desc"
+        aria-modal="true"
+      >
+        <ScrollLock />
+        <div className="cf-modal-body" id={id || ''} {...customStyles}>
+          <button
+            type="button"
+            id={`${this.buttonIdPrefix}close`}
+            className="cf-modal-close"
+            onClick={closeHandler}
+            ref={this.modalCloseFocus}
+          >
+            {closeSymbolHtml()}
+          </button>
+          <h1 id="modal_id-title">{title}</h1>
+          <div {...modalTextStyling}>{children}</div>
+          {noDivider ? '' : <div className="cf-modal-divider" />}
+          <div className="cf-modal-controls">{modalButtons}</div>
         </div>
-        {noDivider ? '' : <div className="cf-modal-divider"></div>}
-        <div className="cf-modal-controls">
-          {modalButtons}
-        </div>
-      </div>
-    </section>;
+      </section>
+    );
   }
 }
 
@@ -155,6 +156,7 @@ Modal.propTypes = {
       return new Error('You cannot set both `buttons` and one of `confirmButton` or `cancelButton`');
     }
   },
+  className: PropTypes.string,
   confirmButton: PropTypes.element,
   cancelButton: PropTypes.element,
   id: PropTypes.string,
@@ -162,4 +164,8 @@ Modal.propTypes = {
   noDivider: PropTypes.bool,
   specialContent: PropTypes.func,
   title: PropTypes.string.isRequired
+};
+
+Modal.defaultProps = {
+  className: ''
 };

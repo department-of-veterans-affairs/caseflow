@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "support/database_cleaner"
-require "rails_helper"
-
 describe DecisionIssue, :postgres do
   include IntakeHelpers
 
@@ -382,8 +379,8 @@ describe DecisionIssue, :postgres do
               decision_review_remanded: decision_review,
               benefit_type: "compensation"
             )
-            expect(subject.claimants.count).to eq(1)
-            expect(subject.claimants.first).to have_attributes(
+            expect(subject.reload.claimants.count).to eq(1)
+            expect(subject.claimant).to have_attributes(
               participant_id: decision_review.claimant_participant_id,
               payee_code: prior_payee_code,
               decision_review: subject
@@ -401,8 +398,8 @@ describe DecisionIssue, :postgres do
                 decision_review_remanded: decision_review,
                 benefit_type: "compensation"
               )
-              expect(subject.claimants.count).to eq(1)
-              expect(subject.claimants.first).to have_attributes(
+              expect(subject.reload.claimants.count).to eq(1)
+              expect(subject.claimant).to have_attributes(
                 participant_id: decision_review.claimant_participant_id,
                 payee_code: "12",
                 decision_review: subject

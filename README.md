@@ -1,5 +1,5 @@
 # Caseflow
-[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow)
+[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master)
 
 Caseflow is a suite of web-based tools to manage VA appeals. It's currently in development by the Appeals Modernization team (est. 2016). It will replace the current system of record for appeals, the Veterans Appeals Control and Location System (VACOLS), which was created in 1979 on now-outdated infrastructure. Additionally, Caseflow will allow the Board of Veterans' Appeals to process appeals under the new guidelines created by the Veterans Appeals Improvement and Modernization Act of 2017, which goes into effect February 14th, 2019.
 
@@ -87,11 +87,10 @@ Providing Veterans transparent information about the status of their appeal
 Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to the Board of Veterans' Appeals (the Board).
 
 ## Other Caseflow Products
-| Product | GitHub Repository | CI |
+| Product | GitHub Repository | Contiuous Integration Tests |
 | --- | --- | ---|
 | Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [CircleCI - Caseflow](https://circleci.com/gh/department-of-veterans-affairs/caseflow) |
-| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
-| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
+| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Circle CI - eFolder](https://circleci.com/gh/department-of-veterans-affairs/caseflow-efolder) |
 | Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
 
 ## Developer Setup ####################################
@@ -108,6 +107,16 @@ We are using 2-factor authentication with Github so, for example, when you acces
 
 
 ### Machine setup #######################################################
+
+You can manually go through the following steps.
+Alternatively, if you have a Mac, you can clone this repo and run the following scripts:
+
+  - `git clone https://github.com/department-of-veterans-affairs/caseflow`
+  - [dev_env_setup_step1.sh](scripts/dev_env_setup_step1.sh)
+  - [dev_env_setup_step2.sh](scripts/dev_env_setup_step2.sh)
+
+Remember to follow the instructions printed at the end of the scripts.
+If an error occurs, it is okay to run the scripts multiple times after the error is corrected.
 
 #### Basic Dependencies #######################################################
 
@@ -263,6 +272,17 @@ docker login -u dsvaappeals
 The password is in the DSVA 1Password account.
 Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
+You may need to adjust your base disk image size to accomodate FACOLS and restart docker. Example:
+
+```
+$ cat /etc/docker/daemon.json
+{
+  "debug": true,
+  "storage-opts" : [ "dm.basesize=256G" ]
+}
+$ systemctl restart docker
+```
+
 #### Install chromedriver
 
 Allows the feature tests to run locally.
@@ -352,11 +372,14 @@ for clarity as to what is happening "behind the scenes."
 
 #### Database environment setup
 
+**Note:** You must have [AWS access granted & setup](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/New-Hires) prior to setting up your local environment as the database is not publicly accessible due to Oracle licensing.
+
 To rapidly set up your local development (and testing) environment, run:
 ```
 bundle exec rake local:build
 ```
 The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
+
 
 ## Running dev Caseflow & Accessing dev DBs ##################
 
@@ -529,6 +552,27 @@ In addition, if you are iterating on a subset of tests, [`guard`](https://github
 automatically rerun some command when a watched set of files change - you can do this by
 running `bundle exec guard`, then editing a file (see Guardfile for details). In conjunction with
 the `focus` flag, you can get a short development loop.
+
+### Test coverage
+
+We use the [simplecov](https://github.com/colszowka/simplecov) gem to evaluate test coverage as part of the CircleCI process.
+
+If you see a test coverage failure at CircleCI, you can evaluate test coverage locally for the affected files using
+the [single_cov](https://github.com/grosser/single_cov) gem.
+
+Add the line to any rspec file locally:
+
+```
+SingleCov.covered!
+```
+
+and run that file under rspec.
+
+```
+SINGLE_COV=true bundle exec rspec spec/path/to/file_spec.rb
+```
+
+Missing test coverage will be reported automatically at the end of the test run.
 
 ## Debugging FACOLS setup
 See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols) or join the DSVA slack channel #appeals-facols-issues.

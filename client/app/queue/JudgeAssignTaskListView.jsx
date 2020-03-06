@@ -14,13 +14,7 @@ import {
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
-import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import SmallLoader from '../components/SmallLoader';
-import { LOGO_COLORS } from '../constants/AppConstants';
-import {
-  fetchTasksAndAppealsOfAttorney,
-  fetchAmaTasksOfUser
-} from './QueueActions';
+
 import { judgeAssignTasksSelector, getTasksByUserId } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
@@ -41,28 +35,10 @@ class JudgeAssignTaskListView extends React.PureComponent {
     this.props.resetErrorMessages();
   };
 
-  createLoadPromise = () => {
-    for (const attorney of this.props.attorneysOfJudge) {
-      this.props.fetchTasksAndAppealsOfAttorney(attorney.id, { role: 'judge' });
-      this.props.fetchAmaTasksOfUser(attorney.id, 'attorney');
-    }
-
-    return Promise.resolve();
-  }
-
-  caseCountOfAttorney = (attorneyId) => {
-    const { attorneyAppealsLoadingState, tasksByUserId } = this.props;
-
-    if (attorneyId in attorneyAppealsLoadingState &&
-      attorneyAppealsLoadingState[attorneyId].state === 'LOADED') {
-      return tasksByUserId[attorneyId] ? tasksByUserId[attorneyId].length : 0;
-    }
-
-    return '?';
-  }
-
   render = () => {
     const { userId,
+      userCssId,
+      targetUserCssId,
       attorneysOfJudge,
       organizations,
       match
@@ -71,35 +47,24 @@ class JudgeAssignTaskListView extends React.PureComponent {
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-          <h1>Assign {this.props.unassignedTasksCount} Cases</h1>
+          <h1>Assign {this.props.unassignedTasksCount} Cases
+          {(userCssId === targetUserCssId) ? '' : ` for ${this.props.targetUserCssId}`}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
         </div>
         <div className="usa-width-one-fourth">
-          <LoadingDataDisplay
-            createLoadPromise={this.createLoadPromise}
-            errorComponent="span"
-            failStatusMessageProps={{ title: 'Unknown failure' }}
-            failStatusMessageChildren={<span>Failed to load sidebar</span>}
-            loadingComponent={SmallLoader}
-            loadingComponentProps={{
-              message: 'Loading...',
-              spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-              component: 'span'
-            }}>
-            <ul className="usa-sidenav-list">
-              <li>
-                <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
-                  Cases to Assign ({this.props.unassignedTasksCount})
+          <ul className="usa-sidenav-list">
+            <li>
+              <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
+                Cases to Assign ({this.props.unassignedTasksCount})
+              </NavLink>
+            </li>
+            {attorneysOfJudge.
+              map((attorney) => <li key={attorney.id}>
+                <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
+                  {attorney.full_name} ({attorney.active_task_count})
                 </NavLink>
-              </li>
-              {attorneysOfJudge.
-                map((attorney) => <li key={attorney.id}>
-                  <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
-                    {attorney.full_name} ({this.caseCountOfAttorney(attorney.id)})
-                  </NavLink>
-                </li>)}
-            </ul>
-          </LoadingDataDisplay>
+              </li>)}
+          </ul>
         </div>
         <div className="usa-width-three-fourths">
           <PageRoute
@@ -123,26 +88,31 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
 JudgeAssignTaskListView.propTypes = {
   attorneysOfJudge: PropTypes.array.isRequired,
-  attorneyAppealsLoadingState: PropTypes.object.isRequired
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  resetSaveState: PropTypes.func,
+  clearCaseSelectSearch: PropTypes.func,
+  match: PropTypes.object,
+  targetUserCssId: PropTypes.string,
+  userCssId: PropTypes.string,
+  userId: PropTypes.number,
+  unassignedTasksCount: PropTypes.number,
+  organizations: PropTypes.array
 };
 
 const mapStateToProps = (state) => {
   const {
     queue: {
-      attorneysOfJudge,
-      attorneyAppealsLoadingState
-    },
-    ui: {
-      featureToggles
+      attorneysOfJudge
     }
   } = state;
 
   return {
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
+    userCssId: state.ui.userCssId,
+    targetUserCssId: state.ui.targetUserCssId,
     tasksByUserId: getTasksByUserId(state),
-    attorneysOfJudge,
-    attorneyAppealsLoadingState,
-    featureToggles
+    attorneysOfJudge
   };
 };
 
@@ -151,9 +121,7 @@ const mapDispatchToProps = (dispatch) => (
     clearCaseSelectSearch,
     resetErrorMessages,
     resetSuccessMessages,
-    resetSaveState,
-    fetchTasksAndAppealsOfAttorney,
-    fetchAmaTasksOfUser
+    resetSaveState
   }, dispatch)
 );
 

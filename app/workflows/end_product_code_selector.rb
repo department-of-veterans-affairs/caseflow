@@ -5,7 +5,7 @@
 
 # The first branch differentiates between primary issues and correction issues
 # For corrections, the next branch is correction type
-# From there, the next branch is original or dta, then benefit type, then review type, then issue type
+# From there, the next branch is original or remand, then benefit type, then review type, then issue type
 
 class EndProductCodeSelector
   END_PRODUCT_CODES = {
@@ -32,25 +32,41 @@ class EndProductCodeSelector
           }
         }
       },
-      dta: {
-        compensation: {
-          appeal: {
-            rating: "040BDER",
-            nonrating: "040BDENR"
+      remand: {
+        duty_to_assist: {
+          compensation: {
+            appeal: {
+              rating: "040BDER",
+              nonrating: "040BDENR"
+            },
+            higher_level_review: {
+              rating: "040HDER",
+              nonrating: "040HDENR"
+            }
           },
-          higher_level_review: {
-            rating: "040HDER",
-            nonrating: "040HDENR"
+          pension: {
+            appeal: {
+              rating: "040BDERPMC",
+              nonrating: "040BDENRPMC"
+            },
+            higher_level_review: {
+              rating: "040HDERPMC",
+              nonrating: "040HDENRPMC"
+            }
           }
         },
-        pension: {
-          appeal: {
-            rating: "040BDERPMC",
-            nonrating: "040BDENRPMC"
+        difference_of_opinion: {
+          compensation: {
+            higher_level_review: {
+              rating: "040AMADOR",
+              nonrating: "040AMADONR"
+            }
           },
-          higher_level_review: {
-            rating: "040HDERPMC",
-            nonrating: "040HDENRPMC"
+          pension: {
+            higher_level_review: {
+              rating: "040ADORPMC",
+              nonrating: "040ADONRPMC"
+            }
           }
         }
       }
@@ -79,21 +95,41 @@ class EndProductCodeSelector
             }
           }
         },
-        dta: {
-          compensation: {
-            appeal: {
-              rating: "930AMARRC",
-              nonrating: "930AMARNRC"
+        remand: {
+          duty_to_assist: {
+            compensation: {
+              appeal: {
+                rating: "930AMARRC",
+                nonrating: "930AMARNRC"
+              },
+              higher_level_review: {
+                rating: "930AMAHDER",
+                nonrating: "930AMAHDENR"
+              }
             },
-            higher_level_review: {
-              rating: "930AMAHDER",
-              nonrating: "930AMAHDENR"
+            pension: {
+              appeal: {
+                rating: "930AMARRCPMC",
+                nonrating: "930ARNRCPMC"
+              },
+              higher_level_review: {
+                rating: "930AHDERPMC",
+                nonrating: "930AHDENRPMC"
+              }
             }
           },
-          pension: {
-            appeal: {
-              rating: "930AMARRCPMC",
-              nonrating: "930ARNRCPMC"
+          difference_of_opinion: {
+            compensation: {
+              higher_level_review: {
+                rating: "930AMADOR",
+                nonrating: "930AMADONR"
+              }
+            },
+            pension: {
+              higher_level_review: {
+                rating: "930DORPMC",
+                nonrating: "930DONRPMC"
+              }
             }
           }
         }
@@ -121,21 +157,41 @@ class EndProductCodeSelector
             }
           }
         },
-        dta: {
-          compensation: {
-            appeal: {
-              rating: "930AMARRCLQE",
-              nonrating: "930ARNRCLQE"
+        remand: {
+          duty_to_assist: {
+            compensation: {
+              appeal: {
+                rating: "930AMARRCLQE",
+                nonrating: "930ARNRCLQE"
+              },
+              higher_level_review: {
+                rating: "930AMAHDERCL",
+                nonrating: "930AMAHDENCL"
+              }
             },
-            higher_level_review: {
-              rating: "930AMAHDERCL",
-              nonrating: "930AMAHDENCL"
+            pension: {
+              appeal: {
+                rating: "930ARRCLQPMC",
+                nonrating: "930ARNRCLPMC"
+              },
+              higher_level_review: {
+                rating: "930AHDERLPMC",
+                nonrating: "930AHDENLPMC"
+              }
             }
           },
-          pension: {
-            appeal: {
-              rating: "930ARRCLQPMC",
-              nonrating: "930ARNRCLPMC"
+          difference_of_opinion: {
+            compensation: {
+              higher_level_review: {
+                rating: "930AMADOR",
+                nonrating: "930AMADONR"
+              }
+            },
+            pension: {
+              higher_level_review: {
+                rating: "930DORPMC",
+                nonrating: "930DONRPMC"
+              }
             }
           }
         }
@@ -163,21 +219,41 @@ class EndProductCodeSelector
             }
           }
         },
-        dta: {
-          compensation: {
-            appeal: {
-              rating: "930AMARRCNQE",
-              nonrating: "930ARNRCNQE"
+        remand: {
+          duty_to_assist: {
+            compensation: {
+              appeal: {
+                rating: "930AMARRCNQE",
+                nonrating: "930ARNRCNQE"
+              },
+              higher_level_review: {
+                rating: "930AMAHDERCN",
+                nonrating: "930AMAHDENCN"
+              }
             },
-            higher_level_review: {
-              rating: "930AMAHDERCN",
-              nonrating: "930AMAHDENCN"
+            pension: {
+              appeal: {
+                rating: "930ARRCNQPMC",
+                nonrating: "930ARNRCNPMC"
+              },
+              higher_level_review: {
+                rating: "930AHDERNPMC",
+                nonrating: "930AHDENNPMC"
+              }
             }
           },
-          pension: {
-            appeal: {
-              rating: "930ARRCNQPMC",
-              nonrating: "930ARNRCNPMC"
+          difference_of_opinion: {
+            compensation: {
+              higher_level_review: {
+                rating: "930AMADOR",
+                nonrating: "930AMADONR"
+              }
+            },
+            pension: {
+              higher_level_review: {
+                rating: "930DORPMC",
+                nonrating: "930DONRPMC"
+              }
             }
           }
         }
@@ -191,11 +267,11 @@ class EndProductCodeSelector
 
   attr_reader :request_issue
 
-  delegate :remanded?, :correction?, :correction_type, :rating?, :is_unidentified?,
+  delegate :remanded?, :remand_type, :correction?, :correction_type, :rating?, :is_unidentified?,
            :decision_review, :decision_review_type, :benefit_type, to: :request_issue
 
   def call
-    return choose_code(initial_ep_code_branch[:dta]) if remanded?
+    return choose_code(initial_ep_code_branch[:remand][remand_type.to_sym]) if remanded?
 
     choose_code(initial_ep_code_branch[:original])
   end

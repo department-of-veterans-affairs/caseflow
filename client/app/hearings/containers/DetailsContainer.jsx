@@ -22,19 +22,23 @@ class HearingDetailsContainer extends React.Component {
     this.props.history.goBack();
   };
 
+  setHearing = (hearing, callback) => {
+    this.setState({
+      hearing,
+      loading: false
+    }, callback);
+  }
+
   getHearing = () => {
     const { hearingId } = this.props;
     const { hearings } = this.state;
     const hearing = _.find(hearings, (_hearing) => _hearing.externalId === hearingId);
 
     if (hearing) {
-      this.setState({ hearing });
+      this.setHearing(hearing);
     } else {
       return ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
-        this.setState({
-          hearing: ApiUtil.convertToCamelCase(resp.body),
-          loading: false
-        });
+        this.setHearing(ApiUtil.convertToCamelCase(resp.body.data));
       });
     }
   };
@@ -50,8 +54,10 @@ class HearingDetailsContainer extends React.Component {
         title: 'Unable to load the details.'
       }}>
       <HearingDetails
-        disabled={!this.props.userInHearingOrTranscriptionOrganization}
+        user={this.props.user}
+        disabled={!this.props.user.userInHearingOrTranscriptionOrganization}
         hearing={this.state.hearing}
+        setHearing={this.setHearing}
         goBack={this.goBack}
       />
     </LoadingDataDisplay>;
@@ -60,7 +66,10 @@ class HearingDetailsContainer extends React.Component {
 
 HearingDetailsContainer.propTypes = {
   hearingId: PropTypes.string.isRequired,
-  userInHearingOrTranscriptionOrganization: PropTypes.bool,
+  user: PropTypes.shape({
+    userInHearingOrTranscriptionOrganization: PropTypes.bool,
+    userCanScheduleVirtualHearings: PropTypes.bool
+  }),
   history: PropTypes.object
 };
 
