@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-## 
+##
 # Grouping all the hearings-related task functions in a single file for
 # visibility
 
 module TaskExtensionForHearings
   # Implemented in app/models.task.rb
-  def ancestor_task_of_type(task_type); end
+  def ancestor_task_of_type(_task_type); end
 
   def available_hearing_user_actions(user)
     available_hearing_admin_actions(user) | available_hearing_mgmt_actions(user)
