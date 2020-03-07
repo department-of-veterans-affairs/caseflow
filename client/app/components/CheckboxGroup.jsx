@@ -33,8 +33,15 @@ export default class CheckboxGroup extends React.Component {
       errorMessage,
       errorState,
       getCheckbox,
-      styling
+      styling,
+      strongLabel
     } = this.props;
+
+    const labelContents = (
+      <span>
+        {label || name}
+      </span>
+    );
 
     let fieldClasses = `checkbox-wrapper-${name} cf-form-checkboxes cf-checkbox-group`;
 
@@ -45,13 +52,13 @@ export default class CheckboxGroup extends React.Component {
     if (errorState || errorMessage) {
       fieldClasses += ' usa-input-error';
     }
-
+    
     let legendClasses = (hideLabel) ? 'hidden-field' : '';
 
     return <fieldset className={fieldClasses} {...styling}>
       <legend className={legendClasses}>
         {required && <span className="cf-required">Required</span>}
-        {label || name}
+        {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
       {options.map((option) => getCheckbox(option, onChange, values))}

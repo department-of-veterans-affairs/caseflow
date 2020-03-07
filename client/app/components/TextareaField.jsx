@@ -24,8 +24,10 @@ export default class TextareaField extends React.Component {
       textAreaStyling,
       disabled,
       labelStyling,
-      placeholder
+      placeholder,
+      optional
     } = this.props;
+
 
     const className = 'cf-form-textarea' +
           `${errorMessage ? ' usa-input-error' : ''}`;
@@ -38,6 +40,7 @@ export default class TextareaField extends React.Component {
       <span>
         {label || name}
         {required && <span className="cf-required">Required</span>}
+        {optional && <span className="cf-optional">Optional</span>}
       </span>;
 
     // hideLabel still leaves the label element in the DOM (for a11y purposes)
