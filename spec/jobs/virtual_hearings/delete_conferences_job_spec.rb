@@ -12,7 +12,6 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
         :hearing_day,
         regional_office: "RO42",
         request_type: "V",
-        judge: create(:user, :judge),
         scheduled_for: Time.zone.now - 1.day
       )
     end
@@ -26,7 +25,6 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
           conference_deleted: true,
           veteran_email_sent: true,
           representative_email_sent: true,
-          judge_email_sent: true
         )
       end
 
@@ -48,7 +46,6 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
         expect(virtual_hearing.conference_deleted).to eq(true)
         expect(virtual_hearing.veteran_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
-        expect(virtual_hearing.judge_email_sent).to eq(true)
       end
     end
 
@@ -63,7 +60,6 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
         expect(job).to_not receive(:delete_conference)
         expect(virtual_hearing.veteran_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
-        expect(virtual_hearing.judge_email_sent).to eq(true)
       end
     end
 
@@ -79,7 +75,6 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
         expect(virtual_hearing.conference_deleted).to eq(true)
         expect(virtual_hearing.veteran_email_sent).to eq(false)
         expect(virtual_hearing.representative_email_sent).to eq(false)
-        expect(virtual_hearing.judge_email_sent).to eq(false)
       end
     end
 
