@@ -28,7 +28,6 @@ export default class TextareaField extends React.Component {
       optional
     } = this.props;
 
-
     const className = 'cf-form-textarea' +
           `${errorMessage ? ' usa-input-error' : ''}`;
 
@@ -75,7 +74,9 @@ export default class TextareaField extends React.Component {
 }
 
 TextareaField.defaultProps = {
-  disabled: false
+  disabled: false,
+  optional: false,
+  required: false
 };
 
 TextareaField.propTypes = {
@@ -92,5 +93,9 @@ TextareaField.propTypes = {
   value: PropTypes.string,
   styling: PropTypes.object,
   disabled: PropTypes.bool,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
+  optional: PropTypes.bool.isRequired,
+  required: PropTypes.bool.isRequired,
+  labelStyling: PropTypes.object,
+  textAreaStyling: PropTypes.object
 };

@@ -52,7 +52,7 @@ export default class CheckboxGroup extends React.Component {
     if (errorState || errorMessage) {
       fieldClasses += ' usa-input-error';
     }
-    
+
     let legendClasses = (hideLabel) ? 'hidden-field' : '';
 
     return <fieldset className={fieldClasses} {...styling}>
@@ -92,5 +92,6 @@ CheckboxGroup.propTypes = {
   errorMessage: PropTypes.string,
   errorState: PropTypes.bool,
   getCheckbox: PropTypes.func,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  strongLabel: PropTypes.bool
 };

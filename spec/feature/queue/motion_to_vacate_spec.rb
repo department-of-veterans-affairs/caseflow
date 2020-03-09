@@ -503,6 +503,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         safe_click "#button-next-button"
 
+
         expect(page.current_path).to eq(submit_decisions_path)
 
         safe_click "#button-back-button"
@@ -521,7 +522,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(page).to have_content(judge.full_name)
         fill_in "notes", with: "all done"
 
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content(
           "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\

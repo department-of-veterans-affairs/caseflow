@@ -171,6 +171,7 @@ class SubmitDecisionView extends React.PureComponent {
         goToNextStep={this.goToNextStep}
         getPrevStepUrl={this.getPrevStepUrl}
         validateForm={this.validateForm}
+        continueBtnText="Submit"
         {...otherProps}
       >
         <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
