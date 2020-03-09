@@ -268,7 +268,7 @@ class SeedDB
     )
   end
 
-  def create_legacy_hearing(day, ro_key)
+  def create_case_hearing(day, ro_key)
     case ro_key
     when "RO17"
       folder_nr = "3620725"
@@ -411,7 +411,7 @@ class SeedDB
   #
   # Use the participant ID `CLAIMANT_WITH_PVA_AS_VSO` to tie this org to a
   # claimant.
-  def create_pva_vso_users
+  def create_pva_vso_and_users
     vso = Vso.create(
       name: "PARALYZED VETERANS OF AMERICA, INC.",
       url: "paralyzed-veteran-of-america",
