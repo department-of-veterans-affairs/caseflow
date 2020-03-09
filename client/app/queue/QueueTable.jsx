@@ -289,7 +289,7 @@ export default class QueueTable extends React.PureComponent {
   getFilters = (filterParams) => {
     const filters = {};
 
-    // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask,ArnesonColocatedTask"]
+    // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask|ArnesonColocatedTask"]
     if (filterParams) {
       // When react router encouters an array of strings param with one element, it converts the param to a string
       // rather than keeping it as the original array
@@ -297,7 +297,7 @@ export default class QueueTable extends React.PureComponent {
         const columnAndValues = filter.split('&');
         const columnName = columnAndValues[0].split('=')[1];
         const column = this.props.columns.find((col) => col.name === columnName);
-        const values = columnAndValues[1].split('=')[1].split(',');
+        const values = columnAndValues[1].split('=')[1].split('|');
 
         if (column) {
           const validValues = column.filterOptions.map((filterOption) => filterOption.value);
@@ -419,7 +419,7 @@ export default class QueueTable extends React.PureComponent {
   // &page=2
   // &sort_by=detailsColumn
   // &order=desc
-  // &filter[]=col=docketNumberColumn&val=legacy,evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
+  // &filter[]=col=docketNumberColumn&val=legacy|evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
   requestUrl = () => {
     return `${this.props.taskPagesApiEndpoint}${this.requestQueryString()}`;
   };
@@ -445,7 +445,7 @@ export default class QueueTable extends React.PureComponent {
           const column = this.props.columns.find((col) => col.columnName === columnName);
 
           filterParams.push(
-            `col=${column.name}&val=${filteredByList[columnName].join(',')}`
+            `col=${column.name}&val=${filteredByList[columnName].join('|')}`
           );
         }
       }
