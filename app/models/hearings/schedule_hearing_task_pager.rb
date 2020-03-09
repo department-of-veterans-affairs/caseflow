@@ -19,10 +19,6 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
     @tasks_for_tab ||= tab.tasks
   end
 
-  def tasks_for_tab_count
-    @tasks_for_tab_count ||= tasks_for_tab.count
-  end
-
   # Sorting by docket number within each category of appeal: AOD and normal.
   def sorted_tasks(tasks)
     tasks.order(Arel.sql(<<-SQL))

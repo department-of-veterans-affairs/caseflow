@@ -23,7 +23,7 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
       tasks: json_tasks(tasks),
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
       task_page_count: task_pager.task_page_count,
-      total_task_count: task_pager.tasks_for_tab_count
+      total_task_count: task_pager.total_task_count
     }
   end
 
