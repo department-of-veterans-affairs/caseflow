@@ -205,7 +205,7 @@ class EndProductEstablishment < CaseflowRecord
         synced_status: result.status_type_code,
         last_synced_at: Time.zone.now
       )
-      status_canceled? ? handle_canceled_ep! : sync_source!
+      status_cancelled? ? handle_cancelled_ep! : sync_source!
       close_request_issues_with_no_decision!
     end
 
@@ -230,7 +230,7 @@ class EndProductEstablishment < CaseflowRecord
     }
   end
 
-  def status_canceled?
+  def status_cancelled?
     synced_status == CANCELED_STATUS
   end
 
@@ -389,12 +389,12 @@ class EndProductEstablishment < CaseflowRecord
       # delete end product in bgs & set sync status to canceled
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
-      handle_canceled_ep!
+      handle_cancelled_ep!
     end
   end
 
-  def handle_canceled_ep!
-    return unless status_canceled?
+  def handle_cancelled_ep!
+    return unless status_cancelled?
 
     source.try(:canceled!)
     request_issues.all.find_each(&:close_after_end_product_canceled!)

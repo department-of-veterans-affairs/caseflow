@@ -21,6 +21,7 @@ describe ExternalApi::PexipService do
         "enable_chat": "yes",
         "enable_overlay_text": true,
         "force_presenter_into_main": true,
+        "ivr_theme": "/api/admin/configuration/v1/ivr_theme/2/",
         "guest_pin": "5678",
         "name": "BVA1111111",
         "pin": "1234",
