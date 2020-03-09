@@ -250,7 +250,6 @@ class SeedDB
 
     TrackVeteranTask.sync_tracking_tasks(appeal)
 
-    # Legacy Hearings can be created here due to hearing_day_full? check
     hearing = FactoryBot.create(
       :hearing,
       hearing_day: day,
