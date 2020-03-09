@@ -417,9 +417,9 @@ class SeedDB
 
     %w[WINNIE].each do |name|
       u = User.create(
-        css_id: "#{name}_VSO",
+        css_id: "#{name}_PVA_VSO",
         station_id: 101,
-        full_name: "#{name} VSOUser James",
+        full_name: "#{name} PVA_VSOUser James",
         roles: %w[VSO]
       )
       vso.add_user(u)
