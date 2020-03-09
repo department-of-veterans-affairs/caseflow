@@ -6,7 +6,7 @@ class BaseHearingUpdateForm
 
   attr_accessor :bva_poc, :disposition,
                 :hearing, :hearing_location_attributes, :hold_open,
-                :military_service, :notes, :prepped,
+                :judge_id, :military_service, :notes, :prepped,
                 :representative_name, :room, :scheduled_time_string,
                 :summary, :transcript_requested, :virtual_hearing_attributes,
                 :witness
