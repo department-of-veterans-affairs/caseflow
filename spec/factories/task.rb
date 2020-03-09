@@ -257,6 +257,11 @@ FactoryBot.define do
 
     # Tasks for AMA appeals
     factory :ama_task, class: Task do
+      # Use undocumented `@overrides` to check if a parent is specified when `create` is called.
+      # https://bit.ly/38IjzV6:
+      # > Though not documented (and therefore even more subject to change) you can access the
+      # > overridden parameters in the instance variable @overrides.
+      # It's a clean solution that doesn't require updating tests or adding a new transient attribute.
       appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
 
       before :create do |task, _eval|
