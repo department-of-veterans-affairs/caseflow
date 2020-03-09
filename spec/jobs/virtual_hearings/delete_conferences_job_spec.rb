@@ -24,7 +24,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
           hearing: hearing,
           conference_deleted: true,
           veteran_email_sent: true,
-          representative_email_sent: true,
+          representative_email_sent: true
         )
       end
 

@@ -43,7 +43,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(hearing.virtual?).to eq(true)
       expect(hearing.virtual_hearing.veteran_email).to eq("email@testingEmail.com")
       expect(hearing.virtual_hearing.representative_email).to eq(pre_loaded_rep_email)
-      expect(hearing.virtual_hearing.judge_email).to eq(nil)
     end
   end
 
