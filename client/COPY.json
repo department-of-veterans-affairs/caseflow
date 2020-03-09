@@ -545,6 +545,8 @@
   "INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER": "Please enter a valid Veteran ID and try again.",
   "INTAKE_SEARCH_ERROR_NOT_ACCESSIBLE": "It looks like you do not have the necessary level of access to view this information. Please alert your manager so they can assign the form to someone else.",
   "INTAKE_SEARCH_ERROR_NOT_MODIFIABLE": "You do not appear to have permission to establish a claim for this Veteran. Often this is because they are an employee at the same station as you. Please alert your manager so they can assign the form to someone else.",
+  "INTAKE_FORM_SELECTION": "Which form are you processing?",
+  "INTAKE_APPEAL_PERMISSIONS_ALERT": "You are not authorized to perform this function. Please contact the Case Review department regarding your access permissions.",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",

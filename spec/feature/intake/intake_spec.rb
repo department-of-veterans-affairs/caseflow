@@ -69,8 +69,10 @@ feature "Intake", :all_dbs do
 
       it "does not allow user to intake appeals" do
         visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.appeal)
 
-        expect(page).to_not have_content(Constants::INTAKE_FORM_NAMES["appeal"])
+        expect(page).to have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
+        expect(page).to have_css(".cf-submit[disabled]")
       end
 
       context "when the user is on the Mail Team" do
@@ -78,8 +80,10 @@ feature "Intake", :all_dbs do
 
         it "allows the user to intake appeals" do
           visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.appeal)
 
-          expect(page).to have_content(Constants::INTAKE_FORM_NAMES["appeal"])
+          expect(page).to_not have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
+          expect(page).to_not have_css(".cf-submit[disabled]")
         end
       end
     end

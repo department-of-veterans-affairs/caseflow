@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setFormType, clearSearchErrors } from '../actions/intake';
 import { PAGE_PATHS, FORM_TYPES } from '../constants';
+import COPY from '../../../COPY';
 import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
@@ -48,8 +49,7 @@ class SelectForm extends React.PureComponent {
         title="Not Authorized"
         type="error"
         lowerMargin>
-        You are not authorized to perform this function.
-        Please contact the Case Review department regarding your access permissions.
+        {COPY.INTAKE_APPEAL_PERMISSIONS_ALERT}
       </Alert>
       }
 
@@ -62,7 +62,7 @@ class SelectForm extends React.PureComponent {
 
       { !enableSearchableDropdown && <RadioField
         name="form-select"
-        label="Which form are you processing?"
+        label={COPY.INTAKE_FORM_SELECTION}
         vertical
         strongLabel
         options={radioOptions}
@@ -73,7 +73,7 @@ class SelectForm extends React.PureComponent {
 
       { enableSearchableDropdown && <SearchableDropdown
         name="form-select"
-        label="Which form are you processing?"
+        label={COPY.INTAKE_FORM_SELECTION}
         placeholder="Enter or select form"
         options={radioOptions}
         onChange={this.setFormTypeFromDropdown}
