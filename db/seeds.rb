@@ -165,7 +165,9 @@ class SeedDB
         appeal = FactoryBot.create(
           :appeal,
           :hearing_docket,
-          claimants: [FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")],
+          claimants: [
+            FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10 ** 10)}")
+          ],
           closest_regional_office: regional_office
         )
 
