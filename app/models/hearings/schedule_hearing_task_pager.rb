@@ -32,9 +32,10 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
   end
 
   def appeal_type
-    if tab_name == Constants.QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME
+    case tab_name
+    when Constants.QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME
       Appeal.name
-    elsif tab_name == Constants.QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME
+    when Constants.QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME
       LegacyAppeal.name
     else
       fail(
