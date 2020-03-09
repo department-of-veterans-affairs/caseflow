@@ -11,9 +11,9 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
   def index
     task_pager = Hearings::ScheduleHearingTaskPager.new(
       assignee: HearingsManagement.singleton,
-      tab_name: allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym],
-      page: allowed_params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym],
-      filters: allowed_params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM.to_sym],
+      tab_name: allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM],
+      page: allowed_params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM],
+      filters: allowed_params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM],
       regional_office_key: allowed_params[:regional_office_key]
     )
 
@@ -31,9 +31,9 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
 
   def allowed_params
     params.permit(
-      Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym,
-      Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym,
-      { Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM.to_sym => [] },
+      Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM,
+      Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM,
+      { Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM => [] },
       :regional_office_key
     )
   end
