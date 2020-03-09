@@ -61,7 +61,7 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
   end
 
   def submit_draft_decision
-    click_on "Continue"
+    click_on "Submit"
   end
 
   def visit_case_details_page_after_attorney_checkout

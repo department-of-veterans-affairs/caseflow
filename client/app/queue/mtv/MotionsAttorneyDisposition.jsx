@@ -6,7 +6,6 @@ import {
   MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE,
   MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION,
   MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL,
-  MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL,
   MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL,
   MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL
 } from '../../../COPY';
@@ -19,7 +18,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 import { DISPOSITION_TEXT } from '../../../constants/MOTION_TO_VACATE';
-import { sprintf } from 'sprintf-js';
 
 const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
   const parts = [`I recommend ${DISPOSITION_TEXT[disposition]}.`, instructions];
@@ -65,6 +63,18 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
   const labelText = <span>Upload the draft to your shared drive and add the location below,<br></br>
               or encrypt it and email it to the VLJ who originally signed the case.</span>;
 
+  const textareaFieldLabel = () => {
+    let label = '';
+
+    if (disposition) {
+      label = `Provide context on which issues should be ${disposition}`;
+    } else {
+      label = 'Provide context on which issues should be granted';
+    }
+
+    return label;
+  };
+
   return (
     <div className="address-motion-to-vacate">
       <AppSegment filledBackground>
@@ -82,7 +92,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
 
         <TextareaField
           name="instructions"
-          label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition)}
+          label={textareaFieldLabel()}
           onChange={(val) => setInstructions(val)}
           value={instructions}
           required={disposition === 'granted'}

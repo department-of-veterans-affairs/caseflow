@@ -523,7 +523,7 @@ feature "AmaQueue", :all_dbs do
         fill_in "Document ID:", with: valid_document_id
         expect(page).to have_content(judge_user.full_name)
         fill_in "notes", with: "all done"
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content(
           "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
@@ -816,7 +816,7 @@ feature "AmaQueue", :all_dbs do
           fill_in "Document ID:", with: valid_document_id
           expect(page).to have_content(judge_user.full_name, wait: 10)
           fill_in "notes", with: "all done"
-          click_on "Continue"
+          click_on "Submit"
 
           expect(page).to have_content(
             "Thank you for drafting #{veteran_full_name}'s decision. It's been "\

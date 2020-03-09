@@ -217,7 +217,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       safe_click "#select-judge"
       click_dropdown(index: 0)
 
-      click_on "Continue"
+      click_on "Submit"
       expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
       expect(page.current_path).to eq("/queue")
@@ -373,7 +373,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         expect(page).to have_content "Back"
 
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content("This field is required")
         expect(page.find_all(".usa-input-error-message").length).to eq(3)
@@ -475,7 +475,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         click_dropdown(index: 0)
         expect(page).to have_content(judge_user.full_name)
 
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content "Record is invalid"
         expect(page).to have_content "Document ID of type Draft Decision must be in one of these formats"
@@ -502,8 +502,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 1)
-
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content("Submit OMO for Review")
 
@@ -511,10 +510,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         click_label("overtime")
         fill_in "document_id", with: "12345"
 
-        click_on "Continue"
+        click_on "Submit"
         expect(page).to have_content(COPY::FORM_ERROR_FIELD_INVALID)
         fill_in "document_id", with: "V1234567.1234"
-        click_on "Continue"
+        click_on "Submit"
         expect(page).not_to have_content(COPY::FORM_ERROR_FIELD_INVALID)
 
         dummy_note = generate_words 100
@@ -525,7 +524,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         click_dropdown(index: 0)
         expect(page).to have_content(judge_user.full_name)
 
-        click_on "Continue"
+        click_on "Submit"
         expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
         case_review = AttorneyCaseReview.all.first

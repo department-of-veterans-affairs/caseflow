@@ -99,7 +99,7 @@ def attorney_checkout
   click_on "Continue"
   fill_in "Document ID:", with: "12345-12345678"
   fill_in "notes", with: "all done"
-  click_on "Continue"
+  click_on "Submit"
 end
 
 def judge_checkout

@@ -111,7 +111,6 @@ export const MTVJudgeDisposition = ({
   const isValid = () => {
     return !(
       !disposition ||
-      // !instructions ||
       (isGrantType() && !vacateType) ||
       (disposition === 'partially_granted' && !issueIds.length)
     );

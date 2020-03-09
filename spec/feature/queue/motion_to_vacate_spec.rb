@@ -113,7 +113,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       it "motions attorney recommends denied decision to judge and fills in hyperlink" do
         send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
-
         find("label[for=disposition_denied]").click
         expect(page).to have_content("Optional")
         expect(page).to have_content("Upload the draft to your shared drive and add the location below")
@@ -502,7 +501,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Submit Draft Decision for Review")
 
         safe_click "#button-next-button"
-
 
         expect(page.current_path).to eq(submit_decisions_path)
 
