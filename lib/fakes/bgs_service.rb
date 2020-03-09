@@ -233,7 +233,7 @@ class Fakes::BGSService
   def fetch_poas_by_participant_ids(participant_ids)
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
-        vso = if participant_id == "CLAIMANT_WITH_PVA_AS_VSO"
+        vso = if participant_id.starts_with?("CLAIMANT_WITH_PVA_AS_VSO")
                 {
                   legacy_poa_cd: "071",
                   nm: "PARALYZED VETERANS OF AMERICA, INC.",
