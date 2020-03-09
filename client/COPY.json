@@ -687,5 +687,9 @@
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Virtual Hearing Link",
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
 
+  "VIRTUAL_HEARING_MAILER_CONFIRMATION_SUBJECT": "Your Board hearing has been scheduled",
+  "VIRTUAL_HEARING_MAILER_CANCELLATION_SUBJECT": "Your Board hearing location has changed",
+  "VIRTUAL_HEARING_MAILER_UPDATE_TIME_SUBJECT": "Your Board hearing time has changed",
+
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }

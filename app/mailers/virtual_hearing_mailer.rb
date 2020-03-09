@@ -12,7 +12,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = cancellation_calendar_invite
 
-    mail(to: recipient.email, subject: "Your Board hearing location has changed")
+    mail(to: recipient.email, subject: COPY::VIRTUAL_HEARING_MAILER_CANCELLATION_SUBJECT)
   end
 
   def confirmation(mail_recipient:, virtual_hearing: nil)
@@ -23,7 +23,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
-    mail(to: recipient.email, subject: confirmation_subject)
+    mail(to: recipient.email, subject: COPY::VIRTUAL_HEARING_MAILER_CONFIRMATION_SUBJECT)
   end
 
   def updated_time_confirmation(mail_recipient:, virtual_hearing: nil)
@@ -36,7 +36,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
     mail(
       to: recipient.email,
-      subject: "Your Board hearing time has changed"
+      subject: COPY::VIRTUAL_HEARING_MAILER_UPDATE_TIME_SUBJECT
     )
   end
 
@@ -54,10 +54,6 @@ class VirtualHearingMailer < ActionMailer::Base
 
   def calendar_invite_name
     "BoardHearing.ics"
-  end
-
-  def confirmation_subject
-    "Your Board hearing has been scheduled"
   end
 
   def link
