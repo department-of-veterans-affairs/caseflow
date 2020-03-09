@@ -205,9 +205,9 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
       RequestStore[:current_user] = user
       Generators::Vacols::Staff.create(sattyid: "111")
       HearingDay.create(
-        [{ request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "7-Mar-2019 09:00:00.000-4:00",
+        [{ request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "7-Feb-2019 09:00:00.000-4:00",
            room: "1", regional_office: "RO04" },
-         { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "9-Mar-2019 09:00:00.000-4:00",
+         { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "9-Feb-2019 09:00:00.000-4:00",
            room: "3", regional_office: "RO04" }]
       )
     end
