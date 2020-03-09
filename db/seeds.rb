@@ -159,8 +159,6 @@ class SeedDB
 
   def create_different_hearings_tasks
     (%w[RO17 RO19 RO31 RO43 RO45] + [nil]).each do |regional_office|
-      puts "Regional Office #{regional_office}"
-
       create_legacy_case_with_open_schedule_hearing_task(regional_office)
 
       rand(10..30).times do
