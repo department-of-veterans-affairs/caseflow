@@ -255,9 +255,7 @@ class SeedDB
       hearing_day: day,
       appeal: appeal,
       bva_poc: User.find_by_css_id("BVAAABSHIRE").full_name,
-      scheduled_time: Time.utc(
-        Time.zone.today.year, Time.zone.today.month, Time.zone.today.day, 9, 0, 0
-      )
+      scheduled_time: "9:00AM"
     )
 
     FactoryBot.create(
