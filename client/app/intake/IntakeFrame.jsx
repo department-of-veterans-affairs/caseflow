@@ -114,7 +114,7 @@ class IntakeFrame extends React.PureComponent {
               <Route
                 exact
                 path={PAGE_PATHS.BEGIN}
-                component={SelectFormButton} />
+                render={() => <SelectFormButton {...this.props} />} />
               <Route
                 exact
                 path={PAGE_PATHS.REVIEW}

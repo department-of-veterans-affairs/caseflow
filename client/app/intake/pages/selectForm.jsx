@@ -18,6 +18,8 @@ class SelectForm extends React.PureComponent {
   }
 
   render() {
+    const { formType } = this.props;
+
     const inboxFeature = this.props.featureToggles.inbox;
     const unreadMessages = this.props.unreadMessages;
 
@@ -25,11 +27,7 @@ class SelectForm extends React.PureComponent {
     const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
 
     const restrictAppealIntakes = this.props.featureToggles.restrictAppealIntakes;
-    const userCanIntakeAppeals = this.props.userCanIntakeAppeals;
-
-    if (restrictAppealIntakes && !userCanIntakeAppeals) {
-      delete enabledFormTypes.APPEAL;
-    }
+    const appealPermissionError = restrictAppealIntakes && !this.props.userCanIntakeAppeals && formType === 'appeal';
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
@@ -46,6 +44,15 @@ class SelectForm extends React.PureComponent {
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
 
+      { appealPermissionError && <Alert
+        title="Not Authorized"
+        type="error"
+        lowerMargin>
+        You are not authorized to perform this function.
+        Please contact the Case Review department regarding your access permissions.
+      </Alert>
+      }
+
       { inboxFeature && unreadMessages && <Alert
         title="Intake Jobs"
         type="warning"
@@ -60,7 +67,7 @@ class SelectForm extends React.PureComponent {
         strongLabel
         options={radioOptions}
         onChange={this.props.setFormType}
-        value={this.props.formType}
+        value={formType}
       />
       }
 
@@ -70,7 +77,7 @@ class SelectForm extends React.PureComponent {
         placeholder="Enter or select form"
         options={radioOptions}
         onChange={this.setFormTypeFromDropdown}
-        value={this.props.formType} />
+        value={formType} />
       }
     </div>;
   }
@@ -92,14 +99,19 @@ class SelectFormButtonUnconnected extends React.PureComponent {
     this.props.history.push('/search');
   }
 
-  render = () =>
-    <Button
+  render() {
+    const { formType } = this.props;
+    const restrictAppealIntakes = this.props.featureToggles.restrictAppealIntakes;
+    const appealPermissionError = restrictAppealIntakes && !this.props.userCanIntakeAppeals && formType === 'appeal';
+
+    return <Button
       name="continue-to-search"
       onClick={this.handleClick}
-      disabled={!this.props.formType}
+      disabled={!formType || appealPermissionError}
     >
       Continue to search
     </Button>;
+  }
 }
 
 export const SelectFormButton = connect(
