@@ -74,7 +74,7 @@ class SeedDB
     create_transcription_team
     create_vso_users_and_tasks
     create_field_vso_and_users
-    create_pva_vso_users
+    create_pva_vso_and_users
     create_org_queue_users
     create_qr_user
     create_aod_user_and_tasks
@@ -308,9 +308,9 @@ class SeedDB
         when 1
           create_ama_hearing(day)
         when 2
-          create_legacy_hearing(day, ro_key)
+          create_case_hearing(day, ro_key)
         when 3
-          create_legacy_hearing(day, ro_key)
+          create_case_hearing(day, ro_key)
           create_ama_hearing(day)
         end
       end
