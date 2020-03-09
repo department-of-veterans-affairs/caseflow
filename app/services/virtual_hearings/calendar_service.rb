@@ -24,7 +24,7 @@ class VirtualHearings::CalendarService
         event.url = link
         event.location = link
         event.status = "CONFIRMED"
-        event.summary = summary(recipient)
+        event.summary = summary
         event.description = render_virtual_hearing_calendar_event_template(
           recipient, :confirmation, template_context
         )
@@ -34,34 +34,24 @@ class VirtualHearings::CalendarService
     # Sent when a virtual hearing is switched back to a video hearing.
     def update_to_video_calendar_invite(hearing, recipient)
       create_calendar_event(hearing) do |event, time_zone, start_time|
-        if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
-          # For judges, just cancel the original invitation.
-          event.status = "CANCELLED"
-        else
-          template_context = {
-            hearing: hearing,
-            time_zone: time_zone,
-            start_time_utc: start_time
-          }
+        template_context = {
+          hearing: hearing,
+          time_zone: time_zone,
+          start_time_utc: start_time
+        }
 
-          event.status = "CONFIRMED"
-          event.summary = summary(recipient)
-          event.description = render_virtual_hearing_calendar_event_template(
-            recipient, :changed_to_video, template_context
-          )
-        end
+        event.status = "CONFIRMED"
+        event.summary = summary
+        event.description = render_virtual_hearing_calendar_event_template(
+          recipient, :changed_to_video, template_context
+        )
       end
     end
 
     private
 
-    def summary(recipient)
-      case recipient.title
-      when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
-        "Hearing with the Board of Veterans' Appeals"
-      when MailRecipient::RECIPIENT_TITLES[:judge]
-        "Virtual Hearing"
-      end
+    def summary
+      "Hearing with the Board of Veterans' Appeals"
     end
 
     def create_calendar
