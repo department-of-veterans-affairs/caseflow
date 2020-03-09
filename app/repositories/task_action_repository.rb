@@ -19,7 +19,7 @@ class TaskActionRepository
 
     def mail_assign_to_organization_data(task, _user = nil)
       options = MailTask.subclass_routing_options
-      valid_options = options.reject { |option| option[:value] == "VacateMotionMailTask" unless task.appeal.outcoded? }
+      valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
       { options: valid_options }
     end
 
