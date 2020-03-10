@@ -130,9 +130,13 @@ rollback: etl-rollback db-rollback	## Rollback all Rails databases
 fresh:  ## https://github.com/imsky/git-fresh
 	git fresh
 
-reset:  ## Resets databases
+reset: reset-dbs enable-feature-flags ## Resets databases and enable feature flags
+
+reset-dbs: ## Resets databases
 	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
+
+enable-feature-flags: ## enable all feature flags
 	bundle exec rails runner scripts/enable_features_dev.rb
 
 bundle-install:  ## Installs ruby dependencies
@@ -143,7 +147,7 @@ client-install:  ## Installs javascript dependencies
 
 install: bundle-install client-install  ## Installs all dependencies
 
-update: fresh install migrate  ## TODO
+update: fresh install migrate  ## get latest master, update dependencies and any database migrations
 
 client-build-test client-test:  ## Builds webpack for tests
 	cd client && yarn run build:test
