@@ -158,7 +158,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         expect(page).to have_content(judge_user.full_name)
         fill_in "notes", with: "all done"
 
-        click_on "Submit"
+        click_on "Continue"
 
         expect(page).to have_content(
           "Thank you for drafting #{veteran_full_name}'s decision. " \

@@ -481,7 +481,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
 
-    context "Straight Vacate" do
+    fcontext "Straight Vacate" do
       let(:vacate_type) { "straight_vacate" }
 
       it "correctly handles checkout flow" do
@@ -519,7 +519,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         fill_in "Document ID:", with: valid_document_id
         expect(page).to have_content(judge.full_name)
         fill_in "notes", with: "all done"
-
+         binding.pry
         click_on "Submit"
 
         expect(page).to have_content(

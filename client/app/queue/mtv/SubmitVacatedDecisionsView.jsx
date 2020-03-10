@@ -7,7 +7,7 @@ import SubmitDecisionView from '../SubmitDecisionView';
 import { useParams } from 'react-router';
 import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES';
 
-export const SubmitVacatedDecisionsView = ({ appeal }) => {
+export const SubmitVacatedDecisionsView = ({ appeal}) => {
   const [ctx] = useContext(MotionToVacateContext);
   const { appealId, taskId } = useParams();
   const dispatch = useDispatch();
@@ -28,6 +28,7 @@ export const SubmitVacatedDecisionsView = ({ appeal }) => {
       checkoutFlow={DECISION_TYPES.DRAFT_DECISION}
       nextStep="/queue"
       prevUrl={ctx.getPrevUrl('submit')}
+      continueBtnText="Submit"
     />
   );
 };
