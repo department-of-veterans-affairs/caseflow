@@ -20,7 +20,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       )
     end
   end
-  let!(:root_task) { create(:root_task, appeal: appeal) }
+  let!(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
   let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
   let!(:hyperlink) { "https://va.gov/fake-link-to-file" }
@@ -54,6 +54,19 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    context "When the appeal is not outcoded" do
+      let!(:root_task) { create(:root_task, appeal: appeal) }
+
+      it "does not show option to create a VacateMotionMailTask" do
+        User.authenticate!(user: mail_user)
+        visit "/queue/appeals/#{appeal.uuid}"
+        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
+        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        expect(page).to have_content(COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL)
+        expect(page).to_not have_content(COPY::VACATE_MOTION_MAIL_TASK_LABEL)
+      end
+    end
 
     it "gets assigned to Litigation Support" do
       # When mail team creates VacateMotionMailTask, it gets assigned to the lit support organization
