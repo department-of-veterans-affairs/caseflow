@@ -120,7 +120,6 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         let(:virtual_hearing_params) do
           {
             veteran_email: "veteran",
-            judge_email: "!@#$%",
             representative_email: "representative_email"
           }
         end
