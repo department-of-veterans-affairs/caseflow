@@ -111,7 +111,6 @@ export const MTVJudgeDisposition = ({
   const isValid = () => {
     return !(
       !disposition ||
-      !instructions ||
       (isGrantType() && !vacateType) ||
       (disposition === 'partially_granted' && !issueIds.length)
     );
@@ -159,6 +158,7 @@ export const MTVJudgeDisposition = ({
             onChange={(val) => setVacateType(val)}
             value={vacateType}
             required
+            strongLabel
             className={['mtv-vacate-type']}
           />
         )}
@@ -183,6 +183,7 @@ export const MTVJudgeDisposition = ({
           value={instructions}
           className={['mtv-decision-instructions']}
           strongLabel
+          optional
         />
 
         {disposition && isGrantType() && (
@@ -195,6 +196,7 @@ export const MTVJudgeDisposition = ({
             onChange={(option) => option && setAttorneyId(option.value)}
             value={attorneyId}
             styling={css({ width: '30rem' })}
+            strongLabel
           />
         )}
       </AppSegment>
