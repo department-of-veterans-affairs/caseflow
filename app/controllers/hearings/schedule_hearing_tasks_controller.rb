@@ -12,7 +12,7 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
     task_pager = Hearings::ScheduleHearingTaskPager.new(
       assignee: HearingsManagement.singleton,
       tab_name: allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM],
-      page: allowed_params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM],
+      page: allowed_params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM].to_i,
       filters: allowed_params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM],
       regional_office_key: allowed_params[:regional_office_key]
     )
