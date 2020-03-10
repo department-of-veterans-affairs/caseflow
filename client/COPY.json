@@ -568,9 +568,9 @@
   "COMPLETE_TRANSCRIPTION_BODY": "Marking this transcription as complete will release it to a judge for review. A 90 day evidence hold may still apply to this case.",
 
   "UNTIMELY_EVIDENCE_TITLE": "AMA requires that VA capture how frequently a Veteran submits evidence that can't be considered.  This includes when the Veteran:",
-  "UNTIMELY_EVIDENCE_BULLET_ONE": "1. Requested a Direct Review appeal option and submitted evidence",
-  "UNTIMELY_EVIDENCE_BULLET_TWO": "2. Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD",
-  "UNTIMELY_EVIDENCE_BULLET_THREE": "3. Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
+  "UNTIMELY_EVIDENCE_BULLET_ONE": "Requested a Direct Review appeal option and submitted evidence",
+  "UNTIMELY_EVIDENCE_BULLET_TWO": "Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD",
+  "UNTIMELY_EVIDENCE_BULLET_THREE": "Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
   "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
 
   "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",

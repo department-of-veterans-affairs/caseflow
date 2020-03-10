@@ -94,8 +94,8 @@ TextareaField.propTypes = {
   styling: PropTypes.object,
   disabled: PropTypes.bool,
   placeholder: PropTypes.string,
-  optional: PropTypes.bool.isRequired,
-  required: PropTypes.bool.isRequired,
+  optional: PropTypes.bool,
+  required: PropTypes.bool,
   labelStyling: PropTypes.object,
   textAreaStyling: PropTypes.object
 };

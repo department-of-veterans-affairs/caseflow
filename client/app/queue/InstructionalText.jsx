@@ -30,9 +30,11 @@ export default class InstructionalText extends React.PureComponent {
       </Button>
       { this.linkClicked && <div {...verticalLine}>
         <div {...headerSpacing}>{this.props.informationHeader}</div>
-        <div>{this.props.bulletOne}</div>
-        <div> {this.props.bulletTwo}</div>
-        <div> {this.props.bulletThree}</div>
+        <ol>
+          <li>{this.props.bulletOne}</li>
+          <li> {this.props.bulletTwo}</li>
+          <li> {this.props.bulletThree}</li>
+        </ol>
       </div>}
       </div>;
     }

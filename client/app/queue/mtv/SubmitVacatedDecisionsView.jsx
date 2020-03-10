@@ -7,7 +7,7 @@ import SubmitDecisionView from '../SubmitDecisionView';
 import { useParams } from 'react-router';
 import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES';
 
-export const SubmitVacatedDecisionsView = ({ appeal}) => {
+export const SubmitVacatedDecisionsView = ({ appeal }) => {
   const [ctx] = useContext(MotionToVacateContext);
   const { appealId, taskId } = useParams();
   const dispatch = useDispatch();
