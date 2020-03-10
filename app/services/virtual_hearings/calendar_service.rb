@@ -51,7 +51,7 @@ class VirtualHearings::CalendarService
     private
 
     def summary
-      "Hearing with the Board of Veterans' Appeals"
+      COPY::VIRTUAL_HEARING_CALENDAR_INVITE_SUMMARY
     end
 
     def create_calendar
