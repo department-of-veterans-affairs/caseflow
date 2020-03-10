@@ -39,10 +39,6 @@ describe VirtualHearingMailer do
     end
   end
 
-  context "for judge" do
-    it_should_behave_like "it can send an email to a recipient with the title", :judge
-  end
-
   context "for veteran" do
     it_should_behave_like "it can send an email to a recipient with the title", :veteran
   end
