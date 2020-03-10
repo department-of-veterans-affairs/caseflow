@@ -652,7 +652,7 @@
   "VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON": "Update and Send Email",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Email notifications will be sent to the Veteran and POA / Representative.",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO": "Emails will be sent to the Veteran and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
-  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Email notifications will be sent to the Veterana and POA / Representative.",
+  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Email notifications will be sent to the Veterans and POA / Representative.",
   "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "An email notification for the virtual hearing will be sent to:",
   "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
 
