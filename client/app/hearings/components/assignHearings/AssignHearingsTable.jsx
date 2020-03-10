@@ -196,16 +196,18 @@ export default class AssignHearingsTable extends React.PureComponent {
       return;
     }
 
-    const { tasks, total_task_count: totalTaskCount, tasks_per_page: tasksPerPage } = response;
-    const amaDocketLineIndex = this.amaDocketCutoffLineIndex(
-      tasks.map((task) => task.appeal).filter((appeal) => !appeal.isLegacy)
-    );
+    const {
+      tasks,
+      total_task_count: totalTaskCount,
+      tasks_per_page: tasksPerPage,
+      docket_line_index: amaDocketLineIndex
+    } = response;
 
     this.setState({
       showNoVeteransToAssignError: totalTaskCount === 0 && !filtered,
       // null index means do not display the line at all
       // -1 index means display line at the very start of the list
-      amaDocketLineIndex: currentPage > 0 && amaDocketLineIndex === -1 ? null : amaDocketLineIndex,
+      amaDocketLineIndex: amaDocketLineIndex,
       rowOffset: (tasksPerPage * currentPage) + 1
     });
   }
