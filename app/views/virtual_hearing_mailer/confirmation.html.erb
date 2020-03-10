@@ -1,6 +1,4 @@
-<% if @recipient.title == MailRecipient::RECIPIENT_TITLES[:judge] %>
-  <%= render "judge_confirmation" %>
-<% elsif @recipient.title == MailRecipient::RECIPIENT_TITLES[:representative] %>
+<% if @recipient.title == MailRecipient::RECIPIENT_TITLES[:representative] %>
   <%= render "representative_confirmation" %>
 <% elsif @recipient.title == MailRecipient::RECIPIENT_TITLES[:veteran] %>
   <%= render "veteran_confirmation" %>

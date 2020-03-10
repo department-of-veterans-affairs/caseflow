@@ -126,7 +126,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       it "motions attorney recommends denied decision to judge and fills in hyperlink" do
         send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
-
         find("label[for=disposition_denied]").click
         expect(page).to have_content("Optional")
         expect(page).to have_content("Upload the draft to your shared drive and add the location below")
@@ -533,8 +532,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         fill_in "Document ID:", with: valid_document_id
         expect(page).to have_content(judge.full_name)
         fill_in "notes", with: "all done"
-
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content(
           "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
@@ -612,7 +610,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(page).to have_content(judge.full_name)
         fill_in "notes", with: "all done"
 
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content(
           "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
