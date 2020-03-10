@@ -597,7 +597,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(page).to have_content(judge.full_name)
         fill_in "notes", with: "all done"
 
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content(
           "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
