@@ -31,10 +31,7 @@ class TaskFilter
   def where_clause
     return [] if filter_params.empty?
 
-    filters = filter_params.map do |filter_string|
-      QueueFilterParameter.from_string(filter_string)
-    end
-
+    filters = filter_params.map(&QueueFilterParameter.method(:from_string))
     where_string = TaskFilter.where_string_from_filters(filters)
     where_arguments = filters.map(&:values).reject(&:empty?)
 
