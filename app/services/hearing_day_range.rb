@@ -107,7 +107,7 @@ class HearingDayRange
         ).serializable_hash[:data][:attributes]
 
         hearing_day_serialized.merge(
-          hearings: scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
+          hearings: scheduled_hearings.map { |hearing| HearingForHearingDaySerializer.new(hearing).serializable_hash[:data][:attributes] }
         )
       end
   end
