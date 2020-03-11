@@ -20,8 +20,8 @@ export const submitMTVAttyReviewError = (error) => ({
   payload: error
 });
 
-export const submitMTVAttyReview = ({ newTask, appeal, history }) => {
-  return async (dispatch) => {
+export const submitMTVAttyReview = ({ newTask, history }) => {
+  return async (dispatch, getState) => {
     dispatch(submitMTVAttyReviewStarted());
 
     const url = '/tasks';
@@ -33,7 +33,10 @@ export const submitMTVAttyReview = ({ newTask, appeal, history }) => {
     try {
       const res = await ApiUtil.post(url, { data });
 
-      dispatch(showSuccessMessage(reviewMotionToVacateSuccessAlert({ appeal })));
+      const { assigned_to_id: judgeId } = newTask;
+      const judge = getState()?.queue?.judges?.[judgeId];
+
+      dispatch(showSuccessMessage(reviewMotionToVacateSuccessAlert({ judge })));
       history.push('/queue');
 
       dispatch(submitMTVAttyReviewSuccess(res));

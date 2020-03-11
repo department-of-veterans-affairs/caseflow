@@ -162,7 +162,8 @@
   "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be %s",
   "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
-  "MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE": "%s's Motion to Vacate has been sent to the judge",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE": "You have submitted your review to %s",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL": "This task will remain in your On Hold tab until it has been completed",
 
   "MTV_CHECKOUT_REVIEW_VACATURES_TITLE": "Review vacated decision issues",
   "MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION": "Review the prior decision issues here that have been marked for vacatur by the judge. Please remember to include them in your decision letter if you haven't already.",
