@@ -6,6 +6,7 @@ class LegacyHearing < CaseflowRecord
   include AppealConcern
   include HasHearingTask
   include HasVirtualHearing
+  include HearingTimeConcern
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -34,9 +35,6 @@ class LegacyHearing < CaseflowRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
-  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string,
-           to: :time
-
   delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
            :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
            :veteran_email_address,
@@ -51,6 +49,8 @@ class LegacyHearing < CaseflowRecord
            :appellant_city, :appellant_country, :appellant_state, :appellant_zip,
            to: :appeal,
            allow_nil: true
+
+  delegate :scheduled_time, to: :time
 
   delegate :timezone, :name, to: :regional_office, prefix: true
 
@@ -132,10 +132,6 @@ class LegacyHearing < CaseflowRecord
                          rescue RegionalOffice::NotFoundError
                            nil
                           end
-  end
-
-  def time
-    @time ||= HearingTimeService.new(hearing: self)
   end
 
   def request_type_location

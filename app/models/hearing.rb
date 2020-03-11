@@ -3,6 +3,7 @@
 class Hearing < CaseflowRecord
   include HasHearingTask
   include HasVirtualHearing
+  include HearingTimeConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -135,12 +136,6 @@ class Hearing < CaseflowRecord
   def scheduled_for_past?
     scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
-
-  def time
-    @time ||= HearingTimeService.new(hearing: self)
-  end
-
-  delegate :central_office_time_string, :scheduled_time_string, to: :time
 
   def worksheet_issues
     request_issues.map do |request_issue|
