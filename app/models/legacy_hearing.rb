@@ -60,6 +60,8 @@ class LegacyHearing < CaseflowRecord
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
 
+  alias aod? aod
+
   def judge
     user
   end

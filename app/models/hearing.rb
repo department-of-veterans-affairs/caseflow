@@ -117,6 +117,10 @@ class Hearing < CaseflowRecord
     Person.find_by(participant_id: appeal.appellant.participant_id).id
   end
 
+  def aod?
+    advance_on_docket_motion.present?
+  end
+
   def advance_on_docket_motion
     # we're only really interested if the AOD was granted
     AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
