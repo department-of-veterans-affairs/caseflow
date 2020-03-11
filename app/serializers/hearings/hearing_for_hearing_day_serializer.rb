@@ -14,6 +14,7 @@ class HearingForHearingDaySerializer
   include FastJsonapi::ObjectSerializer
 
   attribute :aod, &:aod?
+  attribute :appeal_id
   attribute :appeal_external_id
   attribute :appeal_type, if: proc { |hearing, _params| hearing.is_a?(LegacyHearing) }
   attribute :appellant_first_name
