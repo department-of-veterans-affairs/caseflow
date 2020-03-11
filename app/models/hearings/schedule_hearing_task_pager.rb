@@ -19,50 +19,22 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
     @tasks_for_tab ||= tab.tasks
   end
 
-  # Returns all results after the current page (unfiltered) in sorted order.
-  def tasks_after_current_page
-    tasks_for_tab.offset(page * TASKS_PER_PAGE)
-  end
+  # the index of the docket line, which is drawn below the set of tasks
+  # that are attached to appeals that are within docket range or have
+  # AOD status
+  def docket_line_index
+    return nil unless maybe_show_docket_line?
 
-  # Get count of records where AOD = true OR docket range date is before end date 
-  # AFTER the current page
-  #
-  # If there are records after the current page, set "docket_line_index" to null
-  #
-  # If there aren't records after the current page, traverse the list of tasks, and figure
-  # out where the last record with a docket_range_date is, and have that be the index for 
-  # "docket_line_index"
-  def docket_line_index(current_page)
-    case appeal_type
-    when Appeal.name
-      appeals_past_docket_line_count = tasks_after_current_page
-        .joins(Arel.sql(<<-SQL))
-          LEFT JOIN appeals
-          ON tasks.appeal_id = appeals.id
-          AND tasks.appeal_type = 'Appeal'
-        SQL
-        .where(Arel.sql(<<-SQL), current_date: Time.zone.today)
-          cached_appeal_attributes.is_aod OR
-          appeals.docket_range_date < :current_date
-        SQL
-        .count
+    # step through tasks from the bottom up to determine if we should
+    # show a docket line on the current page
+    task_index = paged_tasks.size - 1
+    paged_tasks.reverse_each do |task|
+      break if !!(task.appeal&.docket_range_date &.< docket_line_cutoff_date) || task.appeal&.aod?
 
-      return nil if appeals_past_docket_line_count > 0
-
-      docket_range_cutoff = (Time.zone.today + 1.month).end_of_month
-      idx = current_page.size - 1
-      current_page.reverse_each do |task|
-        if task&.appeal&.docket_range_date &.< docket_range_cutoff
-          break
-        else
-          idx -= 1
-        end
-      end
-
-      idx < 0 ? nil : idx
-    else
-      nil
+      task_index -= 1
     end
+
+    (task_index < 0) ? nil : task_index
   end
 
   # Sorting by docket number within each category of appeal: AOD and normal.
@@ -90,5 +62,46 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
         message: "Tab does not exist"
       )
     end
+  end
+
+  private
+
+  # return true if we may want to show the docket line on the current page
+  def maybe_show_docket_line?
+    # no line for non-AMA appeals
+    return false if appeal_type != Appeal.name
+
+    # no line if filters are applied
+    return false if filters.any?
+
+    # no line if there are no tasks in tabs after the current one with a
+    # docket range date before a cutoff date or AOD status
+    return false if number_of_docket_line_tasks_after_current_page > 0
+
+    # we may want to show a docket line
+    true
+  end
+
+  # all (unfiltered) tasks after the current page
+  def tasks_after_current_page
+    tasks_for_tab.offset(page * TASKS_PER_PAGE)
+  end
+
+  def docket_line_cutoff_date
+    (Time.zone.today + 1.month).end_of_month
+  end
+
+  def number_of_docket_line_tasks_after_current_page
+    tasks_after_current_page
+      .joins(Arel.sql(<<-SQL))
+        LEFT JOIN appeals
+        ON tasks.appeal_id = appeals.id
+        AND tasks.appeal_type = 'Appeal'
+      SQL
+      .where(Arel.sql(<<-SQL), cutoff_date: docket_line_cutoff_date)
+        cached_appeal_attributes.is_aod OR
+        appeals.docket_range_date < :cutoff_date
+      SQL
+      .count
   end
 end

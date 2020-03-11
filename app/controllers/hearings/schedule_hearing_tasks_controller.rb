@@ -24,7 +24,7 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,
-      docket_line_index: task_pager.docket_line_index(tasks)
+      docket_line_index: task_pager.docket_line_index
     }
   end
 
