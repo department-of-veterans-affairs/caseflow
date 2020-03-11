@@ -558,6 +558,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
     let(:unassigned_count) { 3 }
     let(:regional_office) { "RO39" }
+    let(:default_cases_per_page) { TaskPager::TASKS_PER_PAGE }
 
     def create_ama_appeals
       appeal_one = create(
@@ -660,8 +661,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
 
     context "Specify page number" do
-      let(:unassigned_count) { 20 }
-      let(:default_cases_for_page) { 15 }
+      let(:unassigned_count) { default_cases_per_page + 5 }
       let(:page_no) { 2 }
       let(:query_string) do
         "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}="\
@@ -680,10 +680,10 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         visit "hearings/schedule/assign/?#{query_string}"
 
         expect(page).to have_content(
-          "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
+          "Viewing #{default_cases_per_page + 1}-#{unassigned_count} of #{unassigned_count} total"
         )
         page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
-        expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_per_page)
       end
     end
 
@@ -755,6 +755,116 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         step "clicking on a filter reduces the number of results by the expect amount" do
           page.find("label", text: "#{Appeal.first.representative_name} (1)", match: :prefer_exact).click
           expect(find("tbody").find_all("tr").length).to eq(1)
+        end
+      end
+    end
+
+    context "show AMA docket line" do
+      let(:query_string) do
+        "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}="\
+        "#{Constants.QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}"\
+        "&regional_office_key=#{regional_office}"
+      end
+      let(:next_month_text) { (Time.zone.today + 1.month).strftime("%B %Y") }
+      let(:schedule_for_text) { "Schedule for #{next_month_text}" }
+
+      context "no tasks on AOD appeals or tasks on appeals with in-range docket range dates" do
+        let(:tasks_count) { 10 }
+
+        it "doesn't show the docket line" do
+          tasks_count.times do
+            appeal = create(:appeal, closest_regional_office: "RO39")
+            create(:schedule_hearing_task, appeal: appeal)
+          end
+
+          cache_appeals
+
+          visit "hearings/schedule/assign/?#{query_string}"
+
+          expect(page).to_not have_content(:all, schedule_for_text)
+        end
+      end
+
+      context "tasks on AOD appeals" do
+        let(:tasks_count) { 10 }
+        let(:aod_count) { 5 }
+
+        it "shows the docket line" do
+          aod_count.times do
+            appeal = create(:appeal, :advanced_on_docket_due_to_age, closest_regional_office: "RO39")
+            create(:schedule_hearing_task, appeal: appeal)
+          end
+
+          (tasks_count - aod_count).times do
+            appeal = create(:appeal, closest_regional_office: "RO39")
+            create(:schedule_hearing_task, appeal: appeal)
+          end
+
+          cache_appeals
+
+          visit "hearings/schedule/assign/?#{query_string}"
+
+          expect(page).to have_content(:all, schedule_for_text)
+        end
+      end
+
+      context "tasks with in-range docket range dates" do
+        let(:tasks_count) { 10 }
+        let(:range_count) { 5 }
+
+        it "shows the docket line" do
+          range_count.times do
+            appeal = create(:appeal, closest_regional_office: "RO39")
+            appeal.update!(docket_range_date: 1.week.ago)
+            create(:schedule_hearing_task, appeal: appeal)
+          end
+
+          (tasks_count - range_count).times do
+            appeal = create(:appeal, closest_regional_office: "RO39")
+            create(:schedule_hearing_task, appeal: appeal)
+          end
+
+          cache_appeals
+
+          visit "hearings/schedule/assign/?#{query_string}"
+
+          expect(page).to have_content(:all, schedule_for_text)
+        end
+      end
+
+      context "more than a page of tasks on AOD appeals and tasks on appeals with in-range docket range dates" do
+        let(:tasks_count) { 25 }
+        let(:aod_count) { 11 }
+        let(:range_count) { 9 }
+
+        it "shows the docket line on the second page" do
+          aod_count.times do
+            appeal = create(:appeal, :advanced_on_docket_due_to_age, closest_regional_office: "RO39")
+            create(:schedule_hearing_task, appeal: appeal)
+          end
+
+          range_count.times do
+            appeal = create(:appeal, closest_regional_office: "RO39")
+            appeal.update!(docket_range_date: 1.week.ago)
+            create(:schedule_hearing_task, appeal: appeal)
+          end
+
+          (tasks_count - range_count - aod_count).times do
+            appeal = create(:appeal, closest_regional_office: "RO39")
+            create(:schedule_hearing_task, appeal: appeal)
+          end
+
+          cache_appeals
+
+          visit "hearings/schedule/assign/?#{query_string}"
+
+          # no docket line on the first page
+          expect(page).to_not have_content(:all, schedule_for_text)
+
+          click_button("Next", match: :first)
+
+          # docket line on the second page
+          expect(page).to have_content(:all, schedule_for_text)
         end
       end
     end
