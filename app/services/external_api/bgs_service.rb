@@ -311,6 +311,15 @@ class ExternalApi::BGSService
     end
   end
 
+  def find_contention_by_claim_id(claim_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: find contentions for veteran by claim_id #{claim_id}",
+                          service: :bgs,
+                          name: "contention.find_contention_by_claim_id") do
+      client.contention.find_contention_by_claim_id(claim_id)
+    end
+  end
+
   private
 
   def current_user
