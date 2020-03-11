@@ -767,21 +767,54 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       end
       let(:next_month_text) { (Time.zone.today + 1.month).strftime("%B %Y") }
       let(:schedule_for_text) { "Schedule for #{next_month_text}" }
+      let(:all_scheduled_text) { "All veterans have been scheduled through #{next_month_text}" }
 
       context "no tasks on AOD appeals or tasks on appeals with in-range docket range dates" do
-        let(:tasks_count) { 10 }
-
-        it "doesn't show the docket line" do
+        before do
           tasks_count.times do
             appeal = create(:appeal, closest_regional_office: "RO39")
             create(:schedule_hearing_task, appeal: appeal)
           end
+        end
 
-          cache_appeals
+        context "with no tasks" do
+          let(:tasks_count) { 0 }
 
-          visit "hearings/schedule/assign/?#{query_string}"
+          it "shows no docket line" do
+            cache_appeals
 
-          expect(page).to_not have_content(:all, schedule_for_text)
+            visit "hearings/schedule/assign/?#{query_string}"
+
+            expect(page).to_not have_content(:all, schedule_for_text)
+            expect(page).to_not have_content(:all, all_scheduled_text)
+          end
+        end
+
+        context "with less than one page of tasks" do
+          let(:tasks_count) { 10 }
+
+          it "shows the docket line with 'all scheduled' text" do
+            cache_appeals
+
+            visit "hearings/schedule/assign/?#{query_string}"
+
+            expect(page).to_not have_content(:all, schedule_for_text)
+            expect(page).to have_content(:all, all_scheduled_text)
+          end
+        end
+
+        context "with multiple pages of tasks, and on page 2" do
+          let(:tasks_count) { 35 }
+          let(:page_two_query_string) { "&#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=2" }
+
+          it "does not show the docket line" do
+            cache_appeals
+
+            visit "hearings/schedule/assign/?#{query_string}#{page_two_query_string}"
+
+            expect(page).to_not have_content(:all, schedule_for_text)
+            expect(page).to_not have_content(:all, all_scheduled_text)
+          end
         end
       end
 

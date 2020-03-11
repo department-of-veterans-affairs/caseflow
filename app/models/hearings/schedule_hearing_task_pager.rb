@@ -19,22 +19,15 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
     @tasks_for_tab ||= tab.tasks
   end
 
-  # the index of the docket line, which is drawn below the set of tasks
-  # that are attached to appeals that are within docket range or have
-  # AOD status
+  # the index of the docket line, which is drawn below the set of tasks attached
+  # to appeals that are (1) within docket range or (2) have AOD status
   def docket_line_index
     return nil unless maybe_show_docket_line?
 
-    # step through tasks from the bottom up to determine if we should
-    # show a docket line on the current page
-    task_index = paged_tasks.size - 1
-    paged_tasks.reverse_each do |task|
-      break if !!(task.appeal&.docket_range_date &.< docket_line_cutoff_date) || task.appeal&.aod?
+    page_index = docket_line_index_on_current_page
 
-      task_index -= 1
-    end
-
-    (task_index < 0) ? nil : task_index
+    # return nil or -1 if no tasks meet the requirements
+    (page_index < 0) ? no_docket_line_value : page_index
   end
 
   # Sorting by docket number within each category of appeal: AOD and normal.
@@ -66,6 +59,24 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
 
   private
 
+  def docket_line_index_on_current_page
+    # step through tasks from the bottom up to determine if we should
+    # show a docket line on the current page
+    page_index = paged_tasks.size - 1
+    paged_tasks.reverse_each do |task|
+      break if !!(task.appeal&.docket_range_date &.< docket_line_cutoff_date) || task.appeal&.aod?
+
+      page_index -= 1
+    end
+    page_index
+  end
+
+  def no_docket_line_value
+    return -1 if page == 1 && paged_tasks.any?
+
+    nil
+  end
+
   # return true if we may want to show the docket line on the current page
   def maybe_show_docket_line?
     # no line for non-AMA appeals
@@ -74,8 +85,7 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
     # no line if filters are applied
     return false if filters.any?
 
-    # no line if there are no tasks in tabs after the current one with a
-    # docket range date before a cutoff date or AOD status
+    # no line if there are qualified tasks in pages after the current one
     return false if number_of_docket_line_tasks_after_current_page > 0
 
     # we may want to show a docket line
