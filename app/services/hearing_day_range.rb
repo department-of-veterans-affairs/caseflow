@@ -95,6 +95,9 @@ class HearingDayRange
   end
 
   def open_hearing_days_with_hearings_hash
+    # Optimzation: shared for every call to hash the HearingDay.
+    video_hearing_days_request_types = VideoHearingDayRequestTypeQuery.new.call
+
     all_hearing_days
       .select { |hearing_day, scheduled_hearings| self.class.open_hearing_day?(hearing_day, scheduled_hearings) }
       .map do |hearing_day, scheduled_hearings|
