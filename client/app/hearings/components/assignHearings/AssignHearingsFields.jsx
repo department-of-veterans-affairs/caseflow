@@ -2,28 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
-import { getTime, getTimeInDifferentTimeZone } from '../../../util/DateUtil';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
-
-export const HearingTime = ({ hearing, isCentralOffice }) => {
-  const { date, regionalOfficeTimezone } = hearing;
-
-  if (isCentralOffice) {
-    return <div>{getTime(date)} </div>;
-  }
-
-  return <div>
-    {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
-  </div>;
-};
-
-HearingTime.propTypes = {
-  hearing: PropTypes.shape({
-    date: PropTypes.string,
-    regionalOfficeTimezone: PropTypes.string
-  }),
-  isCentralOffice: PropTypes.bool
-};
 
 export const HearingAppellantName = ({ hearing }) => {
   let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName, veteranFileNumber } = hearing;
@@ -87,7 +66,7 @@ export const HearingDocketTag = ({ hearing }) => {
 HearingDocketTag.propTypes = {
   hearing: PropTypes.shape({
     docketName: PropTypes.string,
-    docketNumber: PropTypes.string
+    docketNumber: PropTypes.number
   })
 };
 

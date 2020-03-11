@@ -1,20 +1,17 @@
-import React from 'react';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import moment from 'moment';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+import moment from 'moment';
 
-import { renderAppealType } from '../../../queue/utils';
-import { HearingTime, HearingDocketTag, HearingAppellantName } from './AssignHearingsFields';
+import { HearingDocketTag, HearingAppellantName } from './AssignHearingsFields';
+import { HearingTime } from '../HearingTime';
 import { NoUpcomingHearingDayMessage } from './Messages';
-import QueueTable from '../../../queue/QueueTable';
+import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
+import QueueTable from '../../../queue/QueueTable';
 
 export default class UpcomingHearingsTable extends React.PureComponent {
-
-  isCentralOffice = () => {
-    return this.props.selectedRegionalOffice === 'C';
-  }
 
   getLinkToAppeal = (appealExternalId) => {
     const { selectedHearingDay, selectedRegionalOffice } = this.props;
@@ -71,9 +68,7 @@ export default class UpcomingHearingsTable extends React.PureComponent {
       {
         header: 'Time',
         align: 'left',
-        valueFunction: (row) => (
-          <HearingTime hearing={row} isCentralOffice={this.isCentralOffice()} />
-        )
+        valueFunction: (row) => <HearingTime hearing={row} />
       }
     ];
 
