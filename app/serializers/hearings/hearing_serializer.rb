@@ -15,8 +15,6 @@ class HearingSerializer
         granted: hearing.advance_on_docket_motion.granted,
         reason: hearing.advance_on_docket_motion.reason
       }
-    else
-      nil
     end
   end
   attribute :appeal_external_id

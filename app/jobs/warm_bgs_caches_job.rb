@@ -77,7 +77,7 @@ class WarmBgsCachesJob < CaseflowJob
         Time.zone.today.beginning_of_day,
         Time.zone.today.beginning_of_day + 182.days,
         regional_office
-      ).open_hearing_days_with_hearings_hash(RequestStore.store[:current_user].id)
+      ).open_hearing_days_with_hearings_hash
     rescue StandardError => error
       # Ensure errors are sent to Sentry, but don't block the job from continuing.
       Raven.capture_exception(error)
