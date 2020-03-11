@@ -72,12 +72,17 @@ class WarmBgsCachesJob < CaseflowJob
     start_time = Time.zone.now
     ro_ids.each do |ro_id|
       regional_office = HearingDayMapper.validate_regional_office(ro_id)
-
-      HearingDayRange.new(
+      hearing_day_range = HearingDayRange.new(
         Time.zone.today.beginning_of_day,
         Time.zone.today.beginning_of_day + 182.days,
         regional_office
-      ).open_hearing_days_with_hearings_hash
+      )
+
+      # Calling `quick_to_hash` here runs the code that will touch records that need
+      # to be cached.
+      hearing_day_range.all_hearing_days.map do |_hearing_day, scheduled_hearings|
+        scheduled_hearings.map { |hearing| hearing.quick_to_hash(RequestStore.store[:current_user].id) }
+      end
     rescue StandardError => error
       # Ensure errors are sent to Sentry, but don't block the job from continuing.
       Raven.capture_exception(error)
