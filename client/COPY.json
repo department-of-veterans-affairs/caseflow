@@ -137,7 +137,7 @@
   "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Your cases",
 
   "JUDGE_ADDRESS_MTV_TITLE": "Address %s's Motion to Vacate",
-  "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate.\n\nIf you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.\n\nIf you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case. If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.",
+  "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate.\n\nIf you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.\n\nIf you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.\n\nIf they are no longer active, it will be placed in the Litigation Support team queue for reassignment.",
   "JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL": "How will you address this motion to vacate?",
   "JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL": "What type of vacate?",
   "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed %s document",
@@ -159,8 +159,8 @@
   "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your review for this motion?",
-  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be %s",
   "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be %s",
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
 
   "MTV_CHECKOUT_REVIEW_VACATURES_TITLE": "Review vacated decision issues",
@@ -568,9 +568,9 @@
   "COMPLETE_TRANSCRIPTION_BODY": "Marking this transcription as complete will release it to a judge for review. A 90 day evidence hold may still apply to this case.",
 
   "UNTIMELY_EVIDENCE_TITLE": "AMA requires that VA capture how frequently a Veteran submits evidence that can't be considered.  This includes when the Veteran:",
-  "UNTIMELY_EVIDENCE_BULLET_ONE": "1. Requested a Direct Review appeal option and submitted evidence",
-  "UNTIMELY_EVIDENCE_BULLET_TWO": "2. Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD",
-  "UNTIMELY_EVIDENCE_BULLET_THREE": "3. Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
+  "UNTIMELY_EVIDENCE_BULLET_ONE": "Requested a Direct Review appeal option and submitted evidence",
+  "UNTIMELY_EVIDENCE_BULLET_TWO": "Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD",
+  "UNTIMELY_EVIDENCE_BULLET_THREE": "Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
   "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
 
   "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
@@ -650,9 +650,9 @@
   "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE": "Update Email Address",
   "VIRTUAL_HEARING_CHANGE_HEARING_BUTTON": "Change and Send Email",
   "VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON": "Update and Send Email",
-  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
+  "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Email notifications will be sent to the Veteran and POA / Representative.",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO": "Emails will be sent to the Veteran and POA/Representative to notify them that:<ul><li>The hearing format has been changed to Video, and their Virtual hearing URL is no longer valid</li><li>They must appear in-person at their designated Regional Office or alternate hearing location</li></ul>",
-  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Email notifications will be sent to the Veteran, POA / Representative, and VLJ.",
+  "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO": "Email notifications will be sent to the Veterans and POA / Representative.",
   "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO": "An email notification for the virtual hearing will be sent to:",
   "VIRTUAL_HEARING_MODAL_CONFIRMATION": "Changes to the Veteran and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
 
@@ -664,29 +664,34 @@
   "VIRTUAL_HEARING_USER_ALERTS": {
     "HEARING_CHANGED_TO_VIRTUAL": {
       "TITLE": "We're scheduling %s's virtual hearing",
-      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran, POA / Representative, and VLJ are in progress.</li></ul>"
+      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran and POA / Representative are in progress.</li></ul>"
     },
     "HEARING_CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
-      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
     },
     "EMAILS_UPDATED": {
       "TITLE": "We're emailing the invite to %s's hearing",
       "MESSAGES": {
         "TO_VETERAN_AND_POA": "Emails to the Veteran and POA / Representative are in progress.",
         "TO_VETERAN": "Email to Veteran is in progress.",
-        "TO_POA": "Email to POA / Representative is in progress.",
-        "TO_VLJ": "Email to VLJ is in progress."
+        "TO_POA": "Email to POA / Representative is in progress."
       }
     },
     "HEARING_TIME_CHANGED": {
       "TITLE": "We're updating the hearing time of %s's hearing",
-      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
     }
   },
 
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Virtual Hearing Link",
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
+
+  "VIRTUAL_HEARING_MAILER_CONFIRMATION_SUBJECT": "Your Board hearing has been scheduled",
+  "VIRTUAL_HEARING_MAILER_CANCELLATION_SUBJECT": "Your Board hearing location has changed",
+  "VIRTUAL_HEARING_MAILER_UPDATE_TIME_SUBJECT": "Your Board hearing time has changed",
+
+  "VIRTUAL_HEARING_CALENDAR_INVITE_SUMMARY": "Hearing with the Board of Veterans' Appeals",
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }

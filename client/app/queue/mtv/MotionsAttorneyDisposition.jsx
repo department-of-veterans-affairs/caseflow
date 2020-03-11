@@ -82,7 +82,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
 
         <TextareaField
           name="instructions"
-          label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition)}
+          label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
           onChange={(val) => setInstructions(val)}
           value={instructions}
           required={disposition === 'granted'}
