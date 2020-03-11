@@ -16,6 +16,7 @@ detectors:
       - Veteran
   ControlParameter:
     exclude:
+      - BaseHearingUpdateForm#email_sent_flag
       - ExternalApi::VBMSService#self.send_and_log_request
       - Fakes::BGSService
       - HearingRepository#slot_new_hearing

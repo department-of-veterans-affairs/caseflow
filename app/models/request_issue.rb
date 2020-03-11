@@ -718,7 +718,7 @@ class RequestIssue < CaseflowRecord
         rating_promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
-        end_product_last_action_date: end_product_establishment.result.last_action_date
+        end_product_last_action_date: end_product_establishment.last_action_date
       )
     end
   end
@@ -770,7 +770,7 @@ class RequestIssue < CaseflowRecord
       rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
-      end_product_last_action_date: end_product_establishment.result.last_action_date
+      end_product_last_action_date: end_product_establishment.last_action_date
     )
   end
 
