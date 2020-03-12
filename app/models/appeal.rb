@@ -33,6 +33,7 @@ class Appeal < DecisionReview
   }
 
   before_save :set_stream_docket_number_and_stream_type
+  after_save :set_stream_docket_number_from_new_id
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
@@ -460,6 +461,14 @@ class Appeal < DecisionReview
       self.stream_docket_number ||= docket_number
     end
     self.stream_type ||= type.parameterize.underscore.to_sym
+  end
+
+  # If the new ID from a save! was all we needed to determine the docket_number,
+  # immediately do a second save! so the database record is accurate.
+  def set_stream_docket_number_from_new_id
+    if stream_docket_number.nil? && receipt_date
+      save!(stream_docket_number: docket_number)
+    end
   end
 
   def maybe_create_translation_task

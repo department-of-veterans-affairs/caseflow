@@ -17,6 +17,11 @@ FactoryBot.define do
       Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
     end
 
+    # Appeal's after_save interferes with explicit updated_at values
+    after(:create) do |appeal, evaluator|
+      appeal.touch(time: evaluator.updated_at) if evaluator.try(:updated_at)
+    end
+
     after(:create) do |appeal, _evaluator|
       appeal.request_issues.each do |issue|
         issue.decision_review = appeal
