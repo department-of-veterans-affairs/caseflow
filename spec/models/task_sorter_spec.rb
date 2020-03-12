@@ -300,7 +300,7 @@ describe TaskSorter, :all_dbs do
 
           appeals = [create(:appeal, :advanced_on_docket_due_to_motion), create(:appeal)]
           appeals.each do |appeal|
-            create(:colocated_task, appeal: appeal, assigned_to: org)
+            create(:ama_colocated_task, appeal: appeal, assigned_to: org)
             create(:cached_appeal,
                    appeal_id: appeal.id,
                    appeal_type: Appeal.name,
