@@ -14,24 +14,7 @@ export const HearingTime = (
     hearing.regionalOfficeTimezone || 'America/New_York'
   );
   const coTime = getDisplayTime(hearing.centralOfficeTimeString, 'America/New_York');
-
-  if (hearing.readableRequestType === 'Central') {
-    return (
-      <div>
-        {showRequestType &&
-          <p {...firstParagraphStyle}>
-            <b>{hearing.readableRequestType}</b>
-          </p>
-        }
-        <p>
-          {coTime}
-          {showRegionalOfficeName &&
-            <><br />{hearing.regionalOfficeName}</>
-          }
-        </p>
-      </div>
-    );
-  }
+  const isCentralOffice = hearing.readableRequestType === 'Central';
 
   return (
     <div>
@@ -41,13 +24,17 @@ export const HearingTime = (
         </p>
       }
       <p>
-        {coTime} /<br />
-        {localTime}
+        {coTime}
+        {!isCentralOffice &&
+          <> /<br />{localTime}</>
+        }
         {showRegionalOfficeName &&
           <><br />{hearing.regionalOfficeName}</>
         }
       </p>
-      {showIssueCount && <p>{hearing.currentIssueCount} issues</p>}
+      {isCentralOffice && showIssueCount &&
+        <p>{hearing.currentIssueCount} issues</p>
+      }
     </div>
   );
 };
