@@ -7,12 +7,12 @@ import { HearingDocketTag, HearingAppellantName } from './AssignHearingsFields';
 import { HearingTime } from '../HearingTime';
 import {
   encodeQueryParams,
-  getQueryParams,
+  getQueryParams
 } from '../../../util/QueryParamsUtil';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
 import LinkToAppeal from './LinkToAppeal';
-import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG.json';
+import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
 import QueueTable from '../../../queue/QueueTable';
 
 export default class UpcomingHearingsTable extends React.PureComponent {
