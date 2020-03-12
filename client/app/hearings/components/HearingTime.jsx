@@ -26,13 +26,13 @@ export const HearingTime = (
       <p>
         {coTime}
         {!isCentralOffice &&
-          <> /<br />{localTime}</>
+          <>{' /'}<br />{localTime}</>
         }
         {showRegionalOfficeName &&
           <><br />{hearing.regionalOfficeName}</>
         }
       </p>
-      {isCentralOffice && showIssueCount &&
+      {!isCentralOffice && showIssueCount &&
         <p>{hearing.currentIssueCount} issues</p>
       }
     </div>
