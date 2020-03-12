@@ -70,14 +70,19 @@ class WarmBgsCachesJob < CaseflowJob
 
   def warm_ro_participant_caches(ro_ids)
     start_time = Time.zone.now
+    start_range = Time.zone.today.beginning_of_day
+    end_range = start_range + 182.days
+
     ro_ids.each do |ro_id|
       regional_office = HearingDayMapper.validate_regional_office(ro_id)
 
-      HearingDayRange.new(
-        Time.zone.today.beginning_of_day,
-        Time.zone.today.beginning_of_day + 182.days,
-        regional_office
-      ).open_hearing_days_with_hearings_hash(RequestStore.store[:current_user].id)
+      # Calling `quick_to_hash` here runs the code that will touch records that need
+      # to be cached.
+      HearingDayRange.new(start_range, end_range, regional_office)
+        .all_hearing_days
+        .map { |_hearing_day, scheduled_hearings| scheduled_hearings }
+        .flatten
+        .map { |hearing| hearing.quick_to_hash(RequestStore.store[:current_user].id) }
     rescue StandardError => error
       # Ensure errors are sent to Sentry, but don't block the job from continuing.
       Raven.capture_exception(error)
