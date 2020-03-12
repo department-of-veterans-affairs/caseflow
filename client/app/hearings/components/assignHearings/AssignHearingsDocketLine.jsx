@@ -1,8 +1,5 @@
 import { css } from 'glamor';
 import _ from 'lodash';
-import moment from 'moment';
-
-import LEGACY_APPEAL_TYPES_BY_ID from '../../../../constants/LEGACY_APPEAL_TYPES_BY_ID';
 
 export const docketCutoffLineStyle = (_index, scheduledForText) => {
   const isEmpty = _index < 0;
@@ -49,20 +46,4 @@ export const docketCutoffLineStyle = (_index, scheduledForText) => {
   } : {};
 
   return css(_.merge(style, isEmptyStyle));
-};
-
-const getAppealsInDocketRange = (appeals, endOfRange) => _.filter(appeals, (appeal) => (
-  moment(appeal.docketRangeDate).isBefore(endOfRange) ||
-  appeal.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
-  appeal.aod
-));
-
-export const getIndexOfDocketLine = (appeals, endOfRange) => {
-  if (_.isEmpty(appeals)) {
-    return -1;
-  }
-
-  const numberOfAppealsInDocketRange = getAppealsInDocketRange(appeals, endOfRange).length;
-
-  return numberOfAppealsInDocketRange - 1;
 };
