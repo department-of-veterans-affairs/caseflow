@@ -136,6 +136,8 @@ Rails.application.routes.draw do
   namespace :hearings do
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
+    resources :schedule_hearing_tasks, only: [:index]
+    resources :schedule_hearing_tasks_columns, only: [:index]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
@@ -222,7 +224,6 @@ Rails.application.routes.draw do
   get 'user_info/represented_organizations'
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
-  get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'

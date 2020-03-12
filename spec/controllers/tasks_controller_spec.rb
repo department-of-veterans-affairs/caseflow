@@ -185,7 +185,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           end
 
           get :index, params: { user_id: user.id, role: "unknown" }
-          expect(response).to have_http_status(:success)
+          expect(response).to be_successful
 
           data = JSON.parse(response.body)["tasks"]["data"]
 
@@ -634,16 +634,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     it "updates status to completed" do
       expect(admin_action.versions.length).to be 0
-      expect(admin_action.parent.versions.length).to be 1
       patch :update, params: { task: { status: Constants.TASK_STATUSES.completed }, id: admin_action.id }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["tasks"]["data"]
       expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
       expect(response_body.first["attributes"]["closed_at"]).to_not be nil
       expect(admin_action.reload.versions.length).to eq 1
-      expect(admin_action.parent.versions.length).to eq 2
       versions = PaperTrail::Version.where(request_id: admin_action.versions.first.request_id)
-      expect(versions.length).to eq 3
+      expect(versions.length).to eq 1
     end
 
     context "when some other user updates another user's task" do
@@ -801,7 +799,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 2
+        expect(response_body["tasks"].length).to eq 3
 
         colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "IhpColocatedTask" }
         expect(colocated_task).to_not be_nil
@@ -828,55 +826,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
-        expect(appeal.tasks.size).to eq 3
-      end
-    end
-  end
-
-  describe "GET cases_to_schedule/:ro" do
-    context "when veteran is defined with regional office and hearing location" do
-      let!(:vacols_case) do
-        create(
-          :case,
-          bfcorlid: "#{veteran.file_number}S",
-          folder: create(:folder, tinum: "docket-number"),
-          bfregoff: "RO04",
-          bfcurloc: "57",
-          bfhr: "2",
-          bfdocind: HearingDay::REQUEST_TYPES[:video]
-        )
-      end
-      let(:closest_regional_office) { "RO10" }
-      let(:address) { "Fake Address" }
-      let!(:veteran) { create(:veteran) }
-
-      it "gets veterans ready for hearing schedule" do
-        BGSService.instance_methods(false).each do |method_name|
-          expect_any_instance_of(BGSService).not_to receive(method_name)
-        end
-
-        AppealRepository.create_schedule_hearing_tasks.each do |appeal|
-          appeal.update(closest_regional_office: closest_regional_office)
-
-          AvailableHearingLocations.create(
-            appeal: appeal,
-            address: address,
-            distance: 0,
-            facility_type: "va_health_facility"
-          )
-        end
-
-        get :ready_for_hearing_schedule, params: { ro: closest_regional_office }
-        expect(response).to have_http_status(:success)
-        data = JSON.parse(response.body)["data"]
-
-        expect(data.size).to be(1)
-        expect(data.first["attributes"]["closest_regional_office"]["location_hash"]["city"]).to eq(
-          RegionalOffice.find!(closest_regional_office).city
-        )
-        expect(data.first["attributes"]["available_hearing_locations"].first["address"]).to eq(
-          address
-        )
+        expect(appeal.tasks.size).to eq 5
       end
     end
   end

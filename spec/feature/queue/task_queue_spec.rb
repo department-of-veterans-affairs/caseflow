@@ -557,7 +557,7 @@ feature "Task queue", :all_dbs do
         allow_any_instance_of(Organization).to receive(:use_task_pages_api?).and_return(true)
         Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
           .each_with_index do |task, idx|
-            child_task = create(:ama_task, parent_id: task.id)
+            child_task = create(:ama_task, parent: task)
             child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
           end
         Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
