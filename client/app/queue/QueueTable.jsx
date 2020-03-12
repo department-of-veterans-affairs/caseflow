@@ -230,12 +230,13 @@ export default class QueueTable extends React.PureComponent {
   }
 
   initialState = (paginationOptions) => {
-    const { defaultSort } = this.props;
+    const { defaultSort, useTaskPagesApi } = this.props;
 
     const state = {
       cachedResponses: {},
       tasksFromApi: null,
-      loadingComponent: paginationOptions.needsTaskRequest && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
+      loadingComponent: (useTaskPagesApi && paginationOptions.needsTaskRequest) &&
+        <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
       ...paginationOptions
     };
 
@@ -258,8 +259,9 @@ export default class QueueTable extends React.PureComponent {
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
     const sortColName = columns.map((column) => column.name).includes(sortColumn) ? sortColumn : null;
 
-    // Only request tasks from the back end if we want another page, to sort on a column, or if filters are provided
-    const needsTaskRequest = currentPage || sortColName || !_.isEmpty(filteredByList);
+    // Only request tasks from the back end if no pages have been fetches, we want another page,
+    // to sort on a column, or if filters are provided
+    const needsTaskRequest = _.isUndefined(numberOfPages) || currentPage || sortColName || !_.isEmpty(filteredByList);
 
     return {
       sortAscending,
@@ -287,7 +289,7 @@ export default class QueueTable extends React.PureComponent {
   getFilters = (filterParams) => {
     const filters = {};
 
-    // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask,ArnesonColocatedTask"]
+    // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask|ArnesonColocatedTask"]
     if (filterParams) {
       // When react router encouters an array of strings param with one element, it converts the param to a string
       // rather than keeping it as the original array
@@ -295,7 +297,7 @@ export default class QueueTable extends React.PureComponent {
         const columnAndValues = filter.split('&');
         const columnName = columnAndValues[0].split('=')[1];
         const column = this.props.columns.find((col) => col.name === columnName);
-        const values = columnAndValues[1].split('=')[1].split(',');
+        const values = columnAndValues[1].split('=')[1].split('|');
 
         if (column) {
           const validValues = column.filterOptions.map((filterOption) => filterOption.value);
@@ -324,7 +326,8 @@ export default class QueueTable extends React.PureComponent {
   }
 
   updateFilteredByList = (newList) => {
-    this.setState({ filteredByList: newList }, this.updateAddressBar);
+    this.setState({ filteredByList: newList,
+      filtered: true }, this.updateAddressBar);
 
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
@@ -416,7 +419,7 @@ export default class QueueTable extends React.PureComponent {
   // &page=2
   // &sort_by=detailsColumn
   // &order=desc
-  // &filter[]=col=docketNumberColumn&val=legacy,evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
+  // &filter[]=col=docketNumberColumn&val=legacy|evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
   requestUrl = () => {
     return `${this.props.taskPagesApiEndpoint}${this.requestQueryString()}`;
   };
@@ -442,7 +445,7 @@ export default class QueueTable extends React.PureComponent {
           const column = this.props.columns.find((col) => col.columnName === columnName);
 
           filterParams.push(
-            `col=${column.name}&val=${filteredByList[columnName].join(',')}`
+            `col=${column.name}&val=${filteredByList[columnName].join('|')}`
           );
         }
       }
@@ -531,6 +534,10 @@ export default class QueueTable extends React.PureComponent {
           numberOfPages = responseFromCache.task_page_count;
           totalTaskCount = responseFromCache.total_task_count;
         }
+
+        if (this.props.tabPaginationOptions && this.props.tabPaginationOptions.onPageLoaded) {
+          this.props.tabPaginationOptions.onPageLoaded(responseFromCache, this.state.currentPage, this.state.filtered);
+        }
       }
     } else {
       // Steps to calculate table data to display:
@@ -567,7 +574,7 @@ export default class QueueTable extends React.PureComponent {
 
     if (enablePagination && !this.state.loadingComponent) {
       paginationElements = <Pagination
-        pageSize={casesPerPage}
+        pageSize={casesPerPage || DEFAULT_CASES_PER_PAGE}
         currentPage={this.state.currentPage + 1}
         currentCases={rowObjects ? rowObjects.length : 0}
         totalPages={numberOfPages}
@@ -652,7 +659,13 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   totalTaskCount: PropTypes.number,
   useTaskPagesApi: PropTypes.bool,
   userReadableColumnNames: PropTypes.object,
-  tabPaginationOptions: PropTypes.object
+  tabPaginationOptions: PropTypes.shape({
+    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.number,
+    [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
+    [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
+    [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
+    onPageLoaded: PropTypes.func
+  })
 };
 
 /* eslint-enable max-lines */
