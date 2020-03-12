@@ -601,6 +601,8 @@
   "ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_MESSAGE": "There are no upcoming hearing days for this regional office. Please add a hearing day.",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER": "There are no schedulable veterans",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE": "Please verify that this RO has veterans to assign a hearing",
+  "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER": "This RO has no available hearing days",
+  "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE": "Please contact your supervisor for further assistance. You can see the list of schedulable Veterans by clicking on their respective tabs",
 
   "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_TITLE": "Send to Schedule Veterans List",
   "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_DETAIL": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled. You must assign this case a Regional Office to proceed.",

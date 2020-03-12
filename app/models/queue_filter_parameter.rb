@@ -19,7 +19,7 @@ class QueueFilterParameter
     # ->
     # { "col": "docketNumberColumn", "val": ["legacy", "evidence_submission"] }
     filter_hash = Rack::Utils.parse_query(filter_string)
-    values = filter_hash["val"]&.split("|")&.map { |value| escaped_value(value) }
+    values = filter_hash["val"]&.split(",")&.map { |value| escaped_value(value) }
 
     new(column: filter_hash["col"], values: values)
   end

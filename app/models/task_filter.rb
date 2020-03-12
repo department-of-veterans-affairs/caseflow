@@ -21,7 +21,7 @@ class TaskFilter
     where_clause.empty? ? tasks : tasks.joins(CachedAppeal.left_join_from_tasks_clause).where(*where_clause)
   end
 
-  # filter_params = ["col=docketNumberColumn&val=legacy|evidence_submission", "col=taskColumn&val=TranslationTask"]
+  # filter_params = ["col=docketNumberColumn&val=legacy,evidence_submission", "col=taskColumn&val=TranslationTask"]
   #
   # [
   #   "cached_appeals_attributes.docket_type IN (?) AND tasks.type in (?)",
@@ -31,7 +31,8 @@ class TaskFilter
   def where_clause
     return [] if filter_params.empty?
 
-    filters = filter_params.map(&QueueFilterParameter.method(:from_string))
+    filters = filter_params.map { |filter_string| QueueFilterParameter.from_string(filter_string) }
+
     where_string = TaskFilter.where_string_from_filters(filters)
     where_arguments = filters.map(&:values).reject(&:empty?)
 
@@ -62,7 +63,6 @@ class TaskFilter
     filter.values.empty? ? is_aod_clause : "(#{orig_clause} OR #{is_aod_clause})"
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def self.table_column_from_name(column_name)
     case column_name
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
@@ -75,15 +75,10 @@ class TaskFilter
       "cached_appeal_attributes.case_type"
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
       "cached_appeal_attributes.assignee_label"
-    when Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME
-      "cached_appeal_attributes.power_of_attorney_name"
-    when Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME
-      "cached_appeal_attributes.suggested_hearing_location"
     else
       fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   private
 

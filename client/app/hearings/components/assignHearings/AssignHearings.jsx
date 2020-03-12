@@ -1,13 +1,14 @@
-import { css } from 'glamor';
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
-import moment from 'moment';
 
-import { COLORS } from '../../../constants/AppConstants';
-import { NoUpcomingHearingDayMessage } from './Messages';
-import AssignHearingsTabs from './AssignHearingsTabs';
 import Button from '../../../components/Button';
+import { css } from 'glamor';
+import moment from 'moment';
+import { COLORS } from '../../../constants/AppConstants';
+import AssignHearingsTabs from './AssignHearingsTabs';
+import StatusMessage from '../../../components/StatusMessage';
+import COPY from '../../../../COPY';
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -83,34 +84,46 @@ export default class AssignHearings extends React.Component {
 
   render() {
     const {
-      upcomingHearingDays,
-      selectedHearingDay,
-      selectedRegionalOffice,
+      upcomingHearingDays, selectedHearingDay,
+      appealsReadyForHearing, selectedRegionalOffice,
       onSelectedHearingDayChange
     } = this.props;
     const room = this.room();
 
     if (_.isEmpty(upcomingHearingDays)) {
-      return <NoUpcomingHearingDayMessage />;
+      return <div {...css({ marginTop: 50 })}>
+        <StatusMessage
+          title= {COPY.ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_HEADER}
+          type="alert"
+          messageText={COPY.ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_MESSAGE}
+          wrapInAppSegment={false}
+        />
+      </div>;
     }
 
+    // Remove `displayPowerOfAttorneyColumn` when pagination lands (#11757)
     return (
       <React.Fragment>
-        <UpcomingHearingDaysNav
+        {<UpcomingHearingDaysNav
           upcomingHearingDays={upcomingHearingDays}
           selectedHearingDay={selectedHearingDay}
           onSelectedHearingDayChange={onSelectedHearingDayChange} />
-        <AssignHearingsTabs
-          selectedRegionalOffice={selectedRegionalOffice}
-          selectedHearingDay={selectedHearingDay}
-          room={room}
-        />
+        }
+        {appealsReadyForHearing &&
+          <AssignHearingsTabs
+            selectedRegionalOffice={selectedRegionalOffice}
+            selectedHearingDay={selectedHearingDay}
+            appealsReadyForHearing={appealsReadyForHearing}
+            room={room}
+            displayPowerOfAttorneyColumn={this.props.displayPowerOfAttorneyColumn}
+          />}
       </React.Fragment>
     );
   }
 }
 
 AssignHearings.propTypes = {
+  regionalOffices: PropTypes.object,
   selectedRegionalOffice: PropTypes.string,
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
@@ -118,5 +131,9 @@ AssignHearings.propTypes = {
     PropTypes.string,
     PropTypes.object
   ]),
-  userId: PropTypes.number
+  appealsReadyForHearing: PropTypes.object,
+  userId: PropTypes.number,
+  onReceiveTasks: PropTypes.func,
+  // Remove when pagination lands (#11757)
+  displayPowerOfAttorneyColumn: PropTypes.bool
 };
