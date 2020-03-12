@@ -13,10 +13,7 @@ import {
   encodeQueryParams,
   getQueryParams
 } from '../../../util/QueryParamsUtil';
-import {
-  docketCutoffLineStyle,
-  getIndexOfDocketLine
-} from './AssignHearingsDocketLine';
+import { docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
 import ApiUtil from '../../../util/ApiUtil';
@@ -62,17 +59,6 @@ export default class AssignHearingsTable extends React.PureComponent {
     moment().add(1, 'months').
       endOf('month')
   )
-
-  amaDocketCutoffLineIndex = (appeals) => {
-    const { tabName } = this.props;
-
-    // Docket line only applies to AMA docket.
-    if (tabName !== QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME) {
-      return null;
-    }
-
-    return getIndexOfDocketLine(appeals, this.endOfNextMonth());
-  }
 
   formatSuggestedHearingLocation = (suggestedLocation) => {
     if (_.isNull(suggestedLocation) || _.isUndefined(suggestedLocation)) {
@@ -196,16 +182,17 @@ export default class AssignHearingsTable extends React.PureComponent {
       return;
     }
 
-    const { tasks, total_task_count: totalTaskCount, tasks_per_page: tasksPerPage } = response;
-    const amaDocketLineIndex = this.amaDocketCutoffLineIndex(
-      tasks.map((task) => task.appeal).filter((appeal) => !appeal.isLegacy)
-    );
+    const {
+      total_task_count: totalTaskCount,
+      tasks_per_page: tasksPerPage,
+      docket_line_index: amaDocketLineIndex
+    } = response;
 
     this.setState({
       showNoVeteransToAssignError: totalTaskCount === 0 && !filtered,
       // null index means do not display the line at all
       // -1 index means display line at the very start of the list
-      amaDocketLineIndex: currentPage > 0 && amaDocketLineIndex === -1 ? null : amaDocketLineIndex,
+      amaDocketLineIndex,
       rowOffset: (tasksPerPage * currentPage) + 1
     });
   }

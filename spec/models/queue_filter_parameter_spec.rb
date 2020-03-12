@@ -6,6 +6,12 @@ describe QueueFilterParameter do
 
     subject { QueueFilterParameter.from_string(filter_string) }
 
+    def encode_values(values)
+      URI.escape(
+        values.map(&URI.method(:escape)).join("|")
+      )
+    end
+
     context "when input argument is nil" do
       let(:filter_string) { nil }
 
@@ -41,25 +47,19 @@ describe QueueFilterParameter do
 
     context "when input string contains blank value field" do
       let(:non_null_value) { "good_value" }
-      let(:encoded_blank_value) { URI.escape(URI.escape(COPY::NULL_FILTER_LABEL)) }
+      let(:encoded_values) { encode_values([non_null_value, COPY::NULL_FILTER_LABEL]) }
       let(:column_name) { "fake_column" }
-      let(:filter_string) { "col=#{column_name}&val=#{non_null_value},#{encoded_blank_value}" }
+      let(:filter_string) { "col=#{column_name}&val=#{encoded_values}" }
 
       it "converts the blank value to a null value" do
         expect(subject.values).to match_array([non_null_value, nil])
       end
     end
-  end
 
-  describe ".from_suggested_location_col_filter_string" do
-    let(:filter_string) { nil }
-
-    subject { QueueFilterParameter.from_suggested_location_col_filter_string(filter_string) }
-
-    context "input string contains valid column and value fields" do
+    context "input string contains valid column and value fields with comma" do
       let(:location_values) { ["New York, NY(RO)", "San Francisco, CA(VA)"] }
       let(:all_location_values) { location_values }
-      let(:encoded_location_values) { URI.escape(URI.escape(all_location_values.join(","))) }
+      let(:encoded_location_values) { encode_values(all_location_values) }
       let(:filter_string) do
         "col=#{Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME}&val=#{encoded_location_values}"
       end
@@ -70,7 +70,7 @@ describe QueueFilterParameter do
         expect(subject.values).to match_array all_location_values
       end
 
-      context "input string includes a blank value field" do
+      context "input string also includes a blank value field" do
         let(:all_location_values) { location_values + [COPY::NULL_FILTER_LABEL] }
 
         it "returns the expected values" do
