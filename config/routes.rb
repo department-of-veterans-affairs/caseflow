@@ -144,6 +144,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/:hearing_id/details', to: "hearings_application#show_hearing_index"
   get 'hearings/:hearing_id/worksheet', to: "hearings_application#show_hearing_index"
+  get 'hearings/:id/virtual_hearing_job_status', to: 'hearings#virtual_hearing_job_status'
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day_print#index"
   get 'hearings/schedule/build', to: "hearings_application#build_schedule_index"
