@@ -1,12 +1,29 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  # By default, this task is created in a new Legacy appeal
   factory :task do
     assigned_at { rand(30..35).days.ago }
     association :assigned_by, factory: :user
     association :assigned_to, factory: :user
-    appeal { create(:legacy_appeal, vacols_case: create(:case)) }
     type { Task.name }
+
+    # if a parent is specified, make sure to use that parent's appeal
+    appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:legacy_appeal, vacols_case: create(:case)) }
+
+    after(:create) do |task, _evaluator|
+      if task.parent
+        if task.parent&.appeal_id != task.appeal_id
+          fail "Parent task #{task.parent&.id} is in a different appeal than child task #{task.id}"
+        end
+
+        # appeal_id may happen to be the same in the test env, so check the appeal_type as well
+        if task.parent&.appeal_type != task.appeal_type
+          fail "Parent task #{task.parent&.id} has different appeal_type #{task.parent&.appeal_type} " \
+               "than child task's appeal_type #{task.id} #{task.appeal_type}"
+        end
+      end
+    end
 
     trait :assigned do
       status { Constants.TASK_STATUSES.assigned }
@@ -58,8 +75,10 @@ FactoryBot.define do
       end
     end
 
+    # Colocated tasks for Legacy appeals
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
-      parent { create(:ama_task) }
+      # don't expect to have a parent for LegacyAppeals
+      parent { nil }
       assigned_to { Colocated.singleton }
 
       trait :ihp do
@@ -236,6 +255,7 @@ FactoryBot.define do
       end
     end
 
+    # Tasks for AMA appeals
     factory :ama_task, class: Task do
       # Use undocumented `@overrides` to check if a parent is specified when `create` is called.
       # https://bit.ly/38IjzV6:
@@ -248,8 +268,10 @@ FactoryBot.define do
         task.update(type: task.class.name)
       end
 
+      # Uses parent factory `:colocated_task`
       factory :ama_colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym],
                                    parent: :colocated_task do
+        parent { create(:ama_task, appeal: appeal) }
       end
 
       factory :root_task, class: RootTask do
@@ -455,21 +477,21 @@ FactoryBot.define do
       end
 
       factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do
-        association :parent, factory: :vacate_motion_mail_task
+        parent { create(:vacate_motion_mail_task, appeal: appeal) }
       end
 
       factory :abstract_motion_to_vacate_task, class: AbstractMotionToVacateTask do
-        association :parent, factory: :vacate_motion_mail_task
+        parent { create(:vacate_motion_mail_task, appeal: appeal) }
       end
 
       factory :denied_motion_to_vacate_task, class: DeniedMotionToVacateTask do
-        association :parent, factory: :abstract_motion_to_vacate_task
+        parent { create(:abstract_motion_to_vacate_task, appeal: appeal) }
         assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
         assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
       end
 
       factory :dismissed_motion_to_vacate_task, class: DismissedMotionToVacateTask do
-        association :parent, factory: :abstract_motion_to_vacate_task
+        parent { create(:abstract_motion_to_vacate_task, appeal: appeal) }
         assigned_by { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
         assigned_to { create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1") }
       end

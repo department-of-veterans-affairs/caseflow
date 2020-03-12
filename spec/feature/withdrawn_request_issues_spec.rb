@@ -80,7 +80,6 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
       assigned_to: attorney,
       assigned_by: judge,
       parent: parent_task,
-      appeal: appeal
     )
   end
 
@@ -96,8 +95,7 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
     create(
       :ama_judge_decision_review_task,
       assigned_to: judge,
-      appeal: appeal,
-      parent: create(:root_task)
+      parent: create(:root_task, appeal: appeal)
     )
   end
 
