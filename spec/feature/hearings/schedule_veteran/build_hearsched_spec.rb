@@ -558,6 +558,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
     let(:unassigned_count) { 3 }
     let(:regional_office) { "RO39" }
+    let(:default_cases_per_page) { TaskPager::TASKS_PER_PAGE }
 
     def create_ama_appeals
       appeal_one = create(
@@ -660,8 +661,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
 
     context "Specify page number" do
-      let(:unassigned_count) { 20 }
-      let(:default_cases_for_page) { 15 }
+      let(:unassigned_count) { default_cases_per_page + 5 }
       let(:page_no) { 2 }
       let(:query_string) do
         "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}="\
@@ -680,10 +680,10 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         visit "hearings/schedule/assign/?#{query_string}"
 
         expect(page).to have_content(
-          "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
+          "Viewing #{default_cases_per_page + 1}-#{unassigned_count} of #{unassigned_count} total"
         )
         page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
-        expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_per_page)
       end
     end
 
