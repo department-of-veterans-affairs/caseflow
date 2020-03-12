@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 describe PostDecisionMotionDeleter, :all_dbs do
-
   let(:appeal) { create(:appeal, :with_straight_vacate_stream) }
   let(:vacate_stream) { Appeal.vacate.find_by(stream_docket_number: appeal.docket_number) }
   let(:task) { AttorneyTask.find_by(appeal: vacate_stream) }

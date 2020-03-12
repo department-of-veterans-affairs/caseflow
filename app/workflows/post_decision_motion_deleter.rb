@@ -6,7 +6,6 @@
 # appeal back to the original judge.
 
 class PostDecisionMotionDeleter
-
   attr_reader :task, :instructions
 
   delegate :appeal, to: :task
