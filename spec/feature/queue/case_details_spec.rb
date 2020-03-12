@@ -1047,14 +1047,13 @@ RSpec.feature "Case details", :all_dbs do
 
   describe "case timeline" do
     context "when the only completed task is a TrackVeteranTask" do
-      let(:root_task) { create(:root_task) }
-      let(:appeal) { root_task.appeal }
+      let(:appeal) { create(:appeal) }
       let!(:tracking_task) do
         create(
           :track_veteran_task,
           :completed,
           appeal: appeal,
-          parent: root_task
+          parent: appeal.root_task
         )
       end
 
