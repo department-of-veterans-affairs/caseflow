@@ -119,7 +119,7 @@ feature "AmaQueue", :all_dbs do
             :in_progress,
             assigned_to: attorney_user,
             assigned_by: judge_user,
-            parent: parent_task,
+            parent: parent_task
           ),
           create(
             :ama_attorney_task,

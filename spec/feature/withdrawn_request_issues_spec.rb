@@ -79,7 +79,7 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
       :in_progress,
       assigned_to: attorney,
       assigned_by: judge,
-      parent: parent_task,
+      parent: parent_task
     )
   end
 
