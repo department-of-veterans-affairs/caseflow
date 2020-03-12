@@ -390,7 +390,7 @@ feature "Task queue", :all_dbs do
     end
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
-      let!(:root_task) { create(:root_task) }
+      let!(:root_task) { create(:root_task, :completed) }
 
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do

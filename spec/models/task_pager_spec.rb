@@ -420,7 +420,7 @@ describe TaskPager, :all_dbs do
       context "when filter includes TranslationTasks" do
         let(:filters) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}"] }
 
-        it "returns only translation tasks assigned to the current organization" do
+        it "returns only translation tasks assigned to the current organization", :aggregate_failures do
           expect(subject.map(&:id)).to_not match_array(task_pager.tasks_for_tab.map(&:id))
           expect(subject.map(&:type).uniq).to eq([TranslationTask.name])
           expect(subject.length).to eq(translation_tasks.count)
@@ -429,10 +429,10 @@ describe TaskPager, :all_dbs do
 
       context "when filter includes TranslationTasks and FoiaTasks" do
         let(:filters) do
-          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}|#{FoiaTask.name}"]
         end
 
-        it "returns all translation and FOIA tasks assigned to the current organization" do
+        it "returns all translation and FOIA tasks assigned to the current organization", :aggregate_failures do
           expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
           expect(subject.length).to eq(translation_tasks.count + foia_tasks.count)
         end

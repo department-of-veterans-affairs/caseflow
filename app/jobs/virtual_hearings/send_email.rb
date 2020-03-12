@@ -14,11 +14,6 @@ class VirtualHearings::SendEmail
       virtual_hearing.veteran_email_sent = true
     end
 
-    if !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent
-      send_email(:judge)
-      virtual_hearing.judge_email_sent = true
-    end
-
     if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
       send_email(:representative)
       virtual_hearing.representative_email_sent = true
@@ -59,11 +54,6 @@ class VirtualHearings::SendEmail
         name: virtual_hearing.hearing.appeal.veteran&.first_name,
         email: virtual_hearing.veteran_email,
         title: MailRecipient::RECIPIENT_TITLES[:veteran]
-      ),
-      judge: MailRecipient.new(
-        name: virtual_hearing.hearing.judge&.full_name,
-        email: virtual_hearing.judge_email,
-        title: MailRecipient::RECIPIENT_TITLES[:judge]
       ),
       representative: MailRecipient.new(
         name: virtual_hearing.hearing.appeal.representative_name,
