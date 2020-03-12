@@ -20,7 +20,9 @@ class LookupParticipantIdModal extends React.Component {
       selectedUser: null,
       results: null,
       css_id: null,
-      station_id: null
+      station_id: null,
+      alert: null,
+      error: ''
     };
   }
 
@@ -68,14 +70,19 @@ class LookupParticipantIdModal extends React.Component {
     });
 
     try {
-      const res = await ApiUtil.get(url);
+      const { res } = await ApiUtil.get(url);
 
       this.setState({
         representedOrganizations: res.body.represented_organizations,
         alert: 'success'
       });
-    } catch (error) {
-      this.setState({ alert: 'error' });
+    } catch ({ response }) {
+      const error = response?.body?.errors?.[0];
+
+      this.setState({
+        alert: 'error',
+        error: error.detail
+      });
     }
   };
 
@@ -102,7 +109,7 @@ class LookupParticipantIdModal extends React.Component {
   };
 
   render = () => {
-    const { alert } = this.state;
+    const { alert, error } = this.state;
 
     return (
       <QueueFlowModal
@@ -125,8 +132,9 @@ class LookupParticipantIdModal extends React.Component {
                 {alert === 'success' && <Alert type={alert} title="Lookup Succeeded" />}
                 {alert === 'error' && (
                   <Alert type={alert} title="Error">
-                    There was an error processing your request. Please retry your action and contact support if errors
-                    persist.
+                    {error ?
+                      error :
+                      'There was an error processing your request. Please retry your action and contact support if errors persist.'}
                   </Alert>
                 )}
               </div>
