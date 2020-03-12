@@ -377,7 +377,7 @@ describe TaskPager, :all_dbs do
         end
         appeals = [appeal_1, appeal_2]
         appeals.map do |appeal|
-          create(:colocated_task, assigned_to: assignee, appeal: appeal)
+          create(:ama_colocated_task, assigned_to: assignee, appeal: appeal)
           create(:cached_appeal,
                  appeal_id: appeal.id,
                  appeal_type: Appeal.name,
