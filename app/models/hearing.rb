@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Hearing < CaseflowRecord
+  include HasHearingTask
   include HasVirtualHearing
 
   belongs_to :hearing_day
@@ -11,9 +12,6 @@ class Hearing < CaseflowRecord
   has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
-  has_one :hearing_task_association,
-          -> { includes(:hearing_task).where(tasks: { status: Task.open_statuses }) },
-          as: :hearing
   has_many :hearing_issue_notes
 
   class HearingDayFull < StandardError; end
@@ -102,24 +100,6 @@ class Hearing < CaseflowRecord
     return hearing_day&.judge == user if judge.nil?
 
     judge == user
-  end
-
-  def hearing_task?
-    !hearing_task_association.nil?
-  end
-
-  def disposition_task
-    if hearing_task?
-      hearing_task_association.hearing_task.children.detect { |child| child.type == AssignHearingDispositionTask.name }
-    end
-  end
-
-  def disposition_task_in_progress
-    disposition_task ? disposition_task.open_with_no_children? : false
-  end
-
-  def disposition_editable
-    disposition_task_in_progress || !hearing_task?
   end
 
   def representative

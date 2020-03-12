@@ -58,8 +58,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
     end
 
     context "when updating an existing hearing to a virtual hearing" do
-      let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
-      let(:hearing) { create(:hearing, regional_office: "RO42", judge: judge) }
+      let(:hearing) { create(:hearing, regional_office: "RO42") }
       let(:virtual_hearing_params) { {} }
 
       subject do
@@ -103,9 +102,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
               :virtual_hearing,
               hearing: hearing,
               veteran_email: "existing_veteran_email@caseflow.gov",
-              veteran_email_sent: true,
-              judge_email: "existing_judge_email@caseflow.gov",
-              judge_email_sent: true
+              veteran_email_sent: true
             )
           end
 
@@ -114,8 +111,6 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
             virtual_hearing.reload
             expect(virtual_hearing.veteran_email).to eq("existing_veteran_email@caseflow.gov")
             expect(virtual_hearing.veteran_email_sent).to eq(true)
-            expect(virtual_hearing.judge_email).to eq("existing_judge_email@caseflow.gov")
-            expect(virtual_hearing.judge_email_sent).to eq(true)
             expect(virtual_hearing.representative_email).to eq("new_representative_email@caseflow.gov")
           end
         end
@@ -125,7 +120,6 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         let(:virtual_hearing_params) do
           {
             veteran_email: "veteran",
-            judge_email: "!@#$%",
             representative_email: "representative_email"
           }
         end
@@ -148,7 +142,6 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(VirtualHearing.first).to_not eq(nil)
           expect(VirtualHearing.first.hearing_id).to eq(hearing.id)
           expect(VirtualHearing.first.veteran_email).to eq("new_veteran_email@caseflow.gov")
-          expect(VirtualHearing.first.judge_email).to eq("new_judge_email@caseflow.gov")
           expect(VirtualHearing.first.representative_email).to eq("new_representative_email@caseflow.gov")
         end
 
@@ -158,7 +151,6 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(VirtualHearing.first.status).to eq("active")
           expect(VirtualHearing.first.conference_id).to_not eq(nil)
           expect(VirtualHearing.first.veteran_email_sent).to eq(true)
-          expect(VirtualHearing.first.judge_email_sent).to eq(true)
           expect(VirtualHearing.first.representative_email_sent).to eq(true)
         end
 
@@ -205,54 +197,6 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           virtual_hearing.reload
           expect(virtual_hearing.cancelled?).to eq(true)
         end
-      end
-    end
-
-    context "when updating the judge of an existing virtual hearing" do
-      let(:new_judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
-      let(:hearing) { create(:hearing, regional_office: "RO42") }
-      let!(:virtual_hearing) do
-        create(
-          :virtual_hearing,
-          hearing: hearing,
-          veteran_email: "existing_veteran_email@caseflow.gov",
-          veteran_email_sent: true,
-          judge_email: "existing_judge_email@caseflow.gov",
-          judge_email_sent: true,
-          representative_email: "existing_representative_email@caseflow.gov",
-          representative_email_sent: true
-        )
-      end
-
-      before do
-        # Stub out the job starting, so we can check to make sure the email
-        # sent flags are set properly.
-        allow(VirtualHearings::CreateConferenceJob).to receive(:perform_now)
-      end
-
-      subject do
-        patch_params = {
-          id: hearing.external_id,
-          hearing: {
-            judge_id: new_judge.id
-          }
-        }
-
-        patch :update, as: :json, params: patch_params
-        response
-      end
-
-      it "updates the judge's email on the virtual hearing", :aggregate_failures do
-        expect(subject.status).to eq(200)
-
-        virtual_hearing.reload
-
-        expect(virtual_hearing.hearing.judge_id).to eq(new_judge.id)
-        expect(virtual_hearing.judge_email).to eq(new_judge.email)
-
-        expect(virtual_hearing.judge_email_sent).to eq(false)
-        expect(virtual_hearing.veteran_email_sent).to eq(true)
-        expect(virtual_hearing.representative_email_sent).to eq(true)
       end
     end
 

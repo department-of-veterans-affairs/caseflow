@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VirtualHearingMailer < ActionMailer::Base
-  default from: "solutions@public.govdelivery.com"
+  default from: "BoardofVeteransAppealsHearings@public.govdelivery.com"
   layout "virtual_hearing_mailer"
   helper VirtualHearings::ExternalLinkHelper
   helper VirtualHearings::VeteranNameHelper
@@ -12,7 +12,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = cancellation_calendar_invite
 
-    mail(to: recipient.email, subject: "Your Board hearing location has changed")
+    mail(to: recipient.email, subject: COPY::VIRTUAL_HEARING_MAILER_CANCELLATION_SUBJECT)
   end
 
   def confirmation(mail_recipient:, virtual_hearing: nil)
@@ -23,7 +23,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
-    mail(to: recipient.email, subject: confirmation_subject)
+    mail(to: recipient.email, subject: COPY::VIRTUAL_HEARING_MAILER_CONFIRMATION_SUBJECT)
   end
 
   def updated_time_confirmation(mail_recipient:, virtual_hearing: nil)
@@ -36,7 +36,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
     mail(
       to: recipient.email,
-      subject: "Your Board hearing time has changed"
+      subject: COPY::VIRTUAL_HEARING_MAILER_UPDATE_TIME_SUBJECT
     )
   end
 
@@ -53,28 +53,10 @@ class VirtualHearingMailer < ActionMailer::Base
   end
 
   def calendar_invite_name
-    case recipient.title
-    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
-      "BoardHearing.ics"
-    when MailRecipient::RECIPIENT_TITLES[:judge]
-      "VirtualHearing.ics"
-    end
-  end
-
-  def confirmation_subject
-    case recipient.title
-    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
-      "Your Board hearing has been scheduled"
-    when MailRecipient::RECIPIENT_TITLES[:judge]
-      hearing_date = virtual_hearing.hearing.scheduled_for.to_formatted_s(:short_date)
-
-      "Confirmation: Your virtual hearing on #{hearing_date}"
-    end
+    "BoardHearing.ics"
   end
 
   def link
-    return virtual_hearing.host_link if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
-
     virtual_hearing.guest_link
   end
 

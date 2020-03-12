@@ -526,7 +526,7 @@ export const taskHasCompletedHold = (task) => {
       diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
   }
 
-  return taskIsOnHold(task);
+  return false;
 };
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);

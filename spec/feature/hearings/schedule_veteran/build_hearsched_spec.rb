@@ -162,7 +162,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       create(
         :hearing_day,
         request_type: HearingDay::REQUEST_TYPES[:video],
-        scheduled_for: Time.zone.today + 160,
+        scheduled_for: Time.zone.today + 30.days,
         regional_office: "RO39"
       )
     end
