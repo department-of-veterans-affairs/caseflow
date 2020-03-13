@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { ReturnToJudgeModal } from './ReturnToJudgeModal';
 import { useDispatch } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
@@ -7,14 +7,18 @@ import { showSuccessMessage } from '../../uiReducer/uiActions';
 
 export const ReturnToJudgeModalContainer = () => {
   const { goBack, push } = useHistory();
+  const { taskId } = useParams();
   const dispatch = useDispatch();
 
   const handleSubmit = async ({ instructions }) => {
-    // TODO: set the correct endpoint
     const url = '/post_decision_motions/return_to_judge';
+    const data = ApiUtil.convertToSnakeCase({
+      taskId,
+      instructions
+    });
 
     try {
-      await ApiUtil.post(url, { instructions });
+      await ApiUtil.post(url, { data });
 
       dispatch(
         showSuccessMessage({
