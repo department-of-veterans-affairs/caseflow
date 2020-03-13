@@ -280,7 +280,7 @@
   "MARK_TASK_COMPLETE_COPY": "You can find this case in the completed tab of your queue.",
   "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
   "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
-  "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
+  "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you have made a mistake, please email %s to manage any changes.",
 
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
