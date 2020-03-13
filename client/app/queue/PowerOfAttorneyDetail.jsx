@@ -33,7 +33,6 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
     }
 
     return <span>{COPY.CASE_DETAILS_NO_POA}</span>;
-
   }
 
   renderLoadingOrError() {
@@ -104,20 +103,16 @@ PowerOfAttorneyDetail.defaultProps = {
 const mapStateToProps = (state, ownProps) => {
   const loadingPowerOfAttorney = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'powerOfAttorney');
 
-  if (_.isUndefined(loadingPowerOfAttorney) || loadingPowerOfAttorney.loading) {
+  if (loadingPowerOfAttorney?.loading) {
     return { loading: true };
   }
 
   const appeal = appealWithDetailSelector(state, { appealId: ownProps.appealId });
 
-  if (!appeal) {
-    return { loading: true };
-  }
-
   return {
-    powerOfAttorney: appeal.powerOfAttorney,
-    loading: null,
-    error: loadingPowerOfAttorney.error
+    powerOfAttorney: appeal?.powerOfAttorney,
+    loading: !appeal,
+    error: loadingPowerOfAttorney?.error
   };
 };
 
