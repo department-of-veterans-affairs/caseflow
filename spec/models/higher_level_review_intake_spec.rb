@@ -158,7 +158,7 @@ describe HigherLevelReviewIntake, :all_dbs do
           payee_code: "00",
           predischarge: false,
           claim_type: "Claim",
-          station_of_jurisdiction: "499",
+          station_of_jurisdiction: user.station_id,
           date: detail.receipt_date.to_date,
           end_product_modifier: "030",
           end_product_label: "Higher-Level Review Rating",

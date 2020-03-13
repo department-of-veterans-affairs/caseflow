@@ -94,7 +94,7 @@ class HearingDayRange
       end
   end
 
-  def open_hearing_days_with_hearings_hash(current_user_id = nil)
+  def open_hearing_days_with_hearings_hash
     # Optimzation: shared for every call to hash the HearingDay.
     video_hearing_days_request_types = VideoHearingDayRequestTypeQuery.new.call
 
@@ -107,7 +107,9 @@ class HearingDayRange
         ).serializable_hash[:data][:attributes]
 
         hearing_day_serialized.merge(
-          hearings: scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
+          hearings: scheduled_hearings.map do |hearing|
+            HearingForHearingDaySerializer.new(hearing).serializable_hash[:data][:attributes]
+          end
         )
       end
   end
