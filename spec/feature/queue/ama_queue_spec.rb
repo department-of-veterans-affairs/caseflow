@@ -72,9 +72,9 @@ feature "AmaQueue", :all_dbs do
 
     let(:poa_address) { "123 Poplar St." }
     let(:participant_id) { "600153863" }
-    let!(:root_task) { create(:root_task) }
+    let!(:root_task) { create(:root_task, appeal: appeals.first) }
     let!(:parent_task) do
-      create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task)
+      create(:ama_judge_task, assigned_to: judge_user, parent: root_task)
     end
 
     let(:poa_name) { "Test POA" }
@@ -119,8 +119,7 @@ feature "AmaQueue", :all_dbs do
             :in_progress,
             assigned_to: attorney_user,
             assigned_by: judge_user,
-            parent: parent_task,
-            appeal: appeals.first
+            parent: parent_task
           ),
           create(
             :ama_attorney_task,
