@@ -3,6 +3,7 @@
 class Hearing < CaseflowRecord
   include HasHearingTask
   include HasVirtualHearing
+  include HearingTimeConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -116,6 +117,10 @@ class Hearing < CaseflowRecord
     Person.find_by(participant_id: appeal.appellant.participant_id).id
   end
 
+  def aod?
+    advance_on_docket_motion.present?
+  end
+
   def advance_on_docket_motion
     # we're only really interested if the AOD was granted
     AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
@@ -135,12 +140,6 @@ class Hearing < CaseflowRecord
   def scheduled_for_past?
     scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
-
-  def time
-    @time ||= HearingTimeService.new(hearing: self)
-  end
-
-  delegate :central_office_time_string, :scheduled_time_string, to: :time
 
   def worksheet_issues
     request_issues.map do |request_issue|

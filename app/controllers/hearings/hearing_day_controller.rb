@@ -41,7 +41,7 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def index_with_hearings
     if hearing_day_range.valid?
-      hearing_days_with_hearings = hearing_day_range.open_hearing_days_with_hearings_hash(current_user.id)
+      hearing_days_with_hearings = hearing_day_range.open_hearing_days_with_hearings_hash
 
       render json: { hearing_days: hearing_days_with_hearings }
     else
@@ -104,8 +104,7 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def default_range_end_date
     default = Time.zone.today.beginning_of_day
-    # 2 month range for index_with_hearings, since fetching hearings is *slow*.
-    default += ((params[:action] == "index") ? 365.days : 62.days)
+    default += ((params[:action] == "index") ? 365.days : 182.days)
     default
   end
 
