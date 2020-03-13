@@ -132,9 +132,14 @@ class LookupParticipantIdModal extends React.Component {
                 {alert === 'success' && <Alert type={alert} title="Lookup Succeeded" />}
                 {alert === 'error' && (
                   <Alert type={alert} title="Error">
-                    {error ?
-                      error :
-                      'There was an error processing your request. Please retry your action and contact support if errors persist.'}
+                    {error ? (
+                      error
+                    ) : (
+                      <span>
+                        There was an error processing your request. Please retry your action and contact support if
+                        errors persist.
+                      </span>
+                    )}
                   </Alert>
                 )}
               </div>
