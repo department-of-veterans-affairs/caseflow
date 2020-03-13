@@ -1,6 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
@@ -10,7 +11,7 @@ import { boldText } from './constants';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const detailListStyling = css({
   paddingLeft: 0,
@@ -18,16 +19,16 @@ const detailListStyling = css({
   marginBottom: '3rem'
 });
 
-const VeteranState = ({ veteran: { address: { state }}}) => {
+const VeteranState = ({ veteran: { address: { state } } }) => {
   return <>{state}</>;
-}
+};
 
 class VeteranDetail extends React.PureComponent {
   getDetails = () => {
     const {
       veteran: {
         address,
-        full_name,
+        full_name: fullName,
         gender,
         date_of_birth: dob,
         date_of_death: dod,
@@ -37,7 +38,7 @@ class VeteranDetail extends React.PureComponent {
 
     const details = [{
       label: 'Name',
-      value: full_name
+      value: fullName
     }];
 
     const genderValue = gender === 'F' ? COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
@@ -79,7 +80,7 @@ class VeteranDetail extends React.PureComponent {
     }
 
     const getDetailField = ({ label, value }) => () => (
-      <><span {...boldText}>{label}:</span> {value}</>
+      <><span {...boldText}>{label}:</span>''{value}</>
     );
 
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
@@ -95,9 +96,22 @@ class VeteranDetail extends React.PureComponent {
   };
 }
 
+VeteranState.propTypes = VeteranDetail.propTypes = {
+  veteran: PropTypes.shape({
+    address: PropTypes.shape({
+      state: PropTypes.string
+    }),
+    date_of_birth: PropTypes.string,
+    date_of_death: PropTypes.string,
+    email_address: PropTypes.string,
+    full_name: PropTypes.string,
+    gender: PropTypes.string
+  })
+};
+
 const mapStateToProps = (state, ownProps) => {
   const loadingVeteranInfo = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
-  
+
   if (loadingVeteranInfo?.loading) {
     return { loading: true };
   }
@@ -125,6 +139,14 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 const wrapVeteranDetailComponent = _.flow(
   (WrappedComponent) => (
     class extends React.PureComponent {
+      static propTypes = {
+        appealId: PropTypes.string,
+        error: PropTypes.object,
+        getAppealValue: PropTypes.func,
+        loading: PropTypes.bool,
+        veteranInfo: PropTypes.object
+      }
+
       componentDidMount = () => {
         if (!this.props.veteranInfo) {
           this.props.getAppealValue(this.props.appealId, 'veteran', 'veteranInfo');
