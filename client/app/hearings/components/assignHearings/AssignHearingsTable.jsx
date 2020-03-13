@@ -9,11 +9,12 @@ import {
   SuggestedHearingLocation
 } from './AssignHearingsFields';
 import { NoVeteransToAssignMessage } from './Messages';
+import { VeteranStateDetail } from '../../../queue/VeteranDetail';
+import { docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import {
   encodeQueryParams,
   getQueryParams
 } from '../../../util/QueryParamsUtil';
-import { docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
 import ApiUtil from '../../../util/ApiUtil';
@@ -146,13 +147,22 @@ export default class AssignHearingsTable extends React.PureComponent {
         filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'suggestedLocation').filter_options
       },
       {
+        name: 'veteranState',
+        header: 'Veteran State of Residence',
+        align: 'left',
+        valueFunction: (row) => (
+          <VeteranStateDetail
+            appealId={row.externalAppealId}
+          />
+        )
+      },
+      {
         name: 'powerOfAttorneyName',
         header: 'Power of Attorney (POA)',
         columnName: 'Power of Attorney',
         align: 'left',
         valueFunction: (row) => (
           <PowerOfAttorneyDetail
-            key={`poa-${row.externalAppealId}-detail`}
             appealId={row.externalAppealId}
             displayNameOnly
           />
