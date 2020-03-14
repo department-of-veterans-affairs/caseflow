@@ -141,7 +141,7 @@
   "JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL": "How will you address this motion to vacate?",
   "JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL": "What type of vacate?",
   "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed %s document",
-  "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues you will be granting",
+  "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues should be %s",
   "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
   "JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL": "Which issues would you like to vacate?",
   "JUDGE_ADDRESS_MTV_SUCCESS_TITLE_GRANTED": "%s's Motion to Vacate has been marked for vacatur",
@@ -280,7 +280,7 @@
   "MARK_TASK_COMPLETE_COPY": "You can find this case in the completed tab of your queue.",
   "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
   "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
-  "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
+  "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you have made a mistake, please email %s to manage any changes.",
 
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
