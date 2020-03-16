@@ -10,9 +10,7 @@ class UsersController < ApplicationController
     render json: {}, status: :ok
   end
 
-  def search_by_css_id
-    user = User.find_by_css_id(css_id)
-
+  def search
     fail ActiveRecord::RecordNotFound unless user
 
     render json: { user: user }
@@ -65,16 +63,16 @@ class UsersController < ApplicationController
     render json: { users: json_users(users) }
   end
 
-  def css_id
-    unless params[:css_id]
+  def user
+    unless params[:css_id] || params[:id]
       fail(
         Caseflow::Error::InvalidParameter,
-        parameter: "css_id",
-        message: "Must provide a css id"
+        parameter: "css_id or id",
+        message: "Must provide a css id or user id"
       )
     end
 
-    params[:css_id]
+    @user ||= params[:id] ? User.find(params[:id]) : User.find_by_css_id(params[:css_id])
   end
 
   def user_to_modify
