@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VirtualHearingMailer < ActionMailer::Base
-  default from: "solutions@public.govdelivery.com"
+  default from: "BoardofVeteransAppealsHearings@public.govdelivery.com"
   layout "virtual_hearing_mailer"
   helper VirtualHearings::ExternalLinkHelper
   helper VirtualHearings::VeteranNameHelper

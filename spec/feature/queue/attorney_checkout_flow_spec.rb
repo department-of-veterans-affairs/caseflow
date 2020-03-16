@@ -12,11 +12,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
   context "given a valid ama appeal" do
     before do
-      root_task = create(:root_task)
+      root_task = create(:root_task, appeal: appeal)
       parent_task = create(
         :ama_judge_decision_review_task,
         assigned_to: judge_user,
-        appeal: appeal,
         parent: root_task
       )
 
@@ -25,8 +24,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         :in_progress,
         assigned_to: attorney_user,
         assigned_by: judge_user,
-        parent: parent_task,
-        appeal: appeal
+        parent: parent_task
       )
 
       User.authenticate!(user: attorney_user)

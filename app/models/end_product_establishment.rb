@@ -170,6 +170,12 @@ class EndProductEstablishment < CaseflowRecord
     EndProductCodeSelector::END_PRODUCT_CODES.find_all_values_for(:nonrating).include?(code)
   end
 
+  # The last action date helps approximate when an EP was cleared. However, some EPs are missing this data
+  # Since we stop syncing EPs once they're cleared, the last_synced_at is our best guess when it's missing
+  def last_action_date
+    result&.last_action_date || last_synced_at&.to_date
+  end
+
   # Find an end product that has the traits of the end product that should be created.
   def active_preexisting_end_product
     preexisting_end_products.find(&:active?)
