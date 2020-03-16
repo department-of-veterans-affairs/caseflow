@@ -1126,13 +1126,13 @@ class SeedDB
       )
     end
 
-    FactoryBot.create_list(
-      :ama_judge_task,
-      3,
-      :in_progress,
-      assigned_to: User.find_by(css_id: "BVAEBECKER"),
-      appeal: FactoryBot.create(:appeal)
-    )
+    3.times do
+      FactoryBot.create(
+        :ama_judge_task,
+        :in_progress,
+        assigned_to: User.find_by(css_id: "BVAEBECKER"),
+        appeal: FactoryBot.create(:appeal)
+      )
 
     FactoryBot.create_list(
       :appeal,
