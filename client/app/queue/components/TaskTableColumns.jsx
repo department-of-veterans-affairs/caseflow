@@ -57,10 +57,10 @@ export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   };
 };
 
-export const hearingBadgeColumn = () => {
+export const badgesColumn = () => {
   return {
     header: '',
-    name: QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+    name: QUEUE_CONFIG.COLUMNS.BADGES.name,
     valueFunction: (task) => <HearingBadge task={task} />
   };
 };

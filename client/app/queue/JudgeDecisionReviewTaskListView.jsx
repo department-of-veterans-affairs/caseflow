@@ -20,7 +20,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { judgeDecisionReviewTasksSelector } from './selectors';
 
 import { fullWidth } from './constants';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const containerStyles = css({
   position: 'relative'
@@ -54,7 +54,7 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
       </p>;
     } else {
       tableContent = <TaskTable
-        includeHearingBadge
+        includeBadges
         includeTask
         includeDetailsLink
         includeDocumentId
@@ -81,7 +81,22 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
 }
 
 JudgeDecisionReviewTaskListView.propTypes = {
-  tasks: PropTypes.array.isRequired
+  tasks: PropTypes.array.isRequired,
+  resetSaveState: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  clearCaseSelectSearch: PropTypes.func,
+  organizations: PropTypes.array,
+  messages: PropTypes.shape({
+    error: PropTypes.shape({
+      title: PropTypes.string,
+      detail: PropTypes.string
+    }),
+    success: PropTypes.shape({
+      title: PropTypes.string,
+      detail: PropTypes.string
+    })
+  })
 };
 
 const mapStateToProps = (state) => {
