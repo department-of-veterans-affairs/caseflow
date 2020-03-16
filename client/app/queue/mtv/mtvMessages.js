@@ -10,11 +10,11 @@ import {
 } from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 
-export const reviewMotionToVacateSuccessAlert = ({ judge }) => {
+export const reviewMotionToVacateSuccessAlert = ({ judge = {} }) => {
   const { display_name: judgeName } = judge;
 
   return {
-    title: sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judgeName),
+    title: sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judgeName || 'the judge'),
     detail: MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL
   };
 };
