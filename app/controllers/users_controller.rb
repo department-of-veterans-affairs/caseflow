@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :deny_non_bva_admins, only: [:represented_organizations, :update, :search_by_css_id]
+  before_action :deny_non_bva_admins, only: [:represented_organizations, :update]
 
   def index
     return filter_by_role if params[:role]
