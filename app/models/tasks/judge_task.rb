@@ -10,7 +10,7 @@
 
 class JudgeTask < Task
   def available_actions(user)
-    # Only the current assignee of a judge task should have actions available to them on the judge task unless the user is on the scm team.
+    # Only the current assignee of a judge task should have actions available to them on the judge task.
     if assigned_to == user
       [
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -18,9 +18,13 @@ class JudgeTask < Task
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         additional_available_actions(user)
       ].flatten
-    else
-      return [] unless user.member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
-      [Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h]
+    elsif member_of_scm?(user)
+      [
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+        additional_available_actions(user)
+      ].flatten
+    else 
+      []
     end
   end
 
@@ -36,5 +40,11 @@ class JudgeTask < Task
 
   def previous_task
     children_attorney_tasks.order(:assigned_at).last
+  end
+
+  private
+
+  def member_of_scm?(_user)
+    _user.member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
   end
 end

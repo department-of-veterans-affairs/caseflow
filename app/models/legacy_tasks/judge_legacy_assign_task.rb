@@ -8,13 +8,23 @@ class JudgeLegacyAssignTask < JudgeLegacyTask
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
       ]
+    elsif member_of_scm?(user)
+      [
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+      ]
     else
-      return [] unless user.member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
-      [Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h]
+      []
     end
   end
 
   def label
     COPY::JUDGE_ASSIGN_TASK_LABEL
+  end
+
+  private
+
+  def member_of_scm?(_user)
+    _user.member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
   end
 end
