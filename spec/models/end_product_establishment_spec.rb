@@ -35,6 +35,7 @@ describe EndProductEstablishment, :postgres do
   let(:limited_poa_code) { "ABC" }
   let(:limited_poa_access) { true }
   let(:rating_profile_date) { Date.new(2018, 4, 30) }
+  let(:last_synced_at) { nil }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -54,7 +55,8 @@ describe EndProductEstablishment, :postgres do
       established_at: 30.days.ago,
       user: current_user,
       limited_poa_code: limited_poa_code,
-      limited_poa_access: limited_poa_access
+      limited_poa_access: limited_poa_access,
+      last_synced_at: last_synced_at
     )
   end
   let(:orphaned_end_product) do
@@ -69,6 +71,32 @@ describe EndProductEstablishment, :postgres do
 
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
+  end
+
+  context "#last_action_date" do
+    subject { end_product_establishment.last_action_date }
+
+    let(:last_action_date) { 5.days.ago.mdY }
+    let(:last_synced_at) { 4.days.ago }
+    let(:reference_id) { matching_ep.claim_id }
+
+    let!(:matching_ep) do
+      Generators::EndProduct.build(
+        veteran_file_number: veteran_file_number,
+        bgs_attrs: {
+          last_action_date: last_action_date,
+          status_type_code: "CLR"
+        }
+      )
+    end
+
+    it { is_expected.to eq 5.days.ago.to_date }
+
+    context "when the EP last action date is nil" do
+      let(:last_action_date) { nil }
+
+      it { is_expected.to eq last_synced_at.to_date }
+    end
   end
 
   context "#status_type_code" do
