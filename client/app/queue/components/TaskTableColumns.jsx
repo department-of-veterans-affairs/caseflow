@@ -4,7 +4,7 @@ import pluralize from 'pluralize';
 import _ from 'lodash';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import HearingBadge from './HearingBadge';
+import BadgeArea from './BadgeArea';
 import CaseDetailsLink from '../CaseDetailsLink';
 import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
@@ -61,7 +61,7 @@ export const badgesColumn = () => {
   return {
     header: '',
     name: QUEUE_CONFIG.COLUMNS.BADGES.name,
-    valueFunction: (task) => <HearingBadge task={task} />
+    valueFunction: (task) => <BadgeArea task={task} />
   };
 };
 
