@@ -69,7 +69,7 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
       create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, parent: appeal.root_task, appeal: appeal)
     end
 
-    context "another in-progress JudgeAssignTask is added" do
+    context "with both legacy and ama tasks" do
       scenario "viewing the assign task queue" do
         visit "/queue/#{judge_one.user.id}/assign"
 
