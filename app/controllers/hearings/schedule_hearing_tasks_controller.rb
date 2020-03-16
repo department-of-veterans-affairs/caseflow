@@ -6,7 +6,7 @@
 class Hearings::ScheduleHearingTasksController < ApplicationController
   include HearingsConcerns::VerifyAccess
 
-  before_action :verify_build_hearing_schedule_access
+  before_action :verify_edit_hearing_schedule_access
 
   def index
     task_pager = Hearings::ScheduleHearingTaskPager.new(
