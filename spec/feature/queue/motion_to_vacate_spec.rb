@@ -119,6 +119,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
         # Return back to user's queue
         expect(page).to have_current_path("/queue")
 
+        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
+        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+
         # Verify new task was created
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
         expect(judge_task).to_not be_nil
@@ -136,6 +139,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         # Return back to user's queue
         expect(page).to have_current_path("/queue")
+
+        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
+        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
 
         # Verify new task was created
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
