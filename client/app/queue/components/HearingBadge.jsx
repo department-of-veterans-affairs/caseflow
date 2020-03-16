@@ -94,8 +94,7 @@ HearingBadge.propTypes = {
   hearing: PropTypes.object,
   mostRecentlyHeldHearingForAppeal: PropTypes.object,
   setMostRecentlyHeldHearingForAppeal: PropTypes.func,
-  task: PropTypes.object,
-  appeal: PropTypes.object
+  task: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -105,8 +104,6 @@ const mapStateToProps = (state, ownProps) => {
     hearing = ownProps.hearing;
   } else if (ownProps.task) {
     externalId = ownProps.task.appeal.externalId;
-  } else if (ownProps.appeal) {
-    externalId = ownProps.appeal.externalId;
   }
 
   return {
