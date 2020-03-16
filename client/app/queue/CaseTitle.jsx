@@ -45,10 +45,6 @@ const viewCasesStyling = css({
   cursor: 'pointer'
 });
 
-const badgesStyling = css({
-  display: 'inline-block'
-});
-
 class CaseTitle extends React.PureComponent {
   render = () => {
     const {
@@ -67,9 +63,7 @@ class CaseTitle extends React.PureComponent {
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
       </span>
-      <div {...badgesStyling}>
-        <BadgeArea appeal={appeal} />
-      </div>
+      <BadgeArea appeal={appeal} />
     </CaseTitleScaffolding>;
   }
 }

@@ -7,7 +7,7 @@ import QueueTable from './QueueTable';
 import TabWindow from '../components/TabWindow';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import { completedToNameColumn, daysOnHoldColumn, daysWaitingColumn, detailsColumn, docketNumberColumn,
-  hearingBadgeColumn, issueCountColumn, readerLinkColumn, readerLinkColumnWithNewDocsIcon, regionalOfficeColumn,
+  badgesColumn, issueCountColumn, readerLinkColumn, readerLinkColumnWithNewDocsIcon, regionalOfficeColumn,
   taskColumn, taskCompletedDateColumn, typeColumn } from './components/TaskTableColumns';
 
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
@@ -43,7 +43,7 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(tasks, false, requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name]: readerLinkColumn(requireDasRecord, true),
-      [QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name]: hearingBadgeColumn(tasks),
+      [QUEUE_CONFIG.COLUMNS.BADGES.name]: badgesColumn(tasks),
       [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name]: readerLinkColumnWithNewDocsIcon(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name]: regionalOfficeColumn(tasks, false),
