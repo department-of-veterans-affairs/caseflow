@@ -1117,13 +1117,14 @@ class SeedDB
 
     create_colocated_legacy_tasks(attorney)
 
-    FactoryBot.create_list(
-      :ama_task,
-      5,
-      assigned_by: judge,
-      assigned_to: Translation.singleton,
-      parent: FactoryBot.create(:root_task)
-    )
+    5.times do
+      FactoryBot.create(
+        :ama_task,
+        assigned_by: judge,
+        assigned_to: Translation.singleton,
+        parent: FactoryBot.create(:root_task)
+      )
+    end
 
     FactoryBot.create_list(
       :ama_judge_task,
