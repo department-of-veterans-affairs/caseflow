@@ -684,6 +684,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
     vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
     visit "/queue/appeals/#{vacate_stream.uuid}"
     expect(page).to have_content("Vacate")
+    find("span", text: "View all cases").click
+    expect(find_by_id("table-row-2")).to have_content("Vacate", appeal.docket_number)
   end
 
   def send_to_judge(user:, appeal:, motions_attorney_task:)
