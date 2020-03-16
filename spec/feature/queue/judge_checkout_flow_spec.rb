@@ -27,13 +27,12 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     end
     let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
 
-    let(:root_task) { create(:root_task) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
     let(:parent_task) do
       create(
         :ama_judge_decision_review_task,
         :in_progress,
         assigned_to: judge_user,
-        appeal: appeal,
         parent: root_task
       )
     end
@@ -44,8 +43,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         :in_progress,
         assigned_to: attorney_user,
         assigned_by: judge_user,
-        parent: parent_task,
-        appeal: appeal
+        parent: parent_task
       )
     end
 

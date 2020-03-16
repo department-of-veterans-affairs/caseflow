@@ -91,8 +91,13 @@ class Appeal < DecisionReview
         :receipt_date,
         :veteran_file_number,
         :legacy_opt_in_approved,
-        :veteran_is_not_claimant
-      ).merge(stream_type: stream_type, stream_docket_number: docket_number)).tap do |stream|
+        :veteran_is_not_claimant,
+        :docket_type
+      ).merge(
+        stream_type: stream_type,
+        stream_docket_number: docket_number,
+        established_at: Time.zone.now
+      )).tap do |stream|
         stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
       end
     end

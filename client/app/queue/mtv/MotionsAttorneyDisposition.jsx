@@ -51,11 +51,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
   };
 
   const valid = () => {
-    if (
-      !disposition ||
-      !judgeId ||
-      (disposition === 'granted' && !instructions)
-    ) {
+    if (!disposition || !judgeId) {
       return false;
     }
 
@@ -85,8 +81,8 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
           label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
           onChange={(val) => setInstructions(val)}
           value={instructions}
-          required={disposition === 'granted'}
           className={['mtv-review-instructions']}
+          optional
           strongLabel
         />
 

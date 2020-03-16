@@ -16,7 +16,6 @@ detectors:
       - Veteran
   ControlParameter:
     exclude:
-      - BaseHearingUpdateForm#email_sent_flag
       - ExternalApi::VBMSService#self.send_and_log_request
       - Fakes::BGSService
       - HearingRepository#slot_new_hearing
@@ -150,7 +149,6 @@ detectors:
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
-      - Helpers::AppealHearingHelper#suggested_hearing_location
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
       - JudgeLegacyDecisionReviewTask#review_action
@@ -167,6 +165,7 @@ detectors:
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link
       - VirtualHearings::VeteranNameHelper#formatted_veteran_name
+      - ScheduleHearingTaskPager#sorted_tasks
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

@@ -4,10 +4,9 @@ class HearingSerializer
   include FastJsonapi::ObjectSerializer
   include HearingSerializerBase
 
+  attribute :aod, &:aod?
   attribute :advance_on_docket_motion do |hearing|
-    if hearing.advance_on_docket_motion.nil?
-      nil
-    else
+    if hearing.aod?
       {
         judge_name: hearing.advance_on_docket_motion.user.full_name,
         date: hearing.advance_on_docket_motion.created_at,

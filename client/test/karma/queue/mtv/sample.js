@@ -199,7 +199,7 @@ export const tasks = [
         }
       },
       {
-        label: 'Notify Litigation Support of CAVC jurisdictional conflict',
+        label: 'Notify Pulac Cerullo team of CAVC Jurisdictional Conflict',
         value: 'modal/assign_to_pulac_cerullo',
         func: 'assign_to_pulac_cerullo_data',
         data: {
