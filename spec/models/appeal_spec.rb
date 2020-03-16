@@ -422,7 +422,7 @@ describe Appeal, :all_dbs do
 
   context "#set_stream_docket_number_and_stream_type" do
     let(:appeal) { Appeal.new(veteran_file_number: "1234") }
-    let(:receipt_date) { Time.new("2020", "01", "24").utc }
+    let(:receipt_date) { Date.new(2020, 1, 24) }
 
     it "persists an accurate value for stream_docket_number to the database" do
       appeal.save!

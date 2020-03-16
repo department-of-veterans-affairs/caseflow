@@ -36,7 +36,7 @@ class PostDecisionMotionDeleter
   end
 
   def original_task
-    @original_task ||= JudgeAddressMotionToVacateTask.find_by(appeal: original_appeal)
+    @original_task ||= post_decision_motion.task
   end
 
   def post_decision_motion

@@ -11,7 +11,13 @@ describe PostDecisionMotionDeleter, :all_dbs do
   describe "#process" do
     it "deletes the motion and stream, and creates a new judge task" do
       subject.process
-      expect(JudgeAddressMotionToVacateTask.where(appeal: appeal).count).to eq 2
+      tasks = JudgeAddressMotionToVacateTask.where(appeal: appeal)
+      expect(tasks.count).to eq 2
+      expect(tasks.last).to have_attributes(
+        status: Constants.TASK_STATUSES.assigned,
+        parent: tasks.first.parent,
+        assigned_to: tasks.first.assigned_to
+      )
       expect(PostDecisionMotion.where(appeal: vacate_stream).count).to eq 0
       expect(Task.where(appeal_id: vacate_stream.id).count).to eq 0
       expect { vacate_stream.reload }.to raise_error ActiveRecord::RecordNotFound
