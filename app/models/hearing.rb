@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class Hearing < CaseflowRecord
+  include HasHearingTask
   include HasVirtualHearing
+  include HearingTimeConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -11,9 +13,6 @@ class Hearing < CaseflowRecord
   has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
-  has_one :hearing_task_association,
-          -> { includes(:hearing_task).where(tasks: { status: Task.open_statuses }) },
-          as: :hearing
   has_many :hearing_issue_notes
 
   class HearingDayFull < StandardError; end
@@ -104,24 +103,6 @@ class Hearing < CaseflowRecord
     judge == user
   end
 
-  def hearing_task?
-    !hearing_task_association.nil?
-  end
-
-  def disposition_task
-    if hearing_task?
-      hearing_task_association.hearing_task.children.detect { |child| child.type == AssignHearingDispositionTask.name }
-    end
-  end
-
-  def disposition_task_in_progress
-    disposition_task ? disposition_task.open_with_no_children? : false
-  end
-
-  def disposition_editable
-    disposition_task_in_progress || !hearing_task?
-  end
-
   def representative
     appeal.representative_name
   end
@@ -134,6 +115,10 @@ class Hearing < CaseflowRecord
     return nil if appeal.appellant.nil?
 
     Person.find_by(participant_id: appeal.appellant.participant_id).id
+  end
+
+  def aod?
+    advance_on_docket_motion.present?
   end
 
   def advance_on_docket_motion
@@ -155,12 +140,6 @@ class Hearing < CaseflowRecord
   def scheduled_for_past?
     scheduled_for < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
-
-  def time
-    @time ||= HearingTimeService.new(hearing: self)
-  end
-
-  delegate :central_office_time_string, :scheduled_time_string, to: :time
 
   def worksheet_issues
     request_issues.map do |request_issue|

@@ -2,28 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
-import { getTime, getTimeInDifferentTimeZone } from '../../../util/DateUtil';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
-
-export const HearingTime = ({ hearing, isCentralOffice }) => {
-  const { date, regionalOfficeTimezone } = hearing;
-
-  if (isCentralOffice) {
-    return <div>{getTime(date)} </div>;
-  }
-
-  return <div>
-    {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
-  </div>;
-};
-
-HearingTime.propTypes = {
-  hearing: PropTypes.shape({
-    date: PropTypes.string,
-    regionalOfficeTimezone: PropTypes.string
-  }),
-  isCentralOffice: PropTypes.bool
-};
 
 export const HearingAppellantName = ({ hearing }) => {
   let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName, veteranFileNumber } = hearing;
@@ -54,10 +33,10 @@ HearingAppellantName.propTypes = {
 export const CaseDetailsInformation = ({ appeal }) => {
   let caseDetails;
 
-  if (appeal.attributes.appellantFullName) {
-    caseDetails = `${appeal.attributes.appellantFullName} | ${appeal.attributes.veteranFileNumber}`;
+  if (appeal.appellantFullName) {
+    caseDetails = `${appeal.appellantFullName} | ${appeal.veteranFileNumber}`;
   } else {
-    caseDetails = `${appeal.attributes.veteranFullName} | ${appeal.attributes.veteranFileNumber}`;
+    caseDetails = `${appeal.veteranFullName} | ${appeal.veteranFileNumber}`;
   }
 
   return <React.Fragment>{caseDetails}</React.Fragment>;
@@ -65,11 +44,9 @@ export const CaseDetailsInformation = ({ appeal }) => {
 
 CaseDetailsInformation.propTypes = {
   appeal: PropTypes.shape({
-    attributes: PropTypes.shape({
-      appellantFullName: PropTypes.string,
-      veteranFullName: PropTypes.string,
-      veteranFileNumber: PropTypes.string
-    })
+    appellantFullName: PropTypes.string,
+    veteranFullName: PropTypes.string,
+    veteranFileNumber: PropTypes.string
   })
 };
 
@@ -87,15 +64,15 @@ export const HearingDocketTag = ({ hearing }) => {
 HearingDocketTag.propTypes = {
   hearing: PropTypes.shape({
     docketName: PropTypes.string,
-    docketNumber: PropTypes.string
+    docketNumber: PropTypes.number
   })
 };
 
 export const AppealDocketTag = ({ appeal }) => {
-  if (appeal.attributes.docketNumber) {
+  if (appeal.docketNumber) {
     return <div>
-      <DocketTypeBadge name={appeal.attributes.docketName} number={appeal.attributes.docketNumber} />
-      {appeal.attributes.docketNumber}
+      <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
+      {appeal.docketNumber}
     </div>;
   }
 
@@ -104,10 +81,8 @@ export const AppealDocketTag = ({ appeal }) => {
 
 AppealDocketTag.propTypes = {
   appeal: PropTypes.shape({
-    attributes: PropTypes.shape({
-      docketName: PropTypes.string,
-      docketNumber: PropTypes.string
-    })
+    docketName: PropTypes.string,
+    docketNumber: PropTypes.string
   })
 };
 
