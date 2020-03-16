@@ -61,7 +61,7 @@ export const badgesColumn = () => {
   return {
     header: '',
     name: QUEUE_CONFIG.COLUMNS.BADGES.name,
-    valueFunction: (task) => <BadgeArea appeal={task.appeal} />
+    valueFunction: (task) => <BadgeArea task={task} />
   };
 };
 

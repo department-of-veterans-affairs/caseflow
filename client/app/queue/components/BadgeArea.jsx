@@ -11,16 +11,17 @@ const badgesStyling = css({
 
 class BadgeArea extends React.PureComponent {
   render = () => {
-    const hearing = mostRecentHeldHearingForAppeal(this.props.appeal);
-
     return <div {...badgesStyling}>
-      <HearingBadge hearing={hearing} />
+      {this.props.appeal ?
+        <HearingBadge hearing={mostRecentHeldHearingForAppeal(this.props.appeal)} /> :
+        <HearingBadge task={this.props.task} />}
     </div>;
   }
 }
 
 BadgeArea.propTypes = {
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
+  task: PropTypes.object
 };
 
 export default BadgeArea;
