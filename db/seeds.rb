@@ -74,6 +74,7 @@ class SeedDB
     create_transcription_team
     create_vso_users_and_tasks
     create_field_vso_and_users
+    create_pva_vso_and_users
     create_org_queue_users
     create_qr_user
     create_aod_user_and_tasks
@@ -128,6 +129,7 @@ class SeedDB
     TranscriptionTeam.singleton.add_user(transcription_member)
   end
 
+  ### Hearings Setup ###
   def create_hearings_user_and_tasks
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
     HearingsManagement.singleton.add_user(hearings_member)
@@ -142,39 +144,181 @@ class SeedDB
     HearingsManagement.singleton.add_user(hearings_user)
   end
 
-  def create_different_hearings_tasks
-    10.times do
-      appeal = FactoryBot.create(
-        :appeal,
-        :hearing_docket,
-        closest_regional_office: ["RO17", "RO19", "RO31", nil].sample
-      )
-      root_task = FactoryBot.create(:root_task, appeal: appeal)
-      distribution_task = FactoryBot.create(
-        :distribution_task,
-        appeal: appeal,
-        parent: root_task
-      )
-      parent_hearing_task = FactoryBot.create(
-        :hearing_task,
-        parent: distribution_task,
-        appeal: appeal
-      )
-      FactoryBot.create(
-        :schedule_hearing_task,
-        :completed,
-        parent: parent_hearing_task,
-        appeal: appeal
-      )
-      disposition_task = FactoryBot.create(
-        :assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal
-      )
-      FactoryBot.create(
-        [:no_show_hearing_task, :evidence_submission_window_task].sample,
-        parent: disposition_task,
-        appeal: appeal
-      )
+  def create_legacy_case_with_open_schedule_hearing_task(ro_key)
+    case ro_key
+    when "RO17"
+      vacols_id = "2668454"
+    when "RO45"
+      vacols_id = "3261587"
+    when nil
+      vacols_id = "3019752"
     end
+
+    LegacyAppeal.find_or_create_by_vacols_id(vacols_id) if vacols_id.present?
+  end
+
+  def create_different_hearings_tasks
+    (%w[RO17 RO19 RO31 RO43 RO45] + [nil]).each do |regional_office|
+      create_legacy_case_with_open_schedule_hearing_task(regional_office)
+
+      rand(10..30).times do
+        appeal = FactoryBot.create(
+          :appeal,
+          :hearing_docket,
+          claimants: [
+            FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10 ** 10)}")
+          ],
+          closest_regional_office: regional_office
+        )
+
+        FactoryBot.create(:available_hearing_locations, regional_office, appeal: appeal)
+
+        root_task = FactoryBot.create(:root_task, appeal: appeal)
+        distribution_task = FactoryBot.create(
+          :distribution_task,
+          appeal: appeal,
+          parent: root_task
+        )
+        parent_hearing_task = FactoryBot.create(
+          :hearing_task,
+          parent: distribution_task,
+          appeal: appeal
+        )
+
+        schedule_hearing_task_status = [:completed, :in_progress].sample
+
+        FactoryBot.create(
+          :schedule_hearing_task,
+          schedule_hearing_task_status,
+          parent: parent_hearing_task,
+          appeal: appeal
+        )
+
+        # For completed hearing tasks, generate additional tasks too.
+        if schedule_hearing_task_status == :completed
+          disposition_task = FactoryBot.create(
+            :assign_hearing_disposition_task,
+            parent: parent_hearing_task, 
+            appeal: appeal
+          )
+          FactoryBot.create(
+            [:no_show_hearing_task, :evidence_submission_window_task].sample,
+            parent: disposition_task,
+            appeal: appeal
+          )
+        end
+      end
+    end
+  end
+
+  def create_ama_hearing(day)
+    veteran = FactoryBot.create(
+      :veteran,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+
+    appeal = FactoryBot.create(
+      :appeal,
+      veteran_file_number: veteran.file_number,
+      claimants: [FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")],
+      docket_type: Constants.AMA_DOCKETS.hearing
+    )
+
+    root_task = FactoryBot.create(:root_task, appeal: appeal)
+    distribution_task = FactoryBot.create(
+      :distribution_task,
+      appeal: appeal,
+      parent: root_task
+    )
+    parent_hearing_task = FactoryBot.create(
+      :hearing_task,
+      parent: distribution_task,
+      appeal: appeal
+    )
+
+    FactoryBot.create(
+      :schedule_hearing_task,
+      :completed,
+      parent: parent_hearing_task,
+      appeal: appeal
+    )
+    FactoryBot.create(
+      :assign_hearing_disposition_task,
+      :in_progress,
+      parent: parent_hearing_task,
+      appeal: appeal
+    )
+
+    TrackVeteranTask.sync_tracking_tasks(appeal)
+
+    hearing = FactoryBot.create(
+      :hearing,
+      hearing_day: day,
+      appeal: appeal,
+      bva_poc: User.find_by_css_id("BVAAABSHIRE").full_name,
+      scheduled_time: "9:00AM"
+    )
+
+    FactoryBot.create(
+      :hearing_task_association,
+      hearing: hearing,
+      hearing_task: parent_hearing_task
+    )
+  end
+
+  def create_case_hearing(day, ro_key)
+    case ro_key
+    when "RO17"
+      folder_nr = "3620725"
+    when "RO45"
+      folder_nr = "3411278"
+    when "C"
+      folder_nr = "3542942"
+    end
+
+    FactoryBot.create(
+      :case_hearing,
+      folder_nr: folder_nr,
+      vdkey: day.id,
+      board_member: User.find_by_css_id("BVAAABSHIRE").vacols_attorney_id.to_i
+    )
+  end
+
+  def create_hearing_days
+    user = User.find_by(css_id: "BVATWARNER")
+
+    # Set the current user var here, which is used to populate the
+    # created by field.
+    RequestStore[:current_user] = user
+
+    %w[C RO17 RO19 RO31 RO43 RO45].each do |ro_key|
+      (1..5).each do |index|
+        day = HearingDay.create!(
+          regional_office: (ro_key == "C") ? nil : ro_key,
+          room: "1",
+          judge: User.find_by_css_id("BVAAABSHIRE"),
+          request_type: (ro_key == "C") ? "C" : "V",
+          scheduled_for: Time.zone.today + (index * 11).days,
+          created_by: user,
+          updated_by: user
+        )
+
+        case index
+        when 1
+          create_ama_hearing(day)
+        when 2
+          create_case_hearing(day, ro_key)
+        when 3
+          create_case_hearing(day, ro_key)
+          create_ama_hearing(day)
+        end
+      end
+    end
+
+    # The current user var should be set to nil at the start of this
+    # function. Restore it before executing the next seed function.
+    RequestStore[:current_user] = nil
   end
 
   def create_change_hearing_disposition_task
@@ -197,6 +341,7 @@ class SeedDB
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
     FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
   end
+  ### End Hearings Setup ###
 
   def create_colocated_users
     secondary_user = FactoryBot.create(:user, full_name: "Harper SecondaryVLJSupportStaff Tash", roles: %w[Reader])
@@ -219,7 +364,7 @@ class SeedDB
       participant_id: "2452415"
     )
 
-    %w[BILLIE MICHAEL WINNIE].each do |name|
+    %w[BILLIE MICHAEL].each do |name|
       u = User.create(
         css_id: "#{name}_VSO",
         station_id: 101,
@@ -257,6 +402,29 @@ class SeedDB
                                                                   assigned_to_type: User.name
                                                                 }], u)
       end
+    end
+  end
+
+  # Creates a VSO org for the PARALYZED VETERANS OF AMERICA VSO that the fake BGS
+  # service returns.
+  #
+  # Use the participant ID `CLAIMANT_WITH_PVA_AS_VSO` to tie this org to a
+  # claimant.
+  def create_pva_vso_and_users
+    vso = Vso.create(
+      name: "PARALYZED VETERANS OF AMERICA, INC.",
+      url: "paralyzed-veteran-of-america",
+      participant_id: "2452383"
+    )
+
+    %w[WINNIE].each do |name|
+      u = User.create(
+        css_id: "#{name}_PVA_VSO",
+        station_id: 101,
+        full_name: "#{name} PVA_VSOUser James",
+        roles: %w[VSO]
+      )
+      vso.add_user(u)
     end
   end
 
@@ -466,124 +634,6 @@ class SeedDB
       tag_id: Generators::Tag.create(text: "Right Knee").id,
       document_id: 2
     )
-  end
-
-  def create_ama_hearing(day)
-    vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(digits: 9).to_s,
-      first_name: Faker::Name.first_name,
-      last_name: Faker::Name.last_name
-    )
-    vet.save
-
-    app = FactoryBot.create(
-      :appeal,
-      veteran_file_number: vet.file_number,
-      docket_type: Constants.AMA_DOCKETS.hearing
-    )
-
-    # Legacy Hearings can be created here due to hearing_day_full? check
-    Hearing.create(
-      hearing_day: day,
-      appeal: app,
-      bva_poc: User.find_by_css_id("BVAAABSHIRE").full_name,
-      scheduled_time: Time.utc(
-        Time.zone.today.year, Time.zone.today.month, Time.zone.today.day, 9, 0, 0
-      )
-    )
-  end
-
-  def create_legacy_hearing(day, ro_key)
-    case ro_key
-    when "RO17"
-      folder_nr = "3620725"
-    when "RO45"
-      folder_nr = "3411278"
-    when "C"
-      folder_nr = "3542942"
-    end
-
-    FactoryBot.create(
-      :case_hearing,
-      folder_nr: folder_nr,
-      vdkey: day.id,
-      board_member: User.find_by_css_id("BVAAABSHIRE").vacols_attorney_id.to_i
-    )
-  end
-
-  def create_hearing_days
-    user = User.find_by(css_id: "BVATWARNER")
-
-    # Set the current user var here, which is used to populate the
-    # created by field.
-    RequestStore[:current_user] = user
-
-    %w[C RO17 RO45].each do |ro_key|
-      (1..5).each do |index|
-        day = HearingDay.create!(
-          regional_office: (ro_key == "C") ? nil : ro_key,
-          room: "1",
-          judge: User.find_by_css_id("BVAAABSHIRE"),
-          request_type: (ro_key == "C") ? "C" : "V",
-          scheduled_for: Time.zone.today + (index * 11).days,
-          created_by: user,
-          updated_by: user
-        )
-
-        case index
-        when 1
-          create_ama_hearing(day)
-        when 2
-          create_legacy_hearing(day, ro_key)
-        when 3
-          create_legacy_hearing(day, ro_key)
-          create_ama_hearing(day)
-        end
-      end
-    end
-
-    # The current user var should be set to nil at the start of this
-    # function. Restore it before executing the next seed function.
-    RequestStore[:current_user] = nil
-  end
-
-  def create_legacy_case_with_open_schedule_hearing_task(ro_key)
-    case ro_key
-    when "RO17"
-      vacols_id = "2668454"
-    when "RO45"
-      vacols_id = "3261587"
-    when "C"
-      vacols_id = "3019752"
-    end
-
-    LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
-  end
-
-  def create_ama_case_with_open_schedule_hearing_task(ro_key)
-    vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(digits: 9).to_s,
-      first_name: Faker::Name.first_name,
-      last_name: Faker::Name.last_name
-    )
-
-    vet.save
-
-    FactoryBot.create(
-      :appeal,
-      :with_post_intake_tasks,
-      number_of_claimants: 1,
-      closest_regional_office: ro_key,
-      veteran_file_number: vet.file_number,
-      docket_type: Constants.AMA_DOCKETS.hearing
-    )
-  end
-
-  def create_veterans_ready_for_hearing
-    %w[C RO45 RO17].each do |ro_key|
-      create_legacy_case_with_open_schedule_hearing_task(ro_key)
-      create_ama_case_with_open_schedule_hearing_task(ro_key)
-    end
   end
 
   def create_api_key
@@ -1290,9 +1340,177 @@ class SeedDB
     Message.create(text: message2, detail: appeal2, user: user)
   end
 
+  ### Motions to Vacate setup ###
+  def create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+    veteran = FactoryBot.create(:veteran, file_number: file_number)
+    appeal = FactoryBot.create(
+      :appeal,
+      :outcoded,
+      number_of_claimants: 1,
+      veteran_file_number: veteran.file_number,
+      stream_type: "original"
+    )
+
+    jdr_task = FactoryBot.create(:ama_judge_decision_review_task, :completed,
+             assigned_to: mtv_judge, assigned_by: nil, appeal: appeal, parent: appeal.root_task)
+
+    attorney_task = FactoryBot.create(:ama_attorney_task, :completed, assigned_by: mtv_judge,
+           assigned_to: drafting_attorney, appeal: appeal, parent: jdr_task)
+
+    2.times do |idx|
+      FactoryBot.create(
+        :decision_issue,
+        :rating,
+        decision_review: appeal,
+        description: "I am rating decision issue #{idx}"
+      )
+    end
+
+    2.times do |idx|
+      FactoryBot.create(
+        :decision_issue,
+        :nonrating,
+        decision_review: appeal,
+        description: "I am nonrating decision issue #{idx}"
+      )
+    end
+
+    appeal
+  end
+
+  def create_motion_to_vacate_mail_task(appeal)
+    lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
+    lit_support_org = LitigationSupport.singleton
+    mail_user = User.find_by(css_id: "JOLLY_POSTMAN")
+    mail_team_task = FactoryBot.create(:vacate_motion_mail_task, :on_hold, appeal: appeal, parent: appeal.root_task, assigned_by: mail_user)
+    FactoryBot.create(:vacate_motion_mail_task, :assigned, appeal: appeal, assigned_to: lit_support_user, assigned_by: lit_support_user, parent: mail_team_task, instructions: ["Initial instructions"])
+  end
+
+  def send_mtv_to_judge(appeal, judge, lit_support_user, mail_task, recommendation)
+    FactoryBot.create(:judge_address_motion_to_vacate_task,
+      :assigned,
+      appeal: appeal,
+      assigned_by: lit_support_user,
+      assigned_to: judge,
+      assigned_at: Time.zone.now,
+      parent: mail_task,
+      instructions: "I recommend #{recommendation}."
+    )
+  end
+
+  def judge_addresses_mtv(jam_task, disposition, vacate_type, assigned_to)
+    params = {
+      disposition: disposition,
+      vacate_type: vacate_type,
+      assigned_to_id: assigned_to&.id,
+      instructions: "Instructions from the judge"
+    }
+    PostDecisionMotionUpdater.new(jam_task, params).process
+  end
+
+  def setup_motion_to_vacate
+    lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
+    mtv_judge = User.find_by(css_id: "BVAAABSHIRE")
+    drafting_attorney = User.find_by(css_id: "BVAEERDMAN")
+
+    # MTV file numbers with a decided appeal
+    # From here a MailTeam user or LitigationSupport team member would create a motion to vacate task
+    ("000100000".."000100009").each{ |file_number| create_decided_appeal(file_number, mtv_judge, drafting_attorney) }
+
+    # These are ready for the Lit Support user to send_to_judge
+    ("000100010".."000100012").each do |file_number|
+      create_decided_appeal(file_number, mtv_judge, drafting_attorney).tap{ |a| create_motion_to_vacate_mail_task(a) }
+    end
+
+    # These are ready to be addressed by the Judge
+    ("000100013".."000100015").each do |file_number|
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
+      mtv_task.update!(status: "on_hold")
+      send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "denied")
+    end
+
+    ("000100016".."000100018").each do |file_number|
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
+      mtv_task.update!(status: "on_hold")
+      send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "dismissed")
+    end
+
+    ("000100019".."000100021").each do |file_number|
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
+      mtv_task.update!(status: "on_hold")
+      send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
+    end
+
+    # These are ready to be reviewed by the decision drafting attorney on the vacate stream
+    ("000100022".."000100024").each do |file_number|
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "denied")
+      judge_addresses_mtv(jam_task, "denied", nil, lit_support_user)
+    end
+
+    ("000100025".."000100027").each do |file_number|
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "dismissed")
+      judge_addresses_mtv(jam_task, "dismissed", nil, lit_support_user)
+    end
+
+    ("000100028".."000100030").each do |file_number|
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
+      judge_addresses_mtv(jam_task, "granted", "straight_vacate", drafting_attorney)
+    end
+
+    ("000100031".."000100033").each do |file_number|
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
+      judge_addresses_mtv(jam_task, "granted", "vacate_and_readjudication", drafting_attorney)
+    end
+
+    ("000100034".."000100036").each do |file_number|
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
+      judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
+    end
+
+    ("000100037".."000100039").each do |file_number|
+      original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
+      mtv_task = create_motion_to_vacate_mail_task(original_stream)
+      mtv_task.update!(status: "on_hold")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge,lit_support_user,  mtv_task, "granted")
+      post_decision_motion = judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
+      vacate_stream = post_decision_motion.appeal
+      jdr_task = vacate_stream.tasks.find_by(type: "JudgeDecisionReviewTask")
+      attorney_task = jdr_task.children.find_by(type: "AttorneyTask")
+      [jdr_task, attorney_task].each { |t| t.update!(status: "completed") }
+      root_task = vacate_stream.tasks.find_by(type: "RootTask")
+      BvaDispatchTask.create_from_root_task(root_task)
+      dispatch_user = vacate_stream.tasks.reload.find_by(type: "BvaDispatchTask", assigned_to_type: "User").assigned_to
+      last_six=file_number[-6..-1]
+      citation_number = "A19#{last_six}"
+      outcode_params = {
+        citation_number: citation_number, decision_date: Time.zone.now, redacted_document_location: "\\\\bvacofil1.dva.va.gov\\archdata$\\arch1901\\#{citation_number}.txt", file: last_six
+      }
+      BvaDispatchTask.outcode(vacate_stream.reload, outcode_params, dispatch_user)
+    end
+  end
+
+  ### End Motions to Vacate setup ###
+
   def perform_seeding_jobs
     # Active Jobs which populate tables based on seed data
-    FetchHearingLocationsForVeteransJob.perform_now
     UpdateCachedAppealsAttributesJob.perform_now
     NightlySyncsJob.perform_now
   end
@@ -1314,7 +1532,6 @@ class SeedDB
     call_and_log_seed_step :create_users
     call_and_log_seed_step :create_ama_appeals
     call_and_log_seed_step :create_hearing_days
-    call_and_log_seed_step :create_veterans_ready_for_hearing
     call_and_log_seed_step :create_tasks
     call_and_log_seed_step :create_higher_level_review_tasks
     call_and_log_seed_step :setup_dispatch
@@ -1327,6 +1544,7 @@ class SeedDB
     call_and_log_seed_step :create_intake_users
     call_and_log_seed_step :create_inbox_messages
     call_and_log_seed_step :perform_seeding_jobs
+    call_and_log_seed_step :setup_motion_to_vacate
 
     return if Rails.env.development?
 

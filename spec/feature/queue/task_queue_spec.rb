@@ -143,7 +143,7 @@ feature "Task queue", :all_dbs do
     end
 
     it "shows tabs on the queue page" do
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, vacols_tasks.length))
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count))
       expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
@@ -151,12 +151,12 @@ feature "Task queue", :all_dbs do
 
     it "shows the right number of cases in each tab" do
       # Assigned tab
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
 
       # On Hold tab
       find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count)).click
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_task_count)
       appeal = attorney_task.appeal
       expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
@@ -390,7 +390,7 @@ feature "Task queue", :all_dbs do
     end
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
-      let!(:root_task) { create(:root_task) }
+      let!(:root_task) { create(:root_task, :completed) }
 
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do
@@ -557,7 +557,7 @@ feature "Task queue", :all_dbs do
         allow_any_instance_of(Organization).to receive(:use_task_pages_api?).and_return(true)
         Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
           .each_with_index do |task, idx|
-            child_task = create(:ama_task, parent_id: task.id)
+            child_task = create(:ama_task, parent: task)
             child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
           end
         Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)

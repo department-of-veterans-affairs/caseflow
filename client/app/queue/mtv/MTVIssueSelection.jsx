@@ -35,6 +35,7 @@ export const MTVIssueSelection = ({ issues, onChange }) => {
       }}
       value={selectedIssues}
       options={getDisplayOptions(issues)}
+      strongLabel
     />
   );
 };

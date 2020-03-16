@@ -136,20 +136,21 @@ export const doDatesMatch = (date, query) => {
   return hasMatched;
 };
 
-export const getTime = (date) => {
-  return moment(date).tz('America/New_York').
-    format('h:mm a z').
-    replace(/(\w)(DT|ST)/g, '$1T');
-};
-
-export const getTimeInDifferentTimeZone = (date, timeZone) => {
-  return moment(date).tz(timeZone).
-    format('h:mm a z').
-    replace(/(\w)(DT|ST)/g, '$1T');
-};
-
 export const getDate = (date) => {
   return moment(date).format('YYYY-MM-DD');
+};
+
+export const getDisplayTime = (scheduledTimeString, timezone) => {
+  const val = scheduledTimeString ? moment(scheduledTimeString, 'HH:mm').format('h:mm a') : '';
+
+  if (timezone) {
+    const tz = moment().tz(timezone).
+      format('z');
+
+    return `${val} ${tz}`;
+  }
+
+  return val;
 };
 
 export const getMinutesToMilliseconds = (minutes) => {

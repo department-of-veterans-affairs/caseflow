@@ -4,7 +4,9 @@ class LegacyHearing < CaseflowRecord
   include CachedAttributes
   include AssociatedVacolsModel
   include AppealConcern
+  include HasHearingTask
   include HasVirtualHearing
+  include HearingTimeConcern
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -29,9 +31,6 @@ class LegacyHearing < CaseflowRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
-  has_one :hearing_task_association,
-          -> { includes(:hearing_task).where(tasks: { status: Task.open_statuses }) },
-          as: :hearing
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location
@@ -39,9 +38,6 @@ class LegacyHearing < CaseflowRecord
   # this is used to cache appeal stream for hearings
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
-
-  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string,
-           to: :time
 
   delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
            :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
@@ -58,6 +54,8 @@ class LegacyHearing < CaseflowRecord
            to: :appeal,
            allow_nil: true
 
+  delegate :scheduled_time, to: :time
+
   delegate :timezone, :name, to: :regional_office, prefix: true
 
   before_create :assign_created_by_user
@@ -66,23 +64,7 @@ class LegacyHearing < CaseflowRecord
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
 
-  def hearing_task?
-    !hearing_task_association.nil?
-  end
-
-  def disposition_task
-    if hearing_task?
-      hearing_task_association.hearing_task.children.detect { |child| child.type == AssignHearingDispositionTask.name }
-    end
-  end
-
-  def disposition_task_in_progress
-    disposition_task ? disposition_task.open_with_no_children? : false
-  end
-
-  def disposition_editable
-    disposition_task_in_progress || !hearing_task?
-  end
+  alias aod? aod
 
   def judge
     user
@@ -156,10 +138,6 @@ class LegacyHearing < CaseflowRecord
                          rescue RegionalOffice::NotFoundError
                            nil
                           end
-  end
-
-  def time
-    @time ||= HearingTimeService.new(hearing: self)
   end
 
   def request_type_location
@@ -299,6 +277,20 @@ class LegacyHearing < CaseflowRecord
     super || begin
       update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
+    end
+  end
+
+  # Sometimes, hearings get deleted in VACOLS, but not in Caseflow. Caseflow ends up
+  # with dangling legacy hearings records.
+  #
+  # See: https://github.com/department-of-veterans-affairs/caseflow/issues/12003
+  def vacols_hearing_exists?
+    begin
+      self.class.repository.load_vacols_data(self)
+      true
+    rescue Caseflow::Error::VacolsRecordNotFound => error
+      capture_exception(error)
+      false
     end
   end
 

@@ -74,10 +74,10 @@ describe HearingDispositionChangeJob, :all_dbs do
     # Property: Class that subclasses DispositionTask.
     context "when there are ChangeHearingDispositionTasks" do
       let!(:disposition_tasks) do
-        create_list(:assign_hearing_disposition_task, 6, parent: create(:hearing_task))
+        Array.new(6) { create(:assign_hearing_disposition_task, parent: create(:hearing_task)) }
       end
       let!(:change_disposition_tasks) do
-        create_list(:change_hearing_disposition_task, 3, parent: create(:hearing_task))
+        Array.new(3) { create(:change_hearing_disposition_task, parent: create(:hearing_task)) }
       end
 
       it "only returns the AssignHearingDispositionTasks" do

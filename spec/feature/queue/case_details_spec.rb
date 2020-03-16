@@ -708,7 +708,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on vet_name
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL, wait: 30)
         click_on "Caseflow"
-        expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION, wait: 30)
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, wait: 30)
         fontweight_visited = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
         expect(fontweight_visited).to be < fontweight_new
       end
@@ -1047,14 +1047,13 @@ RSpec.feature "Case details", :all_dbs do
 
   describe "case timeline" do
     context "when the only completed task is a TrackVeteranTask" do
-      let(:root_task) { create(:root_task) }
-      let(:appeal) { root_task.appeal }
+      let(:appeal) { create(:appeal) }
       let!(:tracking_task) do
         create(
           :track_veteran_task,
           :completed,
           appeal: appeal,
-          parent: root_task
+          parent: appeal.root_task
         )
       end
 

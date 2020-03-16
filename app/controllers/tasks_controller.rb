@@ -3,6 +3,7 @@
 class TasksController < ApplicationController
   include Errors
 
+  before_action :verify_view_access, only: [:index]
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
@@ -106,13 +107,6 @@ class TasksController < ApplicationController
     render json: { tasks: json_tasks(tasks)[:data] }
   end
 
-  def ready_for_hearing_schedule
-    ro = HearingDayMapper.validate_regional_office(params[:ro])
-    tasks = HearingCoordinatorScheduleQueue.new(current_user, regional_office: ro).tasks
-
-    render json: json_tasks(tasks, ama_serializer: WorkQueue::RegionalOfficeTaskSerializer)
-  end
-
   def reschedule
     if !task.is_a?(NoShowHearingTask)
       fail(Caseflow::Error::ActionForbiddenError, message: COPY::NO_SHOW_HEARING_TASK_RESCHEDULE_FORBIDDEN_ERROR)
@@ -150,6 +144,16 @@ class TasksController < ApplicationController
 
   def queue_config
     QueueConfig.new(assignee: user).to_hash
+  end
+
+  def verify_view_access
+    return true unless FeatureToggle.enabled?(:scm_view_judge_assign_queue)
+
+    return true if user == current_user
+
+    if !SpecialCaseMovementTeam.singleton.user_has_access?(current_user)
+      fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by members of the Case Movement Team."
+    end
   end
 
   def verify_task_access
