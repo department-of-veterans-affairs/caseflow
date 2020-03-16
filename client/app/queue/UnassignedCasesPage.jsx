@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
+
 import TaskTable from './components/TaskTable';
 import {
   initialAssignTasksToUser
 } from './QueueActions';
 import AssignWidget from './components/AssignWidget';
-import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY.json';
+import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY';
 import {
   resetErrorMessages,
   resetSuccessMessages
@@ -93,6 +95,24 @@ const mapStateToProps = (state, ownProps) => {
     success,
     error
   };
+};
+
+UnassignedCasesPage.propTypes = {
+  tasks: PropTypes.array,
+  userId: PropTypes.number,
+  selectedTasks: PropTypes.array,
+  distributionCompleteCasesLoading: PropTypes.bool,
+  initialAssignTasksToUser: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
+  success: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  })
 };
 
 const mapDispatchToProps = (dispatch) =>

@@ -113,7 +113,10 @@ class CaseListTable extends React.PureComponent {
 
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  clearCaseListSearch: PropTypes.func,
+  userRole: PropTypes.string,
+  userCssId: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
