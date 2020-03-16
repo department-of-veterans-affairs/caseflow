@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import moment from 'moment';
 
-import { HearingTime, HearingDocketTag, HearingAppellantName } from './AssignHearingsFields';
+import { HearingDocketTag, HearingAppellantName } from './AssignHearingsFields';
+import { HearingTime } from '../HearingTime';
 import {
   encodeQueryParams,
   getQueryParams
@@ -32,8 +33,12 @@ export default class UpcomingHearingsTable extends React.PureComponent {
     window.history.replaceState('', '', encodeQueryParams(currentQueryParams));
   }
 
-  isCentralOffice = () => {
-    return this.props.selectedRegionalOffice === 'C';
+  getLinkToAppeal = (appealExternalId) => {
+    const { selectedHearingDay, selectedRegionalOffice } = this.props;
+    const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
+    const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
+
+    return `/queue/appeals/${appealExternalId}/${qry}`;
   }
 
   getColumns = () => {
@@ -86,9 +91,7 @@ export default class UpcomingHearingsTable extends React.PureComponent {
       {
         header: 'Time',
         align: 'left',
-        valueFunction: (row) => (
-          <HearingTime hearing={row} isCentralOffice={this.isCentralOffice()} />
-        )
+        valueFunction: (row) => <HearingTime hearing={row} />
       }
     ];
 

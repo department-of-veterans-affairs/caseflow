@@ -21,7 +21,7 @@ class TaskFilter
     where_clause.empty? ? tasks : tasks.joins(CachedAppeal.left_join_from_tasks_clause).where(*where_clause)
   end
 
-  # filter_params = ["col=docketNumberColumn&val=legacy,evidence_submission", "col=taskColumn&val=TranslationTask"]
+  # filter_params = ["col=docketNumberColumn&val=legacy|evidence_submission", "col=taskColumn&val=TranslationTask"]
   #
   # [
   #   "cached_appeals_attributes.docket_type IN (?) AND tasks.type in (?)",
@@ -31,14 +31,7 @@ class TaskFilter
   def where_clause
     return [] if filter_params.empty?
 
-    filters = filter_params.map do |filter_string|
-      if filter_string.include?("col=#{Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME}")
-        QueueFilterParameter.from_suggested_location_col_filter_string(filter_string)
-      else
-        QueueFilterParameter.from_string(filter_string)
-      end
-    end
-
+    filters = filter_params.map(&QueueFilterParameter.method(:from_string))
     where_string = TaskFilter.where_string_from_filters(filters)
     where_arguments = filters.map(&:values).reject(&:empty?)
 

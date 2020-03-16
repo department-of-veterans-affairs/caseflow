@@ -78,7 +78,7 @@ describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :controller d
       subject
 
       expect(JSON.parse(response.body).keys).to match_array(
-        %w[tasks tasks_per_page task_page_count total_task_count]
+        %w[tasks tasks_per_page task_page_count total_task_count docket_line_index]
       )
     end
 

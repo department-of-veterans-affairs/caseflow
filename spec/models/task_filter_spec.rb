@@ -54,7 +54,7 @@ describe TaskFilter, :all_dbs do
 
       let(:args) { { filter_params: filter_params, tasks: tasks } }
 
-      it "instantiates with given arguments" do
+      it "instantiates with given arguments", :aggregate_failures do
         expect { subject }.to_not raise_error
 
         expect(subject.filter_params).to eq(filter_params)
@@ -91,9 +91,9 @@ describe TaskFilter, :all_dbs do
       let(:val) { URI.escape(URI.escape(unescaped_val)) }
       let(:filter_params) { ["col=#{col}&val=#{val}"] }
 
-      it "calls the suggested location method on QueueFilterParameter" do
+      it "calls the QueueFilterParameter#from_string" do
         expect(QueueFilterParameter)
-          .to receive(:from_suggested_location_col_filter_string)
+          .to receive(:from_string)
           .once.with(filter_params.first)
           .and_return({})
         subject
@@ -130,7 +130,7 @@ describe TaskFilter, :all_dbs do
       context "when filter includes TranslationTasks" do
         let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}"] }
 
-        it "returns only translation tasks assigned to the current organization" do
+        it "returns only translation tasks assigned to the current organization", :aggregate_failures do
           expect(subject.map(&:id)).to_not match_array(all_tasks.map(&:id))
           expect(subject.map(&:type).uniq).to eq([TranslationTask.name])
           expect(subject.map(&:id)).to match_array(translation_tasks.map(&:id))
@@ -139,10 +139,10 @@ describe TaskFilter, :all_dbs do
 
       context "when filter includes TranslationTasks and FoiaTasks" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}|#{FoiaTask.name}"]
         end
 
-        it "returns all translation and FOIA tasks assigned to the current organization" do
+        it "returns all translation and FOIA tasks assigned to the current organization", :aggregate_failures do
           expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
           expect(subject.map(&:id)).to match_array(translation_tasks.map(&:id) + foia_tasks.map(&:id))
         end
@@ -201,7 +201,7 @@ describe TaskFilter, :all_dbs do
 
       context "when filter includes Boston and Washington" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name}&val=Boston,Washington"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name}&val=Boston|Washington"]
         end
 
         it "returns tasks where the closest regional office is Boston or Washington" do
@@ -260,7 +260,7 @@ describe TaskFilter, :all_dbs do
 
       context "when filter includes direct review and hearing" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name}&val=#{docket_types[0]},#{docket_types[2]}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name}&val=#{docket_types[0]}|#{docket_types[2]}"]
         end
 
         it "returns tasks with direct review dockets or hearing dockets" do
@@ -339,7 +339,7 @@ describe TaskFilter, :all_dbs do
 
       context "when filter includes Original and Supplemental" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']},#{case_types['2']}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']}|#{case_types['2']}"]
         end
 
         it "returns tasks with Original or Supplemental case types", skip: "flakey" do
@@ -349,7 +349,7 @@ describe TaskFilter, :all_dbs do
 
       context "when filter includes Original and Supplemental and AOD" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']},#{case_types['2']},is_aod"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']}|#{case_types['2']}|is_aod"]
         end
 
         it "returns tasks with Original or Supplemental case types or AOD cases" do
@@ -413,7 +413,7 @@ describe TaskFilter, :all_dbs do
 
       context "when filter includes Boston and Washington" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=#{users.first.css_id},#{users.second.css_id}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=#{users.first.css_id}|#{users.second.css_id}"]
         end
 
         it "returns tasks where the closest regional office is Boston or Washington" do

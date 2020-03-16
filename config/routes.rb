@@ -308,6 +308,8 @@ Rails.application.routes.draw do
   namespace :test do
     get "/error", to: "users#show_error"
 
+    resources :hearings, only: [:index]
+
     resources :users, only: [:index, :show]
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
