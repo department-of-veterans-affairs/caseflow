@@ -32,7 +32,7 @@ class VirtualHearingLink extends React.PureComponent {
       }
     );
 
-    return `https://${virtualHearing.clientHost}/webapp/?${decodeURIComponent(qs)}`;
+    return `https://${virtualHearing.clientHost}/bva-app/?${decodeURIComponent(qs)}`;
   }
 
   role = () => {
