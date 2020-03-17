@@ -26,6 +26,28 @@ describe JudgeTask, :all_dbs do
       end
     end
 
+    context "user is a Special Case Movement team member" do
+      let(:special_case_movement_user) do
+        user = create(:user)
+        SpecialCaseMovementTeam.singleton.add_user(user)
+        user
+      end
+      let(:user) { special_case_movement_user }
+
+      before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
+
+      context "in the assign phase" do
+        it "should return the Case Management assignment actions" do
+          expect(subject).to eq(
+            [
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+              Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+            ].map { |action| subject_task.build_action_hash(action, judge) }
+          )
+        end
+      end
+    end
+
     context "the task is assigned to the current user" do
       context "in the assign phase" do
         it "should return the assignment action" do
