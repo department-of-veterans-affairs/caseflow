@@ -2,19 +2,27 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { MotionsAttorneyDisposition } from './MotionsAttorneyDisposition';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams, useRouteMatch, useHistory } from 'react-router-dom';
 
 import { fetchJudges } from '../QueueActions';
 import { submitMTVAttyReview } from './mtvActions';
 import { taskById, appealWithDetailSelector } from '../selectors';
 import { taskActionData } from '../utils';
 
-export const ReviewMotionToVacateView = (props) => {
-  const { task, appeal, judges, submitting } = props;
+export const ReviewMotionToVacateView = () => {
+  const { taskId, appealId } = useParams();
+  const match = useRouteMatch();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-  const { selected } = taskActionData(props);
+  const task = useSelector((state) => taskById(state, { taskId }));
+  const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
+  const judges = useSelector((state) => state.queue.judges);
+  const { submitting } = useSelector((state) => state.mtv.attorneyView);
+
+  const { selected } = taskActionData({ task,
+    match });
 
   const judgeOptions = Object.values(judges).map(({ id: value, display_name: label }) => ({
     label,
@@ -30,12 +38,18 @@ export const ReviewMotionToVacateView = (props) => {
       assigned_to_type: 'User'
     };
 
-    await props.submitMTVAttyReview(newTask, props);
+    await dispatch(
+      submitMTVAttyReview({
+        appeal,
+        newTask,
+        history
+      })
+    );
   };
 
   useEffect(() => {
     if (!judgeOptions.length) {
-      props.fetchJudges();
+      dispatch(fetchJudges());
     }
   });
 
@@ -62,30 +76,4 @@ ReviewMotionToVacateView.propTypes = {
   error: PropTypes.bool
 };
 
-const mapStateToProps = (state, { match }) => {
-  const { taskId, appealId } = match.params;
-
-  return {
-    task: taskById(state, { taskId }),
-    appeal: appealWithDetailSelector(state, { appealId }),
-    judges: state.queue.judges,
-    error: state.mtv.attorneyView.error,
-    submitting: state.mtv.attorneyView.submitting
-  };
-};
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      fetchJudges,
-      submitMTVAttyReview
-    },
-    dispatch
-  );
-
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(ReviewMotionToVacateView)
-);
+export default ReviewMotionToVacateView;
