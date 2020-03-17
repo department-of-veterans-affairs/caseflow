@@ -20,7 +20,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       )
     end
   end
-  let!(:root_task) { create(:root_task, appeal: appeal) }
+  let!(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
   let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
   let!(:hyperlink) { "https://va.gov/fake-link-to-file" }
@@ -54,6 +54,19 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    context "When the appeal is not outcoded" do
+      let!(:root_task) { create(:root_task, appeal: appeal) }
+
+      it "does not show option to create a VacateMotionMailTask" do
+        User.authenticate!(user: mail_user)
+        visit "/queue/appeals/#{appeal.uuid}"
+        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
+        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        expect(page).to have_content(COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL)
+        expect(page).to_not have_content(COPY::VACATE_MOTION_MAIL_TASK_LABEL)
+      end
+    end
 
     it "gets assigned to Litigation Support" do
       # When mail team creates VacateMotionMailTask, it gets assigned to the lit support organization
@@ -106,6 +119,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
         # Return back to user's queue
         expect(page).to have_current_path("/queue")
 
+        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
+        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+
         # Verify new task was created
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
         expect(judge_task).to_not be_nil
@@ -113,7 +129,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
       it "motions attorney recommends denied decision to judge and fills in hyperlink" do
         send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
-
         find("label[for=disposition_denied]").click
         expect(page).to have_content("Optional")
         expect(page).to have_content("Upload the draft to your shared drive and add the location below")
@@ -124,6 +139,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         # Return back to user's queue
         expect(page).to have_current_path("/queue")
+
+        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
+        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
 
         # Verify new task was created
         judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
@@ -520,8 +538,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         fill_in "Document ID:", with: valid_document_id
         expect(page).to have_content(judge.full_name)
         fill_in "notes", with: "all done"
-
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content(
           "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
@@ -625,7 +642,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(page).to have_content(judge.full_name)
         fill_in "notes", with: "all done"
 
-        click_on "Continue"
+        click_on "Submit"
 
         expect(page).to have_content(
           "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
@@ -699,6 +716,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
     vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
     visit "/queue/appeals/#{vacate_stream.uuid}"
     expect(page).to have_content("Vacate")
+    find("span", text: "View all cases").click
+    expect(find_by_id("table-row-2")).to have_content("Vacate", appeal.docket_number)
   end
 
   def send_to_judge(user:, appeal:, motions_attorney_task:)

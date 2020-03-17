@@ -277,7 +277,7 @@ HearingLocationDropdown.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
   update: PropTypes.func,
-  regionalOffice: PropTypes.object
+  regionalOffice: PropTypes.string
 };
 
 export const HoldOpenDropdown = ({ hearing, readOnly, update }) => (
@@ -324,7 +324,7 @@ TimeRadioButtons.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
   update: PropTypes.func,
-  regionalOffice: PropTypes.object
+  regionalOffice: PropTypes.string
 };
 
 export const PreppedCheckbox = ({ hearing, update, readOnly }) => (

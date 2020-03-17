@@ -28,7 +28,8 @@ class EndProduct
 
   RAMP_CODES = {
     "682HLRRRAMP" => "Higher-Level Review Rating",
-    "683SCRRRAMP" => "Supplemental Claim Review Rating"
+    "683SCRRRAMP" => "Supplemental Claim Review Rating",
+    "683HAERRAMP" => "Higher-Level Review Additional Evidence Rating"
   }.freeze
 
   DTA_CODES = {

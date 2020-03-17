@@ -127,6 +127,6 @@ HearingTime.propTypes = {
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
-  regionalOffice: PropTypes.object,
+  regionalOffice: PropTypes.string,
   value: PropTypes.string
 };
