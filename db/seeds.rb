@@ -1133,6 +1133,7 @@ class SeedDB
         assigned_to: User.find_by(css_id: "BVAEBECKER"),
         appeal: FactoryBot.create(:appeal)
       )
+    end
 
     FactoryBot.create_list(
       :appeal,
