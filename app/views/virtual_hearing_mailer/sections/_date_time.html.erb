@@ -2,5 +2,5 @@
   Date and Time
 </h3>
 <p>
-  <%= @virtual_hearing.hearing.time.local_time.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
+  <%= @virtual_hearing.hearing.scheduled_for.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
 </p>

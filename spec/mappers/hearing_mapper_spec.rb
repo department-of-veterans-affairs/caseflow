@@ -62,8 +62,7 @@ describe HearingMapper do
                                            regional_office_key: regional_office_key,
                                            type: type)
     end
-    let(:manila_ro_asia_manila) { "RO58" }
-    let(:regional_office_key) { manila_ro_asia_manila }
+    let(:regional_office_key) { "RO58" }
     let(:datetime) { Time.new(2013, 9, 5, 20, 0, 0, "-08:00") }
 
     context "when travel board" do

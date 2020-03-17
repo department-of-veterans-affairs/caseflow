@@ -5,9 +5,6 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:legacy_hearing) { create(:legacy_hearing) }
   let(:ama_hearing) { create(:hearing) }
-  let(:cheyenne_ro_mountain) { "RO42" }
-  let(:oakland_ro_pacific) { "RO43" }
-  let(:baltimore_ro_eastern) { "RO13" }
 
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
@@ -62,7 +59,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
     context "when updating an existing hearing to a virtual hearing" do
       let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
-      let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain, judge: judge) }
+      let(:hearing) { create(:hearing, regional_office: "RO42", judge: judge) }
       let(:virtual_hearing_params) { {} }
 
       subject do
@@ -100,7 +97,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
 
         context "with hearing that already has a virtual hearing" do
-          let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
+          let(:hearing) { create(:hearing, regional_office: "RO42") }
           let!(:virtual_hearing) do
             create(
               :virtual_hearing,
@@ -166,7 +163,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
 
         context "with hearing that already has a virtual hearing" do
-          let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
+          let(:hearing) { create(:hearing, regional_office: "RO42") }
 
           let!(:virtual_hearing) do
             create(
@@ -187,7 +184,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       end
 
       context "with the status param and existing virtual hearing" do
-        let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
+        let(:hearing) { create(:hearing, regional_office: "RO42") }
 
         let!(:virtual_hearing) do
           create(
@@ -213,7 +210,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
     context "when updating the judge of an existing virtual hearing" do
       let(:new_judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
-      let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
+      let(:hearing) { create(:hearing, regional_office: "RO42") }
       let!(:virtual_hearing) do
         create(
           :virtual_hearing,
@@ -297,43 +294,12 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
   end
 
   describe "#show" do
-    let!(:hearing) { create(:hearing, :with_tasks, scheduled_time: "8:30AM") }
-    let(:expected_time_zone) { "America/New_York" }
-    # for "America/New_York", "-04:00" or "-05:00" depending on daylight savings time
-    let(:utc_offset) do
-      hours, minutes = Time.zone.now.in_time_zone(expected_time_zone).utc_offset.divmod(60)[0].divmod(60)
-      hour_string = (hours < 0) ? format("%03i", hours) : format("+%02i", hours)
-      "#{hour_string}:#{format('%02i', minutes)}"
-    end
-
-    subject do
-      get :show, as: :json, params: { id: hearing.external_id }
-    end
+    let!(:hearing) { create(:hearing, :with_tasks) }
 
     it "returns hearing details" do
-      expect(subject.status).to eq 200
-    end
+      get :show, as: :json, params: { id: hearing.external_id }
 
-    shared_examples_for "returns the correct hearing time in EST" do
-      it "returns the correct hearing time in EST", :aggregate_failures do
-        body = JSON.parse(subject.body)
-
-        expect(body["data"]["regional_office_timezone"]).to eq(expected_time_zone)
-        expect(body["data"]["scheduled_time_string"]).to eq("08:30")
-        expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000#{utc_offset}")
-      end
-    end
-
-    it_should_behave_like "returns the correct hearing time in EST"
-
-    context "for user on west coast" do
-      let!(:user) do
-        User.authenticate!(
-          user: create(:user, :judge, selected_regional_office: oakland_ro_pacific, station_id: 343)
-        )
-      end
-
-      it_should_behave_like "returns the correct hearing time in EST"
+      expect(response.status).to eq 200
     end
   end
 
@@ -348,7 +314,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       it "returns an address" do
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: appeal.external_id, regional_office: baltimore_ro_eastern }
+            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 200
       end
@@ -361,7 +327,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       it "returns an address" do
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: legacy_appeal.external_id, regional_office: baltimore_ro_eastern }
+            params: { appeal_id: legacy_appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 200
       end
@@ -382,7 +348,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       it "returns an error response", :aggregate_failures do
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: appeal.external_id, regional_office: baltimore_ro_eastern }
+            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 500
         expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
@@ -406,7 +372,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       it "returns an error response", :aggregate_failures do
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: appeal.external_id, regional_office: baltimore_ro_eastern }
+            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 500
         expect(JSON.parse(response.body).dig("errors").first.dig("detail"))

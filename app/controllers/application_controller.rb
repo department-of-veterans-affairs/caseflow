@@ -2,8 +2,8 @@
 
 class ApplicationController < ApplicationBaseController
   before_action :set_application
-  around_action :set_timezone
-  before_action :setup_fakes
+  before_action :set_timezone,
+                :setup_fakes
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
@@ -207,12 +207,8 @@ class ApplicationController < ApplicationBaseController
   end
 
   def set_timezone
-    old_time_zone = Time.zone
     Time.zone = session[:timezone] || current_user&.timezone
     session[:timezone] ||= current_user&.timezone
-    yield
-  ensure
-    Time.zone = old_time_zone
   end
 
   # This is used in development mode to:
