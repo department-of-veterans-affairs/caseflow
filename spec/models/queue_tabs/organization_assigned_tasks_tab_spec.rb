@@ -44,8 +44,8 @@ describe OrganizationAssignedTasksTab, :postgres do
       let!(:assignee_on_hold_tasks) { create_list(:ama_task, 3, :assigned, assigned_to: assignee) }
       let!(:on_hold_tasks_children) do
         assignee_on_hold_tasks.map do |task|
-          create(:ama_task, :in_progress, parent_id: task.id)
-          create(:timed_hold_task, :assigned, parent_id: task.id)
+          create(:ama_task, :in_progress, parent: task)
+          create(:timed_hold_task, :assigned, parent: task)
           task.update!(status: Constants.TASK_STATUSES.on_hold)
           task.children
         end.flatten

@@ -137,7 +137,7 @@ reset: reset-dbs enable-feature-flags ## Resets databases and enable feature fla
 
 reset-dbs: ## Resets databases
 	DB=etl bundle exec rake db:drop db:create db:schema:load
-	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
+	bundle exec rake db:drop db:create db:schema:load local:vacols:seed spec:setup_vacols db:seed
 
 enable-feature-flags: ## enable all feature flags
 	bundle exec rails runner scripts/enable_features_dev.rb

@@ -28,6 +28,7 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
       subject
       virtual_hearing.reload
       expect(virtual_hearing.veteran_email_sent).to eq(true)
+      expect(virtual_hearing.judge_email_sent).to eq(true)
       expect(virtual_hearing.representative_email_sent).to eq(true)
       expect(virtual_hearing.establishment.processed?).to eq(true)
     end

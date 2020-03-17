@@ -374,12 +374,11 @@ describe ColocatedTask, :all_dbs do
     let(:colocated_user) { create(:user) }
     let(:colocated_task) do
       # We expect all ColocatedTasks that are assigned to individuals to have parent tasks assigned to the organization.
-      org_task = create(:colocated_task, assigned_by: attorney)
+      org_task = create(:colocated_task, appeal: appeal_1, assigned_by: attorney)
       create(
         :colocated_task,
         assigned_by: attorney,
         assigned_to: colocated_user,
-        appeal: appeal_1,
         parent: org_task
       )
     end

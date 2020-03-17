@@ -22,7 +22,8 @@ describe Appeal, :all_dbs do
         legacy_opt_in_approved: appeal.legacy_opt_in_approved,
         veteran_is_not_claimant: appeal.veteran_is_not_claimant,
         stream_docket_number: appeal.docket_number,
-        stream_type: stream_type
+        stream_type: stream_type,
+        established_at: Time.zone.now
       )
       expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
     end
@@ -37,7 +38,8 @@ describe Appeal, :all_dbs do
           legacy_opt_in_approved: appeal.legacy_opt_in_approved,
           veteran_is_not_claimant: appeal.veteran_is_not_claimant,
           stream_docket_number: appeal.docket_number,
-          stream_type: stream_type
+          stream_type: stream_type,
+          established_at: Time.zone.now
         )
         expect(Appeal.de_novo.find_by(stream_docket_number: appeal.docket_number)).to_not be_nil
         expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)

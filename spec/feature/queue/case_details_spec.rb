@@ -134,6 +134,9 @@ RSpec.feature "Case details", :all_dbs do
           .click_link
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+
+        expect(page).to have_selector(".cf-hearing-badge")
+
         scroll_to("#hearings-section")
         worksheet_link = page.find(
           "a[href='/hearings/worksheet/print?keep_open=true&hearing_ids=#{hearing.external_id}']"
@@ -1047,14 +1050,13 @@ RSpec.feature "Case details", :all_dbs do
 
   describe "case timeline" do
     context "when the only completed task is a TrackVeteranTask" do
-      let(:root_task) { create(:root_task) }
-      let(:appeal) { root_task.appeal }
+      let(:appeal) { create(:appeal) }
       let!(:tracking_task) do
         create(
           :track_veteran_task,
           :completed,
           appeal: appeal,
-          parent: root_task
+          parent: appeal.root_task
         )
       end
 

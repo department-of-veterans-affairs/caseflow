@@ -105,7 +105,9 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      claimants { [create(:claimant, :advanced_on_docket_due_to_age)] }
+      after(:create) do |appeal, _evaluator|
+        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+      end
     end
 
     trait :advanced_on_docket_due_to_motion do

@@ -178,7 +178,7 @@ export const MTVJudgeDisposition = ({
 
         <TextareaField
           name="instructions"
-          label={JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL}
+          label={sprintf(JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
           onChange={(val) => setInstructions(val)}
           value={instructions}
           className={['mtv-decision-instructions']}
