@@ -73,7 +73,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             title="Cases to Assign | Caseflow"
             render={
               () => <UnassignedCasesPage
-                userId={(match?.params.userId || userId).toString()} />}
+                userId={userId.toString()} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
@@ -100,7 +100,7 @@ JudgeAssignTaskListView.propTypes = {
   organizations: PropTypes.array
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   const {
     queue: {
       attorneysOfJudge
@@ -112,7 +112,8 @@ const mapStateToProps = (state) => {
     userCssId: state.ui.userCssId,
     targetUserCssId: state.ui.targetUserCssId,
     tasksByUserId: getTasksByUserId(state),
-    attorneysOfJudge
+    attorneysOfJudge,
+    userId: ownProps.match.params.userId
   };
 };
 
