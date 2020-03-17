@@ -170,35 +170,22 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     end
   end
 
-  describe "GET /user?css_id=<css_id>" do
+  describe "GET /user" do
     let(:user) { create(:user) }
     let(:params) { {} }
 
-    subject { get(:search_by_css_id, params: params) }
+    subject { get(:search, params: params) }
 
     before { User.authenticate!(user: user) }
 
-    context "when the user is not a BVA admin" do
-      before { allow_any_instance_of(Bva).to receive(:user_has_access?).and_return(false) }
-
-      it "redirects to /unauthorized" do
-        subject
-
-        expect(response.status).to eq(302)
-        expect(response.body).to match(/unauthorized/)
-      end
-    end
-
-    context "when the user is a BVA admin" do
-      before { allow_any_instance_of(Bva).to receive(:user_has_access?).and_return(true) }
-
+    context "when searching by css_id" do
       context "when no css_id parameter is provided" do
         it "returns an error" do
           subject
 
           expect(response.status).to eq(400)
           response_body = JSON.parse(response.body)
-          expect(response_body["errors"].first["detail"]).to eq("Must provide a css id")
+          expect(response_body["errors"].first["detail"]).to eq("Must provide a css id or user id")
         end
       end
 
@@ -215,6 +202,42 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
 
       context "when a valid css_id parameter is provided" do
         let(:params) { { css_id: user.css_id } }
+
+        it "returns a valid response with the expected user" do
+          subject
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+          expect(response_body["user"]["id"]).to eq(user.id)
+          expect(response_body["user"]["css_id"]).to eq(user.css_id)
+        end
+      end
+    end
+
+    context "when searching by user id" do
+      context "when no id parameter is provided" do
+        it "returns an error" do
+          subject
+
+          expect(response.status).to eq(400)
+          response_body = JSON.parse(response.body)
+          expect(response_body["errors"].first["detail"]).to eq("Must provide a css id or user id")
+        end
+      end
+
+      context "when an incorrect css_id parameter is provided" do
+        let(:id) { "0" }
+        let(:params) { { id: id } }
+
+        it "returns an error" do
+          subject
+
+          expect(response.status).to eq(404)
+        end
+      end
+
+      context "when a valid css_id parameter is provided" do
+        let(:params) { { id: user.id } }
 
         it "returns a valid response with the expected user" do
           subject

@@ -76,7 +76,7 @@ class AssignedCasesPage extends React.Component {
         onTaskAssignment={(params) => props.reassignTasksToUser(params)}
         selectedTasks={selectedTasks} />
       <TaskTable
-        includeHearingBadge
+        includeBadges
         includeSelect
         includeDetailsLink
         includeType

@@ -220,7 +220,7 @@ Rails.application.routes.draw do
   resources :users, only: [:index] do
     get 'represented_organizations', on: :member
   end
-  get 'user', to: 'users#search_by_css_id'
+  get 'user', to: 'users#search'
   get 'user_info/represented_organizations'
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
@@ -307,6 +307,8 @@ Rails.application.routes.draw do
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
+
+    resources :hearings, only: [:index]
 
     resources :users, only: [:index, :show]
     if ApplicationController.dependencies_faked?

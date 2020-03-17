@@ -2,7 +2,7 @@
 name: Flaky test task
 about: Template for a new task to investigate and fix a flaky test
 title: "[Flaky Test] "
-labels: Flaky test, tech-improvement
+labels: Eng: Flaky Test, Type: Tech-Improvement
 assignees: ''
 
 ---

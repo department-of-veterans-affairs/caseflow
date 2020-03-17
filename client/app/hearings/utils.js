@@ -81,7 +81,7 @@ export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
 
 export const virtualHearingRoleForUser = (user, hearing) => (
-  user.userCanAssignHearingSchedule || user.userId.toString() === hearing.judgeId ?
+  user.userCanAssignHearingSchedule || user.userId === hearing.judgeId ?
     VIRTUAL_HEARING_HOST :
     VIRTUAL_HEARING_GUEST
 )

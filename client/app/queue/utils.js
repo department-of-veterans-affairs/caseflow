@@ -16,6 +16,7 @@ import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOL
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import COPY from '../../COPY';
 import { formatDateStrUtc } from '../util/DateUtil';
 
@@ -37,6 +38,14 @@ export const getUndecidedIssues = (issues) => _.filter(issues, (issue) => {
     return true;
   }
 });
+
+export const mostRecentHeldHearingForAppeal = (appeal) => {
+  const hearings = appeal.hearings.
+    filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
+    sort((h1, h2) => h1.date < h2.date ? 1 : -1);
+
+  return hearings.length ? hearings[0] : null;
+};
 
 export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
   return {
@@ -526,7 +535,7 @@ export const taskHasCompletedHold = (task) => {
       diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
   }
 
-  return taskIsOnHold(task);
+  return false;
 };
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
