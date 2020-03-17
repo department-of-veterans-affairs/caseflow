@@ -62,12 +62,8 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
   end
 
   context "SCM user can view judge's queue" do
-    let(:appeal) { create(:appeal) }
+    let!(:appeal) { create(:appeal, :assigned_to_judge, associated_judge: judge_one.user) }
     let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, staff: vacols_user_one)) }
-
-    before do
-      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, parent: appeal.root_task, appeal: appeal)
-    end
 
     context "with both legacy and ama tasks" do
       scenario "viewing the assign task queue" do
