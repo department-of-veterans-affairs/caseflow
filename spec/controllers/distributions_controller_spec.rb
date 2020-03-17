@@ -2,10 +2,15 @@
 
 describe DistributionsController, :all_dbs do
   describe "#new" do
-    context "current user is not a judge" do
+    let(:user) { create(:user) }
+
+    subject { get :new, params: { user_id: user.id } }
+
+    before { User.authenticate!(user: user) }
+
+    context "provided user is not a judge" do
       it "renders an error" do
-        User.authenticate!(user: create(:user))
-        get :new
+        subject
 
         body = JSON.parse(response.body)
         expect(body["errors"].first["error"]).to eq "not_judge"
@@ -14,14 +19,11 @@ describe DistributionsController, :all_dbs do
 
     context "there is a pending distribution" do
       it "returns the pending distribution and no more were created" do
-        judge = create(:user)
-        create(:staff, :judge_role, sdomainid: judge.css_id)
-        User.authenticate!(user: judge)
+        create(:staff, :judge_role, sdomainid: user.css_id)
 
-        distribution = Distribution.create!(judge: judge, status: "pending")
+        distribution = Distribution.create!(judge: user, status: "pending")
         number_of_distributions = Distribution.count
-
-        get :new
+        subject
 
         body = JSON.parse(response.body)
         expect(body["distribution"]["id"]).to eq distribution.id
@@ -30,12 +32,10 @@ describe DistributionsController, :all_dbs do
       end
     end
 
-    context "current user is a judge" do
+    context "provided user is a judge" do
       it "renders the created distribution as json" do
-        judge = create(:user)
-        create(:staff, :judge_role, sdomainid: judge.css_id)
-        User.authenticate!(user: judge)
-        get :new
+        create(:staff, :judge_role, sdomainid: user.css_id)
+        subject
 
         expect(response.status).to eq 200
         body = JSON.parse(response.body)

@@ -8,7 +8,7 @@ class DistributionsController < ApplicationController
   end
 
   def new
-    distribution = Distribution.create!(judge: current_user)
+    distribution = Distribution.create!(judge: judge)
     enqueue_distribution_job(distribution)
     render_single(distribution)
   rescue ActiveRecord::RecordInvalid => error
@@ -27,11 +27,15 @@ class DistributionsController < ApplicationController
     render_single(distribution)
   end
 
+  def judge
+    @judge ||= User.find(params[:user_id])
+  end
+
   private
 
   def enqueue_distribution_job(distribution)
     if run_async?
-      StartDistributionJob.perform_later(distribution, current_user)
+      StartDistributionJob.perform_later(distribution, judge)
     else
       StartDistributionJob.perform_now(distribution)
     end
@@ -96,6 +100,6 @@ class DistributionsController < ApplicationController
   end
 
   def pending_distribution
-    Distribution.pending_for_judge(current_user)
+    Distribution.pending_for_judge(judge)
   end
 end
