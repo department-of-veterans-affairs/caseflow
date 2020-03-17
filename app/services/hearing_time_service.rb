@@ -90,10 +90,4 @@ class HearingTimeService
   def central_office_time
     local_time.in_time_zone("America/New_York")
   end
-
-  def scheduled_time
-    return @hearing.scheduled_time if @hearing.is_a?(Hearing)
-
-    Time.zone.local_to_utc(local_time).change(year: 2000, month: 1, day: 1)
-  end
 end
