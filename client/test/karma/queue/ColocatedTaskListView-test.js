@@ -128,7 +128,7 @@ describe('ColocatedTaskListView', () => {
                 {
                     "filter_options": [],
                     "filterable": false,
-                    "name": "hearingBadgeColumn"
+                    "name": "badgesColumn"
                 },
                 {
                     "filter_options": [],
@@ -222,7 +222,7 @@ describe('ColocatedTaskListView', () => {
                 {
                     "filter_options": [],
                     "filterable": false,
-                    "name": "hearingBadgeColumn"
+                    "name": "badgesColumn"
                 },
                 {
                     "filter_options": [],
@@ -269,7 +269,7 @@ describe('ColocatedTaskListView', () => {
                 {
                     "filter_options": [],
                     "filterable": false,
-                    "name": "hearingBadgeColumn"
+                    "name": "badgesColumn"
                 },
                 {
                     "filter_options": [],
