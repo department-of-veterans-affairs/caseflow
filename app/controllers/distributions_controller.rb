@@ -14,10 +14,7 @@ class DistributionsController < ApplicationController
     enqueue_distribution_job(distribution)
     render_single(distribution)
   rescue ActiveRecord::RecordInvalid => error
-    errors = error.record.errors.details.values.flatten.map { |e| e[:error] }
-    return render_single(pending_distribution) if errors.include? :pending_distribution
-
-    render_403_error(errors)
+    render_errors(error)
   end
 
   def show
@@ -37,6 +34,13 @@ class DistributionsController < ApplicationController
     else
       StartDistributionJob.perform_now(distribution)
     end
+  end
+
+  def render_errors(error)
+    errors = error.record.errors.details.values.flatten.map { |e| e[:error] }
+    return render_single(pending_distribution) if errors.include? :pending_distribution
+
+    render_403_error(errors)
   end
 
   def render_single(distribution)

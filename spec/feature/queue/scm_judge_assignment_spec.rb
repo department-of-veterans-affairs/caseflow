@@ -106,14 +106,8 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
       let!(:appeal) { create(:appeal, :ready_for_distribution) }
 
       before do
-        allow_any_instance_of(DirectReviewDocket)
-          .to receive(:nonpriority_receipts_per_year)
-          .and_return(100)
-
-        allow(Docket)
-          .to receive(:nonpriority_decisions_per_year)
-          .and_return(1000)
-
+        allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
+        allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
         allow_any_instance_of(LegacyDocket).to receive(:weight).and_return(101.4)
         allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
       end
@@ -121,8 +115,17 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
       scenario "viewing the assign task queue" do
         visit "/queue/#{judge_one.user.id}/assign"
 
+        expect(page).to have_content("Assign 1 Cases for #{judge_one.user.css_id}")
+        expect(page).to_not have_content("#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
+
         click_on("Request more cases")
         expect(page).to have_content("Distribution complete")
+
+        expect(page).to have_content("Assign 2 Cases for #{judge_one.user.css_id}")
+
+        expect(page).to have_content(appeal.veteran_file_number)
+        expect(page).to have_content("Original")
+        expect(page).to have_content(appeal.docket_number)
       end
     end
   end
