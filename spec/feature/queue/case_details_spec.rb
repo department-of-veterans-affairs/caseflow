@@ -134,6 +134,9 @@ RSpec.feature "Case details", :all_dbs do
           .click_link
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+
+        expect(page).to have_selector(".cf-hearing-badge")
+
         scroll_to("#hearings-section")
         worksheet_link = page.find(
           "a[href='/hearings/worksheet/print?keep_open=true&hearing_ids=#{hearing.external_id}']"
