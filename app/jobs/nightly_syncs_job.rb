@@ -25,12 +25,8 @@ class NightlySyncsJob < CaseflowJob
 
   def sync_vacols_cases
     start_time = Time.zone.now
-    reporter = LegacyAppealsWithNoVacolsCase.new
-    reporter.call
-    reporter.buffer.each do |vacols_id|
-      legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_id)
-
-      next if legacy_appeal.case_record.present?
+    dangling_legacy_appeals.each do |legacy_appeal|
+      next if legacy_appeal.case_record.present? # extra check
 
       # delete pure danglers
       if legacy_appeal.tasks.none?
@@ -43,5 +39,11 @@ class NightlySyncsJob < CaseflowJob
       legacy_appeal.tasks.open.each(&:cancelled!)
     end
     datadog_report_time_segment(segment: "sync_cases_from_vacols", start_time: start_time)
+  end
+
+  def dangling_legacy_appeals
+    reporter = LegacyAppealsWithNoVacolsCase.new
+    reporter.call
+    reporter.buffer.map { |vacols_id| LegacyAppeal.find_by(vacols_id: vacols_id) }
   end
 end
