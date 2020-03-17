@@ -8,6 +8,8 @@ class DistributionsController < ApplicationController
   end
 
   def new
+    return action_forbidden_error unless current_user_can_request_cases
+
     distribution = Distribution.create!(judge: judge)
     enqueue_distribution_job(distribution)
     render_single(distribution)
@@ -25,10 +27,6 @@ class DistributionsController < ApplicationController
     return render_distribution_error if distribution.status == "error"
 
     render_single(distribution)
-  end
-
-  def judge
-    @judge ||= User.find(params[:user_id])
   end
 
   private
@@ -101,5 +99,23 @@ class DistributionsController < ApplicationController
 
   def pending_distribution
     Distribution.pending_for_judge(judge)
+  end
+
+  def judge
+    @judge ||= User.find(params[:user_id])
+  end
+
+  def current_user_can_request_cases
+    current_user == judge || current_user.can_act_on_behalf_of_judges?
+  end
+
+  def action_forbidden_error
+    render json: {
+      "errors": [
+        "error": "forbidden",
+        "title": "Cannot request cases for another judge",
+        "detail": "Only #{SpecialCaseMovementTeam.name} members may request cases for another judge."
+      ]
+    }, status: :forbidden
   end
 end

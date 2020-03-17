@@ -42,6 +42,37 @@ describe DistributionsController, :all_dbs do
         expect(body["distribution"].keys).to match_array(%w[id created_at updated_at status distributed_cases_count])
       end
     end
+
+    context "provided user is a judge, but is not the current user" do
+      it "returns an error" do
+        create(:staff, :judge_role, sdomainid: user.css_id)
+        other_user = create(:user)
+        User.authenticate!(user: other_user)
+
+        subject
+
+        body = JSON.parse(response.body)
+        expect(body["errors"].first["title"]).to eq "Cannot request cases for another judge"
+      end
+    end
+
+    context "provided user is a judge and current user is on the special case movement team" do
+      before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
+      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
+
+      it "renders the created distribution as json" do
+        create(:staff, :judge_role, sdomainid: user.css_id)
+        scm_user = create(:user)
+        SpecialCaseMovementTeam.singleton.add_user(scm_user)
+        User.authenticate!(user: scm_user)
+
+        subject
+
+        expect(response.status).to eq 200
+        body = JSON.parse(response.body)
+        expect(body["distribution"].keys).to match_array(%w[id created_at updated_at status distributed_cases_count])
+      end
+    end
   end
 
   describe "#show" do
