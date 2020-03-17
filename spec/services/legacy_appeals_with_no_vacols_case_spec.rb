@@ -18,6 +18,7 @@ describe LegacyAppealsWithNoVacolsCase do
         subject.call
         expect(subject.report?).to be_truthy
         expect(subject.report).to eq("LegacyAppeal.find_by(vacols_id: '#{legacy_appeal.vacols_id}')")
+        expect(subject.buffer).to eq([legacy_appeal.vacols_id])
       end
 
       context "when Legacy Appeal has only cancelled tasks" do
@@ -28,6 +29,7 @@ describe LegacyAppealsWithNoVacolsCase do
         it "reports zero missing cases" do
           subject.call
           expect(subject.report?).to be_falsey
+          expect(subject.buffer).to eq []
         end
       end
     end
