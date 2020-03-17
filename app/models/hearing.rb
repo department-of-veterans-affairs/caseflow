@@ -127,14 +127,41 @@ class Hearing < CaseflowRecord
   end
 
   def scheduled_for
-    DateTime.new.in_time_zone(regional_office_timezone).change(
-      year: hearing_day.scheduled_for.year,
-      month: hearing_day.scheduled_for.month,
-      day: hearing_day.scheduled_for.day,
-      hour: scheduled_time.hour,
-      min: scheduled_time.min,
-      sec: scheduled_time.sec
-    )
+    # returns the date and time a hearing is scheduled for in the regional office's
+    # time zone
+    #
+    # When a hearing is scheduled, we save the hearing time to the scheduled_time
+    # field. The time is converted to UTC upon save *relative to the timezone of
+    # the user who saved it*, not relative to the timezone of the RO where the
+    # veteran will attend the hearing. For example, if a user in New York
+    # schedules an 8:30am hearing for a veteran in Los Angeles, the time will be
+    # saved as 13:30 (with the eastern time -5 offset added) rather than 16:30
+    # (with the pacific time -8 offset added).
+    #
+    # The offset will *always* be +5 for a user in the eastern time zone,
+    # regardless of when the hearing is scheduled, because Rails associates a
+    # date of 01 Jan 2000 with the time whenever it's read from the database.
+    # Because that date did not fall during daylight savings time, the conversion
+    # remains the same no matter what time of year it's done.
+    #
+    # So when we need to display the time the hearing is scheduled for, we have
+    # to explicitly convert it to the time zone of the person who scheduled it,
+    # then assemble and return a TimeWithZone object cast to the regional
+    # office's time zone.
+
+    updated_by_timezone = updated_by&.timezone || Time.zone.name
+    scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
+
+    Time.use_zone(regional_office_timezone) do
+      Time.zone.local(
+        hearing_day.scheduled_for.year,
+        hearing_day.scheduled_for.month,
+        hearing_day.scheduled_for.day,
+        scheduled_time_in_updated_by_timezone.hour,
+        scheduled_time_in_updated_by_timezone.min,
+        scheduled_time_in_updated_by_timezone.sec
+      )
+    end
   end
 
   def scheduled_for_past?
