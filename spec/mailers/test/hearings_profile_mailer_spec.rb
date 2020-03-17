@@ -19,7 +19,7 @@ describe Test::HearingsProfileMailer do
             created_by_timezone: "America/New_York",
             central_office_time_string: "11:30",
             scheduled_time_string: "08:30",
-            scheduled_for: "2020-03-19T11:30:00.000-05:00",
+            scheduled_for: "2020-03-19T11:30:00.000-05:00"
           }
         ],
         legacy_hearings: [
@@ -30,7 +30,7 @@ describe Test::HearingsProfileMailer do
             created_by_timezone: "America/New_York",
             central_office_time_string: "10:00",
             scheduled_time_string: "10:00",
-            scheduled_for: "2020-02-19T10:00:00.000-05:00",
+            scheduled_for: "2020-02-19T10:00:00.000-05:00"
           }
         ]
       }
