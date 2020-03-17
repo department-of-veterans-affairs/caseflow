@@ -41,21 +41,21 @@ class JudgeAssignTaskListView extends React.PureComponent {
       targetUserCssId,
       attorneysOfJudge,
       organizations,
+      unassignedTasksCount,
       match
     } = this.props;
 
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-          <h1>Assign {this.props.unassignedTasksCount} Cases
-          {(userCssId === targetUserCssId) ? '' : ` for ${this.props.targetUserCssId}`}</h1>
+          <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' : ` for ${targetUserCssId}`}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
         </div>
         <div className="usa-width-one-fourth">
           <ul className="usa-sidenav-list">
             <li>
               <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
-                Cases to Assign ({this.props.unassignedTasksCount})
+                Cases to Assign ({unassignedTasksCount})
               </NavLink>
             </li>
             {attorneysOfJudge.
@@ -73,7 +73,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             title="Cases to Assign | Caseflow"
             render={
               () => <UnassignedCasesPage
-                userId={this.props.userId.toString()} />}
+                userId={userId.toString()} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
