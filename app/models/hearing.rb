@@ -138,6 +138,12 @@ class Hearing < CaseflowRecord
     # saved as 13:30 (with the eastern time +5 offset added) rather than 16:30
     # (with the pacific time +8 offset added).
     #
+    # The offset will *always* be +5, regardless of when the hearing is
+    # scheduled, because a date of 01 Jan 2000 is associated with the time
+    # whenever it's read from the database. Because that date did not fall
+    # during daylight savings time, the conversion remains the same no matter
+    # what time of year it's done.
+    #
     # So when we need to display the time the hearing is scheduled for, we have
     # to explicitly convert it to the time zone of the person who scheduled it,
     # then assemble and return a TimeWithZone object cast to the regional
