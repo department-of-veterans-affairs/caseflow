@@ -88,6 +88,6 @@ class HearingTimeService
   end
 
   def central_office_time
-    local_time.in_time_zone("America/New_York")
+    local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
 end
