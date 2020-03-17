@@ -1,13 +1,16 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router';
 import { ReturnToJudgeModal } from './ReturnToJudgeModal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { showSuccessMessage } from '../../uiReducer/uiActions';
+import { returnToJudgeAlert } from '../mtvMessages';
+import { appealWithDetailSelector } from '../../selectors';
 
 export const ReturnToJudgeModalContainer = () => {
   const { goBack, push } = useHistory();
-  const { taskId } = useParams();
+  const { taskId, appealId } = useParams();
+  const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
   const dispatch = useDispatch();
 
   const handleSubmit = async ({ instructions }) => {
@@ -21,10 +24,11 @@ export const ReturnToJudgeModalContainer = () => {
       await ApiUtil.post(url, { data });
 
       dispatch(
-        showSuccessMessage({
-          title: 'Task Returned to Judge',
-          detail: ' '
-        })
+        showSuccessMessage(
+          returnToJudgeAlert({
+            appeal
+          })
+        )
       );
 
       push('/queue');
