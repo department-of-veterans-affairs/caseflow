@@ -594,11 +594,11 @@ class SeedDB
     )
     @users.push(User.create(css_id: "Invalid Role", station_id: "283", full_name: "Cave InvalidRole Johnson"))
     @users.push(User.create(css_id: "Establish Claim", station_id: "283", full_name: "Jane EstablishClaim Smith"))
-    @users.push(User.create(css_id: "Establish Claim", station_id: "405", full_name: "Carole EstablishClaim Johnson"))
+    @users.push(User.create(css_id: "Establish Claim 2", station_id: "405", full_name: "Carole EstablishClaim Johnson"))
     @users.push(User.create(css_id: "Manage Claim Establishment", station_id: "283", full_name: "John ManageClaimEstablishment Doe"))
     @users.push(User.create(css_id: "Certify Appeal", station_id: "283", full_name: "John CertifyAppeal Smith"))
     @users.push(User.create(css_id: "System Admin", station_id: "283", full_name: "Angelina SystemAdmin Smith"))
-    @users.push(User.create(css_id: "Reader", station_id: "283", full_name: "Angelina ReaderAccess Smith"))
+    @users.push(User.create(css_id: "Reader 2", station_id: "283", full_name: "Angelina ReaderAccess Smith"))
     @users.push(User.create(css_id: "Hearing Prep", station_id: "283", full_name: "Lauren HearingPrep Roth"))
     @users.push(User.create(css_id: "Mail Intake", station_id: "283", full_name: "Kwame MailIntake Nkrumah"))
     @users.push(User.create(css_id: "Admin Intake", station_id: "283", full_name: "Ash AdminIntake Ketchum"))
@@ -1117,21 +1117,23 @@ class SeedDB
 
     create_colocated_legacy_tasks(attorney)
 
-    FactoryBot.create_list(
-      :ama_task,
-      5,
-      assigned_by: judge,
-      assigned_to: Translation.singleton,
-      parent: FactoryBot.create(:root_task)
-    )
+    5.times do
+      FactoryBot.create(
+        :ama_task,
+        assigned_by: judge,
+        assigned_to: Translation.singleton,
+        parent: FactoryBot.create(:root_task)
+      )
+    end
 
-    FactoryBot.create_list(
-      :ama_judge_task,
-      3,
-      :in_progress,
-      assigned_to: User.find_by(css_id: "BVAEBECKER"),
-      appeal: FactoryBot.create(:appeal)
-    )
+    3.times do
+      FactoryBot.create(
+        :ama_judge_task,
+        :in_progress,
+        assigned_to: User.find_by(css_id: "BVAEBECKER"),
+        appeal: FactoryBot.create(:appeal)
+      )
+    end
 
     FactoryBot.create_list(
       :appeal,

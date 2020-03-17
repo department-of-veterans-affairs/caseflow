@@ -4,7 +4,7 @@ import pluralize from 'pluralize';
 import _ from 'lodash';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import HearingBadge from './HearingBadge';
+import BadgeArea from './BadgeArea';
 import CaseDetailsLink from '../CaseDetailsLink';
 import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
@@ -57,11 +57,11 @@ export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   };
 };
 
-export const hearingBadgeColumn = () => {
+export const badgesColumn = () => {
   return {
     header: '',
-    name: QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
-    valueFunction: (task) => <HearingBadge task={task} />
+    name: QUEUE_CONFIG.COLUMNS.BADGES.name,
+    valueFunction: (task) => <BadgeArea task={task} />
   };
 };
 
