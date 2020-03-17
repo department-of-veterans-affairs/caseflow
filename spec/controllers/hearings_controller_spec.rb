@@ -300,6 +300,13 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
   describe "#show" do
     let!(:hearing) { create(:hearing, :with_tasks, scheduled_time: "8:30AM") }
+    let(:expected_time_zone) { "America/New_York" }
+    # for "America/New_York", "-04:00" or "-05:00" depending on daylight savings time
+    let(:utc_offset) do
+      hours, minutes = Time.zone.now.in_time_zone(expected_time_zone).utc_offset.divmod(60)[0].divmod(60)
+      hour_string = (hours < 0) ? format("%03i", hours) : format("+%02i", hours)
+      "#{hour_string}:#{format('%02i', minutes)}"
+    end
 
     subject do
       get :show, as: :json, params: { id: hearing.external_id }
@@ -313,9 +320,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       it "returns the correct hearing time in EST", :aggregate_failures do
         body = JSON.parse(subject.body)
 
-        expect(body["data"]["regional_office_timezone"]).to eq("America/New_York")
+        expect(body["data"]["regional_office_timezone"]).to eq(expected_time_zone)
         expect(body["data"]["scheduled_time_string"]).to eq("08:30")
-        expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000-05:00")
+        expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000#{utc_offset}")
       end
     end
 
