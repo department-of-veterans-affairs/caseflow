@@ -54,8 +54,6 @@ class LegacyHearing < CaseflowRecord
            to: :appeal,
            allow_nil: true
 
-  delegate :scheduled_time, to: :time
-
   delegate :timezone, :name, to: :regional_office, prefix: true
 
   before_create :assign_created_by_user
