@@ -54,7 +54,7 @@ class QueueTab
   # rubocop:disable Metrics/AbcSize
   def self.attorney_column_names
     [
-      Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
       Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
       Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
       Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
