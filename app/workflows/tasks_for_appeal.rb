@@ -40,7 +40,11 @@ class TasksForAppeal
   end
 
   def legacy_appeal_and_user_is_judge_or_attorney_or_scm?
-    (%w[attorney judge].include?(user_role) || user.member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)) && appeal.is_a?(LegacyAppeal)
+    (%w[attorney judge].include?(user_role) || member_of_scm?(user) && appeal.is_a?(LegacyAppeal))
+  end
+
+  def member_of_scm?(_user)
+    _user.member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
   end
 
   def legacy_appeal_tasks
