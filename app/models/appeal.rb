@@ -32,7 +32,7 @@ class Appeal < DecisionReview
     "de_novo": "de_novo"
   }
 
-  before_save :set_stream_docket_number_and_stream_type
+  after_save :set_original_stream_data
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
@@ -460,11 +460,12 @@ class Appeal < DecisionReview
     request_issues.select(&:requires_record_request_task?).map(&:business_line).uniq
   end
 
-  def set_stream_docket_number_and_stream_type
-    if receipt_date && persisted?
-      self.stream_docket_number ||= docket_number
-    end
+  # If any database fields need populating after the first save, e.g. because we
+  # know the new ID, immediately do a second save! so the record is accurate.
+  def set_original_stream_data
+    self.stream_docket_number ||= docket_number if receipt_date
     self.stream_type ||= type.parameterize.underscore.to_sym
+    save! if has_changes_to_save? # prevent infinite recursion
   end
 
   def maybe_create_translation_task
