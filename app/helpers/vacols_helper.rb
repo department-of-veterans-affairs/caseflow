@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module VacolsHelper
+  # This is the timezone of the VACOLS server in the VA data center, not the timezone of the
+  # Rails server (even though they might, at times, be the same value).
   VACOLS_DEFAULT_TIMEZONE = "America/New_York"
 
   # There is a bug in Vacols where timestamps are saved in local time with UTC timezone

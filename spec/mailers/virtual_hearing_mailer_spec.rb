@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 describe VirtualHearingMailer do
-  # New York City regional office
-  let(:regional_office) { "RO06" }
+  let(:nyc_ro_eastern) { "RO06" }
+  let(:oakland_ro_pacific) { "RO43" }
+  let(:regional_office) { nyc_ro_eastern }
   let(:hearing_day) do
     create(
       :hearing_day,
@@ -87,8 +88,7 @@ describe VirtualHearingMailer do
       end
 
       context "on west coast" do
-        # Oakland, CA Regional Office
-        let(:regional_office) { "RO43" }
+        let(:regional_office) { oakland_ro_pacific }
 
         it "has the correct time in the confirmation email" do
           expect(subject.html_part.body).to include("#{expected_pst_time} PST")

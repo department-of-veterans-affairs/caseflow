@@ -5,6 +5,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:legacy_hearing) { create(:legacy_hearing) }
   let(:ama_hearing) { create(:hearing) }
+  let(:cheyenne_ro_mountain) { "RO42" }
+  let(:oakland_ro_pacific) { "RO43" }
+  let(:baltimore_ro_eastern) { "RO13" }
 
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
@@ -59,8 +62,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
     context "when updating an existing hearing to a virtual hearing" do
       let(:judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
-      # Cheyenne, WY regional office (mountain time)
-      let(:hearing) { create(:hearing, regional_office: "RO42", judge: judge) }
+      let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain, judge: judge) }
       let(:virtual_hearing_params) { {} }
 
       subject do
@@ -98,8 +100,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
 
         context "with hearing that already has a virtual hearing" do
-          # Cheyenne, WY regional office (mountain time)
-          let(:hearing) { create(:hearing, regional_office: "RO42") }
+          let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
           let!(:virtual_hearing) do
             create(
               :virtual_hearing,
@@ -165,8 +166,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
 
         context "with hearing that already has a virtual hearing" do
-          # Cheyenne, WY regional office (mountain time)
-          let(:hearing) { create(:hearing, regional_office: "RO42") }
+          let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
 
           let!(:virtual_hearing) do
             create(
@@ -187,8 +187,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       end
 
       context "with the status param and existing virtual hearing" do
-        # Cheyenne, WY regional office (mountain time)
-        let(:hearing) { create(:hearing, regional_office: "RO42") }
+        let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
 
         let!(:virtual_hearing) do
           create(
@@ -214,8 +213,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
 
     context "when updating the judge of an existing virtual hearing" do
       let(:new_judge) { create(:user, station_id: User::BOARD_STATION_ID, email: "new_judge_email@caseflow.gov") }
-      # Cheyenne, WY regional office (mountain time)
-      let(:hearing) { create(:hearing, regional_office: "RO42") }
+      let(:hearing) { create(:hearing, regional_office: cheyenne_ro_mountain) }
       let!(:virtual_hearing) do
         create(
           :virtual_hearing,
@@ -329,10 +327,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
     it_should_behave_like "returns the correct hearing time in EST"
 
     context "for user on west coast" do
-      # Oakland, CA regional office (pacific time)
       let!(:user) do
         User.authenticate!(
-          user: create(:user, :judge, selected_regional_office: "RO43", station_id: 343)
+          user: create(:user, :judge, selected_regional_office: oakland_ro_pacific, station_id: 343)
         )
       end
 
@@ -349,10 +346,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       let!(:appeal) { create(:appeal) }
 
       it "returns an address" do
-        # Baltimore, MD regional office (eastern time)
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
+            params: { appeal_id: appeal.external_id, regional_office: baltimore_ro_eastern }
 
         expect(response.status).to eq 200
       end
@@ -363,10 +359,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran_address, vacols_case: vacols_case) }
 
       it "returns an address" do
-        # Baltimore, MD regional office (eastern time)
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: legacy_appeal.external_id, regional_office: "RO13" }
+            params: { appeal_id: legacy_appeal.external_id, regional_office: baltimore_ro_eastern }
 
         expect(response.status).to eq 200
       end
@@ -385,10 +380,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       end
 
       it "returns an error response", :aggregate_failures do
-        # Baltimore, MD regional office (eastern time)
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
+            params: { appeal_id: appeal.external_id, regional_office: baltimore_ro_eastern }
 
         expect(response.status).to eq 500
         expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
@@ -410,10 +404,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       end
 
       it "returns an error response", :aggregate_failures do
-        # Baltimore, MD regional office (eastern time)
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
+            params: { appeal_id: appeal.external_id, regional_office: baltimore_ro_eastern }
 
         expect(response.status).to eq 500
         expect(JSON.parse(response.body).dig("errors").first.dig("detail"))

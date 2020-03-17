@@ -12,9 +12,9 @@ RSpec.describe HomeController, :postgres, type: :controller do
     end
 
     context "when visitor is logged in" do
+      let(:chicago_ro_central) { "RO28" }
       let!(:current_user) do
-        # RO28 is the Chicago Regional Office
-        User.authenticate!(user: create(:user, regional_office: "RO28", station_id: 328))
+        User.authenticate!(user: create(:user, regional_office: chicago_ro_central, station_id: 328))
       end
 
       it "should set timezone in session if is not set and restore it" do
