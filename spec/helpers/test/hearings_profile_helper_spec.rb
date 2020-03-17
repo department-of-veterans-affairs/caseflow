@@ -9,7 +9,6 @@ describe Test::HearingsProfileHelper do
       :regional_office_timezone,
       :request_type,
       :scheduled_for,
-      :scheduled_time,
       :scheduled_time_string,
       :unique_id
     ]
