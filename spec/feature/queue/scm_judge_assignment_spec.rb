@@ -106,10 +106,10 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
       let!(:appeal) { create(:appeal, :ready_for_distribution) }
 
       before do
-        allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
-        allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
         allow_any_instance_of(LegacyDocket).to receive(:weight).and_return(101.4)
         allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
+        allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
+        allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
       end
 
       scenario "viewing the assign task queue" do
