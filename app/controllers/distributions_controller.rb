@@ -8,14 +8,13 @@ class DistributionsController < ApplicationController
   end
 
   def new
-    distribution = Distribution.create!(judge: current_user)
+    return action_forbidden_error unless current_user_can_request_cases
+
+    distribution = Distribution.create!(judge: judge)
     enqueue_distribution_job(distribution)
     render_single(distribution)
   rescue ActiveRecord::RecordInvalid => error
-    errors = error.record.errors.details.values.flatten.map { |e| e[:error] }
-    return render_single(pending_distribution) if errors.include? :pending_distribution
-
-    render_403_error(errors)
+    render_errors(error)
   end
 
   def show
@@ -31,10 +30,17 @@ class DistributionsController < ApplicationController
 
   def enqueue_distribution_job(distribution)
     if run_async?
-      StartDistributionJob.perform_later(distribution, current_user)
+      StartDistributionJob.perform_later(distribution, judge)
     else
       StartDistributionJob.perform_now(distribution)
     end
+  end
+
+  def render_errors(error)
+    errors = error.record.errors.details.values.flatten.map { |e| e[:error] }
+    return render_single(pending_distribution) if errors.include? :pending_distribution
+
+    render_403_error(errors)
   end
 
   def render_single(distribution)
@@ -96,6 +102,24 @@ class DistributionsController < ApplicationController
   end
 
   def pending_distribution
-    Distribution.pending_for_judge(current_user)
+    Distribution.pending_for_judge(judge)
+  end
+
+  def judge
+    @judge ||= User.find(params[:user_id])
+  end
+
+  def current_user_can_request_cases
+    current_user == judge || current_user.can_act_on_behalf_of_judges?
+  end
+
+  def action_forbidden_error
+    render json: {
+      "errors": [
+        "error": "forbidden",
+        "title": "Cannot request cases for another judge",
+        "detail": "Only #{SpecialCaseMovementTeam.name} members may request cases for another judge."
+      ]
+    }, status: :forbidden
   end
 end
