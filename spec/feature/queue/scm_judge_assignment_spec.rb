@@ -65,42 +65,67 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
     let!(:appeal) { create(:appeal, :assigned_to_judge, associated_judge: judge_one.user) }
     let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, staff: vacols_user_one)) }
 
-    context "with both legacy and ama tasks" do
+    scenario "with both ama and legacy case" do
+      visit "/queue/#{judge_one.user.id}/assign"
+
+      expect(page).to have_content("Assign 2 Cases for #{judge_one.user.css_id}")
+
+      expect(page).to have_content("#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
+      expect(page).to have_content(appeal.veteran_file_number)
+      expect(page).to have_content("Original")
+      expect(page).to have_content(appeal.docket_number)
+
+      expect(page).to have_content("#{legacy_appeal.veteran_first_name} #{legacy_appeal.veteran_last_name}")
+      expect(page).to have_content(legacy_appeal.veteran_file_number)
+      expect(page).to have_content(legacy_appeal.docket_number)
+
+      expect(page).to have_content("Cases to Assign")
+      expect(page).to have_content("Moe Syzlak")
+      expect(page).to have_content("Alice Macgyvertwo")
+
+      expect(page.find(".usa-sidenav-list")).to have_content attorney_one.full_name
+      expect(page.find(".usa-sidenav-list")).to have_content attorney_two.full_name
+
+      safe_click ".Select"
+      expect(page.find(".dropdown-Assignee")).to have_content attorney_one.full_name
+      expect(page.find(".dropdown-Assignee")).to have_content attorney_two.full_name
+
+      click_dropdown(text: "Other")
+      safe_click ".dropdown-Other"
+      # expect attorneys and acting judges but not judges
+      expect(page.find(".dropdown-Other")).to have_content acting_judge.user.full_name
+      expect(page.find(".dropdown-Other")).to have_no_content judge_one.user.full_name
+      expect(page.find(".dropdown-Other")).to have_no_content judge_two.user.full_name
+      expect(page.find(".dropdown-Other")).to have_content attorney_one.full_name
+      expect(page.find(".dropdown-Other")).to have_content attorney_two.full_name
+
+      expect(page).to have_content "Request more cases"
+    end
+
+    context "and can request cases for a judge" do
+      let!(:appeal) { create(:appeal, :ready_for_distribution) }
+
+      before do
+        allow_any_instance_of(LegacyDocket).to receive(:weight).and_return(101.4)
+        allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
+        allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
+        allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
+      end
+
       scenario "viewing the assign task queue" do
         visit "/queue/#{judge_one.user.id}/assign"
 
+        expect(page).to have_content("Assign 1 Cases for #{judge_one.user.css_id}")
+        expect(page).to_not have_content("#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
+
+        click_on("Request more cases")
+        expect(page).to have_content("Distribution complete")
+
         expect(page).to have_content("Assign 2 Cases for #{judge_one.user.css_id}")
 
-        expect(page).to have_content("#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
         expect(page).to have_content(appeal.veteran_file_number)
         expect(page).to have_content("Original")
         expect(page).to have_content(appeal.docket_number)
-
-        expect(page).to have_content("#{legacy_appeal.veteran_first_name} #{legacy_appeal.veteran_last_name}")
-        expect(page).to have_content(legacy_appeal.veteran_file_number)
-        expect(page).to have_content(legacy_appeal.docket_number)
-
-        expect(page).to have_content("Cases to Assign")
-        expect(page).to have_content("Moe Syzlak")
-        expect(page).to have_content("Alice Macgyvertwo")
-
-        expect(page.find(".usa-sidenav-list")).to have_content attorney_one.full_name
-        expect(page.find(".usa-sidenav-list")).to have_content attorney_two.full_name
-
-        safe_click ".Select"
-        expect(page.find(".dropdown-Assignee")).to have_content attorney_one.full_name
-        expect(page.find(".dropdown-Assignee")).to have_content attorney_two.full_name
-
-        click_dropdown(text: "Other")
-        safe_click ".dropdown-Other"
-        # expect attorneys and acting judges but not judges
-        expect(page.find(".dropdown-Other")).to have_content acting_judge.user.full_name
-        expect(page.find(".dropdown-Other")).to have_no_content judge_one.user.full_name
-        expect(page.find(".dropdown-Other")).to have_no_content judge_two.user.full_name
-        expect(page.find(".dropdown-Other")).to have_content attorney_one.full_name
-        expect(page.find(".dropdown-Other")).to have_content attorney_two.full_name
-
-        expect(page).to have_content "Request more cases"
       end
     end
   end
