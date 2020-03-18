@@ -103,11 +103,7 @@ class AssignHearingTab
   def task_includes
     [
       { appeal: [:available_hearing_locations, :claimants] },
-      { attorney_case_reviews: [:attorney] },
-      :assigned_by,
-      :assigned_to,
-      :children,
-      :parent
+      :assigned_by
     ]
   end
 end
