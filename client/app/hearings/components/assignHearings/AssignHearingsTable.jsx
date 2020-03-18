@@ -19,7 +19,6 @@ import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
 import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
-import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
 import QueueTable from '../../../queue/QueueTable';
 
@@ -159,22 +158,12 @@ export default class AssignHearingsTable extends React.PureComponent {
       {
         name: 'powerOfAttorneyName',
         header: 'Power of Attorney (POA)',
+        valueName: 'powerOfAttorneyName',
         columnName: 'Power of Attorney',
         align: 'left',
-        valueFunction: (row) => (
-          <PowerOfAttorneyDetail
-            appealId={row.externalAppealId}
-            displayNameOnly
-          />
-        ),
         label: 'Filter by Power of Attorney',
         enableFilter: true,
         anyFiltersAreSet: true,
-        filterValueTransform: (_value, row) => {
-          const { powerOfAttorneyNamesForAppeals } = this.props;
-
-          return powerOfAttorneyNamesForAppeals[row.externalAppealId];
-        },
         filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'powerOfAttorneyName').filter_options
       }
     ];
@@ -260,8 +249,6 @@ export default class AssignHearingsTable extends React.PureComponent {
 AssignHearingsTable.propTypes = {
   columns: PropTypes.array,
   clicked: PropTypes.bool,
-  // Appeal ID => Attorney Name Array
-  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string),
   selectedHearingDay: PropTypes.shape({
     scheduledFor: PropTypes.string
   }),
