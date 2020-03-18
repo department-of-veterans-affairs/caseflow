@@ -83,10 +83,13 @@ facols-bash:  ## Connect to the docker FACOLS instance
 facols:  ## Connect directly to the FACOLS oracle database
 	docker exec --tty -i VACOLS_DB sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
-build: clean
+download-facols:	## Download the FACOLS Docker image
+	./local/vacols/build_push.sh rake
+
+sqs-conf-dir:	## Create local required dir
 	mkdir -p local/sqs/conf
-	bundle exec rake local:build
-	DB=etl bundle exec rake db:test:prepare
+
+build: clean sqs-conf-dir download-facols up ready reset	## First time local dev setup
 
 destroy: clean
 	bundle exec rake local:destroy
