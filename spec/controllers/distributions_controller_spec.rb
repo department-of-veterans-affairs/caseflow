@@ -67,7 +67,7 @@ describe DistributionsController, :all_dbs do
 
             expect(response.status).to eq 200
             body = JSON.parse(response.body)
-            expect(body["errors"].length).to eq 0
+            expect(body["errors"]).to eq nil
             expect(body["distribution"].keys).to match_array(
               %w[id created_at updated_at status distributed_cases_count]
             )
