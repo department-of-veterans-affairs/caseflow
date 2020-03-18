@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { showSuccessMessage } from '../../uiReducer/uiActions';
 import { returnToJudgeAlert } from '../mtvMessages';
-import { appealWithDetailSelector, taskById } from '../../selectors';
+import { appealWithDetailSelector } from '../../selectors';
 
 export const ReturnToJudgeModalContainer = () => {
   const { goBack, push } = useHistory();
