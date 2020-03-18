@@ -569,7 +569,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         # Return back to user's queue
         expect(page).to have_current_path("/queue")
-        expect(page).to have_content("Task Returned to Judge")
+        expect(page).to have_content(
+          format(
+            COPY::MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE, appeal.veteran_full_name, judge.full_name
+          )
+        )
+        expect(page).to have_content(COPY::MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS)
       end
     end
 

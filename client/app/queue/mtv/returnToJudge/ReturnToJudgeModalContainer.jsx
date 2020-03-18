@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { showSuccessMessage } from '../../uiReducer/uiActions';
 import { returnToJudgeAlert } from '../mtvMessages';
-import { appealWithDetailSelector } from '../../selectors';
+import { appealWithDetailSelector, taskById } from '../../selectors';
 
 export const ReturnToJudgeModalContainer = () => {
   const { goBack, push } = useHistory();
@@ -21,12 +21,14 @@ export const ReturnToJudgeModalContainer = () => {
     });
 
     try {
-      await ApiUtil.post(url, { data });
+      const { body } = await ApiUtil.post(url, { data });
+      const judge = body?.task?.data?.attributes?.assigned_to;
 
       dispatch(
         showSuccessMessage(
           returnToJudgeAlert({
-            appeal
+            appeal,
+            judge
           })
         )
       );

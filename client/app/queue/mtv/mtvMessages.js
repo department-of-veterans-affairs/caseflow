@@ -55,11 +55,11 @@ export const returnToLitSupportAlert = ({ appeal }) => {
   };
 };
 
-export const returnToJudgeAlert = ({ appeal }) => {
+export const returnToJudgeAlert = ({ appeal, judge }) => {
   const { veteranFullName } = appeal;
 
   return {
-    title: sprintf(MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE, veteranFullName, 'the judge'),
+    title: sprintf(MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE, veteranFullName, judge.full_name),
     detail: MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS
   };
 };

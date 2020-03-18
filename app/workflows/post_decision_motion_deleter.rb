@@ -16,17 +16,20 @@ class PostDecisionMotionDeleter
   end
 
   def process
+    new_task = nil
     ActiveRecord::Base.transaction do
-      JudgeAddressMotionToVacateTask.new(
+      new_task = JudgeAddressMotionToVacateTask.new(
         appeal: original_appeal,
         parent: original_task.parent,
         assigned_by: task.assigned_to,
         assigned_to: original_task.assigned_to,
         instructions: [instructions]
-      ).save
+      )
+      new_task.save
       post_decision_motion.destroy!
       appeal.destroy!
     end
+    new_task
   end
 
   private
