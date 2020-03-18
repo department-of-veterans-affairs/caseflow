@@ -135,8 +135,8 @@ Pagination.propTypes = {
   pageSize: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
   currentCases: PropTypes.number.isRequired,
-  totalPages: PropTypes.number.isRequired,
-  totalCases: PropTypes.number.isRequired,
+  totalPages: PropTypes.number,
+  totalCases: PropTypes.number,
   updatePage: PropTypes.func.isRequired
 };
 
