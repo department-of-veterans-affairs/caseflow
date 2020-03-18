@@ -41,8 +41,8 @@
     "DOCUMENT_COUNT_READER_LINK": {
       "name": "readerLinkColumn"
     },
-    "HEARING_BADGE": {
-      "name": "hearingBadgeColumn"
+    "BADGES": {
+      "name": "badgesColumn"
     },
     "ISSUE_COUNT": {
       "name": "issueCountColumn",

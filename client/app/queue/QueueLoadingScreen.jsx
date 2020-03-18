@@ -3,7 +3,6 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import querystring from 'querystring';
 
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -96,19 +95,31 @@ class QueueLoadingScreen extends React.PureComponent {
       then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }
 
+  maybeLoadTargetUser = (targetUserId) => {
+    const { userId } = this.props;
+
+    if (userId === targetUserId) {
+      this.props.setTargetUserCssId(null);
+
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) => this.props.setTargetUserCssId(resp.body.user.css_id));
+  }
+
   createLoadPromise = () => {
-    const queryString = querystring.parse(this.props.location.search.replace(/^\?/, ''));
-    const isScmUser = queryString.scm?.toLowerCase() === 'true';
+    const {
+      match,
+      userId,
+      userRole
+    } = this.props;
 
-    const targetUserId = (isScmUser) ? this.props.match.params.userId : this.props.userId;
-    const targetUserCssId = (isScmUser) ? queryString.judge_css_id : this.props.userCssId;
-    const targetUserRole = (isScmUser) ? USER_ROLE_TYPES.judge : this.props.userRole;
-
-    this.props.setTargetUserCssId(targetUserCssId);
+    const targetUserId = match?.params.userId || userId;
 
     return Promise.all([
-      this.maybeLoadAmaQueue(targetUserId, targetUserRole),
-      this.maybeLoadLegacyQueue(targetUserId, targetUserRole),
+      this.maybeLoadTargetUser(targetUserId),
+      this.maybeLoadAmaQueue(targetUserId, userRole),
+      this.maybeLoadLegacyQueue(targetUserId, userRole),
       this.maybeLoadJudgeData(targetUserId)
     ]);
   }

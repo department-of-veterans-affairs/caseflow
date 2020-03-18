@@ -42,6 +42,7 @@ class LegacyAppealsWithNoVacolsCase < DataIntegrityChecker
     missing_from_vacols = vacols_ids - vacols_ids_found
     missing_from_vacols.each do |vacols_id|
       add_to_report "LegacyAppeal.find_by(vacols_id: '#{vacols_id}')"
+      add_to_buffer vacols_id
     end
   end
 
