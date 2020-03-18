@@ -58,9 +58,6 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
     return true;
   };
 
-  const labelText = <span>Upload the draft to your shared drive and add the location below,<br></br>
-              or encrypt it and email it to the VLJ who originally signed the case.</span>;
-
   return (
     <div className="address-motion-to-vacate">
       <AppSegment filledBackground>
@@ -94,8 +91,8 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
             onChange={(val) => setHyperlink(val)}
             optional
             strongLabel
-            labelText={labelText}
-            className={['mtv-review-hyperlink']} />
+            className={['mtv-review-hyperlink']}
+          />
         )}
 
         <SearchableDropdown

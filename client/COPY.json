@@ -159,7 +159,7 @@
   "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your review for this motion?",
-  "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert Caseflow Reader document hyperlink to denial draft",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be %s",
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
   "MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE": "You have submitted your review to %s",
