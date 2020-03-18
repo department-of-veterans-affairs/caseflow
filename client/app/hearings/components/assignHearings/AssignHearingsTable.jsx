@@ -85,7 +85,7 @@ export default class AssignHearingsTable extends React.PureComponent {
 
     const { colsFromApi } = this.state;
 
-    if (_.isNil(selectedHearingDay)) {
+    if (_.isNil(selectedHearingDay) || _.isNil(colsFromApi)) {
       return [];
     }
 
