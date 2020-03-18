@@ -17,7 +17,14 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
       regional_office_key: allowed_params[:regional_office_key]
     )
 
-    tasks = task_pager.paged_tasks
+    # Select `power_of_attorney_name` from the `CachedAppeal` table. This is an
+    # optimization that fetches the POA name from the `CachedAppeal` table,
+    # where it is already cached for filtering. The `TaskColumnSerializer` is
+    # "aware" of this optimization, and will serialize the cached value instead
+    # of getting the value through the `Appeal` instance.
+    tasks = task_pager
+      .paged_tasks
+      .select("tasks.*, #{CachedAppeal.table_name}.power_of_attorney_name")
 
     render json: {
       tasks: json_tasks(tasks),
@@ -40,10 +47,12 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
   end
 
   def json_tasks(tasks)
-    AmaAndLegacyTaskSerializer.create_and_preload_legacy_appeals(
-      tasks: tasks,
-      params: { user: current_user },
-      ama_serializer: WorkQueue::RegionalOfficeTaskSerializer
-    ).call
+    primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+
+    WorkQueue::TaskColumnSerializer.new(
+      primed_tasks,
+      is_collection: true,
+      params: { columns: AssignHearingTab.serialize_columns }
+    ).serializable_hash
   end
 end

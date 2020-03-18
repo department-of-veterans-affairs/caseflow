@@ -72,6 +72,18 @@ class AssignHearingTab
     ]
   end
 
+  # Used with the `TaskColumnSerializer` to serialize only the columns that are
+  # in-use by the frontend.
+  def self.serialize_columns
+    [
+      Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME,
+      Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME
+    ]
+  end
+
   def power_of_attorney_name_options
     tasks.joins(CachedAppeal.left_join_from_tasks_clause)
       .group(:power_of_attorney_name).count.each_pair.map do |option, count|
