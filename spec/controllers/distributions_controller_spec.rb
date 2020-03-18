@@ -33,13 +33,43 @@ describe DistributionsController, :all_dbs do
     end
 
     context "provided user is a judge" do
+      before { create(:staff, :judge_role, sdomainid: user.css_id) }
+
       it "renders the created distribution as json" do
-        create(:staff, :judge_role, sdomainid: user.css_id)
         subject
 
         expect(response.status).to eq 200
         body = JSON.parse(response.body)
         expect(body["distribution"].keys).to match_array(%w[id created_at updated_at status distributed_cases_count])
+      end
+
+      context "but is not the logged in user" do
+        let(:authed_user) { create(:user) }
+
+        before { User.authenticate!(user: authed_user) }
+
+        it "returns an error" do
+          subject
+
+          body = JSON.parse(response.body)
+          expect(body["errors"].first["title"]).to eq "Cannot request cases for another judge"
+        end
+
+        context "but scm is enabled" do
+          before do
+            FeatureToggle.enable!(:scm_view_judge_assign_queue)
+            SpecialCaseMovementTeam.singleton.add_user(authed_user)
+          end
+          after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
+
+          it "renders the created distribution as json" do
+            subject
+
+            expect(response.status).to eq 200
+            body = JSON.parse(response.body)
+            expect(body["distribution"].keys).to match_array(%w[id created_at updated_at status distributed_cases_count])
+          end
+        end
       end
     end
   end
