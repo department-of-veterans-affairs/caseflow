@@ -23,7 +23,7 @@ class JudgeTask < Task
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         additional_available_actions(user)
       ].flatten
-    else 
+    else
       []
     end
   end
@@ -45,6 +45,7 @@ class JudgeTask < Task
   private
 
   def member_of_scm?(user)
-    user.member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
+    user.member_of_organization?(SpecialCaseMovementTeam.singleton) &&
+      FeatureToggle.enabled?(:scm_view_judge_assign_queue)
   end
 end

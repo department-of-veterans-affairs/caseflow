@@ -24,7 +24,8 @@ class JudgeLegacyAssignTask < JudgeLegacyTask
 
   private
 
-  def member_of_scm?(_user)
-    _user.member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
+  def member_of_scm?(user)
+    user.member_of_organization?(SpecialCaseMovementTeam.singleton) &&
+      FeatureToggle.enabled?(:scm_view_judge_assign_queue)
   end
 end
