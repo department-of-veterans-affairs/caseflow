@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
@@ -116,8 +116,18 @@ export const MTVJudgeDisposition = ({
     );
   };
 
-  const labelText = <span>Upload the draft to your shared drive and add the location below,<br></br>
-              or encrypt it and email it to the motions attorney.</span>;
+  const labelText = (
+    <span>
+      Upload the draft to your shared drive and add the location below,
+      <br />
+      or encrypt it and email it to the motions attorney.
+    </span>
+  );
+
+  const parsedInstructions = useMemo(
+    () => StringUtil.parseLinks(Array.isArray(task.instructions) ? task.instructions.join('\n') : task.instructions),
+    [task.instructions]
+  );
 
   return (
     <div className="address-motion-to-vacate">
@@ -127,7 +137,7 @@ export const MTVJudgeDisposition = ({
         <p>{StringUtil.nl2br(JUDGE_ADDRESS_MTV_DESCRIPTION)}</p>
 
         <h3>Motion Attorney's Notes</h3>
-        <p className="mtv-task-instructions">{task.instructions}</p>
+        <p className="mtv-task-instructions" dangerouslySetInnerHTML={{ __html: parsedInstructions }} />
 
         <div className="cf-help-divider" />
 
