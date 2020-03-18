@@ -21,7 +21,7 @@ class ExternalApi::PexipService
       "enable_chat": "yes",
       "enable_overlay_text": true,
       # Theme ID is hard coded for now because it's the same in both environments.
-      "ivr_theme": "/api/admin/configuration/v1/ivr_theme/2/",
+      "ivr_theme": "/api/admin/configuration/v1/ivr_theme/13/",
       "force_presenter_into_main": true,
       "guest_pin": guest_pin.to_s,
       "name": "BVA#{name}",
