@@ -18,7 +18,7 @@ class TasksForAppeal
     # This change filters them out from the Queue page
     tasks = all_tasks_except_for_decision_review_tasks
 
-    return (legacy_appeal_tasks + tasks).uniq if legacy_appeal_and_user_is_judge_or_attorney_or_scm?
+    return (legacy_appeal_tasks + tasks).uniq if appeal.is_a?(LegacyAppeal)
 
     tasks
   end
@@ -39,16 +39,13 @@ class TasksForAppeal
     appeal.tasks.not_decisions_review.includes(*task_includes)
   end
 
-  def legacy_appeal_and_user_is_judge_or_attorney_or_scm?
-    (%w[attorney judge].include?(user_role) || member_of_scm?(user) && appeal.is_a?(LegacyAppeal))
-  end
-
-  def member_of_scm?(user)
-    user.member_of_organization?(SpecialCaseMovementTeam.singleton) &&
-      FeatureToggle.enabled?(:scm_view_judge_assign_queue)
+  def user_is_judge_or_attorney?
+    %w[attorney judge].include?(user_role)
   end
 
   def legacy_appeal_tasks
+    return [] unless user_is_judge_or_attorney? || user.can_act_on_behalf_of_judges?
+
     LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
   end
 

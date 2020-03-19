@@ -27,14 +27,12 @@ describe JudgeTask, :all_dbs do
     end
 
     context "user is a Special Case Movement team member" do
-      let(:special_case_movement_user) do
-        user = create(:user)
-        SpecialCaseMovementTeam.singleton.add_user(user)
-        user
+      let(:user) do
+        create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
       end
-      let(:user) { special_case_movement_user }
 
       before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
+      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       context "in the assign phase" do
         it "should return the Case Management assignment actions" do
@@ -42,6 +40,20 @@ describe JudgeTask, :all_dbs do
             [
               Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+            ].map { |action| subject_task.build_action_hash(action, judge) }
+          )
+        end
+      end
+
+      context "in the review phase" do
+        let(:subject_task) do
+          create(:ama_judge_decision_review_task, assigned_to: judge, parent: create(:root_task))
+        end
+
+        it "returns the reassign" do
+          expect(subject).to eq(
+            [
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
         end
