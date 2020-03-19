@@ -694,7 +694,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       create(:ama_colocated_task, :ihp, appeal: appeal, assigned_to: colocated_user, assigned_by: assigning_user)
     end
 
-    shared_examples "judge response" do
+    shared_examples "judge request" do
       scenario "should return JudgeLegacyTasks" do
         get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "judge" }
 
@@ -728,7 +728,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         DatabaseRequestCounter.disable
       end
 
-      it_behaves_like "judge response"
+      it_behaves_like "judge request"
 
       context "when appeal is not assigned to current user" do
         let(:another_judge) { create(:user) }
@@ -774,7 +774,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         DatabaseRequestCounter.disable
       end
 
-      it_behaves_like "judge response"
+      it_behaves_like "judge request"
     end
 
     context "when user is an attorney" do
