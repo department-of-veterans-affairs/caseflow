@@ -274,41 +274,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     subject { post :create, params: { tasks: params } }
 
-    context "Attorney task" do
-      context "when current user is a judge" do
-        let(:ama_appeal) { create(:appeal) }
-        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user, appeal: ama_appeal) }
-        let(:role) { :judge_role }
-
-        let(:params) do
-          [{
-            "external_id": ama_appeal.uuid,
-            "type": AttorneyTask.name,
-            "assigned_to_id": attorney.id,
-            "parent_id": ama_judge_task.id
-          }]
-        end
-
-        it "should be successful" do
-          subject
-
-          expect(response.status).to eq 200
-
-          response_body = JSON.parse(response.body)["tasks"]["data"]
-          expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
-          expect(response_body.second["attributes"]["appeal_id"]).to eq ama_appeal.id
-          expect(response_body.second["attributes"]["docket_number"]).to eq ama_appeal.docket_number
-          expect(response_body.second["attributes"]["appeal_type"]).to eq Appeal.name
-
-          attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
-          expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
-          expect(attorney_task.assigned_to).to eq attorney
-          expect(attorney_task.parent_id).to eq ama_judge_task.id
-          expect(ama_judge_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
-        end
-      end
-    end
-
     context "VSO user" do
       let(:user) { create(:default_user, roles: ["VSO"]) }
       let(:vso) { create(:vso) }
@@ -694,8 +659,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       create(:ama_colocated_task, :ihp, appeal: appeal, assigned_to: colocated_user, assigned_by: assigning_user)
     end
 
-    shared_examples "judge request" do
-      scenario "should return JudgeLegacyTasks" do
+    shared_examples "judge view legacy tasks" do
+      it "should return JudgeLegacyTasks" do
         get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "judge" }
 
         assert_response :success
@@ -728,7 +693,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         DatabaseRequestCounter.disable
       end
 
-      it_behaves_like "judge request"
+      it_behaves_like "judge view legacy tasks"
 
       context "when appeal is not assigned to current user" do
         let(:another_judge) { create(:user) }
@@ -774,7 +739,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         DatabaseRequestCounter.disable
       end
 
-      it_behaves_like "judge request"
+      it_behaves_like "judge view legacy tasks"
     end
 
     context "when user is an attorney" do
