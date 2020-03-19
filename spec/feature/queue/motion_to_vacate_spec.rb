@@ -334,7 +334,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
         find("label[for=disposition_denied]").click
         fill_in("instructions", with: judge_notes)
         fill_in("hyperlink", with: hyperlink)
-        binding.pry
 
         # Ensure we don't show attorney selection for this disposition
         expect(page).not_to have_selector("input#attorney")

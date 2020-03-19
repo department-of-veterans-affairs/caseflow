@@ -116,18 +116,11 @@ export const MTVJudgeDisposition = ({
     );
   };
 
-  const labelText = (
-    <span>
-      Upload the draft to your shared drive and add the location below,
-      <br />
-      or encrypt it and email it to the motions attorney.
-    </span>
-  );
+  const parsedInstructions = useMemo(() => {
+    const str = Array.isArray(task.instructions) ? task.instructions.join('\n') : task.instructions;
 
-  const parsedInstructions = useMemo(
-    () => StringUtil.parseLinks(Array.isArray(task.instructions) ? task.instructions.join('\n') : task.instructions),
-    [task.instructions]
-  );
+    return StringUtil.parseLinks(str).replace(/\n/g, '<br>');
+  }, [task.instructions]);
 
   return (
     <div className="address-motion-to-vacate">
@@ -180,9 +173,8 @@ export const MTVJudgeDisposition = ({
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
             optional
-            className={['mtv-review-hyperlink']}
+            className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
             strongLabel
-            labelText={labelText}
           />
         )}
 

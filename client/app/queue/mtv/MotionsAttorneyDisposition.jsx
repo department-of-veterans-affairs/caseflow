@@ -91,7 +91,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
             onChange={(val) => setHyperlink(val)}
             optional
             strongLabel
-            className={['mtv-review-hyperlink']}
+            className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
           />
         )}
 
