@@ -4,8 +4,6 @@ class IntakesController < ApplicationController
   before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
 
   def index
-    no_cache
-
     respond_to do |format|
       format.html { render(:index) }
     end

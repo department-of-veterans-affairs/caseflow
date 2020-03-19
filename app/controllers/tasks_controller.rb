@@ -100,8 +100,6 @@ class TasksController < ApplicationController
   end
 
   def for_appeal
-    no_cache
-
     tasks = TasksForAppeal.new(appeal: appeal, user: current_user, user_role: user_role).call
 
     render json: { tasks: json_tasks(tasks)[:data] }
