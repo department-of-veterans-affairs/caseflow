@@ -80,7 +80,7 @@ class VeteranDetail extends React.PureComponent {
     }
 
     const getDetailField = ({ label, value }) => () => (
-      <><span {...boldText}>{label}:</span>''{value}</>
+      <><span {...boldText}>{label}:</span> {value}</>
     );
 
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
