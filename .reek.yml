@@ -152,7 +152,6 @@ detectors:
       - Helpers::AppealHearingHelper#hearings
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
-      - JudgeLegacyDecisionReviewTask#review_action
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - Fakes::BGSService
