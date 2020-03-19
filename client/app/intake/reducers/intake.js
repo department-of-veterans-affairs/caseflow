@@ -50,6 +50,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       duplicateProcessedBy: null,
       veteranMissingFields: null,
       veteranAddressTooLong: null,
+      veteranAddressInvalidFields: null,
       pids: null
     },
     cancelModalVisible: false,
@@ -119,6 +120,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         veteranAddressTooLong: {
           $set: action.payload.errorData.veteran_address_too_long
         },
+        veteranAddressInvalidFields: {
+          $set: action.payload.errorData.veteran_address_invalid_fields
+        },
         pids: {
           $set: _.join(action.payload.errorData.pids, ', ')
         }
@@ -145,6 +149,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: null
         },
         veteranAddressTooLong: {
+          $set: null
+        },
+        veteranAddressInvalidFields: {
           $set: null
         },
         pids: {

@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 const missingFieldsMessage = (fields) => <p>
   Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
@@ -11,7 +12,8 @@ const missingFieldsMessage = (fields) => <p>
 const addressTips = [
   () => <Fragment>Do: move the last word(s) of the street address down to an another street address field</Fragment>,
   () => <Fragment>Do: abbreviate to St. Ave. Rd. Blvd. Dr. Ter. Pl. Ct.</Fragment>,
-  () => <Fragment>Don't: edit street names or numbers</Fragment>
+  () => <Fragment>Don't: edit street names or numbers</Fragment>,
+  () => <Fragment>Don't: have invalid characters such as *%$</Fragment>
 ];
 
 const addressTooLongMessage = <Fragment>
@@ -23,12 +25,22 @@ const addressTooLongMessage = <Fragment>
   <BareList items={addressTips} ListElementComponent="ul" />
 </Fragment>;
 
+const addressHasInvalidCharacters = <Fragment>
+  <p>
+    This Veteran's address has invalid characters. Please edit it in VBMS or SHARE so each address field does not
+    have invalid (including double spaces) then try again.
+  </p>
+  <p>Tips:</p>
+  <BareList items={addressTips} ListElementComponent="ul" />
+</Fragment>;
+
 export const invalidVeteranInstructions = (searchErrorData) => {
   if (searchErrorData) {
     return <Fragment>
       { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
         missingFieldsMessage(searchErrorData.veteranMissingFields) }
       { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
+      { searchErrorData.veteranAddressInvalidFields && addressHasInvalidCharacters }
     </Fragment>;
   }
 };
@@ -81,3 +93,9 @@ export default class ErrorAlert extends React.PureComponent {
     </Alert>;
   }
 }
+
+ErrorAlert.propTypes = {
+  errorData: PropTypes.object,
+  errorUUID: PropTypes.object,
+  errorCode: PropTypes.string
+};

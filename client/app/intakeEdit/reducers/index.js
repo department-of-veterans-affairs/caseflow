@@ -15,7 +15,8 @@ export const mapDataToInitialState = function(props = {}) {
   if (serverIntake.veteranInvalidFields) {
     serverIntake.veteranInvalidFields = {
       veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
-      veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
+      veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
+      veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_address
     };
   }
 
