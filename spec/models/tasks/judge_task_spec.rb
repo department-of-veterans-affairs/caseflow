@@ -53,7 +53,7 @@ describe JudgeTask, :all_dbs do
         it "returns the reassign" do
           expect(subject).to eq(
             [
-              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
         end

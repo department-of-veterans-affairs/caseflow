@@ -10,7 +10,7 @@ describe JudgeLegacyTask, :postgres do
   let(:assigned_by_first_name) { "Joe" }
   let(:assigned_by_last_name) { "Snuffy" }
   let(:reassigned_to_judge_date) { nil }
-  let(:assigned_to_attorney_date) { nil}
+  let(:assigned_to_attorney_date) { nil }
   let(:legacy_judge_task) do
     JudgeLegacyTask.from_vacols(
       case_assignment,
