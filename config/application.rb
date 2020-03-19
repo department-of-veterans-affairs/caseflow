@@ -53,6 +53,9 @@ module CaseflowCertification
 
     config.vacols_db_name = "VACOLS"
 
+    # filter out X-Forwarded-For and friends
+    config.middleware.insert_before 0, Rack::HeadersFilter
+
     # config for which SQS endpoint we should use. Override this for local testing
     config.sqs_create_queues = false
     config.sqs_endpoint = nil
