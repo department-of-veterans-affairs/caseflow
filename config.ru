@@ -5,6 +5,10 @@
 require ::File.expand_path("../config/environment", __FILE__)
 require "rack"
 
+require "rack/headers_filter"
+# trust nothing
+use Rack::HeadersFilter, trusted_headers: []
+
 # rubocop:disable all
 module PumaThreadLogger
   def initialize *args
