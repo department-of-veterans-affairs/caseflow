@@ -171,6 +171,12 @@
   "MTV_CHECKOUT_ADD_DECISIONS_TITLE": "Add decisions",
   "MTV_CHECKOUT_ADD_DECISIONS_EXPLANATION": "Add decisions to the items listed here that have been reissued because of the motion to vacate. Any decisions to add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
 
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_ALERT_TITLE": "Prior decision issue(s) marked for vacatur",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_TITLE": "Return to Judge",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_DESCRIPTION": "Use this action to return the Motion to Vacate task to your judge if you believe there is an error in the issues that have been marked for vacatur.\n\nIf your judge is unavailable, this will return to the Litigation Support team queue for reassignment.",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_INSTRUCTIONS_LABEL": "Provide instructions and context for this action",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE": "%s's Motion to Vacate has been returned to %s",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS": "If you made a mistake, please email your judge to resolve the issue.",
 
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
