@@ -15,15 +15,16 @@ class VACOLS::Record < ApplicationRecord
   end
 
   def self.rounded_current_time
-    Time.zone = "Eastern Time (US & Canada)"
-    current_time = Time.zone.now
+    Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
+      current_time = Time.zone.now
 
-    # Round off hours, minutes, and seconds
-    Time.zone.local(
-      current_time.year,
-      current_time.month,
-      current_time.day
-    )
+      # Round off hours, minutes, and seconds
+      Time.zone.local(
+        current_time.year,
+        current_time.month,
+        current_time.day
+      )
+    end
   end
 
   def self.current_user_slogid

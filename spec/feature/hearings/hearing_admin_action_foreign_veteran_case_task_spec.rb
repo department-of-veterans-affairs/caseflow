@@ -74,6 +74,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
 
       context "submitted 'Send to Schedule Veterans list' with notes" do
         let!(:user) { create(:user, roles: ["Build HearSched"]) }
+        let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
 
         before do
           click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.label)
@@ -95,9 +96,10 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
         it "case shows up in schedule veterans list" do
           allow_any_instance_of(HearingDayRange).to receive(:load_days).and_return([create(:hearing_day)])
 
-          visit("/hearings/schedule/assign?roValue=RO17")
+          visit("/hearings/schedule/assign?regional_office_key=RO17")
+          cache_appeals
 
-          click_button("AMA Veterans Waiting")
+          click_button("AMA Veterans Waiting", exact: true)
 
           expect(page).to have_content appeal.veteran_file_number
         end

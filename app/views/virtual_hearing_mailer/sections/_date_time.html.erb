@@ -2,5 +2,9 @@
   Date and Time
 </h3>
 <p>
-  <%= @virtual_hearing.hearing.scheduled_for.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
+<% if @recipient.title == MailRecipient::RECIPIENT_TITLES[:judge] %>
+  <%= @virtual_hearing.hearing.time.central_office_time.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
+<% else %>
+  <%= @virtual_hearing.hearing.time.local_time.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
+<% end %>
 </p>

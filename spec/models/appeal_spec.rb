@@ -22,7 +22,8 @@ describe Appeal, :all_dbs do
         legacy_opt_in_approved: appeal.legacy_opt_in_approved,
         veteran_is_not_claimant: appeal.veteran_is_not_claimant,
         stream_docket_number: appeal.docket_number,
-        stream_type: stream_type
+        stream_type: stream_type,
+        established_at: Time.zone.now
       )
       expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
     end
@@ -37,7 +38,8 @@ describe Appeal, :all_dbs do
           legacy_opt_in_approved: appeal.legacy_opt_in_approved,
           veteran_is_not_claimant: appeal.veteran_is_not_claimant,
           stream_docket_number: appeal.docket_number,
-          stream_type: stream_type
+          stream_type: stream_type,
+          established_at: Time.zone.now
         )
         expect(Appeal.de_novo.find_by(stream_docket_number: appeal.docket_number)).to_not be_nil
         expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
@@ -421,17 +423,25 @@ describe Appeal, :all_dbs do
   end
 
   context "#set_stream_docket_number_and_stream_type" do
+    let(:appeal) { Appeal.new(veteran_file_number: "1234") }
+    let(:receipt_date) { Date.new(2020, 1, 24) }
+
     it "persists an accurate value for stream_docket_number to the database" do
-      appeal = Appeal.new(veteran_file_number: "1234")
       appeal.save!
       expect(appeal.stream_docket_number).to be_nil
-      appeal.receipt_date = Time.new("2020", "01", "24").utc
+      appeal.receipt_date = receipt_date
       expect(appeal.docket_number).to eq("200124-#{appeal.id}")
       appeal.save!
       expect(appeal.stream_docket_number).to eq("200124-#{appeal.id}")
       appeal.stream_docket_number = "something else"
       appeal.save!
       expect(Appeal.where(stream_docket_number: "something else").count).to eq(1)
+    end
+
+    it "persists a non-NULL value for stream_docket_number as soon as possible" do
+      appeal.receipt_date = receipt_date
+      appeal.save!
+      expect(Appeal.where(stream_docket_number: "200124-#{appeal.id}").count).to eq(1)
     end
   end
 

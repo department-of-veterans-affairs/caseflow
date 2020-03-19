@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
+
 import TaskTable from './components/TaskTable';
 import {
   initialAssignTasksToUser
 } from './QueueActions';
 import AssignWidget from './components/AssignWidget';
-import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY.json';
+import RequestDistributionButton from './components/RequestDistributionButton';
+import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY';
 import {
   resetErrorMessages,
   resetSuccessMessages
@@ -19,6 +22,13 @@ import { css } from 'glamor';
 
 const assignSectionStyling = css({ marginTop: '30px' });
 const loadingContainerStyling = css({ marginTop: '-2em' });
+const assignAndRequestStyling = css({
+  display: 'flex',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  '& > *': { marginRight: '1rem',
+    marginTop: '0',
+    marginBottom: '16px' } });
 
 class UnassignedCasesPage extends React.PureComponent {
   componentDidMount = () => {
@@ -35,12 +45,15 @@ class UnassignedCasesPage extends React.PureComponent {
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       <div {...assignSectionStyling}>
         <React.Fragment>
-          <AssignWidget
-            userId={userId}
-            previousAssigneeId={userId}
-            onTaskAssignment={this.props.initialAssignTasksToUser}
-            selectedTasks={selectedTasks}
-            showRequestCasesButton />
+          <div {...assignAndRequestStyling}>
+            <AssignWidget
+              userId={userId}
+              previousAssigneeId={userId}
+              onTaskAssignment={this.props.initialAssignTasksToUser}
+              selectedTasks={selectedTasks}
+              showRequestCasesButton />
+            <RequestDistributionButton userId={userId} />
+          </div>
           {this.props.distributionCompleteCasesLoading &&
             <div {...loadingContainerStyling}>
               <LoadingContainer color={LOGO_COLORS.QUEUE.ACCENT}>
@@ -51,7 +64,7 @@ class UnassignedCasesPage extends React.PureComponent {
           }
           {!this.props.distributionCompleteCasesLoading &&
             <TaskTable
-              includeHearingBadge
+              includeBadges
               includeSelect
               includeDetailsLink
               includeType
@@ -93,6 +106,24 @@ const mapStateToProps = (state, ownProps) => {
     success,
     error
   };
+};
+
+UnassignedCasesPage.propTypes = {
+  tasks: PropTypes.array,
+  userId: PropTypes.number,
+  selectedTasks: PropTypes.array,
+  distributionCompleteCasesLoading: PropTypes.bool,
+  initialAssignTasksToUser: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
+  success: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  })
 };
 
 const mapDispatchToProps = (dispatch) =>

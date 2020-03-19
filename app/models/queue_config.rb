@@ -17,7 +17,7 @@ class QueueConfig
   end
 
   def to_hash
-    table_title = COPY::COLOCATED_QUEUE_PAGE_TABLE_TITLE
+    table_title = COPY::USER_QUEUE_PAGE_TABLE_TITLE
     {
       table_title: assignee_is_org? ? format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, assignee.name) : table_title,
       active_tab: assignee.class.default_active_tab,

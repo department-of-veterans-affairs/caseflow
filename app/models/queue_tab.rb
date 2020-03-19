@@ -51,6 +51,21 @@ class QueueTab
     false
   end
 
+  # rubocop:disable Metrics/AbcSize
+  def self.attorney_column_names
+    [
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+      Constants.QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name
+    ]
+  end
+  # rubocop:enable Metrics/AbcSize
+
   private
 
   def assignee_is_org?

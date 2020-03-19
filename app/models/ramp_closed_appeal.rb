@@ -40,7 +40,7 @@ class RampClosedAppeal < CaseflowRecord
 
     # If the end product was canceled, don't re-close the VACOLS appeal.
     # Instead rollback the RAMP election data from Caseflow
-    return ramp_election.rollback! if ramp_election.end_product_establishment.status_canceled?
+    return ramp_election.rollback! if ramp_election.end_product_establishment.status_cancelled?
 
     fail NoReclosingBvaDecidedAppeals if appeal.decided_by_bva?
 

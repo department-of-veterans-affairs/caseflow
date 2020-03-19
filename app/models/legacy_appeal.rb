@@ -28,6 +28,7 @@ class LegacyAppeal < CaseflowRecord
   has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :claimants, -> { Claimant.none }
+  has_one :cached_vacols_case, class_name: "CachedAppeal", foreign_key: :vacols_id, primary_key: :vacols_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -722,11 +723,11 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def pending_eps
-    end_products.select(&:dispatch_conflict?)
+    end_products&.select(&:dispatch_conflict?)
   end
 
   def non_canceled_end_products_within_30_days
-    end_products.select { |ep| ep.potential_match?(self) }
+    end_products&.select { |ep| ep.potential_match?(self) }
   end
 
   def api_supported?
