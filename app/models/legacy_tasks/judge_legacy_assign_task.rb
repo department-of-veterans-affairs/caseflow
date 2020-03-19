@@ -8,7 +8,7 @@ class JudgeLegacyAssignTask < JudgeLegacyTask
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
       ]
-    elsif member_of_scm?(user)
+    elsif user.can_act_on_behalf_of_judges?
       [
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
@@ -20,12 +20,5 @@ class JudgeLegacyAssignTask < JudgeLegacyTask
 
   def label
     COPY::JUDGE_ASSIGN_TASK_LABEL
-  end
-
-  private
-
-  def member_of_scm?(user)
-    user.member_of_organization?(SpecialCaseMovementTeam.singleton) &&
-      FeatureToggle.enabled?(:scm_view_judge_assign_queue)
   end
 end
