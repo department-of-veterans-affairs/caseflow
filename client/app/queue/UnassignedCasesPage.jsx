@@ -8,6 +8,7 @@ import {
   initialAssignTasksToUser
 } from './QueueActions';
 import AssignWidget from './components/AssignWidget';
+import RequestDistributionButton from './components/RequestDistributionButton';
 import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY';
 import {
   resetErrorMessages,
@@ -21,6 +22,13 @@ import { css } from 'glamor';
 
 const assignSectionStyling = css({ marginTop: '30px' });
 const loadingContainerStyling = css({ marginTop: '-2em' });
+const assignAndRequestStyling = css({
+  display: 'flex',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  '& > *': { marginRight: '1rem',
+    marginTop: '0',
+    marginBottom: '16px' } });
 
 class UnassignedCasesPage extends React.PureComponent {
   componentDidMount = () => {
@@ -37,12 +45,15 @@ class UnassignedCasesPage extends React.PureComponent {
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       <div {...assignSectionStyling}>
         <React.Fragment>
-          <AssignWidget
-            userId={userId}
-            previousAssigneeId={userId}
-            onTaskAssignment={this.props.initialAssignTasksToUser}
-            selectedTasks={selectedTasks}
-            showRequestCasesButton />
+          <div {...assignAndRequestStyling}>
+            <AssignWidget
+              userId={userId}
+              previousAssigneeId={userId}
+              onTaskAssignment={this.props.initialAssignTasksToUser}
+              selectedTasks={selectedTasks}
+              showRequestCasesButton />
+            <RequestDistributionButton userId={userId} />
+          </div>
           {this.props.distributionCompleteCasesLoading &&
             <div {...loadingContainerStyling}>
               <LoadingContainer color={LOGO_COLORS.QUEUE.ACCENT}>
