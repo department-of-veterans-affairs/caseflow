@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { ReturnToJudgeModal } from './ReturnToJudgeModal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,8 +12,10 @@ export const ReturnToJudgeModalContainer = () => {
   const { taskId, appealId } = useParams();
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
   const dispatch = useDispatch();
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async ({ instructions }) => {
+    setSubmitting(true);
     const url = '/post_decision_motions/return_to_judge';
     const data = ApiUtil.convertToSnakeCase({
       taskId,
@@ -36,8 +38,9 @@ export const ReturnToJudgeModalContainer = () => {
       push('/queue');
     } catch (error) {
       console.error('Error during returnToJudge', error);
+      setSubmitting(false);
     }
   };
 
-  return <ReturnToJudgeModal onCancel={goBack} onSubmit={handleSubmit} />;
+  return <ReturnToJudgeModal onCancel={goBack} onSubmit={handleSubmit} submitting={submitting} />;
 };

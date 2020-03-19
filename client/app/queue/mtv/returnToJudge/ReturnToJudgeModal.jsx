@@ -12,7 +12,12 @@ import StringUtil from '../../../util/StringUtil';
 import TextareaField from '../../../components/TextareaField';
 import { noop } from 'lodash';
 
-export const ReturnToJudgeModal = ({ onSubmit = noop, onCancel = noop, instructions: defaultInstructions = '' }) => {
+export const ReturnToJudgeModal = ({
+  onSubmit = noop,
+  onCancel = noop,
+  instructions: defaultInstructions = '',
+  submitting = false
+}) => {
   const [instructions, setInstructions] = useState(defaultInstructions);
 
   const cancelHandler = () => onCancel();
@@ -33,7 +38,7 @@ export const ReturnToJudgeModal = ({ onSubmit = noop, onCancel = noop, instructi
           classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
           name: 'Submit',
           onClick: submitHandler,
-          disabled: !isValid()
+          disabled: !isValid() || submitting
         }
       ]}
       closeHandler={cancelHandler}
@@ -55,5 +60,6 @@ export const ReturnToJudgeModal = ({ onSubmit = noop, onCancel = noop, instructi
 ReturnToJudgeModal.propTypes = {
   onSubmit: PropTypes.func,
   onCancel: PropTypes.func,
-  instructions: PropTypes.string
+  instructions: PropTypes.string,
+  submitting: PropTypes.bool
 };
