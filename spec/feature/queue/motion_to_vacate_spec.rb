@@ -554,6 +554,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
         check_cavc_alert
         verify_cavc_conflict_action
 
+        expect(PostDecisionMotion.all.size).to eq(1)
+        expect(JudgeAddressMotionToVacateTask.all.size).to eq(1)
+
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
@@ -575,6 +578,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
           )
         )
         expect(page).to have_content(COPY::MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS)
+
+        expect(PostDecisionMotion.all.size).to eq(0)
+        expect(JudgeAddressMotionToVacateTask.all.size).to eq(2)
+        expect { vacate_stream.reload }.to raise_error ActiveRecord::RecordNotFound
       end
     end
 
