@@ -8,10 +8,14 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
   def perform
     VirtualHearingRepository.ready_for_deletion.each do |virtual_hearing|
+      Rails.logger.info("Deleting Pexip conference for hearing (#{virtual_hearing.hearing_id})")
+
       process_virtual_hearing(virtual_hearing)
     end
 
     VirtualHearingRepository.cancelled_hearings_with_pending_emails.each do |virtual_hearing|
+      Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
+
       VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
     end
   end
@@ -24,6 +28,8 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
     virtual_hearing.update(conference_deleted: true)
 
     if virtual_hearing.cancelled?
+      Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
+
       VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
     end
   end
@@ -36,12 +42,14 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
     true
   rescue Caseflow::Error::PexipNotFoundError
+    Rails.logger.info("Pexip response: #{response}")
+    Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
+
     # Assume the conference was already deleted if it's no longer in Pexip.
     true
   rescue Caseflow::Error::PexipApiError => error
-    Rails.logger.error(
-      "Failed to delete conference from Pexip with error: (#{error.code}) #{error.message}"
-    )
+    Rails.logger.info("Pexip response: #{response}")
+    Rails.logger.error("Failed to delete conference from Pexip with error: (#{error.code}) #{error.message}")
 
     capture_exception(
       error: error,

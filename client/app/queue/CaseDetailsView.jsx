@@ -119,7 +119,7 @@ export const CaseDetailsView = (props) => {
           {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
             <CaseHearingsDetail title="Hearings" appeal={appeal} />
           )}
-          <VeteranDetail title="About the Veteran" appeal={appeal} />
+          <VeteranDetail title="About the Veteran" appealId={appealId} />
           {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran && (
             <AppellantDetail title="About the Appellant" appeal={appeal} />
           )}
