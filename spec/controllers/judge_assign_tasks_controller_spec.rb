@@ -26,7 +26,7 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
 
     subject { post :create, params: { tasks: params } }
 
-    context "when cases will be assigned to an attorney" do
+    fcontext "when cases will be assigned to an attorney" do
       shared_examples "attorney task assignment" do
         it "returns the newly created tasks along with their new parents and old parents" do
           subject
@@ -49,6 +49,7 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
           review_tasks.each do |review_task|
             judge_review_task = JudgeDecisionReviewTask.find(review_task["id"])
             expect(review_task["attributes"]["assigned_to"]["id"]).to eq judge.id
+            expect(review_task["attributes"]["assigned_by"]["pg_id"]).to eq user.id
             expect(judge_review_task.children.first.type).to eq AttorneyTask.name
             expect(judge_review_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
           end
