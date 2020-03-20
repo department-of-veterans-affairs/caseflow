@@ -203,7 +203,7 @@ class QueueApp extends React.PureComponent {
 
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
 
-  routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} {...props.match.params} />;
+  routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />;
 
   routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 

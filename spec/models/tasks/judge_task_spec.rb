@@ -35,13 +35,15 @@ describe JudgeTask, :all_dbs do
       after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       context "in the assign phase" do
-        it "should return the Case Management assignment actions" do
+        it "should return the Case Management assignment actions along with attorneys" do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
-            ].map { |action| subject_task.build_action_hash(action, judge) }
+            ].map { |action| subject_task.build_action_hash(action, user) }
           )
+          assign_action_hash = subject.find { |hash| hash[:label].eql? Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label }
+          expect(assign_action_hash[:data][:options].nil?).to eq false
         end
       end
 
@@ -62,7 +64,7 @@ describe JudgeTask, :all_dbs do
 
     context "the task is assigned to the current user" do
       context "in the assign phase" do
-        it "should return the assignment action" do
+        it "should return the assignment action, but no attorneys" do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -71,6 +73,8 @@ describe JudgeTask, :all_dbs do
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
+          assign_action_hash = subject.find { |hash| hash[:label].eql? Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label }
+          expect(assign_action_hash[:data][:options].nil?).to eq true
         end
 
         context "the task was assigned from Quality Review" do
