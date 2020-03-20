@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
     end
     # :nocov:
 
-    return redirect_to(ENV["SSO_URL"]) unless current_user
+    return redirect_to(sso_url) unless current_user
 
     # In order to use Caseflow, we need to know what regional office (RO) the user is from.
     # CSS will give us the station office ID. Some station office IDs correspond to multiple
@@ -72,5 +72,9 @@ class SessionsController < ApplicationController
   def remove_user_from_session
     session.delete(:regional_office)
     session.delete("user")
+  end
+
+  def sso_url
+    ENV.fetch("SSO_URL", "/help")
   end
 end
