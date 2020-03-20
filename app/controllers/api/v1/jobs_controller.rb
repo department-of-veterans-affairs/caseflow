@@ -18,6 +18,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "out_of_service_reminder" => OutOfServiceReminderJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
+    "report_request_issues_stats" => ReportRequestIssuesStatsJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
     "sync_intake" => SyncIntakeJob,
     "sync_reviews" => SyncReviewsJob,
