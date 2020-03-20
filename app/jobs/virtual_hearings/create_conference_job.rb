@@ -34,12 +34,12 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
 
     virtual_hearing.establishment.attempted!
 
-    create_conference if !virtual_hearing.conference_id && !virtual_hearing.alias
+    create_conference if !virtual_hearing.conference_id || !virtual_hearing.alias
 
     VirtualHearings::SendEmail.new(
       virtual_hearing: virtual_hearing,
       type: email_type
-    ).call
+    ).call if virtual_hearing.conference_id
 
     if virtual_hearing.active? && virtual_hearing.all_emails_sent?
       virtual_hearing.establishment.clear_error!
