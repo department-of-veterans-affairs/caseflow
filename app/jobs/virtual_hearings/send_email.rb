@@ -15,7 +15,7 @@ class VirtualHearings::SendEmail
     end
 
     # Judge should not receive cancellation email
-    if !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent && type != :cancellation
+    if !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent
       send_email(:judge)
       virtual_hearing.judge_email_sent = true
     end
