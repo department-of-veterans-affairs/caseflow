@@ -20,21 +20,6 @@ describe ReportRequestIssuesStatsJob, :all_dbs do
   end
 
   context "when the job runs successfully" do
-    before do
-      # open_appeals.each do |appeal|
-      #   create_list(:bva_dispatch_task, 3, appeal: appeal)
-      #   create_list(:ama_judge_task, 8, appeal: appeal)
-      # end
-    end
-
-    # it "creates the correct number of cached appeals" do
-    #   expect(CachedAppeal.all.count).to eq(0)
-    #
-    #   ReportRequestIssuesStatsJob.perform_now
-    #
-    #   expect(CachedAppeal.all.count).to eq(open_appeals.length)
-    # end
-
     context "Datadog" do
       let(:emitted_gauges) { [] }
       let(:job_gauges) do
