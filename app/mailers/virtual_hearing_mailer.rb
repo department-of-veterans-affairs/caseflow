@@ -5,6 +5,7 @@ class VirtualHearingMailer < ActionMailer::Base
   layout "virtual_hearing_mailer"
   helper VirtualHearings::ExternalLinkHelper
   helper VirtualHearings::VeteranNameHelper
+  helper VirtualHearings::CalendarTemplateHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)
     @recipient = mail_recipient
