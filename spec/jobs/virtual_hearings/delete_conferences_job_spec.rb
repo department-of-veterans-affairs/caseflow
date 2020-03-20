@@ -48,7 +48,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
         expect(virtual_hearing.conference_deleted).to eq(true)
         expect(virtual_hearing.veteran_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
-        expect(virtual_hearing.judge_email_sent).to eq(true)
+        expect(virtual_hearing.judge_email_sent).to eq(false) # judge should not receive cancellation email
       end
     end
 
@@ -63,7 +63,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
         expect(job).to_not receive(:delete_conference)
         expect(virtual_hearing.veteran_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
-        expect(virtual_hearing.judge_email_sent).to eq(true)
+        expect(virtual_hearing.judge_email_sent).to eq(false) # judge should not receive cancellation email
       end
     end
 

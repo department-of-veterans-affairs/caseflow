@@ -54,8 +54,8 @@ class ExternalApi::PexipService
     url = "https://#{host}:#{port}/#{endpoint}"
     request = HTTPI::Request.new(url)
     request.auth.basic(user_name, password)
-    request.open_timeout = 30
-    request.read_timeout = 30
+    request.open_timeout = 300
+    request.read_timeout = 300
     request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
     request.body = body.to_json unless body.nil?
 

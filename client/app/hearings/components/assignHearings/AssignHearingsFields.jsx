@@ -64,7 +64,10 @@ export const HearingDocketTag = ({ hearing }) => {
 HearingDocketTag.propTypes = {
   hearing: PropTypes.shape({
     docketName: PropTypes.string,
-    docketNumber: PropTypes.number
+    docketNumber: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ])
   })
 };
 
