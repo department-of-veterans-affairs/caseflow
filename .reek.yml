@@ -56,7 +56,9 @@ detectors:
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
-      - VirtualHearings::DeleteConferencesJob
+      - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#perform
+      - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
