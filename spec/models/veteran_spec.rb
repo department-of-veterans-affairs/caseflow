@@ -515,6 +515,16 @@ describe Veteran, :all_dbs do
     end
   end
 
+  context "given a military address with invalid city characters" do
+    let(:military_postal_type_code) { "AA" }
+    let(:city) { "ÐÐÐÐÐ" }
+    let(:state) { nil }
+
+    it "city is considered invalid" do
+      expect(veteran.validate_city_line).to eq ["invalid_characters"]
+    end
+  end
+
   context "given a long address" do
     let(:address_line3) { "this address is longer than 20 chars" }
 
