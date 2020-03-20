@@ -1,6 +1,6 @@
 You're scheduled for a virtual hearing with <%= formatted_veteran_name(virtual_hearing.hearing.appeal.veteran) %>:
 View the Hearing Worksheet: https://appeals.cf.ds.va.gov/hearings/<%= virtual_hearing.hearing.external_id %>/worksheet
- 
+
 Date and Time
 <%= formatted_date_time_for_zone(time_zone, start_time_utc) %>
 
