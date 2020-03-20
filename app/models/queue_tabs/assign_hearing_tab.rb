@@ -76,7 +76,7 @@ class AssignHearingTab
   # in-use by the frontend.
   def self.serialize_columns
     [
-      Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
       Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
       Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
       Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME,
