@@ -103,10 +103,6 @@ class WorkQueue::TaskSerializer
     object.appeal.available_hearing_locations
   end
 
-  attribute :suggested_hearing_location do |object|
-    object.appeal.suggested_hearing_location&.to_hash
-  end
-
   attribute :previous_task do |object|
     {
       assigned_at: object.previous_task.try(:assigned_at)

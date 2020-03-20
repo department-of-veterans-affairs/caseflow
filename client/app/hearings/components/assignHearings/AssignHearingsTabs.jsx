@@ -1,4 +1,3 @@
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
@@ -25,7 +24,7 @@ const getCurrentTabIndex = () => {
   return 0;
 };
 
-export class AssignHearingsTabs extends React.PureComponent {
+export default class AssignHearingsTabs extends React.PureComponent {
   onTabChange = (tabNumber) => {
     this.setState({ clickedTab: tabNumber });
   }
@@ -102,23 +101,9 @@ AssignHearingsTabs.propTypes = {
     totalSlots: PropTypes.number
   }),
   selectedRegionalOffice: PropTypes.string,
-  room: PropTypes.string,
-  // Appeal ID => Attorney Name Array
-  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string)
+  room: PropTypes.string
 };
 
 AssignHearingsTabs.defaultProps = {
-  defaultTabIndex: getCurrentTabIndex(),
-  powerOfAttorneyNamesForAppeals: {}
+  defaultTabIndex: getCurrentTabIndex()
 };
-
-const mapStateToProps = (state) => {
-  const powerOfAttorneyNamesForAppeals = _.mapValues(
-    _.get(state, 'queue.appealDetails', {}),
-    (val) => _.get(val, 'powerOfAttorney.representative_name')
-  );
-
-  return { powerOfAttorneyNamesForAppeals };
-};
-
-export default connect(mapStateToProps)(AssignHearingsTabs);

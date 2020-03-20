@@ -25,16 +25,6 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
     return powerOfAttorney.representative_type && powerOfAttorney.representative_name;
   }
 
-  renderNameOnly() {
-    if (this.hasPowerOfAttorneyDetails) {
-      const { powerOfAttorney } = this.props;
-
-      return <span>{powerOfAttorney.representative_name}</span>;
-    }
-
-    return <span>{COPY.CASE_DETAILS_NO_POA}</span>;
-  }
-
   renderLoadingOrError() {
     const { loading, error } = this.props;
 
@@ -50,14 +40,10 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
   }
 
   render = () => {
-    const { displayNameOnly, powerOfAttorney } = this.props;
+    const { powerOfAttorney } = this.props;
 
     if (!powerOfAttorney) {
       return this.renderLoadingOrError();
-    }
-
-    if (displayNameOnly) {
-      return this.renderNameOnly();
     }
 
     if (!this.hasPowerOfAttorneyDetails()) {
@@ -87,17 +73,12 @@ PowerOfAttorneyDetail.propTypes = {
   error: PropTypes.object,
   getAppealValue: PropTypes.func,
   loading: PropTypes.bool,
-  displayNameOnly: PropTypes.bool,
   powerOfAttorney: PropTypes.shape({
     representative_type: PropTypes.string,
     representative_name: PropTypes.string,
     representative_address: PropTypes.object,
     representative_email_address: PropTypes.string
   })
-};
-
-PowerOfAttorneyDetail.defaultProps = {
-  displayNameOnly: false
 };
 
 const mapStateToProps = (state, ownProps) => {
