@@ -364,7 +364,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         )
         expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
-        # Verify PostDecisionMotion is created; should ultimately also check new tasks
+        # Verify PostDecisionMotion is created
         motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
         expect(motion).to_not be_nil
         expect(motion.disposition).to eq("denied")
