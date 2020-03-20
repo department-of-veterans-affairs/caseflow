@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 
-class CaseDetailLoadingScreen extends React.PureComponent {
+class CaseDetailsLoadingScreen extends React.PureComponent {
   loadActiveAppealAndTask = () => {
     const {
       appealId,
@@ -113,7 +113,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchAllAttorneys
 }, dispatch);
 
-CaseDetailLoadingScreen.propTypes = {
+CaseDetailsLoadingScreen.propTypes = {
   children: PropTypes.array,
   appealId: PropTypes.string,
   userId: PropTypes.number,
@@ -125,4 +125,4 @@ CaseDetailLoadingScreen.propTypes = {
   fetchAllAttorneys: PropTypes.func
 };
 
-export default (connect(mapStateToProps, mapDispatchToProps)(CaseDetailLoadingScreen));
+export default (connect(mapStateToProps, mapDispatchToProps)(CaseDetailsLoadingScreen));
