@@ -51,6 +51,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       veteranMissingFields: null,
       veteranAddressTooLong: null,
       veteranAddressInvalidFields: null,
+      veteranCityInvalidFields: null,
       pids: null
     },
     cancelModalVisible: false,
@@ -123,6 +124,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         veteranAddressInvalidFields: {
           $set: action.payload.errorData.veteran_address_invalid_fields
         },
+        veteranCityInvalidFields: {
+          $set: action.payload.errorData.veteran_city_invalid_fields
+        },
         pids: {
           $set: _.join(action.payload.errorData.pids, ', ')
         }
@@ -152,6 +156,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: null
         },
         veteranAddressInvalidFields: {
+          $set: null
+        },
+        veteranCityInvalidFields: {
           $set: null
         },
         pids: {
