@@ -9,20 +9,18 @@ class ReportRequestIssuesStatsJob < CaseflowJob
 
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = ReportRequestIssuesStatsJob.name.underscore
+  METRIC_NAME_PREFIX = "request_issues.unidentified_with_contention"
 
   def perform
     RequestStore.store[:current_user] = User.system_user
     report_request_issues_stats
-
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
-    log_error(@start_time, error)
+    log_error(error)
+  ensure
+    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
-  def report_request_issues_stats
-    # TODO
-    emit("request_issues_stats", 10)
-  end
+  private
 
   def emit(name, value, attrs: {})
     DataDogService.emit_gauge(
@@ -34,25 +32,44 @@ class ReportRequestIssuesStatsJob < CaseflowJob
     )
   end
 
-  def log_error(start_time, err)
-    duration = time_ago_in_words(start_time)
+  def log_error(err)
+    duration = time_ago_in_words(@start_time)
     msg = "ReportRequestIssuesStatsJob failed after running for #{duration}. Fatal error: #{err.message}"
-
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
     Raven.capture_exception(err)
 
     slack_service.send_notification(msg)
-
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
-  private
+  def report_request_issues_stats
+    start_of_month = Time.zone.now.last_month.beginning_of_month
+    req_issues = unidentified_request_issues_with_contention(start_of_month, start_of_month.next_month)
+    emit(METRIC_NAME_PREFIX, req_issues.count)
 
-  def request_issue_counts_for_appeal_ids(appeal_ids)
-    RequestIssue.where(decision_review_id: appeal_ids, decision_review_type: Appeal.name)
-      .group(:decision_review_id).count
+    req_issues.group(:closed_status).count.each do |ben_type, count|
+      emit("#{METRIC_NAME_PREFIX}.st.#{ben_type || 'nil'}", count)
+    end
+
+    req_issues.group(:benefit_type).count.each do |ben_type, count|
+      emit("#{METRIC_NAME_PREFIX}.ben.#{ben_type}", count)
+    end
+
+    dr_counts_by_type = req_issues.group(:decision_review_type).count
+    dr_counts_by_type.each do |dr_type, count|
+      emit("#{METRIC_NAME_PREFIX}.dr.#{dr_type}", count)
+    end
+
+    # Could use `req_issues.group(:veteran_participant_id).count.count` but there's a count discrepancy
+    emit("#{METRIC_NAME_PREFIX}.vet_count",
+         req_issues.map(&:decision_review).map(&:veteran_file_number).uniq.count)
   end
 
+  def unidentified_request_issues_with_contention(start_date, end_date)
+    RequestIssue.where.not(contention_reference_id: nil)
+      .where(is_unidentified: true)
+      .where("created_at >= ?", start_date)
+      .where("created_at < ?", end_date)
+  end
 end
