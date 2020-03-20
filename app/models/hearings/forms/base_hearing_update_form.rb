@@ -107,7 +107,8 @@ class BaseHearingUpdateForm
     # The judge_email_sent flag should not be set to false if virtual hearing is cancelled.
     emails_sent_updates = {
       veteran_email_sent: email_sent_flag(:veteran_email),
-      judge_email_sent: email_sent_flag(:judge_email) || (virtual_hearing_attributes[:status] == :cancelled),
+      judge_email_sent: email_sent_flag(:judge_email) ||
+                        (!virtual_hearing_attributes.blank? && virtual_hearing_attributes[:status] == :cancelled),
       representative_email_sent: email_sent_flag(:representative_email)
     }.reject { |_k, email_sent| email_sent == true }
 

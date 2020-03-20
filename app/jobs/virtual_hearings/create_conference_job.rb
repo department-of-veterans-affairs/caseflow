@@ -36,10 +36,12 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
 
     create_conference if !virtual_hearing.conference_id || !virtual_hearing.alias
 
-    VirtualHearings::SendEmail.new(
-      virtual_hearing: virtual_hearing,
-      type: email_type
-    ).call if virtual_hearing.conference_id
+    if virtual_hearing.conference_id
+      VirtualHearings::SendEmail.new(
+        virtual_hearing: virtual_hearing,
+        type: email_type
+      ).call
+    end
 
     if virtual_hearing.active? && virtual_hearing.all_emails_sent?
       virtual_hearing.establishment.clear_error!
@@ -62,6 +64,11 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
     end
   end
 
+  def log_error
+    Rails.logger.info("Pexip response: #{resp}")
+    Rails.logger.error "CreateConferenceJob failed: (#{resp.error.code}) #{resp.error.message}"
+  end
+
   def create_conference
     assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
 
@@ -72,9 +79,7 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
     )
 
     if resp.error
-      Rails.logger.info("Pexip response: #{resp}")
-      Rails.logger.error "CreateConferenceJob failed: (#{resp.error.code}) #{resp.error.message}"
-
+      log_error
       virtual_hearing.establishment.update_error!("(#{resp.error.code}) #{resp.error.message}")
 
       fail resp.error
