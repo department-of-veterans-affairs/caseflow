@@ -186,6 +186,8 @@ class Veteran < CaseflowRecord
   end
 
   def validate_city_line
+    return if city.blank?
+
     errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
   end
 
