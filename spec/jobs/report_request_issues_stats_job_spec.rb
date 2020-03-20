@@ -41,11 +41,11 @@ describe ReportRequestIssuesStatsJob, :all_dbs do
         emitted_gauges.select { |gauge| gauge[:metric_group] == "report_request_issues_stats_job" }
       end
       let(:runtime_gauges) do
-        job_gauges.select { |gauge| gauge[:metric_name] == "runtime" }.first
+        job_gauges.detect { |gauge| gauge[:metric_name] == "runtime" }
       end
       let(:metric_name_prefix) { ReportRequestIssuesStatsJob::METRIC_NAME_PREFIX }
       let(:unidentified_with_contention_gauge) do
-        job_gauges.select { |gauge| gauge[:metric_name] == metric_name_prefix }.first
+        job_gauges.detect { |gauge| gauge[:metric_name] == metric_name_prefix }
       end
 
       let!(:req_issues) do
