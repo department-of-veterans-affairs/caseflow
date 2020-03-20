@@ -33,7 +33,7 @@ class ReportRequestIssuesStatsJob < CaseflowJob
   end
 
   def log_error(err)
-    duration = time_ago_in_words(@start_time)
+    duration = time_ago_in_words(start_time)
     msg = "ReportRequestIssuesStatsJob failed after running for #{duration}. Fatal error: #{err.message}"
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))

@@ -89,22 +89,22 @@ describe ReportRequestIssuesStatsJob, :all_dbs do
       end
 
       let(:vet_count_gauge) do
-        job_gauges.select { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.vet_count" }.first
+        job_gauges.detect { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.vet_count" }
       end
       let(:removed_count_gauge) do
-        job_gauges.select { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.st.removed" }.first
+        job_gauges.detect { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.st.removed" }
       end
       let(:pension_count_gauge) do
-        job_gauges.select { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.ben.pension" }.first
+        job_gauges.detect { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.ben.pension" }
       end
       let(:compensation_count_gauge) do
-        job_gauges.select { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.ben.compensation" }.first
+        job_gauges.detect { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.ben.compensation" }
       end
       let(:hlr_count_gauge) do
-        job_gauges.select { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.dr.HigherLevelReview" }.first
+        job_gauges.detect { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.dr.HigherLevelReview" }
       end
       let(:sc_count_gauge) do
-        job_gauges.select { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.dr.SupplementalClaim" }.first
+        job_gauges.detect { |gauge| gauge[:metric_name] == "#{metric_name_prefix}.dr.SupplementalClaim" }
       end
 
       it "records stats on unidentified request issues that have contentions" do
