@@ -131,7 +131,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
         send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
         find("label[for=disposition_denied]").click
         expect(page).to have_content("Optional")
-        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL)
+        expect(page).to have_content(
+          format(COPY::JUDGE_ADDRESS_MTV_HYPERLINK_LABEL, "denial")
+        )
         fill_in("hyperlink", with: hyperlink)
         fill_in("instructions", with: "Attorney context/instructions for judge")
         click_dropdown(text: judge2.display_name)
@@ -218,12 +220,18 @@ RSpec.feature "Motion to vacate", :all_dbs do
     after { FeatureToggle.disable!(:review_motion_to_vacate) }
 
     it "task shows up in judge's queue" do
+      # Ensure the task exists
+      judge_address_motion_to_vacate_task.reload
+
       User.authenticate!(user: judge)
       visit "/queue"
       expect(page).to have_content(COPY::JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL)
     end
 
     it "judge grants motion to vacate (vacate & readjudication)" do
+      # Ensure the task exists
+      judge_address_motion_to_vacate_task.reload
+
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_granted]").click
       find("label[for=vacate-type_vacate_and_readjudication]").click
@@ -248,6 +256,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     it "judge grants motion to vacate (straight vacate)" do
+      # Ensure the task exists
+      judge_address_motion_to_vacate_task.reload
+
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_granted]").click
       find("label[for=vacate-type_straight_vacate]").click
@@ -272,6 +283,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     it "judge grants motion to vacate (vacate & de novo)" do
+      # Ensure the task exists
+      judge_address_motion_to_vacate_task.reload
+
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_granted]").click
       find("label[for=vacate-type_vacate_and_de_novo]").click
@@ -298,6 +312,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     it "judge grants partial vacatur (vacate & readjudication)" do
+      # Ensure the task exists
+      judge_address_motion_to_vacate_task.reload
+
       address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
       find("label[for=disposition_partially_granted]").click
       find("label[for=vacate-type_vacate_and_readjudication]").click
@@ -402,44 +419,51 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(vacate_motion_mail_task.instructions).to include(expected_instructions)
     end
 
-    it "judge dismisses motion to vacate" do
-      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
-      find("label[for=disposition_dismissed]").click
-      expect(page).to have_content("Optional")
-      expect(page).to have_content("Upload the draft to your shared drive and add the location below")
-      fill_in("instructions", with: judge_notes)
-      fill_in("hyperlink", with: hyperlink)
+    context "dismissal" do
+      let(:atty_disposition) { "dismissed" }
+      let(:atty_hyperlink) { "https://efolder.link/file" }
 
-      # Ensure we don't show attorney selection for this disposition
-      expect(page).not_to have_selector("input#attorney")
+      it "judge dismisses motion to vacate" do
+        address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+        find("label[for=disposition_dismissed]").click
+        expect(page).to have_content("Optional")
+        expect(page).to have_content(
+          format(COPY::JUDGE_ADDRESS_MTV_HYPERLINK_LABEL, "dismissal")
+        )
+        fill_in("instructions", with: judge_notes)
+        fill_in("hyperlink", with: hyperlink)
 
-      click_button(text: "Submit")
+        # Ensure we don't show attorney selection for this disposition
+        expect(page).not_to have_selector("input#attorney")
 
-      # Return back to user's queue
-      expect(page).to have_current_path("/queue")
-      expect(page).to have_content(
-        format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "dismissed")
-      )
-      expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
+        click_button(text: "Submit")
 
-      # Verify PostDecisionMotion is created; should ultimately also check new tasks
-      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
-      expect(motion).to_not be_nil
-      expect(motion.disposition).to eq("dismissed")
+        # Return back to user's queue
+        expect(page).to have_current_path("/queue")
+        expect(page).to have_content(
+          format(COPY::JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED, appeal.veteran_full_name, "dismissed")
+        )
+        expect(page).to have_content(COPY::JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED)
 
-      # Verify new task creation
-      instructions = format_mtv_judge_instructions(
-        notes: judge_notes,
-        disposition: "dismissed",
-        hyperlink: hyperlink
-      )
-      new_task = DismissedMotionToVacateTask.find_by(assigned_to: motions_attorney)
-      expect(new_task).to_not be_nil
-      expect(new_task.label).to eq COPY::DISMISSED_MOTION_TO_VACATE_TASK_LABEL
-      expect(new_task.available_actions(motions_attorney)).to include(
-        Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
-      )
-      expect(new_task.instructions.join("")).to eq(instructions)
+        # Verify PostDecisionMotion is created; should ultimately also check new tasks
+        motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+        expect(motion).to_not be_nil
+        expect(motion.disposition).to eq("dismissed")
+
+        # Verify new task creation
+        instructions = format_mtv_judge_instructions(
+          notes: judge_notes,
+          disposition: "dismissed",
+          hyperlink: hyperlink
+        )
+        new_task = DismissedMotionToVacateTask.find_by(assigned_to: motions_attorney)
+        expect(new_task).to_not be_nil
+        expect(new_task.label).to eq COPY::DISMISSED_MOTION_TO_VACATE_TASK_LABEL
+        expect(new_task.available_actions(motions_attorney)).to include(
+          Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
+        )
+        expect(new_task.instructions.join("")).to eq(instructions)
+      end
     end
   end
 

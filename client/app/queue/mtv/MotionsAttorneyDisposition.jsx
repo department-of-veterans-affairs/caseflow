@@ -19,6 +19,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 import { DISPOSITION_TEXT } from '../../../constants/MOTION_TO_VACATE';
+import { dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
 
 const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
@@ -86,7 +87,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
         {disposition && disposition === 'denied' && (
           <TextField
             name="hyperlink"
-            label={MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL}
+            label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL, dispositionStrings[disposition])}
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
             optional

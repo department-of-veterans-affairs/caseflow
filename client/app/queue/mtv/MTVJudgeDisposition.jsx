@@ -26,6 +26,7 @@ import TextField from '../../components/TextField';
 import { MTVIssueSelection } from './MTVIssueSelection';
 import StringUtil from '../../util/StringUtil';
 import { MissingDraftAlert } from './MissingDraftAlert';
+import { grantTypes, dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
 
 const vacateTypeText = (val) => {
@@ -51,13 +52,6 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
   }
 
   return parts.join('\n');
-};
-
-const grantTypes = ['granted', 'partially_granted'];
-
-const dispositionStrings = {
-  denied: 'denial',
-  dismissed: 'dismissal'
 };
 
 export const MTVJudgeDisposition = ({
