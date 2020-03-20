@@ -14,7 +14,7 @@ class VirtualHearings::SendEmail
       virtual_hearing.veteran_email_sent = true
     end
 
-    if !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent
+    if should_judge_receive_email?
       send_email(:judge)
       virtual_hearing.judge_email_sent = true
     end
@@ -71,5 +71,9 @@ class VirtualHearings::SendEmail
         title: MailRecipient::RECIPIENT_TITLES[:representative]
       )
     }
+  end
+
+  def should_judge_receive_email?
+    !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent && type != :cancellation
   end
 end
