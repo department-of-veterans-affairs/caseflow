@@ -170,7 +170,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     let(:judge_team) { JudgeTeam.create_for_judge(judge) }
     let(:drafting_attorney) { create(:user, full_name: "Drafty McDrafter") }
 
-    let(:orig_atty_task) do
+    let!(:orig_atty_task) do
       create(:ama_attorney_task, :completed,
              assigned_to: drafting_attorney, appeal: appeal, created_at: receipt_date + 1.day, parent: root_task)
     end
