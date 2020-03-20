@@ -26,6 +26,7 @@ class WorkQueue::TaskSerializer
     {
       first_name: object.assigned_by_display_name.first,
       last_name: object.assigned_by_display_name.last,
+      full_name: object.assigned_by.try(:full_name),
       css_id: object.assigned_by.try(:css_id),
       pg_id: object.assigned_by.try(:id)
     }
@@ -36,6 +37,7 @@ class WorkQueue::TaskSerializer
       css_id: object.assigned_to.try(:css_id),
       is_organization: object.assigned_to.is_a?(Organization),
       name: object.appeal.assigned_to_location,
+      full_name: object.assigned_to.try(:full_name),
       type: object.assigned_to.class.name,
       id: object.assigned_to.id
     }
