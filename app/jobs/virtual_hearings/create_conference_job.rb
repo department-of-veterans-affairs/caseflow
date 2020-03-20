@@ -72,9 +72,10 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
     )
 
     if resp.error
-      Rails.logger.warn "CreateConferenceJob failed: #{resp.error.message}"
+      Rails.logger.info("Pexip response: #{resp}")
+      Rails.logger.error "CreateConferenceJob failed: (#{resp.error.code}) #{resp.error.message}"
 
-      virtual_hearing.establishment.update_error!(resp.error.message)
+      virtual_hearing.establishment.update_error!("(#{resp.error.code}) #{resp.error.message}")
 
       fail resp.error
     end
