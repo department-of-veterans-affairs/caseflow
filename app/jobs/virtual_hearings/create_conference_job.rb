@@ -64,11 +64,7 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
     end
   end
 
-  def log_error
-    Rails.logger.info("Pexip response: #{resp}")
-    Rails.logger.error "CreateConferenceJob failed: (#{resp.error.code}) #{resp.error.message}"
-  end
-
+  # rubocop:disable Metrics/AbcSize
   def create_conference
     assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
 
@@ -79,7 +75,9 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
     )
 
     if resp.error
-      log_error
+      Rails.logger.info("Pexip response: #{resp}")
+      Rails.logger.error "CreateConferenceJob failed: (#{resp.error.code}) #{resp.error.message}"
+
       virtual_hearing.establishment.update_error!("(#{resp.error.code}) #{resp.error.message}")
 
       fail resp.error
@@ -87,6 +85,7 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
 
     virtual_hearing.update(conference_id: resp.data[:conference_id], status: :active)
   end
+  # rubocop:enable Metrics/AbcSize
 
   def should_initialize_alias_and_pins?
     virtual_hearing.alias.nil? || virtual_hearing.host_pin.nil? || virtual_hearing.guest_pin.nil?
