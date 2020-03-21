@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-describe ReportRequestIssuesStatsJob, :all_dbs do
+describe ReportRequestIssuesStatsJob do
   context "when the entire job fails" do
     let(:error_msg) { "Some dummy error" }
 
     before do
-      allow_any_instance_of(ReportRequestIssuesStatsJob).to receive(:report_request_issues_stats).and_raise(error_msg)
+      allow_any_instance_of(described_class).to receive(:report_request_issues_stats).and_raise(error_msg)
     end
 
     it "sends a message to Slack that includes the error" do
       slack_msg = ""
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
 
-      ReportRequestIssuesStatsJob.perform_now
+      described_class.perform_now
 
-      expected_msg = "ReportRequestIssuesStatsJob failed after running for .*. Fatal error: #{error_msg}"
+      expected_msg = "#{described_class.name} failed after running for .*. Fatal error: #{error_msg}"
       expect(slack_msg).to match(/#{expected_msg}/)
     end
   end
@@ -28,7 +28,7 @@ describe ReportRequestIssuesStatsJob, :all_dbs do
       let(:runtime_gauges) do
         job_gauges.detect { |gauge| gauge[:metric_name] == "runtime" }
       end
-      let(:metric_name_prefix) { ReportRequestIssuesStatsJob::METRIC_NAME_PREFIX }
+      let(:metric_name_prefix) { described_class::METRIC_NAME_PREFIX }
       let(:unidentified_with_contention_gauge) do
         job_gauges.detect { |gauge| gauge[:metric_name] == metric_name_prefix }
       end
@@ -63,11 +63,11 @@ describe ReportRequestIssuesStatsJob, :all_dbs do
       it "records the job's runtime" do
         allow(DataDogService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
 
-        ReportRequestIssuesStatsJob.perform_now
+        described_class.perform_now
 
         expect(runtime_gauges).to include(
           app_name: "caseflow_job",
-          metric_group: ReportRequestIssuesStatsJob.name.underscore,
+          metric_group: described_class.name.underscore,
           metric_name: "runtime",
           metric_value: anything
         )
@@ -95,7 +95,7 @@ describe ReportRequestIssuesStatsJob, :all_dbs do
       it "records stats on unidentified request issues that have contentions" do
         allow(DataDogService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
 
-        ReportRequestIssuesStatsJob.perform_now
+        described_class.perform_now
 
         expect(unidentified_with_contention_gauge[:metric_value]).to eq(9)
         expect(vet_count_gauge[:metric_value]).to be_between(1, 9)

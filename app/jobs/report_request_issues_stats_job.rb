@@ -34,7 +34,7 @@ class ReportRequestIssuesStatsJob < CaseflowJob
 
   def log_error(err)
     duration = time_ago_in_words(start_time)
-    msg = "ReportRequestIssuesStatsJob failed after running for #{duration}. Fatal error: #{err.message}"
+    msg = "#{self.class.name} failed after running for #{duration}. Fatal error: #{err.message}"
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
@@ -44,7 +44,7 @@ class ReportRequestIssuesStatsJob < CaseflowJob
   end
 
   def report_request_issues_stats
-    start_of_month = Time.zone.now.last_month.beginning_of_month
+    start_of_month = Time.zone.now.prev_month.beginning_of_month
     req_issues = unidentified_request_issues_with_contention(start_of_month, start_of_month.next_month)
     emit(METRIC_NAME_PREFIX, req_issues.count)
 
