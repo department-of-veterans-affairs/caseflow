@@ -339,7 +339,7 @@ class SeedDB
       updated_by: hearings_member
     )
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
-    FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
+    FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task)
   end
   ### End Hearings Setup ###
 
