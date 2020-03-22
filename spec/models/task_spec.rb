@@ -500,11 +500,10 @@ describe Task, :all_dbs do
         create(
           disposition_task_type,
           trait,
-          parent: hearing_task,
-          appeal: appeal
+          parent: hearing_task
         )
       end
-      let!(:task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+      let!(:task) { create(:no_show_hearing_task, parent: disposition_task) }
 
       context "user is a member of hearings management" do
         before do
@@ -559,7 +558,7 @@ describe Task, :all_dbs do
       end
 
       context "user is a member of hearings management and task is a ScheduleHearingTask" do
-        let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+        let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2) }
 
         before do
           HearingsManagement.singleton.add_user(user)
@@ -578,7 +577,7 @@ describe Task, :all_dbs do
         end
 
         context "task is not a ScheduleHearingTask" do
-          let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task_2, appeal: appeal) }
+          let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task_2) }
 
           it "returns no actions" do
             expect(subject).to eq []
@@ -1522,7 +1521,7 @@ describe Task, :all_dbs do
   describe ".when_child_task_created" do
     let(:parent_task) { create(:task, appeal: create(:appeal)) }
 
-    subject { create(:task, parent: parent_task, appeal: parent_task.appeal) }
+    subject { create(:task, parent: parent_task) }
 
     before do
       allow(Raven).to receive(:capture_message)

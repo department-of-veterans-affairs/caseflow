@@ -857,8 +857,8 @@ feature "AmaQueue", :all_dbs do
     let(:task_count) { 2 }
     let!(:tasks) do
       Array.new(task_count) do
-        root_task = create(:root_task, appeal: create(:appeal))
-        create(:ama_task, parent: root_task, appeal: root_task.appeal, assigned_to: org)
+        root_task = create(:root_task)
+        create(:ama_task, parent: root_task, assigned_to: org)
       end
     end
 

@@ -4,12 +4,11 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
   let(:root_task) { create(:root_task, appeal: appeal) }
-  let(:distribution_task) { create(:distribution_task, parent: root_task, appeal: appeal) }
-  let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
-  let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: parent_hearing_task, appeal: appeal) }
+  let(:distribution_task) { create(:distribution_task, parent: root_task) }
+  let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task) }
+  let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: parent_hearing_task) }
   let!(:foreign_veteran_case_task) do
     HearingAdminActionForeignVeteranCaseTask.create!(
-      appeal: appeal,
       parent: schedule_hearing_task,
       assigned_to: HearingsManagement.singleton,
       assigned_to_type: "Organization"

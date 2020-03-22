@@ -18,10 +18,10 @@ describe TranscriptionTask, :postgres do
       end
       let(:appeal) { create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal) }
-      let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task.reload, appeal: appeal) }
-      let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
+      let!(:hearing_task) { create(:hearing_task, parent: root_task) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task) }
+      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task.reload) }
+      let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
 
       it "cancels all tasks in the hierarchy and creates a new schedule_hearing_task" do
         transcription_task.update_from_params(update_params, transcription_user)
@@ -49,11 +49,11 @@ describe TranscriptionTask, :postgres do
         }
       end
       let(:appeal) { create(:appeal) }
-      let!(:root_task) { create(:root_task, appeal: appeal) }
-      let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
-      let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
+      let!(:root_task) { create(:root_task), appeal: appeal }
+      let!(:hearing_task) { create(:hearing_task, parent: root_task) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task) }
+      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
+      let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
 
       it "completes the task" do
         transcription_task.update_from_params(update_params, transcription_user)
@@ -66,10 +66,10 @@ describe TranscriptionTask, :postgres do
   context "#hearing_task" do
     let(:appeal) { create(:appeal) }
     let!(:root_task) { create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-    let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
-    let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task) }
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task) }
+    let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
+    let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
 
     it "returns the hearing task" do
       expect(transcription_task.hearing_task).to eq(hearing_task)

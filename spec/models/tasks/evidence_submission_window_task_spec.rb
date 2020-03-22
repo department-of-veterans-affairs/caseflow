@@ -72,7 +72,7 @@ describe EvidenceSubmissionWindowTask, :postgres do
 
     context "parent is a AssignHearingDispositionTask and there is a held hearing" do
       let(:root_task) { create(:root_task, appeal: appeal) }
-      let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task) }
       let(:hearing_day) { create(:hearing_day, scheduled_for: appeal.receipt_date + 15.days) }
       let(:hearing) do
         create(
@@ -93,8 +93,7 @@ describe EvidenceSubmissionWindowTask, :postgres do
         create(
           :assign_hearing_disposition_task,
           :in_progress,
-          parent: hearing_task,
-          appeal: appeal
+          parent: hearing_task
         )
       end
       let!(:task) do

@@ -141,10 +141,10 @@ describe RootTask, :postgres do
   end
 
   context "when child tasks are added" do
-    let(:root_task) { create(:root_task, appeal: create(:appeal)) }
+    let(:root_task) { create(:root_task) }
     let(:task_factory) { :task }
 
-    subject { create(task_factory, parent: root_task, appeal: root_task.appeal) }
+    subject { create(task_factory, parent: root_task) }
 
     before { allow(Raven).to receive(:capture_message) }
 
