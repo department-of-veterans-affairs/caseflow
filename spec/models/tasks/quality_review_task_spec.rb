@@ -24,7 +24,7 @@ describe QualityReviewTask, :all_dbs do
 
       let!(:judge) { create(:user) }
       let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
-      let!(:judge_task) { JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge) }
+      let!(:judge_task) { JudgeAssignTask.create!(parent: root_task, assigned_to: judge) }
 
       let!(:atty) { create(:user) }
       let!(:vacols_atty) { create(:staff, :attorney_role, user: atty) }

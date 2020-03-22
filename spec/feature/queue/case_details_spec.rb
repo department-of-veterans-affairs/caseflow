@@ -840,17 +840,16 @@ RSpec.feature "Case details", :all_dbs do
       let!(:appeal) { create(:appeal) }
       let!(:appeal2) { create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-      let!(:assign_task) { create(:ama_judge_task, appeal: appeal, assigned_to: user, parent: root_task) }
+      let!(:assign_task) { create(:ama_judge_task, assigned_to: user, parent: root_task) }
       let!(:judge_task) do
         create(
           :ama_judge_decision_review_task,
-          appeal: appeal,
           parent: root_task,
           assigned_to: user
         )
       end
-      let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, parent: judge_task, assigned_to: user) }
-      let!(:attorney_task2) { create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user) }
+      let!(:attorney_task) { create(:ama_attorney_task, parent: judge_task, assigned_to: user) }
+      let!(:attorney_task2) { create(:ama_attorney_task, parent: root_task, assigned_to: user) }
 
       before do
         # The status attribute needs to be set here due to update_parent_status hook in the task model
@@ -1114,7 +1113,7 @@ RSpec.feature "Case details", :all_dbs do
       before do
         judge = create(:user, station_id: 101)
         create(:staff, :judge_role, user: judge)
-        judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
+        judge_task = JudgeAssignTask.create!(parent: root_task, assigned_to: judge)
 
         atty = create(:user, station_id: 101)
         create(:staff, :attorney_role, user: atty)
@@ -1154,7 +1153,7 @@ RSpec.feature "Case details", :all_dbs do
     context "when the only task is a TrackVeteranTask" do
       let(:root_task) { create(:root_task) }
       let(:appeal) { root_task.appeal }
-      let(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
+      let(:tracking_task) { create(:track_veteran_task, parent: root_task) }
 
       it "should not show the tracking task in task snapshot" do
         visit("/queue/appeals/#{tracking_task.appeal.uuid}")

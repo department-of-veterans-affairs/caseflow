@@ -13,7 +13,6 @@ describe AttorneyTask, :all_dbs do
       :ama_judge_decision_review_task,
       assigned_by: assigning_judge,
       assigned_to: reviewing_judge,
-      appeal: appeal,
       parent: appeal.root_task
     )
   end
@@ -46,7 +45,6 @@ describe AttorneyTask, :all_dbs do
                :completed,
                assigned_to: attorney,
                assigned_by: assigning_judge,
-               appeal: appeal,
                parent: parent)
       end
 
@@ -61,7 +59,6 @@ describe AttorneyTask, :all_dbs do
           :ama_attorney_task,
           assigned_to: attorney,
           assigned_by: assigning_judge,
-          appeal: appeal,
           parent: parent
         )
       end
@@ -78,7 +75,6 @@ describe AttorneyTask, :all_dbs do
       AttorneyTask.create(
         assigned_to: attorney,
         assigned_by: assigning_judge,
-        appeal: appeal,
         parent: parent,
         status: Constants.TASK_STATUSES.assigned
       )
@@ -129,7 +125,7 @@ describe AttorneyTask, :all_dbs do
   end
 
   context "when cancelling the task" do
-    let!(:attorney_task) { create(:ama_attorney_task, assigned_by: assigning_judge, appeal: appeal, parent: parent) }
+    let!(:attorney_task) { create(:ama_attorney_task, assigned_by: assigning_judge, parent: parent) }
 
     subject { attorney_task.update!(status: Constants.TASK_STATUSES.cancelled) }
 
