@@ -8,6 +8,8 @@ class VirtualHearingMailer < ActionMailer::Base
   helper VirtualHearings::CalendarTemplateHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)
+    return if mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
+
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
 
