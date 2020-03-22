@@ -9,6 +9,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask, :postgres do
   let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: parent_hearing_task) }
   let!(:foreign_veteran_case_task) do
     HearingAdminActionForeignVeteranCaseTask.create!(
+      appeal: appeal,
       parent: schedule_hearing_task,
       assigned_to: HearingsManagement.singleton,
       assigned_to_type: "Organization"
