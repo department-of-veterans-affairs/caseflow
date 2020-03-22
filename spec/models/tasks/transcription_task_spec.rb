@@ -49,7 +49,7 @@ describe TranscriptionTask, :postgres do
         }
       end
       let(:appeal) { create(:appeal) }
-      let!(:root_task) { create(:root_task), appeal: appeal }
+      let!(:root_task) { create(:root_task, appeal: appeal) }
       let!(:hearing_task) { create(:hearing_task, parent: root_task) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task) }
       let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
