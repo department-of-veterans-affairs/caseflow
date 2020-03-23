@@ -76,6 +76,7 @@ describe AttorneyTask, :all_dbs do
       AttorneyTask.create(
         assigned_to: attorney,
         assigned_by: assigning_judge,
+        appeal: appeal,
         parent: parent,
         status: Constants.TASK_STATUSES.assigned
       )
