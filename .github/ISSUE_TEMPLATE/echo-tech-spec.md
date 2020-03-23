@@ -1,8 +1,8 @@
 ---
 name: Echo Tech Spec task
 about: Template for a new tech spec for the echo team
-title: '[SUBJECT] Tech Spec'
-labels: 'tech-spec, echo'
+title: "[SUBJECT] Tech Spec"
+labels: 'Team: Echo 🐬, Type: Tech-Spec'
 assignees: ''
 
 ---

@@ -118,7 +118,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
     context "there's another in-progress JudgeAssignTask" do
       let!(:judge_task) do
-        create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal, parent: root_task)
+        create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, parent: root_task)
       end
 
       scenario "viewing the assign task queue" do
@@ -138,14 +138,12 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
     context "there's an in-progress JudgeDecisionReviewTask" do
       let!(:judge_review_task) do
-        create(
-          :ama_judge_decision_review_task, :in_progress, assigned_to: judge_one.user, appeal: appeal, parent: root_task
-        )
+        create(:ama_judge_decision_review_task, :in_progress, assigned_to: judge_one.user, parent: root_task)
       end
 
       scenario "viewing the review task queue" do
         expect(judge_review_task.status).to eq("in_progress")
-        attorney_completed_task = create(:ama_attorney_task, appeal: appeal, parent: judge_review_task)
+        attorney_completed_task = create(:ama_attorney_task, parent: judge_review_task)
         attorney_completed_task.update!(status: Constants.TASK_STATUSES.completed)
         case_review = create(:attorney_case_review, task_id: attorney_completed_task.id)
 

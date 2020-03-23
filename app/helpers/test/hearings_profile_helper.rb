@@ -99,7 +99,6 @@ module Test::HearingsProfileHelper
         regional_office_timezone: hearing.regional_office&.timezone,
         request_type: hearing.hearing_day&.request_type,
         scheduled_for: hearing.scheduled_for,
-        scheduled_time: hearing.scheduled_time,
         scheduled_time_string: hearing.scheduled_time_string,
         unique_id: "#{hearing.class.name.downcase}-#{hearing.id}"
       }
