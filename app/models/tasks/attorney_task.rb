@@ -56,7 +56,7 @@ class AttorneyTask < Task
   def can_be_moved_by_user?(user)
     return false unless parent.is_a?(JudgeTask)
 
-    # The assigning judge, the judge who is assigned the parent review task, and SpecialCaseMovementTeam members
+    # The judge who is assigned the parent review task, the assigning judge, and SpecialCaseMovementTeam members can
     # cancel or reassign this task
     parent.assigned_to == user || assigned_by == user || user.can_act_on_behalf_of_judges?
   end
