@@ -435,7 +435,7 @@ feature "AmaQueue", :all_dbs do
     end
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:judge_task) do
-      create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
+      create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
     before do

@@ -37,8 +37,8 @@ describe RootTask, :postgres do
     subject { root_task.update_children_status_after_closed }
 
     context "when there are multiple children tasks" do
-      let!(:task) { create(:ama_task, appeal: appeal, parent: root_task) }
-      let!(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
+      let!(:task) { create(:ama_task, parent: root_task) }
+      let!(:tracking_task) { create(:track_veteran_task, parent: root_task) }
 
       it "should only close the tracking task" do
         expect { subject }.to_not raise_error
@@ -53,14 +53,14 @@ describe RootTask, :postgres do
     let!(:appeal) { root_task.appeal }
 
     context "when the Appeal has already been dispatched" do
-      let!(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
+      let!(:tracking_task) { create(:track_veteran_task, parent: root_task) }
       let!(:dispatch_task) do
-        create(:bva_dispatch_task, :completed, closed_at: Time.zone.now - 1, appeal: appeal, parent: root_task)
+        create(:bva_dispatch_task, :completed, closed_at: Time.zone.now - 1, parent: root_task)
       end
-      let!(:mail_task) { create(:reconsideration_motion_mail_task, appeal: appeal, parent: root_task) }
+      let!(:mail_task) { create(:reconsideration_motion_mail_task, parent: root_task) }
 
       context "when there are non-closeable child tasks present" do
-        let!(:task) { create(:ama_task, appeal: appeal, parent: root_task) }
+        let!(:task) { create(:ama_task, parent: root_task) }
 
         it "the RootTask does not close itself" do
           expect(root_task).to be_on_hold

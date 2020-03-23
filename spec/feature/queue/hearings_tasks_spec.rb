@@ -13,7 +13,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
     let(:appeal) { create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let(:root_task) { create(:root_task, appeal: appeal) }
-    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
     let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task) }
     let(:disposition_task) do
       create(:assign_hearing_disposition_task, parent: parent_hearing_task)
