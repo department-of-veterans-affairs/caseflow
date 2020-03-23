@@ -88,6 +88,7 @@ class AppealsController < ApplicationController
   end
 
   def show
+    no_cache
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
