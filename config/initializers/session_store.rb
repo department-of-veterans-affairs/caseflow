@@ -2,7 +2,7 @@
 options = {
   key: '_caseflow_session',
   secure: Rails.env.production?,
-  expire_after: 24.hours
+  expire_after: 12.hours
 }
 
 if ENV["DEPLOY_ENV"]
