@@ -521,7 +521,28 @@ describe Veteran, :all_dbs do
     let(:state) { nil }
 
     it "city is considered invalid" do
-      expect(veteran.validate_city_line).to eq ["invalid_characters"]
+      expect(veteran.validate_city).to eq ["invalid_characters"]
+    end
+  end
+
+  context "given a military address with invalid address characters" do
+    subject { veteran.validate_address_line }
+
+    context "invalid address characters" do
+      let(:address_line1) { "%%%%%" }
+      let(:address_line3) { nil }
+
+      it "address count" do
+        expect(subject.length).to eq(3)
+      end
+
+      it "address_line1 is invalid" do
+        expect(address_line1).to eq("%%%%%")
+      end
+
+      it "address_line3 is nil" do
+        expect(address_line3).to be_nil
+      end
     end
   end
 

@@ -226,7 +226,8 @@ feature "Intake", :all_dbs do
           sex: nil,
           ssn: nil,
           country: nil,
-          address_line1: "this address is more than 20 chars"
+          address_line1: "this address is more than 20 chars",
+          city: "BRISTOW"
         )
       end
 

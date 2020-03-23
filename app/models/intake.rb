@@ -225,10 +225,7 @@ class Intake < CaseflowRecord
         errors.any? { |e| e[:error] == "invalid_characters" }
     end
 
-    city_invalid_characters = veteran.errors.details.any? do |field_name, errors|
-      [:city].include?(field_name) &&
-        errors.any? { |e| e[:error] == "invalid_characters" }
-    end
+    city_invalid_characters = veteran.errors.details[:city]&.any? { |e| e[:error] == "invalid_characters" }
 
     {
       veteran_missing_fields: missing_fields,
