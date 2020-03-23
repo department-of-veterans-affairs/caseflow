@@ -4,7 +4,10 @@ class ClaimantValidator
   PAYEE_CODE_REQUIRED = "payee_code may not be blank"
   CLAIMANT_REQUIRED = "participant_id may not be blank"
   CLAIMANT_ADDRESS_REQUIRED = "claimant_address_required"
+  CLAIMANT_ADDRESS_INVALID = "claimant_address_invalid"
+  CLAIMANT_ADDRESS_CITY_INVALID = "claimant_address_city_invalid"
   BLANK = "blank"
+  INVALID = "invalid"
   BENEFIT_TYPE_REQUIRES_PAYEE_CODE = %w[compensation pension].freeze
 
   def initialize(claimant)
@@ -42,10 +45,26 @@ class ClaimantValidator
   end
 
   def validate_claimant_address
-    return unless claimant.address_line_1.nil?
+    if claimant.address_line_1.nil?
+      errors[:address] << BLANK
+      decision_review.errors[:claimant] << CLAIMANT_ADDRESS_REQUIRED
+    elsif !claimant_address_lines_valid?
+      errors[:address] << INVALID
+      decision_review.errors[:claimant] << CLAIMANT_ADDRESS_INVALID
+    elsif !claimant_city_valid?
+      errors[:address] << INVALID
+      decision_review.errors[:claimant] << CLAIMANT_ADDRESS_CITY_INVALID
+    end
+  end
 
-    errors[:address] << BLANK
-    decision_review.errors[:claimant] << CLAIMANT_ADDRESS_REQUIRED
+  def claimant_address_lines_valid?
+    [claimant.address_line_1, claimant.address_line_2, claimant.address_line_3].all? do |value|
+      value.nil? || (value =~ /\A(?!.*\s\s)[a-zA-Z0-9+#@%&()_:',.\-\/\s]*\Z/ && value.length <= 20)
+    end
+  end
+
+  def claimant_city_valid?
+    claimant.city =~ /\A[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*\Z/ && claimant.city.length <= 30
   end
 
   def benefit_type_requires_payee_code?

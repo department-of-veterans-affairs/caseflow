@@ -72,10 +72,13 @@ class DecisionReviewIntake < Intake
   end
 
   def claimant_address_error
-    @claimant_address_error ||=
-      detail.errors.messages[:claimant].include?(
-        ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
-      ) && ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
+    @claimant_address_error ||= [
+      ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED,
+      ClaimantValidator::CLAIMANT_ADDRESS_INVALID,
+      ClaimantValidator::CLAIMANT_ADDRESS_CITY_INVALID
+    ].find do |error|
+      detail.errors.messages[:claimant].include?(error)
+    end
   end
 
   def claimant_required_error

@@ -13,7 +13,11 @@ export const getClaimantError = (responseErrorCodes) => {
   if (errorCode === 'blank') {
     return 'Please select an option.';
   } else if (errorCode === 'claimant_address_required') {
-    return "Please update the claimant's address.";
+    return "Please supply the claimant's address in VBMS.";
+  } else if (errorCode === 'claimant_address_invalid') {
+    return "Please update the claimant's address in VBMS to be valid.";
+  } else if (errorCode === 'claimant_address_city_invalid') {
+    return "Please update the claimant's address city in VBMS to be valid.";
   }
 };
 
