@@ -18,6 +18,8 @@ class Veteran < CaseflowRecord
 
   validates :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
+  validate :validate_address_line, on: :bgs
+  validate :validate_city, on: :bgs
 
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
@@ -171,6 +173,25 @@ class Veteran < CaseflowRecord
   alias address_line_2 address_line2
   alias address_line_3 address_line3
   alias gender sex
+
+  def validate_address_line
+    [:address_line1, :address_line2, :address_line3].each do |address|
+      address_line = instance_variable_get("@#{address}")
+      next if address_line.blank?
+
+      # This regex validation is used in VBMS to validate address of veteran
+      unless address_line.match?(/^(?!.*\s\s)[a-zA-Z0-9+#@%&()_:',.\-\/\s]*$/)
+        errors.add(address.to_sym, "invalid_characters")
+      end
+    end
+  end
+
+  def validate_city
+    return if city.blank?
+
+    # This regex validation is used in VBMS to vakidate address of veteran
+    errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
+  end
 
   def timely_ratings(from_date:)
     @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
