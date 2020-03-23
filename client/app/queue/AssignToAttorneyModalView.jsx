@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 
 import { AssignWidgetModal } from './components/AssignWidget';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 import {
   taskById
@@ -53,6 +54,18 @@ class AssignToAttorneyModalView extends React.PureComponent {
       selectedTasks={[task]} />;
   }
 }
+
+AssignToAttorneyModalView.propTypes = {
+  task: PropTypes.shape({
+    assignedTo: PropTypes.shape({
+      id: PropTypes.number
+    })
+  }),
+  userId: PropTypes.string,
+  match: PropTypes.object,
+  initialAssignTasksToUser: PropTypes.func,
+  reassignTasksToUser: PropTypes.func
+};
 
 const mapStateToProps = (state, ownProps) => {
   return {

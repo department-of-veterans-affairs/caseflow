@@ -73,7 +73,6 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
         end
         after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
-
         it_behaves_like "attorney task assignment"
       end
     end
