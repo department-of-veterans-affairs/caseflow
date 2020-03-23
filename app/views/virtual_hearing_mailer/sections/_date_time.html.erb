@@ -3,8 +3,8 @@
 </h3>
 <p>
 <% if @recipient.title == MailRecipient::RECIPIENT_TITLES[:judge] %>
-  <%= @virtual_hearing.hearing.time.central_office_time.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
+  <%= VirtualHearings::CalendarTemplateHelper.central_office_display_time_for_virtual_hearing(@virtual_hearing) %>
 <% else %>
-  <%= @virtual_hearing.hearing.time.local_time.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
+  <%= VirtualHearings::CalendarTemplateHelper.local_display_time_for_virtual_hearing(@virtual_hearing) %>
 <% end %>
 </p>
