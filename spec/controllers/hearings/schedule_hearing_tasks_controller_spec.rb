@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :controller do
+describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :controller do
   before do
     User.authenticate!(roles: ["System Admin"])
   end
@@ -17,7 +17,7 @@ RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :contro
       create(
         :case,
         bfcorlid: "#{veteran1.file_number}S",
-        folder: create(:folder, tinum: "1545676"),
+        folder: build(:folder, tinum: "1545676"),
         bfregoff: "RO04",
         bfcurloc: "57",
         bfhr: "2",
@@ -28,7 +28,7 @@ RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :contro
       create(
         :case,
         bfcorlid: "#{veteran2.file_number}S",
-        folder: create(:folder, tinum: "1545678"),
+        folder: build(:folder, tinum: "1545678"),
         bfregoff: "RO04",
         bfcurloc: "57",
         bfhr: "2",
@@ -39,7 +39,7 @@ RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :contro
       create(
         :case,
         bfcorlid: "#{veteran3.file_number}S",
-        folder: create(:folder, tinum: "1545677"),
+        folder: build(:folder, tinum: "1545677"),
         bfregoff: "RO04",
         bfcurloc: "57",
         bfhr: "2",
@@ -71,7 +71,7 @@ RSpec.describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :contro
     it "processes request successfully" do
       subject
 
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
     end
 
     it "returns correct hash keys" do

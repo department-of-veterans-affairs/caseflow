@@ -1024,6 +1024,8 @@ virtual_hearings,hearing_id,integer (8) FK,,,x,,x,Associated hearing
 virtual_hearings,hearing_type,string,,,,,x,
 virtual_hearings,host_pin,integer,,,,,,PIN number for host of Pexip conference
 virtual_hearings,id,integer (8) PK,x,x,,,,
+virtual_hearings,judge_email,string,,,,,,Judge's email address
+virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge
 virtual_hearings,representative_email,string,,,,,,Veteran's representative's email address
 virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran's representative
 virtual_hearings,status,string ∗,x,,,,,The status of the Pexip conference

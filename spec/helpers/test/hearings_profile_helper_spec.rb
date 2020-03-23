@@ -9,7 +9,6 @@ describe Test::HearingsProfileHelper do
       :regional_office_timezone,
       :request_type,
       :scheduled_for,
-      :scheduled_time,
       :scheduled_time_string,
       :unique_id
     ]
@@ -29,7 +28,7 @@ describe Test::HearingsProfileHelper do
   let(:hearing_task1) { create(:hearing_task, appeal: ama_hearing1.appeal) }
   let!(:association1) { create(:hearing_task_association, hearing: ama_hearing1, hearing_task: hearing_task1) }
   let!(:disposition_task1) do
-    create(:assign_hearing_disposition_task, parent: hearing_task1, appeal: ama_hearing1.appeal)
+    create(:assign_hearing_disposition_task, parent: hearing_task1)
   end
 
   # Detroit regional office (America/New_York)
@@ -37,7 +36,7 @@ describe Test::HearingsProfileHelper do
   let(:hearing_task2) { create(:hearing_task, appeal: ama_hearing2.appeal) }
   let!(:association2) { create(:hearing_task_association, hearing: ama_hearing2, hearing_task: hearing_task2) }
   let!(:disposition_task2) do
-    create(:assign_hearing_disposition_task, parent: hearing_task2, appeal: ama_hearing2.appeal)
+    create(:assign_hearing_disposition_task, parent: hearing_task2)
   end
 
   # Oakland regional office (America/Los_Angeles)
@@ -45,7 +44,7 @@ describe Test::HearingsProfileHelper do
   let(:hearing_task3) { create(:hearing_task, appeal: legacy_hearing.appeal) }
   let!(:association3) { create(:hearing_task_association, hearing: legacy_hearing, hearing_task: hearing_task3) }
   let!(:disposition_task3) do
-    create(:assign_hearing_disposition_task, parent: hearing_task3, appeal: legacy_hearing.appeal)
+    create(:assign_hearing_disposition_task, parent: hearing_task3)
   end
   let(:params) {}
 

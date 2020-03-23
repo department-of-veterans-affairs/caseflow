@@ -2586,8 +2586,8 @@ describe LegacyAppeal, :all_dbs do
         let(:today) { Time.zone.today }
         let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
         before do
-          create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
-          create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
+          create(:track_veteran_task, :in_progress, parent: root_task, updated_at: today + 11)
+          create(:timed_hold_task, :in_progress, parent: root_task, updated_at: today + 11)
         end
 
         describe "when there are no other tasks" do
@@ -2599,7 +2599,7 @@ describe LegacyAppeal, :all_dbs do
         describe "when there is an assigned actionable task" do
           let(:task_assignee) { create(:user) }
           let!(:task) do
-            create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal, parent: root_task)
+            create(:colocated_task, :in_progress, assigned_to: task_assignee, parent: root_task)
           end
 
           it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
@@ -2617,7 +2617,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             organization_root_task = create(:root_task, appeal: appeal)
-            create(:ama_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
+            create(:ama_task, assigned_to: organization, parent: organization_root_task)
 
             # These tasks are the most recently updated but should be ignored in the determination
             create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 10)
@@ -2634,7 +2634,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             user_root_task = create(:root_task, appeal: appeal)
-            create(:ama_task, assigned_to: user, appeal: appeal, parent: user_root_task)
+            create(:ama_task, assigned_to: user, parent: user_root_task)
           end
 
           it "it returns the id" do
@@ -2647,7 +2647,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             on_hold_root = create(:root_task, appeal: appeal, updated_at: pre_ama - 1)
-            create(:ama_task, :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
+            create(:ama_task, :on_hold, parent: on_hold_root, updated_at: pre_ama + 1)
           end
 
           it "it returns something" do
