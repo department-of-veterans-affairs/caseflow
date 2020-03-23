@@ -93,27 +93,22 @@ class BaseHearingUpdateForm
     end
   end
 
-  # returns false if the virtual hearing status, email address associated
-  # with the passed key, or scheduled time is being updated
-  def email_sent_flag(email_key)
-    attr_changed = virtual_hearing_attributes&.key?(:status) ||
-                   virtual_hearing_attributes&.key?(email_key) ||
-                   scheduled_time_string.present?
-
-    !attr_changed
+  def updates_requiring_email?
+    virtual_hearing_attributes&.key?(:status) || scheduled_time_string.present?
   end
 
   def veteran_email_sent_flag
-    email_sent_flag(:veteran_email)
+    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:veteran_email))
   end
 
   def representative_email_sent_flag
-    email_sent_flag(:representative_email)
+    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:representative_email))
   end
 
-  # also returns false if no judge id is present or if the virtual hearing is being cancelled
+  # also returns false if the judge id is present or if the virtual hearing is being cancelled
   def judge_email_sent_flag
-    email_sent_flag(:judge_email) || judge_id.blank? || virtual_hearing_attributes&.dig(:status) == :cancelled
+    flag = !(updates_requiring_email? || virtual_hearing_attributes&.key?(:judge_email) || judge_id.present?)
+    flag || virtual_hearing_attributes&.dig(:status) == :cancelled
   end
 
   def virtual_hearing_updates
