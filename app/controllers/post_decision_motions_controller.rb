@@ -24,8 +24,10 @@ class PostDecisionMotionsController < ApplicationController
   end
 
   def return_to_judge
-    PostDecisionMotionDeleter.new(task, params[:instructions]).process
-    render json: {}
+    new_task = PostDecisionMotionDeleter.new(task, params[:instructions]).process
+    render json: {
+      task: ::WorkQueue::TaskSerializer.new(new_task)
+    }
   end
 
   private

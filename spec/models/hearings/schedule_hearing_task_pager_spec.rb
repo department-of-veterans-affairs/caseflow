@@ -35,7 +35,7 @@ describe Hearings::ScheduleHearingTaskPager, :all_dbs do
           :type_cavc_remand,
           bfcorlid: "123454787S",
           bfcurloc: "CASEFLOW",
-          folder: create(
+          folder: build(
             :folder,
             ticknum: "91",
             tinum: "1545678",
@@ -54,7 +54,7 @@ describe Hearings::ScheduleHearingTaskPager, :all_dbs do
           :type_original,
           bfcorlid: "123454788S",
           bfcurloc: "CASEFLOW",
-          folder: create(
+          folder: build(
             :folder,
             ticknum: "92",
             tinum: "1645678",
@@ -73,7 +73,7 @@ describe Hearings::ScheduleHearingTaskPager, :all_dbs do
           :type_original,
           bfcorlid: "323454787S",
           bfcurloc: "CASEFLOW",
-          folder: create(
+          folder: build(
             :folder,
             ticknum: "93",
             tinum: "1645001",
