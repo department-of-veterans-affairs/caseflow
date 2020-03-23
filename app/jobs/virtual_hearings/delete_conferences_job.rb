@@ -24,9 +24,15 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
   private
 
+  def datadog_metric_info
+    {
+      app_name: APP_NAME,
+      metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
+    }
+  end
+
   def count_deleted_and_log(enumerable)
-    removed = 0
-    failed = 0
+    failed = removed = 0
 
     enumerable.each do |virtual_hearing|
       if yield(virtual_hearing)
@@ -38,19 +44,13 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
     if removed > 0
       DataDogService.increment_counter(
-        app_name: APP_NAME,
-        metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-        metric_name: "deleted_conferences.successful",
-        by: removed
+        metric_name: "deleted_conferences.successful", by: removed, **datadog_metric_info
       )
     end
 
     if failed > 0
       DataDogService.increment_counter(
-        app_name: APP_NAME,
-        metric_group: "virtual_hearings",
-        metric_name: "deleted_conferences.failed",
-        by: failed
+        metric_name: "deleted_conferences.failed", by: failed, **datadog_metric_info
       )
     end
   end
