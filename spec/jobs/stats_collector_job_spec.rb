@@ -4,14 +4,11 @@ describe StatsCollectorJob do
   context "when the entire job fails" do
     let(:error_msg) { "Some dummy error" }
 
-    before do
-      allow_any_instance_of(described_class).to receive(:run_collectors).and_raise(error_msg)
-    end
-
     it "sends a message to Slack that includes the error" do
       slack_msg = ""
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
 
+      allow_any_instance_of(described_class).to receive(:run_collectors).and_raise(error_msg)
       described_class.perform_now
 
       expected_msg = "#{described_class.name} failed after running for .*. Fatal error: #{error_msg}"

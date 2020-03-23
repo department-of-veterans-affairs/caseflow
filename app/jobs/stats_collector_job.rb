@@ -41,10 +41,7 @@ class StatsCollectorJob < CaseflowJob
   def run_collectors(stats_collectors)
     stats_collectors.each do |collector_name, collector|
       start_time = Time.zone.now
-      stats = collector.new.collect_stats
-      stats.each do |metric_name, value|
-        emit(metric_name, value)
-      end
+      collector.new.collect_stats&.each { |metric_name, value| emit(metric_name, value) }
     rescue StandardError => error
       log_error(collector_name, error)
     ensure

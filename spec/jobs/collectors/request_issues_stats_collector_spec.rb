@@ -2,7 +2,7 @@
 
 describe Collectors::RequestIssuesStatsCollector do
   context "when unidentified RequestIssues with contentions exist" do
-    let!(:req_issues) do
+    before do
       start_of_last_month = Time.zone.now.last_month.beginning_of_month
       days_in_month = Time.days_in_month(start_of_last_month.month, start_of_last_month.year)
       3.times do |i|
