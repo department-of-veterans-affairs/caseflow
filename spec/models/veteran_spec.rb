@@ -530,18 +530,9 @@ describe Veteran, :all_dbs do
 
     context "invalid address characters" do
       let(:address_line1) { "%%%%%" }
-      let(:address_line3) { nil }
 
       it "address count" do
         expect(subject.length).to eq(3)
-      end
-
-      it "address_line1 is invalid" do
-        expect(address_line1).to eq("%%%%%")
-      end
-
-      it "address_line3 is nil" do
-        expect(address_line3).to be_nil
       end
     end
   end
