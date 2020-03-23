@@ -102,7 +102,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     context "motions attorney reviews case" do
       let!(:motions_attorney_task) do
-        create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+        create(:vacate_motion_mail_task, assigned_to: motions_attorney, parent: root_task)
       end
 
       it "motions attorney recommends grant decision to judge" do
@@ -481,7 +481,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
              assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
     end
     let(:vacate_motion_mail_task) do
-      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+      create(:vacate_motion_mail_task, assigned_to: motions_attorney, parent: root_task)
     end
     let(:judge_address_motion_to_vacate_task) do
       create(:judge_address_motion_to_vacate_task,
@@ -490,7 +490,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
              parent: vacate_motion_mail_task)
     end
     let(:abstract_motion_to_vacate_task) do
-      create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
+      create(:abstract_motion_to_vacate_task, parent: vacate_motion_mail_task)
     end
 
     let(:vacate_type) { "straight_vacate" }
@@ -719,13 +719,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
              assigned_to: judge, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
     end
     let(:vacate_motion_mail_task) do
-      create(:vacate_motion_mail_task, appeal: appeal, assigned_to: motions_attorney, parent: root_task)
+      create(:vacate_motion_mail_task, assigned_to: motions_attorney, parent: root_task)
     end
     let(:judge_address_motion_to_vacate_task) do
-      create(:judge_address_motion_to_vacate_task, appeal: appeal, assigned_to: judge, parent: vacate_motion_mail_task)
+      create(:judge_address_motion_to_vacate_task, assigned_to: judge, parent: vacate_motion_mail_task)
     end
     let(:abstract_motion_to_vacate_task) do
-      create(:abstract_motion_to_vacate_task, appeal: appeal, parent: vacate_motion_mail_task)
+      create(:abstract_motion_to_vacate_task, parent: vacate_motion_mail_task)
     end
     let(:denied_motion_to_vacate_task) do
       create(
