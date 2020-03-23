@@ -31,10 +31,10 @@ const DocketTypeBadge = ({ name, number }) => {
 
 DocketTypeBadge.propTypes = {
   name: PropTypes.string,
-  number: PropTypes.oneOfType(
+  number: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.string
-  )
+  ])
 };
 
 export default DocketTypeBadge;

@@ -8,6 +8,8 @@ import { ReviewVacatedDecisionIssuesView } from './ReviewVacatedDecisionIssuesVi
 import { getSteps, getNextStep, getPrevStep } from './mtvCheckoutSteps';
 import { SubmitVacatedDecisionsView } from './SubmitVacatedDecisionsView';
 import { MotionToVacateCheckoutProgressBar } from './MotionToVacateCheckoutProgressBar';
+import { ReturnToJudgeModalContainer } from './returnToJudge/ReturnToJudgeModalContainer';
+import { REVIEW_VACATE_RETURN_TO_JUDGE } from '../../../constants/TASK_ACTIONS';
 
 export const MotionToVacateFlowContainer = () => {
   const { path } = useRouteMatch();
@@ -30,22 +32,29 @@ export const MotionToVacateFlowContainer = () => {
   return (
     <React.Fragment>
       <MotionToVacateContextProvider initialState={initialState}>
-        <Switch>
-          <Route path={`${path}/review_vacatures`}>
-            <MotionToVacateCheckoutProgressBar steps={steps} current="review_vacatures" />
-            <ReviewVacatedDecisionIssuesView appeal={appeal} />
-          </Route>
+        <React.Fragment>
+          <Switch>
+            <Route path={`${path}/review_vacatures`}>
+              <MotionToVacateCheckoutProgressBar steps={steps} current="review_vacatures" />
+              <ReviewVacatedDecisionIssuesView appeal={appeal} />
+            </Route>
 
-          <Route path={`${path}/add_decisions`}>
-            <MotionToVacateCheckoutProgressBar steps={steps} current="add_decisions" />
-            <AddDecisionIssuesView appeal={appeal} />
-          </Route>
+            <Route path={`${path}/add_decisions`}>
+              <MotionToVacateCheckoutProgressBar steps={steps} current="add_decisions" />
+              <AddDecisionIssuesView appeal={appeal} />
+            </Route>
 
-          <Route path={`${path}/submit`}>
-            <MotionToVacateCheckoutProgressBar steps={steps} current="submit" />
-            <SubmitVacatedDecisionsView appeal={appeal} />
-          </Route>
-        </Switch>
+            <Route path={`${path}/submit`}>
+              <MotionToVacateCheckoutProgressBar steps={steps} current="submit" />
+              <SubmitVacatedDecisionsView appeal={appeal} />
+            </Route>
+          </Switch>
+          <Switch>
+            <Route path={`${path}/review_vacatures/${REVIEW_VACATE_RETURN_TO_JUDGE.value}`}>
+              <ReturnToJudgeModalContainer />
+            </Route>
+          </Switch>
+        </React.Fragment>
       </MotionToVacateContextProvider>
     </React.Fragment>
   );

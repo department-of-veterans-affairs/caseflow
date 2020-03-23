@@ -83,7 +83,7 @@ describe TimedHoldTask, :postgres do
       end
 
       context "when there is an active sibling TimedHoldTask and an active sibling Task" do
-        let!(:existing_task_sibling) { create(:ama_task, parent: parent, appeal: appeal) }
+        let!(:existing_task_sibling) { create(:ama_task, parent: parent) }
         let!(:existing_timed_hold_task) { create(:timed_hold_task, **args, parent: parent.reload) }
 
         it "cancels the TimedHoldTask but leaves the Task alone" do

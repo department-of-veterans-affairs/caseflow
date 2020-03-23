@@ -8,6 +8,7 @@ class ApplicationController < ApplicationBaseController
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
   before_action :deny_vso_access, except: [:unauthorized, :feedback]
+  before_action :set_no_cache_headers
 
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
@@ -141,11 +142,15 @@ class ApplicationController < ApplicationBaseController
     urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
     urls.concat(admin_menu_items) if Bva.singleton.user_has_access?(current_user)
 
-    if ApplicationController.dependencies_faked?
+    if ApplicationController.dependencies_faked? && current_user.present?
       urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
     end
 
-    urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
+    if current_user.present?
+      urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
+    else
+      urls.append(title: "Sign In", link: url_for("/login"), border: true)
+    end
 
     urls
   end
@@ -156,12 +161,16 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
+  def set_no_cache_headers
+    no_cache if FeatureToggle.enabled?(:set_no_cache_headers, user: current_user)
+  end
+
   # https://stackoverflow.com/a/748646
   def no_cache
     # :nocov:
     response.headers["Cache-Control"] = "no-cache, no-store"
     response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT" # waaaay in the past
     # :nocov:
   end
 

@@ -6,7 +6,9 @@ import {
   JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED,
   JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED,
   RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE,
-  RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL
+  RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL,
+  MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE,
+  MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS
 } from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 
@@ -50,5 +52,14 @@ export const returnToLitSupportAlert = ({ appeal }) => {
   return {
     title: sprintf(RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE, veteranFullName),
     detail: RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL
+  };
+};
+
+export const returnToJudgeAlert = ({ appeal, judge }) => {
+  const { veteranFullName } = appeal;
+
+  return {
+    title: sprintf(MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE, veteranFullName, judge.full_name),
+    detail: MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS
   };
 };

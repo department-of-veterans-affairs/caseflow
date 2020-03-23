@@ -9,16 +9,16 @@ import {
   SuggestedHearingLocation
 } from './AssignHearingsFields';
 import { NoVeteransToAssignMessage } from './Messages';
+import { VeteranStateDetail } from '../../../queue/VeteranDetail';
+import { docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import {
   encodeQueryParams,
   getQueryParams
 } from '../../../util/QueryParamsUtil';
-import { docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
 import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
-import PowerOfAttorneyDetail from '../../../queue/PowerOfAttorneyDetail';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
 import QueueTable from '../../../queue/QueueTable';
 
@@ -85,7 +85,7 @@ export default class AssignHearingsTable extends React.PureComponent {
 
     const { colsFromApi } = this.state;
 
-    if (_.isNil(selectedHearingDay)) {
+    if (_.isNil(selectedHearingDay) || _.isNil(colsFromApi)) {
       return [];
     }
 
@@ -146,25 +146,24 @@ export default class AssignHearingsTable extends React.PureComponent {
         filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'suggestedLocation').filter_options
       },
       {
-        name: 'powerOfAttorneyName',
-        header: 'Power of Attorney (POA)',
-        columnName: 'Power of Attorney',
+        name: 'veteranState',
+        header: 'Veteran State of Residence',
         align: 'left',
         valueFunction: (row) => (
-          <PowerOfAttorneyDetail
-            key={`poa-${row.externalAppealId}-detail`}
+          <VeteranStateDetail
             appealId={row.externalAppealId}
-            displayNameOnly
           />
-        ),
+        )
+      },
+      {
+        name: 'powerOfAttorneyName',
+        header: 'Power of Attorney (POA)',
+        valueName: 'powerOfAttorneyName',
+        columnName: 'Power of Attorney',
+        align: 'left',
         label: 'Filter by Power of Attorney',
         enableFilter: true,
         anyFiltersAreSet: true,
-        filterValueTransform: (_value, row) => {
-          const { powerOfAttorneyNamesForAppeals } = this.props;
-
-          return powerOfAttorneyNamesForAppeals[row.externalAppealId];
-        },
         filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'powerOfAttorneyName').filter_options
       }
     ];
@@ -250,8 +249,6 @@ export default class AssignHearingsTable extends React.PureComponent {
 AssignHearingsTable.propTypes = {
   columns: PropTypes.array,
   clicked: PropTypes.bool,
-  // Appeal ID => Attorney Name Array
-  powerOfAttorneyNamesForAppeals: PropTypes.objectOf(PropTypes.string),
   selectedHearingDay: PropTypes.shape({
     scheduledFor: PropTypes.string
   }),
