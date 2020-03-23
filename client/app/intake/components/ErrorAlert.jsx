@@ -50,7 +50,9 @@ export const invalidVeteranInstructions = (searchErrorData) => {
     return <Fragment>
       { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
         missingFieldsMessage(searchErrorData.veteranMissingFields) }
-      {invalidVeteranCharacters(searchErrorData)}
+      { searchErrorData.veteranAddressTooLong && invalidVeteranCharacters(searchErrorData) }
+      { searchErrorData.veteranAddressInvalidFields && invalidVeteranCharacters(searchErrorData) }
+      { searchErrorData.veteranCityInvalidFields && invalidVeteranCharacters(searchErrorData)}
     </Fragment>;
   }
 };
