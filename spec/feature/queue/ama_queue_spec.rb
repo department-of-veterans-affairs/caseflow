@@ -483,7 +483,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues (optional)")
+        expect(page).not_to have_content("Select special issues")
 
         expect(page).to have_content("Add decisions")
 
@@ -555,7 +555,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues (optional)")
+        expect(page).not_to have_content("Select special issues")
 
         expect(page).to have_content("Add decisions")
         expect(page).to have_content("Allowed")
@@ -602,7 +602,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues (optional)")
+        expect(page).not_to have_content("Select special issues")
 
         expect(page).to have_content("Add decisions")
 
@@ -673,7 +673,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues (optional)")
+        expect(page).not_to have_content("Select special issues")
 
         expect(page).to have_content("Add decisions")
         click_on "Continue"
@@ -776,7 +776,7 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-          expect(page).not_to have_content("Select special issues (optional)")
+          expect(page).not_to have_content("Select special issues")
 
           expect(page).to have_content("Add decisions")
 
