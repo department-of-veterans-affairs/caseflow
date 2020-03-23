@@ -142,11 +142,15 @@ class ApplicationController < ApplicationBaseController
     urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
     urls.concat(admin_menu_items) if Bva.singleton.user_has_access?(current_user)
 
-    if ApplicationController.dependencies_faked?
+    if ApplicationController.dependencies_faked? && current_user.present?
       urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
     end
 
-    urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
+    if current_user.present?
+      urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
+    else
+      urls.append(title: "Sign In", link: url_for("/login"), border: true)
+    end
 
     urls
   end

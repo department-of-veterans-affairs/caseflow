@@ -871,11 +871,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     subject { post(:request_hearing_disposition_change, params: params) }
 
     context "when the task is a no show hearing task with a HearingTask ancestor" do
-      let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task) }
       let(:disposition_task) do
-        create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+        create(:assign_hearing_disposition_task, parent: hearing_task)
       end
-      let!(:task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+      let!(:task) { create(:no_show_hearing_task, parent: disposition_task) }
       let(:params) do
         {
           id: task.id,
@@ -906,14 +906,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: past_hearing_disposition)
       end
       let(:hearing_task) do
-        create(:hearing_task, :completed, parent: root_task, appeal: appeal)
+        create(:hearing_task, :completed, parent: root_task)
       end
       let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-      let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let!(:hearing_task_2) { create(:hearing_task, parent: root_task) }
       let!(:association_2) do
         create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
       end
-      let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+      let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2) }
       let(:params) do
         {
           id: task.id,
@@ -952,7 +952,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     context "when the task doesn't have a HearingTask ancestor" do
       let!(:task) do
-        create(:track_veteran_task, parent: root_task, appeal: appeal)
+        create(:track_veteran_task, parent: root_task)
       end
       let(:params) do
         {

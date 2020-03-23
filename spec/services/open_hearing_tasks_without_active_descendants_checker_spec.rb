@@ -37,13 +37,13 @@ describe OpenHearingTasksWithoutActiveDescendantsChecker, :all_dbs do
 
   let(:appeal) { create(:appeal) }
   let(:root_task_2) { create(:root_task, appeal: appeal) }
-  let(:hearing_task_2) { create(:hearing_task, appeal: appeal, parent: root_task_2) }
-  let(:schedule_hearing_task_2) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task_2) }
+  let(:hearing_task_2) { create(:hearing_task, parent: root_task_2) }
+  let(:schedule_hearing_task_2) { create(:schedule_hearing_task, parent: hearing_task_2) }
 
   context "there are open hearing tasks without active descendants and without any descendants" do
     let(:appeal_2) { create(:appeal) }
     let(:root_task_3) { create(:root_task, appeal: appeal_2) }
-    let!(:hearing_task_3) { create(:hearing_task, appeal: appeal_2, parent: root_task_3) }
+    let!(:hearing_task_3) { create(:hearing_task, parent: root_task_3) }
 
     before do
       user_verify_task.update_columns(status: Constants.TASK_STATUSES.completed)
