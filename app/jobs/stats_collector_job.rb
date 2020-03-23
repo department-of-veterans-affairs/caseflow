@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Designed to run daily to collect statistics about appeals.
+# Designed to run daily to collect statistics about appeals in a single CaseflowJob.
 # Runs daily stats collection every day, in the early morning.
 # Runs weekly stats collection every Sunday, in the early morning.
 # Runs monthly stats collection every 1st day of the month, in the early morning.
@@ -20,7 +20,6 @@ class StatsCollectorJob < CaseflowJob
   WEEKLY_COLLECTORS = {
   }.freeze
   MONTHLY_COLLECTORS = {
-    "unidentified_request_issues_with_contention" => Collectors::RequestIssuesStatsCollector
   }.freeze
 
   def perform
