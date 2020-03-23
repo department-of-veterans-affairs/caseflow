@@ -8,12 +8,13 @@ describe AttorneyTask, :all_dbs do
   let!(:assigning_judge_staff) { create(:staff, :judge_role, sdomainid: assigning_judge.css_id) }
   let!(:reviewing_judge_staff) { create(:staff, :judge_role, sdomainid: reviewing_judge.css_id) }
   let(:appeal) { create(:appeal) }
+  let(:root_task) { create(:root_task, appeal: appeal) }
   let!(:parent) do
     create(
       :ama_judge_decision_review_task,
       assigned_by: assigning_judge,
       assigned_to: reviewing_judge,
-      parent: appeal.root_task
+      parent: root_task
     )
   end
 

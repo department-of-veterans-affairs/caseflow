@@ -1113,7 +1113,7 @@ RSpec.feature "Case details", :all_dbs do
       before do
         judge = create(:user, station_id: 101)
         create(:staff, :judge_role, user: judge)
-        judge_task = JudgeAssignTask.create!(parent: root_task, assigned_to: judge)
+        judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
         atty = create(:user, station_id: 101)
         create(:staff, :attorney_role, user: atty)
