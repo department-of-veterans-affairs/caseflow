@@ -1,38 +1,39 @@
-<p>
-  Dear <%= @recipient.name %>,
-</p>
+<%= content_for :intro do %>
+  <p>
+    Dear <%= @recipient.name %>,
+  </p>
 
-<p>
-  The location has changed for your Veteran's hearing with the Board of Veterans' Appeals. You will
-  arrive at <%= @virtual_hearing.hearing.hearing_location.name %> and the Veterans Law Judge will meet
-  with you via video conference.
-</p>
+  <p>
+    The location has changed for your Veteran's hearing with the Board of Veterans' Appeals. You will
+    arrive at <%= @virtual_hearing.hearing.hearing_location.name %> and the Veterans Law Judge will meet
+    with you via video conference.
+  </p>
 
-<h3>
-  <%= formatted_veteran_name(@virtual_hearing.hearing.appeal.veteran) %>
-</h3>
-<p>
-  <a href="https://appeals.cf.ds.va.gov/queue/appeals/<%= @virtual_hearing.hearing.appeal.external_id %>">
-    View the case details
-  </a> (Note: You must be logged in to the VA network to access case details.)
-</p>
+  <h3>
+    <%= formatted_veteran_name(@virtual_hearing.hearing.appeal.veteran) %>
+  </h3>
+  <p>
+    <a href="https://appeals.cf.ds.va.gov/queue/appeals/<%= @virtual_hearing.hearing.appeal.external_id %>">
+      View the case details
+    </a> (Note: You must be logged in to the VA network to access case details.)
+  </p>
+<% end %>
 
-<h3>
-  Date and Time
-</h3>
-<p>
-  <%= @virtual_hearing.hearing.scheduled_for.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
-</p>
+<%= content_for :date_time do %>
+  <%= render "virtual_hearing_mailer/sections/date_time" %>
 
-<h3>
-  Location
-</h3>
-<p>
-  <%= @virtual_hearing.hearing.hearing_location.name %><br/>
-  <%= @virtual_hearing.hearing.hearing_location.address %><br/>
-</p>
+  <h3>
+    Location
+  </h3>
+  <p>
+    <%= @virtual_hearing.hearing.hearing_location.name %><br/>
+    <%= @virtual_hearing.hearing.hearing_location.address %><br/>
+  </p>
+<% end %>
 
-<p>
-  Sincerely,<br />
-  The Board of Veterans' Appeals
-</p>
+<%= content_for :signature do %>
+  <p>
+    Sincerely,<br/>
+    The Board of Veterans' Appeals
+  </p>
+<% end %>
