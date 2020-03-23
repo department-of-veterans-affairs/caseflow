@@ -72,5 +72,4 @@ class StatsCollectorJob < CaseflowJob
 
     slack_service.send_notification(msg)
   end
-
 end

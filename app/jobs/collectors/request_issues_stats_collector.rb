@@ -3,10 +3,12 @@
 class Collectors::RequestIssuesStatsCollector
   METRIC_NAME_PREFIX = "request_issues.unidentified_with_contention"
 
+  # :reek:FeatureEnvy
   def collect_stats
     start_of_month = Time.zone.now.prev_month.beginning_of_month
+    req_issues = unidentified_request_issues_with_contention(start_of_month, start_of_month.next_month)
+
     {}.tap do |stats|
-      req_issues = unidentified_request_issues_with_contention(start_of_month, start_of_month.next_month)
       stats[METRIC_NAME_PREFIX] = req_issues.count
 
       req_issues.group(:closed_status).count.each do |ben_type, count|
