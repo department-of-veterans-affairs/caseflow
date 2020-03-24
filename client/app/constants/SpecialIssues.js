@@ -1,5 +1,24 @@
 import React from 'react';
 
+//
+// node:                     first choice display name; has html
+// display:                  fallback plaintext display name
+// queueDisplay:             fallback plaintext display name, only in Queue
+// specialIssue:             React's ID
+// stationOfJurisdiction:    Can be null, Regional, or this hash. ?rerouting magic at dispatch?
+// {
+//   key:                    ?Does some reouting magic at Dispatch
+//   location:               ?Does some reouting magic at Dispatch
+// },
+// snakeCase:                Rails' ID
+// unhandled: {
+//   emailAddress:           ?Does some reouting magic at Dispatch
+//   regionalOffice:         ?Does some reouting magic at Dispatch
+// },
+// nonCompensation:          ?Not used
+// queueSection:             for Queue display, which section it goes in
+// queueSectionOrder:        for Queue display, the order to display
+
 const SPECIAL_ISSUES = [
   {
     display: 'Contaminated Water at Camp LeJeune',
@@ -12,7 +31,7 @@ const SPECIAL_ISSUES = [
     snakeCase: 'contaminated_water_at_camp_lejeune',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 4
+    queueSectionOrder: 3
   },
   {
     display: 'DIC - death, or accrued benefits - United States',
@@ -141,7 +160,7 @@ const SPECIAL_ISSUES = [
     unhandled: null,
     nonCompensation: true,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 6
+    queueSectionOrder: 4
   },
   {
     display: 'Mustard Gas',
@@ -153,7 +172,7 @@ const SPECIAL_ISSUES = [
     snakeCase: 'mustard_gas',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 3
+    queueSectionOrder: 6
   },
   {
     display: 'National Cemetery Administration',
@@ -176,7 +195,7 @@ const SPECIAL_ISSUES = [
     snakeCase: 'nonrating_issue',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 1
+    queueSectionOrder: 7
   },
   {
     display: 'Pension - United States',
@@ -209,7 +228,7 @@ const SPECIAL_ISSUES = [
     snakeCase: 'radiation',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 7
+    queueSectionOrder: 8
   },
   {
     display: 'Rice Compliance',
@@ -219,7 +238,7 @@ const SPECIAL_ISSUES = [
     snakeCase: 'rice_compliance',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 5
+    queueSectionOrder: 9
   },
   {
     display: 'Spina Bifida',
@@ -229,7 +248,7 @@ const SPECIAL_ISSUES = [
     snakeCase: 'spina_bifida',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 2
+    queueSectionOrder: 10
   },
   {
     display: 'U.S. Territory claim - American Samoa, Guam, Northern ' +
@@ -309,7 +328,51 @@ const SPECIAL_ISSUES = [
     },
     nonCompensation: true,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 8
+    queueSectionOrder: 12
+  },
+  {
+    display: 'Burn Pit',
+    queueDisplay: 'Burn Pit',
+    specialIssue: 'burnPit',
+    snakeCase: 'Burn Pit',
+    unhandled: null,
+    queueSection: 'issuesOnAppeal',
+    queueSectionOrder: 2
+  },
+  {
+    display: 'Military Sexual Trauma (MST)',
+    queueDisplay: 'Military Sexual Trauma (MST)',
+    specialIssue: 'militarySexualTrauma',
+    snakeCase: 'military_sexual_trauma',
+    unhandled: null,
+    queueSection: 'issuesOnAppeal',
+    queueSectionOrder: 5
+  },
+  {
+    display: 'Blue Water',
+    queueDisplay: 'Blue Water',
+    specialIssue: 'blueWater',
+    snakeCase: 'blue_water',
+    unhandled: null,
+    queueSection: 'issuesOnAppeal',
+    queueSectionOrder: 1
+  },
+  {
+    display: 'US Court of Appeals for Veterans Claims (CAVC)',
+    queueDisplay: 'US Court of Appeals for Veterans Claims (CAVC)',
+    specialIssue: 'usCourtOfAppealsForVeteransClaims',
+    snakeCase: 'us_court_of_appeals_for_veterans_claims',
+    unhandled: null,
+    queueSection: 'issuesOnAppeal',
+    queueSectionOrder: 11
+  },
+  {
+    display: 'No Special Issues',
+    queueDisplay: 'No Special Issues',
+    specialIssue: 'noSpecialIssues',
+    snakeCase: 'no_special_issues',
+    unhandled: null,
+    queueSection: 'noSpecialIssues',
   }
 ];
 
