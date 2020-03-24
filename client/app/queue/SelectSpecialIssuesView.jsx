@@ -36,8 +36,10 @@ class SelectSpecialIssuesView extends React.PureComponent {
   validateForm = () => {
     const { specialIssues } = this.props;
 
-    const checkedIssues = Object.entries(specialIssues).filter(function(entry){ return entry[1] === true; })
+    const checkedIssues = Object.entries(specialIssues).filter((entry) => entry[1] === true);
+
     const isValid = checkedIssues.length > 0;
+
     if (!isValid) {
       this.props.showErrorMessage(
         { title: COPY.SPECIAL_ISSUES_NONE_CHOSEN_TITLE,
@@ -146,11 +148,18 @@ class SelectSpecialIssuesView extends React.PureComponent {
 }
 
 SelectSpecialIssuesView.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string
+  }),
   appealId: PropTypes.string.isRequired,
+  requestSave: PropTypes.func,
+  setSpecialIssues: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+  specialIssues: PropTypes.object,
   error: PropTypes.shape({
     title: PropTypes.string,
     detail: PropTypes.string
-  }),
+  })
 };
 
 const mapStateToProps = (state, ownProps) => ({
