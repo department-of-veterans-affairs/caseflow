@@ -81,6 +81,41 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       end
     end
 
+    fcontext "when the user is an SCM team member" do
+      let(:role) { :judge_role }
+      let(:params) do
+        {
+          "appeal_id": appeal.id,
+          "assigned_to_id": attorney.id
+        }
+      end
+
+      before do
+        current_user = create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
+        User.stub = current_user
+        FeatureToggle.enable!(:scm_view_judge_assign_queue)
+        @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
+      end
+      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
+
+      it "should be successful" do
+        params = {
+          "appeal_id": @appeal.id,
+          "assigned_to_id": attorney.id
+        }
+        allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
+          judge: current_user,
+          attorney: attorney,
+          vacols_id: @appeal.vacols_id
+        ).and_return(true)
+
+        post :create, params: { tasks: params }
+        expect(response.status).to eq 200
+        body = JSON.parse(response.body)
+        expect(body["task"]["data"]["attributes"]["assigned_to"]["id"]).to eq attorney.id
+      end
+    end
+
     context "when current user is a judge" do
       let(:role) { :judge_role }
       let(:params) do
