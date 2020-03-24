@@ -52,7 +52,7 @@ describe JudgeTask, :all_dbs do
           create(:ama_judge_decision_review_task, assigned_to: judge, parent: create(:root_task))
         end
 
-        it "returns the reassign" do
+        it "returns the reassign action" do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
@@ -128,7 +128,7 @@ describe JudgeTask, :all_dbs do
         end
 
         it "returns the correct additional actions" do
-          expect(JudgeDecisionReviewTask.new.additional_available_actions(user)).to eq(
+          expect(JudgeDecisionReviewTask.new(assigned_to: user).additional_available_actions(user)).to eq(
             [Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h,
              Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
           )

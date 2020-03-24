@@ -58,7 +58,7 @@ class AttorneyTask < Task
 
     # The judge who is assigned the parent review task, the assigning judge, and SpecialCaseMovementTeam members can
     # cancel or reassign this task
-    parent.assigned_to == user || assigned_by == user || user.can_act_on_behalf_of_judges?
+    parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_judges?
   end
 
   def child_attorney_tasks_are_completed

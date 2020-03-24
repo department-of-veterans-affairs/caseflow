@@ -51,7 +51,9 @@ describe PostDecisionMotionsController do
 
         body = JSON.parse(response.body)
         expect(body["errors"]).to match_array(
-          [{ "detail" => "Assigned by has to be a judge, Assigned to has to be an attorney" }]
+          [{ "detail" =>
+            "Assigned by has to be a judge or special case movement team member, Assigned to has to be an attorney"
+          }]
         )
       end
     end

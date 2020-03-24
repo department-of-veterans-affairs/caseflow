@@ -137,7 +137,7 @@ describe AttorneyTask, :all_dbs do
       expect(parent.reload.status).to eq Constants.TASK_STATUSES.cancelled
       assign_task = appeal.tasks.find_by(type: JudgeAssignTask.name)
       expect(assign_task.status).to eq Constants.TASK_STATUSES.assigned
-      expect(assign_task.assigned_to).to eq assigning_judge
+      expect(assign_task.assigned_to).to eq reviewing_judge
     end
   end
 end
