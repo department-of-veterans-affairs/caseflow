@@ -129,7 +129,7 @@ describe BvaDispatchTask, :all_dbs do
       context "when de_novo appeal stream" do
         let(:stream_type) { "vacate" }
         let!(:task) { create(:ama_judge_decision_review_task, appeal: appeal, assigned_to: judge) }
-        let!(:attorney_task) { create(:ama_attorney_task, parent: task, assigned_to: attorney, appeal: appeal) }
+        let!(:attorney_task) { create(:ama_attorney_task, parent: task, assigned_to: attorney) }
         let!(:post_decision_motion) do
           create(:post_decision_motion,
                  appeal: appeal,

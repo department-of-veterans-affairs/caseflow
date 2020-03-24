@@ -166,8 +166,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let!(:tasks) do
           [
-            create(:ama_attorney_task, assigned_to: user, appeal: ama_appeals.first, parent: parents.first),
-            create(:ama_attorney_task, assigned_to: user, appeal: ama_appeals.second, parent: parents.second)
+            create(:ama_attorney_task, assigned_to: user, parent: parents.first),
+            create(:ama_attorney_task, assigned_to: user, parent: parents.second)
           ]
         end
 

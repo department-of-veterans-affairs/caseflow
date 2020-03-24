@@ -327,9 +327,9 @@ class SeedDB
     veteran = FactoryBot.create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
     appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
     root_task = FactoryBot.create(:root_task, appeal: appeal)
-    distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
-    parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
-    FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
+    distribution_task = FactoryBot.create(:distribution_task, parent: root_task)
+    parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task)
+    FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task)
 
     hearing = FactoryBot.create(
       :hearing,
@@ -339,7 +339,7 @@ class SeedDB
       updated_by: hearings_member
     )
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
-    FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
+    FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task)
   end
   ### End Hearings Setup ###
 

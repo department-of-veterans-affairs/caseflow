@@ -57,6 +57,7 @@ detectors:
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#perform
       - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
@@ -162,7 +163,6 @@ detectors:
       - Reporter#median
       - Reporter#seconds_to_hms
       - Reporter#percent
-      - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link
       - VirtualHearings::VeteranNameHelper#formatted_veteran_name

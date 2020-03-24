@@ -93,21 +93,31 @@ class BaseHearingUpdateForm
     end
   end
 
-  def email_sent_flag(attr_key)
-    attr_changed = virtual_hearing_attributes&.key?(:status) ||
-                   virtual_hearing_attributes&.key?(attr_key) ||
-                   scheduled_time_string.present? ||
-                   (judge_id.present? && attr_key == :judge_email)
+  def updates_requiring_email?
+    virtual_hearing_attributes&.key?(:status) || scheduled_time_string.present?
+  end
 
-    !attr_changed
+  def veteran_email_sent_flag
+    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:veteran_email))
+  end
+
+  def representative_email_sent_flag
+    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:representative_email))
+  end
+
+  # also returns false if the judge id is present or true if the virtual hearing is being cancelled
+  def judge_email_sent_flag
+    flag = !(updates_requiring_email? || virtual_hearing_attributes&.key?(:judge_email) || judge_id.present?)
+    flag || virtual_hearing_attributes&.dig(:status) == :cancelled
   end
 
   def virtual_hearing_updates
     # The email sent flag should always be set to false if any changes are made.
+    # The judge_email_sent flag should not be set to false if virtual hearing is cancelled.
     emails_sent_updates = {
-      veteran_email_sent: email_sent_flag(:veteran_email),
-      judge_email_sent: email_sent_flag(:judge_email),
-      representative_email_sent: email_sent_flag(:representative_email)
+      veteran_email_sent: veteran_email_sent_flag,
+      judge_email_sent: judge_email_sent_flag,
+      representative_email_sent: representative_email_sent_flag
     }.reject { |_k, email_sent| email_sent == true }
 
     updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
