@@ -3,16 +3,28 @@ module.exports = {
     browser: true,
     mocha: true
   },
-  extends: ['@department-of-veterans-affairs/eslint-config-appeals'],
+  extends: [
+    // '@department-of-veterans-affairs/eslint-config-appeals'
+    './eslint-config-appeals.js'
+  ],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true
+    },
+    ecmaVersion: 10,
+    sourceType: 'module'
+  },
   rules: {
     'prefer-const': 'off',
     'max-statements': 'off',
-    'react/prop-types': [1, { ignore: [],
-      customValidators: [] }]
+    'react/prop-types': [
+      1,
+      {
+        ignore: [],
+        customValidators: []
+      }
+    ]
   },
-  plugins: [
-    'nullishCoalescingOperator'
-  ],
   settings: {
     react: {
       version: '16.12'
