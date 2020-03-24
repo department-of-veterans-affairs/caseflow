@@ -3,12 +3,12 @@
 describe NoShowHearingTask, :postgres do
   let(:appeal) { create(:appeal, :hearing_docket) }
   let(:root_task) { create(:root_task, appeal: appeal) }
-  let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
-  let(:hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
-  let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
-  let(:no_show_hearing_task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+  let(:distribution_task) { create(:distribution_task, parent: root_task) }
+  let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
+  let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
+  let(:no_show_hearing_task) { create(:no_show_hearing_task, parent: disposition_task) }
   let!(:completed_scheduling_task) do
-    create(:schedule_hearing_task, :completed, parent: hearing_task, appeal: appeal)
+    create(:schedule_hearing_task, :completed, parent: hearing_task)
   end
 
   context "create a new NoShowHearingTask" do

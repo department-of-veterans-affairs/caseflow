@@ -26,52 +26,47 @@ shared_context "AMA Tableau SQL", shared_context: :metadata do
   end
   let!(:not_distributed_with_timed_hold) do
     create(:appeal, :ready_for_distribution, veteran_file_number: aod_veteran.file_number).tap do |appeal|
-      create(:timed_hold_task, appeal: appeal, parent: appeal.root_task)
+      create(:timed_hold_task, parent: appeal.root_task)
     end
   end
   let!(:distributed_to_judge) { create(:appeal, :assigned_to_judge) }
   let!(:assigned_to_attorney) do
     create(:appeal).tap do |appeal|
-      root_task = create(:root_task, appeal: appeal)
-      create(:ama_attorney_task, appeal: appeal, parent: root_task)
+      create(:ama_attorney_task, parent: create(:root_task, appeal: appeal))
     end
   end
   let!(:assigned_to_colocated) do
     create(:appeal).tap do |appeal|
-      root_task = create(:root_task, appeal: appeal)
-      create(:ama_colocated_task, appeal: appeal, assigned_to: attorney, parent: root_task)
+      create(:ama_colocated_task, assigned_to: attorney, parent: create(:root_task, appeal: appeal))
     end
   end
   let!(:decision_in_progress) do
     create(:appeal).tap do |appeal|
-      create(:root_task, appeal: appeal)
-      create(:ama_attorney_task, :in_progress, appeal: appeal, assigned_by: judge, parent: appeal.root_task)
+      create(:ama_attorney_task, :in_progress, assigned_by: judge, parent: create(:root_task, appeal: appeal))
     end
   end
   let!(:decision_ready_for_signature) do
     create(:appeal).tap do |appeal|
-      root_task = create(:root_task, appeal: appeal)
-      create(:ama_judge_decision_review_task, :in_progress, appeal: appeal, parent: root_task)
+      create(:ama_judge_decision_review_task, :in_progress, parent: create(:root_task, appeal: appeal))
     end
   end
   let!(:decision_signed) do
     create(:appeal).tap do |appeal|
-      root_task = create(:root_task, appeal: appeal)
-      create(:bva_dispatch_task, :in_progress, appeal: appeal, parent: root_task)
+      create(:bva_dispatch_task, :in_progress, parent: create(:root_task, appeal: appeal))
     end
   end
   let!(:decision_dispatched) do
     create(:appeal).tap do |appeal|
       root_task = create(:root_task, appeal: appeal)
-      create(:bva_dispatch_task, :completed, appeal: appeal, parent: root_task)
+      create(:bva_dispatch_task, :completed, parent: root_task)
       root_task.completed!
     end
   end
   let!(:dispatched_with_subsequent_assigned_task) do
     create(:appeal).tap do |appeal|
       root_task = create(:root_task, appeal: appeal)
-      create(:bva_dispatch_task, :completed, appeal: appeal, parent: root_task)
-      create(:ama_attorney_task, assigned_to: attorney, appeal: appeal, parent: root_task)
+      create(:bva_dispatch_task, :completed, parent: root_task)
+      create(:ama_attorney_task, assigned_to: attorney, parent: root_task)
     end
   end
   let!(:cancelled) do
@@ -81,14 +76,12 @@ shared_context "AMA Tableau SQL", shared_context: :metadata do
   end
   let!(:on_hold) do
     create(:appeal).tap do |appeal|
-      root_task = create(:root_task, appeal: appeal)
-      create(:timed_hold_task, appeal: appeal, parent: root_task)
+      create(:timed_hold_task, parent: create(:root_task, appeal: appeal))
     end
   end
   let!(:misc) do
     create(:appeal).tap do |appeal|
-      root_task = create(:root_task, appeal: appeal)
-      create(:ama_judge_dispatch_return_task, appeal: appeal, parent: root_task)
+      create(:ama_judge_dispatch_return_task, parent: create(:root_task, appeal: appeal))
     end
   end
 

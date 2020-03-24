@@ -1193,12 +1193,12 @@ feature "Task queue", :all_dbs do
     let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let!(:root_task) { create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task) }
     let!(:disposition_task) do
-      create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+      create(:assign_hearing_disposition_task, parent: hearing_task)
     end
     let!(:transcription_task) do
-      create(:transcription_task, parent: disposition_task, appeal: appeal, assigned_to: user)
+      create(:transcription_task, parent: disposition_task, assigned_to: user)
     end
     let(:days_on_hold) { 18 }
     let!(:timed_hold_task) do
