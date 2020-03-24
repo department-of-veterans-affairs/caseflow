@@ -16,6 +16,16 @@ class Rating
     Intake::RatingSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
+  def issues
+    issues_data = Array.wrap(rating_profile[:rating_issues] || rating_profile.dig(:rba_issue_list, :rba_issue))
+    return [] if rating_profile[:rating_issues].nil?
+
+    issues_data.map do |issue_data|
+      issue_data[:dgnstc_tc] = diagnostic_codes.dig(issue_data[:dis_sn], :dgnstc_tc)
+      RatingIssue.from_bgs_hash(self, issue_data)
+    end
+  end
+
   def associated_end_products
     associated_claims_data.map do |claim_data|
       EndProduct.new(
@@ -46,6 +56,10 @@ class Rating
       )
     end
 
+    def fetch_in_range(*)
+      fail Caseflow::Error::MustImplementInSubclass
+    end
+
     def sorted_ratings_from_bgs_response(response)
       unsorted = ratings_from_bgs_response(response).select do |rating|
         rating.promulgation_date > start_date
@@ -53,5 +67,44 @@ class Rating
 
       unsorted.sort_by(&:promulgation_date).reverse
     end
+
+    def from_bgs_hash(_data)
+      fail Caseflow::Error::MustImplementInSubclass
+    end
+  end
+
+  private
+
+  def diagnostic_codes
+    @diagnostic_codes ||= generate_diagnostic_codes
+  end
+
+  def generate_diagnostic_codes
+    diability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
+
+    return {} unless disability_data.present?
+
+    Array.wrap(diability_data).reduce({}) do |disability_map, disability|
+      disability_time = disability[:dis_dt]
+
+      if disability_map[disability[:dis_sn]].nil? ||
+         disability_map[disability[:dis_sn]][:date] < disability_time
+
+        disability_map[disability[:dis_sn]] = {
+          dgnstc_tc: get_diagnostic_code(disability),
+          date: disability_time
+        }
+      end
+
+      disability_map
+    end
+  end
+
+  def get_diagnostic_code(disability)
+    self.class.latest_disability_evaluation(disability).dig(:dgnstc_tc)
+  end
+
+  def rating_profile
+    fail Caseflow::Error::MustImplementInSubclass
   end
 end
