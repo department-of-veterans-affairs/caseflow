@@ -146,7 +146,7 @@ class AssignWidget extends React.PureComponent {
       })?.options;
     }
 
-    if (optionsOther.length) {
+    if (optionsOther?.length) {
       placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
       selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
     }

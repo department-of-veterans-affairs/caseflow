@@ -102,8 +102,12 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
       expect(page).to have_content "Request more cases"
     end
 
-    context "and can request cases for a judge" do
+    context "can perform the same case movement actions as a judge" do
       let!(:appeal) { create(:appeal, :ready_for_distribution) }
+      let!(:review_appeal) do
+        create(:appeal, :at_judge_review, associated_judge: judge_one.user, associated_attorney: attorney_one)
+      end
+      let(:assigner_name) { "#{scm_user.full_name.split(' ').first.first}. #{scm_user.full_name.split(' ').last}" }
 
       before do
         allow_any_instance_of(LegacyDocket).to receive(:weight).and_return(101.4)
@@ -112,20 +116,104 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
         allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
       end
 
-      scenario "viewing the assign task queue" do
-        visit "/queue/#{judge_one.user.id}/assign"
+      scenario "on ama appeals" do
+        step "request cases" do
+          visit "/queue/#{judge_one.user.id}/assign"
 
-        expect(page).to have_content("Assign 1 Cases for #{judge_one.user.css_id}")
-        expect(page).to_not have_content("#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
+          expect(page).to have_content("Assign 1 Cases for #{judge_one.user.css_id}")
+          expect(page).to_not have_content("#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
 
-        click_on("Request more cases")
-        expect(page).to have_content("Distribution complete")
+          click_on("Request more cases")
+          expect(page).to have_content("Distribution complete")
 
-        expect(page).to have_content("Assign 2 Cases for #{judge_one.user.css_id}")
+          expect(page).to have_content("Assign 2 Cases for #{judge_one.user.css_id}")
 
-        expect(page).to have_content(appeal.veteran_file_number)
-        expect(page).to have_content("Original")
-        expect(page).to have_content(appeal.docket_number)
+          expect(page).to have_content(appeal.veteran_file_number)
+          expect(page).to have_content("Original")
+          expect(page).to have_content(appeal.docket_number)
+        end
+
+        step "reassign a JudgeAssignTask" do
+          click_on(appeal.veteran_file_number)
+
+          expect(page).to have_content("ASSIGNED TO\n#{judge_one.user.css_id}")
+          click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
+          click_dropdown(prompt: "Select a user", text: judge_two.user.full_name)
+          instructions = "#{judge_one.user.full_name} is on leave. Please take over this case"
+          fill_in("taskInstructions", with: instructions)
+          click_on("Submit")
+
+          expect(page).to have_content("Task reassigned to #{judge_two.user.full_name}")
+
+          visit "/queue/appeals/#{appeal.external_id}"
+          expect(page).to have_content("ASSIGNED TO\n#{judge_two.user.css_id}")
+          expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
+          expect(page).to have_content("TASK\n#{JudgeAssignTask.label}")
+          click_on("View task instructions")
+          expect(page).to have_content(instructions)
+        end
+
+        step "assign an AttorneyTask" do
+          click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
+          click_dropdown(prompt: "Select a user", text: "Other")
+          click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
+          click_on("Submit")
+
+          expect(page).to have_content("Assigned 1 case")
+
+          visit "/queue/appeals/#{appeal.external_id}"
+          expect(page).to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
+          expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
+          expect(page).to have_content("TASK\n#{AttorneyTask.label}")
+          expect(page).to have_content("TASK\n#{JudgeDecisionReviewTask.label}")
+          expect(page).not_to have_content("TASK\n#{JudgeAssignTask.label}")
+        end
+
+        step "reassign an AttorneyTask" do
+          click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
+          click_dropdown(prompt: "Select a user", text: "Other")
+          click_dropdown(prompt: "Select a user", text: attorney_two.full_name)
+          click_on("Submit")
+
+          expect(page).to have_content("Assigned 1 case")
+
+          visit "/queue/appeals/#{appeal.external_id}"
+          expect(page).not_to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
+          expect(page).to have_content("ASSIGNED TO\n#{attorney_two.css_id}")
+          expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
+        end
+
+        step "cancel an AttorneyTask" do
+          click_dropdown(propmt: "Select an action...", text: "Cancel task")
+          click_on("Submit")
+
+          expect(page).to have_content(
+            "Task for #{appeal.veteran.first_name} #{appeal.veteran.last_name}'s case has been cancelled"
+          )
+
+          visit "/queue/appeals/#{appeal.external_id}"
+          expect(page).to have_content("ASSIGNED TO\n#{judge_two.user.css_id}")
+          expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
+          expect(page).to have_content("TASK\n#{JudgeAssignTask.label}")
+        end
+
+        step "reassign a JudgeDecisionReviewTask" do
+          visit "/queue/appeals/#{review_appeal.external_id}"
+
+          expect(page).to have_content("ASSIGNED TO\n#{judge_one.user.css_id}")
+          expect(page).to have_content("TASK\n#{JudgeDecisionReviewTask.label}")
+          click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
+          click_dropdown(prompt: "Select a user", text: judge_two.user.full_name)
+          fill_in("taskInstructions", with: "#{judge_one.user.full_name} is on leave. Please take over this case")
+          click_on("Submit")
+
+          expect(page).to have_content("Task reassigned to #{judge_two.user.full_name}")
+
+          visit "/queue/appeals/#{review_appeal.external_id}"
+          expect(page).to have_content("ASSIGNED TO\n#{judge_two.user.css_id}")
+          expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
+          expect(page).to have_content("TASK\n#{JudgeDecisionReviewTask.label}")
+        end
       end
     end
   end

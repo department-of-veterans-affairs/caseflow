@@ -203,6 +203,17 @@ FactoryBot.define do
       end
     end
 
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to a judge at decision review
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets. Strongly suggest you provide a judge and attorney.
+    trait :at_judge_review do
+      at_attorney_drafting
+      after(:create) do |appeal|
+        appeal.tasks.where(type: AttorneyTask.name).first.completed!
+      end
+    end
+
     trait :with_straight_vacate_stream do
       after(:create) do |appeal, evaluator|
         mail_task = create(
