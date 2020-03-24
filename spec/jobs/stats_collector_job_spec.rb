@@ -39,7 +39,7 @@ describe StatsCollectorJob do
     end
 
     before do
-      stub_const("StatsCollectorJob::DAILY_COLLECTORS", { "test_daily_collector" => ExampleDailyCollector }.freeze)
+      stub_const("StatsCollectorJob::DAILY_COLLECTORS", "test_daily_collector" => ExampleDailyCollector)
       stub_const("StatsCollectorJob::WEEKLY_COLLECTORS", "test_weekly_collector" => ExampleWeeklyCollector)
       stub_const("StatsCollectorJob::MONTHLY_COLLECTORS", "test_monthly_collector" => ExampleMonthlyCollector)
     end
