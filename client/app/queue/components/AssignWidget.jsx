@@ -22,6 +22,8 @@ import pluralize from 'pluralize';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
+import { taskActionData } from '../utils';
+
 import QueueFlowModal from './QueueFlowModal';
 
 const OTHER = 'OTHER';
@@ -131,14 +133,22 @@ class AssignWidget extends React.PureComponent {
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
     let selectedOptionOther = null;
 
-    if (attorneys.data) {
-      optionsOther = attorneys.data.map(optionFromAttorney);
-      placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
-      selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
-    }
-
     if (attorneys.error) {
       placeholderOther = COPY.ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
+    }
+
+    if (attorneys.data) {
+      optionsOther = attorneys.data.map(optionFromAttorney);
+    } else if (this.props.isModal) {
+      optionsOther = taskActionData({
+        ...this.props,
+        task: selectedTasks[0]
+      })?.options;
+    }
+
+    if (optionsOther.length) {
+      placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
+      selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
     }
 
     const Widget = <React.Fragment>

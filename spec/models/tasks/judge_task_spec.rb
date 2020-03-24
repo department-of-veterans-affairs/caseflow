@@ -26,9 +26,45 @@ describe JudgeTask, :all_dbs do
       end
     end
 
+    context "user is a Special Case Movement team member" do
+      let(:user) do
+        create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
+      end
+
+      before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
+      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
+
+      context "in the assign phase" do
+        it "should return the Case Management assignment actions along with attorneys" do
+          expect(subject).to eq(
+            [
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+              Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+            ].map { |action| subject_task.build_action_hash(action, user) }
+          )
+          assign_action_hash = subject.find { |hash| hash[:label].eql? Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label }
+          expect(assign_action_hash[:data][:options].nil?).to eq false
+        end
+      end
+
+      context "in the review phase" do
+        let(:subject_task) do
+          create(:ama_judge_decision_review_task, assigned_to: judge, parent: create(:root_task))
+        end
+
+        it "returns the reassign" do
+          expect(subject).to eq(
+            [
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+            ].map { |action| subject_task.build_action_hash(action, judge) }
+          )
+        end
+      end
+    end
+
     context "the task is assigned to the current user" do
       context "in the assign phase" do
-        it "should return the assignment action" do
+        it "should return the assignment action, but no attorneys" do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -37,6 +73,8 @@ describe JudgeTask, :all_dbs do
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
+          assign_action_hash = subject.find { |hash| hash[:label].eql? Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label }
+          expect(assign_action_hash[:data][:options].nil?).to eq true
         end
 
         context "the task was assigned from Quality Review" do
