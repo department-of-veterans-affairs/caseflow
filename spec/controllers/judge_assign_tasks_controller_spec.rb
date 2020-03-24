@@ -26,7 +26,7 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
 
     subject { post :create, params: { tasks: params } }
 
-    fcontext "when cases will be assigned to an attorney" do
+    context "when cases will be assigned to an attorney" do
       shared_examples "attorney task assignment" do
         it "returns the newly created tasks along with their new parents and old parents" do
           subject

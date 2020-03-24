@@ -93,6 +93,6 @@ class AttorneyTask < Task
   end
 
   def open_judge_assign_task
-    JudgeAssignTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: assigned_by)
+    JudgeAssignTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: parent.assigned_to)
   end
 end

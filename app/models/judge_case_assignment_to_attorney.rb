@@ -53,7 +53,9 @@ class JudgeCaseAssignmentToAttorney
   end
 
   def assigned_by_role_is_valid
-    errors.add(:assigned_by, "has to be a judge") if assigned_by && !assigned_by.judge_in_vacols?
+    if assigned_by && !assigned_by.judge_in_vacols? && !assigned_by.can_act_on_behalf_of_judges?
+      errors.add(:assigned_by, "has to be a judge or a SpecialCaseMovementTeam member")
+    end
   end
 
   class << self
