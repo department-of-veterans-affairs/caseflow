@@ -76,6 +76,7 @@ class VirtualHearings::SendEmail
 
     msg = email.deliver_now!
 
+    # :nocov:
     if msg.is_a?(GovDelivery::TMS::EmailMessage)
       response = msg.response
       response_external_url = response.body.dig("_links", "self")
@@ -90,6 +91,7 @@ class VirtualHearings::SendEmail
         "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
       )
     end
+    # :nocov:
 
     Rails.logger.info("Sent #{type} email to #{recipient.title}!")
   end
