@@ -1,7 +1,7 @@
 Table,Column,Type,Required,Primary Key,Foreign Key,Unique,Index,Description
 advance_on_docket_motions,,,,,,,,
 advance_on_docket_motions,created_at,datetime ∗,x,,,,,
-advance_on_docket_motions,granted,boolean,,,,,,"Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
+advance_on_docket_motions,granted,boolean,,,,,x,"Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
 advance_on_docket_motions,id,integer (8) PK,x,x,,,,
 advance_on_docket_motions,person_id,integer (8) FK,,,x,,x,Appellant ID
 advance_on_docket_motions,reason,string,,,,,,VLJ's rationale for their decision on motion to AOD.
@@ -42,8 +42,8 @@ appeals,,,,,,,,Decision reviews intaken for AMA appeals to the board (also known
 appeals,closest_regional_office,string,,,,,,The code for the regional office closest to the Veteran on the appeal.
 appeals,created_at,datetime,,,,,,
 appeals,docket_range_date,date,,,,,,Date that appeal was added to hearing docket range.
-appeals,docket_type,string ∗,x,,,,,"The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
-appeals,established_at,datetime,,,,,,Timestamp for when the appeal has successfully been intaken into Caseflow by the user.
+appeals,docket_type,string ∗,x,,,,x,"The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
+appeals,established_at,datetime,,,,,x,Timestamp for when the appeal has successfully been intaken into Caseflow by the user.
 appeals,establishment_attempted_at,datetime,,,,,,Timestamp for when the appeal's establishment was last attempted.
 appeals,establishment_canceled_at,datetime,,,,,,Timestamp when job was abandoned
 appeals,establishment_error,string,,,,,,The error message if attempting to establish the appeal resulted in an error. This gets cleared once the establishment is successful.
