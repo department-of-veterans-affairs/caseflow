@@ -54,29 +54,15 @@ class PromulgatedRating < Rating
         end
       end
 
-      # If only one rating is returned, we need to convert it to an array
       Array.wrap(response[:rating_profile_list][:rating_profile]).map do |rating_data|
-        Rating.from_bgs_hash(rating_data)
+        PromulgatedRating.from_bgs_hash(rating_data)
       end
     end
   end
 
-  def decisions
-    return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
-    return [] unless rating_profile[:disabilities]
-
-    Array.wrap(rating_profile[:disabilities]).map do |disability|
-      RatingDecision.from_bgs_disability(self, disability)
-    end
-  end
+  attr_writer :rating_profile
 
   private
-
-  def associated_claims_data
-    return [] if rating_profile[:associated_claims].nil?
-
-    Array.wrap(rating_profile[:associated_claims])
-  end
 
   def fetch_rating_profile
     BGSService.new.fetch_rating_profile(

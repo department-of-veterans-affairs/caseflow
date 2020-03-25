@@ -7,41 +7,9 @@ class Rating
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
   # It is a datetime, not a date.
   attr_accessor :participant_id, :profile_date, :promulgation_date
-  attr_writer :rating_profile
 
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
-
-  def serialize
-    Intake::RatingSerializer.new(self).serializable_hash[:data][:attributes]
-  end
-
-  def issues
-    issues_data = Array.wrap(rating_profile[:rating_issues] || rating_profile.dig(:rba_issue_list, :rba_issue))
-    return [] if rating_profile[:rating_issues].nil?
-
-    issues_data.map do |issue_data|
-      issue_data[:dgnstc_tc] = diagnostic_codes.dig(issue_data[:dis_sn], :dgnstc_tc)
-      RatingIssue.from_bgs_hash(self, issue_data)
-    end
-  end
-
-  def associated_end_products
-    associated_claims_data.map do |claim_data|
-      EndProduct.new(
-        claim_id: claim_data[:clm_id],
-        claim_type_code: claim_data[:bnft_clm_tc]
-      )
-    end
-  end
-
-  def pension?
-    associated_claims_data.any? { |ac| ac[:bnft_clm_tc].match(/PMC$/) }
-  end
-
-  def associated_claims_data
-    fail Caseflow::Error::MustImplementInSubclass
-  end
 
   class << self
     def fetch_all(participant_id)
@@ -73,7 +41,54 @@ class Rating
     end
   end
 
+  def serialize
+    Intake::RatingSerializer.new(self).serializable_hash[:data][:attributes]
+  end
+
+  def issues
+    issues_data = Array.wrap(rating_profile[:rating_issues] || rating_profile.dig(:rba_issue_list, :rba_issue))
+    return [] if rating_profile[:rating_issues].nil?
+
+    issues_data.map do |issue_data|
+      issue_data[:dgnstc_tc] = diagnostic_codes.dig(issue_data[:dis_sn], :dgnstc_tc)
+      RatingIssue.from_bgs_hash(self, issue_data)
+    end
+  end
+
+  def decisions
+    return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
+
+    diability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
+
+    disability_data.map do |disability|
+      RatingDecision.from_bgs_disability(self, disability)
+    end
+  end
+
+  def associated_end_products
+    associated_claims_data.map do |claim_data|
+      EndProduct.new(
+        claim_id: claim_data[:clm_id],
+        claim_type_code: claim_data[:bnft_clm_tc]
+      )
+    end
+  end
+
+  def pension?
+    associated_claims_data.any? { |ac| ac[:bnft_clm_tc].match(/PMC$/) }
+  end
+
   private
+
+  def ratings_from_bgs_response(_response)
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
+  def associated_claims_data
+    associated_claims = rating_profile[:associated_claims] || rating_profile.dig(:rba_claim_list, :rba_claim)
+
+    Array.wrap(associated_claims)
+  end
 
   def diagnostic_codes
     @diagnostic_codes ||= generate_diagnostic_codes
@@ -102,9 +117,5 @@ class Rating
 
   def get_diagnostic_code(disability)
     self.class.latest_disability_evaluation(disability).dig(:dgnstc_tc)
-  end
-
-  def rating_profile
-    fail Caseflow::Error::MustImplementInSubclass
   end
 end
