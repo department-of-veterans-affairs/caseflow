@@ -3,10 +3,7 @@ module.exports = {
     browser: true,
     mocha: true
   },
-  extends: [
-    // '@department-of-veterans-affairs/eslint-config-appeals'
-    './eslint-config-appeals.js'
-  ],
+  extends: ['@department-of-veterans-affairs/eslint-config-appeals'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true
