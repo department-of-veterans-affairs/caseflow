@@ -16,9 +16,10 @@ import _ from 'lodash';
 
 import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
-import { onChangeFormData, onReceiveAlerts } from '../../components/common/actions';
+import { onChangeFormData, onReceiveAlerts, removeAlertsWithoutExpiration } from '../../components/common/actions';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
+import ExponentialPolling from '../../components/ExponentialPolling';
 
 const row = css({
   marginLeft: '-15px',
@@ -57,6 +58,7 @@ class HearingDetails extends React.Component {
       error: false,
       virtualHearingModalOpen: false,
       virtualHearingModalType: null,
+      virtualHearingJobStarted: null,
       initialFormData
     };
 
@@ -190,13 +192,21 @@ class HearingDetails extends React.Component {
       const hearing = ApiUtil.convertToCamelCase(response.body.data);
       const alerts = response.body.alerts;
 
+      // if user is sitting on the page after making changes to virtual hearing,
+      // poll job_completed status to let the user know when changes have been made.
+      // Since we don't want to start polling every time the user hits submit, we
+      // check if the data sent to backend contains any virtual hearing changes.
+      if (data.hearing.virtual_hearing_attributes) {
+        this.setState({ virtualHearingJobStarted: true });
+        this.setState({ alerts: alerts.filter((alert) => alert.type === 'success' && !alert.autoClear) });
+      }
+
       this.setState({
         updated: false,
         loading: false,
         success: true,
         error: false
       });
-
       // set hearing on DetailsContainer then reset initialFormData
       this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
@@ -206,7 +216,9 @@ class HearingDetails extends React.Component {
         });
 
         this.updateAllFormData(initialFormData);
-        this.props.onReceiveAlerts(alerts);
+        this.props.onReceiveAlerts(
+          alerts.filter((alert) => (alert.type === 'success' && alert.autoClear) || alert.type === 'info')
+        );
       });
     }).
       catch((error) => {
@@ -223,6 +235,31 @@ class HearingDetails extends React.Component {
         });
       });
   }
+
+  pollVirtualHearingData = () => (
+    // Did not specify retryCount so if api call fails, it'll stop polling.
+    // If need to retry on failure, pass in retryCount
+    <ExponentialPolling
+      url={`/hearings/${this.props.hearing.externalId}/virtual_hearing_job_status`}
+      method="GET"
+      interval={1000}
+      backoffMultiplier={3}
+      onSuccess={(response) => {
+        if (response.job_completed) {
+          this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, { jobCompleted: response.job_completed });
+          // remove in-progress alert
+          this.props.removeAlertsWithoutExpiration();
+          // show success alert
+          this.props.onReceiveAlerts(this.state.alerts);
+          this.setState({ virtualHearingJobStarted: false });
+        }
+
+        // continue polling if return true (opposite of job_completed)
+        return !response.job_completed;
+      }}
+      render={() => null}
+    />
+  )
 
   render() {
     const {
@@ -302,6 +339,7 @@ class HearingDetails extends React.Component {
             </span>
           </div>
         </div>
+        {this.state.virtualHearingJobStarted && this.pollVirtualHearingData()}
       </AppSegment>
     );
   }
@@ -321,7 +359,8 @@ HearingDetails.propTypes = {
     hearingDetailsForm: PropTypes.object,
     transcriptionDetailsForm: PropTypes.object,
     virtualHearingForm: PropTypes.object
-  })
+  }),
+  removeAlertsWithoutExpiration: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -334,7 +373,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onChangeFormData,
-  onReceiveAlerts
+  onReceiveAlerts,
+  removeAlertsWithoutExpiration
 }, dispatch);
 
 export default connect(
