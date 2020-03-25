@@ -23,7 +23,7 @@ class UserAlerts extends React.Component {
     const { alerts } = this.props;
 
     const expiredAlertTimestamps = alerts.filter((alert) => (
-      (currentTime - alert.timestamp) >= ALERT_EXPIRATION
+      (currentTime - alert.timestamp) >= ALERT_EXPIRATION && alert.autoClear
     )).map((alert) => alert.timestamp);
 
     if (expiredAlertTimestamps.length > 0) {
@@ -56,7 +56,8 @@ UserAlerts.propTypes = {
     type: PropTypes.oneOf(['success', 'info', 'warning', 'error']),
     message: PropTypes.string,
     title: PropTypes.string,
-    timestamp: PropTypes.integer
+    timestamp: PropTypes.integer,
+    autoClear: PropTypes.bool
   })),
   removeAlertsWithTimestamps: PropTypes.func
 };

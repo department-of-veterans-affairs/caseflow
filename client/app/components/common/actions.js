@@ -79,3 +79,7 @@ export const removeAlertsWithTimestamps = (timestamps) => ({
     timestamps
   }
 });
+
+export const removeAlertsWithoutExpiration = () => ({
+  type: ACTIONS.REMOVE_ALERTS_WITHOUT_EXPIRATION
+});
