@@ -6,8 +6,6 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
-  APP_NAME = "caseflow_job"
-
   def perform
     count_deleted_and_log(VirtualHearingRepository.ready_for_deletion) do |virtual_hearing|
       Rails.logger.info("Deleting Pexip conference for hearing (#{virtual_hearing.hearing_id})")
@@ -26,7 +24,7 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
   def datadog_metric_info
     {
-      app_name: APP_NAME,
+      app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
       metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
     }
   end
