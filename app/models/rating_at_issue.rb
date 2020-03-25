@@ -24,7 +24,13 @@ class RatingAtIssue < Rating
     private
 
     def ratings_from_bgs_response(response)
-      Array.wrap(response.dig(:rba_profile_list, :rba_profile)).map do |rating_data|
+      ratings = response.dig(:rba_profile_list, :rba_profile)
+      
+      if ratings.nil?
+        fail NilRatingProfileListError, message: response
+      end
+
+      Array.wrap(ratings).map do |rating_data|
         RatingAtIssue.from_bgs_hash(rating_data)
       end
     end

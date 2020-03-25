@@ -172,10 +172,6 @@ class Veteran < ApplicationRecord
   alias address_line_3 address_line3
   alias gender sex
 
-  def timely_ratings(from_date:)
-    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
-  end
-
   def ratings
     @ratings ||= begin
       if FeatureToggle.enabled?(:ratings_at_issue, user: RequestStore.store[:current_user])

@@ -4,12 +4,14 @@ class Rating
   include ActiveModel::Model
   include LatestRatingDisabilityEvaluation
 
-  # WARNING: profile_date is a misnomer adopted from BGS terminology.
-  # It is a datetime, not a date.
-  attr_accessor :participant_id, :profile_date, :promulgation_date
-
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
+
+  class NilRatingProfileListError < StandardError
+    def ignorable?
+      true
+    end
+  end
 
   class << self
     def fetch_all(participant_id)
@@ -40,6 +42,10 @@ class Rating
       fail Caseflow::Error::MustImplementInSubclass
     end
   end
+
+  # WARNING: profile_date is a misnomer adopted from BGS terminology.
+  # It is a datetime, not a date.
+  attr_accessor :participant_id, :profile_date, :promulgation_date
 
   def serialize
     Intake::RatingSerializer.new(self).serializable_hash[:data][:attributes]

@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 class PromulgatedRating < Rating
-  class NilRatingProfileListError < StandardError
-    def ignorable?
-      true
-    end
-  end
-
   class LockedRatingError < StandardError
     def ignorable?
       true
