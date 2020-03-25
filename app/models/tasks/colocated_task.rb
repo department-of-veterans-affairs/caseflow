@@ -152,9 +152,9 @@ class ColocatedTask < Task
   def appeal_in_caseflow_vacols_location?
     return false unless appeal.is_a?(LegacyAppeal)
 
-    return false unless appeal.case_record # VACOLS case must exist
+    return false if appeal.case_record.nil? # VACOLS case must exist
 
-    appeal.case_record.bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
+    appeal.case_record.reload.bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
   end
 
   def vacols_location
