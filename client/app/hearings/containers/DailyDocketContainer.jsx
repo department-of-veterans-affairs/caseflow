@@ -30,7 +30,6 @@ import {
   handleLockHearingServerError,
   onResetLockHearingAfterError
 } from '../actions/dailyDocketActions';
-import { onReceiveAlerts } from '../../components/common/actions';
 import DailyDocket from '../components/dailyDocket/DailyDocket';
 import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
 import HearingDayEditModal from '../components/HearingDayEditModal';
@@ -324,7 +323,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDisplayLockModal,
   onCancelDisplayLockModal,
   onUpdateLock,
-  onReceiveAlerts,
   onResetLockSuccessMessage,
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
@@ -381,7 +379,6 @@ DailyDocketContainer.propTypes = {
   onReceiveDailyDocket: PropTypes.func,
   onReceiveSavedHearing: PropTypes.func,
   onReceiveHearing: PropTypes.func,
-  onReceiveAlerts: PropTypes.func,
   onResetSaveSuccessful: PropTypes.func,
   onResetLockHearingAfterError: PropTypes.func,
   onResetLockSuccessMessage: PropTypes.func,
