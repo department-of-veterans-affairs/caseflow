@@ -19,8 +19,14 @@ const detailListStyling = css({
   marginBottom: '3rem'
 });
 
-const VeteranState = ({ veteran: { address: { state } } }) => {
-  return <>{state}</>;
+const VeteranState = ({ veteran }) => {
+  const state = veteran?.address?.state;
+
+  if (state) {
+    return <>{state}</>;
+  }
+
+  return null;
 };
 
 class VeteranDetail extends React.PureComponent {
