@@ -460,7 +460,7 @@ describe ColocatedTask, :all_dbs do
       let(:legacy_colocated_task) { org_colocated_task.children.first }
 
       before do
-        org_colocated_task.appeal.case_record.update!(bfcurloc: location_code)
+        org_colocated_task.appeal.case_record&.update!(bfcurloc: location_code)
       end
 
       context "when the location code is CASEFLOW" do
@@ -495,6 +495,17 @@ describe ColocatedTask, :all_dbs do
         it "does not change the case's location_code" do
           legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
           expect(org_colocated_task.reload.appeal.location_code).to eq(location_code)
+        end
+      end
+
+      context "when the VACOLS case has been deleted" do
+        let!(:appeal_1) { create(:legacy_appeal) }
+        let(:task_type_trait) { ColocatedTask.actions_assigned_to_colocated.sample.to_sym }
+        let(:location_code) { "FAKELOC" }
+
+        it "does not attempt to access the location code" do
+          legacy_colocated_task.cancelled!
+          expect(org_colocated_task.reload.appeal.location_code).to be_nil
         end
       end
     end
