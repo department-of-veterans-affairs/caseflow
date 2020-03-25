@@ -659,8 +659,10 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         # reload to verify that the new issues populate the form
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
-        expect(page).to have_content("Requested issues\n1. Left knee granted")
-        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 05/10/2019\nWithdrawn on")
+        expect(find("div", class:"issue-container", match: :first)).to have_content("Left knee granted")
+        expect(find("div", class: "withdrawn-issue")).to have_content(
+          "PTSD denied\nDecision date: 05/10/2019\nWithdrawn on"
+        )
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
     end
