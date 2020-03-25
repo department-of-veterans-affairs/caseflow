@@ -4,34 +4,32 @@ module VirtualHearingAlertConcern
   extend ActiveSupport::Concern
 
   def only_emails_updated?
-    email_changed = virtual_hearing_attributes.key?(:veteran_email) ||
-                    virtual_hearing_attributes.key?(:representative_email) ||
-                    virtual_hearing_attributes.key?(:judge_email)
+    email_changed = virtual_hearing_attributes&.key?(:veteran_email) ||
+                    virtual_hearing_attributes&.key?(:representative_email) ||
+                    judge_id.present?
 
     email_changed && !virtual_hearing_cancelled? && !virtual_hearing_created?
   end
 
   def email_change_type
-    if virtual_hearing_attributes.key?(:veteran_email) && virtual_hearing_attributes.key?(:representative_email)
-      "CHANGE_VETERAN_AND_POA_EMAIL"
-    elsif virtual_hearing_attributes.key?(:veteran_email)
-      "CHANGE_VETERAN_EMAIL"
-    elsif virtual_hearing_attributes.key?(:representative_email)
-      "CHANGE_POA_EMAIL"
+    if virtual_hearing_attributes&.key?(:veteran_email) && virtual_hearing_attributes&.key?(:representative_email)
+      "CHANGED_VETERAN_AND_POA_EMAIL"
+    elsif virtual_hearing_attributes&.key?(:veteran_email)
+      "CHANGED_VETERAN_EMAIL"
+    elsif virtual_hearing_attributes&.key?(:representative_email)
+      "CHANGED_POA_EMAIL"
+    elsif judge_id.present?
+      "CHANGED_VLJ_EMAIL"
     end
-  end
-
-  def virtual_hearing_cancelled?
-    virtual_hearing_attributes[:status] == "cancelled"
   end
 
   def change_type
     if virtual_hearing_created?
-      "CHANGE_TO_VIRTUAL"
+      "CHANGED_TO_VIRTUAL"
     elsif virtual_hearing_cancelled?
-      "CHANGE_FROM_VIRTUAL"
+      "CHANGED_FROM_VIRTUAL"
     elsif only_time_updated?
-      "CHANGE_HEARING_TIME"
+      "CHANGED_HEARING_TIME"
     elsif only_emails_updated?
       email_change_type
     end

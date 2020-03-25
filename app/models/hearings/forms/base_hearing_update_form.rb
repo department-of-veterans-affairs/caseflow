@@ -46,7 +46,8 @@ class BaseHearingUpdateForm
 
   def show_update_alert?
     # if user only changes the hearing time for a virtual hearing, don't show update alert
-    return false if hearing.virtual? && hearing_updates.except(:scheduled_time).empty?
+    # scheduled_time for hearing, scheduled_for for legacy
+    return false if hearing.virtual? && hearing_updates.except(:scheduled_time, :scheduled_for).empty?
 
     hearing_updated?
   end
@@ -109,7 +110,11 @@ class BaseHearingUpdateForm
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
   def judge_email_sent_flag
     flag = !(updates_requiring_email? || virtual_hearing_attributes&.key?(:judge_email) || judge_id.present?)
-    flag || virtual_hearing_attributes&.dig(:status) == :cancelled
+    flag || virtual_hearing_cancelled?
+  end
+
+  def virtual_hearing_cancelled?
+    virtual_hearing_attributes&.dig(:status) == "cancelled"
   end
 
   def virtual_hearing_updates
