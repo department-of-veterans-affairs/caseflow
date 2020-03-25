@@ -58,7 +58,7 @@ class HearingsController < HearingsApplicationController
   end
 
   def virtual_hearing_job_status
-    render json: { job_completed: hearing&.virtual_hearing.job_completed? }
+    render json: { job_completed: hearing.virtual_hearing&.job_completed? }
   end
 
   private

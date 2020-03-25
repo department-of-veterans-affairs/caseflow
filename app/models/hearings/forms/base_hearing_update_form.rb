@@ -2,6 +2,7 @@
 
 class BaseHearingUpdateForm
   include ActiveModel::Model
+  include VirtualHearingAlertConcern
   include RunAsyncable
 
   attr_accessor :bva_poc, :disposition,
@@ -19,7 +20,7 @@ class BaseHearingUpdateForm
         create_or_update_virtual_hearing
         hearing.reload
         start_async_job
-        add_virtual_hearing_alert
+        add_virtual_hearing_alerts
       end
     end
   end
@@ -140,19 +141,11 @@ class BaseHearingUpdateForm
     end
   end
 
-  def add_virtual_hearing_alert
-    alerts << VirtualHearingUserAlertBuilder.new(
-      changed_to_virtual: virtual_hearing_created?,
-      virtual_hearing_attributes: virtual_hearing_updates,
-      veteran_full_name: veteran_full_name,
-      hearing_time_changed: scheduled_time_string.present?
-    ).call.to_hash
-  end
-
   def add_update_hearing_alert
     alerts << UserAlert.new(
       title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
-      type: UserAlert::TYPES[:success]
+      type: UserAlert::TYPES[:success],
+      auto_clear: true
     ).to_hash
   end
 
