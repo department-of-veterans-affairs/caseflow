@@ -190,13 +190,13 @@ describe ScheduleHearingTask, :all_dbs do
     let(:root_task) { create(:root_task, appeal: appeal) }
     let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
     let(:hearing) { create(:hearing, appeal: appeal, disposition: past_hearing_disposition) }
-    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task) }
     let!(:disposition_task) do
-      create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+      create(:assign_hearing_disposition_task, parent: hearing_task)
     end
     let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-    let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+    let!(:hearing_task_2) { create(:hearing_task, parent: root_task) }
+    let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2) }
     let(:instructions) { "These are my detailed instructions for a schedule hearing task." }
 
     before do

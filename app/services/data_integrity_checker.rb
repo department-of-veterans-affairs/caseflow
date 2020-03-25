@@ -4,8 +4,11 @@
 # subclasses will be called by the job.
 
 class DataIntegrityChecker
+  attr_reader :buffer
+
   def initialize
     @report = []
+    @buffer = []
   end
 
   def call
@@ -22,6 +25,10 @@ class DataIntegrityChecker
 
   def add_to_report(msg)
     @report << msg
+  end
+
+  def add_to_buffer(thing)
+    @buffer << thing
   end
 
   def slack_channel

@@ -39,7 +39,7 @@ RSpec.feature "Postpone hearing", :all_dbs do
       )
     end
     let!(:hearing) { create(:hearing, appeal: appeal, hearing_day: hearing_day) }
-    let!(:hearing_task) { create(:hearing_task, parent: RootTask.find_by(appeal: appeal), appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: appeal.root_task) }
     let!(:disposition_task) do
       AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, hearing_task, hearing)
     end

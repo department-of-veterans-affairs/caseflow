@@ -49,7 +49,7 @@ describe TaskActionRepository, :all_dbs do
     let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
     let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge) }
     let!(:attorney_task) do
-      create(:ama_attorney_task, assigned_to: attorney, parent: judge_task, appeal: judge_task.appeal)
+      create(:ama_attorney_task, assigned_to: attorney, parent: judge_task)
     end
 
     subject { TaskActionRepository.return_to_attorney_data(judge_task) }

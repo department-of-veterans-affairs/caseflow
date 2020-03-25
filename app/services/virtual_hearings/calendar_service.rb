@@ -100,8 +100,15 @@ class VirtualHearings::CalendarService
         include VirtualHearings::VeteranNameHelper
       end
 
-      # Some *~ magic ~* here. The recipient title is used to determine
-      # which template to load.
+      # Some *~ magic ~* here. The recipient title is used to determine which template to load:
+      #
+      #              judge_confirmation_event_description
+      #     representative_confirmation_event_description
+      #            veteran_confirmation_event_description
+      #
+      # representative_changed_to_video_event_description
+      #        veteran_changed_to_video_event_description
+
       template_name = "#{recipient.title.downcase}_#{event_type}_event_description"
 
       template.render(

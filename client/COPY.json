@@ -140,7 +140,7 @@
   "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate.\n\nIf you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.\n\nIf you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.\n\nIf they are no longer active, it will be placed in the Litigation Support team queue for reassignment.",
   "JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL": "How will you address this motion to vacate?",
   "JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL": "What type of vacate?",
-  "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert hyperlink to signed %s document",
+  "JUDGE_ADDRESS_MTV_HYPERLINK_LABEL": "Insert Caseflow Reader document hyperlink to %s draft",
   "JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL": "Provide context and instructions on which issues should be %s",
   "JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL": "Assign to decisions attorney",
   "JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL": "Which issues would you like to vacate?",
@@ -159,9 +159,11 @@
   "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your review for this motion?",
-  "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert hyperlink to denial draft",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL": "Insert Caseflow Reader document hyperlink to %s draft",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL": "Provide context on which issues should be %s",
   "MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL": "Assign to judge",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE": "You have submitted your review to %s",
+  "MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL": "This task will remain in your On Hold tab until it has been completed",
 
   "MTV_CHECKOUT_REVIEW_VACATURES_TITLE": "Review vacated decision issues",
   "MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION": "Review the prior decision issues here that have been marked for vacatur by the judge. Please remember to include them in your decision letter if you haven't already.",
@@ -169,6 +171,12 @@
   "MTV_CHECKOUT_ADD_DECISIONS_TITLE": "Add decisions",
   "MTV_CHECKOUT_ADD_DECISIONS_EXPLANATION": "Add decisions to the items listed here that have been reissued because of the motion to vacate. Any decisions to add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
 
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_ALERT_TITLE": "Prior decision issue(s) marked for vacatur",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_TITLE": "Return to Judge",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_DESCRIPTION": "Use this action to return the Motion to Vacate task to your judge if you believe there is an error in the issues that have been marked for vacatur.\n\nIf your judge is unavailable, this will return to the Litigation Support team queue for reassignment.",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_INSTRUCTIONS_LABEL": "Provide instructions and context for this action",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE": "%s's Motion to Vacate has been returned to %s",
+  "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS": "If you made a mistake, please email your judge to resolve the issue.",
 
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
@@ -362,7 +370,7 @@
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
 
-  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issues (optional)",
+  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issues",
   "SPECIAL_ISSUES_PAGE_NOTE": "Select the special issues that pertain to this case. Cases with special issues are routed to specific groups who are in charge of adjusting the case.",
   "SPECIAL_ISSUES_ABOUT_SECTION": "About the appellant: ",
   "SPECIAL_ISSUES_RESIDENCE_SECTION": "Appellant resides in: ",
@@ -593,6 +601,10 @@
   "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
   "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
   "INTAKE_LEGACY_OPT_IN_MESSAGE": "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?",
+
+  "ERROR_ADDRESS_LINE_INVALID_CHARACTERS": "This Veteran's address has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
+  "ERROR_CITY_INVALID_CHARACTERS": "This Veteran's city has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
+  "ERROR_ADDRESS_TOO_LONG": "This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than 20 characters (including spaces) then try again",
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",

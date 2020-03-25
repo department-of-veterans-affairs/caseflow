@@ -4,7 +4,7 @@ Your Veteran is scheduled for a hearing with a Veterans Law Judge of the Board o
 View the case details: https://appeals.cf.ds.va.gov/queue/appeals/<%= hearing.appeal.external_id %>
 
 Date and Time
-<%= formatted_date_time_for_zone(time_zone, start_time_utc) %>
+<%= VirtualHearings::CalendarTemplateHelper.formatted_date_time_for_zone(time_zone, start_time_utc) %>
 
 Location
 <%= hearing.hearing_location.name %>

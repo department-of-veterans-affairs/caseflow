@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VirtualHearings::DeleteConferencesJob, :postgres do
+describe VirtualHearings::DeleteConferencesJob do
   context "#perform" do
     let(:job) { VirtualHearings::DeleteConferencesJob.new }
 
@@ -48,7 +48,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
         expect(virtual_hearing.conference_deleted).to eq(true)
         expect(virtual_hearing.veteran_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
-        expect(virtual_hearing.judge_email_sent).to eq(true)
+        expect(virtual_hearing.judge_email_sent).to eq(false) # judge should not receive cancellation email
       end
     end
 
@@ -63,7 +63,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
         expect(job).to_not receive(:delete_conference)
         expect(virtual_hearing.veteran_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
-        expect(virtual_hearing.judge_email_sent).to eq(true)
+        expect(virtual_hearing.judge_email_sent).to eq(false) # judge should not receive cancellation email
       end
     end
 
@@ -83,7 +83,7 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
       end
     end
 
-    context "for multiple virtual hearings, and pexip returns an error" do
+    context "for multiple virtual hearings" do
       let!(:virtual_hearings) do
         [
           create(
@@ -103,20 +103,50 @@ describe VirtualHearings::DeleteConferencesJob, :postgres do
         ]
       end
 
-      it "does not mark the virtual hearings as deleted" do
-        fake_service = PexipService.new(status_code: 400)
-        expect(job).to receive(:client).twice.and_return(fake_service)
-        subject
-        virtual_hearings.each(&:reload)
-        expect(virtual_hearings.map(&:conference_deleted)).to all(be == false)
-      end
-
-      it "assumes a 404 means the virtual hearing conference was already deleted" do
-        fake_service = PexipService.new(status_code: 404)
-        expect(job).to receive(:client).twice.and_return(fake_service)
+      it "it marks the virtual hearing as deleted" do
+        expect(job).to receive(:client).twice.and_return(PexipService.new)
+        expect(DataDogService).to receive(:increment_counter).with(
+          hash_including(
+            metric_name: "deleted_conferences.successful",
+            metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+            by: 2
+          )
+        )
         subject
         virtual_hearings.each(&:reload)
         expect(virtual_hearings.map(&:conference_deleted)).to all(be == true)
+      end
+
+      context "pexip returns an error" do
+        it "does not mark the virtual hearings as deleted" do
+          fake_service = PexipService.new(status_code: 400)
+          expect(job).to receive(:client).twice.and_return(fake_service)
+          expect(DataDogService).to receive(:increment_counter).with(
+            hash_including(
+              metric_name: "deleted_conferences.failed",
+              metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+              by: 2
+            )
+          )
+          subject
+          virtual_hearings.each(&:reload)
+          expect(virtual_hearings.map(&:conference_deleted)).to all(be == false)
+        end
+
+        it "assumes a 404 means the virtual hearing conference was already deleted" do
+          fake_service = PexipService.new(status_code: 404)
+          expect(job).to receive(:client).twice.and_return(fake_service)
+          expect(DataDogService).to receive(:increment_counter).with(
+            hash_including(
+              metric_name: "deleted_conferences.successful",
+              metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+              by: 2
+            )
+          )
+          subject
+          virtual_hearings.each(&:reload)
+          expect(virtual_hearings.map(&:conference_deleted)).to all(be == true)
+        end
       end
     end
   end

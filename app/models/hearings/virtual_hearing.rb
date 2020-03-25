@@ -57,7 +57,7 @@ class VirtualHearing < CaseflowRecord
   private
 
   def base_url
-    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/webapp/"
+    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/bva-app/"
   end
 
   def assign_created_by_user

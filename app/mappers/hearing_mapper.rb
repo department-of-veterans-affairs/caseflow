@@ -43,14 +43,27 @@ module HearingMapper
       end
     end
 
-    # The TB and Video hearing datetime reflect the timezone of the local RO,
-    # So we append the timezone based on the regional office location
-    # And then convert the date to Eastern Time
-    # asctime - returns a canonical string representation of time
+    # Travel Board and Video hearing datetimes reflect the timezone of
+    # the local RO, so we append the timezone based on the regional
+    # office location then convert the date to Eastern Time
     def datetime_based_on_type(datetime:, regional_office_key:, type:)
+      # convert the date to UTC then cast it to Time.zone. In a
+      # web process, Time.zone is set based on the session's or user's
+      # timezone in ApplicationController.set_timezone
       datetime = VacolsHelper.normalize_vacols_datetime(datetime)
+
+      # return the datetime now if this is a central hearing
       return datetime if type == HearingDay::REQUEST_TYPES[:central]
 
+      # (1) cast the time to the time zone of the regional office, then
+      # (2) convert it to Eastern Time.
+      #
+      # (1) asctime renders a string in the format "Thu Feb 20 08:30:00 2020";
+      #     because the string has no time zone information, in_time_zone
+      #     creates a Time object with the same time and date, and also the
+      #     passed time zone.
+      # (2) that time is then converted to Eastern Time to get the correct
+      #     hearing time for the central office.
       datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
     end
 
