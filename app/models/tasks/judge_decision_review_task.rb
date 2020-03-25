@@ -7,12 +7,14 @@ class JudgeDecisionReviewTask < JudgeTask
   before_create :verify_user_task_unique
 
   def additional_available_actions(user)
+    return [] unless assigned_to == user
+
     judge_checkout_label = if ama?
                              Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h
                            else
                              Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h
                            end
-    assigned_to.eql? user ? [judge_checkout_label, Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h] : []
+    [judge_checkout_label, Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
   end
 
   def self.label
