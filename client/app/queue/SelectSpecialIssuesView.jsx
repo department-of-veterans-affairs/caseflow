@@ -35,9 +35,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
   validateForm = () => {
     const { specialIssues } = this.props;
-
     const checkedIssues = Object.entries(specialIssues).filter((entry) => entry[1] === true);
-
     const isValid = checkedIssues.length > 0;
 
     if (!isValid) {
