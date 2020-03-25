@@ -190,15 +190,20 @@ class HearingDetails extends React.Component {
     }).then((response) => {
 
       const hearing = ApiUtil.convertToCamelCase(response.body.data);
+
+      // hearing may return 3 different alerts:
+      // (1) hearing update OR (2) virtual hearing info AND (3) virtual hearing success
+      // With any updates, we want to immediately display (1) or (2)
+      // only (1) is meant to expire, hence it has {autoClear: true}
       const alerts = response.body.alerts;
 
       // if user is sitting on the page after making changes to virtual hearing,
       // poll job_completed status to let the user know when changes have been made.
       // Since we don't want to start polling every time the user hits submit, we
-      // check if the data sent to backend contains any virtual hearing changes.
+      // check if the data sent to backend contains any virtual hearing changes first.
       if (data.hearing.virtual_hearing_attributes) {
-        this.setState({ virtualHearingJobStarted: true });
         this.setState({ alerts: alerts.filter((alert) => alert.type === 'success' && !alert.autoClear) });
+        this.setState({ virtualHearingJobStarted: true });
       }
 
       this.setState({
@@ -216,6 +221,8 @@ class HearingDetails extends React.Component {
         });
 
         this.updateAllFormData(initialFormData);
+        // only display virtual hearing info and hearing update alerts
+        // pollVirtualHearingData will display virtual hearing success alert
         this.props.onReceiveAlerts(
           alerts.filter((alert) => (alert.type === 'success' && alert.autoClear) || alert.type === 'info')
         );

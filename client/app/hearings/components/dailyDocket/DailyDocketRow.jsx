@@ -167,20 +167,27 @@ class DailyDocketRow extends React.Component {
     return this.props.saveHearing(this.props.hearing.externalId, hearing).
       then((response) => {
         if (response) {
+          // hearing may return 3 different alerts:
+          // (1) hearing update AND/OR (2) virtual hearing info AND (3) virtual hearing success
+          // With any updates, we want to immediately display (1) or (2) or both (depending on changes)
+          // only (1) is meant to expire, hence it has {autoClear: true}
           const alerts = response.body.alerts;
 
           // if user is sitting on the page after making changes to virtual hearing
           // poll job_completed status to let the user know that changes have been made.
           // Since we don't want to start polling every time the user hits submit, we
-          // check if the hearing is virtual and the hearing time was modified.
+          // check if the hearing is virtual and the hearing time was modified first.
           if (this.state.initialState.isVirtual && hearing.scheduledTimeString) {
             this.setState({ virtualHearingJobStarted: true });
             this.setState({ alerts: alerts.filter((alert) => alert.type === 'success' && !alert.autoClear) });
           }
 
+          // only display virtual hearing info and hearing update alerts
+          // pollVirtualHearingData will display virtual hearing success alert
           this.props.onReceiveAlerts(
             alerts.filter((alert) => (alert.type === 'success' && alert.autoClear) || alert.type === 'info')
           );
+
           this.setState({
             initialState: { ...this.props.hearing },
             edited: false

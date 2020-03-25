@@ -73,8 +73,8 @@ export const onReceiveAlerts = (alerts) => {
   };
 };
 
-export const removeAlertsWithTimestamps = (timestamps) => ({
-  type: ACTIONS.REMOVE_ALERTS_WITH_TIMESTAMP,
+export const removeAlertsWithExpiration = (timestamps) => ({
+  type: ACTIONS.REMOVE_ALERTS_WITH_EXPIRATION,
   payload: {
     timestamps
   }

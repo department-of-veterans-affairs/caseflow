@@ -76,7 +76,7 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         ]
       }
     });
-  case ACTIONS.REMOVE_ALERTS_WITH_TIMESTAMP:
+  case ACTIONS.REMOVE_ALERTS_WITH_EXPIRATION:
     return update(state, {
       alerts: {
         $set: state.alerts.filter((alert) => action.payload.timestamps.indexOf(alert.timestamp) === -1)
