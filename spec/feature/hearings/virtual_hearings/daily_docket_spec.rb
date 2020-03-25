@@ -23,7 +23,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
     hearing.reload
     expect(page).to have_no_content(COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name)
-    expect(page).to have_content(COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_TIME_CHANGED"]["MESSAGE"])
+    expect(page).to have_content(COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_HEARING_TIME"]["MESSAGE"])
     expect(hearing.virtual_hearing.all_emails_sent?).to eq(true)
   end
 
