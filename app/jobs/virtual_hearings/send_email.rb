@@ -81,7 +81,7 @@ class VirtualHearings::SendEmail
       response_external_url = response.body.dig("_links", "self")
 
       Rails.logger.info(
-        "GovDelivery returned (code: #{response.status_code}) (external url: #{response_external_url})"
+        "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
       )
     end
 
