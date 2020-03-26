@@ -20,44 +20,44 @@ import COPY from '../../../../COPY';
 const staticSpacing = css({ marginTop: '5px' });
 
 export const DispositionDropdown = ({
-  hearing, update, readOnly, openDispositionModal, saveThenUpdateDisposition
-}) => {
+  hearing, update, readOnly, openDispositionModal, saveHearing
+}) => (
+  <div>
+    <SearchableDropdown
+      name={`${hearing.externalId}-disposition`}
+      label="Disposition"
+      strongLabel
+      options={DISPOSITION_OPTIONS}
+      value={hearing.disposition}
+      onChange={(option) => {
+        if (!option) {
+          return;
+        }
 
-  return <div><SearchableDropdown
-    name={`${hearing.externalId}-disposition`}
-    label="Disposition"
-    strongLabel
-    options={DISPOSITION_OPTIONS}
-    value={hearing.disposition}
-    onChange={(option) => {
-      if (!option) {
-        return;
-      }
+        const fromDisposition = hearing.disposition;
+        const toDisposition = option.value;
 
-      const fromDisposition = hearing.disposition;
-      const toDisposition = option.value;
-
-      update({ disposition: option.value });
-      openDispositionModal({
-        hearing,
-        fromDisposition,
-        toDisposition,
-        onCancel: () => {
-          update({ disposition: fromDisposition });
-        },
-        onConfirm: saveThenUpdateDisposition
-      });
-    }}
-    readOnly={readOnly || !hearing.dispositionEditable}
-  /></div>;
-};
+        openDispositionModal({
+          hearing,
+          fromDisposition,
+          toDisposition,
+          onCancel: () => {
+            update({ disposition: fromDisposition });
+          },
+          onConfirm: saveHearing
+        });
+      }}
+      readOnly={readOnly || !hearing.dispositionEditable}
+    />
+  </div>
+);
 
 DispositionDropdown.propTypes = {
   hearing: PropTypes.object,
   update: PropTypes.func,
   readOnly: PropTypes.bool,
   openDispositionModal: PropTypes.func,
-  saveThenUpdateDisposition: PropTypes.func
+  saveHearing: PropTypes.func
 };
 
 export const Waive90DayHoldCheckbox = ({ hearing, readOnly, update }) => (
