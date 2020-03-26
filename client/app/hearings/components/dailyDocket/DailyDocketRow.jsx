@@ -173,19 +173,19 @@ class DailyDocketRow extends React.Component {
   }
 
   saveThenUpdateDisposition = (toDisposition) => {
-
     const hearingWithDisp = {
       ...this.props.hearing,
       disposition: toDisposition
     };
-    const hearing = deepDiff(this.state.initialState, hearingWithDisp);
+    const hearingChanges = deepDiff(this.state.initialState, hearingWithDisp);
 
-    this.saveHearing(hearing.externalId, hearing).then(() => {
-      this.update(hearingWithDisp);
-      if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
-        this.setState({ initialState: hearingWithDisp });
-      }
-    });
+    return this.props.saveHearing(hearingWithDisp.externalId, hearingChanges).
+      then(() => {
+        this.update(hearingWithDisp);
+        if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
+          this.setState({ initialState: hearingWithDisp });
+        }
+      });
   };
 
   isAmaHearing = () => this.props.hearing.docketName === 'hearing'
