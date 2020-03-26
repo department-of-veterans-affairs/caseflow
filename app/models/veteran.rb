@@ -19,6 +19,7 @@ class Veteran < CaseflowRecord
   validates :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
   validate :validate_address_line, on: :bgs
+  validates :city, length: { maximum: 30 }, on: :bgs
   validate :validate_city, on: :bgs
 
   with_options if: :alive? do
@@ -189,7 +190,7 @@ class Veteran < CaseflowRecord
   def validate_city
     return if city.blank?
 
-    # This regex validation is used in VBMS to vakidate address of veteran
+    # This regex validation is used in VBMS to validate address of veteran
     errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
   end
 

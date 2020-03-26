@@ -227,11 +227,14 @@ class Intake < CaseflowRecord
 
     city_invalid_characters = veteran.errors.details[:city]&.any? { |e| e[:error] == "invalid_characters" }
 
+    city_too_long = veteran.errors.details[:city]&.any? { |e| e[:error] == "too_long" }
+
     {
       veteran_missing_fields: missing_fields,
       veteran_address_too_long: address_too_long,
       veteran_address_invalid_fields: address_invalid_characters,
-      veteran_city_invalid_fields: city_invalid_characters
+      veteran_city_invalid_fields: city_invalid_characters,
+      veteran_city_too_long: city_too_long
     }
   end
 
