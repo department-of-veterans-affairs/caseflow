@@ -99,9 +99,15 @@ describe AttorneyCaseReview, :all_dbs do
         expect(something2_decision.disposition).to eq "remanded"
 
         expect(something2_decision.remand_reasons.size).to eq 3
-        expect(something2_decision.remand_reasons.find { |rr| rr.code == "va_records" }.post_aoj).to eq false
-        expect(something2_decision.remand_reasons.find { |rr| rr.code == "incorrect_notice_sent" }.post_aoj).to eq true
-        expect(something2_decision.remand_reasons.find { |rr| rr.code == "due_process_deficiency" }.post_aoj).to eq false
+        expect(something2_decision.remand_reasons.find do |rr|
+          rr.code == "va_records"
+        end.post_aoj).to eq false
+        expect(something2_decision.remand_reasons.find do |rr|
+          rr.code == "incorrect_notice_sent"
+        end.post_aoj).to eq true
+        expect(something2_decision.remand_reasons.find do |rr|
+          rr.code == "due_process_deficiency"
+        end.post_aoj).to eq false
 
         expect(request_issue3.reload.decision_issues.size).to eq 1
         expect(request_issue4.reload.decision_issues.size).to eq 1
