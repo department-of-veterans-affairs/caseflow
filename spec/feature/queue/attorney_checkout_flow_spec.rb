@@ -381,6 +381,30 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
     context "with four issues" do
       let(:case_issues) { create_list(:case_issue, 4, with_notes: true) }
 
+      context "when :special_issues_revamp feature enabled" do
+        before { FeatureToggle.enable!(:special_issues_revamp) }
+        after { FeatureToggle.disable!(:special_issues_revamp) }
+
+        scenario "no special issue chosen" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+          click_dropdown(index: 0)
+
+          click_on "Continue"
+          expect(page).to have_content("Choose at least one.")
+        end
+        scenario "a special issue is chosen" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+          click_dropdown(index: 0)
+
+          click_label "private_attorney_or_agent"
+
+          click_on "Continue"
+          expect(page).not_to have_content("Choose at least one.")
+        end
+      end
+
       scenario "selects issue dispositions" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
