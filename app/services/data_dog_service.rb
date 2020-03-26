@@ -5,10 +5,10 @@ require "datadog/statsd"
 class DataDogService
   @statsd = Datadog::Statsd.new
 
-  def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {})
+  def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {}, by: 1)
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
-    @statsd.increment(stat_name, tags: tags)
+    @statsd.increment(stat_name, tags: tags, by: by)
   end
 
   def self.record_runtime(metric_group:, app_name:, start_time:)
