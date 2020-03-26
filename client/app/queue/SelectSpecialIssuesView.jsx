@@ -34,6 +34,10 @@ class SelectSpecialIssuesView extends React.PureComponent {
   }
 
   validateForm = () => {
+    if (!this.props.featureToggles.special_issues_revamp) {
+      return true;
+    }
+
     const { specialIssues } = this.props;
     const checkedIssues = Object.entries(specialIssues).filter((entry) => entry[1] === true);
     const isValid = checkedIssues.length > 0;
@@ -150,20 +154,24 @@ SelectSpecialIssuesView.propTypes = {
     externalId: PropTypes.string
   }),
   appealId: PropTypes.string.isRequired,
-  requestSave: PropTypes.func,
-  setSpecialIssues: PropTypes.func,
-  showErrorMessage: PropTypes.func,
-  specialIssues: PropTypes.object,
   error: PropTypes.shape({
     title: PropTypes.string,
     detail: PropTypes.string
-  })
+  }),
+  featureToggles: PropTypes.shape({
+    special_issues_revamp: PropTypes.bool
+  }),
+  requestSave: PropTypes.func,
+  setSpecialIssues: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+  specialIssues: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   specialIssues: state.queue.specialIssues,
-  error: state.ui.messages.error
+  error: state.ui.messages.error,
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
