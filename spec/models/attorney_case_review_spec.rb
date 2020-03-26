@@ -91,27 +91,27 @@ describe AttorneyCaseReview, :all_dbs do
         expect(request_issue1.reload.decision_issues.size).to eq 2
         expect(request_issue2.reload.decision_issues.size).to eq 2
         expect(request_issue1.decision_issues).to eq request_issue2.decision_issues
-        expect(request_issue1.decision_issues[0].disposition).to eq "allowed"
-        expect(request_issue1.decision_issues[0].description).to eq "something1"
 
-        expect(request_issue1.decision_issues[1].disposition).to eq "remanded"
-        expect(request_issue1.decision_issues[1].description).to eq "something2"
+        something1_decision = request_issue1.decision_issues.find { |di| di.description == "something1" }
+        something2_decision = request_issue1.decision_issues.find { |di| di.description == "something2" }
 
-        expect(request_issue1.decision_issues[1].remand_reasons.size).to eq 3
-        expect(request_issue1.decision_issues[1].remand_reasons[0].code).to eq "va_records"
-        expect(request_issue1.decision_issues[1].remand_reasons[0].post_aoj).to eq false
+        expect(something1_decision.disposition).to eq "allowed"
+        expect(something2_decision.disposition).to eq "remanded"
 
-        expect(request_issue1.decision_issues[1].remand_reasons[1].code).to eq "incorrect_notice_sent"
-        expect(request_issue1.decision_issues[1].remand_reasons[1].post_aoj).to eq true
-
-        expect(request_issue1.decision_issues[1].remand_reasons[2].code).to eq "due_process_deficiency"
-        expect(request_issue1.decision_issues[1].remand_reasons[2].post_aoj).to eq false
+        expect(something2_decision.remand_reasons.size).to eq 3
+        expect(something2_decision.remand_reasons.find { |rr| rr.code == "va_records" }.post_aoj).to eq false
+        expect(something2_decision.remand_reasons.find { |rr| rr.code == "incorrect_notice_sent" }.post_aoj).to eq true
+        expect(something2_decision.remand_reasons.find { |rr| rr.code == "due_process_deficiency" }.post_aoj).to eq false
 
         expect(request_issue3.reload.decision_issues.size).to eq 1
         expect(request_issue4.reload.decision_issues.size).to eq 1
         expect(request_issue3.reload.decision_issues.first).to eq request_issue4.decision_issues.first
         expect(request_issue5.reload.decision_issues.size).to eq 2
-        expect(request_issue5.decision_issues[1].remand_reasons.size).to eq 2
+
+        something5_decision = request_issue5.decision_issues.find { |di| di.description == "something5" }
+
+        expect(something5_decision.remand_reasons.size).to eq 2
+
         expect(request_issue6.decision_issues.size).to eq 1
         expect(withdrawn_request_issue.decision_issues.size).to eq 1
         expect(withdrawn_request_issue.decision_issues[0].disposition).to eq "withdrawn"
