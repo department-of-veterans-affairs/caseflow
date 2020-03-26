@@ -1582,9 +1582,9 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#ecf5a27":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#81abd0f":
   version "2.6.1"
-  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#ecf5a2736b9d437fcb9c57dd6160f9be4fa0aa49"
+  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#81abd0fb73225829e7b94525c28b2863a8f3aa5a"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
@@ -12262,14 +12262,18 @@ rc-animate@2.x:
     css-animation "^1.3.2"
     prop-types "15.x"
 
-rc-collapse@^1.7.6:
-  version "1.7.6"
-  resolved "https://registry.yarnpkg.com/rc-collapse/-/rc-collapse-1.7.6.tgz#64433512d921f750df61433e675bb9547ba5ef6b"
+rc-collapse@^1.11.8:
+  version "1.11.8"
+  resolved "https://registry.yarnpkg.com/rc-collapse/-/rc-collapse-1.11.8.tgz#66a40089d469519e9424009ab1c927e214041d80"
+  integrity sha512-8EhfPyScTYljkbRuIoHniSwZagD5UPpZ3CToYgoNYWC85L2qCbPYF7+OaC713FOrIkp6NbfNqXsITNxmDAmxog==
   dependencies:
     classnames "2.x"
     css-animation "1.x"
     prop-types "^15.5.6"
     rc-animate "2.x"
+    react-is "^16.7.0"
+    react-lifecycles-compat "^3.0.4"
+    shallowequal "^1.1.0"
 
 rc@^1.2.7:
   version "1.2.8"

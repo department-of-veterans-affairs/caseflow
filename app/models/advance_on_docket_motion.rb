@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AdvanceOnDocketMotion < ApplicationRecord
+class AdvanceOnDocketMotion < CaseflowRecord
   belongs_to :person
   belongs_to :user
 

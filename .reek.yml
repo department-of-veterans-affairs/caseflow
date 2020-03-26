@@ -28,6 +28,10 @@ detectors:
     exclude:
       - Address
       - Fakes::PersistentStore#convert_dates_from
+  UncommunicativeMethodName:
+    exclude:
+      - LegacyAppeal#appellant_address_line_1
+      - LegacyAppeal#appellant_address_line_2
   UncommunicativeParameterName:
     exclude:
       - Address
@@ -53,6 +57,7 @@ detectors:
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#perform
       - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
@@ -64,6 +69,7 @@ detectors:
       - RedistributedCase#legacy_appeal_relevant_tasks
       - LegacyAppeal#cancel_open_caseflow_tasks!
       - MonthlyMetricsReportJob#build_report
+      - NightlySyncsJob#sync_vacols_cases
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
@@ -82,6 +88,7 @@ detectors:
       - Task
       - CaseflowJob
       - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
+      - ETL::Syncer
       - User
   IrresponsibleModule:
     enabled: false
@@ -112,6 +119,7 @@ detectors:
     exclude:
       - HearingLocation
       - JudgeTeam
+      - LegacyAppeal
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
@@ -134,16 +142,18 @@ detectors:
   UtilityFunction:
     public_methods_only: true
     exclude:
+      - AddressMapper#get_address_from_veteran_record
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
+      - ETL::Builder#last_built
       - ETL::Syncer#filter?
       - ETL::TaskSyncer#filter?
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
-      - Helpers::AppealHearingHelper#suggested_hearing_location
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
+      - JudgeLegacyDecisionReviewTask#review_action
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - Fakes::BGSService
@@ -153,10 +163,10 @@ detectors:
       - Reporter#median
       - Reporter#seconds_to_hms
       - Reporter#percent
-      - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link
       - VirtualHearings::VeteranNameHelper#formatted_veteran_name
+      - ScheduleHearingTaskPager#sorted_tasks
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

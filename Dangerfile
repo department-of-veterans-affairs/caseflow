@@ -7,7 +7,13 @@
 warn("PR is classed as Work in Progress") if github.pr_title.include? "WIP"
 
 # Warn when there is a big PR
-warn("This is a Big PR. Try to break this down if possible.") if git.lines_of_code > 500
+if git.lines_of_code > 500
+  warn(
+    "This is a Big PR. Try to break this down if possible. "\
+    "[Stacked pull requests](https://unhashable.com/stacked-pull-requests-keeping-github-diffs-small/) " \
+    "encourage more detailed and thorough code reviews"
+  )
+end
 
 # Don't let testing shortcuts get into master by accident
 if `git diff #{github.base_commit} spec/ | grep -E '(:focus => true)|(focus: true)'`.length > 1
@@ -22,6 +28,10 @@ end
 # migration without running rake db:migrate
 if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/db\/schema.rb/).none?
   warn("This PR contains one or more db migrations, but the schema.rb is not modified.")
+end
+
+if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/docs\/schema/).none?
+  warn("This PR contains one or more db migrations. Did you forget to run 'make docs'?")
 end
 
 # We should not disable Rubocop rules unless there's a very good reason

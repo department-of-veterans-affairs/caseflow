@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Intake < ApplicationRecord
+class Intake < CaseflowRecord
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
@@ -220,9 +220,18 @@ class Intake < ApplicationRecord
         errors.any? { |e| e[:error] == :too_long }
     end
 
+    address_invalid_characters = veteran.errors.details.any? do |field_name, errors|
+      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
+        errors.any? { |e| e[:error] == "invalid_characters" }
+    end
+
+    city_invalid_characters = veteran.errors.details[:city]&.any? { |e| e[:error] == "invalid_characters" }
+
     {
       veteran_missing_fields: missing_fields,
-      veteran_address_too_long: address_too_long
+      veteran_address_too_long: address_too_long,
+      veteran_address_invalid_fields: address_invalid_characters,
+      veteran_city_invalid_fields: city_invalid_characters
     }
   end
 

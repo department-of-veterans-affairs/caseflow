@@ -6,7 +6,7 @@
 # The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
 # Legacy appeals have VACOLS and BGS as dependencies.
 
-class LegacyAppeal < ApplicationRecord
+class LegacyAppeal < CaseflowRecord
   include AppealConcern
   include AssociatedVacolsModel
   include BgsService
@@ -28,6 +28,7 @@ class LegacyAppeal < ApplicationRecord
   has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :claimants, -> { Claimant.none }
+  has_one :cached_vacols_case, class_name: "CachedAppeal", foreign_key: :vacols_id, primary_key: :vacols_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -78,11 +79,7 @@ class LegacyAppeal < ApplicationRecord
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products,
-           to: :veteran
-
-  delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip,
-           to: :bgs_address_service,
-           prefix: :appellant,
+           to: :veteran,
            allow_nil: true
 
   cache_attribute :aod do
@@ -219,12 +216,52 @@ class LegacyAppeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
-  def appellant
-    claimant
+  def appellant_address
+    appellant_address_from_bgs = bgs_address_service&.address
+
+    # Attempt to get the address from BGS, or fall back to VACOLS. These are expected
+    # to have the same hash keys.
+    if appellant_is_not_veteran
+      appellant_address_from_bgs || get_address_from_corres_entry(case_record.correspondent)
+    else
+      appellant_address_from_bgs ||
+        get_address_from_veteran_record(veteran) ||
+        get_address_from_corres_entry(case_record.correspondent)
+    end
+  end
+
+  def appellant_address_line_1
+    appellant_address&.[](:address_line_1)
+  end
+
+  def appellant_address_line_2
+    appellant_address&.[](:address_line_2)
+  end
+
+  def appellant_city
+    appellant_address&.[](:city)
+  end
+
+  def appellant_country
+    appellant_address&.[](:country)
+  end
+
+  def appellant_state
+    appellant_address&.[](:state)
+  end
+
+  def appellant_zip
+    appellant_address&.[](:zip)
   end
 
   def appellant_is_not_veteran
     !!appellant_first_name
+  end
+
+  def person_for_appellant
+    return nil if appellant_ssn.blank?
+
+    bgs.fetch_person_by_ssn(appellant_ssn)
   end
 
   def veteran_if_exists
@@ -345,7 +382,7 @@ class LegacyAppeal < ApplicationRecord
         middle_name: appellant_middle_initial,
         last_name: appellant_last_name,
         name_suffix: appellant_name_suffix,
-        address: get_address_from_corres_entry(case_record.correspondent),
+        address: appellant_address,
         representative: representative_to_hash
       }
     else
@@ -354,11 +391,13 @@ class LegacyAppeal < ApplicationRecord
         middle_name: veteran_middle_initial,
         last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
-        address: get_address_from_veteran_record(veteran) || get_address_from_corres_entry(case_record.correspondent),
+        address: appellant_address,
         representative: representative_to_hash
       }
     end
   end
+
+  alias appellant claimant
 
   # reptype C is a contested claimant
   def contested_claimants
@@ -684,11 +723,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def pending_eps
-    end_products.select(&:dispatch_conflict?)
+    end_products&.select(&:dispatch_conflict?)
   end
 
   def non_canceled_end_products_within_30_days
-    end_products.select { |ep| ep.potential_match?(self) }
+    end_products&.select { |ep| ep.potential_match?(self) }
   end
 
   def api_supported?
@@ -757,6 +796,7 @@ class LegacyAppeal < ApplicationRecord
     location_code
   end
 
+  # Appellant's addressed wrapped as an instance of `Address`.
   def address
     @address ||= Address.new(appellant[:address]) if appellant[:address].present?
   end
@@ -799,6 +839,10 @@ class LegacyAppeal < ApplicationRecord
     user_has_relevent_open_tasks && Colocated.singleton.user_is_admin?(user)
   end
 
+  def location_history
+    VACOLS::Priorloc.where(lockey: vacols_id).order(:locdout)
+  end
+
   private
 
   def soc_date_eligible_for_opt_in?(receipt_date)
@@ -818,7 +862,15 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def bgs_address_service
-    @bgs_address_service ||= BgsAddressService.new(participant_id: representative_participant_id)
+    participant_id = if appellant_is_not_veteran
+                       person_for_appellant&.[](:ptcpnt_id)
+                     else
+                       veteran&.participant_id
+                     end
+
+    return nil if participant_id.blank?
+
+    @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
   end
 
   def location_code_is_caseflow?
@@ -961,17 +1013,6 @@ class LegacyAppeal < ApplicationRecord
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length.between?(3, 9)
 
       fail Caseflow::Error::InvalidFileNumber
-    end
-
-    # Because SSN is not accurate in VACOLS, we pull the file
-    # number from BGS for the SSN and use that to look appeals
-    # up in VACOLS
-    def vbms_id_for_ssn(ssn)
-      file_number = bgs.fetch_file_number_by_ssn(ssn)
-
-      fail ActiveRecord::RecordNotFound unless file_number
-
-      convert_file_number_to_vacols(file_number)
     end
 
     # Returns a hash of appeals with appeal_id as keys and

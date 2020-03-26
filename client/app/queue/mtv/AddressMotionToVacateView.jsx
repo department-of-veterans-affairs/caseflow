@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useParams, useHistory } from 'react-router-dom';
@@ -14,6 +14,7 @@ export const AddressMotionToVacateView = () => {
   const match = useRouteMatch();
   const history = useHistory();
   const dispatch = useDispatch();
+  const [submitting, setSubmitting] = useState(false);
 
   const task = useSelector((state) => taskById(state, { taskId }));
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
@@ -27,7 +28,13 @@ export const AddressMotionToVacateView = () => {
   }));
 
   const handleSubmit = (result) => {
-    dispatch(submitMTVJudgeDecision(result, { history }));
+    setSubmitting(true);
+    dispatch(
+      submitMTVJudgeDecision(result, {
+        history,
+        appeal
+      })
+    );
   };
 
   return (
@@ -38,6 +45,7 @@ export const AddressMotionToVacateView = () => {
       appeal={appeal}
       onSubmit={handleSubmit}
       returnToLitSupportLink={`${match.url}/${JUDGE_RETURN_TO_LIT_SUPPORT.value}`}
+      submitting={submitting}
     />
   );
 };

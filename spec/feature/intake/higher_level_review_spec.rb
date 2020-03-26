@@ -244,7 +244,7 @@ feature "Higher-Level Review", :all_dbs do
           payee_code: "10",
           predischarge: false,
           claim_type: "Claim",
-          station_of_jurisdiction: "499",
+          station_of_jurisdiction: current_user.station_id,
           date: higher_level_review.receipt_date.to_date,
           end_product_modifier: "033",
           end_product_label: "Higher-Level Review Rating",
@@ -275,7 +275,7 @@ feature "Higher-Level Review", :all_dbs do
         payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "499",
+        station_of_jurisdiction: current_user.station_id,
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
@@ -461,6 +461,8 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_current_path("/intake/review_request")
   end
 
+  # this version is slightly different from what is in IntakeHelpers
+  # TODO it would be good to reconcile and save some duplication.
   def start_higher_level_review(
     test_veteran,
     is_comp: true,
@@ -692,12 +694,10 @@ feature "Higher-Level Review", :all_dbs do
       after { FeatureToggle.disable!(:show_future_ratings) }
 
       scenario "when show_future_ratings featuretoggle is enabled " do
-        start_higher_level_review(veteran)
+        higher_level_review, = start_higher_level_review(veteran)
         visit "/intake/add_issues"
         click_intake_add_issue
         expect(page).to have_content("Future rating issue 1")
-
-        higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
         expect(higher_level_review.receipt_date).to eq(receipt_date)
       end
     end
@@ -905,7 +905,7 @@ feature "Higher-Level Review", :all_dbs do
         code: "030HLRR",
         claimant_participant_id: "5382910292",
         payee_code: "02",
-        station: "499"
+        station: current_user.station_id
       )
 
       expect(end_product_establishment).to_not be_nil
@@ -916,7 +916,7 @@ feature "Higher-Level Review", :all_dbs do
         code: "030HLRNR",
         claimant_participant_id: "5382910292",
         payee_code: "02",
-        station: "499"
+        station: current_user.station_id
       )
       expect(non_rating_end_product_establishment).to_not be_nil
 

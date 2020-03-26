@@ -17,17 +17,16 @@ import {
   fetchAllAttorneys,
   fetchAmaTasksOfUser
 } from './QueueActions';
-import { setUserId } from './uiReducer/uiActions';
+import { setUserId, setTargetUserCssId } from './uiReducer/uiActions';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import WindowUtil from '../util/WindowUtil';
 
 class QueueLoadingScreen extends React.PureComponent {
-  maybeLoadAmaQueue = () => {
+  maybeLoadAmaQueue = (targetUserId, targetUserRole) => {
     const {
       userId,
       appeals,
       amaTasks,
-      userRole,
       loadedUserId
     } = this.props;
 
@@ -37,7 +36,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
     this.props.setUserId(userId);
 
-    return this.props.fetchAmaTasksOfUser(userId, userRole);
+    return this.props.fetchAmaTasksOfUser(targetUserId, targetUserRole);
   }
 
   // When navigating between team and individual queues the configs we get from the back-end could be stale and return
@@ -46,28 +45,27 @@ class QueueLoadingScreen extends React.PureComponent {
     const config = this.props.queueConfig;
 
     // If no queue config is in state (may be using attorney or judge queue) then it is not stale.
-    if (config && config.table_title && config.table_title !== COPY.COLOCATED_QUEUE_PAGE_TABLE_TITLE) {
+    if (config && config.table_title && config.table_title !== COPY.USER_QUEUE_PAGE_TABLE_TITLE) {
       return true;
     }
 
     return false;
   }
 
-  maybeLoadLegacyQueue = () => {
+  maybeLoadLegacyQueue = (targetUserId, targetUserRole) => {
     const {
       userId,
       loadedUserId,
       tasks,
-      appeals,
-      userRole
+      appeals
     } = this.props;
 
-    if (userRole !== USER_ROLE_TYPES.attorney && userRole !== USER_ROLE_TYPES.judge) {
+    if (targetUserRole !== USER_ROLE_TYPES.attorney && targetUserRole !== USER_ROLE_TYPES.judge) {
       return Promise.resolve();
     }
 
-    const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === userId;
-    const urlToLoad = this.props.urlToLoad || `/queue/${userId}`;
+    const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === targetUserId;
+    const urlToLoad = this.props.urlToLoad || `/queue/${targetUserId}`;
 
     if (userQueueLoaded) {
       return Promise.resolve();
@@ -86,22 +84,45 @@ class QueueLoadingScreen extends React.PureComponent {
     });
   };
 
-  maybeLoadJudgeData = () => {
+  maybeLoadJudgeData = (targetUserId) => {
     if (this.props.userRole !== USER_ROLE_TYPES.judge && !this.props.loadAttorneys) {
       return Promise.resolve();
     }
 
     this.props.fetchAllAttorneys();
 
-    return ApiUtil.get(`/users?role=Attorney&judge_id=${this.props.userId}`).
+    return ApiUtil.get(`/users?role=Attorney&judge_id=${targetUserId}`).
       then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }
 
-  createLoadPromise = () => Promise.all([
-    this.maybeLoadAmaQueue(),
-    this.maybeLoadLegacyQueue(),
-    this.maybeLoadJudgeData()
-  ]);
+  maybeLoadTargetUser = (targetUserId) => {
+    const { userId } = this.props;
+
+    if (userId === targetUserId) {
+      this.props.setTargetUserCssId(null);
+
+      return Promise.resolve();
+    }
+
+    return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) => this.props.setTargetUserCssId(resp.body.user.css_id));
+  }
+
+  createLoadPromise = () => {
+    const {
+      match,
+      userId,
+      userRole
+    } = this.props;
+
+    const targetUserId = match?.params.userId || userId;
+
+    return Promise.all([
+      this.maybeLoadTargetUser(targetUserId),
+      this.maybeLoadAmaQueue(targetUserId, userRole),
+      this.maybeLoadLegacyQueue(targetUserId, userRole),
+      this.maybeLoadJudgeData(targetUserId)
+    ]);
+  }
 
   render = () => {
     const failStatusMessageChildren = <div>
@@ -136,13 +157,17 @@ QueueLoadingScreen.propTypes = {
   fetchAmaTasksOfUser: PropTypes.func,
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
+  location: PropTypes.object,
+  match: PropTypes.object,
   onReceiveQueue: PropTypes.func,
   queueConfig: PropTypes.object,
   setAttorneysOfJudge: PropTypes.func,
   setUserId: PropTypes.func,
+  setTargetUserCssId: PropTypes.func,
   tasks: PropTypes.object,
   urlToLoad: PropTypes.string,
   userId: PropTypes.number,
+  userCssId: PropTypes.string,
   userRole: PropTypes.string
 };
 
@@ -163,7 +188,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAttorneysOfJudge,
   fetchAllAttorneys,
   fetchAmaTasksOfUser,
-  setUserId
+  setUserId,
+  setTargetUserCssId
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen));

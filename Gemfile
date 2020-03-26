@@ -8,12 +8,12 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e8285d246b9123301f3516228c6c273d0fd8f900"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "794811107e580321a4b8838c85027ad2fa9136a2"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "6cc4243fac69e0aa6bc6a55293c165d848d5c06f"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "f374da6041b52d73af60d79d60d4013a13d4a72e"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
@@ -21,9 +21,6 @@ gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
 gem "kaminari"
-# active_model_serializers has a default dependency on loofah 2.2.2 which security vulnerabilities
-# (CVE-2018-16468 and CVE-2019-15587)
-gem "loofah", ">= 2.3.1"
 gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
@@ -33,7 +30,7 @@ gem "newrelic_rpm"
 # https://github.com/sparklemotion/nokogiri/issues/1915
 # nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
 # https://github.com/sparklemotion/nokogiri/issues/1943
-gem "nokogiri", "~> 1.10.5"
+gem "nokogiri", "~> 1.10.8"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
@@ -46,7 +43,7 @@ gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 3.12.0"
+gem "puma", "~> 3.12.4"
 # rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
 # Explicitly define rack version here to avoid that.
 gem "rack", "~> 2.0.6"
@@ -123,14 +120,12 @@ group :development do
   gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  # gem 'spring', platforms: :ruby
-  # Include the IANA Time Zone Database on Windows, where Windows doesn't ship with a timezone database.
-  # POSIX systems should have this already, so we're not going to bring it in on other platforms
-  gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+  gem "rails-erd"
 end
 
 group :test do
+  # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
+  gem "rspec-retry"
   gem "webmock"
 end
 # rubocop:enable Metrics/LineLength

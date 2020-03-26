@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
-
 import {
   MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE,
   MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION,
@@ -20,6 +19,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 import { DISPOSITION_TEXT } from '../../../constants/MOTION_TO_VACATE';
+import { dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
 
 const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
@@ -52,12 +52,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
   };
 
   const valid = () => {
-    if (
-      !disposition ||
-      !judgeId ||
-      (disposition === 'granted' && !instructions) ||
-      (disposition === 'denied' && !hyperlink)
-    ) {
+    if (!disposition || !judgeId) {
       return false;
     }
 
@@ -81,21 +76,23 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
 
         <TextareaField
           name="instructions"
-          label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition)}
+          label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
           onChange={(val) => setInstructions(val)}
           value={instructions}
-          required={disposition === 'granted'}
           className={['mtv-review-instructions']}
+          optional
+          strongLabel
         />
 
         {disposition && disposition === 'denied' && (
           <TextField
             name="hyperlink"
-            label={MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL}
+            label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL, dispositionStrings[disposition])}
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
-            required={disposition === 'denied'}
-            className={['mtv-review-hyperlink']}
+            optional
+            strongLabel
+            className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
           />
         )}
 
@@ -108,6 +105,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
           onChange={(option) => option && setJudgeId(option.value)}
           value={judgeId}
           styling={css({ width: '30rem' })}
+          strongLabel
         />
       </AppSegment>
       <div className="controls cf-app-segment">

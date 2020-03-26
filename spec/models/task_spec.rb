@@ -43,23 +43,23 @@ describe Task, :all_dbs do
     subject { ama_task.post_dispatch_task? }
 
     context "dispatch task is not complete" do
-      let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task, appeal: appeal) }
-      let(:ama_task) { create(:ama_task, parent: root_task, appeal: appeal) }
+      let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task) }
+      let(:ama_task) { create(:ama_task, parent: root_task) }
 
       it { is_expected.to be_falsey }
     end
 
     context "dispatch task is complete" do
-      let!(:bva_task) { create(:bva_dispatch_task, :completed, parent: root_task, appeal: appeal) }
+      let!(:bva_task) { create(:bva_dispatch_task, :completed, parent: root_task) }
 
       context "sibling task created before dispatch task completed" do
-        let(:ama_task) { create(:ama_task, created_at: bva_task.closed_at - 1, parent: root_task, appeal: appeal) }
+        let(:ama_task) { create(:ama_task, created_at: bva_task.closed_at - 1, parent: root_task) }
 
         it { is_expected.to be_falsey }
       end
 
       context "sibling task created after dispatch task completed" do
-        let(:ama_task) { create(:ama_task, created_at: bva_task.closed_at + 1, parent: root_task, appeal: appeal) }
+        let(:ama_task) { create(:ama_task, created_at: bva_task.closed_at + 1, parent: root_task) }
 
         it { is_expected.to be_truthy }
       end
@@ -117,7 +117,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has some complete and some incomplete child tasks" do
-        let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent: task) }
 
         it "should not change the task's status" do
           status_before = task.status
@@ -127,7 +127,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has only complete child tasks" do
-        let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent: task) }
         let!(:child) { completed_children.last }
 
         it "should change task's status to assigned" do
@@ -184,7 +184,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has some complete and some incomplete child tasks" do
-        let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let!(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent: task) }
 
         it "should not update any attribute of the task" do
           task_status = task.status
@@ -194,7 +194,7 @@ describe Task, :all_dbs do
       end
 
       context "when task has only complete child tasks" do
-        let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:completed_children) { create_list(:task, 3, :completed, type: Task.name, parent: task) }
         let!(:child) { completed_children.last }
 
         it "should update the task" do
@@ -204,7 +204,7 @@ describe Task, :all_dbs do
       end
 
       context "when child task has a different type than parent" do
-        let!(:child) { create(:quality_review_task, :completed, parent_id: task.id) }
+        let!(:child) { create(:quality_review_task, :completed, parent: task) }
 
         it "sets the status of the parent to assigned" do
           subject
@@ -242,7 +242,7 @@ describe Task, :all_dbs do
     end
 
     context "when there is an attorney_case_review" do
-      let!(:child) { create(:task, type: Task.name, appeal: task.appeal, parent_id: task.id) }
+      let!(:child) { create(:task, type: Task.name, parent: task) }
       let!(:attorney_case_reviews) do
         create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
       end
@@ -284,7 +284,7 @@ describe Task, :all_dbs do
     end
 
     context "when there is a sub task" do
-      let!(:child) { create(:task, type: Task.name, appeal: task.appeal, parent_id: task.id) }
+      let!(:child) { create(:task, type: Task.name, parent: task) }
       let!(:attorney_case_reviews) do
         [
           create(:attorney_case_review, task_id: child.id, created_at: 1.day.ago),
@@ -301,8 +301,8 @@ describe Task, :all_dbs do
   describe "#cancel_task_and_child_subtasks" do
     let(:appeal) { create(:appeal) }
     let!(:top_level_task) { create(:task, appeal: appeal) }
-    let!(:second_level_tasks) { create_list(:task, 2, appeal: appeal, parent: top_level_task) }
-    let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
+    let!(:second_level_tasks) { create_list(:task, 2, parent: top_level_task) }
+    let!(:third_level_task) { create_list(:task, 2, parent: second_level_tasks.first) }
 
     it "cancels all tasks and child subtasks" do
       initial_versions = second_level_tasks[0].versions.count
@@ -322,8 +322,8 @@ describe Task, :all_dbs do
     context "when sub-sub-sub...task has a root task" do
       let(:root_task) { create(:root_task) }
       let(:task) do
-        t = create(:ama_task, parent_id: root_task.id)
-        5.times { t = create(:ama_task, parent_id: t.id) }
+        t = create(:ama_task, parent: root_task)
+        5.times { t = create(:ama_task, parent: t) }
         Task.last
       end
 
@@ -335,7 +335,7 @@ describe Task, :all_dbs do
     context "when sub-sub-sub...task does not have a root task" do
       let(:task) do
         t = create(:ama_task)
-        5.times { t = create(:ama_task, parent_id: t.id) }
+        5.times { t = create(:ama_task, parent: t) }
         Task.last
       end
 
@@ -472,7 +472,7 @@ describe Task, :all_dbs do
 
     context "with a timed hold task" do
       let!(:timed_hold_task) do
-        create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
+        create(:timed_hold_task, assigned_to: user, days_on_hold: 18, parent: task)
       end
 
       it "includes end timed hold in the returned actions" do
@@ -500,11 +500,10 @@ describe Task, :all_dbs do
         create(
           disposition_task_type,
           trait,
-          parent: hearing_task,
-          appeal: appeal
+          parent: hearing_task
         )
       end
-      let!(:task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+      let!(:task) { create(:no_show_hearing_task, parent: disposition_task) }
 
       context "user is a member of hearings management" do
         before do
@@ -559,7 +558,7 @@ describe Task, :all_dbs do
       end
 
       context "user is a member of hearings management and task is a ScheduleHearingTask" do
-        let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+        let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2) }
 
         before do
           HearingsManagement.singleton.add_user(user)
@@ -578,7 +577,7 @@ describe Task, :all_dbs do
         end
 
         context "task is not a ScheduleHearingTask" do
-          let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task_2, appeal: appeal) }
+          let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task_2) }
 
           it "returns no actions" do
             expect(subject).to eq []
@@ -803,8 +802,8 @@ describe Task, :all_dbs do
   describe ".reassign" do
     let(:org) { Organization.find(create(:organization).id) }
     let(:root_task) { RootTask.find(create(:root_task).id) }
-    let(:org_task) { create(:ama_task, parent_id: root_task.id, assigned_to: org) }
-    let(:task) { create(:ama_task, parent_id: org_task.id) }
+    let(:org_task) { create(:ama_task, parent: root_task, assigned_to: org) }
+    let(:task) { create(:ama_task, parent: org_task) }
     let(:old_assignee) { task.assigned_to }
     let(:new_assignee) { create(:user) }
     let(:params) do
@@ -833,22 +832,17 @@ describe Task, :all_dbs do
     end
 
     context "When old assignee reassigns task with several child tasks to a new user" do
-      let(:completed_children_cnt) { 4 }
-      let!(:completed_children) do
-        create_list(
-          :ama_task,
-          completed_children_cnt,
-          :completed,
-          parent_id: task.id
-        )
-      end
-      let(:incomplete_children_cnt) { 5 }
-      let!(:incomplete_children) { create_list(:ama_task, incomplete_children_cnt, parent_id: task.id) }
+      let(:task_type) { :ama_task }
+      let(:closed_children_count) { 2 }
+      let!(:completed_children) { create_list(task_type, closed_children_count / 2, :completed, parent: task) }
+      let!(:cancelled_children) { create_list(task_type, closed_children_count / 2, :cancelled, parent: task) }
+      let(:incomplete_children_count) { 2 }
+      let!(:incomplete_children) { create_list(task_type, incomplete_children_count, parent: task) }
 
       before { task.on_hold! }
 
       it "reassign method should return list with old and new tasks and incomplete child tasks" do
-        expect(subject.length).to eq(2 + incomplete_children_cnt)
+        expect(subject.length).to eq(2 + incomplete_children_count)
       end
 
       it "incomplete children tasks are adopted by new task and completed tasks are not" do
@@ -856,28 +850,50 @@ describe Task, :all_dbs do
         expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         new_task = task.parent.children.open.first
-        expect(new_task.children.length).to eq(incomplete_children_cnt)
+        expect(new_task.children.length).to eq(incomplete_children_count)
         expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
 
         task.reload
-        expect(task.children.length).to eq(completed_children_cnt)
+        expect(task.children.length).to eq(closed_children_count)
       end
 
       context "when the children are task timers" do
-        let(:incomplete_children_cnt) { 1 }
-        let!(:incomplete_children) { create_list(:timed_hold_task, incomplete_children_cnt, parent_id: task.id) }
+        let(:incomplete_children_count) { 1 }
+        let(:task_type) { :timed_hold_task }
 
         it "children timer tasks are adopted by new task and not cancelled" do
+          task.reload
           expect { subject }.to_not raise_error
           expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
           new_task = task.parent.children.open.first
-          expect(new_task.children.length).to eq(incomplete_children_cnt)
+          expect(new_task.children.length).to eq(incomplete_children_count)
           expect(new_task.children.all?(&:assigned?)).to eq(true)
           expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
 
           task.reload
-          expect(task.children.length).to eq(completed_children_cnt)
+          expect(task.children.length).to eq(closed_children_count)
+        end
+      end
+
+      context "when the children are attorney tasks" do
+        let(:incomplete_children_count) { 1 }
+        let(:task_type) { :ama_attorney_task }
+
+        it "assigned AND completed child tasks are adopted by new task" do
+          expect { subject }.to_not raise_error
+          expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+
+          new_task = task.parent.children.open.first
+          expect(new_task.children.length).to eq(incomplete_children_count + closed_children_count / 2)
+          expect(new_task.children.map(&:status)).to match_array(
+            [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.completed]
+          )
+          expect(new_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+
+          task.reload
+          expect(task.children.length).to eq(closed_children_count / 2)
+          expect(task.children.map(&:status)).to match_array([Constants.TASK_STATUSES.cancelled])
         end
       end
     end
@@ -934,7 +950,7 @@ describe Task, :all_dbs do
 
     context "there is an active timed hold task child" do
       let!(:timed_hold_task) do
-        create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
+        create(:timed_hold_task, assigned_to: user, days_on_hold: 18, parent: task)
       end
 
       context "status is updated" do
@@ -1505,7 +1521,7 @@ describe Task, :all_dbs do
   describe ".when_child_task_created" do
     let(:parent_task) { create(:task, appeal: create(:appeal)) }
 
-    subject { create(:task, parent: parent_task, appeal: parent_task.appeal) }
+    subject { create(:task, parent: parent_task) }
 
     before do
       allow(Raven).to receive(:capture_message)

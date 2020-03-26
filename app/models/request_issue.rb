@@ -6,7 +6,7 @@
 # be generated when a decision gets remanded or vacated.
 
 # rubocop:disable Metrics/ClassLength
-class RequestIssue < ApplicationRecord
+class RequestIssue < CaseflowRecord
   include Asyncable
   include HasBusinessLine
   include DecisionSyncable
@@ -440,7 +440,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def close_after_end_product_canceled!
-    return unless end_product_establishment&.reload&.status_canceled?
+    return unless end_product_establishment&.reload&.status_cancelled?
 
     close!(status: :end_product_canceled) do
       legacy_issue_optin&.flag_for_rollback!
@@ -577,6 +577,20 @@ class RequestIssue < ApplicationRecord
     contested_decision_issue&.remanded?
   end
 
+  def remand_type
+    return unless remanded?
+
+    # if this request issue is a correction for a decision issue, use the original issue's remand type
+    # instead of the contested decision issue's disposition
+    return previous_request_issue&.remand_type if decision_correction?
+
+    if contested_decision_issue.disposition == DecisionIssue::DIFFERENCE_OF_OPINION
+      "difference_of_opinion"
+    else
+      "duty_to_assist"
+    end
+  end
+
   def title_of_active_review
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
@@ -704,7 +718,7 @@ class RequestIssue < ApplicationRecord
         rating_promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
-        end_product_last_action_date: end_product_establishment.result.last_action_date
+        end_product_last_action_date: end_product_establishment.last_action_date
       )
     end
   end
@@ -756,7 +770,7 @@ class RequestIssue < ApplicationRecord
       rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
-      end_product_last_action_date: end_product_establishment.result.last_action_date
+      end_product_last_action_date: end_product_establishment.last_action_date
     )
   end
 

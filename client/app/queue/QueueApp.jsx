@@ -119,7 +119,8 @@ class QueueApp extends React.PureComponent {
   );
 
   routedJudgeQueueList = (label) => ({ match }) => (
-    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} loadAttorneys={label === 'assign'}>
+    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} userRole={USER_ROLE_TYPES.judge}
+      loadAttorneys={label === 'assign'} >
       {label === 'assign' ? (
         <JudgeAssignTaskListView {...this.props} match={match} />
       ) : (
@@ -285,10 +286,11 @@ class QueueApp extends React.PureComponent {
   queueName = () => (this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases');
 
   propsForQueueLoadingScreen = () => {
-    const { userId, userRole } = this.props;
+    const { userId, userCssId, userRole } = this.props;
 
     return {
       userId,
+      userCssId,
       userRole
     };
   };

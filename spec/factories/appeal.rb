@@ -17,6 +17,11 @@ FactoryBot.define do
       Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
     end
 
+    # Appeal's after_save interferes with explicit updated_at values
+    after(:create) do |appeal, evaluator|
+      appeal.touch(time: evaluator.updated_at) if evaluator.try(:updated_at)
+    end
+
     after(:create) do |appeal, _evaluator|
       appeal.request_issues.each do |issue|
         issue.decision_review = appeal
@@ -48,9 +53,13 @@ FactoryBot.define do
 
     transient do
       associated_attorney do
-        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
+        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101) do |user|
+          user.full_name = "BVAAABSHIRE"
+        end
         judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
-        attorney = User.find_or_create_by(css_id: "BVAEERDMAN", station_id: 101)
+        attorney = User.find_or_create_by(css_id: "BVAEERDMAN", station_id: 101) do |user|
+          user.full_name = "BVAEERDMAN"
+        end
         judge_team.add_user(attorney)
         create(:staff, :attorney_role, sdomainid: attorney.css_id)
 
@@ -60,7 +69,9 @@ FactoryBot.define do
 
     transient do
       associated_judge do
-        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
+        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101) do |user|
+          user.full_name = "BVAAABSHIRE"
+        end
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
         create(:staff, :judge_role, sdomainid: judge.css_id)
 
@@ -94,7 +105,9 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      claimants { [create(:claimant, :advanced_on_docket_due_to_age)] }
+      after(:create) do |appeal, _evaluator|
+        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+      end
     end
 
     trait :advanced_on_docket_due_to_motion do

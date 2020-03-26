@@ -82,7 +82,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     veteranInvalidFields: {
       $set: {
         veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
-        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
+        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
+        veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_fields,
+        veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_fields
       }
     }
   });

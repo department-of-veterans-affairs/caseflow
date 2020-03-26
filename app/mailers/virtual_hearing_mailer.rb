@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 class VirtualHearingMailer < ActionMailer::Base
-  default from: "solutions@public.govdelivery.com"
+  default from: "BoardofVeteransAppealsHearings@public.govdelivery.com"
   layout "virtual_hearing_mailer"
   helper VirtualHearings::ExternalLinkHelper
   helper VirtualHearings::VeteranNameHelper
+  helper VirtualHearings::CalendarTemplateHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)
+    return if mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
+
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
 
@@ -19,6 +22,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
+    @test_link = test_link
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
@@ -29,6 +33,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
+    @test_link = test_link
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
@@ -74,5 +79,9 @@ class VirtualHearingMailer < ActionMailer::Base
     return virtual_hearing.host_link if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
 
     virtual_hearing.guest_link
+  end
+
+  def test_link
+    "https://vc.va.gov/webapp2/conference/test_call?name=Veteran&join=1"
   end
 end

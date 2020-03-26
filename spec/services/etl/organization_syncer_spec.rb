@@ -4,9 +4,10 @@ describe ETL::OrganizationSyncer, :etl do
   describe "#call" do
     let!(:org1) { create(:organization, updated_at: 3.days.ago.round) }
     let!(:org2) { create(:organization) }
+    let(:etl_build) { ETL::Build.create }
 
     context "2 org records, one needing sync" do
-      subject { described_class.new(since: 2.days.ago.round).call }
+      subject { described_class.new(since: 2.days.ago.round, etl_build: etl_build).call }
 
       it "syncs 1 record" do
         expect(ETL::Organization.all.count).to eq(0)
@@ -19,7 +20,7 @@ describe ETL::OrganizationSyncer, :etl do
     end
 
     context "2 org records, full sync" do
-      subject { described_class.new.call }
+      subject { described_class.new(etl_build: etl_build).call }
 
       it "syncs all records" do
         expect(ETL::Organization.all.count).to eq(0)
@@ -31,10 +32,10 @@ describe ETL::OrganizationSyncer, :etl do
     end
 
     context "origin Org record changes" do
-      subject { described_class.new(since: 2.days.ago.round).call }
+      subject { described_class.new(since: 2.days.ago.round, etl_build: etl_build).call }
 
       before do
-        described_class.new.call
+        described_class.new(etl_build: etl_build).call
       end
 
       let(:new_name) { "foobar" }

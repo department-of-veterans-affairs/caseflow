@@ -7,6 +7,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   include ActionView::Helpers::DateHelper
 
   queue_with_priority :low_priority
+  application_attr :queue
 
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = UpdateCachedAppealsAttributesJob.name.underscore
@@ -29,12 +30,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def cache_ama_appeals
-    appeals = Appeal.where(id: open_appeals_from_tasks)
+    appeals = Appeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(Appeal.name))
     request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
     veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
     appeal_assignees_to_cache = assignees_for_caseflow_appeal_ids(appeals.pluck(:id), Appeal.name)
 
     appeal_aod_status = aod_status_for_appeals(appeals)
+    representative_names = representative_names_for_appeals(appeals)
 
     appeals_to_cache = appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
@@ -49,7 +51,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
         is_aod: appeal_aod_status.include?(appeal.id),
-        power_of_attorney_name: appeal.representative_name,
+        power_of_attorney_name: representative_names[appeal.id],
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
         veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
       }
@@ -74,14 +76,15 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
-  def open_appeals_from_tasks
-    Task.open.where(appeal_type: Appeal.name).pluck(:appeal_id).uniq
+  def open_appeals_from_tasks(appeal_type)
+    Task.open.where(appeal_type: appeal_type).pluck(:appeal_id).uniq
   end
 
   def cache_legacy_appeals
     # Avoid lazy evaluation bugs by immediately plucking all VACOLS IDs. Lazy evaluation of the LegacyAppeal.find(...)
     # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
-    legacy_appeals = LegacyAppeal.where(id: Task.open.where(appeal_type: LegacyAppeal.name).pluck(:appeal_id).uniq)
+    legacy_appeals = LegacyAppeal.includes(:available_hearing_locations)
+      .where(id: open_appeals_from_tasks(LegacyAppeal.name))
     all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
     cache_postgres_data_start = Time.zone.now
@@ -99,6 +102,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     values_to_cache = legacy_appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
+      # bypass PowerOfAttorney model completely and always prefer BGS cache
+      bgs_poa = BgsPowerOfAttorney.new(file_number: appeal.veteran_file_number)
       {
         vacols_id: appeal.vacols_id,
         appeal_id: appeal.id,
@@ -106,7 +111,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
         docket_type: appeal.docket_name, # "legacy"
-        power_of_attorney_name: appeal.representative_name,
+        power_of_attorney_name: bgs_poa.representative_name || appeal.representative_name,
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
     end
@@ -201,6 +206,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
+    Raven.capture_exception(err)
+
     slack_service.send_notification(msg)
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
@@ -217,6 +224,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       "(advance_on_docket_motions.granted = true and advance_on_docket_motions.created_at > appeals.receipt_date) "\
       "or people.date_of_birth < (current_date - interval '75 years')"
     ).pluck(:id)
+  end
+
+  def representative_names_for_appeals(appeals)
+    # builds a hash of appeal_id => rep name
+    Claimant.where(decision_review_id: appeals, decision_review_type: Appeal.name).map do |claimant|
+      [claimant.decision_review_id, claimant.representative_name]
+    end.to_h
   end
 
   def assignees_for_caseflow_appeal_ids(appeal_ids, appeal_type)

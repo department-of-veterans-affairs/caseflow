@@ -8,6 +8,7 @@ import AmaIssueList from '../../components/AmaIssueList';
 import DecisionIssues from '../components/DecisionIssues';
 import { MotionToVacateContext } from './MotionToVacateContext';
 import { RemoveDecisionIssueModal } from './RemoveDecisionIssueModal';
+import { ReturnToJudgeAlert } from './returnToJudge/ReturnToJudgeAlert';
 
 const validateForm = () => true;
 const defaultState = { deleteModal: false,
@@ -37,7 +38,7 @@ export const ReviewVacatedDecisionIssuesView = ({ appeal, allowDelete = false })
   const onDeleteSubmit = () => {
     setCtx({
       ...ctx,
-      decisionIssues: ctx.decisionIssues.filter((issue) => issue.id !== state.issueId)
+      decisionIssues: ctx.decisionIssues.filter((issue) => issue.id !== state?.decisionIssue?.id)
     });
 
     setState({
@@ -58,6 +59,7 @@ export const ReviewVacatedDecisionIssuesView = ({ appeal, allowDelete = false })
       <h1>{COPY.MTV_CHECKOUT_REVIEW_VACATURES_TITLE}</h1>
       <p>{COPY.MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION}</p>
       <hr />
+      <ReturnToJudgeAlert />
       <AmaIssueList requestIssues={appeal.issues} errorMessages={{}}>
         <DecisionIssues
           decisionIssues={ctx.decisionIssues}

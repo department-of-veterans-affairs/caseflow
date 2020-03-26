@@ -4,15 +4,13 @@
 # and repository class. Eventually may persist data to
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
-class HearingDay < ApplicationRecord
+class HearingDay < CaseflowRecord
   acts_as_paranoid
 
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
   belongs_to :updated_by, class_name: "User"
   has_many :hearings
-
-  validates :regional_office, absence: true, if: :central_office?
 
   class HearingDayHasChildrenRecords < StandardError; end
 
@@ -41,6 +39,23 @@ class HearingDay < ApplicationRecord
   before_create :assign_created_and_updated_by_user
   before_update :assign_updated_by_user
   after_update :update_children_records
+
+  # Validates if the judge id maps to an actual record.
+  validates :judge, presence: true, if: -> { judge_id.present? }
+
+  validates :regional_office, absence: true, if: :central_office?
+  validates :regional_office,
+            inclusion: {
+              in: RegionalOffice.all.map(&:key),
+              message: "key (%{value}) is invalid"
+            },
+            unless: :central_office?
+
+  validates :request_type,
+            inclusion: {
+              in: REQUEST_TYPES.values,
+              message: "is invalid"
+            }
 
   def central_office?
     request_type == REQUEST_TYPES[:central]

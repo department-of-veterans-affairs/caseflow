@@ -12,7 +12,7 @@ class AssignedTasksTab < QueueTab
   end
 
   def description
-    COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION
+    COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION
   end
 
   def tasks
@@ -21,8 +21,10 @@ class AssignedTasksTab < QueueTab
 
   # rubocop:disable Metrics/AbcSize
   def column_names
+    return QueueTab.attorney_column_names if assignee.attorney_in_vacols?
+
     [
-      Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
       Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
       Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
       show_regional_office_column ? Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name : nil,

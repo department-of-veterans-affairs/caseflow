@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_21_221718) do
+ActiveRecord::Schema.define(version: 2020_03_03_223155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,6 +149,42 @@ ActiveRecord::Schema.define(version: 2020_01_21_221718) do
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
 
+  create_table "etl_build_tables", comment: "ETL table metadata, one for each table per-build", force: :cascade do |t|
+    t.string "comments", comment: "Ad hoc comments (e.g. error message)"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.bigint "etl_build_id", null: false, comment: "PK of the etl_build"
+    t.datetime "finished_at", comment: "Build end time"
+    t.bigint "rows_deleted", comment: "Number of rows deleted"
+    t.bigint "rows_inserted", comment: "Number of new rows"
+    t.bigint "rows_rejected", comment: "Number of rows skipped"
+    t.bigint "rows_updated", comment: "Number of rows changed"
+    t.datetime "started_at", comment: "Build start time (usually identical to created_at)"
+    t.string "status", comment: "Enum value: running, complete, error"
+    t.string "table_name", comment: "Name of the ETL table"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["created_at"], name: "index_etl_build_tables_on_created_at"
+    t.index ["etl_build_id"], name: "index_etl_build_tables_on_etl_build_id"
+    t.index ["finished_at"], name: "index_etl_build_tables_on_finished_at"
+    t.index ["started_at"], name: "index_etl_build_tables_on_started_at"
+    t.index ["status"], name: "index_etl_build_tables_on_status"
+    t.index ["table_name"], name: "index_etl_build_tables_on_table_name"
+    t.index ["updated_at"], name: "index_etl_build_tables_on_updated_at"
+  end
+
+  create_table "etl_builds", comment: "ETL build metadata for each job", force: :cascade do |t|
+    t.string "comments", comment: "Ad hoc comments (e.g. error message)"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.datetime "finished_at", comment: "Build end time"
+    t.datetime "started_at", comment: "Build start time (usually identical to created_at)"
+    t.string "status", comment: "Enum value: running, complete, error"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["created_at"], name: "index_etl_builds_on_created_at"
+    t.index ["finished_at"], name: "index_etl_builds_on_finished_at"
+    t.index ["started_at"], name: "index_etl_builds_on_started_at"
+    t.index ["status"], name: "index_etl_builds_on_status"
+    t.index ["updated_at"], name: "index_etl_builds_on_updated_at"
+  end
+
   create_table "organizations", comment: "Copy of Organizations table", force: :cascade do |t|
     t.datetime "created_at"
     t.string "name"
@@ -180,7 +216,7 @@ ActiveRecord::Schema.define(version: 2020_01_21_221718) do
   create_table "people", comment: "Copy of People table", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth"
-    t.string "email_address"
+    t.string "email_address", comment: "Person email address, cached from BGS"
     t.string "first_name", limit: 50, comment: "Person first name, cached from BGS"
     t.string "last_name", limit: 50, comment: "Person last name, cached from BGS"
     t.string "middle_name", limit: 50, comment: "Person middle name, cached from BGS"
@@ -253,6 +289,7 @@ ActiveRecord::Schema.define(version: 2020_01_21_221718) do
     t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["status"], name: "index_users_on_status"
     t.index ["updated_at"], name: "index_users_on_updated_at"
+    t.index ["user_id"], name: "index_users_on_user_id"
   end
 
 end

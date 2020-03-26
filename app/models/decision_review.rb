@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DecisionReview < ApplicationRecord
+class DecisionReview < CaseflowRecord
   include CachedAttributes
   include Asyncable
 
@@ -387,7 +387,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def end_product_station
-    "499" # National Work Queue
+    intake&.user&.station_id || "499" # National Work Queue
   end
 
   def validate_receipt_date_not_before_ama

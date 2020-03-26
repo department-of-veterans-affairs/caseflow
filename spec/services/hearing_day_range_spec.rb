@@ -43,7 +43,6 @@ describe HearingDayRange, :all_dbs do
       let(:appeal) do
         create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
       end
-      let!(:staff) { create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
       let!(:hearing_day) do
         create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today)
       end
@@ -56,7 +55,7 @@ describe HearingDayRange, :all_dbs do
           HearingDayRange.new(
             (hearing.hearing_date - 1).beginning_of_day,
             hearing.hearing_date.beginning_of_day + 10
-          ).open_hearing_days_with_hearings_hash(staff.stafkey)
+          ).open_hearing_days_with_hearings_hash
         end
 
         it "returns nested hash structure" do
@@ -81,7 +80,6 @@ describe HearingDayRange, :all_dbs do
       let(:appeal) do
         create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
       end
-      let!(:staff) { create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
       let!(:hearing) do
         create(:case_hearing, folder_nr: appeal.vacols_id)
       end
@@ -106,7 +104,7 @@ describe HearingDayRange, :all_dbs do
         HearingDayRange.new(
           (hearing.hearing_date - 1).beginning_of_day,
           hearing.hearing_date.beginning_of_day + 1.day
-        ).open_hearing_days_with_hearings_hash(staff.stafkey)
+        ).open_hearing_days_with_hearings_hash
       end
 
       context "get video hearings neither postponed or cancelled" do
@@ -115,7 +113,6 @@ describe HearingDayRange, :all_dbs do
           expect(subject[0][:hearings].size).to eq 1
           expect(subject[0][:readable_request_type]).to eq Hearing::HEARING_TYPES[:V]
           expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
-          expect(subject[0][:hearings][0][:hearing_disp]).to eq nil
         end
       end
 
@@ -142,7 +139,7 @@ describe HearingDayRange, :all_dbs do
           create(:hearing_day,
                  request_type: HearingDay::REQUEST_TYPES[:video],
                  scheduled_for: Time.zone.yesterday,
-                 regional_office: staff.stafkey)
+                 regional_office: "RO13")
         end
         let!(:ama_appeal) { create(:appeal) }
         let!(:ama_hearing) do
@@ -155,9 +152,9 @@ describe HearingDayRange, :all_dbs do
           expect(subject[0][:hearings][0][:appeal_id]).to eq ama_appeal.id
           expect(subject[1][:hearings].size).to eq 2
           expect(subject[1][:readable_request_type]).to eq Hearing::HEARING_TYPES[:V]
-          expect(subject[1][:hearings][0][:appeal_id]).to eq appeal.id
-          expect(subject[1][:hearings][0][:hearing_disp]).to eq nil
-          expect(subject[1][:hearings][1][:appeal_id]).to eq appeal_today.id
+          expect(
+            subject[1][:hearings].map { |hearing| hearing[:appeal_id] }
+          ).to include(appeal.id, appeal_today.id)
           expect(subject[2][:hearings][0][:appeal_id]).to eq appeal_tomorrow.id
         end
       end

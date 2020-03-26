@@ -2,24 +2,37 @@ import React from 'react';
 import { Route, useParams, useHistory } from 'react-router';
 import PageRoute from '../../components/PageRoute';
 
-import TASK_ACTIONS from '../../../constants/TASK_ACTIONS.json';
+import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 import ReviewMotionToVacateView from './ReviewMotionToVacateView';
 import { AddressMotionToVacateView } from './AddressMotionToVacateView';
 import { ReturnToLitSupportModal } from './ReturnToLitSupportModal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { returnToLitSupport } from './mtvActions';
 import { MotionToVacateFlowContainer } from './MotionToVacateFlowContainer';
+import { appealWithDetailSelector } from '../selectors';
 
 const RoutedReturnToLitSupport = (props) => {
-  const { taskId } = useParams();
+  const { taskId, appealId } = useParams();
   const { goBack } = useHistory();
   const dispatch = useDispatch();
+
+  const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
 
   return (
     <ReturnToLitSupportModal
       onCancel={() => goBack()}
-      onSubmit={({ instructions }) => dispatch(returnToLitSupport({ instructions,
-        task_id: taskId }, props))}
+      onSubmit={({ instructions }) =>
+        dispatch(
+          returnToLitSupport(
+            {
+              instructions,
+              task_id: taskId
+            },
+            { ...props,
+              appeal }
+          )
+        )
+      }
     />
   );
 };

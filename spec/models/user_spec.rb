@@ -5,11 +5,11 @@ describe User, :all_dbs do
   let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
   let(:user) { User.from_session(session) }
 
-  before(:all) do
+  before do
     Functions.client.del("System Admin")
   end
 
-  after(:all) do
+  after do
     Functions.delete_all_keys!
   end
 
@@ -39,6 +39,22 @@ describe User, :all_dbs do
     it "forces the css id to UPCASE" do
       expect(css_id.upcase).to_not eq(css_id)
       expect(subject.css_id).to eq(css_id.upcase)
+    end
+  end
+
+  context ".find_by_vacols_username" do
+    subject { described_class.find_by_vacols_username(vacols_username) }
+
+    let(:vacols_username) { vacols_user.slogid }
+    let(:vacols_user) { create(:staff) }
+    let!(:caseflow_user) { create(:user, css_id: vacols_user.sdomainid) }
+
+    before do
+      CachedUser.sync_from_vacols
+    end
+
+    it "returns the User corresponding to the VACOLS account" do
+      expect(subject).to eq(caseflow_user)
     end
   end
 

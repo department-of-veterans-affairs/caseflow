@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
@@ -26,6 +26,7 @@ import TextField from '../../components/TextField';
 import { MTVIssueSelection } from './MTVIssueSelection';
 import StringUtil from '../../util/StringUtil';
 import { MissingDraftAlert } from './MissingDraftAlert';
+import { grantTypes, dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
 
 const vacateTypeText = (val) => {
@@ -51,13 +52,6 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
   }
 
   return parts.join('\n');
-};
-
-const grantTypes = ['granted', 'partially_granted'];
-
-const dispositionStrings = {
-  denied: 'denial',
-  dismissed: 'dismissal'
 };
 
 export const MTVJudgeDisposition = ({
@@ -111,12 +105,16 @@ export const MTVJudgeDisposition = ({
   const isValid = () => {
     return !(
       !disposition ||
-      !instructions ||
       (isGrantType() && !vacateType) ||
-      (disposition === 'partially_granted' && !issueIds.length) ||
-      (disposition === 'dismissed' && !hyperlink)
+      (disposition === 'partially_granted' && !issueIds.length)
     );
   };
+
+  const parsedInstructions = useMemo(() => {
+    const str = Array.isArray(task.instructions) ? task.instructions.join('\n') : task.instructions;
+
+    return StringUtil.parseLinks(str).replace(/\n/g, '<br>');
+  }, [task.instructions]);
 
   return (
     <div className="address-motion-to-vacate">
@@ -126,7 +124,7 @@ export const MTVJudgeDisposition = ({
         <p>{StringUtil.nl2br(JUDGE_ADDRESS_MTV_DESCRIPTION)}</p>
 
         <h3>Motion Attorney's Notes</h3>
-        <p className="mtv-task-instructions">{task.instructions}</p>
+        <p className="mtv-task-instructions" dangerouslySetInnerHTML={{ __html: parsedInstructions }} />
 
         <div className="cf-help-divider" />
 
@@ -157,6 +155,7 @@ export const MTVJudgeDisposition = ({
             onChange={(val) => setVacateType(val)}
             value={vacateType}
             required
+            strongLabel
             className={['mtv-vacate-type']}
           />
         )}
@@ -167,17 +166,20 @@ export const MTVJudgeDisposition = ({
             label={sprintf(JUDGE_ADDRESS_MTV_HYPERLINK_LABEL, dispositionStrings[disposition])}
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
-            required={disposition === 'dismissed'}
-            className={['mtv-review-hyperlink']}
+            optional
+            className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
+            strongLabel
           />
         )}
 
         <TextareaField
           name="instructions"
-          label={JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL}
+          label={sprintf(JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
           onChange={(val) => setInstructions(val)}
           value={instructions}
           className={['mtv-decision-instructions']}
+          strongLabel
+          optional
         />
 
         {disposition && isGrantType() && (
@@ -190,6 +192,7 @@ export const MTVJudgeDisposition = ({
             onChange={(option) => option && setAttorneyId(option.value)}
             value={attorneyId}
             styling={css({ width: '30rem' })}
+            strongLabel
           />
         )}
       </AppSegment>

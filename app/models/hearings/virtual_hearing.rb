@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VirtualHearing < ApplicationRecord
+class VirtualHearing < CaseflowRecord
   alias_attribute :alias_name, :alias
 
   belongs_to :hearing, polymorphic: true
@@ -53,7 +53,7 @@ class VirtualHearing < ApplicationRecord
   private
 
   def base_url
-    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/webapp/"
+    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/bva-app/"
   end
 
   def assign_created_by_user

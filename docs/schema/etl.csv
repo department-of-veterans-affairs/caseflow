@@ -1,0 +1,188 @@
+Table,Column,Type,Required,Primary Key,Foreign Key,Unique,Index,Description
+appeals,,,,,,,,Denormalized BVA NODs
+appeals,active_appeal,boolean ∗,x,,,,x,Calculated based on BVA status
+appeals,aod_due_to_dob,boolean,,,,,x,Calculated every day based on Claimant DOB
+appeals,aod_granted,boolean ∗,x,,,,x,advance_on_docket_motions.granted
+appeals,aod_reason,string (50),,,,,,advance_on_docket_motions.reason
+appeals,aod_user_id,integer (8),,,,,x,advance_on_docket_motions.user_id
+appeals,appeal_created_at,datetime ∗,x,,,,x,appeals.created_at
+appeals,appeal_id,integer (8) ∗ FK,x,,x,,x,ID of the Appeal
+appeals,appeal_updated_at,datetime ∗,x,,,,x,appeals.updated_at
+appeals,claimant_dob,date,,,,,x,people.date_of_birth
+appeals,claimant_first_name,string,,,,,,people.first_name
+appeals,claimant_id,integer (8),,,,,x,claimants.id
+appeals,claimant_last_name,string,,,,,,people.last_name
+appeals,claimant_middle_name,string,,,,,,people.middle_name
+appeals,claimant_name_suffix,string,,,,,,people.name_suffix
+appeals,claimant_participant_id,string (20),,,,,x,claimants.participant_id
+appeals,claimant_payee_code,string (20),,,,,,claimants.payee_code
+appeals,claimant_person_id,integer (8),,,,,x,people.id
+appeals,closest_regional_office,string (20),,,,,,The code for the regional office closest to the Veteran on the appeal.
+appeals,created_at,datetime ∗,x,,,,x,Creation timestamp for the ETL record
+appeals,decision_status_sort_key,integer ∗,x,,,,x,Integer for sorting status in display order
+appeals,docket_number,string (50) ∗,x,,,,,Docket number
+appeals,docket_range_date,date,,,,,,Date that appeal was added to hearing docket range.
+appeals,docket_type,string (50) ∗,x,,,,x,Docket type
+appeals,established_at,datetime ∗,x,,,,,Timestamp for when the appeal was intaken successfully
+appeals,id,integer (8) PK,x,x,,,,
+appeals,legacy_opt_in_approved,boolean,,,,,,Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review.
+appeals,poa_participant_id,string (20),,,,,x,Used to identify the power of attorney (POA)
+appeals,receipt_date,date ∗,x,,,,x,Receipt date of the NOD form
+appeals,status,string (32) ∗,x,,,,x,Calculated BVA status based on Tasks
+appeals,target_decision_date,date,,,,,,"If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
+appeals,updated_at,datetime ∗,x,,,,x,Updated timestamp for the ETL record
+appeals,uuid,uuid ∗,x,,,,x,The universally unique identifier for the appeal
+appeals,veteran_dob,date,,,,,,people.date_of_birth
+appeals,veteran_file_number,string (20) ∗,x,,,,x,Veteran file number
+appeals,veteran_first_name,string,,,,,,veterans.first_name
+appeals,veteran_id,integer (8) ∗,x,,,,x,veterans.id
+appeals,veteran_is_not_claimant,boolean,,,,,x,"Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
+appeals,veteran_last_name,string,,,,,,veterans.last_name
+appeals,veteran_middle_name,string,,,,,,veterans.middle_name
+appeals,veteran_name_suffix,string,,,,,,veterans.name_suffix
+appeals,veteran_participant_id,string (20),,,,,x,veterans.participant_id
+attorney_case_reviews,,,,,,,,Denormalized attorney_case_reviews
+attorney_case_reviews,appeal_id,integer (8) ∗,x,,,,x,tasks.appeal_id
+attorney_case_reviews,appeal_type,string ∗,x,,,,x,tasks.appeal_type
+attorney_case_reviews,attorney_css_id,string (20) ∗,x,,,,,users.css_id
+attorney_case_reviews,attorney_full_name,string (255) ∗,x,,,,,users.full_name
+attorney_case_reviews,attorney_id,integer (8) ∗,x,,,,x,attorney_case_reviews.attorney_id
+attorney_case_reviews,attorney_sattyid,string (20),,,,,,users.sattyid
+attorney_case_reviews,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+attorney_case_reviews,document_reference_id,string (50),,,,,,attorney_case_reviews.document_id
+attorney_case_reviews,document_type,string (20),,,,,x,attorney_case_reviews.document_type
+attorney_case_reviews,id,integer (8) PK,x,x,,,,
+attorney_case_reviews,note,text,,,,,,attorney_case_reviews.note
+attorney_case_reviews,overtime,boolean,,,,,,attorney_case_reviews.overtime
+attorney_case_reviews,review_created_at,datetime ∗,x,,,,x,attorney_case_reviews.created_at
+attorney_case_reviews,review_id,integer (8) ∗,x,,,,x,attorney_case_reviews.id
+attorney_case_reviews,review_updated_at,datetime ∗,x,,,,x,attorney_case_reviews.updated_at
+attorney_case_reviews,reviewing_judge_css_id,string (20) ∗,x,,,,,users.css_id
+attorney_case_reviews,reviewing_judge_full_name,string (255) ∗,x,,,,,users.full_name
+attorney_case_reviews,reviewing_judge_id,integer (8) ∗,x,,,,x,attorney_case_reviews.reviewing_judge_id
+attorney_case_reviews,reviewing_judge_sattyid,string (20),,,,,,users.sattyid
+attorney_case_reviews,task_id,string ∗,x,,,,x,attorney_case_reviews.task_id
+attorney_case_reviews,untimely_evidence,boolean,,,,,,attorney_case_reviews.untimely_evidence
+attorney_case_reviews,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+attorney_case_reviews,vacols_id,string,,,,,x,Substring attorney_case_reviews.task_id for Legacy Appeals
+attorney_case_reviews,work_product,string (20),,,,,,attorney_case_reviews.work_product
+etl_builds,,,,,,,,ETL build metadata for each job
+etl_builds,comments,string,,,,,,Ad hoc comments (e.g. error message)
+etl_builds,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+etl_builds,finished_at,datetime,,,,,x,Build end time
+etl_builds,id,integer (8) PK,x,x,,,,
+etl_builds,started_at,datetime,,,,,x,Build start time (usually identical to created_at)
+etl_builds,status,string,,,,,x,"Enum value: running, complete, error"
+etl_builds,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+etl_build_tables,,,,,,,,"ETL table metadata, one for each table per-build"
+etl_build_tables,comments,string,,,,,,Ad hoc comments (e.g. error message)
+etl_build_tables,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+etl_build_tables,etl_build_id,integer (8) ∗ FK,x,,x,,x,PK of the etl_build
+etl_build_tables,finished_at,datetime,,,,,x,Build end time
+etl_build_tables,id,integer (8) PK,x,x,,,,
+etl_build_tables,rows_deleted,integer (8),,,,,,Number of rows deleted
+etl_build_tables,rows_inserted,integer (8),,,,,,Number of new rows
+etl_build_tables,rows_rejected,integer (8),,,,,,Number of rows skipped
+etl_build_tables,rows_updated,integer (8),,,,,,Number of rows changed
+etl_build_tables,started_at,datetime,,,,,x,Build start time (usually identical to created_at)
+etl_build_tables,status,string,,,,,x,"Enum value: running, complete, error"
+etl_build_tables,table_name,string,,,,,x,Name of the ETL table
+etl_build_tables,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+decision_issues,,,,,,,,Copy of decision_issues
+decision_issues,benefit_type,string (20),,,,,,decision_issues.benefit_type
+decision_issues,caseflow_decision_date,date,,,,,,decision_issues.caseflow_decision_date
+decision_issues,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+decision_issues,decision_review_id,integer (8),,,,,x,decision_issues.decision_review_id
+decision_issues,decision_review_type,string (20),,,,,x,decision_issues.decision_review_type
+decision_issues,decision_text,string,,,,,,decision_issues.decision_text
+decision_issues,description,string,,,,,,decision_issues.description
+decision_issues,diagnostic_code,string (20),,,,,,decision_issues.diagnostic_code
+decision_issues,disposition,string (50),,,,,x,decision_issues.disposition
+decision_issues,end_product_last_action_date,date,,,,,,decision_issues.end_product_last_action_date
+decision_issues,id,integer (8) PK,x,x,,,,
+decision_issues,issue_created_at,datetime,,,,,x,decision_issues.created_at
+decision_issues,issue_deleted_at,datetime,,,,,x,decision_issues.deleted_at
+decision_issues,issue_updated_at,datetime,,,,,x,decision_issues.updated_at
+decision_issues,participant_id,integer (8) ∗,x,,,,x,decision_issues.participant_id
+decision_issues,rating_issue_reference_id,integer (8),,,,,x,decision_issues.rating_issue_reference_id
+decision_issues,rating_profile_date,datetime,,,,,,decision_issues.rating_profile_date
+decision_issues,rating_promulgation_date,datetime,,,,,,decision_issues.rating_promulgation_date
+decision_issues,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+organizations,,,,,,,,Copy of Organizations table
+organizations,created_at,datetime,,,,,x,
+organizations,id,integer (8) PK,x,x,,,,
+organizations,name,string,,,,,,
+organizations,participant_id,string,,,,,,Organizations BGS partipant id
+organizations,role,string,,,,,,"Role users in organization must have, if present"
+organizations,status,string,,,,,x,"Whether organization is active, inactive, or in some other Status."
+organizations,status_updated_at,datetime,,,,,,Track when organization status last changed.
+organizations,type,string,,,,,,Single table inheritance
+organizations,updated_at,datetime,,,,,x,
+organizations,url,string,,,,,x,Unique portion of the organization queue url
+organizations_users,,,,,,,,Copy of OrganizationUsers table
+organizations_users,admin,boolean,,,,,,
+organizations_users,created_at,datetime,,,,,x,
+organizations_users,id,integer (8) PK,x,x,,,,
+organizations_users,organization_id,integer,,,,,x,
+organizations_users,updated_at,datetime,,,,,x,
+organizations_users,user_id,integer,,,,,x,
+people,,,,,,,,Copy of People table
+people,created_at,datetime ∗,x,,,,x,
+people,date_of_birth,date,,,,,,
+people,email_address,string,,,,,,"Person email address, cached from BGS"
+people,first_name,string (50),,,,,,"Person first name, cached from BGS"
+people,id,integer (8) PK,x,x,,,,
+people,last_name,string (50),,,,,,"Person last name, cached from BGS"
+people,middle_name,string (50),,,,,,"Person middle name, cached from BGS"
+people,name_suffix,string (20),,,,,,"Person name suffix, cached from BGS"
+people,participant_id,string (20) ∗,x,,,,x,
+people,updated_at,datetime ∗,x,,,,x,
+tasks,,,,,,,,Denormalized Tasks with User/Organization
+tasks,appeal_id,integer (8) ∗ FK,x,,x,,x,tasks.appeal_id
+tasks,appeal_type,string ∗,x,,,,x,tasks.appeal_type
+tasks,assigned_at,datetime,,,,,,tasks.assigned_at
+tasks,assigned_by_id,integer (8),,,,,,tasks.assigned_by_id
+tasks,assigned_by_user_css_id,string (20),,,,,,users.css_id
+tasks,assigned_by_user_full_name,string (255),,,,,,users.full_name
+tasks,assigned_by_user_sattyid,string (20),,,,,,users.sattyid
+tasks,assigned_to_id,integer (8) ∗,x,,,,x,tasks.assigned_to_id
+tasks,assigned_to_org_name,string (255),,,,,,organizations.name
+tasks,assigned_to_org_type,string (50),,,,,,organizations.type
+tasks,assigned_to_type,string ∗,x,,,,x,tasks.assigned_to_type
+tasks,assigned_to_user_css_id,string (20),,,,,,users.css_id
+tasks,assigned_to_user_full_name,string (255),,,,,,users.full_name
+tasks,assigned_to_user_sattyid,string (20),,,,,,users.sattyid
+tasks,closed_at,datetime,,,,,,tasks.closed_at
+tasks,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+tasks,id,integer (8) PK,x,x,,,,
+tasks,instructions,text,,,,,,tasks.instructions
+tasks,parent_id,integer (8),,,,,x,tasks.parent_id
+tasks,placed_on_hold_at,datetime,,,,,,tasks.placed_on_hold_at
+tasks,started_at,datetime,,,,,,tasks.started_at
+tasks,task_created_at,datetime,,,,,,tasks.created_at
+tasks,task_id,integer (8) ∗,x,,,,x,tasks.id
+tasks,task_status,string (20) ∗,x,,,,x,tasks.status
+tasks,task_type,string (50) ∗,x,,,,x,tasks.type
+tasks,task_updated_at,datetime,,,,,,tasks.updated_at
+tasks,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+users,,,,,,,,Combined Caseflow/VACOLS user lookups
+users,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+users,css_id,string (20) ∗,x,,,,,CSEM (Active Directory) username
+users,email,string (255),,,,,,CSEM email
+users,full_name,string (255),,,,,,CSEM full name
+users,id,integer (8) PK,x,x,,,,
+users,last_login_at,datetime,,,,,,
+users,roles,string,,,,,,
+users,sactive,string (1),,,,,,
+users,sattyid,string (20),,,,,,
+users,selected_regional_office,string (255),,,,,,CSEM regional office
+users,slogid,string (20),,,,,,
+users,smemgrp,string (8),,,,,,VACOLS cached_user_attributes.smemgrp
+users,stafkey,string (20),,,,,,
+users,station_id,string (20) ∗,x,,,,,CSEM station
+users,status,string (20),,,,,x,Whether or not the user is an active user of caseflow
+users,status_updated_at,datetime,,,,,,When the user's status was last updated
+users,stitle,string (16),,,,,,VACOLS cached_user_attributes.stitle
+users,svlj,string (1),,,,,,
+users,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
+users,user_id,integer ∗,x,,,,x,ID of the User

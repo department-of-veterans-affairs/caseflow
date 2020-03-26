@@ -97,7 +97,7 @@ class CompleteTaskModal extends React.Component {
       return '';
     }
 
-    return `${String.fromCodePoint(assignedBy.firstName.codePointAt(0))}. ${assignedBy.lastName}`;
+    return `${assignedBy.firstName} ${assignedBy.lastName}`;
   };
 
   getTaskConfiguration = () => {

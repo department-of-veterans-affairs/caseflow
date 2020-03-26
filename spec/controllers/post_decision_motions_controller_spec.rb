@@ -80,8 +80,38 @@ describe PostDecisionMotionsController do
             assigned_to_id: user.id }
         post :create, params: params
 
-        expect(response).to be_success
-        expect(flash[:success]).to be_present
+        expect(response).to be_successful
+      end
+    end
+  end
+
+  describe "#return_to_lit_support", :postgres do
+    context "when the motion is valid" do
+      it "returns a 200 response" do
+        allow(controller).to receive(:verify_authentication).and_return(true)
+
+        task = create_task_without_unnecessary_models
+        params = { task_id: task.id }
+        post :return_to_lit_support, params: params
+
+        expect(response).to be_successful
+        task.reload
+        expect(task.status).to eq Constants.TASK_STATUSES.cancelled
+      end
+    end
+  end
+
+  describe "#return_to_judge", :postgres do
+    context "when the motion is valid" do
+      it "returns a 200 response" do
+        allow(controller).to receive(:verify_authentication).and_return(true)
+
+        task = create_task_on_vacate_stream
+        params = { task_id: task.id, instructions: "instructions" }
+        User.stub = task.assigned_to
+        post :return_to_judge, params: params
+
+        expect(response).to be_successful
       end
     end
   end
@@ -97,5 +127,11 @@ describe PostDecisionMotionsController do
       assigned_to: judge,
       assigned_by: assigned_by
     )
+  end
+
+  def create_task_on_vacate_stream
+    appeal = create(:appeal, :with_straight_vacate_stream)
+    vacate_stream = Appeal.vacate.find_by(stream_docket_number: appeal.docket_number)
+    AttorneyTask.find_by(appeal: vacate_stream)
   end
 end
