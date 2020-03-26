@@ -128,6 +128,11 @@ export const hideModal = (modalType) => ({
   payload: { modalType }
 });
 
+export const setFeatureToggles = (featureToggles) => ({
+  type: ACTIONS.SET_FEATURE_TOGGLES,
+  payload: { featureToggles }
+});
+
 export const setUserRole = (userRole) => ({
   type: ACTIONS.SET_USER_ROLE,
   payload: { userRole }
