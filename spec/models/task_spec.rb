@@ -242,7 +242,7 @@ describe Task, :all_dbs do
     end
 
     context "when there is an attorney_case_review" do
-      let!(:child) { create(:task, type: Task.name, appeal: task.appeal, parent: task) }
+      let!(:child) { create(:task, type: Task.name, parent: task) }
       let!(:attorney_case_reviews) do
         create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
       end
@@ -284,7 +284,7 @@ describe Task, :all_dbs do
     end
 
     context "when there is a sub task" do
-      let!(:child) { create(:task, type: Task.name, appeal: task.appeal, parent: task) }
+      let!(:child) { create(:task, type: Task.name, parent: task) }
       let!(:attorney_case_reviews) do
         [
           create(:attorney_case_review, task_id: child.id, created_at: 1.day.ago),
@@ -301,8 +301,8 @@ describe Task, :all_dbs do
   describe "#cancel_task_and_child_subtasks" do
     let(:appeal) { create(:appeal) }
     let!(:top_level_task) { create(:task, appeal: appeal) }
-    let!(:second_level_tasks) { create_list(:task, 2, appeal: appeal, parent: top_level_task) }
-    let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
+    let!(:second_level_tasks) { create_list(:task, 2, parent: top_level_task) }
+    let!(:third_level_task) { create_list(:task, 2, parent: second_level_tasks.first) }
 
     it "cancels all tasks and child subtasks" do
       initial_versions = second_level_tasks[0].versions.count
@@ -472,7 +472,7 @@ describe Task, :all_dbs do
 
     context "with a timed hold task" do
       let!(:timed_hold_task) do
-        create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
+        create(:timed_hold_task, assigned_to: user, days_on_hold: 18, parent: task)
       end
 
       it "includes end timed hold in the returned actions" do
@@ -500,11 +500,10 @@ describe Task, :all_dbs do
         create(
           disposition_task_type,
           trait,
-          parent: hearing_task,
-          appeal: appeal
+          parent: hearing_task
         )
       end
-      let!(:task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+      let!(:task) { create(:no_show_hearing_task, parent: disposition_task) }
 
       context "user is a member of hearings management" do
         before do
@@ -559,7 +558,7 @@ describe Task, :all_dbs do
       end
 
       context "user is a member of hearings management and task is a ScheduleHearingTask" do
-        let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+        let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2) }
 
         before do
           HearingsManagement.singleton.add_user(user)
@@ -578,7 +577,7 @@ describe Task, :all_dbs do
         end
 
         context "task is not a ScheduleHearingTask" do
-          let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task_2, appeal: appeal) }
+          let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task_2) }
 
           it "returns no actions" do
             expect(subject).to eq []
@@ -951,7 +950,7 @@ describe Task, :all_dbs do
 
     context "there is an active timed hold task child" do
       let!(:timed_hold_task) do
-        create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
+        create(:timed_hold_task, assigned_to: user, days_on_hold: 18, parent: task)
       end
 
       context "status is updated" do
@@ -1522,7 +1521,7 @@ describe Task, :all_dbs do
   describe ".when_child_task_created" do
     let(:parent_task) { create(:task, appeal: create(:appeal)) }
 
-    subject { create(:task, parent: parent_task, appeal: parent_task.appeal) }
+    subject { create(:task, parent: parent_task) }
 
     before do
       allow(Raven).to receive(:capture_message)

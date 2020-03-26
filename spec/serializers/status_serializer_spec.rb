@@ -33,7 +33,7 @@ describe StatusSerializer, :all_dbs do
     end
 
     context "hearing is scheduled" do
-      let(:hearing_task) { create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: appeal_root_task) }
       let(:hearing_scheduled_for) { Time.zone.today + 15.days }
       let(:hearing_day) do
         create(:hearing_day,

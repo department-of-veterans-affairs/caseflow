@@ -7,7 +7,7 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
   application_attr :hearing_schedule
 
   def perform
-    VirtualHearingRepository.ready_for_deletion.each do |virtual_hearing|
+    count_deleted_and_log(VirtualHearingRepository.ready_for_deletion) do |virtual_hearing|
       Rails.logger.info("Deleting Pexip conference for hearing (#{virtual_hearing.hearing_id})")
 
       process_virtual_hearing(virtual_hearing)
@@ -22,8 +22,41 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
   private
 
+  def datadog_metric_info
+    {
+      app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
+      metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
+    }
+  end
+
+  def count_deleted_and_log(enumerable)
+    failed = removed = 0
+
+    enumerable.each do |virtual_hearing|
+      if yield(virtual_hearing)
+        removed += 1
+      else
+        failed += 1
+      end
+    end
+
+    if removed > 0
+      DataDogService.increment_counter(
+        metric_name: "deleted_conferences.successful", by: removed, **datadog_metric_info
+      )
+    end
+
+    if failed > 0
+      DataDogService.increment_counter(
+        metric_name: "deleted_conferences.failed", by: failed, **datadog_metric_info
+      )
+    end
+  end
+
   def process_virtual_hearing(virtual_hearing)
-    return unless delete_conference(virtual_hearing)
+    deleted_conference = delete_conference(virtual_hearing)
+
+    return false unless deleted_conference
 
     virtual_hearing.update(conference_deleted: true)
 
@@ -32,6 +65,8 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
 
       VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
     end
+
+    true
   end
 
   # Returns whether or not the conference was deleted from Pexip

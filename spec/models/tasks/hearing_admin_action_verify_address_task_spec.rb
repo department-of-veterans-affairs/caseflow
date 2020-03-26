@@ -3,13 +3,12 @@
 RSpec.shared_examples "Address Verify Task for Appeal" do
   let!(:user) { create(:hearings_coordinator) }
   let(:distribution_task) { create(:distribution_task, appeal: appeal) }
-  let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
+  let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task) }
   let!(:schedule_hearing_task) { create(:schedule_hearing_task, :completed, appeal: appeal) }
   let!(:verify_address_task) do
     create(
       :hearing_admin_action_verify_address_task,
       parent: parent_hearing_task,
-      appeal: appeal,
       assigned_to: HearingsManagement.singleton,
       assigned_to_type: "Organization"
     )
