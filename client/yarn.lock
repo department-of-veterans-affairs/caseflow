@@ -1598,9 +1598,9 @@
     redux-perf-middleware "^1.2.2"
     redux-thunk "^2.2.0"
 
-"@department-of-veterans-affairs/eslint-config-appeals@https://github.com/department-of-veterans-affairs/eslint-config-appeals#8ecb62a":
+"@department-of-veterans-affairs/eslint-config-appeals@https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db":
   version "1.0.2"
-  resolved "https://github.com/department-of-veterans-affairs/eslint-config-appeals#8ecb62a01d371268a71c5a25513cf8592660f12d"
+  resolved "https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db11bf6c4db8e4c35b6a1517eff702161bb"
   dependencies:
     babel-eslint "^10.1.0"
     eslint-plugin-import "^2.20.1"
