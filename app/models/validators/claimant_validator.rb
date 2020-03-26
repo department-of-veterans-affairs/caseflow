@@ -5,7 +5,7 @@ class ClaimantValidator
   CLAIMANT_REQUIRED = "participant_id may not be blank"
   CLAIMANT_ADDRESS_REQUIRED = "claimant_address_required"
   CLAIMANT_ADDRESS_INVALID = "claimant_address_invalid"
-  CLAIMANT_ADDRESS_CITY_INVALID = "claimant_address_city_invalid"
+  CLAIMANT_CITY_INVALID = "claimant_city_invalid"
   BLANK = "blank"
   INVALID = "invalid"
   BENEFIT_TYPE_REQUIRES_PAYEE_CODE = %w[compensation pension].freeze
@@ -57,12 +57,14 @@ class ClaimantValidator
     end
   end
 
+  # Validates address lines using this regex that VBMS uses.
   def claimant_address_lines_valid?
     [claimant.address_line_1, claimant.address_line_2, claimant.address_line_3].all? do |value|
       value.nil? || (value =~ /\A(?!.*\s\s)[a-zA-Z0-9+#@%&()_:',.\-\/\s]*\Z/ && value.length <= 20)
     end
   end
 
+  # Validates claimant city using this regex that VBMS uses.
   def claimant_city_valid?
     claimant.city =~ /\A[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*\Z/ && claimant.city.length <= 30
   end

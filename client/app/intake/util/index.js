@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { REVIEW_OPTIONS } from '../constants';
+import { REVIEW_OPTIONS, CLAIMANT_ERRORS } from '../constants';
 import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
 
@@ -10,15 +10,7 @@ export const getBlankOptionError = (responseErrorCodes, field) => (
 export const getClaimantError = (responseErrorCodes) => {
   const errorCode = _.get(responseErrorCodes.claimant, 0);
 
-  if (errorCode === 'blank') {
-    return 'Please select an option.';
-  } else if (errorCode === 'claimant_address_required') {
-    return "Please supply the claimant's address in VBMS.";
-  } else if (errorCode === 'claimant_address_invalid') {
-    return "Please update the claimant's address in VBMS to be valid.";
-  } else if (errorCode === 'claimant_address_city_invalid') {
-    return "Please update the claimant's address city in VBMS to be valid.";
-  }
+  return CLAIMANT_ERRORS[errorCodes];
 };
 
 export const getPageError = (responseErrorCodes) => (
