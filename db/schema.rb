@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_25_211113) do
+ActiveRecord::Schema.define(version: 2020_03_26_141733) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -344,6 +344,8 @@ ActiveRecord::Schema.define(version: 2020_03_25_211113) do
     t.datetime "rating_profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
     t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
     t.datetime "updated_at"
+    t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
+    t.index ["deleted_at"], name: "index_decision_issues_on_deleted_at"
     t.index ["disposition"], name: "index_decision_issues_on_disposition"
     t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
