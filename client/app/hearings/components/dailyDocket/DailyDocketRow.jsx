@@ -264,11 +264,13 @@ class DailyDocketRow extends React.Component {
         {hearing.isVirtual &&
           <StaticVirtualHearing hearing={hearing} user={user} />
         }
-        <DispositionDropdown {...inputProps}
+        <DispositionDropdown
+          {...inputProps}
           cancelUpdate={this.cancelUpdate}
-          saveThenUpdateDisposition={this.saveThenUpdateDisposition}
+          saveHearing={this.saveThenUpdateDisposition}
           openDispositionModal={openDispositionModal}
-          readOnly={readOnly || (hearing.isVirtual && !hearing.virtualHearing.jobCompleted)} />
+          readOnly={readOnly || (hearing.isVirtual && !hearing.virtualHearing.jobCompleted)}
+        />
         {(user.userHasHearingPrepRole && this.isAmaHearing()) &&
           <Waive90DayHoldCheckbox {...inputProps} />}
         <TranscriptRequestedCheckbox {...inputProps} />
