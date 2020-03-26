@@ -94,7 +94,7 @@ export default class DailyDocket extends React.Component {
           this.closeDispositionModal();
         },
         onConfirm: () => {
-          onConfirm();
+          onConfirm(toDisposition);
           this.closeDispositionModal();
         }
       }
