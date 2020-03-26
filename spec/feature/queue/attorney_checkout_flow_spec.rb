@@ -391,7 +391,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           click_dropdown(index: 0)
 
           click_on "Continue"
-          expect(page).to have_content("Choose at least one.")
+          expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
         end
         scenario "a special issue is chosen" do
           visit "/queue"
@@ -401,7 +401,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           click_label "private_attorney_or_agent"
 
           click_on "Continue"
-          expect(page).not_to have_content("Choose at least one.")
+          expect(page).not_to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
         end
       end
 
