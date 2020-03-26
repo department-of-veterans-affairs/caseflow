@@ -160,3 +160,70 @@ export const applyCommonReducers = (state, action) => {
 
   return reducerFunc ? reducerFunc() : state;
 };
+
+export const commonStateFromServerIntake = (serverIntake) => {
+  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
+
+  return {
+    isStarted: {
+      $set: Boolean(serverIntake.id)
+    },
+    receiptDate: {
+      $set: serverIntake.receipt_date
+    },
+    veteranIsNotClaimant: {
+      $set: serverIntake.veteran_is_not_claimant
+    },
+    claimant: {
+      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
+    },
+    payeeCode: {
+      $set: serverIntake.payeeCode
+    },
+    legacyOptInApproved: {
+      $set: serverIntake.legacy_opt_in_approved
+    },
+    legacyAppeals: {
+      $set: serverIntake.legacyAppeals
+    },
+    isReviewed: {
+      $set: Boolean(serverIntake.receipt_date)
+    },
+    contestableIssues: {
+      $set: contestableIssues
+    },
+    activeNonratingRequestIssues: {
+      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
+    },
+    requestIssues: {
+      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
+    },
+    isComplete: {
+      $set: Boolean(serverIntake.completed_at)
+    },
+    relationships: {
+      $set: formatRelationships(serverIntake.relationships)
+    },
+    intakeUser: {
+     $set: serverIntake.intakeUser
+    },
+    asyncJobUrl: {
+      $set: serverIntake.asyncJobUrl
+    },
+    processedAt: {
+      $set: serverIntake.processedAt
+    },
+    veteranValid: {
+      $set: serverIntake.veteranValid
+    },
+    veteranInvalidFields: {
+      $set: {
+        veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
+        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
+        veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_fields,
+        veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_fields,
+        veteranCityTooLong: serverIntake.veteranInvalidFields.veteran_city_too_long
+      }
+    }
+  };
+};
