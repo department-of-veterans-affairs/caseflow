@@ -1,5 +1,7 @@
 // shared functions between reducers
 import { ACTIONS } from '../constants';
+import { formatRelationships } from '../util';
+import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import { update } from '../../util/ReducerUtil';
 
 export const commonReducers = (state, action) => {
