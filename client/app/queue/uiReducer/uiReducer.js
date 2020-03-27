@@ -15,6 +15,7 @@ export const initialState = {
   },
   saveState: initialSaveState,
   modals: {},
+  featureToggles: {},
   userRole: '',
   userCssId: '',
   organizations: [],
@@ -128,6 +129,12 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return showModal(state, action.payload.modalType);
   case ACTIONS.HIDE_MODAL:
     return hideModal(state, action.payload.modalType);
+  case ACTIONS.SET_FEATURE_TOGGLES:
+    return update(state, {
+      featureToggles: {
+        $set: action.payload.featureToggles
+      }
+    });
   case ACTIONS.TOGGLE_VETERAN_CASE_LIST:
     return update(state, {
       veteranCaseListIsVisible: { $set: !state.veteranCaseListIsVisible }

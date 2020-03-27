@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VirtualHearings::SendEmail, :all_dbs do
+describe VirtualHearings::SendEmail do
   let(:nyc_ro_eastern) { "RO06" }
   let(:judge_email_sent) { false }
   let(:representative_email_sent) { false }
@@ -16,21 +16,24 @@ describe VirtualHearings::SendEmail, :all_dbs do
     )
   end
   let(:email_type) { nil }
-  let(:mail_recipients) do
-    {
-      veteran: instance_double(MailRecipient),
-      judge: instance_double(MailRecipient),
-      representative: instance_double(MailRecipient)
-    }
+  let(:judge_recipient) do
+    MailRecipient.new(name: "TEST", email: "america@example.com", title: :judge)
   end
-  let(:send_email_job) { VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: email_type) }
-  let(:virtual_hearing_mailer) { double(VirtualHearingMailer) }
+  let(:veteran_recipient) do
+    MailRecipient.new(name: "TEST", email: "america@example.com", title: :veteran)
+  end
+  let(:representative_recipient) do
+    MailRecipient.new(name: "TEST", email: "america@example.com", title: :representative)
+  end
+  let(:send_email_job) do
+    VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: email_type)
+  end
 
   describe ".call" do
     before do
-      allow(VirtualHearings::SendEmail).to receive(:new).and_return(send_email_job)
-      allow(send_email_job).to receive(:mail_recipients).and_return(mail_recipients)
-      allow(virtual_hearing_mailer).to receive(:deliver_now)
+      allow(send_email_job).to receive(:judge_recipient).and_return(judge_recipient)
+      allow(send_email_job).to receive(:veteran_recipient).and_return(veteran_recipient)
+      allow(send_email_job).to receive(:representative_recipient).and_return(representative_recipient)
     end
 
     subject do
@@ -45,19 +48,17 @@ describe VirtualHearings::SendEmail, :all_dbs do
         expect(VirtualHearingMailer)
           .to receive(:cancellation)
           .once
-          .with(mail_recipient: mail_recipients[:veteran], virtual_hearing: virtual_hearing)
-          .and_return(virtual_hearing_mailer)
+          .with(mail_recipient: veteran_recipient, virtual_hearing: virtual_hearing)
 
         expect(VirtualHearingMailer)
           .to receive(:cancellation)
           .once
-          .with(mail_recipient: mail_recipients[:representative], virtual_hearing: virtual_hearing)
-          .and_return(virtual_hearing_mailer)
+          .with(mail_recipient: representative_recipient, virtual_hearing: virtual_hearing)
 
         # NO for judge
         expect(VirtualHearingMailer)
           .to_not receive(:cancellation)
-          .with(mail_recipient: mail_recipients[:judge], virtual_hearing: virtual_hearing)
+          .with(mail_recipient: judge_recipient, virtual_hearing: virtual_hearing)
 
         subject
       end
