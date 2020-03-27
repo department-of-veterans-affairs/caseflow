@@ -170,6 +170,13 @@ export const REVIEW_OPTIONS = {
   }
 };
 
+export const CLAIMANT_ERRORS = {
+  blank: 'Please select an option.',
+  claimant_address_required: "Please supply the claimant's address in VBMS.",
+  claimant_address_invalid: "Please update the claimant's address in VBMS to be valid.",
+  claimant_city_invalid: "Please update the claimant's city in VBMS to be valid."
+};
+
 export const ENDPOINT_NAMES = {
   START_INTAKE: 'start-intake',
   REVIEW_INTAKE: 'review-intake',
