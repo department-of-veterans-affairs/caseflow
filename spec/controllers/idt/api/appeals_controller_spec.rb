@@ -153,21 +153,24 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let!(:ama_appeals) do
           [
             create(:appeal, veteran: veteran1, number_of_claimants: 1, veteran_is_not_claimant: true),
-            create(:appeal, veteran: veteran2, number_of_claimants: 1)
-          ]
+            create(:appeal, veteran: veteran2, number_of_claimants: 1),
+            create(:appeal, veteran: veteran1, number_of_claimants: 1)
+          ].map { |app| app.tap { |appeal| appeal.create_tasks_on_intake_success! } }
         end
 
         let!(:parents) do
           [
-            create(:ama_judge_decision_review_task, appeal: ama_appeals.first),
-            create(:ama_judge_decision_review_task, appeal: ama_appeals.second)
+            create(:ama_judge_decision_review_task, appeal: ama_appeals.first, parent: ama_appeals.first.root_task),
+            create(:ama_judge_decision_review_task, appeal: ama_appeals.second, parent: ama_appeals.second.root_task),
+            create(:ama_judge_decision_review_task, appeal: ama_appeals.last, parent: ama_appeals.last.root_task),
           ]
         end
 
         let!(:tasks) do
           [
             create(:ama_attorney_task, assigned_to: user, parent: parents.first),
-            create(:ama_attorney_task, assigned_to: user, parent: parents.second)
+            create(:ama_attorney_task, assigned_to: user, parent: parents.second),
+            create(:ama_attorney_task, assigned_to: user, parent: parents.last)
           ]
         end
 
@@ -209,7 +212,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
 
         it "returns appeals associated with a file number" do
-          headers = { "FILENUMBER" => tasks.first.appeal.veteran_file_number }
+          # cancel one, so it does not show up
+          Appeal.where(veteran_file_number: veteran1.file_number).last.tasks.each(&:cancelled!)
+
+          headers = { "FILENUMBER" => veteran1.file_number }
           request.headers.merge! headers
           get :list
           expect(response.status).to eq 200
