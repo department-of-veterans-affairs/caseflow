@@ -182,6 +182,9 @@ export const commonStateFromServerIntake = (serverIntake) => {
     payeeCode: {
       $set: serverIntake.payeeCode
     },
+    processedInCaseflow: {
+      $set: serverIntake.processed_in_caseflow
+    },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
     },

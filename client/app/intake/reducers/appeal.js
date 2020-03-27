@@ -21,10 +21,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     ...commonState,
     docketType: {
       $set: serverIntake.docket_type
-    },
-    // TODO do we need this at all?
-    processedInCaseflow: {
-      $set: true
     }
   });
 };

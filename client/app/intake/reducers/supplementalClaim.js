@@ -22,9 +22,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     ...commonState,
     benefitType: {
       $set: serverIntake.benefit_type
-    },
-    processedInCaseflow: {
-      $set: serverIntake.processed_in_caseflow
     }
   });
 };
