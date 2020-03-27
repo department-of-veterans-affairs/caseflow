@@ -73,9 +73,9 @@ class DecisionReviewIntake < Intake
 
   def claimant_address_error
     @claimant_address_error ||= [
-      ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED,
-      ClaimantValidator::CLAIMANT_ADDRESS_INVALID,
-      ClaimantValidator::CLAIMANT_ADDRESS_CITY_INVALID
+      ClaimantValidator::ERRORS[:claimant_address_required],
+      ClaimantValidator::ERRORS[:claimant_address_invalid],
+      ClaimantValidator::ERRORS[:claimant_address_city_invalid]
     ].find do |error|
       detail.errors.messages[:claimant].include?(error)
     end
@@ -84,15 +84,15 @@ class DecisionReviewIntake < Intake
   def claimant_required_error
     @claimant_required_error ||=
       detail.errors.messages[:veteran_is_not_claimant].include?(
-        ClaimantValidator::CLAIMANT_REQUIRED
-      ) && ClaimantValidator::BLANK
+        ClaimantValidator::ERRORS[:claimant_required]
+      ) && ClaimantValidator::ERRORS[:blank]
   end
 
   def payee_code_error
     @payee_code_error ||=
       detail.errors.messages[:benefit_type].include?(
-        ClaimantValidator::PAYEE_CODE_REQUIRED
-      ) && ClaimantValidator::BLANK
+        ClaimantValidator::ERRORS[:payee_code_required]
+      ) && ClaimantValidator::ERRORS[:blank]
   end
 
   # run during start!

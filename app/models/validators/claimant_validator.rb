@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 class ClaimantValidator
-  PAYEE_CODE_REQUIRED = "payee_code may not be blank"
-  CLAIMANT_REQUIRED = "participant_id may not be blank"
-  CLAIMANT_ADDRESS_REQUIRED = "claimant_address_required"
-  CLAIMANT_ADDRESS_INVALID = "claimant_address_invalid"
-  CLAIMANT_CITY_INVALID = "claimant_city_invalid"
-  BLANK = "blank"
-  INVALID = "invalid"
+  ERRORS = {
+    payee_code_required: "payee_code may not be blank",
+    claimant_required: "participant_id may not be blank",
+    claimant_address_required: "claimant_address_required",
+    claimant_address_invalid: "claimant_address_invalid",
+    claimant_city_invalid: "claimant_city_invalid",
+    blank: "blank",
+    invalid: "invalid"
+  }.freeze
+
   BENEFIT_TYPE_REQUIRES_PAYEE_CODE = %w[compensation pension].freeze
 
   def initialize(claimant)
@@ -22,6 +25,7 @@ class ClaimantValidator
     if claimant_details_required?
       validate_payee_code
       validate_claimant_address
+      validate_claimant_city
     end
   end
 
@@ -33,27 +37,31 @@ class ClaimantValidator
     return if payee_code
     return if veteran_is_claimant?
 
-    errors[:payee_code] << BLANK
-    decision_review.errors[:benefit_type] << PAYEE_CODE_REQUIRED
+    errors[:payee_code] << ERRORS[:blank]
+    decision_review.errors[:benefit_type] << ERRORS[:payee_code_required]
   end
 
   def validate_participant_id
     return if participant_id
 
-    errors[:participant_id] << BLANK
-    decision_review.errors[:veteran_is_not_claimant] << CLAIMANT_REQUIRED
+    errors[:participant_id] << ERRORS[:blank]
+    decision_review.errors[:veteran_is_not_claimant] << ERRORS[:claimant_required]
   end
 
   def validate_claimant_address
     if claimant.address_line_1.nil?
-      errors[:address] << BLANK
-      decision_review.errors[:claimant] << CLAIMANT_ADDRESS_REQUIRED
+      errors[:address] << ERRORS[:blank]
+      decision_review.errors[:claimant] << ERRORS[:claimant_address_required]
     elsif !claimant_address_lines_valid?
-      errors[:address] << INVALID
-      decision_review.errors[:claimant] << CLAIMANT_ADDRESS_INVALID
-    elsif !claimant_city_valid?
-      errors[:address] << INVALID
-      decision_review.errors[:claimant] << CLAIMANT_ADDRESS_CITY_INVALID
+      errors[:address] << ERRORS[:invalid]
+      decision_review.errors[:claimant] << ERRORS[:claimant_address_invalid]
+    end
+  end
+
+  def validate_claimant_city
+    if !claimant_city_valid?
+      errors[:address] << ERRORS[:invalid]
+      decision_review.errors[:claimant] << ERRORS[:claimant_city_invalid]
     end
   end
 

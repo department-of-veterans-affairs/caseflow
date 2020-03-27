@@ -40,35 +40,35 @@ describe ClaimantValidator, :postgres do
     context "claimant has no participant id" do
       let(:participant_id) { nil }
       it "sets a claimant required error" do
-        expect(subject[:veteran_is_not_claimant]).to contain_exactly(ClaimantValidator::CLAIMANT_REQUIRED)
+        expect(subject[:veteran_is_not_claimant]).to contain_exactly(ClaimantValidator::ERRORS[:claimant_required])
       end
     end
 
     context "claimant is missing a payee code" do
       let(:payee_code) { nil }
       it "sets a missing payee code error" do
-        expect(subject[:benefit_type]).to contain_exactly(ClaimantValidator::PAYEE_CODE_REQUIRED)
+        expect(subject[:benefit_type]).to contain_exactly(ClaimantValidator::ERRORS[:payee_code_required])
       end
     end
 
     context "claimant is missing address" do
       let(:address_line_1) { nil }
       it "sets an address required error" do
-        expect(subject[:claimant]).to contain_exactly(ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED)
+        expect(subject[:claimant]).to contain_exactly(ClaimantValidator::ERRORS[:claimant_address_required])
       end
     end
 
     context "claimant has an invalid address line" do
       let(:address_line_2) { "Apt  3" }
       it "sets an invalid address line error" do
-        expect(subject[:claimant]).to contain_exactly(ClaimantValidator::CLAIMANT_ADDRESS_INVALID)
+        expect(subject[:claimant]).to contain_exactly(ClaimantValidator::ERRORS[:claimant_address_invalid])
       end
     end
 
     context "claimant has an invalid city" do
       let(:city) { "An improbably lengthy city name that exceeds 30 characters" }
       it "sets an invalid address city error" do
-        expect(subject[:claimant]).to contain_exactly(ClaimantValidator::CLAIMANT_ADDRESS_CITY_INVALID)
+        expect(subject[:claimant]).to contain_exactly(ClaimantValidator::ERRORS[:claimant_city_invalid])
       end
     end
   end
