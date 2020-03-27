@@ -55,7 +55,7 @@ class BaseHearingUpdateForm
     #   1. Any virtual hearing attributes are set
     #   2. Hearing time is being changed
     #   3. Judge is being changed
-    return true if !virtual_hearing_attributes.blank?
+    return true if virtual_hearing_attributes.present?
 
     if hearing.virtual?
       return scheduled_time_string.present? || judge_id.present?
