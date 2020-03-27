@@ -1,7 +1,7 @@
 Table,Column,Type,Required,Primary Key,Foreign Key,Unique,Index,Description
 advance_on_docket_motions,,,,,,,,
 advance_on_docket_motions,created_at,datetime ∗,x,,,,,
-advance_on_docket_motions,granted,boolean,,,,,,"Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
+advance_on_docket_motions,granted,boolean,,,,,x,"Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
 advance_on_docket_motions,id,integer (8) PK,x,x,,,,
 advance_on_docket_motions,person_id,integer (8) FK,,,x,,x,Appellant ID
 advance_on_docket_motions,reason,string,,,,,,VLJ's rationale for their decision on motion to AOD.
@@ -42,8 +42,8 @@ appeals,,,,,,,,Decision reviews intaken for AMA appeals to the board (also known
 appeals,closest_regional_office,string,,,,,,The code for the regional office closest to the Veteran on the appeal.
 appeals,created_at,datetime,,,,,,
 appeals,docket_range_date,date,,,,,,Date that appeal was added to hearing docket range.
-appeals,docket_type,string ∗,x,,,,,"The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
-appeals,established_at,datetime,,,,,,Timestamp for when the appeal has successfully been intaken into Caseflow by the user.
+appeals,docket_type,string ∗,x,,,,x,"The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
+appeals,established_at,datetime,,,,,x,Timestamp for when the appeal has successfully been intaken into Caseflow by the user.
 appeals,establishment_attempted_at,datetime,,,,,,Timestamp for when the appeal's establishment was last attempted.
 appeals,establishment_canceled_at,datetime,,,,,,Timestamp when job was abandoned
 appeals,establishment_error,string,,,,,,The error message if attempting to establish the appeal resulted in an error. This gets cleared once the establishment is successful.
@@ -250,10 +250,10 @@ decision_issues,,,,,,,,Issues that represent a decision made on a decision revie
 decision_issues,benefit_type,string,,,,,,"Classification of the benefit being decided on. Maps 1 to 1 to VA lines of business, and typically used to know which line of business the decision correlates to."
 decision_issues,caseflow_decision_date,date,,,,,,"This is a decision date for decision issues where decisions are entered in Caseflow, such as for appeals or for decision reviews with a business line that is not processed in VBMS."
 decision_issues,created_at,datetime,,,,,,Automatic timestamp when row was created.
-decision_issues,decision_review_id,integer FK,,,x,,,ID of the decision review the decision was made on.
-decision_issues,decision_review_type,string,,,,,,Type of the decision review the decision was made on.
+decision_issues,decision_review_id,integer FK,,,x,,x,ID of the decision review the decision was made on.
+decision_issues,decision_review_type,string,,,,,x,Type of the decision review the decision was made on.
 decision_issues,decision_text,string,,,,,,"If decision resulted in a change to a rating, the rating issue's decision text."
-decision_issues,deleted_at,datetime,,,,,,
+decision_issues,deleted_at,datetime,,,,,x,
 decision_issues,description,string,,,,,,Optional description that the user can input for decisions made in Caseflow.
 decision_issues,diagnostic_code,string,,,,,,"If a decision resulted in a rating, this is the rating issue's diagnostic code."
 decision_issues,disposition,string ∗,x,,,,x,The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values.
@@ -795,19 +795,20 @@ request_decision_issues,request_issue_id,integer FK,,,x,,x,The ID of the request
 request_decision_issues,updated_at,datetime ∗,x,,,,x,Automatically populated when the record is updated.
 request_issues,,,,,,,,"Each Request Issue represents the Veteran's response to a Rating Issue. Request Issues come in three flavors: rating, nonrating, and unidentified. They are attached to a Decision Review and (for those that track contentions) an End Product Establishment. A Request Issue can contest a rating issue, a decision issue, or a nonrating issue without a decision issue."
 request_issues,benefit_type,string ∗,x,,,,,The Line of Business the issue is connected with.
-request_issues,closed_at,datetime,,,,,,Timestamp when the request issue was closed. The reason it was closed is in closed_status.
+request_issues,closed_at,datetime,,,,,x,Timestamp when the request issue was closed. The reason it was closed is in closed_status.
 request_issues,closed_status,string,,,,,,"Indicates whether the request issue is closed, for example if it was removed from a Decision Review, the associated End Product got canceled, the Decision Review was withdrawn."
 request_issues,contention_reference_id,integer,,,,,x,The ID of the contention created on the End Product for this request issue. This is populated after the contention is created in VBMS.
 request_issues,contention_removed_at,datetime,,,,,,"When a request issue is removed from a Decision Review during an edit, if it has a contention in VBMS that is also removed. This field indicates when the contention has successfully been removed in VBMS."
 request_issues,contention_updated_at,datetime,,,,,,Timestamp indicating when a contention was successfully updated in VBMS.
 request_issues,contested_decision_issue_id,integer FK,,,x,,x,The ID of the decision issue that this request issue contests. A Request issue will contest either a rating issue or a decision issue
 request_issues,contested_issue_description,string,,,,,,Description of the contested rating or decision issue. Will be either a rating issue's decision text or a decision issue's description.
-request_issues,contested_rating_decision_reference_id,string,,,,,,The BGS id for contested rating decisions. These may not have corresponding contested_rating_issue_reference_id values.
+request_issues,contested_rating_decision_reference_id,string,,,,,x,The BGS id for contested rating decisions. These may not have corresponding contested_rating_issue_reference_id values.
 request_issues,contested_rating_issue_diagnostic_code,string,,,,,,"If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
 request_issues,contested_rating_issue_profile_date,string,,,,,,"If the contested issue is a rating issue, this is the rating issue's profile date. Will be nil if this request issue contests a decision issue."
 request_issues,contested_rating_issue_reference_id,string,,,,,x,"If the contested issue is a rating issue, this is the rating issue's reference id. Will be nil if this request issue contests a decision issue."
 request_issues,corrected_by_request_issue_id,integer FK,,,x,,,"If this request issue has been corrected, the ID of the new correction request issue. This is needed for EP 930."
 request_issues,correction_type,string,,,,,,"EP 930 correction type. Allowed values: control, local_quality_error, national_quality_error where 'control' is a regular correction, 'local_quality_error' was found after the fact by a local quality review team, and 'national_quality_error' was similarly found by a national quality review team. This is needed for EP 930."
+request_issues,covid_timeliness_exempt,boolean,,,,,,"If a veteran requests a timeliness exemption that is related to COVID-19, this is captured when adding a Request Issue and available for reporting."
 request_issues,created_at,datetime,,,,,,Automatic timestamp when row was created
 request_issues,decision_date,date,,,,,,"Either the rating issue's promulgation date, the decision issue's approx decision date or the decision date entered by the user (for nonrating and unidentified issues)"
 request_issues,decision_review_id,integer (8) FK,,,x,,x,ID of the decision review that this request issue belongs to
@@ -822,7 +823,7 @@ request_issues,edited_description,string,,,,,,"The edited description for the co
 request_issues,end_product_establishment_id,integer FK,,,x,,x,The ID of the End Product Establishment created for this request issue.
 request_issues,id,integer (8) PK,x,x,,,,
 request_issues,ineligible_due_to_id,integer (8) FK,,,x,,x,"If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
-request_issues,ineligible_reason,string,,,,,,"The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
+request_issues,ineligible_reason,string,,,,,x,"The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
 request_issues,is_unidentified,boolean,,,,,,"Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
 request_issues,nonrating_issue_category,string,,,,,,The category selected for nonrating request issues. These vary by business line.
 request_issues,nonrating_issue_description,string,,,,,,The user entered description if the issue is a nonrating issue

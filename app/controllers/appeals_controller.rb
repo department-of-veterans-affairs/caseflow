@@ -65,8 +65,6 @@ class AppealsController < ApplicationController
   end
 
   def most_recent_hearing
-    log_hearings_request
-
     most_recently_held_hearing = HearingsForAppeal.new(url_appeal_uuid)
       .held_hearings
       .max_by(&:scheduled_for)
@@ -146,16 +144,6 @@ class AppealsController < ApplicationController
     else
       render json: result.to_h, status: result.extra[:status]
     end
-  end
-
-  def log_hearings_request
-    # Log requests to this endpoint to try to investigate cause addressed by this rollback:
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/9271
-    DataDogService.increment_counter(
-      metric_group: "request_counter",
-      metric_name: "hearings_for_appeal",
-      app_name: RequestStore[:application]
-    )
   end
 
   def request_issues_update

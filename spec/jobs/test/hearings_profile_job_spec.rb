@@ -28,7 +28,7 @@ describe Test::HearingsProfileJob, :postgres do
 
       allow(user).to receive(:timezone).and_return(user_timezone)
 
-      expect(mailer).to receive(:deliver_now).once
+      expect(mailer).to receive(:deliver_now!).once
 
       expect(Test::HearingsProfileMailer)
         .to receive(:call)
