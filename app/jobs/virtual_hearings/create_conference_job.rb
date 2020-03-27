@@ -67,6 +67,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     pexip_response = create_pexip_conference
 
+    updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
+
     if pexip_response.error
       Rails.logger.info("Pexip response: #{pexip_response}")
       error_display = pexip_error_display(pexip_response)
@@ -74,9 +76,12 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
       virtual_hearing.establishment.update_error!(error_display)
 
+      DataDogService.increment_counter(metric_name: "created_conference.failed", **updated_metric_info)
 
       fail pexip_response.error
     end
+
+    DataDogService.increment_counter(metric_name: "created_conference.successful", **updated_metric_info)
 
     virtual_hearing.update(conference_id: pexip_response.data[:conference_id], status: :active)
   end

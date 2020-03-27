@@ -43,6 +43,13 @@ class BaseHearingUpdateForm
 
   private
 
+  def datadog_metric_info
+    {
+      app_name: RequestStore[:application],
+      metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
+    }
+  end
+
   def show_update_alert?
     # if user only changes the hearing time for a virtual hearing, don't show update alert
     return false if hearing.virtual? && hearing_updates.except(:scheduled_time).empty?
@@ -142,11 +149,15 @@ class BaseHearingUpdateForm
       @virtual_hearing_created = true
     end
 
+    updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: hearing&.id })
+
     if !virtual_hearing_created?
       virtual_hearing.update(virtual_hearing_updates)
       virtual_hearing.establishment.restart!
+      DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
+      DataDogService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
     end
   end
 
