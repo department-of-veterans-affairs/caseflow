@@ -20,6 +20,7 @@ class Veteran < CaseflowRecord
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
   validate :validate_address_line, on: :bgs
   validate :validate_city, on: :bgs
+  validate :validate_birth_date, on: :bgs
 
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
@@ -184,6 +185,12 @@ class Veteran < CaseflowRecord
         errors.add(address.to_sym, "invalid_characters")
       end
     end
+  end
+
+  def validate_birth_date
+    # return if date_of_birth.blank?
+     binding.pry
+     errors.add(:date_of_birth, "missing_leading_zero") unless date_of_birth.match?(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d/)
   end
 
   def validate_city

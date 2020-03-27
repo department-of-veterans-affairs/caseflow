@@ -554,6 +554,7 @@
   "INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER": "Please enter a valid Veteran ID and try again.",
   "INTAKE_SEARCH_ERROR_NOT_ACCESSIBLE": "It looks like you do not have the necessary level of access to view this information. Please alert your manager so they can assign the form to someone else.",
   "INTAKE_SEARCH_ERROR_NOT_MODIFIABLE": "You do not appear to have permission to establish a claim for this Veteran. Often this is because they are an employee at the same station as you. Please alert your manager so they can assign the form to someone else.",
+  "INTAKE_VETERAN_BIRTH_DATE_ERROR": "Please check that the Veteran's birthdate follows the format \"mm/dd/yy\" (please include zeros) in VBMS OR SHARE and try again.",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",

@@ -413,7 +413,7 @@ feature "Intake", :all_dbs do
         end
       end
 
-      context "invalid city characters" do
+      fcontext "invalid city characters" do
         let(:veteran) do
           Generators::Veteran.build(
             file_number: "12341234",
@@ -421,7 +421,8 @@ feature "Intake", :all_dbs do
             ssn: nil,
             country: "USA",
             city: "ÐÐÐÐÐ",
-            address_line1: "1234"
+            address_line1: "1234",
+            # birth_date: "01/1/1953"
           )
         end
 
@@ -431,6 +432,7 @@ feature "Intake", :all_dbs do
           safe_click ".cf-submit.usa-button"
 
           fill_in search_bar_title, with: "12341234"
+          binding.pry
           click_on "Search"
 
           expect(page).to have_current_path("/intake/review_request")

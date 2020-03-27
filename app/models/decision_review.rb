@@ -330,7 +330,7 @@ class DecisionReview < CaseflowRecord
 
   def veteran_invalid_fields
     return unless intake
-
+    binding.pry
     intake.veteran.valid?(:bgs)
     intake.veteran_invalid_fields
   end

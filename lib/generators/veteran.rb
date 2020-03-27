@@ -28,7 +28,7 @@ class Generators::Veteran
         cp_payment_postal_type_code: nil,
         cp_payment_state: "PA",
         cp_payment_zip_code: "15701",
-        date_of_birth: "05/04/1955",
+        date_of_birth: "05/4/1955",
         date_of_death: nil,
         debit_card_ind: "N",
         eft_account_number: nil,

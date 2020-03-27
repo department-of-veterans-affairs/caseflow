@@ -5,7 +5,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
   ERROR_CITY_INVALID_CHARACTERS,
-  ERROR_ADDRESS_TOO_LONG } from '../../../COPY';
+  ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_BIRTH_DATE_ERROR } from '../../../COPY';
 import { css } from 'glamor';
 
 const missingFieldsMessage = (fields) => <p>
@@ -95,7 +95,11 @@ export default class ErrorAlert extends React.PureComponent {
       veteran_not_valid: {
         title: "The Veteran's profile has missing or invalid information required to create an EP.",
         body: invalidVeteranInstructions(this.props.errorData)
-      }
+      },
+      veteran_birth_date_invalid_character: {
+        title: "Please correct the Veteran's birthdate.",
+        body: INTAKE_VETERAN_BIRTH_DATE_ERROR
+      },
     }[this.props.errorCode || 'default'];
 
     return <Alert title={errorObject.title} type="error" lowerMargin>

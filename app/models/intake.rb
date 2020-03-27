@@ -235,6 +235,11 @@ class Intake < CaseflowRecord
     }
   end
 
+  def veteran_birth_date_missing_field
+    binding.pry
+    veteran.errors.details[:date_of_birth]&.any? { |e| e[:error] == "missing_leading_zero" }
+  end
+
   # Optionally implement this methods in subclass
   def validate_detail_on_start
     true
