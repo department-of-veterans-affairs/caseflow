@@ -10,7 +10,7 @@ export const getBlankOptionError = (responseErrorCodes, field) => (
 export const getClaimantError = (responseErrorCodes) => {
   const errorCode = _.get(responseErrorCodes.claimant, 0);
 
-  return CLAIMANT_ERRORS[errorCodes];
+  return CLAIMANT_ERRORS[errorCode];
 };
 
 export const getPageError = (responseErrorCodes) => (
