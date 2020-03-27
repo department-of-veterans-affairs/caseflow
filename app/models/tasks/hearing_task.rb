@@ -87,15 +87,7 @@ class HearingTask < Task
   def ready_for_completion?
     return false if appeal.tasks.open.where(type: HearingTask.name).any?
 
-    if appeal_in_caseflow_location?
-      true
-    else
-      fail HearingTaskNotCompletable
-    end
-  end
-
-  def appeal_in_caseflow_location?
-    appeal.is_a?(Appeal) || appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
+    appeal.tracked_by_caseflow? || fail(HearingTaskNotCompletable)
   end
 
   def set_assignee

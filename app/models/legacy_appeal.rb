@@ -473,9 +473,15 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def in_location?(location)
-    fail UnknownLocationError unless LOCATION_CODES[location]
+    fail(UnknownLocationError, "Unknown location: #{location}") unless LOCATION_CODES[location]
 
     location_code == LOCATION_CODES[location]
+  end
+
+  # Returns whether or not a case is tracked in Caseflow. For legacy appeals,
+  # the location code in VACOLS is used to determine where a case is.
+  def tracked_by_caseflow?
+    in_location? :caseflow
   end
 
   cache_attribute :case_assignment_exists do

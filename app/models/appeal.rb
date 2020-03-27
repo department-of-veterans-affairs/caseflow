@@ -387,6 +387,12 @@ class Appeal < DecisionReview
     RootTask.find_by(appeal: self)
   end
 
+  # Returns whether or not a case is tracked in Caseflow. For AMA appeals,
+  # this is always true.
+  def tracked_by_caseflow?
+    true
+  end
+
   def processed_in_caseflow?
     true
   end
