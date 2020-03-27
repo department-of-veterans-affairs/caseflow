@@ -2554,7 +2554,7 @@ describe LegacyAppeal, :all_dbs do
       let!(:vacols_case) { create(:case, :status_complete) }
 
       it "returns nil" do
-        expect(appeal.assigned_to_location).to eq(nil)
+        expect(appeal.assigned_to_location).to eq(LegacyAppeal::LOCATION_CODES[:closed])
       end
     end
 

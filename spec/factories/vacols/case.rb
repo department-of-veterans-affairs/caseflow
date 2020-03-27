@@ -10,7 +10,6 @@ FactoryBot.define do
     association :folder, factory: :folder, ticknum: :bfkey
 
     bfregoff { "RO18" }
-    bfcurloc { "CASEFLOW" }
 
     trait :assigned do
       transient do
@@ -194,6 +193,7 @@ FactoryBot.define do
 
     trait :status_complete do
       bfmpro { "HIS" }
+      bfcurloc { LegacyAppeal::LOCATION_CODES[:closed] }
     end
 
     trait :status_advance do
