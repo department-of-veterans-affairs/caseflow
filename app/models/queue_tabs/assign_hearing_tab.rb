@@ -37,7 +37,9 @@ class AssignHearingTab
   # chose one. Likewise, we can't use DC if it's the closest regional office unless they
   # chose a central office hearing.
   def legacy_tasks(tasks)
-    central_office_ids = VACOLS::Case.where(bfhr: 1, bfcurloc: "CASEFLOW").pluck(:bfkey)
+    central_office_ids = VACOLS::Case
+      .where(bfhr: 1, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow])
+      .pluck(:bfkey)
     central_office_legacy_appeal_ids = LegacyAppeal.where(vacols_id: central_office_ids).pluck(:id)
 
     if regional_office_key == "C"
