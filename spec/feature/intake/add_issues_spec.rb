@@ -198,6 +198,22 @@ feature "Intake Add Issues Page", :all_dbs do
       find("label", text: "Yes").click
       expect(page).to have_content("Notes")
     end
+
+    context "with covid_timeliness_exemption feature toggle" do
+      before { FeatureToggle.enable!(:covid_timeliness_exemption) }
+      after { FeatureToggle.disable!(:covid_timeliness_exemption) }
+
+      scenario "When the user selects untimely exemption it shows COVID-19 exemption notice" do
+        start_appeal(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("Untimely Issue")
+        expect(page).to_not have_content("Notes")
+        expect(page).to have_content("Issue 1 is an Untimely Issue")
+        find("label", text: "Yes").click
+        expect(page).to have_content("Is the reason for requesting an extension related to COVID-19?")
+      end
+    end
   end
 
   context "show decision date on unidentified issues" do
