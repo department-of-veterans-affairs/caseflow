@@ -9,7 +9,7 @@ import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDateStr } from '../../util/DateUtil';
 import { connect } from 'react-redux';
-import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler.js';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import _ from 'lodash';
 
@@ -66,7 +66,7 @@ export class EstablishClaimNote extends BaseForm {
 
   selectedSpecialIssues() {
     return _.reduce(
-      SPECIAL_ISSUES,
+      enabledSpecialIssues(this.props.featureToggles.special_issues_revamp),
       (result, issue) => {
         if (this.props.specialIssues[issue.specialIssue]) {
           result.push(issue.display);
@@ -231,7 +231,8 @@ EstablishClaimNote.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    specialIssues: state.specialIssues
+    specialIssues: state.specialIssues,
+    featureToggles: state.ui.featureToggles
   };
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-//
+// Fields:
 // node:                     first choice display name; has html
 // display:                  fallback plaintext display name
 // queueDisplay:             fallback plaintext display name, only in Queue
@@ -19,7 +19,7 @@ import React from 'react';
 // queueSection:             for Queue display, which section it goes in
 // queueSectionOrder:        for Queue display, the order to display
 
-const SPECIAL_ISSUES = [
+export const SPECIAL_ISSUES = [
   {
     display: 'Contaminated Water at Camp LeJeune',
     queueDisplay: 'Contaminated water at Camp LeJeune',
@@ -329,7 +329,13 @@ const SPECIAL_ISSUES = [
     nonCompensation: true,
     queueSection: 'issuesOnAppeal',
     queueSectionOrder: 12
-  },
+  }
+];
+
+// Special Issues added in 2020-Spring. Currently seperate from the above in order to be
+// locked to the FeatureToggle :special_issues_revamp down below. After the feature toggle is fully enabled
+// & removed these can be cleanly merged into the above array. Reference PR #13781
+export const NEW_SPECIAL_ISSUES = [
   {
     display: 'Burn Pit',
     queueDisplay: 'Burn Pit',
