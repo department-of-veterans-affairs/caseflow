@@ -39,7 +39,7 @@ const DetailsInputs = (props) => {
     readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast
   );
 
-  function renderVirtualHearingLinkSection() {
+  const renderVirtualHearingLinkSection = () => {
     const virtualHearingLabel = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
       COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
       COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
@@ -69,7 +69,7 @@ const DetailsInputs = (props) => {
     }
 
     return null;
-  }
+  };
 
   return (
     <>

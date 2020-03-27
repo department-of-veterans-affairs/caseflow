@@ -71,7 +71,7 @@ export default class HearingsApp extends React.PureComponent {
     />
   );
   routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
-  
+
   routeForHearingDetails = ({ match: { params }, history }) => (
     <HearingsUserContext.Provider value={this.userPermissionProps()}>
       <HearingDetailsContainer hearingId={params.hearingId} history={history} />
