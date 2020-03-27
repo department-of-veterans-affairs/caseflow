@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AssignHearingDispositionTask, :all_dbs do
+describe AssignHearingDispositionTask do
   describe "#update_from_params for ama appeal" do
     let(:appeal) { create(:appeal) }
     let!(:hearing) { create(:hearing, appeal: appeal) }
@@ -349,7 +349,7 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       context "the appeal is a legacy appeal" do
-        let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
+        let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
