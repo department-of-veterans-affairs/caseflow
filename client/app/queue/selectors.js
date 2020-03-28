@@ -26,7 +26,7 @@ const getTasks = (state) => state.queue.tasks;
 const getAmaTasks = (state) => state.queue.amaTasks;
 const getAppeals = (state) => state.queue.appeals;
 const getAppealDetails = (state) => state.queue.appealDetails;
-const getUserCssId = (state) => state.ui.targetUserCssId || state.ui.userCssId;
+const getUserCssId = (state) => state.ui.targetUser?.css_id || state.ui.userCssId;
 const getAppealId = (state, props) => props.appealId;
 const getActiveOrganizationId = (state) => state.ui.activeOrganization.id;
 const getTaskUniqueId = (state, props) => props.taskId;

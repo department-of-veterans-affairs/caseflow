@@ -17,7 +17,7 @@ import {
   fetchAllAttorneys,
   fetchAmaTasksOfUser
 } from './QueueActions';
-import { setUserId, setTargetUserId, setTargetUserCssId } from './uiReducer/uiActions';
+import { setUserId, setTargetUser } from './uiReducer/uiActions';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import WindowUtil from '../util/WindowUtil';
 
@@ -106,17 +106,13 @@ class QueueLoadingScreen extends React.PureComponent {
 
     if (this.isUserId(userUrlParam)) {
       const targetUserId = parseInt(userUrlParam, 10);
-      this.props.setTargetUserId(targetUserId);
 
       return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) =>
-        this.props.setTargetUserCssId(resp.body.user.css_id));
+        this.props.setTargetUser(resp.body.user));
     }
 
-    const targetCssId = userUrlParam;
-    this.props.setTargetUserCssId(targetCssId);
-
-    return ApiUtil.get(`/user?css_id=${targetCssId}`).then((resp) =>
-      this.props.setTargetUserId(resp.body.user.id));
+    return ApiUtil.get(`/user?css_id=${userUrlParam}`).then((resp) =>
+      this.props.setTargetUser(resp.body.user));
   }
 
   isUserId = (str) => {
@@ -185,8 +181,7 @@ QueueLoadingScreen.propTypes = {
   queueConfig: PropTypes.object,
   setAttorneysOfJudge: PropTypes.func,
   setUserId: PropTypes.func,
-  setTargetUserId: PropTypes.func,
-  setTargetUserCssId: PropTypes.func,
+  setTargetUser: PropTypes.func,
   tasks: PropTypes.object,
   targetUserId: PropTypes.number,
   urlToLoad: PropTypes.string,
@@ -205,7 +200,7 @@ const mapStateToProps = (state) => {
     amaTasks,
     loadedUserId: state.ui.loadedUserId,
     queueConfig: state.queue.queueConfig,
-    targetUserId: state.ui.targetUserId
+    targetUserId: state.ui.targetUser?.id
   };
 };
 
@@ -215,8 +210,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchAllAttorneys,
   fetchAmaTasksOfUser,
   setUserId,
-  setTargetUserId,
-  setTargetUserCssId
+  setTargetUser
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen));
