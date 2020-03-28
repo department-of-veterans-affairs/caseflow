@@ -117,7 +117,6 @@ class QueueLoadingScreen extends React.PureComponent {
       this.props.setTargetUserId(resp.body.user.id));
   }
 
-  // TODO: test for parser error and negative numbers
   isUserId = (str) => {
     try {
       const id = parseInt(str, 10);

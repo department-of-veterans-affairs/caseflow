@@ -37,7 +37,7 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
       scenario "visits 'Assign' view" do
         [judge_one.user.id, judge_one.user.css_id].each do |user_id_path|
           visit "/queue/#{user_id_path}/assign"
-          expect(page).to have_content("Additional access needed")
+          expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
         end
       end
     end

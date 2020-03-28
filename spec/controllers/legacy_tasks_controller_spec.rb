@@ -56,6 +56,31 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     end
   end
 
+  context "GET :user_id/assign" do
+    let(:user) { create(:user) }
+    before do
+      create(:staff, sdomainid: user.css_id)
+      User.authenticate!(user: user)
+    end
+
+    context "CSS_ID in URL is valid" do
+      it "returns 200" do
+        [user.id, user.css_id].each do |user_id_path|
+          get :index, params: { user_id: user_id_path}
+          expect(response.status).to eq 200
+        end
+      end
+    end
+    context "css_id in URL is invalid" do
+      it "returns 400" do
+        [-1, "BAD_CSS_ID"].each do |user_id_path|
+          get :index, params: { user_id: user_id_path}
+          expect(response.status).to eq 400
+        end
+      end
+    end
+  end
+
   describe "POST /legacy_tasks" do
     let(:attorney) { create(:user) }
     let(:user) { create(:user) }
