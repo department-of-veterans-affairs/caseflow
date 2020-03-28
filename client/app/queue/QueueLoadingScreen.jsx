@@ -68,7 +68,6 @@ class QueueLoadingScreen extends React.PureComponent {
 
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === chosenUserId;
     const urlToLoad = this.props.urlToLoad || `/queue/${chosenUserId}`;
-
     if (userQueueLoaded) {
       return Promise.resolve();
     }
@@ -99,25 +98,20 @@ class QueueLoadingScreen extends React.PureComponent {
 
   maybeLoadTargetUserInfo = () => {
     const userUrlParam = this.props.match?.params.userId;
-
     if (!userUrlParam) {
       return Promise.resolve();
     }
 
     if (this.isUserId(userUrlParam)) {
       const targetUserId = parseInt(userUrlParam, 10);
-
       this.props.setTargetUserId(targetUserId);
-      console.error('userId', this.props.userId, 'targetUserId', targetUserId, 'targetCssId', 'TBD');
 
       return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) =>
         this.props.setTargetUserCssId(resp.body.user.css_id));
     }
 
     const targetCssId = userUrlParam;
-
     this.props.setTargetUserCssId(targetCssId);
-    console.error('userId', this.props.userId, 'targetUserId', 'TBD', 'targetCssId', targetCssId);
 
     return ApiUtil.get(`/user?css_id=${targetCssId}`).then((resp) =>
       this.props.setTargetUserId(resp.body.user.id));

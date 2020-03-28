@@ -38,12 +38,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
   render = () => {
     const { userId,
       userCssId,
+      targetUserId,
       targetUserCssId,
       attorneysOfJudge,
       organizations,
       unassignedTasksCount,
       match
     } = this.props;
+
+    const chosenUserId = targetUserId || userId;
 
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
@@ -54,13 +57,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
         <div className="usa-width-one-fourth">
           <ul className="usa-sidenav-list">
             <li>
-              <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
+              <NavLink to={`/queue/${chosenUserId}/assign`} activeClassName="usa-current" exact>
                 Cases to Assign ({unassignedTasksCount})
               </NavLink>
             </li>
             {attorneysOfJudge.
               map((attorney) => <li key={attorney.id}>
-                <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
+                <NavLink to={`/queue/${chosenUserId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
                   {attorney.full_name} ({attorney.active_task_count})
                 </NavLink>
               </li>)}
@@ -71,7 +74,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             exact
             path={match.url}
             title="Cases to Assign | Caseflow"
-            render={() => <UnassignedCasesPage userId={userId.toString()} />}
+            render={() => <UnassignedCasesPage userId={chosenUserId.toString()} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
@@ -91,6 +94,7 @@ JudgeAssignTaskListView.propTypes = {
   resetSaveState: PropTypes.func,
   clearCaseSelectSearch: PropTypes.func,
   match: PropTypes.object,
+  targetUserId: PropTypes.number,
   targetUserCssId: PropTypes.string,
   userCssId: PropTypes.string,
   userId: PropTypes.number,
@@ -98,7 +102,7 @@ JudgeAssignTaskListView.propTypes = {
   organizations: PropTypes.array
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   const {
     queue: {
       attorneysOfJudge
@@ -108,10 +112,10 @@ const mapStateToProps = (state, ownProps) => {
   return {
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
     userCssId: state.ui.userCssId,
+    targetUserId: state.ui.targetUserId,
     targetUserCssId: state.ui.targetUserCssId,
     tasksByUserId: getTasksByUserId(state),
-    attorneysOfJudge,
-    userId: ownProps.match.params.userId
+    attorneysOfJudge
   };
 };
 
