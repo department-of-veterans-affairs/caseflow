@@ -145,8 +145,8 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.all([
         this.maybeLoadAmaQueue(chosenUserId),
         this.maybeLoadLegacyQueue(chosenUserId),
-        this.maybeLoadJudgeData(chosenUserId),
-      ])
+        this.maybeLoadJudgeData(chosenUserId)
+      ]);
     });
   }
 
