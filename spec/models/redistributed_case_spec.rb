@@ -8,6 +8,19 @@ describe RedistributedCase, :all_dbs do
   # legacy_appeal.vacols_id is set to legacy_appeal.case_record["bfkey"]
   subject { RedistributedCase.new(case_id: legacy_appeal.vacols_id, new_distribution: distribution) }
 
+  context ".allow!" do
+    context "when legacy case does not exist" do
+      subject { RedistributedCase.new(case_id: "does-not-exists", new_distribution: distribution) }
+      it "reports case not found error" do
+        error_msg = ""
+        allow(Raven).to receive(:capture_exception) { |exc, _| error_msg = exc.message }
+
+        subject.allow!
+        expect(error_msg).to eq("Case not found")
+      end
+    end
+  end
+
   context ".ok_to_redistribute?" do
     context "when there are no relevant tasks" do
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
