@@ -68,6 +68,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === chosenUserId;
     const urlToLoad = this.props.urlToLoad || `/queue/${chosenUserId}`;
+
     if (userQueueLoaded) {
       return Promise.resolve();
     }
@@ -98,6 +99,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
   maybeLoadTargetUserInfo = () => {
     const userUrlParam = this.props.match?.params.userId;
+
     if (!userUrlParam) {
       return Promise.resolve();
     }
