@@ -155,7 +155,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             create(:appeal, veteran: veteran1, number_of_claimants: 1, veteran_is_not_claimant: true),
             create(:appeal, veteran: veteran2, number_of_claimants: 1),
             create(:appeal, veteran: veteran1, number_of_claimants: 1)
-          ].map { |app| app.tap(&:create_tasks_on_intake_success!) }
+          ].map { |appeal| appeal.tap(&:create_tasks_on_intake_success!) }
         end
 
         let!(:parents) do
@@ -177,10 +177,15 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let!(:case_review1) { create(:attorney_case_review, task_id: tasks.first.id) }
         let!(:case_review2) { create(:attorney_case_review, task_id: tasks.first.id) }
 
-        it "returns a list of active assigned appeals" do
+        before do
           # cancel one, so it does not show up
           Appeal.where(veteran_file_number: veteran1.file_number).last.tasks.each(&:cancelled!)
 
+          # mark all distribution tasks complete so status logic is consistent
+          DistributionTask.all.each(&:completed!)
+        end
+
+        it "returns a list of active assigned appeals" do
           tasks.first.update(assigned_at: 5.days.ago)
           tasks.second.update(assigned_at: 15.days.ago)
           get :list
@@ -215,9 +220,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
 
         it "returns active appeals associated with a file number" do
-          # cancel one, so it does not show up
-          Appeal.where(veteran_file_number: veteran1.file_number).last.tasks.each(&:cancelled!)
-
           headers = { "FILENUMBER" => veteran1.file_number }
           request.headers.merge! headers
           get :list
@@ -295,7 +297,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
-              expect(response_body["attributes"]["status"]).to eq "not_distributed"
+              expect(response_body["attributes"]["status"]).to eq "assigned_to_attorney"
               expect(response_body["attributes"]["veteran_is_deceased"]).to eq false
               expect(response_body["attributes"]["veteran_ssn"]).to eq ama_appeals.first.veteran_ssn
               expect(response_body["attributes"]["veteran_death_date"]).to eq nil
