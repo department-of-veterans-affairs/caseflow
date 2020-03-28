@@ -177,7 +177,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let!(:case_review1) { create(:attorney_case_review, task_id: tasks.first.id) }
         let!(:case_review2) { create(:attorney_case_review, task_id: tasks.first.id) }
 
-        it "returns a list of assigned appeals" do
+        it "returns a list of active assigned appeals" do
+          # cancel one, so it does not show up
+          Appeal.where(veteran_file_number: veteran1.file_number).last.tasks.each(&:cancelled!)
+
           tasks.first.update(assigned_at: 5.days.ago)
           tasks.second.update(assigned_at: 15.days.ago)
           get :list
@@ -211,7 +214,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             .to eq case_review2.document_id
         end
 
-        it "returns appeals associated with a file number" do
+        it "returns active appeals associated with a file number" do
           # cancel one, so it does not show up
           Appeal.where(veteran_file_number: veteran1.file_number).last.tasks.each(&:cancelled!)
 
@@ -254,7 +257,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
         end
 
-        context "and AMA appeal id URL parameter is passed" do
+        context "an AMA appeal id URL parameter is passed" do
           before do
             allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
               ama_appeals.first.claimant.participant_id => {
@@ -292,7 +295,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
-              expect(response_body["attributes"]["status"]).to eq "assigned_to_attorney"
+              expect(response_body["attributes"]["status"]).to eq "not_distributed"
               expect(response_body["attributes"]["veteran_is_deceased"]).to eq false
               expect(response_body["attributes"]["veteran_ssn"]).to eq ama_appeals.first.veteran_ssn
               expect(response_body["attributes"]["veteran_death_date"]).to eq nil
