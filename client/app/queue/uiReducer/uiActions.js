@@ -162,6 +162,11 @@ export const setUserId = (userId) => ({
   payload: { userId }
 });
 
+export const setTargetUserId = (targetUserId) => ({
+  type: ACTIONS.SET_TARGET_USER_ID,
+  payload: { targetUserId }
+});
+
 export const setTargetUserCssId = (targetUserCssId) => ({
   type: ACTIONS.SET_TARGET_USER_CSS_ID,
   payload: { targetUserCssId }
