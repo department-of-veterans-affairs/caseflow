@@ -155,14 +155,14 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             create(:appeal, veteran: veteran1, number_of_claimants: 1, veteran_is_not_claimant: true),
             create(:appeal, veteran: veteran2, number_of_claimants: 1),
             create(:appeal, veteran: veteran1, number_of_claimants: 1)
-          ].map { |app| app.tap { |appeal| appeal.create_tasks_on_intake_success! } }
+          ].map { |app| app.tap(&:create_tasks_on_intake_success!) }
         end
 
         let!(:parents) do
           [
             create(:ama_judge_decision_review_task, appeal: ama_appeals.first, parent: ama_appeals.first.root_task),
             create(:ama_judge_decision_review_task, appeal: ama_appeals.second, parent: ama_appeals.second.root_task),
-            create(:ama_judge_decision_review_task, appeal: ama_appeals.last, parent: ama_appeals.last.root_task),
+            create(:ama_judge_decision_review_task, appeal: ama_appeals.last, parent: ama_appeals.last.root_task)
           ]
         end
 
