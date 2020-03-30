@@ -42,8 +42,7 @@ export const invalidVeteranCharacters = (searchErrorData) => {
       <p>{ERROR_ADDRESS_TOO_LONG}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
-  }
-  else if (searchErrorData.veteranBirthDateMissingCharacter) {
+  } else if (searchErrorData.veteranBirthDateMissingCharacter) {
     return <Fragment>
       <p>{INTAKE_VETERAN_BIRTH_DATE_ERROR}</p>
     </Fragment>;
@@ -98,9 +97,9 @@ export default class ErrorAlert extends React.PureComponent {
         )
       },
       veteran_not_valid: {
-        title: `The Veteran's profile has missing or invalid information required to create an EP`,
+        title: 'The Veteran\'s profile has missing or invalid information required to create an EP',
         body: invalidVeteranInstructions(this.props.errorData)
-      },
+      }
     }[this.props.errorCode || 'default'];
 
     return <Alert title={errorObject.title} type="error" lowerMargin>

@@ -229,7 +229,6 @@ class Intake < CaseflowRecord
     city_invalid_characters = veteran.errors.details[:city]&.any? { |e| e[:error] == "invalid_characters" }
 
     city_too_long = veteran.errors.details[:city]&.any? { |e| e[:error] == "too_long" }
-    binding.pry
 
     veteran_birth_date = veteran.errors.details[:date_of_birth]&.any? { |e| e[:error] == "missing_leading_zero" }
 
