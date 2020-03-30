@@ -138,11 +138,11 @@ fresh:  ## https://github.com/imsky/git-fresh - updates local master to match or
 
 reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
 
-reset-dbs: ## Resets databases
+reset-dbs: ## Resets database schemas
 	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load
 
-seed-dbs:
+seed-dbs:	## Seed databases
 	bundle exec rake local:vacols:seed
 	bundle exec rake spec:setup_vacols
 	bundle exec rake db:seed
