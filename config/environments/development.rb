@@ -83,11 +83,7 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  config.action_mailer.delivery_method = :govdelivery_tms
-  config.action_mailer.govdelivery_tms_settings = {
-    auth_token: ENV["GOVDELIVERY_TOKEN"],
-    api_root: "https://#{ENV["GOVDELIVERY_SERVER"]}"
-  }
+  config.action_mailer.delivery_method = :test
 
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
