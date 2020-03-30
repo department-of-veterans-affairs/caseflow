@@ -83,21 +83,9 @@ class OrganizationQueue extends React.PureComponent {
   columnsFromConfig = (config, tabConfig, tasks) =>
     tabConfig.columns.map((column) => this.createColumnObject(column, config, tasks));
 
-  tasksForTab = (tabName) => {
-    const mapper = {
-      [QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME]: this.props.unassignedTasks,
-      [QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME]: this.props.assignedTasks,
-      [QUEUE_CONFIG.ON_HOLD_TASKS_TAB_NAME]: this.props.onHoldTasks,
-      [QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME]: this.props.completedTasks,
-      [QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME]: this.props.trackingTasks
-    };
-
-    return mapper[tabName];
-  }
-
   taskTableTabFactory = (tabConfig, config) => {
     const { paginationOptions = {} } = this.props;
-    const tasks = this.tasksForTab(tabConfig.name);
+    const tasks = tasksWithAppealsFromRawTasks(tabConfig.tasks);
     const cols = this.columnsFromConfig(config, tabConfig, tasks);
     const totalTaskCount = tabConfig.total_task_count;
 
