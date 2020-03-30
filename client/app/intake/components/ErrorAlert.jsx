@@ -43,6 +43,11 @@ export const invalidVeteranCharacters = (searchErrorData) => {
       <span>{veteranAddressTips}</span>
     </Fragment>;
   }
+  else if (searchErrorData.veteranBirthDateMissingCharacter) {
+    return <Fragment>
+      <p>{INTAKE_VETERAN_BIRTH_DATE_ERROR}</p>
+    </Fragment>;
+  }
 };
 
 export const invalidVeteranInstructions = (searchErrorData) => {
@@ -93,12 +98,8 @@ export default class ErrorAlert extends React.PureComponent {
         )
       },
       veteran_not_valid: {
-        title: "The Veteran's profile has missing or invalid information required to create an EP.",
+        title: `The Veteran's profile has missing or invalid information required to create an EP`,
         body: invalidVeteranInstructions(this.props.errorData)
-      },
-      veteran_birth_date_invalid_character: {
-        title: "Please correct the Veteran's birthdate.",
-        body: INTAKE_VETERAN_BIRTH_DATE_ERROR
       },
     }[this.props.errorCode || 'default'];
 
