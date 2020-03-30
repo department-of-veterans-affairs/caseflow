@@ -203,15 +203,42 @@ feature "Intake Add Issues Page", :all_dbs do
       before { FeatureToggle.enable!(:covid_timeliness_exemption) }
       after { FeatureToggle.disable!(:covid_timeliness_exemption) }
 
-      scenario "When the user selects untimely exemption it shows COVID-19 exemption notice" do
-        start_appeal(veteran, legacy_opt_in_approved: true)
-        visit "/intake/add_issues"
-        click_intake_add_issue
-        add_intake_rating_issue("Untimely Issue")
-        expect(page).to_not have_content("Notes")
-        expect(page).to have_content("Issue 1 is an Untimely Issue")
-        find("label", text: "Yes").click
-        expect(page).to have_content("Is the reason for requesting an extension related to COVID-19?")
+      context "for higher level review" do
+        scenario "When the user selects untimely exemption it shows COVID-19 exemption notice" do
+          start_higher_level_review(veteran)
+          visit "/intake"
+          click_intake_continue
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+          add_intake_rating_issue("Untimely Issue")
+          expect(page).to_not have_content("Notes")
+          expect(page).to have_content("Issue 1 is an Untimely Issue")
+          find("label", text: "Yes").click
+          expect(page).to have_content("Is the reason for requesting an extension related to COVID-19?")
+          find('label[for="untimelyExemptionCovid_true"]').click
+          safe_click ".add-issue"
+          expect(page).to have_content("Untimely Issue")
+          click_on "Establish EP"
+          expect(page).to have_content("Intake completed")
+
+          expect(RequestIssue.size).to eq(1)
+          ri = RequestIssue.first
+          expect(ri.covid_timeliness_exempt).to eq(true)
+        end
+      end
+
+      context "for appeal" do
+        it "does not show COVID-19 exemption notice" do
+          start_appeal(veteran, legacy_opt_in_approved: true)
+          visit "/intake/add_issues"
+          click_intake_add_issue
+          add_intake_rating_issue("Untimely Issue")
+          expect(page).to_not have_content("Notes")
+          expect(page).to have_content("Issue 1 is an Untimely Issue")
+          find("label", text: "Yes").click
+          expect(page).to_not have_content("Is the reason for requesting an extension related to COVID-19?")
+        end
       end
     end
   end

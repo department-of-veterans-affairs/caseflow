@@ -8,6 +8,7 @@ import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 import { useSelector } from 'react-redux';
 
 const UntimelyExemptionModal = ({
+  formType,
   intakeData,
   currentIssue,
   onSubmit,
@@ -22,7 +23,7 @@ const UntimelyExemptionModal = ({
   const [state, setState] = useState({
     untimelyExemption: '',
     untimelyExemptionNotes: '',
-    covidTimelinessExempt: ''
+    untimelyExemptionCovid: ''
   });
 
   const buttons = useMemo(() => {
@@ -73,15 +74,15 @@ const UntimelyExemptionModal = ({
 
         {state.untimelyExemption === 'true' && (
           <>
-            {covidTimelinessExemption && (
+            {covidTimelinessExemption && formType === 'higher_level_review' && (
               <RadioField
-                name="covidTimelinessExempt"
+                name="untimelyExemptionCovid"
                 label="Is the reason for requesting an extension related to COVID-19?"
                 strongLabel
                 vertical
                 options={BOOLEAN_RADIO_OPTIONS}
-                onChange={(covidTimelinessExempt) => setState({ ...state, covidTimelinessExempt })}
-                value={state.covidTimelinessExempt === null ? null : state.covidTimelinessExempt.toString()}
+                onChange={(untimelyExemptionCovid) => setState({ ...state, untimelyExemptionCovid })}
+                value={state.untimelyExemptionCovid === null ? null : state.untimelyExemptionCovid.toString()}
               />
             )}
 
@@ -100,6 +101,7 @@ const UntimelyExemptionModal = ({
 };
 
 UntimelyExemptionModal.propTypes = {
+  formType: PropTypes.string.isRequired,
   intakeData: PropTypes.object.isRequired,
   currentIssue: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
