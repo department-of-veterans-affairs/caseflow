@@ -210,6 +210,7 @@ FactoryBot.define do
     trait :at_judge_review do
       at_attorney_drafting
       after(:create) do |appeal|
+        create(:decision_document, appeal: appeal)
         appeal.tasks.where(type: AttorneyTask.name).first.completed!
       end
     end
