@@ -29,7 +29,6 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
       then(
         (response) => {
           const {
-            tasks: { data: tasks },
             id,
             organization_name: organizationName,
             is_vso: isVso,
@@ -37,7 +36,6 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
           } = response.body;
 
           this.props.setActiveOrganization(id, organizationName, isVso);
-          this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
           this.props.setQueueConfig(queueConfig);
         }
       ).
