@@ -98,6 +98,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidUserId < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "\"#{@user_id}\" is not a valid CSS_ID or user ID"
+    end
+  end
+
   class InvalidAssigneeStatusOnTaskCreate < SerializableError
     def initialize(args)
       @assignee = args[:assignee]
