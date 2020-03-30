@@ -36,13 +36,13 @@ describe Collectors::RequestIssuesStatsCollector do
       expect(stats[metric_name_prefix]).to eq(9)
       expect(stats["#{metric_name_prefix}.vet_count"]).to be_between(1, 9)
 
-      expect(stats["#{metric_name_prefix}.st.removed"]).to eq(2)
+      expect(stats["#{metric_name_prefix}.closed_status.removed"]).to eq(2)
 
-      expect(stats["#{metric_name_prefix}.ben.pension"]).to eq(5)
-      expect(stats["#{metric_name_prefix}.ben.compensation"]).to eq(4)
+      expect(stats["#{metric_name_prefix}.benefit.pension"]).to eq(5)
+      expect(stats["#{metric_name_prefix}.benefit.compensation"]).to eq(4)
 
-      expect(stats["#{metric_name_prefix}.dr.HigherLevelReview"]).to eq(3)
-      expect(stats["#{metric_name_prefix}.dr.SupplementalClaim"]).to eq(6)
+      expect(stats["#{metric_name_prefix}.decision_review.HigherLevelReview"]).to eq(3)
+      expect(stats["#{metric_name_prefix}.decision_review.SupplementalClaim"]).to eq(6)
     end
   end
 end
