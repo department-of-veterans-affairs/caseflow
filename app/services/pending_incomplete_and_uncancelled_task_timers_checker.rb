@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
-class  PendingIncompleteAndUncancelledTaskTimersChecker < DataIntegrityChecker
+class PendingIncompleteAndUncancelledTaskTimersChecker < DataIntegrityChecker
   def call
+    return if pending_timers.count == 0
+
+    add_to_report "#{pending_timers.count} pending and incomplete TaskTimers"
+    pending_timers.each do |timer|
+      add_to_report "TaskTimer.find(#{timer.id})"
+    end
   end
 
   private

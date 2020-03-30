@@ -1,27 +1,19 @@
 # frozen_string_literal: true
 
-RSpec.describe PendingIncompleteAndUncancelledTaskTimersChecker do
+describe PendingIncompleteAndUncancelledTaskTimersChecker do
+  describe "#call" do
+    let(:task) { create(:task, :on_hold) }
+    let!(:task_timer) do
+      create(:task_timer, task: task, created_at: 5.days.ago, submitted_at: 6.days.ago)
+    end
+    let!(:task_timer2) { create(:task_timer, task: task) }
 
-  # Create Task Time which should qualify
-  let(:task) { create(:generic_task, :on_hold) }
-  let(:task_timer) { TaskTimer.create!(task: task)}
+    it "sends a message to Slack when there are pending incomplete and uncancelled Task Timers" do
+      subject.call
 
-  before do
-    created_at = 5.days.ago
-    submitted_at = 6.days.ago
-
-    task_timer.update!(created_at: created_at, submitted_at: submitted_at, canceled_at: null, processed_at: null)
-  end
-
-  it "sends a message to Slack when there are pending incomplete and uncancelled Task Timers" do
-
-    checker = PendingIncompleteAndUncancelledTaskTimersChecker.new
-    checker.call
-
-    expect(checker.report?).to eq(True)
-    expect(checker.report).to contains("1 pending and incomplete")
-    expect(checker.slack_channel).to eq("appeals-queue-alerts")
-
-    # see whether SlackService received message
+      expect(subject.report?).to eq(true)
+      expect(subject.report).to match("1 pending and incomplete")
+      expect(subject.slack_channel).to eq("#appeals-job-alerts")
+    end
   end
 end
