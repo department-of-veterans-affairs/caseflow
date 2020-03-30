@@ -1,8 +1,6 @@
 import { update } from '../../util/ReducerUtil';
 
 const updateFromServerFeatures = (state, featureToggles) => {
-  console.log('updateFromServerFeatures', featureToggles);
-
   return update(state, {
     useAmaActivationDate: {
       $set: Boolean(featureToggles.useAmaActivationDate)

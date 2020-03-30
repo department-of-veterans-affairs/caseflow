@@ -222,9 +222,9 @@ feature "Intake Add Issues Page", :all_dbs do
           click_on "Establish EP"
           expect(page).to have_content("Intake completed")
 
-          expect(RequestIssue.size).to eq(1)
-          ri = RequestIssue.first
-          expect(ri.covid_timeliness_exempt).to eq(true)
+          expect(RequestIssue.all.size).to eq(1)
+          untimely_issue = RequestIssue.first
+          expect(untimely_issue.covid_timeliness_exempt).to eq(true)
         end
       end
 

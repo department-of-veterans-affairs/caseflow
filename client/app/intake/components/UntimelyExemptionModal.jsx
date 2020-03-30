@@ -50,7 +50,7 @@ const UntimelyExemptionModal = ({
     }
 
     return btns;
-  }, [cancelText, onCancel, submitText, state.untimelyExemption, skipText, onSkip]);
+  }, [cancelText, onCancel, submitText, skipText, onSkip, state]);
 
   const issueNumber = (intakeData.addedIssues || []).length + 1;
   const issue = currentIssue;
@@ -68,7 +68,7 @@ const UntimelyExemptionModal = ({
           strongLabel
           vertical
           options={BOOLEAN_RADIO_OPTIONS}
-          onChange={(untimelyExemption) => setState({ ...state, untimelyExemption })}
+          onChange={(val) => setState({ ...state, untimelyExemption: val })}
           value={state.untimelyExemption === null ? null : state.untimelyExemption.toString()}
         />
 
@@ -81,7 +81,7 @@ const UntimelyExemptionModal = ({
                 strongLabel
                 vertical
                 options={BOOLEAN_RADIO_OPTIONS}
-                onChange={(untimelyExemptionCovid) => setState({ ...state, untimelyExemptionCovid })}
+                onChange={(val) => setState({ ...state, untimelyExemptionCovid: val })}
                 value={state.untimelyExemptionCovid === null ? null : state.untimelyExemptionCovid.toString()}
               />
             )}
