@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationController < ApplicationBaseController
+  include AuthenticatedControllerAction
+
   before_action :set_application
   around_action :set_timezone
   before_action :setup_fakes
@@ -201,18 +203,6 @@ class ApplicationController < ApplicationBaseController
         "detail": "Required parameters are missing: #{array_of_keys.join(' ,')}"
       ]
     }, status: :bad_request
-  end
-
-  def set_raven_user
-    if current_user && ENV["SENTRY_DSN"]
-      # Raven sends error info to Sentry.
-      Raven.user_context(
-        email: current_user.email,
-        css_id: current_user.css_id,
-        station_id: current_user.station_id,
-        regional_office: current_user.regional_office
-      )
-    end
   end
 
   def set_timezone
