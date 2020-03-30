@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class Idt::Api::V1::BaseController < ActionController::Base
+  include AuthenticatedControllerAction
+
   protect_from_forgery with: :exception
   before_action :validate_token
   before_action :set_application
+  before_action :set_raven_user
 
   # :nocov:
   rescue_from StandardError do |error|
@@ -46,6 +49,9 @@ class Idt::Api::V1::BaseController < ActionController::Base
       user
     end
   end
+
+  # set_raven_user via AuthenticatedControllerAction expects a current_user
+  alias current_user user
 
   def set_application
     RequestStore.store[:application] = "idt"
