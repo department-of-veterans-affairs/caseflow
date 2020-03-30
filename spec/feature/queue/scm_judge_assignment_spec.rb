@@ -185,8 +185,8 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
 
         step "cancel an AttorneyTask" do
           click_dropdown(propmt: "Select an action...", text: "Cancel task")
+          expect(page).to have_content(format(COPY::CANCEL_TASK_MODAL_DETAIL, judge_two.user.full_name))
           click_on("Submit")
-
           expect(page).to have_content(
             "Task for #{appeal.veteran.first_name} #{appeal.veteran.last_name}'s case has been cancelled"
           )

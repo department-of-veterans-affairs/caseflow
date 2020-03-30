@@ -27,7 +27,10 @@ class TaskActionRepository
       assigner_name = task.assigned_by&.full_name || "the assigner"
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, assigner_name),
+        modal_body: format(
+          COPY::CANCEL_TASK_MODAL_DETAIL,
+          task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : assigner_name
+        ),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
         message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigner_name)
       }
