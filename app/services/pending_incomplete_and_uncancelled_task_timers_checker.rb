@@ -15,5 +15,4 @@ class PendingIncompleteAndUncancelledTaskTimersChecker < DataIntegrityChecker
   def pending_timers
     @pending_timers ||= PendingIncompleteAndUncancelledTaskTimersQuery.new.call
   end
-
 end
