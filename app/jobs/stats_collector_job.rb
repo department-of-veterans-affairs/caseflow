@@ -4,6 +4,9 @@
 # Runs daily stats collection every day, in the early morning.
 # Runs weekly stats collection every Sunday, in the early morning.
 # Runs monthly stats collection every 1st day of the month, in the early morning.
+#
+# This is a harness that can be extended with collectors that plug into `*_COLLECTORS` hashes.
+# See Collectors::RequestIssuesStatsCollector as an example.
 class StatsCollectorJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
