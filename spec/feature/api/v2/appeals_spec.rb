@@ -135,8 +135,12 @@ describe "Appeals API v2", :all_dbs, type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      allow(ApiKey).to receive(:authorize).and_raise("Much random error")
-      expect(Raven).to receive(:capture_exception)
+      random_error = StandardError.new("Much random error")
+
+      allow(ApiKey).to receive(:authorize).and_raise(random_error)
+      expect(Raven).to receive(:capture_exception).with(
+        random_error, hash_including(extra: hash_including(vbms_id: "444444444S"))
+      )
       expect(Raven).to receive(:last_event_id).and_return("a1b2c3")
 
       get "/api/v2/appeals", headers: headers
