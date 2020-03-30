@@ -138,14 +138,15 @@ fresh:  ## https://github.com/imsky/git-fresh - updates local master to match or
 
 reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
 
-reset-dbs: ## Resets database schemas
+reset-dbs: ## Resets Caseflow and ETL database schemas
 	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load
 
-seed-dbs:	## Seed databases
+seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed
 	bundle exec rake spec:setup_vacols
 	bundle exec rake db:seed
+	DB=etl bundle exec rake db:seed
 
 enable-feature-flags: ## enable all feature flags
 	bundle exec rails runner scripts/enable_features_dev.rb
