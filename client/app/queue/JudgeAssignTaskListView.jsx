@@ -113,7 +113,7 @@ const mapStateToProps = (state) => {
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
     userCssId: state.ui.userCssId,
     targetUserId: state.ui.targetUser?.id,
-    targetUserCssId: state.ui.targetUser?.css_id,
+    targetUserCssId: state.ui.targetUser?.cssId,
     tasksByUserId: getTasksByUserId(state),
     attorneysOfJudge
   };

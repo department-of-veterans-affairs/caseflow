@@ -161,7 +161,15 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.SET_TARGET_USER:
     return update(state, {
-      targetUser: { $set: action.payload.targetUser }
+      targetUser: {
+        id: { $set: action.payload.targetUser.id },
+        cssId: { $set: action.payload.targetUser.css_id },
+        fullName: { $set: action.payload.targetUser.full_name },
+        displayName: { $set: action.payload.targetUser.display_name },
+        status: { $set: action.payload.targetUser.status },
+        roles: { $set: action.payload.targetUser.roles },
+        selectedRegionalOffice: { $set: action.payload.targetUser.selected_regional_office }
+      }
     });
   case ACTIONS.SET_USER_IS_VSO_EMPLOYEE:
     return update(state, {
