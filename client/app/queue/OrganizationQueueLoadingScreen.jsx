@@ -7,7 +7,6 @@ import ApiUtil from '../util/ApiUtil';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { extractAppealsAndAmaTasks } from './utils';
 
 import {
   onReceiveQueue,
