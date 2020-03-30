@@ -451,7 +451,7 @@ feature "Intake", :all_dbs do
             ssn: nil,
             country: "USA",
             address_line1: "1234",
-            birth_date: "01/1/1953"
+            date_of_birth: "01/1/1953"
           )
         end
 
