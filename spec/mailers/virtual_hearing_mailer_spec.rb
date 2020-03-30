@@ -66,13 +66,13 @@ describe VirtualHearingMailer do
 
   shared_examples_for "sends an email" do
     it "sends an email" do
-      expect { subject.deliver_now }.to change { ActionMailer::Base.deliveries.count }.by 1
+      expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
     end
   end
 
   shared_examples_for "doesn't send an email" do
     it "doesn't send an email" do
-      expect { subject.deliver_now }.to_not(change { ActionMailer::Base.deliveries.count })
+      expect { subject.deliver_now! }.to_not(change { ActionMailer::Base.deliveries.count })
     end
   end
 
