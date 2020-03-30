@@ -34,7 +34,8 @@ export const initialState = {
   hearingDay: {
     hearingDate: null,
     regionalOffice: null
-  }
+  },
+  targetUser : {}
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
