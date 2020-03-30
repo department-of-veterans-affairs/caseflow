@@ -88,7 +88,7 @@ describe QueueConfig, :postgres do
 
       context "with a non-VSO organization assignee" do
         it "does not include a tab for tracking tasks" do
-          expect(subject.length).to eq(3)
+          expect(subject.length).to eq(4)
           expect(subject.pluck(:name)).to_not include(Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME)
         end
 
