@@ -24,6 +24,7 @@ detectors:
       - TaskSorter#sort_requires_case_norm?
       - VBMSCaseflowLogger#log
       - Veteran
+      - JudgeDecisionReviewTask#additional_available_actions
   UncommunicativeVariableName:
     exclude:
       - Address
