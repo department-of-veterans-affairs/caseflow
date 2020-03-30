@@ -24,12 +24,12 @@ class TaskActionRepository
     end
 
     def cancel_task_data(task, _user = nil)
-      assigner_name = task.assigned_by&.full_name || "the assigner"
+      return_to_name = task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : task_assigner_name(task)
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, assigner_name),
+        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigner_name)
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
       }
     end
 
@@ -47,10 +47,7 @@ class TaskActionRepository
         modal_title: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE,
         modal_body: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL,
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(
-          COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL,
-          task.assigned_by&.full_name || "the assigner"
-        )
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, task_assigner_name(task))
       }
     end
 
@@ -118,10 +115,10 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_attorney_data(task, _user = nil)
+    def assign_to_attorney_data(task, user)
       {
         selected: nil,
-        options: nil,
+        options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
     end
@@ -332,6 +329,10 @@ class TaskActionRepository
     end
 
     private
+
+    def task_assigner_name(task)
+      task.assigned_by&.full_name || "the assigner"
+    end
 
     def users_to_options(users)
       users.map do |user|
