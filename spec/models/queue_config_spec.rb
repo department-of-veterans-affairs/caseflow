@@ -117,7 +117,7 @@ describe QueueConfig, :postgres do
           end
         end
 
-        context "when the organization uses the task pages API and has tasks assigned to it" do
+        context "when the organization has assigned tasks" do
           let!(:unassigned_tasks) { create_list(:ama_task, 4, assigned_to: assignee) }
           let!(:assigned_tasks) do
             create_list(:ama_task, 2, parent: create(:ama_task, assigned_to: assignee))
@@ -126,8 +126,6 @@ describe QueueConfig, :postgres do
             create_list(:ama_task, 2, :on_hold, parent: create(:ama_task, assigned_to: assignee))
           end
           let!(:completed_tasks) { create_list(:ama_task, 7, :completed, assigned_to: assignee) }
-
-          before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
 
           it "returns the tasks in the correct tabs" do
             tabs = subject

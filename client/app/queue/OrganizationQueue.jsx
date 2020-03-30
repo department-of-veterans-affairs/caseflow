@@ -59,19 +59,18 @@ class OrganizationQueue extends React.PureComponent {
     return config;
   }
 
-  filterValuesForColumn = (column, config) =>
-    config.use_task_pages_api && column && column.filterable && column.filter_options;
+  filterValuesForColumn = (column) => column && column.filterable && column.filter_options;
 
   createColumnObject = (column, config, tasks) => {
     const functionForColumn = {
       badgesColumn: badgesColumn(tasks),
       detailsColumn: detailsColumn(tasks, false, config.userRole),
-      taskColumn: taskColumn(tasks, this.filterValuesForColumn(column, config)),
-      regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(column, config)),
-      typeColumn: typeColumn(tasks, this.filterValuesForColumn(column, config), false),
-      assignedToColumn: assignedToColumn(tasks, this.filterValuesForColumn(column, config)),
+      taskColumn: taskColumn(tasks, this.filterValuesForColumn(column)),
+      regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(column)),
+      typeColumn: typeColumn(tasks, this.filterValuesForColumn(column), false),
+      assignedToColumn: assignedToColumn(tasks, this.filterValuesForColumn(column)),
       completedToNameColumn: completedToNameColumn(),
-      docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(column, config), false),
+      docketNumberColumn: docketNumberColumn(tasks, this.filterValuesForColumn(column), false),
       daysWaitingColumn: daysWaitingColumn(false),
       daysOnHoldColumn: daysOnHoldColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
@@ -98,11 +97,9 @@ class OrganizationQueue extends React.PureComponent {
 
   taskTableTabFactory = (tabConfig, config) => {
     const { paginationOptions = {} } = this.props;
-    const tasks = config.use_task_pages_api ?
-      tasksWithAppealsFromRawTasks(tabConfig.tasks) :
-      this.tasksForTab(tabConfig.name);
+    const tasks = this.tasksForTab(tabConfig.name);
     const cols = this.columnsFromConfig(config, tabConfig, tasks);
-    const totalTaskCount = config.use_task_pages_api ? tabConfig.total_task_count : tasks.length;
+    const totalTaskCount = tabConfig.total_task_count;
 
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
@@ -114,12 +111,12 @@ class OrganizationQueue extends React.PureComponent {
           columns={cols}
           rowObjects={tasks}
           getKeyForRow={(_rowNumber, task) => task.uniqueId}
-          useTaskPagesApi={config.use_task_pages_api}
           casesPerPage={config.tasks_per_page}
           numberOfPages={tabConfig.task_page_count}
           totalTaskCount={totalTaskCount}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
           tabPaginationOptions={paginationOptions.tab === tabConfig.name && paginationOptions}
+          useTaskPagesApi
           enablePagination
         />
       </React.Fragment>
