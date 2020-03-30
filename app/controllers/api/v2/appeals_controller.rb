@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V2::AppealsController < Api::ApplicationController
-  before_action :set_raven_context
-
   def index
     api_key.api_views.create(vbms_id: vbms_id, source: source)
     render json: json_appeals
@@ -16,8 +14,8 @@ class Api::V2::AppealsController < Api::ApplicationController
 
   private
 
-  def set_raven_context
-    Raven.extra_context(veteran_file_number: veteran_file_number, vbms_id: vbms_id, source: source)
+  def raven_extra_context
+    { veteran_file_number: veteran_file_number, vbms_id: vbms_id, source: source }
   end
 
   def ssn
