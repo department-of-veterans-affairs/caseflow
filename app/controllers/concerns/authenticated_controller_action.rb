@@ -4,7 +4,9 @@ module AuthenticatedControllerAction
   extend ActiveSupport::Concern
 
   def set_raven_user
-    if current_user && ENV["SENTRY_DSN"]
+    return unless sentry_reporting_is_live?
+
+    if current_user
       # Raven sends error info to Sentry.
       Raven.user_context(
         email: current_user.email,
@@ -13,5 +15,9 @@ module AuthenticatedControllerAction
         regional_office: current_user.regional_office
       )
     end
+  end
+
+  def sentry_reporting_is_live?
+    ENV["SENTRY_DSN"]
   end
 end

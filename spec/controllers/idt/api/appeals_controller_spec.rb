@@ -623,6 +623,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
 
     context "when appeal has already been outcoded" do
+      before do
+        allow(controller).to receive(:sentry_reporting_is_live?) { true }
+        allow(Raven).to receive(:user_context) do |args|
+          @raven_user = args
+        end
+      end
+
       it "throws an error" do
         BvaDispatchTask.create_from_root_task(root_task)
         post :outcode, params: params
@@ -636,6 +643,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                         "Cannot outcode the same appeal and task combination more than once"
 
         expect(response_detail).to eq error_message
+        expect(@raven_user[:css_id]).to eq(user.css_id)
       end
     end
   end
