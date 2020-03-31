@@ -16,6 +16,9 @@ class Rating
   class << self
     def fetch_all(participant_id)
       fetch_timely(participant_id: participant_id, from_date: (Time.zone.today - TWO_LIFETIMES_DAYS))
+
+    rescue BGS::NoRatingsExistForVeteran
+      []
     end
 
     def fetch_timely(participant_id:, from_date:)

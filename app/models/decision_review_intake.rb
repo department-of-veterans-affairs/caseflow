@@ -18,7 +18,7 @@ class DecisionReviewIntake < Intake
       veteranValid: veteran&.valid?(:bgs),
       veteranInvalidFields: veteran_invalid_fields
     )
-  rescue Rating::NilRatingProfileListError, Rating::LockedRatingError
+  rescue Rating::NilRatingProfileListError, PromulgatedRating::LockedRatingError
     cancel!(reason: "system_error")
     raise
   end
