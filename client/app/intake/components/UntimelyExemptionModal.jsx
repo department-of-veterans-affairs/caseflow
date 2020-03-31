@@ -7,7 +7,33 @@ import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 import { useSelector } from 'react-redux';
 
-const UntimelyExemptionModal = ({
+const generateButtons = ({ cancelText, onCancel, onSubmit, submitText, skipText, onSkip, state, isInvalid }) => {
+  const btns = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+      name: cancelText,
+      onClick: onCancel
+    },
+    {
+      classNames: ['usa-button', 'add-issue'],
+      name: submitText,
+      onClick: () => onSubmit({ ...state }),
+      disabled: isInvalid()
+    }
+  ];
+
+  if (onSkip) {
+    btns.push({
+      classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
+      name: skipText,
+      onClick: onSkip
+    });
+  }
+
+  return btns;
+};
+
+export const UntimelyExemptionModal = ({
   formType,
   intakeData,
   currentIssue,
@@ -26,33 +52,24 @@ const UntimelyExemptionModal = ({
     untimelyExemptionCovid: ''
   });
 
-  const isInvalid = () => state.untimelyExemption || (state.untimelyExemption && !state.untimelyExemptionCovid);
+  const isInvalid = () => {
+    return !state.untimelyExemption || (state.untimelyExemption === 'true' && !state.untimelyExemptionCovid);
+  };
 
-  const buttons = useMemo(() => {
-    const btns = [
-      {
-        classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-        name: cancelText,
-        onClick: onCancel
-      },
-      {
-        classNames: ['usa-button', 'add-issue'],
-        name: submitText,
-        onClick: () => onSubmit({ ...state }),
-        disabled: isInvalid()
-      }
-    ];
-
-    if (onSkip) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: skipText,
-        onClick: onSkip
-      });
-    }
-
-    return btns;
-  }, [cancelText, onCancel, submitText, skipText, onSkip, state]);
+  const buttons = useMemo(
+    () =>
+      generateButtons({
+        cancelText,
+        onCancel,
+        onSubmit,
+        submitText,
+        skipText,
+        onSkip,
+        state,
+        isInvalid
+      }),
+    [cancelText, onCancel, submitText, skipText, onSkip, state]
+  );
 
   const issueNumber = (intakeData.addedIssues || []).length + 1;
   const issue = currentIssue;
