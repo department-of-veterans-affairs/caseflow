@@ -18,11 +18,11 @@ class StatsCollectorJob < CaseflowJob
   METRIC_GROUP_NAME = name.underscore
 
   DAILY_COLLECTORS = {
-    "unidentified_request_issues_with_contention" => Collectors::RequestIssuesStatsCollector
   }.freeze
   WEEKLY_COLLECTORS = {
   }.freeze
   MONTHLY_COLLECTORS = {
+    "unidentified_request_issues_with_contention" => Collectors::RequestIssuesStatsCollector
   }.freeze
 
   def perform
