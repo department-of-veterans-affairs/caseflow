@@ -20,7 +20,7 @@ class AttorneyTask < Task
     if can_be_moved_by_user?(user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+        Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
       ]
     end
 
@@ -30,7 +30,7 @@ class AttorneyTask < Task
       (Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
       Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ].compact
   end
 
