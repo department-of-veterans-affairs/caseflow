@@ -26,7 +26,7 @@ const UntimelyExemptionModal = ({
     untimelyExemptionCovid: ''
   });
 
-  const isInvalid = () => !state.untimelyExemption || (state.untimelyExemption && !state.untimelyExemptionCovid);
+  const isInvalid = () => state.untimelyExemption || (state.untimelyExemption && !state.untimelyExemptionCovid);
 
   const buttons = useMemo(() => {
     const btns = [
