@@ -5,6 +5,7 @@ class PendingIncompleteAndUncancelledTaskTimersChecker < DataIntegrityChecker
     return if pending_timers.count == 0
 
     add_to_report "#{pending_timers.count} pending and incomplete TaskTimers"
+    add_to_report "Verify TaskTimerJob is running and check each TaskTimer.error"
     pending_timers.each do |timer|
       add_to_report "TaskTimer.find(#{timer.id})"
     end
