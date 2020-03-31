@@ -74,11 +74,11 @@ class SelectSpecialIssuesView extends React.PureComponent {
       ...otherProps
     } = this.props;
     let sections = [
-      specialIssueFilters.aboutSection(),
-      specialIssueFilters.residenceSection(),
-      specialIssueFilters.benefitTypeSection(),
-      specialIssueFilters.issuesOnAppealSection(),
-      specialIssueFilters.dicOrPensionSection()];
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).aboutSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).residenceSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).benefitTypeSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).issuesOnAppealSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).dicOrPensionSection()];
 
     // format the section the way the CheckBoxGroup expects it, and sort according to the mock
     sections = sections.map((section) => {

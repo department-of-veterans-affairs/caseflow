@@ -26,11 +26,11 @@ export class EstablishClaimEmail extends BaseForm {
 
     let specialIssuesStatus = this.props.specialIssues;
 
-    const selectedSpecialIssue = enabledSpecialIssues(this.props.featureToggles.special_issues_revamp).map((issue) =>
+    const selectedSpecialIssue = enabledSpecialIssues(this.props.featureToggles.special_issues_revamp).map((issue) => {
       if (specialIssuesStatus[issue.specialIssue]) {
         return issue.display
       }
-    )
+    })
 
     // Add an and if there are multiple issues so that the last element
     // in the list has an and before it.
