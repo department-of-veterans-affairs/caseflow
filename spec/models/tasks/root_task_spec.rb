@@ -198,9 +198,7 @@ describe RootTask, :postgres do
             :aod_motion_mail_task,
             :reconsideration_motion_mail_task,
             :vacate_motion_mail_task,
-            :congressional_interest_mail_task,
-            :judge_address_motion_to_vacate_task,
-            :abstract_motion_to_vacate_task
+            :congressional_interest_mail_task
           ].sample
         end
 
