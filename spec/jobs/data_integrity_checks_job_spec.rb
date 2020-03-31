@@ -26,11 +26,35 @@ describe DataIntegrityChecksJob do
       allow(checker).to receive(:report).and_call_original
     end
     allow(slack_service).to receive(:send_notification).and_return(true)
+
+    @emitted_gauges = []
+    allow(DataDogService).to receive(:emit_gauge) do |args|
+      @emitted_gauges.push(args)
+    end
   end
 
   describe "#perform" do
+    subject { described_class.perform_now }
+
+    it "updates DataDog" do
+      subject
+
+      expect(@emitted_gauges).to include(
+        app_name: "caseflow_job",
+        metric_group: "data_integrity_checks_job",
+        metric_name: "runtime",
+        metric_value: anything
+      )
+      expect(@emitted_gauges).to include(
+        app_name: "caseflow_job_segment",
+        metric_group: "expired_async_jobs_checker",
+        metric_name: "runtime",
+        metric_value: anything
+      )
+    end
+
     it "does not send slack notifications unless there is a report" do
-      described_class.perform_now
+      subject
 
       expect(expired_async_jobs_checker).to have_received(:call).once
       expect(expired_async_jobs_checker).to have_received(:report?).once
@@ -57,7 +81,7 @@ describe DataIntegrityChecksJob do
       end
 
       it "sends slack notification if there is a report" do
-        described_class.perform_now
+        subject
 
         expect(expired_async_jobs_checker).to have_received(:call).once
         expect(expired_async_jobs_checker).to have_received(:report?).once

@@ -153,28 +153,39 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let!(:ama_appeals) do
           [
             create(:appeal, veteran: veteran1, number_of_claimants: 1, veteran_is_not_claimant: true),
-            create(:appeal, veteran: veteran2, number_of_claimants: 1)
-          ]
+            create(:appeal, veteran: veteran2, number_of_claimants: 1),
+            create(:appeal, veteran: veteran1, number_of_claimants: 1)
+          ].map { |appeal| appeal.tap(&:create_tasks_on_intake_success!) }
         end
 
         let!(:parents) do
           [
-            create(:ama_judge_decision_review_task, appeal: ama_appeals.first),
-            create(:ama_judge_decision_review_task, appeal: ama_appeals.second)
+            create(:ama_judge_decision_review_task, appeal: ama_appeals.first, parent: ama_appeals.first.root_task),
+            create(:ama_judge_decision_review_task, appeal: ama_appeals.second, parent: ama_appeals.second.root_task),
+            create(:ama_judge_decision_review_task, appeal: ama_appeals.last, parent: ama_appeals.last.root_task)
           ]
         end
 
         let!(:tasks) do
           [
             create(:ama_attorney_task, assigned_to: user, parent: parents.first),
-            create(:ama_attorney_task, assigned_to: user, parent: parents.second)
+            create(:ama_attorney_task, assigned_to: user, parent: parents.second),
+            create(:ama_attorney_task, assigned_to: user, parent: parents.last)
           ]
         end
 
         let!(:case_review1) { create(:attorney_case_review, task_id: tasks.first.id) }
         let!(:case_review2) { create(:attorney_case_review, task_id: tasks.first.id) }
 
-        it "returns a list of assigned appeals" do
+        before do
+          # cancel one, so it does not show up
+          Appeal.where(veteran_file_number: veteran1.file_number).last.tasks.each(&:cancelled!)
+
+          # mark all distribution tasks complete so status logic is consistent
+          DistributionTask.all.each(&:completed!)
+        end
+
+        it "returns a list of active assigned appeals" do
           tasks.first.update(assigned_at: 5.days.ago)
           tasks.second.update(assigned_at: 15.days.ago)
           get :list
@@ -208,8 +219,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             .to eq case_review2.document_id
         end
 
-        it "returns appeals associated with a file number" do
-          headers = { "FILENUMBER" => tasks.first.appeal.veteran_file_number }
+        it "returns active appeals associated with a file number" do
+          headers = { "FILENUMBER" => veteran1.file_number }
           request.headers.merge! headers
           get :list
           expect(response.status).to eq 200
@@ -248,7 +259,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
         end
 
-        context "and AMA appeal id URL parameter is passed" do
+        context "an AMA appeal id URL parameter is passed" do
           before do
             allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
               ama_appeals.first.claimant.participant_id => {
@@ -612,6 +623,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
 
     context "when appeal has already been outcoded" do
+      before do
+        allow(controller).to receive(:sentry_reporting_is_live?) { true }
+        allow(Raven).to receive(:user_context) do |args|
+          @raven_user = args
+        end
+      end
+
       it "throws an error" do
         BvaDispatchTask.create_from_root_task(root_task)
         post :outcode, params: params
@@ -625,6 +643,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                         "Cannot outcode the same appeal and task combination more than once"
 
         expect(response_detail).to eq error_message
+        expect(@raven_user[:css_id]).to eq(user.css_id)
       end
     end
   end

@@ -172,7 +172,7 @@ class ExternalApi::BGSService
   # We cache at 2 levels: the boolean check per user, and the veteran record itself.
   # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
   def can_access?(vbms_id)
-    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 24.hours) do
+    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 2.hours) do
       DBService.release_db_connections
 
       MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
