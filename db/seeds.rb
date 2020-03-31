@@ -893,7 +893,7 @@ class SeedDB
       docket_type: Constants.AMA_DOCKETS.direct_review,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
-        :request_issue, 2, contested_issue_description: description, notes: notes
+        :request_issue, 2, :rating, contested_issue_description: description, notes: notes
       )
     )
   end
@@ -1308,7 +1308,7 @@ class SeedDB
       docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
-        :request_issue, 1, contested_issue_description: description, notes: notes
+        :request_issue, 1, :rating, contested_issue_description: description, notes: notes
       )
     )
     @ama_appeals << FactoryBot.create(
@@ -1319,7 +1319,7 @@ class SeedDB
       docket_type: Constants.AMA_DOCKETS.hearing,
       closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
-        :request_issue, 8, contested_issue_description: description, notes: notes
+        :request_issue, 8, :rating, contested_issue_description: description, notes: notes
       )
     )
 

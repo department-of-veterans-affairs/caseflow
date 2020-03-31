@@ -378,6 +378,9 @@
   "SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION": "Issues on Appeal: ",
   "SPECIAL_ISSUES_DIC_OR_PENSION_SECTION": "Dependency and Indemnity Compensation (DIC) or Pension: ",
 
+  "SPECIAL_ISSUES_NONE_CHOSEN_TITLE": "Choose at least one.",
+  "SPECIAL_ISSUES_NONE_CHOSEN_DETAIL": "If no special issues apply to this case, please confirm by selecting \"No special issues\"",
+
   "ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE": "Update Advanced on Docket (AOD) Status",
   "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN": "AOD Motion Disposition",
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN": "Reason",
@@ -601,6 +604,10 @@
   "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
   "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
   "INTAKE_LEGACY_OPT_IN_MESSAGE": "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?",
+
+  "ERROR_ADDRESS_LINE_INVALID_CHARACTERS": "This Veteran's address has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
+  "ERROR_CITY_INVALID_CHARACTERS": "This Veteran's city has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
+  "ERROR_ADDRESS_TOO_LONG": "This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than 20 characters (including spaces) then try again",
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",

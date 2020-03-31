@@ -50,6 +50,8 @@ build(){
   echo -e "\tCleaning Up Old dependencies and Bring Required Packages"
   rm -rf $build_facols_dir && mkdir $build_facols_dir
 
+  parent_dir=$PWD
+
   cp $parent_dir/Dockerfile $parent_dir/setup_vacols.sql $parent_dir/vacols_copy_* $build_facols_dir
 
   echo -e "\tDownloading FACOLS Dependencies..."
