@@ -6,6 +6,7 @@ import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 import { useSelector } from 'react-redux';
+import Checkbox from '../../components/Checkbox';
 
 const generateButtons = ({ cancelText, onCancel, onSubmit, submitText, skipText, onSkip, state, isInvalid }) => {
   const btns = [
@@ -97,12 +98,9 @@ export const UntimelyExemptionModal = ({
         {state.untimelyExemption === 'true' && (
           <>
             {covidTimelinessExemption && formType === 'higher_level_review' && (
-              <RadioField
+              <Checkbox
                 name="untimelyExemptionCovid"
-                label="Is the reason for requesting an extension related to COVID-19?"
-                strongLabel
-                vertical
-                options={BOOLEAN_RADIO_OPTIONS}
+                label="This request is related to COVID-19"
                 onChange={(val) => setState({ ...state, untimelyExemptionCovid: val })}
                 value={state.untimelyExemptionCovid === null ? null : state.untimelyExemptionCovid.toString()}
               />

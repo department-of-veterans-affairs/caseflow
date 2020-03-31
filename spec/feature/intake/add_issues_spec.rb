@@ -215,8 +215,8 @@ feature "Intake Add Issues Page", :all_dbs do
           expect(page).to_not have_content("Notes")
           expect(page).to have_content("Issue 1 is an Untimely Issue")
           find("label", text: "Yes").click
-          expect(page).to have_content("Is the reason for requesting an extension related to COVID-19?")
-          find('label[for="untimelyExemptionCovid_true"]').click
+          expect(page).to have_content("This request is related to COVID-19")
+          find('label[for="untimelyExemptionCovid"]').click
           safe_click ".add-issue"
           expect(page).to have_content("Untimely Issue")
           click_on "Establish EP"
