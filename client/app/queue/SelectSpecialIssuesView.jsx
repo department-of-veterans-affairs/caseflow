@@ -74,6 +74,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       ...otherProps
     } = this.props;
     let sections = [
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).noneSection(),
       specialIssueFilters(this.props.featureToggles.special_issues_revamp).aboutSection(),
       specialIssueFilters(this.props.featureToggles.special_issues_revamp).residenceSection(),
       specialIssueFilters(this.props.featureToggles.special_issues_revamp).benefitTypeSection(),
@@ -93,7 +94,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
     });
 
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
-    const [aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection] = sections;
+    const [noneSection, aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection] = sections;
 
     return <QueueFlowPage goToNextStep={this.goToNextStep} validateForm={this.validateForm} {...otherProps}>
       <h1>
@@ -105,6 +106,13 @@ class SelectSpecialIssuesView extends React.PureComponent {
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div {...flexContainer} className="special-options">
         <div {...flexColumn}>
+      { this.props.featureToggles.special_issues_revamp && <CheckboxGroup
+            label=""
+            name=""
+            options={noneSection}
+            values={specialIssues}
+            onChange={this.onChangeLegacySpecialIssue}
+          />}
           <CheckboxGroup
             label={<h3>{COPY.SPECIAL_ISSUES_ABOUT_SECTION}</h3>}
             name="About the appellant"

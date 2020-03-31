@@ -27,6 +27,10 @@ const specialIssueFilters = (isFeatureToggled) => ({
     });
   },
 
+  noneSection() {
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'noSpecialIssues');
+  },
+
   aboutSection() {
     return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'about');
   },
