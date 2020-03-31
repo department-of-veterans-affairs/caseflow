@@ -80,6 +80,7 @@ detectors:
       - User#current_case_assignments_with_views
       - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
+      - VideoHearingDayRequestTypeQuery#call
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
   InstanceVariableAssumption:
