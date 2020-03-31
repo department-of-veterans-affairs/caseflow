@@ -62,9 +62,8 @@ RSpec.feature "List Schedule for Hearing Prep", :all_dbs do
     context "Many hearing days assigned to judge and not assigned to judge" do
       before do
         5.times do
-          create(:hearing, :with_tasks, judge: current_user)
+          create(:hearing, :with_tasks, judge: current_user, regional_office: "RO13")
         end
-
         5.times do
           create(:hearing, :with_tasks)
         end
@@ -78,9 +77,16 @@ RSpec.feature "List Schedule for Hearing Prep", :all_dbs do
         find("li", text: "Complete Hearing Schedule").click
         expect(page).to have_css(".section-hearings-list tbody tr", count: 10)
       end
+      it "Can filter hearings by type" do
+        visit "hearings/schedule"
+
+        find(".section-hearings-list .table-icon", class: "unselected-filter-icon", match: :first).click
+        expect(page).to have_css(".cf-filter-option-row")
+        find(".cf-filter-option-row", text: "Video").click
+        expect(page).to_not have_content("Central")
+      end
     end
   end
-
   context "Hearing prep deprecation" do
     let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
 

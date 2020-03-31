@@ -5,7 +5,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     let(:appeal) { create(:appeal) }
     let!(:hearing) { create(:hearing, appeal: appeal) }
     let!(:root_task) { create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task) }
     let!(:disposition_task) do
       AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, hearing_task, hearing)
     end
@@ -32,12 +32,13 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls cancel!" do
-        expect(disposition_task).to receive(:cancel!).exactly(1).times
+        expect(disposition_task).to receive(:cancel!).exactly(1).times.and_call_original
 
         subject
 
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
+        expect(disposition_task.reload.closed_at).to_not be_nil
       end
     end
 
@@ -228,8 +229,8 @@ describe AssignHearingDispositionTask, :all_dbs do
     let(:disposition) { nil }
     let(:appeal) { create(:appeal) }
     let(:root_task) { create(:root_task, appeal: appeal) }
-    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
-    let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: distribution_task) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
     let(:evidence_window_waived) { nil }
     let(:hearing_scheduled_for) { appeal.receipt_date + 15.days }
     let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_scheduled_for) }
@@ -253,16 +254,14 @@ describe AssignHearingDispositionTask, :all_dbs do
       create(
         :assign_hearing_disposition_task,
         :in_progress,
-        parent: hearing_task,
-        appeal: appeal
+        parent: hearing_task
       )
     end
     let!(:schedule_hearing_task) do
       create(
         :schedule_hearing_task,
         :completed,
-        parent: hearing_task,
-        appeal: appeal
+        parent: hearing_task
       )
     end
 
@@ -281,6 +280,8 @@ describe AssignHearingDispositionTask, :all_dbs do
 
             expect(disposition_task.reload.cancelled?).to be_truthy
             expect(hearing_task.reload.cancelled?).to be_truthy
+            expect(disposition_task.closed_at).to_not be_nil
+            expect(hearing_task.closed_at).to_not be_nil
             expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
             expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
             expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
@@ -288,7 +289,7 @@ describe AssignHearingDispositionTask, :all_dbs do
 
           context "the appeal has an existing EvidenceSubmissionWindowTask" do
             let!(:evidence_submission_window_task) do
-              create(:evidence_submission_window_task, appeal: appeal, parent: distribution_task)
+              create(:evidence_submission_window_task, parent: distribution_task)
             end
 
             it "does not raise an error" do

@@ -35,6 +35,9 @@
 #   # pulled latest from github? try:
 #   % make install migrate
 #
+#   # get fully up to date with master on origin and all deps & db?
+#   % make update
+#
 # Hopefully the targets are easy enough to remember to make this useful to others.
 #
 .DEFAULT_GOAL := help
@@ -43,13 +46,22 @@ whats-next:  ## TODO
 	scripts/whats-next
 
 ready:  ## Helper command that watches the docker containers to finish start up
-	h=`docker-compose ps | grep healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep healthy`; echo $$h; sleep 1; done
+	h=`docker-compose ps | grep -i starting`; while [ "$$h" != "" ]; do h=`docker-compose ps | grep -i starting`; echo $$h; sleep 1; done
 
 up:  ## Start the docker containers
 	docker-compose up -d
 
+down:	## Stop the docker containers
+	docker-compose down
+
 run: up ready  ## Start rails server and frontend server
 	foreman start
+
+run-backend: up ready  ## Start rails server without the frontend
+	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
+
+run-frontend: ## Start just the frontend server
+	cd client && yarn run dev:hot
 
 test: clean  ## Run test suite
 	bundle exec rake
@@ -68,11 +80,19 @@ realclean: clean ## TODO
 facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 
-facols:  ## Connect directly to the FACOLS oracle database, requires sqlplus
-	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
+facols:  ## Connect directly to the FACOLS oracle database
+	docker exec --tty -i VACOLS_DB sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
-build: clean
-	bundle exec rake local:destroy local:build
+download-facols:	## Download the FACOLS Docker image
+	./local/vacols/build_push.sh rake
+
+sqs-conf-dir:	## Create local required dir
+	mkdir -p local/sqs/conf
+
+build: clean sqs-conf-dir download-facols up ready reset	## First time local dev setup
+
+destroy: clean
+	bundle exec rake local:destroy
 
 lint:  ## Run linter for javascript and ruby
 	bundle exec rake lint
@@ -113,12 +133,22 @@ migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
 
 rollback: etl-rollback db-rollback	## Rollback all Rails databases
 
-fresh:  ## https://github.com/imsky/git-fresh
+fresh:  ## https://github.com/imsky/git-fresh - updates local master to match origin, stashes changes, prunes remote branches
 	git fresh
 
-reset:  ## Resets databases
+reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
+
+reset-dbs: ## Resets Caseflow and ETL database schemas
 	DB=etl bundle exec rake db:drop db:create db:schema:load
-	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
+	bundle exec rake db:drop db:create db:schema:load
+
+seed-dbs:	## Seed all databases
+	bundle exec rake local:vacols:seed
+	bundle exec rake spec:setup_vacols
+	bundle exec rake db:seed
+	DB=etl bundle exec rake db:seed
+
+enable-feature-flags: ## enable all feature flags
 	bundle exec rails runner scripts/enable_features_dev.rb
 
 bundle-install:  ## Installs ruby dependencies
@@ -129,10 +159,15 @@ client-install:  ## Installs javascript dependencies
 
 install: bundle-install client-install  ## Installs all dependencies
 
-update: fresh install migrate  ## TODO
+update: fresh install migrate  ## Get fully up to date with origin master - pulls origin, installs all deps and runs any db migrations
 
-client-test:  ## Runs javascript tests
+client-build-test client-test:  ## Builds webpack for tests
 	cd client && yarn run build:test
+
+client-build-demo client-demo: ## Builds webpack for local server
+	cd client && yarn run build:demo
+
+client-build-all client-all: client-test client-demo ## Builds webpack for both tests and local server
 
 one-test:  ## run the test passed in
 	bundle exec rspec $$T
@@ -149,8 +184,29 @@ clear-eps:  ## TODO
 karma:  ## TODO
 	cd client && node_modules/.bin/karma start
 
+erd-etl:	## Create ERD diagram for the ETL database
+	ERD_BASE=ETL::Record bundle exec erd --filename etl-erd --title 'ODS/ETL Data Model'
+
+erd-vacols:	## Create ERD diagram for the VACOLS database
+	ERD_BASE=VACOLS::Record bundle exec erd --filename vacols-erd --title 'VACOLS Data Model'
+
+erd-caseflow:	## Create ERD diagram for the Caseflow database
+	ERD_BASE=CaseflowRecord bundle exec erd --filename caseflow-erd --title 'Caseflow Data Model'
+
+erd: erd-etl erd-vacols erd-caseflow ## Create all ERD diagrams
+
+doc-schema-caseflow:	# Create docs/schema/caseflow.csv
+	ERD_BASE="CaseflowRecord" SCHEMA=caseflow bundle exec rake doc:schema
+
+doc-schema-etl:	# Create docs/schema/etl.csv
+	ERD_BASE="ETL::Record" SCHEMA=etl bundle exec rake doc:schema
+
+doc-schema:	doc-schema-caseflow doc-schema-etl	# Create all docs/schema csv files
+
+docs: erd doc-schema	# Build all documentation
+
 # Self-documented makefile from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:  ## Shows help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[\ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; { split($$1, C, " "); printf "\033[36m%-30s\033[0m %s\n", C[1], $$2}'
 
 .PHONY: test run clean lint check logs db update one-test client-test security build ready help

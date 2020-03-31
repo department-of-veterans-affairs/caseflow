@@ -36,7 +36,7 @@ class AsyncableJobsController < ApplicationController
 
   def add_note
     send_to_intake_user = ActiveRecord::Type::Boolean.new.deserialize(allowed_params[:send_to_intake_user])
-    messaging = AsyncableJobMessaging.new(job: job, current_user: current_user)
+    messaging = AsyncableJobMessaging.new(job: job, user: current_user)
     job_note = messaging.add_job_note(
       text: allowed_params[:note],
       send_to_intake_user: send_to_intake_user

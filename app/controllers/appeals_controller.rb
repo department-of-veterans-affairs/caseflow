@@ -65,8 +65,6 @@ class AppealsController < ApplicationController
   end
 
   def most_recent_hearing
-    log_hearings_request
-
     most_recently_held_hearing = HearingsForAppeal.new(url_appeal_uuid)
       .held_hearings
       .max_by(&:scheduled_for)
@@ -92,7 +90,7 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        if BGSService.new.can_access?(appeal.veteran_file_number)
+        if BGSService.new.can_access?(appeal.veteran_file_number) || user_represents_claimant_not_veteran
           id = params[:appeal_id]
           MetricsService.record("Get appeal information for ID #{id}",
                                 service: :queue,
@@ -104,6 +102,11 @@ class AppealsController < ApplicationController
         end
       end
     end
+  end
+
+  def edit
+    # only AMA appeals may call /edit
+    return not_found if appeal.is_a?(LegacyAppeal)
   end
 
   helper_method :appeal, :url_appeal_uuid
@@ -132,6 +135,12 @@ class AppealsController < ApplicationController
 
   private
 
+  def user_represents_claimant_not_veteran
+    return false unless FeatureToggle.enabled?(:vso_claimant_representative)
+
+    appeal.appellant_is_not_veteran && appeal.representatives.any? { |rep| rep.user_has_access?(current_user) }
+  end
+
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
   # :reek:FeatureEnvy
   def render_search_results_as_json(result)
@@ -140,16 +149,6 @@ class AppealsController < ApplicationController
     else
       render json: result.to_h, status: result.extra[:status]
     end
-  end
-
-  def log_hearings_request
-    # Log requests to this endpoint to try to investigate cause addressed by this rollback:
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/9271
-    DataDogService.increment_counter(
-      metric_group: "request_counter",
-      metric_name: "hearings_for_appeal",
-      app_name: RequestStore[:application]
-    )
   end
 
   def request_issues_update

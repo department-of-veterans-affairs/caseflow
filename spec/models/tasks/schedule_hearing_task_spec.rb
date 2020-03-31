@@ -133,6 +133,7 @@ describe ScheduleHearingTask, :all_dbs do
             schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+            expect(schedule_hearing_task.closed_at).to_not be_nil
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
             expect(vacols_case.bfha).to eq("5")
             expect(vacols_case.bfhr).to eq("5")
@@ -189,13 +190,13 @@ describe ScheduleHearingTask, :all_dbs do
     let(:root_task) { create(:root_task, appeal: appeal) }
     let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
     let(:hearing) { create(:hearing, appeal: appeal, disposition: past_hearing_disposition) }
-    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task) }
     let!(:disposition_task) do
-      create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+      create(:assign_hearing_disposition_task, parent: hearing_task)
     end
     let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-    let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+    let!(:hearing_task_2) { create(:hearing_task, parent: root_task) }
+    let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2) }
     let(:instructions) { "These are my detailed instructions for a schedule hearing task." }
 
     before do
@@ -209,9 +210,13 @@ describe ScheduleHearingTask, :all_dbs do
       subject
 
       expect(hearing_task.reload.open?).to be_falsey
+      expect(hearing_task.closed_at).to_not be_nil
       expect(disposition_task.reload.open?).to be_falsey
+      expect(disposition_task.closed_at).to_not be_nil
       expect(hearing_task_2.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(hearing_task_2.closed_at).to_not be_nil
       expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(task.closed_at).to_not be_nil
       new_hearing_tasks = appeal.tasks.open.where(type: HearingTask.name)
       expect(new_hearing_tasks.count).to eq 1
       expect(new_hearing_tasks.first.hearing).to eq hearing

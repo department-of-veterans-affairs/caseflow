@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import DOMPurify from 'dompurify';
 
 const StringUtil = {
   camelCaseToDashCase(variable) {
@@ -81,6 +82,14 @@ const StringUtil = {
     return str.toLowerCase().replace(/\W+/g, '_');
   },
 
+  parseLinks(str = '', { target = '_blank' } = {}) {
+    // From https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149
+    // eslint-disable-next-line no-useless-escape
+    const regex = /(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/gi;
+
+    return DOMPurify.sanitize(str.replace(regex, `<a href="$&" ${target ? `target="${target}"` : ''}>$&</a>`));
+  },
+
   // Replace newline ("\n") characters with React-friendly <br /> elements
   nl2br(str) {
     if (typeof str !== 'string') {
@@ -93,7 +102,7 @@ const StringUtil = {
       return (
         <React.Fragment key={idx}>
           {txt}
-          {idx < (arr.length - 1) ? <br /> : null}
+          {idx < arr.length - 1 ? <br /> : null}
         </React.Fragment>
       );
     });

@@ -36,6 +36,6 @@ class FoiaColocatedTask < ColocatedTask
   private
 
   def cascade_closure_from_child_task?(child_task)
-    child_task.is_a?(FoiaTask)
+    child_task.is_a?(FoiaTask) || child_task.is_a?(PrivacyActTask)
   end
 end

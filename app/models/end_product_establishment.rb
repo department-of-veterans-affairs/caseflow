@@ -8,7 +8,7 @@
 # end product when it was created. Exceptions are `synced_status` and `last_synced_at`, used to record
 # the current status of the EP when the EndProductEstablishment is synced.
 
-class EndProductEstablishment < ApplicationRecord
+class EndProductEstablishment < CaseflowRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
   has_many :end_product_code_updates
@@ -49,6 +49,9 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def perform!(commit: false)
+    return if reference_id
+
+    save_recovered_end_product!
     return if reference_id
 
     fail InvalidEndProductError unless end_product_to_establish.valid?
@@ -167,6 +170,12 @@ class EndProductEstablishment < ApplicationRecord
     EndProductCodeSelector::END_PRODUCT_CODES.find_all_values_for(:nonrating).include?(code)
   end
 
+  # The last action date helps approximate when an EP was cleared. However, some EPs are missing this data
+  # Since we stop syncing EPs once they're cleared, the last_synced_at is our best guess when it's missing
+  def last_action_date
+    result&.last_action_date || last_synced_at&.to_date
+  end
+
   # Find an end product that has the traits of the end product that should be created.
   def active_preexisting_end_product
     preexisting_end_products.find(&:active?)
@@ -195,15 +204,14 @@ class EndProductEstablishment < ApplicationRecord
     # load contentions now, in case "source" needs them.
     # this VBMS call is slow and will cause the transaction below
     # to timeout in some cases.
-    contentions
+    contentions unless result.status_type_code == EndProduct::STATUSES.key("Canceled")
 
     transaction do
       update!(
         synced_status: result.status_type_code,
         last_synced_at: Time.zone.now
       )
-      sync_source!
-      handle_canceled_ep!
+      status_cancelled? ? handle_cancelled_ep! : sync_source!
       close_request_issues_with_no_decision!
     end
 
@@ -228,7 +236,7 @@ class EndProductEstablishment < ApplicationRecord
     }
   end
 
-  def status_canceled?
+  def status_cancelled?
     synced_status == CANCELED_STATUS
   end
 
@@ -324,6 +332,17 @@ class EndProductEstablishment < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
   end
 
+  # In order to expedite processing, EPs originating from the board are set to "Ready for Decision"
+  def status_type_code
+    ready_for_decision_codes = EndProduct::EFFECTUATION_CODES.merge(EndProduct::REMAND_CODES)
+
+    if ready_for_decision_codes.include?(code)
+      EndProduct::STATUSES.key("Ready for decision")
+    else
+      EndProduct::STATUSES.key("Pending")
+    end
+  end
+
   private
 
   def status_type
@@ -378,12 +397,12 @@ class EndProductEstablishment < ApplicationRecord
       # delete end product in bgs & set sync status to canceled
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
-      handle_canceled_ep!
+      handle_cancelled_ep!
     end
   end
 
-  def handle_canceled_ep!
-    return unless status_canceled?
+  def handle_cancelled_ep!
+    return unless status_cancelled?
 
     source.try(:canceled!)
     request_issues.all.find_each(&:close_after_end_product_canceled!)
@@ -391,7 +410,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def close_request_issues_with_no_decision!
     return unless status_cleared?
-    return unless result.claim_type_code =~ /^400/
+    return unless result.claim_type_code.include?("400")
 
     request_issues.each { |ri| RequestIssueClosure.new(ri).with_no_decision! }
   end
@@ -447,6 +466,16 @@ class EndProductEstablishment < ApplicationRecord
     @cached_result ||= end_product_with_modifier
   end
 
+  # Fetch and cache an EP whose attributes match this EPE (or nil if none found)
+  # The complicated version of ||= is used because nil is a common value for this method.
+  def matching_established_end_product
+    return @matching_established_end_product if defined?(@matching_established_end_product)
+
+    @matching_established_end_product = veteran.end_products.find do |end_product|
+      matches_end_product?(end_product)
+    end
+  end
+
   def end_product_with_modifier(the_modifier = nil)
     the_modifier ||= modifier
     EndProduct.new(
@@ -461,7 +490,8 @@ class EndProductEstablishment < ApplicationRecord
       gulf_war_registry: false,
       station_of_jurisdiction: station,
       limited_poa_code: limited_poa_code,
-      limited_poa_access: limited_poa_access
+      limited_poa_access: limited_poa_access,
+      status_type_code: status_type_code
     )
   end
 
@@ -477,6 +507,17 @@ class EndProductEstablishment < ApplicationRecord
     result
   end
 
+  def matches_end_product?(end_product)
+    return true if ep_created? && reference_id == end_product.claim_id
+    return false unless end_product.active? &&
+                        end_product.claim_type_code == code &&
+                        end_product.claim_date == claim_date &&
+                        end_product.payee_code == payee_code
+
+    # Call it a match once we confirm that other EPE has the same claim ID
+    EndProductEstablishment.find_by(reference_id: end_product.claim_id).nil?
+  end
+
   def sync_source!
     return unless source&.respond_to?(:on_sync)
 
@@ -488,6 +529,14 @@ class EndProductEstablishment < ApplicationRecord
       return if result.claim_type_code == end_product_code_updates.last&.code
 
       end_product_code_updates.create(code: result.claim_type_code)
+    end
+  end
+
+  def save_recovered_end_product!
+    return unless source.try(:previously_attempted?)
+
+    if matching_established_end_product.present?
+      update!(reference_id: matching_established_end_product.claim_id)
     end
   end
 

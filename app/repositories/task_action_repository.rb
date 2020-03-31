@@ -17,17 +17,19 @@ class TaskActionRepository
       }
     end
 
-    def mail_assign_to_organization_data(_task, _user = nil)
-      { options: MailTask.subclass_routing_options }
+    def mail_assign_to_organization_data(task, _user = nil)
+      options = MailTask.subclass_routing_options
+      valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
+      { options: valid_options }
     end
 
     def cancel_task_data(task, _user = nil)
-      assigner_name = task.assigned_by&.full_name || "the assigner"
+      return_to_name = task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : task_assigner_name(task)
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, assigner_name),
+        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigner_name)
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
       }
     end
 
@@ -45,10 +47,7 @@ class TaskActionRepository
         modal_title: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE,
         modal_body: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL,
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(
-          COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL,
-          task.assigned_by&.full_name || "the assigner"
-        )
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, task_assigner_name(task))
       }
     end
 
@@ -65,17 +64,11 @@ class TaskActionRepository
     end
 
     def assign_to_user_data(task, user = nil)
-      users = if task.assigned_to.is_a?(Organization)
-                task.assigned_to.users
-              elsif task.parent&.assigned_to.is_a?(Organization)
-                task.parent.assigned_to.users.reject { |check_user| check_user == task.assigned_to }
-              else
-                []
-              end
+      users = potential_task_assignees(task)
 
       extras = if task.is_a?(HearingAdminActionTask)
                  {
-                   redirect_after: "/organizations/#{HearingAdmin.singleton.url}",
+                   redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
                else
@@ -122,10 +115,10 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_attorney_data(task, _user = nil)
+    def assign_to_attorney_data(task, user)
       {
         selected: nil,
-        options: nil,
+        options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
     end
@@ -330,11 +323,16 @@ class TaskActionRepository
     def review_decision_draft(task, user)
       action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
       action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
+      action = Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.ama? && task.appeal.vacate?
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
     private
+
+    def task_assigner_name(task)
+      task.assigned_by&.full_name || "the assigner"
+    end
 
     def users_to_options(users)
       users.map do |user|
@@ -342,6 +340,17 @@ class TaskActionRepository
           label: user.full_name,
           value: user.id
         }
+      end
+    end
+
+    # Exclude users who aren't active or to whom the task is already assigned.
+    def potential_task_assignees(task)
+      if task.assigned_to.is_a?(Organization)
+        task.assigned_to.users.active
+      elsif task.parent&.assigned_to.is_a?(Organization)
+        task.parent.assigned_to.users.active.reject { |check_user| check_user == task.assigned_to }
+      else
+        []
       end
     end
   end

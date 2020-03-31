@@ -73,8 +73,10 @@ feature "Higher Level Review Edit issues", :all_dbs do
     )
   end
 
+  let(:participant_id) { "5382910292" }
+
   before do
-    higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
+    higher_level_review.create_claimant!(participant_id: participant_id, payee_code: "10")
 
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
@@ -82,7 +84,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
       first_name: "BOB",
       last_name: "VANCE",
-      ptcpnt_id: "5382910292",
+      ptcpnt_id: participant_id,
       relationship_type: "Spouse"
     )
   end
@@ -367,7 +369,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       click_intake_add_issue
       add_intake_rating_issue(ri_with_previous_hlr.contention_text)
-      add_intake_rating_issue("None of these match")
+      select_intake_no_match
 
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
@@ -385,7 +387,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       click_intake_add_issue
       add_intake_rating_issue(ri_in_review.contention_text)
-      add_intake_rating_issue("None of these match")
+      select_intake_no_match
 
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
@@ -409,7 +411,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         date: "01/01/2016",
         legacy_issues: true
       )
-      add_intake_rating_issue("None of these match")
+      select_intake_no_match
       add_untimely_exemption_response("No")
 
       expect_ineligible_issue(number_of_issues)
@@ -428,7 +430,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       click_intake_add_issue
       add_intake_rating_issue(ri_before_ama.contention_text)
-      add_intake_rating_issue("None of these match")
+      select_intake_no_match
       add_untimely_exemption_response("Yes")
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(

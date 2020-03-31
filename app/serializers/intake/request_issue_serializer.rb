@@ -25,6 +25,7 @@ class Intake::RequestIssueSerializer
   attribute :withdrawal_date
   attribute :contested_issue_description
   attribute :end_product_code
+  attribute :verified_unidentified_issue
   attribute :editable, &:editable?
   attribute :end_product_cleared do |object|
     object.end_product_establishment&.status_cleared?

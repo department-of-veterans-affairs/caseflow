@@ -15,7 +15,7 @@ import {
 } from '../uiReducer/uiActions';
 import QueueFlowModal from './QueueFlowModal';
 import { taskActionData, prepareAppealForStore } from '../utils';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 
 import RadioField from '../../components/RadioField';
 import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';

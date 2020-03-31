@@ -3,6 +3,36 @@
 RSpec.describe AppealsController, :all_dbs, type: :controller do
   include TaskHelpers
 
+  describe "GET appeals/:id/edit" do
+    let(:ssn) { Generators::Random.unique_ssn }
+    let(:options) { { format: :html, appeal_id: appeal_url_identifier } }
+    let(:appeal_url_identifier) { appeal.is_a?(LegacyAppeal) ? appeal.vacols_id : appeal.uuid }
+
+    subject { get :edit, params: options }
+
+    before { User.authenticate!(roles: ["System Admin"]) }
+
+    context "AMA appeal" do
+      let(:appeal) { create(:appeal, veteran_file_number: ssn) }
+
+      it "returns 200" do
+        subject
+
+        expect(response).to be_successful
+      end
+    end
+
+    context "Legacy Appeal" do
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
+
+      it "returns 404" do
+        subject
+
+        expect(response).to be_not_found
+      end
+    end
+  end
+
   describe "GET appeals" do
     let(:ssn) { Generators::Random.unique_ssn }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
@@ -454,13 +484,12 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
   end
 
   describe "GET appeals/:id" do
+    let!(:user) { User.authenticate!(roles: ["System Admin"]) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
     let!(:veteran) { create(:veteran, file_number: appeal.sanitized_vbms_id) }
     let(:request_params) { { appeal_id: appeal.vacols_id } }
 
     subject { get(:show, params: request_params, format: :json) }
-
-    before { User.authenticate!(roles: ["System Admin"]) }
 
     context "when user has high enough BGS sensitivity level to access the Veteran's case" do
       it "returns a successful response" do
@@ -476,6 +505,33 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         expect(Raven).to receive(:capture_exception).exactly(0).times
         subject
         expect(response.response_code).to eq(403)
+      end
+
+      context "when the user represents the claimant" do
+        let!(:user) { User.authenticate!(roles: ["VSO"]) }
+        let!(:vso) { create(:vso, participant_id: appeal.claimant[:representative][:participant_id]) }
+
+        before do
+          allow_any_instance_of(LegacyAppeal).to receive(:appellant_is_not_veteran).and_return(true)
+          allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id)
+            .and_return([appeal.claimant[:representative]])
+        end
+
+        it "returns an error but does not send a message to Sentry" do
+          expect(Raven).to receive(:capture_exception).exactly(0).times
+          subject
+          expect(response.response_code).to eq(403)
+        end
+
+        context "when feature is enabled" do
+          before { FeatureToggle.enable!(:vso_claimant_representative) }
+          after { FeatureToggle.disable!(:vso_claimant_representative) }
+
+          it "returns a successful response" do
+            subject
+            assert_response(:success)
+          end
+        end
       end
     end
   end

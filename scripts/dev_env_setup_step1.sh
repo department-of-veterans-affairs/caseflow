@@ -43,7 +43,7 @@ echo "==> Installing the base dependencies"
 brew install rbenv nodenv yarn jq
 brew tap ouchxp/nodenv
 brew install nodenv-nvmrc
-brew tap caskroom/cask
+brew install postgres
 brew cask install chromedriver
 chromedriver --version
 

@@ -10,13 +10,14 @@ import {
   LEGACY_APPEAL_TYPES
 } from './constants';
 
-import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
-import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.json';
-import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
-import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION.json';
-import COPY from '../../COPY.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
+import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
+import TASK_STATUSES from '../../constants/TASK_STATUSES';
+import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
+import COPY from '../../COPY';
 import { formatDateStrUtc } from '../util/DateUtil';
 
 /**
@@ -38,6 +39,14 @@ export const getUndecidedIssues = (issues) => _.filter(issues, (issue) => {
   }
 });
 
+export const mostRecentHeldHearingForAppeal = (appeal) => {
+  const hearings = appeal.hearings.
+    filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
+    sort((h1, h2) => h1.date < h2.date ? 1 : -1);
+
+  return hearings.length ? hearings[0] : null;
+};
+
 export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
   return {
     appealId,
@@ -48,7 +57,8 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
       type: hearing.type,
       externalId: hearing.external_id,
       disposition: hearing.disposition,
-      isVirtual: hearing.is_virtual
+      isVirtual: hearing.is_virtual,
+      scheduledForIsPast: hearing.scheduled_for_is_past
     }
   };
 };
@@ -101,7 +111,13 @@ const taskAttributesFromRawTask = (task) => {
     timelineTitle: task.attributes.timeline_title,
     hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
     hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
-    hideFromCaseTimeline: task.attributes.hide_from_case_timeline
+    hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
+    availableHearingLocations: task.attributes.available_hearing_locations,
+    // `powerOfAttorneyName` and `suggestedHearingLocation` are only present for
+    // /hearings/scheduled/assign page, and are not returned from the API when
+    // requesting the full task.
+    powerOfAttorneyName: task.attributes.power_of_attorney_name,
+    suggestedHearingLocation: task.attributes.suggested_hearing_location
   };
 };
 
@@ -117,6 +133,7 @@ const appealAttributesFromRawTask = (task) => ({
   type: task.attributes.appeal_type,
   externalId: task.attributes.external_appeal_id,
   docketName: task.attributes.docket_name,
+  docketRangeDate: task.attributes.docket_range_date,
   isLegacyAppeal: task.attributes.docket_name === 'legacy',
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,
@@ -283,7 +300,8 @@ export const prepareAppealForStore =
         veteranFullName: appeal.attributes.veteran_full_name,
         veteranFileNumber: appeal.attributes.veteran_file_number,
         isPaperCase: appeal.attributes.paper_case,
-        sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type
+        sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type,
+        vacateType: appeal.attributes.vacate_type
       };
 
       return accumulator;
@@ -512,11 +530,6 @@ export const taskHasNewDocuments = (task, newDocsForAppeal) => {
 };
 
 export const taskIsOnHold = (task) => {
-  if (task.onHoldDuration && task.placedOnHoldAt) {
-    return moment().startOf('day').
-      diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
-  }
-
   return task.status === TASK_STATUSES.on_hold;
 };
 
@@ -526,7 +539,7 @@ export const taskHasCompletedHold = (task) => {
       diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
   }
 
-  return task.status === TASK_STATUSES.on_hold;
+  return false;
 };
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);

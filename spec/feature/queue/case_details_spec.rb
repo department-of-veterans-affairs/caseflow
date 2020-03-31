@@ -134,6 +134,9 @@ RSpec.feature "Case details", :all_dbs do
           .click_link
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+
+        expect(page).to have_selector(".cf-hearing-badge")
+
         scroll_to("#hearings-section")
         worksheet_link = page.find(
           "a[href='/hearings/worksheet/print?keep_open=true&hearing_ids=#{hearing.external_id}']"
@@ -708,7 +711,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on vet_name
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL, wait: 30)
         click_on "Caseflow"
-        expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION, wait: 30)
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, wait: 30)
         fontweight_visited = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
         expect(fontweight_visited).to be < fontweight_new
       end
@@ -837,17 +840,16 @@ RSpec.feature "Case details", :all_dbs do
       let!(:appeal) { create(:appeal) }
       let!(:appeal2) { create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-      let!(:assign_task) { create(:ama_judge_task, appeal: appeal, assigned_to: user, parent: root_task) }
+      let!(:assign_task) { create(:ama_judge_task, assigned_to: user, parent: root_task) }
       let!(:judge_task) do
         create(
           :ama_judge_decision_review_task,
-          appeal: appeal,
           parent: root_task,
           assigned_to: user
         )
       end
-      let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, parent: judge_task, assigned_to: user) }
-      let!(:attorney_task2) { create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user) }
+      let!(:attorney_task) { create(:ama_attorney_task, parent: judge_task, assigned_to: user) }
+      let!(:attorney_task2) { create(:ama_attorney_task, parent: root_task, assigned_to: user) }
 
       before do
         # The status attribute needs to be set here due to update_parent_status hook in the task model
@@ -1047,14 +1049,13 @@ RSpec.feature "Case details", :all_dbs do
 
   describe "case timeline" do
     context "when the only completed task is a TrackVeteranTask" do
-      let(:root_task) { create(:root_task) }
-      let(:appeal) { root_task.appeal }
+      let(:appeal) { create(:appeal) }
       let!(:tracking_task) do
         create(
           :track_veteran_task,
           :completed,
           appeal: appeal,
-          parent: root_task
+          parent: appeal.root_task
         )
       end
 
@@ -1152,7 +1153,7 @@ RSpec.feature "Case details", :all_dbs do
     context "when the only task is a TrackVeteranTask" do
       let(:root_task) { create(:root_task) }
       let(:appeal) { root_task.appeal }
-      let(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
+      let(:tracking_task) { create(:track_veteran_task, parent: root_task) }
 
       it "should not show the tracking task in task snapshot" do
         visit("/queue/appeals/#{tracking_task.appeal.uuid}")

@@ -7,7 +7,7 @@
 # Example:
 #
 # RollbackRampElection.create!(ramp_election: ramp_election, user: user, reason: "A good reason")
-class RampElectionRollback < ApplicationRecord
+class RampElectionRollback < CaseflowRecord
   belongs_to :user
   belongs_to :ramp_election
 
@@ -46,7 +46,7 @@ class RampElectionRollback < ApplicationRecord
   # require that it was canceled manually beforehand
   def validate_canceled_end_product
     establishment = EndProductEstablishment.find_by(source: ramp_election)
-    unless establishment&.status_canceled?
+    unless establishment&.status_cancelled?
       errors.add(:ramp_election, "end_product_not_canceled")
     end
   end

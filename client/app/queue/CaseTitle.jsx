@@ -8,6 +8,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import { COLORS } from '../constants/AppConstants';
 import CopyTextButton from '../components/CopyTextButton';
+import BadgeArea from './components/BadgeArea';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
 const containingDivStyling = css({
@@ -62,6 +63,7 @@ class CaseTitle extends React.PureComponent {
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
       </span>
+      <BadgeArea appeal={appeal} />
     </CaseTitleScaffolding>;
   }
 }

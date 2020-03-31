@@ -6,9 +6,9 @@ RSpec.feature "TranscriptionTeam", :postgres do
   let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let!(:root_task) { create(:root_task, appeal: appeal) }
-  let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
-  let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
-  let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
+  let!(:hearing_task) { create(:hearing_task, parent: root_task) }
+  let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
+  let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
 
   before do
     TranscriptionTeam.singleton.add_user(transcription_team_member)

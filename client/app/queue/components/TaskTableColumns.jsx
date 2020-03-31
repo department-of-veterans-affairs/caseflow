@@ -1,9 +1,10 @@
 import * as React from 'react';
 import moment from 'moment';
+import pluralize from 'pluralize';
 import _ from 'lodash';
 
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import HearingBadge from './HearingBadge';
+import BadgeArea from './BadgeArea';
 import CaseDetailsLink from '../CaseDetailsLink';
 import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
@@ -12,10 +13,10 @@ import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
 
-import COPY from '../../../COPY.json';
-import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
-import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import COPY from '../../../COPY';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
+import DOCKET_NAME_FILTERS from '../../../constants/DOCKET_NAME_FILTERS';
+import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS';
 
 import {
   CATEGORIES,
@@ -56,11 +57,11 @@ export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   };
 };
 
-export const hearingBadgeColumn = () => {
+export const badgesColumn = () => {
   return {
     header: '',
-    name: QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
-    valueFunction: (task) => <HearingBadge task={task} />
+    name: QUEUE_CONFIG.COLUMNS.BADGES.name,
+    valueFunction: (task) => <BadgeArea task={task} />
   };
 };
 
@@ -203,11 +204,17 @@ export const daysWaitingColumn = (requireDasRecord) => {
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
     valueFunction: (task) => {
+      const daysSinceAssigned = moment().startOf('day').
+          diff(moment(task.assignedOn), 'days'),
+        daysSincePlacedOnHold = moment().startOf('day').
+          diff(task.placedOnHoldAt, 'days');
+
       return <React.Fragment>
-        <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>{moment().startOf('day').
-          diff(moment(task.assignedOn), 'days')}</span>
-        { taskHasCompletedHold(task) ? <ContinuousProgressBar level={moment().startOf('day').
-          diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
+        <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
+          {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
+        </span>
+        { taskHasCompletedHold(task) &&
+          <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
       </React.Fragment>;
     },
     backendCanSort: true,
@@ -252,6 +259,6 @@ export const taskCompletedDateColumn = () => {
     name: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
     valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
     backendCanSort: true,
-    getSortValue: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null
+    getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
   };
 };

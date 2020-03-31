@@ -265,7 +265,8 @@ describe EndProduct do
         gulf_war_registry: true,
         claimant_participant_id: "1234",
         limited_poa_code: nil,
-        limited_poa_access: nil
+        limited_poa_access: nil,
+        status_type_code: nil
       )
     end
   end

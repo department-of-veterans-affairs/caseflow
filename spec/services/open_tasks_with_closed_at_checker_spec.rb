@@ -12,12 +12,21 @@ describe OpenTasksWithClosedAtChecker, :postgres do
     task
   end
 
+  let!(:open_task_with_closed_parent) do
+    appeal = create(:appeal)
+    parent = create(:task, appeal: appeal)
+    task = create(:task, :assigned, parent: parent)
+    parent.update!(closed_at: Time.zone.now, status: :completed)
+    task
+  end
+
   describe "#call" do
     it "reports one Task in bad state" do
       subject.call
 
       expect(subject.report?).to eq(true)
       expect(subject.report).to match(/1 open Task\(s\) with a closed_at value/)
+      expect(subject.report).to match(/1 open Task\(s\) with a closed parent Task/)
     end
   end
 end

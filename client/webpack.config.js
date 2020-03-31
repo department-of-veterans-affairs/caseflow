@@ -16,7 +16,7 @@ const config = {
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })
   ]),
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.json'],
     alias: {
       // This does not actually appear to be necessary, but it does silence
       // a warning from superagent-no-cache.

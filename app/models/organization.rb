@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Organization < ApplicationRecord
+class Organization < CaseflowRecord
   has_one :vso_config, dependent: :destroy
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
@@ -69,7 +69,7 @@ class Organization < ApplicationRecord
   end
 
   def admins
-    organizations_users.includes(:user).select(&:admin?).map(&:user)
+    organizations_users.includes(:user).admin.map(&:user)
   end
 
   def non_admins

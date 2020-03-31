@@ -23,14 +23,14 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   end
 
   context "Acting judge can see team and other users load" do
-    let!(:vacols_user_one) { create(:staff, :attorney_judge_role, user: judge_one.user) }
+    let!(:vacols_user_one_acting_judge) { create(:staff, :attorney_judge_role, user: judge_one.user) }
 
     scenario "visits 'Assign' view" do
       visit "/queue"
 
       find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-      expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
-      click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+      expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
+      click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id)
 
       expect(page).to have_content("Cases to Assign")
       expect(page).to have_content("Moe Syzlak")
@@ -39,7 +39,11 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       safe_click ".Select"
       click_dropdown(text: "Other")
       safe_click ".dropdown-Other"
-      expect(page.find(".dropdown-Other")).to have_content judge_two.user.full_name
+      # expect attorneys and acting judges but not judges
+      expect(page.find(".dropdown-Other")).to have_content judge_one.user.full_name
+      expect(page.find(".dropdown-Other")).to have_no_content judge_two.user.full_name
+      expect(page.find(".dropdown-Other")).to have_content attorney_one.full_name
+      expect(page.find(".dropdown-Other")).to have_content attorney_two.full_name
     end
   end
 
@@ -51,8 +55,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       visit "/queue"
 
       find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-      expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
-      click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+      expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
+      click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id)
 
       expect(page).to have_content("Cases to Assign (2)")
       expect(page).to have_content("Moe Syzlak")
@@ -114,15 +118,15 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
     context "there's another in-progress JudgeAssignTask" do
       let!(:judge_task) do
-        create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal, parent: root_task)
+        create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, parent: root_task)
       end
 
       scenario "viewing the assign task queue" do
         visit "/queue"
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
-        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+        expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
+        click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id)
 
         expect(page).to have_content("Assign 3 Cases")
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
@@ -134,14 +138,12 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
     context "there's an in-progress JudgeDecisionReviewTask" do
       let!(:judge_review_task) do
-        create(
-          :ama_judge_decision_review_task, :in_progress, assigned_to: judge_one.user, appeal: appeal, parent: root_task
-        )
+        create(:ama_judge_decision_review_task, :in_progress, assigned_to: judge_one.user, parent: root_task)
       end
 
       scenario "viewing the review task queue" do
         expect(judge_review_task.status).to eq("in_progress")
-        attorney_completed_task = create(:ama_attorney_task, appeal: appeal, parent: judge_review_task)
+        attorney_completed_task = create(:ama_attorney_task, parent: judge_review_task)
         attorney_completed_task.update!(status: Constants.TASK_STATUSES.completed)
         case_review = create(:attorney_case_review, task_id: attorney_completed_task.id)
 
@@ -159,8 +161,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         visit "/queue"
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
-        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+        expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
+        click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id)
 
         expect(page).to have_current_path("/queue/#{judge_one.user.id}/assign")
         expect(page).to have_content("Assign 2 Cases")
@@ -194,7 +196,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       expect(page).to have_content("Task reassigned to #{judge_two.user.full_name}")
 
       click_on("Switch views")
-      click_on("Assign team cases")
+      click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
 
       expect(page).to_not have_content("#{appeal.veteran_first_name} #{appeal.veteran_last_name}")
       expect(page).to have_content("Cases to Assign (0)")
@@ -238,7 +240,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_on("Submit")
 
       click_on("Switch views")
-      click_on("Assign team cases")
+      click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
 
       expect(page).to_not have_content("#{appeal_one.veteran_first_name} #{appeal_one.veteran_last_name}")
       expect(page).to have_content("Cases to Assign (0)")
@@ -267,27 +269,6 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       click_on("Submit")
       expect(page).to have_content("Assigned 1 case")
-    end
-  end
-
-  describe "Assigning an ama appeal to a judge from the case details page the old way" do
-    before do
-      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
-    end
-
-    it "should disallow us from assign an ama appeal to a judge from the 'Assign to attorney' action'" do
-      visit("/queue/appeals/#{appeal_one.external_id}")
-
-      click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
-      click_dropdown(prompt: "Select a user", text: "Other")
-      safe_click ".dropdown-Other"
-      click_dropdown({ text: judge_two.user.full_name }, page.find(".dropdown-Other"))
-
-      click_on("Submit")
-
-      expect(page).to have_content(COPY::ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE)
-      expect(page).to have_content(COPY::ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK)
-      expect(page).to have_content(COPY::ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL)
     end
   end
 

@@ -58,9 +58,9 @@ RSpec.configure do |config|
   end
 
   # ETL is never used in feature tests and there are only a few, so we tag those with :etl
-  # ETL db uses truncation strategy everywhere because syncing runs in a transaction.
+  # ETL db uses deletion strategy everywhere because syncing runs in a transaction.
   config.before(:each, :etl) do
-    DatabaseCleaner[:active_record, { connection: etl }].strategy = :truncation
+    DatabaseCleaner[:active_record, { connection: etl }].strategy = :deletion
   end
 
   config.before(:each, :etl, db_clean: :truncation) do
@@ -68,12 +68,12 @@ RSpec.configure do |config|
   end
 
   config.before(:each, :etl) do
-    puts "DatabaseCleaner.start ETL"
+    Rails.logger.info("DatabaseCleaner.start ETL")
     DatabaseCleaner[:active_record, { connection: etl }].start
   end
 
   config.append_after(:each, :etl) do
     DatabaseCleaner[:active_record, { connection: etl }].clean
-    puts "DatabaseCleaner.clean ETL"
+    Rails.logger.info("DatabaseCleaner.clean ETL")
   end
 end

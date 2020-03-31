@@ -15,7 +15,7 @@ import VirtualHearingLink from '../VirtualHearingLink';
 
 import { DISPOSITION_OPTIONS } from '../../constants';
 import { COLORS } from '../../../constants/AppConstants';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 
 const staticSpacing = css({ marginTop: '5px' });
 
@@ -277,7 +277,7 @@ HearingLocationDropdown.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
   update: PropTypes.func,
-  regionalOffice: PropTypes.object
+  regionalOffice: PropTypes.string
 };
 
 export const HoldOpenDropdown = ({ hearing, readOnly, update }) => (
@@ -324,7 +324,7 @@ TimeRadioButtons.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
   update: PropTypes.func,
-  regionalOffice: PropTypes.object
+  regionalOffice: PropTypes.string
 };
 
 export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
@@ -347,7 +347,8 @@ PreppedCheckbox.propTypes = {
 export const StaticVirtualHearing = ({ hearing, user }) => (
   <div>
     <VirtualHearingLink
-      role={user.userId === hearing.judgeId ? 'host' : 'guest'}
+      user={user}
+      hearing={hearing}
       isVirtual={hearing.isVirtual}
       virtualHearing={hearing.virtualHearing}
     />

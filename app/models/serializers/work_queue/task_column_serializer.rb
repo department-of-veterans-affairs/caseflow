@@ -26,7 +26,7 @@ class WorkQueue::TaskColumnSerializer
   attribute :external_appeal_id do |object, params|
     columns = [
       Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
-      Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
       Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name
     ]
 
@@ -163,6 +163,27 @@ class WorkQueue::TaskColumnSerializer
       css_id: object.assigned_by.try(:css_id),
       pg_id: object.assigned_by.try(:id)
     }
+  end
+
+  # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
+  attribute :power_of_attorney_name do |object, params|
+    columns = [Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME]
+
+    if serialize_attribute?(params, columns)
+      # The `power_of_attorney_name` field doesn't exist on the actual model. This
+      # field needs to be added in a select statement and represents the field from
+      # the `cached_appeal_attributes` table.
+      object&.[](:power_of_attorney_name)
+    end
+  end
+
+  # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
+  attribute :suggested_hearing_location do |object, params|
+    columns = [Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.suggested_hearing_location&.to_hash
+    end
   end
 
   # UNUSED
