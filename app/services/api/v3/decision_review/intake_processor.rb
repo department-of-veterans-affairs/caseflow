@@ -3,13 +3,14 @@
 class Api::V3::DecisionReview::IntakeProcessor
   attr_reader :errors, :intake
 
-  def initialize(params:, user:, form_type:)
+  def initialize(params:, user:, form_type:, params_class:)
     @errors = []
-    @params = Api::V3::DecisionReview::IntakeParams.new(params)
-    @errors += @params.errors
-    build_intake(user, form_type) unless errors?
-  rescue StandardError
-    @errors << Api::V3::DecisionReview::IntakeError.new
+    @params = params_class.new(params)
+    @errors += @params.intake_errors
+    @intake = errors? ? nil : build_intake(user, form_type)
+    add_intake_error_if_intake_error_code
+  rescue StandardError => error
+    @errors << Api::V3::DecisionReview::IntakeError.new(error)
   end
 
   def errors?
@@ -37,8 +38,7 @@ class Api::V3::DecisionReview::IntakeProcessor
   private
 
   def build_intake(user, form_type)
-    @intake = Intake.build(user: user, veteran_file_number: @params.veteran_file_number, form_type: form_type)
-    add_intake_error_if_intake_error_code
+    Intake.build(user: user, veteran_file_number: @params.veteran.file_number, form_type: form_type)
   end
 
   def add_intake_error_if_intake_error_code

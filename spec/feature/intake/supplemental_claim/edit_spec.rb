@@ -65,7 +65,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   let(:contested_decision_issue) { nil }
 
   before do
-    supplemental_claim.create_claimants!(participant_id: "5382910292", payee_code: "10")
+    supplemental_claim.create_claimant!(participant_id: "5382910292", payee_code: "10")
 
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
 
@@ -183,7 +183,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       after { FeatureToggle.disable!(:edit_contention_text) }
 
       let(:decision_review_remanded) { create(:higher_level_review) }
-      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
+      let(:contested_decision_issue) { create(:decision_issue, :nonrating, disposition: "remanded") }
 
       it "only allows users to edit contention text" do
         nonrating_dta_claim_id = EndProductEstablishment.find_by(
@@ -659,8 +659,10 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         # reload to verify that the new issues populate the form
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
-        expect(page).to have_content("Requested issues\n1. Left knee granted")
-        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 05/10/2019\nWithdrawn on")
+        expect(find("div", class: "issue-container", match: :first)).to have_content("Left knee granted")
+        expect(find("div", class: "withdrawn-issue")).to have_content(
+          "PTSD denied\nDecision date: 05/10/2019\nWithdrawn on"
+        )
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
     end

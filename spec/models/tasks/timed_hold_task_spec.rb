@@ -83,7 +83,7 @@ describe TimedHoldTask, :postgres do
       end
 
       context "when there is an active sibling TimedHoldTask and an active sibling Task" do
-        let!(:existing_task_sibling) { create(:ama_task, parent: parent, appeal: appeal) }
+        let!(:existing_task_sibling) { create(:ama_task, parent: parent) }
         let!(:existing_timed_hold_task) { create(:timed_hold_task, **args, parent: parent.reload) }
 
         it "cancels the TimedHoldTask but leaves the Task alone" do
@@ -221,6 +221,26 @@ describe TimedHoldTask, :postgres do
   describe ".hide_from_task_snapshot" do
     it "is always hidden from task snapshot" do
       expect(task.hide_from_task_snapshot).to eq(true)
+    end
+  end
+
+  describe "when attempting to create a child of a timed hold task" do
+    let(:child_task) { create(:task, parent: task) }
+
+    subject { child_task }
+
+    it "fails" do
+      expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
+    end
+  end
+
+  describe "when attempting to adopt a child by a timed hold task" do
+    let!(:child_task) { create(:task) }
+
+    subject { child_task.update!(parent: task) }
+
+    it "fails" do
+      expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
     end
   end
 end

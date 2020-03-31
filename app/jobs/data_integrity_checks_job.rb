@@ -7,6 +7,7 @@ class DataIntegrityChecksJob < CaseflowJob
   CHECKERS = %w[
     DecisionReviewTasksForInactiveAppealsChecker
     ExpiredAsyncJobsChecker
+    LegacyAppealsWithNoVacolsCase
     OpenHearingTasksWithoutActiveDescendantsChecker
     OpenTasksWithClosedAtChecker
     ReviewsWithDuplicateEpErrorChecker
@@ -19,12 +20,16 @@ class DataIntegrityChecksJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
 
     CHECKERS.each do |klass|
+      checker_start_time = Time.zone.now
       checker = klass.constantize.new
       checker.call
+      datadog_report_time_segment(segment: klass.underscore, start_time: checker_start_time)
       if checker.report?
         send_to_slack(checker)
       end
     end
+
+    datadog_report_runtime(metric_group_name: "data_integrity_checks_job")
   end
 
   private

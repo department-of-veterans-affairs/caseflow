@@ -52,6 +52,14 @@
     "value": "address_motion_to_vacate",
     "func": "address_motion_to_vacate_data"
   },
+  "REVIEW_VACATE_DECISION": {
+    "label": "Decision ready for review",
+    "value": "motion_to_vacate_checkout/review_vacatures"
+  },
+  "REVIEW_VACATE_RETURN_TO_JUDGE": {
+    "label": "Return to judge",
+    "value": "return_to_judge"
+  },
   "SIGN_MOTION_TO_VACATE": {
     "label": "Sign Motion to Vacate",
     "value": "sign_motion_to_vacate",
@@ -125,7 +133,7 @@
     "func": "return_to_attorney_data"
   },
   "LIT_SUPPORT_PULAC_CERULLO": {
-    "label": "Notify Litigation Support of CAVC jurisdictional conflict",
+    "label": "Notify Pulac Cerullo team of CAVC Jurisdictional Conflict",
     "value": "modal/assign_to_pulac_cerullo",
     "func": "assign_to_pulac_cerullo_data"
   },

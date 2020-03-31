@@ -5,8 +5,8 @@ THIS_SCRIPT_DIR=$(dirname $0)
 # Set variables for application
 source $THIS_SCRIPT_DIR/env.sh
 
-echo "Waiting for FACOLS to properly start up - 4 minutes"
-sleep 240
+echo "Waiting for dependencies to properly start up - 90 seconds"
+sleep 90
 
 echo "Starting Appeals App"
 date

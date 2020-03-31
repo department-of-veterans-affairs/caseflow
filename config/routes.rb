@@ -136,6 +136,8 @@ Rails.application.routes.draw do
   namespace :hearings do
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
+    resources :schedule_hearing_tasks, only: [:index]
+    resources :schedule_hearing_tasks_columns, only: [:index]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
@@ -218,11 +220,10 @@ Rails.application.routes.draw do
   resources :users, only: [:index] do
     get 'represented_organizations', on: :member
   end
-  get 'user', to: 'users#search_by_css_id'
+  get 'user', to: 'users#search'
   get 'user_info/represented_organizations'
 
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
-  get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
@@ -282,7 +283,6 @@ Rails.application.routes.draw do
 
   get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
-  get 'intake/stats(/:interval)', to: 'intake_stats#show', as: 'intake_stats'
   get 'stats', to: 'stats#show'
 
   match '/intake/:any' => 'intakes#index', via: [:get]
@@ -302,11 +302,14 @@ Rails.application.routes.draw do
   end
 
   post "post_decision_motions/return", to: "post_decision_motions#return_to_lit_support"
+  post "post_decision_motions/return_to_judge", to: "post_decision_motions#return_to_judge"
   post "post_decision_motions", to: "post_decision_motions#create"
 
   # :nocov:
   namespace :test do
     get "/error", to: "users#show_error"
+
+    resources :hearings, only: [:index]
 
     resources :users, only: [:index, :show]
     if ApplicationController.dependencies_faked?

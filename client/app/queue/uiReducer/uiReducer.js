@@ -15,6 +15,7 @@ export const initialState = {
   },
   saveState: initialSaveState,
   modals: {},
+  featureToggles: {},
   userRole: '',
   userCssId: '',
   organizations: [],
@@ -33,7 +34,8 @@ export const initialState = {
   hearingDay: {
     hearingDate: null,
     regionalOffice: null
-  }
+  },
+  targetUser : {}
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -128,6 +130,12 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return showModal(state, action.payload.modalType);
   case ACTIONS.HIDE_MODAL:
     return hideModal(state, action.payload.modalType);
+  case ACTIONS.SET_FEATURE_TOGGLES:
+    return update(state, {
+      featureToggles: {
+        $set: action.payload.featureToggles
+      }
+    });
   case ACTIONS.TOGGLE_VETERAN_CASE_LIST:
     return update(state, {
       veteranCaseListIsVisible: { $set: !state.veteranCaseListIsVisible }
@@ -151,6 +159,18 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_USER_CSS_ID:
     return update(state, {
       userCssId: { $set: action.payload.cssId }
+    });
+  case ACTIONS.SET_TARGET_USER:
+    return update(state, {
+      targetUser: {
+        id: { $set: action.payload.targetUser.id },
+        cssId: { $set: action.payload.targetUser.css_id },
+        fullName: { $set: action.payload.targetUser.full_name },
+        displayName: { $set: action.payload.targetUser.display_name },
+        status: { $set: action.payload.targetUser.status },
+        roles: { $set: action.payload.targetUser.roles },
+        selectedRegionalOffice: { $set: action.payload.targetUser.selected_regional_office }
+      }
     });
   case ACTIONS.SET_USER_IS_VSO_EMPLOYEE:
     return update(state, {

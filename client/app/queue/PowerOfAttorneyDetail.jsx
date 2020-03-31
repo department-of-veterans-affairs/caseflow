@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import { getAppealValue } from './QueueActions';
 import { appealWithDetailSelector } from './selectors';
 import Address from './components/Address';
@@ -25,17 +25,6 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
     return powerOfAttorney.representative_type && powerOfAttorney.representative_name;
   }
 
-  renderNameOnly() {
-    if (this.hasPowerOfAttorneyDetails) {
-      const { powerOfAttorney } = this.props;
-
-      return <span>{powerOfAttorney.representative_name}</span>;
-    }
-
-    return <span>{COPY.CASE_DETAILS_NO_POA}</span>;
-
-  }
-
   renderLoadingOrError() {
     const { loading, error } = this.props;
 
@@ -51,14 +40,10 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
   }
 
   render = () => {
-    const { displayNameOnly, powerOfAttorney } = this.props;
+    const { powerOfAttorney } = this.props;
 
     if (!powerOfAttorney) {
       return this.renderLoadingOrError();
-    }
-
-    if (displayNameOnly) {
-      return this.renderNameOnly();
     }
 
     if (!this.hasPowerOfAttorneyDetails()) {
@@ -88,7 +73,6 @@ PowerOfAttorneyDetail.propTypes = {
   error: PropTypes.object,
   getAppealValue: PropTypes.func,
   loading: PropTypes.bool,
-  displayNameOnly: PropTypes.bool,
   powerOfAttorney: PropTypes.shape({
     representative_type: PropTypes.string,
     representative_name: PropTypes.string,
@@ -97,27 +81,19 @@ PowerOfAttorneyDetail.propTypes = {
   })
 };
 
-PowerOfAttorneyDetail.defaultProps = {
-  displayNameOnly: false
-};
-
 const mapStateToProps = (state, ownProps) => {
   const loadingPowerOfAttorney = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'powerOfAttorney');
 
-  if (!loadingPowerOfAttorney) {
+  if (loadingPowerOfAttorney?.loading) {
     return { loading: true };
   }
 
   const appeal = appealWithDetailSelector(state, { appealId: ownProps.appealId });
 
-  if (!appeal) {
-    return { loading: true };
-  }
-
   return {
-    powerOfAttorney: appeal.powerOfAttorney,
-    loading: loadingPowerOfAttorney ? loadingPowerOfAttorney.loading : null,
-    error: loadingPowerOfAttorney ? loadingPowerOfAttorney.error : null
+    powerOfAttorney: appeal?.powerOfAttorney,
+    loading: !appeal,
+    error: loadingPowerOfAttorney?.error
   };
 };
 

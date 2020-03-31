@@ -66,30 +66,42 @@ describe Hearings::HearingDayController, :all_dbs do
       end
       let(:params) { { start_time: Time.zone.now.to_date - 2.days } }
 
-      def virtual_request_type_test
-        expect(subject.status).to eq 200
-        hearing_days = JSON.parse(subject.body)
-        expect(hearing_days["hearings"].size).to eq 1
-        expect(hearing_days["hearings"][0]["id"]).to eq hearing_day.id
-        expect(hearing_days["hearings"][0]["readable_request_type"]).to eq "Video, Virtual"
+      shared_examples "route has expected request type" do |request_type|
+        it "returns 200 and the has expected type '#{request_type}'", :aggregate_failures do
+          expect(subject.status).to eq 200
+          hearing_days = JSON.parse(subject.body)
+          expect(hearing_days["hearings"].size).to eq 1
+          expect(hearing_days["hearings"][0]["id"]).to eq hearing_day.id
+          expect(hearing_days["hearings"][0]["readable_request_type"]).to eq request_type
+        end
       end
 
       context "associated with an AMA hearing" do
         let(:hearing) { create(:hearing, hearing_day: hearing_day) }
         let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: hearing) }
 
-        it "returns 200 and the hearing day has the request type 'Video, Virtual'", :aggregate_failures do
-          virtual_request_type_test
-        end
+        include_examples "route has expected request type", "Virtual"
       end
 
       context "associated with a Legacy hearing" do
         let(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
-        let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: legacy_hearing).reload }
+        let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: legacy_hearing) }
 
-        it "returns 200 and the hearing day has the request type 'Video, Virtual'", :aggregate_failures do
-          virtual_request_type_test
+        include_examples "route has expected request type", "Virtual"
+      end
+
+      context "associated with one video and one virtual hearing" do
+        let(:hearings) do
+          [
+            create(:hearing, hearing_day: hearing_day),
+            create(:legacy_hearing, hearing_day: hearing_day)
+          ]
         end
+        let!(:virtual_hearing) do
+          create(:virtual_hearing, :initialized, hearing: hearings[0])
+        end
+
+        include_examples "route has expected request type", "Video, Virtual"
       end
     end
   end

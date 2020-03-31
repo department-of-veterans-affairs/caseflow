@@ -5,12 +5,11 @@ class JudgeTeam < Organization
     def for_judge(user)
       if use_judge_team_roles?
         administered_judge_teams = user.administered_judge_teams
-        return unless administered_judge_teams.any?
 
         # Find the one, if any, we're the JudgeTeamLead for
         administered_judge_teams.detect { |jt| user == jt.judge }
       else
-        user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
+        user.administered_teams.detect { |team| team.is_a?(JudgeTeam) && team.judge.eql?(user) }
       end
     end
 
@@ -24,7 +23,7 @@ class JudgeTeam < Organization
     end
 
     def use_judge_team_roles?
-      FeatureToggle.enabled?(:use_judge_team_role)
+      FeatureToggle.enabled?(:judge_admin_scm)
     end
   end
 
@@ -34,7 +33,7 @@ class JudgeTeam < Organization
   def add_user(user)
     super.tap do |org_user|
       class_name = (users.count == 1) ? JudgeTeamLead : DecisionDraftingAttorney
-      class_name.create!(organizations_user: org_user)
+      class_name.find_or_create_by(organizations_user: org_user)
     end
   end
 

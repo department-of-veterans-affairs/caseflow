@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
-import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, issueCountColumn,
+import { docketNumberColumn, badgesColumn, detailsColumn, taskColumn, regionalOfficeColumn, issueCountColumn,
   typeColumn, assignedToColumn, daysWaitingColumn, daysOnHoldColumn, readerLinkColumn, completedToNameColumn } from
   './components/TaskTableColumns';
 
@@ -25,7 +25,7 @@ import {
 import { tasksWithAppealsFromRawTasks } from './utils';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
-import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 
 const containerStyles = css({
   position: 'relative'
@@ -64,7 +64,7 @@ class OrganizationQueue extends React.PureComponent {
 
   createColumnObject = (column, config, tasks) => {
     const functionForColumn = {
-      hearingBadgeColumn: hearingBadgeColumn(tasks),
+      badgesColumn: badgesColumn(tasks),
       detailsColumn: detailsColumn(tasks, false, config.userRole),
       taskColumn: taskColumn(tasks, this.filterValuesForColumn(column, config)),
       regionalOfficeColumn: regionalOfficeColumn(tasks, this.filterValuesForColumn(column, config)),

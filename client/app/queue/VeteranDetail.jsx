@@ -1,16 +1,17 @@
-import React from 'react';
-import { css } from 'glamor';
-import _ from 'lodash';
-
-import BareList from '../components/BareList';
-import Address from './components/Address';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { boldText } from './constants';
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+
 import { DateString } from '../util/DateUtil';
-import { getAppealValue } from './QueueActions';
 import { appealWithDetailSelector } from './selectors';
-import COPY from '../../COPY.json';
+import { boldText } from './constants';
+import { getAppealValue } from './QueueActions';
+import Address from './components/Address';
+import BareList from '../components/BareList';
+import COPY from '../../COPY';
 
 const detailListStyling = css({
   paddingLeft: 0,
@@ -18,28 +19,32 @@ const detailListStyling = css({
   marginBottom: '3rem'
 });
 
-export class VeteranDetail extends React.PureComponent {
-  componentDidMount = () => {
-    this.props.getAppealValue(
-      this.props.appeal.externalId,
-      'veteran',
-      'veteranInfo'
-    );
+const VeteranState = ({ veteran }) => {
+  const state = veteran?.address?.state;
+
+  if (state) {
+    return <>{state}</>;
   }
 
+  return null;
+};
+
+class VeteranDetail extends React.PureComponent {
   getDetails = () => {
     const {
-      address,
-      full_name,
-      gender,
-      date_of_birth: dob,
-      date_of_death: dod,
-      email_address: email
-    } = this.props.veteranInfo.veteran;
+      veteran: {
+        address,
+        full_name: fullName,
+        gender,
+        date_of_birth: dob,
+        date_of_death: dod,
+        email_address: email
+      }
+    } = this.props;
 
     const details = [{
       label: 'Name',
-      value: full_name
+      value: fullName
     }];
 
     const genderValue = gender === 'F' ? COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
@@ -80,46 +85,49 @@ export class VeteranDetail extends React.PureComponent {
       });
     }
 
-    const getDetailField = ({ label, value }) => () => <React.Fragment>
-      <span {...boldText}>{label}:</span> {value}
-    </React.Fragment>;
+    const getDetailField = ({ label, value }) => () => (
+      <><span {...boldText}>{label}:</span>{' '}{value}</>
+    );
 
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
 
-  getDataSourceInfo = () => {
-    return <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>;
-  }
-
   render = () => {
-    if (!this.props.veteranInfo) {
-      if (this.props.loading) {
-        return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
-      }
-      if (this.props.error) {
-        return <React.Fragment>
-          {COPY.CASE_DETAILS_UNABLE_TO_LOAD}
-        </React.Fragment>;
-      }
-
-      return null;
-    }
-
-    return <ul {...detailListStyling}>
-      {this.getDetails()}
-      {this.getDataSourceInfo()}
-    </ul>;
+    return (
+      <ul {...detailListStyling}>
+        {this.getDetails()}
+        <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>
+      </ul>
+    );
   };
 }
 
+VeteranState.propTypes = VeteranDetail.propTypes = {
+  veteran: PropTypes.shape({
+    address: PropTypes.shape({
+      state: PropTypes.string
+    }),
+    date_of_birth: PropTypes.string,
+    date_of_death: PropTypes.string,
+    email_address: PropTypes.string,
+    full_name: PropTypes.string,
+    gender: PropTypes.string
+  })
+};
+
 const mapStateToProps = (state, ownProps) => {
   const loadingVeteranInfo = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
-  const appeal = appealWithDetailSelector(state, { appealId: ownProps.appeal.externalId });
+
+  if (loadingVeteranInfo?.loading) {
+    return { loading: true };
+  }
+
+  const appeal = appealWithDetailSelector(state, { appealId: ownProps.appealId });
 
   return {
-    veteranInfo: appeal.veteranInfo,
-    loading: loadingVeteranInfo ? loadingVeteranInfo.loading : null,
-    error: loadingVeteranInfo ? loadingVeteranInfo.error : null
+    veteranInfo: appeal?.veteranInfo,
+    loading: !appeal,
+    error: loadingVeteranInfo?.error
   };
 };
 
@@ -127,5 +135,50 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getAppealValue
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(VeteranDetail));
+// Wraps a component inside of a container component that calls the veteran info
+// endpoint.
+//
+// Uses this pattern for higher order components:
+//
+//   https://reactjs.org/docs/higher-order-components.html
+//
+const wrapVeteranDetailComponent = _.flow(
+  (WrappedComponent) => (
+    class extends React.PureComponent {
+      static propTypes = {
+        appealId: PropTypes.string,
+        error: PropTypes.object,
+        getAppealValue: PropTypes.func,
+        loading: PropTypes.bool,
+        veteranInfo: PropTypes.object
+      }
 
+      componentDidMount = () => {
+        if (!this.props.veteranInfo) {
+          this.props.getAppealValue(this.props.appealId, 'veteran', 'veteranInfo');
+        }
+      }
+
+      render() {
+        if (!this.props.veteranInfo) {
+          if (this.props.loading) {
+            return <>{COPY.CASE_DETAILS_LOADING}</>;
+          }
+
+          if (this.props.error) {
+            return <>{COPY.CASE_DETAILS_UNABLE_TO_LOAD}</>;
+          }
+
+          return null;
+        }
+
+        return <WrappedComponent {...this.props.veteranInfo} />;
+      }
+    }
+  ),
+  connect(mapStateToProps, mapDispatchToProps)
+);
+
+export const VeteranStateDetail = wrapVeteranDetailComponent(VeteranState);
+
+export default wrapVeteranDetailComponent(VeteranDetail);

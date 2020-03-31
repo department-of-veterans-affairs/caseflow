@@ -185,7 +185,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           end
 
           get :index, params: { user_id: user.id, role: "unknown" }
-          expect(response).to have_http_status(:success)
+          expect(response).to be_successful
 
           data = JSON.parse(response.body)["tasks"]["data"]
 
@@ -273,41 +273,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     subject { post :create, params: { tasks: params } }
-
-    context "Attorney task" do
-      context "when current user is a judge" do
-        let(:ama_appeal) { create(:appeal) }
-        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user, appeal: ama_appeal) }
-        let(:role) { :judge_role }
-
-        let(:params) do
-          [{
-            "external_id": ama_appeal.uuid,
-            "type": AttorneyTask.name,
-            "assigned_to_id": attorney.id,
-            "parent_id": ama_judge_task.id
-          }]
-        end
-
-        it "should be successful" do
-          subject
-
-          expect(response.status).to eq 200
-
-          response_body = JSON.parse(response.body)["tasks"]["data"]
-          expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
-          expect(response_body.second["attributes"]["appeal_id"]).to eq ama_appeal.id
-          expect(response_body.second["attributes"]["docket_number"]).to eq ama_appeal.docket_number
-          expect(response_body.second["attributes"]["appeal_type"]).to eq Appeal.name
-
-          attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
-          expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
-          expect(attorney_task.assigned_to).to eq attorney
-          expect(attorney_task.parent_id).to eq ama_judge_task.id
-          expect(ama_judge_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
-        end
-      end
-    end
 
     context "VSO user" do
       let(:user) { create(:default_user, roles: ["VSO"]) }
@@ -634,16 +599,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     it "updates status to completed" do
       expect(admin_action.versions.length).to be 0
-      expect(admin_action.parent.versions.length).to be 1
       patch :update, params: { task: { status: Constants.TASK_STATUSES.completed }, id: admin_action.id }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["tasks"]["data"]
       expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
       expect(response_body.first["attributes"]["closed_at"]).to_not be nil
       expect(admin_action.reload.versions.length).to eq 1
-      expect(admin_action.parent.versions.length).to eq 2
       versions = PaperTrail::Version.where(request_id: admin_action.versions.first.request_id)
-      expect(versions.length).to eq 3
+      expect(versions.length).to eq 1
     end
 
     context "when some other user updates another user's task" do
@@ -725,7 +688,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
 
-        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(18)
+        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(13)
       end
 
       context "when appeal is not assigned to current user" do
@@ -801,7 +764,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 2
+        expect(response_body["tasks"].length).to eq 3
 
         colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "IhpColocatedTask" }
         expect(colocated_task).to_not be_nil
@@ -828,55 +791,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
-        expect(appeal.tasks.size).to eq 3
-      end
-    end
-  end
-
-  describe "GET cases_to_schedule/:ro" do
-    context "when veteran is defined with regional office and hearing location" do
-      let!(:vacols_case) do
-        create(
-          :case,
-          bfcorlid: "#{veteran.file_number}S",
-          folder: create(:folder, tinum: "docket-number"),
-          bfregoff: "RO04",
-          bfcurloc: "57",
-          bfhr: "2",
-          bfdocind: HearingDay::REQUEST_TYPES[:video]
-        )
-      end
-      let(:closest_regional_office) { "RO10" }
-      let(:address) { "Fake Address" }
-      let!(:veteran) { create(:veteran) }
-
-      it "gets veterans ready for hearing schedule" do
-        BGSService.instance_methods(false).each do |method_name|
-          expect_any_instance_of(BGSService).not_to receive(method_name)
-        end
-
-        AppealRepository.create_schedule_hearing_tasks.each do |appeal|
-          appeal.update(closest_regional_office: closest_regional_office)
-
-          AvailableHearingLocations.create(
-            appeal: appeal,
-            address: address,
-            distance: 0,
-            facility_type: "va_health_facility"
-          )
-        end
-
-        get :ready_for_hearing_schedule, params: { ro: closest_regional_office }
-        expect(response).to have_http_status(:success)
-        data = JSON.parse(response.body)["data"]
-
-        expect(data.size).to be(1)
-        expect(data.first["attributes"]["closest_regional_office"]["location_hash"]["city"]).to eq(
-          RegionalOffice.find!(closest_regional_office).city
-        )
-        expect(data.first["attributes"]["available_hearing_locations"].first["address"]).to eq(
-          address
-        )
+        expect(appeal.tasks.size).to eq 5
       end
     end
   end
@@ -921,11 +836,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     subject { post(:request_hearing_disposition_change, params: params) }
 
     context "when the task is a no show hearing task with a HearingTask ancestor" do
-      let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task) }
       let(:disposition_task) do
-        create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+        create(:assign_hearing_disposition_task, parent: hearing_task)
       end
-      let!(:task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+      let!(:task) { create(:no_show_hearing_task, parent: disposition_task) }
       let(:params) do
         {
           id: task.id,
@@ -956,14 +871,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: past_hearing_disposition)
       end
       let(:hearing_task) do
-        create(:hearing_task, :completed, parent: root_task, appeal: appeal)
+        create(:hearing_task, :completed, parent: root_task)
       end
       let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-      let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let!(:hearing_task_2) { create(:hearing_task, parent: root_task) }
       let!(:association_2) do
         create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
       end
-      let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+      let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2) }
       let(:params) do
         {
           id: task.id,
@@ -1002,7 +917,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     context "when the task doesn't have a HearingTask ancestor" do
       let!(:task) do
-        create(:track_veteran_task, parent: root_task, appeal: appeal)
+        create(:track_veteran_task, parent: root_task)
       end
       let(:params) do
         {

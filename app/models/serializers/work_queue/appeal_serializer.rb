@@ -51,7 +51,7 @@ class WorkQueue::AppealSerializer
     false
   end
 
-  attribute(:appellant_is_not_veteran) { |object| !!object.veteran_is_not_claimant }
+  attribute :appellant_is_not_veteran
 
   attribute :appellant_full_name do |object|
     object.claimant&.name
@@ -78,6 +78,7 @@ class WorkQueue::AppealSerializer
   attribute :external_id, &:uuid
 
   attribute :type
+  attribute :vacate_type
   attribute :aod, &:advanced_on_docket?
   attribute :docket_name
   attribute :docket_number

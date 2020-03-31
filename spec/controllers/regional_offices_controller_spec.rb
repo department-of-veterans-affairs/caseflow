@@ -8,7 +8,7 @@ RSpec.describe RegionalOfficesController, :all_dbs, type: :controller do
       get :index, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
-      expect(response_body["regional_offices"].size).to eq 57
+      expect(response_body["regional_offices"].size).to eq 56
     end
   end
 

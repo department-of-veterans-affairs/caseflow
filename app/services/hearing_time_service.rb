@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 # Service to handle hearing time updates consistently between VACOLS and Caseflow
-# using scheduled_time_string parameter.
-# scheduled_time_string is always local time
+# using scheduled_time_string parameter. scheduled_time_string is always in the
+# regional office's time zone, or in the central office's time zone if no regional
+# office is associated with the hearing.
 
 class HearingTimeService
+  CENTRAL_OFFICE_TIMEZONE = "America/New_York"
+
   class << self
     def build_legacy_params_with_time(hearing, update_params)
       # takes hearing update_legacy_params from controller and adds
@@ -28,7 +31,7 @@ class HearingTimeService
     def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
       hour, min = scheduled_time_string.split(":")
       time = scheduled_for.to_datetime
-      Time.use_zone("America/New_York") do
+      Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
         Time.zone.now.change(
           year: time.year, month: time.month, day: time.day, hour: hour.to_i, min: min.to_i
         )
@@ -66,23 +69,25 @@ class HearingTimeService
   end
 
   def local_time
+    # returns the date and time a hearing is scheduled for in the regional
+    # office's time zone; or the central office's time zone if no regional
+    # office is associated with the hearing.
+
+    # for AMA hearings, return the hearing object's scheduled_for
     return @hearing.scheduled_for if @hearing.is_a?(Hearing)
 
-    # since regional office is from HearingDay, it can only be nil if it's a
-    # central office hearing in ET
-    regional_office = @hearing.regional_office_timezone || "America/New_York"
+    # for legacy hearings, convert to the regional office's time zone
 
-    # scheduled_for returns hearing time in ET, convert back to local time
-    @hearing.scheduled_for.in_time_zone(regional_office)
+    # if the hearing's regional_office_timezone is nil, assume this is a
+    # central office hearing (eastern time)
+    regional_office_timezone = @hearing.regional_office_timezone || CENTRAL_OFFICE_TIMEZONE
+
+    # convert the hearing time returned by LegacyHearing.scheduled_for
+    # to the regional office timezone
+    @hearing.scheduled_for.in_time_zone(regional_office_timezone)
   end
 
   def central_office_time
-    local_time.in_time_zone("America/New_York")
-  end
-
-  def scheduled_time
-    return @hearing.scheduled_time if @hearing.is_a?(Hearing)
-
-    Time.zone.local_to_utc(local_time).change(year: 2000, month: 1, day: 1)
+    local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
 end

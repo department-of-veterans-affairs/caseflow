@@ -15,15 +15,15 @@ import PropTypes from 'prop-types';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
-import { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn, daysWaitingColumn,
+import { docketNumberColumn, badgesColumn, detailsColumn, taskColumn, regionalOfficeColumn, daysWaitingColumn,
   issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn,
   taskCompletedDateColumn } from
   './TaskTableColumns';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
-import COPY from '../../../COPY.json';
-import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
+import COPY from '../../../COPY';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -44,8 +44,8 @@ export class TaskTableUnconnected extends React.PureComponent {
 
   collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
 
-  caseHearingColumn = () => {
-    return this.props.includeHearingBadge ? hearingBadgeColumn() : null;
+  caseBadgesColumn = () => {
+    return this.props.includeBadges ? badgesColumn() : null;
   }
 
   caseSelectColumn = () => {
@@ -163,7 +163,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   getQueueColumns = () =>
     _.orderBy((this.props.customColumns || []).concat(
       _.compact([
-        this.caseHearingColumn(),
+        this.caseBadgesColumn(),
         this.caseSelectColumn(),
         this.caseDetailsColumn(),
         this.caseTaskColumn(),
@@ -197,7 +197,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   render = () => <QueueTable
-    columns={this.getQueueColumns}
+    columns={this.getQueueColumns()}
     rowObjects={this.props.tasks}
     getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
@@ -210,7 +210,7 @@ TaskTableUnconnected.propTypes = {
   isTaskAssignedToUserSelected: PropTypes.object,
   userId: PropTypes.number,
   requireDasRecord: PropTypes.bool,
-  includeHearingBadge: PropTypes.bool,
+  includeBadges: PropTypes.bool,
   includeSelect: PropTypes.bool,
   setSelectionOfTaskOfUser: PropTypes.func,
   includeDetailsLink: PropTypes.bool,

@@ -9,11 +9,19 @@ class RootTask < Task
   # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
   after_initialize :set_assignee, if: -> { assigned_to_id.nil? }
 
+  CHILD_TASK_TYPES_TO_CLOSE_AFTER_CLOSED = [TrackVeteranTask.name].freeze
+
   def set_assignee
     self.assigned_to = Bva.singleton
   end
 
-  def when_child_task_completed(_child_task); end
+  def when_child_task_completed(child_task)
+    return unless child_task.post_dispatch_task?
+
+    if all_open_children_will_be_closed_after_closed?
+      completed!
+    end
+  end
 
   def self.creatable_tasks_types_when_on_hold
     [
@@ -30,12 +38,20 @@ class RootTask < Task
     if active?
       update!(status: :on_hold)
     elsif !self.class.creatable_tasks_types_when_on_hold.include?(child_task.type) && !on_hold?
-      Raven.capture_message("Created child task for RootTask #{id} but did not update RootTask status")
+      Raven.capture_message("Created child task #{child_task&.id} for RootTask #{id} " \
+        "but did not update RootTask status")
     end
   end
 
   def update_children_status_after_closed
-    children.open.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
+    transaction do
+      # do not use update_all since that will avoid callbacks and we want versions history.
+      children.open.where(type: CHILD_TASK_TYPES_TO_CLOSE_AFTER_CLOSED).find_each(&:completed!)
+    end
+  end
+
+  def all_open_children_will_be_closed_after_closed?
+    children.open.where.not(type: CHILD_TASK_TYPES_TO_CLOSE_AFTER_CLOSED).empty?
   end
 
   def hide_from_case_timeline

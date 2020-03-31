@@ -10,6 +10,11 @@ class RedistributedCase
   end
 
   def allow!
+    unless legacy_appeal
+      alert_case_not_found
+      return false
+    end
+
     if ok_to_redistribute?
       rename_existing_distributed_case!
     else
@@ -45,10 +50,28 @@ class RedistributedCase
     existing_distributed_case.update!(case_id: "#{case_id}-redistributed-#{ymd}")
   end
 
+  def alert_case_not_found
+    error = CannotRedistribute.new("Case not found")
+    Raven.capture_exception(
+      error,
+      extra: {
+        vacols_id: case_id
+      }
+    )
+  end
+
   # send to Sentry but do not raise exception.
   def alert_existing_distributed_case_not_unique
     error = CannotRedistribute.new("DistributedCase already exists")
-    Raven.capture_exception(error, extra: { vacols_id: case_id, judge: new_distribution.judge.css_id })
+    Raven.capture_exception(
+      error,
+      extra: {
+        vacols_id: case_id,
+        judge: new_distribution.judge.css_id,
+        location: legacy_appeal.location_code,
+        previous_location: legacy_appeal.location_history.last.summary
+      }
+    )
   end
 
   def legacy_appeal

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class HearingLocation < ApplicationRecord
+class HearingLocation < CaseflowRecord
   belongs_to :hearing, polymorphic: true
 
   # backwards compat data fix for "central" office.
@@ -27,6 +27,15 @@ class HearingLocation < ApplicationRecord
     return unless addr
 
     addr["address_1"]
+  end
+
+  def timezone
+    key = vba_372? ? "VACO" : facility_id
+    tz = Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[key]
+
+    return unless tz
+
+    tz["timezone"]
   end
 
   private

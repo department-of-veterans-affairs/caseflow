@@ -14,7 +14,7 @@ import {
   requestPatch
 } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 
 class CancelTaskModal extends React.Component {
@@ -33,7 +33,9 @@ class CancelTaskModal extends React.Component {
 
     const hearingScheduleLink = taskActionData(this.props).back_to_hearing_schedule ?
       <p>
-        <Link href={`/hearings/schedule/assign?roValue=${hearingDay.regionalOffice}`}>Back to Hearing Schedule </Link>
+        <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
+          Back to Hearing Schedule
+        </Link>
       </p> : null;
     const successMsg = {
       title: taskActionData(this.props).message_title,

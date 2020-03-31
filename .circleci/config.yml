@@ -16,9 +16,10 @@ jobs:
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
-      - image: circleci/postgres:9.5
+      - image: circleci/postgres:9.6
         environment:
           - POSTGRES_USER: root
+            POSTGRES_PASSWORD: password
             POSTGRES_DB: caseflow_certification_test
 
       # This is our homespun VACOLS container. An oracle db with some special sauce.
@@ -85,8 +86,8 @@ jobs:
       - run:
           name: Database setup
           command: |
-            ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate:redo"
-            ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate:redo"
+            ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
+            ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
 
       - run:
           name: Wait for FACOLS to be ready

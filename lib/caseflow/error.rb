@@ -45,6 +45,12 @@ module Caseflow::Error
     end
   end
 
+  class MissingBusinessLine < StandardError
+    def initialize
+      @message = "No Business Line found"
+    end
+  end
+
   class InvalidParameter < SerializableError
     def initialize(args = {})
       @code = args[:code] || 400
@@ -89,6 +95,14 @@ module Caseflow::Error
       @task_type = args[:task_type]
       @code = args[:code] || 400
       @message = args[:message] || "Task status has to be 'assigned' on create for #{@task_type}"
+    end
+  end
+
+  class InvalidUserId < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "\"#{@user_id}\" is not a valid CSS_ID or user ID"
     end
   end
 

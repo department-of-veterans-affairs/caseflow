@@ -4,7 +4,12 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
   context ".perform" do
     let(:hearing) { create(:hearing, regional_office: "RO06") }
     let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
-    let(:create_job) { VirtualHearings::CreateConferenceJob.new(hearing_id: virtual_hearing.hearing_id) }
+    let(:create_job) do
+      VirtualHearings::CreateConferenceJob.new(
+        hearing_id: virtual_hearing.hearing_id,
+        hearing_type: virtual_hearing.hearing_type
+      )
+    end
     let(:fake_pexip) { Fakes::PexipService.new(status_code: 400) }
 
     subject { create_job.perform_now }
@@ -29,7 +34,7 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
     end
 
     it "job goes back on queue and logs if error", :aggregate_failures do
-      expect(Rails.logger).to receive(:warn)
+      expect(Rails.logger).to receive(:error)
       expect(create_job).to receive(:client).and_return(fake_pexip)
       expect { subject }.to have_enqueued_job(VirtualHearings::CreateConferenceJob)
       virtual_hearing.establishment.reload

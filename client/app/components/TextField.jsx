@@ -1,5 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
+
+const labelTextStyling = css({
+  marginTop: '0.65em',
+  marginBottom: '0.65em'
+});
 
 export default class TextField extends React.Component {
 
@@ -27,7 +33,8 @@ export default class TextField extends React.Component {
       max,
       autoComplete,
       useAriaLabel,
-      dateErrorMessage
+      dateErrorMessage,
+      labelText
     } = this.props;
 
     let textInputClass = className.concat(
@@ -68,6 +75,7 @@ export default class TextField extends React.Component {
           }
         </label>
       }
+      {labelText && <p{...labelTextStyling}>{labelText}</p>}
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       {this.props.fixedInput ?
         <p>{value}</p> :
@@ -115,6 +123,10 @@ TextField.propTypes = {
     PropTypes.string,
     PropTypes.bool
   ]),
+  labelText: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
   useAriaLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange(props) {
@@ -124,6 +136,12 @@ TextField.propTypes = {
       }
     }
   },
+  title: PropTypes.string,
+  onKeyPress: PropTypes.func,
+  strongLabel: PropTypes.bool,
+  maxLength: PropTypes.number,
+  max: PropTypes.number,
+  autoComplete: PropTypes.string,
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
   fixedInput: PropTypes.bool,

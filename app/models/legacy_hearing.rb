@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-class LegacyHearing < ApplicationRecord
+class LegacyHearing < CaseflowRecord
   include CachedAttributes
   include AssociatedVacolsModel
   include AppealConcern
+  include HasHearingTask
   include HasVirtualHearing
+  include HearingTimeConcern
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -12,6 +14,10 @@ class LegacyHearing < ApplicationRecord
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
+
+  # scheduled_for is the correct hearing date and time in Eastern Time for travel
+  # board and video hearings, or in the user's time zone for central hearings; the
+  # transformation happens in HearingMapper.datetime_based_on_type
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
@@ -25,9 +31,6 @@ class LegacyHearing < ApplicationRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
-  has_one :hearing_task_association,
-          -> { includes(:hearing_task).where(tasks: { status: Task.open_statuses }) },
-          as: :hearing
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location
@@ -36,11 +39,9 @@ class LegacyHearing < ApplicationRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
-  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string,
-           to: :time
-
   delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
            :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
+           :veteran_email_address,
            to: :appeal,
            allow_nil: true
 
@@ -61,23 +62,7 @@ class LegacyHearing < ApplicationRecord
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
 
-  def hearing_task?
-    !hearing_task_association.nil?
-  end
-
-  def disposition_task
-    if hearing_task?
-      hearing_task_association.hearing_task.children.detect { |child| child.type == AssignHearingDispositionTask.name }
-    end
-  end
-
-  def disposition_task_in_progress
-    disposition_task ? disposition_task.open_with_no_children? : false
-  end
-
-  def disposition_editable
-    disposition_task_in_progress || !hearing_task?
-  end
+  alias aod? aod
 
   def judge
     user
@@ -85,6 +70,10 @@ class LegacyHearing < ApplicationRecord
 
   def representative
     appeal&.representative_name
+  end
+
+  def representative_email_address
+    appeal&.representative_email_address
   end
 
   def assigned_to_vso?(user)
@@ -149,10 +138,6 @@ class LegacyHearing < ApplicationRecord
                           end
   end
 
-  def time
-    @time ||= HearingTimeService.new(hearing: self)
-  end
-
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
@@ -177,6 +162,24 @@ class LegacyHearing < ApplicationRecord
 
   def scheduled_pending?
     scheduled_for && !closed?
+  end
+
+  def scheduled_for_past?
+    # FIXME: scheduled_for date is inconsistent in many places.
+    # (https://github.com/department-of-veterans-affairs/caseflow/issues/13273)
+    # scheduled_for should either pulled from VACOLS or from the associated hearing_day,
+    # but some method exclusively use the value from VACOLS. The hearing_day association to
+    # legacy hearings was added in #11741.
+    # (https://github.com/department-of-veterans-affairs/caseflow/pull/11741)
+    scheduled_date = if hearing_day_id_refers_to_vacols_row?
+                       # Handles conversion of a VACOLS time (EST) to the timezone of the RO
+                       time.local_time
+                     else
+                       # Hearing Day scheduled_for is in the timezone of the RO
+                       hearing_day&.scheduled_for || time.local_time
+                     end
+
+    scheduled_date < DateTime.yesterday.in_time_zone(regional_office_timezone)
   end
 
   def held_open?
@@ -272,6 +275,20 @@ class LegacyHearing < ApplicationRecord
     super || begin
       update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
+    end
+  end
+
+  # Sometimes, hearings get deleted in VACOLS, but not in Caseflow. Caseflow ends up
+  # with dangling legacy hearings records.
+  #
+  # See: https://github.com/department-of-veterans-affairs/caseflow/issues/12003
+  def vacols_hearing_exists?
+    begin
+      self.class.repository.load_vacols_data(self)
+      true
+    rescue Caseflow::Error::VacolsRecordNotFound => error
+      capture_exception(error)
+      false
     end
   end
 

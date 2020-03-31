@@ -172,7 +172,7 @@ class ExternalApi::BGSService
   # We cache at 2 levels: the boolean check per user, and the veteran record itself.
   # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
   def can_access?(vbms_id)
-    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 24.hours) do
+    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 2.hours) do
       DBService.release_db_connections
 
       MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
@@ -190,20 +190,18 @@ class ExternalApi::BGSService
     end
   end
 
-  # can_access? reflects whether a user may read a veteran's records.
-  # may_modify? reflects whether a user may establish a new claim.
-  def may_modify?(vbms_id, veteran_participant_id)
-    return false unless can_access?(vbms_id)
-
+  # station_conflict? performs a few checks to determine if the current user
+  # has a same-station conflict with the veteran in question
+  def station_conflict?(vbms_id, veteran_participant_id)
     # sometimes find_flashes works
     begin
       client.claimants.find_flashes(vbms_id)
     rescue BGS::ShareError
-      return false
+      return true
     end
 
     # sometimes the station conflict logic works
-    !ExternalApi::BgsVeteranStationUserConflict.new(
+    ExternalApi::BgsVeteranStationUserConflict.new(
       veteran_participant_id: veteran_participant_id,
       client: client
     ).conflict?
@@ -292,7 +290,7 @@ class ExternalApi::BGSService
     MetricsService.record("BGS: find participant id for user #{css_id}, #{station_id}",
                           service: :bgs,
                           name: "security.find_participant_id") do
-      client.security.find_participant_id(css_id: css_id, station_id: station_id)
+      client.security.find_participant_id(css_id: css_id.upcase, station_id: station_id)
     end
   end
 
@@ -327,6 +325,15 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "documents.generate_tracked_items") do
       client.documents.generate_tracked_items(claim_id)
+    end
+  end
+
+  def find_contention_by_claim_id(claim_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: find contentions for veteran by claim_id #{claim_id}",
+                          service: :bgs,
+                          name: "contention.find_contention_by_claim_id") do
+      client.contention.find_contention_by_claim_id(claim_id)
     end
   end
 

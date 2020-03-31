@@ -6,7 +6,7 @@ describe AsyncableJobMessaging, :postgres do
     let(:job) { create(:higher_level_review, intake: create(:intake, user: owner)) }
     let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
     let(:text) { "contents of a new job note" }
-    let(:messaging) { AsyncableJobMessaging.new(job: job, current_user: user) }
+    let(:messaging) { AsyncableJobMessaging.new(job: job, user: user) }
 
     subject { messaging.add_job_note(text: text, send_to_intake_user: send_to_intake_user) }
 
@@ -113,7 +113,7 @@ describe AsyncableJobMessaging, :postgres do
     let(:owner) { create(:default_user) }
     let(:job) { create(:higher_level_review, intake: create(:intake, user: owner)) }
     let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
-    let(:messaging) { AsyncableJobMessaging.new(job: job, current_user: user) }
+    let(:messaging) { AsyncableJobMessaging.new(job: job, user: user) }
 
     subject { messaging.add_job_cancellation_note(text: "some reason") }
 

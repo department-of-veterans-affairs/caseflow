@@ -5,16 +5,16 @@
 class AsyncableJobMessaging
   FAILING_TIME_BEFORE_MESSAGING = 1.day.freeze
 
-  attr_reader :job, :current_user
+  attr_reader :job, :user
 
-  def initialize(job:, current_user: nil)
+  def initialize(job:, user: RequestStore[:current_user])
     @job = job
-    @current_user = current_user
+    @user = user
   end
 
   def add_job_note(text:, send_to_intake_user:)
     ApplicationRecord.transaction do
-      job_note = JobNote.create!(job: job, user: current_user, note: text, send_to_intake_user: send_to_intake_user)
+      job_note = JobNote.create!(job: job, user: user, note: text, send_to_intake_user: send_to_intake_user)
       if send_to_intake_user && job.asyncable_user
         message_text = <<-EOS.strip_heredoc
           A new note has been added to #{job.label}.
@@ -30,7 +30,7 @@ class AsyncableJobMessaging
     send_to_intake_user = !!job.asyncable_user
     ApplicationRecord.transaction do
       text = "This job has been cancelled with the following note:\n#{text}"
-      job_note = JobNote.create!(job: job, user: current_user, note: text, send_to_intake_user: send_to_intake_user)
+      job_note = JobNote.create!(job: job, user: user, note: text, send_to_intake_user: send_to_intake_user)
       if send_to_intake_user
         message_text = <<-EOS.strip_heredoc
           The job for processing <a href="#{job_note.path}">#{job.label}</a> has been cancelled.<br />

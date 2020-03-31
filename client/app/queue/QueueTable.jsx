@@ -14,28 +14,43 @@ import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
-import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 
 /**
  * This component can be used to easily build tables.
  * The required props are:
  * - @columns {array[string]} array of objects that define the properties
  *   of the columns. Possible attributes for each column include:
+ *   - @align {string} alignment of the column ("left", "right", or "center")
+ *   - @anyFiltersAreSet {boolean} determines whether the "Clear All Filters" option
+ *     in the dropdown is enabled
+ *   - @cellClass {string} a CSS class to apply to each cell in the column
+ *   - @columnName {string} the name of the column in the table data
+ *   - @enableFilter {boolean} whether filtering is turned on for the column
+ *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
+ *     is automatically capitalized. default is true.
+ *   - @filterOptions {array[object]} array of value - displayText pairs to override the
+ *     generated filter values and counts in <TableFilter>
+ *   - @filterValueTransform {function(any)} function that takes the value of the
+ *     column, and transforms it into a string for filtering.
+ *   - @footer {string} footer cell value for the column
  *   - @header {string|component} header cell value for the column
- *   - @align {sting} alignment of the column ("left", "right", or "center")
+ *   - @label {string} used for the aria-label on the icon,
  *   - @tableData {array[object]} array of rows that are being used to populate the table.
  *     if not specified, @rowObjects will used.
  *   - @valueFunction {function(rowObject)} function that takes `rowObject` as
  *     an argument and returns the value of the cell for that column.
  *   - @valueName {string} if valueFunction is not defined, cell value will use
  *     valueName to pull that attribute from the rowObject.
- *   - @filterValueTransform {function(any)} function that takes the value of the
- *     column, and transforms it into a string for filtering.
+ *   - @filterValueTransform {function(any, any)} function that takes the value of the
+ *     column, and transforms it into a string for filtering. The row is passed in as
+ *     a second argument.
  *   - @filterOptions {array[object]} array of value - displayText pairs to override the
  *     generated filter values and counts in <TableFilter>
  *   - @enableFilterTextTransform {boolean} when true, filter text that gets displayed
  *     is automatically capitalized. default is true.
  *   - @footer {string} footer cell value for the column
+
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary
  * - @enablePagination {boolean} whether or not to enablePagination
@@ -106,7 +121,6 @@ const HeaderRow = (props) => {
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         }
-
         const columnTitleContent = <span>{column.header || ''}</span>;
         const columnContent = <span {...iconHeaderStyle} aria-label="">
           {columnTitleContent}
@@ -203,29 +217,27 @@ export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const { tabPaginationOptions = {}, useTaskPagesApi } = this.props;
-    const needsTaskRequest = useTaskPagesApi && !_.isEmpty(tabPaginationOptions);
+    const { useTaskPagesApi } = this.props;
+    const validatedPaginationOptions = this.validatedPaginationOptions();
 
-    this.state = this.initialState(tabPaginationOptions, needsTaskRequest);
+    this.state = this.initialState(validatedPaginationOptions);
 
-    if (needsTaskRequest) {
+    if (useTaskPagesApi && validatedPaginationOptions.needsTaskRequest) {
       this.requestTasks();
     }
 
     this.updateAddressBar();
   }
 
-  initialState = (tabPaginationOptions, needsTaskRequest) => {
-    const { defaultSort } = this.props;
+  initialState = (paginationOptions) => {
+    const { defaultSort, useTaskPagesApi } = this.props;
+
     const state = {
-      sortAscending: tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
-                     QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC,
-      sortColName: tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null,
-      filteredByList: this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]),
       cachedResponses: {},
       tasksFromApi: null,
-      loadingComponent: needsTaskRequest && <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
-      currentPage: (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0
+      loadingComponent: (useTaskPagesApi && paginationOptions.needsTaskRequest) &&
+        <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
+      ...paginationOptions
     };
 
     if (defaultSort) {
@@ -233,6 +245,31 @@ export default class QueueTable extends React.PureComponent {
     }
 
     return state;
+  }
+
+  validatedPaginationOptions = () => {
+    const { tabPaginationOptions = {}, numberOfPages, columns } = this.props;
+
+    const sortAscending = tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
+      QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
+    const sortColumn = tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null;
+    const filteredByList = this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]);
+    const pageNumber = (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0;
+
+    const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
+    const sortColName = columns.map((column) => column.name).includes(sortColumn) ? sortColumn : null;
+
+    // Only request tasks from the back end if no pages have been fetches, we want another page,
+    // to sort on a column, or if filters are provided
+    const needsTaskRequest = _.isUndefined(numberOfPages) || currentPage || sortColName || !_.isEmpty(filteredByList);
+
+    return {
+      sortAscending,
+      sortColName,
+      filteredByList,
+      currentPage,
+      needsTaskRequest
+    };
   }
 
   componentDidMount = () => {
@@ -252,7 +289,7 @@ export default class QueueTable extends React.PureComponent {
   getFilters = (filterParams) => {
     const filters = {};
 
-    // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask,ArnesonColocatedTask"]
+    // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask|ArnesonColocatedTask"]
     if (filterParams) {
       // When react router encouters an array of strings param with one element, it converts the param to a string
       // rather than keeping it as the original array
@@ -260,9 +297,13 @@ export default class QueueTable extends React.PureComponent {
         const columnAndValues = filter.split('&');
         const columnName = columnAndValues[0].split('=')[1];
         const column = this.props.columns.find((col) => col.name === columnName);
-        const values = columnAndValues[1].split('=')[1].split(',');
+        const values = columnAndValues[1].split('=')[1].split('|');
 
-        filters[column.columnName] = values;
+        if (column) {
+          const validValues = column.filterOptions.map((filterOption) => filterOption.value);
+
+          filters[column.columnName] = values.filter((value) => validValues.includes(value));
+        }
       });
     }
 
@@ -285,7 +326,8 @@ export default class QueueTable extends React.PureComponent {
   }
 
   updateFilteredByList = (newList) => {
-    this.setState({ filteredByList: newList }, this.updateAddressBar);
+    this.setState({ filteredByList: newList,
+      filtered: true }, this.updateAddressBar);
 
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
@@ -320,7 +362,7 @@ export default class QueueTable extends React.PureComponent {
           let cellValue = _.get(row, columnName);
 
           if (columnConfig && columnConfig.filterValueTransform) {
-            cellValue = columnConfig.filterValueTransform(cellValue);
+            cellValue = columnConfig.filterValueTransform(cellValue, row);
           }
 
           if (_.isNil(cellValue)) {
@@ -377,7 +419,7 @@ export default class QueueTable extends React.PureComponent {
   // &page=2
   // &sort_by=detailsColumn
   // &order=desc
-  // &filter[]=col=docketNumberColumn&val=legacy,evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
+  // &filter[]=col=docketNumberColumn&val=legacy|evidence_submission&filters[]=col=taskColumn&val=Unaccredited rep
   requestUrl = () => {
     return `${this.props.taskPagesApiEndpoint}${this.requestQueryString()}`;
   };
@@ -403,7 +445,7 @@ export default class QueueTable extends React.PureComponent {
           const column = this.props.columns.find((col) => col.columnName === columnName);
 
           filterParams.push(
-            `col=${column.name}&val=${filteredByList[columnName].join(',')}`
+            `col=${column.name}&val=${filteredByList[columnName].join('|')}`
           );
         }
       }
@@ -492,6 +534,10 @@ export default class QueueTable extends React.PureComponent {
           numberOfPages = responseFromCache.task_page_count;
           totalTaskCount = responseFromCache.total_task_count;
         }
+
+        if (this.props.tabPaginationOptions && this.props.tabPaginationOptions.onPageLoaded) {
+          this.props.tabPaginationOptions.onPageLoaded(responseFromCache, this.state.currentPage, this.state.filtered);
+        }
       }
     } else {
       // Steps to calculate table data to display:
@@ -528,7 +574,7 @@ export default class QueueTable extends React.PureComponent {
 
     if (enablePagination && !this.state.loadingComponent) {
       paginationElements = <Pagination
-        pageSize={casesPerPage}
+        pageSize={casesPerPage || DEFAULT_CASES_PER_PAGE}
         currentPage={this.state.currentPage + 1}
         currentCases={rowObjects ? rowObjects.length : 0}
         totalPages={numberOfPages}
@@ -565,7 +611,7 @@ export default class QueueTable extends React.PureComponent {
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
           {...this.state} />
-        <FooterRow columns={columns} />
+        <FooterRow rowObjects={[]} columns={columns} />
       </table>;
 
     return <div className="cf-table-wrapper" ref={(div) => {
@@ -613,7 +659,13 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   totalTaskCount: PropTypes.number,
   useTaskPagesApi: PropTypes.bool,
   userReadableColumnNames: PropTypes.object,
-  tabPaginationOptions: PropTypes.object
+  tabPaginationOptions: PropTypes.shape({
+    [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: PropTypes.number,
+    [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: PropTypes.string,
+    [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: PropTypes.string,
+    [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
+    onPageLoaded: PropTypes.func
+  })
 };
 
 /* eslint-enable max-lines */

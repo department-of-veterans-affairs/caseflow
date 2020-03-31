@@ -16,7 +16,7 @@ import ReaderLink from './ReaderLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { pencilSymbol } from '../components/RenderFunctions';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 

@@ -32,6 +32,10 @@ FactoryBot.define do
       roles { ["Mail Intake"] }
     end
 
+    trait :inactive do
+      status { "inactive" }
+    end
+
     trait :vso_role do
       roles { ["VSO"] }
     end

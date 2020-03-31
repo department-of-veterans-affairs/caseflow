@@ -244,7 +244,7 @@ feature "Higher-Level Review", :all_dbs do
           payee_code: "10",
           predischarge: false,
           claim_type: "Claim",
-          station_of_jurisdiction: "499",
+          station_of_jurisdiction: current_user.station_id,
           date: higher_level_review.receipt_date.to_date,
           end_product_modifier: "033",
           end_product_label: "Higher-Level Review Rating",
@@ -275,7 +275,7 @@ feature "Higher-Level Review", :all_dbs do
         payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "499",
+        station_of_jurisdiction: current_user.station_id,
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
@@ -461,6 +461,8 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_current_path("/intake/review_request")
   end
 
+  # this version is slightly different from what is in IntakeHelpers
+  # TODO it would be good to reconcile and save some duplication.
   def start_higher_level_review(
     test_veteran,
     is_comp: true,
@@ -687,6 +689,19 @@ feature "Higher-Level Review", :all_dbs do
       end
     end
 
+    context "Veteran with future ratings" do
+      before { FeatureToggle.enable!(:show_future_ratings) }
+      after { FeatureToggle.disable!(:show_future_ratings) }
+
+      scenario "when show_future_ratings featuretoggle is enabled " do
+        higher_level_review, = start_higher_level_review(veteran)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        expect(page).to have_content("Future rating issue 1")
+        expect(higher_level_review.receipt_date).to eq(receipt_date)
+      end
+    end
+
     scenario "Add Issues modal uses promulgation date" do
       start_higher_level_review(veteran)
       visit "/intake/add_issues"
@@ -890,7 +905,7 @@ feature "Higher-Level Review", :all_dbs do
         code: "030HLRR",
         claimant_participant_id: "5382910292",
         payee_code: "02",
-        station: "499"
+        station: current_user.station_id
       )
 
       expect(end_product_establishment).to_not be_nil
@@ -901,7 +916,7 @@ feature "Higher-Level Review", :all_dbs do
         code: "030HLRNR",
         claimant_participant_id: "5382910292",
         payee_code: "02",
-        station: "499"
+        station: current_user.station_id
       )
       expect(non_rating_end_product_establishment).to_not be_nil
 
@@ -1276,7 +1291,7 @@ feature "Higher-Level Review", :all_dbs do
           # Expect untimely exemption modal for untimely issue
           click_intake_add_issue
           add_intake_rating_issue("Untimely rating issue 1")
-          add_intake_rating_issue("None of these match")
+          select_intake_no_match
           add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Untimely rating issue 1")
@@ -1292,7 +1307,7 @@ feature "Higher-Level Review", :all_dbs do
 
           expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
-          add_intake_rating_issue("None of these match")
+          select_intake_no_match
           add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Description for Active Duty Adjustments")
@@ -1362,6 +1377,127 @@ feature "Higher-Level Review", :all_dbs do
             LegacyIssueOptin::VACOLS_DISPOSITION_CODE
           )
         end
+
+        context "with unidentified issue on legacy opt-in" do
+          before do
+            FeatureToggle.enable!(:verify_unidentified_issue)
+            FeatureToggle.enable!(:unidentified_issue_decision_date)
+          end
+
+          after do
+            FeatureToggle.disable!(:verify_unidentified_issue)
+            FeatureToggle.enable!(:unidentified_issue_decision_date)
+          end
+
+          let(:decision_date) { 30.days.ago.to_date.mdY }
+
+          scenario "show unidentified modal" do
+            start_higher_level_review(veteran, legacy_opt_in_approved: true)
+            visit "/intake/add_issues"
+            click_intake_add_issue
+            click_intake_no_matching_issues
+            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+
+            # Expect unidentified issue modal for unidentified issue
+            click_intake_no_matching_issues
+            expect(page).to have_content("Describe the issue to mark it as needing further review")
+            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            safe_click ".add-issue"
+
+            # Expect legacy opt in issue modal to show
+            expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+            add_intake_rating_issue("impairment of hip")
+            expect(page).to have_content("Service connection, impairment of hip")
+          end
+
+          scenario "with legacy opt in not approved" do
+            start_higher_level_review(veteran, legacy_opt_in_approved: false)
+            visit "/intake/add_issues"
+            click_intake_add_issue
+            click_intake_no_matching_issues
+
+            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+            # do not show inactive appeals when legacy opt in is false
+            click_intake_no_matching_issues
+            expect(page).to have_content("Describe the issue to mark it as needing further review")
+            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            safe_click ".add-issue"
+
+            add_intake_rating_issue("ankylosis of hip")
+            expect(page).to have_content(ineligible_constants.legacy_issue_not_withdrawn.to_s)
+
+            click_intake_finish
+
+            ineligible_checklist = find("ul.cf-issue-checklist")
+            expect(ineligible_checklist).to have_content(
+              ineligible_constants.legacy_issue_not_withdrawn.to_s
+            )
+
+            expect(RequestIssue.find_by(
+                     is_unidentified: true,
+                     ineligible_reason: :legacy_issue_not_withdrawn,
+                     vacols_id: "vacols1",
+                     vacols_sequence_id: "1"
+                   )).to_not be_nil
+
+            expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
+          end
+
+          scenario "Verify checkbox on unidentified issues modal on edit page is enabled" do
+            start_higher_level_review(veteran, legacy_opt_in_approved: true)
+            visit "/intake/add_issues"
+            click_intake_add_issue
+            click_intake_no_matching_issues
+            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+
+            click_intake_no_matching_issues
+            expect(page).to have_content("Describe the issue to mark it as needing further review")
+            fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+            safe_click ".add-issue"
+
+            add_intake_rating_issue("ankylosis of hip")
+            click_intake_finish
+            expect(page).to have_content("correct the issues")
+            click_on "correct the issues"
+            expect(page).to have_content("This issue has automatically closed the VACOLS issue")
+
+            click_intake_add_issue
+            click_intake_no_matching_issues
+
+            expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
+            click_intake_no_matching_issues
+            expect(find_field("Verify record of prior decision", visible: false)).to_not be_checked
+
+            find("label", text: "Verify record of prior decision").click
+            expect(page).to have_button("Next", disabled: true)
+            expect(page).not_to have_content("Decision date (optional)")
+            expect(page).not_to have_content("Notes (optional)")
+
+            fill_in "Transcribe the issue as it's written on the form", with: "Verified issue"
+            fill_in "Decision date", with: decision_date
+            fill_in "Notes", with: "Testing verified unidentified issues"
+            click_on "Next"
+
+            expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+            expect(page).to have_content("impairment of hip")
+            add_intake_rating_issue("limitation of thigh motion")
+            expect(page).to have_content("Testing verified unidentified issues")
+
+            click_button("Save")
+            safe_click "#Unidentified-issue-button-id-1"
+            expect(page).to have_content("Number of issues has changed")
+            safe_click "#Number-of-issues-has-changed-button-id-1"
+
+            expect(page).to have_content("Claim Issues Saved")
+            verified_issue = RequestIssue.find_by(verified_unidentified_issue: true,
+                                                  vacols_id: "vacols1",
+                                                  unidentified_issue_text: "Verified issue",
+                                                  is_unidentified: false)
+
+            expect(verified_issue).to_not be_nil
+            expect(page).to have_content("Contention: #{verified_issue.contention_text}")
+          end
+        end
       end
 
       context "with legacy opt in not approved" do
@@ -1375,7 +1511,6 @@ feature "Higher-Level Review", :all_dbs do
           # do not show inactive appeals when legacy opt in is false
           expect(page).to_not have_content("impairment of hip")
           expect(page).to_not have_content("typhoid arthritis")
-
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(

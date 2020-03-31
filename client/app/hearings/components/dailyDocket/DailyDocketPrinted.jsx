@@ -1,16 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment';
-import _ from 'lodash';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Table from '../../../components/Table';
-import { getDisplayTime } from './DailyDocketRowDisplayText';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+import moment from 'moment';
+
+import { getDate, getDisplayTime } from '../../../util/DateUtil';
 import { isPreviouslyScheduledHearing, sortHearings } from '../../utils';
-import { getDate } from '../../../util/DateUtil';
 import { openPrintDialogue } from '../../../util/PrintUtil';
-import AOD_CODE_TO_LABEL_MAP from '../../../../constants/AOD_CODE_TO_LABEL_MAP.json';
-import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.json';
+import AOD_CODE_TO_LABEL_MAP from '../../../../constants/AOD_CODE_TO_LABEL_MAP';
+import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
+import Table from '../../../components/Table';
 
 export class DailyDocketPrinted extends React.Component {
 

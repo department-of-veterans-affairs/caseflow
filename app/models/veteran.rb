@@ -4,7 +4,7 @@
 #
 # TODO: How do we deal with differences between the BGS vet values and the
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
-class Veteran < ApplicationRecord
+class Veteran < CaseflowRecord
   include AssociatedBgsRecord
 
   has_many :available_hearing_locations,
@@ -18,6 +18,9 @@ class Veteran < ApplicationRecord
 
   validates :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
+  validate :validate_address_line, on: :bgs
+  validates :city, length: { maximum: 30 }, on: :bgs
+  validate :validate_city, on: :bgs
 
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
@@ -172,6 +175,25 @@ class Veteran < ApplicationRecord
   alias address_line_3 address_line3
   alias gender sex
 
+  def validate_address_line
+    [:address_line1, :address_line2, :address_line3].each do |address|
+      address_line = instance_variable_get("@#{address}")
+      next if address_line.blank?
+
+      # This regex validation is used in VBMS to validate address of veteran
+      unless address_line.match?(/^(?!.*\s\s)[a-zA-Z0-9+#@%&()_:',.\-\/\s]*$/)
+        errors.add(address.to_sym, "invalid_characters")
+      end
+    end
+  end
+
+  def validate_city
+    return if city.blank?
+
+    # This regex validation is used in VBMS to validate address of veteran
+    errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
+  end
+
   def ratings
     @ratings ||= begin
       if FeatureToggle.enabled?(:ratings_at_issue, user: RequestStore.store[:current_user])
@@ -184,31 +206,6 @@ class Veteran < ApplicationRecord
 
   def decision_issues
     DecisionIssue.where(participant_id: participant_id)
-  end
-
-  def accessible_appeals_for_poa(poa_participant_ids)
-    appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
-    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
-
-    poas = poas_for_appeals(appeals, legacy_appeals)
-
-    [
-      appeals.select do |appeal|
-        appeal.claimants.any? do |claimant|
-          poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
-        end
-      end,
-      legacy_appeals.select do |legacy_appeal|
-        poa_participant_ids.include?(poas[legacy_appeal.veteran.participant_id][:participant_id])
-      end
-    ].flatten
-  end
-
-  def poas_for_appeals(appeals, legacy_appeals)
-    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
-      .concat(legacy_appeals.map { |legacy_appeal| legacy_appeal.veteran.participant_id }.flatten)
-
-    bgs.fetch_poas_by_participant_ids(claimants_participant_ids.uniq)
   end
 
   def participant_id
@@ -239,10 +236,15 @@ class Veteran < ApplicationRecord
     raise response.error # rubocop:disable Style/SignalException
   end
 
+  def stale?
+    (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
+      email_address.nil?)
+  end
+
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil?)
+    is_stale = stale?
     is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
     is_stale
   end

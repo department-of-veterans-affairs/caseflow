@@ -202,7 +202,7 @@ feature "Intake", :all_dbs do
 
     context "Veteran is an employee at the same station as the User" do
       before do
-        allow_any_instance_of(Fakes::BGSService).to receive(:may_modify?).and_return(false)
+        allow_any_instance_of(Fakes::BGSService).to receive(:station_conflict?).and_return(true)
       end
 
       scenario "Search for a Veteran that the user may not modify" do
@@ -226,7 +226,8 @@ feature "Intake", :all_dbs do
           sex: nil,
           ssn: nil,
           country: nil,
-          address_line1: "this address is more than 20 chars"
+          address_line1: "this address is more than 20 chars",
+          city: "BRISTOW"
         )
       end
 
@@ -286,8 +287,7 @@ feature "Intake", :all_dbs do
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
-        expect(page).to have_content("This Veteran has a duplicate record in CorpDB")
-        expect(page).to have_content("[#{participant_id1}, #{participant_id2}]")
+        expect(page).to have_content("This Veteran has a duplicate record in the Corporate database")
       end
     end
 
@@ -379,6 +379,68 @@ feature "Intake", :all_dbs do
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("Invalid file number")
+      end
+    end
+
+    context "Invalid characters" do
+      context "invalid address characters" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            address_line1: "%&^%",
+            city: "BRISTOW"
+          )
+        end
+
+        scenario "veteran has invalid characters in an address" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("The Veteran's profile has missing or invalid information")
+          expect(page).to have_content("This Veteran's address has invalid characters")
+        end
+      end
+
+      context "invalid city characters" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            city: "ÐÐÐÐÐ",
+            address_line1: "1234"
+          )
+        end
+
+        scenario "veteran has city invalid characters" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("The Veteran's profile has missing or invalid information")
+          expect(page).to have_content("This Veteran's city has invalid characters")
+        end
       end
     end
   end
