@@ -10,6 +10,7 @@ class DataIntegrityChecksJob < CaseflowJob
     LegacyAppealsWithNoVacolsCase
     OpenHearingTasksWithoutActiveDescendantsChecker
     OpenTasksWithClosedAtChecker
+    PendingIncompleteAndUncancelledTaskTimersChecker
     ReviewsWithDuplicateEpErrorChecker
     StuckAppealsChecker
     UntrackedLegacyAppealsChecker
