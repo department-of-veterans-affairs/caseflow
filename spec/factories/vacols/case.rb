@@ -33,10 +33,17 @@ FactoryBot.define do
         end
         vacols_case.update!(bfcurloc: slogid) if slogid
 
+        # Set the Work Product
+        deprod = if evaluator.work_product && evaluator.work_product.length > 3
+                   evaluator.work_product[0..2].upcase
+                 else
+                   evaluator.work_product
+                 end
+
         create_list(
           :decass,
           evaluator.decass_count,
-          deprod: evaluator.work_product,
+          deprod: deprod,
           defolder: vacols_case.bfkey,
           deadusr: slogid || "TEST",
           demdusr: assigner_slogid || "ASSIGNER",
