@@ -344,18 +344,18 @@ class Fakes::BGSService
     rating_profile
   end
 
-  def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
-    normed_date_key = Fakes::RatingStore.normed_profile_date_key(profile_date).to_sym
-    rating_profile = (get_rating_record(participant_id)[:profiles] || {})[normed_date_key]
-
-    # Simulate the error bgs throws if rating profile doesn't exist
-    unless rating_profile
-      fail Savon::Error, "a record does not exist for PTCPNT_VET_ID = '#{participant_id}'"\
-        " and PRFL_DT = '#{profile_date}'"
-    end
-
-    rating_profile
-  end
+  # def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
+  #   normed_date_key = Fakes::RatingStore.normed_profile_date_key(profile_date).to_sym
+  #   rating_profile = (get_rating_record(participant_id)[:profiles] || {})[normed_date_key]
+  #
+  #   # Simulate the error bgs throws if rating profile doesn't exist
+  #   unless rating_profile
+  #     fail Savon::Error, "a record does not exist for PTCPNT_VET_ID = '#{participant_id}'"\
+  #       " and PRFL_DT = '#{profile_date}'"
+  #   end
+  #
+  #   rating_profile
+  # end
 
   def get_participant_id_for_user(user)
     get_participant_id_for_css_id_and_station_id(user.css_id, user.station_id)
