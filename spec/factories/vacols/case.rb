@@ -36,7 +36,7 @@ FactoryBot.define do
         create_list(
           :decass,
           evaluator.decass_count,
-          evaluator.work_product,
+          deprod: evaluator.work_product,
           defolder: vacols_case.bfkey,
           deadusr: slogid || "TEST",
           demdusr: assigner_slogid || "ASSIGNER",
