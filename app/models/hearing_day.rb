@@ -102,7 +102,7 @@ class HearingDay < CaseflowRecord
 
   def to_hash
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
-                                         VideoHearingDayRequestTypeQuery
+                                         HearingDayRequestTypeQuery
                                            .new(HearingDay.where(id: id))
                                            .call
                                        else

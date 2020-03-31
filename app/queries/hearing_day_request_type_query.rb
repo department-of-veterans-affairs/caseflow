@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 ##
-# Determines the hearing day request type for multiple video hearing days.
+# Determines the hearing day request type for multiple video or central hearing
+# days.
 #
 # This class exists to optimize the process for determining the request
 # type for multiple hearing days. Otherwise, you need to get a full list of
 # the hearings for that day.
 
-class VideoHearingDayRequestTypeQuery
+class HearingDayRequestTypeQuery
   def initialize(hearing_days = HearingDay.all)
     @hearing_days = hearing_days
   end

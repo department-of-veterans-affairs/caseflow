@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe VideoHearingDayRequestTypeQuery do
-  subject { VideoHearingDayRequestTypeQuery.new.call }
+describe HearingDayRequestTypeQuery do
+  subject { HearingDayRequestTypeQuery.new.call }
 
   context "with central hearing day" do
     let!(:hearing_day) do
