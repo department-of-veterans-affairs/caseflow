@@ -9,7 +9,7 @@ class RatingAtIssue < Rating
         end_date: end_date
       )
 
-      sorted_ratings_from_bgs_response(response)
+      sorted_ratings_from_bgs_response(response: response, start_date: start_date)
     end
 
     def from_bgs_hash(data)
@@ -25,7 +25,7 @@ class RatingAtIssue < Rating
 
     def ratings_from_bgs_response(response)
       ratings = response.dig(:rba_profile_list, :rba_profile)
-      
+
       if ratings.nil?
         fail NilRatingProfileListError, message: response
       end

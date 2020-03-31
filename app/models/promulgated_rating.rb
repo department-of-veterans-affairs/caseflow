@@ -21,7 +21,7 @@ class PromulgatedRating < Rating
         end_date: end_date
       )
 
-      sorted_ratings_from_bgs_response(response)
+      sorted_ratings_from_bgs_response(response: response, start_date: start_date)
     rescue Savon::Error
       []
     end

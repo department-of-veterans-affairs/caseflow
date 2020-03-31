@@ -242,22 +242,22 @@ class ExternalApi::BGSService
     end
   end
 
-  def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
-    DBService.release_db_connections
-
-    MetricsService.record("BGS: fetch rating profile in range: \
-                           participant_id = #{participant_id}, \
-                           start_date = #{start_date}, \
-                           end_date = #{end_date}",
-                          service: :bgs,
-                          name: "rating_profile.find_in_date_range") do
-      client.rating_profile.find_in_date_range(
-        participant_id: participant_id,
-        start_date: start_date,
-        end_date: end_date
-      )
-    end
-  end
+  # def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
+  #   DBService.release_db_connections
+  #
+  #   MetricsService.record("BGS: fetch rating profile in range: \
+  #                          participant_id = #{participant_id}, \
+  #                          start_date = #{start_date}, \
+  #                          end_date = #{end_date}",
+  #                         service: :bgs,
+  #                         name: "rating_profile.find_in_date_range") do
+  #     client.rating_profile.find_in_date_range(
+  #       participant_id: participant_id,
+  #       start_date: start_date,
+  #       end_date: end_date
+  #     )
+  #   end
+  # end
 
   def fetch_claimant_info_by_participant_id(participant_id)
     DBService.release_db_connections

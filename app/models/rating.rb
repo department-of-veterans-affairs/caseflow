@@ -30,7 +30,7 @@ class Rating
       fail Caseflow::Error::MustImplementInSubclass
     end
 
-    def sorted_ratings_from_bgs_response(response)
+    def sorted_ratings_from_bgs_response(response:, start_date:)
       unsorted = ratings_from_bgs_response(response).select do |rating|
         rating.promulgation_date > start_date
       end
@@ -64,7 +64,7 @@ class Rating
   def decisions
     return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
 
-    diability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
+    disability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
 
     disability_data.map do |disability|
       RatingDecision.from_bgs_disability(self, disability)
@@ -101,11 +101,11 @@ class Rating
   end
 
   def generate_diagnostic_codes
-    diability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
+    disability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
 
-    return {} unless disability_data.present?
+    return {} if disability_data.blank?
 
-    Array.wrap(diability_data).reduce({}) do |disability_map, disability|
+    Array.wrap(disability_data).reduce({}) do |disability_map, disability|
       disability_time = disability[:dis_dt]
 
       if disability_map[disability[:dis_sn]].nil? ||
