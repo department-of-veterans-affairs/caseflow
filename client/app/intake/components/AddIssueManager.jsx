@@ -187,13 +187,12 @@ class AddIssueManager extends React.Component {
   };
 
   setupUntimelyExemptionModal = () => {
-    const { intakeData, formType } = this.props;
+    const { intakeData } = this.props;
 
     return {
       component: UntimelyExemptionModal,
       props: {
         intakeData,
-        formType,
         onCancel: () => this.cancel(),
         onSubmit: ({ untimelyExemption, untimelyExemptionNotes, untimelyExemptionCovid }) => {
           this.setState(

@@ -227,19 +227,6 @@ feature "Intake Add Issues Page", :all_dbs do
           expect(untimely_issue.covid_timeliness_exempt).to eq(true)
         end
       end
-
-      context "for appeal" do
-        it "does not show COVID-19 exemption notice" do
-          start_appeal(veteran, legacy_opt_in_approved: true)
-          visit "/intake/add_issues"
-          click_intake_add_issue
-          add_intake_rating_issue("Untimely Issue")
-          expect(page).to_not have_content("Notes")
-          expect(page).to have_content("Issue 1 is an Untimely Issue")
-          find("label", text: "Yes").click
-          expect(page).to_not have_content("Is the reason for requesting an extension related to COVID-19?")
-        end
-      end
     end
   end
 

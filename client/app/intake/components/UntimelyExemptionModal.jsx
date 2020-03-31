@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
@@ -35,7 +35,6 @@ const generateButtons = ({ cancelText, onCancel, onSubmit, submitText, skipText,
 };
 
 export const UntimelyExemptionModal = ({
-  formType,
   intakeData,
   currentIssue,
   onSubmit,
@@ -50,15 +49,10 @@ export const UntimelyExemptionModal = ({
   const [state, setState] = useState({
     untimelyExemption: '',
     untimelyExemptionNotes: '',
-    untimelyExemptionCovid: ''
+    untimelyExemptionCovid: false
   });
 
-  const isInvalid = () => {
-    return (
-      !state.untimelyExemption ||
-      (covidTimelinessExemption && state.untimelyExemption === 'true' && !state.untimelyExemptionCovid)
-    );
-  };
+  const isInvalid = () => !state.untimelyExemption;
 
   const buttons = useMemo(
     () =>
@@ -97,12 +91,12 @@ export const UntimelyExemptionModal = ({
 
         {state.untimelyExemption === 'true' && (
           <>
-            {covidTimelinessExemption && formType === 'higher_level_review' && (
+            {covidTimelinessExemption && (
               <Checkbox
                 name="untimelyExemptionCovid"
                 label="This request is related to COVID-19"
                 onChange={(val) => setState({ ...state, untimelyExemptionCovid: val })}
-                value={state.untimelyExemptionCovid === null ? null : state.untimelyExemptionCovid.toString()}
+                value={state.untimelyExemptionCovid}
               />
             )}
 
@@ -121,7 +115,6 @@ export const UntimelyExemptionModal = ({
 };
 
 UntimelyExemptionModal.propTypes = {
-  formType: PropTypes.string.isRequired,
   intakeData: PropTypes.object.isRequired,
   currentIssue: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
