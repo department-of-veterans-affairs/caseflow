@@ -14,7 +14,7 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
 
     subject { create_job.perform_now }
 
-    it "creates a conference and datadogs success", :aggregate_failures do
+    it "creates a conference", :aggregate_failures do
       subject
 
       virtual_hearing.reload
