@@ -6,7 +6,9 @@
 class JudgeDecisionReviewTask < JudgeTask
   before_create :verify_user_task_unique
 
-  def additional_available_actions(_user)
+  def additional_available_actions(user)
+    return [] unless assigned_to == user
+
     judge_checkout_label = if ama?
                              Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h
                            else
