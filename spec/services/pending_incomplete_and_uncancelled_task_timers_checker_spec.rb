@@ -2,7 +2,7 @@
 
 describe PendingIncompleteAndUncancelledTaskTimersChecker do
   describe "#call" do
-    let(:task) { create(:task, :on_hold) }
+    let(:task) { create(:task) }
     let!(:task_timer) do
       create(:task_timer, task: task, created_at: 5.days.ago, submitted_at: 6.days.ago)
     end
