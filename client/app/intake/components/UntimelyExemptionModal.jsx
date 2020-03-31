@@ -26,6 +26,8 @@ const UntimelyExemptionModal = ({
     untimelyExemptionCovid: ''
   });
 
+  const isInvalid = () => !state.untimelyExemption || (state.untimelyExemption && !state.untimelyExemptionCovid);
+
   const buttons = useMemo(() => {
     const btns = [
       {
@@ -37,7 +39,7 @@ const UntimelyExemptionModal = ({
         classNames: ['usa-button', 'add-issue'],
         name: submitText,
         onClick: () => onSubmit({ ...state }),
-        disabled: !state.untimelyExemption
+        disabled: isInvalid()
       }
     ];
 
