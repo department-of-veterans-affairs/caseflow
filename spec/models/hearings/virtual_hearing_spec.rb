@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VirtualHearing, :all_dbs do
+describe VirtualHearing, focus: true do
   context "validation tests" do
     let(:virtual_hearing) { build(:virtual_hearing) }
 
@@ -17,10 +17,10 @@ describe VirtualHearing, :all_dbs do
         )
       end
 
-      it { expect(subject).to be(false) }
+      it { expect(subject).to be(true) }
     end
 
-    context "for a central legacy hearing", all_dbs: true do
+    context "for a central legacy hearing" do
       let(:virtual_hearing) do
         build(
           :virtual_hearing,
@@ -31,7 +31,7 @@ describe VirtualHearing, :all_dbs do
         )
       end
 
-      it { expect(subject).to be(false) }
+      it { expect(subject).to be(true) }
     end
   end
 end
