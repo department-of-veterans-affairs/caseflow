@@ -53,7 +53,10 @@ export const UntimelyExemptionModal = ({
   });
 
   const isInvalid = () => {
-    return !state.untimelyExemption || (state.untimelyExemption === 'true' && !state.untimelyExemptionCovid);
+    return (
+      !state.untimelyExemption ||
+      (covidTimelinessExemption && state.untimelyExemption === 'true' && !state.untimelyExemptionCovid)
+    );
   };
 
   const buttons = useMemo(
