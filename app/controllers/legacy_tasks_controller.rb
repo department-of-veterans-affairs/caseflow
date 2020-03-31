@@ -14,6 +14,8 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
+    fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
+
     user_role = (params[:role] || user.vacols_roles.first).try(:downcase)
     return invalid_role_error unless ROLES.include?(user_role)
 
@@ -90,9 +92,17 @@ class LegacyTasksController < ApplicationController
   private
 
   def user
-    @user ||= User.find(params[:user_id])
+    @user ||= begin
+                return User.find(params[:user_id]) if positive_integer?(params[:user_id])
+
+                User.find_by(css_id: params[:user_id])
+              end
   end
   helper_method :user
+
+  def positive_integer?(param)
+    /\A\d+\z/.match(param)
+  end
 
   def appeal
     @appeal ||= LegacyAppeal.find(legacy_task_params[:appeal_id])
