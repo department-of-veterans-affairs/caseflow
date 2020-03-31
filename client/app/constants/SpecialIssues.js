@@ -382,4 +382,7 @@ export const NEW_SPECIAL_ISSUES = [
   }
 ];
 
+// NEW_SPECIAL_ISSUES added in 2020-Spring. Currently listed seperate from the main list in order to be                
+// locked to the FeatureToggle :special_issues_revamp in SpecialIssueEnabler. As a part of removing the feature toggle, merge the
+// arrays and clean up this export.  
 export default SPECIAL_ISSUES;
