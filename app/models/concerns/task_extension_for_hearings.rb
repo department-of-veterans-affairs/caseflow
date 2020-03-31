@@ -5,6 +5,8 @@
 # visibility
 
 module TaskExtensionForHearings
+  extend ActiveSupport::Concern
+
   # Implemented in app/models.task.rb
   def ancestor_task_of_type(_task_type); end
 
