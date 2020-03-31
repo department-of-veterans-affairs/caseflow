@@ -248,7 +248,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     let(:vacols_role_trait) { :attorney_judge_role }
 
     let(:created_at) { "2019-02-14" }
-    let(:document_id) { "12345-12345678" }
+    let(:document_id) { "02255-00000002" }
     let(:vacols_id) { appeal.vacols_id }
 
     let!(:case_review) do
@@ -285,11 +285,12 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         vacols_id: vacols_id,
         assigned_by_css_id: attorney_user.css_id,
         assigned_to_css_id: judge_user.css_id,
-        document_id: "1234-567890",
+        document_id: "02255-00000002",
         work_product: :draft_decision,
         created_at: created_at.to_date
       )
       allow(VACOLS::CaseAssignment).to receive(:latest_task_for_appeal).with(vacols_id).and_return(case_assignment)
+      allow(case_assignment).to receive(:correct_legacy_attorney_document_id?).and_return(true)
     end
 
     scenario "starts dispatch checkout flow" do
