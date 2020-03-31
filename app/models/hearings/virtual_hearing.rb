@@ -39,7 +39,7 @@ class VirtualHearing < CaseflowRecord
   VALID_REQUEST_TYPES = [
     HearingDay::REQUEST_TYPES[:video],
     HearingDay::REQUEST_TYPES[:central]
-  ]
+  ].freeze
 
   def all_emails_sent?
     veteran_email_sent &&
