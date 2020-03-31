@@ -658,7 +658,7 @@ feature "Task queue", :all_dbs do
             end
             expect(page).to have_content("Viewing 1-#{foia_task_count} of #{foia_task_count} total")
             expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
-            expect(find("tbody")).not_to have_content(PrivacyActTask.label)
+            expect(find("tbody").has_no_content?(PrivacyActTask.label)).to eq(true)
           end
         end
       end

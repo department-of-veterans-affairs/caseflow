@@ -180,7 +180,7 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue"
         find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
           .click_link
-        expect(page).not_to have_content("Hearing preference")
+        expect(page.has_no_content?("Hearing preference")).to eq(true)
       end
     end
   end
@@ -205,7 +205,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).not_to have_content("About the Appellant")
+        expect(page.has_no_content?("About the Appellant")).to eq(true)
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
         expect(page).to have_content(appeal.veteran_address_line_1)
@@ -244,7 +244,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).not_to have_content("About the Appellant")
+        expect(page.has_no_content?("About the Appellant")).to eq(true)
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")
@@ -317,7 +317,7 @@ RSpec.feature "Case details", :all_dbs do
 
         # Expect to find content we know to be on the page so that we wait for the page to load.
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        expect(page).not_to have_content("Select an action")
+        expect(page.has_no_content?("Select an action")).to eq(true)
       end
     end
 
@@ -616,9 +616,9 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{appeal.external_id}"
 
         case_timeline = page.find("table#case-timeline-table")
-        expect(case_timeline).not_to have_content(transcript_task.class.name)
-        expect(case_timeline).not_to have_content(translation_task.class.name)
-        expect(case_timeline).not_to have_content(foia_task.class.name)
+        expect(case_timeline.has_no_content?(transcript_task.class.name)).to eq(true)
+        expect(case_timeline.has_no_content?(translation_task.class.name)).to eq(true)
+        expect(case_timeline.has_no_content?(foia_task.class.name)).to eq(true)
         expect(case_timeline).to have_content(transcript_task.children.first.class.name)
         expect(case_timeline).to have_content(translation_task.children.first.class.name)
         expect(case_timeline).to have_content(foia_task.children.first.class.name)
@@ -683,7 +683,7 @@ RSpec.feature "Case details", :all_dbs do
         assigner_name = on_hold_task.assigned_by_display_name
 
         click_on "On hold (1)"
-        click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+        click_on "#{vet_name} (#{on_hold_task.appeal.veteran_file_number})"
 
         expect(page).to have_content("TASK\n#{on_hold_task.label}")
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
@@ -879,7 +879,7 @@ RSpec.feature "Case details", :all_dbs do
 
       it "should NOT display judge & attorney tasks" do
         visit "/queue/appeals/#{appeal2.uuid}"
-        expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+        expect(page.has_no_content?(COPY::CASE_TIMELINE_JUDGE_TASK)).to eq(true)
       end
     end
   end
