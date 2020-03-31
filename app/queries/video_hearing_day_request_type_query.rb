@@ -16,10 +16,10 @@ class VideoHearingDayRequestTypeQuery
   def call
     (counts_for_ama_hearings + counts_for_legacy_hearings)
       .group_by(&:id)
-      .transform_values! do |counts|
-        virtual_hearings_count = counts.sum(&:virtual_hearings_count)
-        hearings_count = counts.sum(&:hearings_count)
-        request_type = Hearing::HEARING_TYPES[counts.first.request_type.to_sym]
+      .transform_values! do |row|
+        virtual_hearings_count = row.sum(&:virtual_hearings_count)
+        hearings_count = row.sum(&:hearings_count)
+        request_type = Hearing::HEARING_TYPES[row.first.request_type.to_sym]
 
         if virtual_hearings_count == 0
           request_type
