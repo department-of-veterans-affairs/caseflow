@@ -241,7 +241,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
       # Your queue
       visit "/queue"
-      click_on veteran_queue_link_text
+      click_on "Bob Smith"
 
       # Reassign
       within find("tr", text: "BVATWARNER") do
@@ -286,7 +286,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
         # Your queue
         visit "/queue"
-        click_on veteran_queue_link_text
+        click_on "Bob Smith"
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
         # On hold
@@ -301,7 +301,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       # Refresh the page in the present, and the hold should be completed.
       TaskTimerJob.perform_now
       visit "/queue"
-      click_on veteran_queue_link_text
+      click_on "Bob Smith"
 
       # Complete the admin action
       click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label])
@@ -315,7 +315,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_dropdown(text: "Denver")
       click_button("AMA Veterans Waiting", exact: true)
 
-      click_on veteran_link_text
+      click_on "Bob Smith"
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       click_dropdown({ text: "Denver" }, find(".dropdown-regionalOffice"))
       click_dropdown({ index: 1 }, find(".dropdown-hearingDate"))
