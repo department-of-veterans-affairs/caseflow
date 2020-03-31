@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VirtualHearing, focus: true do
+describe VirtualHearing do
   context "validation tests" do
     let(:virtual_hearing) { build(:virtual_hearing) }
 
