@@ -155,7 +155,7 @@ RSpec.feature "Login", :all_dbs do
     select_ro_from_dropdown
     click_on "Log in"
     # Automatically wait for elements to disappear (but actually wait for asynchronous code to return)
-    expect(page).not_to have_content("Logging in")
+    expect(page.has_no_content?("Logging in")).to eq(true)
     expect(user.reload.email).to eq user_email
     expect(user.selected_regional_office).to eq "RO05"
   end
