@@ -341,7 +341,7 @@ describe AppealStatusApiDecorator, :all_dbs do
 
     context "has a scheduled hearing" do
       let!(:appeal_root_task) { create(:root_task, :in_progress, appeal: appeal) }
-      let!(:hearing_task) { create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let!(:hearing_task) { create(:hearing_task, parent: appeal_root_task) }
       let(:hearing_scheduled_for) { Time.zone.today + 15.days }
       let!(:hearing_day) do
         create(:hearing_day,

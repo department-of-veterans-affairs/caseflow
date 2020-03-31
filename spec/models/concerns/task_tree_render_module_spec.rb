@@ -3,8 +3,8 @@
 describe TaskTreeRenderModule do
   let(:appeal) { create(:appeal, :with_post_intake_tasks) }
   let(:root_task) { appeal.root_task }
-  let!(:ama_judge_task) { create(:ama_judge_task, appeal: appeal, parent: root_task, created_at: 1.day.ago.round) }
-  let!(:ama_attorney_task) { create(:ama_attorney_task, parent: root_task, appeal: appeal) }
+  let!(:ama_judge_task) { create(:ama_judge_task, parent: root_task, created_at: 1.day.ago.round) }
+  let!(:ama_attorney_task) { create(:ama_attorney_task, parent: root_task) }
   let!(:ama_attorney_task_no_parent) { create(:ama_attorney_task, appeal: appeal) }
 
   context "#tree is called on an appeal" do

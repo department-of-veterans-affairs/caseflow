@@ -12,11 +12,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
   context "given a valid ama appeal" do
     before do
-      root_task = create(:root_task)
+      root_task = create(:root_task, appeal: appeal)
       parent_task = create(
         :ama_judge_decision_review_task,
         assigned_to: judge_user,
-        appeal: appeal,
         parent: root_task
       )
 
@@ -25,8 +24,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         :in_progress,
         assigned_to: attorney_user,
         assigned_by: judge_user,
-        parent: parent_task,
-        appeal: appeal
+        parent: parent_task
       )
 
       User.authenticate!(user: attorney_user)
@@ -382,6 +380,30 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
     context "with four issues" do
       let(:case_issues) { create_list(:case_issue, 4, with_notes: true) }
+
+      context "when :special_issues_revamp feature enabled" do
+        before { FeatureToggle.enable!(:special_issues_revamp) }
+        after { FeatureToggle.disable!(:special_issues_revamp) }
+
+        scenario "no special issue chosen" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+          click_dropdown(index: 0)
+
+          click_on "Continue"
+          expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+        end
+        scenario "a special issue is chosen" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+          click_dropdown(index: 0)
+
+          click_label "private_attorney_or_agent"
+
+          click_on "Continue"
+          expect(page).not_to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+        end
+      end
 
       scenario "selects issue dispositions" do
         visit "/queue"

@@ -46,9 +46,9 @@ RSpec.feature "Start Certification", :all_dbs do
   end
 
   context "As a user who's not logged in" do
-    scenario "Starting a certification redirects to login page" do
+    scenario "Starting a certification redirects to help page" do
       visit "certifications/new/#{appeal_ready.vacols_id}"
-      expect(page).to have_current_path("/login")
+      expect(page).to have_current_path("/help")
     end
   end
 

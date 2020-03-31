@@ -46,6 +46,7 @@
   "400CORRCPMC": "PMC-Correspondence",
   "682HLRRRAMP": "Higher-Level Review Rating",
   "683SCRRRAMP": "Supplemental Claim Review Rating",
+  "683HAERRAMP" : "Higher-Level Review Additional Evidence Rating",
   "930ABGNRCLQE": "BVA Grant Non-Rating Correction of LQE 930",
   "930ABGNRCNQE": "BVA Grant Non-Rating Correction of NQE 930",
   "930ABGNRCPMC": "PMC BVA Grant Non-Rating Control 930",

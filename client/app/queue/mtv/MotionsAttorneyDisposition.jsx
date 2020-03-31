@@ -19,6 +19,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
 import { DISPOSITION_TEXT } from '../../../constants/MOTION_TO_VACATE';
+import { dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
 
 const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
@@ -51,19 +52,12 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
   };
 
   const valid = () => {
-    if (
-      !disposition ||
-      !judgeId ||
-      (disposition === 'granted' && !instructions)
-    ) {
+    if (!disposition || !judgeId) {
       return false;
     }
 
     return true;
   };
-
-  const labelText = <span>Upload the draft to your shared drive and add the location below,<br></br>
-              or encrypt it and email it to the VLJ who originally signed the case.</span>;
 
   return (
     <div className="address-motion-to-vacate">
@@ -82,24 +76,24 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
 
         <TextareaField
           name="instructions"
-          label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition)}
+          label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
           onChange={(val) => setInstructions(val)}
           value={instructions}
-          required={disposition === 'granted'}
           className={['mtv-review-instructions']}
+          optional
           strongLabel
         />
 
         {disposition && disposition === 'denied' && (
           <TextField
             name="hyperlink"
-            label={MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL}
+            label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL, dispositionStrings[disposition])}
             value={hyperlink}
             onChange={(val) => setHyperlink(val)}
             optional
             strongLabel
-            labelText={labelText}
-            className={['mtv-review-hyperlink']} />
+            className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
+          />
         )}
 
         <SearchableDropdown

@@ -390,7 +390,7 @@ feature "Task queue", :all_dbs do
     end
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
-      let!(:root_task) { create(:root_task) }
+      let!(:root_task) { create(:root_task, :completed) }
 
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do
@@ -557,7 +557,7 @@ feature "Task queue", :all_dbs do
         allow_any_instance_of(Organization).to receive(:use_task_pages_api?).and_return(true)
         Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
           .each_with_index do |task, idx|
-            child_task = create(:ama_task, parent_id: task.id)
+            child_task = create(:ama_task, parent: task)
             child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
           end
         Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
@@ -1193,12 +1193,12 @@ feature "Task queue", :all_dbs do
     let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let!(:root_task) { create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task) }
     let!(:disposition_task) do
-      create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+      create(:assign_hearing_disposition_task, parent: hearing_task)
     end
     let!(:transcription_task) do
-      create(:transcription_task, parent: disposition_task, appeal: appeal, assigned_to: user)
+      create(:transcription_task, parent: disposition_task, assigned_to: user)
     end
     let(:days_on_hold) { 18 }
     let!(:timed_hold_task) do

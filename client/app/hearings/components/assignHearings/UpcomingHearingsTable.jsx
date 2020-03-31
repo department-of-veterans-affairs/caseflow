@@ -1,19 +1,36 @@
-import React from 'react';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import moment from 'moment';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
+import moment from 'moment';
 
+import { HearingDocketTag, HearingAppellantName } from './AssignHearingsFields';
+import { HearingTime } from '../HearingTime';
+import {
+  encodeQueryParams,
+  getQueryParams
+} from '../../../util/QueryParamsUtil';
 import { renderAppealType } from '../../../queue/utils';
-import { HearingTime, HearingDocketTag, HearingAppellantName } from './AssignHearingsFields';
-import { NoUpcomingHearingDayMessage } from './Messages';
-import QueueTable from '../../../queue/QueueTable';
 import { tableNumberStyling } from './styles';
+import LinkToAppeal from './LinkToAppeal';
+import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
+import QueueTable from '../../../queue/QueueTable';
 
 export default class UpcomingHearingsTable extends React.PureComponent {
 
-  isCentralOffice = () => {
-    return this.props.selectedRegionalOffice === 'C';
+  componentDidMount = () => {
+    this.updateQueryString();
+  }
+
+  updateQueryString = () => {
+    const currentQueryParams = getQueryParams(window.location.search);
+
+    // Overwrite the current tab name in the query string.
+    currentQueryParams[QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM] = QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME;
+
+    // This table doesn't use pagination, so the page param can be removed.
+    delete currentQueryParams[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM];
+
+    window.history.replaceState('', '', encodeQueryParams(currentQueryParams));
   }
 
   getLinkToAppeal = (appealExternalId) => {
@@ -25,6 +42,7 @@ export default class UpcomingHearingsTable extends React.PureComponent {
   }
 
   getColumns = () => {
+    const { selectedHearingDay, selectedRegionalOffice } = this.props;
     const columns = [
       {
         header: '',
@@ -37,11 +55,13 @@ export default class UpcomingHearingsTable extends React.PureComponent {
         header: 'Case Details',
         align: 'left',
         valueFunction: (row) => (
-          <Link
-            name={row.appealExternalId}
-            href={this.getLinkToAppeal(row.appealExternalId)}>
+          <LinkToAppeal
+            appealExternalId={row.appealExternalId}
+            hearingDay={selectedHearingDay}
+            regionalOffice={selectedRegionalOffice}
+          >
             <HearingAppellantName hearing={row} />
-          </Link>
+          </LinkToAppeal>
         )
       },
       {
@@ -71,9 +91,7 @@ export default class UpcomingHearingsTable extends React.PureComponent {
       {
         header: 'Time',
         align: 'left',
-        valueFunction: (row) => (
-          <HearingTime hearing={row} isCentralOffice={this.isCentralOffice()} />
-        )
+        valueFunction: (row) => <HearingTime hearing={row} />
       }
     ];
 
@@ -82,10 +100,6 @@ export default class UpcomingHearingsTable extends React.PureComponent {
 
   render() {
     const { hearings, selectedHearingDay } = this.props;
-
-    if (_.isNil(selectedHearingDay)) {
-      return <NoUpcomingHearingDayMessage />;
-    }
 
     return (
       <div>

@@ -5,9 +5,9 @@ RSpec.shared_examples "Change hearing disposition" do
   let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101) }
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let(:root_task) { create(:root_task, appeal: appeal) }
-  let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+  let(:hearing_task) { create(:hearing_task, parent: root_task) }
   let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-  let!(:change_task) { create(:change_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+  let!(:change_task) { create(:change_hearing_disposition_task, parent: hearing_task) }
   let(:instructions_text) { "This is why I'm changing this hearing's disposition." }
 
   before do
@@ -128,6 +128,10 @@ RSpec.shared_examples "Change hearing disposition" do
     end
 
     context "changing hearing disposition" do
+      before do
+        cache_appeals
+      end
+
       scenario "change hearing disposition to postponed" do
         step "visit the hearing admin organization queue and click on the veteran's name" do
           visit "/organizations/#{HearingAdmin.singleton.url}"
@@ -153,7 +157,7 @@ RSpec.shared_examples "Change hearing disposition" do
           visit "hearings/schedule/assign"
           expect(page).to have_content("Regional Office")
           click_dropdown(text: "Denver")
-          click_button(waiting_button_text)
+          click_button(waiting_button_text, exact: true)
           click_on veteran_hearing_link_text
           expect(page).to have_content(ScheduleHearingTask.last.label)
         end
@@ -203,15 +207,16 @@ RSpec.shared_examples "Change hearing disposition" do
       let(:hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
       let(:case_hearing_disposition) { :disposition_postponed }
       let!(:cancel_change_task) { change_task.update!(status: Constants.TASK_STATUSES.cancelled) }
-      let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let!(:hearing_task_2) { create(:hearing_task, parent: root_task) }
       let!(:association_2) do
         create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
       end
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task_2) }
       let(:instructions_text) { "This hearing is postponed, but it should be held." }
 
       before do
         User.authenticate!(user: hearing_mgmt_user)
+        cache_appeals
       end
 
       scenario "correct the hearing disposition to held" do
@@ -219,7 +224,7 @@ RSpec.shared_examples "Change hearing disposition" do
           visit "hearings/schedule/assign"
           expect(page).to have_content("Regional Office")
           click_dropdown(text: "Denver")
-          click_button(waiting_button_text)
+          click_button(waiting_button_text, exact: true)
           click_on veteran_hearing_link_text
           expect(page).to have_content(ScheduleHearingTask.last.label)
         end
@@ -351,7 +356,7 @@ RSpec.shared_examples "Change hearing disposition" do
     end
 
     context "disposition task" do
-      let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+      let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
 
       scenario "can create a change hearing disposition task" do
         visit(appeal_path)
@@ -366,7 +371,7 @@ RSpec.shared_examples "Change hearing disposition" do
       end
 
       context "transcription task" do
-        let!(:child_task) { create(:transcription_task, parent: task, appeal: appeal) }
+        let!(:child_task) { create(:transcription_task, parent: task) }
 
         scenario "can create a change hearing disposition task" do
           visit(appeal_path)
@@ -381,7 +386,7 @@ RSpec.shared_examples "Change hearing disposition" do
       end
 
       context "no show hearing task" do
-        let!(:child_task) { create(:no_show_hearing_task, parent: task, appeal: appeal) }
+        let!(:child_task) { create(:no_show_hearing_task, parent: task) }
 
         scenario "can create a change hearing disposition task" do
           visit(appeal_path)
@@ -397,7 +402,7 @@ RSpec.shared_examples "Change hearing disposition" do
     end
 
     context "schedule hearing task" do
-      let!(:task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
+      let!(:task) { create(:schedule_hearing_task, parent: hearing_task) }
 
       scenario "cannot create a change hearing disposition task" do
         visit(appeal_path)
@@ -407,7 +412,7 @@ RSpec.shared_examples "Change hearing disposition" do
 
       context "hearing admin task" do
         let!(:child_task) do
-          create(:hearing_admin_action_incarcerated_veteran_task, parent: task, appeal: appeal)
+          create(:hearing_admin_action_incarcerated_veteran_task, parent: task)
         end
 
         scenario "cannot create a change hearing disposition task" do
@@ -440,6 +445,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
     end
     let(:waiting_button_text) { "AMA Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.uuid}" }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
 
     include_examples "Change hearing disposition"
   end
@@ -462,6 +468,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
     end
     let(:waiting_button_text) { "Legacy Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.vacols_id}" }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     include_examples "Change hearing disposition"
   end

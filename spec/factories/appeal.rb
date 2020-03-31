@@ -17,6 +17,11 @@ FactoryBot.define do
       Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
     end
 
+    # Appeal's after_save interferes with explicit updated_at values
+    after(:create) do |appeal, evaluator|
+      appeal.touch(time: evaluator.updated_at) if evaluator.try(:updated_at)
+    end
+
     after(:create) do |appeal, _evaluator|
       appeal.request_issues.each do |issue|
         issue.decision_review = appeal
@@ -100,7 +105,9 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      claimants { [create(:claimant, :advanced_on_docket_due_to_age)] }
+      after(:create) do |appeal, _evaluator|
+        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+      end
     end
 
     trait :advanced_on_docket_due_to_motion do
@@ -193,6 +200,18 @@ FactoryBot.define do
           assigned_to: evaluator.associated_attorney,
           assigned_by: judge_assign_task.assigned_to
         ).call
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to a judge at decision review
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets. Strongly suggest you provide a judge and attorney.
+    trait :at_judge_review do
+      at_attorney_drafting
+      after(:create) do |appeal|
+        create(:decision_document, appeal: appeal)
+        appeal.tasks.where(type: AttorneyTask.name).first.completed!
       end
     end
 

@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 class VirtualHearingMailer < ActionMailer::Base
-  default from: "solutions@public.govdelivery.com"
+  default from: "BoardofVeteransAppealsHearings@public.govdelivery.com"
   layout "virtual_hearing_mailer"
   helper VirtualHearings::ExternalLinkHelper
   helper VirtualHearings::VeteranNameHelper
+  helper VirtualHearings::CalendarTemplateHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)
+    return if mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
+
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
 

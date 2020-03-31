@@ -15,7 +15,7 @@ describe OpenTasksWithClosedAtChecker, :postgres do
   let!(:open_task_with_closed_parent) do
     appeal = create(:appeal)
     parent = create(:task, appeal: appeal)
-    task = create(:task, :assigned, appeal: appeal, parent: parent)
+    task = create(:task, :assigned, parent: parent)
     parent.update!(closed_at: Time.zone.now, status: :completed)
     task
   end
