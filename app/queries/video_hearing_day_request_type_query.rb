@@ -19,13 +19,14 @@ class VideoHearingDayRequestTypeQuery
       .transform_values! do |counts|
         virtual_hearings_count = counts.sum(&:virtual_hearings_count)
         hearings_count = counts.sum(&:hearings_count)
+        request_type = Hearing::HEARING_TYPES[counts.first.request_type.to_sym]
 
         if virtual_hearings_count == 0
-          Hearing::HEARING_TYPES[:V]
+          request_type
         elsif virtual_hearings_count == hearings_count
           COPY::VIRTUAL_HEARING_REQUEST_TYPE
         else
-          "#{Hearing::HEARING_TYPES[:V]}, #{COPY::VIRTUAL_HEARING_REQUEST_TYPE}"
+          "#{request_type}, #{COPY::VIRTUAL_HEARING_REQUEST_TYPE}"
         end
       end
   end
@@ -42,7 +43,7 @@ class VideoHearingDayRequestTypeQuery
 
   def counts_for_ama_hearings
     @hearing_days
-      .where(request_type: HearingDay::REQUEST_TYPES[:video])
+      .where(request_type: VirtualHearing::VALID_REQUEST_TYPES)
       .joins("INNER JOIN hearings ON hearing_days.id = hearings.hearing_day_id")
       .joins(<<-SQL)
         LEFT OUTER JOIN virtual_hearings
@@ -54,6 +55,7 @@ class VideoHearingDayRequestTypeQuery
       .group(:id)
       .select(
         "id",
+        "request_type",
         VIRTUAL_HEARINGS_COUNT_STATEMENT,
         "count(hearings.id) as hearings_count"
       )
@@ -61,7 +63,7 @@ class VideoHearingDayRequestTypeQuery
 
   def counts_for_legacy_hearings
     @hearing_days
-      .where(request_type: HearingDay::REQUEST_TYPES[:video])
+      .where(request_type: VirtualHearing::VALID_REQUEST_TYPES)
       .joins("INNER JOIN legacy_hearings ON hearing_days.id = legacy_hearings.hearing_day_id")
       .joins(<<-SQL)
         LEFT OUTER JOIN virtual_hearings
@@ -73,6 +75,7 @@ class VideoHearingDayRequestTypeQuery
       .group(:id)
       .select(
         "id",
+        "request_type",
         VIRTUAL_HEARINGS_COUNT_STATEMENT,
         "count(legacy_hearings.id) as hearings_count"
       )
