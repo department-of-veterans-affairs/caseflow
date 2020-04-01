@@ -26,7 +26,7 @@ export class EstablishClaimEmail extends BaseForm {
 
     let specialIssuesStatus = this.props.specialIssues;
 
-    const selectedSpecialIssue = enabledSpecialIssues(this.props.featureToggles.special_issues_revamp).map((issue) => {
+    const selectedSpecialIssue = enabledSpecialIssues(this.props.special_issues_revamp).map((issue) => {
       if (specialIssuesStatus[issue.specialIssue]) {
         return issue.display
       }
@@ -163,8 +163,7 @@ EstablishClaimEmail.propTypes = {
 
 const mapStateToProps = (state) => ({
   specialIssues: state.specialIssues,
-  loading: state.establishClaim.loading,
-  featureToggles: state.ui.featureToggles
+  loading: state.establishClaim.loading
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

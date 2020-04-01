@@ -66,7 +66,7 @@ export class EstablishClaimNote extends BaseForm {
 
   selectedSpecialIssues() {
     return _.reduce(
-      enabledSpecialIssues(this.props.featureToggles.special_issues_revamp),
+      enabledSpecialIssues(this.props.special_issues_revamp),
       (result, issue) => {
         if (this.props.specialIssues[issue.specialIssue]) {
           result.push(issue.display);
@@ -231,8 +231,7 @@ EstablishClaimNote.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    specialIssues: state.specialIssues,
-    featureToggles: state.ui.featureToggles
+    specialIssues: state.specialIssues
   };
 };
 

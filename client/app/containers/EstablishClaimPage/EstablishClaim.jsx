@@ -504,6 +504,7 @@ export class EstablishClaim extends React.Component {
             regionalOfficeKey={this.props.task.appeal.regional_office_key}
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
+            special_issues_revamp={this.props.featureToggles.special_issues_revamp}
           />
         )}
         {this.isNotePage() && (
@@ -518,6 +519,7 @@ export class EstablishClaim extends React.Component {
             showNotePageAlert={this.state.showNotePageAlert}
             displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
+            special_issues_revamp={this.props.featureToggles.special_issues_revamp}
           />
         )}
         {this.isEmailPage() && (
@@ -538,6 +540,7 @@ export class EstablishClaim extends React.Component {
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             specialIssuesRegionalOffice={this.state.specialIssuesRegionalOffice}
             taskId={this.props.task.id}
+            special_issues_revamp={this.props.featureToggles.special_issues_revamp}
           />
         )}
         <CancelModal
@@ -566,7 +569,7 @@ EstablishClaim.propTypes = {
   beginPerformEstablishClaim: PropTypes.func,
   performEstablishClaimSuccess: PropTypes.func,
   performEstablishClaimFailure: PropTypes.func,
-  featureToggles: PropTypes.bool
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({

@@ -18,7 +18,7 @@ export class EstablishClaimForm extends React.Component {
       this.props.stationOfJurisdiction,
       this.props.regionalOfficeKey,
       this.props.regionalOfficeCities,
-      this.props.featureToggles.special_issues_revamp
+      this.props.special_issues_revamp
     );
   }
 
@@ -142,7 +142,6 @@ const mapStateToProps = (state, ownProps) => ({
     ownProps.stationKey,
     state.ui.featureToggles.special_issues_revamp
   ),
-  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => ({
