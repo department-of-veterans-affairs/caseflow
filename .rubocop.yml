@@ -130,7 +130,7 @@ Style/RedundantBegin:
 
 Style/FormatStringToken:
   Enabled: true
-  EnforcedStyle: annotate
+  EnforcedStyle: annotated
 
 Naming/FileName:
   Enabled: false
