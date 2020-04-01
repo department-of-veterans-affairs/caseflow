@@ -22,7 +22,7 @@ class PromulgatedRating < Rating
       )
 
       sorted_ratings_from_bgs_response(response: response, start_date: start_date)
-    rescue Savon::Error
+    rescue Savon::Error, BGS::ShareError
       []
     end
 

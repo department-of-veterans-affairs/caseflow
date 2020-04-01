@@ -16,9 +16,6 @@ class Rating
   class << self
     def fetch_all(participant_id)
       fetch_timely(participant_id: participant_id, from_date: (Time.zone.today - TWO_LIFETIMES_DAYS))
-
-    rescue BGS::NoRatingsExistForVeteran
-      []
     end
 
     def fetch_timely(participant_id:, from_date:)
@@ -48,14 +45,14 @@ class Rating
 
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
   # It is a datetime, not a date.
-  attr_accessor :participant_id, :profile_date, :promulgation_date
+  attr_accessor :participant_id, :profile_date, :promulgation_date, :rating_profile
 
   def serialize
     Intake::RatingSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def issues
-    issues_data = Array.wrap(rating_profile[:rating_issues] || rating_profile.dig(:rba_issue_list, :rba_issue))
+    issues_data = Array.wrap(rating_profile[:rating_issues] || rating_profile&.dig(:rba_issue_list, :rba_issue))
     return [] if rating_profile[:rating_issues].nil?
 
     issues_data.map do |issue_data|

@@ -49,7 +49,7 @@ class Generators::Rating
         bgs_rating_profile_data(attrs)
       )
 
-      Rating.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
+      PromulgatedRating.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
     end
 
     private

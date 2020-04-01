@@ -35,6 +35,4 @@ class RatingAtIssue < Rating
       end
     end
   end
-
-  attr_accessor :rating_profile
 end
