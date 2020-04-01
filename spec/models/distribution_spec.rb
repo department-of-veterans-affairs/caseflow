@@ -65,8 +65,9 @@ describe Distribution, :all_dbs do
           folder: build(
             :folder,
             tinum: "1801#{format('%<index>03d', index: i)}",
-            titrnum: "123456789S")
+            titrnum: "123456789S"
           )
+        )
       end
     end
 
