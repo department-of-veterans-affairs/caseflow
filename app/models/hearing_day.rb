@@ -47,7 +47,7 @@ class HearingDay < CaseflowRecord
   validates :regional_office,
             inclusion: {
               in: RegionalOffice.all.map(&:key),
-              message: "key (%{value}) is invalid"
+              message: "key (%<value>s) is invalid"
             },
             unless: :central_office?
 
