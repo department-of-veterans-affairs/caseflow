@@ -526,6 +526,14 @@ describe Veteran, :all_dbs do
     end
   end
 
+  context "given date of birth is missing leading zeros" do
+    let(:date_of_birth) { "2/2/1956" }
+
+    it "date_of_birth is considered invalid" do
+      expect(veteran.validate_date_of_birth).to eq ["invalid_date_of_birth"]
+    end
+  end
+
   context "given a military address with invalid address characters" do
     subject { veteran.validate_address_line }
 

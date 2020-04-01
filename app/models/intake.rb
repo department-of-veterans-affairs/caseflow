@@ -230,7 +230,7 @@ class Intake < CaseflowRecord
 
     city_too_long = veteran.errors.details[:city]&.any? { |e| e[:error] == "too_long" }
 
-    birth_date_missing_zero = veteran.errors.details[:date_of_birth]&.any? { |e| e[:error] == "missing_leading_zero" }
+    date_of_birth = veteran.errors.details[:date_of_birth]&.any? { |e| e[:error] == "invalid_date_of_birth" }
 
     {
       veteran_missing_fields: missing_fields,
@@ -238,7 +238,7 @@ class Intake < CaseflowRecord
       veteran_address_invalid_fields: address_invalid_characters,
       veteran_city_invalid_fields: city_invalid_characters,
       veteran_city_too_long: city_too_long,
-      veteran_birth_date_missing_character: birth_date_missing_zero
+      veteran_date_of_birth_invalid_character: date_of_birth
     }
   end
 

@@ -324,13 +324,13 @@ feature "Appeal Edit issues", :all_dbs do
         description: "Description for Accrued",
         date: 1.day.ago.to_date.mdY
       )
-      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to_not have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: false)
 
       # Add a rating issue
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
-      expect(page).to have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
       expect(page).to have_content(
         "the corporate database, then retry establishing the EP in Caseflow: country"
@@ -338,7 +338,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
       click_remove_intake_issue_dropdown("Left knee granted")
-      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to_not have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: false)
 
       # Add a compensation nonrating issue
@@ -350,7 +350,7 @@ feature "Appeal Edit issues", :all_dbs do
         description: "Description for Apportionment",
         date: 2.days.ago.to_date.mdY
       )
-      expect(page).to have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: true)
     end
   end
@@ -371,7 +371,7 @@ feature "Appeal Edit issues", :all_dbs do
         date: 1.day.ago.to_date.mdY
       )
 
-      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to_not have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: false)
 
       click_edit_submit_and_confirm

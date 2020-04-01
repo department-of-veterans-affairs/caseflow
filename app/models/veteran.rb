@@ -16,18 +16,20 @@ class Veteran < CaseflowRecord
                     :military_postal_type_code, :military_post_office_type_code,
                     :service, :date_of_birth, :date_of_death, :email_address
 
-  validates :first_name, :last_name, presence: true, on: :bgs
-  validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
-  validate :validate_address_line, on: :bgs
-  validates :city, length: { maximum: 30 }, on: :bgs
-  validate :validate_city, on: :bgs
-  validate :validate_birth_date, on: :bgs
-
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
     validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
     validates :state, presence: true, if: :state_is_required?, on: :bgs
     validates :city, presence: true, unless: :military_address?, on: :bgs
+  end
+
+  with_options on: :bgs do
+    validates :first_name, :last_name, presence: true
+    validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }
+    validate :validate_address_line
+    validates :city, length: { maximum: 30 }
+    validate :validate_city
+    validate :validate_date_of_birth
   end
 
   delegate :full_address, to: :address
@@ -188,11 +190,11 @@ class Veteran < CaseflowRecord
     end
   end
 
-  def validate_birth_date
+  def validate_date_of_birth
     return if date_of_birth.blank?
-    
+
     unless date_of_birth.match?(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d/)
-      errors.add(:date_of_birth, "missing_leading_zero")
+      errors.add(:date_of_birth, "invalid_date_of_birth")
     end
   end
 
