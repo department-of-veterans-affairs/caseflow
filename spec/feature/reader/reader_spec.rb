@@ -186,7 +186,7 @@ RSpec.feature "Reader", :all_dbs do
         # When the "clear filters" button is clicked, the filtering message is reset,
         # and focus goes back on the Document toggle.
         find("#clear-filters").click
-        expect(page).not_to have_content("Filtering by:")
+        expect(page.has_no_content?("Filtering by:")).to eq(true)
         expect(find("#button-documents")["class"]).to have_content("usa-button")
       end
     end
@@ -589,16 +589,16 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_content("how's it going")
 
         # A doc without a comment should not show up
-        expect(page).not_to have_content(documents[2].type)
+        expect(page.has_no_content?(documents[2].type)).to eq(true)
 
         # Filtering the document list should work in "Comments" mode.
         fill_in "searchBar", with: "form"
-        expect(page).not_to have_content(documents[0].type)
+        expect(page.has_no_content?(documents[0].type)).to eq(true)
         expect(page).to have_content(documents[1].type)
 
         click_on "Documents"
-        expect(page).not_to have_content("another comment")
-        expect(page).not_to have_content("how's it going")
+        expect(page.has_no_content?("another comment")).to eq(true)
+        expect(page.has_no_content?("how's it going")).to eq(true)
       end
 
       def element_position(selector)

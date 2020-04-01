@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VACOLS::CaseAssignment < VACOLS::Record
+  include ::LegacyAttorneyCaseReviewDocumentIdValidator
+
   # :nocov:
   self.table_name = "brieff"
 

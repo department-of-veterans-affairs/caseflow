@@ -88,7 +88,7 @@ RSpec.feature "MailTasks", :postgres do
       visit "/queue/appeals/#{task.appeal.uuid}"
 
       # Make sure mail team tasks do not show in task snapshot
-      expect(find("#currently-active-tasks")).not_to have_content("ASSIGNED TO\nMail")
+      expect(find("#currently-active-tasks").has_no_content?("ASSIGNED TO\nMail")).to eq(true)
       expect(find_all("#currently-active-tasks tr").length).to eq 1
 
       # Navigate to the change task type modal
