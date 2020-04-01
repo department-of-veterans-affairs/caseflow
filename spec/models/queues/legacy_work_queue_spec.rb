@@ -48,6 +48,7 @@ describe LegacyWorkQueue, :all_dbs do
         expect(subject.length).to eq(3)
         expect(subject[0].class).to eq(AttorneyLegacyTask)
         expect(subject[1].class).to eq(JudgeLegacyDecisionReviewTask)
+        expect(subject[2].class).to eq(AttorneyLegacyTask)
       end
     end
   end
