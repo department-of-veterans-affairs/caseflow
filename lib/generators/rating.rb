@@ -50,8 +50,14 @@ class Generators::Rating
       )
 
       if FeatureToggle.enabled?(:ratings_at_issue)
-        RatingAtIssue.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
+        RatingAtIssue.new(attrs)
       else
+        Fakes::BGSService.store_rating_profile_record(
+          attrs[:participant_id],
+          attrs[:profile_date],
+          bgs_rating_profile_data(attrs)
+        )
+
         PromulgatedRating.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
       end
     end
