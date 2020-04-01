@@ -74,6 +74,11 @@ Rails/FilePath:
 Rails/HasManyOrHasOneDependent:
   Enabled: false
 
+Rails/HelperInstanceVariable:
+  Enabled: true
+  Exclude:
+    - app/helpers/test/hearings_profile_helper.rb
+
 Rails/InverseOf:
   Enabled: false
 

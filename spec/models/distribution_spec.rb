@@ -43,7 +43,7 @@ describe Distribution, :all_dbs do
                bfmpro: "ACT",
                bfcurloc: "81",
                bfdloout: i.days.ago,
-               folder: build(:folder, tinum: "1801#{format('%03d', i)}", titrnum: "123456789S"))
+               folder: build(:folder,tinum: "1801#{format('%<index>03d', index: i)}",titrnum: "123456789S"))
       end
     end
 
@@ -55,7 +55,7 @@ describe Distribution, :all_dbs do
                bfmpro: "ACT",
                bfcurloc: "81",
                bfdloout: i.days.ago,
-               folder: build(:folder, tinum: "1801#{format('%03d', i)}", titrnum: "123456789S"))
+               folder: build(:folder, tinum: "1801#{format('%<index>03d', index: i)}", titrnum: "123456789S"))
       end
     end
 
