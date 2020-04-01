@@ -298,7 +298,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       click_remove_intake_issue_dropdown("PTSD denied")
 
       # expect a pop up
-      expect(page).not_to have_content("PTSD denied")
+      expect(page.has_no_content?("PTSD denied")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -656,6 +656,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
 
         sleep 1
+
         # reload to verify that the new issues populate the form
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
@@ -767,14 +768,13 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
 
-        sleep 1
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         # going back to the edit page does not show any requested issues
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
-        expect(page).not_to have_content(existing_request_issues.first.description)
-        expect(page).not_to have_content(existing_request_issues.second.description)
+        expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
+        expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
       end
 
       scenario "no active tasks cancelled when request issues remain" do
