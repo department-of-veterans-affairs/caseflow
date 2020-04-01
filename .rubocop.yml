@@ -1,4 +1,6 @@
-require: rubocop-performance
+require:
+  - rubocop-performance
+  - rubocop-rails
 
 AllCops:
   Exclude:
@@ -13,6 +15,7 @@ AllCops:
     - 'client/node_modules/**/*'
     - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
   TargetRailsVersion: 5.1
+  TargetRubyVersion: 2.5
   UseCache: true
 
 Bundler/OrderedGems:
