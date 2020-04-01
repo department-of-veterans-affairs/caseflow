@@ -586,9 +586,11 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         response
       end
 
-      it { expect(subject.status).to eq 200 }
-      it { expect(JSON.parse(subject.body)["veteran"]["email_address"]).to eq "test@test.com" }
-      it { expect(JSON.parse(subject.body)["veteran"]["full_name"]).to eq "Test User" }
+      it "returns expected response", :aggregate_failures do
+        expect(subject.status).to eq 200
+        expect(JSON.parse(subject.body)["veteran"]["email_address"]).to eq "test@test.com"
+        expect(JSON.parse(subject.body)["veteran"]["full_name"]).to eq "Test User"
+      end
     end
   end
 end

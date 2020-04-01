@@ -13,7 +13,7 @@ RSpec.feature "Log in as User", :postgres do
   scenario "Non authorized user will not see the feature" do
     visit "test/users"
     expect(page).to have_content("DSUSER")
-    expect(page).not_to have_content("Log in as user")
+    expect(page.has_no_content?("Log in as user")).to eq(true)
   end
 
   context "user is Global Admin" do
@@ -37,7 +37,7 @@ RSpec.feature "Log in as User", :postgres do
       expect(page).to have_content("Certification Help")
 
       visit "test/users"
-      expect(page).not_to have_content("Log in as user")
+      expect(page.has_no_content?("Log in as user")).to eq(true)
 
       find("a", text: "ANNE MERICA (DSUSER)").click
       find("a", text: "Sign Out").click
