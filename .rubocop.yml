@@ -23,12 +23,7 @@ Bundler/OrderedGems:
   TreatCommentsAsGroupSeparators: false
 
 Metrics/ModuleLength:
-  CountComments: false
-  Max: 100
-  Description: Avoid modules longer than 100 lines of code.
-  Enabled: true
-  Exclude:
-  - spec/**/*
+  Enabled: false
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -46,20 +41,7 @@ Metrics/LineLength:
   Max: 120
 
 Metrics/BlockLength:
-  CountComments: false
-  Enabled: true
-  Max: 25
-  ExcludedMethods:
-    - 'Struct.new'
-  Exclude:
-    - 'Gemfile'
-    - 'Rakefile'
-    - '**/*.rake'
-    - 'config/environments/*.rb'
-    - 'config/routes.rb'
-    - 'spec/**/*.rb'
-    - 'db/seeds.rb'
-    - 'bin/setup'
+  Enabled: false
 
 Naming/RescuedExceptionsVariableName:
   Description: 'Use consistent rescued exceptions variables naming.'
@@ -74,16 +56,16 @@ Rails/UnknownEnv:
   Enabled: false
 
 Metrics/MethodLength:
-  Max: 10
+  Max: 20
   Exclude:
     - 'db/migrate/*'
     - "spec/**/*"
 
 Metrics/ClassLength:
-  Max: 100
+  Max: 400
 
 Metrics/AbcSize:
-  Max: 15
+  Max: 30
 
 Style/SymbolArray:
   EnforcedStyle: brackets
