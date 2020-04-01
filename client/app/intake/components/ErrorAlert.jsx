@@ -45,7 +45,7 @@ export const invalidVeteranCharacters = (searchErrorData) => {
       <span>{veteranAddressTips}</span>
     </Fragment>;
   }
-  if (searchErrorData.veteranDateOfBirthInvalidCharacter) {
+  if (searchErrorData.veteranDateOfBirthInvalid) {
     return <Fragment>
       <p>{INTAKE_VETERAN_DATE_OF_BIRTH_ERROR}</p>
     </Fragment>;

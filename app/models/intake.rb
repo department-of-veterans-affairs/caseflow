@@ -238,7 +238,7 @@ class Intake < CaseflowRecord
       veteran_address_invalid_fields: address_invalid_characters,
       veteran_city_invalid_fields: city_invalid_characters,
       veteran_city_too_long: city_too_long,
-      veteran_date_of_birth_invalid_character: date_of_birth
+      veteran_date_of_birth_invalid: date_of_birth
     }
   end
 

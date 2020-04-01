@@ -690,6 +690,7 @@ export const sample1 = {
       veteranAddressTooLong: false,
       veteranAddressInvalidFields: false,
       veteranCityInvalidFields: false,
+      veteranDateOfBirthInvalid: false
     },
     processedInCaseflow: false,
     benefitType: 'compensation',
