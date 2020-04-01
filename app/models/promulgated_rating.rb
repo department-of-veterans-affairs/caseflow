@@ -44,7 +44,7 @@ class PromulgatedRating < Rating
         elsif reject_reason.include? "Converted or Backfilled Rating"
           fail BackfilledRatingError, message: response
         else
-          fail NilRatingProfileListError, message: response
+          fail Rating::NilRatingProfileListError, message: response
         end
       end
 

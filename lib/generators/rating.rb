@@ -49,7 +49,11 @@ class Generators::Rating
         bgs_rating_profile_data(attrs)
       )
 
-      PromulgatedRating.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
+      if FeatureToggle.enabled?(:ratings_at_issue)
+        RatingAtIssue.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
+      else
+        PromulgatedRating.new(attrs.except(:issues, :decisions, :associated_claims, :disabilities))
+      end
     end
 
     private

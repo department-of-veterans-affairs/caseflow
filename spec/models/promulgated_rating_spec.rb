@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Rating do
+describe PromulgatedRating do
   before do
     Time.zone = "UTC"
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -317,7 +317,7 @@ describe Rating do
   end
 
   context ".from_bgs_hash" do
-    subject { Rating.from_bgs_hash(bgs_record) }
+    subject { PromulgatedRating.from_bgs_hash(bgs_record) }
 
     let(:bgs_record) do
       {
@@ -343,7 +343,7 @@ describe Rating do
   context ".fetch_timely" do
     let(:receipt_date) { Time.zone.today }
 
-    subject { Rating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date) }
+    subject { PromulgatedRating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date) }
 
     let!(:rating) do
       Generators::Rating.build(
@@ -390,7 +390,7 @@ describe Rating do
       it "throws NilRatingProfileListError" do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range).and_return(error: "Oops")
         expect do
-          Rating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date)
+          PromulgatedRating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date)
         end.to raise_error(Rating::NilRatingProfileListError)
       end
     end
@@ -399,7 +399,7 @@ describe Rating do
   context ".fetch_all" do
     let(:receipt_date) { Time.zone.today - 50.years }
 
-    subject { Rating.fetch_all("DRAYMOND") }
+    subject { PromulgatedRating.fetch_all("DRAYMOND") }
 
     let!(:rating) do
       Generators::Rating.build(
@@ -420,7 +420,7 @@ describe Rating do
     end
 
     context "on NoRatingsExistForVeteran error" do
-      subject { Rating.fetch_all("FOOBAR") }
+      subject { PromulgatedRating.fetch_all("FOOBAR") }
 
       it "returns empty array" do
         expect(subject.count).to eq(0)
