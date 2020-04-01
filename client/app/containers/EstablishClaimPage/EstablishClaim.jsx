@@ -474,6 +474,7 @@ export class EstablishClaim extends React.Component {
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             task={this.props.task}
+            special_issues_revamp={this.props.featureToggles.special_issues_revamp}
           />
         )}
         {this.isAssociatePage() && (
@@ -564,13 +565,13 @@ EstablishClaim.propTypes = {
   submitDecisionPageFailure: PropTypes.func,
   beginPerformEstablishClaim: PropTypes.func,
   performEstablishClaimSuccess: PropTypes.func,
-  performEstablishClaimFailure: PropTypes.func
+  performEstablishClaimFailure: PropTypes.func,
+  featureToggles: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
   specialIssues: state.specialIssues,
-  establishClaimForm: state.establishClaimForm,
-  featureToggles: state.ui.featureToggles
+  establishClaimForm: state.establishClaimForm
 });
 
 const mapDispatchToProps = (dispatch) => ({
