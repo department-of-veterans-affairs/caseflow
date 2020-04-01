@@ -44,12 +44,6 @@ describe LegacyWorkQueue, :all_dbs do
     context "when it is an acting judge" do
       let(:role) { :attorney_judge_role }
 
-      it "returns attorney tasks for cases with a nil doc id, but judge task for cases with a valid doc id" do
-        expect(subject.length).to eq(3)
-        expect(subject[0].class).to eq(AttorneyLegacyTask)
-        expect(subject[1].class).to eq(JudgeLegacyDecisionReviewTask)
-      end
-
       it "returns attorney tasks for cases with invalid doc ids, but judge task for cases with a valid doc id" do
         expect(subject.length).to eq(3)
         expect(subject[0].class).to eq(AttorneyLegacyTask)

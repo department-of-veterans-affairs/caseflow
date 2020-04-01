@@ -79,7 +79,7 @@ class UpdateLegacyAttorneyCaseReview
 
   def correct_format
     return unless vacols_case_review
-    return if correct_legacy_attorney_document_id?
+    return if valid_document_id?
 
     errors.add(:document_id, work_product_error_hash[work_product])
   end

@@ -1160,10 +1160,15 @@ class SeedDB
     create_task_at_attorney_review(FactoryBot.create(:appeal), acting_judge, attorney)
     create_task_at_judge_review(FactoryBot.create(:appeal), judge, acting_judge)
     create_task_at_judge_review(FactoryBot.create(:appeal), acting_judge, attorney)
+
+    # Create Acting Judge Legacy Appeals
+    create_legacy_appeal_at_acting_judge
   end
 
   def create_legacy_appeal_at_acting_judge
     # Find the 2 VACOLS Cases for the Acting Judge (seeded from local/vacols/VACOLS::Case_dump.csv)
+    # - Case 3662860 does not have a decision drafted for it yet, so it is assigned to the AVLJ as an attorney
+    # - Case 3662859 has a valid decision document, so it is assigned to the AVLJ as a judge
     vacols_case_attorney = VACOLS::Case.find_by(bfkey: "3662860")
     vacols_case_judge = VACOLS::Case.find_by(bfkey: "3662859")
 
@@ -1573,7 +1578,6 @@ class SeedDB
     call_and_log_seed_step :create_inbox_messages
     call_and_log_seed_step :perform_seeding_jobs
     call_and_log_seed_step :setup_motion_to_vacate
-    call_and_log_seed_step :create_legacy_appeal_at_acting_judge
 
     return if Rails.env.development?
 

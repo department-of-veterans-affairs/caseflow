@@ -290,7 +290,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         created_at: created_at.to_date
       )
       allow(VACOLS::CaseAssignment).to receive(:latest_task_for_appeal).with(vacols_id).and_return(case_assignment)
-      allow(case_assignment).to receive(:correct_legacy_attorney_document_id?).and_return(true)
+      allow(case_assignment).to receive(:valid_document_id?).and_return(true)
     end
 
     scenario "starts dispatch checkout flow" do

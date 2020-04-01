@@ -3,7 +3,7 @@
 module LegacyAttorneyCaseReviewDocumentIdValidator
   extend ActiveSupport::Concern
 
-  def correct_legacy_attorney_document_id?
+  def valid_document_id?
     if draft_decision_work_product?
       return document_id.match?(new_decision_regex) || document_id.match?(old_decision_regex)
     end
