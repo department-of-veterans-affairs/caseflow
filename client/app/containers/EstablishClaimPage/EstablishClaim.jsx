@@ -505,6 +505,11 @@ export class EstablishClaim extends React.Component {
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
             special_issues_revamp={this.props.featureToggles.special_issues_revamp}
+            stationOfJurisdiction={getStationOfJurisdiction(
+              this.props.specialIssues,
+              this.props.task.appeal.station_key,
+              this.props.featureToggles.special_issues_revamp
+            )}
           />
         )}
         {this.isNotePage() && (

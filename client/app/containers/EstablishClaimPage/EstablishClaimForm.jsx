@@ -8,7 +8,6 @@ import DateSelector from '../../components/DateSelector';
 
 import { formattedStationOfJurisdiction } from '../../establishClaim/util';
 import * as Constants from '../../establishClaim/constants';
-import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
 import { connect } from 'react-redux';
 
@@ -137,11 +136,6 @@ EstablishClaimForm.propTypes = {
  */
 const mapStateToProps = (state, ownProps) => ({
   establishClaimForm: state.establishClaimForm,
-  stationOfJurisdiction: getStationOfJurisdiction(
-    state.specialIssues,
-    ownProps.stationKey,
-    state.ui.featureToggles.special_issues_revamp
-  ),
 });
 
 const mapDispatchToProps = (dispatch) => ({
