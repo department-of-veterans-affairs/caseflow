@@ -64,8 +64,8 @@ describe AsyncableJobs, :postgres do
     end
 
     it "includes all unprocessed jobs regardless of whether they have expired" do
-      expect(subject.jobs.select(&:expired_without_processing?).count).to eq(3)
-      expect(subject.jobs.reject(&:expired_without_processing?).count).to eq(3)
+      expect(subject.jobs.count(&:expired_without_processing?)).to eq(3)
+      expect(subject.jobs.count { |job| !job.expired_without_processing? }).to eq(3)
     end
   end
 

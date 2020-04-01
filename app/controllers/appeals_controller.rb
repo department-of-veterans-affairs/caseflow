@@ -225,7 +225,7 @@ class AppealsController < ApplicationController
   end
 
   def access_error_message
-    (appeal.veteran&.multiple_phone_numbers?) ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
+    appeal.veteran&.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
   end
 
   def docket_number?(search)

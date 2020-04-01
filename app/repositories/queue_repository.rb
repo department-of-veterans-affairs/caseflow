@@ -29,7 +29,6 @@ class QueueRepository
       appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
                                       service: :vacols,
                                       name: "appeals_by_vacols_ids") do
-
         # Run queries to fetch different types of data so the # of queries doesn't increase with
         # the # of appeals. Combine that data manually.
         case_records = QueueRepository.appeal_info_query(vacols_ids)
