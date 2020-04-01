@@ -24,7 +24,7 @@ require "timeout"
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |f| require f }
 
 # The TZ variable controls the timezone of the browser in capybara tests, so we always define it.
 # By default (esp for CI) we use Eastern time, so that it doesn't matter where the developer happens to sit.

@@ -60,7 +60,7 @@ describe QualityReviewTask, :all_dbs do
     it "should create a task for BVA dispatch" do
       qr_task.update!(status: Constants.TASK_STATUSES.cancelled)
       expect(qr_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      expect(root_task.reload.children.select { |t| t.type == BvaDispatchTask.name }.count).to eq(1)
+      expect(root_task.reload.children.count { |t| t.type == BvaDispatchTask.name }).to eq(1)
     end
   end
 
