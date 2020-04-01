@@ -20,12 +20,12 @@ class Api::V3::DecisionReview::ContestableIssueParams
   attr_reader :ids
 
   def initialize(
-        decision_review_class:,
-        veteran:,
-        receipt_date:,
-        benefit_type:,
-        params:
-      )
+    decision_review_class:,
+    veteran:,
+    receipt_date:,
+    benefit_type:,
+    params:
+  )
     @decision_review_class = decision_review_class
     @veteran = veteran
     @receipt_date = receipt_date

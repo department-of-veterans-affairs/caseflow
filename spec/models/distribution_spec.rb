@@ -36,26 +36,37 @@ describe Distribution, :all_dbs do
 
     let!(:legacy_priority_cases) do
       (1..legacy_priority_count).map do |i|
-        create(:case,
-               :aod,
-               bfd19: 1.year.ago,
-               bfac: "1",
-               bfmpro: "ACT",
-               bfcurloc: "81",
-               bfdloout: i.days.ago,
-               folder: build(:folder,tinum: "1801#{format('%<index>03d', index: i)}",titrnum: "123456789S"))
+        create(
+          :case,
+          :aod,
+          bfd19: 1.year.ago,
+          bfac: "1",
+          bfmpro: "ACT",
+          bfcurloc: "81",
+          bfdloout: i.days.ago,
+          folder: build(
+            :folder,
+            tinum: "1801#{format('%<index>03d', index: i)}",
+            titrnum: "123456789S"
+          )
+        )
       end
     end
 
     let!(:legacy_nonpriority_cases) do
       (15..100).map do |i|
-        create(:case,
-               bfd19: 1.year.ago,
-               bfac: "1",
-               bfmpro: "ACT",
-               bfcurloc: "81",
-               bfdloout: i.days.ago,
-               folder: build(:folder, tinum: "1801#{format('%<index>03d', index: i)}", titrnum: "123456789S"))
+        create(
+          :case,
+          bfd19: 1.year.ago,
+          bfac: "1",
+          bfmpro: "ACT",
+          bfcurloc: "81",
+          bfdloout: i.days.ago,
+          folder: build(
+            :folder,
+            tinum: "1801#{format('%<index>03d', index: i)}",
+            titrnum: "123456789S")
+          )
       end
     end
 

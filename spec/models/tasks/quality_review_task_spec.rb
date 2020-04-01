@@ -11,11 +11,11 @@ describe QualityReviewTask, :all_dbs do
   describe ".update!(status: Constants.TASK_STATUSES.completed)" do
     context "when QualityReviewTask is assigned to the QR organization" do
       it "should create a task for BVA dispatch and close the current task" do
-        expect(root_task.children.select { |t| t.type == BvaDispatchTask.name }.count).to eq(0)
+        expect(root_task.children.count { |t| t.type == BvaDispatchTask.name }).to eq(0)
         expect { qr_task.update!(status: Constants.TASK_STATUSES.completed) }.to_not raise_error
 
         expect(qr_task.status).to eq(Constants.TASK_STATUSES.completed)
-        expect(root_task.reload.children.select { |t| t.type == BvaDispatchTask.name }.count).to eq(1)
+        expect(root_task.reload.children.count { |t| t.type == BvaDispatchTask.name }).to eq(1)
       end
     end
 
@@ -46,12 +46,12 @@ describe QualityReviewTask, :all_dbs do
       let!(:qr_person_task) { QualityReviewTask.create_many_from_params(qr_task_params, qr_user).first }
 
       it "should create a task for BVA dispatch and close all QualityReviewTasks" do
-        expect(root_task.children.select { |t| t.type == BvaDispatchTask.name }.count).to eq(0)
+        expect(root_task.children.count { |t| t.type == BvaDispatchTask.name }).to eq(0)
         expect { qr_person_task.update!(status: Constants.TASK_STATUSES.completed) }.to_not raise_error
 
         expect(qr_person_task.status).to eq(Constants.TASK_STATUSES.completed)
         expect(qr_org_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        expect(root_task.reload.children.select { |t| t.type == BvaDispatchTask.name }.count).to eq(1)
+        expect(root_task.reload.children.count { |t| t.type == BvaDispatchTask.name }).to eq(1)
       end
     end
   end
