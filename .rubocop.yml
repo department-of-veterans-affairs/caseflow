@@ -34,9 +34,6 @@ Style/Documentation:
 Style/ClassAndModuleChildren:
   Enabled: false
 
-Metrics/LineLength:
-  Max: 120
-
 Metrics/BlockLength:
   Enabled: false
 
@@ -147,9 +144,12 @@ Naming/VariableNumber:
 Lint/UriEscapeUnescape:
   Enabled: false
 
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Enabled: true
   AllowComments: true
+
+Layout/LineLength:
+  Max: 120
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
