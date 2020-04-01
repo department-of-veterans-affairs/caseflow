@@ -77,7 +77,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
       step "QR user visits the quality review organization page and assigns the task to themself" do
         visit quality_review_organization.path
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
@@ -93,7 +93,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       step "QR user returns the case to a judge" do
         click_on "Caseflow"
 
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.to_h[:label]).click
@@ -132,12 +132,12 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         visit "/queue"
 
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         all("button", text: "+ Add decision", count: 1)[0].click
@@ -192,7 +192,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         visit "/queue"
 
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
         find(".Select-control", text: "Select an action").click
@@ -259,7 +259,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       step "return the case to the judge" do
         visit("/queue/appeals/#{appeal.uuid}")
         click_dropdown(text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.label)
-        fill_in("instructions", with: "returning to judge")
+        fill_in("taskInstructions", with: "returning to judge")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
       end
 

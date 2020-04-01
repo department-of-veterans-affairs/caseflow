@@ -1748,11 +1748,13 @@ describe LegacyAppeal, :all_dbs do
         )
       end
 
-      it { expect(subject.length).to eq(4) }
-      it { is_expected.to include("Foreign claim - compensation claims, dual claims, appeals") }
-      it { is_expected.to include("Vocational Rehabilitation and Employment") }
-      it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
-      it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
+      it "has expected issues", :aggregate_failures do
+        expect(subject.length).to eq(4)
+        is_expected.to include("Foreign claim - compensation claims, dual claims, appeals")
+        is_expected.to include("Vocational Rehabilitation and Employment")
+        is_expected.to include(/Education - GI Bill, dependents educational assistance/)
+        is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands")
+      end
     end
   end
 
@@ -1813,9 +1815,12 @@ describe LegacyAppeal, :all_dbs do
       ]
     end
 
-    it { is_expected.to include("02-01") }
-    it { is_expected.to include("02-02") }
-    it { is_expected.to_not include("02-03") }
+    it "has expected issues", :aggregate_failures do
+      is_expected.to include("02-01")
+      is_expected.to include("02-02")
+      is_expected.to_not include("02-03")
+    end
+
     it "returns uniqued issue categories" do
       expect(subject.length).to eq(2)
     end
