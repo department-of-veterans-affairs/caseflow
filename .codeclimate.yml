@@ -73,6 +73,32 @@ plugins:
     channel: rubocop-0-67
   scss-lint:
     enabled: true
+  grep:
+    enabled: true  
+    config:
+      patterns:
+        tests-sleep:
+          pattern: sleep
+          annotation: "Avoid using sleep in tests"
+          severity: info
+          categories: Performance
+          content: >
+            Avoid using sleep in tests because it affects the performance of the
+            test suite.
+          path_patterns:
+            - "spec/**/*_spec.rb"
+        tests-capybara-non-waiting-finder:
+          pattern: not_to have_content\(?[^,]+\)?$
+          annotation: "Avoid using capybara's `have_content` with an RSpec negative matcher"
+          severity: info
+          categories: Performance
+          content: >
+            Avoid using Capybara's `have_content` finder with RSpec's negative matcher. Capybara's
+            `have_content` selector is a waiting selector, that will block until Capybara finds
+            the element. Prefer using a non-blocking matcher if possible like
+            `expect(page.has_no_content?('...')).to eq(true)`.
+          path_patterns:
+            - "spec/feature/**/*.rb"
 
 exclude_patterns:
   - 'db/schema.rb'
