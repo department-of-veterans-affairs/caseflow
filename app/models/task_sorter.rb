@@ -33,9 +33,9 @@ class TaskSorter
 
   # some columns cannot be cast through SQL UPPER for normalized sorting.
   def sort_requires_case_norm?(col)
-    return false if col.match? /_at$/ # no timestamps
-    return false if col.match? /^is_/ # no booleans
-    return false if col.match? /_count$/ # no integers
+    return false if col.match?(/_at$/) # no timestamps
+    return false if col.match?(/^is_/) # no booleans
+    return false if col.match?(/_count$/) # no integers
 
     true
   end

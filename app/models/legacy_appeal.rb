@@ -920,7 +920,7 @@ class LegacyAppeal < CaseflowRecord
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
-      return bfcorlid unless bfcorlid.match? /\d/
+      return bfcorlid unless bfcorlid.match?(/\d/)
 
       numeric = bfcorlid.gsub(/[^0-9]/, "")
 

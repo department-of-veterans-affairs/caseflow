@@ -285,7 +285,7 @@ class User < CaseflowRecord
     judge_team_judges.each do |judge|
       orgs << {
         name: "Assign #{judge.css_id}",
-        url: format("/queue/%s/assign", judge.id)
+        url: "/queue/#{judge.id}/assign"
       }
     end
 
