@@ -32,21 +32,25 @@ export const invalidVeteranCharacters = (searchErrorData) => {
       <p>{ERROR_ADDRESS_LINE_INVALID_CHARACTERS}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
-  } else if (searchErrorData.veteranCityInvalidFields) {
+  }
+  if (searchErrorData.veteranCityInvalidFields) {
     return <Fragment>
       <p>{ERROR_CITY_INVALID_CHARACTERS}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
-  } else if (searchErrorData.veteranAddressTooLong) {
+  }
+  if (searchErrorData.veteranAddressTooLong) {
     return <Fragment>
       <p>{ERROR_ADDRESS_TOO_LONG}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
-  } else if (searchErrorData.veteranDateOfBirthInvalidCharacter) {
+  }
+  if (searchErrorData.veteranDateOfBirthInvalidCharacter) {
     return <Fragment>
       <p>{INTAKE_VETERAN_DATE_OF_BIRTH_ERROR}</p>
     </Fragment>;
   }
+
 };
 
 export const invalidVeteranInstructions = (searchErrorData) => {
