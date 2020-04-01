@@ -131,6 +131,10 @@ Style/IfUnlessModifier:
 Style/RedundantBegin:
   Enabled: false
 
+Style/FormatStringToken:
+  Enabled: true
+  EnforcedStyle: template
+
 Naming/FileName:
   Enabled: false
 
@@ -142,6 +146,10 @@ Naming/VariableNumber:
 
 Lint/UriEscapeUnescape:
   Enabled: false
+
+Lint/HandleExceptions:
+  Enabled: true
+  AllowComments: true
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
