@@ -80,7 +80,7 @@ RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
 
-        expect(response_body.keys).to match_array(%w[organization_name tasks id is_vso queue_config])
+        expect(response_body.keys).to match_array(%w[organization_name id is_vso queue_config])
       end
     end
 
