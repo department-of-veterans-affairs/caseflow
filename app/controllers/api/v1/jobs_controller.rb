@@ -19,6 +19,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
+    "stats_collector" => StatsCollectorJob,
     "sync_intake" => SyncIntakeJob,
     "sync_reviews" => SyncReviewsJob,
     "take_docket_snapshot" => TakeDocketSnapshotJob,
