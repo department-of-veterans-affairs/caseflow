@@ -52,8 +52,8 @@ class Rating
   end
 
   def issues
-    issues_data = Array.wrap(rating_profile[:rating_issues] || rating_profile&.dig(:rba_issue_list, :rba_issue))
-    return [] if rating_profile[:rating_issues].nil?
+    issues_data = Array.wrap(rating_profile[:rating_issues] || rating_profile.dig(:rba_issue_list, :rba_issue))
+    return [] if issues_data.nil?
 
     issues_data.map do |issue_data|
       issue_data[:dgnstc_tc] = diagnostic_codes.dig(issue_data[:dis_sn], :dgnstc_tc)
