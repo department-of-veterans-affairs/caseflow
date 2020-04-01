@@ -202,13 +202,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def log_error(start_time, err)
     duration = time_ago_in_words(start_time)
     msg = "UpdateCachedAppealsAttributesJob failed after running for #{duration}. Fatal error: #{err.message}"
+    slack_msg = "UpdateCachedAppealsAttributesJob failed after running for #{duration}. See Sentry for error"
 
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
     Raven.capture_exception(err)
 
-    slack_service.send_notification(msg)
+    slack_service.send_notification(slack_msg) # do not leak PII
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
