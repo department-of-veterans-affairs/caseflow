@@ -81,13 +81,14 @@ describe ExternalApi::EfolderService, :postgres do
     end
 
     context "doc count is not yet cached" do
-      it "creates background job" do
+      it "creates background job, once" do
         expect(Rails.cache.exist?(cache_key)).to eq(false)
         expect(Rails.cache.exist?(job_cache_key)).to eq(false)
         subject
         expect(Rails.cache.exist?(cache_key)).to eq(false)
         expect(Rails.cache.exist?(job_cache_key)).to eq(true)
-        expect(FetchEfolderDocumentCountJob).to have_received(:perform_later)
+        subject # call again to test sentinel cache key
+        expect(FetchEfolderDocumentCountJob).to have_received(:perform_later).once
       end
     end
   end
