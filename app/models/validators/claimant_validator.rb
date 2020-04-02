@@ -74,7 +74,7 @@ class ClaimantValidator
 
   # Validates claimant city using this regex that VBMS uses.
   def claimant_city_valid?
-    return true if city.blank?
+    return true if claimant.city.blank?
 
     claimant.city =~ /\A[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*\Z/ && claimant.city.length <= 30
   end

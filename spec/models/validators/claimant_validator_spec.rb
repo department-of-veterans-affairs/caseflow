@@ -35,6 +35,14 @@ describe ClaimantValidator, :postgres do
       it "sets no errors" do
         expect(subject[:claimant]).to be_empty
       end
+
+      context "claimant has a nil city" do
+        let(:city) { nil }
+
+        it "sets no errors" do
+          expect(subject[:claimant]).to be_empty
+        end
+      end
     end
 
     context "claimant has no participant id" do
