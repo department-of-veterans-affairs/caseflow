@@ -10,7 +10,7 @@ class Test::HearingsProfileJob < ApplicationJob
     Test::HearingsProfileMailer.call(
       email_address: send_to_user.email,
       mail_body: Test::HearingsProfileHelper.profile_data(send_to_user, **options).to_json
-    ).deliver_now
+    ).deliver_now!
 
     Rails.logger.info("Sent hearings profile email to #{send_to_user.email}!")
   end

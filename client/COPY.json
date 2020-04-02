@@ -378,6 +378,9 @@
   "SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION": "Issues on Appeal: ",
   "SPECIAL_ISSUES_DIC_OR_PENSION_SECTION": "Dependency and Indemnity Compensation (DIC) or Pension: ",
 
+  "SPECIAL_ISSUES_NONE_CHOSEN_TITLE": "Choose at least one.",
+  "SPECIAL_ISSUES_NONE_CHOSEN_DETAIL": "If no special issues apply to this case, please confirm by selecting \"No special issues\"",
+
   "ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE": "Update Advanced on Docket (AOD) Status",
   "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN": "AOD Motion Disposition",
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN": "Reason",

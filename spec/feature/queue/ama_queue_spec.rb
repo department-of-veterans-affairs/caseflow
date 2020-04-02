@@ -483,7 +483,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
 
@@ -509,7 +509,7 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "Select-option", text: "Remanded").click
 
         click_on "Save"
-        expect(page).not_to have_content("This field is required")
+        expect(page.has_no_content?("This field is required")).to eq(true)
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -555,7 +555,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         expect(page).to have_content("Allowed")
@@ -602,7 +602,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
 
@@ -673,7 +673,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         click_on "Continue"
@@ -776,7 +776,7 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-          expect(page).not_to have_content("Select special issues")
+          expect(page.has_no_content?("Select special issues")).to eq(true)
 
           expect(page).to have_content("Add decisions")
 
@@ -802,7 +802,7 @@ feature "AmaQueue", :all_dbs do
           find("div", class: "Select-option", text: "Remanded").click
 
           click_on "Save"
-          expect(page).not_to have_content("This field is required")
+          expect(page.has_no_content?("This field is required")).to eq(true)
           click_on "Continue"
 
           expect(page).to have_content("Select Remand Reasons")

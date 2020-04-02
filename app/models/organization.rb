@@ -61,7 +61,7 @@ class Organization < CaseflowRecord
   end
 
   def use_task_pages_api?
-    false
+    true
   end
 
   def add_user(user)

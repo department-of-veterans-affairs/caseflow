@@ -63,7 +63,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
     scenario "submits draft decision" do
       visit "/queue"
-      click_on "(#{appeal.veteran_file_number})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       # Ensure the issue is on the case details screen
       expect(page).to have_content(issue_description)
@@ -243,7 +243,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       User.authenticate!(user: judge_user)
       visit "/queue"
 
-      click_on "(#{appeal.veteran_file_number})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       # ensure decision issues show up on case details page
       expect(page).to have_content "Correct issues"
@@ -381,6 +381,30 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
     context "with four issues" do
       let(:case_issues) { create_list(:case_issue, 4, with_notes: true) }
 
+      context "when :special_issues_revamp feature enabled" do
+        before { FeatureToggle.enable!(:special_issues_revamp) }
+        after { FeatureToggle.disable!(:special_issues_revamp) }
+
+        scenario "no special issue chosen" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+          click_dropdown(index: 0)
+
+          click_on "Continue"
+          expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+        end
+        scenario "a special issue is chosen" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+          click_dropdown(index: 0)
+
+          click_label "private_attorney_or_agent"
+
+          click_on "Continue"
+          expect(page).not_to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+        end
+      end
+
       scenario "selects issue dispositions" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
@@ -513,7 +537,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(page).to have_content(COPY::FORM_ERROR_FIELD_INVALID)
         fill_in "document_id", with: "V1234567.1234"
         click_on "Continue"
-        expect(page).not_to have_content(COPY::FORM_ERROR_FIELD_INVALID)
+        expect(page.has_no_content?(COPY::FORM_ERROR_FIELD_INVALID)).to eq(true)
 
         dummy_note = generate_words 100
         fill_in "notes", with: dummy_note

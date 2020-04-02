@@ -4,13 +4,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { setSpecialIssues } from './QueueActions';
-import { requestSave } from './uiReducer/uiActions';
+import { requestSave, showErrorMessage } from './uiReducer/uiActions';
 
 import Alert from '../components/Alert';
 import { css } from 'glamor';
 import CheckboxGroup from '../components/CheckboxGroup';
 import specialIssueFilters from '../constants/SpecialIssueFilters';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import ApiUtil from '../util/ApiUtil';
 import QueueFlowPage from './components/QueueFlowPage';
 
@@ -32,6 +32,24 @@ class SelectSpecialIssuesView extends React.PureComponent {
       [event.target.id]: document.getElementById(event.target.id).checked
     });
   }
+
+  validateForm = () => {
+    if (!this.props.featureToggles.special_issues_revamp) {
+      return true;
+    }
+
+    const { specialIssues } = this.props;
+    const checkedIssues = Object.entries(specialIssues).filter((entry) => entry[1] === true);
+    const isValid = checkedIssues.length > 0;
+
+    if (!isValid) {
+      this.props.showErrorMessage(
+        { title: COPY.SPECIAL_ISSUES_NONE_CHOSEN_TITLE,
+          detail: COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL });
+    }
+
+    return isValid;
+  };
   goToNextStep = () => {
     const {
       appeal,
@@ -77,7 +95,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
     const [aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection] = sections;
 
-    return <QueueFlowPage goToNextStep={this.goToNextStep} {...otherProps}>
+    return <QueueFlowPage goToNextStep={this.goToNextStep} validateForm={this.validateForm} {...otherProps}>
       <h1>
         {this.getPageName()}
       </h1>
@@ -132,17 +150,33 @@ class SelectSpecialIssuesView extends React.PureComponent {
 }
 
 SelectSpecialIssuesView.propTypes = {
-  appealId: PropTypes.string.isRequired
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string
+  }),
+  appealId: PropTypes.string.isRequired,
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
+  featureToggles: PropTypes.shape({
+    special_issues_revamp: PropTypes.bool
+  }),
+  requestSave: PropTypes.func,
+  setSpecialIssues: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+  specialIssues: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   specialIssues: state.queue.specialIssues,
-  error: state.ui.messages.error
+  error: state.ui.messages.error,
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSpecialIssues,
+  showErrorMessage,
   requestSave
 }, dispatch);
 

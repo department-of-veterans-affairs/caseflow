@@ -46,7 +46,7 @@ describe Test::HearingsProfileMailer do
   end
 
   it "delivers an email" do
-    expect { subject.deliver_now }.to change { ActionMailer::Base.deliveries.count }.by 1
+    expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
   end
 
   it "creates an email to the expected address with the expected subject and body" do

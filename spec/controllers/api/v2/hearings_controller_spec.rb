@@ -41,9 +41,11 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
           response
         end
 
-        it { expect(subject.status).to eq 200 }
-        it { expect(JSON.parse(subject.body)).to have_key("hearings") }
-        it { expect(JSON.parse(subject.body)["hearings"]).to eq [] }
+        it "returns expected response", :aggregate_failures do
+          expect(subject.status).to eq 200
+          expect(JSON.parse(subject.body)).to have_key("hearings")
+          expect(JSON.parse(subject.body)["hearings"]).to eq []
+        end
       end
 
       context "response for hearing day with hearings" do
