@@ -12,7 +12,7 @@ class ExternalApi::EfolderService
     efolder_doc_count_bgjob_key = "Efolder-document-count-bgjob-#{file_number}"
 
     # if it's in the cache return it.
-    doc_count = Rails.cache.fetch(self.document_count_cache_key(file_number))
+    doc_count = Rails.cache.fetch(document_count_cache_key(file_number))
     return doc_count if doc_count
 
     # if not in the cache, start a bg job to cache it.
@@ -28,7 +28,7 @@ class ExternalApi::EfolderService
 
   # synchronous API call
   def self.fetch_document_count(file_number, user)
-    Rails.cache.fetch(self.document_count_cache_key(file_number), expires_in: 4.hours) do
+    Rails.cache.fetch(document_count_cache_key(file_number), expires_in: 4.hours) do
       headers = { "FILE-NUMBER" => file_number }
       response = send_efolder_request("/api/v2/document_counts", user, headers)
       response_body = JSON.parse(response.body)
