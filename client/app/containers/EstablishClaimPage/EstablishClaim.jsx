@@ -147,13 +147,13 @@ export class EstablishClaim extends React.Component {
   }
 
   containsRoutedSpecialIssues = () => {
-    return specialIssueFilters(this.props.featureToggles.special_issues_revamp).routedSpecialIssues().some((issue) => {
+    return specialIssueFilters(this.props.featureToggles?.special_issues_revamp).routedSpecialIssues().some((issue) => {
       return this.props.specialIssues[issue.specialIssue];
     });
   };
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return specialIssueFilters(this.props.featureToggles.special_issues_revamp).routedOrRegionalSpecialIssues().some((issue) => {
+    return specialIssueFilters(this.props.featureToggles?.special_issues_revamp).routedOrRegionalSpecialIssues().some((issue) => {
       return this.props.specialIssues[issue.specialIssue || issue];
     });
   };
@@ -240,7 +240,7 @@ export class EstablishClaim extends React.Component {
     let stationOfJurisdiction = getStationOfJurisdiction(
       this.props.specialIssues,
       this.props.task.appeal.station_key,
-      this.props.featureToggles.special_issues_revamp
+      this.props.featureToggles?.special_issues_revamp
     );
 
     return stationOfJurisdiction === '397' ? 'ARC' : 'Routed';
@@ -406,7 +406,7 @@ export class EstablishClaim extends React.Component {
     claim.stationOfJurisdiction = getStationOfJurisdiction(
       this.props.specialIssues,
       this.props.task.appeal.station_key,
-      this.props.featureToggles.special_issues_revamp
+      this.props.featureToggles?.special_issues_revamp
     );
 
     // We have to add in the claimLabel separately, since it is derived from
@@ -427,7 +427,7 @@ export class EstablishClaim extends React.Component {
       return;
     }
 
-    specialIssueFilters(this.props.featureToggles.special_issues_revamp).unhandledSpecialIssues().forEach((issue) => {
+    specialIssueFilters(this.props.featureToggles?.special_issues_revamp).unhandledSpecialIssues().forEach((issue) => {
       if (this.props.specialIssues[issue.specialIssue]) {
         this.setState({
           // If there are multiple unhandled special issues, we'll route
@@ -449,7 +449,7 @@ export class EstablishClaim extends React.Component {
       return true;
     }
 
-    specialIssueFilters(this.props.featureToggles.special_issues_revamp).unhandledSpecialIssues().forEach((issue) => {
+    specialIssueFilters(this.props.featureToggles?.special_issues_revamp).unhandledSpecialIssues().forEach((issue) => {
       if (this.props.specialIssues[issue.specialIssue]) {
         willCreateEndProduct = false;
       }
@@ -474,7 +474,7 @@ export class EstablishClaim extends React.Component {
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             task={this.props.task}
-            special_issues_revamp={this.props.featureToggles.special_issues_revamp}
+            special_issues_revamp={this.props.featureToggles?.special_issues_revamp}
           />
         )}
         {this.isAssociatePage() && (
@@ -504,11 +504,11 @@ export class EstablishClaim extends React.Component {
             regionalOfficeKey={this.props.task.appeal.regional_office_key}
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
-            special_issues_revamp={this.props.featureToggles.special_issues_revamp}
+            special_issues_revamp={this.props.featureToggles?.special_issues_revamp}
             stationOfJurisdiction={getStationOfJurisdiction(
               this.props.specialIssues,
               this.props.task.appeal.station_key,
-              this.props.featureToggles.special_issues_revamp
+              this.props.featureToggles?.special_issues_revamp
             )}
           />
         )}
@@ -524,7 +524,7 @@ export class EstablishClaim extends React.Component {
             showNotePageAlert={this.state.showNotePageAlert}
             displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
-            special_issues_revamp={this.props.featureToggles.special_issues_revamp}
+            special_issues_revamp={this.props.featureToggles?.special_issues_revamp}
           />
         )}
         {this.isEmailPage() && (
@@ -545,7 +545,7 @@ export class EstablishClaim extends React.Component {
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             specialIssuesRegionalOffice={this.state.specialIssuesRegionalOffice}
             taskId={this.props.task.id}
-            special_issues_revamp={this.props.featureToggles.special_issues_revamp}
+            special_issues_revamp={this.props.featureToggles?.special_issues_revamp}
           />
         )}
         <CancelModal
