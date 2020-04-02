@@ -64,7 +64,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, regional_office: "RO06") }
     let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % legacy_hearing.appeal.veteran.name }
     let(:virtual_hearing_alert) do
-      COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["TITLE"] % legacy_hearing.appeal.veteran.name
+      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % legacy_hearing.appeal.veteran.name
     end
 
     scenario "User can edit Judge and change virtual hearings" do
