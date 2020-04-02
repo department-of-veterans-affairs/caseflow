@@ -1122,6 +1122,9 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
   create_table "special_issue_lists", force: :cascade do |t|
     t.bigint "appeal_id"
     t.string "appeal_type"
+    t.boolean "blue_water", default: false, comment: "Blue Water"
+    t.boolean "burn_pit", default: false, comment: "Burn Pit"
+    t.boolean "cavc", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
@@ -1134,8 +1137,10 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
     t.boolean "incarcerated_veterans", default: false
     t.boolean "insurance", default: false
     t.boolean "manlincon_compliance", default: false
+    t.boolean "military_sexual_trama", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
+    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
