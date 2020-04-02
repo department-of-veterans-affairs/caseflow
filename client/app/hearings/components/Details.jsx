@@ -264,7 +264,7 @@ class HearingDetails extends React.Component {
         <UserAlerts />
         {error &&
           <div {...css({ marginBottom: '4rem' })}>
-            <Alert type="error" title="There was an error updating hearing" />
+            <Alert type="error" title="There was an error updating the hearing" />
           </div>
         }
         <div {...inputFix}>
