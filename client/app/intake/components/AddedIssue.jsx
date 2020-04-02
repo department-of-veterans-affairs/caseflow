@@ -10,8 +10,6 @@ import { legacyIssue } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
 import { CORRECTION_TYPE_OPTIONS } from '../constants';
 
-const IssueDescription = ({ text, editedDescription }) => {};
-
 class AddedIssue extends React.PureComponent {
   needsEligibilityCheck() {
     const { issue, requestIssues } = this.props;
