@@ -121,7 +121,7 @@ class AddedIssue extends React.PureComponent {
         {issue.editedDescription ? issue.editedDescription : issue.text} {eligibleState.errorMsg}
         {issue.editedDescription && (
           <div>
-            <em>Originally: {issue.text}</em>
+            <em>(Originally: {issue.text})</em>
           </div>
         )}
         {issue.date && <span className="issue-date">Decision date: {formatDateStr(issue.date)}</span>}
