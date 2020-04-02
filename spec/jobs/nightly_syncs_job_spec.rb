@@ -52,5 +52,24 @@ describe NightlySyncsJob, :all_dbs do
         end
       end
     end
+
+    context "open DecisionReviewTasks" do
+      let(:education) { create(:business_line, url: "education") }
+      let(:veteran) { create(:veteran) }
+      let(:hlr) do
+        create(:higher_level_review, benefit_type: "education", veteran_file_number: veteran.file_number)
+      end
+      let!(:request_issue) { create(:request_issue, :removed, decision_review: hlr) }
+      let!(:task) { create(:higher_level_review_task, appeal: hlr, assigned_to: education) }
+      let!(:board_grant_effectuation_task) { create(:board_grant_effectuation_task, appeal: hlr, assigned_to: education) }
+
+      it "cancels any for completed cases" do
+        hlr.request_issues.each { |reqi| reqi.close!(status: :decided) }
+
+        subject
+
+        expect(task.reload).to be_cancelled
+      end
+    end
   end
 end
