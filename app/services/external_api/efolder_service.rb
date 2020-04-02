@@ -3,6 +3,8 @@
 require "json"
 
 class ExternalApi::EfolderService
+  DOCUMENT_COUNT_DEFERRED = -1
+
   def self.document_count_cache_key(file_number)
     "Efolder-document-count-#{file_number}"
   end
@@ -23,7 +25,7 @@ class ExternalApi::EfolderService
     end
 
     # indicate to caller to check back later
-    -1
+    DOCUMENT_COUNT_DEFERRED
   end
 
   # synchronous API call
