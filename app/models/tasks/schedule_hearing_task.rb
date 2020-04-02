@@ -56,6 +56,10 @@ class ScheduleHearingTask < Task
     # get the current hearing task for later use before it is cancelled.
     hearing_task = hearing.hearing_task
 
+    if hearing_task.cancelled?
+      fail Caseflow::Error::ActionForbiddenError, message: "Hearing Task already cancelled"
+    end
+
     # cancel my children, myself, and my hearing task ancestor
     children.open.update_all(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
