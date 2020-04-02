@@ -11,15 +11,16 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff } from '../utils';
+import { deepDiff, pollVirtualHearingData } from '../utils';
 import _ from 'lodash';
 
 import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
-import { onChangeFormData, onReceiveAlerts, removeAlertsWithoutExpiration } from '../../components/common/actions';
+import {
+  onChangeFormData, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
+} from '../../components/common/actions';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
-import ExponentialPolling from '../../components/ExponentialPolling';
 
 const row = css({
   marginLeft: '-15px',
@@ -58,7 +59,7 @@ class HearingDetails extends React.Component {
       error: false,
       virtualHearingModalOpen: false,
       virtualHearingModalType: null,
-      virtualHearingJobStarted: null,
+      startPolling: null,
       initialFormData
     };
 
@@ -191,20 +192,7 @@ class HearingDetails extends React.Component {
 
       const hearing = ApiUtil.convertToCamelCase(response.body.data);
 
-      // hearing may return 3 different alerts:
-      // (1) hearing update OR (2) virtual hearing info AND (3) virtual hearing success
-      // With any updates, we want to immediately display (1) or (2)
-      // only (1) is meant to expire, hence it has {autoClear: true}
       const alerts = response.body.alerts;
-
-      // if user is sitting on the page after making changes to virtual hearing,
-      // poll job_completed status to let the user know when changes have been made.
-      // Since we don't want to start polling every time the user hits submit, we
-      // check if the data sent to backend contains any virtual hearing changes first.
-      if (data.hearing.virtual_hearing_attributes) {
-        this.setState({ alerts: alerts.filter((alert) => alert.type === 'success' && !alert.autoClear) });
-        this.setState({ virtualHearingJobStarted: true });
-      }
 
       this.setState({
         updated: false,
@@ -221,11 +209,13 @@ class HearingDetails extends React.Component {
         });
 
         this.updateAllFormData(initialFormData);
-        // only display virtual hearing info and hearing update alerts
-        // pollVirtualHearingData will display virtual hearing success alert
-        this.props.onReceiveAlerts(
-          alerts.filter((alert) => (alert.type === 'success' && alert.autoClear) || alert.type === 'info')
-        );
+        if (alerts.hearing) {
+          this.props.onReceiveAlerts(alerts.hearing);
+        }
+        if (!_.isEmpty(alerts.virtual_hearing)) {
+          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
+          this.setState({ startPolling: true });
+        }
       });
     }).
       catch((error) => {
@@ -243,30 +233,18 @@ class HearingDetails extends React.Component {
       });
   }
 
-  pollVirtualHearingData = () => (
-    // Did not specify retryCount so if api call fails, it'll stop polling.
-    // If need to retry on failure, pass in retryCount
-    <ExponentialPolling
-      url={`/hearings/${this.props.hearing.externalId}/virtual_hearing_job_status`}
-      method="GET"
-      interval={1000}
-      backoffMultiplier={3}
-      onSuccess={(response) => {
-        if (response.job_completed) {
-          this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, { jobCompleted: response.job_completed });
-          // remove in-progress alert
-          this.props.removeAlertsWithoutExpiration();
-          // show success alert
-          this.props.onReceiveAlerts(this.state.alerts);
-          this.setState({ virtualHearingJobStarted: false });
-        }
+  startPolling = () => {
+    return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
+      if (response.job_completed) {
+        this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, { jobCompleted: response.job_completed });
+        this.props.transitionAlert('virtualHearing');
+        this.setState({ startPolling: false });
+      }
 
-        // continue polling if return true (opposite of job_completed)
-        return !response.job_completed;
-      }}
-      render={() => null}
-    />
-  )
+      // continue polling if return true (opposite of job_completed)
+      return !response.job_completed;
+    });
+  }
 
   render() {
     const {
@@ -346,7 +324,7 @@ class HearingDetails extends React.Component {
             </span>
           </div>
         </div>
-        {this.state.virtualHearingJobStarted && this.pollVirtualHearingData()}
+        {this.state.startPolling && this.startPolling()}
       </AppSegment>
     );
   }
@@ -361,13 +339,14 @@ HearingDetails.propTypes = {
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
   onReceiveAlerts: PropTypes.func,
+  onReceiveTransitioningAlert: PropTypes.func,
+  transitionAlert: PropTypes.func,
   onChangeFormData: PropTypes.func,
   formData: PropTypes.shape({
     hearingDetailsForm: PropTypes.object,
     transcriptionDetailsForm: PropTypes.object,
     virtualHearingForm: PropTypes.object
-  }),
-  removeAlertsWithoutExpiration: PropTypes.func
+  })
 };
 
 const mapStateToProps = (state) => ({
@@ -381,7 +360,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onChangeFormData,
   onReceiveAlerts,
-  removeAlertsWithoutExpiration
+  onReceiveTransitioningAlert,
+  transitionAlert
 }, dispatch);
 
 export default connect(
