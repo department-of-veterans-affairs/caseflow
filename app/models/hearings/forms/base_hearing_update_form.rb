@@ -2,7 +2,6 @@
 
 class BaseHearingUpdateForm
   include ActiveModel::Model
-  include VirtualHearingAlertConcern
   include RunAsyncable
 
   attr_accessor :bva_poc, :disposition,

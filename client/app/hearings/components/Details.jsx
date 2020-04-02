@@ -213,8 +213,9 @@ class HearingDetails extends React.Component {
           this.props.onReceiveAlerts(alerts.hearing);
         }
         if (!_.isEmpty(alerts.virtual_hearing)) {
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
           this.setState({ startPolling: true });
+          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
+
         }
       });
     }).
