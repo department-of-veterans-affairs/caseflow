@@ -13,7 +13,6 @@ detectors:
       - AsyncableJobsReporter#initialize
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
-      - UserAlert#initialize
       - Veteran
   ControlParameter:
     exclude:

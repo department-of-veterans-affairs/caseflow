@@ -191,7 +191,6 @@ class HearingDetails extends React.Component {
     }).then((response) => {
 
       const hearing = ApiUtil.convertToCamelCase(response.body.data);
-
       const alerts = response.body.alerts;
 
       this.setState({
