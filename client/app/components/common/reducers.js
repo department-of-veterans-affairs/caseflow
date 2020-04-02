@@ -8,7 +8,8 @@ export const initialState = {
     regionalOffices: {}
   },
   forms: {},
-  alerts: []
+  alerts: [],
+  transitioningAlerts: {}
 };
 
 const dropdownsReducer = (state = {}, action = {}) => {
@@ -76,16 +77,40 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         ]
       }
     });
+  case ACTIONS.RECEIVE_TRANSITIONING_ALERT:
+    return update(state, {
+      alerts: {
+        $set: [
+          ...state.alerts,
+          action.payload.alert
+        ]
+      },
+      transitioningAlerts: {
+        $set: {
+          ...state.transitioningAlerts,
+          [action.payload.key]: action.payload.alert
+        }
+      }
+    });
+  case ACTIONS.TRANSITION_ALERT:
+    return update(state, {
+      alerts: {
+        $set: [
+          ...state.alerts.filter((alert) => alert !== state.transitioningAlerts[action.payload.key]),
+          state.transitioningAlerts[action.payload.key].next
+        ]
+      },
+      transitioningAlerts: {
+        $set: {
+          ...state.transitioningAlerts,
+          ...state.transitioningAlerts[action.payload.key] = state.transitioningAlerts[action.payload.key].next
+        }
+      }
+    });
   case ACTIONS.REMOVE_ALERTS_WITH_EXPIRATION:
     return update(state, {
       alerts: {
         $set: state.alerts.filter((alert) => action.payload.timestamps.indexOf(alert.timestamp) === -1)
-      }
-    });
-  case ACTIONS.REMOVE_ALERTS_WITHOUT_EXPIRATION:
-    return update(state, {
-      alerts: {
-        $set: state.alerts.filter((alert) => alert.autoClear)
       }
     });
   case ACTIONS.RECEIVE_REGIONAL_OFFICES:
