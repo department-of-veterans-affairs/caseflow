@@ -60,6 +60,8 @@ class ApplicationController < ApplicationBaseController
   end
 
   def handle_non_critical_error(endpoint, err)
+    Rails.logger.error "#{err.message}\n#{err.backtrace.join("\n")}"
+
     error_type = err.class.name
     if !err.class.method_defined? :serialize_response
       code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
