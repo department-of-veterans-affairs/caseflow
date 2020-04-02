@@ -23,7 +23,7 @@ class QueueConfig
       active_tab: assignee.class.default_active_tab,
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
       use_task_pages_api: assignee.use_task_pages_api?,
-      tabs: tabs.map { |tab| attach_tasks_to_tab(tab) }
+      tabs: assignee.queue_tabs.map { |tab| attach_tasks_to_tab(tab) }
     }
   end
 
@@ -31,14 +31,6 @@ class QueueConfig
 
   def assignee_is_org?
     assignee.is_a?(Organization)
-  end
-
-  def tabs
-    queue_tabs = assignee.queue_tabs
-
-    return queue_tabs unless !assignee.use_task_pages_api? && assignee_is_org?
-
-    queue_tabs.reject { |tab| tab.is_a?(::OrganizationOnHoldTasksTab) }
   end
 
   def attach_tasks_to_tab(tab)

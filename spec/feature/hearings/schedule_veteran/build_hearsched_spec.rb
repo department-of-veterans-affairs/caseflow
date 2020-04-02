@@ -70,7 +70,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_button("Scheduled Veterans", exact: true)
       expect(VACOLS::Case.where(bfcorlid: "123454787S"))
       click_button("Legacy Veterans Waiting", exact: true)
-      expect(page).not_to have_content("123454787S")
+      expect(page.has_no_content?("123454787S")).to eq(true)
       expect(page).to have_content("There are no schedulable veterans")
       expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
     end
@@ -131,7 +131,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_button("Scheduled Veterans", exact: true)
       expect(VACOLS::Case.where(bfcorlid: "123456789S"))
       click_button("Legacy Veterans Waiting", exact: true)
-      expect(page).not_to have_content("123456789S")
+      expect(page.has_no_content?("123456789S")).to eq(true)
       expect(page).to have_content("There are no schedulable veterans")
       expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
     end
@@ -256,7 +256,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       User.authenticate!(user: other_user)
       visit "/queue"
 
-      expect(page).to have_content("Bob Smith")
+      expect(page).to have_content(appeal.veteran_full_name)
     end
 
     scenario "Schedule Veteran for a video hearing with admin actions that can be put on hold and completed" do

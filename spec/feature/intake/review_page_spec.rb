@@ -284,7 +284,7 @@ def check_deceased_veteran_cant_be_payee
   find(".Select-control").click
 
   # verify that veteran cannot be selected
-  expect(page).not_to have_content("00 - Veteran")
+  expect(page.has_no_content?("00 - Veteran")).to eq(true)
   expect(page).to have_content("10 - Spouse")
 end
 

@@ -15,9 +15,9 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("Add Hearing Day")
       expect(page).to have_content("Select Hearing Date")
       expect(page).to have_content("Select Hearing Type")
-      expect(page).not_to have_content("Select Regional Office (RO)")
-      expect(page).not_to have_content("Select VLJ (Optional)")
-      expect(page).not_to have_content("Select Hearing Coordinator (Optional)")
+      expect(page.has_no_content?("Select Regional Office (RO)")).to eq(true)
+      expect(page.has_no_content?("Select VLJ (Optional)")).to eq(true)
+      expect(page.has_no_content?("Select Hearing Coordinator (Optional)")).to eq(true)
       expect(page).to have_content("Notes (Optional)")
       expect(page).to have_content("Assign Board Hearing Room")
     end
@@ -42,7 +42,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("Add Hearing Day")
       click_dropdown(index: "C", text: "Central")
       expect(page).to have_content("Select VLJ (Optional)", wait: 30)
-      expect(page).not_to have_content("Select Regional Office (RO)")
+      expect(page.has_no_content?("Select Regional Office (RO)")).to eq(true)
       expect(page).to have_content("Select Hearing Coordinator (Optional)")
     end
 
