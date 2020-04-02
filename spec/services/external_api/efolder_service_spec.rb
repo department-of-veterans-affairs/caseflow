@@ -33,10 +33,11 @@ describe ExternalApi::EfolderService, :postgres do
     end
   end
 
-  context "#document_count" do
+  context "#fetch_document_count" do
     let(:user) { Generators::User.create }
     let(:file_number) { "1234" }
     let(:expected_response) { HTTPI::Response.new(200, [], { documents: "20" }.to_json) }
+    let(:cache_key) { "Efolder-document-count-#{file_number}" }
 
     before do
       allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url)
@@ -44,17 +45,50 @@ describe ExternalApi::EfolderService, :postgres do
       allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response)
     end
 
-    subject { ExternalApi::EfolderService.document_count(file_number, user) }
+    subject { ExternalApi::EfolderService.fetch_document_count(file_number, user) }
 
     it "returns document count" do
       expect(subject).to eq("20")
     end
 
     it "caches result" do
-      cache_key = "Efolder-document-count-#{file_number}"
       expect(Rails.cache.exist?(cache_key)).to eq(false)
       subject
       expect(Rails.cache.exist?(cache_key)).to eq(true)
+    end
+  end
+
+  context "#document_count" do
+    let(:user) { Generators::User.create }
+    let(:file_number) { "1234" }
+    let(:cache_key) { "Efolder-document-count-#{file_number}" }
+    let(:job_cache_key) { "Efolder-document-count-bgjob-#{file_number}" }
+
+    subject { ExternalApi::EfolderService.document_count(file_number, user) }
+
+    before do
+      allow(FetchEfolderDocumentCountJob).to receive(:perform_later) { true }
+    end
+
+    context "doc count is already cached" do
+      before do
+        Rails.cache.write(cache_key, 10)
+      end
+
+      it "returns cached value" do
+        expect(subject).to eq(10)
+      end
+    end
+
+    context "doc count is not yet cached" do
+      it "creates background job" do
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+        expect(Rails.cache.exist?(job_cache_key)).to eq(false)
+        subject
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+        expect(Rails.cache.exist?(job_cache_key)).to eq(true)
+        expect(FetchEfolderDocumentCountJob).to have_received(:perform_later)
+      end
     end
   end
 
