@@ -73,8 +73,10 @@ feature "Higher Level Review Edit issues", :all_dbs do
     )
   end
 
+  let(:participant_id) { "5382910292" }
+
   before do
-    higher_level_review.create_claimant!(participant_id: "5382910292", payee_code: "10")
+    higher_level_review.create_claimant!(participant_id: participant_id, payee_code: "10")
 
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
@@ -82,7 +84,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
       first_name: "BOB",
       last_name: "VANCE",
-      ptcpnt_id: "5382910292",
+      ptcpnt_id: participant_id,
       relationship_type: "Spouse"
     )
   end
@@ -916,7 +918,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       # remove existing issue
       click_remove_intake_issue_dropdown(1)
-      expect(page).not_to have_content("PTSD denied")
+      expect(page.has_no_content?("PTSD denied")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -1283,6 +1285,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
 
         sleep 1
+
         # reload to verify that the new issues populate the form
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
@@ -1342,14 +1345,14 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        sleep 1
+
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         # going back to the edit page does not show any requested issues
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-        expect(page).not_to have_content(existing_request_issues.first.description)
-        expect(page).not_to have_content(existing_request_issues.second.description)
+        expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
+        expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
       end
 
       scenario "no active tasks cancelled when request issues remain" do
@@ -1359,7 +1362,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        sleep 1
+
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
       end
@@ -1374,7 +1377,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_intake_confirm
         expect(page).to have_content("Review Removed")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        sleep 1
+
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       end
     end

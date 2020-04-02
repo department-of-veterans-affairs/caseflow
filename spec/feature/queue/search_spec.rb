@@ -387,7 +387,7 @@ feature "Search", :all_dbs do
       it "clicking on docket number sends us to the case details page" do
         find("a", exact_text: appeal.docket_number).click
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
-        expect(page).not_to have_content "Select an action"
+        expect(page.has_no_content?("Select an action")).to eq(true)
       end
 
       scenario "found appeal is paper case" do

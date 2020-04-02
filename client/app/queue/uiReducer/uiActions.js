@@ -128,6 +128,11 @@ export const hideModal = (modalType) => ({
   payload: { modalType }
 });
 
+export const setFeatureToggles = (featureToggles) => ({
+  type: ACTIONS.SET_FEATURE_TOGGLES,
+  payload: { featureToggles }
+});
+
 export const setUserRole = (userRole) => ({
   type: ACTIONS.SET_USER_ROLE,
   payload: { userRole }
@@ -157,9 +162,9 @@ export const setUserId = (userId) => ({
   payload: { userId }
 });
 
-export const setTargetUserCssId = (targetUserCssId) => ({
-  type: ACTIONS.SET_TARGET_USER_CSS_ID,
-  payload: { targetUserCssId }
+export const setTargetUser = (targetUser) => ({
+  type: ACTIONS.SET_TARGET_USER,
+  payload: { targetUser }
 });
 
 export const setUserIsVsoEmployee = (userIsVsoEmployee) => ({

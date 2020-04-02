@@ -26,8 +26,7 @@ const getTasks = (state) => state.queue.tasks;
 const getAmaTasks = (state) => state.queue.amaTasks;
 const getAppeals = (state) => state.queue.appeals;
 const getAppealDetails = (state) => state.queue.appealDetails;
-const getUserCssId = (state) => state.ui.userCssId;
-const getTargetUserCssId = (state) => state.ui.targetUserCssId;
+const getUserCssId = (state) => state.ui.targetUser?.cssId || state.ui.userCssId;
 const getAppealId = (state, props) => props.appealId;
 const getActiveOrganizationId = (state) => state.ui.activeOrganization.id;
 const getTaskUniqueId = (state, props) => props.taskId;
@@ -297,17 +296,8 @@ export const judgeDecisionReviewTasksSelector = createSelector(
   })
 );
 
-export const tasksByJudgeCssIdSelector = createSelector(
-  [tasksWithAppealSelector, getTargetUserCssId],
-  (tasks, targetUserCssId) => _.filter(tasks, (task) => task.assignedTo.cssId === targetUserCssId)
-);
-
-export const workTasksByJudgeCssIdSelector = createSelector(
-  [tasksByJudgeCssIdSelector], (tasks) => workTasksSelector(tasks)
-);
-
 export const judgeAssignTasksSelector = createSelector(
-  [workTasksByJudgeCssIdSelector],
+  [workTasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task) => {
     if (task.appealType === 'Appeal' || !task.isLegacy) {
       return task.label === COPY.JUDGE_ASSIGN_TASK_LABEL &&

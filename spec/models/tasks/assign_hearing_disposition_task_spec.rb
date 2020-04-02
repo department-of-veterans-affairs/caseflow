@@ -5,7 +5,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     let(:appeal) { create(:appeal) }
     let!(:hearing) { create(:hearing, appeal: appeal) }
     let!(:root_task) { create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task) }
     let!(:disposition_task) do
       AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, hearing_task, hearing)
     end
@@ -229,8 +229,8 @@ describe AssignHearingDispositionTask, :all_dbs do
     let(:disposition) { nil }
     let(:appeal) { create(:appeal) }
     let(:root_task) { create(:root_task, appeal: appeal) }
-    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
-    let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: distribution_task) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
     let(:evidence_window_waived) { nil }
     let(:hearing_scheduled_for) { appeal.receipt_date + 15.days }
     let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_scheduled_for) }
@@ -254,16 +254,14 @@ describe AssignHearingDispositionTask, :all_dbs do
       create(
         :assign_hearing_disposition_task,
         :in_progress,
-        parent: hearing_task,
-        appeal: appeal
+        parent: hearing_task
       )
     end
     let!(:schedule_hearing_task) do
       create(
         :schedule_hearing_task,
         :completed,
-        parent: hearing_task,
-        appeal: appeal
+        parent: hearing_task
       )
     end
 
@@ -291,7 +289,7 @@ describe AssignHearingDispositionTask, :all_dbs do
 
           context "the appeal has an existing EvidenceSubmissionWindowTask" do
             let!(:evidence_submission_window_task) do
-              create(:evidence_submission_window_task, appeal: appeal, parent: distribution_task)
+              create(:evidence_submission_window_task, parent: distribution_task)
             end
 
             it "does not raise an error" do

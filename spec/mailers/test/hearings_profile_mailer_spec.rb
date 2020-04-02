@@ -19,8 +19,7 @@ describe Test::HearingsProfileMailer do
             created_by_timezone: "America/New_York",
             central_office_time_string: "11:30",
             scheduled_time_string: "08:30",
-            scheduled_for: "2020-03-19T11:30:00.000-05:00",
-            scheduled_time: "2000-01-01T11:30:00.000-05:00"
+            scheduled_for: "2020-03-19T11:30:00.000-05:00"
           }
         ],
         legacy_hearings: [
@@ -31,8 +30,7 @@ describe Test::HearingsProfileMailer do
             created_by_timezone: "America/New_York",
             central_office_time_string: "10:00",
             scheduled_time_string: "10:00",
-            scheduled_for: "2020-02-19T10:00:00.000-05:00",
-            scheduled_time: "2000-01-01T15:00:00.000Z"
+            scheduled_for: "2020-02-19T10:00:00.000-05:00"
           }
         ]
       }
@@ -48,7 +46,7 @@ describe Test::HearingsProfileMailer do
   end
 
   it "delivers an email" do
-    expect { subject.deliver_now }.to change { ActionMailer::Base.deliveries.count }.by 1
+    expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
   end
 
   it "creates an email to the expected address with the expected subject and body" do

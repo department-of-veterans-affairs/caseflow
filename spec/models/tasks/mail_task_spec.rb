@@ -62,7 +62,7 @@ describe MailTask, :postgres do
 
     context "when the task is a blocking mail task" do
       let(:task_class) { FoiaRequestMailTask }
-      let!(:distribution_task) { create(:distribution_task, parent: root_task, appeal: root_task.appeal) }
+      let!(:distribution_task) { create(:distribution_task, parent: root_task) }
 
       it "creates FoiaRequestMailTask as a child of the distribution task" do
         expect { task_class.create_from_params(params, user) }.to_not raise_error
@@ -96,7 +96,7 @@ describe MailTask, :postgres do
     subject { MailTask.pending_hearing_task?(root_task) }
 
     context "when the task's appeal has an open HearingTask" do
-      before { create(:hearing_task, parent: root_task, appeal: appeal) }
+      before { create(:hearing_task, parent: root_task) }
 
       it "indicates there there is a pending_hearing_task" do
         expect(subject).to eq(true)
@@ -105,7 +105,7 @@ describe MailTask, :postgres do
 
     context "when the task's appeal has a closed HearingTask" do
       before do
-        create(:hearing_task, :completed, parent: root_task, appeal: appeal)
+        create(:hearing_task, :completed, parent: root_task)
       end
 
       it "indicates there there is not a pending_hearing_task" do

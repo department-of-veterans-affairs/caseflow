@@ -16,7 +16,6 @@ detectors:
       - Veteran
   ControlParameter:
     exclude:
-      - BaseHearingUpdateForm#email_sent_flag
       - ExternalApi::VBMSService#self.send_and_log_request
       - Fakes::BGSService
       - HearingRepository#slot_new_hearing
@@ -25,6 +24,7 @@ detectors:
       - TaskSorter#sort_requires_case_norm?
       - VBMSCaseflowLogger#log
       - Veteran
+      - JudgeDecisionReviewTask#additional_available_actions
   UncommunicativeVariableName:
     exclude:
       - Address
@@ -58,6 +58,7 @@ detectors:
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
       - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#perform
       - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
@@ -69,6 +70,7 @@ detectors:
       - RedistributedCase#legacy_appeal_relevant_tasks
       - LegacyAppeal#cancel_open_caseflow_tasks!
       - MonthlyMetricsReportJob#build_report
+      - NightlySyncsJob#sync_vacols_cases
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
@@ -146,24 +148,24 @@ detectors:
       - ETL::Builder#last_built
       - ETL::Syncer#filter?
       - ETL::TaskSyncer#filter?
+      - Fakes::BGSService
+      - Fakes::PexipService
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
-      - Helpers::AppealHearingHelper#suggested_hearing_location
+      - JudgeLegacyDecisionReviewTask#review_action
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
-      - JudgeLegacyDecisionReviewTask#review_action
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
-      - Fakes::BGSService
-      - Fakes::PexipService
-      - VBMSCaseflowLogger#log
+      - PendingIncompleteAndUncancelledTaskTimersQuery#call
       - Reporter#average
       - Reporter#median
       - Reporter#seconds_to_hms
       - Reporter#percent
-      - VirtualHearings::CalendarTemplateHelper#formatted_date_time_for_zone
+      - ScheduleHearingTaskPager#sorted_tasks
+      - VBMSCaseflowLogger#log
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link
       - VirtualHearings::VeteranNameHelper#formatted_veteran_name

@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
-import { applyCommonReducers } from './common';
+import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import {
   convertStringToBoolean,
@@ -18,71 +17,11 @@ const updateFromServerIntake = (state, serverIntake) => {
     return state;
   }
 
-  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
-
+  const commonState = commonStateFromServerIntake(serverIntake);
   return update(state, {
-    isStarted: {
-      $set: Boolean(serverIntake.id)
-    },
-    receiptDate: {
-      $set: serverIntake.receipt_date
-    },
+    ...commonState,
     benefitType: {
       $set: serverIntake.benefit_type
-    },
-    processedInCaseflow: {
-      $set: serverIntake.processed_in_caseflow
-    },
-    veteranIsNotClaimant: {
-      $set: serverIntake.veteran_is_not_claimant
-    },
-    claimant: {
-      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
-    },
-    payeeCode: {
-      $set: serverIntake.payeeCode
-    },
-    legacyOptInApproved: {
-      $set: serverIntake.legacy_opt_in_approved
-    },
-    legacyAppeals: {
-      $set: serverIntake.legacyAppeals
-    },
-    isReviewed: {
-      $set: Boolean(serverIntake.receipt_date)
-    },
-    contestableIssues: {
-      $set: contestableIssues
-    },
-    activeNonratingRequestIssues: {
-      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
-    },
-    requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
-    },
-    isComplete: {
-      $set: Boolean(serverIntake.completed_at)
-    },
-    relationships: {
-      $set: formatRelationships(serverIntake.relationships)
-    },
-    intakeUser: {
-      $set: serverIntake.intakeUser
-   },
-    asyncJobUrl: {
-      $set: serverIntake.asyncJobUrl
-    },
-    processedAt: {
-      $set: serverIntake.processedAt
-    },
-    veteranValid: {
-      $set: serverIntake.veteranValid
-    },
-    veteranInvalidFields: {
-      $set: {
-        veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
-        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
-      }
     }
   });
 };

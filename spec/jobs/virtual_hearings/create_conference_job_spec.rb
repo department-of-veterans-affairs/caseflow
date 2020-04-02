@@ -28,12 +28,13 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
       subject
       virtual_hearing.reload
       expect(virtual_hearing.veteran_email_sent).to eq(true)
+      expect(virtual_hearing.judge_email_sent).to eq(true)
       expect(virtual_hearing.representative_email_sent).to eq(true)
       expect(virtual_hearing.establishment.processed?).to eq(true)
     end
 
     it "job goes back on queue and logs if error", :aggregate_failures do
-      expect(Rails.logger).to receive(:warn)
+      expect(Rails.logger).to receive(:error)
       expect(create_job).to receive(:client).and_return(fake_pexip)
       expect { subject }.to have_enqueued_job(VirtualHearings::CreateConferenceJob)
       virtual_hearing.establishment.reload

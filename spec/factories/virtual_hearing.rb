@@ -9,6 +9,8 @@ FactoryBot.define do
     conference_deleted { false }
     guest_pin { nil }
     host_pin { nil }
+    judge_email { "caseflow-judge@test.com" }
+    judge_email_sent { false }
     veteran_email { "caseflow-veteran@test.com" }
     veteran_email_sent { false }
     representative_email { "caseflow-representative@test.com" }
@@ -38,6 +40,7 @@ FactoryBot.define do
     trait :all_emails_sent do
       veteran_email_sent { true }
       representative_email_sent { true }
+      judge_email_sent { true }
     end
 
     after(:create) do |virtual_hearing, _evaluator|

@@ -31,7 +31,8 @@ class VirtualHearingRepository
         .cancelled
         .where(<<-SQL)
           (
-            NOT virtual_hearings.veteran_email_sent
+            NOT virtual_hearings.judge_email_sent
+            OR NOT virtual_hearings.veteran_email_sent
             OR (
               NOT virtual_hearings.representative_email = null
               AND NOT virtual_hearings.representative_email_sent
