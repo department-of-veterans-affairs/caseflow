@@ -20,13 +20,17 @@ class BaseHearingUpdateForm
         create_or_update_virtual_hearing
         hearing.reload
         start_async_job
-        add_virtual_hearing_alerts
+        add_virtual_hearing_alert
       end
     end
   end
 
-  def alerts
-    @alerts ||= []
+  def hearing_alerts
+    @hearing_alerts ||= []
+  end
+
+  def virtual_hearing_alert
+    @virtual_hearing_alert ||= {}
   end
 
   protected
@@ -157,7 +161,7 @@ class BaseHearingUpdateForm
   end
 
   def add_update_hearing_alert
-    alerts << UserAlert.new(
+    hearing_alerts << UserAlert.new(
       title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
       type: UserAlert::TYPES[:success],
       auto_clear: true

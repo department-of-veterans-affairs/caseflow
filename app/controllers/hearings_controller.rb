@@ -38,7 +38,10 @@ class HearingsController < HearingsApplicationController
 
     render json: {
       data: form.hearing.to_hash(current_user.id),
-      alerts: form.alerts
+      alerts: {
+        hearing: form.hearing_alerts,
+        virtual_hearing: form.virtual_hearing_alert
+      }
     }
   end
 
