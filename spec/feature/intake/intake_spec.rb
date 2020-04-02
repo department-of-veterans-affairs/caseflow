@@ -461,7 +461,6 @@ feature "Intake", :all_dbs do
           safe_click ".cf-submit.usa-button"
 
           fill_in search_bar_title, with: "12341234"
-          # binding.pry
           click_on "Search"
 
           expect(page).to have_current_path("/intake/review_request")
@@ -469,8 +468,8 @@ feature "Intake", :all_dbs do
             find("label", text: "Compensation", match: :prefer_exact).click
           end
 
-          expect(page).to have_content("The Veteran's profile has missing or invalid information")
-          expect(page).to have_content("This Veteran's city has invalid characters")
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content("Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.)")
         end
       end
     end
