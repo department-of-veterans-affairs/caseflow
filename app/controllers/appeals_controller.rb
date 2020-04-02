@@ -49,7 +49,7 @@ class AppealsController < ApplicationController
 
   def document_count
     doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
-    status = (doc_count == -1) ? 202 : 200
+    status = (doc_count == EfolderService::DOCUMENT_COUNT_DEFERRED) ? 202 : 200
     render json: { document_count: doc_count }, status: status
   rescue Caseflow::Error::EfolderAccessForbidden => error
     render(error.serialize_response)
