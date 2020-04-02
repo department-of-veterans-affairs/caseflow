@@ -1,12 +1,14 @@
 import * as Constants from '../constants';
-import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler.js';
 import StringUtil from '../../util/StringUtil';
 
 export const getSpecialIssuesInitialState = function(props = {}) {
 
   let initialState = {};
 
-  SPECIAL_ISSUES.forEach((issue) => {
+  const enabled_special_issues  = enabledSpecialIssues(props.featureToggles?.special_issues_revamp)
+
+  enabled_special_issues.forEach((issue) => {
 
     // Check special issue boxes based on what was sent from the database
     let snakeCaseIssueSubstring =

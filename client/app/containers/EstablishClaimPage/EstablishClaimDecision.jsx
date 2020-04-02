@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import { dateFormatString } from '../../util/DateUtil';
 import StringUtil from '../../util/StringUtil';
-import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler.js';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
@@ -205,7 +205,7 @@ export class EstablishClaimDecision extends React.Component {
               </label>
             </legend>
             <div className="cf-multiple-columns">
-              {SPECIAL_ISSUES.map((issue, index) => {
+              {enabledSpecialIssues(this.props.special_issues_revamp).map((issue, index) => {
                 return (
                   <Checkbox
                     id={issue.specialIssue}

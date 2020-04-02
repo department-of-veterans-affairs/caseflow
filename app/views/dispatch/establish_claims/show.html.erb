@@ -9,6 +9,9 @@
   userDisplayName: current_user.display_name,
   dropdownUrls: dropdown_urls,
   feedbackUrl: feedback_url,
-  buildDate: build_date
+  buildDate: build_date,
+  featureToggles: {
+    special_issues_revamp: FeatureToggle.enabled?(:special_issues_revamp, user: current_user)
+  }
 }) %>
 <% end %>
