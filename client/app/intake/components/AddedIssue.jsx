@@ -10,6 +10,8 @@ import { legacyIssue } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
 import { CORRECTION_TYPE_OPTIONS } from '../constants';
 
+const IssueDescription = ({ text, editedDescription }) => {};
+
 class AddedIssue extends React.PureComponent {
   needsEligibilityCheck() {
     const { issue, requestIssues } = this.props;
@@ -117,6 +119,11 @@ class AddedIssue extends React.PureComponent {
       <div className={eligibleState.cssKlasses.join(' ')}>
         <span className="issue-num">{issueIdx + 1}.&nbsp;</span>
         {issue.editedDescription ? issue.editedDescription : issue.text} {eligibleState.errorMsg}
+        {issue.editedDescription && (
+          <div>
+            <em>Originally: {issue.text}</em>
+          </div>
+        )}
         {issue.date && <span className="issue-date">Decision date: {formatDateStr(issue.date)}</span>}
         {issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span>}
         {issue.untimelyExemptionNotes && (
