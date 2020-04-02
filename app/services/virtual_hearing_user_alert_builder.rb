@@ -10,7 +10,7 @@ class VirtualHearingUserAlertBuilder
   end
 
   def call
-    UserAlert.new(title: title, message: message, type: UserAlert::TYPES[alert_type], auto_clear: false)
+    UserAlert.new(title: title, message: message, type: UserAlert::TYPES[alert_type])
   end
 
   private
@@ -28,6 +28,12 @@ class VirtualHearingUserAlertBuilder
       COPY::VIRTUAL_HEARING_PROGRESS_ALERTS[change_type]
     elsif alert_type == :success
       COPY::VIRTUAL_HEARING_SUCCESS_ALERTS[change_type]
+    else
+      fail(
+        Caseflow::Error::InvalidParameter,
+        parameter: alert_type,
+        message: "Alert type is invalid"
+      )
     end
   end
 end

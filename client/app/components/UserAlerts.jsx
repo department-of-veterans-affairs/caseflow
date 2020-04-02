@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Alert from './Alert';
 import { uniq } from 'lodash';
-import { removeAlertsWithExpiration } from './common/actions';
+import { removeAlertsWithTimestamps } from './common/actions';
 
 const ALERT_EXPIRATION = 30000;
 
@@ -23,11 +23,11 @@ class UserAlerts extends React.Component {
     const { alerts } = this.props;
 
     const expiredAlertTimestamps = alerts.filter((alert) => (
-      (currentTime - alert.timestamp) >= ALERT_EXPIRATION && alert.autoClear
+      (currentTime - alert.timestamp) >= ALERT_EXPIRATION
     )).map((alert) => alert.timestamp);
 
     if (expiredAlertTimestamps.length > 0) {
-      this.props.removeAlertsWithExpiration(uniq(expiredAlertTimestamps));
+      this.props.removeAlertsWithTimestamps(uniq(expiredAlertTimestamps));
     }
   }
 
@@ -56,10 +56,9 @@ UserAlerts.propTypes = {
     type: PropTypes.oneOf(['success', 'info', 'warning', 'error']),
     message: PropTypes.string,
     title: PropTypes.string,
-    timestamp: PropTypes.integer,
-    autoClear: PropTypes.bool
+    timestamp: PropTypes.integer
   })),
-  removeAlertsWithExpiration: PropTypes.func
+  removeAlertsWithTimestamps: PropTypes.func
 };
 
 UserAlerts.defaultProps = {
@@ -71,7 +70,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  removeAlertsWithExpiration
+  removeAlertsWithTimestamps
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserAlerts);

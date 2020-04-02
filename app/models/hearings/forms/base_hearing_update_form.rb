@@ -163,8 +163,7 @@ class BaseHearingUpdateForm
   def add_update_hearing_alert
     hearing_alerts << UserAlert.new(
       title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
-      type: UserAlert::TYPES[:success],
-      auto_clear: true
+      type: UserAlert::TYPES[:success]
     ).to_hash
   end
 
