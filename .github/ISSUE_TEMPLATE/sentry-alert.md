@@ -10,9 +10,10 @@ assignees: ''
 [Link to alert](https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/)
 
 ## Description
-<!-- Add the alert text below so it is searchable-->
+<!-- Add the alert text below so it is searchable -->
 ```
 ```
+<!-- Give a description of the alert and steps to replicate if possible -->
 
 ## Acceptance criteria
 - [ ] Timebox ticket to a <estimate>
