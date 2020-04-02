@@ -41,8 +41,9 @@ class AppealDocumentCount extends React.PureComponent {
         const docCount = response.body.document_count;
 
         // if we were told "try again later" then do do.
-        if (response.status === 202 && parseInt(docCount) === -1) {
-          setTimeout(tryFetchingDocumentCount, 30000); // try every 30 seconds
+        if (response.status === 202 && parseInt(docCount, 10) === -1) {
+          // try again in 30 seconds
+          setTimeout(tryFetchingDocumentCount, 30000);
 
           return;
         }
@@ -51,7 +52,7 @@ class AppealDocumentCount extends React.PureComponent {
       }, () => {
         this.props.errorFetchingDocumentCount(this.props.externalId);
       });
-    }
+    };
 
     tryFetchingDocumentCount();
   }
