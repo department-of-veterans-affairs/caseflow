@@ -186,7 +186,6 @@ class Veteran < CaseflowRecord
       # This regex validation is used in VBMS to validate address of veteran
       unless address_line.match?(/^(?!.*\s\s)[a-zA-Z0-9+#@%&()_:',.\-\/\s]*$/)
         errors.add(address.to_sym, "invalid_characters")
-        return
       end
     end
   end
