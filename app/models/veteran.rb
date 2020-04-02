@@ -186,10 +186,9 @@ class Veteran < CaseflowRecord
       # This regex validation is used in VBMS to validate address of veteran
       unless address_line.match?(/^(?!.*\s\s)[a-zA-Z0-9+#@%&()_:',.\-\/\s]*$/)
         errors.add(address.to_sym, "invalid_characters")
+        return
       end
     end
-
-    true
   end
 
   def validate_date_of_birth
@@ -201,7 +200,7 @@ class Veteran < CaseflowRecord
   end
 
   def validate_city
-    return true city.blank?
+    return true if city.blank?
 
     # This regex validation is used in VBMS to validate address of veteran
     errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
