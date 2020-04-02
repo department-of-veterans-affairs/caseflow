@@ -227,7 +227,8 @@ export const commonStateFromServerIntake = (serverIntake) => {
         veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
         veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_fields,
         veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_fields,
-        veteranCityTooLong: serverIntake.veteranInvalidFields.veteran_city_too_long
+        veteranCityTooLong: serverIntake.veteranInvalidFields.veteran_city_too_long,
+        veteranNameSuffixInvalid: serverIntake.veteranInvalidFields.veteran_name_suffix_invalid
       }
     }
   };

@@ -5,7 +5,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
   ERROR_CITY_INVALID_CHARACTERS,
-  ERROR_ADDRESS_TOO_LONG } from '../../../COPY';
+  ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_NAME_SUFFIX_ERROR } from '../../../COPY';
 import { css } from 'glamor';
 
 const missingFieldsMessage = (fields) => <p>
@@ -41,6 +41,10 @@ export const invalidVeteranCharacters = (searchErrorData) => {
     return <Fragment>
       <p>{ERROR_ADDRESS_TOO_LONG}</p>
       <span>{veteranAddressTips}</span>
+    </Fragment>;
+  } else if (searchErrorData.veteranNameSuffixInvalid) {
+    return <Fragment>
+      <p>{INTAKE_VETERAN_NAME_SUFFIX_ERROR}</p>
     </Fragment>;
   }
 };

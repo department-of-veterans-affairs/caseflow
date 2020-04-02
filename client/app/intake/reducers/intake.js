@@ -130,6 +130,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         veteranCityTooLong: {
           $set: action.payload.errorData.veteran_city_too_long
         },
+        veteranNameSuffixInvalid: {
+          $set: action.payload.errorData.veteran_name_suffix_invalid
+        },
         pids: {
           $set: _.join(action.payload.errorData.pids, ', ')
         }
