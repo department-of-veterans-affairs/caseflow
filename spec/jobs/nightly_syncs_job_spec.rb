@@ -61,7 +61,9 @@ describe NightlySyncsJob, :all_dbs do
       end
       let!(:request_issue) { create(:request_issue, :removed, decision_review: hlr) }
       let!(:task) { create(:higher_level_review_task, appeal: hlr, assigned_to: education) }
-      let!(:board_grant_effectuation_task) { create(:board_grant_effectuation_task, appeal: hlr, assigned_to: education) }
+      let!(:board_grant_effectuation_task) do
+        create(:board_grant_effectuation_task, appeal: hlr, assigned_to: education)
+      end
 
       it "cancels any for completed cases" do
         hlr.request_issues.each { |reqi| reqi.close!(status: :decided) }
@@ -69,6 +71,7 @@ describe NightlySyncsJob, :all_dbs do
         subject
 
         expect(task.reload).to be_cancelled
+        expect(board_grant_effectuation_task.reload).to be_assigned
       end
     end
   end
