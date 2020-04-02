@@ -21,6 +21,9 @@ class ExternalApi::EfolderService
     Rails.cache.fetch(efolder_doc_count_bgjob_key, expires_in: 15.minutes) do
       FetchEfolderDocumentCountJob.perform_later(file_number: file_number, user: user)
     end
+
+    # indicate to caller to check back later
+    -1
   end
 
   # synchronous API call
