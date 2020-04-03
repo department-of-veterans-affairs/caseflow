@@ -247,7 +247,7 @@ describe Veteran, :all_dbs do
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
-        name_suffix: nil,
+        name_suffix: name_suffix,
         service: [{ branch_of_service: "army" }],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
@@ -520,7 +520,7 @@ describe Veteran, :all_dbs do
     let(:date_of_birth) { nil }
 
     it "is considered a valid veteran from bgs" do
-      expect(veteran.valid?(:bgs)).to be true
+      expect(veteran.valid?(:bgs)).to be false
     end
   end
 
