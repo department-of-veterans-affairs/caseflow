@@ -469,7 +469,6 @@ feature "Intake", :all_dbs do
           end
 
           expect(page).to have_content("Check the Veteran's profile for invalid information")
-          expect(page).to have_content("Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.)")
           expect(page).to have_content("Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\"")
         end
       end
@@ -482,7 +481,6 @@ feature "Intake", :all_dbs do
             ssn: nil,
             country: "USA",
             address_line1: "1234",
-            date_of_birth: "01/1/1953",
             name_suffix: "JR."
           )
         end
@@ -501,7 +499,9 @@ feature "Intake", :all_dbs do
           end
 
           expect(page).to have_content("Check the Veteran's profile for invalid information")
-          expect(page).to have_content("Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.)")
+          expect(page).to have_content(
+            "Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.)"
+          )
         end
       end
     end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Veteran, :all_dbs do
-  let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
+  let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper", name_suffix: name_suffix) }
 
   before do
     Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
@@ -19,7 +19,7 @@ describe Veteran, :all_dbs do
       first_name: "June",
       middle_name: "Janice",
       last_name: "Juniper",
-      name_suffix: "II",
+      name_suffix: name_suffix,
       ssn: ssn,
       address_line1: "122 Mullberry St.",
       address_line2: "PO BOX 123",
@@ -34,6 +34,7 @@ describe Veteran, :all_dbs do
       service: service
     }
   end
+  let(:name_suffix) { "II" }
 
   let(:city) { "San Francisco" }
   let(:state) { "CA" }
@@ -42,7 +43,7 @@ describe Veteran, :all_dbs do
   let(:country) { "USA" }
   let(:zip_code) { "94117" }
   let(:address_line3) { "Daisies" }
-  let(:date_of_birth) { "21/12/1989" }
+  let(:date_of_birth) { "12/21/1989" }
   let(:service) { [{ branch_of_service: "army" }] }
   let(:ssn) { "123456789" }
 
@@ -174,7 +175,7 @@ describe Veteran, :all_dbs do
         city: "San Francisco",
         state: "CA",
         country: "USA",
-        date_of_birth: "21/12/1989",
+        date_of_birth: "12/21/1989",
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE",
@@ -222,7 +223,7 @@ describe Veteran, :all_dbs do
         city: "San Francisco",
         state: "CA",
         country: "USA",
-        date_of_birth: "21/12/1989",
+        date_of_birth: "12/21/1989",
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE"
@@ -249,7 +250,7 @@ describe Veteran, :all_dbs do
         city: "San Francisco",
         state: "CA",
         country: "USA",
-        date_of_birth: "21/12/1989",
+        date_of_birth: "12/21/1989",
         zip_code: "94117",
         address_type: "",
         email_address: nil
@@ -531,6 +532,25 @@ describe Veteran, :all_dbs do
 
     it "date_of_birth is considered invalid" do
       expect(veteran.validate_date_of_birth).to eq ["invalid_date_of_birth"]
+    end
+  end
+
+  context "#validate_name_suffix" do
+    subject { veteran.validate_name_suffix }
+    let(:name_suffix) { "JR." }
+
+    it "name_suffix is considered invalid" do
+      expect(subject).to eq ["invalid_character"]
+      expect(veteran.valid?(:bgs)).to eq false
+    end
+
+    context "name_suffix nil" do
+      let(:name_suffix) { nil }
+
+      it "name_suffix is considered valid" do
+        subject
+        expect(veteran.valid?(:bgs)).to eq true
+      end
     end
   end
 
