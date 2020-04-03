@@ -6,10 +6,11 @@ class Collectors::DailyCountsStatsCollector
   TOTALS_METRIC_NAME_PREFIX = "daily_counts.totals"
   INCREMENTS_METRIC_NAME_PREFIX = "daily_counts.increments"
 
-  # :reek:FeatureEnvy
   def collect_stats
-    stats = flatten_stats total_counts_hash(TOTALS_METRIC_NAME_PREFIX)
-    stats.merge! flatten_stats daily_counts(INCREMENTS_METRIC_NAME_PREFIX)
+    {}.tap do |stats|
+      stats.merge! flatten_stats total_counts_hash(TOTALS_METRIC_NAME_PREFIX)
+      stats.merge! flatten_stats daily_counts(INCREMENTS_METRIC_NAME_PREFIX)
+    end
   end
 
   private
@@ -51,12 +52,11 @@ class Collectors::DailyCountsStatsCollector
       "#{prefix}.hearing" => Hearing.group(:disposition).count,
       # => {nil=>432, "postponed"=>577, "no_show"=>125, "held"=>1253, "cancelled"=>219}
 
-      "#{prefix}.hearing_virtual." => VirtualHearing.group(:hearing_type).count,
+      "#{prefix}.hearing_virtual" => VirtualHearing.group(:hearing_type).count,
       # => {"LegacyHearing"=>9}
 
       "#{prefix}.distribution" => Distribution.all.group(:status).count,
       # => {"completed"=>5090, "error"=>1431}
-      # completed_at: "2020-04-02 00:34:40", started_at: "2020-04-02 00:34:01"
 
       "#{prefix}.case_review" => {
         "judge" => JudgeCaseReview.count,
@@ -75,7 +75,7 @@ class Collectors::DailyCountsStatsCollector
       # => {["fiduciary", "remanded"]=>2, ["pension", "dismissed_matter_of_law"]=>31, ["vha", "Granted"]=>70, ...
 
       "#{prefix}.dispatch" => Dispatch::Task.group(:type, :aasm_state).count
-      # => {["EstablishClaim", "started"]=>5, ["EstablishClaim", "unprepared"]=>64, ["EstablishClaim", "unassigned"]
+      # => {["EstablishClaim", "started"]=>5, ["EstablishClaim", "unprepared"]=>64, ...
     }
   end
 
