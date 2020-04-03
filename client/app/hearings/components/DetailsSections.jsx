@@ -66,7 +66,7 @@ const DetailsSections = (props) => {
       }
     </>
   );
-}
+};
 
 DetailsSections.propTypes = {
   transcription: PropTypes.object,

@@ -19,6 +19,97 @@ import TextField from '../../../components/TextField';
 import TextareaField from '../../../components/TextareaField';
 import VirtualHearingLink from '../VirtualHearingLink';
 
+// Displays the emails associated with the virtual hearing.
+const EmailSection = (
+  { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, updateVirtualHearing }
+) => {
+  const showEmailFields = (isVirtual || wasVirtual) && virtualHearing;
+  const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
+
+  if (!showEmailFields) {
+    return null;
+  }
+
+  return (
+    <div {...rowThirds}>
+      <TextField
+        name="Veteran Email"
+        value={virtualHearing.veteranEmail}
+        strongLabel
+        required
+        className={[classnames('cf-form-textinput', 'cf-inline-field')]}
+        readOnly={readOnlyEmails}
+        onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
+      />
+      <TextField
+        name="POA/Representative Email"
+        value={virtualHearing.representativeEmail}
+        strongLabel
+        className={[classnames('cf-form-textinput', 'cf-inline-field')]}
+        readOnly={readOnlyEmails}
+        onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
+      />
+    </div>
+  );
+};
+
+EmailSection.propTypes = {
+  hearing: PropTypes.shape({
+    scheduledForIsPast: PropTypes.bool
+  }),
+  virtualHearing: PropTypes.shape({
+    veteranEmail: PropTypes.string,
+    representativeEmail: PropTypes.string,
+    jobCompleted: PropTypes.bool
+  }),
+  isVirtual: PropTypes.bool,
+  wasVirtual: PropTypes.bool,
+  readOnly: PropTypes.bool,
+  updateVirtualHearing: PropTypes.func
+};
+
+// Displays the virtual hearing link and label.
+const VirtualLinkSection = ({ hearing, virtualHearing, isVirtual }) => {
+  const user = useContext(HearingsUserContext);
+  const virtualHearingLabel = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
+    COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
+    COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
+
+  if (isVirtual && virtualHearing) {
+    return (
+      <div>
+        <strong>{virtualHearingLabel}</strong>
+        <div {...css({ marginTop: '1.5rem' })}>
+          {virtualHearing?.jobCompleted &&
+            <VirtualHearingLink
+              user={user}
+              hearing={hearing}
+              showFullLink
+              isVirtual={isVirtual}
+              virtualHearing={virtualHearing}
+            />
+          }
+          {!virtualHearing?.jobCompleted &&
+            <span {...css({ color: COLORS.GREY_MEDIUM })}>
+              {COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}
+            </span>
+          }
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+VirtualLinkSection.propTypes = {
+  hearing: PropTypes.object,
+  virtualHearing: PropTypes.shape({
+    jobCompleted: PropTypes.bool
+  }),
+  isVirtual: PropTypes.bool
+};
+
 const DetailsInputs = (props) => {
   const {
     hearing,
@@ -33,43 +124,6 @@ const DetailsInputs = (props) => {
     isVirtual,
     wasVirtual
   } = props;
-  const user = useContext(HearingsUserContext);
-  const showEmailFields = (isVirtual || wasVirtual) && virtualHearing;
-  const readOnlyEmails = (
-    readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast
-  );
-
-  const renderVirtualHearingLinkSection = () => {
-    const virtualHearingLabel = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
-      COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
-      COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
-
-    if (isVirtual && virtualHearing) {
-      return (
-        <div>
-          <strong>{virtualHearingLabel}</strong>
-          <div {...css({ marginTop: '1.5rem' })}>
-            {virtualHearing?.jobCompleted &&
-              <VirtualHearingLink
-                user={user}
-                hearing={hearing}
-                showFullLink
-                isVirtual={isVirtual}
-                virtualHearing={virtualHearing}
-              />
-            }
-            {!virtualHearing?.jobCompleted &&
-              <span {...css({ color: COLORS.GREY_MEDIUM })}>
-                {COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}
-              </span>
-            }
-          </div>
-        </div>
-      );
-    }
-
-    return null;
-  };
 
   return (
     <>
@@ -82,30 +136,21 @@ const DetailsInputs = (props) => {
             openModal={openVirtualHearingModal}
             readOnly={hearing.scheduledForIsPast || (isVirtual && virtualHearing && !virtualHearing.jobCompleted)}
           />
-          {renderVirtualHearingLinkSection()}
-        </div>
-      }
-      {showEmailFields &&
-        <div {...rowThirds}>
-          <TextField
-            name="Veteran Email"
-            value={virtualHearing.veteranEmail}
-            strongLabel
-            required
-            className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-            readOnly={readOnlyEmails}
-            onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
-          />
-          <TextField
-            name="POA/Representative Email"
-            value={virtualHearing.representativeEmail}
-            strongLabel
-            className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-            readOnly={readOnlyEmails}
-            onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
+          <VirtualLinkSection
+            hearing={hearing}
+            virtualHearing={virtualHearing}
+            isVirtual={isVirtual}
           />
         </div>
       }
+      <EmailSection
+        hearing={hearing}
+        virtualHearing={virtualHearing}
+        isVirtual={isVirtual}
+        wasVirtual={wasVirtual}
+        readOnly={readOnly}
+        updateVirtualHearing={updateVirtualHearing}
+      />
       <div {...rowThirds}>
         <JudgeDropdown
           name="judgeDropdown"
@@ -153,7 +198,7 @@ const DetailsInputs = (props) => {
       />
     </>
   );
-}
+};
 
 DetailsInputs.propTypes = {
   hearing: PropTypes.shape({
