@@ -12527,6 +12527,11 @@ react-on-rails@^8.0.6:
   resolved "https://registry.yarnpkg.com/react-on-rails/-/react-on-rails-8.0.6.tgz#b0f30772a850dca6fa2c508576455557a2dd40ea"
   integrity sha512-c/HLdDjmGRs+gyPFtdsdoj3JLym0Vkg7dIL9ujoyaUHL0rZibRivrvLjbjEXJgPWPN3cP2sttuXm3OcqVfC/jA==
 
+react-polling@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/react-polling/-/react-polling-1.0.5.tgz#4104e0716dd0399ecf156fc3ae14ba18c7e19a77"
+  integrity sha512-H6nC/f40P14oOXvQ9gi1a0S4Gd49eHy89g4EhKzLgSQwMzwtSxg70boTOArkXbwDVWvgd8qYckfLUsTEYcBpzw==
+
 react-popper-tooltip@^2.8.3:
   version "2.10.1"
   resolved "https://registry.yarnpkg.com/react-popper-tooltip/-/react-popper-tooltip-2.10.1.tgz#e10875f31916297c694d64a677d6f8fa0a48b4d1"
