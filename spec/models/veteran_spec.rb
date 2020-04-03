@@ -509,6 +509,7 @@ describe Veteran, :all_dbs do
     let(:military_postal_type_code) { "AA" }
     let(:city) { nil }
     let(:state) { nil }
+    let(:date_of_birth) { nil }
 
     it "is considered a valid veteran from bgs" do
       expect(veteran.valid?(:bgs)).to be true
@@ -522,6 +523,14 @@ describe Veteran, :all_dbs do
 
     it "city is considered invalid" do
       expect(veteran.validate_city).to eq ["invalid_characters"]
+    end
+  end
+
+  context "given date of birth is missing leading zeros" do
+    let(:date_of_birth) { "2/2/1956" }
+
+    it "date_of_birth is considered invalid" do
+      expect(veteran.validate_date_of_birth).to eq ["invalid_date_of_birth"]
     end
   end
 
