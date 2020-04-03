@@ -38,7 +38,10 @@ class HearingsController < HearingsApplicationController
 
     render json: {
       data: form.hearing.to_hash(current_user.id),
-      alerts: form.alerts
+      alerts: {
+        hearing: form.hearing_alerts,
+        virtual_hearing: form.virtual_hearing_alert
+      }
     }
   end
 
@@ -55,6 +58,10 @@ class HearingsController < HearingsApplicationController
       capture_exception(facility_response.error) if facility_response.error.code == 400
       render facility_response.error.serialize_response
     end
+  end
+
+  def virtual_hearing_job_status
+    render json: { job_completed: hearing.virtual_hearing&.job_completed? }
   end
 
   private

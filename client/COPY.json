@@ -557,6 +557,7 @@
   "INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER": "Please enter a valid Veteran ID and try again.",
   "INTAKE_SEARCH_ERROR_NOT_ACCESSIBLE": "It looks like you do not have the necessary level of access to view this information. Please alert your manager so they can assign the form to someone else.",
   "INTAKE_SEARCH_ERROR_NOT_MODIFIABLE": "You do not appear to have permission to establish a claim for this Veteran. Often this is because they are an employee at the same station as you. Please alert your manager so they can assign the form to someone else.",
+  "INTAKE_VETERAN_DATE_OF_BIRTH_ERROR": "Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\" (please include zeros) in VBMS or Share and try again.",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
@@ -675,27 +676,65 @@
 
   "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
 
-  "VIRTUAL_HEARING_USER_ALERTS": {
-    "HEARING_CHANGED_TO_VIRTUAL": {
+  "VIRTUAL_HEARING_PROGRESS_ALERTS": {
+    "CHANGED_TO_VIRTUAL": {
       "TITLE": "We're scheduling %s's virtual hearing",
       "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran, POA / Representative, and VLJ are in progress.</li></ul>"
     },
-    "HEARING_CHANGED_FROM_VIRTUAL": {
+    "CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
       "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
     },
-    "EMAILS_UPDATED": {
+    "CHANGED_VETERAN_AND_POA_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",
-      "MESSAGES": {
-        "TO_VETERAN_AND_POA": "Emails to the Veteran and POA / Representative are in progress.",
-        "TO_VETERAN": "Email to Veteran is in progress.",
-        "TO_POA": "Email to POA / Representative is in progress.",
-        "TO_VLJ": "Email to VLJ is in progress."
-      }
+      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
     },
-    "HEARING_TIME_CHANGED": {
+    "CHANGED_VETERAN_EMAIL": {
+      "TITLE": "We're emailing the invite to %s's hearing",
+      "MESSAGE": "Email to Veteran is in progress."
+    },
+    "CHANGED_POA_EMAIL": {
+      "TITLE": "We're emailing the invite to %s's hearing",
+      "MESSAGE": "Email to POA / Representative is in progress."
+    },
+    "CHANGED_VLJ_EMAIL": {
+      "TITLE": "We're emailing the invite to %s's hearing",
+      "MESSAGE": "Email to VLJ is in progress."
+    },
+    "CHANGED_HEARING_TIME": {
       "TITLE": "We're updating the hearing time of %s's hearing",
       "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+    }
+  },
+
+  "VIRTUAL_HEARING_SUCCESS_ALERTS": {
+    "CHANGED_TO_VIRTUAL": {
+      "TITLE": "You have successfully scheduled %s's virtual hearing.",
+      "MESSAGE": "Email notifications were sent to the Veteran, POA/Representative, and VLJ."
+    },
+    "CHANGED_FROM_VIRTUAL": {
+      "TITLE": "You have successfully updated the type of %s's hearing.",
+      "MESSAGE": "Email notifications were sent to the Veteran and POA/Representative."
+    },
+    "CHANGED_VETERAN_AND_POA_EMAIL": {
+      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "MESSAGE": ""
+    },
+    "CHANGED_VETERAN_EMAIL": {
+      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "MESSAGE": ""
+    },
+    "CHANGED_POA_EMAIL": {
+      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "MESSAGE": ""
+    },
+    "CHANGED_VLJ_EMAIL": {
+      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "MESSAGE": ""
+    },
+    "CHANGED_HEARING_TIME": {
+      "TITLE": "You have successfully updated the time of %s's virtual hearing",
+      "MESSAGE": "Email notifications were sent to the Veteran and POA/Representative."
     }
   },
 

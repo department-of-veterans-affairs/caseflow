@@ -30,7 +30,6 @@ import {
   handleLockHearingServerError,
   onResetLockHearingAfterError
 } from '../actions/dailyDocketActions';
-import { onReceiveAlerts } from '../../components/common/actions';
 import DailyDocket from '../components/dailyDocket/DailyDocket';
 import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
 import HearingDayEditModal from '../components/HearingDayEditModal';
@@ -134,9 +133,8 @@ export class DailyDocketContainer extends React.Component {
         const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
 
         this.props.onReceiveSavedHearing(hearingResp);
-        this.props.onReceiveAlerts(response.body.alerts);
 
-        return true;
+        return response;
       }, (err) => {
         this.props.handleDailyDocketServerError(err);
 
@@ -325,7 +323,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDisplayLockModal,
   onCancelDisplayLockModal,
   onUpdateLock,
-  onReceiveAlerts,
   onResetLockSuccessMessage,
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
@@ -382,7 +379,6 @@ DailyDocketContainer.propTypes = {
   onReceiveDailyDocket: PropTypes.func,
   onReceiveSavedHearing: PropTypes.func,
   onReceiveHearing: PropTypes.func,
-  onReceiveAlerts: PropTypes.func,
   onResetSaveSuccessful: PropTypes.func,
   onResetLockHearingAfterError: PropTypes.func,
   onResetLockSuccessMessage: PropTypes.func,
