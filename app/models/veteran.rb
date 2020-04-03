@@ -59,7 +59,10 @@ class Veteran < CaseflowRecord
     middle_name: :middle_name,
     name_suffix: :name_suffix,
     ssn: :ssn,
-    participant_id: :ptcpnt_id
+    participant_id: :ptcpnt_id,
+    country: :country,
+    state: :state,
+    zip_code: :zip_code
   }.freeze
 
   # TODO: get middle initial from BGS
