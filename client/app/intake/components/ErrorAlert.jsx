@@ -5,7 +5,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
   ERROR_CITY_INVALID_CHARACTERS,
-  ERROR_ADDRESS_TOO_LONG } from '../../../COPY';
+  ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_DATE_OF_BIRTH_ERROR } from '../../../COPY';
 import { css } from 'glamor';
 
 const missingFieldsMessage = (fields) => <p>
@@ -32,17 +32,25 @@ export const invalidVeteranCharacters = (searchErrorData) => {
       <p>{ERROR_ADDRESS_LINE_INVALID_CHARACTERS}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
-  } else if (searchErrorData.veteranCityInvalidFields) {
+  }
+  if (searchErrorData.veteranCityInvalidFields) {
     return <Fragment>
       <p>{ERROR_CITY_INVALID_CHARACTERS}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
-  } else if (searchErrorData.veteranAddressTooLong) {
+  }
+  if (searchErrorData.veteranAddressTooLong) {
     return <Fragment>
       <p>{ERROR_ADDRESS_TOO_LONG}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
   }
+  if (searchErrorData.veteranDateOfBirthInvalid) {
+    return <Fragment>
+      <p>{INTAKE_VETERAN_DATE_OF_BIRTH_ERROR}</p>
+    </Fragment>;
+  }
+
 };
 
 export const invalidVeteranInstructions = (searchErrorData) => {
@@ -93,7 +101,7 @@ export default class ErrorAlert extends React.PureComponent {
         )
       },
       veteran_not_valid: {
-        title: "The Veteran's profile has missing or invalid information required to create an EP.",
+        title: 'Check the Veteran\'s profile for invalid information',
         body: invalidVeteranInstructions(this.props.errorData)
       }
     }[this.props.errorCode || 'default'];
