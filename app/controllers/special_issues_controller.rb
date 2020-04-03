@@ -49,7 +49,7 @@ class SpecialIssuesController < ApplicationController
               :foreign_pension_dic_mexico_central_and_south_america_caribb,
               :us_territory_claim_american_samoa_guam_northern_mariana_isla,
               :us_territory_claim_puerto_rico_and_virgin_islands,
-              :burn_pit, :military_sexual_trama, :blue_water, :cavc, :no_special_issues)
+              :burn_pit, :military_sexual_trauma, :blue_water, :cavc, :no_special_issues)
   end
 
   def record_not_found
