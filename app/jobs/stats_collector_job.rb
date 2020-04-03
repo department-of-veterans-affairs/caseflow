@@ -33,6 +33,8 @@ class StatsCollectorJob < CaseflowJob
     run_collectors(WEEKLY_COLLECTORS) if Time.zone.today.sunday?
 
     run_collectors(MONTHLY_COLLECTORS) if Time.zone.today.day == 1
+
+    log_success
   rescue StandardError => error
     log_error(self.class.name, error)
   ensure
@@ -60,6 +62,14 @@ class StatsCollectorJob < CaseflowJob
       app_name: APP_NAME,
       attrs: attrs
     )
+  end
+
+  def log_success
+    duration = time_ago_in_words(start_time)
+    msg = "#{self.class.name} completed after running for #{duration}."
+    Rails.logger.info(msg)
+
+    slack_service.send_notification(msg)
   end
 
   def log_error(collector_name, err)

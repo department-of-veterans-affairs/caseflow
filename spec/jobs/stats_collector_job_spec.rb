@@ -126,15 +126,18 @@ describe StatsCollectorJob do
         it "records the job's runtime and collector stats despite a failing collector" do
           allow(DataDogService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
 
-          slack_msg = ""
-          allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+          slack_msg = []
+          allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg << first_arg }
 
           described_class.perform_now
 
           # check failing collector
           expect(runtime_gauges["stats_collector_job.failing_collector"][:metric_value]).not_to be_nil
-          expected_msg = "failing_collector failed after running for less than a minute. Fatal error: meant to fail"
-          expect(slack_msg).to eq(expected_msg)
+          failure_msg = "failing_collector failed after running for less than a minute. Fatal error: meant to fail"
+          expect(slack_msg).to include(failure_msg)
+          # individual collector fails, but job completes
+          success_msg = "StatsCollectorJob completed after running for less than a minute."
+          expect(slack_msg).to include(success_msg)
 
           # check subsequent collector
           expect(runtime_gauges["stats_collector_job"][:metric_value]).not_to be_nil
