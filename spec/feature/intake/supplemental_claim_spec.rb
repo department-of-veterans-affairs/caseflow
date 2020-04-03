@@ -207,7 +207,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "499",
+        station_of_jurisdiction: current_user.station_id,
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
@@ -239,7 +239,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "499",
+        station_of_jurisdiction: current_user.station_id,
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
@@ -489,7 +489,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to_not have_content("Notes:")
 
       click_remove_intake_issue("1")
-      expect(page).not_to have_content("Left knee granted 2")
+      expect(page.has_no_content?("Left knee granted 2")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -597,7 +597,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         veteran_file_number: veteran.file_number,
         code: "040SCR",
         claimant_participant_id: supplemental_claim.claimant_participant_id,
-        station: "499"
+        station: current_user.station_id
       )
 
       expect(end_product_establishment).to_not be_nil
@@ -607,7 +607,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         veteran_file_number: veteran.file_number,
         code: "040SCNR",
         claimant_participant_id: supplemental_claim.claimant_participant_id,
-        station: "499"
+        station: current_user.station_id
       )
       expect(non_rating_end_product_establishment).to_not be_nil
 

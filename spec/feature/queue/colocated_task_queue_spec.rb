@@ -11,12 +11,12 @@ RSpec.feature "ColocatedTask", :all_dbs do
     let(:attorney_user) { create(:user) }
     let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
     let(:root_task) { create(:root_task) }
+    let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge_user, parent: root_task) }
     let(:appeal) { root_task.appeal }
     let!(:atty_task) do
       create(
         :ama_attorney_task,
-        appeal: appeal,
-        parent: root_task,
+        parent: judge_task,
         assigned_by: judge_user,
         assigned_to: attorney_user
       )

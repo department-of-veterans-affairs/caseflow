@@ -251,7 +251,8 @@ feature "Intake", :all_dbs do
           sex: nil,
           ssn: nil,
           country: nil,
-          address_line1: "this address is more than 20 chars"
+          address_line1: "this address is more than 20 chars",
+          city: "BRISTOW"
         )
       end
 
@@ -403,6 +404,98 @@ feature "Intake", :all_dbs do
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("Invalid file number")
+      end
+    end
+
+    context "Invalid characters" do
+      context "invalid address characters" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            address_line1: "%&^%",
+            city: "BRISTOW"
+          )
+        end
+
+        scenario "veteran has invalid characters in an address" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content("This Veteran's address has invalid characters")
+        end
+      end
+
+      context "invalid city characters" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            city: "ÐÐÐÐÐ",
+            address_line1: "1234"
+          )
+        end
+
+        scenario "veteran has city invalid characters" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content("This Veteran's city has invalid characters")
+        end
+      end
+
+      context "veteran date_of_birth invalid_date_of_birth" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            address_line1: "1234",
+            date_of_birth: "01/1/1953"
+          )
+        end
+
+        scenario "invalid_date_of_birth" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content("Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\"")
+        end
       end
     end
   end

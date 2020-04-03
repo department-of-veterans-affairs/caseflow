@@ -12,8 +12,4 @@ class HearingsManagement < Organization
   def show_regional_office_in_queue?
     true
   end
-
-  def use_task_pages_api?
-    true
-  end
 end

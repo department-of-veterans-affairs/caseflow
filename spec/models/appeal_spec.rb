@@ -22,7 +22,8 @@ describe Appeal, :all_dbs do
         legacy_opt_in_approved: appeal.legacy_opt_in_approved,
         veteran_is_not_claimant: appeal.veteran_is_not_claimant,
         stream_docket_number: appeal.docket_number,
-        stream_type: stream_type
+        stream_type: stream_type,
+        established_at: Time.zone.now
       )
       expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
     end
@@ -37,7 +38,8 @@ describe Appeal, :all_dbs do
           legacy_opt_in_approved: appeal.legacy_opt_in_approved,
           veteran_is_not_claimant: appeal.veteran_is_not_claimant,
           stream_docket_number: appeal.docket_number,
-          stream_type: stream_type
+          stream_type: stream_type,
+          established_at: Time.zone.now
         )
         expect(Appeal.de_novo.find_by(stream_docket_number: appeal.docket_number)).to_not be_nil
         expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
@@ -421,17 +423,25 @@ describe Appeal, :all_dbs do
   end
 
   context "#set_stream_docket_number_and_stream_type" do
+    let(:appeal) { Appeal.new(veteran_file_number: "1234") }
+    let(:receipt_date) { Date.new(2020, 1, 24) }
+
     it "persists an accurate value for stream_docket_number to the database" do
-      appeal = Appeal.new(veteran_file_number: "1234")
       appeal.save!
       expect(appeal.stream_docket_number).to be_nil
-      appeal.receipt_date = Time.new("2020", "01", "24").utc
+      appeal.receipt_date = receipt_date
       expect(appeal.docket_number).to eq("200124-#{appeal.id}")
       appeal.save!
       expect(appeal.stream_docket_number).to eq("200124-#{appeal.id}")
       appeal.stream_docket_number = "something else"
       appeal.save!
       expect(Appeal.where(stream_docket_number: "something else").count).to eq(1)
+    end
+
+    it "persists a non-NULL value for stream_docket_number as soon as possible" do
+      appeal.receipt_date = receipt_date
+      appeal.save!
+      expect(Appeal.where(stream_docket_number: "200124-#{appeal.id}").count).to eq(1)
     end
   end
 
@@ -775,8 +785,8 @@ describe Appeal, :all_dbs do
 
       let(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
       before do
-        create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 21)
-        create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 21)
+        create(:track_veteran_task, :in_progress, parent: root_task, updated_at: today + 21)
+        create(:timed_hold_task, :in_progress, parent: root_task, updated_at: today + 21)
       end
 
       describe "when there are no other tasks" do
@@ -788,7 +798,7 @@ describe Appeal, :all_dbs do
       describe "when there is an actionable task with an assignee", skip: "flake" do
         let(:assignee) { create(:user) }
         let!(:task) do
-          create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal, parent: root_task)
+          create(:ama_attorney_task, :in_progress, assigned_to: assignee, parent: root_task)
         end
 
         it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
@@ -809,13 +819,13 @@ describe Appeal, :all_dbs do
 
       before do
         organization_root_task = create(:root_task, appeal: appeal_organization)
-        create(:ama_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
+        create(:ama_task, assigned_to: organization, parent: organization_root_task)
 
         user_root_task = create(:root_task, appeal: appeal_user)
-        create(:ama_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+        create(:ama_task, assigned_to: user, parent: user_root_task)
 
         on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
-        create(:ama_task, :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
+        create(:ama_task, :on_hold, parent: on_hold_root, updated_at: today + 1)
 
         # These tasks are the most recently updated but should be ignored in the determination
         create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 20)

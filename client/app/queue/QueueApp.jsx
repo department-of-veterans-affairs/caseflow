@@ -9,6 +9,7 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
+  setFeatureToggles,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
@@ -80,6 +81,7 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
+    this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
@@ -114,14 +116,12 @@ class QueueApp extends React.PureComponent {
     return <ColocatedTaskListView />;
   };
 
-  routedQueueList = ({ match, location }) => (
-    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} location={location}>
-      {this.viewForUserRole()}
-    </QueueLoadingScreen>
+  routedQueueList = () => (
+    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>{this.viewForUserRole()}</QueueLoadingScreen>
   );
 
-  routedJudgeQueueList = (label) => ({ match, location }) => (
-    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} location={location}
+  routedJudgeQueueList = (label) => ({ match }) => (
+    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} userRole={USER_ROLE_TYPES.judge}
       loadAttorneys={label === 'assign'} >
       {label === 'assign' ? (
         <JudgeAssignTaskListView {...this.props} match={match} />
@@ -205,7 +205,7 @@ class QueueApp extends React.PureComponent {
 
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
 
-  routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} {...props.match.params} />;
+  routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />;
 
   routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
@@ -643,6 +643,8 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
   canEditAod: PropTypes.bool,
+  setFeatureToggles: PropTypes.func,
+  featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
   setOrganizations: PropTypes.func,
@@ -666,6 +668,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
+      setFeatureToggles,
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,

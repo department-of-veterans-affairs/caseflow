@@ -35,6 +35,9 @@
 #   # pulled latest from github? try:
 #   % make install migrate
 #
+#   # get fully up to date with master on origin and all deps & db?
+#   % make update
+#
 # Hopefully the targets are easy enough to remember to make this useful to others.
 #
 .DEFAULT_GOAL := help
@@ -43,7 +46,7 @@ whats-next:  ## TODO
 	scripts/whats-next
 
 ready:  ## Helper command that watches the docker containers to finish start up
-	h=`docker-compose ps | grep -i healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep -i healthy`; echo $$h; sleep 1; done
+	h=`docker-compose ps | grep -i starting`; while [ "$$h" != "" ]; do h=`docker-compose ps | grep -i starting`; echo $$h; sleep 1; done
 
 up:  ## Start the docker containers
 	docker-compose up -d
@@ -77,13 +80,16 @@ realclean: clean ## TODO
 facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 
-facols:  ## Connect directly to the FACOLS oracle database, requires sqlplus
-	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
+facols:  ## Connect directly to the FACOLS oracle database
+	docker exec --tty -i VACOLS_DB sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
-build: clean
+download-facols:	## Download the FACOLS Docker image
+	./local/vacols/build_push.sh rake
+
+sqs-conf-dir:	## Create local required dir
 	mkdir -p local/sqs/conf
-	bundle exec rake local:build
-	DB=etl bundle exec rake db:test:prepare
+
+build: clean sqs-conf-dir download-facols up ready reset	## First time local dev setup
 
 destroy: clean
 	bundle exec rake local:destroy
@@ -127,12 +133,22 @@ migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
 
 rollback: etl-rollback db-rollback	## Rollback all Rails databases
 
-fresh:  ## https://github.com/imsky/git-fresh
+fresh:  ## https://github.com/imsky/git-fresh - updates local master to match origin, stashes changes, prunes remote branches
 	git fresh
 
-reset:  ## Resets databases
+reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
+
+reset-dbs: ## Resets Caseflow and ETL database schemas
 	DB=etl bundle exec rake db:drop db:create db:schema:load
-	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
+	bundle exec rake db:drop db:create db:schema:load
+
+seed-dbs:	## Seed all databases
+	bundle exec rake local:vacols:seed
+	bundle exec rake spec:setup_vacols
+	bundle exec rake db:seed
+	DB=etl bundle exec rake db:seed
+
+enable-feature-flags: ## enable all feature flags
 	bundle exec rails runner scripts/enable_features_dev.rb
 
 bundle-install:  ## Installs ruby dependencies
@@ -143,7 +159,7 @@ client-install:  ## Installs javascript dependencies
 
 install: bundle-install client-install  ## Installs all dependencies
 
-update: fresh install migrate  ## TODO
+update: fresh install migrate  ## Get fully up to date with origin master - pulls origin, installs all deps and runs any db migrations
 
 client-build-test client-test:  ## Builds webpack for tests
 	cd client && yarn run build:test

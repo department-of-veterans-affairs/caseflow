@@ -38,29 +38,32 @@ class JudgeAssignTaskListView extends React.PureComponent {
   render = () => {
     const { userId,
       userCssId,
+      targetUserId,
       targetUserCssId,
       attorneysOfJudge,
       organizations,
+      unassignedTasksCount,
       match
     } = this.props;
+
+    const chosenUserId = targetUserId || userId;
 
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-          <h1>Assign {this.props.unassignedTasksCount} Cases
-          {(userCssId === targetUserCssId) ? '' : ` for ${this.props.targetUserCssId}`}</h1>
+          <h1>Assign {unassignedTasksCount} Cases{(userCssId === targetUserCssId) ? '' : ` for ${targetUserCssId}`}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
         </div>
         <div className="usa-width-one-fourth">
           <ul className="usa-sidenav-list">
             <li>
-              <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
-                Cases to Assign ({this.props.unassignedTasksCount})
+              <NavLink to={`/queue/${chosenUserId}/assign`} activeClassName="usa-current" exact>
+                Cases to Assign ({unassignedTasksCount})
               </NavLink>
             </li>
             {attorneysOfJudge.
               map((attorney) => <li key={attorney.id}>
-                <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
+                <NavLink to={`/queue/${chosenUserId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
                   {attorney.full_name} ({attorney.active_task_count})
                 </NavLink>
               </li>)}
@@ -71,9 +74,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             exact
             path={match.url}
             title="Cases to Assign | Caseflow"
-            render={
-              () => <UnassignedCasesPage
-                userId={this.props.userId.toString()} />}
+            render={() => <UnassignedCasesPage userId={chosenUserId.toString()} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
@@ -93,6 +94,7 @@ JudgeAssignTaskListView.propTypes = {
   resetSaveState: PropTypes.func,
   clearCaseSelectSearch: PropTypes.func,
   match: PropTypes.object,
+  targetUserId: PropTypes.number,
   targetUserCssId: PropTypes.string,
   userCssId: PropTypes.string,
   userId: PropTypes.number,
@@ -110,7 +112,8 @@ const mapStateToProps = (state) => {
   return {
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
     userCssId: state.ui.userCssId,
-    targetUserCssId: state.ui.targetUserCssId,
+    targetUserId: state.ui.targetUser?.id,
+    targetUserCssId: state.ui.targetUser?.cssId,
     tasksByUserId: getTasksByUserId(state),
     attorneysOfJudge
   };

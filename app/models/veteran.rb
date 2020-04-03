@@ -16,14 +16,20 @@ class Veteran < CaseflowRecord
                     :military_postal_type_code, :military_post_office_type_code,
                     :service, :date_of_birth, :date_of_death, :email_address
 
-  validates :first_name, :last_name, presence: true, on: :bgs
-  validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
-
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
     validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
     validates :state, presence: true, if: :state_is_required?, on: :bgs
     validates :city, presence: true, unless: :military_address?, on: :bgs
+  end
+
+  with_options on: :bgs do
+    validates :first_name, :last_name, presence: true
+    validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }
+    validate :validate_address_line
+    validates :city, length: { maximum: 30 }
+    validate :validate_city
+    validate :validate_date_of_birth
   end
 
   delegate :full_address, to: :address
@@ -171,6 +177,33 @@ class Veteran < CaseflowRecord
   alias address_line_2 address_line2
   alias address_line_3 address_line3
   alias gender sex
+
+  def validate_address_line
+    [:address_line1, :address_line2, :address_line3].each do |address|
+      address_line = instance_variable_get("@#{address}")
+      next if address_line.blank?
+
+      # This regex validation is used in VBMS to validate address of veteran
+      unless address_line.match?(/^(?!.*\s\s)[a-zA-Z0-9+#@%&()_:',.\-\/\s]*$/)
+        errors.add(address.to_sym, "invalid_characters")
+      end
+    end
+  end
+
+  def validate_date_of_birth
+    return if date_of_birth.blank?
+
+    unless date_of_birth.match?(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d/)
+      errors.add(:date_of_birth, "invalid_date_of_birth")
+    end
+  end
+
+  def validate_city
+    return true if city.blank?
+
+    # This regex validation is used in VBMS to validate address of veteran
+    errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
+  end
 
   def timely_ratings(from_date:)
     @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)

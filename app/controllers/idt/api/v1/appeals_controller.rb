@@ -46,7 +46,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def appeals_by_file_number
     appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:activated?)
-    appeals += Appeal.where(veteran_file_number: file_number)
+    appeals += Appeal.active.where(veteran_file_number: file_number)
     appeals
   end
 

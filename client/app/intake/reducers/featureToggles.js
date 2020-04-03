@@ -14,21 +14,26 @@ const updateFromServerFeatures = (state, featureToggles) => {
     unidentifiedIssueDecisionDate: {
       $set: Boolean(featureToggles.unidentifiedIssueDecisionDate)
     },
+    covidTimelinessExemption: {
+      $set: Boolean(featureToggles.covidTimelinessExemption)
+    },
     verifyUnidentifiedIssue: {
       $set: Boolean(featureToggles.verifyUnidentifiedIssue)
     }
   });
 };
 
-export const mapDataToFeatureToggle = (data = { featureToggles: {} }) => (
-  updateFromServerFeatures({
-    useAmaActivationDate: false,
-    editContentionText: false,
-    correctClaimReviews: false,
-    unidentifiedIssueDecisionDate: false,
-    verifyUnidentifiedIssue: false
-  }, data.featureToggles)
-);
+export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
+  updateFromServerFeatures(
+    {
+      useAmaActivationDate: false,
+      editContentionText: false,
+      correctClaimReviews: false,
+      unidentifiedIssueDecisionDate: false,
+      verifyUnidentifiedIssue: false
+    },
+    data.featureToggles
+  );
 
 export const featureToggleReducer = (state = mapDataToFeatureToggle()) => {
   return state;

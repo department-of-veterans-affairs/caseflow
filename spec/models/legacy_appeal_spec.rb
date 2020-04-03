@@ -674,19 +674,19 @@ describe LegacyAppeal, :all_dbs do
 
     subject { appeal.location_history.map { |priloc| [priloc.assigned_at, priloc.location, priloc.assigned_by] } }
 
-    let(:today) { Time.zone.today }
+    let(:oracle_sysdate) { Time.zone.now.utc.to_date } # NOT Time.zone.now because we want to act like Oracle SYSDATE
 
     it "returns array of date, to_whom, by_whom" do
       expect(subject).to eq([
-                              [today, first_location, "DSUSER"],
-                              [today, second_location, "DSUSER"],
-                              [today, third_location, "DSUSER"]
+                              [oracle_sysdate, first_location, "DSUSER"],
+                              [oracle_sysdate, second_location, "DSUSER"],
+                              [oracle_sysdate, third_location, "DSUSER"]
                             ])
       expect(appeal.location_history.last.summary).to eq(location: third_location,
-                                                         assigned_at: today,
+                                                         assigned_at: oracle_sysdate,
                                                          assigned_by: "DSUSER",
                                                          date_in: nil,
-                                                         date_out: today)
+                                                         date_out: oracle_sysdate)
     end
   end
 
@@ -1748,11 +1748,13 @@ describe LegacyAppeal, :all_dbs do
         )
       end
 
-      it { expect(subject.length).to eq(4) }
-      it { is_expected.to include("Foreign claim - compensation claims, dual claims, appeals") }
-      it { is_expected.to include("Vocational Rehabilitation and Employment") }
-      it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
-      it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
+      it "has expected issues", :aggregate_failures do
+        expect(subject.length).to eq(4)
+        is_expected.to include("Foreign claim - compensation claims, dual claims, appeals")
+        is_expected.to include("Vocational Rehabilitation and Employment")
+        is_expected.to include(/Education - GI Bill, dependents educational assistance/)
+        is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands")
+      end
     end
   end
 
@@ -1813,9 +1815,12 @@ describe LegacyAppeal, :all_dbs do
       ]
     end
 
-    it { is_expected.to include("02-01") }
-    it { is_expected.to include("02-02") }
-    it { is_expected.to_not include("02-03") }
+    it "has expected issues", :aggregate_failures do
+      is_expected.to include("02-01")
+      is_expected.to include("02-02")
+      is_expected.to_not include("02-03")
+    end
+
     it "returns uniqued issue categories" do
       expect(subject.length).to eq(2)
     end
@@ -2586,8 +2591,8 @@ describe LegacyAppeal, :all_dbs do
         let(:today) { Time.zone.today }
         let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
         before do
-          create(:track_veteran_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
-          create(:timed_hold_task, :in_progress, appeal: appeal, parent: root_task, updated_at: today + 11)
+          create(:track_veteran_task, :in_progress, parent: root_task, updated_at: today + 11)
+          create(:timed_hold_task, :in_progress, parent: root_task, updated_at: today + 11)
         end
 
         describe "when there are no other tasks" do
@@ -2599,7 +2604,7 @@ describe LegacyAppeal, :all_dbs do
         describe "when there is an assigned actionable task" do
           let(:task_assignee) { create(:user) }
           let!(:task) do
-            create(:colocated_task, :in_progress, assigned_to: task_assignee, appeal: appeal, parent: root_task)
+            create(:colocated_task, :in_progress, assigned_to: task_assignee, parent: root_task)
           end
 
           it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
@@ -2617,7 +2622,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             organization_root_task = create(:root_task, appeal: appeal)
-            create(:ama_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
+            create(:ama_task, assigned_to: organization, parent: organization_root_task)
 
             # These tasks are the most recently updated but should be ignored in the determination
             create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 10)
@@ -2634,7 +2639,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             user_root_task = create(:root_task, appeal: appeal)
-            create(:ama_task, assigned_to: user, appeal: appeal, parent: user_root_task)
+            create(:ama_task, assigned_to: user, parent: user_root_task)
           end
 
           it "it returns the id" do
@@ -2647,7 +2652,7 @@ describe LegacyAppeal, :all_dbs do
 
           before do
             on_hold_root = create(:root_task, appeal: appeal, updated_at: pre_ama - 1)
-            create(:ama_task, :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
+            create(:ama_task, :on_hold, parent: on_hold_root, updated_at: pre_ama + 1)
           end
 
           it "it returns something" do

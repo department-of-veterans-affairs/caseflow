@@ -129,12 +129,33 @@ RSpec.feature "Login", :all_dbs do
   end
   # :nocov:
 
+  context "user is logged out" do
+    before do
+      Fakes::AuthenticationService.user_session = nil
+      @cached_sso_url = ENV["SSO_URL"]
+      ENV["SSO_URL"] = "/fake-login-page"
+    end
+
+    after do
+      ENV["SSO_URL"] = @cached_sso_url
+    end
+
+    scenario "Sign In menu option on /help page" do
+      visit "/help"
+
+      click_on "Menu"
+      click_on "Sign In"
+
+      expect(current_path).to eq("/fake-login-page")
+    end
+  end
+
   scenario "email and selected regional office should be set on login" do
     visit "certifications/new/#{appeal.vacols_id}"
     select_ro_from_dropdown
     click_on "Log in"
     # Automatically wait for elements to disappear (but actually wait for asynchronous code to return)
-    expect(page).not_to have_content("Logging in")
+    expect(page.has_no_content?("Logging in")).to eq(true)
     expect(user.reload.email).to eq user_email
     expect(user.selected_regional_office).to eq "RO05"
   end

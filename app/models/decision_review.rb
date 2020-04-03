@@ -255,7 +255,7 @@ class DecisionReview < CaseflowRecord
     return unless remand_supplemental_claims.any?
     return if active_remanded_claims?
 
-    remand_supplemental_claims.map(&:decision_event_date).max.try(&:to_date)
+    remand_supplemental_claims.map(&:decision_event_date).compact.max.try(&:to_date)
   end
 
   def fetch_all_decision_issues
@@ -387,7 +387,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def end_product_station
-    "499" # National Work Queue
+    intake&.user&.station_id || "499" # National Work Queue
   end
 
   def validate_receipt_date_not_before_ama

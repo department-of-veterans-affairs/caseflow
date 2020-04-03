@@ -108,7 +108,7 @@ class Search extends React.PureComponent {
         body: COPY.INTAKE_SEARCH_ERROR_NOT_MODIFIABLE
       },
       veteran_not_valid: {
-        title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
+        title: 'Check the Veteran\'s profile for invalid information',
         body: invalidVeteranInstructions(searchErrorData)
       },
       incident_flash: {

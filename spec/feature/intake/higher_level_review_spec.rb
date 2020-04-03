@@ -244,7 +244,7 @@ feature "Higher-Level Review", :all_dbs do
           payee_code: "10",
           predischarge: false,
           claim_type: "Claim",
-          station_of_jurisdiction: "499",
+          station_of_jurisdiction: current_user.station_id,
           date: higher_level_review.receipt_date.to_date,
           end_product_modifier: "033",
           end_product_label: "Higher-Level Review Rating",
@@ -275,7 +275,7 @@ feature "Higher-Level Review", :all_dbs do
         payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "499",
+        station_of_jurisdiction: current_user.station_id,
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
@@ -756,7 +756,7 @@ feature "Higher-Level Review", :all_dbs do
 
       # removing an issue
       click_remove_intake_issue("1")
-      expect(page).not_to have_content("Left knee granted 2")
+      expect(page.has_no_content?("Left knee granted 2")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -905,7 +905,7 @@ feature "Higher-Level Review", :all_dbs do
         code: "030HLRR",
         claimant_participant_id: "5382910292",
         payee_code: "02",
-        station: "499"
+        station: current_user.station_id
       )
 
       expect(end_product_establishment).to_not be_nil
@@ -916,7 +916,7 @@ feature "Higher-Level Review", :all_dbs do
         code: "030HLRNR",
         claimant_participant_id: "5382910292",
         payee_code: "02",
-        station: "499"
+        station: current_user.station_id
       )
       expect(non_rating_end_product_establishment).to_not be_nil
 

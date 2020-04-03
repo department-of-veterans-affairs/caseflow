@@ -184,6 +184,7 @@ class RequestIssue < CaseflowRecord
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
         untimely_exemption_notes: data[:untimely_exemption_notes],
+        covid_timeliness_exempt: data[:untimely_exemption_covid],
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
         vacols_sequence_id: data[:vacols_sequence_id],
@@ -440,7 +441,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def close_after_end_product_canceled!
-    return unless end_product_establishment&.reload&.status_canceled?
+    return unless end_product_establishment&.reload&.status_cancelled?
 
     close!(status: :end_product_canceled) do
       legacy_issue_optin&.flag_for_rollback!
@@ -718,7 +719,7 @@ class RequestIssue < CaseflowRecord
         rating_promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
-        end_product_last_action_date: end_product_establishment.result.last_action_date
+        end_product_last_action_date: end_product_establishment.last_action_date
       )
     end
   end
@@ -770,7 +771,7 @@ class RequestIssue < CaseflowRecord
       rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
-      end_product_last_action_date: end_product_establishment.result.last_action_date
+      end_product_last_action_date: end_product_establishment.last_action_date
     )
   end
 

@@ -2,6 +2,11 @@ import React, { Fragment } from 'react';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
+import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
+  ERROR_CITY_INVALID_CHARACTERS,
+  ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_DATE_OF_BIRTH_ERROR } from '../../../COPY';
+import { css } from 'glamor';
 
 const missingFieldsMessage = (fields) => <p>
   Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
@@ -11,24 +16,49 @@ const missingFieldsMessage = (fields) => <p>
 const addressTips = [
   () => <Fragment>Do: move the last word(s) of the street address down to an another street address field</Fragment>,
   () => <Fragment>Do: abbreviate to St. Ave. Rd. Blvd. Dr. Ter. Pl. Ct.</Fragment>,
-  () => <Fragment>Don't: edit street names or numbers</Fragment>
+  () => <Fragment>Don't: edit street names or numbers</Fragment>,
+  () => <Fragment>Don't: use invalid characters such as *%$Ð</Fragment>
 ];
 
-const addressTooLongMessage = <Fragment>
-  <p>
-    This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than
-    20 characters (including spaces) then try again.
-  </p>
-  <p>Tips:</p>
+const veteranAddressTips = <Fragment>
+  <p {...css({ marginTop: '10px',
+    marginBottom: '10px' })}>Tips:</p>
   <BareList items={addressTips} ListElementComponent="ul" />
 </Fragment>;
+
+export const invalidVeteranCharacters = (searchErrorData) => {
+  if (searchErrorData.veteranAddressInvalidFields) {
+    return <Fragment>
+      <p>{ERROR_ADDRESS_LINE_INVALID_CHARACTERS}</p>
+      <span>{veteranAddressTips}</span>
+    </Fragment>;
+  }
+  if (searchErrorData.veteranCityInvalidFields) {
+    return <Fragment>
+      <p>{ERROR_CITY_INVALID_CHARACTERS}</p>
+      <span>{veteranAddressTips}</span>
+    </Fragment>;
+  }
+  if (searchErrorData.veteranAddressTooLong) {
+    return <Fragment>
+      <p>{ERROR_ADDRESS_TOO_LONG}</p>
+      <span>{veteranAddressTips}</span>
+    </Fragment>;
+  }
+  if (searchErrorData.veteranDateOfBirthInvalid) {
+    return <Fragment>
+      <p>{INTAKE_VETERAN_DATE_OF_BIRTH_ERROR}</p>
+    </Fragment>;
+  }
+
+};
 
 export const invalidVeteranInstructions = (searchErrorData) => {
   if (searchErrorData) {
     return <Fragment>
       { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
         missingFieldsMessage(searchErrorData.veteranMissingFields) }
-      { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
+      { invalidVeteranCharacters(searchErrorData) }
     </Fragment>;
   }
 };
@@ -71,7 +101,7 @@ export default class ErrorAlert extends React.PureComponent {
         )
       },
       veteran_not_valid: {
-        title: "The Veteran's profile has missing or invalid information required to create an EP.",
+        title: 'Check the Veteran\'s profile for invalid information',
         body: invalidVeteranInstructions(this.props.errorData)
       }
     }[this.props.errorCode || 'default'];
@@ -81,3 +111,9 @@ export default class ErrorAlert extends React.PureComponent {
     </Alert>;
   }
 }
+
+ErrorAlert.propTypes = {
+  errorData: PropTypes.object,
+  errorUUID: PropTypes.object,
+  errorCode: PropTypes.string
+};

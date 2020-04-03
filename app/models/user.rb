@@ -348,6 +348,10 @@ class User < CaseflowRecord
     false
   end
 
+  def can_act_on_behalf_of_judges?
+    member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
+  end
+
   def show_regional_office_in_queue?
     HearingsManagement.singleton.user_has_access?(self)
   end

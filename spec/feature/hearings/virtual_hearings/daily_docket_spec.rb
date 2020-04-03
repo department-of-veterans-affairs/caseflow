@@ -23,7 +23,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
     hearing.reload
     expect(page).to have_no_content(COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name)
-    expect(page).to have_content(COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_TIME_CHANGED"]["MESSAGE"])
+    expect(page).to have_content(COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_HEARING_TIME"]["MESSAGE"])
     expect(hearing.virtual_hearing.all_emails_sent?).to eq(true)
   end
 
@@ -51,6 +51,29 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_no_css(".is-disabled")
       expect(all(".cf-form-radio-option").first).to have_no_css(".disabled")
       expect(find(".dropdown-optionalHearingTime1")).to have_no_css(".is-disabled")
+    end
+  end
+
+  context "Virtual Hearing Link" do
+    let(:vlj_virtual_hearing_link) { COPY::VLJ_VIRTUAL_HEARING_LINK_LABEL }
+
+    context "Hearing Coordinator view" do
+      scenario "User has the host link" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+
+        expect(page).to have_content(vlj_virtual_hearing_link)
+        expect(page).to have_xpath "//a[contains(@href,'role=host')]"
+      end
+    end
+    context "VLJ view" do
+      let(:current_user) { User.authenticate!(css_id: hearing.judge.css_id, roles: ["Hearing Prep"]) }
+
+      scenario "User has the host link" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+
+        expect(page).to have_content(vlj_virtual_hearing_link)
+        expect(page).to have_xpath "//a[contains(@href,'role=host')]"
+      end
     end
   end
 end

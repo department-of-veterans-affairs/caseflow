@@ -3,8 +3,8 @@
 describe ChangeHearingDispositionTask, :postgres do
   let(:appeal) { create(:appeal, :hearing_docket) }
   let(:root_task) { create(:root_task, appeal: appeal) }
-  let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
-  let(:hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
+  let(:distribution_task) { create(:distribution_task, parent: root_task) }
+  let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
 
   context "create a new ChangeHearingDispositionTask" do
     let(:task_params) { { appeal: appeal, parent: hearing_task } }

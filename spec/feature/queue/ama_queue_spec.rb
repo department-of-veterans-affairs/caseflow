@@ -72,9 +72,9 @@ feature "AmaQueue", :all_dbs do
 
     let(:poa_address) { "123 Poplar St." }
     let(:participant_id) { "600153863" }
-    let!(:root_task) { create(:root_task) }
+    let!(:root_task) { create(:root_task, appeal: appeals.first) }
     let!(:parent_task) do
-      create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task)
+      create(:ama_judge_task, assigned_to: judge_user, parent: root_task)
     end
 
     let(:poa_name) { "Test POA" }
@@ -119,8 +119,7 @@ feature "AmaQueue", :all_dbs do
             :in_progress,
             assigned_to: attorney_user,
             assigned_by: judge_user,
-            parent: parent_task,
-            appeal: appeals.first
+            parent: parent_task
           ),
           create(
             :ama_attorney_task,
@@ -436,7 +435,7 @@ feature "AmaQueue", :all_dbs do
     end
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:judge_task) do
-      create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
+      create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
     before do
@@ -484,7 +483,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues (optional)")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
 
@@ -510,7 +509,7 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "Select-option", text: "Remanded").click
 
         click_on "Save"
-        expect(page).not_to have_content("This field is required")
+        expect(page.has_no_content?("This field is required")).to eq(true)
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -556,7 +555,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues (optional)")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         expect(page).to have_content("Allowed")
@@ -603,7 +602,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues (optional)")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
 
@@ -674,7 +673,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues (optional)")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         click_on "Continue"
@@ -777,7 +776,7 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-          expect(page).not_to have_content("Select special issues (optional)")
+          expect(page.has_no_content?("Select special issues")).to eq(true)
 
           expect(page).to have_content("Add decisions")
 
@@ -803,7 +802,7 @@ feature "AmaQueue", :all_dbs do
           find("div", class: "Select-option", text: "Remanded").click
 
           click_on "Save"
-          expect(page).not_to have_content("This field is required")
+          expect(page.has_no_content?("This field is required")).to eq(true)
           click_on "Continue"
 
           expect(page).to have_content("Select Remand Reasons")
@@ -858,8 +857,8 @@ feature "AmaQueue", :all_dbs do
     let(:task_count) { 2 }
     let!(:tasks) do
       Array.new(task_count) do
-        root_task = create(:root_task, appeal: create(:appeal))
-        create(:ama_task, parent: root_task, appeal: root_task.appeal, assigned_to: org)
+        root_task = create(:root_task)
+        create(:ama_task, parent: root_task, assigned_to: org)
       end
     end
 

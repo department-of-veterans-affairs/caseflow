@@ -144,6 +144,7 @@ feature "Intake Review Page", :postgres do
       end
 
       context "when the claimant is missing an address" do
+        let(:error_text) { "Please supply the claimant's address in VBMS" }
         before do
           allow_any_instance_of(BgsAddressService).to receive(:fetch_bgs_record).and_return(nil)
         end
@@ -152,7 +153,7 @@ feature "Intake Review Page", :postgres do
           it "does not require the claimant to have an address" do
             review = start_appeal(veteran, veteran_is_not_claimant: veteran_is_not_claimant).first
 
-            check_claimant_address_error(review, benefit_type)
+            check_claimant_address_error(review, benefit_type, error_text)
           end
         end
 
@@ -165,7 +166,7 @@ feature "Intake Review Page", :postgres do
                 veteran_is_not_claimant: veteran_is_not_claimant
               ).first
 
-              check_claimant_address_error(review, benefit_type)
+              check_claimant_address_error(review, benefit_type, error_text)
             end
           end
         end
@@ -183,8 +184,30 @@ feature "Intake Review Page", :postgres do
                   benefit_type: benefit_type
                 ).first
 
-                check_claimant_address_error(review, benefit_type)
+                check_claimant_address_error(review, benefit_type, error_text)
               end
+            end
+          end
+        end
+      end
+
+      context "when the claimant has an invalid address" do
+        let(:invalid_address) { { address_line_1: "one", address_line_2: "two  ", city: nil, state: nil, zip: nil } }
+        let(:error_text) { "Please update the claimant's address in VBMS to be valid" }
+        before do
+          allow_any_instance_of(BgsAddressService).to receive(:fetch_bgs_record).and_return(invalid_address)
+        end
+
+        [:higher_level_review, :supplemental_claim].each do |claim_review_type|
+          describe "given a #{claim_review_type}" do
+            it "requires that the claimant have a valid address" do
+              review = start_claim_review(
+                claim_review_type,
+                veteran: veteran,
+                veteran_is_not_claimant: veteran_is_not_claimant
+              ).first
+
+              check_claimant_address_error(review, benefit_type, error_text)
             end
           end
         end
@@ -261,7 +284,7 @@ def check_deceased_veteran_cant_be_payee
   find(".Select-control").click
 
   # verify that veteran cannot be selected
-  expect(page).not_to have_content("00 - Veteran")
+  expect(page.has_no_content?("00 - Veteran")).to eq(true)
   expect(page).to have_content("10 - Spouse")
 end
 
@@ -307,7 +330,7 @@ def check_pension_and_compensation_payee_code
   expect(page).to have_current_path("/intake/add_issues")
 end
 
-def check_claimant_address_error(review, benefit_type)
+def check_claimant_address_error(review, benefit_type, error_text)
   visit "/intake"
   expect(page).to have_current_path("/intake/review_request")
 
@@ -323,10 +346,10 @@ def check_claimant_address_error(review, benefit_type)
   click_intake_continue
 
   if review.processed_in_caseflow?
-    expect(page).to_not have_content("Please update the claimant's address")
+    expect(page).to_not have_content(error_text)
     expect(page).to have_current_path("/intake/add_issues")
   else
-    expect(page).to have_content("Please update the claimant's address")
+    expect(page).to have_content(error_text)
   end
 end
 
@@ -359,13 +382,13 @@ def check_invalid_veteran_alert_on_review_page(form_type)
   click_on "Search"
 
   expect(page).to have_current_path("/intake/review_request")
-  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to_not have_content("Check the Veteran's profile for invalid information")
 
   within_fieldset("What is the Benefit Type?") do
     find("label", text: "Compensation", match: :prefer_exact).click
   end
 
-  expect(page).to have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to have_content("Check the Veteran's profile for invalid information")
   expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
   expect(page).to have_content(
     "the corporate database, then retry establishing the EP in Caseflow: country."
@@ -377,7 +400,7 @@ def check_invalid_veteran_alert_on_review_page(form_type)
     find("label", text: "Education", match: :prefer_exact).click
   end
 
-  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to_not have_content("Check the Veteran's profile for invalid information")
   expect(page).to have_button("Continue to next step", disabled: false)
 end
 
