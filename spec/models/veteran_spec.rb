@@ -520,7 +520,7 @@ describe Veteran, :all_dbs do
     let(:date_of_birth) { nil }
 
     it "is considered a valid veteran from bgs" do
-      expect(veteran.valid?(:bgs)).to be false
+      expect(veteran.valid?(:bgs)).to be true
     end
   end
 
