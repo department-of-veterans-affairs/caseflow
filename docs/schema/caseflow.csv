@@ -869,6 +869,9 @@ schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
 special_issue_lists,,,,,,,,
 special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
 special_issue_lists,appeal_type,string,,,,,x,
+special_issue_lists,blue_water,boolean,,,,,,Blue Water
+special_issue_lists,burn_pit,boolean,,,,,,Burn Pit
+special_issue_lists,cavc,boolean,,,,,,US Court of Appeals for Veterans Claims (CAVC)
 special_issue_lists,contaminated_water_at_camp_lejeune,boolean,,,,,,
 special_issue_lists,created_at,datetime,,,,,,
 special_issue_lists,dic_death_or_accrued_benefits_united_states,boolean,,,,,,
@@ -882,8 +885,10 @@ special_issue_lists,id,integer (8) PK,x,x,,,,
 special_issue_lists,incarcerated_veterans,boolean,,,,,,
 special_issue_lists,insurance,boolean,,,,,,
 special_issue_lists,manlincon_compliance,boolean,,,,,,
+special_issue_lists,military_sexual_trama,boolean,,,,,,Military Sexual Trauma (MST)
 special_issue_lists,mustard_gas,boolean,,,,,,
 special_issue_lists,national_cemetery_administration,boolean,,,,,,
+special_issue_lists,no_special_issues,boolean,,,,,,"Affirmative no special issues, added belatedly"
 special_issue_lists,nonrating_issue,boolean,,,,,,
 special_issue_lists,pension_united_states,boolean,,,,,,
 special_issue_lists,private_attorney_or_agent,boolean,,,,,,
