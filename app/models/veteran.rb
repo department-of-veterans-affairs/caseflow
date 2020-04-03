@@ -192,14 +192,12 @@ class Veteran < CaseflowRecord
   end
 
   def validate_date_of_birth
-
     unless date_of_birth&.match?(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d/)
       errors.add(:date_of_birth, "invalid_date_of_birth")
     end
   end
 
   def validate_city
-
     # This regex validation is used in VBMS to validate address of veteran
     errors.add(:city, "invalid_characters") unless city&.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
   end

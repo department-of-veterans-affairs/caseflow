@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
 describe Veteran, :all_dbs do
-  let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper", name_suffix: name_suffix) }
+  let(:veteran) do
+    Veteran.new(
+      file_number: "44556677",
+      first_name: "June",
+      last_name: "Juniper",
+      name_suffix: name_suffix
+    )
+  end
 
   before do
     Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
