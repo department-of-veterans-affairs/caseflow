@@ -1004,6 +1004,7 @@ vbms_uploaded_documents,updated_at,datetime ∗,x,,,,x,
 vbms_uploaded_documents,uploaded_to_vbms_at,datetime,,,,,,
 veterans,,,,,,,,
 veterans,closest_regional_office,string,,,,,,
+veterans,country,string ∗,x,,,,,Cached copy of veteran's country from BGS
 veterans,created_at,datetime,,,,,,
 veterans,file_number,string ∗,x,,,,x,
 veterans,first_name,string ∗,x,,,,,
@@ -1013,7 +1014,9 @@ veterans,middle_name,string,,,,,,
 veterans,name_suffix,string,,,,,,
 veterans,participant_id,string,,,,,x,
 veterans,ssn,string,,,,,x,The cached Social Security Number
+veterans,state,string ∗,x,,,,,Cached copy of veteran's state from BGS
 veterans,updated_at,datetime,,,,,x,
+veterans,zip_code,string ∗,x,,,,,Cached copy of veteran's zipcode from BGS
 virtual_hearings,,,,,,,,
 virtual_hearings,alias,string,,,,,x,Alias for conference in Pexip
 virtual_hearings,conference_deleted,boolean ∗,x,,,,,Whether or not the conference was deleted from Pexip
