@@ -287,7 +287,6 @@ class HearingDetails extends React.Component {
             type={this.state.virtualHearingModalType}
             {...editedEmails} />}
           <DetailsSections
-            user={this.props.user}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
@@ -331,9 +330,6 @@ class HearingDetails extends React.Component {
 }
 
 HearingDetails.propTypes = {
-  user: PropTypes.shape({
-    userCanScheduleVirtualHearings: PropTypes.bool
-  }),
   hearing: PropTypes.object.isRequired,
   setHearing: PropTypes.func,
   goBack: PropTypes.func,
