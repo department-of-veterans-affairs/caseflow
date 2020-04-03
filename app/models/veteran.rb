@@ -205,7 +205,7 @@ class Veteran < CaseflowRecord
   end
 
   def validate_name_suffix
-
+    # This regex validation checks for punctuations in the name suffix
     errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
   end
 
