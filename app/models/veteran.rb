@@ -200,7 +200,7 @@ class Veteran < CaseflowRecord
   end
 
   def validate_city
-    return if city.blank?
+    return true if city.blank?
 
     # This regex validation is used in VBMS to validate address of veteran
     errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
