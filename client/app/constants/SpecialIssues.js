@@ -7,13 +7,13 @@ import React from 'react';
 // specialIssue:             React's ID
 // stationOfJurisdiction:    Can be null, Regional, or this hash. ?rerouting magic at dispatch?
 // {
-//   key:                    ?Does some reouting magic at Dispatch
-//   location:               ?Does some reouting magic at Dispatch
+//   key:                    ?Does some rerouting magic at Dispatch
+//   location:               ?Does some rerouting magic at Dispatch
 // },
 // snakeCase:                Rails' ID
 // unhandled: {
-//   emailAddress:           ?Does some reouting magic at Dispatch
-//   regionalOffice:         ?Does some reouting magic at Dispatch
+//   emailAddress:           ?Does some rerouting magic at Dispatch
+//   regionalOffice:         ?Does some rerouting magic at Dispatch
 // },
 // nonCompensation:          ?Not used
 // queueSection:             for Queue display, which section it goes in
@@ -332,15 +332,15 @@ export const SPECIAL_ISSUES = [
   }
 ];
 
-// Special Issues added in 2020-Spring. Currently seperate from the above in order to be
-// locked to the FeatureToggle :special_issues_revamp down below. After the feature toggle is fully enabled
-// & removed these can be cleanly merged into the above array. Reference PR #13781
+// Special Issues added in 2020-Spring. Currently separate from the above in order to be
+// locked to the FeatureToggle :special_issues_revamp in SpecialIssueEnabler. As a part of
+// removing the feature toggle these can be cleanly merged into the above array. Reference PR #13781
 export const NEW_SPECIAL_ISSUES = [
   {
     display: 'Burn Pit',
     queueDisplay: 'Burn Pit',
     specialIssue: 'burnPit',
-    snakeCase: 'Burn Pit',
+    snakeCase: 'burn_pit',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
     queueSectionOrder: 2
@@ -383,7 +383,4 @@ export const NEW_SPECIAL_ISSUES = [
   }
 ];
 
-// NEW_SPECIAL_ISSUES added in 2020-Spring. Currently listed seperate from the main list in order to be
-// locked to the FeatureToggle :special_issues_revamp in SpecialIssueEnabler. As a part of removing the feature toggle, merge the
-// arrays and clean up this export.
 export default SPECIAL_ISSUES;
