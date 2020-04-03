@@ -1137,7 +1137,7 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
     t.boolean "incarcerated_veterans", default: false
     t.boolean "insurance", default: false
     t.boolean "manlincon_compliance", default: false
-    t.boolean "military_sexual_trama", default: false, comment: "Military Sexual Trauma (MST)"
+    t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
