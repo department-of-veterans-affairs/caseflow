@@ -885,7 +885,7 @@ special_issue_lists,id,integer (8) PK,x,x,,,,
 special_issue_lists,incarcerated_veterans,boolean,,,,,,
 special_issue_lists,insurance,boolean,,,,,,
 special_issue_lists,manlincon_compliance,boolean,,,,,,
-special_issue_lists,military_sexual_trama,boolean,,,,,,Military Sexual Trauma (MST)
+special_issue_lists,military_sexual_trauma,boolean,,,,,,Military Sexual Trauma (MST)
 special_issue_lists,mustard_gas,boolean,,,,,,
 special_issue_lists,national_cemetery_administration,boolean,,,,,,
 special_issue_lists,no_special_issues,boolean,,,,,,"Affirmative no special issues, added belatedly"
