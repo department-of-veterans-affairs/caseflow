@@ -1,29 +1,29 @@
 # frozen_string_literal: true
 
 describe Collectors::DailyCountsStatsCollector do
-  def random_time_today
+  def random_time_of_day
     rand(0..23).hours + rand(0..59).minutes + rand(0..59).seconds
   end
   context "#collect_stats" do
     before do
       yesterday = Time.now.utc.yesterday.change(hour: 0, min: 0, sec: 0)
       2.times do
-        create(:appeal, created_at: yesterday + random_time_today)
+        create(:appeal, created_at: yesterday + random_time_of_day)
       end
 
       create(:judge_case_review, location: :quality_review)
       2.times do
-        create(:attorney_case_review, created_at: yesterday + random_time_today)
+        create(:attorney_case_review, created_at: yesterday + random_time_of_day)
       end
 
       3.times do
-        create(:hearing, created_at: yesterday + random_time_today)
+        create(:hearing, created_at: yesterday + random_time_of_day)
       end
 
       2.times do |i|
         create(:request_issue, :unidentified,
                benefit_type: "pension",
-               created_at: yesterday + random_time_today,
+               created_at: yesterday + random_time_of_day,
                contention_reference_id: i,
                decision_review: create(:higher_level_review))
       end
