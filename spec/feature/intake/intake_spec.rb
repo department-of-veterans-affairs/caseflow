@@ -408,7 +408,7 @@ feature "Intake", :all_dbs do
             find("label", text: "Compensation", match: :prefer_exact).click
           end
 
-          expect(page).to have_content("The Veteran's profile has missing or invalid information")
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
           expect(page).to have_content("This Veteran's address has invalid characters")
         end
       end
@@ -438,8 +438,39 @@ feature "Intake", :all_dbs do
             find("label", text: "Compensation", match: :prefer_exact).click
           end
 
-          expect(page).to have_content("The Veteran's profile has missing or invalid information")
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
           expect(page).to have_content("This Veteran's city has invalid characters")
+        end
+      end
+
+      context "veteran date_of_birth invalid_date_of_birth" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            address_line1: "1234",
+            date_of_birth: "01/1/1953"
+          )
+        end
+
+        scenario "invalid_date_of_birth" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content("Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.)")
+          expect(page).to have_content("Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\"")
         end
       end
 
@@ -451,6 +482,7 @@ feature "Intake", :all_dbs do
             ssn: nil,
             country: "USA",
             address_line1: "1234",
+            date_of_birth: "01/1/1953",
             name_suffix: "JR."
           )
         end

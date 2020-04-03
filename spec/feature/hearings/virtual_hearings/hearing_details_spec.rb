@@ -13,7 +13,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO13") }
   let!(:expected_alert) do
-    COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+    COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
   end
 
   let(:pre_loaded_vet_email) { hearing.appeal.veteran.email_address }
@@ -28,7 +28,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_field("POA/Representative Email", with: pre_loaded_rep_email)
     end
 
-    scenario "hearing is swtiched to 'Virtual'" do
+    scenario "hearing is switched to 'Virtual'" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
@@ -50,7 +50,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   context "for an existing Virtual Hearing" do
     let!(:virtual_hearing) { create(:virtual_hearing, :active, :all_emails_sent, conference_id: "0", hearing: hearing) }
     let!(:expected_alert) do
-      COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
+      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
     end
 
     scenario "user switches hearing type back to original request type" do
