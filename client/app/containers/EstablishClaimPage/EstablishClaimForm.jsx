@@ -17,7 +17,7 @@ export class EstablishClaimForm extends React.Component {
       this.props.stationOfJurisdiction,
       this.props.regionalOfficeKey,
       this.props.regionalOfficeCities,
-      this.props.special_issues_revamp
+      this.props.specialIssuesRevamp
     );
   }
 
@@ -126,7 +126,10 @@ EstablishClaimForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   stationKey: PropTypes.string.isRequired,
   regionalOfficeKey: PropTypes.string.isRequired,
-  regionalOfficeCities: PropTypes.object.isRequired
+  regionalOfficeCities: PropTypes.object.isRequired,
+  stationOfJurisdiction: PropTypes.object.isRequired,
+  specialIssuesRevamp: PropTypes.bool.isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
 /*
@@ -134,8 +137,8 @@ EstablishClaimForm.propTypes = {
  * application state should be passed in as props to
  * the rendered component.
  */
-const mapStateToProps = (state, ownProps) => ({
-  establishClaimForm: state.establishClaimForm,
+const mapStateToProps = (state) => ({
+  establishClaimForm: state.establishClaimForm
 });
 
 const mapDispatchToProps = (dispatch) => ({

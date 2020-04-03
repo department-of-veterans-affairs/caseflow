@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import { dateFormatString } from '../../util/DateUtil';
 import StringUtil from '../../util/StringUtil';
-import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler.js';
+import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import LoadingContainer from '../../components/LoadingContainer';
@@ -201,11 +201,11 @@ export class EstablishClaimDecision extends React.Component {
           <fieldset className="fieldset">
             <legend>
               <label>
-                <b>Select Special Issues</b>
+                <b>Select Special Issues</b>
               </label>
             </legend>
             <div className="cf-multiple-columns">
-              {enabledSpecialIssues(this.props.special_issues_revamp).map((issue, index) => {
+              {enabledSpecialIssues(this.props.specialIssuesRevamp).map((issue, index) => {
                 return (
                   <Checkbox
                     id={issue.specialIssue}
@@ -249,7 +249,8 @@ EstablishClaimDecision.propTypes = {
   pdfjsLink: PropTypes.string.isRequired,
   specialIssues: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  specialIssuesRevamp: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

@@ -13,7 +13,7 @@ import FormField from '../../util/FormField';
 import { formatDateStr } from '../../util/DateUtil';
 import { connect } from 'react-redux';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler.js';
+import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler';
 import * as Constants from '../../establishClaim/constants';
 import { getSpecialIssuesRegionalOfficeCode } from '../../establishClaim/util';
 
@@ -26,11 +26,13 @@ export class EstablishClaimEmail extends BaseForm {
 
     let specialIssuesStatus = this.props.specialIssues;
 
-    const selectedSpecialIssue = enabledSpecialIssues(this.props.special_issues_revamp).map((issue) => {
+    const selectedSpecialIssue = enabledSpecialIssues(this.props.specialIssuesRevamp).map((issue) => {
       if (specialIssuesStatus[issue.specialIssue]) {
-        return issue.display
+        return issue.display;
       }
-    })
+
+      return null;
+    });
 
     // Add an and if there are multiple issues so that the last element
     // in the list has an and before it.

@@ -147,15 +147,17 @@ export class EstablishClaim extends React.Component {
   }
 
   containsRoutedSpecialIssues = () => {
-    return specialIssueFilters(this.props.featureToggles?.special_issues_revamp).routedSpecialIssues().some((issue) => {
-      return this.props.specialIssues[issue.specialIssue];
-    });
+    return specialIssueFilters(this.props.featureToggles?.specialIssuesRevamp).routedSpecialIssues().
+      some((issue) => {
+        return this.props.specialIssues[issue.specialIssue];
+      });
   };
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return specialIssueFilters(this.props.featureToggles?.special_issues_revamp).routedOrRegionalSpecialIssues().some((issue) => {
-      return this.props.specialIssues[issue.specialIssue || issue];
-    });
+    return specialIssueFilters(this.props.featureToggles?.specialIssuesRevamp).routedOrRegionalSpecialIssues().
+      some((issue) => {
+        return this.props.specialIssues[issue.specialIssue || issue];
+      });
   };
 
   componentDidMount() {
@@ -219,10 +221,12 @@ export class EstablishClaim extends React.Component {
       },
       (error) => {
         this.props.performEstablishClaimFailure();
+        // eslint-disable-next-line
         const errorMessage = CREATE_EP_ERRORS[error.response.body?.error_code] || CREATE_EP_ERRORS.default;
 
         const nextModifier = this.validModifiers()[1];
 
+        // eslint-disable-next-line
         if (error.response.body?.error_code === 'duplicate_ep' && nextModifier) {
           this.props.onDuplicateEP(nextModifier);
         }
@@ -240,7 +244,7 @@ export class EstablishClaim extends React.Component {
     let stationOfJurisdiction = getStationOfJurisdiction(
       this.props.specialIssues,
       this.props.task.appeal.station_key,
-      this.props.featureToggles?.special_issues_revamp
+      this.props.featureToggles?.specialIssuesRevamp
     );
 
     return stationOfJurisdiction === '397' ? 'ARC' : 'Routed';
@@ -331,6 +335,7 @@ export class EstablishClaim extends React.Component {
         this.props.submitDecisionPageSuccess();
       },
       (error) => {
+        // eslint-disable-next-line
         const errorMessage = CREATE_EP_ERRORS[error.response.body?.error_code] || CREATE_EP_ERRORS.default;
 
         this.setState({
@@ -406,7 +411,7 @@ export class EstablishClaim extends React.Component {
     claim.stationOfJurisdiction = getStationOfJurisdiction(
       this.props.specialIssues,
       this.props.task.appeal.station_key,
-      this.props.featureToggles?.special_issues_revamp
+      this.props.featureToggles?.specialIssuesRevamp
     );
 
     // We have to add in the claimLabel separately, since it is derived from
@@ -427,16 +432,17 @@ export class EstablishClaim extends React.Component {
       return;
     }
 
-    specialIssueFilters(this.props.featureToggles?.special_issues_revamp).unhandledSpecialIssues().forEach((issue) => {
-      if (this.props.specialIssues[issue.specialIssue]) {
-        this.setState({
+    specialIssueFilters(this.props.featureToggles?.specialIssuesRevamp).unhandledSpecialIssues().
+      forEach((issue) => {
+        if (this.props.specialIssues[issue.specialIssue]) {
+          this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
-          specialIssuesEmail: issue.unhandled.emailAddress,
-          specialIssuesRegionalOffice: issue.unhandled.regionalOffice
-        });
-      }
-    });
+            specialIssuesEmail: issue.unhandled.emailAddress,
+            specialIssuesRegionalOffice: issue.unhandled.regionalOffice
+          });
+        }
+      });
   };
 
   // This returns true if the flow will create an EP or assign to an existing EP
@@ -449,11 +455,12 @@ export class EstablishClaim extends React.Component {
       return true;
     }
 
-    specialIssueFilters(this.props.featureToggles?.special_issues_revamp).unhandledSpecialIssues().forEach((issue) => {
-      if (this.props.specialIssues[issue.specialIssue]) {
-        willCreateEndProduct = false;
-      }
-    });
+    specialIssueFilters(this.props.featureToggles?.specialIssuesRevamp).unhandledSpecialIssues().
+      forEach((issue) => {
+        if (this.props.specialIssues[issue.specialIssue]) {
+          willCreateEndProduct = false;
+        }
+      });
 
     return willCreateEndProduct;
   }
@@ -474,7 +481,7 @@ export class EstablishClaim extends React.Component {
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             task={this.props.task}
-            special_issues_revamp={this.props.featureToggles?.special_issues_revamp}
+            specialIssuesRevamp={this.props.featureToggles?.specialIssuesRevamp}
           />
         )}
         {this.isAssociatePage() && (
@@ -504,11 +511,11 @@ export class EstablishClaim extends React.Component {
             regionalOfficeKey={this.props.task.appeal.regional_office_key}
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
-            special_issues_revamp={this.props.featureToggles?.special_issues_revamp}
+            specialIssuesRevamp={this.props.featureToggles?.specialIssuesRevamp}
             stationOfJurisdiction={getStationOfJurisdiction(
               this.props.specialIssues,
               this.props.task.appeal.station_key,
-              this.props.featureToggles?.special_issues_revamp
+              this.props.featureToggles?.specialIssuesRevamp
             )}
           />
         )}
@@ -524,7 +531,7 @@ export class EstablishClaim extends React.Component {
             showNotePageAlert={this.state.showNotePageAlert}
             displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
-            special_issues_revamp={this.props.featureToggles?.special_issues_revamp}
+            specialIssuesRevamp={this.props.featureToggles?.specialIssuesRevamp}
           />
         )}
         {this.isEmailPage() && (
@@ -545,7 +552,7 @@ export class EstablishClaim extends React.Component {
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             specialIssuesRegionalOffice={this.state.specialIssuesRegionalOffice}
             taskId={this.props.task.id}
-            special_issues_revamp={this.props.featureToggles?.special_issues_revamp}
+            specialIssuesRevamp={this.props.featureToggles?.specialIssuesRevamp}
           />
         )}
         <CancelModal

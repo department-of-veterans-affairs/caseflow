@@ -94,7 +94,14 @@ class SelectSpecialIssuesView extends React.PureComponent {
     });
 
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
-    const [noneSection, aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection] = sections;
+    const [
+      noneSection,
+      aboutSection,
+      residenceSection,
+      benefitTypeSection,
+      issuesOnAppealSection,
+      dicOrPensionSection
+    ] = sections;
 
     return <QueueFlowPage goToNextStep={this.goToNextStep} validateForm={this.validateForm} {...otherProps}>
       <h1>
@@ -106,7 +113,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div {...flexContainer} className="special-options">
         <div {...flexColumn}>
-      { this.props.featureToggles.special_issues_revamp && <CheckboxGroup
+          { this.props.featureToggles.special_issues_revamp && <CheckboxGroup
             label=""
             name=""
             options={noneSection}

@@ -367,7 +367,7 @@ export const NEW_SPECIAL_ISSUES = [
     display: 'US Court of Appeals for Veterans Claims (CAVC)',
     queueDisplay: 'US Court of Appeals for Veterans Claims (CAVC)',
     specialIssue: 'usCourtOfAppealsForVeteransClaims',
-    snakeCase: 'us_court_of_appeals_for_veterans_claims',
+    snakeCase: 'cavc',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
     queueSectionOrder: 11
