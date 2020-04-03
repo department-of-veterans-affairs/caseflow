@@ -3,19 +3,15 @@ import { css } from 'glamor';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import PropTypes from 'prop-types';
-
-import { docketRowStyle } from './style';
 
 import Button from '../../../components/Button';
 
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
-import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData } from '../../utils';
-import {
-  onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
-} from '../../../components/common/actions';
+import PropTypes from 'prop-types';
+import { deepDiff, isPreviouslyScheduledHearing } from '../../utils';
+
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AmaAodDropdown, LegacyAodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
@@ -23,6 +19,7 @@ import {
   Waive90DayHoldCheckbox, HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import VirtualHearingModal from '../VirtualHearingModal';
+import { docketRowStyle } from './style';
 
 const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
   return <div {...css({
@@ -70,8 +67,7 @@ class DailyDocketRow extends React.Component {
       },
       aodModalActive: false,
       edited: false,
-      virtualHearingModalActive: false,
-      startPolling: null
+      virtualHearingModalActive: false
     };
   }
 
@@ -109,7 +105,6 @@ class DailyDocketRow extends React.Component {
   openVirtualHearingModal = () => {
     this.setState({ virtualHearingModalActive: true });
   }
-
   closeVirtualHearingModal = () => {
     this.setState({ virtualHearingModalActive: false });
   }
@@ -167,21 +162,13 @@ class DailyDocketRow extends React.Component {
     const hearing = deepDiff(this.state.initialState, this.props.hearing);
 
     return this.props.saveHearing(this.props.hearing.externalId, hearing).
-      then((response) => {
-        const alerts = response.body.alerts;
-
-        if (alerts.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
+      then((success) => {
+        if (success) {
+          this.setState({
+            initialState: { ...this.props.hearing },
+            edited: false
+          });
         }
-        if (!_.isEmpty(alerts.virtual_hearing)) {
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
-          this.setState({ startPolling: true });
-        }
-
-        this.setState({
-          initialState: { ...this.props.hearing },
-          edited: false
-        });
       });
   }
 
@@ -277,33 +264,6 @@ class DailyDocketRow extends React.Component {
     );
   }
 
-  startPolling = () => {
-    return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      if (response.job_completed) {
-        this.updateVirtualHearing({ jobCompleted: response.job_completed });
-        this.props.transitionAlert('virtualHearing');
-        this.setState({ startPolling: false });
-      }
-
-      // continue polling if return true (opposite of job_completed)
-      return !response.job_completed;
-    });
-  }
-
-  renderVirtualHearingModal = (user, hearing) => (
-    <VirtualHearingModal hearing={hearing}
-      timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
-      virtualHearing={hearing.virtualHearing || {}} reset={() => {
-        this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });
-        this.closeVirtualHearingModal()
-        ;
-      }} user={user}
-      update={this.updateVirtualHearing}
-      submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
-      type="change_hearing_time"
-    />
-  )
-
   render () {
     const { hearing, user, index, readOnly, hidePreviouslyScheduled } = this.props;
 
@@ -326,7 +286,17 @@ class DailyDocketRow extends React.Component {
         {this.getRightColumn()}
       </div>
       {(user.userCanScheduleVirtualHearings && this.state.virtualHearingModalActive && hearing.isVirtual) &&
-        this.renderVirtualHearingModal(user, hearing)}
+        <VirtualHearingModal hearing={hearing}
+          timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
+          virtualHearing={hearing.virtualHearing || {}} reset={() => {
+            this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });
+            this.closeVirtualHearingModal()
+            ;
+          }} user={user}
+          update={this.updateVirtualHearing}
+          submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
+          type="change_hearing_time"
+        />}
       {this.state.aodModalActive && <AodModal
         advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
         onConfirm={() => {
@@ -338,7 +308,6 @@ class DailyDocketRow extends React.Component {
           this.closeAodModal();
         }}
       />}
-      {this.state.startPolling && this.startPolling()}
     </div>;
   }
 }
@@ -355,9 +324,7 @@ DailyDocketRow.propTypes = {
   hearing: PropTypes.shape({
     docketName: PropTypes.string,
     advanceOnDocketMotion: PropTypes.object,
-    virtualHearing: PropTypes.shape({
-      jobCompleted: PropTypes.bool
-    }),
+    virtualHearing: PropTypes.object,
     isVirtual: PropTypes.bool,
     externalId: PropTypes.string,
     disposition: PropTypes.string,
@@ -373,10 +340,7 @@ DailyDocketRow.propTypes = {
     userCanScheduleVirtualHearings: PropTypes.bool,
     userId: PropTypes.number,
     userCssId: PropTypes.string
-  }),
-  onReceiveAlerts: PropTypes.func,
-  onReceiveTransitioningAlert: PropTypes.func,
-  transitionAlert: PropTypes.func
+  })
 };
 
 const mapStateToProps = (state, props) => ({
@@ -384,10 +348,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = (dispatch, props) => bindActionCreators({
-  update: (values) => onUpdateDocketHearing(props.hearingId, values),
-  onReceiveAlerts,
-  onReceiveTransitioningAlert,
-  transitionAlert
+  update: (values) => onUpdateDocketHearing(props.hearingId, values)
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketRow);

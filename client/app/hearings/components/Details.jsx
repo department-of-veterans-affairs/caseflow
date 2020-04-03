@@ -11,14 +11,12 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, pollVirtualHearingData } from '../utils';
+import { deepDiff } from '../utils';
 import _ from 'lodash';
 
 import DetailsSections from './DetailsSections';
 import DetailsOverview from './details/DetailsOverview';
-import {
-  onChangeFormData, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
-} from '../../components/common/actions';
+import { onChangeFormData, onReceiveAlerts } from '../../components/common/actions';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
 
@@ -59,7 +57,6 @@ class HearingDetails extends React.Component {
       error: false,
       virtualHearingModalOpen: false,
       virtualHearingModalType: null,
-      startPolling: null,
       initialFormData
     };
 
@@ -199,6 +196,7 @@ class HearingDetails extends React.Component {
         success: true,
         error: false
       });
+
       // set hearing on DetailsContainer then reset initialFormData
       this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
@@ -208,14 +206,7 @@ class HearingDetails extends React.Component {
         });
 
         this.updateAllFormData(initialFormData);
-        if (alerts.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
-        }
-        if (!_.isEmpty(alerts.virtual_hearing)) {
-          this.setState({ startPolling: true });
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
-
-        }
+        this.props.onReceiveAlerts(alerts);
       });
     }).
       catch((error) => {
@@ -231,19 +222,6 @@ class HearingDetails extends React.Component {
           success: false
         });
       });
-  }
-
-  startPolling = () => {
-    return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      if (response.job_completed) {
-        this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, { jobCompleted: response.job_completed });
-        this.props.transitionAlert('virtualHearing');
-        this.setState({ startPolling: false });
-      }
-
-      // continue polling if return true (opposite of job_completed)
-      return !response.job_completed;
-    });
   }
 
   render() {
@@ -324,7 +302,6 @@ class HearingDetails extends React.Component {
             </span>
           </div>
         </div>
-        {this.state.startPolling && this.startPolling()}
       </AppSegment>
     );
   }
@@ -339,8 +316,6 @@ HearingDetails.propTypes = {
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
   onReceiveAlerts: PropTypes.func,
-  onReceiveTransitioningAlert: PropTypes.func,
-  transitionAlert: PropTypes.func,
   onChangeFormData: PropTypes.func,
   formData: PropTypes.shape({
     hearingDetailsForm: PropTypes.object,
@@ -359,9 +334,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onChangeFormData,
-  onReceiveAlerts,
-  onReceiveTransitioningAlert,
-  transitionAlert
+  onReceiveAlerts
 }, dispatch);
 
 export default connect(

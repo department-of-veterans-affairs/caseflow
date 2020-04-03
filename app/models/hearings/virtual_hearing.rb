@@ -50,10 +50,6 @@ class VirtualHearing < CaseflowRecord
     "#{base_url}?conference=#{alias_name}&pin=#{host_pin}#&join=1&role=host"
   end
 
-  def job_completed?
-    active? && all_emails_sent?
-  end
-
   private
 
   def base_url

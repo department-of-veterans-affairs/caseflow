@@ -12,5 +12,7 @@ class VirtualHearingSerializer
   attribute :alias
   attribute :host_pin
   attribute :guest_pin
-  attribute :job_completed, &:job_completed?
+  attribute :job_completed do |virtual_hearing|
+    virtual_hearing.active? && virtual_hearing.all_emails_sent?
+  end
 end

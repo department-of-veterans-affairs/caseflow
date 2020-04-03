@@ -24,12 +24,8 @@ class BaseHearingUpdateForm
     end
   end
 
-  def hearing_alerts
-    @hearing_alerts ||= []
-  end
-
-  def virtual_hearing_alert
-    @virtual_hearing_alert ||= {}
+  def alerts
+    @alerts ||= []
   end
 
   protected
@@ -56,8 +52,7 @@ class BaseHearingUpdateForm
 
   def show_update_alert?
     # if user only changes the hearing time for a virtual hearing, don't show update alert
-    # scheduled_time for hearing, scheduled_for for legacy
-    return false if hearing.virtual? && hearing_updates.except(:scheduled_time, :scheduled_for).empty?
+    return false if hearing.virtual? && hearing_updates.except(:scheduled_time).empty?
 
     hearing_updated?
   end
@@ -120,11 +115,7 @@ class BaseHearingUpdateForm
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
   def judge_email_sent_flag
     flag = !(updates_requiring_email? || virtual_hearing_attributes&.key?(:judge_email) || judge_id.present?)
-    flag || virtual_hearing_cancelled?
-  end
-
-  def virtual_hearing_cancelled?
-    virtual_hearing_attributes&.dig(:status) == "cancelled"
+    flag || virtual_hearing_attributes&.dig(:status) == :cancelled
   end
 
   def virtual_hearing_updates
@@ -170,8 +161,17 @@ class BaseHearingUpdateForm
     end
   end
 
+  def add_virtual_hearing_alert
+    alerts << VirtualHearingUserAlertBuilder.new(
+      changed_to_virtual: virtual_hearing_created?,
+      virtual_hearing_attributes: virtual_hearing_updates,
+      veteran_full_name: veteran_full_name,
+      hearing_time_changed: scheduled_time_string.present?
+    ).call.to_hash
+  end
+
   def add_update_hearing_alert
-    hearing_alerts << UserAlert.new(
+    alerts << UserAlert.new(
       title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
       type: UserAlert::TYPES[:success]
     ).to_hash
@@ -179,53 +179,5 @@ class BaseHearingUpdateForm
 
   def veteran_full_name
     @veteran_full_name ||= hearing.appeal&.veteran&.name&.to_s || "the veteran"
-  end
-
-  def only_emails_updated?
-    email_changed = virtual_hearing_attributes&.key?(:veteran_email) ||
-                    virtual_hearing_attributes&.key?(:representative_email) ||
-                    judge_id.present?
-
-    email_changed && !virtual_hearing_cancelled? && !virtual_hearing_created?
-  end
-
-  def email_change_type
-    if virtual_hearing_attributes&.key?(:veteran_email) && virtual_hearing_attributes&.key?(:representative_email)
-      "CHANGED_VETERAN_AND_POA_EMAIL"
-    elsif virtual_hearing_attributes&.key?(:veteran_email)
-      "CHANGED_VETERAN_EMAIL"
-    elsif virtual_hearing_attributes&.key?(:representative_email)
-      "CHANGED_POA_EMAIL"
-    elsif judge_id.present?
-      "CHANGED_VLJ_EMAIL"
-    end
-  end
-
-  def change_type
-    if virtual_hearing_created?
-      "CHANGED_TO_VIRTUAL"
-    elsif virtual_hearing_cancelled?
-      "CHANGED_FROM_VIRTUAL"
-    elsif only_time_updated?
-      "CHANGED_HEARING_TIME"
-    elsif only_emails_updated?
-      email_change_type
-    end
-  end
-
-  def add_virtual_hearing_alert
-    nested_alert = VirtualHearingUserAlertBuilder.new(
-      change_type: change_type,
-      alert_type: :info,
-      veteran_full_name: veteran_full_name
-    ).call.to_hash
-
-    nested_alert[:next] = VirtualHearingUserAlertBuilder.new(
-      change_type: change_type,
-      alert_type: :success,
-      veteran_full_name: veteran_full_name
-    ).call.to_hash
-
-    @virtual_hearing_alert = nested_alert
   end
 end
