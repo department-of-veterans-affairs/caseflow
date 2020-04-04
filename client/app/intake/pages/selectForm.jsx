@@ -20,13 +20,10 @@ class SelectForm extends React.PureComponent {
 
   render() {
     const { formType, featureToggles, userCanIntakeAppeals } = this.props;
-
     const inboxFeature = featureToggles.inbox;
     const unreadMessages = this.props.unreadMessages;
-
     const rampEnabled = featureToggles.rampIntake;
     const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
-
     const restrictAppealIntakes = featureToggles.restrictAppealIntakes;
     const appealPermissionError = restrictAppealIntakes && !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
 
