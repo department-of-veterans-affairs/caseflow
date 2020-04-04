@@ -100,9 +100,8 @@ class SelectFormButtonUnconnected extends React.PureComponent {
   }
 
   render() {
-    const { formType } = this.props;
-    const restrictAppealIntakes = this.props.featureToggles.restrictAppealIntakes;
-    const appealPermissionError = restrictAppealIntakes && !this.props.userCanIntakeAppeals && formType === 'appeal';
+    const { formType, restrictAppealIntakes, userCanIntakeAppeals } = this.props;
+    const appealPermissionError = restrictAppealIntakes && !userCanIntakeAppeals && formType === 'appeal';
 
     return <Button
       name="continue-to-search"
@@ -115,7 +114,8 @@ class SelectFormButtonUnconnected extends React.PureComponent {
 }
 
 export const SelectFormButton = connect(
-  ({ intake }) => ({ formType: intake.formType }),
+  ({ intake, featureToggles }) => ({
+    formType: intake.formType, restrictAppealIntakes: featureToggles.restrictAppealIntakes }),
   (dispatch) => bindActionCreators({
     clearSearchErrors
   }, dispatch)

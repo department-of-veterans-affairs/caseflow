@@ -73,6 +73,11 @@ feature "Intake", :all_dbs do
 
         expect(page).to have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
         expect(page).to have_css(".cf-submit[disabled]")
+
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+
+        expect(page).to have_current_path("/intake/search")
       end
 
       context "when the user is on the Mail Team" do

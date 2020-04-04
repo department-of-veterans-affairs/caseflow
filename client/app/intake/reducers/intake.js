@@ -33,6 +33,9 @@ const updateFromServerIntake = (state, serverIntake) => {
       isDeceased: {
         $set: serverIntake.veteran_is_deceased
       }
+    },
+    userCanIntakeAppeals: {
+      $set: serverIntake.userCanIntakeAppeals
     }
   });
 };
