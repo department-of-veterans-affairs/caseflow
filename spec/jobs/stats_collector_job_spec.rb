@@ -168,7 +168,12 @@ describe StatsCollectorJob do
         it "records stats with tags when provided in collector results" do
           allow(DataDogService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
 
+          slack_msg = []
+          allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg << first_arg }
+
           described_class.perform_now
+
+          expect(slack_msg).not_to include(/Fatal error/)
 
           expect(collector_gauges["ex_tagged_metric"].first[:metric_value]).to eq(9)
           expect(status_gauge["open"].first[:metric_value]).to eq(3)

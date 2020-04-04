@@ -31,18 +31,18 @@ describe Collectors::RequestIssuesStatsCollector do
 
     it "records stats on unidentified request issues that have contentions" do
       stats = subject.collect_stats
+      expect(stats).to include(
+        { metric: "request_issues.unidentified", value: 9 },
+        { metric: "request_issues.unidentified.status", value: 2, "status" => "removed" },
+        { metric: "request_issues.unidentified.status", value: 7, "status" => "nil" },
+        { metric: "request_issues.unidentified.benefit", value: 4, "benefit" => "compensation" },
+        { metric: "request_issues.unidentified.benefit", value: 5, "benefit" => "pension" },
+        { metric: "request_issues.unidentified.decision_review", value: 3, "decision_review" => "higherlevelreview" },
+        { metric: "request_issues.unidentified.decision_review", value: 6, "decision_review" => "supplementalclaim" }
+      )
 
-      metric_name_prefix = described_class::METRIC_NAME_PREFIX
-      expect(stats[metric_name_prefix]).to eq(9)
-      expect(stats["#{metric_name_prefix}.vet_count"]).to be_between(1, 9)
-
-      expect(stats["#{metric_name_prefix}.closed_status.removed"]).to eq(2)
-
-      expect(stats["#{metric_name_prefix}.benefit.pension"]).to eq(5)
-      expect(stats["#{metric_name_prefix}.benefit.compensation"]).to eq(4)
-
-      expect(stats["#{metric_name_prefix}.decision_review.HigherLevelReview"]).to eq(3)
-      expect(stats["#{metric_name_prefix}.decision_review.SupplementalClaim"]).to eq(6)
+      vet_count_stat = stats.select { |stat| stat[:metric] == "request_issues.unidentified.vet_count" }.first
+      expect(vet_count_stat[:value]).to be_between(1, 9)
     end
   end
 end
