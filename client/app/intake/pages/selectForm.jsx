@@ -19,16 +19,16 @@ class SelectForm extends React.PureComponent {
   }
 
   render() {
-    const { formType } = this.props;
+    const { formType, featureToggles, userCanIntakeAppeals } = this.props;
 
-    const inboxFeature = this.props.featureToggles.inbox;
+    const inboxFeature = featureToggles.inbox;
     const unreadMessages = this.props.unreadMessages;
 
-    const rampEnabled = this.props.featureToggles.rampIntake;
+    const rampEnabled = featureToggles.rampIntake;
     const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
 
-    const restrictAppealIntakes = this.props.featureToggles.restrictAppealIntakes;
-    const appealPermissionError = restrictAppealIntakes && !this.props.userCanIntakeAppeals && formType === 'appeal';
+    const restrictAppealIntakes = featureToggles.restrictAppealIntakes;
+    const appealPermissionError = restrictAppealIntakes && !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
@@ -101,7 +101,7 @@ class SelectFormButtonUnconnected extends React.PureComponent {
 
   render() {
     const { formType, restrictAppealIntakes, userCanIntakeAppeals } = this.props;
-    const appealPermissionError = restrictAppealIntakes && !userCanIntakeAppeals && formType === 'appeal';
+    const appealPermissionError = restrictAppealIntakes && !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
 
     return <Button
       name="continue-to-search"

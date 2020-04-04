@@ -717,7 +717,7 @@ describe User, :all_dbs do
     end
   end
 
-  describe ".can_intake_appeals?" do
+  describe "#can_intake_appeals?" do
     let(:user) { create(:user) }
 
     subject { user.can_intake_appeals? }
