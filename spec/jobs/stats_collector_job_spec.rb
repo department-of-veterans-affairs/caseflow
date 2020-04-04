@@ -18,11 +18,11 @@ describe StatsCollectorJob do
 
   class ExampleDailyCollector
     def collect_stats
-      {
-        "ex_metric_daily" => 9,
-        "ex_metric_daily.stats1" => 2,
-        "ex_metric_daily.statsA.metric2" => 4
-      }
+      [
+        { "ex_metric_daily" => 9 },
+        { "ex_metric_daily.stats1" => 2 },
+        { "ex_metric_daily.statsA.metric2" => 4 }
+      ]
     end
   end
 
@@ -88,7 +88,7 @@ describe StatsCollectorJob do
       let(:emitted_gauges) { [] }
       let(:collector_gauges) do
         emitted_gauges.select { |gauge| gauge[:metric_group] == StatsCollectorJob.name.underscore }
-          .map { |gauge| [gauge[:metric_name], gauge] }.to_h
+          .group_by { |gauge| gauge[:metric_name] }
       end
       let(:runtime_gauges) do
         emitted_gauges.select { |gauge| gauge[:metric_name] == "runtime" }
@@ -104,9 +104,9 @@ describe StatsCollectorJob do
           expect(runtime_gauges["stats_collector_job"][:metric_value]).not_to be_nil
           expect(runtime_gauges["stats_collector_job.test_daily_collector"][:metric_value]).not_to be_nil
 
-          expect(collector_gauges["ex_metric_daily"][:metric_value]).to eq(9)
-          expect(collector_gauges["ex_metric_daily.stats1"][:metric_value]).to eq(2)
-          expect(collector_gauges["ex_metric_daily.statsA.metric2"][:metric_value]).to eq(4)
+          expect(collector_gauges["ex_metric_daily"].first[:metric_value]).to eq(9)
+          expect(collector_gauges["ex_metric_daily.stats1"].first[:metric_value]).to eq(2)
+          expect(collector_gauges["ex_metric_daily.statsA.metric2"].first[:metric_value]).to eq(4)
         end
       end
 
@@ -143,9 +143,36 @@ describe StatsCollectorJob do
           expect(runtime_gauges["stats_collector_job"][:metric_value]).not_to be_nil
           expect(runtime_gauges["stats_collector_job.test_daily_collector"][:metric_value]).not_to be_nil
 
-          expect(collector_gauges["ex_metric_daily"][:metric_value]).to eq(9)
-          expect(collector_gauges["ex_metric_daily.stats1"][:metric_value]).to eq(2)
-          expect(collector_gauges["ex_metric_daily.statsA.metric2"][:metric_value]).to eq(4)
+          expect(collector_gauges["ex_metric_daily"].first[:metric_value]).to eq(9)
+          expect(collector_gauges["ex_metric_daily.stats1"].first[:metric_value]).to eq(2)
+          expect(collector_gauges["ex_metric_daily.statsA.metric2"].first[:metric_value]).to eq(4)
+        end
+      end
+
+      context "with tagging collector" do
+        class ExampleTaggingCollector
+          def collect_stats
+            [
+              { "ex_tagged_metric" => 9 },
+              { metric: "ex_tagged_metric.status", value: 3, "status": "open" },
+              { metric: "ex_tagged_metric.status", value: 5, "status": "closed" }
+            ]
+          end
+        end
+        let(:daily_collectors) { { "tagging_collector" => ExampleTaggingCollector }.freeze }
+
+        let(:status_gauge) do
+          collector_gauges["ex_tagged_metric.status"].group_by { |gauge| gauge[:attrs][:status] }
+        end
+
+        it "records stats with tags when provided in collector results" do
+          allow(DataDogService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
+
+          described_class.perform_now
+
+          expect(collector_gauges["ex_tagged_metric"].first[:metric_value]).to eq(9)
+          expect(status_gauge["open"].first[:metric_value]).to eq(3)
+          expect(status_gauge["closed"].first[:metric_value]).to eq(5)
         end
       end
     end

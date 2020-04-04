@@ -47,7 +47,15 @@ class StatsCollectorJob < CaseflowJob
   def run_collectors(stats_collectors)
     stats_collectors.each do |collector_name, collector|
       start_time = Time.zone.now
-      collector.new.collect_stats&.each { |metric_name, value| emit(metric_name, value) }
+      collector.new.collect_stats&.each do |obj|
+        if obj[:metric] && obj[:value]
+          emit(obj[:metric], obj[:value], tags: obj.except(:metric, :value))
+        elsif obj.size == 1
+          emit(obj.first[0], obj.first[1])
+        else
+          fail "Unexpect hash value: #{obj}"
+        end
+      end
     rescue StandardError => error
       log_error(collector_name, error)
     ensure
@@ -55,13 +63,13 @@ class StatsCollectorJob < CaseflowJob
     end
   end
 
-  def emit(name, value, attrs: {})
+  def emit(name, value, tags: {})
     DataDogService.emit_gauge(
       metric_group: METRIC_GROUP_NAME,
       metric_name: name,
       metric_value: value,
       app_name: APP_NAME,
-      attrs: attrs
+      attrs: tags
     )
   end
 
