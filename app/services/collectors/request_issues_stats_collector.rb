@@ -54,22 +54,22 @@ class Collectors::RequestIssuesStatsCollector
     @end_date ||= start_date.next_month
   end
 
-  def endproduct_establishment(start = start_date, stop = end_date)
+  def endproduct_establishment
     EndProductEstablishment.where.not(reference_id: nil)
-      .where("committed_at >= ?", start)
-      .where("committed_at < ?", stop)
+      .where("committed_at >= ?", start_date)
+      .where("committed_at < ?", end_date)
   end
 
-  def request_issues_with_contention(start = start_date, stop = end_date)
+  def request_issues_with_contention
     @request_issues_with_contention ||= RequestIssue.where.not(contention_reference_id: nil)
-      .where("created_at >= ?", start)
-      .where("created_at < ?", stop)
+      .where("created_at >= ?", start_date)
+      .where("created_at < ?", end_date)
   end
 
-  def edited_request_issues_with_contention(start = start_date, stop = end_date)
+  def edited_request_issues_with_contention
     @edited_request_issues_with_contention ||= RequestIssue.where.not(contention_reference_id: nil)
       .where.not(contention_updated_at: nil)
-      .where("contention_updated_at >= ?", start)
-      .where("contention_updated_at < ?", stop)
+      .where("contention_updated_at >= ?", start_date)
+      .where("contention_updated_at < ?", end_date)
   end
 end

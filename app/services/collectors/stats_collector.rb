@@ -37,7 +37,7 @@ module Collectors::StatsCollector
   def to_valid_tag_key(name)
     return "#{name}_" if %w[host device source service].include?(name)
 
-    tag_key = to_valid_tag(name)
+    to_valid_tag(name)
   end
 
   def valid_metric_name?(metric_name)
