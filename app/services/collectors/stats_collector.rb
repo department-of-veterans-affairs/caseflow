@@ -23,7 +23,8 @@ module Collectors::StatsCollector
   protected
 
   def add_tags_to_group_counts(prefix, metric_name, group_counts)
-    tag_key = to_valid_tag(metric_name.split(".").last)
+    tag_key = to_valid_tag_key(metric_name.split(".").last)
+
     group_counts.map do |key, count|
       { :metric => "#{prefix}.#{metric_name}", :value => count, tag_key => to_valid_tag(group_key_to_name(key)) }
     end
@@ -32,6 +33,13 @@ module Collectors::StatsCollector
   # See valid tag name rules at https://docs.datadoghq.com/tagging/#defining-tags
   def to_valid_tag(name)
     name.gsub(/[^a-zA-Z_\-\:\.\d\/]/, "__")
+  end
+
+  def to_valid_tag_key(name)
+    tag_key = to_valid_tag(name)
+    return "#{tag_key}_" if %w[host device source service].include?(tag_key)
+
+    tag_key
   end
 
   def valid_metric_name?(metric_name)
