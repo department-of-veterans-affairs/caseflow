@@ -67,10 +67,6 @@ describe Collectors::DailyCountsStatsCollector do
         emitted_gauges.select { |gauge| gauge[:metric_group] == StatsCollectorJob.name.underscore }
           .group_by { |gauge| gauge[:metric_name] }
       end
-      let(:runtime_gauges) do
-        emitted_gauges.select { |gauge| gauge[:metric_name] == "runtime" }
-          .map { |gauge| [gauge[:metric_group], gauge] }.to_h
-      end
 
       let(:case_review_gauge) do
         collector_gauges["daily_counts.totals.case_review"].group_by { |gauge| gauge[:attrs]["case_review"] }
@@ -84,7 +80,6 @@ describe Collectors::DailyCountsStatsCollector do
 
         StatsCollectorJob.new.perform_now
 
-        expect(runtime_gauges["stats_collector_job.my_collector"][:metric_value]).not_to be_nil
         expect(slack_msg).not_to include(/Fatal error/)
 
         expect(collector_gauges["daily_counts.increments.appeal"].first[:metric_value]).to eq(2)
