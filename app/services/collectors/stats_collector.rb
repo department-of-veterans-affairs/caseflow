@@ -35,10 +35,9 @@ module Collectors::StatsCollector
   end
 
   def to_valid_tag_key(name)
-    tag_key = to_valid_tag(name)
-    return "#{tag_key}_" if %w[host device source service].include?(tag_key)
+    return "#{name}_" if %w[host device source service].include?(name)
 
-    tag_key
+    tag_key = to_valid_tag(name)
   end
 
   def valid_metric_name?(metric_name)
@@ -54,10 +53,10 @@ module Collectors::StatsCollector
   def group_key_to_name(key)
     return "nil" unless key
 
-    return key.map(&:parameterize).map(&:underscore).join(".") if key.instance_of?(Array)
+    return key.map(&:underscore).map(&:parameterize).join(".") if key.instance_of?(Array)
 
-    return key.parameterize.underscore if key.instance_of?(String)
+    return key.underscore.parameterize if key.instance_of?(String)
 
-    key.to_s.parameterize.underscore
+    key.to_s.underscore.parameterize
   end
 end
