@@ -47,20 +47,24 @@ class StatsCollectorJob < CaseflowJob
   def run_collectors(stats_collectors)
     stats_collectors.each do |collector_name, collector|
       start_time = Time.zone.now
-      collector.new.collect_stats&.each do |obj|
-        if obj[:metric] && obj[:value]
-          emit(obj[:metric], obj[:value], tags: obj.except(:metric, :value))
-        elsif obj.size == 1
-          emit(obj.first[0], obj.first[1])
-        else
-          fail "Unexpect hash value: #{obj}"
-        end
-      end
+
+      collector.new.collect_stats&.each { |obj| emit_or_fail(obj) }
     rescue StandardError => error
       log_error(collector_name, error)
     ensure
       datadog_report_time_segment(segment: "#{METRIC_GROUP_NAME}.#{collector_name}", start_time: start_time)
     end
+  end
+
+  # :reek:FeatureEnvy
+  def emit_or_fail(hash)
+    # when hash is { metric: metric_name", value: 123, "some_tag": "type1" }
+    return emit(hash[:metric], hash[:value], tags: hash.except(:metric, :value)) if hash[:metric] && hash[:value]
+
+    # when hash is { "metric_name" => 123 }
+    return emit(hash.first[0], hash.first[1]) if hash.size == 1
+
+    fail "Unexpect metric object: #{hash}"
   end
 
   def emit(name, value, tags: {})

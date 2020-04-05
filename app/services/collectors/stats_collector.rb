@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Collectors::StatsCollector
-
   # Given metric_name_prefix and a hash like { "hearing.disposition" => Hearing.group(:disposition).count },
   # the result will be an array of metrics like:
   # [ { :metric => "#{metric_name_prefix}.hearing.disposition", :value => 300, "disposition" => "held" },
