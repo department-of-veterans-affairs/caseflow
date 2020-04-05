@@ -7,24 +7,17 @@
 class Collectors::RequestIssuesStatsCollector
   include Collectors::StatsCollector
 
-  METRIC_NAME_PREFIX = "request_issues.unidentified"
+  METRIC_NAME_PREFIX = "req_issues.w_contentions"
 
   # :reek:FeatureEnvy
   def collect_stats
-    start_of_month = Time.zone.now.prev_month.beginning_of_month
-    req_issues = unidentified_request_issues_with_contention(start_of_month, start_of_month.next_month)
-
     [].tap do |stats|
-      stats << { metric: METRIC_NAME_PREFIX, value: req_issues.count }
-
-      # Could use `req_issues.group(:veteran_participant_id).count.count` but there's a count discrepancy
-      stats << { metric: "#{METRIC_NAME_PREFIX}.vet_count",
-                 value: req_issues.map(&:decision_review).map(&:veteran_file_number).uniq.count }
-
       group_count_hash = {
-        "status" => req_issues.group(:closed_status).count,
-        "benefit" => req_issues.group(:benefit_type).count,
-        "decision_review" => req_issues.group(:decision_review_type).count
+        "status" => request_issues_with_contention.group(:closed_status).count,
+        "benefit" => request_issues_with_contention.group(:benefit_type).count,
+        "decis_review" => request_issues_with_contention.group(:decision_review_type).count,
+
+        "report" => monthly_report_hash
       }
       stats.concat flatten_stats(METRIC_NAME_PREFIX, group_count_hash)
     end
@@ -32,10 +25,51 @@ class Collectors::RequestIssuesStatsCollector
 
   private
 
-  def unidentified_request_issues_with_contention(start_date, end_date)
-    RequestIssue.where.not(contention_reference_id: nil)
-      .where(is_unidentified: true)
-      .where("created_at >= ?", start_date)
-      .where("created_at < ?", end_date)
+  def monthly_report_hash
+    {
+      "hlr_established" => HigherLevelReview
+        .where("establishment_processed_at >= ?", start_date)
+        .where("establishment_processed_at < ?", end_date).count,
+      "sc_established" => SupplementalClaim
+        .where("establishment_processed_at >= ?", start_date)
+        .where("establishment_processed_at < ?", end_date).count,
+
+      "030_end_products_established" => endproduct_establishment.where(source_type: "HigherLevelReview").count,
+      "040_end_products_established" => endproduct_establishment.where(source_type: "SupplementalClaim").count,
+
+      "created" => request_issues_with_contention.count,
+      "edited" => edited_request_issues_with_contention.count,
+      "unidentified_created" => request_issues_with_contention.where(is_unidentified: true).count,
+
+      # Could use `req_issues.group(:veteran_participant_id).count.count` but there's a count discrepancy
+      "vet_count" => request_issues_with_contention.map(&:decision_review).map(&:veteran_file_number).uniq.count
+    }
+  end
+
+  def start_date
+    @start_date ||= Time.zone.now.prev_month.beginning_of_month
+  end
+
+  def end_date
+    @end_date ||= start_date.next_month
+  end
+
+  def endproduct_establishment(start = start_date, stop = end_date)
+    EndProductEstablishment.where.not(reference_id: nil)
+      .where("committed_at >= ?", start)
+      .where("committed_at < ?", stop)
+  end
+
+  def request_issues_with_contention(start = start_date, stop = end_date)
+    @request_issues_with_contention ||= RequestIssue.where.not(contention_reference_id: nil)
+      .where("created_at >= ?", start)
+      .where("created_at < ?", stop)
+  end
+
+  def edited_request_issues_with_contention(start = start_date, stop = end_date)
+    @edited_request_issues_with_contention ||= RequestIssue.where.not(contention_reference_id: nil)
+      .where.not(contention_updated_at: nil)
+      .where("contention_updated_at >= ?", start)
+      .where("contention_updated_at < ?", stop)
   end
 end

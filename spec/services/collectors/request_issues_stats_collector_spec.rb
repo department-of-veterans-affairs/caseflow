@@ -35,17 +35,23 @@ describe Collectors::RequestIssuesStatsCollector do
       stats = subject.collect_stats
 
       expected_stats = [
-        { metric: "request_issues.unidentified", value: 9 },
-        { metric: "request_issues.unidentified.status", value: 2, "status" => "removed" },
-        { metric: "request_issues.unidentified.status", value: 7, "status" => "nil" },
-        { metric: "request_issues.unidentified.benefit", value: 4, "benefit" => "compensation" },
-        { metric: "request_issues.unidentified.benefit", value: 5, "benefit" => "pension" },
-        { metric: "request_issues.unidentified.decision_review", value: 3, "decision_review" => "higherlevelreview" },
-        { metric: "request_issues.unidentified.decision_review", value: 6, "decision_review" => "supplementalclaim" }
+        { :metric => "req_issues.w_contentions.status", :value => 2, "status" => "removed" },
+        { :metric => "req_issues.w_contentions.status", :value => 7, "status" => "nil" },
+        { :metric => "req_issues.w_contentions.benefit", :value => 4, "benefit" => "compensation" },
+        { :metric => "req_issues.w_contentions.benefit", :value => 5, "benefit" => "pension" },
+        { :metric => "req_issues.w_contentions.decis_review", :value => 3, "decis_review" => "higherlevelreview" },
+        { :metric => "req_issues.w_contentions.decis_review", :value => 6, "decis_review" => "supplementalclaim" },
+        { :metric => "req_issues.w_contentions.report", :value => 0, "report" => "hlr_established" },
+        { :metric => "req_issues.w_contentions.report", :value => 0, "report" => "sc_established" },
+        { :metric => "req_issues.w_contentions.report", :value => 0, "report" => "030_end_products_established" },
+        { :metric => "req_issues.w_contentions.report", :value => 0, "report" => "040_end_products_established" },
+        { :metric => "req_issues.w_contentions.report", :value => 9, "report" => "created" },
+        { :metric => "req_issues.w_contentions.report", :value => 0, "report" => "edited" },
+        { :metric => "req_issues.w_contentions.report", :value => 9, "report" => "unidentified_created" }
       ]
       expect(stats).to include(*expected_stats)
 
-      vet_count_stat = stats.detect { |stat| stat[:metric] == "request_issues.unidentified.vet_count" }
+      vet_count_stat = stats.detect { |stat| stat["report"] == "vet_count" }
       expect(vet_count_stat[:value]).to be_between(1, 9)
     end
 
@@ -63,7 +69,7 @@ describe Collectors::RequestIssuesStatsCollector do
       end
 
       let(:issue_status_gauge) do
-        collector_gauges["request_issues.unidentified.status"].group_by { |gauge| gauge[:attrs]["status"] }
+        collector_gauges["req_issues.w_contentions.status"].group_by { |gauge| gauge[:attrs]["status"] }
       end
 
       it "records stats with tags" do
@@ -76,7 +82,6 @@ describe Collectors::RequestIssuesStatsCollector do
 
         expect(slack_msg).not_to include(/Fatal error/)
 
-        expect(collector_gauges["request_issues.unidentified"].first[:metric_value]).to eq(9)
         expect(issue_status_gauge["removed"].first[:metric_value]).to eq(2)
         expect(issue_status_gauge["nil"].first[:metric_value]).to eq(7)
       end
