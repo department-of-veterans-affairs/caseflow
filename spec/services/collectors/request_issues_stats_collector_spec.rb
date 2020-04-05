@@ -45,7 +45,7 @@ describe Collectors::RequestIssuesStatsCollector do
       ]
       expect(stats).to include(*expected_stats)
 
-      vet_count_stat = stats.select { |stat| stat[:metric] == "request_issues.unidentified.vet_count" }.first
+      vet_count_stat = stats.detect { |stat| stat[:metric] == "request_issues.unidentified.vet_count" }
       expect(vet_count_stat[:value]).to be_between(1, 9)
     end
 
