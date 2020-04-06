@@ -26,17 +26,38 @@ export const listItemStyling = css({
   '& > h4': { textTransform: 'uppercase' }
 });
 
+export const flexParent = css({
+  display: 'flex'
+});
+
+// Column for flexParent that takes one third of the space.
+export const columnThird = css({
+  paddingLeft: 0,
+  paddingRight: 15,
+  flex: 1,
+  margin: 0
+});
+
+// Spacer column that occupies 2/3 of flexParent.
+export const columnDoubleSpacer = css({
+  flex: '2 1 auto',
+  paddingLeft: 45
+});
+
 export const rowThirds = css({
-  marginTop: '30px',
-  marginBottom: '30px',
-  marginLeft: '-15px',
-  marginRight: '-15px',
+  marginTop: 30,
+  marginBottom: 30,
+  display: 'flex',
   '& > *': {
-    display: 'inline-block',
-    paddingLeft: '15',
-    paddingRight: '15px',
-    verticalAlign: 'top',
-    margin: 0,
-    width: '33.333333333333%'
+    paddingLeft: 15,
+    paddingRight: 15,
+    flex: 1,
+    margin: 0
+  },
+  '& > :first-child': {
+    paddingLeft: 0
+  },
+  '& > :last-child': {
+    paddingRight: 0
   }
 });
