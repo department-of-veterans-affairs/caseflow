@@ -145,12 +145,13 @@ const TranscriptionSection = (
       />
       <div className="cf-help-divider" />
     </div>
-  </React.Fragment> 
+  </React.Fragment>
 );
 
 TranscriptionSection.propTypes = {
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
+  transcription: PropTypes.object,
   updateHearing: PropTypes.func,
   updateTranscription: PropTypes.func
 };
@@ -215,7 +216,7 @@ const DetailsInputs = (props) => {
       {(isVirtual || wasVirtual) &&
         <React.Fragment>
           <div className="cf-help-divider" />
-          <h3>{wasVirtual && "Previous "}Virtual Hearing Details</h3>
+          <h3>{wasVirtual && 'Previous '}Virtual Hearing Details</h3>
           <VirtualLinkSection
             hearing={hearing}
             virtualHearing={virtualHearing}
@@ -257,6 +258,7 @@ const DetailsInputs = (props) => {
         <TranscriptionSection
           hearing={hearing}
           readOnly={readOnly}
+          transcription={transcription}
           updateHearing={updateHearing}
           updateTranscription={updateTranscription}
         />
