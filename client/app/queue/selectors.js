@@ -28,7 +28,6 @@ const getAppeals = (state) => state.queue.appeals;
 const getAppealDetails = (state) => state.queue.appealDetails;
 const getUserCssId = (state) => state.ui.targetUser?.cssId || state.ui.userCssId;
 const getAppealId = (state, props) => props.appealId;
-const getActiveOrganizationId = (state) => state.ui.activeOrganization.id;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
 const getModals = (state) => state.ui.modals;
@@ -80,23 +79,6 @@ export const workTasksWithAppealSelector = createSelector(
   [tasksWithAppealSelector], (tasks) => workTasksSelector(tasks)
 );
 
-export const tasksByOrganization = createSelector(
-  [tasksWithAppealSelector, getActiveOrganizationId],
-  (tasks, organizationId) =>
-    _.filter(tasks, (task) => (
-      task.assignedTo.id === organizationId &&
-      task.assignedTo.isOrganization
-    ))
-);
-
-export const workTasksByOrganization = createSelector(
-  [tasksByOrganization], (tasks) => workTasksSelector(tasks)
-);
-
-export const trackingTasksForOrganization = createSelector(
-  [tasksByOrganization], (tasks) => trackingTasksSelector(tasks)
-);
-
 export const taskById = createSelector(
   [tasksWithAppealSelector, getTaskUniqueId],
   (tasks, taskId) =>
@@ -130,23 +112,6 @@ export const getAllTasksForAppeal = createSelector(
 
 export const incompleteTasksForAppeal = createSelector(
   [getAllTasksForAppeal], (tasks) => incompleteTasksSelector(tasks)
-);
-
-export const getUnassignedOrganizationalTasks = createSelector(
-  [workTasksByOrganization],
-  (tasks) => _.filter(tasks, (task) => {
-    return (task.status === TASK_STATUSES.assigned || task.status === TASK_STATUSES.in_progress);
-  })
-);
-
-export const getAssignedOrganizationalTasks = createSelector(
-  [workTasksByOrganization],
-  (tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
-);
-
-export const getCompletedOrganizationalTasks = createSelector(
-  [workTasksByOrganization],
-  (tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed)
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(
