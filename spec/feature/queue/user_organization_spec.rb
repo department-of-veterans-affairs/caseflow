@@ -26,7 +26,7 @@ RSpec.feature "User organization", :postgres do
       visit "/"
 
       find(".cf-dropdown-trigger").click
-      expect(page).not_to have_content("#{organization.name} team management")
+      expect(page.has_no_content?("#{organization.name} team management")).to eq(true)
     end
   end
 
