@@ -433,6 +433,12 @@ class QueueApp extends React.PureComponent {
               />
 
               <PageRoute
+                exact
+                path="/organizations/:organization/users"
+                title="Organization Users | Caseflow"
+                render={this.routedOrganizationUsers}
+              />
+              <PageRoute
                 path="/organizations/:organization"
                 title="Organization Queue | Caseflow"
                 render={this.routedOrganization}
@@ -618,12 +624,6 @@ class QueueApp extends React.PureComponent {
                 render={this.routedBulkAssignTaskModal}
               />
 
-              <PageRoute
-                exact
-                path="/organizations/:organization/users"
-                title="Organization Users | Caseflow"
-                render={this.routedOrganizationUsers}
-              />
               <Route path="/team_management/add_judge_team" render={this.routedAddJudgeTeam} />
               <Route path="/team_management/add_vso" render={this.routedAddVsoModal} />
               <Route path="/team_management/add_private_bar" render={this.routedAddPrivateBarModal} />
