@@ -66,7 +66,7 @@ describe NightlySyncsJob, :all_dbs do
       end
 
       it "cancels any for completed cases" do
-        hlr.request_issues.each { |reqi| reqi.close!(status: :decided) }
+        expect(task.reload).to be_assigned
 
         subject
 
