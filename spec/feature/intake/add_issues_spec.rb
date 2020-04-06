@@ -98,14 +98,14 @@ feature "Intake Add Issues Page", :all_dbs do
         )
 
         expect(page).to have_content("Description for Accrued")
-        expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to_not have_content("Check the Veteran's profile for invalid information")
         expect(page).to have_button("Establish appeal", disabled: false)
 
         # Add a rating issue
         click_intake_add_issue
         add_intake_rating_issue("Left knee granted")
 
-        expect(page).to have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to have_content("Check the Veteran's profile for invalid information")
         expect(page).to have_content(
           "the corporate database, then retry establishing the EP in Caseflow: country."
         )
@@ -113,7 +113,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_button("Establish appeal", disabled: true)
 
         click_remove_intake_issue_by_text("Left knee granted")
-        expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to_not have_content("Check the Veteran's profile for invalid information")
         expect(page).to have_button("Establish appeal", disabled: false)
 
         # Add a compensation nonrating issue
@@ -127,7 +127,7 @@ feature "Intake Add Issues Page", :all_dbs do
         )
 
         expect(page).to have_content("Description for Apportionment")
-        expect(page).to have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to have_content("Check the Veteran's profile for invalid information")
         expect(page).to have_button("Establish appeal", disabled: true)
       end
     end
@@ -143,8 +143,8 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
       edit_contention_text("Left knee granted", "Right knee")
-      expect(page).to_not have_content("Left knee granted")
       expect(page).to have_content("Right knee")
+      expect(page).to have_content("(Originally: Left knee granted)")
       click_intake_finish
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")

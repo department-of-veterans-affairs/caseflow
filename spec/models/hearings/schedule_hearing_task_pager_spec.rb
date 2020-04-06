@@ -195,15 +195,17 @@ describe Hearings::ScheduleHearingTaskPager, :all_dbs do
             create(:schedule_hearing_task, appeal: appeal)
           end
 
-          range_count.times do
+          non_aod_appeals = []
+          (tasks_count - aod_count).times do
             appeal = create(:appeal, closest_regional_office: regional_office_key)
-            appeal.update!(docket_range_date: 1.week.ago)
             create(:schedule_hearing_task, appeal: appeal)
+            non_aod_appeals << appeal
           end
 
-          (tasks_count - range_count - aod_count).times do
-            appeal = create(:appeal, closest_regional_office: regional_office_key)
-            create(:schedule_hearing_task, appeal: appeal)
+          non_aod_appeals.sort_by!(&:docket_number)
+
+          range_count.times do |index|
+            non_aod_appeals[index].update!(docket_range_date: 1.week.ago)
           end
 
           cache_ama_appeals
