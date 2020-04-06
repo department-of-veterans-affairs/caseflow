@@ -263,11 +263,17 @@ class QueueApp extends React.PureComponent {
 
   routedBulkAssignTaskModal = (props) => <BulkAssignModal {...props} />;
 
-  routedOrganization = (props) => (
-    <OrganizationQueueLoadingScreen urlToLoad={`${props.location.pathname}/tasks`}>
-      <OrganizationQueue {...this.props} paginationOptions={querystring.parse(window.location.search.slice(1))} />
-    </OrganizationQueueLoadingScreen>
-  );
+  routedOrganization = (props) => {
+    const {
+      match: { url }
+    } = props;
+
+    return (
+      <OrganizationQueueLoadingScreen urlToLoad={`${url}/tasks`}>
+        <OrganizationQueue {...this.props} paginationOptions={querystring.parse(window.location.search.slice(1))} />
+      </OrganizationQueueLoadingScreen>
+    );
+  };
 
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
