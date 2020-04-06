@@ -9,6 +9,19 @@ import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
 import COPY from '../../COPY';
 
+export const selectedTasksSelector = (state, userId) => {
+  return _.map(
+    state.queue.isTaskAssignedToUserSelected[userId] || {},
+    (selected, id) => {
+      if (!selected) {
+        return;
+      }
+
+      return state.queue.tasks[id] || state.queue.amaTasks[id];
+    }
+  ).filter(Boolean);
+};
+
 const getTasks = (state) => state.queue.tasks;
 const getAmaTasks = (state) => state.queue.amaTasks;
 const getAppeals = (state) => state.queue.appeals;
@@ -17,22 +30,29 @@ const getUserCssId = (state) => state.ui.targetUser?.cssId || state.ui.userCssId
 const getAppealId = (state, props) => props.appealId;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
+const getModals = (state) => state.ui.modals;
 const getNewDocsForAppeal = (state) => state.queue.newDocsForAppeal;
 const getClaimReviews = (state) => state.queue.claimReviews;
 
-const incompleteTasksSelector = (tasks) => _.filter(tasks, (task) => taskIsActive(task));
-const completeTasksSelector = (tasks) => _.filter(tasks, (task) => !taskIsActive(task));
-const taskIsNotOnHoldSelector = (tasks) => _.filter(tasks, (task) => !taskIsOnHold(task));
-const workTasksSelector = (tasks) => _.filter(tasks, (task) => !task.hideFromQueueTableView);
+export const incompleteTasksSelector = (tasks) => _.filter(tasks, (task) => taskIsActive(task));
 
-const taskIsLegacyAttorneyJudgeTask = (task) => {
-  const legacyAttorneyJudgeTaskTypes =
-    ['AttorneyLegacyTask', 'JudgeLegacyTask', 'JudgeLegacyAssignTask', 'JudgeLegacyDecisionReviewTask'];
+export const completeTasksSelector = (tasks) => _.filter(tasks, (task) => !taskIsActive(task));
 
-  return legacyAttorneyJudgeTaskTypes.includes(task.type);
-};
+export const taskIsNotOnHoldSelector = (tasks) =>
+  _.filter(tasks, (task) => !taskIsOnHold(task));
 
-const tasksWithAppealSelector = createSelector(
+export const workTasksSelector = (tasks) =>
+  _.filter(tasks, (task) => !task.hideFromQueueTableView);
+
+export const trackingTasksSelector = (tasks) =>
+  _.filter(tasks, (task) => task.type === 'TrackVeteranTask');
+
+export const getActiveModalType = createSelector(
+  [getModals],
+  (modals) => _.find(Object.keys(modals), (modalName) => modals[modalName])
+);
+
+export const tasksWithAppealSelector = createSelector(
   [getTasks, getAmaTasks, getAppeals, getAppealDetails],
   (tasks, amaTasks, appeals, appealDetails) => {
     return [
@@ -54,74 +74,27 @@ const tasksWithAppealSelector = createSelector(
   }
 );
 
-const appealsWithDetailsSelector = createSelector(
+// To differentiate between tracking tasks which exist purely to provide visibility into appeals.
+export const workTasksWithAppealSelector = createSelector(
+  [tasksWithAppealSelector], (tasks) => workTasksSelector(tasks)
+);
+
+export const taskById = createSelector(
+  [tasksWithAppealSelector, getTaskUniqueId],
+  (tasks, taskId) =>
+    _.find(tasks, (task) => task.uniqueId === taskId)
+);
+
+export const appealsWithDetailsSelector = createSelector(
   [getAppeals, getAppealDetails],
   (appeals, appealDetails) => {
     return _.merge(appeals, appealDetails);
   }
 );
 
-const claimReviewsSelector = createSelector(
+export const claimReviewsSelector = createSelector(
   [getClaimReviews],
   (claimReviews) => claimReviews
-);
-
-const incompleteTasksForAppeal = createSelector(
-  [getAllTasksForAppeal], (tasks) => incompleteTasksSelector(tasks)
-);
-
-const tasksByAssigneeCssIdSelector = createSelector(
-  [tasksWithAppealSelector, getUserCssId],
-  (tasks, cssId) =>
-    _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
-);
-
-const workTasksByAssigneeCssIdSelector = createSelector(
-  [tasksByAssigneeCssIdSelector], (tasks) => workTasksSelector(tasks)
-);
-
-const tasksByAssignerCssIdSelector = createSelector(
-  [tasksWithAppealSelector, getUserCssId],
-  (tasks, cssId) =>
-    _.filter(tasks, (task) => task.assignedBy.cssId === cssId)
-);
-
-const incompleteTasksByAssigneeCssIdSelector = createSelector(
-  [workTasksByAssigneeCssIdSelector],
-  (tasks) => incompleteTasksSelector(tasks)
-);
-
-const incompleteTasksByAssignerCssIdSelector = createSelector(
-  [tasksByAssignerCssIdSelector],
-  (tasks) => incompleteTasksSelector(tasks)
-);
-
-const actionableTasksForAppeal = createSelector(
-  [getAllTasksForAppeal], (tasks) => _.filter(tasks, (task) => task.availableActions.length)
-);
-
-const incompleteTasksWithHold = createSelector(
-  [incompleteTasksByAssigneeCssIdSelector],
-  (tasks) => tasks.filter((task) => taskIsOnHold(task))
-);
-
-export const selectedTasksSelector = (state, userId) => {
-  return _.map(
-    state.queue.isTaskAssignedToUserSelected[userId] || {},
-    (selected, id) => {
-      if (!selected) {
-        return;
-      }
-
-      return state.queue.tasks[id] || state.queue.amaTasks[id];
-    }
-  ).filter(Boolean);
-};
-
-export const taskById = createSelector(
-  [tasksWithAppealSelector, getTaskUniqueId],
-  (tasks, taskId) =>
-    _.find(tasks, (task) => task.uniqueId === taskId)
 );
 
 export const appealWithDetailSelector = createSelector(
@@ -135,6 +108,10 @@ export const getAllTasksForAppeal = createSelector(
     return _.filter(tasks, (task) => task.externalAppealId === appealId).
       concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId));
   }
+);
+
+export const incompleteTasksForAppeal = createSelector(
+  [getAllTasksForAppeal], (tasks) => incompleteTasksSelector(tasks)
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(
@@ -158,9 +135,39 @@ export const claimReviewsByCaseflowVeteranId = createSelector(
       claimReview.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
+export const tasksByAssigneeCssIdSelector = createSelector(
+  [tasksWithAppealSelector, getUserCssId],
+  (tasks, cssId) =>
+    _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
+);
+
+export const workTasksByAssigneeCssIdSelector = createSelector(
+  [tasksByAssigneeCssIdSelector], (tasks) => workTasksSelector(tasks)
+);
+
+export const tasksByAssignerCssIdSelector = createSelector(
+  [tasksWithAppealSelector, getUserCssId],
+  (tasks, cssId) =>
+    _.filter(tasks, (task) => task.assignedBy.cssId === cssId)
+);
+
+export const incompleteTasksByAssigneeCssIdSelector = createSelector(
+  [workTasksByAssigneeCssIdSelector],
+  (tasks) => incompleteTasksSelector(tasks)
+);
+
+export const incompleteTasksByAssignerCssIdSelector = createSelector(
+  [tasksByAssignerCssIdSelector],
+  (tasks) => incompleteTasksSelector(tasks)
+);
+
 export const completeTasksByAssigneeCssIdSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => completeTasksSelector(tasks)
+);
+
+export const actionableTasksForAppeal = createSelector(
+  [getAllTasksForAppeal], (tasks) => _.filter(tasks, (task) => task.availableActions.length)
 );
 
 export const scheduleHearingTasksForAppeal = createSelector(
@@ -189,6 +196,13 @@ export const newTasksByAssigneeCssIdSelector = createSelector(
   (tasks) => tasks.filter((task) => !taskIsOnHold(task))
 );
 
+const taskIsLegacyAttorneyJudgeTask = (task) => {
+  const legacyAttorneyJudgeTaskTypes =
+    ['AttorneyLegacyTask', 'JudgeLegacyTask', 'JudgeLegacyAssignTask', 'JudgeLegacyDecisionReviewTask'];
+
+  return legacyAttorneyJudgeTaskTypes.includes(task.type);
+};
+
 export const workableTasksByAssigneeCssIdSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => tasks.filter(
@@ -198,6 +212,11 @@ export const workableTasksByAssigneeCssIdSelector = createSelector(
           task.status === TASK_STATUSES.in_progress);
     }
   )
+);
+
+const incompleteTasksWithHold = createSelector(
+  [incompleteTasksByAssigneeCssIdSelector],
+  (tasks) => tasks.filter((task) => taskIsOnHold(task))
 );
 
 export const onHoldTasksByAssigneeCssIdSelector = createSelector(
