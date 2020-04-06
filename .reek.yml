@@ -86,17 +86,13 @@ detectors:
   InstanceVariableAssumption:
     exclude:
       - Appeal
-      - BgsAddressService#country
-      - BgsAddressService#state
-      - BgsAddressService#zip
+      - BgsAddressService
       - Task
       - CaseflowJob
       - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
       - ETL::Syncer
       - User
-      - Veteran#country
-      - Veteran#state
-      - Veteran#zip_code
+      - Veteran
   IrresponsibleModule:
     enabled: false
   LongParameterList:
