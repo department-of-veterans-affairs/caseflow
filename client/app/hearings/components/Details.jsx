@@ -14,7 +14,7 @@ import ApiUtil from '../../util/ApiUtil';
 import { deepDiff, pollVirtualHearingData } from '../utils';
 import _ from 'lodash';
 
-import DetailsSections from './DetailsSections';
+import DetailsInputs from './details/DetailsInputs';
 import DetailsOverview from './details/DetailsOverview';
 import {
   onChangeFormData, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
@@ -248,9 +248,12 @@ class HearingDetails extends React.Component {
 
   render() {
     const {
+      isVirtual,
+      wasVirtual,
       veteranFirstName,
       veteranLastName,
-      veteranFileNumber
+      veteranFileNumber,
+      scheduledForIsPast
     } = this.props.hearing;
 
     const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props.formData;
@@ -286,19 +289,20 @@ class HearingDetails extends React.Component {
             reset={this.resetVirtualHearing}
             type={this.state.virtualHearingModalType}
             {...editedEmails} />}
-          <DetailsSections
+          <DetailsInputs
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
             transcription={transcriptionDetailsForm}
             hearing={hearingDetailsForm}
+            scheduledForIsPast={scheduledForIsPast}
             virtualHearing={virtualHearingForm}
             isLegacy={this.state.isLegacy}
             openVirtualHearingModal={this.openVirtualHearingModal}
             requestType={this.props.hearing.readableRequestType}
-            disabled={disabled}
-            isVirtual={this.props.hearing.isVirtual}
-            wasVirtual={this.props.hearing.wasVirtual} />
+            readOnly={disabled}
+            isVirtual={isVirtual}
+            wasVirtual={wasVirtual} />
           <div>
             <a
               className="button-link"
