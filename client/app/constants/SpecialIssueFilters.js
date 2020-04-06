@@ -1,52 +1,56 @@
-import SPECIAL_ISSUES from './SpecialIssues';
+import { enabledSpecialIssues } from './SpecialIssueEnabler.js';
 
-const specialIssueFilters = {
+const specialIssueFilters = (isFeatureToggled) => ({
 
   unhandledSpecialIssues() {
-    return SPECIAL_ISSUES.filter((issue) => {
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => {
       return issue.unhandled;
     });
   },
 
   regionalSpecialIssues() {
-    return SPECIAL_ISSUES.filter((issue) => {
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => {
       return issue.stationOfJurisdiction === 'regional';
     });
   },
 
   routedSpecialIssues() {
-    return SPECIAL_ISSUES.filter((issue) => {
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => {
       return issue.stationOfJurisdiction &&
         issue.stationOfJurisdiction !== 'regional';
     });
   },
 
   routedOrRegionalSpecialIssues() {
-    return SPECIAL_ISSUES.filter((issue) => {
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => {
       return issue.stationOfJurisdiction;
     });
   },
 
+  noneSection() {
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'noSpecialIssues');
+  },
+
   aboutSection() {
-    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'about');
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'about');
   },
 
   residenceSection() {
-    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'residence');
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'residence');
   },
 
   benefitTypeSection () {
-    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'benefitType');
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'benefitType');
   },
 
   issuesOnAppealSection () {
-    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'issuesOnAppeal');
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'issuesOnAppeal');
   },
 
   dicOrPensionSection () {
-    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'dicOrPension');
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'dicOrPension');
   }
 
-};
+});
 
 export default specialIssueFilters;

@@ -18,6 +18,7 @@ class StatsCollectorJob < CaseflowJob
   METRIC_GROUP_NAME = name.underscore
 
   DAILY_COLLECTORS = {
+    "daily_counts" => Collectors::DailyCountsStatsCollector
   }.freeze
   WEEKLY_COLLECTORS = {
   }.freeze
