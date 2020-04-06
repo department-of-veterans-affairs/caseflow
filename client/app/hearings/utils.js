@@ -95,7 +95,6 @@ export const pollVirtualHearingData = (hearingId, onSuccess) => (
   <ExponentialPolling
     method="GET"
     interval={1000}
-    backoffMultiplier={3}
     onSuccess={onSuccess}
     render={() => null}
     url={`/hearings/${hearingId}/virtual_hearing_job_status`}

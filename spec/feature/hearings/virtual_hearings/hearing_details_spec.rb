@@ -28,7 +28,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_field("POA/Representative Email", with: pre_loaded_rep_email)
     end
 
-    scenario "hearing is swtiched to 'Virtual'" do
+    scenario "hearing is switched to 'Virtual'" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)

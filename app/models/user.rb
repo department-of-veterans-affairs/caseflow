@@ -102,6 +102,10 @@ class User < CaseflowRecord
     BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
   end
 
+  def can_intake_appeals?
+    MailTeam.singleton.users.include?(self)
+  end
+
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end
