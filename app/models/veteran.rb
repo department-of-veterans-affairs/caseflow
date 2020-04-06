@@ -169,10 +169,42 @@ class Veteran < CaseflowRecord
     bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
   end
 
+  ZIP_CODE_REGEX = /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/
+
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
-    @zip_code || (@address_line3 if (@address_line3 || "").match?(/(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/))
+    zip_code = @zip_code || (@address_line3 if (@address_line3 || "").match?(ZIP_CODE_REGEX))
+
+    # Write to cache for research purposes. Will remove!
+    # See:
+    #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
+    Rails.cache.write("person-zip-#{zip_code}", true) if zip_code.present?
+
+    return zip_code
   end
+
+  def state
+    state = @state
+
+    # Write to cache for research purposes. Will remove!
+    # See:
+    #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
+    Rails.cache.write("person-state-#{state}", true) if state.present?
+
+    return state
+  end
+
+  def country
+    country = @country
+
+    # Write to cache for research purposes. Will remove!
+    # See:
+    #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
+    Rails.cache.write("person-country-#{country}", true) if country.present?
+
+    return country
+  end
+
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2
