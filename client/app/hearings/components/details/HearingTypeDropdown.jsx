@@ -58,6 +58,7 @@ class HearingTypeDropdown extends React.Component {
         value={this.getValue()}
         onChange={this.onChange}
         readOnly={this.props.readOnly}
+        {...this.props}
       />
     );
   }
