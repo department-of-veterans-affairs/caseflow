@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe RatingAtIssue do
+  before { FeatureToggle.enable!(:ratings_at_issue) }
+  after { FeatureToggle.disable!(:ratings_at_issue) }
+
   let(:disability_sn) { "1234" }
   let(:diagnostic_code) { "7611" }
   let(:reference_id) { "1555" }
@@ -70,6 +73,38 @@ describe RatingAtIssue do
       disability_list: disability_data,
       rba_claim_list: claim_data
     }
+  end
+
+  context ".fetch_all" do
+    let(:receipt_date) { Time.zone.today - 50.years }
+
+    subject { RatingAtIssue.fetch_all("DRAYMOND") }
+
+    let!(:rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 370.days
+      )
+    end
+
+    let!(:untimely_rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 100.years
+      )
+    end
+
+    it "returns rating objects for all ratings" do
+      expect(subject.count).to eq(2)
+    end
+
+    context "on NoRatingsExistForVeteran error" do
+      subject { RatingAtIssue.fetch_all("FOOBAR") }
+
+      it "returns empty array" do
+        expect(subject.count).to eq(0)
+      end
+    end
   end
 
   context ".from_bgs_hash" do

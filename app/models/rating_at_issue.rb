@@ -9,6 +9,8 @@ class RatingAtIssue < Rating
         end_date: end_date
       )
 
+      return [] if response.dig(:response, :response_text) == "No Data Found"
+
       sorted_ratings_from_bgs_response(response: response, start_date: start_date)
     end
 
@@ -27,7 +29,7 @@ class RatingAtIssue < Rating
       ratings = response.dig(:rba_profile_list, :rba_profile)
 
       if ratings.nil?
-        fail NilRatingProfileListError, message: response
+        fail Rating::NilRatingProfileListError, message: response
       end
 
       Array.wrap(ratings).map do |rating_data|

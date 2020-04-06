@@ -7,14 +7,14 @@ describe PromulgatedRating do
     subject { PromulgatedRating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date) }
 
     let!(:rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: "DRAYMOND",
         promulgation_date: receipt_date - 371.days
       )
     end
 
     let!(:untimely_rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: "DRAYMOND",
         promulgation_date: receipt_date - 373.days
       )
@@ -26,7 +26,7 @@ describe PromulgatedRating do
 
     context "when multiple timely ratings exist" do
       let!(:another_rating) do
-        Generators::Rating.build(
+        Generators::PromulgatedRating.build(
           participant_id: "DRAYMOND",
           promulgation_date: receipt_date - 370.days
         )
@@ -57,6 +57,38 @@ describe PromulgatedRating do
     end
   end
 
+  context ".fetch_all" do
+    let(:receipt_date) { Time.zone.today - 50.years }
+
+    subject { PromulgatedRating.fetch_all("DRAYMOND") }
+
+    let!(:rating) do
+      Generators::PromulgatedRating.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 370.days
+      )
+    end
+
+    let!(:untimely_rating) do
+      Generators::PromulgatedRating.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 100.years
+      )
+    end
+
+    it "returns rating objects for all ratings" do
+      expect(subject.count).to eq(2)
+    end
+
+    context "on NoRatingsExistForVeteran error" do
+      subject { PromulgatedRating.fetch_all("FOOBAR") }
+
+      it "returns empty array" do
+        expect(subject.count).to eq(0)
+      end
+    end
+  end
+
   context ".from_bgs_hash" do
     subject { PromulgatedRating.from_bgs_hash(bgs_record) }
 
@@ -70,7 +102,7 @@ describe PromulgatedRating do
       }
     end
 
-    it { is_expected.to be_a(Rating) }
+    it { is_expected.to be_a(PromulgatedRating) }
 
     it do
       is_expected.to have_attributes(

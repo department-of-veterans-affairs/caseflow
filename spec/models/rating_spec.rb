@@ -15,7 +15,7 @@ describe Rating do
   let(:associated_claims) { [] }
 
   let(:rating) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       issues: issues,
       decisions: decisions,
       promulgation_date: promulgation_date,
@@ -61,7 +61,7 @@ describe Rating do
   context "with disabilities" do
     let(:participant_id) { "disability_id" }
     let(:rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         promulgation_date: promulgation_date,
         profile_date: profile_date,
         participant_id: participant_id,
@@ -80,6 +80,7 @@ describe Rating do
         disabilities: disabilities
       )
     end
+
     subject { rating.issues }
 
     context "with multiple disabilities" do
@@ -312,38 +313,6 @@ describe Rating do
             issues: []
           )
         )
-      end
-    end
-  end
-
-  context ".fetch_all" do
-    let(:receipt_date) { Time.zone.today - 50.years }
-
-    subject { Rating.fetch_all("DRAYMOND") }
-
-    let!(:rating) do
-      Generators::Rating.build(
-        participant_id: "DRAYMOND",
-        promulgation_date: receipt_date - 370.days
-      )
-    end
-
-    let!(:untimely_rating) do
-      Generators::Rating.build(
-        participant_id: "DRAYMOND",
-        promulgation_date: receipt_date - 100.years
-      )
-    end
-
-    it "returns rating objects for all ratings" do
-      expect(subject.count).to eq(2)
-    end
-
-    context "on NoRatingsExistForVeteran error" do
-      subject { Rating.fetch_all("FOOBAR") }
-
-      it "returns empty array" do
-        expect(subject.count).to eq(0)
       end
     end
   end
