@@ -1,9 +1,8 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { analyticsCallback, submitIntakeCompleteRequest, submitIntakeReviewRequest } from './intake';
+import { analyticsCallback, submitIntakeCompleteRequest } from './intake';
 import { prepareReviewData } from '../util';
 import { formatIssues } from '../util/issues';
-import _ from 'lodash';
 
 const analytics = true;
 
@@ -15,37 +14,36 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
 
   const data = prepareReviewData(intakeData, intakeType);
 
-  return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
-    then(
-      (response) => {
-        dispatch({
-          type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
-          payload: {
-            intake: response.body
-          },
-          meta: { analytics }
-        });
+  return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).then(
+    (response) => {
+      dispatch({
+        type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
+        payload: {
+          intake: response.body
+        },
+        meta: { analytics }
+      });
 
-        return true;
-      },
-      (error) => {
-        const responseObject = error.response.body;
-        const responseErrorCodes = responseObject.error_codes;
+      return true;
+    },
+    (error) => {
+      const responseObject = error.response.body;
+      const responseErrorCodes = responseObject.error_codes;
 
-        dispatch({
-          type: ACTIONS.SUBMIT_REVIEW_FAIL,
-          payload: {
-            errorUUID: responseObject.error_uuid,
-            responseErrorCodes
-          },
-          meta: {
-            analytics: analyticsCallback
-          }
-        });
+      dispatch({
+        type: ACTIONS.SUBMIT_REVIEW_FAIL,
+        payload: {
+          errorUUID: responseObject.error_uuid,
+          responseErrorCodes
+        },
+        meta: {
+          analytics: analyticsCallback
+        }
+      });
 
-        throw error;
-      }
-    );
+      throw error;
+    }
+  );
 };
 
 export const completeIntake = (intakeId, intakeData) => (dispatch) => {

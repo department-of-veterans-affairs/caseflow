@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_27_174629) do
+ActiveRecord::Schema.define(version: 2020_04_05_223053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -195,8 +195,16 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
+    t.index ["case_type"], name: "index_cached_appeal_attributes_on_case_type"
+    t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
+    t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
+    t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
+    t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
+    t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
     t.index ["updated_at"], name: "index_cached_appeal_attributes_on_updated_at"
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
+    t.index ["veteran_name"], name: "index_cached_appeal_attributes_on_veteran_name"
   end
 
   create_table "cached_user_attributes", id: false, comment: "VACOLS cached staff table attributes", force: :cascade do |t|
@@ -1122,6 +1130,9 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
   create_table "special_issue_lists", force: :cascade do |t|
     t.bigint "appeal_id"
     t.string "appeal_type"
+    t.boolean "blue_water", default: false, comment: "Blue Water"
+    t.boolean "burn_pit", default: false, comment: "Burn Pit"
+    t.boolean "cavc", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
@@ -1134,8 +1145,10 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
     t.boolean "incarcerated_veterans", default: false
     t.boolean "insurance", default: false
     t.boolean "manlincon_compliance", default: false
+    t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
+    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false

@@ -12,12 +12,12 @@ RSpec.feature "Test Users for Demo", :postgres do
 
   scenario "We can switch between users in the database in demo mode" do
     visit "test/users"
-    expect(page).not_to have_content("123 (DSUSER)")
+    expect(page.has_no_content?("123 (DSUSER)")).to eq(true)
     expect(page).to have_content("DSUSER")
     safe_click("div.Select-control")
     safe_click("#react-select-2--option-0")
     safe_click("#button-Switch-user")
-    expect(page).not_to have_content("123 (DSUSER)")
+    expect(page.has_no_content?("123 (DSUSER)")).to eq(true)
   end
 
   # Dispatch-speific seeding

@@ -1,73 +1,72 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
 
+import { HearingsUserContext } from '../HearingsUserContext';
 import DetailsInputs from './details/DetailsInputs';
 import TranscriptionDetailsInputs from './details/TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './details/TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './details/TranscriptionRequestInputs';
 
-class DetailsSections extends React.Component {
+const DetailsSections = (props) => {
+  const {
+    transcription,
+    hearing,
+    disabled,
+    updateHearing,
+    updateTranscription,
+    updateVirtualHearing,
+    isLegacy,
+    virtualHearing,
+    requestType,
+    openVirtualHearingModal,
+    isVirtual,
+    wasVirtual
+  } = props;
+  const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
 
-  constructor (props) {
-    super(props);
+  return (
+    <>
+      <DetailsInputs
+        readOnly={disabled}
+        requestType={requestType}
+        isLegacy={isLegacy}
+        hearing={hearing}
+        scheduledForIsPast={hearing.scheduledForIsPast}
+        update={updateHearing}
+        enableVirtualHearings={userCanScheduleVirtualHearings && requestType !== 'Central'}
+        virtualHearing={virtualHearing}
+        updateVirtualHearing={updateVirtualHearing}
+        openVirtualHearingModal={openVirtualHearingModal}
+        isVirtual={isVirtual}
+        wasVirtual={wasVirtual} />
+      <div className="cf-help-divider" />
+      {!isLegacy &&
+        <div>
+          <h2>Transcription Details</h2>
+          <TranscriptionDetailsInputs
+            transcription={transcription}
+            update={updateTranscription}
+            readOnly={disabled} />
+          <div className="cf-help-divider" />
 
-    this.state = {
-      modalOpen: false,
-      virtualModalType: null
-    };
-  }
+          <h2>Transcription Problem</h2>
+          <TranscriptionProblemInputs
+            transcription={transcription}
+            update={updateTranscription}
+            readOnly={disabled} />
+          <div className="cf-help-divider" />
 
-  render () {
-    const {
-      transcription, hearing, disabled, updateHearing, updateTranscription, updateVirtualHearing,
-      isLegacy, virtualHearing, user, requestType, openVirtualHearingModal, isVirtual, wasVirtual
-    } = this.props;
-
-    return (
-      <React.Fragment>
-        <DetailsInputs
-          user={user}
-          readOnly={disabled}
-          requestType={requestType}
-          isLegacy={isLegacy}
-          hearing={hearing}
-          scheduledForIsPast={hearing.scheduledForIsPast}
-          update={updateHearing}
-          enableVirtualHearings={user.userCanScheduleVirtualHearings && requestType !== 'Central'}
-          virtualHearing={virtualHearing}
-          updateVirtualHearing={updateVirtualHearing}
-          openVirtualHearingModal={openVirtualHearingModal}
-          isVirtual={isVirtual}
-          wasVirtual={wasVirtual} />
-        <div className="cf-help-divider" />
-        {!isLegacy &&
-          <div>
-            <h2>Transcription Details</h2>
-            <TranscriptionDetailsInputs
-              transcription={transcription}
-              update={updateTranscription}
-              readOnly={disabled} />
-            <div className="cf-help-divider" />
-
-            <h2>Transcription Problem</h2>
-            <TranscriptionProblemInputs
-              transcription={transcription}
-              update={updateTranscription}
-              readOnly={disabled} />
-            <div className="cf-help-divider" />
-
-            <h2>Transcription Request</h2>
-            <TranscriptionRequestInputs
-              hearing={hearing}
-              update={updateHearing}
-              readOnly={disabled} />
-            <div className="cf-help-divider" />
-          </div>
-        }
-      </React.Fragment>
-    );
-  }
-}
+          <h2>Transcription Request</h2>
+          <TranscriptionRequestInputs
+            hearing={hearing}
+            update={updateHearing}
+            readOnly={disabled} />
+          <div className="cf-help-divider" />
+        </div>
+      }
+    </>
+  );
+};
 
 DetailsSections.propTypes = {
   transcription: PropTypes.object,
@@ -81,10 +80,6 @@ DetailsSections.propTypes = {
   requestType: PropTypes.string,
   submit: PropTypes.func,
   openVirtualHearingModal: PropTypes.func,
-  user: PropTypes.shape({
-    userId: PropTypes.number,
-    userCanScheduleVirtualHearings: PropTypes.bool
-  }),
   isVirtual: PropTypes.bool,
   wasVirtual: PropTypes.bool
 };

@@ -756,7 +756,7 @@ feature "Higher-Level Review", :all_dbs do
 
       # removing an issue
       click_remove_intake_issue("1")
-      expect(page).not_to have_content("Left knee granted 2")
+      expect(page.has_no_content?("Left knee granted 2")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue

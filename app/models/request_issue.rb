@@ -184,6 +184,7 @@ class RequestIssue < CaseflowRecord
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
         untimely_exemption_notes: data[:untimely_exemption_notes],
+        covid_timeliness_exempt: data[:untimely_exemption_covid],
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
         vacols_sequence_id: data[:vacols_sequence_id],
