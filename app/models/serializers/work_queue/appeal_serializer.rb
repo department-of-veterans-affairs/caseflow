@@ -21,6 +21,8 @@ class WorkQueue::AppealSerializer
     end
   end
 
+  attribute :status
+
   attribute :decision_issues do |object|
     object.decision_issues.uniq.map do |issue|
       {
