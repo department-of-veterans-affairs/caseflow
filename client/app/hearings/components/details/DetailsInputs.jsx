@@ -36,16 +36,17 @@ const EmailSection = (
   return (
     <div {...rowThirds}>
       <TextField
-        name="Veteran Email"
+        name="Veteran Email for Notifications"
         value={virtualHearing.veteranEmail}
-        strongLabel
         required
+        hideRequired
+        strongLabel
         className={[classnames('cf-form-textinput', 'cf-inline-field')]}
         readOnly={readOnlyEmails}
         onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
       />
       <TextField
-        name="POA/Representative Email"
+        name="POA/Representative Email for Notifications"
         value={virtualHearing.representativeEmail}
         strongLabel
         className={[classnames('cf-form-textinput', 'cf-inline-field')]}
