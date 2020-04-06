@@ -30,7 +30,6 @@ const getUserCssId = (state) => state.ui.targetUser?.cssId || state.ui.userCssId
 const getAppealId = (state, props) => props.appealId;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
-const getModals = (state) => state.ui.modals;
 const getNewDocsForAppeal = (state) => state.queue.newDocsForAppeal;
 const getClaimReviews = (state) => state.queue.claimReviews;
 
@@ -43,14 +42,6 @@ export const taskIsNotOnHoldSelector = (tasks) =>
 
 export const workTasksSelector = (tasks) =>
   _.filter(tasks, (task) => !task.hideFromQueueTableView);
-
-export const trackingTasksSelector = (tasks) =>
-  _.filter(tasks, (task) => task.type === 'TrackVeteranTask');
-
-export const getActiveModalType = createSelector(
-  [getModals],
-  (modals) => _.find(Object.keys(modals), (modalName) => modals[modalName])
-);
 
 export const tasksWithAppealSelector = createSelector(
   [getTasks, getAmaTasks, getAppeals, getAppealDetails],
@@ -72,11 +63,6 @@ export const tasksWithAppealSelector = createSelector(
       }))
     ];
   }
-);
-
-// To differentiate between tracking tasks which exist purely to provide visibility into appeals.
-export const workTasksWithAppealSelector = createSelector(
-  [tasksWithAppealSelector], (tasks) => workTasksSelector(tasks)
 );
 
 export const taskById = createSelector(
@@ -112,13 +98,6 @@ export const getAllTasksForAppeal = createSelector(
 
 export const incompleteTasksForAppeal = createSelector(
   [getAllTasksForAppeal], (tasks) => incompleteTasksSelector(tasks)
-);
-
-export const tasksForAppealAssignedToUserSelector = createSelector(
-  [incompleteTasksForAppeal, getUserCssId],
-  (tasks, cssId) => {
-    return _.filter(tasks, (task) => task.assignedTo.cssId === cssId);
-  }
 );
 
 export const appealsByCaseflowVeteranId = createSelector(
