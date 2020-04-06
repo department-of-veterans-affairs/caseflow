@@ -169,18 +169,16 @@ class Veteran < CaseflowRecord
     bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
   end
 
-  ZIP_CODE_REGEX = /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/
-
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
-    zip_code = @zip_code || (@address_line3 if (@address_line3 || "").match?(ZIP_CODE_REGEX))
+    zip_code = @zip_code || (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
 
     # Write to cache for research purposes. Will remove!
     # See:
     #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
     Rails.cache.write("person-zip-#{zip_code}", true) if zip_code.present?
 
-    return zip_code
+    zip_code
   end
 
   def state
