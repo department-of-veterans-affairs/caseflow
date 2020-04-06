@@ -86,13 +86,11 @@ detectors:
   InstanceVariableAssumption:
     exclude:
       - Appeal
-      - BgsAddressService
       - Task
       - CaseflowJob
       - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
       - ETL::Syncer
       - User
-      - Veteran
   IrresponsibleModule:
     enabled: false
   LongParameterList:
