@@ -143,8 +143,8 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
       edit_contention_text("Left knee granted", "Right knee")
-      expect(page).to_not have_content("Left knee granted")
       expect(page).to have_content("Right knee")
+      expect(page).to have_content("(Originally: Left knee granted)")
       click_intake_finish
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
