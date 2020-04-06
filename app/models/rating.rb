@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# A Rating can be a PromulgatedRating or a RatingAtIssue. Please see the subclasses for more information.
+
 class Rating
   include ActiveModel::Model
   include LatestRatingDisabilityEvaluation

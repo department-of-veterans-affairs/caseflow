@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Promulgated ratings are returned from BGS's Rating service, and do not contain information about
+# the rating profiles themselves. A second call to BGS's RatingProfile service is used to fetch that data.
+# In comparison, Ratings at issue return both the rating and rating profile information from the RatingProfile service
+
 describe PromulgatedRating do
   context ".fetch_timely" do
     let(:receipt_date) { Time.zone.today }

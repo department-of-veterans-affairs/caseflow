@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Ratings at issue are returned from BGS's Rating Profile service and contain rating profile information in the response
+# compared with Promulgated Ratings which makes two separate calls (one to Rating and a second to Rating Profile)
+
 class RatingAtIssue < Rating
   class << self
     def fetch_in_range(participant_id:, start_date:, end_date:)

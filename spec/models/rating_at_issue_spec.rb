@@ -32,7 +32,6 @@ describe RatingAtIssue do
         dis_sn: disability_sn,
         decn_tn: "Service Connected",
         dis_dt: Time.zone.today - 6.days,
-        dis_sn: disability_sn,
         disability_evaluation: [
           {
             dgnstc_tc: diagnostic_code,

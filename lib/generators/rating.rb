@@ -52,7 +52,7 @@ class Generators::Rating
 
     private
 
-    def bgs_rating_issues_data(attrs)
+    def bgs_rating_issues_data(_attrs)
       fail Caseflow::Error::MustImplementInSubclass
     end
 
