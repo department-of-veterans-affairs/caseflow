@@ -63,6 +63,36 @@ feature "Intake", :all_dbs do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
+    context "when restrict appeal intakes enabled" do
+      before { FeatureToggle.enable!(:restrict_appeal_intakes) }
+      after { FeatureToggle.disable!(:restrict_appeal_intakes) }
+
+      it "does not allow user to intake appeals" do
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.appeal)
+
+        expect(page).to have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
+        expect(page).to have_css(".cf-submit[disabled]")
+
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+
+        expect(page).to have_current_path("/intake/search")
+      end
+
+      context "when the user is on the Mail Team" do
+        before { MailTeam.singleton.add_user(current_user) }
+
+        it "allows the user to intake appeals" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.appeal)
+
+          expect(page).to_not have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
+          expect(page).to_not have_css(".cf-submit[disabled]")
+        end
+      end
+    end
+
     context "user has unread Inbox messages" do
       before { FeatureToggle.enable!(:inbox, users: [current_user.css_id]) }
       after { FeatureToggle.disable!(:inbox) }

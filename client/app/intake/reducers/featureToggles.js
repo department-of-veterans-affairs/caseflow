@@ -19,6 +19,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     verifyUnidentifiedIssue: {
       $set: Boolean(featureToggles.verifyUnidentifiedIssue)
+    },
+    restrictAppealIntakes: {
+      $set: Boolean(featureToggles.restrictAppealIntakes)
     }
   });
 };
@@ -30,7 +33,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       editContentionText: false,
       correctClaimReviews: false,
       unidentifiedIssueDecisionDate: false,
-      verifyUnidentifiedIssue: false
+      verifyUnidentifiedIssue: false,
+      restrictAppealIntakes: false
     },
     data.featureToggles
   );
