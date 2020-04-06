@@ -191,7 +191,7 @@ class Veteran < CaseflowRecord
     #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
     Rails.cache.write("person-state-#{state}", true) if state.present?
 
-    return state
+    state
   end
 
   def country
@@ -202,7 +202,7 @@ class Veteran < CaseflowRecord
     #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
     Rails.cache.write("person-country-#{country}", true) if country.present?
 
-    return country
+    country
   end
 
   alias zip zip_code

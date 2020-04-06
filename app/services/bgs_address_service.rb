@@ -32,7 +32,7 @@ class BgsAddressService
     #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
     Rails.cache.write("person-zip-#{zip_code}", true) if zip_code.present?
 
-    return zip_code
+    zip_code
   end
 
   def state
@@ -43,7 +43,7 @@ class BgsAddressService
     #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
     Rails.cache.write("person-state-#{state}", true) if state.present?
 
-    return state
+    state
   end
 
   def country
@@ -54,7 +54,7 @@ class BgsAddressService
     #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
     Rails.cache.write("person-country-#{country}", true) if country.present?
 
-    return country
+    country
   end
 
   def fetch_bgs_record
