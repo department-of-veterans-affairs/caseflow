@@ -30,6 +30,7 @@ class Veteran < CaseflowRecord
     validates :city, length: { maximum: 30 }
     validate :validate_city
     validate :validate_date_of_birth
+    validate :validate_name_suffix
   end
 
   delegate :full_address, to: :address
@@ -203,6 +204,11 @@ class Veteran < CaseflowRecord
 
     # This regex validation is used in VBMS to validate address of veteran
     errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
+  end
+
+  def validate_name_suffix
+    # This regex validation checks for punctuations in the name suffix
+    errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
   end
 
   def timely_ratings(from_date:)

@@ -5,7 +5,8 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
   ERROR_CITY_INVALID_CHARACTERS,
-  ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_DATE_OF_BIRTH_ERROR } from '../../../COPY';
+  ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_DATE_OF_BIRTH_ERROR,
+  INTAKE_VETERAN_NAME_SUFFIX_ERROR } from '../../../COPY';
 import { css } from 'glamor';
 
 const missingFieldsMessage = (fields) => <p>
@@ -48,6 +49,12 @@ export const invalidVeteranCharacters = (searchErrorData) => {
   if (searchErrorData.veteranDateOfBirthInvalid) {
     return <Fragment>
       <p>{INTAKE_VETERAN_DATE_OF_BIRTH_ERROR}</p>
+    </Fragment>;
+  }
+
+  if (searchErrorData.veteranNameSuffixInvalid) {
+    return <Fragment>
+      <p>{INTAKE_VETERAN_NAME_SUFFIX_ERROR}</p>
     </Fragment>;
   }
 
