@@ -121,8 +121,12 @@ class QueueApp extends React.PureComponent {
   );
 
   routedJudgeQueueList = (label) => ({ match }) => (
-    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} userRole={USER_ROLE_TYPES.judge}
-      loadAttorneys={label === 'assign'} >
+    <QueueLoadingScreen
+      {...this.propsForQueueLoadingScreen()}
+      match={match}
+      userRole={USER_ROLE_TYPES.judge}
+      loadAttorneys={label === 'assign'}
+    >
       {label === 'assign' ? (
         <JudgeAssignTaskListView {...this.props} match={match} />
       ) : (
@@ -429,6 +433,12 @@ class QueueApp extends React.PureComponent {
               />
 
               <PageRoute
+                path="/organizations/:organization"
+                title="Organization Queue | Caseflow"
+                render={this.routedOrganization}
+              />
+
+              <PageRoute
                 path="/team_management"
                 title="Team Management | Caseflow"
                 render={this.routedTeamManagement}
@@ -602,16 +612,12 @@ class QueueApp extends React.PureComponent {
                 title="Change Task Type | Caseflow"
                 render={this.routedChangeTaskTypeModal}
               />
+
               <Route
                 path="/organizations/:organization/modal/bulk_assign_tasks"
                 render={this.routedBulkAssignTaskModal}
               />
-              <PageRoute
-                exact
-                path={['/organizations/:organization', '/organizations/:organization/modal/:modalType']}
-                title="Organization Queue | Caseflow"
-                render={this.routedOrganization}
-              />
+
               <PageRoute
                 exact
                 path="/organizations/:organization/users"
