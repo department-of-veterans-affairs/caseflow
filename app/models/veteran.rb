@@ -171,7 +171,8 @@ class Veteran < CaseflowRecord
 
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
-    zip_code = @zip_code || (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
+    zip_code = bgs_record&.[](:zip_code)
+    zip_code ||= (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
 
     # Write to cache for research purposes. Will remove!
     # See:
@@ -182,7 +183,7 @@ class Veteran < CaseflowRecord
   end
 
   def state
-    state = @state
+    state = bgs_record&.[](:state)
 
     # Write to cache for research purposes. Will remove!
     # See:
@@ -193,7 +194,7 @@ class Veteran < CaseflowRecord
   end
 
   def country
-    country = @country
+    country = bgs_record&.[](:country)
 
     # Write to cache for research purposes. Will remove!
     # See:

@@ -25,7 +25,7 @@ class BgsAddressService
   end
 
   def zip
-    zip_code = @zip
+    zip_code = bgs_record&.[](:zip)
 
     # Write to cache for research purposes. Will remove!
     # See:
@@ -36,7 +36,7 @@ class BgsAddressService
   end
 
   def state
-    state = @state
+    state = bgs_record&.[](:state)
 
     # Write to cache for research purposes. Will remove!
     # See:
@@ -47,7 +47,7 @@ class BgsAddressService
   end
 
   def country
-    country = @country
+    country = bgs_record&.[](:country)
 
     # Write to cache for research purposes. Will remove!
     # See:
