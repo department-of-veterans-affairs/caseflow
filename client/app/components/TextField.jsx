@@ -20,7 +20,6 @@ export default class TextField extends React.Component {
       name,
       readOnly,
       required,
-      hideRequired,
       optional,
       type,
       value,
@@ -59,7 +58,7 @@ export default class TextField extends React.Component {
     const labelContents =
       <span>
         {label || name}
-        {required && !hideRequired && <span className="cf-required">Required</span>}
+        {required && <span className="cf-required">Required</span>}
         {optional && <span className="cf-optional">Optional</span>}
       </span>;
 
@@ -109,7 +108,6 @@ export default class TextField extends React.Component {
 
 TextField.defaultProps = {
   required: false,
-  hideRequired: false,
   optional: false,
   useAriaLabel: false,
   type: 'text',
@@ -148,7 +146,6 @@ TextField.propTypes = {
   readOnly: PropTypes.bool,
   fixedInput: PropTypes.bool,
   required: PropTypes.bool.isRequired,
-  hideRequired: PropTypes.bool,
   optional: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,

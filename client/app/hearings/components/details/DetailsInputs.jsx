@@ -39,7 +39,6 @@ const EmailSection = (
         name="Veteran Email for Notifications"
         value={virtualHearing.veteranEmail}
         required
-        hideRequired
         strongLabel
         className={[classnames('cf-form-textinput', 'cf-inline-field')]}
         readOnly={readOnlyEmails}
