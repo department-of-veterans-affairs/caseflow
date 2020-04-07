@@ -324,9 +324,9 @@ describe ClaimReview, :postgres do
   context "#serialized_ratings" do
     let(:ratings) do
       [
-        Generators::Rating.build(promulgation_date: Time.zone.today - 30),
-        Generators::Rating.build(promulgation_date: Time.zone.today - 60, issues: [], decisions: decisions),
-        Generators::Rating.build(promulgation_date: Time.zone.today - 400)
+        Generators::PromulgatedRating.build(promulgation_date: Time.zone.today - 30),
+        Generators::PromulgatedRating.build(promulgation_date: Time.zone.today - 60, issues: [], decisions: decisions),
+        Generators::PromulgatedRating.build(promulgation_date: Time.zone.today - 400)
       ]
     end
 
