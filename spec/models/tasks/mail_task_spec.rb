@@ -238,7 +238,7 @@ describe MailTask, :postgres do
     context "for an AppealWithdrawalMailTask" do
       let(:task_class) { AppealWithdrawalMailTask }
 
-      it "should always route to BVA Intake" do
+      it "should always route to Case Review" do
         expect(subject).to eq(CaseReview.singleton)
       end
     end
