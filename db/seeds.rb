@@ -56,8 +56,8 @@ class SeedDB
     User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
     dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "Geoffrey BVADispatchAdmin_NoCases Black")
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
-    bva_intake_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim BVAIntakeAdmin Blue")
-    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+    case_review_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
+    OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
     special_case_movement_user = User.create(css_id: "BVARDUNKLE",
                                              station_id: 101,
                                              full_name: "Rosalie SpecialCaseMovement Dunkle")

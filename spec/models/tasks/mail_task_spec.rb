@@ -239,7 +239,7 @@ describe MailTask, :postgres do
       let(:task_class) { AppealWithdrawalMailTask }
 
       it "should always route to BVA Intake" do
-        expect(subject).to eq(BvaIntake.singleton)
+        expect(subject).to eq(CaseReview.singleton)
       end
     end
 
