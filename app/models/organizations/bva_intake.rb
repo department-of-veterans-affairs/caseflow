@@ -11,6 +11,7 @@ class BvaIntake < Organization
 
     # temporary function to split the original mistake where the org Case Review was
     # referred to as BvaIntake. Can be removed after the production database is up to date.
+    # :nocov:
     def find_and_update_incorrect_bva_intake
       # check if the mismatch exists; if not default back to BvaIntake.first
       case_review_misnamed = Organization.find_by(name: "Case Review", type: "BvaIntake")
