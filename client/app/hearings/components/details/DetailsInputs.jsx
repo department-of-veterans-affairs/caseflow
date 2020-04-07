@@ -165,7 +165,6 @@ const DetailsInputs = (props) => {
     readOnly,
     requestType,
     transcription,
-    update,
     updateHearing,
     updateTranscription,
     updateVirtualHearing,
@@ -182,19 +181,19 @@ const DetailsInputs = (props) => {
           name="judgeDropdown"
           value={hearing?.judgeId}
           readOnly={readOnly}
-          onChange={(judgeId) => update({ judgeId })}
+          onChange={(judgeId) => updateHearing({ judgeId })}
         />
         <HearingCoordinatorDropdown
           name="hearingCoordinatorDropdown"
           value={hearing?.bvaPoc}
           readOnly={readOnly}
-          onChange={(bvaPoc) => update({ bvaPoc })}
+          onChange={(bvaPoc) => updateHearing({ bvaPoc })}
         />
         <HearingRoomDropdown
           name="hearingRoomDropdown"
           value={hearing?.room}
           readOnly={readOnly}
-          onChange={(room) => update({ room })}
+          onChange={(room) => updateHearing({ room })}
         />
       </div>
       {enableVirtualHearings &&
@@ -241,7 +240,7 @@ const DetailsInputs = (props) => {
             name="evidenceWindowWaived"
             disabled={readOnly}
             value={hearing?.evidenceWindowWaived || false}
-            onChange={(evidenceWindowWaived) => update({ evidenceWindowWaived })}
+            onChange={(evidenceWindowWaived) => updateHearing({ evidenceWindowWaived })}
           />
         </div>
       }
@@ -252,7 +251,7 @@ const DetailsInputs = (props) => {
         styling={css({ display: 'block', maxWidth: '100%' })}
         disabled={readOnly}
         value={hearing?.notes || ''}
-        onChange={(notes) => update({ notes })}
+        onChange={(notes) => updateHearing({ notes })}
       />
       {!isLegacy &&
         <TranscriptionSection
@@ -276,7 +275,6 @@ DetailsInputs.propTypes = {
     bvaPoc: PropTypes.string,
     scheduledForIsPast: PropTypes.bool
   }),
-  update: PropTypes.func,
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,
   isLegacy: PropTypes.bool,
