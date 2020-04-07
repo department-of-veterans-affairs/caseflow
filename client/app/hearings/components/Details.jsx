@@ -208,16 +208,16 @@ class HearingDetails extends React.Component {
 
         if (alerts) {
           const {
-            hearing,
-            virtual_hearing: virtualHearing
+            hearing: hearingAlerts,
+            virtual_hearing: virtualHearingAlerts
           } = alerts;
 
-          if (hearing) {
-            this.props.onReceiveAlerts(hearing);
+          if (hearingAlerts) {
+            this.props.onReceiveAlerts(hearingAlerts);
           }
 
-          if (!_.isEmpty(virtualHearing)) {
-            this.props.onReceiveTransitioningAlert(virtualHearing, 'virtualHearing');
+          if (!_.isEmpty(virtualHearingAlerts)) {
+            this.props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
             this.setState({ startPolling: true });
           }
         }
