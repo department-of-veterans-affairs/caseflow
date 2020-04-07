@@ -1,9 +1,10 @@
 # Storing information about virtual hearings emails
 **Drafter**: Tomas Apodaca
+
 **Date**: April 6th, 2020
 
 ## Context
-This tech spec proposes the back end changes necessary to store data for the feature described in #13370, "Display more info about sent Virtual Hearings emails". Hearing Coordinators need to see a history of the virtual hearing notification emails that Caseflow has sent, so that they can respond to inquiries and troubleshoot any issues. 
+This tech spec proposes the back end changes necessary to store data for the feature described in [#13370](https://github.com/department-of-veterans-affairs/caseflow/issues/13370), "Display more info about sent Virtual Hearings emails". Hearing Coordinators need to see a history of the virtual hearing notification emails that Caseflow has sent, so that they can respond to inquiries and troubleshoot any issues.
 
 ## Approach
 The spirit of the feature is to provide users a reliable record that they can use to reconstruct a history of the actions Caseflow has taken on their behalf. To fulfill that need, the approach described in this document stores enough information to give a future-proof record of sent emails.
@@ -31,7 +32,7 @@ We'll create a new model `SentHearingEmailRecords` and its corresponding table: 
 
 New records will probably be created in the `VirtualHearings::SendEmail` job when we successfully initiate the sending of an email. We may need to provide additional context to the job to accomplish this.
 
-We can use these records to create a record of the sent email like so:
+We can use these records to display information about a sent email like so:
 
 **Sent To** _The field label of the email input field, either "Veteran Email" or "POA/Representative Email" or "VLJ Email"_
 
