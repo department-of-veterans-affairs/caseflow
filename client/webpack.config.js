@@ -12,9 +12,7 @@ const config = {
     sourceMapFilename: 'sourcemap-[file].map',
     path: path.join(__dirname, '../app/assets/javascripts')
   },
-  plugins: _.compact([
-    new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })
-  ]),
+  plugins: _.compact([new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })]),
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
     alias: {
@@ -27,9 +25,7 @@ const config = {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: new RegExp(
-          'node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'
-        ),
+        exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'),
         use: [
           {
             loader: 'babel-loader'
@@ -39,8 +35,7 @@ const config = {
       {
         test: /\.(ttf|eot|woff|woff2)$/,
         use: {
-          loader:
-            'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
+          loader: 'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
         }
       },
       {
@@ -102,8 +97,20 @@ const config = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
+        use: ['url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/']
+      },
+      {
+        test: /\.(pdf)$/,
         use: [
-          'url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 1024,
+              name: 'documents/[name]-[hash].[ext]',
+              outputPath: '../../../public/',
+              publicPath: '/'
+            }
+          }
         ]
       }
     ]

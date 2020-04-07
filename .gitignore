@@ -50,6 +50,7 @@ storybook-static/
 /public/assets/*
 /public/fonts/*
 /public/images/*
+/public/documents/*
 
 # Oracle instant client
 ci-bin/circle_docker_container/instant*

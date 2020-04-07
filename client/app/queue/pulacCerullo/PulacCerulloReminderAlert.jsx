@@ -1,7 +1,7 @@
 import React from 'react';
 import Alert from '../../components/Alert';
-import { chairmanMemoUrl } from '.';
 import { CavcLinkInfo } from './CavcLinkInfo';
+import chairmanMemo from '../../../../app/assets/documents/chairman_memorandum_01-10-18.pdf';
 
 export const PulacCerulloReminderAlert = () => {
   return (
@@ -18,7 +18,7 @@ export const PulacCerulloReminderAlert = () => {
       </p>
       <p>
         See{' '}
-        <a href={chairmanMemoUrl} target="_blank" rel="noopener noreferrer">
+        <a href={chairmanMemo} target="_blank" rel="noopener noreferrer">
           Chairman's Memorandum No. 01-10-18
         </a>{' '}
         for more information about how to conduct NOA checks.
