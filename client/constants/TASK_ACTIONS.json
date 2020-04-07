@@ -70,6 +70,11 @@
     "value": "modal/cancel_task",
     "func": "cancel_foreign_veterans_case_data"
   },
+  "CANCEL_AND_RETURN_TASK": {
+    "label": "Cancel task and return to judge",
+    "value": "modal/cancel_task",
+    "func": "cancel_task_data"
+  },
   "CANCEL_TASK": {
     "label": "Cancel task",
     "value": "modal/cancel_task",

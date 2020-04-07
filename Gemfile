@@ -47,7 +47,7 @@ gem "puma", "~> 3.12.4"
 # rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
 # Explicitly define rack version here to avoid that.
 gem "rack", "~> 2.0.6"
-gem "rails", "5.2.4.1"
+gem "rails", "5.2.4.2"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -108,6 +108,7 @@ group :test, :development, :demo do
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
+  gem "test-prof"
   gem "timecop"
   gem "webdrivers"
 end

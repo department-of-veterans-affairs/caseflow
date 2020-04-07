@@ -1,14 +1,11 @@
-import _ from 'lodash';
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
-import { applyCommonReducers } from './common';
-import { formatRequestIssues, formatContestableIssues } from '../util/issues';
+import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import {
   convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
   getClaimantError,
   getPageError,
-  formatRelationships,
   getDefaultPayeeCode
 } from '../util';
 import { update } from '../../util/ReducerUtil';
@@ -18,79 +15,17 @@ const updateFromServerIntake = (state, serverIntake) => {
     return state;
   }
 
-  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
-
+  const commonState = commonStateFromServerIntake(serverIntake);
   return update(state, {
-    isStarted: {
-      $set: Boolean(serverIntake.id)
-    },
+    ...commonState,
     informalConference: {
       $set: serverIntake.informal_conference
     },
     sameOffice: {
       $set: serverIntake.same_office
     },
-    receiptDate: {
-      $set: serverIntake.receipt_date
-    },
     benefitType: {
       $set: serverIntake.benefit_type
-    },
-    veteranIsNotClaimant: {
-      $set: serverIntake.veteran_is_not_claimant
-    },
-    claimant: {
-      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
-    },
-    payeeCode: {
-      $set: serverIntake.payeeCode
-    },
-    processedInCaseflow: {
-      $set: serverIntake.processed_in_caseflow
-    },
-    legacyOptInApproved: {
-      $set: serverIntake.legacy_opt_in_approved
-    },
-    legacyAppeals: {
-      $set: serverIntake.legacyAppeals
-    },
-    isReviewed: {
-      $set: Boolean(serverIntake.receipt_date)
-    },
-    contestableIssues: {
-      $set: contestableIssues
-    },
-    activeNonratingRequestIssues: {
-      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
-    },
-    requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
-    },
-    isComplete: {
-      $set: Boolean(serverIntake.completed_at)
-    },
-    relationships: {
-      $set: formatRelationships(serverIntake.relationships)
-    },
-    intakeUser: {
-      $set: serverIntake.intakeUser
-    },
-    asyncJobUrl: {
-      $set: serverIntake.asyncJobUrl
-    },
-    processedAt: {
-      $set: serverIntake.processedAt
-    },
-    veteranValid: {
-      $set: serverIntake.veteranValid
-    },
-    veteranInvalidFields: {
-      $set: {
-        veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
-        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
-        veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_fields,
-        veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_fields
-      }
     }
   });
 };

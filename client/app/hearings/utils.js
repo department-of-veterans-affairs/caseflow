@@ -1,6 +1,9 @@
+import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
 import _ from 'lodash';
+
+import ExponentialPolling from '../components/ExponentialPolling';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -86,9 +89,6 @@ export const filterPriorIssues = (issues) =>
 export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
 
-export const virtualHearingRoleForUser = (user, hearing) =>
-  user.userCanAssignHearingSchedule || user.userId === hearing.judgeId ? VIRTUAL_HEARING_HOST : VIRTUAL_HEARING_GUEST;
-
 /**
  * Method to override falsy values for comparison
  * @param {*} init -- Initial value to compare against
@@ -136,3 +136,18 @@ export const handleEdit = (init, current, fields) => {
     };
   }, {});
 };
+
+export const virtualHearingRoleForUser = (user, hearing) =>
+  user.userCanAssignHearingSchedule || user.userId === hearing.judgeId ? VIRTUAL_HEARING_HOST : VIRTUAL_HEARING_GUEST;
+
+export const pollVirtualHearingData = (hearingId, onSuccess) => (
+  // Did not specify retryCount so if api call fails, it'll stop polling.
+  // If need to retry on failure, pass in retryCount
+  <ExponentialPolling
+    method="GET"
+    interval={1000}
+    onSuccess={onSuccess}
+    render={() => null}
+    url={`/hearings/${hearingId}/virtual_hearing_job_status`}
+  />
+);

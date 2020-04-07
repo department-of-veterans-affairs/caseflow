@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
-class VirtualHearings::DeleteConferencesJob < ApplicationJob
-  include VirtualHearings::PexipClient
-
+class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
-
-  APP_NAME = "caseflow_job"
 
   def perform
     count_deleted_and_log(VirtualHearingRepository.ready_for_deletion) do |virtual_hearing|
@@ -23,13 +19,6 @@ class VirtualHearings::DeleteConferencesJob < ApplicationJob
   end
 
   private
-
-  def datadog_metric_info
-    {
-      app_name: APP_NAME,
-      metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
-    }
-  end
 
   def count_deleted_and_log(enumerable)
     failed = removed = 0

@@ -91,7 +91,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
       UpdateCachedAppealsAttributesJob.perform_now
 
-      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. Fatal error: #{error_msg}"
+      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. See Sentry for error"
 
       expect(slack_msg).to match(/#{expected_msg}/)
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_26_141733) do
+ActiveRecord::Schema.define(version: 2020_04_05_223053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -195,8 +195,16 @@ ActiveRecord::Schema.define(version: 2020_03_26_141733) do
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
+    t.index ["case_type"], name: "index_cached_appeal_attributes_on_case_type"
+    t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
+    t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
+    t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
+    t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
+    t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
     t.index ["updated_at"], name: "index_cached_appeal_attributes_on_updated_at"
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
+    t.index ["veteran_name"], name: "index_cached_appeal_attributes_on_veteran_name"
   end
 
   create_table "cached_user_attributes", id: false, comment: "VACOLS cached staff table attributes", force: :cascade do |t|
@@ -1043,6 +1051,7 @@ ActiveRecord::Schema.define(version: 2020_03_26_141733) do
     t.string "contested_rating_issue_reference_id", comment: "If the contested issue is a rating issue, this is the rating issue's reference id. Will be nil if this request issue contests a decision issue."
     t.integer "corrected_by_request_issue_id", comment: "If this request issue has been corrected, the ID of the new correction request issue. This is needed for EP 930."
     t.string "correction_type", comment: "EP 930 correction type. Allowed values: control, local_quality_error, national_quality_error where 'control' is a regular correction, 'local_quality_error' was found after the fact by a local quality review team, and 'national_quality_error' was similarly found by a national quality review team. This is needed for EP 930."
+    t.boolean "covid_timeliness_exempt", comment: "If a veteran requests a timeliness exemption that is related to COVID-19, this is captured when adding a Request Issue and available for reporting."
     t.datetime "created_at", comment: "Automatic timestamp when row was created"
     t.date "decision_date", comment: "Either the rating issue's promulgation date, the decision issue's approx decision date or the decision date entered by the user (for nonrating and unidentified issues)"
     t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
@@ -1121,6 +1130,9 @@ ActiveRecord::Schema.define(version: 2020_03_26_141733) do
   create_table "special_issue_lists", force: :cascade do |t|
     t.bigint "appeal_id"
     t.string "appeal_type"
+    t.boolean "blue_water", default: false, comment: "Blue Water"
+    t.boolean "burn_pit", default: false, comment: "Burn Pit"
+    t.boolean "cavc", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
@@ -1133,8 +1145,10 @@ ActiveRecord::Schema.define(version: 2020_03_26_141733) do
     t.boolean "incarcerated_veterans", default: false
     t.boolean "insurance", default: false
     t.boolean "manlincon_compliance", default: false
+    t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
+    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
