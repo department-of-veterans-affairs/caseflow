@@ -261,7 +261,12 @@ class QueueApp extends React.PureComponent {
     return <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
   };
 
-  routedBulkAssignTaskModal = (props) => <BulkAssignModal {...props} />;
+  routedBulkAssignTaskModal = (props) => {
+    const { match } = props;
+    const pageRoute = match.path.replace('modal/bulk_assign_tasks', '');
+
+    return <BulkAssignModal {...props} onCancel={() => props.history.push(pageRoute)} />;
+  };
 
   routedOrganization = (props) => {
     const {
