@@ -8,8 +8,9 @@ class CreateBgsPowerOfAttorneys < ActiveRecord::Migration[5.2]
       t.string "legacy_poa_cd", comment: "Legacy POA code"
       t.string "representative_name", null: false, comment: "POA name"
       t.string "representative_type", null: false, comment: "POA type"
-      t.string "poa_participant_id", null: false, comment: "POA participant ID"
-      t.string "claimant_participant_id", null: false, comment: "Claimant participant ID -- use as FK to claimants and people tables"
+      t.string "poa_participant_id", null: false, comment: "POA participant ID -- use as FK to people"
+      t.string "claimant_participant_id", null: false, comment: "Claimant participant ID -- use as FK to claimants"
+      t.string "file_number", null: false, comment: "Claimant file number"
 
       t.index ["claimant_participant_id"], unique: true
       t.index ["created_at"]
@@ -18,6 +19,7 @@ class CreateBgsPowerOfAttorneys < ActiveRecord::Migration[5.2]
       t.index ["representative_name"]
       t.index ["representative_type"]
       t.index ["poa_participant_id"]
+      t.index ["file_number"]
     end
   end
 end
