@@ -831,4 +831,18 @@ describe Veteran, :all_dbs do
       it { is_expected.to eq(true) }
     end
   end
+
+  context "#zip_code" do
+    subject do
+      veteran.zip_code
+    end
+
+    it { is_expected.to eq("94117") }
+
+    it "calls Rails.write.cache" do
+      expect(Rails.cache).to receive(:write).with(any_args)
+      expect(Rails.cache).to receive(:write).with("person-zip-94117", true).once
+      subject
+    end
+  end
 end

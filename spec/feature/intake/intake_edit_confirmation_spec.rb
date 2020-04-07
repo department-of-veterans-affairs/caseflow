@@ -12,7 +12,7 @@ feature "Intake Edit Confirmation", :postgres do
   describe "when editing a decision review" do
     let(:veteran) { create(:veteran) }
     let!(:rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: decision_review.veteran.participant_id,
         profile_date: decision_review.receipt_date - 1.month,
         promulgation_date: decision_review.receipt_date - 2.months,
