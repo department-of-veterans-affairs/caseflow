@@ -21,31 +21,44 @@ const alertStyling = css({
   marginBottom: '30px'
 });
 
-const Alerts = ({
-  displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket, dailyDocketServerError
-}) => (
+const Alerts = ({ displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket, dailyDocketServerError }) => (
   <React.Fragment>
     <UserAlerts />
-    {displayLockSuccessMessage &&
-      <Alert type="success"
+    {displayLockSuccessMessage && (
+      <Alert
+        type="success"
         styling={alertStyling}
-        title={dailyDocket.lock ? 'You have successfully locked this Hearing ' +
-          'Day' : 'You have successfully unlocked this Hearing Day'}
-        message={dailyDocket.lock ? 'You cannot add more veterans to this hearing day, ' +
-          'but you can edit existing entries' : 'You can now add more veterans to this hearing day'} />}
+        title={
+          dailyDocket.lock ?
+            'You have successfully locked this Hearing ' + 'Day' :
+            'You have successfully unlocked this Hearing Day'
+        }
+        message={
+          dailyDocket.lock ?
+            'You cannot add more veterans to this hearing day, ' + 'but you can edit existing entries' :
+            'You can now add more veterans to this hearing day'
+        }
+      />
+    )}
 
-    {dailyDocketServerError &&
-      <Alert type="error"
+    {dailyDocketServerError && (
+      <Alert
+        type="error"
         styling={alertStyling}
         title=" This save was unsuccessful."
-        message="Please refresh the page and try again." />}
+        message="Please refresh the page and try again."
+      />
+    )}
 
-    {onErrorHearingDayLock &&
-      <Alert type="error"
+    {onErrorHearingDayLock && (
+      <Alert
+        type="error"
         styling={alertStyling}
         title={`VACOLS Hearing Day ${moment(dailyDocket.scheduledFor).format('M/DD/YYYY')}
            cannot be locked in Caseflow.`}
-        message="VACOLS Hearing Day cannot be locked" />}
+        message="VACOLS Hearing Day cannot be locked"
+      />
+    )}
   </React.Fragment>
 );
 
@@ -61,7 +74,7 @@ Alerts.propTypes = {
 };
 
 export default class DailyDocket extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -99,26 +112,23 @@ export default class DailyDocket extends React.Component {
         }
       }
     });
-  }
+  };
 
   closeDispositionModal = () => {
     this.setState({ editedDispositionModalProps: null });
-  }
+  };
 
   navigateToPrintAllPage = () => {
     const hearingIds = this.dailyDocketHearings().map((hearing) => hearing.externalId);
-    const queryString = encodeQueryParams(
-      {
-        hearing_ids: hearingIds.join(','),
-        keep_open: true
-      }
-    );
+    const queryString = encodeQueryParams({
+      hearing_ids: hearingIds.join(','),
+      keep_open: true
+    });
 
     navigateToPrintPage(`/hearings/worksheet/print${queryString}`);
-  }
+  };
 
   render() {
-
     const regionalOffice = this.getRegionalOffice();
     const docketHearings = this.dailyDocketHearings();
     const prevHearings = this.previouslyScheduledHearings();
@@ -127,105 +137,124 @@ export default class DailyDocket extends React.Component {
     const hasPrevHearings = !_.isEmpty(prevHearings);
 
     const {
-      dailyDocket, onCancelRemoveHearingDay, onClickRemoveHearingDay, displayRemoveHearingDayModal,
-      displayLockModal, openModal, deleteHearingDay, updateLockHearingDay, onCancelDisplayLockModal,
+      dailyDocket,
+      onCancelRemoveHearingDay,
+      onClickRemoveHearingDay,
+      displayRemoveHearingDayModal,
+      displayLockModal,
+      openModal,
+      deleteHearingDay,
+      updateLockHearingDay,
+      onCancelDisplayLockModal,
       user
     } = this.props;
 
     const { editedDispositionModalProps } = this.state;
 
-    return <AppSegment filledBackground>
+    return (
+      <AppSegment filledBackground>
+        {editedDispositionModalProps && <DispositionModal {...this.state.editedDispositionModalProps} />}
 
-      {editedDispositionModalProps &&
-        <DispositionModal
-          {...this.state.editedDispositionModalProps} />}
-
-      {displayRemoveHearingDayModal &&
-        <RemoveHearingModal dailyDocket={dailyDocket}
-          onCancelRemoveHearingDay={onCancelRemoveHearingDay}
-          onClickRemoveHearingDay={onClickRemoveHearingDay}
-          deleteHearingDay={deleteHearingDay} />}
-
-      {displayLockModal &&
-        <LockModal
-          dailyDocket={dailyDocket}
-          updateLockHearingDay={updateLockHearingDay}
-          onCancelDisplayLockModal={onCancelDisplayLockModal} />}
-
-      <Alerts
-        dailyDocket={dailyDocket}
-        saveSuccessful={this.props.saveSuccessful}
-        displayLockSuccessMessage={this.props.displayLockSuccessMessage}
-        dailyDocketServerError={this.props.dailyDocketServerError}
-        onErrorHearingDayLock={this.props.onErrorHearingDayLock} />
-
-      <div className="cf-app-segment">
-        <div className="cf-push-left">
-          <DailyDocketEditLinks
+        {displayRemoveHearingDayModal && (
+          <RemoveHearingModal
             dailyDocket={dailyDocket}
-            hearings={docketHearings.concat(prevHearings)}
-            user={user}
-            openModal={openModal}
-            onDisplayLockModal={this.props.onDisplayLockModal}
-            onClickRemoveHearingDay={this.props.onClickRemoveHearingDay} />
-        </div>
-        <div className="cf-push-right">
-          VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName} <br />
-          Coordinator: {dailyDocket.bvaPoc} <br />
-          Hearing type: {dailyDocket.readableRequestType} <br />
-          Regional office: {dailyDocket.regionalOffice}<br />
-          Room number: {dailyDocket.room}
-        </div>
-      </div>
+            onCancelRemoveHearingDay={onCancelRemoveHearingDay}
+            onClickRemoveHearingDay={onClickRemoveHearingDay}
+            deleteHearingDay={deleteHearingDay}
+          />
+        )}
 
-      <div className="cf-app-segment">
-        <div className="cf-push-left">
-          <Button onClick={() => navigateToPrintPage()}>
-            Download & Print Page
-          </Button>
+        {displayLockModal && (
+          <LockModal
+            dailyDocket={dailyDocket}
+            updateLockHearingDay={updateLockHearingDay}
+            onCancelDisplayLockModal={onCancelDisplayLockModal}
+          />
+        )}
+
+        <Alerts
+          dailyDocket={dailyDocket}
+          saveSuccessful={this.props.saveSuccessful}
+          displayLockSuccessMessage={this.props.displayLockSuccessMessage}
+          dailyDocketServerError={this.props.dailyDocketServerError}
+          onErrorHearingDayLock={this.props.onErrorHearingDayLock}
+        />
+
+        <div className="cf-app-segment">
+          <div className="cf-push-left">
+            <DailyDocketEditLinks
+              dailyDocket={dailyDocket}
+              hearings={docketHearings.concat(prevHearings)}
+              user={user}
+              openModal={openModal}
+              onDisplayLockModal={this.props.onDisplayLockModal}
+              onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
+            />
+          </div>
+          <div className="cf-push-right">
+            VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName} <br />
+            Coordinator: {dailyDocket.bvaPoc} <br />
+            Hearing type: {dailyDocket.readableRequestType} <br />
+            Regional office: {dailyDocket.regionalOffice}
+            <br />
+            Room number: {dailyDocket.room}
+          </div>
         </div>
-        <div className="cf-push-right">
-          {
-            user.userHasHearingPrepRole &&
-            <Button
-              classNames={['usa-button-secondary']}
-              onClick={this.navigateToPrintAllPage}
-              disabled={_.isEmpty(docketHearings)}
-            >
-              Print all Hearing Worksheets
-            </Button>
-          }
+
+        <div className="cf-app-segment">
+          <div className="cf-push-left">
+            <Button onClick={() => navigateToPrintPage()}>Download & Print Page</Button>
+          </div>
+          <div className="cf-push-right">
+            {user.userHasHearingPrepRole && (
+              <Button
+                classNames={['usa-button-secondary']}
+                onClick={this.navigateToPrintAllPage}
+                disabled={_.isEmpty(docketHearings)}
+              >
+                Print all Hearing Worksheets
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
 
-      <DailyDocketRows
-        hearings={this.props.hearings}
-        hidePreviouslyScheduled
-        readOnly={user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule}
-        saveHearing={this.props.saveHearing}
-        openDispositionModal={this.openDispositionModal}
-        regionalOffice={regionalOffice}
-        user={user} />
+        <DailyDocketRows
+          hearings={this.props.hearings}
+          hidePreviouslyScheduled
+          readOnly={user.userCanViewHearingSchedule || user.userCanVsoHearingSchedule}
+          saveHearing={this.props.saveHearing}
+          openDispositionModal={this.openDispositionModal}
+          regionalOffice={regionalOffice}
+          user={user}
+        />
 
-      {!hasDocketHearings &&
-        <div {...css({ marginTop: '75px' })}>
-          <StatusMessage
-            title={user.userHasHearingPrepRole ? COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS :
-              COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS}
-            type="status" />
-        </div>}
+        {!hasDocketHearings && (
+          <div {...css({ marginTop: '75px' })}>
+            <StatusMessage
+              title={
+                user.userHasHearingPrepRole ?
+                  COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS :
+                  COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS
+              }
+              type="status"
+            />
+          </div>
+        )}
 
-      {hasPrevHearings &&
-        <div {...css({ marginTop: '75px' })}>
-          <h1>Previously Scheduled</h1>
-          <DailyDocketRows
-            hidePreviouslyScheduled={false}
-            hearings={prevHearings}
-            regionalOffice={regionalOffice}
-            user={user}
-            readOnly />
-        </div>}
-    </AppSegment>;
+        {hasPrevHearings && (
+          <div {...css({ marginTop: '75px' })}>
+            <h1>Previously Scheduled</h1>
+            <DailyDocketRows
+              hidePreviouslyScheduled={false}
+              hearings={prevHearings}
+              regionalOffice={regionalOffice}
+              user={user}
+              readOnly
+            />
+          </div>
+        )}
+      </AppSegment>
+    );
   }
 }
 

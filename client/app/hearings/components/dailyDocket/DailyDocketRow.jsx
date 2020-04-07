@@ -10,7 +10,7 @@ import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
 import PropTypes from 'prop-types';
-import { deepDiff, isPreviouslyScheduledHearing } from '../../utils';
+import { deepDiff, isPreviouslyScheduledHearing, handleEdit } from '../../utils';
 
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
@@ -67,13 +67,20 @@ class DailyDocketRow extends React.Component {
       },
       aodModalActive: false,
       edited: false,
+      editedFields: [],
       virtualHearingModalActive: false
     };
   }
 
   update = (values) => {
+    // Determine whether the form has been edited and which fields
+    const { edited, editedFields } = handleEdit(this.state.initialState, values, this.state.editedFields)
+
+    // Update the state with the new values
     this.props.update(values);
-    this.setState({ edited: true });
+
+    // Set the edited value based on a change in initial state
+    this.setState({ edited: edited || editedFields.length > 0, editedFields });
   }
 
   openAodModal = () => {
@@ -113,6 +120,7 @@ class DailyDocketRow extends React.Component {
     this.props.update(this.state.initialState);
     this.setState({
       edited: false,
+      editedFields: [],
       invalid: {
         advanceOnDocketMotionReason: false
       }
@@ -166,6 +174,7 @@ class DailyDocketRow extends React.Component {
         if (success) {
           this.setState({
             initialState: { ...this.props.hearing },
+            editedFields: [],
             edited: false
           });
         }
@@ -183,7 +192,11 @@ class DailyDocketRow extends React.Component {
       then(() => {
         this.update(hearingWithDisp);
         if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
-          this.setState({ initialState: hearingWithDisp });
+          this.setState({
+            initialState: hearingWithDisp,
+            editedFields: [],
+            edited: false
+          });
         }
       });
   };
@@ -282,7 +295,7 @@ class DailyDocketRow extends React.Component {
     );
   }
 
-  render () {
+  render() {
     const { hearing, user, index, readOnly, hidePreviouslyScheduled } = this.props;
 
     const hide = (isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled) ? 'hide ' : '';
@@ -309,7 +322,7 @@ class DailyDocketRow extends React.Component {
           virtualHearing={hearing.virtualHearing || {}} reset={() => {
             this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });
             this.closeVirtualHearingModal()
-            ;
+              ;
           }} user={user}
           update={this.updateVirtualHearing}
           submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
