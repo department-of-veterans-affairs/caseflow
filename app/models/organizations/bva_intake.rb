@@ -4,7 +4,7 @@ class BvaIntake < Organization
   class << self
     def singleton
       # after the production database is correct, replace the tmp function with BvaIntake.first
-      find_and_update_incorrect_bva_intake || BvaIntake.create(name: "Bva Intake", url: "bva-intake")
+      find_and_update_incorrect_bva_intake || BvaIntake.create(name: "BVA Intake", url: "bva-intake")
     end
 
     private
