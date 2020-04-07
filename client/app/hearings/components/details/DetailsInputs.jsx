@@ -73,83 +73,110 @@ EmailSection.propTypes = {
   updateVirtualHearing: PropTypes.func
 };
 
-// Displays the virtual hearing link and label.
-const VirtualLinkSection = ({ hearing, virtualHearing, isVirtual }) => {
+// Displays the virtual hearing link and emails.
+const VirtualHearingSection = (
+  { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, updateVirtualHearing }
+) => {
+  if (!isVirtual && !wasVirtual) {
+    return null;
+  }
+
   const user = useContext(HearingsUserContext);
   const virtualHearingLabel = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
     COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
     COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
-  if (isVirtual && virtualHearing) {
-    return (
-      <div>
-        <strong>{virtualHearingLabel}</strong>
-        <div {...css({ marginTop: '1.5rem' })}>
-          {virtualHearing?.jobCompleted &&
-            <VirtualHearingLink
-              user={user}
-              hearing={hearing}
-              showFullLink
-              isVirtual={isVirtual}
-              virtualHearing={virtualHearing}
-            />
-          }
-          {!virtualHearing?.jobCompleted &&
-            <span {...css({ color: COLORS.GREY_MEDIUM })}>
-              {COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}
-            </span>
-          }
+  return (
+    <React.Fragment>
+      <div className="cf-help-divider" />
+      <h3>{wasVirtual && 'Previous '}Virtual Hearing Details</h3>
+      {isVirtual &&
+        <div>
+          <strong>{virtualHearingLabel}</strong>
+          <div {...css({ marginTop: '1.5rem' })}>
+            {virtualHearing?.jobCompleted &&
+              <VirtualHearingLink
+                user={user}
+                hearing={hearing}
+                showFullLink
+                isVirtual={isVirtual}
+                virtualHearing={virtualHearing}
+              />
+            }
+            {!virtualHearing?.jobCompleted &&
+              <span {...css({ color: COLORS.GREY_MEDIUM })}>
+                {COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}
+              </span>
+            }
+          </div>
         </div>
-      </div>
-    );
-  }
-
-  return null;
+      }
+      <EmailSection
+        hearing={hearing}
+        virtualHearing={virtualHearing}
+        isVirtual={isVirtual}
+        wasVirtual={wasVirtual}
+        readOnly={readOnly}
+        updateVirtualHearing={updateVirtualHearing}
+      />
+    </React.Fragment>
+  );
 };
 
-VirtualLinkSection.propTypes = {
+VirtualHearingSection.propTypes = {
   hearing: PropTypes.object,
+  isVirtual: PropTypes.bool,
+  readOnly: PropTypes.bool,
+  updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
     jobCompleted: PropTypes.bool
   }),
-  isVirtual: PropTypes.bool
+  wasVirtual: PropTypes.bool
 };
 
+// Displays transcriptions fields.
 const TranscriptionSection = (
-  { hearing, updateHearing, transcription, updateTranscription, readOnly }
-) => (
-  <React.Fragment>
-    <div className="cf-help-divider" />
-    <div>
-      <h2>Transcription Details</h2>
-      <TranscriptionDetailsInputs
-        transcription={transcription}
-        update={updateTranscription}
-        readOnly={readOnly}
-      />
-      <div className="cf-help-divider" />
+  { hearing, updateHearing, transcription, updateTranscription, isLegacy, readOnly }
+) => {
+  if (isLegacy) {
+    return null;
+  }
 
-      <h3>Transcription Problem</h3>
-      <TranscriptionProblemInputs
-        transcription={transcription}
-        update={updateTranscription}
-        readOnly={readOnly}
-      />
+  return (
+    <React.Fragment>
       <div className="cf-help-divider" />
+      <div>
+        <h2>Transcription Details</h2>
+        <TranscriptionDetailsInputs
+          transcription={transcription}
+          update={updateTranscription}
+          readOnly={readOnly}
+        />
+        <div className="cf-help-divider" />
 
-      <h3>Transcription Request</h3>
-      <TranscriptionRequestInputs
-        hearing={hearing}
-        update={updateHearing}
-        readOnly={readOnly}
-      />
-      <div className="cf-help-divider" />
-    </div>
-  </React.Fragment>
-);
+        <h3>Transcription Problem</h3>
+        <TranscriptionProblemInputs
+          transcription={transcription}
+          update={updateTranscription}
+          readOnly={readOnly}
+        />
+        <div className="cf-help-divider" />
+
+        <h3>Transcription Request</h3>
+        <TranscriptionRequestInputs
+          hearing={hearing}
+          update={updateHearing}
+          readOnly={readOnly}
+        />
+        <div className="cf-help-divider" />
+      </div>
+    </React.Fragment>
+  );
+};
 
 TranscriptionSection.propTypes = {
   hearing: PropTypes.object,
+  isLegacy: PropTypes.bool,
   readOnly: PropTypes.bool,
   transcription: PropTypes.object,
   updateHearing: PropTypes.func,
@@ -205,44 +232,35 @@ const DetailsInputs = (props) => {
               requestType={requestType}
               updateVirtualHearing={updateVirtualHearing}
               openModal={openVirtualHearingModal}
-              readOnly={hearing?.scheduledForIsPast || (isVirtual && virtualHearing && !virtualHearing.jobCompleted)}
+              readOnly={hearing?.scheduledForIsPast || (isVirtual && !virtualHearing?.jobCompleted)}
               styling={columnThird}
             />
             <div {...columnDoubleSpacer} />
           </div>
         </React.Fragment>
       }
-      {(isVirtual || wasVirtual) &&
+      <VirtualHearingSection
+        hearing={hearing}
+        isVirtual={isVirtual}
+        readOnly={readOnly}
+        updateVirtualHearing={updateVirtualHearing}
+        virtualHearing={virtualHearing}
+        wasVirtual={wasVirtual}
+      />
+      {!isLegacy &&
         <React.Fragment>
           <div className="cf-help-divider" />
-          <h3>{wasVirtual && 'Previous '}Virtual Hearing Details</h3>
-          <VirtualLinkSection
-            hearing={hearing}
-            virtualHearing={virtualHearing}
-            isVirtual={isVirtual}
-          />
-          <EmailSection
-            hearing={hearing}
-            virtualHearing={virtualHearing}
-            isVirtual={isVirtual}
-            wasVirtual={wasVirtual}
-            readOnly={readOnly}
-            updateVirtualHearing={updateVirtualHearing}
-          />
+          <div>
+            <strong>Waive 90 Day Evidence Hold</strong>
+            <Checkbox
+              label="Yes, Waive 90 Day Evidence Hold"
+              name="evidenceWindowWaived"
+              disabled={readOnly}
+              value={hearing?.evidenceWindowWaived || false}
+              onChange={(evidenceWindowWaived) => updateHearing({ evidenceWindowWaived })}
+            />
+          </div>
         </React.Fragment>
-      }
-      <div className="cf-help-divider" />
-      {!isLegacy &&
-        <div>
-          <strong>Waive 90 Day Evidence Hold</strong>
-          <Checkbox
-            label="Yes, Waive 90 Day Evidence Hold"
-            name="evidenceWindowWaived"
-            disabled={readOnly}
-            value={hearing?.evidenceWindowWaived || false}
-            onChange={(evidenceWindowWaived) => updateHearing({ evidenceWindowWaived })}
-          />
-        </div>
       }
       <div className="cf-help-divider" />
       <TextareaField
@@ -253,15 +271,14 @@ const DetailsInputs = (props) => {
         value={hearing?.notes || ''}
         onChange={(notes) => updateHearing({ notes })}
       />
-      {!isLegacy &&
-        <TranscriptionSection
-          hearing={hearing}
-          readOnly={readOnly}
-          transcription={transcription}
-          updateHearing={updateHearing}
-          updateTranscription={updateTranscription}
-        />
-      }
+      <TranscriptionSection
+        hearing={hearing}
+        isLegacy={isLegacy}
+        readOnly={readOnly}
+        transcription={transcription}
+        updateHearing={updateHearing}
+        updateTranscription={updateTranscription}
+      />
     </React.Fragment>
   );
 };
