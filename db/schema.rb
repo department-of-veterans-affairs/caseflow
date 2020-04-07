@@ -166,9 +166,8 @@ ActiveRecord::Schema.define(version: 2020_04_21_231908) do
     t.string "representative_name", null: false, comment: "POA name"
     t.string "representative_type", null: false, comment: "POA type"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.index ["claimant_participant_id"], name: "index_bgs_power_of_attorneys_on_claimant_participant_id", unique: true
+    t.index ["claimant_participant_id", "file_number"], name: "bgs_poa_pid_fn_unique_idx", unique: true
     t.index ["created_at"], name: "index_bgs_power_of_attorneys_on_created_at"
-    t.index ["file_number"], name: "index_bgs_power_of_attorneys_on_file_number"
     t.index ["last_synced_at"], name: "index_bgs_power_of_attorneys_on_last_synced_at"
     t.index ["poa_participant_id"], name: "index_bgs_power_of_attorneys_on_poa_participant_id"
     t.index ["representative_name"], name: "index_bgs_power_of_attorneys_on_representative_name"
