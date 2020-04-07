@@ -168,14 +168,22 @@ class DailyDocketRow extends React.Component {
 
     return this.props.saveHearing(this.props.hearing.externalId, hearing).
       then((response) => {
-        const alerts = response.body.alerts;
+        const alerts = response.body?.alerts;
 
-        if (alerts.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
-        }
-        if (!_.isEmpty(alerts.virtual_hearing)) {
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
-          this.setState({ startPolling: true });
+        if (alerts) {
+          const {
+            hearing,
+            virtual_hearing: virtualHearing
+          } = alerts;
+
+          if (hearing) {
+            this.props.onReceiveAlerts(hearing);
+          }
+
+          if (!_.isEmpty(virtualHearing)) {
+            this.props.onReceiveTransitioningAlert(virtualHearing, 'virtualHearing');
+            this.setState({ startPolling: true });
+          }
         }
 
         this.setState({

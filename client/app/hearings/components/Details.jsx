@@ -189,9 +189,8 @@ class HearingDetails extends React.Component {
     return ApiUtil.patch(`/hearings/${externalId}`, {
       data: ApiUtil.convertToSnakeCase(data)
     }).then((response) => {
-
       const hearing = ApiUtil.convertToCamelCase(response.body.data);
-      const alerts = response.body.alerts;
+      const alerts = response.body?.alerts;
 
       this.setState({
         updated: false,
@@ -203,18 +202,24 @@ class HearingDetails extends React.Component {
       this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
 
-        this.setState({
-          initialFormData
-        });
+        this.setState({ initialFormData });
 
         this.updateAllFormData(initialFormData);
-        if (alerts.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
-        }
-        if (!_.isEmpty(alerts.virtual_hearing)) {
-          this.setState({ startPolling: true });
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
 
+        if (alerts) {
+          const {
+            hearing,
+            virtual_hearing: virtualHearing
+          } = alerts;
+
+          if (hearing) {
+            this.props.onReceiveAlerts(hearing);
+          }
+
+          if (!_.isEmpty(virtualHearing)) {
+            this.props.onReceiveTransitioningAlert(virtualHearing, 'virtualHearing');
+            this.setState({ startPolling: true });
+          }
         }
       });
     }).
