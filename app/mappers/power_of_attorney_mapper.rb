@@ -19,7 +19,11 @@ module PowerOfAttorneyMapper
       representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",
       representative_name: bgs_rep[:nm],
       # Used to find the POA address
-      participant_id: bgs_rep[:ptcpnt_id]
+      participant_id: bgs_rep[:ptcpnt_id],
+      # pass through other attrs
+      authzn_change_clmant_addrs_ind: bgs_rep[:authzn_change_clmant_addrs_ind],
+      authzn_poa_access_ind: bgs_rep[:authzn_poa_access_ind],
+      legacy_poa_cd: bgs_rep[:legacy_poa_cd]
     }
   end
 
