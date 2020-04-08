@@ -370,6 +370,7 @@ describe AssignHearingDispositionTask, :all_dbs do
             allow(BGSService).to receive(:power_of_attorney_records).and_return(
               appeal.veteran_file_number => {
                 file_number: appeal.veteran_file_number,
+                ptcpnt_id: "4567",
                 power_of_attorney: {
                   legacy_poa_cd: "3QQ",
                   nm: "Clarence Darrow",
