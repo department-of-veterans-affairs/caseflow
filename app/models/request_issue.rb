@@ -858,13 +858,29 @@ class RequestIssue < CaseflowRecord
     return unless vacols_id
     return unless decision_review.serialized_legacy_appeals.any?
 
-    unless vacols_issue.eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
+    unless issue_eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
 
+  def use_covid_eligibility_rules?
+    FeatureToggle.enabled?(:covid_timeliness_exemption, user: RequestStore.store[:current_user]) && covid_timeliness_exempt
+  end
+
+  def issue_eligible_for_opt_in?
+    if use_covid_eligibility_rules?
+      vacols_issue.eligible_for_opt_in_with_covid_exemption?
+    else
+      vacols_issue.eligible_for_soc_opt_in?
+    end
+  end
+
   def legacy_appeal_eligible_for_opt_in?
-    vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(decision_review.receipt_date)
+    if use_covid_eligibility_rules?
+      vacols_issue.legacy_appeal.eligible_for_soc_opt_in_with_covid_exemption?(decision_review.receipt_date)
+    else
+      vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(decision_review.receipt_date)
+    end
   end
 
   def check_for_active_request_issue_by_rating!

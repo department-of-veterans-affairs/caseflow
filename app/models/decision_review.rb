@@ -184,6 +184,7 @@ class DecisionReview < CaseflowRecord
         vacols_id: legacy_appeal.vacols_id,
         date: legacy_appeal.nod_date,
         eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?(receipt_date),
+        eligible_for_soc_opt_in_with_covid_exemption: legacy_appeal.eligible_for_soc_opt_in_with_covid_exemption?(receipt_date)
         issues: legacy_appeal.issues.map(&:intake_attributes)
       }
     end

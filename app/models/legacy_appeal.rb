@@ -758,7 +758,11 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def matchable_to_request_issue?(receipt_date)
-    issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
+    if FeatureToggle.enabled?(:covid_timeliness_exemption, user: RequestStore.store[:current_user])
+      issues.any? && (active? || eligible_for_soc_opt_in_with_covid_exemption?(receipt_date))
+    else
+      issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
+    end
   end
 
   def eligible_for_soc_opt_in?(receipt_date)
@@ -766,6 +770,13 @@ class LegacyAppeal < CaseflowRecord
     return false unless soc_date
 
     soc_date_eligible_for_opt_in?(receipt_date) || nod_date_eligible_for_opt_in?(receipt_date)
+  end
+
+  def eligible_for_soc_opt_in_with_covid_exemption?(receipt_date)
+    return false unless receipt_date
+    return false unless soc_date
+
+    soc_date_eligible_for_opt_in_with_covid_exemption?(receipt_date) || nod_date_eligible_for_opt_in_with_covid_exemption?(receipt_date)
   end
 
   def serializer_class
@@ -853,12 +864,27 @@ class LegacyAppeal < CaseflowRecord
     soc_date >= earliest_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= earliest_eligible_date }
   end
 
-  def nod_date_eligible_for_opt_in?(receipt_date)
+  def soc_date_eligible_for_opt_in_with_covid_exemption?(receipt_date)
+    return false unles soc_date
+
+    soc_eligible_date = receipt_date - 60.days
+    covid_eligible_date = Constants::DATES["SOC_COVID_ELIGIBLE"].to_date
+    eligible_date = [soc_eligible_date, covid_eligible_date].min
+    earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
+
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
+    soc_date >= earliest_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= earliest_eligible_date }
+  end
+
+  def nod_date_eligible_for_opt_in_with_covid_exemption?(receipt_date)
     return false unless nod_date
 
     nod_eligible_date = receipt_date - 372.days
+    covid_eligible_date = Constants::DATES["NOD_COVID_ELIGIBLE"].to_date
+    eligible_date = [nod_eligible_date, covid_eligible_date].min
+    earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
-    nod_date >= nod_eligible_date
+    nod_date >= earliest_eligible_date
   end
 
   def bgs_address_service

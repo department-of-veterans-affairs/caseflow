@@ -204,6 +204,7 @@ class Issue
       vacols_id: id,
       vacols_sequence_id: vacols_sequence_id,
       eligible_for_soc_opt_in: eligible_for_opt_in?,
+      eligible_for_soc_opt_in_with_covid_exemption: eligible_for_opt_in_with_covid_exemption?,
       description: friendly_description,
       disposition: disposition,
       close_date: close_date,
@@ -220,6 +221,10 @@ class Issue
     return disposition_date_after_legacy_appeal_soc? if disposition_is_failure_to_respond?
 
     active?
+  end
+
+  def eligible_for_opt_in_with_covid_exemption?
+    active? || disposition_is_failure_to_respond?
   end
 
   def legacy_appeal
