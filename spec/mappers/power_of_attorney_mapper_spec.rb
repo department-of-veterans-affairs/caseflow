@@ -89,19 +89,19 @@ describe PowerOfAttorneyMapper do
       let(:no_poa) { { message: "No POA found for 1234567" } }
 
       it "maps BGS rep type to our rep type" do
-        poa = poa_mapper.new.get_poa_from_bgs_poa(attorney_poa[:power_of_attorney])
+        poa = poa_mapper.new.get_poa_from_bgs_poa(attorney_poa)
         expect(poa[:representative_name]).to eq("Steve Holtz")
         expect(poa[:representative_type]).to eq("Attorney")
       end
 
       it "classifies rep type as 'Other' if we haven't categorized it" do
-        poa = poa_mapper.new.get_poa_from_bgs_poa(unknown_type_poa[:power_of_attorney])
+        poa = poa_mapper.new.get_poa_from_bgs_poa(unknown_type_poa)
         expect(poa[:representative_name]).to eq("Mrs. Featherbottom")
         expect(poa[:representative_type]).to eq("Other")
       end
 
       it "when no poa is found" do
-        poa = poa_mapper.new.get_poa_from_bgs_poa(no_poa[:power_of_attorney])
+        poa = poa_mapper.new.get_poa_from_bgs_poa(no_poa)
         expect(poa).to eq({})
       end
     end
