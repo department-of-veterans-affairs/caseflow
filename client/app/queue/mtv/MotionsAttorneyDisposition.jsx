@@ -24,10 +24,23 @@ const formatReviewAttyInstructions = ({ disposition, hyperlinks, instructions })
   const parts = [`I recommend ${DISPOSITION_TEXT[disposition]}.`, instructions];
 
   if (hyperlinks.length) {
-    parts.push('Document Links:\n\n');
+    parts.push('\n\nDocument Links:');
 
+    // Handle the link to draft, and remove from array
+    const motionDraft = hyperlinks.shift();
+
+    parts.push(`\n\nHere is the hyperlink to the draft of the motion:\n${motionDraft.link}`);
+
+    // Handle denied/dismissed draft
+    const denialDraft = hyperlinks.shift();
+
+    if (['denied', 'dismissed'].includes(disposition)) {
+      parts.push(`\n\nHere is the hyperlink to the ${DISPOSITION_TEXT[disposition]} draft:\n${denialDraft.link}`);
+    }
+
+    // Handle any remaining hyperlinks that might exist
     for (const item of hyperlinks) {
-      parts.push(`${sprintf(item.type, disposition)}: ${item.link}\n`);
+      parts.push(`\n\nHere is the hyperlink to the ${item.type}:\n${item.link}\n`);
     }
   }
 
@@ -48,6 +61,8 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
       hyperlinks,
       instructions
     });
+
+    return console.log('formattedInstructions', formattedInstructions);
 
     const newTask = {
       instructions: formattedInstructions,

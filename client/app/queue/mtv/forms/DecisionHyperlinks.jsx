@@ -35,7 +35,17 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
     setHyperlinks(updated);
     setShowModal(false);
   };
-  const editHyperlink = ({ idx, type, link }) => setHyperlinks([...hyperlinks].splice(idx, 1, { type, link }));
+  const editHyperlink = ({ idx, type, link }) => {
+    setHyperlinks((prev) =>
+      prev.map((item) => {
+        if (item === hyperlinks[idx]) {
+          return { type, link };
+        }
+
+        return item;
+      })
+    );
+  };
   const removeHyperlink = (idx) => {
     const updated = [...hyperlinks];
 
@@ -53,7 +63,6 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
           label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DRAFT_HYPERLINK_LABEL, dispositionStrings[disposition])}
           value={decision.link}
           onChange={(link) => editHyperlink({ idx: 0, type: decision.type, link })}
-          optional
           strongLabel
           className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
         />
@@ -64,7 +73,6 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
         label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_MOTION_HYPERLINK_LABEL, dispositionStrings[disposition])}
         value={motion.link}
         onChange={(link) => editHyperlink({ idx: 1, type: motion.type, link })}
-        optional
         strongLabel
         className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
       />
@@ -76,7 +84,7 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
           </div>
           <div>
             <span>{item.link}</span>{' '}
-            <Button linkStyling="link" onClick={() => removeHyperlink(idx + 2)}>
+            <Button linkStyling={true} onClick={() => removeHyperlink(idx + 2)}>
               Remove
             </Button>
           </div>
