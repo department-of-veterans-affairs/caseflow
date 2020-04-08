@@ -77,9 +77,9 @@ class Claimant < CaseflowRecord
   private
 
   def find_power_of_attorney
-    BgsPowerOfAttorney.find_or_create_by_file_number(decision_review.veteran_file_number)
-  rescue ActiveRecord::RecordInvalid # not found
     BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(participant_id)
+  rescue ActiveRecord::RecordInvalid # not found at BGS by PID
+    BgsPowerOfAttorney.find_or_create_by_file_number(decision_review.veteran_file_number)
   end
 
   def bgs_address_service

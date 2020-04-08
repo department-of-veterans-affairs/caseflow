@@ -92,6 +92,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def found?
+    return false if bgs_record == :not_found
+
     bgs_record.keys.any?
   end
 
@@ -119,7 +121,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def fetch_bgs_record
     if self[:claimant_participant_id]
-      bgs.fetch_poas_by_participant_id(self[:claimant_participant_id])[0]
+      [bgs.fetch_poas_by_participant_id(self[:claimant_participant_id])].flatten[0]
     elsif self[:file_number]
       bgs.fetch_poa_by_file_number(self[:file_number])
     else

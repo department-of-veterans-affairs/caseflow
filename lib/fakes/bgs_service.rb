@@ -251,6 +251,7 @@ class Fakes::BGSService
 
         {
           ptcpnt_id: participant_id,
+          file_number: "00001234",
           power_of_attorney: vso
         }
       end
