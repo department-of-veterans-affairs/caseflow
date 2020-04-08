@@ -68,6 +68,8 @@ class BgsPowerOfAttorney < CaseflowRecord
     cached_or_fetched_from_bgs(attr_name: :poa_participant_id, bgs_attr: :participant_id)
   end
 
+  alias participant_id poa_participant_id
+
   def claimant_participant_id
     cached_or_fetched_from_bgs(attr_name: :claimant_participant_id)
   end
@@ -106,6 +108,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
     bgs_attr ||= attr_name
     self[attr_name] ||= begin
+      return if bgs_record == :not_found
+
       return unless bgs_record.dig(bgs_attr)
 
       update!(attr_name => bgs_record[bgs_attr]) if persisted?
@@ -115,7 +119,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def fetch_bgs_record
     if self[:claimant_participant_id]
-      bgs.fetch_poas_by_participant_id(self[:claimant_participant_id])
+      bgs.fetch_poas_by_participant_id(self[:claimant_participant_id])[0]
     elsif self[:file_number]
       bgs.fetch_poa_by_file_number(self[:file_number])
     else

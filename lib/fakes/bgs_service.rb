@@ -218,7 +218,7 @@ class Fakes::BGSService
     record ||= default_vso_power_of_attorney_record if file_number == 216_979_849
     record ||= default_power_of_attorney_record
 
-    get_poa_from_bgs_poa(record[:power_of_attorney])
+    get_poa_from_bgs_poa(record)
   end
 
   def fetch_poas_by_participant_id(participant_id)

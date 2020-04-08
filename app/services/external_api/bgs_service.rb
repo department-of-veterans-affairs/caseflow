@@ -133,7 +133,7 @@ class ExternalApi::BGSService
       @poa_by_participant_ids[participant_id] = [bgs_poas].flatten.compact.map { |poa| get_poa_from_bgs_poa(poa) }
     end
 
-    @poa_by_participant_ids[participant_id].empty? ? {} : @poa_by_participant_ids[participant_id]
+    @poa_by_participant_ids[participant_id]
   end
 
   def fetch_poas_by_participant_ids(participant_ids)
