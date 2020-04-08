@@ -23,6 +23,7 @@ We'll create a new model `SentHearingEmailRecords` and its corresponding table: 
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type", comment: "Hearing or LegacyHearing"
     t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
+    t.string "email_type", comment: "The type of email sent: cancellation, confirmation, update"
     t.string "email_address", comment: "Address the email was sent to"
     t.integer "sent_by_id", comment: "User who initiated sending the email"
     t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
@@ -31,6 +32,8 @@ We'll create a new model `SentHearingEmailRecords` and its corresponding table: 
 ```
 
 New records will probably be created in the `VirtualHearings::SendEmail` job when we successfully initiate the sending of an email. We may need to provide additional context to the job to accomplish this.
+
+### Columns for message display
 
 We can use these records to display information about a sent email like so:
 
@@ -50,8 +53,11 @@ The datetime object is stored in the `sent_at` field and can be formatted approp
 
 The user id of the sender is stored in `sent_by_id`; use that to look up the CSS ID.
 
+### Additional columns
+
+In addition, We'll store the type of message sent: `cancellation`, `confirmation`, or `update`; it's not required for the display, but will make things easier for engineers reconstructing a timeline.
+
 ## Open questions
 
-1. Should we record the purpose of the email? Like `cancellation`, `confirmation`, `update`... it's not required for the display but could make things easier for engineers trying to reconstruct a timeline.
 1. For the same reasons, should we store a string representation of the hearing time that we sent in the email?
 1. Would it be useful right now to have a `status` field representing the sent status of the email (for when we're able to collect that information)?
