@@ -1,3 +1,4 @@
+// eslint-disable max-lines
 import React from 'react';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
