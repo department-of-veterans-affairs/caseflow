@@ -10,6 +10,8 @@ import { docketRowStyle, inputSpacing } from './style';
 
 import Button from '../../../components/Button';
 
+import ApiUtil from '../../../util/ApiUtil';
+
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
@@ -182,7 +184,7 @@ class DailyDocketRow extends React.Component {
     const hearing = deepDiff(this.state.initialState, this.props.hearing);
 
     return this.props.saveHearing(this.props.hearing.externalId, hearing).then((response) => {
-      const alerts = response.body.alerts;
+      const alerts = response.body?.alerts;
 
       if (alerts.hearing) {
         this.props.onReceiveAlerts(alerts.hearing);
@@ -208,7 +210,7 @@ class DailyDocketRow extends React.Component {
     const hearingChanges = deepDiff(this.state.initialState, hearingWithDisp);
 
     return this.props.saveHearing(hearingWithDisp.externalId, hearingChanges).then((response) => {
-      const alerts = response.body.alerts;
+      const alerts = response.body?.alerts;
 
       if (alerts.hearing) {
         this.props.onReceiveAlerts(alerts.hearing);
@@ -333,8 +335,11 @@ class DailyDocketRow extends React.Component {
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      if (response.job_completed) {
-        this.updateVirtualHearing({ jobCompleted: response.job_completed });
+      // response includes jobCompleted, alias, and hostPin
+      const resp = ApiUtil.convertToCamelCase(response);
+
+      if (resp.jobCompleted) {
+        this.updateVirtualHearing(resp);
         this.props.transitionAlert('virtualHearing');
         this.setState({ startPolling: false });
       }
