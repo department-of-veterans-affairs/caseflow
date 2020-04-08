@@ -240,8 +240,11 @@ class HearingDetails extends React.Component {
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      if (response.job_completed) {
-        this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, { jobCompleted: response.job_completed });
+      // response includes jobCompleted, alias, and hostPin
+      const resp = ApiUtil.convertToCamelCase(response);
+
+      if (resp.jobCompleted) {
+        this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, resp);
         this.props.transitionAlert('virtualHearing');
         this.setState({ startPolling: false });
       }
