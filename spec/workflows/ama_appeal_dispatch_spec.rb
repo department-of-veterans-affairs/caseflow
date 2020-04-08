@@ -12,8 +12,8 @@ describe AmaAppealDispatch, :postgres do
       poa_participant_id = "1234567"
 
       bgs_poa = instance_double(BgsPowerOfAttorney)
-      allow(BgsPowerOfAttorney).to receive(:new)
-        .with(claimant_participant_id: claimant.participant_id).and_return(bgs_poa)
+      allow(BgsPowerOfAttorney).to receive(:find_or_create_by_file_number)
+        .with(appeal.veteran_file_number).and_return(bgs_poa)
       allow(bgs_poa).to receive(:participant_id).and_return(poa_participant_id)
 
       params = {
