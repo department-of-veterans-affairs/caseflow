@@ -22,7 +22,7 @@ class Claimant < CaseflowRecord
   end
 
   def power_of_attorney
-    @power_of_attorney ||= BgsPowerOfAttorney.new(claimant_participant_id: participant_id)
+    @power_of_attorney ||= find_power_of_attorney
   end
 
   delegate :representative_name,
@@ -75,6 +75,12 @@ class Claimant < CaseflowRecord
   end
 
   private
+
+  def find_power_of_attorney
+    BgsPowerOfAttorney.find_or_create_by_file_number(decision_review.veteran_file_number)
+  rescue ActiveRecord::RecordInvalid # not found
+    BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(participant_id)
+  end
 
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)

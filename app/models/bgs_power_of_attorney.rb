@@ -11,13 +11,34 @@ class BgsPowerOfAttorney < CaseflowRecord
     :representative_type,
     :authzn_change_clmant_addrs_ind,
     :authzn_poa_access_ind,
-    :legacy_poa_cd
+    :legacy_poa_cd,
+    :poa_participant_id,
+    :claimant_participant_id,
+    :file_number
   ].freeze
 
   delegate :email_address,
            to: :person, prefix: :representative
 
+  validates :claimant_participant_id, :poa_participant_id, :representative_name, :representative_type, presence: true
+
   CACHE_TTL = 30.days
+
+  before_save :update_cached_attributes!
+
+  class << self
+    # Neither file_number nor claimant_participant_id is unique by itself,
+    # but we treat them that way for easy lookup. They are unique together in our db.
+    # Since this is a cache we only want to mirror what BGS has and leave the
+    # data integrity to them.
+    def find_or_create_by_file_number(file_number)
+      find_or_create_by!(file_number: file_number)
+    end
+
+    def find_or_create_by_claimant_participant_id(claimant_participant_id)
+      find_or_create_by!(claimant_participant_id: claimant_participant_id)
+    end
+  end
 
   def representative_name
     cached_or_fetched_from_bgs(attr_name: :representative_name)
@@ -47,6 +68,14 @@ class BgsPowerOfAttorney < CaseflowRecord
     cached_or_fetched_from_bgs(attr_name: :poa_participant_id, bgs_attr: :participant_id)
   end
 
+  def claimant_participant_id
+    cached_or_fetched_from_bgs(attr_name: :claimant_participant_id)
+  end
+
+  def file_number
+    cached_or_fetched_from_bgs(attr_name: :file_number)
+  end
+
   def stale_attributes?
     return false if bgs_record == :not_found
 
@@ -56,7 +85,12 @@ class BgsPowerOfAttorney < CaseflowRecord
   def update_cached_attributes!
     transaction do
       CACHED_BGS_ATTRIBUTES.each { |attr| send(attr) }
+      self.last_synced_at = Time.zone.now
     end
+  end
+
+  def found?
+    bgs_record.keys.any?
   end
 
   private
@@ -71,19 +105,21 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
     bgs_attr ||= attr_name
-    self[attr_name] || begin
-      return unless bgs_record
+    self[attr_name] ||= begin
+      return unless bgs_record.dig(bgs_attr)
 
       update!(attr_name => bgs_record[bgs_attr]) if persisted?
-      self[attr_name]
+      bgs_record[bgs_attr]
     end
   end
 
   def fetch_bgs_record
-    if claimant_participant_id
-      bgs.fetch_poas_by_participant_ids([claimant_participant_id])[claimant_participant_id]
+    if self[:claimant_participant_id]
+      bgs.fetch_poas_by_participant_id(self[:claimant_participant_id])
+    elsif self[:file_number]
+      bgs.fetch_poa_by_file_number(self[:file_number])
     else
-      bgs.fetch_poa_by_file_number(file_number)
+      fail "Must define claimant_participant_id or file_number"
     end
   end
 

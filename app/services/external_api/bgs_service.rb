@@ -84,7 +84,8 @@ class ExternalApi::BGSService
       middle_name: bgs_info[:middle_nm],
       name_suffix: bgs_info[:suffix_nm],
       birth_date: bgs_info[:brthdy_dt],
-      email_address: bgs_info[:email_addr]
+      email_address: bgs_info[:email_addr],
+      file_number: bgs_info[:file_nbr]
     }
   end
 
@@ -114,7 +115,7 @@ class ExternalApi::BGSService
                                       name: "org.find_poas_by_file_number") do
         client.org.find_poas_by_file_number(file_number)
       end
-      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa[:power_of_attorney])
+      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa)
     end
 
     @poas[file_number]
@@ -132,7 +133,7 @@ class ExternalApi::BGSService
       @poa_by_participant_ids[participant_id] = [bgs_poas].flatten.compact.map { |poa| get_poa_from_bgs_poa(poa) }
     end
 
-    @poa_by_participant_ids[participant_id]
+    @poa_by_participant_ids[participant_id].empty? ? {} : @poa_by_participant_ids[participant_id]
   end
 
   def fetch_poas_by_participant_ids(participant_ids)
