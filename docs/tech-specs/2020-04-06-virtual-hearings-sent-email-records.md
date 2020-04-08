@@ -22,6 +22,7 @@ We'll create a new model `SentHearingEmailEvents` and its corresponding table: `
   create_table "sent_hearing_email_events", force: :cascade do |t|
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type", comment: "Hearing or LegacyHearing"
+    t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
     t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
     t.string "email_type", comment: "The type of email sent: cancellation, confirmation, update"
     t.string "email_address", comment: "Address the email was sent to"
@@ -56,6 +57,8 @@ The user id of the sender is stored in `sent_by_id`; use that to look up the CSS
 ### Additional columns
 
 In addition, We'll store the type of message sent: `cancellation`, `confirmation`, or `update`; it's not required for the display, but will make things easier for engineers reconstructing a timeline.
+
+We'll also store the unique ID returned by the GovDelivery API for each message in `external_message_id`; we can use this to query the API for the message's status.
 
 ## Open questions
 
