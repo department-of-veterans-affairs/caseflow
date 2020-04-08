@@ -8,6 +8,55 @@ class TaskFilter
 
   attr_accessor :filter_params, :tasks
 
+  class << self
+    def where_string_from_filters(filters)
+      filters.map do |filter|
+        if filter.values.present?
+          create_where_clause(filter)
+        end
+      end.compact.join(" AND ")
+    end
+
+    def create_where_clause(filter)
+      clause = "#{table_column_from_name(filter.column)} IN (?)"
+      filter_selections = filter.values
+      if filter.column == Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name &&
+         filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+        clause = extract_aod_clause(filter, clause)
+      end
+      clause
+    end
+
+    def extract_aod_clause(filter, orig_clause)
+      filter.values.delete(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+      is_aod_clause = "cached_appeal_attributes.is_aod = true"
+      filter.values.empty? ? is_aod_clause : "(#{orig_clause} OR #{is_aod_clause})"
+    end
+
+    # rubocop:disable Metrics/CyclomaticComplexity
+    def table_column_from_name(column_name)
+      case column_name
+      when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
+        "tasks.type"
+      when Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name
+        "cached_appeal_attributes.closest_regional_office_city"
+      when Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name
+        "cached_appeal_attributes.docket_type"
+      when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
+        "cached_appeal_attributes.case_type"
+      when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
+        "cached_appeal_attributes.assignee_label"
+      when Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME
+        "cached_appeal_attributes.power_of_attorney_name"
+      when Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME
+        "cached_appeal_attributes.suggested_hearing_location"
+      else
+        fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
+      end
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity
+  end
+
   def initialize(args)
     super
 
@@ -37,53 +86,6 @@ class TaskFilter
 
     [where_string] + where_arguments
   end
-
-  def self.where_string_from_filters(filters)
-    filters.map do |filter|
-      if filter.values.present?
-        create_where_clause(filter)
-      end
-    end.compact.join(" AND ")
-  end
-
-  def self.create_where_clause(filter)
-    clause = "#{table_column_from_name(filter.column)} IN (?)"
-    filter_selections = filter.values
-    if filter.column == Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name &&
-       filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
-      clause = extract_aod_clause(filter, clause)
-    end
-    clause
-  end
-
-  def self.extract_aod_clause(filter, orig_clause)
-    filter.values.delete(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
-    is_aod_clause = "cached_appeal_attributes.is_aod = true"
-    filter.values.empty? ? is_aod_clause : "(#{orig_clause} OR #{is_aod_clause})"
-  end
-
-  # rubocop:disable Metrics/CyclomaticComplexity
-  def self.table_column_from_name(column_name)
-    case column_name
-    when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
-      "tasks.type"
-    when Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name
-      "cached_appeal_attributes.closest_regional_office_city"
-    when Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name
-      "cached_appeal_attributes.docket_type"
-    when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
-      "cached_appeal_attributes.case_type"
-    when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
-      "cached_appeal_attributes.assignee_label"
-    when Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME
-      "cached_appeal_attributes.power_of_attorney_name"
-    when Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME
-      "cached_appeal_attributes.suggested_hearing_location"
-    else
-      fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
-    end
-  end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   private
 

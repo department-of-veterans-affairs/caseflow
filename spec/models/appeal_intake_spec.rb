@@ -23,7 +23,7 @@ describe AppealIntake, :all_dbs do
   let(:profile_date) { Time.zone.local(2018, 9, 15) }
 
   let!(:rating) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: profile_date,
       profile_date: profile_date,

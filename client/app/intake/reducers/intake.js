@@ -133,6 +133,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         veteranDateOfBirthInvalid: {
           $set: action.payload.errorData.veteran_date_of_birth_invalid
         },
+        veteranNameSuffixInvalid: {
+          $set: action.payload.errorData.veteran_name_suffix_invalid
+        },
         pids: {
           $set: _.join(action.payload.errorData.pids, ', ')
         }

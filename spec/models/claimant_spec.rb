@@ -49,7 +49,7 @@ describe Claimant, :postgres do
       let(:zip_code) { "20001" }
       let(:country) { "USA" }
 
-      it "returns BGS attributes when accessed through instance" do
+      before do
         allow_any_instance_of(Fakes::BGSService).to(
           receive(:find_address_by_participant_id).and_return(claimant_address)
         )
@@ -61,7 +61,9 @@ describe Claimant, :postgres do
         allow_any_instance_of(Fakes::BGSService).to(
           receive(:fetch_person_info).and_return(name_info)
         )
+      end
 
+      it "returns BGS attributes when accessed through instance" do
         expect(claimant.name).to eq "Harry Potter"
         expect(claimant.relationship).to eq relationship_to_veteran
         expect(claimant.address_line_1).to eq address_line_1
@@ -70,6 +72,12 @@ describe Claimant, :postgres do
         expect(claimant.state).to eq state
         expect(claimant.zip).to eq zip_code
         expect(claimant.country).to eq country
+      end
+
+      it "calls Rails.cache.write when accessing #zip" do
+        expect(Rails.cache).to receive(:write).with(any_args)
+        expect(Rails.cache).to receive(:write).with("person-zip-20001", true).once
+        claimant.zip
       end
     end
   end
