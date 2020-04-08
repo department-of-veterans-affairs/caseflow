@@ -235,7 +235,7 @@ class HearingDetails extends React.Component {
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      // response includes jobCompleted, alias, hostPin, and guestPin
+      // response includes jobCompleted, alias, and hostPin
       const resp = ApiUtil.convertToCamelCase(response);
 
       if (resp.jobCompleted) {

@@ -64,8 +64,7 @@ class HearingsController < HearingsApplicationController
     render json: {
       job_completed: hearing.virtual_hearing&.job_completed?,
       alias: hearing.virtual_hearing&.alias,
-      host_pin: hearing.virtual_hearing&.host_pin,
-      guest_pin: hearing.virtual_hearing&.guest_pin
+      host_pin: hearing.virtual_hearing&.host_pin
     }
   end
 
