@@ -16,10 +16,10 @@ I've tried not to anticipate future needs too much; it might be nice to store th
 
 ## Implementation
 
-We'll create a new model `SentHearingEmailRecords` and its corresponding table: `sent_hearing_email_records`, with (roughly) the following schema:
+We'll create a new model `SentHearingEmailEvents` and its corresponding table: `sent_hearing_email_events`, with (roughly) the following schema:
 
 ```ruby
-  create_table "sent_hearing_email_records", force: :cascade do |t|
+  create_table "sent_hearing_email_events", force: :cascade do |t|
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type", comment: "Hearing or LegacyHearing"
     t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
@@ -27,7 +27,7 @@ We'll create a new model `SentHearingEmailRecords` and its corresponding table: 
     t.string "email_address", comment: "Address the email was sent to"
     t.integer "sent_by_id", comment: "User who initiated sending the email"
     t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
-    t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_records_on_hearing_type_and_hearing_id"
+    t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
   end
 ```
 
