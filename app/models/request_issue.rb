@@ -636,7 +636,7 @@ class RequestIssue < CaseflowRecord
     false
   rescue Rating::NilRatingProfileListError
     false
-  rescue Rating::LockedRatingError, Rating::BackfilledRatingError
+  rescue PromulgatedRating::LockedRatingError, PromulgatedRating::BackfilledRatingError
     true
   end
 
