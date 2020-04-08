@@ -30,12 +30,12 @@ const Alerts = ({ displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket,
         styling={alertStyling}
         title={
           dailyDocket.lock ?
-            'You have successfully locked this Hearing ' + 'Day' :
+            'You have successfully locked this Hearing Day' :
             'You have successfully unlocked this Hearing Day'
         }
         message={
           dailyDocket.lock ?
-            'You cannot add more veterans to this hearing day, ' + 'but you can edit existing entries' :
+            'You cannot add more veterans to this hearing day, but you can edit existing entries' :
             'You can now add more veterans to this hearing day'
         }
       />

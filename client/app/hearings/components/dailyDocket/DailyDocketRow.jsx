@@ -1,13 +1,11 @@
+// eslint-disable max-lines
 import React from 'react';
-import { css } from 'glamor';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 
-import { docketRowStyle } from './style';
-
-import Button from '../../../components/Button';
+import { docketRowStyle, inputSpacing } from './style';
 
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
@@ -32,41 +30,6 @@ import {
   HoldOpenDropdown
 } from './DailyDocketRowInputs';
 import VirtualHearingModal from '../VirtualHearingModal';
-
-const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
-  return (
-    <div
-      {...css({
-        content: ' ',
-        clear: 'both',
-        display: 'block'
-      })}
-    >
-      <Button styling={css({ float: 'left' })} linkStyling onClick={cancelUpdate}>
-        Cancel
-      </Button>
-      <Button
-        styling={css({ float: 'right' })}
-        disabled={hearing.dateEdited && !hearing.dispositionEdited}
-        onClick={saveHearing}
-      >
-        Save
-      </Button>
-    </div>
-  );
-};
-
-SaveButton.propTypes = {
-  hearing: PropTypes.object,
-  cancelUpdate: PropTypes.func,
-  saveHearing: PropTypes.func
-};
-
-const inputSpacing = css({
-  '&>div:not(:first-child)': {
-    marginTop: '25px'
-  }
-});
 
 class DailyDocketRow extends React.Component {
   constructor(props) {
