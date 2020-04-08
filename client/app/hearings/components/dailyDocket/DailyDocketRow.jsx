@@ -9,6 +9,8 @@ import { docketRowStyle } from './style';
 
 import Button from '../../../components/Button';
 
+import ApiUtil from '../../../util/ApiUtil';
+
 import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
 import HearingText from './DailyDocketRowDisplayText';
@@ -279,8 +281,11 @@ class DailyDocketRow extends React.Component {
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      if (response.job_completed) {
-        this.updateVirtualHearing({ jobCompleted: response.job_completed });
+      //response includes jobCompleted, alias, hostPin, guestPin
+      const resp = ApiUtil.convertToCamelCase(response);
+
+      if (resp.jobCompleted) {
+        this.updateVirtualHearing(resp);
         this.props.transitionAlert('virtualHearing');
         this.setState({ startPolling: false });
       }
