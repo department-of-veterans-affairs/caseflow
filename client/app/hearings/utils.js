@@ -105,7 +105,7 @@ export const isEdited = (init, current) => {
   case '':
   case false:
     return current != falsy;
-    // Default to compare the initial with the current value
+  // Default to compare the initial with the current value
   default:
     return !_.isEqual(current, init);
   }
