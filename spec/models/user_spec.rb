@@ -727,9 +727,7 @@ describe User, :all_dbs do
     context "when the user is a member of the Mail Team" do
       before { MailTeam.singleton.add_user(user) }
 
-      it "returns true" do
-        expect(subject).to eq(true)
-      end
+      it { is_expected.to be_truthy }
     end
   end
 
