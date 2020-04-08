@@ -65,7 +65,7 @@ export const onReceiveAlerts = (alerts) => {
   return {
     type: ACTIONS.RECEIVE_ALERTS,
     payload: {
-      alerts: alerts.map((alert) => ({
+      alerts: (alerts || []).map((alert) => ({
         ...alert,
         timestamp
       }))
