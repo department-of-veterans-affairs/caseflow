@@ -34,7 +34,9 @@ describe HigherLevelReviewsController, :postgres, type: :controller do
 
     context "rating is locked" do
       before do
-        allow(Rating).to receive(:fetch_in_range).and_raise(Rating::LockedRatingError.new(message: "locked!"))
+        allow(Rating).to receive(:fetch_in_range).and_raise(
+          PromulgatedRating::LockedRatingError.new(message: "locked!")
+        )
       end
 
       let!(:request_issue) do

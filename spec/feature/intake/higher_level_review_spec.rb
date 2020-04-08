@@ -585,7 +585,7 @@ feature "Higher-Level Review", :all_dbs do
     let(:another_profile_date) { receipt_date - 50.days }
 
     let!(:another_rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: another_promulgation_date,
         profile_date: another_profile_date,

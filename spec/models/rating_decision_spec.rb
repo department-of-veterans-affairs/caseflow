@@ -57,7 +57,7 @@ describe RatingDecision do
     end
 
     let!(:rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: participant_id,
         promulgation_date: promulgation_date,
         profile_date: profile_date,
