@@ -3,8 +3,8 @@ class CreateBgsPowerOfAttorneys < ActiveRecord::Migration[5.2]
     create_table :bgs_power_of_attorneys, comment: "Power of Attorney (POA) cached from BGS" do |t|
       t.timestamps null: false, comment: "Standard created_at/updated_at timestamps"
       t.datetime "last_synced_at", comment: "The last time BGS was checked"
-      t.string "authzn_change_clmant_addrs_ind", null: false, comment: "Authorization for POA to change claimant address"
-      t.string "authzn_poa_access_ind", null: false, comment: "Authorization for POA access"
+      t.string "authzn_change_clmant_addrs_ind", comment: "Authorization for POA to change claimant address"
+      t.string "authzn_poa_access_ind", comment: "Authorization for POA access"
       t.string "legacy_poa_cd", comment: "Legacy POA code"
       t.string "representative_name", null: false, comment: "POA name"
       t.string "representative_type", null: false, comment: "POA type"

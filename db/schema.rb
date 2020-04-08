@@ -155,8 +155,8 @@ ActiveRecord::Schema.define(version: 2020_04_21_231908) do
   end
 
   create_table "bgs_power_of_attorneys", comment: "Power of Attorney (POA) cached from BGS", force: :cascade do |t|
-    t.string "authzn_change_clmant_addrs_ind", null: false, comment: "Authorization for POA to change claimant address"
-    t.string "authzn_poa_access_ind", null: false, comment: "Authorization for POA access"
+    t.string "authzn_change_clmant_addrs_ind", comment: "Authorization for POA to change claimant address"
+    t.string "authzn_poa_access_ind", comment: "Authorization for POA access"
     t.string "claimant_participant_id", null: false, comment: "Claimant participant ID -- use as FK to claimants"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.string "file_number", null: false, comment: "Claimant file number"
