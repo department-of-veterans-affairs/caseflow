@@ -212,7 +212,12 @@ class DailyDocketRow extends React.Component {
     };
     const hearingChanges = deepDiff(this.state.initialState, hearingWithDisp);
 
-    return this.props.saveHearing(hearingWithDisp.externalId, hearingChanges).then(() => {
+    return this.props.saveHearing(hearingWithDisp.externalId, hearingChanges).then((response) => {
+      const alerts = response.body.alerts;
+
+      if (alerts.hearing) {
+        this.props.onReceiveAlerts(alerts.hearing);
+      }
       this.update(hearingWithDisp);
       if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
         this.setState({
