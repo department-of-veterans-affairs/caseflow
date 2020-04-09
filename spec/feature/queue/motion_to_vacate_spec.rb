@@ -24,6 +24,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
   let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
   let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
   let!(:hyperlink) { "https://va.gov/fake-link-to-file" }
+  let(:atty_hyperlinks) { generate_atty_hyperlinks }
 
   before do
     create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -43,6 +44,16 @@ RSpec.feature "Motion to vacate", :all_dbs do
     let!(:judge_review_task) do
       create(:ama_judge_decision_review_task, :completed,
              assigned_to: judge2, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
+    end
+
+    let(:atty_disposition) { "granted" }
+
+    let(:atty_instructions) do
+      format_mtv_attorney_instructions(
+        notes: atty_notes,
+        disposition: atty_disposition,
+        hyperlinks: atty_hyperlinks
+      )
     end
 
     before do
@@ -104,50 +115,90 @@ RSpec.feature "Motion to vacate", :all_dbs do
       let!(:motions_attorney_task) do
         create(:vacate_motion_mail_task, assigned_to: motions_attorney, parent: root_task)
       end
+      let(:atty_notes) { "Here is some context from Attorney to the judge" }
+        let(:atty_instructions) do
+          format_mtv_attorney_instructions(
+            notes: atty_notes,
+            disposition: atty_disposition,
+            hyperlinks: atty_hyperlinks
+          )
+        end
 
-      it "motions attorney recommends grant decision to judge" do
-        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
+      context "recommends a disposition of granted" do
+        let(:atty_disposition) { "granted" }
 
-        find("label[for=disposition_granted]").click
-        fill_in("instructions", with: "Attorney context/instructions for judge")
+        it "processes correctly" do
+          send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
 
-        # Ensure it has pre-selected judge previously assigned to case
-        expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+          find("label[for=disposition_granted]").click
+          fill_in("instructions", with: atty_notes)
 
-        click_button(text: "Submit")
+          fill_in("motionFile", with: atty_hyperlinks[1][:link])
 
-        # Return back to user's queue
-        expect(page).to have_current_path("/queue")
+          atty_hyperlinks[2..3].each do |item|
+            click_button(text: "+ Add hyperlink")
+            fill_in("type", with: item[:type])
+            fill_in("link", with: item[:link])
+            click_button(text: "Save")
+            expect(page).to have_content(item[:type])
+            expect(page).to have_content(item[:link])
+          end
 
-        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
-        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+          # Ensure it has pre-selected judge previously assigned to case
+          expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
 
-        # Verify new task was created
-        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
-        expect(judge_task).to_not be_nil
+          click_button(text: "Submit")
+
+          # Return back to user's queue
+          expect(page).to have_current_path("/queue")
+
+          expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
+          expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+
+          # Verify new task was created
+          judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
+          expect(judge_task).to_not be_nil
+          expect(judge_task[:instructions]).to eq [atty_instructions]
+        end
       end
 
-      it "motions attorney recommends denied decision to judge and fills in hyperlink" do
-        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
-        find("label[for=disposition_denied]").click
-        expect(page).to have_content("Optional")
-        expect(page).to have_content(
-          format(COPY::JUDGE_ADDRESS_MTV_HYPERLINK_LABEL, "denial")
-        )
-        fill_in("hyperlink", with: hyperlink)
-        fill_in("instructions", with: "Attorney context/instructions for judge")
-        click_dropdown(text: judge2.display_name)
-        click_button(text: "Submit")
+      context "recommends a denial of vacatur" do
+        let(:atty_disposition) { "denied" }
 
-        # Return back to user's queue
-        expect(page).to have_current_path("/queue")
+        it "processes correctly" do
+          send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
+          find("label[for=disposition_denied]").click
+          expect(page).to have_content("Optional")
 
-        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
-        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+          fill_in("instructions", with: atty_notes)
 
-        # Verify new task was created
-        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
-        expect(judge_task).to_not be_nil
+          fill_in("decisionDraft", with: atty_hyperlinks[0][:link])
+
+          fill_in("motionFile", with: atty_hyperlinks[1][:link])
+
+          atty_hyperlinks[2..3].each do |item|
+            click_button(text: "+ Add hyperlink")
+            fill_in("type", with: item[:type])
+            fill_in("link", with: item[:link])
+            click_button(text: "Save")
+            expect(page).to have_content(item[:type])
+            expect(page).to have_content(item[:link])
+          end
+
+          click_dropdown(text: judge2.display_name)
+          click_button(text: "Submit")
+  
+          # Return back to user's queue
+          expect(page).to have_current_path("/queue")
+  
+          expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
+          expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+  
+          # Verify new task was created
+          judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
+          expect(judge_task).to_not be_nil
+          expect(judge_task[:instructions]).to eq [atty_instructions]
+        end
       end
 
       it "motions attorney triggers Pulac-Cerullo" do
@@ -187,12 +238,11 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
     let(:atty_notes) { "Notes from attorney" }
     let(:atty_disposition) { "granted" }
-    let(:atty_hyperlink) { nil }
     let(:atty_instructions) do
       format_mtv_attorney_instructions(
         notes: atty_notes,
         disposition: atty_disposition,
-        hyperlink: hyperlink
+        hyperlinks: atty_hyperlinks
       )
     end
     let(:judge_address_motion_to_vacate_task) do
@@ -849,5 +899,26 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   def valid_document_id
     "12345-12345678"
+  end
+
+  def generate_atty_hyperlinks
+    [
+      {
+        type: "%s Draft",
+        link: "https://example.com/decision_draft.pdf"
+      },
+      {
+        type: "Motion File",
+        link: "https://example.com/motion_file.pdf"
+      },
+      {
+        type: "Supplementary File 1",
+        link: "https://example.com/file1.pdf"
+      },
+      {
+        type: "Supplementary File 2",
+        link: "https://example.com/file2.pdf"
+      }
+    ]
   end
 end
