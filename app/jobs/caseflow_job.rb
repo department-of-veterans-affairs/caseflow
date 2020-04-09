@@ -37,6 +37,6 @@ class CaseflowJob < ApplicationJob
   def log_error(error, extra: {})
     Rails.logger.error(error)
     Rails.logger.error(error.backtrace.join("\n"))
-    capture_exception(error, extra)
+    capture_exception(error: error, extra: extra)
   end
 end

@@ -31,6 +31,8 @@ describe DataIntegrityChecksJob do
     allow(DataDogService).to receive(:emit_gauge) do |args|
       @emitted_gauges.push(args)
     end
+
+    allow(Raven).to receive(:capture_exception) { @raven_called = true }
   end
 
   describe "#perform" do
@@ -87,6 +89,19 @@ describe DataIntegrityChecksJob do
         expect(expired_async_jobs_checker).to have_received(:report?).once
         expect(expired_async_jobs_checker).to have_received(:report).once
         expect(slack_service).to have_received(:send_notification)
+      end
+    end
+
+    context "one report throws an error" do
+      before do
+        allow(expired_async_jobs_checker).to receive(:call) { fail StandardError.new("oops!") }
+      end
+
+      it "rescues error and logs to sentry and slack" do
+        subject
+
+        expect(slack_service).to have_received(:send_notification)
+        expect(@raven_called).to eq(true)
       end
     end
   end

@@ -30,15 +30,11 @@ class DataIntegrityChecksJob < CaseflowJob
       end
     # don't retry via normal shoryuken, just log and move to next checker.
     rescue StandardError => error
-      log_error(error, class: klass)
+      log_error(error, extra: { checker: klass })
+      slack_service.send_notification("Error running #{klass}", klass, checker.slack_channel)
     end
 
     datadog_report_runtime(metric_group_name: "data_integrity_checks_job")
-    slack_service.send_notification(
-      "All checks complete",
-      "DataIntegrityChecksJob",
-      DataIntegrityChecker.new.slack_channel
-    )
   end
 
   private
