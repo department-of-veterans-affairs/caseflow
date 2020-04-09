@@ -771,7 +771,7 @@ class LegacyAppeal < CaseflowRecord
     return false unless soc_date
 
     soc_eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag) ||
-    nod_eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag)
+      nod_eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag)
   end
 
   def serializer_class
@@ -859,7 +859,7 @@ class LegacyAppeal < CaseflowRecord
     earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    ([soc_date] + ssoc_dates).any?{ |soc_date| ssoc_date >= earliest_eligible_date }
+    ([soc_date] + ssoc_dates).any? { |soc_date| soc_date >= earliest_eligible_date }
   end
 
   def nod_eligible_for_opt_in?(receipt_date:, covid_flag: false)
