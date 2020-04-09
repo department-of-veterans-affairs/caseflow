@@ -137,7 +137,6 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         ).and_return(true)
 
         post :create, params: { tasks: params }
-        binding.pry
         expect(response.status).to eq 200
         body = JSON.parse(response.body)
         expect(body["task"]["data"]["attributes"]["assigned_to"]["id"]).to eq attorney.id

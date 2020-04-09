@@ -55,9 +55,7 @@ describe QueueRepository, :all_dbs do
 
       before do
         RequestStore.store[:current_user] = scm_user
-        FeatureToggle.enable!(:scm_view_judge_assign_queue)
       end
-      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       it "should assign a case to attorney" do
         expect(vacols_case.bfcurloc).to eq judge_staff.slogid

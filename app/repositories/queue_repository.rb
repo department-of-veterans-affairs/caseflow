@@ -122,27 +122,27 @@ class QueueRepository
           fail Caseflow::Error::LegacyCaseAlreadyAssignedError, message: "Case already assigned"
         end
 
-        update_location_to_attorney(vacols_id, attorney)
-
-        attrs = {
-          case_id: vacols_id,
-          attorney_id: attorney.vacols_attorney_id,
-          group_name: attorney.vacols_group_id[0..2],
-          assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
-          deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
-          complexity_rating: decass_complexity_rating(vacols_id)
-        }
+        update_location_to_attorney(assigned_by, vacols_id, attorney)
 
         incomplete_record = incomplete_decass_record(vacols_id)
         if incomplete_record.present?
-          return update_decass_record(incomplete_record,
-                                      attrs.merge(modifying_user: assigned_by.vacols_uniq_id, work_product: nil))
+          return update_decass_record(incomplete_record, assign_to_attorney_attrs.merge(work_product: nil))
         end
 
-        create_decass_record(
-          attrs.merge(adding_user: assigned_by.vacols_uniq_id, modifying_user: assigned_by.vacols_uniq_id)
-        )
+        create_decass_record(assign_to_attorney_attrs.merge(adding_user: assigned_by.vacols_uniq_id))
       end
+    end
+
+    def assign_to_attorney_attrs(assigned_by:, attorney:, vacols_id:)
+      @assign_to_attorney_attrs ||= {
+        case_id: vacols_id,
+        attorney_id: attorney.vacols_attorney_id,
+        group_name: attorney.vacols_group_id[0..2],
+        assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+        deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
+        complexity_rating: decass_complexity_rating(vacols_id),
+        modifying_user: assigned_by.vacols_uniq_id
+      }
     end
 
     def incomplete_decass_record(vacols_id)
