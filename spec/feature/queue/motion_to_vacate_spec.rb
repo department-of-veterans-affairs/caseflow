@@ -160,17 +160,17 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_DETAIL.gsub("%s", appeal.veteran_full_name))
       end
 
-      def submit_and_fetch_task(assigned_judge)
+      def submit_and_fetch_task(judge)
         click_button(text: "Submit")
 
         # Return back to user's queue
         expect(page).to have_current_path("/queue")
 
-        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, assigned_judge.display_name))
+        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge.display_name))
         expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
 
         # Verify new task was created
-        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: assigned_judge)
+        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge)
         expect(judge_task).to_not be_nil
         judge_task
       end

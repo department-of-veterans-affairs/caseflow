@@ -59,7 +59,10 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
     return true;
   };
 
-  const instructionsLabel = sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted').replace('_', ' ');
+  const instructionsLabel = sprintf(
+    MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL,
+    disposition || 'granted'
+  ).replace('_', ' ');
 
   return (
     <div className="address-motion-to-vacate">
