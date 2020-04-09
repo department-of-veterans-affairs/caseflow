@@ -717,6 +717,20 @@ describe User, :all_dbs do
     end
   end
 
+  describe "#can_intake_appeals?" do
+    let(:user) { create(:user) }
+
+    subject { user.can_intake_appeals? }
+
+    it { is_expected.to be_falsey }
+
+    context "when the user is a member of the Mail Team" do
+      before { MailTeam.singleton.add_user(user) }
+
+      it { is_expected.to be_truthy }
+    end
+  end
+
   describe "when the status is updated" do
     let(:user) { create(:user) }
 

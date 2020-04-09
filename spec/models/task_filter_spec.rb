@@ -151,8 +151,9 @@ describe TaskFilter, :all_dbs do
 
     context "when filtering by regional office" do
       let(:tasks_per_city) { 3 }
+      let(:number_of_regional_office_cities) { 5 }
       let(:regional_office_cities) do
-        RegionalOffice::ROS.sort.take(5).map { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
+        ["Washington", "Digital Service HQ", "Washington", "Boston", "Togus"]
       end
       let(:washington_tasks_1) { create_list(:task, tasks_per_city) }
       let(:ds_tasks) { create_list(:task, tasks_per_city) }
@@ -164,14 +165,21 @@ describe TaskFilter, :all_dbs do
           .pluck(:id).sort)
       end
 
-      before do
-        all_tasks.each_with_index do |task, idx|
+      def create_cached_appeals_per_city(tasks, city)
+        tasks.each do |task|
           create(
             :cached_appeal,
             appeal_type: task.appeal_type,
             appeal_id: task.appeal.id,
-            closest_regional_office_city: regional_office_cities[idx / tasks_per_city % regional_office_cities.length]
+            closest_regional_office_city: city
           )
+        end
+      end
+
+      before do
+        # order of task sets must match order of regional_office_cities
+        [washington_tasks_1, ds_tasks, washington_tasks_2, boston_tasks, togus_tasks].each_with_index do |tasks, idx|
+          create_cached_appeals_per_city(tasks, regional_office_cities[idx])
         end
       end
 
