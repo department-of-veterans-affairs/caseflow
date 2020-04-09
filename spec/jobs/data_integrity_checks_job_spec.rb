@@ -94,7 +94,7 @@ describe DataIntegrityChecksJob do
 
     context "one report throws an error" do
       before do
-        allow(expired_async_jobs_checker).to receive(:call) { fail StandardError.new("oops!") }
+        allow(expired_async_jobs_checker).to receive(:call) { fail StandardError, "oops!" }
       end
 
       it "rescues error and logs to sentry and slack" do
