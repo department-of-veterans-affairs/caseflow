@@ -8,7 +8,7 @@ import { DISPOSITION_OPTIONS, PARTIAL_GRANT_OPTION } from '../../../constants/MO
 const [grant, ...rest] = DISPOSITION_OPTIONS;
 const optsWithPartial = [grant, PARTIAL_GRANT_OPTION, ...rest];
 
-export const MTVDispositionSelection = ({ label = '', value: initialVal = null, onChange, allowPartial = false }) => {
+export const MTVDispositionSelection = ({ label = '', value: initialVal = null, onChange, allowPartial = true }) => {
   const [value, setValue] = useState(initialVal);
 
   const handleChange = (val) => {
@@ -27,7 +27,6 @@ export const MTVDispositionSelection = ({ label = '', value: initialVal = null, 
       options={options}
       onChange={handleChange}
       value={value}
-      required
       strongLabel
       className={['mtv-disposition-selection']}
     />
