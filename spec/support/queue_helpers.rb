@@ -22,9 +22,9 @@ module QueueHelpers
       denial_dismissal_draft = hyperlinks.shift
       if %w[denied dismissed].include?(disposition)
         parts += [
-          "\nHere is the hyperlink to the #{disposition_text[disposition.to_sym]}",
+          "\nHere is the hyperlink to the #{disposition_text[disposition.to_sym]} "\
           "draft:\n#{denial_dismissal_draft[:link]}"
-        ].join(" ")
+        ]
       end
 
       motion_draft = hyperlinks.shift
