@@ -189,9 +189,8 @@ class HearingDetails extends React.Component {
     return ApiUtil.patch(`/hearings/${externalId}`, {
       data: ApiUtil.convertToSnakeCase(data)
     }).then((response) => {
-
       const hearing = ApiUtil.convertToCamelCase(response.body.data);
-      const alerts = response.body.alerts;
+      const alerts = response.body?.alerts;
 
       this.setState({
         updated: false,
@@ -203,18 +202,24 @@ class HearingDetails extends React.Component {
       this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
 
-        this.setState({
-          initialFormData
-        });
+        this.setState({ initialFormData });
 
         this.updateAllFormData(initialFormData);
-        if (alerts.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
-        }
-        if (!_.isEmpty(alerts.virtual_hearing)) {
-          this.setState({ startPolling: true });
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
 
+        if (alerts) {
+          const {
+            hearing: hearingAlerts,
+            virtual_hearing: virtualHearingAlerts
+          } = alerts;
+
+          if (hearingAlerts) {
+            this.props.onReceiveAlerts(hearingAlerts);
+          }
+
+          if (!_.isEmpty(virtualHearingAlerts)) {
+            this.props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
+            this.setState({ startPolling: true });
+          }
         }
       });
     }).
@@ -235,8 +240,11 @@ class HearingDetails extends React.Component {
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      if (response.job_completed) {
-        this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, { jobCompleted: response.job_completed });
+      // response includes jobCompleted, alias, and hostPin
+      const resp = ApiUtil.convertToCamelCase(response);
+
+      if (resp.jobCompleted) {
+        this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, resp);
         this.props.transitionAlert('virtualHearing');
         this.setState({ startPolling: false });
       }
@@ -287,7 +295,6 @@ class HearingDetails extends React.Component {
             type={this.state.virtualHearingModalType}
             {...editedEmails} />}
           <DetailsSections
-            user={this.props.user}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
@@ -331,9 +338,6 @@ class HearingDetails extends React.Component {
 }
 
 HearingDetails.propTypes = {
-  user: PropTypes.shape({
-    userCanScheduleVirtualHearings: PropTypes.bool
-  }),
   hearing: PropTypes.object.isRequired,
   setHearing: PropTypes.func,
   goBack: PropTypes.func,

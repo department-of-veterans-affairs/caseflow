@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Address
+  ZIP_CODE_REGEX = /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/.freeze
+
   attr_reader :country, :city, :zip, :address_line_1, :address_line_2, :address_line_3, :state
 
   # rubocop:disable Metrics/ParameterLists
