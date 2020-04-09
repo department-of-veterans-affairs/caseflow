@@ -863,24 +863,14 @@ class RequestIssue < CaseflowRecord
     end
   end
 
-  def use_covid_eligibility_rules?
-    FeatureToggle.enabled?(:covid_timeliness_exemption, user: RequestStore.store[:current_user]) && covid_timeliness_exempt
-  end
-
   def issue_eligible_for_opt_in?
-    if use_covid_eligibility_rules?
-      vacols_issue.eligible_for_opt_in_with_covid_exemption?
-    else
-      vacols_issue.eligible_for_soc_opt_in?
-    end
+    vacols_issue.eligible_for_opt_in?(covid_flag: covid_timeliness_exempt)
   end
 
   def legacy_appeal_eligible_for_opt_in?
-    if use_covid_eligibility_rules?
-      vacols_issue.legacy_appeal.eligible_for_soc_opt_in_with_covid_exemption?(decision_review.receipt_date)
-    else
-      vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(decision_review.receipt_date)
-    end
+    vacols_issue.legacy_appeal.eligible_for_opt_in?(
+      receipt_date: decision_review.receipt_date, covid_flag: covid_timeliness_exempt
+    )
   end
 
   def check_for_active_request_issue_by_rating!
