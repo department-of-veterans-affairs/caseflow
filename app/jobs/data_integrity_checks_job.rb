@@ -31,12 +31,12 @@ class DataIntegrityChecksJob < CaseflowJob
     end
 
     datadog_report_runtime(metric_group_name: "data_integrity_checks_job")
+    slack_service.send_notification("All checks complete", "DataIntegrityChecksJob", DataIntegrityChecker.new.slack_channel)
   end
 
   private
 
   def send_to_slack(checker)
-    slack = SlackService.new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
-    slack.send_notification(checker.report, checker.class.name, checker.slack_channel)
+    slack_service.send_notification(checker.report, checker.class.name, checker.slack_channel)
   end
 end
