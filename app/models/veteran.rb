@@ -242,12 +242,14 @@ class Veteran < CaseflowRecord
     errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
   end
 
-  def timely_ratings(from_date:)
-    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
-  end
-
   def ratings
-    @ratings ||= Rating.fetch_all(participant_id)
+    @ratings ||= begin
+      if FeatureToggle.enabled?(:ratings_at_issue, user: RequestStore.store[:current_user])
+        RatingAtIssue.fetch_all(participant_id)
+      else
+        PromulgatedRating.fetch_all(participant_id)
+      end
+    end
   end
 
   def decision_issues

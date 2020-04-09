@@ -36,7 +36,7 @@ describe RequestIssue, :all_dbs do
   let(:rating_promulgation_date) { (review.receipt_date - 40.days).in_time_zone }
 
   let!(:ratings) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: rating_promulgation_date,
       profile_date: (review.receipt_date - 50.days).in_time_zone,
@@ -672,7 +672,7 @@ describe RequestIssue, :all_dbs do
   context "#ui_hash" do
     context "when there is a previous request issue in active review" do
       let!(:ratings) do
-        Generators::Rating.build(
+        Generators::PromulgatedRating.build(
           participant_id: veteran.participant_id,
           promulgation_date: 10.days.ago,
           profile_date: 20.days.ago,
@@ -1129,7 +1129,7 @@ describe RequestIssue, :all_dbs do
     end
 
     let!(:ratings) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: rating_promulgation_date,
         profile_date: receipt_date - 50.days,
@@ -1145,7 +1145,7 @@ describe RequestIssue, :all_dbs do
           }
         ]
       )
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: receipt_date - 400.days,
         profile_date: receipt_date - 450.days,
@@ -1153,7 +1153,7 @@ describe RequestIssue, :all_dbs do
           { reference_id: old_reference_id, decision_text: "Really old injury" }
         ]
       )
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
         profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,

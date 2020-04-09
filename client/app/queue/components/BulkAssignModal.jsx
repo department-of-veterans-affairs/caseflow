@@ -208,6 +208,7 @@ class BulkAssignModal extends React.PureComponent {
     return <QueueFlowModal
       pathAfterSubmit={`/organizations/${this.organizationUrl()}`}
       button={COPY.BULK_ASSIGN_BUTTON_TEXT}
+      onCancel={this.props.onCancel}
       submit={this.bulkAssignTasks}
       validateForm={this.validateForm}
       title={COPY.BULK_ASSIGN_MODAL_TITLE}>
@@ -225,7 +226,8 @@ BulkAssignModal.propTypes = {
   bulkAssignTasks: PropTypes.func,
   highlightFormItems: PropTypes.bool,
   history: PropTypes.object,
-  location: PropTypes.object
+  location: PropTypes.object,
+  onCancel: PropTypes.func
 };
 
 const mapStateToProps = (state) => {
