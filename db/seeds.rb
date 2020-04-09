@@ -88,6 +88,7 @@ class SeedDB
     create_hearings_user_and_tasks
     create_ama_distribution_tasks
     create_edit_hearings_user
+    create_non_admin_hearing_coordinator_user
   end
 
   def create_ama_distribution_tasks
@@ -141,6 +142,11 @@ class SeedDB
 
   def create_edit_hearings_user
     hearings_user = User.create(css_id: "BVASYELLOW", station_id: 101, full_name: "Stacy BuildAndEditHearingSchedule Yellow", roles: ["Edit HearSched", "Build HearSched"])
+    HearingsManagement.singleton.add_user(hearings_user)
+  end
+
+  def create_non_admin_hearing_coordinator_user
+    hearings_user = User.create(css_id: "BVANHALE", station_id: 101, full_name: "Nisha NonAdminHearingCoordinator Hale", roles: ["Edit HearSched"])
     HearingsManagement.singleton.add_user(hearings_user)
   end
 

@@ -16,7 +16,7 @@ class QueueFlowModal extends React.PureComponent {
     };
   }
 
-  cancelHandler = () => this.props.history.goBack();
+  cancelHandler = () => this.props.onCancel ? this.props.onCancel() : this.props.history.goBack();
 
   closeHandler = () => this.props.history.replace(this.props.pathAfterSubmit);
 
@@ -77,6 +77,7 @@ QueueFlowModal.propTypes = {
   history: PropTypes.object,
   title: PropTypes.string,
   button: PropTypes.string,
+  onCancel: PropTypes.func,
   pathAfterSubmit: PropTypes.string,
   // submit should return a promise on which .then() can be called
   submit: PropTypes.func,
