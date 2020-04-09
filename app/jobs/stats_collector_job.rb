@@ -59,12 +59,24 @@ class StatsCollectorJob < CaseflowJob
   # :reek:FeatureEnvy
   def emit_or_fail(hash)
     # when hash is { metric: metric_name", value: 123, "some_tag": "type1" }
-    return emit(hash[:metric], hash[:value], tags: hash.except(:metric, :value)) if hash[:metric] && hash[:value]
+    return emit_tagged_hash(hash) if tagged_hash?(hash)
 
     # when hash is { "metric_name" => 123 }
-    return emit(hash.first[0], hash.first[1]) if hash.size == 1
+    return emit_untagged_hash(hash) if hash.size == 1
 
     fail "Unexpect metric object: #{hash}"
+  end
+
+  def tagged_hash?(hash)
+    hash[:metric] && hash[:value]
+  end
+
+  def emit_tagged_hash(hash)
+    emit(hash[:metric], hash[:value], tags: hash.except(:metric, :value))
+  end
+
+  def emit_untagged_hash(hash)
+    emit(hash.first[0], hash.first[1])
   end
 
   def emit(name, value, tags: {})
