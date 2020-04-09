@@ -15,6 +15,7 @@ gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "f374da6041b52d73af60d79d60d4013a13d4a72e"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
+gem "ddtrace"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
@@ -71,7 +72,6 @@ gem "tty-tree"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
-gem 'ddtrace'
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
