@@ -113,6 +113,7 @@ class LegacyTasksController < ApplicationController
       .permit(:appeal_id)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
+      .merge(judge: User.find_by(id: params[:tasks][:judge_id]))
   end
 
   def json_task(task)
