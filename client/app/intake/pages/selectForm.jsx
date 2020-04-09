@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
@@ -10,7 +10,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setFormType, clearSearchErrors } from '../actions/intake';
 import { PAGE_PATHS, FORM_TYPES } from '../constants';
+import COPY from '../../../COPY';
 import _ from 'lodash';
+
+const appealPermissionErrorMessage = <Fragment>
+  <p>{COPY.INTAKE_APPEAL_PERMISSIONS_ALERT}</p>
+  <p>
+    Mail to <strong>425 I St NW, Washington DC, 20001</strong><br />
+    Attention: <strong>Case Review and Evaluation Branch</strong>
+  </p>
+</Fragment>;
 
 class SelectForm extends React.PureComponent {
   setFormTypeFromDropdown = (formObject) => {
@@ -18,10 +27,13 @@ class SelectForm extends React.PureComponent {
   }
 
   render() {
-    const rampEnabled = this.props.featureToggles.rampIntake;
-    const inboxFeature = this.props.featureToggles.inbox;
+    const { formType, featureToggles, userCanIntakeAppeals } = this.props;
+    const inboxFeature = featureToggles.inbox;
     const unreadMessages = this.props.unreadMessages;
+    const rampEnabled = featureToggles.rampIntake;
     const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
+    const restrictAppealIntakes = featureToggles.restrictAppealIntakes;
+    const appealPermissionError = restrictAppealIntakes && !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
@@ -38,6 +50,14 @@ class SelectForm extends React.PureComponent {
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
 
+      { appealPermissionError && <Alert
+        title="Not Authorized"
+        type="error"
+        lowerMargin>
+        {appealPermissionErrorMessage}
+      </Alert>
+      }
+
       { inboxFeature && unreadMessages && <Alert
         title="Intake Jobs"
         type="warning"
@@ -47,22 +67,22 @@ class SelectForm extends React.PureComponent {
 
       { !enableSearchableDropdown && <RadioField
         name="form-select"
-        label="Which form are you processing?"
+        label={COPY.INTAKE_FORM_SELECTION}
         vertical
         strongLabel
         options={radioOptions}
         onChange={this.props.setFormType}
-        value={this.props.formType}
+        value={formType}
       />
       }
 
       { enableSearchableDropdown && <SearchableDropdown
         name="form-select"
-        label="Which form are you processing?"
+        label={COPY.INTAKE_FORM_SELECTION}
         placeholder="Enter or select form"
         options={radioOptions}
         onChange={this.setFormTypeFromDropdown}
-        value={this.props.formType} />
+        value={formType} />
       }
     </div>;
   }
@@ -84,18 +104,23 @@ class SelectFormButtonUnconnected extends React.PureComponent {
     this.props.history.push('/search');
   }
 
-  render = () =>
-    <Button
+  render() {
+    const { formType, restrictAppealIntakes, userCanIntakeAppeals } = this.props;
+    const appealPermissionError = restrictAppealIntakes && !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
+
+    return <Button
       name="continue-to-search"
       onClick={this.handleClick}
-      disabled={!this.props.formType}
+      disabled={!formType || appealPermissionError}
     >
       Continue to search
     </Button>;
+  }
 }
 
 export const SelectFormButton = connect(
-  ({ intake }) => ({ formType: intake.formType }),
+  ({ intake, featureToggles }) => ({
+    formType: intake.formType, restrictAppealIntakes: featureToggles.restrictAppealIntakes }),
   (dispatch) => bindActionCreators({
     clearSearchErrors
   }, dispatch)

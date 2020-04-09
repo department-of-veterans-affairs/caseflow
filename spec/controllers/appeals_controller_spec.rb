@@ -3,6 +3,36 @@
 RSpec.describe AppealsController, :all_dbs, type: :controller do
   include TaskHelpers
 
+  describe "GET appeals/:id/edit" do
+    let(:ssn) { Generators::Random.unique_ssn }
+    let(:options) { { format: :html, appeal_id: appeal_url_identifier } }
+    let(:appeal_url_identifier) { appeal.is_a?(LegacyAppeal) ? appeal.vacols_id : appeal.uuid }
+
+    subject { get :edit, params: options }
+
+    before { User.authenticate!(roles: ["System Admin"]) }
+
+    context "AMA appeal" do
+      let(:appeal) { create(:appeal, veteran_file_number: ssn) }
+
+      it "returns 200" do
+        subject
+
+        expect(response).to be_successful
+      end
+    end
+
+    context "Legacy Appeal" do
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
+
+      it "returns 404" do
+        subject
+
+        expect(response).to be_not_found
+      end
+    end
+  end
+
   describe "GET appeals" do
     let(:ssn) { Generators::Random.unique_ssn }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
@@ -556,9 +586,11 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         response
       end
 
-      it { expect(subject.status).to eq 200 }
-      it { expect(JSON.parse(subject.body)["veteran"]["email_address"]).to eq "test@test.com" }
-      it { expect(JSON.parse(subject.body)["veteran"]["full_name"]).to eq "Test User" }
+      it "returns expected response", :aggregate_failures do
+        expect(subject.status).to eq 200
+        expect(JSON.parse(subject.body)["veteran"]["email_address"]).to eq "test@test.com"
+        expect(JSON.parse(subject.body)["veteran"]["full_name"]).to eq "Test User"
+      end
     end
   end
 end

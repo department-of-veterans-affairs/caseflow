@@ -9,6 +9,7 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
+  setFeatureToggles,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
@@ -80,6 +81,7 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
+    this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
@@ -119,8 +121,12 @@ class QueueApp extends React.PureComponent {
   );
 
   routedJudgeQueueList = (label) => ({ match }) => (
-    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} userRole={USER_ROLE_TYPES.judge}
-      loadAttorneys={label === 'assign'} >
+    <QueueLoadingScreen
+      {...this.propsForQueueLoadingScreen()}
+      match={match}
+      userRole={USER_ROLE_TYPES.judge}
+      loadAttorneys={label === 'assign'}
+    >
       {label === 'assign' ? (
         <JudgeAssignTaskListView {...this.props} match={match} />
       ) : (
@@ -203,7 +209,7 @@ class QueueApp extends React.PureComponent {
 
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
 
-  routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} {...props.match.params} />;
+  routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />;
 
   routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
@@ -255,13 +261,24 @@ class QueueApp extends React.PureComponent {
     return <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
   };
 
-  routedBulkAssignTaskModal = (props) => <BulkAssignModal {...props} />;
+  routedBulkAssignTaskModal = (props) => {
+    const { match } = props;
+    const pageRoute = match.path.replace('modal/bulk_assign_tasks', '');
 
-  routedOrganization = (props) => (
-    <OrganizationQueueLoadingScreen urlToLoad={`${props.location.pathname}/tasks`}>
-      <OrganizationQueue {...this.props} paginationOptions={querystring.parse(window.location.search.slice(1))} />
-    </OrganizationQueueLoadingScreen>
-  );
+    return <BulkAssignModal {...props} onCancel={() => props.history.push(pageRoute)} />;
+  };
+
+  routedOrganization = (props) => {
+    const {
+      match: { url }
+    } = props;
+
+    return (
+      <OrganizationQueueLoadingScreen urlToLoad={`${url}/tasks`}>
+        <OrganizationQueue {...this.props} paginationOptions={querystring.parse(window.location.search.slice(1))} />
+      </OrganizationQueueLoadingScreen>
+    );
+  };
 
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
@@ -424,6 +441,18 @@ class QueueApp extends React.PureComponent {
                 path="/queue/appeals/:appealId/tasks/:taskId/colocated_task"
                 title="Add Colocated Task | Caseflow"
                 render={this.routedAddColocatedTask}
+              />
+
+              <PageRoute
+                exact
+                path="/organizations/:organization/users"
+                title="Organization Users | Caseflow"
+                render={this.routedOrganizationUsers}
+              />
+              <PageRoute
+                path="/organizations/:organization"
+                title="Organization Queue | Caseflow"
+                render={this.routedOrganization}
               />
 
               <PageRoute
@@ -600,22 +629,12 @@ class QueueApp extends React.PureComponent {
                 title="Change Task Type | Caseflow"
                 render={this.routedChangeTaskTypeModal}
               />
+
               <Route
                 path="/organizations/:organization/modal/bulk_assign_tasks"
                 render={this.routedBulkAssignTaskModal}
               />
-              <PageRoute
-                exact
-                path={['/organizations/:organization', '/organizations/:organization/modal/:modalType']}
-                title="Organization Queue | Caseflow"
-                render={this.routedOrganization}
-              />
-              <PageRoute
-                exact
-                path="/organizations/:organization/users"
-                title="Organization Users | Caseflow"
-                render={this.routedOrganizationUsers}
-              />
+
               <Route path="/team_management/add_judge_team" render={this.routedAddJudgeTeam} />
               <Route path="/team_management/add_vso" render={this.routedAddVsoModal} />
               <Route path="/team_management/add_private_bar" render={this.routedAddPrivateBarModal} />
@@ -641,6 +660,8 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
   canEditAod: PropTypes.bool,
+  setFeatureToggles: PropTypes.func,
+  featureToggles: PropTypes.object,
   setUserRole: PropTypes.func,
   setUserCssId: PropTypes.func,
   setOrganizations: PropTypes.func,
@@ -664,6 +685,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
+      setFeatureToggles,
       setUserRole,
       setUserCssId,
       setUserIsVsoEmployee,

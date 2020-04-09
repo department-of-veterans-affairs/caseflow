@@ -51,7 +51,7 @@ describe RatingIssue do
     end
 
     let!(:rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: "123",
         promulgation_date: promulgation_date,
         profile_date: profile_date,

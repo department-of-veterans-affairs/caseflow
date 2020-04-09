@@ -31,7 +31,7 @@ const youveGotMailStyle = css({
 
 const InboxLink = (props) => <div {...containerStyling}>
   <Link href="/inbox" target={props.newWindow ? '_blank' : '_self'}>
-    <i className="fa fa-envelope-o" ariaHidden="true">
+    <i className="fa fa-envelope-o" aria-hidden="true">
       { props.youveGotMail && <span {...youveGotMailStyle}></span> }
     </i>
     <h3 {...textStyling}>Inbox</h3>

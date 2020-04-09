@@ -59,6 +59,7 @@ class Api::V3::DecisionReview::ContestableIssueParams
   #   nonrating_issue_category
   #   notes
   #   untimely_exemption
+  #   untimely_exemption_covid
   #   untimely_exemption_notes
   #   vacols_id
   #   vacols_sequence_id

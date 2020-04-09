@@ -370,13 +370,16 @@
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
 
-  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issues (optional)",
+  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issues",
   "SPECIAL_ISSUES_PAGE_NOTE": "Select the special issues that pertain to this case. Cases with special issues are routed to specific groups who are in charge of adjusting the case.",
   "SPECIAL_ISSUES_ABOUT_SECTION": "About the appellant: ",
   "SPECIAL_ISSUES_RESIDENCE_SECTION": "Appellant resides in: ",
   "SPECIAL_ISSUES_BENEFIT_TYPE_SECTION": "Benefit Types: ",
   "SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION": "Issues on Appeal: ",
   "SPECIAL_ISSUES_DIC_OR_PENSION_SECTION": "Dependency and Indemnity Compensation (DIC) or Pension: ",
+
+  "SPECIAL_ISSUES_NONE_CHOSEN_TITLE": "Choose at least one.",
+  "SPECIAL_ISSUES_NONE_CHOSEN_DETAIL": "If no special issues apply to this case, please confirm by selecting \"No special issues\"",
 
   "ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE": "Update Advanced on Docket (AOD) Status",
   "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN": "AOD Motion Disposition",
@@ -554,6 +557,10 @@
   "INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER": "Please enter a valid Veteran ID and try again.",
   "INTAKE_SEARCH_ERROR_NOT_ACCESSIBLE": "It looks like you do not have the necessary level of access to view this information. Please alert your manager so they can assign the form to someone else.",
   "INTAKE_SEARCH_ERROR_NOT_MODIFIABLE": "You do not appear to have permission to establish a claim for this Veteran. Often this is because they are an employee at the same station as you. Please alert your manager so they can assign the form to someone else.",
+  "INTAKE_FORM_SELECTION": "Which form are you processing?",
+  "INTAKE_APPEAL_PERMISSIONS_ALERT": "You are not authorized to perform this function. Please take necessary steps to send this Notice of Disagreement form to the Board.",
+  "INTAKE_VETERAN_NAME_SUFFIX_ERROR": "Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.) in VBMS or Share and try again.",
+  "INTAKE_VETERAN_DATE_OF_BIRTH_ERROR": "Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\" (please include zeros) in VBMS or Share and try again.",
 
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
@@ -601,6 +608,10 @@
   "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
   "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
   "INTAKE_LEGACY_OPT_IN_MESSAGE": "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?",
+
+  "ERROR_ADDRESS_LINE_INVALID_CHARACTERS": "This Veteran's address has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
+  "ERROR_CITY_INVALID_CHARACTERS": "This Veteran's city has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
+  "ERROR_ADDRESS_TOO_LONG": "This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than 20 characters (including spaces) then try again",
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
@@ -668,27 +679,65 @@
 
   "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
 
-  "VIRTUAL_HEARING_USER_ALERTS": {
-    "HEARING_CHANGED_TO_VIRTUAL": {
+  "VIRTUAL_HEARING_PROGRESS_ALERTS": {
+    "CHANGED_TO_VIRTUAL": {
       "TITLE": "We're scheduling %s's virtual hearing",
       "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran, POA / Representative, and VLJ are in progress.</li></ul>"
     },
-    "HEARING_CHANGED_FROM_VIRTUAL": {
+    "CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
       "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
     },
-    "EMAILS_UPDATED": {
+    "CHANGED_VETERAN_AND_POA_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",
-      "MESSAGES": {
-        "TO_VETERAN_AND_POA": "Emails to the Veteran and POA / Representative are in progress.",
-        "TO_VETERAN": "Email to Veteran is in progress.",
-        "TO_POA": "Email to POA / Representative is in progress.",
-        "TO_VLJ": "Email to VLJ is in progress."
-      }
+      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
     },
-    "HEARING_TIME_CHANGED": {
+    "CHANGED_VETERAN_EMAIL": {
+      "TITLE": "We're emailing the invite to %s's hearing",
+      "MESSAGE": "Email to Veteran is in progress."
+    },
+    "CHANGED_POA_EMAIL": {
+      "TITLE": "We're emailing the invite to %s's hearing",
+      "MESSAGE": "Email to POA / Representative is in progress."
+    },
+    "CHANGED_VLJ_EMAIL": {
+      "TITLE": "We're emailing the invite to %s's hearing",
+      "MESSAGE": "Email to VLJ is in progress."
+    },
+    "CHANGED_HEARING_TIME": {
       "TITLE": "We're updating the hearing time of %s's hearing",
       "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+    }
+  },
+
+  "VIRTUAL_HEARING_SUCCESS_ALERTS": {
+    "CHANGED_TO_VIRTUAL": {
+      "TITLE": "You have successfully scheduled %s's virtual hearing.",
+      "MESSAGE": "Email notifications were sent to the Veteran, POA/Representative, and VLJ."
+    },
+    "CHANGED_FROM_VIRTUAL": {
+      "TITLE": "You have successfully updated the type of %s's hearing.",
+      "MESSAGE": "Email notifications were sent to the Veteran and POA/Representative."
+    },
+    "CHANGED_VETERAN_AND_POA_EMAIL": {
+      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "MESSAGE": ""
+    },
+    "CHANGED_VETERAN_EMAIL": {
+      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "MESSAGE": ""
+    },
+    "CHANGED_POA_EMAIL": {
+      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "MESSAGE": ""
+    },
+    "CHANGED_VLJ_EMAIL": {
+      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
+      "MESSAGE": ""
+    },
+    "CHANGED_HEARING_TIME": {
+      "TITLE": "You have successfully updated the time of %s's virtual hearing",
+      "MESSAGE": "Email notifications were sent to the Veteran and POA/Representative."
     }
   },
 

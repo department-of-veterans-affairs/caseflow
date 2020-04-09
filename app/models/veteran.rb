@@ -16,14 +16,21 @@ class Veteran < CaseflowRecord
                     :military_postal_type_code, :military_post_office_type_code,
                     :service, :date_of_birth, :date_of_death, :email_address
 
-  validates :first_name, :last_name, presence: true, on: :bgs
-  validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
-
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
     validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
     validates :state, presence: true, if: :state_is_required?, on: :bgs
     validates :city, presence: true, unless: :military_address?, on: :bgs
+  end
+
+  with_options on: :bgs do
+    validates :first_name, :last_name, presence: true
+    validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }
+    validate :validate_address_line
+    validates :city, length: { maximum: 30 }
+    validate :validate_city
+    validate :validate_date_of_birth
+    validate :validate_name_suffix
   end
 
   delegate :full_address, to: :address
@@ -164,20 +171,85 @@ class Veteran < CaseflowRecord
 
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
-    @zip_code || (@address_line3 if (@address_line3 || "").match?(/(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/))
+    zip_code = bgs_record&.[](:zip_code)
+    zip_code ||= (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
+
+    # Write to cache for research purposes. Will remove!
+    # See:
+    #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
+    Rails.cache.write("person-zip-#{zip_code}", true) if zip_code.present?
+
+    zip_code
   end
+
+  def state
+    state = bgs_record&.[](:state)
+
+    # Write to cache for research purposes. Will remove!
+    # See:
+    #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
+    Rails.cache.write("person-state-#{state}", true) if state.present?
+
+    state
+  end
+
+  def country
+    country = bgs_record&.[](:country)
+
+    # Write to cache for research purposes. Will remove!
+    # See:
+    #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
+    Rails.cache.write("person-country-#{country}", true) if country.present?
+
+    country
+  end
+
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2
   alias address_line_3 address_line3
   alias gender sex
 
-  def timely_ratings(from_date:)
-    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
+  def validate_address_line
+    [:address_line1, :address_line2, :address_line3].each do |address|
+      address_line = instance_variable_get("@#{address}")
+      next if address_line.blank?
+
+      # This regex validation is used in VBMS to validate address of veteran
+      unless address_line.match?(/^(?!.*\s\s)[a-zA-Z0-9+#@%&()_:',.\-\/\s]*$/)
+        errors.add(address.to_sym, "invalid_characters")
+      end
+    end
+  end
+
+  def validate_date_of_birth
+    return if date_of_birth.blank?
+
+    unless date_of_birth.match?(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d/)
+      errors.add(:date_of_birth, "invalid_date_of_birth")
+    end
+  end
+
+  def validate_city
+    return true if city.blank?
+
+    # This regex validation is used in VBMS to validate address of veteran
+    errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
+  end
+
+  def validate_name_suffix
+    # This regex validation checks for punctuations in the name suffix
+    errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
   end
 
   def ratings
-    @ratings ||= Rating.fetch_all(participant_id)
+    @ratings ||= begin
+      if FeatureToggle.enabled?(:ratings_at_issue, user: RequestStore.store[:current_user])
+        RatingAtIssue.fetch_all(participant_id)
+      else
+        PromulgatedRating.fetch_all(participant_id)
+      end
+    end
   end
 
   def decision_issues

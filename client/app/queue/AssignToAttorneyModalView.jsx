@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 
 import { AssignWidgetModal } from './components/AssignWidget';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 import {
   taskById
@@ -37,7 +38,7 @@ class AssignToAttorneyModalView extends React.PureComponent {
   }
 
   render = () => {
-    const { task, userId } = this.props;
+    const { task, userId, match } = this.props;
     const previousAssigneeId = task ? task.assignedTo.id.toString() : null;
 
     if (!previousAssigneeId) {
@@ -46,6 +47,7 @@ class AssignToAttorneyModalView extends React.PureComponent {
 
     return <AssignWidgetModal
       isModal
+      match={match}
       userId={userId}
       onTaskAssignment={this.handleAssignment}
       previousAssigneeId={previousAssigneeId}
@@ -53,9 +55,21 @@ class AssignToAttorneyModalView extends React.PureComponent {
   }
 }
 
+AssignToAttorneyModalView.propTypes = {
+  task: PropTypes.shape({
+    assignedTo: PropTypes.shape({
+      id: PropTypes.number
+    })
+  }),
+  userId: PropTypes.string,
+  match: PropTypes.object,
+  initialAssignTasksToUser: PropTypes.func,
+  reassignTasksToUser: PropTypes.func
+};
+
 const mapStateToProps = (state, ownProps) => {
   return {
-    task: taskById(state, { taskId: ownProps.taskId })
+    task: taskById(state, { taskId: ownProps.match.params.taskId })
   };
 };
 

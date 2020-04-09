@@ -255,7 +255,7 @@ class DecisionReview < CaseflowRecord
     return unless remand_supplemental_claims.any?
     return if active_remanded_claims?
 
-    remand_supplemental_claims.map(&:decision_event_date).max.try(&:to_date)
+    remand_supplemental_claims.map(&:decision_event_date).compact.max.try(&:to_date)
   end
 
   def fetch_all_decision_issues
@@ -372,7 +372,7 @@ class DecisionReview < CaseflowRecord
     veteran.ratings.reject { |rating| rating.issues.empty? && rating.decisions.empty? }
 
     # return empty list when there are no ratings
-  rescue Rating::BackfilledRatingError, Rating::LockedRatingError => error
+  rescue PromulgatedRating::BackfilledRatingError, PromulgatedRating::LockedRatingError => error
     Raven.capture_exception(error)
     []
   end

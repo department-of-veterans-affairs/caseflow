@@ -2,9 +2,7 @@
 
 # This job will create a conference for a hearing
 # that is switched to virtual hearing.
-class VirtualHearings::CreateConferenceJob < ApplicationJob
-  include VirtualHearings::PexipClient
-
+class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   queue_with_priority :high_priority
 
   retry_on Caseflow::Error::PexipApiError, attempts: 5 do |_job, exception|
@@ -64,28 +62,41 @@ class VirtualHearings::CreateConferenceJob < ApplicationJob
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
   def create_conference
     assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
 
-    resp = client.create_conference(
+    pexip_response = create_pexip_conference
+
+    updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
+
+    if pexip_response.error
+      Rails.logger.info("Pexip response: #{pexip_response}")
+      error_display = pexip_error_display(pexip_response)
+      Rails.logger.error "CreateConferenceJob failed: #{error_display}"
+
+      virtual_hearing.establishment.update_error!(error_display)
+
+      DataDogService.increment_counter(metric_name: "created_conference.failed", **updated_metric_info)
+
+      fail pexip_response.error
+    end
+
+    DataDogService.increment_counter(metric_name: "created_conference.successful", **updated_metric_info)
+
+    virtual_hearing.update(conference_id: pexip_response.data[:conference_id], status: :active)
+  end
+
+  def pexip_error_display(response)
+    "(#{response.error.code}) #{response.error.message}"
+  end
+
+  def create_pexip_conference
+    client.create_conference(
       host_pin: virtual_hearing.host_pin,
       guest_pin: virtual_hearing.guest_pin,
       name: virtual_hearing.alias
     )
-
-    if resp.error
-      Rails.logger.info("Pexip response: #{resp}")
-      Rails.logger.error "CreateConferenceJob failed: (#{resp.error.code}) #{resp.error.message}"
-
-      virtual_hearing.establishment.update_error!("(#{resp.error.code}) #{resp.error.message}")
-
-      fail resp.error
-    end
-
-    virtual_hearing.update(conference_id: resp.data[:conference_id], status: :active)
   end
-  # rubocop:enable Metrics/AbcSize
 
   def should_initialize_alias_and_pins?
     virtual_hearing.alias.nil? || virtual_hearing.host_pin.nil? || virtual_hearing.guest_pin.nil?

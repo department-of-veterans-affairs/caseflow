@@ -18,7 +18,7 @@ class DecisionReviewIntake < Intake
       veteranValid: veteran&.valid?(:bgs),
       veteranInvalidFields: veteran_invalid_fields
     )
-  rescue Rating::NilRatingProfileListError, Rating::LockedRatingError
+  rescue Rating::NilRatingProfileListError, PromulgatedRating::LockedRatingError
     cancel!(reason: "system_error")
     raise
   end
@@ -72,24 +72,27 @@ class DecisionReviewIntake < Intake
   end
 
   def claimant_address_error
-    @claimant_address_error ||=
-      detail.errors.messages[:claimant].include?(
-        ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
-      ) && ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
+    @claimant_address_error ||= [
+      ClaimantValidator::ERRORS[:claimant_address_required],
+      ClaimantValidator::ERRORS[:claimant_address_invalid],
+      ClaimantValidator::ERRORS[:claimant_address_city_invalid]
+    ].find do |error|
+      detail.errors.messages[:claimant].include?(error)
+    end
   end
 
   def claimant_required_error
     @claimant_required_error ||=
       detail.errors.messages[:veteran_is_not_claimant].include?(
-        ClaimantValidator::CLAIMANT_REQUIRED
-      ) && ClaimantValidator::BLANK
+        ClaimantValidator::ERRORS[:claimant_required]
+      ) && ClaimantValidator::ERRORS[:blank]
   end
 
   def payee_code_error
     @payee_code_error ||=
       detail.errors.messages[:benefit_type].include?(
-        ClaimantValidator::PAYEE_CODE_REQUIRED
-      ) && ClaimantValidator::BLANK
+        ClaimantValidator::ERRORS[:payee_code_required]
+      ) && ClaimantValidator::ERRORS[:blank]
   end
 
   # run during start!
