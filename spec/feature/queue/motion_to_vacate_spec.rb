@@ -47,7 +47,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     let(:atty_disposition) { "granted" }
-
+    let(:atty_notes) { "Here is some context from Attorney to the judge" }
     let(:atty_instructions) do
       format_mtv_attorney_instructions(
         notes: atty_notes,
@@ -115,14 +115,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
       let!(:motions_attorney_task) do
         create(:vacate_motion_mail_task, assigned_to: motions_attorney, parent: root_task)
       end
-      let(:atty_notes) { "Here is some context from Attorney to the judge" }
-        let(:atty_instructions) do
-          format_mtv_attorney_instructions(
-            notes: atty_notes,
-            disposition: atty_disposition,
-            hyperlinks: atty_hyperlinks
-          )
-        end
 
       context "recommends a disposition of granted" do
         let(:atty_disposition) { "granted" }
@@ -135,14 +127,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           fill_in("motionFile", with: atty_hyperlinks[1][:link])
 
-          atty_hyperlinks[2..3].each do |item|
-            click_button(text: "+ Add hyperlink")
-            fill_in("type", with: item[:type])
-            fill_in("link", with: item[:link])
-            click_button(text: "Save")
-            expect(page).to have_content(item[:type])
-            expect(page).to have_content(item[:link])
-          end
+          fill_and_check_other_hyperlinks(atty_hyperlinks)
 
           # Ensure it has pre-selected judge previously assigned to case
           expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
@@ -176,14 +161,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           fill_in("motionFile", with: atty_hyperlinks[1][:link])
 
-          atty_hyperlinks[2..3].each do |item|
-            click_button(text: "+ Add hyperlink")
-            fill_in("type", with: item[:type])
-            fill_in("link", with: item[:link])
-            click_button(text: "Save")
-            expect(page).to have_content(item[:type])
-            expect(page).to have_content(item[:link])
-          end
+          fill_and_check_other_hyperlinks(atty_hyperlinks)
 
           click_dropdown(text: judge2.display_name)
           click_button(text: "Submit")
@@ -920,5 +898,16 @@ RSpec.feature "Motion to vacate", :all_dbs do
         link: "https://example.com/file2.pdf"
       }
     ]
+  end
+
+  def fill_and_check_other_hyperlinks(atty_hyperlinks)
+    atty_hyperlinks[2..3].each do |item|
+      click_button(text: "+ Add hyperlink")
+      fill_in("type", with: item[:type])
+      fill_in("link", with: item[:link])
+      click_button(text: "Save")
+      expect(page).to have_content(item[:type])
+      expect(page).to have_content(item[:link])
+    end
   end
 end
