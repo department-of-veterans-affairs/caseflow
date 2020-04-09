@@ -569,7 +569,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when a user can withdraw issues" do
       before do
-        BvaIntake.singleton.add_user(current_user)
+        CaseReview.singleton.add_user(current_user)
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
 
