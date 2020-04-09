@@ -84,7 +84,7 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
           </div>
           <div>
             <span>{item.link}</span>{' '}
-            <Button linkStyling={true} onClick={() => removeHyperlink(idx + 2)}>
+            <Button linkStyling onClick={() => removeHyperlink(idx + 2)}>
               Remove
             </Button>
           </div>
