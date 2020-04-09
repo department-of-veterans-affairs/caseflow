@@ -28,6 +28,9 @@ class DataIntegrityChecksJob < CaseflowJob
       if checker.report?
         send_to_slack(checker)
       end
+    # don't retry via normal shoryuken, just log and move to next checker.
+    rescue StandardError => error
+      log_error(error)
     end
 
     datadog_report_runtime(metric_group_name: "data_integrity_checks_job")

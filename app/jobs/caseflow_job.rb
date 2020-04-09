@@ -33,4 +33,10 @@ class CaseflowJob < ApplicationJob
   def slack_service
     @slack_service ||= SlackService.new(url: slack_url)
   end
+
+  def log_error(error, extra: {})
+    Rails.logger.error(error)
+    Rails.logger.error(error.backtrace.join("\n"))
+    capture_exception(error, extra)
+  end
 end
