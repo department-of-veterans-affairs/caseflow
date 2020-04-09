@@ -25,7 +25,7 @@ import { MTVTaskHeader } from './MTVTaskHeader';
 import TextField from '../../components/TextField';
 import { MTVIssueSelection } from './MTVIssueSelection';
 import StringUtil from '../../util/StringUtil';
-import { MissingDraftAlert } from './MissingDraftAlert';
+import { ReturnToLitSupportAlert } from './ReturnToLitSupportAlert';
 import { grantTypes, dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
 
@@ -145,7 +145,7 @@ export const MTVJudgeDisposition = ({
           />
         )}
 
-        {disposition && !isGrantType() && <MissingDraftAlert to={returnToLitSupportLink} disposition={disposition} />}
+        {disposition && <ReturnToLitSupportAlert to={returnToLitSupportLink} disposition={disposition} />}
 
         {disposition && isGrantType() && (
           <RadioField
