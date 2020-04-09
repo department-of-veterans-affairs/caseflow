@@ -642,5 +642,5 @@ export const statusLabel = (appeal) =>
   appeal.status === 'cancelled' ? (
     <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
   ) : (
-    appeal.status
+    StringUtil.snakeCaseToCapitalized(appeal.status)
   );
