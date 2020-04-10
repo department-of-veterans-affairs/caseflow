@@ -25,16 +25,24 @@ RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
   let(:vso_participant_ids) do
     [
       {
-        legacy_poa_cd: "070",
-        nm: "VIETNAM VETERANS OF AMERICA",
-        org_type_nm: "POA National Organization",
-        ptcpnt_id: vso_participant_id
+        file_number: "00000000",
+        ptcpnt_id: "1111",
+        power_of_attorney: {
+          legacy_poa_cd: "070",
+          nm: "VIETNAM VETERANS OF AMERICA",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: vso_participant_id
+        }
       },
       {
-        legacy_poa_cd: "071",
-        nm: "PARALYZED VETERANS OF AMERICA, INC.",
-        org_type_nm: "POA National Organization",
-        ptcpnt_id: "2452383"
+        file_number: "66666666",
+        ptcpnt_id: "2222",
+        power_of_attorney: {
+          legacy_poa_cd: "071",
+          nm: "PARALYZED VETERANS OF AMERICA, INC.",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: "2452383"
+        }
       }
     ]
   end
