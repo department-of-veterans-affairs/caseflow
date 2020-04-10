@@ -551,23 +551,19 @@ describe Appeal, :all_dbs do
     before do
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id)
         .with(participant_id_with_pva).and_return(
-          {
-            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
-            representative_type: "POA National Organization",
-            participant_id: "9876",
-            file_number: appeal.veteran_file_number,
-            claimant_participant_id: participant_id_with_pva
-          }
+          representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
+          representative_type: "POA National Organization",
+          participant_id: "9876",
+          file_number: appeal.veteran_file_number,
+          claimant_participant_id: participant_id_with_pva
         )
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id)
         .with(participant_id_with_aml).and_return(
-          {
-            representative_name: "AMERICAN LEGION",
-            representative_type: "POA National Organization",
-            participant_id: "54321",
-            file_number: appeal.veteran_file_number,
-            claimant_participant_id: participant_id_with_aml
-          }
+          representative_name: "AMERICAN LEGION",
+          representative_type: "POA National Organization",
+          participant_id: "54321",
+          file_number: appeal.veteran_file_number,
+          claimant_participant_id: participant_id_with_aml
         )
     end
 
