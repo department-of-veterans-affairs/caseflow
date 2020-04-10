@@ -30,11 +30,17 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   end
 
   def fetch_poa_with_address
-    poa = bgs.fetch_poa_by_file_number(veteran[:file_number])
+    bgs_poa = BgsPowerOfAttorney.new(file_number: veteran[:file_number])
 
-    return {} unless poa
+    return {} unless bgs_poa.found?
 
-    poa_address = bgs.find_address_by_participant_id(poa[:participant_id])
+    poa_address = bgs_poa.representative_address
+
+    poa = {
+      representative_name: bgs_poa.representative_name,
+      representative_type: bgs_poa.representative_type,
+      participant_id: bgs_poa.poa_participant_id
+    }
 
     return poa unless poa_address
 
