@@ -56,8 +56,8 @@ class SeedDB
     User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
     dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "Geoffrey BVADispatchAdmin_NoCases Black")
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
-    bva_intake_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim BVAIntakeAdmin Blue")
-    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+    case_review_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
+    OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
     special_case_movement_user = User.create(css_id: "BVARDUNKLE",
                                              station_id: 101,
                                              full_name: "Rosalie SpecialCaseMovement Dunkle")
@@ -88,6 +88,7 @@ class SeedDB
     create_hearings_user_and_tasks
     create_ama_distribution_tasks
     create_edit_hearings_user
+    create_non_admin_hearing_coordinator_user
   end
 
   def create_ama_distribution_tasks
@@ -141,6 +142,11 @@ class SeedDB
 
   def create_edit_hearings_user
     hearings_user = User.create(css_id: "BVASYELLOW", station_id: 101, full_name: "Stacy BuildAndEditHearingSchedule Yellow", roles: ["Edit HearSched", "Build HearSched"])
+    HearingsManagement.singleton.add_user(hearings_user)
+  end
+
+  def create_non_admin_hearing_coordinator_user
+    hearings_user = User.create(css_id: "BVANHALE", station_id: 101, full_name: "Nisha NonAdminHearingCoordinator Hale", roles: ["Edit HearSched"])
     HearingsManagement.singleton.add_user(hearings_user)
   end
 

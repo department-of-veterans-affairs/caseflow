@@ -358,7 +358,7 @@ FactoryBot.define do
       end
 
       factory :appeal_withdrawal_bva_task, class: AppealWithdrawalMailTask do
-        assigned_to { BvaIntake.singleton }
+        assigned_to { CaseReview.singleton }
         parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
       end
 

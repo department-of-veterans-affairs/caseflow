@@ -14,7 +14,7 @@ feature "Intake Add Issues Page", :all_dbs do
   let(:profile_date) { 10.days.ago }
   let(:promulgation_date) { 9.days.ago.to_date }
   let!(:rating) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -178,7 +178,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
   context "When the user adds an untimely issue" do
     before do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: 2.years.ago,
         profile_date: 2.years.ago,

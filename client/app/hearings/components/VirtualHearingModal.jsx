@@ -33,8 +33,8 @@ const formatTimeString = (hearing, timeWasEdited) => {
 
 const DateTime = ({ hearing, timeWasEdited }) => (
   <div>
-    <strong>{'Date:'}&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
-    <strong>{'Time:'}&nbsp;</strong>{formatTimeString(hearing, timeWasEdited)}
+    <strong>Date:&nbsp;</strong>{moment(hearing.scheduledFor).format('MM/DD/YYYY')}<br />
+    <strong>Time:&nbsp;</strong>{formatTimeString(hearing, timeWasEdited)}
   </div>
 );
 
@@ -115,7 +115,7 @@ const ChangeEmail = (props) => (
 const ChangeFromVirtual = ({ hearing, ...props }) => (
   <React.Fragment>
     <DateTime {...props} hearing={hearing} />
-    {hearing.location && <div><strong>{'Location:'}&nbsp;</strong>{hearing.location.name}</div>}
+    {hearing.location && <div><strong>Location:&nbsp;</strong>{hearing.location.name}</div>}
     <ReadOnlyEmails {...props} showAllEmails />
   </React.Fragment>
 );
