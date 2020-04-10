@@ -66,6 +66,10 @@ class SeedDB
                                               station_id: 101,
                                               full_name: "Bryan SpecialCaseMovementAdmin Beekman")
     OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
+    bva_intake_admin = User.create(css_id: "BVADWISE", station_id: 101, full_name: "Deborah BvaIntakeAdmin Wise")
+    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+    bva_intake_user = User.create(css_id: "BVAISHAW", station_id: 101, full_name: "Ignacio BvaIntakeUser Shaw")
+    BvaIntake.singleton.add_user(bva_intake_user)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
