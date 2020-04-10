@@ -121,12 +121,21 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def fetch_bgs_record
     if self[:claimant_participant_id]
-      [bgs.fetch_poas_by_participant_id(self[:claimant_participant_id])].flatten[0]
+      fetch_bgs_record_by_claimant_participant_id
     elsif self[:file_number]
       bgs.fetch_poa_by_file_number(self[:file_number])
     else
       fail "Must define claimant_participant_id or file_number"
     end
+  end
+
+  # In theory, both these BGS calls should return the same thing.
+  # We try both services if necessary mostly for backwards compatability in tests.
+  def fetch_bgs_record_by_claimant_participant_id
+    pid = self[:claimant_participant_id]
+    poa = [bgs.fetch_poas_by_participant_id(pid)].flatten[0] || bgs.fetch_poas_by_participant_ids([pid])[pid]
+    poa[:claimant_participant_id] ||= pid
+    poa
   end
 
   def load_bgs_address!

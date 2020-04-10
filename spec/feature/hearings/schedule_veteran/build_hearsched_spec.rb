@@ -723,13 +723,13 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     context "Filter by PowerOfAttorneyName column" do
       before do
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["1"]).and_return(
-          "1" => { representative_type: "Attorney", representative_name: "Attorney 1", participant_id: "1" }
+          "1" => { file_number: "0000", representative_type: "Attorney", representative_name: "Attorney 1", participant_id: "1" }
         )
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["2"]).and_return(
-          "2" => { representative_type: "Attorney", representative_name: "Attorney 2", participant_id: "2" }
+          "2" => { file_number: "1111", representative_type: "Attorney", representative_name: "Attorney 2", participant_id: "2" }
         )
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["3"]).and_return(
-          "3" => { representative_type: "Attorney", representative_name: "Attorney 3", participant_id: "3" }
+          "3" => { file_number: "2222", representative_type: "Attorney", representative_name: "Attorney 3", participant_id: "3" }
         )
 
         create_ama_appeals
