@@ -67,11 +67,11 @@ gem "shoryuken", "3.1.11"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
-gem "tzinfo"
 # execjs runtime
 gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
+gem "tzinfo"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
