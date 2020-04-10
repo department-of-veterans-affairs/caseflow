@@ -8,7 +8,6 @@ describe AmaAppealDispatch, :postgres do
       appeal = create(:appeal, :advanced_on_docket_due_to_age)
       root_task = create(:root_task, appeal: appeal)
       BvaDispatchTask.create_from_root_task(root_task)
-      claimant = appeal.claimant
       poa_participant_id = "1234567"
 
       bgs_poa = instance_double(BgsPowerOfAttorney)
