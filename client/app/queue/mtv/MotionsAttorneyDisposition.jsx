@@ -23,24 +23,10 @@ import { DecisionHyperlinks } from './forms/DecisionHyperlinks';
 const formatReviewAttyInstructions = ({ disposition, hyperlinks, instructions }) => {
   const parts = [`I recommend ${DISPOSITION_TEXT[disposition]}.`, instructions];
 
-  if (hyperlinks.length) {
-    parts.push('\nDocument Links:');
-
-    // Handle denied/dismissed draft (if applicable) and remove from array
-    const denialDraft = hyperlinks.shift();
-
-    if (['denied', 'dismissed'].includes(disposition)) {
-      parts.push(`\nHere is the hyperlink to the ${DISPOSITION_TEXT[disposition]} draft:\n${denialDraft.link}`);
-    }
-
-    // Handle the link to draft, and remove from array
-    const motionDraft = hyperlinks.shift();
-
-    parts.push(`\nHere is the hyperlink to the draft of the motion:\n${motionDraft.link}`);
-
-    // Handle any remaining hyperlinks that might exist
-    for (const item of hyperlinks) {
-      parts.push(`\nHere is the hyperlink to the ${item.type}:\n${item.link}`);
+  // Add any hyperlinks that might exist
+  for (const item of hyperlinks) {
+    if (item.link) {
+      parts.push(`\nHere is the hyperlink to the ${item.type}:\n${sprintf(item.link, DISPOSITION_TEXT[disposition])}`);
     }
   }
 
@@ -71,7 +57,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
   };
 
   const valid = () => {
-    if (!disposition || !judgeId) {
+    if (!disposition || !judgeId || !hyperlinks[0]?.link) {
       return false;
     }
 

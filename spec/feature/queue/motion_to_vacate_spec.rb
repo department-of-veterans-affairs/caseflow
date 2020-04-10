@@ -24,7 +24,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
   let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
   let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
   let!(:hyperlink) { "https://va.gov/fake-link-to-file" }
-  let(:atty_hyperlinks) { generate_atty_hyperlinks }
 
   before do
     create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -55,6 +54,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         hyperlinks: atty_hyperlinks
       )
     end
+    let(:atty_hyperlinks) { generate_atty_hyperlinks(atty_disposition) }
 
     before do
       create(:staff, :judge_role, sdomainid: judge2.css_id)
@@ -125,7 +125,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           find("label[for=disposition_granted]").click
           fill_in("instructions", with: atty_notes)
 
-          fill_in("motionFile", with: atty_hyperlinks[1][:link])
+          fill_in("motionFile", with: atty_hyperlinks[0][:link])
 
           fill_and_check_other_hyperlinks(atty_hyperlinks)
 
@@ -879,15 +879,15 @@ RSpec.feature "Motion to vacate", :all_dbs do
     "12345-12345678"
   end
 
-  def generate_atty_hyperlinks
+  def generate_atty_hyperlinks(disposition)
     [
       {
-        type: "%s Draft",
-        link: "https://example.com/decision_draft.pdf"
+        type: "draft of the motion",
+        link: "https://example.com/motion_file.pdf"
       },
       {
-        type: "Motion File",
-        link: "https://example.com/motion_file.pdf"
+        type: "draft of the %s",
+        link: %w[denied dismissed].include?(disposition) ? "https://example.com/decision_draft.pdf" : ""
       },
       {
         type: "Supplementary File 1",

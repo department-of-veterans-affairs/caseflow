@@ -12,11 +12,11 @@ import { AddHyperlinkModal } from './AddHyperlinkModal';
 
 const defaultHyperlinks = [
   {
-    type: '%s Draft',
+    type: 'draft of the motion',
     link: ''
   },
   {
-    type: 'Motion File',
+    type: 'draft of the %s',
     link: ''
   }
 ];
@@ -53,7 +53,7 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
     setHyperlinks(updated);
   };
 
-  const [decision, motion, ...otherLinks] = hyperlinks;
+  const [motion, decision, ...otherLinks] = hyperlinks;
 
   return (
     <>
@@ -62,7 +62,7 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
           name="decisionDraft"
           label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DRAFT_HYPERLINK_LABEL, dispositionStrings[disposition])}
           value={decision.link}
-          onChange={(link) => editHyperlink({ idx: 0, type: decision.type, link })}
+          onChange={(link) => editHyperlink({ idx: 1, type: decision.type, link })}
           strongLabel
           className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
         />
@@ -72,7 +72,7 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
         name="motionFile"
         label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_MOTION_HYPERLINK_LABEL, dispositionStrings[disposition])}
         value={motion.link}
-        onChange={(link) => editHyperlink({ idx: 1, type: motion.type, link })}
+        onChange={(link) => editHyperlink({ idx: 0, type: motion.type, link })}
         strongLabel
         className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
       />
