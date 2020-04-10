@@ -228,7 +228,7 @@ describe Document, :postgres do
           alt_doc_types: nil
         )
       end
-      it "returns the documents" do
+      it "assigns the correct label type" do
         expect(subject.type).to eq("VA Form 20-0995 Supplemental Claim Application")
       end
     end
