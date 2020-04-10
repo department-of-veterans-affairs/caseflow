@@ -2,11 +2,13 @@ openapi: 3.0.0
 info:
   title: Decision Reviews
   description: >+
-    The Decision Reviews API allows you to interact with a Veteran’s Decision Review requests, also known as benefit appeals. This API provides a secure and efficient alternative to paper or fax document submissions. Veterans Benefits Administration or Board of Veterans Appeals can begin processing Decision Review requests submitted through this API immediately, which ultimately allows VA to provide Veterans with appeal decisions more quickly.
+    The Decision Reviews API allows you to interact with a veteran’s Decision Reviews. This API provides a secure and efficient alternative to paper or fax document submissions. Veterans Benefits Administration or Board of Veterans Appeals can begin processing Decision Review requests submitted through this API immediately, which ultimately allows VA to provide Veterans with appeal decisions more quickly.
 
-    > * For more information on the Decision Review process, including the different types of Decision Reviews, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/).
 
-    > * The Decision Reviews API supports the Appeals Modernization Act (AMA) process only. Appeals going through the legacy Appeal process cannot be managed through this API. Learn more about the AMA [here](https://benefits.va.gov/benefits/appeals.asp).
+    For more information on the Decision Review process, including the different types of Decision Reviews, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/).
+
+
+    The Decision Reviews API supports the Appeals Modernization Act (AMA) process only. Appeals going through the legacy Appeal process cannot be managed through this API. Learn more about the AMA [here](https://benefits.va.gov/benefits/appeals.asp).
 
     ## Technical Summary
 
@@ -18,16 +20,18 @@ info:
 
     * Detailed error messages will be returned to help your application provide meaningful information to the Veteran attempting to make the Decision Review request.
 
-    ### Authorization
+    ## Authorization
 
-    API requests are authorized through a symmetric API token, provided in an HTTP header with name "apikey."
+    API requests are authorized through a token, provided in an HTTP header.
+    Example _curl_ (assuming you're running Caseflow locally, and the `api_v3` feature toggle has been enabled):
+
+    ```
+     curl -v POST http://localhost:3000/api/v3/decision_review/higher_level_reviews /
+     -d {{json}} -i -H "Content-Type: application/json" /
+     -H "Authorization: Token token={{yourApiKeyHere}}"
+    ```
+
   version: 3.0.0
-servers:
-  - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
-    description: "VA.gov API development environment"
-    variables:
-      version:
-        default: "v3"
 paths:
   /higher_level_reviews:
     post:
