@@ -5,7 +5,7 @@ class JudgeCaseAssignmentToAttorney
 
   attr_accessor :appeal_id, :assigned_to, :task_id, :assigned_by, :judge
 
-  validates :assigned_by, :assigned_to, :judge, presence: true
+  validates :assigned_by, :assigned_to, presence: true
   validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
   validate :assigned_by_role_is_valid
 
@@ -15,7 +15,7 @@ class JudgeCaseAssignmentToAttorney
                           name: "assign_case_to_attorney") do
       self.class.repository.assign_case_to_attorney!(
         assigned_by: assigned_by,
-        judge: judge,
+        judge: judge || assigned_by,
         attorney: assigned_to,
         vacols_id: vacols_id
       )

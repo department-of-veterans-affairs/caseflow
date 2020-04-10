@@ -109,11 +109,11 @@ class LegacyTasksController < ApplicationController
   end
 
   def legacy_task_params
-    params.require("tasks")
+    @legacy_task_params ||= params.require("tasks")
       .permit(:appeal_id)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
-      .merge(judge: User.find_by(id: params[:tasks][:judge_id] || current_user.id))
+    @legacy_task_params.merge(judge: User.find_by(id: params[:tasks][:judge_id])) if params[:tasks][:judge_id]
   end
 
   def json_task(task)
