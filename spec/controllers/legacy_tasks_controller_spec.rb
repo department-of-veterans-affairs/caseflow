@@ -161,6 +161,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           "assigned_to_id": attorney.id
         }
         allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
+          assigned_by: user,
           judge: user,
           attorney: attorney,
           vacols_id: @appeal.vacols_id
@@ -413,14 +414,22 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       User.stub = assigning_judge
     end
 
-    it "should be successful" do
-      allow(QueueRepository).to receive(:update_location_to_judge).with(
-        appeal.vacols_id,
-        assignee_judge
-      ).and_return(true)
+    shared_examples "judge reassigns case" do
+      it "should be successful" do
+        expect(VACOLS::Case.find_by(bfkey: appeal.vacols_id).bfcurloc).to eq assigning_judge.vacols_uniq_id
+        patch :assign_to_judge, params: { tasks: params }
+        expect(response.status).to eq 200
+        expect(VACOLS::Case.find_by(bfkey: appeal.vacols_id).bfcurloc).to eq assignee_judge.vacols_uniq_id
+      end
+    end
 
-      patch :assign_to_judge, params: { tasks: params }
-      expect(response.status).to eq 200
+    it_behaves_like "judge reassigns case"
+
+    context "when the reassigner is an scm team member" do
+      before do
+        User.stub = create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
+      end
+      it_behaves_like "judge reassigns case"
     end
   end
 end

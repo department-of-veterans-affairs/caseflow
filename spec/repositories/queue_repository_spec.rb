@@ -33,7 +33,9 @@ describe QueueRepository, :all_dbs do
         expect(vacols_case.bfcurloc).to eq judge_staff.slogid
         expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 0
 
-        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        QueueRepository.assign_case_to_attorney!(
+          assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+        )
 
         expect(vacols_case.reload.bfcurloc).to eq attorney_staff.slogid
         expect(vacols_case.bfattid).to eq attorney_staff.sattyid
@@ -84,7 +86,9 @@ describe QueueRepository, :all_dbs do
 
       it "should raise ActiveRecord::RecordNotFound" do
         expect do
-          QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+          QueueRepository.assign_case_to_attorney!(
+            assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+          )
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -94,7 +98,9 @@ describe QueueRepository, :all_dbs do
         vacols_case.update(bfcurloc: attorney.vacols_uniq_id)
 
         expect do
-          QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+          QueueRepository.assign_case_to_attorney!(
+            assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+          )
         end.to raise_error(Caseflow::Error::LegacyCaseAlreadyAssignedError)
       end
     end
@@ -108,7 +114,9 @@ describe QueueRepository, :all_dbs do
                                deatty: "111",
                                deteam: "D5",
                                deprod: "DEV")
-        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        QueueRepository.assign_case_to_attorney!(
+          assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+        )
         decass_results = VACOLS::Decass.where(defolder: vacols_case.bfkey)
         expect(decass_results.count).to eq 1
         decass = decass_results.first

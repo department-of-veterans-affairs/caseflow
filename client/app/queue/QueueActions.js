@@ -457,7 +457,7 @@ export const initialAssignTasksToUser = ({
     const { requestParams, url, taskIds } = params;
 
     return ApiUtil.post(url, requestParams).
-      then((resp) => resp.body).
+      then((resp) => resp.body, (err) =>{ debugger }).
       then((resp) => {
         dispatchOldTasks(dispatch, requestParams.data.tasks, resp);
 

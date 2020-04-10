@@ -20,6 +20,10 @@ class AttorneyLegacyTask < LegacyTask
     COPY::CASE_TIMELINE_ATTORNEY_TASK
   end
 
+  def label
+    COPY::ATTORNEY_TASK_LABEL
+  end
+
   def self.from_vacols(case_assignment, appeal, user_id)
     super
   end
