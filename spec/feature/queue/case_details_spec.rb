@@ -1196,7 +1196,7 @@ RSpec.feature "Case details", :all_dbs do
       let(:user) { create(:user) }
 
       before do
-        BvaIntake.singleton.add_user(user)
+        CaseReview.singleton.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -1221,7 +1221,7 @@ RSpec.feature "Case details", :all_dbs do
 
         new_task = new_tasks.first
         expect(new_task.status).to eq Constants.TASK_STATUSES.cancelled
-        expect(appeal_withdrawal_bva_task.assigned_to).to eq(BvaIntake.singleton)
+        expect(appeal_withdrawal_bva_task.assigned_to).to eq(CaseReview.singleton)
         expect(appeal_withdrawal_bva_task.parent.assigned_to).to eq(MailTeam.singleton)
       end
     end
