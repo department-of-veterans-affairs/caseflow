@@ -79,7 +79,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def stale_attributes?
-    return false if bgs_record == :not_found
+    return false if not_found?
 
     stale_attributes.any?
   end
@@ -92,12 +92,16 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def found?
-    return false if bgs_record == :not_found
+    return false if not_found?
 
     bgs_record.keys.any?
   end
 
   private
+
+  def not_found?
+    bgs_record == :not_found
+  end
 
   def person
     @person ||= Person.find_or_create_by(participant_id: poa_participant_id)
