@@ -263,14 +263,16 @@ class AddIssueManager extends React.Component {
   };
 
   requiresUntimelyExemption = () => {
+
+    const { currentIssue, eligibleForSocOptIn } = this.state;
+
     if (this.props.formType === 'supplemental_claim') {
-      return false;
+      return !eligibleForSocOptIn;
     }
-    const { currentIssue } = this.state;
 
     // Skip untimely check for legacy issues
     if (currentIssue && currentIssue.vacolsId) {
-      return false;
+      return !eligibleForSocOptIn;
     }
 
     // Skip untimely check for unidentified issues

@@ -7,6 +7,7 @@ import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 import { useSelector } from 'react-redux';
 import Checkbox from '../../components/Checkbox';
+import { css } from 'glamor';
 
 const generateButtons = ({ cancelText, onCancel, onSubmit, submitText, skipText, onSkip, state, isInvalid }) => {
   const btns = [
@@ -78,7 +79,9 @@ export const UntimelyExemptionModal = ({
         <p>
           <strong>Requested issue:</strong> {issue.description}
         </p>
-        <p>The issue requested isn't usually eligible because its decision date is older than what's allowed.</p>
+        <p {...css({ marginBottom: '20px !important' })}>
+        Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.
+        </p>
         <RadioField
           name="untimely-exemption"
           label="Did the applicant request an extension to the date requirements?"

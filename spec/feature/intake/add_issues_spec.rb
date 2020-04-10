@@ -227,6 +227,23 @@ feature "Intake Add Issues Page", :all_dbs do
           expect(untimely_issue.covid_timeliness_exempt).to eq(true)
         end
       end
+
+      fscenario "vacols issue with untimely exemption" do
+        start_higher_level_review(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("Untimely Issue")
+
+        expect(page).to have_content("Issue 1 is an Untimely Issue")
+        find("label", text: "Yes").click
+        expect(page).to have_content("This request is related to COVID-19")
+        find('label[for="untimelyExemptionCovid"]').click
+        safe_click ".add-issue"
+        expect(page).to have_content("Untimely Issue")
+        binding.pry
+        click_on "Establish EP"
+        expect(page).to have_content("Intake completed")
+      end
     end
   end
 
