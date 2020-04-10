@@ -220,7 +220,7 @@ describe Document, :postgres do
       it { is_expected.to have_attributes(type: "Form 9") }
     end
 
-    context "when the doc type is a newly recognized label" do 
+    context "when the doc type is a newly recognized label" do
       let(:vbms_document) do
         OpenStruct.new(
           document_id: "1",
