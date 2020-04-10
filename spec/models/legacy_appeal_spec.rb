@@ -106,9 +106,12 @@ describe LegacyAppeal, :all_dbs do
   end
 
   context "#eligible_for_opt_in? and #matchable_to_request_issue?" do
-    let(:soc_eligible_date) { receipt_date - 60.days }
-    let(:nod_eligible_date) { receipt_date - 372.days }
-    let(:receipt_date) { Time.zone.today }
+    let(:receipt_date) { Date.new(2020,4,10) }
+    let(:ama_date) { Constants::DATES["AMA_ACTIVATION"].to_date }
+    let(:ineligible_soc_date) { receipt_date - 60.days - 1.day }
+    let(:ineligible_nod_date) { receipt_date - 372.days - 1.day }
+    let(:eligible_soc_date) { receipt_date - 60.days + 1.day }
+    let(:eligible_nod_date) { receipt_date - 372.days + 1.day }
 
     let(:vacols_case) do
       create(:case, bfcorlid: "123456789S")
@@ -117,7 +120,6 @@ describe LegacyAppeal, :all_dbs do
     let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1, disposition: nil)] }
 
     context "when the ssoc date is before when AMA was launched" do
-      let(:ama_date) { Constants::DATES["AMA_ACTIVATION"].to_date }
       let(:receipt_date) { ama_date + 1.day }
 
       scenario "when the ssoc date is before AMA was launched" do
@@ -126,6 +128,7 @@ describe LegacyAppeal, :all_dbs do
         allow(appeal).to receive(:soc_date).and_return(Constants::DATES["AMA_ACTIVATION"].to_date - 1.day)
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(false)
         expect(appeal.matchable_to_request_issue?(receipt_date: receipt_date)).to eq(true)
       end
     end
@@ -133,8 +136,8 @@ describe LegacyAppeal, :all_dbs do
     scenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)
       allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
+      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
       expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
@@ -143,9 +146,9 @@ describe LegacyAppeal, :all_dbs do
     scenario "when is active and soc is not eligible but ssoc is" do
       allow(appeal).to receive(:active?).and_return(true)
       allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
-      allow(appeal).to receive(:ssoc_dates).and_return([soc_eligible_date + 1.day])
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
+      allow(appeal).to receive(:ssoc_dates).and_return([eligible_soc_date])
+      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
       expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
@@ -154,8 +157,8 @@ describe LegacyAppeal, :all_dbs do
     scenario "when is not active but is eligible" do
       allow(appeal).to receive(:active?).and_return(false)
       allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+      allow(appeal).to receive(:soc_date).and_return(eligible_soc_date)
+      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
       expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
@@ -164,8 +167,8 @@ describe LegacyAppeal, :all_dbs do
     scenario "when is not active or eligible" do
       allow(appeal).to receive(:active?).and_return(false)
       allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
+      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
       expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
@@ -174,8 +177,8 @@ describe LegacyAppeal, :all_dbs do
     scenario "when is active or eligible but has no issues" do
       allow(appeal).to receive(:active?).and_return(true)
       allow(appeal).to receive(:issues).and_return([])
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date + 1.day)
+      allow(appeal).to receive(:soc_date).and_return(eligible_soc_date)
+      allow(appeal).to receive(:nod_date).and_return(eligible_nod_date)
 
       expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
@@ -192,6 +195,35 @@ describe LegacyAppeal, :all_dbs do
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
+    end
+
+    context "when allowing covid-related timeliness exemptions" do
+      before { FeatureToggle.enable!(:covid_timeliness_exemption) }
+      after { FeatureToggle.disable!(:covid_timeliness_exemption) }
+      let(:soc_covid_eligible_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date }
+      let(:nod_covid_eligible_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date }
+
+      scenario "when NOD date is eligible with covid-related exemption" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(soc_covid_eligible_date - 1.day)
+        allow(appeal).to receive(:nod_date).and_return(nod_covid_eligible_date + 1.day)
+
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(true)
+      end
+
+      scenario "when SOC date is only eligible with a covid-related extension" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(soc_covid_eligible_date + 1.day)
+        allow(appeal).to receive(:nod_date).and_return(nod_covid_eligible_date - 1.day)
+
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(true)
       end
     end
   end
