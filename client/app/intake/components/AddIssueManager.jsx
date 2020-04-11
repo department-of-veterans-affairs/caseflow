@@ -150,13 +150,15 @@ class AddIssueManager extends React.Component {
 
   setupLegacyOptInModal = () => {
     const { intakeData, formType } = this.props;
+    const { covidTimelinessExemption } = this.props.featureToggles;
+    const timelyRules = covidTimelinessExemption ? this.requiresTimelyWithExemption() : this.requiresUntimelyExemption();
 
     return {
       component: LegacyOptInModal,
       props: {
         intakeData,
         formType,
-        submitText: this.requiresUntimelyExemption() ? 'Next' : 'Add this issue',
+        submitText: timelyRules ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSubmit: ({ vacolsId, vacolsSequenceId, eligibleForSocOptIn }) => {
           this.setState(
@@ -171,7 +173,7 @@ class AddIssueManager extends React.Component {
             () => {
               const { currentIssue } = this.state;
 
-              if (this.requiresUntimelyExemption()) {
+              if (timelyRules) {
                 this.setState({ currentModal: 'UntimelyExemptionModal', addtlProps: { currentIssue } });
               } else {
                 this.props.addIssue(currentIssue);
@@ -263,16 +265,14 @@ class AddIssueManager extends React.Component {
   };
 
   requiresUntimelyExemption = () => {
-
-    const { currentIssue, eligibleForSocOptIn } = this.state;
-
     if (this.props.formType === 'supplemental_claim') {
-      return !eligibleForSocOptIn;
+      return false;
     }
+    const { currentIssue } = this.state;
 
     // Skip untimely check for legacy issues
     if (currentIssue && currentIssue.vacolsId) {
-      return !eligibleForSocOptIn;
+      return false;
     }
 
     // Skip untimely check for unidentified issues
@@ -281,6 +281,34 @@ class AddIssueManager extends React.Component {
     }
 
     return currentIssue && !currentIssue.timely;
+  };
+
+  requiresTimelyWithExemption = () => {
+
+    const { currentIssue, eligibleForSocOptIn } = this.state;
+    const { formType } = this.props;
+
+    const legacyIssueIsTimely = !this.props.intakeData.legacyOptInApproved || eligibleForSocOptIn;
+
+    const requestIssueIsTimely = currentIssue && currentIssue.timely;
+
+    if (formType === 'appeal') {
+      return !requestIssueIsTimely;
+    }
+
+    if (formType === 'supplemental_claim') {
+      return !legacyIssueIsTimely;
+    }
+
+    if (formType === 'higher_level_review') {
+      if (requestIssueIsTimely) {
+        return !legacyIssueIsTimely;
+      }
+
+      return true;
+
+    }
+
   };
 
   render() {
