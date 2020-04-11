@@ -941,7 +941,7 @@ describe RequestIssue, :all_dbs do
         :end_product_establishment,
         :cleared,
         veteran_file_number: veteran.file_number,
-        established_at: previous_higher_level_receipt_date - 100.days
+        established_at: previous_higher_level_review.receipt_date - 100.days
       )
     end
 
