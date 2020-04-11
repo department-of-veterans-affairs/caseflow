@@ -106,7 +106,7 @@ describe LegacyAppeal, :all_dbs do
   end
 
   context "#eligible_for_opt_in? and #matchable_to_request_issue?" do
-    let(:receipt_date) { Date.new(2020,4,10) }
+    let(:receipt_date) { Date.new(2020, 4, 10) }
     let(:ama_date) { Constants::DATES["AMA_ACTIVATION"].to_date }
     let(:ineligible_soc_date) { receipt_date - 60.days - 1.day }
     let(:ineligible_nod_date) { receipt_date - 372.days - 1.day }
