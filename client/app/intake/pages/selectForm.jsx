@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
@@ -12,14 +12,6 @@ import { setFormType, clearSearchErrors } from '../actions/intake';
 import { PAGE_PATHS, FORM_TYPES } from '../constants';
 import COPY from '../../../COPY';
 import _ from 'lodash';
-
-const appealPermissionErrorMessage = <Fragment>
-  <p>{COPY.INTAKE_APPEAL_PERMISSIONS_ALERT}</p>
-  <p>
-    Mail to <strong>425 I St NW, Washington DC, 20001</strong><br />
-    Attention: <strong>Case Review and Evaluation Branch</strong>
-  </p>
-</Fragment>;
 
 class SelectForm extends React.PureComponent {
   setFormTypeFromDropdown = (formObject) => {
@@ -54,7 +46,7 @@ class SelectForm extends React.PureComponent {
         title="Not Authorized"
         type="error"
         lowerMargin>
-        {appealPermissionErrorMessage}
+        {COPY.INTAKE_APPEAL_PERMISSIONS_ALERT}
       </Alert>
       }
 
