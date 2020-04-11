@@ -576,14 +576,14 @@ feature "Search", :all_dbs do
     end
   end
 
+  def perform_search
+    visit "/search"
+    fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
+    click_on "Search"
+  end
+
   context "has withdrawn decision reviews" do
     let!(:caseflow_appeal) { create(:appeal) }
-
-    def perform_search
-      visit "/search"
-      fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
-      click_on "Search"
-    end
 
     it "shows 'Withdrawn' text on search results page" do
       policy = instance_double(WithdrawnDecisionReviewPolicy)
@@ -592,6 +592,21 @@ feature "Search", :all_dbs do
       perform_search
 
       expect(page).to have_content("Withdrawn")
+    end
+  end
+
+  context "is cancelled ama appeal" do
+    let!(:caseflow_appeal) { create(:appeal, :at_attorney_drafting, associated_attorney: attorney_user) }
+
+    it "shows 'Cancelled' text on search results page" do
+      perform_search
+      expect(page).to have_content("Assigned To Attorney")
+      expect(page).to have_content("Assigned to you")
+
+      caseflow_appeal.reload.tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+      perform_search
+      expect(page).to have_content("Cancelled")
+      expect(page).not_to have_content("Assigned to you")
     end
   end
 end
