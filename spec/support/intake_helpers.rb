@@ -585,7 +585,7 @@ module IntakeHelpers
       }
     end
 
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -595,7 +595,7 @@ module IntakeHelpers
   end
 
   def generate_rating(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -608,7 +608,7 @@ module IntakeHelpers
   end
 
   def generate_timely_rating(veteran, receipt_date, duplicate_reference_id)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 40.days,
       profile_date: receipt_date - 50.days,
@@ -621,7 +621,7 @@ module IntakeHelpers
   end
 
   def generate_untimely_rating(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -645,11 +645,11 @@ module IntakeHelpers
     if with_associated_claims
       args[:associated_claims] = { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
     end
-    Generators::Rating.build(args)
+    Generators::PromulgatedRating.build(args)
   end
 
   def generate_future_rating(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -661,7 +661,7 @@ module IntakeHelpers
   end
 
   def generate_pre_ama_rating(veteran)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: ama_test_start_date - 5.days,
       profile_date: ama_test_start_date - 10.days,
@@ -672,7 +672,7 @@ module IntakeHelpers
   end
 
   def generate_rating_with_defined_contention(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -685,7 +685,7 @@ module IntakeHelpers
   end
 
   def generate_rating_before_ama_from_ramp(veteran)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: ama_test_start_date - 5.days,
       profile_date: ama_test_start_date - 11.days,
@@ -698,7 +698,7 @@ module IntakeHelpers
   end
 
   def generate_rating_with_legacy_issues(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -710,7 +710,7 @@ module IntakeHelpers
   end
 
   def generate_rating_with_old_decisions(veteran, receipt_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 5.years,
       profile_date: receipt_date - 5.years,

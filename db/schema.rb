@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_27_174629) do
+ActiveRecord::Schema.define(version: 2020_04_05_223053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -195,8 +195,16 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
+    t.index ["case_type"], name: "index_cached_appeal_attributes_on_case_type"
+    t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
+    t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
+    t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
+    t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
+    t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
     t.index ["updated_at"], name: "index_cached_appeal_attributes_on_updated_at"
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
+    t.index ["veteran_name"], name: "index_cached_appeal_attributes_on_veteran_name"
   end
 
   create_table "cached_user_attributes", id: false, comment: "VACOLS cached staff table attributes", force: :cascade do |t|

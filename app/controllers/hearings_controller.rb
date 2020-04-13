@@ -61,7 +61,11 @@ class HearingsController < HearingsApplicationController
   end
 
   def virtual_hearing_job_status
-    render json: { job_completed: hearing.virtual_hearing&.job_completed? }
+    render json: {
+      job_completed: hearing.virtual_hearing&.job_completed?,
+      alias: hearing.virtual_hearing&.alias,
+      host_pin: hearing.virtual_hearing&.host_pin
+    }
   end
 
   private

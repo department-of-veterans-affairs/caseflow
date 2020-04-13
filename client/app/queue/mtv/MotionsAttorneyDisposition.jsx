@@ -18,12 +18,12 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
-import { DISPOSITION_TEXT } from '../../../constants/MOTION_TO_VACATE';
+import { DISPOSITION_RECOMMENDATIONS } from '../../../constants/MOTION_TO_VACATE';
 import { dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
 
 const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
-  const parts = [`I recommend ${DISPOSITION_TEXT[disposition]}.`, instructions];
+  const parts = [DISPOSITION_RECOMMENDATIONS[disposition], instructions];
 
   if (hyperlink) {
     parts.push(`Here is the hyperlink to the draft of the denial:\n${hyperlink}`);
@@ -59,6 +59,11 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
     return true;
   };
 
+  const instructionsLabel = sprintf(
+    MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL,
+    disposition || 'granted'
+  ).replace('_', ' ');
+
   return (
     <div className="address-motion-to-vacate">
       <AppSegment filledBackground>
@@ -76,7 +81,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
 
         <TextareaField
           name="instructions"
-          label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
+          label={instructionsLabel}
           onChange={(val) => setInstructions(val)}
           value={instructions}
           className={['mtv-review-instructions']}

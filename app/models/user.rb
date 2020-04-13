@@ -99,7 +99,11 @@ class User < CaseflowRecord
   end
 
   def can_withdraw_issues?
-    BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
+    CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
+  end
+
+  def can_intake_appeals?
+    MailTeam.singleton.users.include?(self)
   end
 
   def administer_org_users?

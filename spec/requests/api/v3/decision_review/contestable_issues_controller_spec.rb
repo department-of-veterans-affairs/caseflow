@@ -37,7 +37,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
     end
 
     it "should return a list of issues in JSONAPI format" do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.ptcpnt_id,
         profile_date: Time.zone.today - 10.days # must be before receipt_date
       ) # this is a contestable_rating_issues
@@ -90,7 +90,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
       let(:disability_id) { "123" }
       let(:issues) do
         date = Time.zone.today
-        Generators::Rating.build(
+        Generators::PromulgatedRating.build(
           participant_id: veteran.ptcpnt_id,
           associated_claims: [
             { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
