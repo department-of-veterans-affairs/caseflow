@@ -1,6 +1,83 @@
 # frozen_string_literal: true
 
-describe TimezoneService, focus: true do
+describe TimezoneService do
+  describe "#address_to_timezone" do
+    let(:city) { "Test City" }
+    let(:country) { nil }
+    let(:state) { nil }
+    let(:zip) { nil }
+    let(:address) do
+      Address.new(
+        address_line_1: "LINE 1",
+        city: city,
+        country: country,
+        state: state,
+        zip: zip
+      )
+    end
+
+    subject { TimezoneService.address_to_timezone(address) }
+
+    context "address in the US" do
+      let(:country) { "United States" }
+
+      context "zip code is in Barrigada, Guam" do
+        let(:zip) { "96913" }
+
+        it { expect(subject.identifier).to eq("Pacific/Guam") }
+      end
+
+      context "zip code is in El Paso, TX" do
+        let(:zip) { "79925" }
+
+        it { expect(subject.identifier).to eq("America/Denver") }
+      end
+
+      context "zip code is in Providence, RI" do
+        let(:zip) { "02908" }
+
+        it { expect(subject.identifier).to eq("America/New_York") }
+      end
+
+      context "zip code is in Puerto Rico" do
+        let(:zip) { "00601" }
+
+        it { expect(subject.identifier).to eq("America/Puerto_Rico") }
+      end
+
+      context "invalid zip code input" do
+        let(:zip) { "934" }
+
+        it { expect { subject }.to raise_error(TimezoneService::InvalidZip5Error) }
+      end
+    end
+
+    shared_examples "address in non-US country resolves to single timezone" do |country_name, expected_timezone|
+      context "address is in #{country_name}" do
+        let(:country) { country_name }
+
+        it { expect(subject.identifier).to eq(expected_timezone) }
+      end
+    end
+
+    include_examples "address in non-US country resolves to single timezone", "Chad", "Africa/Ndjamena"
+    include_examples "address in non-US country resolves to single timezone", "Japan", "Asia/Tokyo"
+    include_examples "address in non-US country resolves to single timezone", "Philippines", "Asia/Manila"
+
+    shared_examples 'address in non-US country has ambiguous timezone' do |country_name|
+      context "address is in #{country_name}" do
+        let(:country) { country_name }
+
+        it { expect { subject }.to raise_error(TimezoneService::AmbiguousTimezoneError) }
+      end
+    end
+
+    include_examples "address in non-US country has ambiguous timezone", "Australia"
+    include_examples "address in non-US country has ambiguous timezone", "China"
+    include_examples "address in non-US country has ambiguous timezone", "Mexico"
+    include_examples "address in non-US country has ambiguous timezone", "Portugal"
+  end
+
   describe "#iso3166_alpha2_code_from_name" do
     shared_examples "it resolves to a valid ISO 3166 country code" do |country_name, expected_code|
       it "#{country_name.inspect} resolves to #{expected_code.inspect}" do
