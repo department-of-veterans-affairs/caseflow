@@ -34,7 +34,8 @@ export default class TextField extends React.Component {
       autoComplete,
       useAriaLabel,
       dateErrorMessage,
-      labelText
+      labelText,
+      inputStyling
     } = this.props;
 
     let textInputClass = className.concat(
@@ -94,6 +95,7 @@ export default class TextField extends React.Component {
           max={max}
           autoComplete={autoComplete}
           {...ariaLabelObj}
+          {...inputStyling}
         />
       }
 
@@ -152,5 +154,6 @@ TextField.propTypes = {
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
-  ])
+  ]),
+  inputStyling: PropTypes.object
 };
