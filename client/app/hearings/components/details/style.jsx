@@ -39,7 +39,7 @@ export const flexParent = css({
 export const columnThird = css({
   paddingLeft: 0,
   paddingRight: 15,
-  flex:  1,
+  flex: 1,
   margin: 0
 });
 
