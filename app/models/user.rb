@@ -110,6 +110,11 @@ class User < CaseflowRecord
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end
 
+  def can_view_overtime_status?
+    # How do we determin SSCs? Can we count on them being judges in vacols? Possibly may all be acting judges
+    (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp)
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= user_info[:uniq_id]
   end

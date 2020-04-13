@@ -19,16 +19,6 @@ import { setMostRecentlyHeldHearingForAppeal } from '../QueueActions';
  *   <HearingBadge task={task} />
  */
 
-const badgeStyling = css({
-  display: 'inline-block',
-  color: COLORS.WHITE,
-  background: COLORS.GREEN,
-  borderRadius: '.5rem',
-  lineHeight: '2rem',
-  marginLeft: '1rem',
-  padding: '0 1rem'
-});
-
 const listStyling = css({
   listStyle: 'none',
   textAlign: 'left',
@@ -81,7 +71,14 @@ class HearingBadge extends React.PureComponent {
       </ul>
     </div>;
 
-    return <div {...css({ marginRight: '-2.5rem' })} className="cf-hearing-badge">
+    const badgeStyling = css({
+      ...this.props.badgeStyling,
+      background: COLORS.GREEN
+    });
+
+    // TODO: Ask geronimo about removed negative margin
+    // return <div {...css({ marginRight: '-2.5rem' })} className="cf-hearing-badge">
+    return <div className="cf-hearing-badge">
       <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
         <span {...badgeStyling}>H</span>
       </Tooltip>
@@ -94,7 +91,8 @@ HearingBadge.propTypes = {
   hearing: PropTypes.object,
   mostRecentlyHeldHearingForAppeal: PropTypes.object,
   setMostRecentlyHeldHearingForAppeal: PropTypes.func,
-  task: PropTypes.object
+  task: PropTypes.object,
+  badgeStyling: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {

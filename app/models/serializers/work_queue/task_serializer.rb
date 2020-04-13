@@ -91,6 +91,10 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:advanced_on_docket?)
   end
 
+  attribute :overtime do |object|
+    object.appeal.try(:overtime?)
+  end
+
   attribute :issue_count do |object|
     object.appeal.number_of_issues
   end

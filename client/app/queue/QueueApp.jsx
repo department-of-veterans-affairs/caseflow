@@ -9,6 +9,7 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
+  setCanViewOvertimeStatus,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
@@ -81,6 +82,7 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
+    this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
@@ -659,6 +661,7 @@ QueueApp.propTypes = {
   dropdownUrls: PropTypes.array,
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
+  setCanViewOvertimeStatus: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -685,6 +688,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
+      setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserRole,
       setUserCssId,
