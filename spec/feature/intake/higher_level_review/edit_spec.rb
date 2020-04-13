@@ -281,6 +281,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
       higher_level_review.establish!
     end
 
+    before { FeatureToggle.enable!(:covid_timeliness_exemption) }
+    after { FeatureToggle.disable!(:covid_timeliness_exemption) }
+
     context "VACOLS issue from before AMA opted in" do
       let!(:ri_legacy_issue_eligible) do
         create(
@@ -353,6 +356,13 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_rating_issue(ri_legacy_issue_not_withdrawn.contention_text)
       add_intake_rating_issue("ankylosis of hip")
 
+      expect(page).to have_content(
+        ri_legacy_issue_not_withdrawn.contention_text.to_s
+      )
+
+      expect(page).to have_content("Issue 8 is an Untimely Issue")
+      add_untimely_exemption_response("Yes")
+
       expect_ineligible_issue(number_of_issues)
 
       expect(page).to have_content(
@@ -371,6 +381,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_rating_issue(ri_with_previous_hlr.contention_text)
       select_intake_no_match
 
+      add_untimely_exemption_response("Yes")
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
         "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
@@ -389,6 +400,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       add_intake_rating_issue(ri_in_review.contention_text)
       select_intake_no_match
 
+      add_untimely_exemption_response("Yes")
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
         "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"

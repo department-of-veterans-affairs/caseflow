@@ -151,7 +151,7 @@ class AddIssueManager extends React.Component {
   setupLegacyOptInModal = () => {
     const { intakeData, formType } = this.props;
     const { covidTimelinessExemption } = this.props.featureToggles;
-    const timelyRules = covidTimelinessExemption ? this.requiresTimelyWithExemption() : this.requiresUntimelyExemption();
+    const timelyRules = covidTimelinessExemption ? this.requiresTimelyExemption() : this.requiresUntimelyExemption();
 
     return {
       component: LegacyOptInModal,
@@ -283,7 +283,7 @@ class AddIssueManager extends React.Component {
     return currentIssue && !currentIssue.timely;
   };
 
-  requiresTimelyWithExemption = () => {
+  requiresTimelyExemption = () => {
 
     const { currentIssue, eligibleForSocOptIn } = this.state;
     const { formType } = this.props;
