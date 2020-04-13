@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
@@ -22,12 +21,13 @@ class OvertimeBadge extends React.PureComponent {
       This case has been approved to be worked in overtime hours
     </div>;
 
-    return <Badge name="overtime" displayName="OT" color={COLORS.GREY_DARK} tooltipText={tooltipText} id={appeal.id}/>;
+    return <Badge name="overtime" displayName="OT" color={COLORS.GREY_DARK} tooltipText={tooltipText} id={appeal.id} />;
   }
 }
 
 OvertimeBadge.propTypes = {
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
+  canViewOvertimeStatus: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({ canViewOvertimeStatus: state.ui.canViewOvertimeStatus });

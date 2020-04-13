@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import _ from 'lodash';
 import * as React from 'react';
 
 import Tooltip from '../../components/Tooltip';
@@ -18,7 +17,6 @@ const defaultBadgeStyling = {
 /**
  * Component to display a badge. Display name should be all uppercase and no longer than 3 letters
  */
-
 class Badge extends React.PureComponent {
   render = () => {
     const { color, name, displayName, tooltipText, id } = this.props;
@@ -40,7 +38,7 @@ Badge.propTypes = {
   color: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
-  tooltipText: PropTypes.opject,
+  tooltipText: PropTypes.object,
   id: PropTypes.number
 };
 

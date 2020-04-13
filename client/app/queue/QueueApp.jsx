@@ -677,7 +677,8 @@ QueueApp.propTypes = {
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
-  userCanViewHearingSchedule: PropTypes.bool
+  userCanViewHearingSchedule: PropTypes.bool,
+  userCanViewOvertimeStatus: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

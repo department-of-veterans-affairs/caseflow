@@ -24,19 +24,19 @@ class BadgeArea extends React.PureComponent {
 
     if (appeal) {
       badges = <React.Fragment>
-        <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)}/>
-        <OvertimeBadge appeal={appeal}/>
+        <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} />
+        <OvertimeBadge appeal={appeal} />
       </React.Fragment>;
     } else {
       badges = <React.Fragment>
-        <HearingBadge task={task}/>
-        <OvertimeBadge appeal={task.appeal}/>
-      </React.Fragment>
+        <HearingBadge task={task} />
+        <OvertimeBadge appeal={task.appeal} />
+      </React.Fragment>;
     }
 
     const badgeAreaStyling = css({
-      display: isHorizontal ? 'inline-flex': 'inline-block',
-      textAlign: "center"
+      display: isHorizontal ? 'inline-flex' : 'inline-block',
+      textAlign: 'center'
     });
 
     return <div {...badgeAreaStyling}>{badges}</div>;
