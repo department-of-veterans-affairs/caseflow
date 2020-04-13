@@ -88,6 +88,7 @@ class VirtualHearings::SendEmail
       )
 
       Rails.logger.info(
+        "[Virtual Hearing: #{virtual_hearing.id}] " +
         "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
       )
     end
