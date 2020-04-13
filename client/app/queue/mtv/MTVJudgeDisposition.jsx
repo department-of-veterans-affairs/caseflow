@@ -145,7 +145,7 @@ export const MTVJudgeDisposition = ({
           />
         )}
 
-        {disposition && <ReturnToLitSupportAlert to={returnToLitSupportLink} disposition={disposition} />}
+        <ReturnToLitSupportAlert to={returnToLitSupportLink} />
 
         {disposition && isGrantType() && (
           <RadioField
