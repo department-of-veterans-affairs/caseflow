@@ -47,7 +47,8 @@ class StatsCollectorJob < CaseflowJob
   def run_collectors(stats_collectors)
     stats_collectors.each do |collector_name, collector|
       start_time = Time.zone.now
-      collector.new.collect_stats&.each { |metric_name, value| emit(metric_name, value) }
+
+      collector.new.collect_stats&.each { |obj| emit_or_fail(obj) }
     rescue StandardError => error
       log_error(collector_name, error)
     ensure
@@ -55,13 +56,38 @@ class StatsCollectorJob < CaseflowJob
     end
   end
 
-  def emit(name, value, attrs: {})
+  def emit_or_fail(hash)
+    # when hash is { metric: metric_name", value: 123, "some_tag": "type1" }
+    return emit_tagged_hash(hash) if tagged_hash?(hash)
+
+    # when hash is { "metric_name" => 123 }
+    return emit_untagged_hash(hash) if hash.size == 1
+
+    fail "Unexpect metric object: #{hash}"
+  end
+
+  # :reek:FeatureEnvy
+  def tagged_hash?(hash)
+    hash[:metric] && hash[:value]
+  end
+
+  # :reek:FeatureEnvy
+  def emit_tagged_hash(hash)
+    emit(hash[:metric], hash[:value], tags: hash.except(:metric, :value))
+  end
+
+  # :reek:FeatureEnvy
+  def emit_untagged_hash(hash)
+    emit(hash.first[0], hash.first[1])
+  end
+
+  def emit(name, value, tags: {})
     DataDogService.emit_gauge(
       metric_group: METRIC_GROUP_NAME,
       metric_name: name,
       metric_value: value,
       app_name: APP_NAME,
-      attrs: attrs
+      attrs: tags
     )
   end
 
