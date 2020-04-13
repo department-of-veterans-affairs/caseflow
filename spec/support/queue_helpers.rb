@@ -17,10 +17,10 @@ module QueueHelpers
     parts = ["I recommend #{disposition_text[disposition.to_sym]}.", notes]
 
     hyperlinks.each do |item|
-      unless item[:link].empty?
+      next unless item[:link].empty?
         parts += [
           "\nHere is the hyperlink to the #{format(item[:type], disposition_text[disposition.to_sym])}:\n#{item[:link]}"
-        ] 
+        ]
       end
     end
 
