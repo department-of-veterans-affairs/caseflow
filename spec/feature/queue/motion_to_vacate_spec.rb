@@ -47,6 +47,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
     let(:atty_disposition) { "granted" }
     let(:atty_notes) { "Here is some context from Attorney to the judge" }
+    let(:atty_hyperlinks) { generate_atty_hyperlinks(atty_disposition) }
     let(:atty_instructions) do
       format_mtv_attorney_instructions(
         notes: atty_notes,
@@ -54,7 +55,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
         hyperlinks: atty_hyperlinks
       )
     end
-    let(:atty_hyperlinks) { generate_atty_hyperlinks(atty_disposition) }
 
     before do
       create(:staff, :judge_role, sdomainid: judge2.css_id)
@@ -236,6 +236,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
     let(:atty_notes) { "Notes from attorney" }
     let(:atty_disposition) { "granted" }
+    let(:atty_hyperlinks) { generate_atty_hyperlinks(atty_disposition) }
     let(:atty_instructions) do
       format_mtv_attorney_instructions(
         notes: atty_notes,

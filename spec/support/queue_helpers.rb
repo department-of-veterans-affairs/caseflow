@@ -22,6 +22,7 @@ module QueueHelpers
 
     hyperlinks.each do |item|
       next if item[:link].empty?
+
       parts += [
         "\nHere is the hyperlink to the #{format(item[:type], disposition_text[disposition.to_sym])}:\n#{item[:link]}"
       ]
