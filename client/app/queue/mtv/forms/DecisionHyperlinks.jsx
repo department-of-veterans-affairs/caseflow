@@ -27,7 +27,14 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
   const [hyperlinks, setHyperlinks] = useState([...defaultHyperlinks]);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => onChange(hyperlinks), [hyperlinks]);
+  useEffect(() => {
+    // Ensure that we remove unused link if disposition changes
+    if (!notGrantType(disposition)) {
+      hyperlinks[1].link = '';
+    }
+
+    onChange(hyperlinks);
+  }, [hyperlinks, disposition]);
 
   const addHyperlink = (item) => {
     const updated = [...hyperlinks, item];

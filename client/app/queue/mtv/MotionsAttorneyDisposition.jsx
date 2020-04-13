@@ -61,6 +61,10 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
       return false;
     }
 
+    if (['denied', 'dismissed'].includes(disposition) && !hyperlinks[1]?.link) {
+      return false;
+    }
+
     return true;
   };
 
