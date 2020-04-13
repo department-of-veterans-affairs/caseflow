@@ -15,6 +15,7 @@ import {
   columnDoubleSpacer,
   columnThird,
   flexParent,
+  genericRow,
   maxWidthFormInput,
   rowThirds,
   rowThirdsWithFinalSpacer
@@ -96,9 +97,11 @@ const VirtualHearingSection = (
   return (
     <React.Fragment>
       <div className="cf-help-divider" />
-      <h3>{wasVirtual && 'Previous '}Virtual Hearing Details</h3>
+      <h3>
+        {wasVirtual && 'Previous '}Virtual Hearing Details
+      </h3>
       {isVirtual &&
-        <div>
+        <div {...genericRow}>
           <strong>{virtualHearingLabel}</strong>
           <div {...css({ marginTop: '1.5rem' })}>
             {virtualHearing?.jobCompleted &&

@@ -49,24 +49,31 @@ export const columnDoubleSpacer = css({
   paddingLeft: 45
 });
 
-// Container element for a row with 3 columns.
-export const rowThirds = css({
+// Generic row element for consistent spacing.
+export const genericRow = css({
   marginTop: 30,
-  marginBottom: 30,
-  display: 'flex',
-  '& > *': {
-    paddingLeft: 15,
-    paddingRight: 15,
-    flex: 1,
-    margin: 0
-  },
-  '& > :first-child': {
-    paddingLeft: 0
-  },
-  '& > :last-child': {
-    paddingRight: 0
-  }
+  marginBottom: 30
 });
+
+// Container element for a row with 3 columns.
+export const rowThirds = css(
+  genericRow,
+  {
+    display: 'flex',
+    '& > *': {
+      paddingLeft: 15,
+      paddingRight: 15,
+      flex: 1,
+      margin: 0
+    },
+    '& > :first-child': {
+      paddingLeft: 0
+    },
+    '& > :last-child': {
+      paddingRight: 0
+    }
+  }
+);
 
 // Container element for a row with 3 columns, where the last
 // column is a spacer.
