@@ -26,7 +26,7 @@ const formatReviewAttyInstructions = ({ disposition, hyperlinks, instructions })
   // Add any hyperlinks that might exist
   for (const item of hyperlinks) {
     if (item.link) {
-      parts.push(`\nHere is the hyperlink to the ${item.type}:\n${sprintf(item.link, DISPOSITION_TEXT[disposition])}`);
+      parts.push(`\nHere is the hyperlink to the ${sprintf(item.type, DISPOSITION_TEXT[disposition])}:\n${item.link}`);
     }
   }
 
