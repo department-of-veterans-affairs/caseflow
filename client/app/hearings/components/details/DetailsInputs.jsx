@@ -11,7 +11,14 @@ import {
   HearingRoomDropdown
 } from '../../../components/DataDropdowns/index';
 import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../../utils';
-import { rowThirds, flexParent, columnThird, columnDoubleSpacer } from './style';
+import {
+  columnDoubleSpacer,
+  columnThird,
+  flexParent,
+  maxWidthFormInput,
+  rowThirds,
+  rowThirdsWithFinalSpacer
+} from './style';
 import COPY from '../../../../COPY';
 import Checkbox from '../../../components/Checkbox';
 import HearingTypeDropdown from './HearingTypeDropdown';
@@ -34,7 +41,7 @@ const EmailSection = (
   }
 
   return (
-    <div {...rowThirds}>
+    <div {...rowThirdsWithFinalSpacer}>
       <TextField
         name="Veteran Email for Notifications"
         value={virtualHearing.veteranEmail}
@@ -42,6 +49,7 @@ const EmailSection = (
         className={[classnames('cf-form-textinput', 'cf-inline-field')]}
         readOnly={readOnlyEmails}
         onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
+        inputStyling={maxWidthFormInput}
       />
       <TextField
         name="POA/Representative Email for Notifications"
@@ -50,6 +58,7 @@ const EmailSection = (
         className={[classnames('cf-form-textinput', 'cf-inline-field')]}
         readOnly={readOnlyEmails}
         onChange={(representativeEmail) => updateVirtualHearing({ representativeEmail })}
+        inputStyling={maxWidthFormInput}
       />
       <div />
     </div>
@@ -133,48 +142,39 @@ VirtualHearingSection.propTypes = {
 };
 
 // Displays transcriptions fields.
-const TranscriptionSection = (
-  { hearing, updateHearing, transcription, updateTranscription, isLegacy, readOnly }
-) => {
-  if (isLegacy) {
-    return null;
-  }
-
-  return (
-    <React.Fragment>
+const TranscriptionSection = ({ hearing, updateHearing, transcription, updateTranscription, readOnly }) => (
+  <React.Fragment>
+    <div className="cf-help-divider" />
+    <div>
+      <h2>Transcription Details</h2>
+      <TranscriptionDetailsInputs
+        transcription={transcription}
+        update={updateTranscription}
+        readOnly={readOnly}
+      />
       <div className="cf-help-divider" />
-      <div>
-        <h2>Transcription Details</h2>
-        <TranscriptionDetailsInputs
-          transcription={transcription}
-          update={updateTranscription}
-          readOnly={readOnly}
-        />
-        <div className="cf-help-divider" />
 
-        <h3>Transcription Problem</h3>
-        <TranscriptionProblemInputs
-          transcription={transcription}
-          update={updateTranscription}
-          readOnly={readOnly}
-        />
-        <div className="cf-help-divider" />
+      <h3>Transcription Problem</h3>
+      <TranscriptionProblemInputs
+        transcription={transcription}
+        update={updateTranscription}
+        readOnly={readOnly}
+      />
+      <div className="cf-help-divider" />
 
-        <h3>Transcription Request</h3>
-        <TranscriptionRequestInputs
-          hearing={hearing}
-          update={updateHearing}
-          readOnly={readOnly}
-        />
-        <div className="cf-help-divider" />
-      </div>
-    </React.Fragment>
-  );
-};
+      <h3>Transcription Request</h3>
+      <TranscriptionRequestInputs
+        hearing={hearing}
+        update={updateHearing}
+        readOnly={readOnly}
+      />
+      <div className="cf-help-divider" />
+    </div>
+  </React.Fragment>
+);
 
 TranscriptionSection.propTypes = {
   hearing: PropTypes.object,
-  isLegacy: PropTypes.bool,
   readOnly: PropTypes.bool,
   transcription: PropTypes.object,
   updateHearing: PropTypes.func,
@@ -264,19 +264,20 @@ const DetailsInputs = (props) => {
       <TextareaField
         name="Notes"
         strongLabel
-        styling={css({ display: 'block', maxWidth: '100%' })}
+        styling={maxWidthFormInput}
         disabled={readOnly}
         value={hearing?.notes || ''}
         onChange={(notes) => updateHearing({ notes })}
       />
-      <TranscriptionSection
-        hearing={hearing}
-        isLegacy={isLegacy}
-        readOnly={readOnly}
-        transcription={transcription}
-        updateHearing={updateHearing}
-        updateTranscription={updateTranscription}
-      />
+      {!isLegacy &&
+        <TranscriptionSection
+          hearing={hearing}
+          readOnly={readOnly}
+          transcription={transcription}
+          updateHearing={updateHearing}
+          updateTranscription={updateTranscription}
+        />
+      }
     </React.Fragment>
   );
 };
