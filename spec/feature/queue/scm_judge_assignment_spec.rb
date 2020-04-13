@@ -250,7 +250,6 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
-          puts FeatureToggle.enabled?(attorney_one.vacols_group_id)
           click_on("Submit")
 
           expect(page).to have_content("Assigned 1 case")
