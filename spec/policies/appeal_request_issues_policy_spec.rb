@@ -69,7 +69,7 @@ describe AppealRequestIssuesPolicy, :postgres do
       let(:user) { create(:user) }
 
       it "returns true" do
-        BvaIntake.singleton.add_user(user)
+        CaseReview.singleton.add_user(user)
         create(:task,
                type: "ColocatedTask",
                appeal: appeal,
@@ -84,7 +84,7 @@ describe AppealRequestIssuesPolicy, :postgres do
       let(:user) { create(:user) }
 
       it "returns false" do
-        BvaIntake.singleton.add_user(user)
+        CaseReview.singleton.add_user(user)
         create(:task,
                type: "AttorneyTask",
                appeal: appeal,
