@@ -1,6 +1,11 @@
 import { css } from 'glamor';
 import { COLORS } from '../../../constants/AppConstants';
 
+export const maxWidthFormInput = css({
+  display: 'block',
+  maxWidth: '100%'
+});
+
 export const listStyling = css({
   verticalAlign: 'super',
   '::after': {
@@ -34,7 +39,7 @@ export const flexParent = css({
 export const columnThird = css({
   paddingLeft: 0,
   paddingRight: 15,
-  flex: 1,
+  flex:  1,
   margin: 0
 });
 
@@ -44,6 +49,7 @@ export const columnDoubleSpacer = css({
   paddingLeft: 45
 });
 
+// Container element for a row with 3 columns.
 export const rowThirds = css({
   marginTop: 30,
   marginBottom: 30,
@@ -61,3 +67,25 @@ export const rowThirds = css({
     paddingRight: 0
   }
 });
+
+// Container element for a row with 3 columns, where the last
+// column is a spacer.
+//
+// For small screen sizes, the spacer column collpases, and the first 2 columns
+// fill the entire space.
+export const rowThirdsWithFinalSpacer = css(
+  rowThirds,
+  {
+    '@media screen and (max-width: 1302px)': {
+      '& > :nth-child(2)': {
+        paddingLeft: 15,
+        paddingRight: 0
+      },
+      '& > :last-child': {
+        flex: '0 !important',
+        paddingLeft: 0,
+        paddingRight: 0
+      }
+    }
+  }
+);
