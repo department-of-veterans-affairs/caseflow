@@ -9,13 +9,13 @@ class TimezoneService
 
   # Could not find a timezone by zip code.
   class InvalidZip5Error < StandardError; end
-  
+ 
   # There were multiple timezones for an address.
   class AmbiguousTimezoneError < StandardError; end
 
   class << self
     # Attempts to find a timezone based on an address. For addresses within the United States,
-    # this does a lookup of timezone based on zipcode. For addresses outisde of the US,
+    # this does a lookup of timezone based on zip code. For addresses outisde of the US,
     # this does a lookup based on country code.
     #
     # Fails if there are multiple timezones for a country outside of the US.
