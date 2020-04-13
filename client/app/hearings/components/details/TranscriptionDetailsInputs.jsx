@@ -15,7 +15,7 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
         label="Task #"
         strongLabel
         readOnly={readOnly}
-        value={transcription.taskNumber}
+        value={transcription?.taskNumber}
         onChange={(taskNumber) => update({ taskNumber })}
       />
       <SearchableDropdown
@@ -23,7 +23,7 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
         label="Transcriber"
         strongLabel
         readOnly={readOnly}
-        value={transcription.transcriber}
+        value={transcription?.transcriber}
         options={[
           {
             label: '',
@@ -44,6 +44,7 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
         ]}
         onChange={(option) => update({ transcriber: (option || {}).value })}
       />
+      <div />
     </div>
     <div {...rowThirds}>
       <DateSelector
@@ -52,7 +53,7 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
         strongLabel
         type="date"
         readOnly={readOnly}
-        value={transcription.sentToTranscriberDate}
+        value={transcription?.sentToTranscriberDate}
         onChange={(sentToTranscriberDate) => update({ sentToTranscriberDate })}
       />
       <DateSelector
@@ -61,7 +62,7 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
         strongLabel
         type="date"
         readOnly={readOnly}
-        value={transcription.expectedReturnDate}
+        value={transcription?.expectedReturnDate}
         onChange={(expectedReturnDate) => update({ expectedReturnDate })}
       />
       <DateSelector
@@ -70,7 +71,7 @@ const TranscriptionDetailsInputs = ({ transcription, update, readOnly }) => (
         strongLabel
         type="date"
         readOnly={readOnly}
-        value={transcription.uploadedToVbmsDate}
+        value={transcription?.uploadedToVbmsDate}
         onChange={(uploadedToVbmsDate) => update({ uploadedToVbmsDate })}
       />
     </div>
