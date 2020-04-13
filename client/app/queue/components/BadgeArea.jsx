@@ -5,39 +5,38 @@ import * as React from 'react';
 import HearingBadge from './HearingBadge';
 import OvertimeBadge from './OvertimeBadge';
 import { mostRecentHeldHearingForAppeal } from '../utils';
-import { COLORS } from '../../constants/AppConstants';
 
-const badgeStyling = {
-  display: 'inline-block',
-  color: COLORS.WHITE,
-  borderRadius: '.5rem',
-  lineHeight: '2rem',
-  marginLeft: '1rem',
-  padding: '0 1rem'
-};
-
+/**
+ * Component to display a set of badges, currently limited to hearing and overtime badges. Each badge should
+ * individually handle whether or not they should be displayed.
+ * This component can accept either an Appeal object or a Task object. An appeal object should be passed in places where
+ * we are strictly showing an appeal (in case details or case search). A Task object should be passed in places we do
+ * have a task rather than an appeal (in queue task lists)
+ * The default is for badges to be displayed listed vertically. Pass isHorizontal to display them horizontally
+ * e.g.,
+ *   <BadgeArea appeal={appeal} />
+ *   <BadgeArea task={task} />
+ */
 class BadgeArea extends React.PureComponent {
   render = () => {
     const { appeal, isHorizontal, task } = this.props;
     let badges;
 
-    // TODO: Add helper function to make it clear that this is for case search and case details
-    // TODO: Ask geronimo about order and same widths?
     if (appeal) {
       badges = <React.Fragment>
-        <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} badgeStyling={badgeStyling}/>
-        <OvertimeBadge appeal={appeal} badgeStyling={badgeStyling}/>
+        <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)}/>
+        <OvertimeBadge appeal={appeal}/>
       </React.Fragment>;
     } else {
-      // TODO: add comment on context (task list)
       badges = <React.Fragment>
-        <HearingBadge task={task} badgeStyling={badgeStyling}/>
-        <OvertimeBadge appeal={task.appeal} badgeStyling={badgeStyling}/>
+        <HearingBadge task={task}/>
+        <OvertimeBadge appeal={task.appeal}/>
       </React.Fragment>
     }
 
     const badgeAreaStyling = css({
-      display: isHorizontal ? 'inline-flex': 'inline-block'
+      display: isHorizontal ? 'inline-flex': 'inline-block',
+      textAlign: "center"
     });
 
     return <div {...badgeAreaStyling}>{badges}</div>;

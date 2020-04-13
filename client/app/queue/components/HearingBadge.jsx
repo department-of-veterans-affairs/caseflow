@@ -5,14 +5,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import Tooltip from '../../components/Tooltip';
 import { COLORS } from '../../constants/AppConstants';
 
+import Badge from './Badge';
 import ApiUtil from '../../util/ApiUtil';
 import { DateString } from '../../util/DateUtil';
 import { setMostRecentlyHeldHearingForAppeal } from '../QueueActions';
 
 /**
+ * Component to display hearing information associated with a hearing. If a task is provided to the badge, a request is
+ * sent to the back end to pull hearing information if there is a hearing associated with the task's appeal.
  * This component can accept either a Hearing object or a Task object.
  * e.g.,
  *   <HearingBadge hearing={hearing} />
@@ -71,18 +73,7 @@ class HearingBadge extends React.PureComponent {
       </ul>
     </div>;
 
-    const badgeStyling = css({
-      ...this.props.badgeStyling,
-      background: COLORS.GREEN
-    });
-
-    // TODO: Ask geronimo about removed negative margin
-    // return <div {...css({ marginRight: '-2.5rem' })} className="cf-hearing-badge">
-    return <div className="cf-hearing-badge">
-      <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
-        <span {...badgeStyling}>H</span>
-      </Tooltip>
-    </div>;
+    return <Badge name="hearing" displayName="H" color={COLORS.GREEN} tooltipText={tooltipText} id={hearing.id} />;
   }
 }
 
@@ -91,8 +82,7 @@ HearingBadge.propTypes = {
   hearing: PropTypes.object,
   mostRecentlyHeldHearingForAppeal: PropTypes.object,
   setMostRecentlyHeldHearingForAppeal: PropTypes.func,
-  task: PropTypes.object,
-  badgeStyling: PropTypes.object
+  task: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {
