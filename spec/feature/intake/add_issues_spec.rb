@@ -199,7 +199,7 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Notes")
     end
 
-    fcontext "with covid_timeliness_exemption feature toggle" do
+    context "with covid_timeliness_exemption feature toggle" do
       before { FeatureToggle.enable!(:covid_timeliness_exemption) }
       after { FeatureToggle.disable!(:covid_timeliness_exemption) }
 
