@@ -39,6 +39,9 @@ class TimezoneService
       fail InvalidZip5Error, "could not find timezone for zip code \"#{zip}\"" if timezone_name.blank?
 
       TZInfo::Timezone.get(timezone_name)
+    rescue TZInfo::InvalidTimezoneIdentifier
+      # For military zip codes, `ziptz` returns "APO/FPO", which causes an invalid timezone error.
+      raise InvalidZip5Error, "could not find timezone for zip code \"#{zip}\""
     end
 
     # Maps an ISO 3166 country code to a timezone.
