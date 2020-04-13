@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 describe TimezoneService do
+  before do
+    # The day the tests were written
+    Timecop.freeze(Time.utc(2020, 4, 13, 12, 0, 0))
+  end
+
   describe "#address_to_timezone" do
     let(:city) { "Test City" }
     let(:country) { nil }
@@ -21,61 +26,134 @@ describe TimezoneService do
     context "address in the US" do
       let(:country) { "United States" }
 
-      context "zip code is in Barrigada, Guam" do
-        let(:zip) { "96913" }
+      shared_examples "zip code resolves to timezone" do |zip_code, location, expected_timezone|
+        context "zip code is in #{location}" do
+          let(:zip) { zip_code }
 
-        it { expect(subject.identifier).to eq("Pacific/Guam") }
+          it "#{zip_code} resolves to timezone #{expected_timezone}" do
+            expect(subject.identifier).to eq(expected_timezone)
+          end
+        end
       end
 
-      context "zip code is in El Paso, TX" do
-        let(:zip) { "79925" }
+      # Note: The ziptz library doesn't provide super granular timezone mappings. I found cases where
+      # it mapped a zip code to one with the same UTC offset, but a different than expected name.
+      shared_examples "zip code resolves to equivalent timezone" do |zip_code, location, expected_timezone_name|
+        context "zip code is in #{location}" do
+          let(:zip) { zip_code }
 
-        it { expect(subject.identifier).to eq("America/Denver") }
+          it "#{zip_code} resolves to timezone with same attributes as #{expected_timezone_name}" do
+            expected_timezone = TZInfo::Timezone.get(expected_timezone_name)
+            resolved_timezone = subject
+
+            expect(resolved_timezone.identifier).not_to eq(expected_timezone_name)
+            expect(resolved_timezone.current_period.offset).to eq(expected_timezone.current_period.offset)
+          end
+        end
       end
 
-      context "zip code is in Providence, RI" do
-        let(:zip) { "02908" }
+      include_examples "zip code resolves to timezone", "96913", "Barrigada, Guam", "Pacific/Guam"
+      include_examples "zip code resolves to timezone", "79925", "El Paso, TX", "America/Denver"
+      include_examples "zip code resolves to timezone", "02908", "Providence, RI", "America/New_York"
+      include_examples "zip code resolves to timezone", "00601", "Puerto Rico", "America/Puerto_Rico"
+      include_examples "zip code resolves to timezone", "96799", "American Samoa", "Pacific/Pago_Pago"
 
-        it { expect(subject.identifier).to eq("America/New_York") }
-      end
-
-      context "zip code is in Puerto Rico" do
-        let(:zip) { "00601" }
-
-        it { expect(subject.identifier).to eq("America/Puerto_Rico") }
-      end
+      # Note: These tests resolve to the incorrect IANA timezone (ex. 00803 should resolve to America/St_Thomas),
+      # but the offsets from UTC are the same.
+      include_examples "zip code resolves to equivalent timezone", "00803",
+                       "US Virgin Islands", "America/St_Thomas"
+      include_examples "zip code resolves to equivalent timezone", "96950",
+                       "Northern Mariana Islands", "Pacific/Saipan"
+      include_examples "zip code resolves to equivalent timezone", "96898",
+                       "Wake Island, HI", "Pacific/Wake"
 
       context "invalid zip code input" do
         let(:zip) { "934" }
 
         it { expect { subject }.to raise_error(TimezoneService::InvalidZip5Error) }
       end
-    end
 
-    shared_examples "address in non-US country resolves to single timezone" do |country_name, expected_timezone|
-      context "address is in #{country_name}" do
-        let(:country) { country_name }
+      context "zip code for military address" do
+        let(:zip) { "96516" }
 
-        it { expect(subject.identifier).to eq(expected_timezone) }
+        it { expect { subject }.to raise_error(TimezoneService::InvalidZip5Error) }
       end
     end
 
-    include_examples "address in non-US country resolves to single timezone", "Chad", "Africa/Ndjamena"
-    include_examples "address in non-US country resolves to single timezone", "Japan", "Asia/Tokyo"
-    include_examples "address in non-US country resolves to single timezone", "Philippines", "Asia/Manila"
+    context "outside of the US" do
+      shared_examples "address in non-US country resolves to single timezone" do |country_name, expected_timezone|
+        context "address is in #{country_name}" do
+          let(:country) { country_name }
 
-    shared_examples 'address in non-US country has ambiguous timezone' do |country_name|
-      context "address is in #{country_name}" do
-        let(:country) { country_name }
-
-        it { expect { subject }.to raise_error(TimezoneService::AmbiguousTimezoneError) }
+          it { expect(subject.identifier).to eq(expected_timezone) }
+        end
       end
-    end
 
-    include_examples "address in non-US country has ambiguous timezone", "Australia"
-    include_examples "address in non-US country has ambiguous timezone", "China"
-    include_examples "address in non-US country has ambiguous timezone", "Mexico"
-    include_examples "address in non-US country has ambiguous timezone", "Portugal"
+      # The timezones that are returned by TZInfo might not align with the different understandings of
+      # borders/sovereignty that people from various backgrounds have. What we are more concerned about here
+      # is whether or not the times are displayed correctly to different users in different regions, which
+      # requires us to be consistent with the internet standards (IANA).
+      #
+      # See: https://github.com/tzinfo/tzinfo-data/issues/17#issuecomment-421379950
+      # See: https://github.com/hexorx/countries/pull/397
+      # See: https://tz.iana.narkive.com/DTtwvfsT/tz-proposal-to-use-asia-tel-aviv-for-israel-jerusalem-is-not-internationally-recognized-as-part-of
+      shared_examples "address in non-US country resolves to equivalent timezone" do |country_name, expected_timezone_name|
+        context "address is in #{country_name}" do
+          let(:country) { country_name }
+
+          it "#{country_name} resolves to timezone with same attributes as #{expected_timezone_name}" do
+            expected_timezone = TZInfo::Timezone.get(expected_timezone_name)
+            resolved_timezone = subject
+
+            expect(resolved_timezone.identifier).not_to eq(expected_timezone_name)
+            expect(resolved_timezone.current_period.offset).to eq(expected_timezone.current_period.offset)
+          end
+
+          it "time for #{country_name} timezone displays the same as #{expected_timezone_name}" do
+            expected_timezone = TZInfo::Timezone.get(expected_timezone_name)
+            resolved_timezone = subject
+
+            expected_time_str = expected_timezone.strftime("%A, %-d %B %Y at %-l:%M%P %Z", Time.now.utc)
+            resolved_time_str = resolved_timezone.strftime("%A, %-d %B %Y at %-l:%M%P %Z", Time.now.utc)
+
+            expect(resolved_time_str).to eq(expected_time_str)
+          end
+        end
+      end
+
+      include_examples "address in non-US country resolves to single timezone", "Afghanistan", "Asia/Kabul"
+      include_examples "address in non-US country resolves to single timezone", "Belgium", "Europe/Brussels"
+      include_examples "address in non-US country resolves to single timezone", "Bulgaria", "Europe/Sofia"
+      include_examples "address in non-US country resolves to equivalent timezone", "Bosnia and Herzegovina",
+                       "Europe/Sarajevo"
+      include_examples "address in non-US country resolves to equivalent timezone", "Cameroon", "Africa/Douala"
+      include_examples "address in non-US country resolves to single timezone", "Chad", "Africa/Ndjamena"
+      include_examples "address in non-US country resolves to single timezone", "Germany", "Europe/Berlin"
+      include_examples "address in non-US country resolves to single timezone", "Israel", "Asia/Jerusalem"
+      include_examples "address in non-US country resolves to single timezone", "Italy", "Europe/Rome"
+      include_examples "address in non-US country resolves to single timezone", "Iraq", "Asia/Baghdad"
+      include_examples "address in non-US country resolves to single timezone", "Japan", "Asia/Tokyo"
+      include_examples "address in non-US country resolves to equivalent timezone", "Kuwait", "Asia/Kuwait"
+      include_examples "address in non-US country resolves to equivalent timezone", "North Macedonia",
+                       "Europe/Skopje"
+      include_examples "address in non-US country resolves to single timezone", "Philippines", "Asia/Manila"
+      include_examples "address in non-US country resolves to equivalent timezone", "Somalia", "Africa/Mogadishu"
+      include_examples "address in non-US country resolves to single timezone", "South Korea", "Asia/Seoul"
+      include_examples "address in non-US country resolves to single timezone", "Syria", "Asia/Damascus"
+
+      shared_examples 'address in non-US country has ambiguous timezone' do |country_name|
+        context "address is in #{country_name}" do
+          let(:country) { country_name }
+
+          it { expect { subject }.to raise_error(TimezoneService::AmbiguousTimezoneError) }
+        end
+      end
+
+      include_examples "address in non-US country has ambiguous timezone", "Australia"
+      include_examples "address in non-US country has ambiguous timezone", "China"
+      include_examples "address in non-US country has ambiguous timezone", "Mexico"
+      include_examples "address in non-US country has ambiguous timezone", "Portugal"
+    end
   end
 
   describe "#iso3166_alpha2_code_from_name" do
