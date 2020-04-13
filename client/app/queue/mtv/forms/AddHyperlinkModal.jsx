@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import Modal from '../../../components/Modal';
@@ -11,6 +11,7 @@ import TextField from '../../../components/TextField';
 export const AddHyperlinkModal = ({ onSubmit, onCancel }) => {
   const [type, setType] = useState('');
   const [link, setLink] = useState('');
+  const inValid = useMemo(() => !type || !link, [type, link]);
 
   const buttons = [
     {
@@ -21,7 +22,8 @@ export const AddHyperlinkModal = ({ onSubmit, onCancel }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Save',
-      onClick: () => onSubmit({ type, link })
+      onClick: () => onSubmit({ type, link }),
+      disabled: inValid
     }
   ];
 
