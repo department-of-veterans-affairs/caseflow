@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { editStagedAppeal, stageAppeal, setDecisionOptions } from '../../QueueActions';
 import SubmitDecisionView from '../../SubmitDecisionView';
 import { useParams } from 'react-router';
-import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES';
+import DECISION_TYPES from '../../../../constants/APPEAL_DECISION_TYPES';
 
 export const SubmitVacatedDecisionsView = ({ appeal }) => {
   const [ctx] = useContext(MotionToVacateContext);

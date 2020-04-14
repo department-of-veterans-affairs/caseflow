@@ -8,7 +8,7 @@ import { ReviewVacatedDecisionIssuesView } from './ReviewVacatedDecisionIssuesVi
 import { getSteps, getNextStep, getPrevStep } from './mtvCheckoutSteps';
 import { SubmitVacatedDecisionsView } from './SubmitVacatedDecisionsView';
 import { MotionToVacateCheckoutProgressBar } from './MotionToVacateCheckoutProgressBar';
-import { ReturnToJudgeModalContainer } from '../returnToJudge/ReturnToJudgeModalContainer';
+import { ReturnToJudgeModalContainer } from './returnToJudge/ReturnToJudgeModalContainer';
 import { REVIEW_VACATE_RETURN_TO_JUDGE } from '../../../../constants/TASK_ACTIONS';
 
 export const MotionToVacateFlowContainer = () => {

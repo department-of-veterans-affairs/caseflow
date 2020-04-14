@@ -29,6 +29,7 @@ export const AddDecisionIssuesView = ({ appeal }) => {
   const connectedRequestIssues = useMemo(
     () =>
       appeal.issues.filter((issue) => {
+        // eslint-disable-next-line camelcase
         return state?.decisionIssue?.request_issue_ids?.includes(issue.id);
       }),
     [state.decisionIssue, appeal.issues]
