@@ -9,7 +9,7 @@ class TimezoneService
 
   # Could not find a timezone by zip code.
   class InvalidZip5Error < StandardError; end
- 
+
   # There were multiple timezones for an address.
   class AmbiguousTimezoneError < StandardError; end
 
@@ -32,13 +32,16 @@ class TimezoneService
 
     # Maps a US 5-digit zip code to a timezone.
     def zip5_to_timezone(zip)
-      fail InvalidZip5Error, "invalid zip code \"#{zip}\"" unless zip.size == 5
+      Address.validate_zip5_code(zip)
 
       timezone_name = Ziptz.new.time_zone_name(zip)
 
       fail InvalidZip5Error, "could not find timezone for zip code \"#{zip}\"" if timezone_name.blank?
 
       TZInfo::Timezone.get(timezone_name)
+    rescue ArgumentError
+      # Zip code is in an invalid format
+      raise InvalidZip5Error, "invalid zip code \"#{zip}\""
     rescue TZInfo::InvalidTimezoneIdentifier
       # For military zip codes, `ziptz` returns "APO/FPO", which causes an invalid timezone error.
       raise InvalidZip5Error, "could not find timezone for zip code \"#{zip}\""
