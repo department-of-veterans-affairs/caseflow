@@ -536,7 +536,11 @@ class EndProductEstablishment < CaseflowRecord
     return unless source.try(:previously_attempted?)
 
     if matching_established_end_product.present?
-      update!(reference_id: matching_established_end_product.claim_id)
+      update!(
+        reference_id: matching_established_end_product.claim_id,
+        established_at: Time.zone.now,
+        modifier: matching_established_end_product.modifier
+      )
     end
   end
 
