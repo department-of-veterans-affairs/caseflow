@@ -12,7 +12,7 @@ const TranscriptionRequestInputs = ({ hearing, update, readOnly }) => (
       <Checkbox
         name="copyRequested"
         label="Yes, Transcript Requested"
-        value={hearing.transcriptRequested || false}
+        value={hearing?.transcriptRequested || false}
         disabled={readOnly}
         onChange={(transcriptRequested) => update({ transcriptRequested })}
       />
@@ -23,9 +23,10 @@ const TranscriptionRequestInputs = ({ hearing, update, readOnly }) => (
       strongLabel
       type="date"
       readOnly={readOnly}
-      value={hearing.transcriptSentDate}
+      value={hearing?.transcriptSentDate}
       onChange={(transcriptSentDate) => update({ transcriptSentDate })}
     />
+    <div />
   </div>
 );
 

@@ -130,7 +130,6 @@ export const MTVJudgeDisposition = ({
 
         <MTVDispositionSelection
           label={JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL}
-          allowPartial
           onChange={(val) => {
             setVacateType(null);
             setDisposition(val);

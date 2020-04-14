@@ -19,6 +19,7 @@ export const COLORS = {
   COLOR_COOL_BLUE_LIGHTER: '#8ba6ca',
   PRIMARY: '#0071bc',
   BASE: '#212121',
+  RED: '#E31C3D',
   RED_DARK: '#cd2026'
 };
 
