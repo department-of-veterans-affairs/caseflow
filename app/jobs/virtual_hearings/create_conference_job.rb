@@ -83,7 +83,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     DataDogService.increment_counter(metric_name: "created_conference.successful", **updated_metric_info)
 
-    virtual_hearing.update(conference_id: pexip_response.data[:conference_id], status: :active)
+    virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
   end
 
   def pexip_error_display(response)

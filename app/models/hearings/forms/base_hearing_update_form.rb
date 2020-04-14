@@ -150,6 +150,9 @@ class BaseHearingUpdateForm
   end
 
   def create_or_update_virtual_hearing
+    # Remove ths status column from the updates
+    updates = virtual_hearing_updates.tap { |hearing| hearing.delete(:status) }
+
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
       new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
@@ -158,10 +161,26 @@ class BaseHearingUpdateForm
       @virtual_hearing_created = true
     end
 
-    updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: hearing&.id })
+    # Evaluate whether to cancel, create or restart the virtual hearing
+    update_status(updates, virtual_hearing)
+  end
 
-    if !virtual_hearing_created?
-      virtual_hearing.update(virtual_hearing_updates)
+  # Manage updating virtual hearing based on the status
+  def update_status(updates, virtual_hearing)
+    # Merge the hearing ID into the DataDog metrics
+    updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: hearing&.id })
+    byebug
+
+    # Handle the status toggle of the virtual hearing
+    if virtual_hearing_cancelled?
+      # Update the virtual hearings
+      virtual_hearing.update(updates)
+
+      # Cancel the hearing
+      virtual_hearing.cancel!
+      DataDogService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
+    elsif !virtual_hearing_created?
+      virtual_hearing.update(updates)
       virtual_hearing.establishment.restart!
       DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else

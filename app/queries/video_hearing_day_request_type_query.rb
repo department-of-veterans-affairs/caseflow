@@ -33,11 +33,7 @@ class VideoHearingDayRequestTypeQuery
   private
 
   VIRTUAL_HEARINGS_COUNT_STATEMENT = <<-SQL
-    count(
-      case when virtual_hearings.status != 'cancelled'
-        then true
-      end
-    ) as virtual_hearings_count
+    count(*) as virtual_hearings_count
   SQL
 
   def counts_for_ama_hearings
@@ -48,7 +44,6 @@ class VideoHearingDayRequestTypeQuery
         LEFT OUTER JOIN virtual_hearings
         ON virtual_hearings.hearing_id = hearings.id
         AND virtual_hearings.hearing_type = 'Hearing'
-        AND virtual_hearings.status != 'cancelled'
         AND NOT virtual_hearings.conference_deleted
       SQL
       .group(:id)
@@ -67,7 +62,6 @@ class VideoHearingDayRequestTypeQuery
         LEFT OUTER JOIN virtual_hearings
         ON virtual_hearings.hearing_id = legacy_hearings.id
         AND virtual_hearings.hearing_type = 'LegacyHearing'
-        AND virtual_hearings.status != 'cancelled'
         AND NOT virtual_hearings.conference_deleted
       SQL
       .group(:id)
