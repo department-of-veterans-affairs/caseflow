@@ -1,11 +1,11 @@
 import React, { useContext, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import COPY from '../../../COPY';
+import COPY from '../../../../COPY';
 
-import QueueFlowPage from '../components/QueueFlowPage';
-import AmaIssueList from '../../components/AmaIssueList';
-import DecisionIssues from '../components/DecisionIssues';
+import QueueFlowPage from '../../components/QueueFlowPage';
+import AmaIssueList from '../../../components/AmaIssueList';
+import DecisionIssues from '../../components/DecisionIssues';
 import { MotionToVacateContext } from './MotionToVacateContext';
 import { AddEditDecisionIssueModal } from './AddEditDecisionIssueModal';
 import uuid from 'uuid';
