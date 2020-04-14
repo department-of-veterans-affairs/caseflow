@@ -124,6 +124,10 @@
     "label": "Ready for Dispatch",
     "value": "dispatch_decision/dispositions"
   },
+  "JUDGE_AMA_CHECKOUT_SPECIAL_ISSUES": {
+    "label": "Ready for Dispatch",
+    "value": "dispatch_decision/special_issues"
+  },
   "JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER": {
     "label": "Ready for Dispatch",
     "value": "modal/check_cavc"
@@ -214,6 +218,10 @@
   "REVIEW_AMA_DECISION": {
     "label": "Decision ready for review",
     "value": "draft_decision/dispositions"
+  },
+  "REVIEW_AMA_DECISION_SPECIAL_ISSUES": {
+    "label": "Decision ready for review",
+    "value": "draft_decision/special_issues"
   },
   "REVIEW_DECISION_DRAFT": {
     "func": "review_decision_draft"

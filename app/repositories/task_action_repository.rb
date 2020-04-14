@@ -324,6 +324,7 @@ class TaskActionRepository
       action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
       action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
       action = Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.ama? && task.appeal.vacate?
+      action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SPECIAL_ISSUES.to_h if task.ama? && FeatureToggle.enabled?(:special_issues_revamp)
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end

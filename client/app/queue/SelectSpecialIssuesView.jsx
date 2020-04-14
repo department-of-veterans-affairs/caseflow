@@ -64,9 +64,14 @@ class SelectSpecialIssuesView extends React.PureComponent {
       });
   };
   render() {
-    const { specialIssues } = this.props;
+    const { appeal, specialIssues } = this.props;
 
-    return this.renderLegacySpecialIssues(specialIssues);
+    if(appeal.isLegacyAppeal){
+      return this.renderLegacySpecialIssues(specialIssues);
+    } else {
+      return this.renderAmaSpecialIssues(specialIssues);
+    }
+
   }
   renderLegacySpecialIssues = (specialIssues) => {
     const {
@@ -155,6 +160,64 @@ class SelectSpecialIssuesView extends React.PureComponent {
             label={<h3>{COPY.SPECIAL_ISSUES_DIC_OR_PENSION_SECTION} </h3>}
             name="DIC or Pension"
             options={dicOrPensionSection}
+            values={specialIssues}
+            onChange={this.onChangeLegacySpecialIssue}
+          />
+        </div>
+      </div>
+    </QueueFlowPage>;
+  };
+  renderAmaSpecialIssues = (specialIssues) => {
+    const {
+      error,
+      ...otherProps
+    } = this.props;
+    let sections = [
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).noneSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).amaIssuesOnAppealSection()];
+
+    // format the section the way the CheckBoxGroup expects it, and sort according to the mock
+    sections = sections.map((section) => {
+      return section.sort((previous, next) => {
+        return previous.queueSectionOrder - next.queueSectionOrder;
+      }).map((issue) => {
+        return {
+          id: issue.snakeCase,
+          label: issue.node || issue.queueDisplay || issue.display
+        };
+      });
+    });
+
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+    const [
+      noneSection,
+      issuesOnAppealSection,
+    ] = sections;
+
+    return <QueueFlowPage goToNextStep={this.goToNextStep} validateForm={this.validateForm} {...otherProps}>
+      <h1>
+        {this.getPageName()}
+      </h1>
+      <p>
+        {this.getPageNote()}
+      </p>
+      {error && <Alert type="error" title={error.title} message={error.detail} />}
+      <div {...flexContainer} className="special-options">
+        <div {...flexColumn}>
+          { this.props.featureToggles.special_issues_revamp && <CheckboxGroup
+            label=""
+            name=""
+            options={noneSection}
+            values={specialIssues}
+            onChange={this.onChangeLegacySpecialIssue}
+          />}
+        </div>
+        <div {...flexColumn}>
+          <CheckboxGroup
+            styling={css({ marginTop: 0 })}
+            label={<h3> {COPY.SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION}</h3>}
+            name="Issues on Appeal"
+            options={issuesOnAppealSection}
             values={specialIssues}
             onChange={this.onChangeLegacySpecialIssue}
           />
