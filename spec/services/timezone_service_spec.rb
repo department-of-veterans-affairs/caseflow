@@ -97,11 +97,11 @@ describe TimezoneService do
       # See: https://github.com/tzinfo/tzinfo-data/issues/17#issuecomment-421379950
       # See: https://github.com/hexorx/countries/pull/397
       # See: https://tz.iana.narkive.com/DTtwvfsT/tz-proposal-to-use-asia-tel-aviv-for-israel-jerusalem-is-not-internationally-recognized-as-part-of
-      shared_examples "address in non-US country resolves to equivalent timezone" do |country_name, expected_timezone_name|
-        context "address is in #{country_name}" do
-          let(:country) { country_name }
+      shared_examples "address in non-US country resolves to equivalent timezone" do |country, expected_timezone_name|
+        context "address is in #{country}" do
+          let(:country) { country }
 
-          it "#{country_name} resolves to timezone with same attributes as #{expected_timezone_name}" do
+          it "#{country} resolves to timezone with same attributes as #{expected_timezone_name}" do
             expected_timezone = TZInfo::Timezone.get(expected_timezone_name)
             resolved_timezone = subject
 
@@ -109,7 +109,7 @@ describe TimezoneService do
             expect(resolved_timezone.current_period.offset).to eq(expected_timezone.current_period.offset)
           end
 
-          it "time for #{country_name} timezone displays the same as #{expected_timezone_name}" do
+          it "time for #{country} timezone displays the same as #{expected_timezone_name}" do
             expected_timezone = TZInfo::Timezone.get(expected_timezone_name)
             resolved_timezone = subject
 
@@ -141,7 +141,7 @@ describe TimezoneService do
       include_examples "address in non-US country resolves to single timezone", "South Korea", "Asia/Seoul"
       include_examples "address in non-US country resolves to single timezone", "Syria", "Asia/Damascus"
 
-      shared_examples 'address in non-US country has ambiguous timezone' do |country_name|
+      shared_examples "address in non-US country has ambiguous timezone" do |country_name|
         context "address is in #{country_name}" do
           let(:country) { country_name }
 
