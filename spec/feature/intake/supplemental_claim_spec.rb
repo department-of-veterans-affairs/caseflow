@@ -901,7 +901,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       context "with legacy opt in not approved" do
         before { FeatureToggle.enable!(:covid_timeliness_exemption) }
         after { FeatureToggle.disable!(:covid_timeliness_exemption) }
-        
+
         scenario "adding issues" do
           start_supplemental_claim(veteran, legacy_opt_in_approved: false)
           visit "/intake/add_issues"
