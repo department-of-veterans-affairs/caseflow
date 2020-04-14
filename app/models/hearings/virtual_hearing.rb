@@ -30,8 +30,13 @@ class VirtualHearing < CaseflowRecord
     cancelled: :cancelled
   }
 
-  # scope :eligible_for_deletion,
-  #       -> { where(conference_deleted: false, id: select { |hearing| [:active, :cancelled].include?(hearing.status).pluck(:id)) }
+  scope :eligible_for_deletion,
+        lambda {
+          where(
+            conference_deleted: false,
+            id: select { |hearing| [:active, :cancelled].include?(hearing.status).pluck(:id) }
+          )
+        }
 
   scope :not_cancelled,
         -> { where(id: reject(&:cancelled?).pluck(:id)) }

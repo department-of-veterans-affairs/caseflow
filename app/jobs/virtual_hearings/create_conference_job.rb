@@ -41,9 +41,9 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       ).call
     end
 
-    if virtual_hearing.active? && virtual_hearing.all_emails_sent?
+    if !virtual_hearing.cancelled? && virtual_hearing.all_emails_sent?
       virtual_hearing.establishment.clear_error!
-      virtual_hearing.establishment.processed!
+      virtual_hearing.activate!
     end
   end
 
@@ -82,9 +82,6 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     end
 
     DataDogService.increment_counter(metric_name: "created_conference.successful", **updated_metric_info)
-
-    # Set the hearing status to processed
-    virtual_hearing.activate!
 
     virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
   end
