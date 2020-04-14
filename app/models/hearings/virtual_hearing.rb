@@ -20,19 +20,18 @@ class VirtualHearing < CaseflowRecord
   enum status: {
     # Initial status for a virtual hearing. Indicates the Pexip conference
     # does not exist yet
-    pending: "pending",
+    pending: :pending,
 
     # Indicates that the Pexip conference was created
-    active: "active",
+    active: :active,
 
     # Indicates that the hearing was cancelled, and the Pexip conference needs
     # to be cleaned up
-    cancelled: "cancelled"
+    cancelled: :cancelled
   }
 
-  def self.eligible_for_deletion
-    all.where(conference_deleted: false).select { |hearing| [:active, :cancelled].include?(hearing.status) }
-  end
+  # scope :eligible_for_deletion,
+  #       -> { where(conference_deleted: false, id: select { |hearing| [:active, :cancelled].include?(hearing.status).pluck(:id)) }
 
   scope :not_cancelled,
         -> { where(id: reject(&:cancelled?).pluck(:id)) }
@@ -84,6 +83,11 @@ class VirtualHearing < CaseflowRecord
 
     # If the establishment is not active or cancelled it is pending
     :pending
+  end
+
+  # Sets the virtual hearing status to active
+  def activate!
+    establishment.processed!
   end
 
   # Sets the virtual hearing status to cancelled

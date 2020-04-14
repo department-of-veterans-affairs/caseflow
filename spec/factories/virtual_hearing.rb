@@ -5,7 +5,6 @@ FactoryBot.define do
     hearing
     alias_name { nil }
     conference_id { nil }
-    status { VirtualHearing.statuses[:pending] }
     conference_deleted { false }
     guest_pin { nil }
     host_pin { nil }
@@ -23,18 +22,6 @@ FactoryBot.define do
       conference_id { rand(1..9) }
       guest_pin { rand(1..9).to_s[0..3].to_i }
       host_pin { rand(1..9).to_s[0..3].to_i }
-    end
-
-    trait :pending do
-      status { VirtualHearing.statuses[:pending] }
-    end
-
-    trait :active do
-      status { VirtualHearing.statuses[:active] }
-    end
-
-    trait :cancelled do
-      status { VirtualHearing.statuses[:cancelled] }
     end
 
     trait :all_emails_sent do
