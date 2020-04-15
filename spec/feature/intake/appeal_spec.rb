@@ -724,8 +724,6 @@ feature "Appeal Intake", :all_dbs do
     context "with legacy_opt_in_approved" do
       let(:receipt_date) { Time.zone.today }
 
-      before { FeatureToggle.enable!(:covid_timeliness_exemption) }
-      after { FeatureToggle.disable!(:covid_timeliness_exemption) }
       scenario "adding issues" do
         start_appeal(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
@@ -741,12 +739,17 @@ feature "Appeal Intake", :all_dbs do
 
         add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
-        # Expect untimely exemption modal for untimely issue
-        expect(page).to have_content("Issue 1 is an Untimely Issue")
-        add_untimely_exemption_response("Yes")
         expect(page).to have_content(
           "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
         )
+
+        # Expect untimely exemption modal for untimely issue
+        click_intake_add_issue
+        add_intake_rating_issue("Untimely rating issue 1")
+        select_intake_no_match
+        add_untimely_exemption_response("Yes")
+
+        expect(page).to have_content("Untimely rating issue 1")
 
         click_intake_add_issue
         click_intake_no_matching_issues
@@ -757,12 +760,11 @@ feature "Appeal Intake", :all_dbs do
           legacy_issues: true
         )
 
-        expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+        expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
         select_intake_no_match
 
         expect(page).to have_content("Description for Active Duty Adjustments")
-        add_untimely_exemption_response("Yes")
 
         # add before_ama ratings
         click_intake_add_issue
@@ -773,13 +775,11 @@ feature "Appeal Intake", :all_dbs do
         expect(page).to_not have_content(
           "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
         )
-        add_untimely_exemption_response("No")
 
         # add eligible legacy issue
         click_intake_add_issue
         add_intake_rating_issue("PTSD denied")
         add_intake_rating_issue("ankylosis of hip")
-        add_untimely_exemption_response("No")
 
         expect(page).to have_content(
           "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"

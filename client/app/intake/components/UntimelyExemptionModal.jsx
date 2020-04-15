@@ -8,6 +8,7 @@ import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 import { useSelector } from 'react-redux';
 import Checkbox from '../../components/Checkbox';
 import { css } from 'glamor';
+import COPY from '../../../COPY';
 
 const generateButtons = ({ cancelText, onCancel, onSubmit, submitText, skipText, onSkip, state, isInvalid }) => {
   const btns = [
@@ -73,6 +74,22 @@ export const UntimelyExemptionModal = ({
   const issueNumber = (intakeData.addedIssues || []).length + 1;
   const issue = currentIssue;
 
+  const descriptionText = () => {
+
+    let errorMsg = '';
+
+    if (covidTimelinessExemption && !issue.timely) {
+      errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
+    } else if (covidTimelinessExemption && !issue.eligibleForSocOptIn) {
+      errorMsg = COPY.INTAKE_LEGACY_ISSUE_UNTIMELY;
+    } else if (covidTimelinessExemption && !issue.timely) {
+      if (!issue.eligibleForSocOptIn) {
+        errorMsg = COPY.INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY;
+      }
+    }
+    return errorMsg;
+  };
+
   return (
     <div className="intake-add-issues">
       <Modal buttons={buttons} visible closeHandler={onCancel} title={`Issue ${issueNumber} is an Untimely Issue`}>
@@ -80,7 +97,7 @@ export const UntimelyExemptionModal = ({
           <strong>Requested issue:</strong> {issue.description}
         </p>
         <p {...css({ marginBottom: '20px !important' })}>
-        Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.
+          {descriptionText()}
         </p>
         <RadioField
           name="untimely-exemption"

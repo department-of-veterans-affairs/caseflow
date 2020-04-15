@@ -287,9 +287,7 @@ class AddIssueManager extends React.Component {
 
     const { currentIssue, eligibleForSocOptIn } = this.state;
     const { formType } = this.props;
-
     const legacyIssueIsTimely = !this.props.intakeData.legacyOptInApproved || eligibleForSocOptIn;
-
     const requestIssueIsTimely = currentIssue && currentIssue.timely;
 
     if (formType === 'appeal') {

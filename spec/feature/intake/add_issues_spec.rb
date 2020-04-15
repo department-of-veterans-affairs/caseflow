@@ -227,22 +227,6 @@ feature "Intake Add Issues Page", :all_dbs do
           expect(untimely_issue.covid_timeliness_exempt).to eq(true)
         end
       end
-
-      scenario "vacols issue with untimely exemption" do
-        start_higher_level_review(veteran, legacy_opt_in_approved: true)
-        visit "/intake/add_issues"
-        click_intake_add_issue
-        add_intake_rating_issue("Untimely Issue")
-
-        expect(page).to have_content("Issue 1 is an Untimely Issue")
-        find("label", text: "Yes").click
-        expect(page).to have_content("This request is related to COVID-19")
-        find('label[for="untimelyExemptionCovid"]').click
-        safe_click ".add-issue"
-        expect(page).to have_content("Untimely Issue")
-        click_on "Establish EP"
-        expect(page).to have_content("Intake completed")
-      end
     end
   end
 
@@ -351,6 +335,97 @@ feature "Intake Add Issues Page", :all_dbs do
       )
 
       expect(unidentified_issue).to_not be_nil
+    end
+  end
+
+  context "show untimely issue modal" do
+    before do
+      setup_legacy_opt_in_appeals(veteran.file_number)
+    end
+    let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
+    let!(:ratings_with_legacy_issues) do
+      generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
+    end
+
+    let(:receipt_date) { Time.zone.today - 30.days }
+    let(:promulgation_date) { receipt_date - 10.days }
+    let(:benefit_type) { "compensation" }
+    let(:untimely_days) { 372.days }
+    let(:profile_date) { (receipt_date - 8.days).to_datetime }
+    let(:untimely_promulgation_date) { receipt_date - untimely_days - 1.day }
+    let(:untimely_profile_date) { receipt_date - untimely_days - 3.days }
+
+    let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+    let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+
+    before { FeatureToggle.enable!(:covid_timeliness_exemption) }
+    after { FeatureToggle.disable!(:covid_timeliness_exemption) }
+    scenario "when vacols issue is ineligible" do
+      start_higher_level_review(veteran, legacy_opt_in_approved: true)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      add_intake_rating_issue("PTSD denied")
+
+      # Expect legacy opt in issue modal to show
+      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+      add_intake_rating_issue("intervertebral disc syndrome")
+
+      # Expect untimely issue modal to show
+      expect(page).to have_content("Issue 1 is an Untimely Issue")
+      expect(page).to have_content(
+        "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to COVID-19"
+      )
+    end
+
+    scenario "when request issue is ineligible" do
+      start_higher_level_review(veteran, legacy_opt_in_approved: true)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      add_intake_rating_issue("Untimely rating issue 2")
+
+      # Expect legacy opt in issue modal to show
+      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+      add_intake_rating_issue("impairment of hip")
+
+      # Expect untimely issue modal to show
+      expect(page).to have_content("Issue 1 is an Untimely Issue")
+      expect(page).to have_content(
+        "The issue requested isn't usually eligible because its decision date is older than what's allowed"
+      )
+    end
+
+    scenario "when vacols issue is ineligible on a supplemental claim" do
+      start_supplemental_claim(veteran, legacy_opt_in_approved: true)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      add_intake_rating_issue("PTSD denied")
+
+      # Expect legacy opt in issue modal to show
+      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+      add_intake_rating_issue("intervertebral disc syndrome")
+
+      # Expect untimely issue modal to show
+      expect(page).to have_content("Issue 1 is an Untimely Issue")
+      expect(page).to have_content(
+        "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to COVID-19"
+      )
+    end
+
+    scenario "when request issue is ineligible on a supplemental claim" do
+      start_supplemental_claim(veteran, legacy_opt_in_approved: true)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      add_intake_rating_issue("Untimely rating issue 2")
+
+      # Expect legacy opt in issue modal to show
+      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+      add_intake_rating_issue("impairment of hip")
+
+      # Expect untimely issue modal to show
+      expect(page).to have_content("Issue 1 is an Untimely Issue")
+      expect(page).to have_content(
+        "The issue requested isn't usually eligible because its decision date is older than what's allowed"
+      )
     end
   end
 end

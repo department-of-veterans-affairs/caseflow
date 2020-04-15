@@ -1264,10 +1264,7 @@ feature "Higher-Level Review", :all_dbs do
     context "with active legacy appeal" do
       before do
         setup_legacy_opt_in_appeals(veteran.file_number)
-        FeatureToggle.enable!(:covid_timeliness_exemption)
       end
-
-      after { FeatureToggle.disable!(:covid_timeliness_exemption) }
 
       context "with legacy_opt_in_approved" do
         let(:receipt_date) { Time.zone.today }
@@ -1275,6 +1272,7 @@ feature "Higher-Level Review", :all_dbs do
         scenario "adding issues" do
           start_higher_level_review(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
+
           click_intake_add_issue
           expect(page).to have_content("Next")
           add_intake_rating_issue(/Left knee granted$/)
@@ -1285,8 +1283,6 @@ feature "Higher-Level Review", :all_dbs do
           expect(page).to_not have_content("typhoid arthritis")
 
           add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
-
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content(
             "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
@@ -1320,7 +1316,6 @@ feature "Higher-Level Review", :all_dbs do
           click_intake_add_issue
           add_intake_rating_issue("PTSD denied")
           add_intake_rating_issue("ankylosis of hip")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content(
             "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
@@ -1344,13 +1339,10 @@ feature "Higher-Level Review", :all_dbs do
             "Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
           )
 
-          add_untimely_exemption_response("Yes")
-
           # add ineligible legacy issue (already opted-in)
           click_intake_add_issue
           add_intake_rating_issue("Looks like a VACOLS issue")
           add_intake_rating_issue("impairment of femur")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content(
             "Looks like a VACOLS issue #{ineligible_constants.legacy_appeal_not_eligible}"
@@ -1390,13 +1382,11 @@ feature "Higher-Level Review", :all_dbs do
           before do
             FeatureToggle.enable!(:verify_unidentified_issue)
             FeatureToggle.enable!(:unidentified_issue_decision_date)
-            FeatureToggle.enable!(:covid_timeliness_exemption)
           end
 
           after do
             FeatureToggle.disable!(:verify_unidentified_issue)
             FeatureToggle.enable!(:unidentified_issue_decision_date)
-            FeatureToggle.disable!(:covid_timeliness_exemption)
           end
 
           let(:decision_date) { 30.days.ago.to_date.mdY }
@@ -1417,9 +1407,7 @@ feature "Higher-Level Review", :all_dbs do
             # Expect legacy opt in issue modal to show
             expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
             add_intake_rating_issue("impairment of hip")
-
-            # Expect untimely modal to show
-            expect(page).to have_content("Issue 1 is an Untimely Issue")
+            expect(page).to have_content("Service connection, impairment of hip")
           end
 
           scenario "with legacy opt in not approved" do
@@ -1436,9 +1424,6 @@ feature "Higher-Level Review", :all_dbs do
             safe_click ".add-issue"
 
             add_intake_rating_issue("ankylosis of hip")
-            expect(page).to have_content("unidentified issue")
-            add_untimely_exemption_response("Yes")
-
             expect(page).to have_content(ineligible_constants.legacy_issue_not_withdrawn.to_s)
 
             click_intake_finish
@@ -1471,9 +1456,6 @@ feature "Higher-Level Review", :all_dbs do
             safe_click ".add-issue"
 
             add_intake_rating_issue("ankylosis of hip")
-            expect(page).to have_content("unidentified issue")
-            add_untimely_exemption_response("Yes")
-
             click_intake_finish
             expect(page).to have_content("correct the issues")
             click_on "correct the issues"
@@ -1499,8 +1481,6 @@ feature "Higher-Level Review", :all_dbs do
             expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
             expect(page).to have_content("impairment of hip")
             add_intake_rating_issue("limitation of thigh motion")
-
-            add_untimely_exemption_response("Yes")
             expect(page).to have_content("Testing verified unidentified issues")
 
             click_button("Save")
@@ -1521,9 +1501,6 @@ feature "Higher-Level Review", :all_dbs do
       end
 
       context "with legacy opt in not approved" do
-        before { FeatureToggle.enable!(:covid_timeliness_exemption) }
-        after { FeatureToggle.disable!(:covid_timeliness_exemption) }
-
         scenario "adding issues" do
           start_higher_level_review(veteran, legacy_opt_in_approved: false)
           visit "/intake/add_issues"
@@ -1535,7 +1512,6 @@ feature "Higher-Level Review", :all_dbs do
           expect(page).to_not have_content("impairment of hip")
           expect(page).to_not have_content("typhoid arthritis")
           add_intake_rating_issue("ankylosis of hip")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content(
             "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
