@@ -45,6 +45,7 @@ class JudgeDecisionReviewTask < JudgeTask
 
   def ama_judge_actions
     return Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h if FeatureToggle.enabled?(:special_issues_revamp)
+
     Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h
   end
 end
