@@ -35,8 +35,7 @@ class BadgeArea extends React.PureComponent {
     }
 
     const badgeAreaStyling = css({
-      display: isHorizontal ? 'inline-flex' : 'inline-block',
-      textAlign: 'center'
+      display: isHorizontal ? 'inline-flex' : 'inline-block'
     });
 
     return <div {...badgeAreaStyling}>{badges}</div>;
