@@ -69,6 +69,14 @@ describe JudgeLegacyTask, :postgres do
     subject { legacy_judge_task.available_actions(user, "judge") }
 
     context "when the task is at judge assign" do
+      context "when the user is not the assignee" do
+        let(:user) { create(:user) }
+
+        it "returns no actions" do
+          expect(subject).to eq []
+        end
+      end
+
       context "when the user is the assignee" do
         it "returns all judge actions" do
           expect(subject).to match_array [
