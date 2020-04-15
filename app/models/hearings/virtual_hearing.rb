@@ -34,12 +34,15 @@ class VirtualHearing < CaseflowRecord
         lambda {
           where(
             conference_deleted: false,
-            id: select { |hearing| [:active, :cancelled].include?(hearing.status).pluck(:id) }
+            id: select { |hearing| [:active, :cancelled].include?(hearing.status) }.pluck(:id)
           )
         }
 
   scope :not_cancelled,
         -> { where(id: reject(&:cancelled?).pluck(:id)) }
+
+  scope :cancelled,
+        -> { where(id: select(&:cancelled?).pluck(:id)) }
 
   def all_emails_sent?
     veteran_email_sent &&

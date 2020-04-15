@@ -39,10 +39,11 @@ describe VirtualHearings::DeleteConferencesJob do
     context "for virtual hearing that was cancelled" do
       let(:scheduled_for) { Time.zone.now + 7.days }
       let!(:virtual_hearing) do
-        create(:virtual_hearing, :cancelled, hearing: hearing, conference_deleted: false)
+        create(:virtual_hearing, hearing: hearing, conference_deleted: false)
       end
 
       it "updates the appropriate fields", :aggregate_failures do
+        virtual_hearing.cancel!
         subject
         virtual_hearing.reload
         expect(virtual_hearing.conference_deleted).to eq(true)
@@ -54,10 +55,11 @@ describe VirtualHearings::DeleteConferencesJob do
 
     context "for a virtual hearing that was cancelled, but the emails failed to send" do
       let!(:virtual_hearing) do
-        create(:virtual_hearing, :cancelled, hearing: hearing, conference_deleted: true)
+        create(:virtual_hearing, hearing: hearing, conference_deleted: true)
       end
 
       it "doesn't call `delete_conference` and sends each email" do
+        virtual_hearing.cancel!
         subject
         virtual_hearing.reload
         expect(job).to_not receive(:delete_conference)
@@ -70,10 +72,11 @@ describe VirtualHearings::DeleteConferencesJob do
     context "for virtual hearing that already occurred" do
       let(:scheduled_for) { Time.zone.now - 7.days }
       let!(:virtual_hearing) do
-        create(:virtual_hearing, :active, hearing: hearing, conference_deleted: false)
+        create(:virtual_hearing, hearing: hearing, conference_deleted: false)
       end
 
       it "updates the conference_deleted, but doesn't send emails", :aggregate_failures do
+        virtual_hearing.activate!
         subject
         virtual_hearing.reload
         expect(virtual_hearing.conference_deleted).to eq(true)
@@ -88,14 +91,12 @@ describe VirtualHearings::DeleteConferencesJob do
         [
           create(
             :virtual_hearing,
-            :active,
             :initialized,
             hearing: create(:hearing, hearing_day: hearing_day),
             conference_deleted: false
           ),
           create(
             :virtual_hearing,
-            :active,
             :initialized,
             hearing: create(:hearing, hearing_day: hearing_day),
             conference_deleted: false
@@ -112,6 +113,7 @@ describe VirtualHearings::DeleteConferencesJob do
             by: 2
           )
         )
+        virtual_hearings.each(&:activate!)
         subject
         virtual_hearings.each(&:reload)
         expect(virtual_hearings.map(&:conference_deleted)).to all(be == true)
@@ -128,6 +130,7 @@ describe VirtualHearings::DeleteConferencesJob do
               by: 2
             )
           )
+          virtual_hearings.each(&:activate!)
           subject
           virtual_hearings.each(&:reload)
           expect(virtual_hearings.map(&:conference_deleted)).to all(be == false)
@@ -143,6 +146,7 @@ describe VirtualHearings::DeleteConferencesJob do
               by: 2
             )
           )
+          virtual_hearings.each(&:activate!)
           subject
           virtual_hearings.each(&:reload)
           expect(virtual_hearings.map(&:conference_deleted)).to all(be == true)
