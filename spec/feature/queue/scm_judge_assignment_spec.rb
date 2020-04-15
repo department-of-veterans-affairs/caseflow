@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
+RSpec.feature "SCM Team access to judge movement features", :all_dbs do
   let(:judge_one) { Judge.new(create(:user, full_name: "Billie Daniel")) }
   let(:judge_two) { Judge.new(create(:user, full_name: "Joe Shmoe")) }
   let(:acting_judge) { Judge.new(create(:user, full_name: "Acting Judge")) }
@@ -14,11 +14,12 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
   let(:team_attorneys) { [attorney_one, attorney_two] }
 
   let!(:scm_user) { create(:user, full_name: "Rosalie SCM Dunkle") }
+  let!(:scm_staff) { create(:staff, user: scm_user) }
   let(:current_user) { scm_user }
 
   before do
     team_attorneys.each do |attorney|
-      create(:staff, :attorney_role, user: attorney)
+      create(:staff, :attorney_role, user: attorney, stitle: "DF")
       judge_one_team.add_user(attorney)
     end
 
@@ -119,7 +120,11 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
         allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
         allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
         allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
+
+        FeatureToggle.enable!(:scm_view_judge_assign_queue)
       end
+
+      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       scenario "on ama appeals" do
         step "request cases" do
@@ -218,6 +223,41 @@ RSpec.feature "SCM Team access to judge assignment features", :all_dbs do
           expect(page).to have_content("ASSIGNED TO\n#{judge_two.user.css_id}")
           expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
           expect(page).to have_content("TASK\n#{JudgeDecisionReviewTask.label}")
+        end
+      end
+
+      scenario "on legacy appeals" do
+        step "reassign a JudgeLegacyAssignTask" do
+          visit "/queue/#{judge_one.user.css_id}/assign"
+          click_on(legacy_appeal.veteran_file_number)
+
+          expect(page).to have_content("ASSIGNED TO\n#{judge_one.user.vacols_uniq_id}")
+          click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
+          click_dropdown(prompt: "Select a user", text: judge_two.user.full_name)
+          fill_in("taskInstructions", with: "#{judge_one.user.full_name} is on leave. Please take over this case")
+          click_on("Submit")
+
+          expect(page).to have_content("Task reassigned to #{judge_two.user.full_name}")
+
+          visit "/queue/appeals/#{legacy_appeal.external_id}"
+          expect(page).to have_content("ASSIGNED TO\n#{judge_two.user.vacols_uniq_id}")
+          expect(page).to have_content("TASK\n#{COPY::JUDGE_ASSIGN_TASK_LABEL}")
+          visit "/queue/#{judge_two.user.css_id}/assign"
+          click_on(legacy_appeal.veteran_file_number)
+        end
+
+        step "assign an AttorneyTask" do
+          click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
+          click_dropdown(prompt: "Select a user", text: "Other")
+          click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
+          click_on("Submit")
+
+          expect(page).to have_content("Assigned 1 case")
+
+          visit "/queue/appeals/#{legacy_appeal.external_id}"
+          expect(page).to have_content("ASSIGNED TO\n#{attorney_one.vacols_uniq_id}")
+          expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
+          expect(page).to have_content("TASK\n#{COPY::ATTORNEY_TASK_LABEL}")
         end
       end
     end

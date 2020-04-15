@@ -1,14 +1,21 @@
 # frozen_string_literal: true
 
 class JudgeLegacyAssignTask < JudgeLegacyTask
-  def available_actions(current_user, role)
-    return [] if role != "judge" || current_user != assigned_to
-
-    [
-      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-      Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
-    ]
+  def available_actions(user, role)
+    if assigned_to == user && role == "judge"
+      [
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+      ]
+    elsif user.can_act_on_behalf_of_judges?
+      [
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+      ]
+    else
+      []
+    end
   end
 
   def label
