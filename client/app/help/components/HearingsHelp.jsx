@@ -58,7 +58,7 @@ class HearingPrepHelp extends React.Component {
 
       <p>Caseflow Hearing Prep helps judges rapidly prepare for their hearings. It allows judges to view their upcoming hearings, view relevant appellant information, take notes before and during a hearing, and review documents in the veteran's eFolder.
         Hearing Prep was built by the Digital Service at VA (DSVA) and will create cost savings and process improvements for many areas at the VA. Learn more:
-        <a target="_blank" rel="noopener noreferrer" href="/hearingprep_training_guide_june2018.pdf">Training Guide</a>
+      <a target="_blank" rel="noopener noreferrer" href="/hearingprep_training_guide_june2018.pdf">Training Guide</a>
       </p>
 
       <h2 id="how-was-hearing-developed">2. How was Hearing Prep developed?</h2>

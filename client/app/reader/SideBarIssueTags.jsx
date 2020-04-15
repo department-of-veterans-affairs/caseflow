@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -51,6 +52,14 @@ class SideBarIssueTags extends PureComponent {
     </div>;
   }
 }
+
+SideBarIssueTags.propTypes = {
+  doc: PropTypes.object,
+  removeTag: PropTypes.func,
+  addNewTag: PropTypes.func,
+  error: PropTypes.object,
+  tagOptions: PropTypes.string
+};
 
 const mapStateToProps = (state) => {
   return {

@@ -13,6 +13,7 @@ import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 const submitText = 'Finish intake';
 
@@ -160,6 +161,31 @@ export class FinishButtons extends React.PureComponent {
       <FinishNextButtonConnected history={this.props.history} />
     </div>
 }
+
+Finish.propTypes = {
+  appeals: PropTypes.object,
+  confirmFinishIntake: PropTypes.func,
+  completeIntakeErrorCode: PropTypes.string,
+  completeIntakeErrorData: PropTypes.string,
+  history: PropTypes.object,
+  finishConfirmed: PropTypes.string,
+  finishConfirmedError: PropTypes.string,
+  optionSelected: PropTypes.string,
+  rampElectionStatus: PropTypes.string,
+  requestState: PropTypes.string
+};
+
+FinishNextButton.propTypes = {
+  completeIntake: PropTypes.func,
+  history: PropTypes.object,
+  intakeId: PropTypes.string,
+  rampElection: PropTypes.object,
+  requestState: PropTypes.string
+};
+
+FinishButtons.propTypes = {
+  history: PropTypes.object
+};
 
 export default connect(
   (state) => ({
