@@ -710,7 +710,7 @@ describe User, :all_dbs do
     end
 
     context "when the user is a member of Case review Organization" do
-      before { BvaIntake.singleton.add_user(user) }
+      before { CaseReview.singleton.add_user(user) }
       it "returns true" do
         expect(subject).to eq(true)
       end

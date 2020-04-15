@@ -72,7 +72,6 @@ feature "Intake", :all_dbs do
         select_form(Constants.INTAKE_FORM_NAMES.appeal)
 
         expect(page).to have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
-        expect(page).to have_content("Mail to 425 I St NW, Washington DC, 20001")
         expect(page).to have_css(".cf-submit[disabled]")
 
         select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)

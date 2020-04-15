@@ -25,7 +25,7 @@ import { MTVTaskHeader } from './MTVTaskHeader';
 import TextField from '../../components/TextField';
 import { MTVIssueSelection } from './MTVIssueSelection';
 import StringUtil from '../../util/StringUtil';
-import { MissingDraftAlert } from './MissingDraftAlert';
+import { ReturnToLitSupportAlert } from './ReturnToLitSupportAlert';
 import { grantTypes, dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
 
@@ -130,7 +130,6 @@ export const MTVJudgeDisposition = ({
 
         <MTVDispositionSelection
           label={JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL}
-          allowPartial
           onChange={(val) => {
             setVacateType(null);
             setDisposition(val);
@@ -145,7 +144,7 @@ export const MTVJudgeDisposition = ({
           />
         )}
 
-        {disposition && !isGrantType() && <MissingDraftAlert to={returnToLitSupportLink} disposition={disposition} />}
+        <ReturnToLitSupportAlert to={returnToLitSupportLink} />
 
         {disposition && isGrantType() && (
           <RadioField
