@@ -114,17 +114,21 @@ RSpec.feature "Motion to vacate", :all_dbs do
         # Ensure it has pre-selected judge previously assigned to case
         expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
 
-        click_button(text: "Submit")
+        task = submit_and_fetch_task(judge2)
+        expect(task.instructions.first).to include("I recommend granting a vacatur")
+      end
 
-        # Return back to user's queue
-        expect(page).to have_current_path("/queue")
+      it "motions attorney recommends partial grant to judge" do
+        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
 
-        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
-        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+        find("label[for=disposition_partially_granted]").click
+        fill_in("instructions", with: "Attorney context/instructions for judge")
 
-        # Verify new task was created
-        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
-        expect(judge_task).to_not be_nil
+        # Ensure it has pre-selected judge previously assigned to case
+        expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+
+        task = submit_and_fetch_task(judge2)
+        expect(task.instructions.first).to include("I recommend granting a partial vacatur")
       end
 
       it "motions attorney recommends denied decision to judge and fills in hyperlink" do
@@ -137,17 +141,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
         fill_in("hyperlink", with: hyperlink)
         fill_in("instructions", with: "Attorney context/instructions for judge")
         click_dropdown(text: judge2.display_name)
-        click_button(text: "Submit")
 
-        # Return back to user's queue
-        expect(page).to have_current_path("/queue")
-
-        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
-        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
-
-        # Verify new task was created
-        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
-        expect(judge_task).to_not be_nil
+        task = submit_and_fetch_task(judge2)
+        expect(task.instructions.first).to include("I recommend denial")
       end
 
       it "motions attorney triggers Pulac-Cerullo" do
@@ -162,6 +158,21 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_TITLE)
         expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_DETAIL.gsub("%s", appeal.veteran_full_name))
+      end
+
+      def submit_and_fetch_task(judge)
+        click_button(text: "Submit")
+
+        # Return back to user's queue
+        expect(page).to have_current_path("/queue")
+
+        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge.display_name))
+        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+
+        # Verify new task was created
+        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge)
+        expect(judge_task).to_not be_nil
+        judge_task
       end
     end
   end
@@ -205,7 +216,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
     let(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let(:judge_notes) { "Here's why I made my decision..." }
-    let(:return_to_lit_support_instructions) { "\n\nYou forgot the denial draft" }
+    let(:return_to_lit_support_instructions) { "\n\nYou forgot the decision draft" }
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -324,7 +335,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       issues_to_select = [1, 3]
-      issues_to_select.each { |idx| select_issue_for_vacature(idx) }
+      issues_to_select.each { |idx| select_issue_for_vacatur(idx) }
 
       click_button(text: "Submit")
 
@@ -385,40 +396,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
       end
     end
 
-    it "judge returns to lit support due to missing denial draft" do
-      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
-      find("label[for=disposition_denied]").click
-
-      find("a", text: "return to the motions attorney").click
-
-      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_TITLE)
-      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS)
-      find("div.cf-modal-body").fill_in("instructions",
-                                        with: return_to_lit_support_instructions,
-                                        fill_options: { clear: :none })
-
-      click_button(text: "Submit")
-
-      # Return back to user's queue
-      expect(page).to have_current_path("/queue")
-      expect(page).to have_content(
-        format(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE, appeal.veteran_full_name)
-      )
-      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL)
-
-      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
-      expect(motion).to be_nil
-
-      expect(judge_address_motion_to_vacate_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
-
-      expect(vacate_motion_mail_task.reload.status).to eq Constants.TASK_STATUSES.assigned
-      expect(vacate_motion_mail_task.instructions.length).to eq 2
-
-      expected_instructions = COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS +
-                              return_to_lit_support_instructions
-      expect(vacate_motion_mail_task.instructions).to include(expected_instructions)
-    end
-
     context "dismissal" do
       let(:atty_disposition) { "dismissed" }
       let(:atty_hyperlink) { "https://efolder.link/file" }
@@ -463,6 +440,58 @@ RSpec.feature "Motion to vacate", :all_dbs do
           Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
         )
         expect(new_task.instructions.join("")).to eq(instructions)
+      end
+    end
+
+    describe "judge returns case to lit support" do
+      context "disposition: granted" do
+        let(:disposition) { "granted" }
+
+        it "allows proper return to lit support" do
+          return_to_lit_support(disposition: disposition)
+        end
+      end
+
+      context "disposition: denied" do
+        let(:disposition) { "denied" }
+
+        it "allows proper return to lit support" do
+          return_to_lit_support(disposition: disposition)
+        end
+      end
+
+      def return_to_lit_support(disposition:)
+        address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+        find("label[for=disposition_#{disposition}]").click
+
+        find("a", text: "return to the motions attorney").click
+
+        expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_TITLE)
+        expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS)
+        find("div.cf-modal-body").fill_in("instructions",
+                                          with: return_to_lit_support_instructions,
+                                          fill_options: { clear: :none })
+
+        click_button(text: "Submit")
+
+        # Return back to user's queue
+        expect(page).to have_current_path("/queue")
+        expect(page).to have_content(
+          format(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE, appeal.veteran_full_name)
+        )
+        expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL)
+
+        motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+        expect(motion).to be_nil
+
+        expect(judge_address_motion_to_vacate_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+
+        expect(vacate_motion_mail_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+        expect(vacate_motion_mail_task.instructions.length).to eq 2
+
+        expected_instructions = COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS +
+                                return_to_lit_support_instructions
+        expect(vacate_motion_mail_task.instructions).to include(expected_instructions)
       end
     end
   end
@@ -843,7 +872,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     action_dropdown.click
   end
 
-  def select_issue_for_vacature(issue_id)
+  def select_issue_for_vacatur(issue_id)
     find(".checkbox-wrapper-issues").find("label[for=\"#{issue_id}\"]").click
   end
 
