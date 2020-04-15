@@ -23,8 +23,4 @@ class AttorneyLegacyTask < LegacyTask
   def label
     COPY::ATTORNEY_TASK_LABEL
   end
-
-  def self.from_vacols(case_assignment, appeal, user_id)
-    super
-  end
 end
