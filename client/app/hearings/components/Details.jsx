@@ -46,6 +46,17 @@ const SET_ALL_HEARING_FORMS = 'setAllHearingForms';
 const SET_UPDATED = 'setUpdated';
 
 const HearingDetails = (props) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [virtualHearingModalOpen, setVirtualHearingModalOpen] = useState(false);
+  const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
+  const [shouldStartPolling, setShouldStartPolling] = useState(null);
+
+  const hearingsFormContext = useContext(HearingsFormContext);
+  const hearingsFormDispatch = hearingsFormContext.dispatch;
+  const hearingForms = hearingsFormContext.state.hearingForms;
+  const formsUpdated = hearingsFormContext.state.updated;
+
   const getInitialFormData = () => {
     const { hearing } = props;
     const transcription = hearing.transcription || {};
@@ -89,21 +100,11 @@ const HearingDetails = (props) => {
     };
   };
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [virtualHearingModalOpen, setVirtualHearingModalOpen] = useState(false);
-  const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
-  const [shouldStartPolling, setShouldStartPolling] = useState(null);
-  const [initialFormData, setInitialFormData] = useState(getInitialFormData());
-
-  const hearingsFormContext = useContext(HearingsFormContext);
-  const hearingsFormDispatch = hearingsFormContext.dispatch;
-  const hearingForms = hearingsFormContext.state.hearingForms;
-  const formsUpdated = hearingsFormContext.state.updated;
-
   useEffect(() => {
+    const initialFormData = getInitialFormData();
+
     hearingsFormDispatch({ type: SET_ALL_HEARING_FORMS, payload: initialFormData });
-  }, []);
+  }, [props.hearing]);
 
   const openVirtualHearingModal = ({ type }) => {
     setVirtualHearingModalOpen(true);
@@ -127,6 +128,7 @@ const HearingDetails = (props) => {
 
   const getEditedEmails = () => {
     const { hearing: { virtualHearing } } = props;
+
     const { virtualHearingForm } = hearingForms;
     const changes = deepDiff(virtualHearing, virtualHearingForm || {});
 
@@ -137,7 +139,7 @@ const HearingDetails = (props) => {
   };
 
   const submit = () => {
-    const { hearing: { externalId } } = props;
+    const { saveHearing, setHearing } = props;
 
     if (!formsUpdated) {
       return;
@@ -146,7 +148,7 @@ const HearingDetails = (props) => {
     // only send updated properties
     const {
       hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm
-    } = deepDiff(initialFormData, hearingForms);
+    } = deepDiff(getInitialFormData(), hearingForms);
 
     const data = {
       hearing: {
@@ -162,21 +164,15 @@ const HearingDetails = (props) => {
 
     setLoading(true);
 
-    return ApiUtil.patch(`/hearings/${externalId}`, {
-      data: ApiUtil.convertToSnakeCase(data)
-    }).then((response) => {
+    return saveHearing(data).then((response) => {
       const hearing = ApiUtil.convertToCamelCase(response.body.data);
       const alerts = response.body?.alerts;
 
       setLoading(false);
       setError(false);
 
-      // set hearing on DetailsContainer then reset initialFormData
-      props.setHearing(hearing, () => {
-        setInitialFormData(getInitialFormData());
-
-        hearingsFormDispatch({ type: SET_ALL_HEARING_FORMS, payload: initialFormData });
-
+      // set hearing on DetailsContainer
+      setHearing(hearing, () => {
         if (alerts) {
           const {
             hearing: hearingAlerts,
@@ -234,7 +230,6 @@ const HearingDetails = (props) => {
   } = props.hearing;
   const { disabled } = props;
   const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = hearingForms;
-
   const isLegacy = docketName !== 'hearing';
   const editedEmails = getEditedEmails();
 
@@ -307,6 +302,7 @@ const HearingDetails = (props) => {
 
 HearingDetails.propTypes = {
   hearing: PropTypes.object.isRequired,
+  saveHearing: PropTypes.func,
   setHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,

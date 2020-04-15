@@ -43,6 +43,14 @@ class HearingDetailsContainer extends React.Component {
     }
   };
 
+  saveHearing = (data) => {
+    const { externalId } = this.state.hearing;
+
+    return ApiUtil.patch(`/hearings/${externalId}`, {
+      data: ApiUtil.convertToSnakeCase(data)
+    });
+  }
+
   render() {
     const { userInHearingOrTranscriptionOrganization } = this.context;
 
@@ -61,6 +69,7 @@ class HearingDetailsContainer extends React.Component {
           disabled={!userInHearingOrTranscriptionOrganization}
           hearing={this.state.hearing}
           setHearing={this.setHearing}
+          saveHearing={this.saveHearing}
           goBack={this.goBack}
         />
       </LoadingDataDisplay>
