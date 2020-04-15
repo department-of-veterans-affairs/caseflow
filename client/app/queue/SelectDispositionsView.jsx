@@ -102,15 +102,11 @@ class SelectDispositionsView extends React.PureComponent {
       checkoutFlow
     } = this.props;
 
-    if (this.props.featureToggles.special_issues_revamp) {
+    if (appeal.isLegacyAppeal || this.props.featureToggles.special_issues_revamp) {
       return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
-    } else {
-      if (appeal.isLegacyAppeal) {
-        return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
-      }
-
-      return `/queue/appeals/${appealId}`;
     }
+
+    return `/queue/appeals/${appealId}`;
   }
 
   validateForm = () => {
@@ -439,6 +435,7 @@ SelectDispositionsView.propTypes = {
   appeal: PropTypes.shape({
     decisionIssues: PropTypes.array,
     externalId: PropTypes.string,
+    isLegacyAppeal: PropTypes.bool,
     issues: PropTypes.array
   }),
   appealId: PropTypes.string.isRequired,
