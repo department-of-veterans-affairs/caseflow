@@ -560,7 +560,7 @@ describe EstablishClaim, :all_dbs do
       let(:completion_status) { :special_issue_emailed }
       let(:special_issues) { { vamc: true, radiation: true } }
 
-      it { is_expected.to eq("Emailed - Radiation; VAMC Issue(s)") }
+      it { is_expected.to eq("Emailed - Radiation; VAMC Issues") }
     end
 
     context "when completion_status doesn't need additional information" do

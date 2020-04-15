@@ -22,7 +22,7 @@ describe DependenciesReportServiceLogJob do
     end
 
     it "should log the correct error message" do
-      expect(Rails.logger).to receive(:error).with("Caseflow Monitor shows a possible VACOLS and VBMS outage(s).")
+      expect(Rails.logger).to receive(:error).with("Caseflow Monitor shows a possible VACOLS and VBMS outage.")
       DependenciesReportServiceLogJob.perform_now
     end
   end
