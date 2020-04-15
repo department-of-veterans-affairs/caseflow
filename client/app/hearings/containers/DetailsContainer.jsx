@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
-import { HearingsUserContext } from '../HearingsUserContext';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
 import HearingDetails from '../components/Details';
