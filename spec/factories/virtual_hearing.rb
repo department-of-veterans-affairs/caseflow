@@ -17,6 +17,10 @@ FactoryBot.define do
     association :created_by, factory: :user
     establishment { nil }
 
+    transient do
+      status { nil }
+    end
+
     trait :initialized do
       alias_name { rand(1..9).to_s[0..6] }
       conference_id { rand(1..9) }
@@ -30,11 +34,17 @@ FactoryBot.define do
       judge_email_sent { true }
     end
 
-    after(:create) do |virtual_hearing, _evaluator|
+    after(:create) do |virtual_hearing, evaluator|
       virtual_hearing.establishment = create(
         :virtual_hearing_establishment,
         virtual_hearing: virtual_hearing
       )
+
+      if evaluator.status == :cancelled
+        virtual_hearing.cancel!
+      elsif evaluator.status == :active
+        virtual_hearing.activate!
+      end
     end
   end
 end

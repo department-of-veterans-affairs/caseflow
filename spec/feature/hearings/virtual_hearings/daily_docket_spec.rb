@@ -9,10 +9,9 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
   let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06", scheduled_time: "9:00AM") }
-  let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
+  let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, status: :active, hearing: hearing) }
 
   scenario "Virtual hearing time is updated" do
-    virtual_hearing.activate!
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
     expect(page).to have_content("Daily Docket")
@@ -29,7 +28,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   end
 
   scenario "Virtual hearing time update is cancelled" do
-    virtual_hearing.activate!
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
     expect(page).to have_content("Daily Docket")
@@ -48,7 +46,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     end
 
     scenario "async job is completed" do
-      virtual_hearing.activate!
       virtual_hearing.update(veteran_email_sent: true)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_no_css(".is-disabled")
@@ -62,7 +59,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
     context "Hearing Coordinator view" do
       scenario "User has the host link" do
-        virtual_hearing.activate!
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
         expect(page).to have_content(vlj_virtual_hearing_link)
@@ -73,7 +69,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       let(:current_user) { User.authenticate!(css_id: hearing.judge.css_id, roles: ["Hearing Prep"]) }
 
       scenario "User has the host link" do
-        virtual_hearing.activate!
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
         expect(page).to have_content(vlj_virtual_hearing_link)

@@ -51,11 +51,10 @@ RSpec.describe Api::V2::HearingsController, :all_dbs, type: :controller do
       context "response for hearing day with hearings" do
         shared_examples_for "hearings api route that serializes virtual hearing" do
           let!(:virtual_hearing) do
-            create(:virtual_hearing, :initialized, hearing: hearings[0])
+            create(:virtual_hearing, :initialized, status: :active, hearing: hearings[0])
           end
 
           it "returns a 200 and has expected response", :aggregate_failures do
-            virtual_hearing.activate!
             expect(subject.status).to eq 200
             response_body = JSON.parse(subject.body)
             expect(response_body).to have_key("hearings")

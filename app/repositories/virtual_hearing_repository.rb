@@ -2,16 +2,16 @@
 
 class VirtualHearingRepository
   class << self
-    def hearings
-      @hearings = if !VirtualHearing.cancelled.empty?
-                    VirtualHearing.cancelled.pluck(:id)
-                  else
-                    0
-                  end
+    def cancelled_virtual_hearings
+      if !VirtualHearing.cancelled.empty?
+        VirtualHearing.cancelled.pluck(:id)
+      else
+        0
+      end
     end
 
     def ready_for_deletion
-      hearings
+      virtual_hearings = cancelled_virtual_hearings
 
       virtual_hearings_for_ama_hearings = VirtualHearing.eligible_for_deletion
         .where(hearing_type: Hearing.name)
@@ -20,7 +20,7 @@ class VirtualHearingRepository
         .where(
           "hearing_days.scheduled_for < :today OR virtual_hearings.id = ANY (array[:ids])",
           today: Time.zone.today,
-          ids: @hearings
+          ids: virtual_hearings
         )
 
       virtual_hearings_for_legacy_hearings = VirtualHearing.eligible_for_deletion
@@ -30,7 +30,7 @@ class VirtualHearingRepository
         .where(
           "hearing_days.scheduled_for < :today OR virtual_hearings.id = ANY (array[:ids])",
           today: Time.zone.today,
-          ids: @hearings
+          ids: virtual_hearings
         )
 
       virtual_hearings_for_ama_hearings + virtual_hearings_for_legacy_hearings

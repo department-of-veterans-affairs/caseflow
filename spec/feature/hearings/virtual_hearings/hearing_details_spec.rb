@@ -48,13 +48,20 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   end
 
   context "for an existing Virtual Hearing" do
-    let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, conference_id: "0", hearing: hearing) }
+    let!(:virtual_hearing) do
+      create(
+        :virtual_hearing,
+        :all_emails_sent,
+        status: :active,
+        conference_id: "0",
+        hearing: hearing
+      )
+    end
     let!(:expected_alert) do
       COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_FROM_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
     end
 
     scenario "user switches hearing type back to original request type" do
-      virtual_hearing.activate!
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       click_dropdown(name: "hearingType", index: 0)
@@ -91,10 +98,16 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   end
 
   context "User can see and edit veteran and poa emails" do
-    let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
+    let!(:virtual_hearing) do
+      create(
+        :virtual_hearing,
+        :all_emails_sent,
+        status: :active,
+        hearing: hearing
+      )
+    end
 
     scenario "user can update emails" do
-      virtual_hearing.activate!
       visit "hearings/" + hearing.external_id.to_s + "/details"
       fill_in "Veteran Email", with: "new@email.com"
       fill_in "POA/Representative Email", with: "rep@testingEmail.com"
@@ -112,10 +125,17 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   end
 
   context "User has the correct link" do
-    let!(:virtual_hearing) { create(:virtual_hearing, :initialized, :all_emails_sent, hearing: hearing) }
+    let!(:virtual_hearing) do
+      create(
+        :virtual_hearing,
+        :initialized,
+        :all_emails_sent,
+        status: :active,
+        hearing: hearing
+      )
+    end
 
     scenario "user has the host link" do
-      virtual_hearing.activate!
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       expect(page).to have_content(
@@ -125,10 +145,17 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   end
 
   context "User can see disabled email fields after switching hearing back to video" do
-    let!(:virtual_hearing) { create(:virtual_hearing, :initialized, :all_emails_sent, hearing: hearing) }
+    let!(:virtual_hearing) do
+      create(
+        :virtual_hearing,
+        :initialized,
+        :all_emails_sent,
+        status: :cancelled,
+        hearing: hearing
+      )
+    end
 
     scenario "email fields are visible but disabled" do
-      virtual_hearing.cancel!
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       expect(page).to have_field("Veteran Email", readonly: true)
