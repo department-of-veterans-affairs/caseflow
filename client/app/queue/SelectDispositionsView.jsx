@@ -13,7 +13,7 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import { COLORS } from '../constants/AppConstants';
 
 import {
@@ -26,8 +26,8 @@ import {
   ISSUE_DISPOSITIONS
 } from './constants';
 
-import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
 import uuid from 'uuid';
 import QueueFlowPage from './components/QueueFlowPage';
 
@@ -427,8 +427,18 @@ class SelectDispositionsView extends React.PureComponent {
 }
 
 SelectDispositionsView.propTypes = {
+  appeal: PropTypes.shape({
+    decisionIssues: PropTypes.array,
+    externalId: PropTypes.string,
+    issues: PropTypes.array
+  }),
   appealId: PropTypes.string.isRequired,
-  checkoutFlow: PropTypes.string.isRequired
+  checkoutFlow: PropTypes.string.isRequired,
+  editStagedAppeal: PropTypes.func,
+  hideSuccessMessage: PropTypes.func,
+  highlight: PropTypes.bool,
+  setDecisionOptions: PropTypes.func,
+  taskId: PropTypes.string
 };
 
 const mapStateToProps = (state, ownProps) => ({

@@ -66,28 +66,17 @@ class SelectSpecialIssuesView extends React.PureComponent {
   render() {
     const { appeal, specialIssues } = this.props;
 
-    if(appeal.isLegacyAppeal){
+    if (appeal.isLegacyAppeal) {
       return this.renderLegacySpecialIssues(specialIssues);
-    } else {
-      return this.renderAmaSpecialIssues(specialIssues);
     }
 
-  }
-  renderLegacySpecialIssues = (specialIssues) => {
-    const {
-      error,
-      ...otherProps
-    } = this.props;
-    let sections = [
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).noneSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).aboutSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).residenceSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).benefitTypeSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).issuesOnAppealSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).dicOrPensionSection()];
+    return this.renderAmaSpecialIssues(specialIssues);
 
+  }
+
+  sortSectionsAndMapIssues = (sections) => {
     // format the section the way the CheckBoxGroup expects it, and sort according to the mock
-    sections = sections.map((section) => {
+    return sections.map((section) => {
       return section.sort((previous, next) => {
         return previous.queueSectionOrder - next.queueSectionOrder;
       }).map((issue) => {
@@ -97,6 +86,19 @@ class SelectSpecialIssuesView extends React.PureComponent {
         };
       });
     });
+  }
+  renderLegacySpecialIssues = (specialIssues) => {
+    const {
+      error,
+      ...otherProps
+    } = this.props;
+    const sections = [
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).noneSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).aboutSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).residenceSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).benefitTypeSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).issuesOnAppealSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).dicOrPensionSection()];
 
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
     const [
@@ -106,7 +108,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       benefitTypeSection,
       issuesOnAppealSection,
       dicOrPensionSection
-    ] = sections;
+    ] = this.sortSectionsAndMapIssues(sections);
 
     return <QueueFlowPage goToNextStep={this.goToNextStep} validateForm={this.validateForm} {...otherProps}>
       <h1>
@@ -172,27 +174,15 @@ class SelectSpecialIssuesView extends React.PureComponent {
       error,
       ...otherProps
     } = this.props;
-    let sections = [
+    const sections = [
       specialIssueFilters(this.props.featureToggles.special_issues_revamp).noneSection(),
-      specialIssueFilters(this.props.featureToggles.special_issues_revamp).amaIssuesOnAppealSection()];
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).amaIssuesOnAppealSection()
+    ];
 
-    // format the section the way the CheckBoxGroup expects it, and sort according to the mock
-    sections = sections.map((section) => {
-      return section.sort((previous, next) => {
-        return previous.queueSectionOrder - next.queueSectionOrder;
-      }).map((issue) => {
-        return {
-          id: issue.snakeCase,
-          label: issue.node || issue.queueDisplay || issue.display
-        };
-      });
-    });
-
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
     const [
       noneSection,
-      issuesOnAppealSection,
-    ] = sections;
+      issuesOnAppealSection
+    ] = this.sortSectionsAndMapIssues(sections);
 
     return <QueueFlowPage goToNextStep={this.goToNextStep} validateForm={this.validateForm} {...otherProps}>
       <h1>
@@ -204,13 +194,13 @@ class SelectSpecialIssuesView extends React.PureComponent {
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div {...flexContainer} className="special-options">
         <div {...flexColumn}>
-          { this.props.featureToggles.special_issues_revamp && <CheckboxGroup
+          <CheckboxGroup
             label=""
             name=""
             options={noneSection}
             values={specialIssues}
             onChange={this.onChangeLegacySpecialIssue}
-          />}
+          />
         </div>
         <div {...flexColumn}>
           <CheckboxGroup
@@ -229,7 +219,8 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
 SelectSpecialIssuesView.propTypes = {
   appeal: PropTypes.shape({
-    externalId: PropTypes.string
+    externalId: PropTypes.string,
+    isLegacyAppeal: PropTypes.bool
   }),
   appealId: PropTypes.string.isRequired,
   error: PropTypes.shape({
