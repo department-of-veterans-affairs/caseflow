@@ -61,8 +61,7 @@ RSpec.feature "Overtime", :all_dbs do
            :at_judge_review,
            veteran: create(:veteran),
            associated_attorney: attorney_user,
-           associated_judge: judge_user
-          )
+           associated_judge: judge_user)
   end
 
   before do
