@@ -177,6 +177,7 @@ export const prepareLegacyTasksForStore = (tasks) => {
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       closedAt: null,
+      assigneeName: task.attributes.assignee_name,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         isOrganization: task.attributes.assigned_to.is_organization,
