@@ -10,7 +10,9 @@ class OpenTasksWithClosedAtChecker < DataIntegrityChecker
     end
     suspect_tasks = open_tasks_with_closed_parent
     if suspect_tasks.count > 0
-      add_to_report "#{suspect_tasks.count} open " + "Task".pluralize(suspect_tasks.count) + " with a closed parent Task"
+      add_to_report "#{suspect_tasks.count} open " +
+                    "Task".pluralize(suspect_tasks.count) +
+                    " with a closed parent Task"
       add_to_report "Verify with `Task.where(id: [#{suspect_tasks.pluck(:id).join(',')}])`"
     end
   end
