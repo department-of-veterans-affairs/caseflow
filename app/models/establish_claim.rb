@@ -221,7 +221,7 @@ class EstablishClaim < Dispatch::Task
   def email_sent_action_description
     return nil unless sent_email
 
-    "Sent email to: #{sent_email.recipient} in #{sent_email.ro_name} - re: #{special_issues} Issue(s)"
+    "Sent email to: #{sent_email.recipient} in #{sent_email.ro_name} - re: #{special_issues} Issue"
   end
 
   def not_emailed_action_description

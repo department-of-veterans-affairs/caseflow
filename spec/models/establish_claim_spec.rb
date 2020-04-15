@@ -527,7 +527,7 @@ describe EstablishClaim, :all_dbs do
 
           it do
             is_expected
-              .to include("Sent email to: appealcoach@va.gov in Philadelphia COWAC, PA - re: Radiation Issue(s)")
+              .to include("Sent email to: appealcoach@va.gov in Philadelphia COWAC, PA - re: Radiation Issue")
           end
         end
 
