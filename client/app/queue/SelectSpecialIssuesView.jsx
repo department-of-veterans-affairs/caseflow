@@ -132,14 +132,8 @@ class SelectSpecialIssuesView extends React.PureComponent {
             values={specialIssues}
             onChange={this.onChangeSpecialIssue}
           />}
-          { !appeal.isLegacyAppeal && sectionsMap.issuesOnAppeal && <CheckboxGroup
-            styling={css({ marginTop: 0 })}
-            label={<h3> {COPY.SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION}</h3>}
-            name="Issues on Appeal"
-            options={sectionsMap.issuesOnAppeal}
-            values={specialIssues}
-            onChange={this.onChangeSpecialIssue}
-          /> }
+          { !appeal.isLegacyAppeal && sectionsMap.issuesOnAppeal &&
+            this.issuesOnAppealCheckboxGroup(sectionsMap, specialIssues) }
           { sectionsMap.about && <CheckboxGroup
             label={<h3>{COPY.SPECIAL_ISSUES_ABOUT_SECTION}</h3>}
             name="About the appellant"
@@ -163,14 +157,8 @@ class SelectSpecialIssuesView extends React.PureComponent {
           /> }
         </div>
         <div {...flexColumn}>
-          { appeal.isLegacyAppeal && sectionsMap.issuesOnAppeal && <CheckboxGroup
-            styling={css({ marginTop: 0 })}
-            label={<h3> {COPY.SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION}</h3>}
-            name="Issues on Appeal"
-            options={sectionsMap.issuesOnAppeal}
-            values={specialIssues}
-            onChange={this.onChangeSpecialIssue}
-          /> }
+          { appeal.isLegacyAppeal && sectionsMap.issuesOnAppeal &&
+            this.issuesOnAppealCheckboxGroup(sectionsMap, specialIssues) }
           { sectionsMap.dicOrPension && <CheckboxGroup
             label={<h3>{COPY.SPECIAL_ISSUES_DIC_OR_PENSION_SECTION} </h3>}
             name="DIC or Pension"
@@ -181,6 +169,17 @@ class SelectSpecialIssuesView extends React.PureComponent {
         </div>
       </div>
     </QueueFlowPage>;
+  };
+
+  issuesOnAppealCheckboxGroup = (sectionsMap, specialIssues) => {
+    return <CheckboxGroup
+      styling={css({ marginTop: 0 })}
+      label={<h3> {COPY.SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION}</h3>}
+      name="Issues on Appeal"
+      options={sectionsMap.issuesOnAppeal}
+      values={specialIssues}
+      onChange={this.onChangeSpecialIssue}
+    />;
   };
 }
 
