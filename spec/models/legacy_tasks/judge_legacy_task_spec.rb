@@ -54,6 +54,7 @@ describe JudgeLegacyTask, :postgres do
         expect(subject.user_id).to eq user.css_id
         expect(subject.id).to eq vacols_id
         expect(subject.label).to eq COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
+        expect(subject.timeline_title).to eq COPY::CASE_TIMELINE_JUDGE_TASK
         expect(subject.assigned_on).to eq 3.days.ago.to_date
         expect(subject.task_id).to eq "#{vacols_id}-2015-01-25"
         expect(subject.document_id).to eq document_id
