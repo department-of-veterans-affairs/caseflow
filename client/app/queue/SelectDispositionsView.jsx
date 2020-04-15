@@ -97,11 +97,20 @@ class SelectDispositionsView extends React.PureComponent {
   getPrevStepUrl = () => {
     const {
       appealId,
+      appeal,
       taskId,
       checkoutFlow
     } = this.props;
 
-    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
+    if (this.props.featureToggles.special_issues_revamp) {
+      return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
+    } else {
+      if (appeal.isLegacyAppeal) {
+        return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
+      }
+
+      return `/queue/appeals/${appealId}`;
+    }
   }
 
   validateForm = () => {
@@ -435,6 +444,9 @@ SelectDispositionsView.propTypes = {
   appealId: PropTypes.string.isRequired,
   checkoutFlow: PropTypes.string.isRequired,
   editStagedAppeal: PropTypes.func,
+  featureToggles: PropTypes.shape({
+    special_issues_revamp: PropTypes.bool
+  }),
   hideSuccessMessage: PropTypes.func,
   highlight: PropTypes.bool,
   setDecisionOptions: PropTypes.func,
@@ -444,7 +456,8 @@ SelectDispositionsView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   success: state.ui.messages.success,
-  highlight: state.ui.highlightFormItems
+  highlight: state.ui.highlightFormItems,
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
