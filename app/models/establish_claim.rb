@@ -139,7 +139,7 @@ class EstablishClaim < Dispatch::Task
     when "routed_to_ro"
       "EP created for RO #{saved_end_product.station_description}"
     when "special_issue_emailed"
-      "Emailed - #{special_issues} Issue(s)"
+      "Emailed - #{special_issues} " + "Issue".pluralize(special_issues)
     else
       super
     end
