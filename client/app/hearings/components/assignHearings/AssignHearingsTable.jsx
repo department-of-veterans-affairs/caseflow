@@ -113,7 +113,7 @@ export default class AssignHearingsTable extends React.PureComponent {
       },
       {
         name: 'type',
-        header: 'Type(s)',
+        header: 'Types',
         align: 'left',
         valueFunction: (row) => renderAppealType({
           caseType: row.appeal.caseType,

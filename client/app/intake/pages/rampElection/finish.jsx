@@ -24,7 +24,7 @@ class Finish extends React.PureComponent {
         valueName: 'programDescription'
       },
       {
-        header: 'VACOLS Issue(s)',
+        header: 'VACOLS Issues',
         valueFunction: (issue, index) => (
           issue.description.map(
             (descriptor) => <div key={`${descriptor}-${index}`}>{descriptor}</div>

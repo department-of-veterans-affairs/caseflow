@@ -39,7 +39,7 @@ class SideBarIssueTags extends PureComponent {
       <SearchableDropdown
         key={doc.id}
         name="tags"
-        label="Select or tag issue(s)"
+        label="Select or tag issues"
         multi
         creatable
         options={generateOptionsFromTags(this.props.tagOptions)}

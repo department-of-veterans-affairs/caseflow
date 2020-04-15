@@ -132,7 +132,7 @@ class HearingPrepHelp extends React.Component {
 
       <h2 id="access-past-hearings">13. How do I access the Hearing Worksheet for past hearings?</h2>
       <p>You may access Hearing Worksheets for hearings held within the past year from the Your Hearing Days page. Alternately, when a case is assigned to you, a link to the Hearing Worksheet (pdf version) will be accessible from the Caseflow Reader Cases Checked in page
-         (also known as the Reader Welcome page). Similarly, when the case is assigned to an attorney, the case will be displayed on their Caseflow Reader Cases Checked in page along with a link to its <b>Hearing Worksheet</b>(s).
+         (also known as the Reader Welcome page). Similarly, when the case is assigned to an attorney, the case will be displayed on their Caseflow Reader Cases Checked in page along with a link to its one or more <b>Hearing Worksheet</b>.
       </p>
 
       <h2 id="use-veteran-id-button">14. How can I use the Veteran ID button on the Hearing Worksheet?</h2>
