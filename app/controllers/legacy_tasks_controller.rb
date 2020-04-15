@@ -114,6 +114,8 @@ class LegacyTasksController < ApplicationController
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
 
+    # If a judge id is passed to the back end, assigned_by is not the judge this case is currently assigned to in order
+    # to allow SCM users to assign cases to attorneys for judges.
     return task_params.merge(judge: User.find_by(id: params[:tasks][:judge_id])) if params[:tasks][:judge_id]
 
     task_params
