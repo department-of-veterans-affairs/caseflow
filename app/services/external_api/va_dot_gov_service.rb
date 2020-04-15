@@ -33,7 +33,7 @@ class ExternalApi::VADotGovService
     private
 
     def send_facilities_request(query:)
-      cache_key = Digest::SHA1.hexdigest query.to_json
+      cache_key = "send_facilities_request_#{Digest::SHA1.hexdigest(query.to_json)}"
       response = Rails.cache.fetch(cache_key, expires_in: 2.hours) do
         send_va_dot_gov_request(
           query: query,
