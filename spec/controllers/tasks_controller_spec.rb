@@ -659,6 +659,24 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       create(:ama_colocated_task, :ihp, appeal: appeal, assigned_to: colocated_user, assigned_by: assigning_user)
     end
 
+    shared_examples "judge view legacy tasks" do
+      it "should return JudgeLegacyTasks" do
+        get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "judge" }
+
+        assert_response :success
+        response_body = JSON.parse(response.body)
+        expect(response_body["tasks"].length).to eq 4
+        task = response_body["tasks"][0]
+        expect(task["id"]).to eq(legacy_appeal.vacols_id)
+        expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
+        expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
+        expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
+        expect(task["attributes"]["available_actions"].size).to eq 2
+
+        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(13)
+      end
+    end
+
     context "when user is a judge" do
       let(:legacy_appeal) do
         create(:legacy_appeal,
@@ -675,21 +693,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         DatabaseRequestCounter.disable
       end
 
-      it "should return JudgeLegacyTasks" do
-        get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "judge" }
-
-        assert_response :success
-        response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 4
-        task = response_body["tasks"][0]
-        expect(task["id"]).to eq(legacy_appeal.vacols_id)
-        expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
-        expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
-        expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
-        expect(task["attributes"]["available_actions"].size).to eq 2
-
-        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(15)
-      end
+      it_behaves_like "judge view legacy tasks"
 
       context "when appeal is not assigned to current user" do
         let(:another_judge) { create(:user) }
@@ -714,6 +718,28 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           expect(task["attributes"]["available_actions"].size).to eq 0
         end
       end
+    end
+
+    context "when the user is a memeber of the special case movement team" do
+      let(:legacy_appeal) do
+        create(:legacy_appeal,
+               vacols_case:
+               create(:case, :assigned, bfcorlid: "0000000000S", user: judge_user))
+      end
+
+      before do
+        scm_user = create(:user)
+        SpecialCaseMovementTeam.singleton.add_user(scm_user)
+        FeatureToggle.enable!(:scm_view_judge_assign_queue)
+        User.authenticate!(user: judge_user)
+        DatabaseRequestCounter.enable
+      end
+      after do
+        FeatureToggle.disable!(:scm_view_judge_assign_queue)
+        DatabaseRequestCounter.disable
+      end
+
+      it_behaves_like "judge view legacy tasks"
     end
 
     context "when user is an attorney" do
