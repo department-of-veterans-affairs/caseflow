@@ -111,7 +111,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_view_overtime_status?
-    # How do we determin SSCs? Can we count on them being judges in vacols? Possibly may all be acting judges
     (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp)
   end
 
