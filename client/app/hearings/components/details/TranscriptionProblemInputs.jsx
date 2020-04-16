@@ -15,7 +15,7 @@ const TranscriptionProblemInputs = ({ transcription, update, readOnly }) => (
       label="Transcription Problem Type"
       strongLabel
       readOnly={readOnly}
-      value={transcription.problemType}
+      value={transcription?.problemType}
       options={[
         {
           label: '',
@@ -45,8 +45,8 @@ const TranscriptionProblemInputs = ({ transcription, update, readOnly }) => (
       label="Problem Notice Sent"
       strongLabel
       type="date"
-      readOnly={readOnly || _.isEmpty(transcription.problemType)}
-      value={transcription.problemNoticeSentDate}
+      readOnly={readOnly || _.isEmpty(transcription?.problemType)}
+      value={transcription?.problemNoticeSentDate}
       onChange={(problemNoticeSentDate) => update({ problemNoticeSentDate })}
     />
     <RadioField
@@ -57,25 +57,25 @@ const TranscriptionProblemInputs = ({ transcription, update, readOnly }) => (
         {
           value: '',
           displayText: 'None',
-          disabled: readOnly || _.isEmpty(transcription.problemType)
+          disabled: readOnly || _.isEmpty(transcription?.problemType)
         },
         {
           value: 'Proceed without transcript',
           displayText: 'Proceeed without transcript',
-          disabled: readOnly || _.isEmpty(transcription.problemType)
+          disabled: readOnly || _.isEmpty(transcription?.problemType)
         },
         {
           value: 'Proceed with partial transcript',
           displayText: 'Process with partial transcript',
-          disabled: readOnly || _.isEmpty(transcription.problemType)
+          disabled: readOnly || _.isEmpty(transcription?.problemType)
         },
         {
           value: 'New hearing',
           displayText: 'New hearing',
-          disabled: readOnly || _.isEmpty(transcription.problemType)
+          disabled: readOnly || _.isEmpty(transcription?.problemType)
         }
       ]}
-      value={transcription.requestedRemedy || ''}
+      value={transcription?.requestedRemedy || ''}
       onChange={(requestedRemedy) => update({ requestedRemedy })}
     />
   </div>
