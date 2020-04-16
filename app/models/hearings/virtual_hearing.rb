@@ -17,25 +17,14 @@ class VirtualHearing < CaseflowRecord
   validates_email_format_of :representative_email, allow_nil: true
   validate :associated_hearing_is_video, on: :create
 
-  enum status: {
-    # Initial status for a virtual hearing. Indicates the Pexip conference
-    # does not exist yet
-    pending: :pending,
-
-    # Indicates that the Pexip conference was created
-    active: :active,
-
-    # Indicates that the hearing was cancelled, and the Pexip conference needs
-    # to be cleaned up
-    cancelled: :cancelled
-  }
-
   scope :eligible_for_deletion,
         lambda {
-          where(
-            conference_deleted: false,
-            id: select { |hearing| hearing.active? || hearing.cancelled? }.pluck(:id)
-          )
+          joins(:establishment)
+            .where("
+              conference_deleted = false AND (
+              request_cancelled = true OR
+              virtual_hearing_establishments.processed_at IS NOT NULL
+            )")
         }
 
   scope :not_cancelled,
@@ -74,7 +63,7 @@ class VirtualHearing < CaseflowRecord
 
   # Determines whether the virtual hearing is ready to be created
   def activate?
-    pending? && all_emails_sent?
+    active? && all_emails_sent?
   end
 
   # Determines if the hearing has been activated
@@ -90,7 +79,7 @@ class VirtualHearing < CaseflowRecord
     end
 
     # If the establishment has been processed it is active
-    if establishment.processed?
+    if conference_id
       return :active
     end
 

@@ -48,6 +48,7 @@ class VideoHearingDayRequestTypeQuery
         LEFT OUTER JOIN virtual_hearings
         ON virtual_hearings.hearing_id = hearings.id
         AND virtual_hearings.hearing_type = 'Hearing'
+        AND virtual_hearings.request_cancelled = false
         AND NOT virtual_hearings.conference_deleted
       SQL
       .group(:id)
@@ -66,6 +67,7 @@ class VideoHearingDayRequestTypeQuery
         LEFT OUTER JOIN virtual_hearings
         ON virtual_hearings.hearing_id = legacy_hearings.id
         AND virtual_hearings.hearing_type = 'LegacyHearing'
+        AND virtual_hearings.request_cancelled = false
         AND NOT virtual_hearings.conference_deleted
       SQL
       .group(:id)

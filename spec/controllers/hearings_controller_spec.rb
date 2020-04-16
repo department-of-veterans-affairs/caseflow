@@ -199,7 +199,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
         let(:virtual_hearing_params) do
           {
-            status: "cancelled"
+            request_cancelled: true
           }
         end
 

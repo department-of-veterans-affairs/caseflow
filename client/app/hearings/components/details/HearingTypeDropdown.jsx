@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 
 class HearingTypeDropdown extends React.Component {
-
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     const { requestType } = props;
@@ -29,7 +28,7 @@ class HearingTypeDropdown extends React.Component {
     }
 
     return this.HEARING_TYPE_OPTIONS[1];
-  }
+  };
 
   onChange = (option) => {
     const { updateVirtualHearing, openModal } = this.props;
@@ -44,11 +43,11 @@ class HearingTypeDropdown extends React.Component {
     }
 
     if (currentValue.value && !option.value) {
-      updateVirtualHearing({ status: 'cancelled' });
+      updateVirtualHearing({ request_cancelled: true });
     }
-  }
+  };
 
-  render () {
+  render() {
     return (
       <SearchableDropdown
         label="Hearing Type"

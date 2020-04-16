@@ -71,7 +71,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for pending hearing" do
-        let(:virtual_hearing) { create(:virtual_hearing, status: :pending, hearing: hearing) }
+        let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
         it "does not return the virtual hearing" do
           expect(subject).to eq []

@@ -5,7 +5,7 @@ class VirtualHearingSerializer
 
   attribute :veteran_email
   attribute :representative_email
-  attribute :status, &:status
+  attribute :status
   attribute :client_host do
     ENV["PEXIP_CLIENT_HOST"] || "care.evn.va.gov"
   end
