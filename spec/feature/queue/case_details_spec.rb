@@ -508,8 +508,8 @@ RSpec.feature "Case details", :all_dbs do
 
       visit "/queue/appeals/#{appeal.uuid}"
       expect(page).to have_content(COPY::TASK_SNAPSHOT_NO_ACTIVE_LABEL)
-      expect(page).not_to have_content(judge_user.full_name)
-      expect(page).not_to have_content(attorney_user.full_name)
+      expect(page).to have_no_content(judge_user.full_name)
+      expect(page).to have_no_content(attorney_user.full_name)
     end
   end
 
