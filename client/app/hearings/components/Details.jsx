@@ -109,8 +109,7 @@ class HearingDetails extends React.Component {
         veteranEmail: virtualHearing.veteranEmail,
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status,
-        // eslint-disable-next-line
-        request_cancelled: virtualHearing.request_cancelled,
+        requestCancelled: virtualHearing.requestCancelled,
         // not used in form
         jobCompleted: virtualHearing.jobCompleted,
         clientHost: virtualHearing.clientHost,

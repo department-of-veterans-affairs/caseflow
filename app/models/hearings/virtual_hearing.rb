@@ -91,6 +91,7 @@ class VirtualHearing < CaseflowRecord
   def activate!
     establishment.clear_error!
     establishment.processed!
+    update(request_cancelled: false)
   end
 
   # Sets the virtual hearing status to cancelled
