@@ -158,23 +158,17 @@ class BaseHearingUpdateForm
       @virtual_hearing_created = true
     end
 
-    # Evaluate whether to cancel, create or restart the virtual hearing
-    update_status(virtual_hearing_updates, virtual_hearing)
-  end
-
-  # Manage updating virtual hearing based on the status
-  def update_status(updates, virtual_hearing)
     # Merge the hearing ID into the DataDog metrics
     updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: hearing&.id })
 
     # Handle the status toggle of the virtual hearing
     if virtual_hearing_cancelled?
       # Update the virtual hearings
-      virtual_hearing.update(updates)
+      virtual_hearing.update(virtual_hearing_updates)
 
       DataDogService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
     elsif !virtual_hearing_created?
-      virtual_hearing.update(updates)
+      virtual_hearing.update(virtual_hearing_updates)
       virtual_hearing.establishment.restart!
       DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else
