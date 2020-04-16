@@ -283,13 +283,14 @@ class AddIssueManager extends React.Component {
 
   requiresUntimelyExemptionWithCovid = () => {
 
-    const { currentIssue, eligibleForSocOptIn, vacolsId } = this.state;
+    const { currentIssue, eligibleForSocOptIn } = this.state;
     const { formType } = this.props;
     const legacyIssueIsTimely = !this.props.intakeData.legacyOptInApproved || eligibleForSocOptIn;
     const requestIssueIsTimely = currentIssue && currentIssue.timely;
+    const vacolsIdCheck = currentIssue && currentIssue.vacolsId;
 
     if (formType === 'appeal') {
-      return !requestIssueIsTimely && !vacolsId;
+      return !requestIssueIsTimely && !vacolsIdCheck;
     }
 
     if (formType === 'supplemental_claim') {

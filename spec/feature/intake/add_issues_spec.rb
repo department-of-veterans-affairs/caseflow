@@ -338,7 +338,7 @@ feature "Intake Add Issues Page", :all_dbs do
     end
   end
 
-  fcontext "show untimely issue modal" do
+  context "show untimely issue modal" do
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)
     end
@@ -373,7 +373,7 @@ feature "Intake Add Issues Page", :all_dbs do
       # Expect untimely issue modal to show
       expect(page).to have_content("Issue 1 is an Untimely Issue")
       expect(page).to have_content(
-        "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to COVID-19"
+        "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested"
       )
     end
 
@@ -424,7 +424,7 @@ feature "Intake Add Issues Page", :all_dbs do
       # Expect untimely issue modal to show
       expect(page).to have_content("Issue 1 is an Untimely Issue")
       expect(page).to have_content(
-        "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to COVID-19"
+        "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested"
       )
     end
 
@@ -442,6 +442,24 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Issue 1 is an Untimely Issue")
       expect(page).to have_content(
         "The issue requested isn't usually eligible because its decision date is older than what's allowed"
+      )
+    end
+
+    scenario "when request issue is ineligible and no vacols id on appeal" do
+      start_appeal(veteran, legacy_opt_in_approved: true)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+
+      # Expect legacy opt in issue modal to show
+      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+      find("label", text: /^No VACOLS issues were found/).click
+      safe_click ".add-issue"
+
+      # Expect untimely issue modal to show
+      expect(page).to have_content("Issue 1 is an Untimely Issue")
+      expect(page).to have_content(
+        "its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC"
       )
     end
   end
