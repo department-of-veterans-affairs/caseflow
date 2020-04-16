@@ -6,10 +6,12 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
   context "Daily docket with one legacy hearing" do
     let!(:hearing_day) do
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             regional_office: "RO18",
-             scheduled_for: Date.new(2020, 4, 15))
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        regional_office: "RO18",
+        scheduled_for: Date.today + 1.week
+      )
     end
 
     let!(:vacols_case) { create(:case, bfcorlid: "123456789S") }
