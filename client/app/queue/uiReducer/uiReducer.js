@@ -75,6 +75,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       canEditAod: { $set: action.payload.canEditAod }
     });
+  case ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS:
+    return update(state, {
+      canViewOvertimeStatus: { $set: action.payload.canViewOvertimeStatus }
+    });
   case ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS:
     return update(state, {
       highlightFormItems: {

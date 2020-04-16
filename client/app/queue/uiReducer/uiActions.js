@@ -13,6 +13,13 @@ export const setCanEditAod = (canEditAod) => ({
   }
 });
 
+export const setCanViewOvertimeStatus = (canViewOvertimeStatus) => ({
+  type: ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS,
+  payload: {
+    canViewOvertimeStatus
+  }
+});
+
 export const showErrorMessage = (errorMessage) => ({
   type: ACTIONS.SHOW_ERROR_MESSAGE,
   payload: {

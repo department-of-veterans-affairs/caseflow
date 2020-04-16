@@ -6,8 +6,8 @@ import { bindActionCreators } from 'redux';
 
 import CaseDetailsLink from './CaseDetailsLink';
 import DocketTypeBadge from '../components/DocketTypeBadge';
-import HearingBadge from './components/HearingBadge';
 import Table from '../components/Table';
+import BadgeArea from './components/BadgeArea';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
 
 import { DateString } from '../util/DateUtil';
@@ -54,20 +54,20 @@ class CaseListTable extends React.PureComponent {
       }
     ];
 
-    const doAnyAppealsHaveHeldHearings = Boolean(
+    const anyAppealsHaveHeldHearings = Boolean(
       _.find(this.props.appeals, (appeal) => mostRecentHeldHearingForAppeal(appeal))
     );
 
-    if (doAnyAppealsHaveHeldHearings) {
-      const hearingColumn = {
-        valueFunction: (appeal) => {
-          const mostRecentHearing = mostRecentHeldHearingForAppeal(appeal);
+    const anyAppealsHaveOvertimeStatus = Boolean(
+      _.find(this.props.appeals, (appeal) => appeal.overtime)
+    );
 
-          return mostRecentHearing ? <HearingBadge hearing={mostRecentHearing} /> : null;
-        }
-      };
+    const badgeColumn = {
+      valueFunction: (appeal) => <BadgeArea appeal={appeal} />
+    };
 
-      columns.unshift(hearingColumn);
+    if (anyAppealsHaveHeldHearings || anyAppealsHaveOvertimeStatus) {
+      columns.unshift(badgeColumn);
     }
 
     return columns;
