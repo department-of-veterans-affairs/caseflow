@@ -18,6 +18,7 @@ import React from 'react';
 // nonCompensation:          ?Not used
 // queueSection:             for Queue display, which section it goes in
 // queueSectionOrder:        for Queue display, the order to display
+// isAmaRelevant:            whether issue is relevant to AMA cases
 
 export const SPECIAL_ISSUES = [
   {
@@ -343,7 +344,8 @@ export const NEW_SPECIAL_ISSUES = [
     snakeCase: 'burn_pit',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 2
+    queueSectionOrder: 2,
+    isAmaRelevant: true
   },
   {
     display: 'Military Sexual Trauma (MST)',
@@ -352,7 +354,8 @@ export const NEW_SPECIAL_ISSUES = [
     snakeCase: 'military_sexual_trauma',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 5
+    queueSectionOrder: 5,
+    isAmaRelevant: true
   },
   {
     display: 'Blue Water',
@@ -361,7 +364,8 @@ export const NEW_SPECIAL_ISSUES = [
     snakeCase: 'blue_water',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 1
+    queueSectionOrder: 1,
+    isAmaRelevant: true
   },
   {
     display: 'US Court of Appeals for Veterans Claims (CAVC)',
@@ -370,7 +374,8 @@ export const NEW_SPECIAL_ISSUES = [
     snakeCase: 'cavc',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 11
+    queueSectionOrder: 11,
+    isAmaRelevant: true
   },
   {
     node: <b>No Special Issues</b>,

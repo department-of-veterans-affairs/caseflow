@@ -102,6 +102,7 @@ class SelectDispositionsView extends React.PureComponent {
       checkoutFlow
     } = this.props;
 
+    // Once the featureToggle is made permanent, simply return `.../special_issues` for both appeal types
     if (appeal.isLegacyAppeal || this.props.featureToggles.special_issues_revamp) {
       return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
     }

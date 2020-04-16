@@ -1,7 +1,5 @@
 import { enabledSpecialIssues } from './SpecialIssueEnabler.js';
 
-const amaIssueSnakeCaseIds = ['burn_pit', 'military_sexual_trauma', 'blue_water', 'cavc'];
-
 const specialIssueFilters = (isFeatureToggled) => ({
 
   unhandledSpecialIssues() {
@@ -54,10 +52,8 @@ const specialIssueFilters = (isFeatureToggled) => ({
   },
 
   amaIssuesOnAppealSection () {
-    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'issuesOnAppeal' &&
-      amaIssueSnakeCaseIds.includes(issue.snakeCase));
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.isAmaRelevant && issue.queueSection === 'issuesOnAppeal');
   }
-
 });
 
 export default specialIssueFilters;

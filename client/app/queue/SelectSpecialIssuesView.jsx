@@ -101,6 +101,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
           };
         });
 
+        // assumes all issues in issueList is in the same queueSection, which they should be
         map[section[0].queueSection] = issueList;
       }
 
