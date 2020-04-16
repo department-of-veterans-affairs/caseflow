@@ -12,12 +12,13 @@ class SentHearingEmailEvent < CaseflowRecord
        _prefix: :sent_to
 
   # Email types are specified in `SendEmail#email_for_recipient`
-  enum email_type: {
-         confirmation: "confirmation",
-         cancelled: "cancelled",
-         updated_time_confirmation: "updated_time_confirmation"
-       },
-       _prefix: :is
+  enum email_type: (
+    {
+      confirmation: "confirmation",
+      cancelled: "cancelled",
+      updated_time_confirmation: "updated_time_confirmation"
+    }
+  ), _prefix: :is
 
   def readonly?
     !new_record?
