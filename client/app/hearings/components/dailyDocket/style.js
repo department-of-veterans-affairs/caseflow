@@ -29,3 +29,9 @@ export const docketRowStyle = css({
     display: 'none'
   }
 });
+
+export const inputSpacing = css({
+  '&>div:not(:first-child)': {
+    marginTop: '25px'
+  }
+});
