@@ -899,9 +899,6 @@ feature "Supplemental Claim Intake", :all_dbs do
       end
 
       context "with legacy opt in not approved" do
-        before { FeatureToggle.enable!(:covid_timeliness_exemption) }
-        after { FeatureToggle.disable!(:covid_timeliness_exemption) }
-
         scenario "adding issues" do
           start_supplemental_claim(veteran, legacy_opt_in_approved: false)
           visit "/intake/add_issues"
@@ -934,35 +931,6 @@ feature "Supplemental Claim Intake", :all_dbs do
                  )).to_not be_nil
 
           expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
-        end
-        scenario "adding issues" do
-          start_supplemental_claim(veteran, legacy_opt_in_approved: true)
-          visit "/intake/add_issues"
-          click_intake_add_issue
-
-          add_intake_rating_issue("Really old injury")
-
-          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-          expect(page).to have_content("impairment of hip")
-          add_intake_rating_issue("intervertebral disc syndrome")
-
-          expect(page).to have_content("Issue 1 is an Untimely Issue")
-
-          add_untimely_exemption_response("Yes")
-
-          expect(page).to_not have_content(
-            "is ineligible because it's already under review as a Higher-Level Review"
-          )
-
-          click_intake_finish
-          expect(page).to have_content("Intake completed")
-
-          expect(RequestIssue.find_by(
-                   contested_issue_description: "Really old injury",
-                   ineligible_reason: :legacy_appeal_not_eligible,
-                   vacols_id: "vacols2",
-                   vacols_sequence_id: "1"
-                 )).to_not be_nil
         end
       end
     end

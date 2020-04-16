@@ -150,15 +150,13 @@ class AddIssueManager extends React.Component {
 
   setupLegacyOptInModal = () => {
     const { intakeData, formType } = this.props;
-    const { covidTimelinessExemption } = this.props.featureToggles;
-    const timelyRules = covidTimelinessExemption ? this.requiresTimelyExemption() : this.requiresUntimelyExemption();
 
     return {
       component: LegacyOptInModal,
       props: {
         intakeData,
         formType,
-        submitText: timelyRules ? 'Next' : 'Add this issue',
+        submitText: this.requiresTimelyrules() ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSubmit: ({ vacolsId, vacolsSequenceId, eligibleForSocOptIn }) => {
           this.setState(
@@ -173,7 +171,7 @@ class AddIssueManager extends React.Component {
             () => {
               const { currentIssue } = this.state;
 
-              if (timelyRules) {
+              if (this.requiresTimelyrules()) {
                 this.setState({ currentModal: 'UntimelyExemptionModal', addtlProps: { currentIssue } });
               } else {
                 this.props.addIssue(currentIssue);
@@ -283,15 +281,15 @@ class AddIssueManager extends React.Component {
     return currentIssue && !currentIssue.timely;
   };
 
-  requiresTimelyExemption = () => {
+  requiresUntimelyExemptionWithCovid = () => {
 
-    const { currentIssue, eligibleForSocOptIn } = this.state;
+    const { currentIssue, eligibleForSocOptIn, vacolsId } = this.state;
     const { formType } = this.props;
     const legacyIssueIsTimely = !this.props.intakeData.legacyOptInApproved || eligibleForSocOptIn;
     const requestIssueIsTimely = currentIssue && currentIssue.timely;
 
     if (formType === 'appeal') {
-      return !requestIssueIsTimely;
+      return !requestIssueIsTimely && !vacolsId;
     }
 
     if (formType === 'supplemental_claim') {
@@ -308,6 +306,17 @@ class AddIssueManager extends React.Component {
     }
 
   };
+
+  requiresTimelyrules = () => {
+    const { covidTimelinessExemption } = this.props.featureToggles;
+
+    if (covidTimelinessExemption) {
+      return this.requiresUntimelyExemptionWithCovid();
+    }
+
+    return this.requiresUntimelyExemption();
+
+  }
 
   render() {
     const { currentModal, addtlProps } = this.state;

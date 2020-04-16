@@ -75,18 +75,21 @@ export const UntimelyExemptionModal = ({
   const issue = currentIssue;
 
   const descriptionText = () => {
-
     let errorMsg = '';
 
-    if (covidTimelinessExemption && !issue.timely) {
-      errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
-    } else if (covidTimelinessExemption && !issue.eligibleForSocOptIn) {
-      errorMsg = COPY.INTAKE_LEGACY_ISSUE_UNTIMELY;
-    } else if (covidTimelinessExemption && !issue.timely) {
-      if (!issue.eligibleForSocOptIn) {
+    if (covidTimelinessExemption) {
+      if (!issue.timely && !issue.eligibleForSocOptIn) {
         errorMsg = COPY.INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY;
+      } else if (!issue.eligibleForSocOptIn) {
+        errorMsg = COPY.INTAKE_LEGACY_ISSUE_UNTIMELY;
+      } else if (!issue.timely) {
+        errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
       }
+
+    } else {
+      errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
     }
+
     return errorMsg;
   };
 
