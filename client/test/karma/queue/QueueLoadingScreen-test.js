@@ -78,6 +78,7 @@ describe('QueueLoadingScreen', () => {
           // eslint-disable-next-line no-undefined
           isOrganization: undefined
         },
+        assigneeName: undefined,
         // eslint-disable-next-line no-undefined
         availableActions: undefined,
         // eslint-disable-next-line no-undefined
