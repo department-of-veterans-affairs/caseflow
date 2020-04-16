@@ -34,15 +34,15 @@ class VirtualHearing < CaseflowRecord
         lambda {
           where(
             conference_deleted: false,
-            id: select { |hearing| [:active, :cancelled].include?(hearing.status) }.pluck(:id)
+            id: select { |hearing| hearing.active? || hearing.cancelled? }.pluck(:id)
           )
         }
 
   scope :not_cancelled,
-        -> { where(id: reject(&:cancelled?).pluck(:id)) }
+        -> { where(request_cancelled: false) }
 
   scope :cancelled,
-        -> { where(id: select(&:cancelled?).pluck(:id)) }
+        -> { where(request_cancelled: true) }
 
   def all_emails_sent?
     veteran_email_sent &&
@@ -72,6 +72,11 @@ class VirtualHearing < CaseflowRecord
     status == :pending
   end
 
+  # Determines whether the virtual hearing is ready to be created
+  def activate?
+    pending? && all_emails_sent?
+  end
+
   # Determines if the hearing has been activated
   def active?
     status == :active
@@ -80,7 +85,7 @@ class VirtualHearing < CaseflowRecord
   # Determines the status of the Virtual Hearing based on the establishment
   def status
     # Check if the establishment has been cancelled
-    if establishment.canceled?
+    if request_cancelled?
       return :cancelled
     end
 
@@ -95,13 +100,14 @@ class VirtualHearing < CaseflowRecord
 
   # Sets the virtual hearing status to active
   def activate!
+    establishment.clear_error!
     establishment.processed!
+    update(request_cancelled: false)
   end
 
   # Sets the virtual hearing status to cancelled
   def cancel!
-    establishment.restart!
-    establishment.canceled!
+    update(request_cancelled: true)
   end
 
   private

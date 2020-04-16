@@ -10,11 +10,6 @@
 class VideoHearingDayRequestTypeQuery
   def initialize(hearing_days = HearingDay.all)
     @hearing_days = hearing_days
-    @hearings = if !VirtualHearing.not_cancelled.empty?
-                  VirtualHearing.not_cancelled.pluck(:id)
-                else
-                  0
-                end
   end
 
   # Returns a hash of hearing day id to request type.
@@ -39,7 +34,7 @@ class VideoHearingDayRequestTypeQuery
 
   VIRTUAL_HEARINGS_COUNT_STATEMENT = <<-SQL
     count(
-      case when virtual_hearings.id = ANY (array[?])
+      case when virtual_hearings.request_cancelled = false
         then true
       end
     ) as virtual_hearings_count
@@ -58,7 +53,7 @@ class VideoHearingDayRequestTypeQuery
       .group(:id)
       .select(
         "id",
-        ActiveRecord::Base.sanitize_sql_array([VIRTUAL_HEARINGS_COUNT_STATEMENT, @hearings]),
+        VIRTUAL_HEARINGS_COUNT_STATEMENT,
         "count(hearings.id) as hearings_count"
       )
   end
@@ -76,7 +71,7 @@ class VideoHearingDayRequestTypeQuery
       .group(:id)
       .select(
         "id",
-        ActiveRecord::Base.sanitize_sql_array([VIRTUAL_HEARINGS_COUNT_STATEMENT, @hearings]),
+        VIRTUAL_HEARINGS_COUNT_STATEMENT,
         "count(legacy_hearings.id) as hearings_count"
       )
   end

@@ -41,8 +41,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       ).call
     end
 
-    if !virtual_hearing.cancelled? && virtual_hearing.all_emails_sent?
-      virtual_hearing.establishment.clear_error!
+    if virtual_hearing.activate?
       virtual_hearing.activate!
     end
   end
