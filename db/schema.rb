@@ -1362,7 +1362,7 @@ ActiveRecord::Schema.define(version: 2020_04_16_161705) do
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
-    t.boolean "request_cancelled", default: false
+    t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false
     t.string "veteran_email", comment: "Veteran's email address"
     t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"
