@@ -166,6 +166,10 @@ class Appeal < DecisionReview
       .order(:created_at).last
   end
 
+  def overtime?
+    latest_attorney_case_review&.overtime
+  end
+
   def reviewing_judge_name
     task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
