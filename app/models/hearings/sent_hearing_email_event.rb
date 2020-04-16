@@ -19,6 +19,10 @@ class SentHearingEmailEvent < CaseflowRecord
        },
        _prefix: :is
 
+  def readonly?
+    !new_record?
+  end
+
   private
 
   def assign_sent_at_time
