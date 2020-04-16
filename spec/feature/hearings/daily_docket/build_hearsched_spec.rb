@@ -10,7 +10,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
         :hearing_day,
         request_type: HearingDay::REQUEST_TYPES[:video],
         regional_office: "RO18",
-        scheduled_for: Date.today + 1.week
+        scheduled_for: Time.zone.today + 1.week
       )
     end
 
