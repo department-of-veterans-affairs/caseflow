@@ -8,27 +8,27 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
-import TextareaField from '../components/TextareaField';
-import SearchableDropdown from '../components/SearchableDropdown';
-import Alert from '../components/Alert';
+import TextareaField from '../../components/TextareaField';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import Alert from '../../components/Alert';
 
-import { highlightInvalidFormItems, requestSave } from './uiReducer/uiActions';
-import { setAppealAttrs, onReceiveTasks, deleteTask } from './QueueActions';
+import { highlightInvalidFormItems, requestSave } from '../uiReducer/uiActions';
+import { setAppealAttrs, onReceiveTasks, deleteTask } from '../QueueActions';
 
 import {
   appealWithDetailSelector,
   taskById
-} from './selectors';
+} from '../selectors';
 import {
   fullWidth,
   marginBottom,
   marginTop
-} from './constants';
-import COPY from '../../COPY';
-import Button from '../components/Button';
+} from '../constants';
+import COPY from '../../../COPY';
+import Button from '../../components/Button';
 
-import { taskActionData, prepareAllTasksForStore } from './utils';
-import QueueFlowPage from './components/QueueFlowPage';
+import { taskActionData, prepareAllTasksForStore } from '../utils';
+import QueueFlowPage from '../components/QueueFlowPage';
 
 const adminActionTemplate = () => {
   return {

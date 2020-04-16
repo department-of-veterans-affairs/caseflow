@@ -30,7 +30,7 @@ import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
-import AddColocatedTaskView from './AddColocatedTaskView';
+import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
