@@ -384,7 +384,7 @@ export const NEW_SPECIAL_ISSUES = [
     specialIssue: 'noSpecialIssues',
     snakeCase: 'no_special_issues',
     unhandled: null,
-    queueSection: 'noSpecialIssues',
+    queueSection: 'noSpecialIssues'
   }
 ];
 
