@@ -136,7 +136,11 @@ class HearingDetails extends React.Component {
     const { hearing: { virtualHearing } } = this.props;
 
     if (virtualHearing) {
-      this.updateVirtualHearing(virtualHearing);
+      this.updateVirtualHearing({
+        ...virtualHearing,
+        jobCompleted: true,
+        requestCancelled: this.state.initialFormData.virtualHearingForm?.requestCancelled
+      });
     } else {
       this.updateVirtualHearing(null);
     }
@@ -199,6 +203,7 @@ class HearingDetails extends React.Component {
         success: true,
         error: false
       });
+
       // set hearing on DetailsContainer then reset initialFormData
       this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
