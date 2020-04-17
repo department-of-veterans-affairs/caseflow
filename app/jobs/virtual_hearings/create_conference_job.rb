@@ -44,7 +44,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     virtual_hearing.establishment.attempted!
 
-    create_conference if !virtual_hearing.conference_id
+    create_conference if !virtual_hearing.active?
 
     send_emails(email_type)
 
@@ -95,7 +95,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def send_emails(email_type)
-    if virtual_hearing.conference_id
+    if virtual_hearing.active?
       VirtualHearings::SendEmail.new(
         virtual_hearing: virtual_hearing,
         type: email_type
