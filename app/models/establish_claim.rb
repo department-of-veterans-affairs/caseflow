@@ -139,7 +139,7 @@ class EstablishClaim < Dispatch::Task
     when "routed_to_ro"
       "EP created for RO #{saved_end_product.station_description}"
     when "special_issue_emailed"
-      "Emailed - #{special_issues} " + "Issue".pluralize(special_issues)
+      "Emailed - #{special_issues} " + "Issue".pluralize(appeal.special_issues.size)
     else
       super
     end
@@ -221,7 +221,8 @@ class EstablishClaim < Dispatch::Task
   def email_sent_action_description
     return nil unless sent_email
 
-    "Sent email to: #{sent_email.recipient} in #{sent_email.ro_name} - re: #{special_issues} Issue"
+    "Sent email to: #{sent_email.recipient} in #{sent_email.ro_name} - re: #{special_issues} " +
+      "Issue".pluralize(appeal.special_issues.size)
   end
 
   def not_emailed_action_description
