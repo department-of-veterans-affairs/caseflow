@@ -39,7 +39,7 @@ describe VirtualHearings::DeleteConferencesJob do
     context "for virtual hearing that was cancelled" do
       let(:scheduled_for) { Time.zone.now + 7.days }
       let!(:virtual_hearing) do
-        create(:virtual_hearing, :cancelled, hearing: hearing, conference_deleted: false)
+        create(:virtual_hearing, status: :cancelled, hearing: hearing, conference_deleted: false)
       end
 
       it "updates the appropriate fields", :aggregate_failures do
@@ -54,7 +54,7 @@ describe VirtualHearings::DeleteConferencesJob do
 
     context "for a virtual hearing that was cancelled, but the emails failed to send" do
       let!(:virtual_hearing) do
-        create(:virtual_hearing, :cancelled, hearing: hearing, conference_deleted: true)
+        create(:virtual_hearing, status: :cancelled, hearing: hearing, conference_deleted: true)
       end
 
       it "doesn't call `delete_conference` and sends each email" do
@@ -70,7 +70,7 @@ describe VirtualHearings::DeleteConferencesJob do
     context "for virtual hearing that already occurred" do
       let(:scheduled_for) { Time.zone.now - 7.days }
       let!(:virtual_hearing) do
-        create(:virtual_hearing, :active, hearing: hearing, conference_deleted: false)
+        create(:virtual_hearing, status: :active, hearing: hearing, conference_deleted: false)
       end
 
       it "updates the conference_deleted, but doesn't send emails", :aggregate_failures do
@@ -88,15 +88,15 @@ describe VirtualHearings::DeleteConferencesJob do
         [
           create(
             :virtual_hearing,
-            :active,
             :initialized,
+            status: :active,
             hearing: create(:hearing, hearing_day: hearing_day),
             conference_deleted: false
           ),
           create(
             :virtual_hearing,
-            :active,
             :initialized,
+            status: :active,
             hearing: create(:hearing, hearing_day: hearing_day),
             conference_deleted: false
           )

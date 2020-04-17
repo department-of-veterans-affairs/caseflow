@@ -10,12 +10,12 @@ import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
 import { css } from 'glamor';
 
 const missingFieldsMessage = (fields) => <p>
-  Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
+  Please fill in the following fields in the Veteran's profile in VBMS or the corporate database,
   then retry establishing the EP in Caseflow: {fields}.
 </p>;
 
 const addressTips = [
-  () => <Fragment>Do: move the last word(s) of the street address down to an another street address field</Fragment>,
+  () => <Fragment>Do: move the last words of the street address down to an another street address field</Fragment>,
   () => <Fragment>Do: abbreviate to St. Ave. Rd. Blvd. Dr. Ter. Pl. Ct.</Fragment>,
   () => <Fragment>Don't: edit street names or numbers</Fragment>,
   () => <Fragment>Don't: use invalid characters such as *%$Ð</Fragment>
