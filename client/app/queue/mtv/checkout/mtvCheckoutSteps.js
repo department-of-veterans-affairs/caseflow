@@ -1,6 +1,7 @@
 export const views = {
   review_vacatures: { title: 'Review Vacated Decision Issues' },
   add_decisions: { title: 'Add Decisions' },
+  admin_actions: { title: 'Admin Actions' },
   submit: { title: 'Submit Draft Decision for Review' }
 };
 
@@ -9,7 +10,7 @@ export const getSteps = ({ caseType, vacateType }) => {
   switch (vacateType?.toLowerCase()) {
   case 'straight_vacate':
   case 'vacate_and_de_novo':
-    return ['review_vacatures', 'submit'];
+    return ['review_vacatures', 'admin_actions', 'submit'];
   case 'vacate_and_readjudication':
     return ['review_vacatures', 'add_decisions', 'submit'];
   default:
