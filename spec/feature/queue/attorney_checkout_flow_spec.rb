@@ -79,7 +79,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         # Special Issues page
         expect(page).to have_content("Select special issues")
 
-        expect(page).to have_content("No Special Issues")
+        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
 
         expect(page).to have_content("Blue Water")
         expect(page).to have_content("Burn Pit")
@@ -111,7 +111,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         # Special Issues page
         expect(page).to have_content("Select special issues")
 
-        expect(page).to have_content("No Special Issues")
+        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
 
         expect(page).to have_content("Blue Water")
         expect(page).to have_content("Burn Pit")
@@ -307,7 +307,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         # Special Issues page
         expect(page).to have_content("Select special issues")
 
-        expect(page).to have_content("No Special Issues")
+        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
 
         expect(page).to have_content("Blue Water")
         expect(page).to have_content("Burn Pit")
