@@ -129,19 +129,19 @@ cached_appeal_attributes,,,,,,,,
 cached_appeal_attributes,appeal_id,integer,,,,,x,
 cached_appeal_attributes,appeal_type,string,,,,,x,
 cached_appeal_attributes,assignee_label,string,,,,,,Who is currently most responsible for the appeal
-cached_appeal_attributes,case_type,string,,,,,,"The case type, i.e. original, post remand, CAVC remand, etc"
-cached_appeal_attributes,closest_regional_office_city,string,,,,,,Closest regional office to the veteran
-cached_appeal_attributes,closest_regional_office_key,string,,,,,,Closest regional office to the veteran in 4 character key
+cached_appeal_attributes,case_type,string,,,,,x,"The case type, i.e. original, post remand, CAVC remand, etc"
+cached_appeal_attributes,closest_regional_office_city,string,,,,,x,Closest regional office to the veteran
+cached_appeal_attributes,closest_regional_office_key,string,,,,,x,Closest regional office to the veteran in 4 character key
 cached_appeal_attributes,created_at,datetime,,,,,,
 cached_appeal_attributes,docket_number,string,,,,,,
-cached_appeal_attributes,docket_type,string,,,,,,
-cached_appeal_attributes,is_aod,boolean,,,,,,Whether the case is Advanced on Docket
+cached_appeal_attributes,docket_type,string,,,,,x,
+cached_appeal_attributes,is_aod,boolean,,,,,x,Whether the case is Advanced on Docket
 cached_appeal_attributes,issue_count,integer,,,,,,Number of issues on the appeal.
-cached_appeal_attributes,power_of_attorney_name,string,,,,,,'Firstname Lastname' of power of attorney
-cached_appeal_attributes,suggested_hearing_location,string,,,,,,"Suggested hearing location in 'City, State (Facility Type)' format"
+cached_appeal_attributes,power_of_attorney_name,string,,,,,x,'Firstname Lastname' of power of attorney
+cached_appeal_attributes,suggested_hearing_location,string,,,,,x,"Suggested hearing location in 'City, State (Facility Type)' format"
 cached_appeal_attributes,updated_at,datetime,,,,,x,
 cached_appeal_attributes,vacols_id,string,,,,,x,
-cached_appeal_attributes,veteran_name,string,,,,,,"'LastName, FirstName' of the veteran"
+cached_appeal_attributes,veteran_name,string,,,,,x,"'LastName, FirstName' of the veteran"
 cached_user_attributes,,,,,,,,VACOLS cached staff table attributes
 cached_user_attributes,created_at,datetime ∗,x,,,,,
 cached_user_attributes,sactive,string ∗,x,,,,,

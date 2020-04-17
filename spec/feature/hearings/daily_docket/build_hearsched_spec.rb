@@ -6,10 +6,12 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
   context "Daily docket with one legacy hearing" do
     let!(:hearing_day) do
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             regional_office: "RO18",
-             scheduled_for: Date.new(2020, 4, 15))
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        regional_office: "RO18",
+        scheduled_for: Time.zone.today + 1.week
+      )
     end
 
     let!(:vacols_case) { create(:case, bfcorlid: "123456789S") }
@@ -60,7 +62,6 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("8:30", visible: false)).to be_checked
     end
-
     scenario "User can see paper_case notification" do
       visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
       expect(page).to have_content(COPY::IS_PAPER_CASE)

@@ -57,6 +57,7 @@
 
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
+  "TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL": "Veteran Documents",
   "TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Days waiting",
   "TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL": "Docket",
   "TASK_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE": "Task information",
@@ -369,6 +370,7 @@
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
+  "MODAL_CANCEL_ATTORNEY_CHECKOUT_SPECIAL_ISSUES": "All changes made to this page will be lost, except for the selection of special issues and the adding, editing, and deleting of issues.",
 
   "SPECIAL_ISSUES_PAGE_TITLE": "Select special issues",
   "SPECIAL_ISSUES_PAGE_NOTE": "Select the special issues that pertain to this case. Cases with special issues are routed to specific groups who are in charge of adjusting the case.",
