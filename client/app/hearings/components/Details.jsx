@@ -168,14 +168,14 @@ const HearingDetails = (props) => {
     setLoading(true);
 
     return saveHearing(data).then((response) => {
-      const hearing = ApiUtil.convertToCamelCase(response.body.data);
+      const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
       const alerts = response.body?.alerts;
 
       setLoading(false);
       setError(false);
 
       // set hearing on DetailsContainer
-      setHearing(hearing, () => {
+      setHearing(hearingResp, () => {
         if (alerts) {
           const {
             hearing: hearingAlerts,
