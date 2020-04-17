@@ -7,7 +7,6 @@ export const initialState = {
     hearingCoordinators: {},
     regionalOffices: {}
   },
-  forms: {},
   alerts: [],
   transitioningAlerts: {}
 };
@@ -40,25 +39,6 @@ const dropdownsReducer = (state = {}, action = {}) => {
         errorMsg: {
           $set: action.payload.errorMsg
         }
-      }
-    });
-  default:
-    return state;
-  }
-};
-
-const formsReducer = (state = {}, action = {}) => {
-  const formState = state[action.payload.formName] || {};
-
-  switch (action.type) {
-  case ACTIONS.CHANGE_FORM_DATA:
-    return update(state, {
-      [action.payload.formName]: {
-        $set: action.payload.formData === null ?
-          {} : {
-            ...formState,
-            ...action.payload.formData
-          }
       }
     });
   default:
@@ -137,12 +117,6 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
     return update(state, {
       dropdowns: {
         $set: dropdownsReducer(state.dropdowns, action)
-      }
-    });
-  case ACTIONS.CHANGE_FORM_DATA:
-    return update(state, {
-      forms: {
-        $set: formsReducer(state.forms, action)
       }
     });
   default:
