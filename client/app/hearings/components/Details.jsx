@@ -169,14 +169,9 @@ class HearingDetails extends React.Component {
     }
 
     const { init, current } = toggleCancelled(this.state.initialFormData, this.props.formData, form);
-    console.log("INIT: ", init)
-    console.log("CURRENT: ", current)
 
     // only send updated properties
     const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = deepDiff(init, current);
-    console.log("VIRTUAL: ", virtualHearingForm)
-    console.log("HEARINGS: ", hearingDetailsForm)
-    console.log("TRANSCRIPT: ", transcriptionDetailsForm)
 
     const data = {
       hearing: {
