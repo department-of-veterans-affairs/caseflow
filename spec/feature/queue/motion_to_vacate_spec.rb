@@ -45,6 +45,17 @@ RSpec.feature "Motion to vacate", :all_dbs do
              assigned_to: judge2, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
     end
 
+    let(:atty_disposition) { "granted" }
+    let(:atty_notes) { "Here is some context from Attorney to the judge" }
+    let(:atty_hyperlinks) { generate_atty_hyperlinks(atty_disposition) }
+    let(:atty_instructions) do
+      format_mtv_attorney_instructions(
+        notes: atty_notes,
+        disposition: atty_disposition,
+        hyperlinks: atty_hyperlinks
+      )
+    end
+
     before do
       create(:staff, :judge_role, sdomainid: judge2.css_id)
       create(:staff, :judge_role, sdomainid: judge3.css_id)
@@ -105,45 +116,72 @@ RSpec.feature "Motion to vacate", :all_dbs do
         create(:vacate_motion_mail_task, assigned_to: motions_attorney, parent: root_task)
       end
 
-      it "motions attorney recommends grant decision to judge" do
-        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
+      context "recommends a disposition of granted" do
+        let(:atty_disposition) { "granted" }
 
-        find("label[for=disposition_granted]").click
-        fill_in("instructions", with: "Attorney context/instructions for judge")
+        it "processes correctly" do
+          send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
 
-        # Ensure it has pre-selected judge previously assigned to case
-        expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+          find("label[for=disposition_granted]").click
+          fill_in("instructions", with: atty_notes)
 
-        task = submit_and_fetch_task(judge2)
-        expect(task.instructions.first).to include("I recommend granting a vacatur")
+          fill_in("motionFile", with: atty_hyperlinks[0][:link])
+
+          fill_and_check_other_hyperlinks(atty_hyperlinks)
+
+          # Ensure it has pre-selected judge previously assigned to case
+          expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+
+          task = submit_and_fetch_task(judge2)
+          expect(task.instructions.first).to include("I recommend granting a vacatur")
+          expect(task[:instructions]).to eq [atty_instructions]
+        end
       end
 
-      it "motions attorney recommends partial grant to judge" do
-        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
+      context "recommends a partial vacatur" do
+        let(:atty_disposition) { "partially_granted" }
 
-        find("label[for=disposition_partially_granted]").click
-        fill_in("instructions", with: "Attorney context/instructions for judge")
+        it "processes correctly" do
+          send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
 
-        # Ensure it has pre-selected judge previously assigned to case
-        expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+          find("label[for=disposition_partially_granted]").click
+          fill_in("instructions", with: atty_notes)
 
-        task = submit_and_fetch_task(judge2)
-        expect(task.instructions.first).to include("I recommend granting a partial vacatur")
+          fill_in("motionFile", with: atty_hyperlinks[0][:link])
+
+          fill_and_check_other_hyperlinks(atty_hyperlinks)
+
+          # Ensure it has pre-selected judge previously assigned to case
+          expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+
+          task = submit_and_fetch_task(judge2)
+          expect(task.instructions.first).to include("I recommend granting a partial vacatur")
+          expect(task[:instructions]).to eq [atty_instructions]
+        end
       end
 
-      it "motions attorney recommends denied decision to judge and fills in hyperlink" do
-        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
-        find("label[for=disposition_denied]").click
-        expect(page).to have_content("Optional")
-        expect(page).to have_content(
-          format(COPY::JUDGE_ADDRESS_MTV_HYPERLINK_LABEL, "denial")
-        )
-        fill_in("hyperlink", with: hyperlink)
-        fill_in("instructions", with: "Attorney context/instructions for judge")
-        click_dropdown(text: judge2.display_name)
+      context "recommends a denial of vacatur" do
+        let(:atty_disposition) { "denied" }
 
-        task = submit_and_fetch_task(judge2)
-        expect(task.instructions.first).to include("I recommend denial")
+        it "processes correctly" do
+          send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
+          find("label[for=disposition_denied]").click
+          expect(page).to have_content("Optional")
+
+          fill_in("instructions", with: atty_notes)
+
+          fill_in("decisionDraft", with: atty_hyperlinks[1][:link])
+
+          fill_in("motionFile", with: atty_hyperlinks[0][:link])
+
+          fill_and_check_other_hyperlinks(atty_hyperlinks)
+
+          click_dropdown(text: judge2.display_name)
+
+          task = submit_and_fetch_task(judge2)
+          expect(task.instructions.first).to include("I recommend denial")
+          expect(task[:instructions]).to eq [atty_instructions]
+        end
       end
 
       it "motions attorney triggers Pulac-Cerullo" do
@@ -198,12 +236,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
     let(:atty_notes) { "Notes from attorney" }
     let(:atty_disposition) { "granted" }
-    let(:atty_hyperlink) { nil }
+    let(:atty_hyperlinks) { generate_atty_hyperlinks(atty_disposition) }
     let(:atty_instructions) do
       format_mtv_attorney_instructions(
         notes: atty_notes,
         disposition: atty_disposition,
-        hyperlink: hyperlink
+        hyperlinks: atty_hyperlinks
       )
     end
     let(:judge_address_motion_to_vacate_task) do
@@ -878,5 +916,37 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   def valid_document_id
     "12345-12345678"
+  end
+
+  def generate_atty_hyperlinks(disposition)
+    [
+      {
+        type: "draft of the motion",
+        link: "https://example.com/motion_file.pdf"
+      },
+      {
+        type: "draft of the %s",
+        link: %w[denied dismissed].include?(disposition) ? "https://example.com/decision_draft.pdf" : ""
+      },
+      {
+        type: "Supplementary File 1",
+        link: "https://example.com/file1.pdf"
+      },
+      {
+        type: "Supplementary File 2",
+        link: "https://example.com/file2.pdf"
+      }
+    ]
+  end
+
+  def fill_and_check_other_hyperlinks(atty_hyperlinks)
+    atty_hyperlinks[2..3].each do |item|
+      click_button(text: "+ Add hyperlink")
+      fill_in("type", with: item[:type])
+      fill_in("link", with: item[:link])
+      click_button(text: "Save")
+      expect(page).to have_content(item[:type])
+      expect(page).to have_content(item[:link])
+    end
   end
 end
