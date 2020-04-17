@@ -11,8 +11,7 @@ import {
 
 class ScheduleHearingLaterWithAdminActionForm extends React.Component {
   getErrorMessages = (newValues) => {
-    const { state: { hearingForms: { scheduleHearingLaterWithAdminActionForm } } } = this.context;
-    const values = { ...scheduleHearingLaterWithAdminActionForm, ...newValues };
+    const values = { ...this.props.scheduleHearingLaterWithAdminActionForm, ...newValues };
 
     return {
       withAdminActionKlass: values.withAdminActionKlass ? false : 'Please enter an action',
@@ -21,8 +20,7 @@ class ScheduleHearingLaterWithAdminActionForm extends React.Component {
   }
 
   getApiFormattedValues = (newValues) => {
-    const { state: { hearingForms: { scheduleHearingLaterWithAdminActionForm } } } = this.context;
-    const values = { ...scheduleHearingLaterWithAdminActionForm, ...newValues };
+    const values = { ...this.props.scheduleHearingLaterWithAdminActionForm, ...newValues };
 
     return {
       with_admin_action_klass: values.withAdminActionKlass,
@@ -42,15 +40,13 @@ class ScheduleHearingLaterWithAdminActionForm extends React.Component {
   }
 
   render () {
-    const { adminActionOptions, showErrorMessages } = this.props;
-
-    const { state: { hearingForms: { scheduleHearingLaterWithAdminActionForm } } } = this.context;
+    const { adminActionOptions, showErrorMessages, scheduleHearingLaterWithAdminActionForm } = this.props;
 
     return (
       <div>
         <SearchableDropdown
           errorMessage={
-            showErrorMessages ? scheduleHearingLaterWithAdminActionForm.errorMessages.withAdminActionKlass : ''
+            showErrorMessages ? scheduleHearingLaterWithAdminActionForm?.errorMessages.withAdminActionKlass : ''
           }
           label="Select Reason"
           strongLabel
@@ -75,7 +71,8 @@ ScheduleHearingLaterWithAdminActionForm.contextType = HearingsFormContext;
 
 ScheduleHearingLaterWithAdminActionForm.propTypes = {
   adminActionOptions: PropTypes.object,
-  showErrorMessages: PropTypes.bool
+  showErrorMessages: PropTypes.bool,
+  scheduleHearingLaterWithAdminActionForm: PropTypes.object
 };
 
 export default ScheduleHearingLaterWithAdminActionForm;

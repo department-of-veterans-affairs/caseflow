@@ -14,8 +14,7 @@ import { HearingsFormContext, UPDATE_ASSIGN_HEARING } from '../../contexts/Heari
 
 class AssignHearingForm extends React.Component {
   getErrorMessages = (newValues) => {
-    const { state: { hearingForms: { assignHearingForm } } } = this.context;
-    const values = { ...assignHearingForm || { }, ...newValues };
+    const values = { ...this.props.assignHearingForm, ...newValues };
 
     const errorMessages = {
       hearingDay: values.hearingDay && values.hearingDay.hearingId ?
@@ -32,8 +31,7 @@ class AssignHearingForm extends React.Component {
   }
 
   getApiFormattedValues = (newValues) => {
-    const { state: { hearingForms: { assignHearingForm } } } = this.context;
-    const values = { ...assignHearingForm || { }, ...newValues };
+    const values = { ...this.props.assignHearingForm, ...newValues };
 
     return {
       scheduled_time_string: values.scheduledTimeString,
@@ -61,17 +59,14 @@ class AssignHearingForm extends React.Component {
 
   getErrorMessage = (valueKey) => {
     if (this.props.showErrorMessages) {
-      const { state: { hearingForms: { assignHearingForm } } } = this.context;
-
-      return assignHearingForm.errorMessages[valueKey];
+      return this.props.assignHearingForm.errorMessages[valueKey];
     }
 
     return '';
   }
 
   render() {
-    const { state: { hearingForms: { assignHearingForm } } } = this.context;
-    const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString } = assignHearingForm || {};
+    const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString } = this.props.assignHearingForm;
     const { appeal, initialRegionalOffice, initialHearingDate } = this.props;
 
     const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
@@ -124,10 +119,17 @@ AssignHearingForm.propTypes = {
     closestRegionalOffice: PropTypes.string,
     externalId: PropTypes.string
   }),
+  assignHearingForm: PropTypes.shape({
+    errorMessages: PropTypes.object,
+    regionalOffice: PropTypes.string,
+    hearingLocation: PropTypes.object,
+    hearingDay: PropTypes.object,
+    scheduledTimeString: PropTypes.string
+  }),
   hearingDay: PropTypes.object,
-  initialHearingDate: PropTypes.string,
+  initialHearingDate: PropTypes.object,
   initialRegionalOffice: PropTypes.string,
-  scheduledTimeString: PropTypes.object,
+  scheduledTimeString: PropTypes.string,
   showErrorMessages: PropTypes.bool
 };
 

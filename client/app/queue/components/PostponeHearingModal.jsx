@@ -57,9 +57,16 @@ class PostponeHearingModal extends React.Component {
     };
   }
 
+  getForms = () => {
+    const assignHearingForm = this.context.state.hearingForms?.assignHearingForm || {};
+    const scheduleHearingLaterWithAdminActionForm =
+      this.context.state.hearingForms?.scheduleHearingLaterWithAdminActionForm || {};
+
+    return { assignHearingForm, scheduleHearingLaterWithAdminActionForm };
+  }
+
   validateRescheduleValues = () => {
-    const { assignHearingForm } = this.context.state.hearingForms;
-    const { errorMessages: { hasErrorMessages } } = assignHearingForm || {};
+    const { errorMessages: { hasErrorMessages } } = this.getForms().assignHearingForm;
 
     this.setState({ showErrorMessages: hasErrorMessages });
 
@@ -67,8 +74,7 @@ class PostponeHearingModal extends React.Component {
   }
 
   validateScheduleLaterValues = () => {
-    const { scheduleHearingLaterWithAdminActionForm } = this.context.state.hearingForms;
-    const { errorMessages: { hasErrorMessages } } = scheduleHearingLaterWithAdminActionForm || {};
+    const { errorMessages: { hasErrorMessages } } = this.getForms().scheduleHearingLaterWithAdminActionForm;
 
     this.setState({ showErrorMessages: hasErrorMessages });
 
@@ -86,11 +92,10 @@ class PostponeHearingModal extends React.Component {
   }
 
   getReschedulePayload = () => {
-    const { hearingForms } = this.context.state;
     const {
       // eslint-disable-next-line camelcase
       apiFormattedValues: { scheduled_time_string, hearing_day_id, hearing_location }
-    } = hearingForms.assignHearingForm || {};
+    } = this.getForms().assignHearingForm;
 
     return {
       action: ACTIONS.RESCHEDULE,
@@ -104,13 +109,12 @@ class PostponeHearingModal extends React.Component {
 
   getScheduleLaterPayload = () => {
     const { afterDispositionUpdateAction } = this.state;
-    const { hearingForms } = this.context.state;
 
     if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
       const {
         // eslint-disable-next-line camelcase
         apiFormattedValues: { with_admin_action_klass, admin_action_instructions }
-      } = hearingForms.scheduleHearingLaterWithAdminActionForm || {};
+      } = this.getForms().scheduleHearingLaterWithAdminActionForm;
 
       return {
         action: ACTIONS.SCHEDULE_LATER,
@@ -216,12 +220,14 @@ class PostponeHearingModal extends React.Component {
 
         {afterDispositionUpdateAction === ACTIONS.RESCHEDULE &&
         <AssignHearingForm
+          appeal={appeal}
+          assignHearingForm={this.getForms().assignHearingForm}
           initialRegionalOffice={appeal.closestRegionalOffice}
           showErrorMessages={showErrorMessages}
-          appeal={appeal}
         />
         }{afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION &&
         <ScheduleHearingLaterWithAdminActionForm
+          scheduleHearingLaterWithAdminActionForm={this.getForms().scheduleHearingLaterWithAdminActionForm}
           showErrorMessages={showErrorMessages}
           adminActionOptions={taskData ? taskData.options : []}
         />

@@ -37,6 +37,8 @@ class AssignHearingModal extends React.PureComponent {
     };
   }
 
+  getAssignHearingForm = () => this.context.state.hearingForms?.assignHearingForm || {};
+
   componentDidMount = () => {
     const { openHearing } = this.props;
 
@@ -56,9 +58,8 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   toggleFullHearingDayWarning = () => {
-    const { state: { hearingForms: { assignHearingForm } } } = this.context;
     const { hearingDay } = this.props;
-    const selectedHearingDay = (assignHearingForm || {}).hearingDay || hearingDay;
+    const selectedHearingDay = (this.getAssignHearingForm()).hearingDay || hearingDay;
 
     if (!selectedHearingDay) {
       return;
@@ -74,14 +75,13 @@ class AssignHearingModal extends React.PureComponent {
   };
 
   validateForm = () => {
-    const { state: { hearingForms: { assignHearingForm } } } = this.context;
     const { openHearing } = this.props;
 
     if (openHearing) {
       return false;
     }
 
-    const { errorMessages: { hasErrorMessages } } = assignHearingForm;
+    const { errorMessages: { hasErrorMessages } } = this.getAssignHearingForm();
 
     this.setState({ showErrorMessages: hasErrorMessages });
 
@@ -89,7 +89,6 @@ class AssignHearingModal extends React.PureComponent {
   };
 
   completeScheduleHearingTask = () => {
-    const { state: { hearingForms: { assignHearingForm } } } = this.context;
     const { appeal, scheduleHearingTask, history } = this.props;
     const { showFullHearingDayWarning } = this.state;
 
@@ -100,7 +99,7 @@ class AssignHearingModal extends React.PureComponent {
           business_payloads: {
             description: 'Update Task',
             values: {
-              ...assignHearingForm.apiFormattedValues,
+              ...this.getAssignHearingForm().apiFormattedValues,
               override_full_hearing_day_validation: showFullHearingDayWarning
             }
           }
@@ -157,7 +156,7 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   getSuccessMsg = () => {
-    const { state: { hearingForms: { assignHearingForm } } } = this.context;
+    const assignHearingForm = this.getAssignHearingForm();
     const { appeal } = this.props;
 
     const hearingDateStr = formatDateStr(assignHearingForm.hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
@@ -222,6 +221,7 @@ class AssignHearingModal extends React.PureComponent {
           </p>
           <AssignHearingForm
             appeal={appeal}
+            assignHearingForm={this.getAssignHearingForm()}
             showErrorMessages={showErrorMessages}
             {...this.getInitialValues()} />
         </div>
