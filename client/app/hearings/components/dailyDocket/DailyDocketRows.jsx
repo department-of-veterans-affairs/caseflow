@@ -23,7 +23,7 @@ const Header = ({ user }) => (
       <div>{user.userHasHearingPrepRole && <strong>Prep</strong>}</div>
       <div></div>
       <div><strong>Appellant/Veteran ID/Representative</strong></div>
-      <div><strong>Type/Time/RO(s)</strong></div>
+      <div><strong>Type/Time/RO</strong></div>
     </div>
     <div><div><strong>Actions</strong></div></div>
   </div>
