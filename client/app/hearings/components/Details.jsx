@@ -160,7 +160,7 @@ class HearingDetails extends React.Component {
     this.setState({ updated: true });
   }
 
-  submit = () => {
+  submit = (form = '') => {
     const { hearing: { externalId } } = this.props;
     const { updated } = this.state;
 
@@ -168,9 +168,15 @@ class HearingDetails extends React.Component {
       return;
     }
 
-    // only send updated properties
     const { init, current } = toggleCancelled(this.state.initialFormData, this.props.formData, form);
+    console.log("INIT: ", init)
+    console.log("CURRENT: ", current)
+
+    // only send updated properties
     const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = deepDiff(init, current);
+    console.log("VIRTUAL: ", virtualHearingForm)
+    console.log("HEARINGS: ", hearingDetailsForm)
+    console.log("TRANSCRIPT: ", transcriptionDetailsForm)
 
     const data = {
       hearing: {
@@ -292,7 +298,7 @@ class HearingDetails extends React.Component {
             hearing={this.props.hearing}
             virtualHearing={virtualHearingForm}
             update={this.updateVirtualHearing}
-            submit={() => this.submit().then(this.closeVirtualHearingModal)}
+            submit={() => this.submit('virtualHearingForm').then(this.closeVirtualHearingModal)}
             closeModal={this.closeVirtualHearingModal}
             reset={this.resetVirtualHearing}
             type={this.state.virtualHearingModalType}

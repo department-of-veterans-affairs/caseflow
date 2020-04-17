@@ -105,7 +105,7 @@ export const isEdited = (init, current) => {
   case '':
   case false:
     return current != falsy;
-  // Default to compare the initial with the current value
+    // Default to compare the initial with the current value
   default:
     return !_.isEqual(current, init);
   }
@@ -151,3 +151,36 @@ export const pollVirtualHearingData = (hearingId, onSuccess) => (
     url={`/hearings/${hearingId}/virtual_hearing_job_status`}
   />
 );
+
+/**
+ * Method to reset the keys on an object
+ * @param {Object} obj -- The object which is being reset
+ * @returns {Object} -- New object with the same keys and empty values
+ */
+export const reset = (obj) => Object.keys(obj).reduce((result, item) => ({ ...result, [item]: '' }), {});
+
+/**
+ * Method to change the cancelled status if both objects are set to cancelled
+ * @param {Object} first -- The first object to check status
+ * @param {Object} second -- The second object to check status
+ * @param {string} form -- The form to check the value of status
+ * @returns {Object} -- The initial and current values that will be compares later
+ */
+export const toggleCancelled = (first, second, form) =>
+  !second[form]?.requestCancelled && first[form]?.status === 'cancelled' ?
+    {
+      init: {
+        ...first,
+        [form]: reset(first[form])
+      },
+      current: {
+        [form]: {
+          ...second[form],
+          requestCancelled: false
+        }
+      }
+    } :
+    {
+      init: first,
+      current: second
+    };
