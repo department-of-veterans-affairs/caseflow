@@ -11,7 +11,7 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, pollVirtualHearingData } from '../utils';
+import { deepDiff, toggleCancelled, pollVirtualHearingData } from '../utils';
 import _ from 'lodash';
 
 import DetailsInputs from './details/DetailsInputs';
@@ -169,9 +169,8 @@ class HearingDetails extends React.Component {
     }
 
     // only send updated properties
-    const {
-      hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm
-    } = deepDiff(this.state.initialFormData, this.props.formData);
+    const { init, current } = toggleCancelled(this.state.initialFormData, this.props.formData, form);
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = deepDiff(init, current);
 
     const data = {
       hearing: {
