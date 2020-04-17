@@ -10,7 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 2020_04_16_161705) do
+=======
+ActiveRecord::Schema.define(version: 2020_04_14_195209) do
+>>>>>>> a386141707057b242ace8a6fa97d31f982e2b00e
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1125,6 +1129,19 @@ ActiveRecord::Schema.define(version: 2020_04_16_161705) do
     t.bigint "user_id", null: false
     t.index ["updated_at"], name: "index_schedule_periods_on_updated_at"
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
+  end
+
+  create_table "sent_hearing_email_events", comment: "Events related to hearings notification emails", force: :cascade do |t|
+    t.string "email_address", comment: "Address the email was sent to"
+    t.string "email_type", comment: "The type of email sent: cancellation, confirmation, update"
+    t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
+    t.bigint "hearing_id", null: false, comment: "Associated hearing"
+    t.string "hearing_type", null: false
+    t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
+    t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
+    t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
+    t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
+    t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
   end
 
   create_table "special_issue_lists", force: :cascade do |t|
