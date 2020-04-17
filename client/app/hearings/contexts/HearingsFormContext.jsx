@@ -14,8 +14,14 @@ export const SET_ALL_HEARING_FORMS = 'setAllHearingForms';
 export const UPDATE_HEARING_DETAILS = 'hearingDetailsForm';
 export const UPDATE_TRANSCRIPTION = 'transcriptionDetailsForm';
 export const UPDATE_VIRTUAL_HEARING = 'virtualHearingForm';
+export const UPDATE_ASSIGN_HEARING = 'assignHearingForm';
+export const UPDATE_SCHEDULE_HEARING_LATER_WITH_ADMIN_ACTION_FORM = 'scheduleHearingLaterWithAdminActionForm';
 
-const UPDATE_FORMS = [UPDATE_HEARING_DETAILS, UPDATE_TRANSCRIPTION, UPDATE_VIRTUAL_HEARING];
+const UPDATE_FORMS = [
+  UPDATE_HEARING_DETAILS, UPDATE_TRANSCRIPTION,
+  UPDATE_VIRTUAL_HEARING, UPDATE_ASSIGN_HEARING,
+  UPDATE_SCHEDULE_HEARING_LATER_WITH_ADMIN_ACTION_FORM
+];
 
 const setUpdated = (state, value) => ({ ...state, updated: value });
 
