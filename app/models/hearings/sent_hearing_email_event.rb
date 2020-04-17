@@ -15,7 +15,7 @@ class SentHearingEmailEvent < CaseflowRecord
   enum email_type: (
     {
       confirmation: "confirmation",
-      cancelled: "cancelled",
+      cancellation: "cancellation",
       updated_time_confirmation: "updated_time_confirmation"
     }
   ), _prefix: :is
