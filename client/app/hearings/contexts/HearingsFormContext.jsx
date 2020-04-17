@@ -9,6 +9,14 @@ const initialState = {
   updated: false
 };
 
+export const SET_UPDATED = 'setUpdated';
+export const SET_ALL_HEARING_FORMS = 'setAllHearingForms';
+export const UPDATE_HEARING_DETAILS = 'hearingDetailsForm';
+export const UPDATE_TRANSCRIPTION = 'transcriptionDetailsForm';
+export const UPDATE_VIRTUAL_HEARING = 'virtualHearingForm';
+
+const UPDATE_FORMS = [UPDATE_HEARING_DETAILS, UPDATE_TRANSCRIPTION, UPDATE_VIRTUAL_HEARING];
+
 const setUpdated = (state, value) => ({ ...state, updated: value });
 
 const updateForm = (form, state, values) => {
@@ -31,29 +39,24 @@ const updateForm = (form, state, values) => {
 };
 
 const setAllHearingForms = (state, { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm }) => {
-  let modifidedState = updateForm('hearingDetailsForm', state, hearingDetailsForm);
+  let modifidedState = updateForm(UPDATE_HEARING_DETAILS, state, hearingDetailsForm);
 
-  modifidedState = updateForm('virtualHearingForm', modifidedState, virtualHearingForm);
-  modifidedState = updateForm('transcriptionDetailsForm', modifidedState, transcriptionDetailsForm);
+  modifidedState = updateForm(UPDATE_VIRTUAL_HEARING, modifidedState, virtualHearingForm);
+  modifidedState = updateForm(UPDATE_TRANSCRIPTION, modifidedState, transcriptionDetailsForm);
 
   return setUpdated(modifidedState, false);
 };
 
 const reducer = (state, action) => {
-  switch (action.type) {
-  case 'setUpdated':
+  if (action.type === SET_UPDATED) {
     return setUpdated(state, action.payload);
-  case 'updateHearingDetails':
-    return updateForm('hearingDetailsForm', state, action.payload);
-  case 'updateVirtualHearing':
-    return updateForm('virtualHearingForm', state, action.payload);
-  case 'updateTranscriptionDetails':
-    return updateForm('transcriptionDetailsForm', state, action.payload);
-  case 'setAllHearingForms':
+  } else if (action.type === SET_ALL_HEARING_FORMS) {
     return setAllHearingForms(state, action.payload);
-  default:
-    return state;
+  } else if (UPDATE_FORMS.includes(action.type)) {
+    return updateForm(action.type, state, action.payload);
   }
+
+  return state;
 };
 
 const HearingsFormContextProvider = ({ children }) => {

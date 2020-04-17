@@ -5,7 +5,10 @@ import classnames from 'classnames';
 
 import { COLORS } from '../../../constants/AppConstants';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
-import { HearingsFormContext } from '../../contexts/HearingsFormContext';
+import {
+  HearingsFormContext,
+  UPDATE_HEARING_DETAILS, UPDATE_TRANSCRIPTION, UPDATE_VIRTUAL_HEARING
+} from '../../contexts/HearingsFormContext';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
@@ -30,10 +33,6 @@ import TranscriptionDetailsInputs from './TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './TranscriptionRequestInputs';
 import VirtualHearingLink from '../VirtualHearingLink';
-
-const UPDATE_HEARING_DETAILS = 'updateHearingDetails';
-const UPDATE_TRANSCRIPTION = 'updateTranscriptionDetails';
-const UPDATE_VIRTUAL_HEARING = 'updateVirtualHearing';
 
 // Displays the emails associated with the virtual hearing.
 const EmailSection = (
