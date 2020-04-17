@@ -174,6 +174,7 @@ export const toggleCancelled = (first, second, form) =>
         [form]: reset(first[form])
       },
       current: {
+        ...second,
         [form]: {
           ...second[form],
           requestCancelled: false
