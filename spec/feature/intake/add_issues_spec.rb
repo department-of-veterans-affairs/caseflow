@@ -428,22 +428,6 @@ feature "Intake Add Issues Page", :all_dbs do
       )
     end
 
-    scenario "when request issue is ineligible on a supplemental claim" do
-      start_supplemental_claim(veteran, legacy_opt_in_approved: true)
-      visit "/intake/add_issues"
-      click_intake_add_issue
-      add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
-
-      # Expect legacy opt in issue modal to show
-      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-      add_intake_rating_issue("limitation of thigh motion")
-
-      # Expect untimely issue modal to show
-      expect(page).to have_content("Issue 1 is an Untimely Issue")
-      expect(page).to have_content(
-        "The issue requested isn't usually eligible because its decision date is older than what's allowed"
-      )
-    end
 
     scenario "when request issue is ineligible and no vacols id on appeal" do
       start_appeal(veteran, legacy_opt_in_approved: true)
@@ -459,7 +443,7 @@ feature "Intake Add Issues Page", :all_dbs do
       # Expect untimely issue modal to show
       expect(page).to have_content("Issue 1 is an Untimely Issue")
       expect(page).to have_content(
-        "its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC"
+       "The issue requested isn't usually eligible because its decision date is older than what's allowed"
       )
     end
   end

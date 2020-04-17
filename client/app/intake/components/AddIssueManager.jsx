@@ -187,12 +187,13 @@ class AddIssueManager extends React.Component {
   };
 
   setupUntimelyExemptionModal = () => {
-    const { intakeData } = this.props;
+    const { intakeData, formType } = this.props;
 
     return {
       component: UntimelyExemptionModal,
       props: {
         intakeData,
+        formType,
         onCancel: () => this.cancel(),
         onSubmit: ({ untimelyExemption, untimelyExemptionNotes, untimelyExemptionCovid }) => {
           this.setState(
@@ -285,9 +286,9 @@ class AddIssueManager extends React.Component {
 
     const { currentIssue, eligibleForSocOptIn } = this.state;
     const { formType } = this.props;
-    const legacyIssueIsTimely = !this.props.intakeData.legacyOptInApproved || eligibleForSocOptIn;
-    const requestIssueIsTimely = currentIssue && currentIssue.timely;
     const vacolsIdCheck = currentIssue && currentIssue.vacolsId;
+    const legacyIssueIsTimely = !vacolsIdCheck || !this.props.intakeData.legacyOptInApproved || eligibleForSocOptIn;
+    const requestIssueIsTimely = currentIssue && currentIssue.timely;
 
     if (formType === 'appeal') {
       return !requestIssueIsTimely && !vacolsIdCheck;

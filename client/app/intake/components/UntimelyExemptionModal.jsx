@@ -40,6 +40,7 @@ export const UntimelyExemptionModal = ({
   intakeData,
   currentIssue,
   onSubmit,
+  formType,
   submitText = 'Add this issue',
   onCancel,
   cancelText = 'Cancel adding this issue',
@@ -76,13 +77,15 @@ export const UntimelyExemptionModal = ({
 
   const descriptionText = () => {
     let errorMsg = '';
+    const vacolsIssueIneligible = issue.vacolsId && !issue.eligibleForSocOptIn;
+    const requestIssueUnTimely = !issue.timely && !(formType === 'supplemental_claim');
 
     if (covidTimelinessExemption) {
-      if (!issue.timely && !issue.eligibleForSocOptIn) {
+      if (vacolsIssueIneligible && requestIssueUnTimely) {
         errorMsg = COPY.INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY;
-      } else if (!issue.eligibleForSocOptIn) {
+      } else if (vacolsIssueIneligible) {
         errorMsg = COPY.INTAKE_LEGACY_ISSUE_UNTIMELY;
-      } else if (!issue.timely) {
+      } else if (requestIssueUnTimely) {
         errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
       }
 
@@ -145,6 +148,7 @@ UntimelyExemptionModal.propTypes = {
   onCancel: PropTypes.func,
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
+  formType: PropTypes.string,
   skipText: PropTypes.string
 };
 
