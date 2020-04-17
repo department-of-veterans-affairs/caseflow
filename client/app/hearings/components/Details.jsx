@@ -46,14 +46,13 @@ const inputFix = css({
 
 const HearingDetails = (props) => {
   const {
-    hearing, saveHearing, setHearing, goBack, onReceiveAlerts,
-    onReceiveTransitioningAlert, transitionAlert
+    hearing, saveHearing, setHearing, goBack
   } = props;
 
   const {
     bvaPoc, judgeId, isVirtual, wasVirtual,
     externalId, veteranFirstName, veteranLastName,
-    veteranFileNumber, room, notes,
+    veteranFileNumber, room, notes, evidenceWindowWaived,
     scheduledForIsPast, docketName, transcriptRequested,
     transcriptSentDate, disabled, readableRequestType
   } = hearing;
@@ -115,7 +114,7 @@ const HearingDetails = (props) => {
     const initialFormData = getInitialFormData();
 
     hearingsFormDispatch({ type: SET_ALL_HEARING_FORMS, payload: initialFormData });
-  }, [hearing]);
+  }, [props.hearing]);
 
   const openVirtualHearingModal = ({ type }) => {
     setVirtualHearingModalOpen(true);
@@ -184,11 +183,11 @@ const HearingDetails = (props) => {
           } = alerts;
 
           if (hearingAlerts) {
-            onReceiveAlerts(hearingAlerts);
+            props.onReceiveAlerts(hearingAlerts);
           }
 
           if (!_.isEmpty(virtualHearingAlerts)) {
-            onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
+            props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
             setShouldStartPolling(true);
           }
         }
@@ -215,7 +214,7 @@ const HearingDetails = (props) => {
         setShouldStartPolling(false);
         hearingsFormDispatch({ type: UPDATE_VIRTUAL_HEARING, payload: resp });
         hearingsFormDispatch({ type: SET_UPDATED, payload: false });
-        transitionAlert('virtualHearing');
+        props.transitionAlert('virtualHearing');
       }
 
       // continue polling if return true (opposite of job_completed)
