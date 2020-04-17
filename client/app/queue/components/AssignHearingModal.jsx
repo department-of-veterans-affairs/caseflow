@@ -25,6 +25,7 @@ import ApiUtil from '../../util/ApiUtil';
 import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
 import COPY from '../../../COPY';
 import QueueFlowModal from './QueueFlowModal';
+import { HearingsFormContext } from '../../hearings/contexts/HearingsFormContext';
 
 class AssignHearingModal extends React.PureComponent {
   constructor(props) {
@@ -55,7 +56,8 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   toggleFullHearingDayWarning = () => {
-    const { assignHearingForm, hearingDay } = this.props;
+    const { state: { hearingForms: { assignHearingForm } } } = this.context;
+    const { hearingDay } = this.props;
     const selectedHearingDay = (assignHearingForm || {}).hearingDay || hearingDay;
 
     if (!selectedHearingDay) {
@@ -72,7 +74,8 @@ class AssignHearingModal extends React.PureComponent {
   };
 
   validateForm = () => {
-    const { assignHearingForm, openHearing } = this.props;
+    const { state: { hearingForms: { assignHearingForm } } } = this.context;
+    const { openHearing } = this.props;
 
     if (openHearing) {
       return false;
@@ -86,7 +89,8 @@ class AssignHearingModal extends React.PureComponent {
   };
 
   completeScheduleHearingTask = () => {
-    const { appeal, scheduleHearingTask, history, assignHearingForm } = this.props;
+    const { state: { hearingForms: { assignHearingForm } } } = this.context;
+    const { appeal, scheduleHearingTask, history } = this.props;
     const { showFullHearingDayWarning } = this.state;
 
     const payload = {
@@ -153,7 +157,8 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   getSuccessMsg = () => {
-    const { appeal, assignHearingForm } = this.props;
+    const { state: { hearingForms: { assignHearingForm } } } = this.context;
+    const { appeal } = this.props;
 
     const hearingDateStr = formatDateStr(assignHearingForm.hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = sprintf(
@@ -225,6 +230,8 @@ class AssignHearingModal extends React.PureComponent {
   }
 }
 
+AssignHearingModal.contextType = HearingsFormContext;
+
 AssignHearingModal.propTypes = {
   openHearing: PropTypes.shape({
     date: PropTypes.string
@@ -235,16 +242,6 @@ AssignHearingModal.propTypes = {
     isLegacyAppeal: PropTypes.bool,
     regionalOffice: PropTypes.object,
     veteranFullName: PropTypes.string
-  }),
-  assignHearingForm: PropTypes.shape({
-    apiFormattedValues: PropTypes.object,
-    errorMessages: PropTypes.shape({
-      hasErrorMessages: PropTypes.bool
-    }),
-    hearingDay: PropTypes.shape({
-      hearingDate: PropTypes.string,
-      regionalOffice: PropTypes.string
-    })
   }),
   hearingDay: PropTypes.shape({
     hearingDate: PropTypes.string,
@@ -266,7 +263,6 @@ const mapStateToProps = (state, ownProps) => ({
     appealWithDetailSelector(state, ownProps).hearings,
     (hearing) => hearing.disposition === null
   ),
-  assignHearingForm: state.components.forms.assignHearing,
   appeal: appealWithDetailSelector(state, ownProps),
   selectedRegionalOffice: state.components.selectedRegionalOffice,
   hearingDay: state.ui.hearingDay

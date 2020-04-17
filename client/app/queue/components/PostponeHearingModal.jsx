@@ -23,6 +23,8 @@ import ScheduleHearingLaterWithAdminActionForm from
   '../../hearings/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
 import ApiUtil from '../../util/ApiUtil';
 
+import { HearingsFormContext } from '../../hearings/contexts/HearingsFormContext';
+
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
   SCHEDULE_LATER: 'schedule_later',
@@ -56,7 +58,8 @@ class PostponeHearingModal extends React.Component {
   }
 
   validateRescheduleValues = () => {
-    const { errorMessages: { hasErrorMessages } } = this.props.assignHearing;
+    const { assignHearingForm } = this.context.state.hearingForms;
+    const { errorMessages: { hasErrorMessages } } = assignHearingForm || {};
 
     this.setState({ showErrorMessages: hasErrorMessages });
 
@@ -64,7 +67,8 @@ class PostponeHearingModal extends React.Component {
   }
 
   validateScheduleLaterValues = () => {
-    const { errorMessages: { hasErrorMessages } } = this.props.scheduleHearingLaterWithAdminAction;
+    const { scheduleHearingLaterWithAdminActionForm } = this.context.state.hearingForms;
+    const { errorMessages: { hasErrorMessages } } = scheduleHearingLaterWithAdminActionForm || {};
 
     this.setState({ showErrorMessages: hasErrorMessages });
 
@@ -82,10 +86,11 @@ class PostponeHearingModal extends React.Component {
   }
 
   getReschedulePayload = () => {
+    const { hearingForms } = this.context.state;
     const {
       // eslint-disable-next-line camelcase
       apiFormattedValues: { scheduled_time_string, hearing_day_id, hearing_location }
-    } = this.props.assignHearing;
+    } = hearingForms.assignHearingForm || {};
 
     return {
       action: ACTIONS.RESCHEDULE,
@@ -99,12 +104,13 @@ class PostponeHearingModal extends React.Component {
 
   getScheduleLaterPayload = () => {
     const { afterDispositionUpdateAction } = this.state;
+    const { hearingForms } = this.context.state;
 
     if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
       const {
         // eslint-disable-next-line camelcase
         apiFormattedValues: { with_admin_action_klass, admin_action_instructions }
-      } = this.props.scheduleHearingLaterWithAdminAction;
+      } = hearingForms.scheduleHearingLaterWithAdminActionForm || {};
 
       return {
         action: ACTIONS.SCHEDULE_LATER,
@@ -139,7 +145,9 @@ class PostponeHearingModal extends React.Component {
 
   getSuccessMsg = () => {
     const { afterDispositionUpdateAction } = this.state;
-    const { assignHearing: { hearingDay }, appeal } = this.props;
+    const { appeal } = this.props;
+    const { assignHearingForm } = this.context.state.hearingForms;
+    const { hearingDay } = assignHearingForm || {};
 
     if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
       const hearingDateStr = formatDateStr(hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
@@ -223,6 +231,8 @@ class PostponeHearingModal extends React.Component {
   };
 }
 
+PostponeHearingModal.contextType = HearingsFormContext;
+
 PostponeHearingModal.propTypes = {
   appeal: PropTypes.shape({
     closestRegionalOffice: PropTypes.string,
@@ -262,9 +272,7 @@ PostponeHearingModal.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
-  appeal: appealWithDetailSelector(state, ownProps),
-  scheduleHearingLaterWithAdminAction: state.components.forms.scheduleHearingLaterWithAdminAction || {},
-  assignHearing: state.components.forms.assignHearing || {}
+  appeal: appealWithDetailSelector(state, ownProps)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -79,6 +79,8 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 
+import { HearingsFormContextProvider } from '../hearings/contexts/HearingsFormContext';
+
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
@@ -247,9 +249,17 @@ class QueueApp extends React.PureComponent {
     <UpdateTaskStatusAssignRegionalOfficeModal updateStatusTo={updateStatusTo} {...props.match.params} />
   );
 
-  routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
+  routedAssignHearingModal = (props) => (
+    <HearingsFormContextProvider>
+      <AssignHearingModal userId={this.props.userId} {...props.match.params} />
+    </HearingsFormContextProvider>
+  );
 
-  routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
+  routedPostponeHearingModal = (props) => (
+    <HearingsFormContextProvider>
+      <PostponeHearingModal userId={this.props.userId} {...props.match.params} />
+    </HearingsFormContextProvider>
+  );
 
   routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
 

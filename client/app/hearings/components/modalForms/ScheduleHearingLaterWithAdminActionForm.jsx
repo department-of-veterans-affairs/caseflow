@@ -1,19 +1,18 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import TextareaField from '../../../components/TextareaField';
 
-import { onChangeFormData } from '../../../components/common/actions';
+import {
+  HearingsFormContext,
+  UPDATE_SCHEDULE_HEARING_LATER_WITH_ADMIN_ACTION_FORM
+} from '../../contexts/HearingsFormContext';
 
 class ScheduleHearingLaterWithAdminActionForm extends React.Component {
-
   getErrorMessages = (newValues) => {
-    const values = {
-      ...this.props.values,
-      ...newValues
-    };
+    const { state: { hearingForms: { scheduleHearingLaterWithAdminActionForm } } } = this.context;
+    const values = { ...scheduleHearingLaterWithAdminActionForm, ...newValues };
 
     return {
       withAdminActionKlass: values.withAdminActionKlass ? false : 'Please enter an action',
@@ -22,10 +21,8 @@ class ScheduleHearingLaterWithAdminActionForm extends React.Component {
   }
 
   getApiFormattedValues = (newValues) => {
-    const values = {
-      ...this.props.values,
-      ...newValues
-    };
+    const { state: { hearingForms: { scheduleHearingLaterWithAdminActionForm } } } = this.context;
+    const values = { ...scheduleHearingLaterWithAdminActionForm, ...newValues };
 
     return {
       with_admin_action_klass: values.withAdminActionKlass,
@@ -34,32 +31,39 @@ class ScheduleHearingLaterWithAdminActionForm extends React.Component {
   }
 
   onChange = (value) => {
-    this.props.onChange({
-      ...value,
-      errorMessages: this.getErrorMessages(value),
-      apiFormattedValues: this.getApiFormattedValues(value)
-    });
+    const { dispatch } = this.context;
+
+    dispatch({ type: UPDATE_SCHEDULE_HEARING_LATER_WITH_ADMIN_ACTION_FORM,
+      payload: {
+        ...value,
+        errorMessages: this.getErrorMessages(value),
+        apiFormattedValues: this.getApiFormattedValues(value)
+      } });
   }
 
   render () {
-    const { adminActionOptions, values, showErrorMessages } = this.props;
+    const { adminActionOptions, showErrorMessages } = this.props;
+
+    const { state: { hearingForms: { scheduleHearingLaterWithAdminActionForm } } } = this.context;
 
     return (
       <div>
         <SearchableDropdown
-          errorMessage={showErrorMessages ? values.errorMessages.withAdminActionKlass : ''}
+          errorMessage={
+            showErrorMessages ? scheduleHearingLaterWithAdminActionForm.errorMessages.withAdminActionKlass : ''
+          }
           label="Select Reason"
           strongLabel
           name="postponementReason"
           options={adminActionOptions}
-          value={values.withAdminActionKlass}
+          value={scheduleHearingLaterWithAdminActionForm?.withAdminActionKlass}
           onChange={(val) => this.onChange({ withAdminActionKlass: val ? val.value : null })}
         />
         <TextareaField
           label="Instructions"
           strongLabel
           name="adminActionInstructions"
-          value={values.adminActionInstructions}
+          value={scheduleHearingLaterWithAdminActionForm?.adminActionInstructions}
           onChange={(val) => this.onChange({ adminActionInstructions: val })}
         />
       </div>
@@ -67,14 +71,11 @@ class ScheduleHearingLaterWithAdminActionForm extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  values: state.components.forms.scheduleHearingLaterWithAdminAction || {}
-});
+ScheduleHearingLaterWithAdminActionForm.contextType = HearingsFormContext;
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onChange: (value) => onChangeFormData('scheduleHearingLaterWithAdminAction', value)
-}, dispatch);
+ScheduleHearingLaterWithAdminActionForm.propTypes = {
+  adminActionOptions: PropTypes.object,
+  showErrorMessages: PropTypes.bool
+};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps)(ScheduleHearingLaterWithAdminActionForm);
+export default ScheduleHearingLaterWithAdminActionForm;

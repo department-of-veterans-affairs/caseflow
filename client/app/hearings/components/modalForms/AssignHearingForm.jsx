@@ -1,7 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 
 import ApiUtil from '../../../util/ApiUtil';
 
@@ -11,15 +10,12 @@ import {
   HearingDateDropdown
 } from '../../../components/DataDropdowns';
 import HearingTime from './HearingTime';
-
-import { onChangeFormData } from '../../../components/common/actions';
+import { HearingsFormContext, UPDATE_ASSIGN_HEARING } from '../../contexts/HearingsFormContext';
 
 class AssignHearingForm extends React.Component {
   getErrorMessages = (newValues) => {
-    const values = {
-      ...this.props.values,
-      ...newValues
-    };
+    const { state: { hearingForms: { assignHearingForm } } } = this.context;
+    const values = { ...assignHearingForm || { }, ...newValues };
 
     const errorMessages = {
       hearingDay: values.hearingDay && values.hearingDay.hearingId ?
@@ -36,10 +32,8 @@ class AssignHearingForm extends React.Component {
   }
 
   getApiFormattedValues = (newValues) => {
-    const values = {
-      ...this.props.values,
-      ...newValues
-    };
+    const { state: { hearingForms: { assignHearingForm } } } = this.context;
+    const values = { ...assignHearingForm || { }, ...newValues };
 
     return {
       scheduled_time_string: values.scheduledTimeString,
@@ -49,35 +43,37 @@ class AssignHearingForm extends React.Component {
   }
 
   onChange = (newValues) => {
-    this.props.onChange({
-      ...newValues,
-      errorMessages: this.getErrorMessages(newValues),
-      apiFormattedValues: this.getApiFormattedValues(newValues)
-    });
+    const { dispatch } = this.context;
+
+    dispatch({ type: UPDATE_ASSIGN_HEARING,
+      payload: {
+        ...newValues,
+        errorMessages: this.getErrorMessages(newValues),
+        apiFormattedValues: this.getApiFormattedValues(newValues)
+      } });
   }
 
   onRegionalOfficeChange = (regionalOffice) => {
-    const newValues = {
-      regionalOffice,
-      hearingLocation: null,
-      scheduledTimeString: null,
-      hearingDay: null
-    };
+    const newValues = { regionalOffice, hearingLocation: null, scheduledTimeString: null, hearingDay: null };
 
     this.onChange(newValues);
   }
 
   getErrorMessage = (valueKey) => {
     if (this.props.showErrorMessages) {
-      return this.props.values.errorMessages[valueKey];
+      const { state: { hearingForms: { assignHearingForm } } } = this.context;
+
+      return assignHearingForm.errorMessages[valueKey];
     }
 
     return '';
   }
 
   render() {
-    const { appeal, values, initialRegionalOffice, initialHearingDate } = this.props;
-    const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString } = values;
+    const { state: { hearingForms: { assignHearingForm } } } = this.context;
+    const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString } = assignHearingForm || {};
+    const { appeal, initialRegionalOffice, initialHearingDate } = this.props;
+
     const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
     const dynamic = regionalOffice !== appeal.closestRegionalOffice || _.isEmpty(appeal.availableHearingLocations);
 
@@ -120,12 +116,19 @@ class AssignHearingForm extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  values: state.components.forms.assignHearing || {}
-});
+AssignHearingForm.contextType = HearingsFormContext;
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onChange: (value) => onChangeFormData('assignHearing', value)
-}, dispatch);
+AssignHearingForm.propTypes = {
+  appeal: PropTypes.shape({
+    availableHearingLocations: PropTypes.array,
+    closestRegionalOffice: PropTypes.string,
+    externalId: PropTypes.string
+  }),
+  hearingDay: PropTypes.object,
+  initialHearingDate: PropTypes.string,
+  initialRegionalOffice: PropTypes.string,
+  scheduledTimeString: PropTypes.object,
+  showErrorMessages: PropTypes.bool
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(AssignHearingForm);
+export default AssignHearingForm;
