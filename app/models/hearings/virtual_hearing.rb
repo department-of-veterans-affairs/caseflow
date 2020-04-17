@@ -56,29 +56,29 @@ class VirtualHearing < CaseflowRecord
     status == :cancelled
   end
 
-  # Determines if the hearing is pending
+  # Hearings are pending if the conference is not created and it is not cancelled
   def pending?
     status == :pending
   end
 
-  # Determines whether the virtual hearing is ready to be created
+  # Hearings can be activated only if the conference is created and emails sent
   def activate?
     active? && all_emails_sent?
   end
 
-  # Determines if the hearing has been activated
+  # Determines if the hearing conference has been created
   def active?
     status == :active
   end
 
   # Determines the status of the Virtual Hearing based on the establishment
   def status
-    # Check if the establishment has been cancelled
+    # Check if the establishment has been cancelled by the user
     if request_cancelled?
       return :cancelled
     end
 
-    # If the establishment has been processed it is active
+    # If the conference has been created the virtual hearing is active
     if conference_id
       return :active
     end
