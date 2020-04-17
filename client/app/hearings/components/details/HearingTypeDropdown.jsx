@@ -43,7 +43,6 @@ class HearingTypeDropdown extends React.Component {
     }
 
     if ((currentValue.value && !option.value) || virtualHearing.requestCancelled) {
-      console.log('OPENED: ', virtualHearing);
       updateVirtualHearing({ requestCancelled: !virtualHearing.requestCancelled });
     }
   };
