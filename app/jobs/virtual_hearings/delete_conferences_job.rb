@@ -14,11 +14,20 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     VirtualHearingRepository.cancelled_hearings_with_pending_emails.each do |virtual_hearing|
       Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
 
+      set_current_user(virtual_hearing)
+
       VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
     end
   end
 
   private
+
+  def set_current_user(virtual_hearing)
+    # FIXME: There isn't a user associated with the cancelled virtual hearing.
+    # We should track who initiated the cancellation, so we can assign `sent_by` for the
+    # hearing email event. 
+    RequestStore[:current_user] = virtual_hearing.created_by
+  end
 
   def count_deleted_and_log(enumerable)
     failed = removed = 0
@@ -53,6 +62,8 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
     if virtual_hearing.cancelled?
       Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
+
+      set_current_user(virtual_hearing)
 
       VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
     end
