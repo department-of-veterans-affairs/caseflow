@@ -322,13 +322,20 @@ class TaskActionRepository
 
     def review_decision_draft(task, user)
       action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
-      action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
-      action = Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.ama? && task.appeal.vacate?
+      action = select_ama_review_decision_action(task) if task.ama?
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
     private
+
+    def select_ama_review_decision_action(task)
+      return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
+
+      return Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h if FeatureToggle.enabled?(:special_issues_revamp)
+
+      Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
+    end
 
     def task_assigner_name(task)
       task.assigned_by&.full_name || "the assigner"
