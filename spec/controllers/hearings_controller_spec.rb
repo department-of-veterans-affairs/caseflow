@@ -158,7 +158,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         it "kicks off CreateConferenceJob and updates virtual_hearing table", :aggregate_failures do
           subject
           expect(VirtualHearing.first.establishment.submitted?).to eq(true)
-          expect(VirtualHearing.first.status).to eq("active")
+          expect(VirtualHearing.first.status).to eq(:active)
           expect(VirtualHearing.first.conference_id).to_not eq(nil)
           expect(VirtualHearing.first.veteran_email_sent).to eq(true)
           expect(VirtualHearing.first.judge_email_sent).to eq(true)
@@ -199,7 +199,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
         let(:virtual_hearing_params) do
           {
-            status: "cancelled"
+            request_cancelled: true
           }
         end
 
