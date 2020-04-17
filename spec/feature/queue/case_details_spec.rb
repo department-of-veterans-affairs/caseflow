@@ -494,6 +494,25 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  context "when an appeal has been cancelled" do
+    let!(:appeal) do
+      create(:appeal, :at_judge_review, associated_judge: judge_user, associated_attorney: attorney_user)
+    end
+
+    it "does not show assigned attorney or judge" do
+      visit "/queue/appeals/#{appeal.uuid}"
+      expect(page).to have_content(judge_user.full_name)
+      expect(page).to have_content(attorney_user.full_name)
+
+      appeal.tasks.open.update_all(status: Constants.TASK_STATUSES.cancelled)
+
+      visit "/queue/appeals/#{appeal.uuid}"
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_NO_ACTIVE_LABEL)
+      expect(page).to have_no_content(judge_user.full_name)
+      expect(page).to have_no_content(attorney_user.full_name)
+    end
+  end
+
   context "loads judge task detail views" do
     let!(:vacols_case) do
       create(
