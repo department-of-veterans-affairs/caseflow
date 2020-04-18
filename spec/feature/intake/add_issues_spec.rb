@@ -338,7 +338,7 @@ feature "Intake Add Issues Page", :all_dbs do
     end
   end
 
-  context "show untimely issue modal" do
+  fcontext "show untimely issue modal" do
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)
     end
@@ -357,6 +357,30 @@ feature "Intake Add Issues Page", :all_dbs do
 
     let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
     let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+
+    let!(:old_ratings) do
+      Generators::PromulgatedRating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 372.days,
+        profile_date: receipt_date - 372.days,
+        issues: [
+          { reference_id: "abc127", decision_text: "Left knee issue granted" },
+          { reference_id: "def457", decision_text: "PTSD1 denied" },
+          { reference_id: "def787", decision_text: "Looks like a VACOLS issue2" }
+        ],
+        decisions: [
+          {
+            rating_issue_reference_id: nil,
+            original_denial_date: promulgation_date - 100.days,
+            diagnostic_text: "Broken arm",
+            diagnostic_type: "Bone",
+            disability_id: "123",
+            disability_date: promulgation_date - 100.days,
+            type_name: "Not Service Connected"
+          }
+        ]
+      )
+    end
 
     before { FeatureToggle.enable!(:covid_timeliness_exemption) }
     after { FeatureToggle.disable!(:covid_timeliness_exemption) }
@@ -381,7 +405,7 @@ feature "Intake Add Issues Page", :all_dbs do
       start_higher_level_review(veteran, legacy_opt_in_approved: true)
       visit "/intake/add_issues"
       click_intake_add_issue
-      add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+      add_intake_rating_issue("Left knee issue granted")
 
       # Expect legacy opt in issue modal to show
       expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
@@ -398,7 +422,7 @@ feature "Intake Add Issues Page", :all_dbs do
       start_higher_level_review(veteran, legacy_opt_in_approved: true)
       visit "/intake/add_issues"
       click_intake_add_issue
-      add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+      add_intake_rating_issue("Left knee issue granted")
 
       # Expect legacy opt in issue modal to show
       expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
@@ -428,12 +452,11 @@ feature "Intake Add Issues Page", :all_dbs do
       )
     end
 
-
     scenario "when request issue is ineligible and no vacols id on appeal" do
       start_appeal(veteran, legacy_opt_in_approved: true)
       visit "/intake/add_issues"
       click_intake_add_issue
-      add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+      add_intake_rating_issue("Left knee issue granted")
 
       # Expect legacy opt in issue modal to show
       expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
@@ -443,7 +466,7 @@ feature "Intake Add Issues Page", :all_dbs do
       # Expect untimely issue modal to show
       expect(page).to have_content("Issue 1 is an Untimely Issue")
       expect(page).to have_content(
-       "The issue requested isn't usually eligible because its decision date is older than what's allowed"
+        "The issue requested isn't usually eligible because its decision date is older than what's allowed"
       )
     end
   end
