@@ -20,7 +20,7 @@ class AppealRequestIssuesPolicy
   end
 
   def current_user_is_case_review_team_member?
-    BvaIntake.singleton.user_has_access?(user)
+    CaseReview.singleton.user_has_access?(user)
   end
 
   def case_is_not_in_active_review?

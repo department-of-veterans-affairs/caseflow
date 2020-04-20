@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class User < CaseflowRecord
+class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BgsService
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
@@ -99,11 +99,19 @@ class User < CaseflowRecord
   end
 
   def can_withdraw_issues?
-    BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
+    CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
+  end
+
+  def can_intake_appeals?
+    MailTeam.singleton.users.include?(self)
   end
 
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
+  end
+
+  def can_view_overtime_status?
+    (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp)
   end
 
   def vacols_uniq_id

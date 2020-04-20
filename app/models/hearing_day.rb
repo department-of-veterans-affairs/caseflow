@@ -28,6 +28,7 @@ class HearingDay < CaseflowRecord
     "America/Indiana/Indianapolis" => 12,
     "America/Kentucky/Louisville" => 12,
     "America/Denver" => 10,
+    "America/Phoenix" => 10,
     "America/Los_Angeles" => 8,
     "America/Boise" => 10,
     "America/Puerto_Rico" => 12,

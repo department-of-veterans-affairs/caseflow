@@ -382,14 +382,14 @@ def check_invalid_veteran_alert_on_review_page(form_type)
   click_on "Search"
 
   expect(page).to have_current_path("/intake/review_request")
-  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to_not have_content("Check the Veteran's profile for invalid information")
 
   within_fieldset("What is the Benefit Type?") do
     find("label", text: "Compensation", match: :prefer_exact).click
   end
 
-  expect(page).to have_content("The Veteran's profile has missing or invalid information")
-  expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+  expect(page).to have_content("Check the Veteran's profile for invalid information")
+  expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
   expect(page).to have_content(
     "the corporate database, then retry establishing the EP in Caseflow: country."
   )
@@ -400,7 +400,7 @@ def check_invalid_veteran_alert_on_review_page(form_type)
     find("label", text: "Education", match: :prefer_exact).click
   end
 
-  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to_not have_content("Check the Veteran's profile for invalid information")
   expect(page).to have_button("Continue to next step", disabled: false)
 end
 

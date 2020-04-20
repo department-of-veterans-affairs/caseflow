@@ -16,12 +16,6 @@ import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Alert from '../components/Alert';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import {
-  getUnassignedOrganizationalTasks,
-  getAssignedOrganizationalTasks,
-  getCompletedOrganizationalTasks,
-  trackingTasksForOrganization
-} from './selectors';
 import { tasksWithAppealsFromRawTasks } from './utils';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
@@ -141,7 +135,7 @@ class OrganizationQueue extends React.PureComponent {
           title={`You have bulk assigned
             ${tasksAssignedByBulk.numberOfTasks}
             ${tasksAssignedByBulk.taskType.replace(/([a-z])([A-Z])/g, '$1 $2')}
-            task(s)`}
+            tasks`}
           type="success"
           styling={alertStyling} />
       }
@@ -151,16 +145,12 @@ class OrganizationQueue extends React.PureComponent {
 }
 
 OrganizationQueue.propTypes = {
-  assignedTasks: PropTypes.array,
   clearCaseSelectSearch: PropTypes.func,
-  completedTasks: PropTypes.array,
   onHoldTasks: PropTypes.array,
   organizations: PropTypes.array,
   queueConfig: PropTypes.object,
   success: PropTypes.object,
   tasksAssignedByBulk: PropTypes.object,
-  trackingTasks: PropTypes.array,
-  unassignedTasks: PropTypes.array,
   paginationOptions: PropTypes.object
 };
 
@@ -174,10 +164,6 @@ const mapStateToProps = (state) => {
     organizationIsVso: state.ui.activeOrganization.isVso,
     organizations: state.ui.organizations,
     tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
-    unassignedTasks: getUnassignedOrganizationalTasks(state),
-    assignedTasks: getAssignedOrganizationalTasks(state),
-    completedTasks: getCompletedOrganizationalTasks(state),
-    trackingTasks: trackingTasksForOrganization(state),
     queueConfig: state.queue.queueConfig
   };
 };

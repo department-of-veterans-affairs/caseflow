@@ -315,7 +315,18 @@ class Fakes::BGSService
       fail BGS::NoRatingsExistForVeteran, "No Ratings exist for this Veteran"
     end
 
-    build_ratings_in_range(ratings, start_date, end_date)
+    format_promulgated_rating(build_ratings_in_range(ratings, start_date, end_date))
+  end
+
+  def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
+    ratings = get_rating_record(participant_id)[:ratings] || []
+
+    # Simulate the response if participant doesn't exist or doesn't have any ratings
+    if ratings.blank?
+      return { response: { response_text: "No Data Found" } }
+    end
+
+    format_rating_at_issue(build_ratings_in_range(ratings, start_date, end_date))
   end
 
   def build_ratings_in_range(all_ratings, start_date, end_date)
@@ -326,7 +337,15 @@ class Fakes::BGSService
     # BGS returns the data not as an array if there is only one rating
     ratings = ratings.first if ratings.count == 1
 
+    ratings
+  end
+
+  def format_promulgated_rating(ratings)
     { rating_profile_list: ratings.empty? ? nil : { rating_profile: ratings } }
+  end
+
+  def format_rating_at_issue(ratings)
+    { rba_profile_list: ratings.empty? ? nil : { rba_profile: ratings } }
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)

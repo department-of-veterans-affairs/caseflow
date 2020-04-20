@@ -569,7 +569,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when a user can withdraw issues" do
       before do
-        BvaIntake.singleton.add_user(current_user)
+        CaseReview.singleton.add_user(current_user)
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
 
@@ -766,8 +766,9 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
 
         click_edit_submit_and_confirm
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
 
+        expect(page).to have_content("Review Removed")
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 

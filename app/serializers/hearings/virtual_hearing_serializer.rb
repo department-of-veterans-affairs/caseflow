@@ -6,13 +6,12 @@ class VirtualHearingSerializer
   attribute :veteran_email
   attribute :representative_email
   attribute :status
+  attribute :request_cancelled
   attribute :client_host do
     ENV["PEXIP_CLIENT_HOST"] || "care.evn.va.gov"
   end
   attribute :alias
   attribute :host_pin
   attribute :guest_pin
-  attribute :job_completed do |virtual_hearing|
-    virtual_hearing.active? && virtual_hearing.all_emails_sent?
-  end
+  attribute :job_completed, &:job_completed?
 end

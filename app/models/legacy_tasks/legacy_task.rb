@@ -33,17 +33,11 @@ class LegacyTask
     assigned_at
   end
 
+  # :nocov:
   def label
-    action
+    fail Caseflow::Error::MustImplementInSubclass
   end
-
-  def hide_from_case_timeline
-    false
-  end
-
-  def hide_from_task_snapshot
-    false
-  end
+  # :nocov:
 
   def serializer_class
     ::WorkQueue::LegacyTaskSerializer
@@ -72,9 +66,11 @@ class LegacyTask
     (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
+  # :nocov:
   def available_actions(_role)
-    []
+    fail Caseflow::Error::MustImplementInSubclass
   end
+  # :nocov:
 
   ### Serializer Methods End
 

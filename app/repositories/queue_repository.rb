@@ -115,7 +115,7 @@ class QueueRepository
     end
     # :nocov:
 
-    def assign_case_to_attorney!(judge:, attorney:, vacols_id:)
+    def assign_case_to_attorney!(assigned_by:, judge:, attorney:, vacols_id:)
       transaction do
         unless VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
           fail Caseflow::Error::LegacyCaseAlreadyAssignedError, message: "Case already assigned"
@@ -123,23 +123,27 @@ class QueueRepository
 
         update_location_to_attorney(vacols_id, attorney)
 
-        attrs = {
-          case_id: vacols_id,
-          attorney_id: attorney.vacols_attorney_id,
-          group_name: attorney.vacols_group_id[0..2],
-          assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
-          deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
-          complexity_rating: decass_complexity_rating(vacols_id)
-        }
+        attrs = assign_to_attorney_attrs(vacols_id, attorney, assigned_by)
 
         incomplete_record = incomplete_decass_record(vacols_id)
         if incomplete_record.present?
-          return update_decass_record(incomplete_record,
-                                      attrs.merge(modifying_user: judge.vacols_uniq_id, work_product: nil))
+          return update_decass_record(incomplete_record, attrs.merge(work_product: nil))
         end
 
-        create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id, modifying_user: judge.vacols_uniq_id))
+        create_decass_record(attrs.merge(adding_user: assigned_by.vacols_uniq_id))
       end
+    end
+
+    def assign_to_attorney_attrs(vacols_id, attorney, assigned_by)
+      {
+        case_id: vacols_id,
+        attorney_id: attorney.vacols_attorney_id,
+        group_name: attorney.vacols_group_id[0..2],
+        assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+        deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
+        complexity_rating: decass_complexity_rating(vacols_id),
+        modifying_user: assigned_by.vacols_uniq_id
+      }
     end
 
     def incomplete_decass_record(vacols_id)

@@ -11,12 +11,14 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff } from '../utils';
+import { deepDiff, pollVirtualHearingData } from '../utils';
 import _ from 'lodash';
 
-import DetailsSections from './DetailsSections';
+import DetailsInputs from './details/DetailsInputs';
 import DetailsOverview from './details/DetailsOverview';
-import { onChangeFormData, onReceiveAlerts } from '../../components/common/actions';
+import {
+  onChangeFormData, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
+} from '../../components/common/actions';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
 
@@ -57,6 +59,7 @@ class HearingDetails extends React.Component {
       error: false,
       virtualHearingModalOpen: false,
       virtualHearingModalType: null,
+      startPolling: null,
       initialFormData
     };
 
@@ -102,6 +105,7 @@ class HearingDetails extends React.Component {
         veteranEmail: virtualHearing.veteranEmail,
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status,
+        requestCancelled: virtualHearing.requestCancelled,
         // not used in form
         jobCompleted: virtualHearing.jobCompleted,
         clientHost: virtualHearing.clientHost,
@@ -186,9 +190,8 @@ class HearingDetails extends React.Component {
     return ApiUtil.patch(`/hearings/${externalId}`, {
       data: ApiUtil.convertToSnakeCase(data)
     }).then((response) => {
-
       const hearing = ApiUtil.convertToCamelCase(response.body.data);
-      const alerts = response.body.alerts;
+      const alerts = response.body?.alerts;
 
       this.setState({
         updated: false,
@@ -196,17 +199,29 @@ class HearingDetails extends React.Component {
         success: true,
         error: false
       });
-
       // set hearing on DetailsContainer then reset initialFormData
       this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
 
-        this.setState({
-          initialFormData
-        });
+        this.setState({ initialFormData });
 
         this.updateAllFormData(initialFormData);
-        this.props.onReceiveAlerts(alerts);
+
+        if (alerts) {
+          const {
+            hearing: hearingAlerts,
+            virtual_hearing: virtualHearingAlerts
+          } = alerts;
+
+          if (hearingAlerts) {
+            this.props.onReceiveAlerts(hearingAlerts);
+          }
+
+          if (!_.isEmpty(virtualHearingAlerts)) {
+            this.props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
+            this.setState({ startPolling: true });
+          }
+        }
       });
     }).
       catch((error) => {
@@ -224,11 +239,30 @@ class HearingDetails extends React.Component {
       });
   }
 
+  startPolling = () => {
+    return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
+      // response includes jobCompleted, alias, and hostPin
+      const resp = ApiUtil.convertToCamelCase(response);
+
+      if (resp.jobCompleted) {
+        this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, resp);
+        this.props.transitionAlert('virtualHearing');
+        this.setState({ startPolling: false });
+      }
+
+      // continue polling if return true (opposite of job_completed)
+      return !response.job_completed;
+    });
+  }
+
   render() {
     const {
+      isVirtual,
+      wasVirtual,
       veteranFirstName,
       veteranLastName,
-      veteranFileNumber
+      veteranFileNumber,
+      scheduledForIsPast
     } = this.props.hearing;
 
     const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props.formData;
@@ -242,7 +276,7 @@ class HearingDetails extends React.Component {
         <UserAlerts />
         {error &&
           <div {...css({ marginBottom: '4rem' })}>
-            <Alert type="error" title="There was an error updating hearing" />
+            <Alert type="error" title="There was an error updating the hearing" />
           </div>
         }
         <div {...inputFix}>
@@ -264,20 +298,20 @@ class HearingDetails extends React.Component {
             reset={this.resetVirtualHearing}
             type={this.state.virtualHearingModalType}
             {...editedEmails} />}
-          <DetailsSections
-            user={this.props.user}
+          <DetailsInputs
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
             transcription={transcriptionDetailsForm}
             hearing={hearingDetailsForm}
+            scheduledForIsPast={scheduledForIsPast}
             virtualHearing={virtualHearingForm}
             isLegacy={this.state.isLegacy}
             openVirtualHearingModal={this.openVirtualHearingModal}
             requestType={this.props.hearing.readableRequestType}
-            disabled={disabled}
-            isVirtual={this.props.hearing.isVirtual}
-            wasVirtual={this.props.hearing.wasVirtual} />
+            readOnly={disabled}
+            isVirtual={isVirtual}
+            wasVirtual={wasVirtual} />
           <div>
             <a
               className="button-link"
@@ -302,20 +336,20 @@ class HearingDetails extends React.Component {
             </span>
           </div>
         </div>
+        {this.state.startPolling && this.startPolling()}
       </AppSegment>
     );
   }
 }
 
 HearingDetails.propTypes = {
-  user: PropTypes.shape({
-    userCanScheduleVirtualHearings: PropTypes.bool
-  }),
   hearing: PropTypes.object.isRequired,
   setHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
   onReceiveAlerts: PropTypes.func,
+  onReceiveTransitioningAlert: PropTypes.func,
+  transitionAlert: PropTypes.func,
   onChangeFormData: PropTypes.func,
   formData: PropTypes.shape({
     hearingDetailsForm: PropTypes.object,
@@ -334,7 +368,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onChangeFormData,
-  onReceiveAlerts
+  onReceiveAlerts,
+  onReceiveTransitioningAlert,
+  transitionAlert
 }, dispatch);
 
 export default connect(

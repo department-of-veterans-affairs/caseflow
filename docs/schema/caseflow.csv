@@ -129,19 +129,19 @@ cached_appeal_attributes,,,,,,,,
 cached_appeal_attributes,appeal_id,integer,,,,,x,
 cached_appeal_attributes,appeal_type,string,,,,,x,
 cached_appeal_attributes,assignee_label,string,,,,,,Who is currently most responsible for the appeal
-cached_appeal_attributes,case_type,string,,,,,,"The case type, i.e. original, post remand, CAVC remand, etc"
-cached_appeal_attributes,closest_regional_office_city,string,,,,,,Closest regional office to the veteran
-cached_appeal_attributes,closest_regional_office_key,string,,,,,,Closest regional office to the veteran in 4 character key
+cached_appeal_attributes,case_type,string,,,,,x,"The case type, i.e. original, post remand, CAVC remand, etc"
+cached_appeal_attributes,closest_regional_office_city,string,,,,,x,Closest regional office to the veteran
+cached_appeal_attributes,closest_regional_office_key,string,,,,,x,Closest regional office to the veteran in 4 character key
 cached_appeal_attributes,created_at,datetime,,,,,,
 cached_appeal_attributes,docket_number,string,,,,,,
-cached_appeal_attributes,docket_type,string,,,,,,
-cached_appeal_attributes,is_aod,boolean,,,,,,Whether the case is Advanced on Docket
+cached_appeal_attributes,docket_type,string,,,,,x,
+cached_appeal_attributes,is_aod,boolean,,,,,x,Whether the case is Advanced on Docket
 cached_appeal_attributes,issue_count,integer,,,,,,Number of issues on the appeal.
-cached_appeal_attributes,power_of_attorney_name,string,,,,,,'Firstname Lastname' of power of attorney
-cached_appeal_attributes,suggested_hearing_location,string,,,,,,"Suggested hearing location in 'City, State (Facility Type)' format"
+cached_appeal_attributes,power_of_attorney_name,string,,,,,x,'Firstname Lastname' of power of attorney
+cached_appeal_attributes,suggested_hearing_location,string,,,,,x,"Suggested hearing location in 'City, State (Facility Type)' format"
 cached_appeal_attributes,updated_at,datetime,,,,,x,
 cached_appeal_attributes,vacols_id,string,,,,,x,
-cached_appeal_attributes,veteran_name,string,,,,,,"'LastName, FirstName' of the veteran"
+cached_appeal_attributes,veteran_name,string,,,,,x,"'LastName, FirstName' of the veteran"
 cached_user_attributes,,,,,,,,VACOLS cached staff table attributes
 cached_user_attributes,created_at,datetime ∗,x,,,,,
 cached_user_attributes,sactive,string ∗,x,,,,,
@@ -869,6 +869,9 @@ schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
 special_issue_lists,,,,,,,,
 special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
 special_issue_lists,appeal_type,string,,,,,x,
+special_issue_lists,blue_water,boolean,,,,,,Blue Water
+special_issue_lists,burn_pit,boolean,,,,,,Burn Pit
+special_issue_lists,cavc,boolean,,,,,,US Court of Appeals for Veterans Claims (CAVC)
 special_issue_lists,contaminated_water_at_camp_lejeune,boolean,,,,,,
 special_issue_lists,created_at,datetime,,,,,,
 special_issue_lists,dic_death_or_accrued_benefits_united_states,boolean,,,,,,
@@ -882,8 +885,10 @@ special_issue_lists,id,integer (8) PK,x,x,,,,
 special_issue_lists,incarcerated_veterans,boolean,,,,,,
 special_issue_lists,insurance,boolean,,,,,,
 special_issue_lists,manlincon_compliance,boolean,,,,,,
+special_issue_lists,military_sexual_trauma,boolean,,,,,,Military Sexual Trauma (MST)
 special_issue_lists,mustard_gas,boolean,,,,,,
 special_issue_lists,national_cemetery_administration,boolean,,,,,,
+special_issue_lists,no_special_issues,boolean,,,,,,"Affirmative no special issues, added belatedly"
 special_issue_lists,nonrating_issue,boolean,,,,,,
 special_issue_lists,pension_united_states,boolean,,,,,,
 special_issue_lists,private_attorney_or_agent,boolean,,,,,,
@@ -1029,7 +1034,7 @@ virtual_hearings,judge_email,string,,,,,,Judge's email address
 virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge
 virtual_hearings,representative_email,string,,,,,,Veteran's representative's email address
 virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran's representative
-virtual_hearings,status,string ∗,x,,,,,The status of the Pexip conference
+virtual_hearings,request_cancelled,boolean,,,,,,Determines whether the user has cancelled the virtual hearing request
 virtual_hearings,updated_at,datetime ∗,x,,,,x,
 virtual_hearings,veteran_email,string ∗,x,,,,,Veteran's email address
 virtual_hearings,veteran_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran

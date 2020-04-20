@@ -1,23 +1,26 @@
-import _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import { detect } from 'detect-browser';
-import querystring from 'querystring';
-import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
-import AppFrame from '../components/AppFrame';
-import PageRoute from '../components/PageRoute';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+
+import querystring from 'querystring';
+
+import { HearingsUserContext } from './HearingsUserContext';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import AppFrame from '../components/AppFrame';
+import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
-import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
-import ListScheduleContainer from './containers/ListScheduleContainer';
-import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import HearingDetailsContainer from './containers/DetailsContainer';
 import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
 import HearingWorksheetPrintAllContainer from './containers/HearingWorksheetPrintAllContainer';
+import ListScheduleContainer from './containers/ListScheduleContainer';
+import NavigationBar from '../components/NavigationBar';
+import PageRoute from '../components/PageRoute';
+import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
 import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 
@@ -35,7 +38,7 @@ export default class HearingsApp extends React.PureComponent {
       userCssId
     } = this.props;
 
-    return {
+    return Object.freeze({
       userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
@@ -45,7 +48,7 @@ export default class HearingsApp extends React.PureComponent {
       userInHearingOrTranscriptionOrganization,
       userId,
       userCssId
-    };
+    });
   };
 
   propsForAssignHearingsContainer = () => {
@@ -54,10 +57,10 @@ export default class HearingsApp extends React.PureComponent {
       userCssId
     } = this.props;
 
-    return {
+    return Object.freeze({
       userId,
       userCssId
-    };
+    });
   };
 
   routeForListScheduleContainer = () => <ListScheduleContainer user={this.userPermissionProps()} />;
@@ -68,8 +71,13 @@ export default class HearingsApp extends React.PureComponent {
     />
   );
   routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
-  routeForHearingDetails = ({ match: { params }, history }) =>
-    <HearingDetailsContainer hearingId={params.hearingId} history={history} user={this.userPermissionProps()} />;
+
+  routeForHearingDetails = ({ match: { params }, history }) => (
+    <HearingsUserContext.Provider value={this.userPermissionProps()}>
+      <HearingDetailsContainer hearingId={params.hearingId} history={history} />
+    </HearingsUserContext.Provider>
+  );
+
   routeForHearingWorksheet = () => ({ match: { params } }) =>
     <HearingWorksheetContainer hearingId={params.hearingId} />;
   routeForPrintedHearingWorksheets = (props) => {

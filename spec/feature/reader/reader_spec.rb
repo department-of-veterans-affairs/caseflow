@@ -865,9 +865,9 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to have_content("Procedural")
 
       click_accordion_header(2)
-      expect(page).to_not have_content("Select or tag issue(s)")
+      expect(page).to_not have_content("Select or tag issues")
       click_accordion_header(2)
-      expect(page).to have_content("Select or tag issue(s)")
+      expect(page).to have_content("Select or tag issues")
 
       click_accordion_header(3)
       expect(page).to_not have_content("Add a comment")

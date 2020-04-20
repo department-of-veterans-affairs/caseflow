@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_27_174629) do
+ActiveRecord::Schema.define(version: 2020_04_16_161705) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -195,8 +195,16 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
     t.string "vacols_id"
     t.string "veteran_name", comment: "'LastName, FirstName' of the veteran"
     t.index ["appeal_id", "appeal_type"], name: "index_cached_appeal_attributes_on_appeal_id_and_appeal_type", unique: true
+    t.index ["case_type"], name: "index_cached_appeal_attributes_on_case_type"
+    t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
+    t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
+    t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
+    t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
+    t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
     t.index ["updated_at"], name: "index_cached_appeal_attributes_on_updated_at"
     t.index ["vacols_id"], name: "index_cached_appeal_attributes_on_vacols_id", unique: true
+    t.index ["veteran_name"], name: "index_cached_appeal_attributes_on_veteran_name"
   end
 
   create_table "cached_user_attributes", id: false, comment: "VACOLS cached staff table attributes", force: :cascade do |t|
@@ -1119,9 +1127,25 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
   end
 
+  create_table "sent_hearing_email_events", comment: "Events related to hearings notification emails", force: :cascade do |t|
+    t.string "email_address", comment: "Address the email was sent to"
+    t.string "email_type", comment: "The type of email sent: cancellation, confirmation, update"
+    t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
+    t.bigint "hearing_id", null: false, comment: "Associated hearing"
+    t.string "hearing_type", null: false
+    t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
+    t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
+    t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
+    t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
+    t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
+  end
+
   create_table "special_issue_lists", force: :cascade do |t|
     t.bigint "appeal_id"
     t.string "appeal_type"
+    t.boolean "blue_water", default: false, comment: "Blue Water"
+    t.boolean "burn_pit", default: false, comment: "Burn Pit"
+    t.boolean "cavc", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
@@ -1134,8 +1158,10 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
     t.boolean "incarcerated_veterans", default: false
     t.boolean "insurance", default: false
     t.boolean "manlincon_compliance", default: false
+    t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
+    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
@@ -1349,7 +1375,7 @@ ActiveRecord::Schema.define(version: 2020_03_27_174629) do
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
-    t.string "status", default: "pending", null: false, comment: "The status of the Pexip conference"
+    t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false
     t.string "veteran_email", comment: "Veteran's email address"
     t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"

@@ -63,6 +63,36 @@ feature "Intake", :all_dbs do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
+    context "when restrict appeal intakes enabled" do
+      before { FeatureToggle.enable!(:restrict_appeal_intakes) }
+      after { FeatureToggle.disable!(:restrict_appeal_intakes) }
+
+      it "does not allow user to intake appeals" do
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.appeal)
+
+        expect(page).to have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
+        expect(page).to have_css(".cf-submit[disabled]")
+
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+
+        expect(page).to have_current_path("/intake/search")
+      end
+
+      context "when the user is on the Mail Team" do
+        before { MailTeam.singleton.add_user(current_user) }
+
+        it "allows the user to intake appeals" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.appeal)
+
+          expect(page).to_not have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
+          expect(page).to_not have_css(".cf-submit[disabled]")
+        end
+      end
+    end
+
     context "user has unread Inbox messages" do
       before { FeatureToggle.enable!(:inbox, users: [current_user.css_id]) }
       after { FeatureToggle.disable!(:inbox) }
@@ -240,7 +270,7 @@ feature "Intake", :all_dbs do
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
-        expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+        expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
         expect(page).to have_content(
           "the corporate database, then retry establishing the EP in Caseflow: country."
         )
@@ -408,7 +438,7 @@ feature "Intake", :all_dbs do
             find("label", text: "Compensation", match: :prefer_exact).click
           end
 
-          expect(page).to have_content("The Veteran's profile has missing or invalid information")
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
           expect(page).to have_content("This Veteran's address has invalid characters")
         end
       end
@@ -438,8 +468,70 @@ feature "Intake", :all_dbs do
             find("label", text: "Compensation", match: :prefer_exact).click
           end
 
-          expect(page).to have_content("The Veteran's profile has missing or invalid information")
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
           expect(page).to have_content("This Veteran's city has invalid characters")
+        end
+      end
+
+      context "veteran date_of_birth invalid_date_of_birth" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            address_line1: "1234",
+            date_of_birth: "01/1/1953"
+          )
+        end
+
+        scenario "invalid_date_of_birth" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content("Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\"")
+        end
+      end
+
+      context "invalid name suffix character" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            address_line1: "1234",
+            name_suffix: "JR."
+          )
+        end
+
+        scenario "veteran has invalid name suffix character" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content(
+            "Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.)"
+          )
         end
       end
     end

@@ -82,12 +82,13 @@ class VirtualHearings::SendEmail
       response_external_url = response.body.dig("_links", "self")
 
       DataDogService.increment_counter(
-        app_name: DATADOG_METRICS.HEARINGS.APP_NAME,
+        app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
         metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
         metric_name: "emails.submitted"
       )
 
       Rails.logger.info(
+        "[Virtual Hearing: #{virtual_hearing.id}] " \
         "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
       )
     end

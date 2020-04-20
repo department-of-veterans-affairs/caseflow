@@ -13,15 +13,15 @@ class BgsAddressService
 
     # The address from BGS includes a type field. Filter the hash keys to only include
     # address components (for Address#new).
-    bgs_record.slice(
-      :address_line_1,
-      :address_line_2,
-      :address_line_3,
-      :city,
-      :zip,
-      :country,
-      :state
-    )
+    {
+      address_line_1: address_line_1,
+      address_line_2: address_line_2,
+      address_line_3: address_line_3,
+      city: city,
+      zip: zip,
+      country: country,
+      state: state
+    }
   end
 
   def fetch_bgs_record

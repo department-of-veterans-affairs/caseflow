@@ -27,7 +27,7 @@ const flexColumn = css({
 class SelectSpecialIssuesView extends React.PureComponent {
   getPageName = () => COPY.SPECIAL_ISSUES_PAGE_TITLE;
   getPageNote = () => COPY.SPECIAL_ISSUES_PAGE_NOTE;
-  onChangeLegacySpecialIssue = (event) => {
+  onChangeSpecialIssue = (event) => {
     this.props.setSpecialIssues({
       [event.target.id]: document.getElementById(event.target.id).checked
     });
@@ -64,36 +64,57 @@ class SelectSpecialIssuesView extends React.PureComponent {
       });
   };
   render() {
-    const { specialIssues } = this.props;
+    const { appeal, specialIssues } = this.props;
+    const sections = (appeal.isLegacyAppeal) ? this.legacySpecialIssuesSections() : this.amaSpecialIssuesSections();
 
-    return this.renderLegacySpecialIssues(specialIssues);
+    return this.renderSpecialIssuesPage(appeal, sections, specialIssues);
   }
-  renderLegacySpecialIssues = (specialIssues) => {
+
+  legacySpecialIssuesSections = () => {
+    return [
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).noneSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).aboutSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).residenceSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).benefitTypeSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).issuesOnAppealSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).dicOrPensionSection()
+    ];
+  };
+  amaSpecialIssuesSections = () => {
+    return [
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).noneSection(),
+      specialIssueFilters(this.props.featureToggles.special_issues_revamp).amaIssuesOnAppealSection()
+    ];
+  };
+
+  sortAndConvertIssues = (sections) => {
+    // convert sections array to a map for easier conditional rendering of CheckboxGroups
+    return sections.reduce((map, section) => {
+      if (section.length > 0) {
+        // format the section the way the CheckBoxGroup expects it, and sort according to the mock
+        const issueList = section.sort((previous, next) => {
+          return previous.queueSectionOrder - next.queueSectionOrder;
+        }).map((issue) => {
+          return {
+            id: issue.snakeCase,
+            label: issue.node || issue.queueDisplay || issue.display
+          };
+        });
+
+        // assumes all issues in issueList is in the same queueSection, which they should be
+        map[section[0].queueSection] = issueList;
+      }
+
+      return map;
+    }, {});
+  };
+
+  renderSpecialIssuesPage = (appeal, sections, specialIssues) => {
     const {
       error,
       ...otherProps
     } = this.props;
-    let sections = [
-      specialIssueFilters.aboutSection(),
-      specialIssueFilters.residenceSection(),
-      specialIssueFilters.benefitTypeSection(),
-      specialIssueFilters.issuesOnAppealSection(),
-      specialIssueFilters.dicOrPensionSection()];
-
-    // format the section the way the CheckBoxGroup expects it, and sort according to the mock
-    sections = sections.map((section) => {
-      return section.sort((previous, next) => {
-        return previous.queueSectionOrder - next.queueSectionOrder;
-      }).map((issue) => {
-        return {
-          id: issue.snakeCase,
-          label: issue.node || issue.queueDisplay || issue.display
-        };
-      });
-    });
-
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
-    const [aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection] = sections;
+    const sectionsMap = this.sortAndConvertIssues(sections);
 
     return <QueueFlowPage goToNextStep={this.goToNextStep} validateForm={this.validateForm} {...otherProps}>
       <h1>
@@ -105,53 +126,86 @@ class SelectSpecialIssuesView extends React.PureComponent {
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div {...flexContainer} className="special-options">
         <div {...flexColumn}>
-          <CheckboxGroup
-            label={<h3>{COPY.SPECIAL_ISSUES_ABOUT_SECTION}</h3>}
-            name="About the appellant"
-            options={aboutSection}
-            values={specialIssues}
-            onChange={this.onChangeLegacySpecialIssue}
-          />
-          <CheckboxGroup
-            label={<h3>{COPY.SPECIAL_ISSUES_RESIDENCE_SECTION}</h3>}
-            name="Residence"
-            options={residenceSection}
-            values={specialIssues}
-            onChange={this.onChangeLegacySpecialIssue}
-          />
-          <CheckboxGroup
-            label={<h3>{COPY.SPECIAL_ISSUES_BENEFIT_TYPE_SECTION}</h3>}
-            name="Benefit Types"
-            options={benefitTypeSection}
-            values={specialIssues}
-            onChange={this.onChangeLegacySpecialIssue}
-          />
+          {
+            this.props.featureToggles.special_issues_revamp && sectionsMap.noSpecialIssues && <CheckboxGroup
+              label=""
+              name=""
+              options={sectionsMap.noSpecialIssues}
+              values={specialIssues}
+              onChange={this.onChangeSpecialIssue}
+            />
+          }
+          { /* For AMA cases, show the 'issuesOnAppeal' section in the first column.
+               For Legacy cases, show it in the second column.
+             */
+            !appeal.isLegacyAppeal && sectionsMap.issuesOnAppeal &&
+            this.issuesOnAppealCheckboxGroup(sectionsMap, specialIssues)
+          }
+          {
+            sectionsMap.about && <CheckboxGroup
+              label={<h3>{COPY.SPECIAL_ISSUES_ABOUT_SECTION}</h3>}
+              name="About the appellant"
+              options={sectionsMap.about}
+              values={specialIssues}
+              onChange={this.onChangeSpecialIssue}
+            />
+          }
+          {
+            sectionsMap.residence && <CheckboxGroup
+              label={<h3>{COPY.SPECIAL_ISSUES_RESIDENCE_SECTION}</h3>}
+              name="Residence"
+              options={sectionsMap.residence}
+              values={specialIssues}
+              onChange={this.onChangeSpecialIssue}
+            />
+          }
+          {
+            sectionsMap.benefitType && <CheckboxGroup
+              label={<h3>{COPY.SPECIAL_ISSUES_BENEFIT_TYPE_SECTION}</h3>}
+              name="Benefit Types"
+              options={sectionsMap.benefitType}
+              values={specialIssues}
+              onChange={this.onChangeSpecialIssue}
+            />
+          }
         </div>
         <div {...flexColumn}>
-          <CheckboxGroup
-            styling={css({ marginTop: 0 })}
-            label={<h3> {COPY.SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION}</h3>}
-            name="Issues on Appeal"
-            options={issuesOnAppealSection}
-            values={specialIssues}
-            onChange={this.onChangeLegacySpecialIssue}
-          />
-          <CheckboxGroup
-            label={<h3>{COPY.SPECIAL_ISSUES_DIC_OR_PENSION_SECTION} </h3>}
-            name="DIC or Pension"
-            options={dicOrPensionSection}
-            values={specialIssues}
-            onChange={this.onChangeLegacySpecialIssue}
-          />
+          { /* For AMA cases, show the 'issuesOnAppeal' section in the first column.
+               For Legacy cases, show it in the second column.
+             */
+            appeal.isLegacyAppeal && sectionsMap.issuesOnAppeal &&
+            this.issuesOnAppealCheckboxGroup(sectionsMap, specialIssues)
+          }
+          {
+            sectionsMap.dicOrPension && <CheckboxGroup
+              label={<h3>{COPY.SPECIAL_ISSUES_DIC_OR_PENSION_SECTION} </h3>}
+              name="DIC or Pension"
+              options={sectionsMap.dicOrPension}
+              values={specialIssues}
+              onChange={this.onChangeSpecialIssue}
+            />
+          }
         </div>
       </div>
     </QueueFlowPage>;
+  };
+
+  issuesOnAppealCheckboxGroup = (sectionsMap, specialIssues) => {
+    return <CheckboxGroup
+      styling={css({ marginTop: 0 })}
+      label={<h3> {COPY.SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION}</h3>}
+      name="Issues on Appeal"
+      options={sectionsMap.issuesOnAppeal}
+      values={specialIssues}
+      onChange={this.onChangeSpecialIssue}
+    />;
   };
 }
 
 SelectSpecialIssuesView.propTypes = {
   appeal: PropTypes.shape({
-    externalId: PropTypes.string
+    externalId: PropTypes.string,
+    isLegacyAppeal: PropTypes.bool
   }),
   appealId: PropTypes.string.isRequired,
   error: PropTypes.shape({

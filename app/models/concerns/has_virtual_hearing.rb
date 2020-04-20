@@ -9,8 +9,8 @@ module HasVirtualHearing
 
   def virtual?
     [
-      VirtualHearing.statuses[:pending],
-      VirtualHearing.statuses[:active]
+      :pending,
+      :active
     ].include? virtual_hearing&.status
   end
 

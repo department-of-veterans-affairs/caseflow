@@ -56,8 +56,8 @@ class SeedDB
     User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
     dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "Geoffrey BVADispatchAdmin_NoCases Black")
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
-    bva_intake_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim BVAIntakeAdmin Blue")
-    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+    case_review_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
+    OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
     special_case_movement_user = User.create(css_id: "BVARDUNKLE",
                                              station_id: 101,
                                              full_name: "Rosalie SpecialCaseMovement Dunkle")
@@ -66,6 +66,10 @@ class SeedDB
                                               station_id: 101,
                                               full_name: "Bryan SpecialCaseMovementAdmin Beekman")
     OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
+    bva_intake_admin = User.create(css_id: "BVADWISE", station_id: 101, full_name: "Deborah BvaIntakeAdmin Wise")
+    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
+    bva_intake_user = User.create(css_id: "BVAISHAW", station_id: 101, full_name: "Ignacio BvaIntakeUser Shaw")
+    BvaIntake.singleton.add_user(bva_intake_user)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -88,6 +92,7 @@ class SeedDB
     create_hearings_user_and_tasks
     create_ama_distribution_tasks
     create_edit_hearings_user
+    create_non_admin_hearing_coordinator_user
   end
 
   def create_ama_distribution_tasks
@@ -144,6 +149,11 @@ class SeedDB
     HearingsManagement.singleton.add_user(hearings_user)
   end
 
+  def create_non_admin_hearing_coordinator_user
+    hearings_user = User.create(css_id: "BVANHALE", station_id: 101, full_name: "Nisha NonAdminHearingCoordinator Hale", roles: ["Edit HearSched"])
+    HearingsManagement.singleton.add_user(hearings_user)
+  end
+
   def create_legacy_case_with_open_schedule_hearing_task(ro_key)
     case ro_key
     when "RO17"
@@ -166,7 +176,7 @@ class SeedDB
           :appeal,
           :hearing_docket,
           claimants: [
-            FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10 ** 10)}")
+            FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10**10)}")
           ],
           closest_regional_office: regional_office
         )
@@ -195,18 +205,18 @@ class SeedDB
         )
 
         # For completed hearing tasks, generate additional tasks too.
-        if schedule_hearing_task_status == :completed
-          disposition_task = FactoryBot.create(
-            :assign_hearing_disposition_task,
-            parent: parent_hearing_task,
-            appeal: appeal
-          )
-          FactoryBot.create(
-            [:no_show_hearing_task, :evidence_submission_window_task].sample,
-            parent: disposition_task,
-            appeal: appeal
-          )
-        end
+        next unless schedule_hearing_task_status == :completed
+
+        disposition_task = FactoryBot.create(
+          :assign_hearing_disposition_task,
+          parent: parent_hearing_task,
+          appeal: appeal
+        )
+        FactoryBot.create(
+          [:no_show_hearing_task, :evidence_submission_window_task].sample,
+          parent: disposition_task,
+          appeal: appeal
+        )
       end
     end
   end
@@ -723,7 +733,7 @@ class SeedDB
 
     # Create AMA tasks ready for distribution
     (1..30).each do |num|
-      vet_file_number = "3213213%02d" % num
+      vet_file_number = format("3213213%02d", num)
       FactoryBot.create(
         :appeal,
         :ready_for_distribution,
@@ -1160,6 +1170,38 @@ class SeedDB
     create_task_at_attorney_review(FactoryBot.create(:appeal), acting_judge, attorney)
     create_task_at_judge_review(FactoryBot.create(:appeal), judge, acting_judge)
     create_task_at_judge_review(FactoryBot.create(:appeal), acting_judge, attorney)
+
+    # Create Acting Judge Legacy Appeals
+    create_legacy_appeal_at_acting_judge
+  end
+
+  def create_legacy_appeal_at_acting_judge
+    # Find the 2 VACOLS Cases for the Acting Judge (seeded from local/vacols/VACOLS::Case_dump.csv)
+    # - Case 3662860 does not have a decision drafted for it yet, so it is assigned to the AVLJ as an attorney
+    # - Case 3662859 has a valid decision document, so it is assigned to the AVLJ as a judge
+    vacols_case_attorney = VACOLS::Case.find_by(bfkey: "3662860")
+    vacols_case_judge = VACOLS::Case.find_by(bfkey: "3662859")
+
+    # Initialize the attorney and judge case issue list
+    attorney_case_issues = []
+    judge_case_issues = []
+    %w[5240 5241 5242 5243 5250].each do |lev2|
+      # Assign every other case issue to attorney
+      case_issues = lev2.to_i.even? ? attorney_case_issues : judge_case_issues
+
+      # Create issue and push into the case issues list
+      case_issues << FactoryBot.create(:case_issue, issprog: "02", isscode: "15", isslev1: "04", isslev2: lev2)
+    end
+
+    # Update the Case with the Issues
+    vacols_case_attorney.update!(case_issues: attorney_case_issues)
+    vacols_case_judge.update!(case_issues: judge_case_issues)
+
+    # Create the Judge and Attorney Legacy Appeals
+    [vacols_case_attorney, vacols_case_judge].each do |vacols_case|
+      # Assign the Vacols Case to the new Legacy Appeal
+      FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+    end
   end
 
   def create_board_grant_tasks
@@ -1354,10 +1396,10 @@ class SeedDB
     )
 
     jdr_task = FactoryBot.create(:ama_judge_decision_review_task, :completed,
-             assigned_to: mtv_judge, assigned_by: nil, appeal: appeal, parent: appeal.root_task)
+                                 assigned_to: mtv_judge, assigned_by: nil, appeal: appeal, parent: appeal.root_task)
 
     attorney_task = FactoryBot.create(:ama_attorney_task, :completed, assigned_by: mtv_judge,
-           assigned_to: drafting_attorney, appeal: appeal, parent: jdr_task)
+                                                                      assigned_to: drafting_attorney, appeal: appeal, parent: jdr_task)
 
     2.times do |idx|
       FactoryBot.create(
@@ -1390,14 +1432,13 @@ class SeedDB
 
   def send_mtv_to_judge(appeal, judge, lit_support_user, mail_task, recommendation)
     FactoryBot.create(:judge_address_motion_to_vacate_task,
-      :assigned,
-      appeal: appeal,
-      assigned_by: lit_support_user,
-      assigned_to: judge,
-      assigned_at: Time.zone.now,
-      parent: mail_task,
-      instructions: "I recommend #{recommendation}."
-    )
+                      :assigned,
+                      appeal: appeal,
+                      assigned_by: lit_support_user,
+                      assigned_to: judge,
+                      assigned_at: Time.zone.now,
+                      parent: mail_task,
+                      instructions: "I recommend #{recommendation}.")
   end
 
   def judge_addresses_mtv(jam_task, disposition, vacate_type, assigned_to)
@@ -1417,11 +1458,11 @@ class SeedDB
 
     # MTV file numbers with a decided appeal
     # From here a MailTeam user or LitigationSupport team member would create a motion to vacate task
-    ("000100000".."000100009").each{ |file_number| create_decided_appeal(file_number, mtv_judge, drafting_attorney) }
+    ("000100000".."000100009").each { |file_number| create_decided_appeal(file_number, mtv_judge, drafting_attorney) }
 
     # These are ready for the Lit Support user to send_to_judge
     ("000100010".."000100012").each do |file_number|
-      create_decided_appeal(file_number, mtv_judge, drafting_attorney).tap{ |a| create_motion_to_vacate_mail_task(a) }
+      create_decided_appeal(file_number, mtv_judge, drafting_attorney).tap { |a| create_motion_to_vacate_mail_task(a) }
     end
 
     # These are ready to be addressed by the Judge
@@ -1491,7 +1532,7 @@ class SeedDB
       original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
       mtv_task = create_motion_to_vacate_mail_task(original_stream)
       mtv_task.update!(status: "on_hold")
-      jam_task = send_mtv_to_judge(original_stream, mtv_judge,lit_support_user,  mtv_task, "granted")
+      jam_task = send_mtv_to_judge(original_stream, mtv_judge, lit_support_user, mtv_task, "granted")
       post_decision_motion = judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
       vacate_stream = post_decision_motion.appeal
       jdr_task = vacate_stream.tasks.find_by(type: "JudgeDecisionReviewTask")
@@ -1500,7 +1541,7 @@ class SeedDB
       root_task = vacate_stream.tasks.find_by(type: "RootTask")
       BvaDispatchTask.create_from_root_task(root_task)
       dispatch_user = vacate_stream.tasks.reload.find_by(type: "BvaDispatchTask", assigned_to_type: "User").assigned_to
-      last_six=file_number[-6..-1]
+      last_six = file_number[-6..-1]
       citation_number = "A19#{last_six}"
       outcode_params = {
         citation_number: citation_number, decision_date: Time.zone.now, redacted_document_location: "\\\\bvacofil1.dva.va.gov\\archdata$\\arch1901\\#{citation_number}.txt", file: last_six
