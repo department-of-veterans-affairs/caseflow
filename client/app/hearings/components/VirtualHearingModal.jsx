@@ -187,6 +187,14 @@ class VirtualHearingModal extends React.Component {
       vetEmailError: null,
       repEmailError: null
     };
+
+    if (this.props.type === 'change_to_virtual') {
+      this.props.update({
+        veteranEmail: this.props.virtualHearing.veteranEmail || this.props.hearing.veteranEmailAddress,
+        representativeEmail:
+          this.props.virtualHearing.representativeEmail || this.props.hearing.representativeEmailAddress
+      });
+    }
   }
 
   validateForm = () => {
