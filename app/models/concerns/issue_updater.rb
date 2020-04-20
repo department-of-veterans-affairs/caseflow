@@ -44,7 +44,7 @@ module IssueUpdater
         disposition: issue_attrs[:disposition],
         description: issue_attrs[:description],
         benefit_type: issue_attrs[:benefit_type],
-        diagnostic_code: issue_attrs[:diagnostic_code],
+        diagnostic_code: issue_attrs[:diagnostic_code].presence,
         participant_id: appeal.veteran.participant_id,
         decision_review: appeal,
         caseflow_decision_date: appeal.decision_document&.decision_date

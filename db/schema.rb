@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_05_223053) do
+ActiveRecord::Schema.define(version: 2020_04_16_161705) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1127,6 +1127,19 @@ ActiveRecord::Schema.define(version: 2020_04_05_223053) do
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
   end
 
+  create_table "sent_hearing_email_events", comment: "Events related to hearings notification emails", force: :cascade do |t|
+    t.string "email_address", comment: "Address the email was sent to"
+    t.string "email_type", comment: "The type of email sent: cancellation, confirmation, update"
+    t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
+    t.bigint "hearing_id", null: false, comment: "Associated hearing"
+    t.string "hearing_type", null: false
+    t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
+    t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
+    t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
+    t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
+    t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
+  end
+
   create_table "special_issue_lists", force: :cascade do |t|
     t.bigint "appeal_id"
     t.string "appeal_type"
@@ -1362,7 +1375,7 @@ ActiveRecord::Schema.define(version: 2020_04_05_223053) do
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
-    t.string "status", default: "pending", null: false, comment: "The status of the Pexip conference"
+    t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false
     t.string "veteran_email", comment: "Veteran's email address"
     t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"

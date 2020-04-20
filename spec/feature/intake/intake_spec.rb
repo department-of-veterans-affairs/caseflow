@@ -72,7 +72,6 @@ feature "Intake", :all_dbs do
         select_form(Constants.INTAKE_FORM_NAMES.appeal)
 
         expect(page).to have_content(COPY::INTAKE_APPEAL_PERMISSIONS_ALERT)
-        expect(page).to have_content("Mail to 425 I St NW, Washington DC, 20001")
         expect(page).to have_css(".cf-submit[disabled]")
 
         select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
@@ -271,7 +270,7 @@ feature "Intake", :all_dbs do
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
-        expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+        expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
         expect(page).to have_content(
           "the corporate database, then retry establishing the EP in Caseflow: country."
         )

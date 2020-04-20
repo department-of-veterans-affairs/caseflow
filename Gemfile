@@ -12,9 +12,10 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "f374da6041b52d73af60d79d60d4013a13d4a72e"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
+gem "ddtrace"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
