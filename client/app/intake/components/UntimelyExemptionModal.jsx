@@ -78,14 +78,14 @@ export const UntimelyExemptionModal = ({
   const descriptionText = () => {
     let errorMsg = '';
     const vacolsIssueIneligible = issue.vacolsId && !issue.eligibleForSocOptIn;
-    const requestIssueUnTimely = !issue.timely && !(formType === 'supplemental_claim');
+    const requestIssueUntimely = !issue.timely && !(formType === 'supplemental_claim');
 
     if (covidTimelinessExemption) {
-      if (vacolsIssueIneligible && requestIssueUnTimely) {
+      if (vacolsIssueIneligible && requestIssueUntimely) {
         errorMsg = COPY.INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY;
       } else if (vacolsIssueIneligible) {
         errorMsg = COPY.INTAKE_LEGACY_ISSUE_UNTIMELY;
-      } else if (requestIssueUnTimely) {
+      } else if (requestIssueUntimely) {
         errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
       }
 

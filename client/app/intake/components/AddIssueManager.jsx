@@ -156,7 +156,7 @@ class AddIssueManager extends React.Component {
       props: {
         intakeData,
         formType,
-        submitText: this.requiresTimelyrules() ? 'Next' : 'Add this issue',
+        submitText: this.requiresTimelyRules() ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSubmit: ({ vacolsId, vacolsSequenceId, eligibleForSocOptIn }) => {
           this.setState(
@@ -171,7 +171,7 @@ class AddIssueManager extends React.Component {
             () => {
               const { currentIssue } = this.state;
 
-              if (this.requiresTimelyrules()) {
+              if (this.requiresTimelyRules()) {
                 this.setState({ currentModal: 'UntimelyExemptionModal', addtlProps: { currentIssue } });
               } else {
                 this.props.addIssue(currentIssue);
@@ -270,12 +270,12 @@ class AddIssueManager extends React.Component {
     const { currentIssue } = this.state;
 
     // Skip untimely check for legacy issues
-    if (currentIssue && currentIssue.vacolsId) {
+    if (currentIssue?.vacolsId) {
       return false;
     }
 
     // Skip untimely check for unidentified issues
-    if (currentIssue && currentIssue.isUnidentified) {
+    if (currentIssue?.isUnidentified) {
       return false;
     }
 
@@ -283,12 +283,12 @@ class AddIssueManager extends React.Component {
   };
 
   requiresUntimelyExemptionWithCovid = () => {
-
-    const { currentIssue, eligibleForSocOptIn } = this.state;
+    const { currentIssue } = this.state;
     const { formType } = this.props;
-    const vacolsIdCheck = currentIssue && currentIssue.vacolsId;
-    const legacyIssueIsTimely = !vacolsIdCheck || !this.props.intakeData.legacyOptInApproved || eligibleForSocOptIn;
-    const requestIssueIsTimely = currentIssue && currentIssue.timely;
+    const vacolsIdCheck = currentIssue?.vacolsId;
+    const legacyIssueIsTimely = !vacolsIdCheck || !this.props.intakeData.legacyOptInApproved ||
+      currentIssue?.eligibleForSocOptIn;
+    const requestIssueIsTimely = currentIssue?.timely;
 
     if (formType === 'appeal') {
       return !requestIssueIsTimely && !vacolsIdCheck;
@@ -304,12 +304,10 @@ class AddIssueManager extends React.Component {
       }
 
       return true;
-
     }
-
   };
 
-  requiresTimelyrules = () => {
+  requiresTimelyRules = () => {
     const { covidTimelinessExemption } = this.props.featureToggles;
 
     if (covidTimelinessExemption) {
