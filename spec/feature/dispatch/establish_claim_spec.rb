@@ -484,6 +484,42 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
       expect(page).to have_content("System Error")
     end
 
+    context "Special issue validation" do
+      before { FeatureToggle.enable!(:special_issues_revamp) }
+      after { FeatureToggle.disable!(:special_issues_revamp) }
+
+      let!(:task) do
+        create(:establish_claim,
+               created_at: 3.days.ago,
+               prepared_at: Date.yesterday,
+               appeal: appeal_full_grant,
+               aasm_state: "unassigned")
+      end
+
+      scenario "Establish a new claim with special issue routed to national office" do
+        task.assign!(:assigned, current_user)
+        visit "/dispatch/establish-claim/#{task.id}"
+
+        # Try to move forward without selecting a special issue
+        click_on "Route claim"
+
+        # Error!
+        expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+        expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_DETAIL)
+
+        # Select no special issues and move forward
+        click_label("noSpecialIssues")
+        click_on "Route claim"
+
+        # Success!
+        expect(page).to have_content("Create End Product")
+
+        # Ensure we really cleared the error
+        click_on "< Back to Review Decision"
+        expect(page).to have_no_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
+      end
+    end
+
     context "For an appeal with multiple possible decision documents in VBMS" do
       let(:documents) do
         [
