@@ -53,12 +53,12 @@ export class EstablishClaimDecision extends React.Component {
     if (specialIssuesRevamp) {
       const specialIssueSelected = Object.values(specialIssues).some((specialIssue) => specialIssue);
 
-      if (!specialIssueSelected) {
-        handleSpecialIssueError(COPY.SPECIAL_ISSUES_NONE_CHOSEN_TITLE, COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL)
+      if (specialIssueSelected) {
+        clearSpecialIssueError();
+      } else {
+        handleSpecialIssueError(COPY.SPECIAL_ISSUES_NONE_CHOSEN_TITLE, COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL);
 
         return;
-      } else {
-        clearSpecialIssueError();
       }
     }
 
@@ -230,9 +230,7 @@ export class EstablishClaimDecision extends React.Component {
               </label>
             </legend>
             {specialIssuesError &&
-              <Alert title={specialIssuesError.title} type="error">
-                {specialIssuesError.details}
-              </Alert>
+              <Alert title={specialIssuesError.title} message={specialIssuesError.details} type="error" />
             }
             <div className="cf-multiple-columns">
               {enabledSpecialIssues(this.props.specialIssuesRevamp).map((issue, index) => {
