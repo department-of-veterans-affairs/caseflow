@@ -59,7 +59,7 @@ export class EstablishClaimDecision extends React.Component {
         valueName: 'program_description'
       },
       {
-        header: 'VACOLS Issue(s)',
+        header: 'VACOLS Issues',
         valueFunction: (issue, index) => {
           return issue.description.map(
             (descriptor) => (

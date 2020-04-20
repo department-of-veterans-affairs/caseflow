@@ -135,7 +135,7 @@ class OrganizationQueue extends React.PureComponent {
           title={`You have bulk assigned
             ${tasksAssignedByBulk.numberOfTasks}
             ${tasksAssignedByBulk.taskType.replace(/([a-z])([A-Z])/g, '$1 $2')}
-            task(s)`}
+            tasks`}
           type="success"
           styling={alertStyling} />
       }

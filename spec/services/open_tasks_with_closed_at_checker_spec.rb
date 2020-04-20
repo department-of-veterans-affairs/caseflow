@@ -25,8 +25,8 @@ describe OpenTasksWithClosedAtChecker, :postgres do
       subject.call
 
       expect(subject.report?).to eq(true)
-      expect(subject.report).to match(/1 open Task\(s\) with a closed_at value/)
-      expect(subject.report).to match(/1 open Task\(s\) with a closed parent Task/)
+      expect(subject.report).to match(/1 open Task with a closed_at value/)
+      expect(subject.report).to match(/1 open Task with a closed parent Task/)
     end
   end
 end
