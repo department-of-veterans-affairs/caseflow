@@ -34,14 +34,20 @@ describe DocketCoordinator, :all_dbs do
 
   let!(:priority_cases) do
     (0...priority_case_count).map do |i|
-      create(:case,
-             :aod,
-             bfd19: 2.years.ago,
-             bfac: "1",
-             bfmpro: "ACT",
-             bfcurloc: "81",
-             bfdloout: i.days.ago,
-             folder: build(:folder, tinum: "1801#{format('%03d', i)}", titrnum: "123456789S"))
+      create(
+        :case,
+        :aod,
+        bfd19: 2.years.ago,
+        bfac: "1",
+        bfmpro: "ACT",
+        bfcurloc: "81",
+        bfdloout: i.days.ago,
+        folder: build(
+          :folder,
+          tinum: "1801#{format('%<index>03d', index: i)}",
+          titrnum: "123456789S"
+        )
+      )
     end
   end
 
@@ -49,13 +55,19 @@ describe DocketCoordinator, :all_dbs do
 
   let!(:nonpriority_legacy_cases) do
     (0...nonpriority_legacy_count).map do |i|
-      create(:case,
-             bfd19: 3.years.ago,
-             bfac: "1",
-             bfmpro: "ACT",
-             bfcurloc: "81",
-             bfdloout: i.days.ago,
-             folder: build(:folder, tinum: "1701#{format('%03d', i)}", titrnum: "123456789S"))
+      create(
+        :case,
+        bfd19: 3.years.ago,
+        bfac: "1",
+        bfmpro: "ACT",
+        bfcurloc: "81",
+        bfdloout: i.days.ago,
+        folder: build(
+          :folder,
+          tinum: "1701#{format('%<index>03d', index: i)}",
+          titrnum: "123456789S"
+        )
+      )
     end
   end
 
