@@ -156,7 +156,7 @@ class AddIssueManager extends React.Component {
       props: {
         intakeData,
         formType,
-        submitText: this.requiresUntimelyExemption() ? 'Next' : 'Add this issue',
+        submitText: this.requiresTimelyRules() ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSubmit: ({ vacolsId, vacolsSequenceId, eligibleForSocOptIn }) => {
           this.setState(
@@ -171,7 +171,7 @@ class AddIssueManager extends React.Component {
             () => {
               const { currentIssue } = this.state;
 
-              if (this.requiresUntimelyExemption()) {
+              if (this.requiresTimelyRules()) {
                 this.setState({ currentModal: 'UntimelyExemptionModal', addtlProps: { currentIssue } });
               } else {
                 this.props.addIssue(currentIssue);
@@ -187,12 +187,13 @@ class AddIssueManager extends React.Component {
   };
 
   setupUntimelyExemptionModal = () => {
-    const { intakeData } = this.props;
+    const { intakeData, formType } = this.props;
 
     return {
       component: UntimelyExemptionModal,
       props: {
         intakeData,
+        formType,
         onCancel: () => this.cancel(),
         onSubmit: ({ untimelyExemption, untimelyExemptionNotes, untimelyExemptionCovid }) => {
           this.setState(
@@ -269,17 +270,53 @@ class AddIssueManager extends React.Component {
     const { currentIssue } = this.state;
 
     // Skip untimely check for legacy issues
-    if (currentIssue && currentIssue.vacolsId) {
+    if (currentIssue?.vacolsId) {
       return false;
     }
 
     // Skip untimely check for unidentified issues
-    if (currentIssue && currentIssue.isUnidentified) {
+    if (currentIssue?.isUnidentified) {
       return false;
     }
 
     return currentIssue && !currentIssue.timely;
   };
+
+  requiresUntimelyExemptionWithCovid = () => {
+    const { currentIssue } = this.state;
+    const { formType } = this.props;
+    const vacolsIdCheck = currentIssue?.vacolsId;
+    const legacyIssueIsTimely = !vacolsIdCheck || !this.props.intakeData.legacyOptInApproved ||
+      currentIssue?.eligibleForSocOptIn;
+    const requestIssueIsTimely = currentIssue?.timely;
+
+    if (formType === 'appeal') {
+      return !requestIssueIsTimely && !vacolsIdCheck;
+    }
+
+    if (formType === 'supplemental_claim') {
+      return !legacyIssueIsTimely;
+    }
+
+    if (formType === 'higher_level_review') {
+      if (requestIssueIsTimely) {
+        return !legacyIssueIsTimely;
+      }
+
+      return true;
+    }
+  };
+
+  requiresTimelyRules = () => {
+    const { covidTimelinessExemption } = this.props.featureToggles;
+
+    if (covidTimelinessExemption) {
+      return this.requiresUntimelyExemptionWithCovid();
+    }
+
+    return this.requiresUntimelyExemption();
+
+  }
 
   render() {
     const { currentModal, addtlProps } = this.state;
