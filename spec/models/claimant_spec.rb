@@ -73,12 +73,6 @@ describe Claimant, :postgres do
         expect(claimant.zip).to eq zip_code
         expect(claimant.country).to eq country
       end
-
-      it "calls Rails.cache.write when accessing #zip" do
-        expect(Rails.cache).to receive(:write).with(any_args)
-        expect(Rails.cache).to receive(:write).with("person-zip-20001", true).once
-        claimant.zip
-      end
     end
   end
 

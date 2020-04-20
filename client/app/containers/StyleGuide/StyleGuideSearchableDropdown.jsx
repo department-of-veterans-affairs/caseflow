@@ -65,7 +65,7 @@ export default class StyleGuideSearchableDropdown extends React.PureComponent {
         <h3 id="multi-dropdown">Creatable Searchable Multiselect Dropdown</h3>
         <SearchableDropdown
           creatable
-          label="Click in the box below to select, type, or add issue(s)"
+          label="Click in the box below to select, type, or add issues"
           name="multi-select-countries"
           options={options}
           required

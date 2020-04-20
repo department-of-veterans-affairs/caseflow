@@ -65,7 +65,7 @@ export default class UpcomingHearingsTable extends React.PureComponent {
         )
       },
       {
-        header: 'Type(s)',
+        header: 'Types',
         align: 'left',
         valueFunction: (row) => renderAppealType({
           caseType: row.appealType,

@@ -47,6 +47,8 @@ class WorkQueue::AppealSerializer
 
   attribute :removed, &:removed?
 
+  attribute :overtime, &:overtime?
+
   attribute :assigned_to_location
 
   attribute :completed_hearing_on_previous_appeal? do

@@ -158,7 +158,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         it "kicks off CreateConferenceJob and updates virtual_hearing table", :aggregate_failures do
           subject
           expect(VirtualHearing.first.establishment.submitted?).to eq(true)
-          expect(VirtualHearing.first.status).to eq("active")
+          expect(VirtualHearing.first.status).to eq(:active)
           expect(VirtualHearing.first.conference_id).to_not eq(nil)
           expect(VirtualHearing.first.veteran_email_sent).to eq(true)
           expect(VirtualHearing.first.judge_email_sent).to eq(true)
@@ -199,7 +199,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
         let(:virtual_hearing_params) do
           {
-            status: "cancelled"
+            request_cancelled: true
           }
         end
 
@@ -302,8 +302,8 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
     # for "America/New_York", "-04:00" or "-05:00" depending on daylight savings time
     let(:utc_offset) do
       hours, minutes = Time.zone.now.in_time_zone(expected_time_zone).utc_offset.divmod(60)[0].divmod(60)
-      hour_string = (hours < 0) ? format("%03i", hours) : format("+%02i", hours)
-      "#{hour_string}:#{format('%02i', minutes)}"
+      hour_string = (hours < 0) ? format("%<hours>03i", hours: hours) : format("+%<hours>02i", hours: hours)
+      "#{hour_string}:#{format('%<minutes>02i', minutes: minutes)}"
     end
 
     subject do

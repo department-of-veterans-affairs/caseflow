@@ -99,6 +99,7 @@ detectors:
       - ExternalApi::VBMSService#self.create_contentions!
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReview::ContestableIssueFinder#initialize
+      - QueueRepository#assign_case_to_attorney!
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReview::IntakeError#potential_error_code

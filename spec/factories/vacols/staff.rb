@@ -65,7 +65,8 @@ FactoryBot.define do
 
     after(:build) do |staff, evaluator|
       if evaluator.user&.full_name
-        staff.snamef, staff.snamel = evaluator.user.full_name.split(" ")
+        staff.snamef = evaluator.user.full_name.split(" ").first
+        staff.snamel = evaluator.user.full_name.split(" ").last
       end
     end
   end

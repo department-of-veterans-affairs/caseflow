@@ -33,7 +33,7 @@ describe Organizations::TaskPagesController, :postgres, type: :controller do
       end
 
       it "returns correct task_page_count" do
-        expect(subject["task_page_count"]).to eq((task_count.to_f / TaskPager::TASKS_PER_PAGE.to_f).ceil)
+        expect(subject["task_page_count"]).to eq((task_count.to_f / TaskPager::TASKS_PER_PAGE).ceil)
       end
 
       it "returns correct total_task_count" do

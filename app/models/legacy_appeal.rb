@@ -273,7 +273,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def veteran_ssn
-    vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
+    vbms_id.ends_with?("C") ? veteran&.ssn : sanitized_vbms_id
   end
 
   def congressional_interest_addresses
@@ -637,6 +637,10 @@ class LegacyAppeal < CaseflowRecord
     das_assignments.max_by(&:created_at).try(:assigned_by_name)
   end
 
+  def overtime?
+    QueueMapper::OVERTIME_WORK_PRODUCTS.key?(das_assignments.max_by(&:created_at).try(:work_product))
+  end
+
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
@@ -920,7 +924,7 @@ class LegacyAppeal < CaseflowRecord
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
-      return bfcorlid unless bfcorlid =~ /\d/
+      return bfcorlid unless bfcorlid.match?(/\d/)
 
       numeric = bfcorlid.gsub(/[^0-9]/, "")
 

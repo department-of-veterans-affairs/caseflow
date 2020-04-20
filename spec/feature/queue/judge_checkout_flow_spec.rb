@@ -85,6 +85,57 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       expect(case_review.one_touch_initiative).to eq false
       expect(case_review.positive_feedback).to include("logically_organized")
     end
+
+    context "when special_issues_revamp feature is enabled" do
+      before { FeatureToggle.enable!(:special_issues_revamp) }
+      after { FeatureToggle.disable!(:special_issues_revamp) }
+      scenario "starts dispatch checkout flow" do
+        visit "/queue"
+        click_on "(#{appeal.veteran_file_number})"
+
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+
+        # Special Issues page
+        expect(page).to have_content("Select special issues")
+
+        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
+
+        expect(page).to have_content("Blue Water")
+        expect(page).to have_content("Burn Pit")
+        expect(page).to have_content("Military Sexual Trauma (MST)")
+        expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
+        find("label", text: "Blue Water").click
+        click_on "Continue"
+
+        # Decision Issues screen
+        click_on "Continue"
+        expect(page).to have_content("Evaluate Decision")
+
+        expect(page).to_not have_content("Select an action")
+        expect(page).to_not have_content("One Touch Initiative")
+
+        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+        text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
+        find("label", text: text_to_click).click
+        find("#logically_organized", visible: false).sibling("label").click
+        find("#issues_are_not_addressed", visible: false).sibling("label").click
+
+        dummy_note = generate_words 5
+        fill_in "additional-factors", with: dummy_note
+        expect(page).to have_content(dummy_note[0..5])
+        click_on "Continue"
+
+        expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+
+        case_review = JudgeCaseReview.find_by(task_id: parent_task.id)
+        expect(case_review.attorney).to eq attorney_user
+        expect(case_review.judge).to eq judge_user
+        expect(case_review.complexity).to eq "easy"
+        expect(case_review.quality).to eq "does_not_meet_expectations"
+        expect(case_review.one_touch_initiative).to eq false
+        expect(case_review.positive_feedback).to include("logically_organized")
+      end
+    end
   end
 
   context "given a valid legacy appeal with single issue" do
