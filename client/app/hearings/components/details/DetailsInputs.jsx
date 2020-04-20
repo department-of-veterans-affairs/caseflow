@@ -72,6 +72,10 @@ const EmailSection = ({ hearing, virtualHearing, isVirtual, wasVirtual, readOnly
 };
 
 EmailSection.propTypes = {
+  errors: PropTypes.shape({
+    vetEmail: PropTypes.string,
+    repEmail: PropTypes.string
+  }),
   hearing: PropTypes.shape({
     scheduledForIsPast: PropTypes.bool
   }),
@@ -149,6 +153,10 @@ VirtualHearingSection.propTypes = {
   updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
     jobCompleted: PropTypes.bool
+  }),
+  errors: PropTypes.shape({
+    vetEmail: PropTypes.string,
+    repEmail: PropTypes.string
   }),
   wasVirtual: PropTypes.bool
 };
@@ -285,6 +293,10 @@ const DetailsInputs = (props) => {
 };
 
 DetailsInputs.propTypes = {
+  errors: PropTypes.shape({
+    vetEmail: PropTypes.string,
+    repEmail: PropTypes.string
+  }),
   hearing: PropTypes.shape({
     judgeId: PropTypes.string,
     room: PropTypes.string,

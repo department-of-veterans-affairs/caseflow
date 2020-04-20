@@ -165,7 +165,6 @@ class HearingDetails extends React.Component {
     this.setState({ updated: true });
   }
 
-
   handleSave = (editedEmails) => {
     if (
       !this.props.formData.virtualHearingForm.representativeEmail ||
