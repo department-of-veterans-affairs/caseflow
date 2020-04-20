@@ -57,6 +57,7 @@ class HearingDetails extends React.Component {
       loading: false,
       success: false,
       error: false,
+      virtualHearingErrors: {},
       virtualHearingModalOpen: false,
       virtualHearingModalType: null,
       startPolling: null,
@@ -129,7 +130,11 @@ class HearingDetails extends React.Component {
 
   updateVirtualHearing = (values) => {
     this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
-    this.setState({ updated: true });
+
+    this.setState({
+      updated: !_.isEmpty(deepDiff(values, this.state.initialFormData.virtualHearingForm)),
+      virtualHearingErrors: {}
+    });
   }
 
   resetVirtualHearing = () => {
@@ -159,6 +164,27 @@ class HearingDetails extends React.Component {
     this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, values);
     this.setState({ updated: true });
   }
+
+
+  handleSave = (editedEmails) => {
+    if (
+      !this.props.formData.virtualHearingForm.representativeEmail ||
+      !this.props.formData.virtualHearingForm.veteranEmail
+    ) {
+      this.setState({
+        loading: false,
+        success: false,
+        virtualHearingErrors: {
+          vetEmail: !this.props.formData.virtualHearingForm.veteranEmail && 'Veteran email is required',
+          repEmail: !this.props.formData.virtualHearingForm.representativeEmail && 'Representative email is required'
+        }
+      });
+    } else if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
+      this.openVirtualHearingModal({ type: 'change_email' });
+    } else {
+      this.submit();
+    }
+  };
 
   submit = () => {
     const { hearing: { externalId } } = this.props;
@@ -299,6 +325,7 @@ class HearingDetails extends React.Component {
             type={this.state.virtualHearingModalType}
             {...editedEmails} />}
           <DetailsInputs
+            errors={this.state.virtualHearingErrors}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
@@ -324,13 +351,7 @@ class HearingDetails extends React.Component {
                 disabled={!this.state.updated || this.state.disabled}
                 loading={this.state.loading}
                 className="usa-button"
-                onClick={() => {
-                  if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
-                    this.openVirtualHearingModal({ type: 'change_email' });
-                  } else {
-                    this.submit();
-                  }
-                }}
+                onClick={() => this.handleSave(editedEmails)}
                 styling={css({ float: 'right' })}
               >Save</Button>
             </span>
