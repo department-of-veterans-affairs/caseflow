@@ -13,8 +13,10 @@ describe JudgeTask, :all_dbs do
 
   describe ".available_actions" do
     let(:user) { judge }
+    let(:appeal) { create(:appeal, stream_type: stream_type) }
+    let(:stream_type) { "original" }
     let(:subject_task) do
-      create(:ama_judge_task, assigned_to: judge, appeal: create(:appeal))
+      create(:ama_judge_task, assigned_to: judge, appeal: appeal)
     end
 
     subject { subject_task.available_actions_unwrapper(user) }
@@ -133,6 +135,22 @@ describe JudgeTask, :all_dbs do
              Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
           )
         end
+      end
+    end
+
+    fcontext "in the review phase" do
+      let(:stream_type) { "vacate" }
+      let!(:task) do
+        create(:ama_judge_decision_review_task,
+               appeal: appeal,
+               assigned_to: judge)
+      end
+
+      it "should fail creation of second JudgeDecisionReviewTask" do
+        binding.pry
+        expect(JudgeDecisionReviewTask.new(assigned_to: user).additional_available_actions(user)).to eq(
+          [Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h]
+        )
       end
     end
   end

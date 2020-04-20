@@ -14,7 +14,10 @@ class JudgeDecisionReviewTask < JudgeTask
                            else
                              Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h
                            end
-    [judge_checkout_label, Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
+    binding.pry
+    [vacate_appeal,
+     judge_checkout_label,
+     Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h].compact
   end
 
   def self.label
@@ -47,5 +50,9 @@ class JudgeDecisionReviewTask < JudgeTask
     return Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h if FeatureToggle.enabled?(:special_issues_revamp)
 
     Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h
+  end
+
+  def vacate_appeal
+    return Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?
   end
 end
