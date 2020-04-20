@@ -7,6 +7,8 @@ import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 import { useSelector } from 'react-redux';
 import Checkbox from '../../components/Checkbox';
+import { css } from 'glamor';
+import COPY from '../../../COPY';
 
 const generateButtons = ({ cancelText, onCancel, onSubmit, submitText, skipText, onSkip, state, isInvalid }) => {
   const btns = [
@@ -38,6 +40,7 @@ export const UntimelyExemptionModal = ({
   intakeData,
   currentIssue,
   onSubmit,
+  formType,
   submitText = 'Add this issue',
   onCancel,
   cancelText = 'Cancel adding this issue',
@@ -72,13 +75,36 @@ export const UntimelyExemptionModal = ({
   const issueNumber = (intakeData.addedIssues || []).length + 1;
   const issue = currentIssue;
 
+  const descriptionText = () => {
+    let errorMsg = '';
+    const vacolsIssueIneligible = issue.vacolsId && !issue.eligibleForSocOptIn;
+    const requestIssueUntimely = !issue.timely && !(formType === 'supplemental_claim');
+
+    if (covidTimelinessExemption) {
+      if (vacolsIssueIneligible && requestIssueUntimely) {
+        errorMsg = COPY.INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY;
+      } else if (vacolsIssueIneligible) {
+        errorMsg = COPY.INTAKE_LEGACY_ISSUE_UNTIMELY;
+      } else if (requestIssueUntimely) {
+        errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
+      }
+
+    } else {
+      errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
+    }
+
+    return errorMsg;
+  };
+
   return (
     <div className="intake-add-issues">
       <Modal buttons={buttons} visible closeHandler={onCancel} title={`Issue ${issueNumber} is an Untimely Issue`}>
         <p>
           <strong>Requested issue:</strong> {issue.description}
         </p>
-        <p>The issue requested isn't usually eligible because its decision date is older than what's allowed.</p>
+        <p {...css({ marginBottom: '20px !important' })}>
+          {descriptionText()}
+        </p>
         <RadioField
           name="untimely-exemption"
           label="Did the applicant request an extension to the date requirements?"
@@ -122,6 +148,7 @@ UntimelyExemptionModal.propTypes = {
   onCancel: PropTypes.func,
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
+  formType: PropTypes.string,
   skipText: PropTypes.string
 };
 
