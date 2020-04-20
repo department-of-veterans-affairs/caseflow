@@ -63,7 +63,7 @@ class CaseTitle extends React.PureComponent {
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
       </span>
-      <BadgeArea appeal={appeal} />
+      <BadgeArea appeal={appeal} isHorizontal />
     </CaseTitleScaffolding>;
   }
 }

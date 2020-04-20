@@ -331,7 +331,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
       expect(page).to have_content("Check the Veteran's profile for invalid information")
-      expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+      expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
       expect(page).to have_content(
         "the corporate database, then retry establishing the EP in Caseflow: country"
       )

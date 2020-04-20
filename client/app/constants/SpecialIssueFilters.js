@@ -49,8 +49,11 @@ const specialIssueFilters = (isFeatureToggled) => ({
 
   dicOrPensionSection () {
     return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'dicOrPension');
-  }
+  },
 
+  amaIssuesOnAppealSection () {
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.isAmaRelevant && issue.queueSection === 'issuesOnAppeal');
+  }
 });
 
 export default specialIssueFilters;

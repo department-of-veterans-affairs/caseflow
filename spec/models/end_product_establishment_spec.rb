@@ -312,7 +312,11 @@ describe EndProductEstablishment, :postgres do
         allow(end_product_establishment.veteran).to receive(:end_products).and_return([orphaned_end_product])
         subject
         expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
-        expect(end_product_establishment.reference_id).to eq(orphaned_end_product.claim_id)
+        expect(end_product_establishment).to have_attributes(
+          reference_id: orphaned_end_product.claim_id,
+          established_at: Time.zone.now,
+          modifier: orphaned_end_product.modifier
+        )
       end
     end
 

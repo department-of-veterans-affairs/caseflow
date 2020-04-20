@@ -158,7 +158,7 @@ export class CaseTitleDetails extends React.PureComponent {
 
       { !userIsVsoEmployee && this.props.userCanAccessReader &&
         <React.Fragment>
-          <h4>Veteran Documents</h4>
+          <h4>{COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL}</h4>
           <div>
             <ReaderLink
               appealId={appealId}
@@ -232,15 +232,17 @@ export class CaseTitleDetails extends React.PureComponent {
           </Modal>}
         </React.Fragment> }
 
-      { !userIsVsoEmployee && appeal.assignedJudge && !appeal.removed && <React.Fragment>
-        <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</h4>
-        <div>{appeal.assignedJudge.full_name}</div>
-      </React.Fragment> }
+      { !userIsVsoEmployee && appeal.assignedJudge && !appeal.removed && appeal.status !== 'cancelled' &&
+        <React.Fragment>
+          <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</h4>
+          <div>{appeal.assignedJudge.full_name}</div>
+        </React.Fragment> }
 
-      { !userIsVsoEmployee && appeal.assignedAttorney && !appeal.removed && <React.Fragment>
-        <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
-        <div>{appeal.assignedAttorney.full_name}</div>
-      </React.Fragment> }
+      { !userIsVsoEmployee && appeal.assignedAttorney && !appeal.removed && appeal.status !== 'cancelled' &&
+        <React.Fragment>
+          <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
+          <div>{appeal.assignedAttorney.full_name}</div>
+        </React.Fragment> }
     </CaseDetailTitleScaffolding>;
   };
 }
