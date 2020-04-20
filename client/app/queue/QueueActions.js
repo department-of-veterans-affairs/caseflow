@@ -444,7 +444,8 @@ export const initialAssignTasksToUser = ({
         tasks: {
           assigned_to_id: assigneeId,
           type: 'JudgeCaseAssignmentToAttorney',
-          appeal_id: oldTask.appealId
+          appeal_id: oldTask.appealId,
+          judge_id: previousAssigneeId
         }
       }
     }

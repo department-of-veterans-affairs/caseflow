@@ -137,6 +137,7 @@ const appealAttributesFromRawTask = (task) => ({
   isLegacyAppeal: task.attributes.docket_name === 'legacy',
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,
+  overtime: task.attributes.overtime,
   issueCount: task.attributes.issue_count,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
@@ -177,6 +178,7 @@ export const prepareLegacyTasksForStore = (tasks) => {
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       closedAt: null,
+      assigneeName: task.attributes.assignee_name,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         isOrganization: task.attributes.assigned_to.is_organization,
@@ -286,6 +288,7 @@ export const prepareAppealForStore = (appeals) => {
       docketName: appeal.attributes.docket_name,
       withdrawn: appeal.attributes.withdrawn,
       removed: appeal.attributes.removed,
+      overtime: appeal.attributes.overtime,
       withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
       isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
       caseType: appeal.attributes.type,

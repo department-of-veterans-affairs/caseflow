@@ -15,6 +15,7 @@
     buildDate: build_date,
     hasCaseDetailsRole: current_user.roles.include?('Case Details'),
     userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
+    userCanViewOvertimeStatus: current_user.can_view_overtime_status?,
     featureToggles: {
       special_issues_revamp: FeatureToggle.enabled?(:special_issues_revamp, user: current_user)
     }

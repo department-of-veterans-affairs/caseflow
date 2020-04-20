@@ -58,6 +58,10 @@ class WorkQueue::LegacyTaskSerializer
     object.appeal.aod
   end
 
+  attribute :overtime do |object|
+    object.appeal.overtime?
+  end
+
   attribute :external_appeal_id do |object|
     object.appeal.vacols_id
   end

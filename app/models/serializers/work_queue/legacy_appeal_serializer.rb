@@ -43,6 +43,7 @@ class WorkQueue::LegacyAppealSerializer
   attribute :nod_date
   attribute :certification_date
   attribute :paper_case, &:paper_case?
+  attribute :overtime, &:overtime?
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end
