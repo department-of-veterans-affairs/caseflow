@@ -17,14 +17,14 @@
 class Api::V3::DecisionReview::ContestableIssueFinder
   # rubocop:disable Metrics/ParameterLists
   def initialize(
-        decision_review_class:,
-        veteran:,
-        receipt_date:,
-        benefit_type:,
-        rating_issue_id: nil,
-        decision_issue_id: nil,
-        rating_decision_issue_id: nil
-      )
+    decision_review_class:,
+    veteran:,
+    receipt_date:,
+    benefit_type:,
+    rating_issue_id: nil,
+    decision_issue_id: nil,
+    rating_decision_issue_id: nil
+  )
     @decision_review_class = decision_review_class
     @veteran = veteran
     @receipt_date = receipt_date

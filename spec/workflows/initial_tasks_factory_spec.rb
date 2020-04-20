@@ -58,7 +58,7 @@ describe InitialTasksFactory, :postgres do
         end
 
         it "does not create a tracking task" do
-          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(0)
+          expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(0)
         end
       end
 
@@ -85,7 +85,7 @@ describe InitialTasksFactory, :postgres do
 
         it "creates a tracking task assigned to the VSO" do
           subject
-          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+          expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
           expect(appeal.tasks.detect { |t| t.is_a?(TrackVeteranTask) }.assigned_to).to eq(pva)
         end
 
@@ -102,9 +102,9 @@ describe InitialTasksFactory, :postgres do
           end
 
           it "does not create a duplicate tracking task" do
-            expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+            expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
             subject
-            expect(appeal.reload.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+            expect(appeal.reload.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
           end
         end
       end

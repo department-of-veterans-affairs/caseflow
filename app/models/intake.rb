@@ -113,7 +113,7 @@ class Intake < CaseflowRecord
         completed_at: Time.zone.now,
         completion_status: :error
       )
-      return false
+      false
     end
   end
 
