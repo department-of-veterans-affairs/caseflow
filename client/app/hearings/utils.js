@@ -164,7 +164,7 @@ export const reset = (obj) => Object.keys(obj).reduce((result, item) => ({ ...re
  * @param {Object} first -- The first object to check status
  * @param {Object} second -- The second object to check status
  * @param {string} form -- The form to check the value of status
- * @returns {Object} -- The initial and current values that will be compares later
+ * @returns {Object} -- The initial and current values that will be compared later
  */
 export const toggleCancelled = (first, second, form) =>
   !second[form]?.requestCancelled && first[form]?.status === 'cancelled' ?
