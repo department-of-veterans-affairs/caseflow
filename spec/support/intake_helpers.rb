@@ -385,7 +385,7 @@ module IntakeHelpers
         bfkey: "vacols2",
         bfcorlid: "#{veteran_file_number}S",
         bfdnod: 4.years.ago,
-        bfdsoc: Date.new(2019,12,31),
+        bfdsoc: Date.new(2019, 12, 31),
         case_issues: [
           create(:case_issue, :intervertebral_disc_syndrome),
           create(:case_issue, :degenerative_arthritis_of_the_spine)
@@ -401,7 +401,7 @@ module IntakeHelpers
         bfkey: "vacols5",
         bfcorlid: "#{veteran_file_number}S",
         bfdnod: 2.years.ago,
-        bfdsoc: Date.new(2020,2,2),
+        bfdsoc: Date.new(2020, 2, 2),
         case_issues: [
           create(:case_issue, :rheumatoid_arthritis),
           create(:case_issue, :osteomyelitis)

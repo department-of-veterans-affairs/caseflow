@@ -4,7 +4,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(post_ama_start_date)
+    Timecop.freeze(Date.new(2020, 4, 21))
     FeatureToggle.enable!(:use_ama_activation_date)
   end
 
@@ -521,7 +521,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         description: "A nonrating issue before AMA",
         date: pre_ama_start_date.to_date.mdY
       )
-
+      add_untimely_exemption_response("Yes")
       safe_click("#button-submit-update")
 
       expect(page).to have_content("The review originally had 1 issue but now has 3.")
@@ -1220,7 +1220,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
-        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawal pending/i)
+        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 03\/31\/2020\s*Withdrawal pending/i)
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -1268,7 +1268,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         expect(page).to have_content(/Requested issues\s*[0-9]+\. Left knee granted/i)
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawal pending/i
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 03\/31\/2020\s*Withdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1290,7 +1290,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawn on/i
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 03\/31\/2020\s*Withdrawn on/i
         )
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
@@ -1344,8 +1344,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
         click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
 
+        expect(page).to have_content("Review Removed")
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 

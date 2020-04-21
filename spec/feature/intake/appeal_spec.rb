@@ -4,7 +4,7 @@ feature "Appeal Intake", :all_dbs do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(post_ama_start_date)
+    Timecop.freeze(Date.new(2020, 4, 21))
   end
 
   let!(:current_user) do
@@ -32,9 +32,9 @@ feature "Appeal Intake", :all_dbs do
   end
 
   let(:future_date) { (Time.zone.now + 30.days).to_date }
-  let(:receipt_date) { (post_ama_start_date - 30.days).to_date }
+  let(:receipt_date) { 30.days.ago.to_date }
   let(:untimely_days) { 372.days }
-  let(:profile_date) { (post_ama_start_date - 35.days).utc.to_datetime }
+  let(:profile_date) { 35.days.ago.utc.to_datetime }
   let(:nonrating_date) { Time.zone.yesterday }
   let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
   let(:promulgation_date) { receipt_date - 5.days }

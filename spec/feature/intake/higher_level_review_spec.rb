@@ -4,7 +4,7 @@ feature "Higher-Level Review", :all_dbs do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(post_ama_start_date)
+    Timecop.freeze(Date.new(2020, 4, 21))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -1406,8 +1406,8 @@ feature "Higher-Level Review", :all_dbs do
 
             # Expect legacy opt in issue modal to show
             expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-            add_intake_rating_issue("impairment of hip")
-            expect(page).to have_content("Service connection, impairment of hip")
+            add_intake_rating_issue("ankylosis of hip")
+            expect(page).to have_content("Service connection, ankylosis of hip")
           end
 
           scenario "with legacy opt in not approved" do

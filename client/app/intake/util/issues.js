@@ -325,7 +325,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       const issueText = issue.isUnidentified ? `Unidentified issue: no issue matched for "${issue.description}"` : issue.description
       return {
         index,
-        referenceId: issue.id,
+        id: issue.id,
         text: issueText,
         notes: issue.notes,
         isUnidentified: issue.isUnidentified,
@@ -357,7 +357,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
 
       return {
         index,
-        referenceId: issue.id,
+        id: issue.id,
         text: issue.description,
         date: issue.decisionDate || issue.approxDecisionDate,
         notes: issue.notes,
@@ -393,7 +393,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
     // returns nonrating request issue format
     return {
       index,
-      referenceId: issue.id,
+      id: issue.id,
       text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
       benefitType: issue.benefitType,
       date: issue.decisionDate,
