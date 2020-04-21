@@ -226,10 +226,12 @@ describe HearingDayRange, :all_dbs do
     let!(:vso_participant_ids) do
       [
         {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: vso_participant_id
+          power_of_attorney: {
+            legacy_poa_cd: "070",
+            nm: "VIETNAM VETERANS OF AMERICA",
+            org_type_nm: "POA National Organization",
+            ptcpnt_id: vso_participant_id
+          }
         }
       ]
     end
