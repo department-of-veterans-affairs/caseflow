@@ -34,11 +34,11 @@ class VirtualHearings::SendEmail
 
     case type.to_s
     when "confirmation"
-      VirtualHearingMailer.confirmation(args)
+      VirtualHearingMailer.confirmation(**args)
     when "cancellation"
-      VirtualHearingMailer.cancellation(args)
+      VirtualHearingMailer.cancellation(**args)
     when "updated_time_confirmation"
-      VirtualHearingMailer.updated_time_confirmation(args)
+      VirtualHearingMailer.updated_time_confirmation(**args)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
