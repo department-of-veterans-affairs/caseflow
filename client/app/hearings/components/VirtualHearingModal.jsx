@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Button from '../../components/Button';
@@ -162,79 +162,73 @@ const TYPES = {
   }
 };
 
-class VirtualHearingModal extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      vetEmailError: null,
-      repEmailError: null
-    };
-
-    if (this.props.type === 'change_to_virtual') {
-      this.props.update({ veteranEmail: this.props.hearing.veteranEmailAddress,
-        representativeEmail: this.props.hearing.representativeEmailAddress });
-    }
+const VirtualHearingModal = (props) => {
+  if (!props.show) {
+    return null;
   }
 
-  validateForm = () => {
-    let { virtualHearing } = this.props;
+  const [vetEmailError, setVetEmailError] = useState(null);
+  const [repEmailError, setRepEmailError] = useState(null);
+
+  const { type, update, hearing, virtualHearing, submit, closeModal } = props;
+
+  useEffect(() => {
+    if (type === 'change_to_virtual') {
+      update({ veteranEmail: hearing.veteranEmailAddress,
+        representativeEmail: hearing.representativeEmailAddress });
+    }
+  }, []);
+
+  const validateForm = () => {
     let isValid = true;
 
     if (_.isEmpty(virtualHearing.veteranEmail)) {
-      this.setState({ vetEmailError: INVALID_EMAIL_FORMAT });
+      setVetEmailError(INVALID_EMAIL_FORMAT);
       isValid = false;
     }
 
     return isValid;
-  }
+  };
 
-  onSubmit = () => {
-    let { submit } = this.props;
-
-    if (this.validateForm()) {
+  const onSubmit = () => {
+    if (validateForm()) {
       submit().
         catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
           const msg = error.response.body.errors[0].message;
 
-          this.setState({
-            repEmailError: msg.indexOf('Representative') === -1 ? null : INVALID_EMAIL_FORMAT,
-            vetEmailError: msg.indexOf('Veteran') === -1 ? null : INVALID_EMAIL_FORMAT
-          });
+          setVetEmailError(msg.indexOf('Veteran') === -1 ? null : INVALID_EMAIL_FORMAT);
+          setRepEmailError(msg.indexOf('Representative') === -1 ? null : INVALID_EMAIL_FORMAT);
         });
     }
-  }
+  };
 
-  render () {
-    const { type, reset } = this.props;
-    const { vetEmailError, repEmailError } = this.state;
+  const typeSettings = TYPES[type];
 
-    const typeSettings = TYPES[type];
-
-    return <div>
+  return (
+    <div>
       <Modal
         title={typeSettings.title}
-        closeHandler={reset}
+        closeHandler={closeModal}
         confirmButton={
           <Button classNames={['usa-button-secondary']}
-            onClick={this.onSubmit}>
+            onClick={onSubmit}>
             {typeSettings.button || COPY.VIRTUAL_HEARING_CHANGE_HEARING_BUTTON}
           </Button>
         }
         cancelButton={
-          <Button linkStyling onClick={reset}>Cancel</Button>
+          <Button linkStyling onClick={closeModal}>Cancel</Button>
         }>
         <p dangerouslySetInnerHTML={{ __html: typeSettings.intro }}>
         </p>
         <typeSettings.element
-          {...this.props}
+          {...props}
           vetEmailError={vetEmailError}
           repEmailError={repEmailError} />
       </Modal>
-    </div>;
-  }
-}
+    </div>
+  );
+};
 
 VirtualHearingModal.propTypes = {
   virtualHearing: PropTypes.shape({
@@ -261,7 +255,7 @@ VirtualHearingModal.propTypes = {
   vetEmailEdited: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
-  reset: PropTypes.func,
+  show: PropTypes.bool,
   closeModal: PropTypes.func
 };
 

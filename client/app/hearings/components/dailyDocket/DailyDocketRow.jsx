@@ -349,28 +349,13 @@ class DailyDocketRow extends React.Component {
     });
   };
 
-  renderVirtualHearingModal = (user, hearing) => (
-    <VirtualHearingModal
-      hearing={hearing}
-      timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
-      virtualHearing={hearing.virtualHearing || {}}
-      reset={() => {
-        this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });
-        this.closeVirtualHearingModal();
-      }}
-      user={user}
-      update={this.updateVirtualHearing}
-      submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
-      type="change_hearing_time"
-    />
-  );
-
   render() {
     const { hearing, user, index, readOnly, hidePreviouslyScheduled } = this.props;
 
     const hide = isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled ? 'hide ' : '';
     const judgeView = user.userHasHearingPrepRole ? 'judge-view' : '';
     const className = `${hide}${judgeView}`;
+    const { virtualHearingModalActive, initialState } = this.state;
 
     return (
       <div {...docketRowStyle} key={hearing.externalId} className={className}>
@@ -388,10 +373,20 @@ class DailyDocketRow extends React.Component {
           {this.getLeftColumn()}
           {this.getRightColumn()}
         </div>
-        {user.userCanScheduleVirtualHearings &&
-          this.state.virtualHearingModalActive &&
-          hearing.isVirtual &&
-          this.renderVirtualHearingModal(user, hearing)}
+        <VirtualHearingModal
+          show={user.userCanScheduleVirtualHearings && virtualHearingModalActive && hearing.isVirtual}
+          hearing={hearing}
+          timeWasEdited={initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
+          virtualHearing={hearing.virtualHearing || {}}
+          closeModal={() => {
+            this.update({ scheduledTimeString: initialState.scheduledTimeString });
+            this.closeVirtualHearingModal();
+          }}
+          user={user}
+          update={this.updateVirtualHearing}
+          submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
+          type="change_hearing_time"
+        />
         {this.state.aodModalActive && (
           <AodModal
             advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
