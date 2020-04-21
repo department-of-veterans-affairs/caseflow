@@ -356,12 +356,18 @@ class DailyDocketRow extends React.Component {
     return user.userCanScheduleVirtualHearings && virtualHearingModalActive && hearing.isVirtual;
   }
 
-  render() {
-    const { user, hearing, index, readOnly, hidePreviouslyScheduled } = this.props;
+  judgeView = (user) => user.userHasHearingPrepRole ? 'judge-view' : '';
 
-    const hide = isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled ? 'hide ' : '';
-    const judgeView = user.userHasHearingPrepRole ? 'judge-view' : '';
-    const className = `${hide}${judgeView}`;
+  hidePreviouslyScheduled = () => {
+    const { hearing, hidePreviouslyScheduled } = this.props;
+
+    return isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled ? 'hide ' : '';
+  }
+
+  render() {
+    const { user, hearing, index, readOnly } = this.props;
+
+    const className = `${this.hidePreviouslyScheduled()}${this.judgeView()}`;
     const { initialState } = this.state;
 
     return (
