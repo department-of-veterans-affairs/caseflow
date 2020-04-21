@@ -91,7 +91,7 @@ class VirtualHearings::SendEmail
     # the email after it has been accepted by GovDelivery.
     email = email_for_recipient(recipient)
 
-    return if email.nil?
+    return false if email.nil?
 
     msg = email.deliver_now!
 
