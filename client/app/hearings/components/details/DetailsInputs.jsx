@@ -230,7 +230,8 @@ const DetailsInputs = (props) => {
         virtualHearing={virtualHearing}
         wasVirtual={wasVirtual}
       />
-      {((isVirtual && virtualHearing?.jobCompleted) || wasVirtual) && <EmailNotificationHistory wasVirtual />}
+      {/* TODO: Change to rows.length > 0 where rows = emails_sent list */}
+      <EmailNotificationHistory />
       {!isLegacy && (
         <React.Fragment>
           <div className="cf-help-divider" />

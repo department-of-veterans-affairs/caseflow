@@ -5,6 +5,9 @@ import Accordion from '../../../components/Accordion';
 import AccordionSection from '../../../components/AccordionSection';
 import Table from '../../../components/Table';
 import COPY from '../../../../COPY';
+import moment from 'moment-timezone';
+
+const DATE_TIME_FORMAT = 'MMM DD, YYYY, h:mm a zz';
 
 // Setup the column definitions
 const columns = [
@@ -16,8 +19,12 @@ const columns = [
   },
   {
     align: 'left',
-    valueName: 'sentAt',
-    header: 'Date Sent'
+    header: 'Date Sent',
+    valueFunction: (email) =>
+      moment(email.sentAt).
+        tz(moment.tz.guess()).
+        format(DATE_TIME_FORMAT).
+        replace(/DT/, 'ST')
   },
   {
     align: 'left',
@@ -29,7 +36,7 @@ const columns = [
 const rows = [
   {
     emailAddress: 'something',
-    sentAt: 'someDate',
+    sentAt: '2020-04-21 17:48:27 UTC',
     sentTo: 'someone',
     sentBy: 'someoneelse'
   }
