@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 import update from 'immutability-helper';
 import pluralize from 'pluralize';
+import PropTypes from 'prop-types';
 
 import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
@@ -11,7 +12,8 @@ import { issueCountSelector } from '../../intake/selectors';
 import { requestIssuesUpdate } from '../actions/edit';
 import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../intake/constants';
 import SaveAlertConfirmModal from './SaveAlertConfirmModal';
-import PropTypes from 'prop-types';
+import COPY from '../../../COPY';
+import { sprintf } from 'sprintf-js';
 
 class SaveButtonUnconnected extends React.Component {
   constructor(props) {
@@ -131,55 +133,47 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
 
-    const saveButtonText = withdrawReview ? 'Withdraw' : 'Save';
+    const saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_SAVE;
 
-    const removeVbmsCopy = 'This will remove the review and cancel all the End Products associated with it.';
-
-    const removeCaseflowCopy = 'This review and all tasks associated with it will be removed.';
-
-    const originalIssueNumberCopy = `The review originally had ${this.state.originalIssueNumber}
-       ${pluralize('issue', this.state.originalIssueNumber)} but now has ${this.props.state.addedIssues.length}.`;
+    const originalIssueNumberCopy = sprintf(COPY.CORRECT_REQUEST_ISSUES_ORIGINAL_NUMBER, this.state.originalIssueNumber,
+      pluralize('issue', this.state.originalIssueNumber), this.props.state.addedIssues.length);
 
     return <span>
       {this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
-        title="Number of issues has changed"
+        title={COPY.CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TITLE}
         onClose={() => this.closeModal('issueChangeModal')}
         onConfirm={() => this.confirmModal('issueChangeModal')}>
         <p>
           {originalIssueNumberCopy}
         </p>
-        <p>Please check that this is the correct number.</p>
+        <p>{COPY.CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TEXT}</p>
       </SaveAlertConfirmModal>}
 
       {this.state.showModals.reviewRemovedModal && <SaveAlertConfirmModal
-        title="Remove review?"
-        buttonText= "Yes, remove"
+        title={COPY.CORRECT_REQUEST_ISSUES_REMOVE_MODAL_TITLE}
+        buttonText={COPY.CORRECT_REQUEST_ISSUES_REMOVE_MODAL_BUTTON}
         onClose={() => this.closeModal('reviewRemovedModal')}
         onConfirm={() => this.confirmModal('reviewRemovedModal')}>
-        <p>
-          {originalIssueNumberCopy}
-        </p>
-        <p>{processedInCaseflow ? removeCaseflowCopy : removeVbmsCopy}</p>
+        <p>{originalIssueNumberCopy}</p>
+        <p>{processedInCaseflow ?
+          COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW :
+          COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS}</p>
       </SaveAlertConfirmModal>}
 
       { this.state.showModals.unidentifiedIssueModal && <SaveAlertConfirmModal
         title="Unidentified issue"
         onClose={() => this.closeModal('unidentifiedIssueModal')}
         onConfirm={() => this.confirmModal('unidentifiedIssueModal')}>
-        <p>
-          You still have an "Unidentified" issue that needs to be&nbsp;
-          removed and replaced with a rated or non-rated issue.
-        </p>
-        <p>Are you sure you want to save this issue without fixing the unidentified issue?</p>
+        <p>{COPY.CORRECT_REQUEST_ISSUES_UNIDENTIFIED_MODAL_TEXT}</p>
+        <p>{COPY.CORRECT_REQUEST_ISSUES_UNIDENTIFIED_MODAL_TEXT_CONFIRM}</p>
       </SaveAlertConfirmModal>}
 
       { this.showCorrectionIssueModal() && <SaveAlertConfirmModal
-        title="Establish 930 EP"
-        buttonText= "Yes, establish"
+        title={COPY.CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TITLE}
+        buttonText= {COPY.CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_BUTTON}
         onClose={() => this.closeModal('correctionIssueModal')}
         onConfirm={() => this.confirmModal('correctionIssueModal')}>
-        <p>
-          You are now creating a 930 EP in VBMS.</p>
+        <p>{COPY.CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TEXT}</p>
       </SaveAlertConfirmModal>}
 
       <Button
