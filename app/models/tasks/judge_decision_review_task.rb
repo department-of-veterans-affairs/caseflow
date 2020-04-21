@@ -14,10 +14,12 @@ class JudgeDecisionReviewTask < JudgeTask
                            else
                              Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h
                            end
-     
-    [(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
-     judge_checkout_label,
-     Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h].compact
+
+    [
+      (Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
+      judge_checkout_label,
+      Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
+    ].compact
   end
 
   def self.label
