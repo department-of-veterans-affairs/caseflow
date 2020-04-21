@@ -223,8 +223,12 @@ export class EstablishClaimDecision extends React.Component {
               </label>
             </legend>
             {specialIssuesError &&
-              <div className="usa-input-error-message usa-input-error">{COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL}</div>
-            }
+              <Alert
+                title={COPY.SPECIAL_ISSUES_NONE_CHOSEN_TITLE}
+                message={COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL}
+                type="error"
+              />
+             }
             <div className="cf-multiple-columns">
               {enabledSpecialIssues(this.props.specialIssuesRevamp).map((issue, index) => {
                 return (
