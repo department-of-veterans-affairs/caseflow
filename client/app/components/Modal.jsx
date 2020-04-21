@@ -7,8 +7,26 @@ import Button from './Button';
 import _ from 'lodash';
 import { css } from 'glamor';
 
-const modalTextStyling = css({ width: '100%',
-  fontFamily: 'Source Sans Pro' });
+const modalTextStyling = css({ width: '100%', fontFamily: 'Source Sans Pro' });
+
+/**
+ * Method to determine whether the body is wrapped in an outer component
+ * @param {Object} props -- An optional wrapper component for the Modal and DOM children
+ */
+export const BodyWrapper = ({ Wrapper, children }) => (Wrapper ? <Wrapper>{children}</Wrapper> : children);
+
+/**
+ * Method to Determine whether to show the Modal
+ * @param {Object} props -- Whether the modal should be shown  and DOM children
+ */
+export const ModalWrapper = ({ show, children, ...props }) =>
+  show === undefined ?
+    children :
+    show && (
+      <BodyWrapper show={show} {...props}>
+        {children}
+      </BodyWrapper>
+    );
 
 export default class Modal extends React.Component {
   constructor(props) {
@@ -94,7 +112,9 @@ export default class Modal extends React.Component {
       confirmButton,
       cancelButton,
       title,
-      customStyles
+      customStyles,
+      show,
+      Wrapper
     } = this.props;
 
     let modalButtons;
@@ -111,31 +131,33 @@ export default class Modal extends React.Component {
     }
 
     return (
-      <section
-        className={`cf-modal active ${className}`}
-        id="modal_id"
-        role="alertdialog"
-        aria-labelledby="modal_id-title"
-        aria-describedby="modal_id-desc"
-        aria-modal="true"
-      >
-        <ScrollLock />
-        <div className="cf-modal-body" id={id || ''} {...customStyles}>
-          <button
-            type="button"
-            id={`${this.buttonIdPrefix}close`}
-            className="cf-modal-close"
-            onClick={closeHandler}
-            ref={this.modalCloseFocus}
-          >
-            {closeSymbolHtml()}
-          </button>
-          <h1 id="modal_id-title">{title}</h1>
-          <div {...modalTextStyling}>{children}</div>
-          {noDivider ? '' : <div className="cf-modal-divider" />}
-          <div className="cf-modal-controls">{modalButtons}</div>
-        </div>
-      </section>
+      <ModalWrapper show={show} Wrapper={Wrapper}>
+        <section
+          className={`cf-modal active ${className}`}
+          id="modal_id"
+          role="alertdialog"
+          aria-labelledby="modal_id-title"
+          aria-describedby="modal_id-desc"
+          aria-modal="true"
+        >
+          <ScrollLock />
+          <div className="cf-modal-body" id={id || ''} {...customStyles}>
+            <button
+              type="button"
+              id={`${this.buttonIdPrefix}close`}
+              className="cf-modal-close"
+              onClick={closeHandler}
+              ref={this.modalCloseFocus}
+            >
+              {closeSymbolHtml()}
+            </button>
+            <h1 id="modal_id-title">{title}</h1>
+            <div {...modalTextStyling}>{children}</div>
+            {noDivider ? '' : <div className="cf-modal-divider" />}
+            <div className="cf-modal-controls">{modalButtons}</div>
+          </div>
+        </section>
+      </ModalWrapper>
     );
   }
 }
@@ -163,7 +185,9 @@ Modal.propTypes = {
   label: PropTypes.string,
   noDivider: PropTypes.bool,
   specialContent: PropTypes.func,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  show: PropTypes.bool,
+  Wrapper: PropTypes.element
 };
 
 Modal.defaultProps = {
