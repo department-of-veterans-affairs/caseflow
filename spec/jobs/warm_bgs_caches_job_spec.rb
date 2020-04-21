@@ -2,8 +2,6 @@
 
 describe WarmBgsCachesJob, :all_dbs do
   context "#perform" do
-    # cache keys are using default POA so no specific ids.
-    let(:poa_cache_key) { "bgs-participant-poa-" }
     let(:address_cache_key) { "bgs-participant-address-" }
     let(:ro_id) { "RO04" }
     let(:vacols_case) { create(:case) }
@@ -44,8 +42,8 @@ describe WarmBgsCachesJob, :all_dbs do
     it "fetches all hearings and warms the Rails cache" do
       # validate data before we run job
       expect(appeal.reload.veteran[:ssn]).to be_nil
-      expect(Rails.cache.exist?(poa_cache_key)).to eq(false)
       expect(Rails.cache.exist?(address_cache_key)).to eq(false)
+      expect(BgsPowerOfAttorney.all.count).to eq(0)
 
       # run job w/o error
       expect { described_class.perform_now }.to_not raise_error
@@ -53,9 +51,9 @@ describe WarmBgsCachesJob, :all_dbs do
       # validate data after job
       expect(bgs_poa).to have_received(:fetch_bgs_record).once
       expect(bgs_address_service).to have_received(:fetch_bgs_record).once
-      expect(Rails.cache.exist?(poa_cache_key)).to eq(true)
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
+      expect(BgsPowerOfAttorney.all.count).to eq(1)
       expect(@slack_msg).to be_nil
       expect(@people_sync).to eq(6)
     end
