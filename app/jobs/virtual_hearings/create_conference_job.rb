@@ -50,7 +50,11 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     # when a conference has been created and emails sent, the virtual hearing can be established
     send_emails(email_type) if virtual_hearing.active?
 
-    fail IncompleteError unless virtual_hearing.established!
+    if virtual_hearing.can_be_established?
+      virtual_hearing.established!
+    else
+      fail IncompleteError
+    end
   end
 
   private

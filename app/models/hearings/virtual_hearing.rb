@@ -83,13 +83,14 @@ class VirtualHearing < CaseflowRecord
   end
 
   # Hearings can be established only if the conference has been created and emails sent
-  def established!
-    return false unless active? && all_emails_sent?
+  def can_be_established?
+    active? && all_emails_sent?
+  end
 
+  def established!
     establishment.clear_error!
     establishment.processed!
     update(request_cancelled: false)
-    true
   end
 
   # Sets the virtual hearing status to cancelled
