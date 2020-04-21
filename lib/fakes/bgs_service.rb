@@ -500,16 +500,20 @@ class Fakes::BGSService
   def default_vsos_by_participant_id
     [
       {
-        legacy_poa_cd: "070",
-        nm: "VIETNAM VETERANS OF AMERICA",
-        org_type_nm: "POA National Organization",
-        ptcpnt_id: "2452415"
+        power_of_attorney: {
+          legacy_poa_cd: "070",
+          nm: "VIETNAM VETERANS OF AMERICA",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: "2452415"
+        }
       },
       {
-        legacy_poa_cd: "071",
-        nm: "PARALYZED VETERANS OF AMERICA, INC.",
-        org_type_nm: "POA National Organization",
-        ptcpnt_id: "2452383"
+        power_of_attorney: {
+          legacy_poa_cd: "071",
+          nm: "PARALYZED VETERANS OF AMERICA, INC.",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: "2452383"
+        }
       }
     ]
   end
