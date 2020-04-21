@@ -138,18 +138,21 @@ describe JudgeTask, :all_dbs do
       end
     end
 
-    fcontext "in the review phase" do
+    context "when it is a vacate type appeal" do
+      let(:judge3) { create(:user) }
+      let!(:user) { judge3 }
       let(:stream_type) { "vacate" }
       let!(:task) do
         create(:ama_judge_decision_review_task,
                appeal: appeal,
-               assigned_to: judge)
+               assigned_to: judge3)
       end
 
-      it "should fail creation of second JudgeDecisionReviewTask" do
-        binding.pry
-        expect(JudgeDecisionReviewTask.new(assigned_to: user).additional_available_actions(user)).to eq(
-          [Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h]
+      it "should show pulac cerullo task action" do
+        expect(JudgeDecisionReviewTask.new(assigned_to: user, appeal: appeal).additional_available_actions(user)).to eq(
+          [Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h,
+           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
+           Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
         )
       end
     end
