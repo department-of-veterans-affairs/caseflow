@@ -38,6 +38,10 @@ class BgsPowerOfAttorney < CaseflowRecord
     def find_or_create_by_claimant_participant_id(claimant_participant_id)
       find_or_create_by!(claimant_participant_id: claimant_participant_id)
     end
+
+    def find_or_load_by_file_number(file_number)
+      find_by(file_number: file_number) || new(file_number: file_number)
+    end
   end
 
   def representative_name
