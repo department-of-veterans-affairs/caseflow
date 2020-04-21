@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { formatDateStr } from '../../util/DateUtil';
 import { bindActionCreators } from 'redux';
@@ -14,14 +14,13 @@ import {
   requestPatch, showErrorMessage
 } from '../uiReducer/uiActions';
 import QueueFlowModal from './QueueFlowModal';
-import { taskActionData, prepareAppealForStore } from '../utils';
+import { taskActionData } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 
 import RadioField from '../../components/RadioField';
 import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
 import ScheduleHearingLaterWithAdminActionForm from
   '../../hearings/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
-import ApiUtil from '../../util/ApiUtil';
 
 import { HearingsFormContext } from '../../hearings/contexts/HearingsFormContext';
 
@@ -46,56 +45,50 @@ const AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS = [
   }
 ];
 
-class PostponeHearingModal extends React.Component {
-  constructor(props) {
-    super(props);
+const PostponeHearingModal = (props) => {
+  const [afterDispositionUpdateAction, setAfterDispositionUpdateAction] = useState('');
+  const [showErrorMessages, setShowErrorMessages] = useState(false);
+  const [isPosting, setIsPosting] = useState(false);
 
-    this.state = {
-      afterDispositionUpdateAction: '',
-      showErrorMessages: false,
-      isPosting: false
-    };
-  }
+  const { appeal, task } = props;
+  const taskData = taskActionData(props);
 
-  getForms = () => {
-    const assignHearingForm = this.context.state.hearingForms?.assignHearingForm || {};
-    const scheduleHearingLaterWithAdminActionForm =
-      this.context.state.hearingForms?.scheduleHearingLaterWithAdminActionForm || {};
+  const hearingsFormContext = useContext(HearingsFormContext);
+  const assignHearingForm = hearingsFormContext.state.hearingForms?.assignHearingForm || {};
+  const scheduleHearingLaterWithAdminActionForm =
+    hearingsFormContext.state.hearingForms?.scheduleHearingLaterWithAdminActionForm || {};
 
-    return { assignHearingForm, scheduleHearingLaterWithAdminActionForm };
-  }
+  const validateRescheduleValues = () => {
+    const { errorMessages: { hasErrorMessages } } = assignHearingForm;
 
-  validateRescheduleValues = () => {
-    const { errorMessages: { hasErrorMessages } } = this.getForms().assignHearingForm;
-
-    this.setState({ showErrorMessages: hasErrorMessages });
+    setShowErrorMessages({ hasErrorMessages });
 
     return !hasErrorMessages;
-  }
+  };
 
-  validateScheduleLaterValues = () => {
-    const { errorMessages: { hasErrorMessages } } = this.getForms().scheduleHearingLaterWithAdminActionForm;
+  const validateScheduleLaterValues = () => {
+    const { errorMessages: { hasErrorMessages } } = scheduleHearingLaterWithAdminActionForm;
 
-    this.setState({ showErrorMessages: hasErrorMessages });
+    setShowErrorMessages(hasErrorMessages);
 
     return !hasErrorMessages;
-  }
+  };
 
-  validateForm = () => {
-    if (this.state.afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
-      return this.validateRescheduleValues();
-    } else if (this.state.afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
-      return this.validateScheduleLaterValues();
+  const validateForm = () => {
+    if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
+      return validateRescheduleValues();
+    } else if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
+      return validateScheduleLaterValues();
     }
 
     return true;
-  }
+  };
 
-  getReschedulePayload = () => {
+  const getReschedulePayload = () => {
     const {
       // eslint-disable-next-line camelcase
       apiFormattedValues: { scheduled_time_string, hearing_day_id, hearing_location }
-    } = this.getForms().assignHearingForm;
+    } = assignHearingForm;
 
     return {
       action: ACTIONS.RESCHEDULE,
@@ -105,52 +98,9 @@ class PostponeHearingModal extends React.Component {
         hearing_location
       }
     };
-  }
+  };
 
-  getScheduleLaterPayload = () => {
-    const { afterDispositionUpdateAction } = this.state;
-
-    if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
-      const {
-        // eslint-disable-next-line camelcase
-        apiFormattedValues: { with_admin_action_klass, admin_action_instructions }
-      } = this.getForms().scheduleHearingLaterWithAdminActionForm;
-
-      return {
-        action: ACTIONS.SCHEDULE_LATER,
-        with_admin_action_klass,
-        admin_action_instructions
-      };
-    }
-
-    return {
-      action: ACTIONS.SCHEDULE_LATER
-    };
-  }
-
-  getPayload = () => {
-    const { afterDispositionUpdateAction } = this.state;
-
-    return {
-      data: {
-        task: {
-          status: TASK_STATUSES.cancelled,
-          business_payloads: {
-            values: {
-              disposition: 'postponed',
-              after_disposition_update: afterDispositionUpdateAction === ACTIONS.RESCHEDULE ?
-                this.getReschedulePayload() : this.getScheduleLaterPayload()
-            }
-          }
-        }
-      }
-    };
-  }
-
-  getSuccessMsg = () => {
-    const { afterDispositionUpdateAction } = this.state;
-    const { appeal } = this.props;
-    const { assignHearingForm } = this.context.state.hearingForms;
+  const getSuccessMsg = () => {
     const { hearingDay } = assignHearingForm || {};
 
     if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
@@ -164,80 +114,95 @@ class PostponeHearingModal extends React.Component {
     return {
       title: `${appeal.veteranFullName} was successfully added back to the schedule veteran list.`
     };
-  }
+  };
 
-  submit = () => {
-    if (this.state.isPosting) {
+  const getScheduleLaterPayload = () => {
+    if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
+      const {
+        // eslint-disable-next-line camelcase
+        apiFormattedValues: { with_admin_action_klass, admin_action_instructions }
+      } = scheduleHearingLaterWithAdminActionForm;
+
+      return {
+        action: ACTIONS.SCHEDULE_LATER,
+        with_admin_action_klass,
+        admin_action_instructions
+      };
+    }
+
+    return {
+      action: ACTIONS.SCHEDULE_LATER
+    };
+  };
+
+  const getPayload = () => {
+    return {
+      data: {
+        task: {
+          status: TASK_STATUSES.cancelled,
+          business_payloads: {
+            values: {
+              disposition: 'postponed',
+              after_disposition_update: afterDispositionUpdateAction === ACTIONS.RESCHEDULE ?
+                getReschedulePayload() : getScheduleLaterPayload()
+            }
+          }
+        }
+      }
+    };
+  };
+
+  const submit = () => {
+    if (isPosting) {
       return;
     }
 
-    const { task } = this.props;
-    const payload = this.getPayload();
+    setIsPosting(true);
 
-    this.setState({ isPosting: true });
-
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, this.getSuccessMsg()).
+    return props.requestPatch(`/tasks/${task.taskId}`, getPayload(), getSuccessMsg()).
       then((resp) => {
-        this.setState({ isPosting: false });
-        this.props.onReceiveAmaTasks(resp.body.tasks.data);
+        setIsPosting(false);
+        props.onReceiveAmaTasks(resp.body.tasks.data);
       }, () => {
-        this.setState({ isPosting: false });
+        setIsPosting(false);
 
-        this.props.showErrorMessage({
+        showErrorMessage({
           title: 'Unable to postpone hearing.',
           detail: 'Please retry submitting again and contact support if errors persist.'
         });
       });
-  }
-
-  resetAppealDetails = () => {
-    const { appeal } = this.props;
-
-    ApiUtil.get(`/appeals/${appeal.externalId}`).then((response) => {
-      this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
-    });
-  }
-
-  render = () => {
-    const { appeal } = this.props;
-    const { afterDispositionUpdateAction, showErrorMessages } = this.state;
-    const taskData = taskActionData(this.props);
-
-    return (
-      <QueueFlowModal
-        title="Postpone Hearing"
-        submit={this.submit}
-        validateForm={this.validateForm}
-        pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}>
-        <RadioField
-          name="postponeAfterDispositionUpdateAction"
-          hideLabel
-          strongLabel
-          options={AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS}
-          onChange={(option) => this.setState({ afterDispositionUpdateAction: option })}
-          value={afterDispositionUpdateAction}
-        />
-
-        {afterDispositionUpdateAction === ACTIONS.RESCHEDULE &&
-        <AssignHearingForm
-          appeal={appeal}
-          assignHearingForm={this.getForms().assignHearingForm}
-          initialRegionalOffice={appeal.closestRegionalOffice}
-          showErrorMessages={showErrorMessages}
-        />
-        }{afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION &&
-        <ScheduleHearingLaterWithAdminActionForm
-          scheduleHearingLaterWithAdminActionForm={this.getForms().scheduleHearingLaterWithAdminActionForm}
-          showErrorMessages={showErrorMessages}
-          adminActionOptions={taskData ? taskData.options : []}
-        />
-        }
-      </QueueFlowModal>
-    );
   };
-}
 
-PostponeHearingModal.contextType = HearingsFormContext;
+  return (
+    <QueueFlowModal
+      title="Postpone Hearing"
+      submit={submit}
+      validateForm={validateForm}
+      pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}>
+      <RadioField
+        name="postponeAfterDispositionUpdateAction"
+        hideLabel
+        strongLabel
+        options={AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS}
+        onChange={(option) => setAfterDispositionUpdateAction(option)}
+        value={afterDispositionUpdateAction}
+      />
+
+      {afterDispositionUpdateAction === ACTIONS.RESCHEDULE &&
+      <AssignHearingForm
+        appeal={appeal}
+        initialRegionalOffice={appeal.closestRegionalOffice}
+        showErrorMessages={showErrorMessages}
+      />
+      }{afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION &&
+      <ScheduleHearingLaterWithAdminActionForm
+        showErrorMessages={showErrorMessages}
+        adminActionOptions={taskData ? taskData.options : []}
+      />
+      }
+    </QueueFlowModal>
+  );
+};
 
 PostponeHearingModal.propTypes = {
   appeal: PropTypes.shape({

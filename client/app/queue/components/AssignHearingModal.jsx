@@ -1,10 +1,10 @@
+import React, { useContext, useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { sprintf } from 'sprintf-js';
 import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
-import * as React from 'react';
 import _ from 'lodash';
 
 import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
@@ -27,143 +27,58 @@ import COPY from '../../../COPY';
 import QueueFlowModal from './QueueFlowModal';
 import { HearingsFormContext } from '../../hearings/contexts/HearingsFormContext';
 
-class AssignHearingModal extends React.PureComponent {
-  constructor(props) {
-    super(props);
+const AssignHearingModal = (props) => {
+  const [showErrorMessages, setShowErrorMessages] = useState(false);
+  const [showFullHearingDayWarning, setShowFullHearingDayWarning] = useState(false);
 
-    this.state = {
-      showErrorMessages: false,
-      showFullHearingDayWarning: false
-    };
+  const hearingsFormContext = useContext(HearingsFormContext);
+  const assignHearingForm = hearingsFormContext.state.hearingForms?.assignHearingForm || {};
+
+  const {
+    openHearing, hearingDay, appeal, scheduleHearingTask, history, selectedRegionalOffice
+  } = props;
+
+  const { address_line_1: addressLine1, city, state, zip } = appeal.appellantAddress || {};
+
+  if (openHearing) {
+    return null;
   }
 
-  getAssignHearingForm = () => this.context.state.hearingForms?.assignHearingForm || {};
-
-  componentDidMount = () => {
-    const { openHearing } = this.props;
-
-    if (openHearing) {
-      this.props.showErrorMessage({
-        title: 'Open Hearing',
-        detail: `This appeal has an open hearing on ${formatDateStr(openHearing.date)}. ` +
-                'You cannot schedule another hearing.'
-      });
-    }
-
-    this.toggleFullHearingDayWarning();
-  }
-
-  componentDidUpdate = () => {
-    this.toggleFullHearingDayWarning();
-  }
-
-  toggleFullHearingDayWarning = () => {
-    const { hearingDay } = this.props;
-    const selectedHearingDay = (this.getAssignHearingForm()).hearingDay || hearingDay;
+  const toggleFullHearingDayWarning = () => {
+    const selectedHearingDay = (assignHearingForm).hearingDay || hearingDay;
 
     if (!selectedHearingDay) {
       return;
     }
 
-    this.setState({
-      showFullHearingDayWarning: selectedHearingDay.filledSlots >= selectedHearingDay.totalSlots
-    });
-  }
-
-  submit = () => {
-    return this.completeScheduleHearingTask();
+    setShowFullHearingDayWarning(selectedHearingDay.filledSlots >= selectedHearingDay.totalSlots);
   };
 
-  validateForm = () => {
-    const { openHearing } = this.props;
-
+  useEffect(() => {
     if (openHearing) {
-      return false;
+      props.showErrorMessage({
+        title: 'Open Hearing',
+        detail: `This appeal has an open hearing on ${formatDateStr(openHearing.date)}. ` +
+                'You cannot schedule another hearing.'
+      });
     }
+    toggleFullHearingDayWarning();
+  }, []);
 
-    const { errorMessages: { hasErrorMessages } } = this.getAssignHearingForm();
-
-    this.setState({ showErrorMessages: hasErrorMessages });
-
-    return !hasErrorMessages;
+  const resetAppealDetails = () => {
+    ApiUtil.get(`/appeals/${appeal.externalId}`).then((response) => {
+      props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
+    });
   };
 
-  completeScheduleHearingTask = () => {
-    const { appeal, scheduleHearingTask, history } = this.props;
-    const { showFullHearingDayWarning } = this.state;
+  const getHearingType = () => selectedRegionalOffice === 'C' ? CENTRAL_OFFICE_HEARING : VIDEO_HEARING;
 
-    const payload = {
-      data: {
-        task: {
-          status: 'completed',
-          business_payloads: {
-            description: 'Update Task',
-            values: {
-              ...this.getAssignHearingForm().apiFormattedValues,
-              override_full_hearing_day_validation: showFullHearingDayWarning
-            }
-          }
-        }
-      }
-    };
-
-    return this.props.requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, this.getSuccessMsg()).
-      then(() => {
-        history.goBack();
-        this.resetAppealDetails();
-
-      }, () => {
-        if (appeal.isLegacyAppeal) {
-          this.props.showErrorMessage({
-            title: 'No Available Slots',
-            detail: 'Could not find any available slots for this regional office and hearing day combination. ' +
-                    'Please select a different date.'
-          });
-        } else {
-          this.props.showErrorMessage({
-            title: 'No Hearing Day',
-            detail: 'Until April 1st hearing days for AMA appeals need to be created manually. ' +
-                    'Please contact the Caseflow Team for assistance.'
-          });
-        }
-      });
-  }
-
-  resetAppealDetails = () => {
-    const { appeal } = this.props;
-
-    ApiUtil.get(`/appeals/${appeal.externalId}`).then((response) => {
-      this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
-    });
-  }
-
-  getRO = () => {
-    const { appeal, hearingDay } = this.props;
-
-    if (hearingDay.regionalOffice) {
-      return hearingDay.regionalOffice;
-    } else if (appeal.regionalOffice) {
-      return appeal.regionalOffice.key;
-    }
-
-    return '';
-  }
-
-  getHearingType = () => {
-    const { selectedRegionalOffice } = this.props;
-
-    return selectedRegionalOffice === 'C' ? CENTRAL_OFFICE_HEARING : VIDEO_HEARING;
-  }
-
-  getSuccessMsg = () => {
-    const assignHearingForm = this.getAssignHearingForm();
-    const { appeal } = this.props;
-
+  const getSuccessMsg = () => {
     const hearingDateStr = formatDateStr(assignHearingForm.hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = sprintf(
       COPY.SCHEDULE_VETERAN_SUCCESS_MESSAGE_TITLE,
       appeal.veteranFullName,
-      this.getHearingType(),
+      getHearingType(),
       hearingDateStr
     );
     const href = `/hearings/schedule/assign?regional_office_key=${assignHearingForm.hearingDay.regionalOffice}`;
@@ -177,60 +92,107 @@ class AssignHearingModal extends React.PureComponent {
 
     return { title,
       detail };
-  }
+  };
 
-  getInitialValues = () => {
-    const { hearingDay } = this.props;
+  const completeScheduleHearingTask = () => {
+    const payload = {
+      data: {
+        task: {
+          status: 'completed',
+          business_payloads: {
+            description: 'Update Task',
+            values: {
+              ...assignHearingForm.apiFormattedValues,
+              override_full_hearing_day_validation: showFullHearingDayWarning
+            }
+          }
+        }
+      }
+    };
 
+    return props.requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, getSuccessMsg()).
+      then(() => {
+        history.goBack();
+        resetAppealDetails();
+
+      }, () => {
+        if (appeal.isLegacyAppeal) {
+          props.showErrorMessage({
+            title: 'No Available Slots',
+            detail: 'Could not find any available slots for this regional office and hearing day combination. ' +
+                    'Please select a different date.'
+          });
+        } else {
+          props.showErrorMessage({
+            title: 'No Hearing Day',
+            detail: 'Until April 1st hearing days for AMA appeals need to be created manually. ' +
+                    'Please contact the Caseflow Team for assistance.'
+          });
+        }
+      });
+  };
+
+  const submit = () => completeScheduleHearingTask();
+
+  const getRO = () => {
+    if (hearingDay.regionalOffice) {
+      return hearingDay.regionalOffice;
+    } else if (appeal.regionalOffice) {
+      return appeal.regionalOffice.key;
+    }
+
+    return '';
+  };
+
+  const getInitialValues = () => {
     return {
       initialHearingDate: hearingDay.hearingDate,
-      initialRegionalOffice: this.getRO()
+      initialRegionalOffice: getRO()
     };
   };
 
-  render = () => {
-    const { appeal, openHearing } = this.props;
-    const { showErrorMessages, showFullHearingDayWarning } = this.state;
-    const { address_line_1: addressLine1, city, state, zip } = appeal.appellantAddress || {};
-
+  const validateForm = () => {
     if (openHearing) {
-      return null;
+      return false;
     }
 
-    return (
-      <QueueFlowModal
-        submit={this.submit}
-        validateForm={this.validateForm}
-        title="Schedule Veteran"
-        button="Schedule"
-      >
-        <div {...fullWidth}>
-          {
-            showFullHearingDayWarning &&
-            <Alert
-              title={COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE}
-              type="warning"
-            >
-              {COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL}
-            </Alert>
-          }
-          <p>
-            Veteran Address<br />
-            {addressLine1}<br />
-            {`${city}, ${state} ${zip}`}
-          </p>
-          <AssignHearingForm
-            appeal={appeal}
-            assignHearingForm={this.getAssignHearingForm()}
-            showErrorMessages={showErrorMessages}
-            {...this.getInitialValues()} />
-        </div>
-      </QueueFlowModal>
-    );
-  }
-}
+    const { errorMessages: { hasErrorMessages } } = assignHearingForm;
 
-AssignHearingModal.contextType = HearingsFormContext;
+    setShowErrorMessages(hasErrorMessages);
+
+    return !hasErrorMessages;
+  };
+
+  return (
+    <QueueFlowModal
+      submit={submit}
+      validateForm={validateForm}
+      title="Schedule Veteran"
+      button="Schedule"
+    >
+      <div {...fullWidth}>
+        {
+          showFullHearingDayWarning &&
+          <Alert
+            title={COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE}
+            type="warning"
+          >
+            {COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL}
+          </Alert>
+        }
+        <p>
+          Veteran Address<br />
+          {addressLine1}<br />
+          {`${city}, ${state} ${zip}`}
+        </p>
+        <AssignHearingForm
+          appeal={appeal}
+          showErrorMessages={showErrorMessages}
+          {...getInitialValues()} />
+      </div>
+    </QueueFlowModal>
+  );
+};
 
 AssignHearingModal.propTypes = {
   openHearing: PropTypes.shape({
