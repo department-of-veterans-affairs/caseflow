@@ -228,7 +228,7 @@ export class EstablishClaimDecision extends React.Component {
                 message={COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL}
                 type="error"
               />
-             }
+            }
             <div className="cf-multiple-columns">
               {enabledSpecialIssues(this.props.specialIssuesRevamp).map((issue, index) => {
                 return (
@@ -290,7 +290,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
   },
   handleSpecialIssueFieldChange: (specialIssue) => (value) => {
-    dispatch({ type: Constants.CLEAR_SPECIAL_ISSUE_ERROR })
+    dispatch({ type: Constants.CLEAR_SPECIAL_ISSUE_ERROR });
     dispatch({
       type: Constants.CHANGE_SPECIAL_ISSUE,
       payload: {
@@ -299,7 +299,7 @@ const mapDispatchToProps = (dispatch) => ({
       }
     });
   },
-  showSpecialIssueError: () => dispatch({type: Constants.SHOW_SPECIAL_ISSUE_ERROR})
+  showSpecialIssueError: () => dispatch({ type: Constants.SHOW_SPECIAL_ISSUE_ERROR })
 });
 
 const ConnectedEstablishClaimDecision = connect(
