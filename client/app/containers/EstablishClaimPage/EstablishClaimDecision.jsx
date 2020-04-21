@@ -46,20 +46,13 @@ export class EstablishClaimDecision extends React.Component {
       specialIssuesRevamp,
       specialIssues,
       handleSubmit,
-      handleSpecialIssueError,
-      clearSpecialIssueError
+      showSpecialIssueError
     } = this.props;
 
-    if (specialIssuesRevamp) {
-      const specialIssueSelected = Object.values(specialIssues).some((specialIssue) => specialIssue);
+    if (specialIssuesRevamp && Object.values(specialIssues).every((isChecked) => !isChecked)) {
+      showSpecialIssueError();
 
-      if (specialIssueSelected) {
-        clearSpecialIssueError();
-      } else {
-        handleSpecialIssueError(COPY.SPECIAL_ISSUES_NONE_CHOSEN_TITLE, COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL);
-
-        return;
-      }
+      return;
     }
 
     return handleSubmit();
@@ -230,7 +223,7 @@ export class EstablishClaimDecision extends React.Component {
               </label>
             </legend>
             {specialIssuesError &&
-              <Alert title={specialIssuesError.title} message={specialIssuesError.details} type="error" />
+              <div className="usa-input-error-message usa-input-error">{COPY.SPECIAL_ISSUES_NONE_CHOSEN_DETAIL}</div>
             }
             <div className="cf-multiple-columns">
               {enabledSpecialIssues(this.props.specialIssuesRevamp).map((issue, index) => {
@@ -272,8 +265,7 @@ EstablishClaimDecision.propTypes = {
   decisionType: PropTypes.string.isRequired,
   handleToggleCancelTaskModal: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  clearSpecialIssueError: PropTypes.func,
-  handleSpecialIssueError: PropTypes.func,
+  showSpecialIssueError: PropTypes.func,
   handleSpecialIssueFieldChange: PropTypes.func,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
@@ -281,10 +273,7 @@ EstablishClaimDecision.propTypes = {
   task: PropTypes.object.isRequired,
   loading: PropTypes.bool,
   specialIssuesRevamp: PropTypes.bool,
-  specialIssuesError: PropTypes.shape({
-    title: PropTypes.string,
-    details: PropTypes.string
-  })
+  specialIssuesError: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -297,6 +286,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
   },
   handleSpecialIssueFieldChange: (specialIssue) => (value) => {
+    dispatch({ type: Constants.CLEAR_SPECIAL_ISSUE_ERROR })
     dispatch({
       type: Constants.CHANGE_SPECIAL_ISSUE,
       payload: {
@@ -305,18 +295,7 @@ const mapDispatchToProps = (dispatch) => ({
       }
     });
   },
-  handleSpecialIssueError: (title, details) => {
-    dispatch({
-      type: Constants.SPECIAL_ISSUE_ERROR,
-      payload: {
-        title,
-        details
-      }
-    });
-  },
-  clearSpecialIssueError: () => {
-    dispatch({ type: Constants.CLEAR_SPECIAL_ISSUE_ERROR });
-  }
+  showSpecialIssueError: () => dispatch({type: Constants.SHOW_SPECIAL_ISSUE_ERROR})
 });
 
 const ConnectedEstablishClaimDecision = connect(

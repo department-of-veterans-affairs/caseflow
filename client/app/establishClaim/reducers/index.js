@@ -8,7 +8,7 @@ export const getEstablishClaimInitialState = function() {
     isShowingCancelModal: false,
     isValidating: false,
     loading: false,
-    error: null
+    error: false
   };
 };
 
@@ -49,19 +49,16 @@ export const establishClaim = function(state = getEstablishClaimInitialState(), 
       isValidating: false,
       cancelFeedback: action.payload.value
     };
-  case Constants.SPECIAL_ISSUE_ERROR: {
+  case Constants.SHOW_SPECIAL_ISSUE_ERROR: {
     return {
       ...state,
-      error: {
-        title: action.payload.title,
-        details: action.payload.details
-      }
+      error: true
     };
   }
   case Constants.CLEAR_SPECIAL_ISSUE_ERROR: {
     return {
       ...state,
-      error: null
+      error: false
     };
   }
   default:
