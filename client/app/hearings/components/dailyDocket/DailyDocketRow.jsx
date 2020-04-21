@@ -349,13 +349,20 @@ class DailyDocketRow extends React.Component {
     });
   };
 
+  showModal = () => {
+    const { user, hearing } = this.props;
+    const { virtualHearingModalActive } = this.state;
+
+    return user.userCanScheduleVirtualHearings && virtualHearingModalActive && hearing.isVirtual;
+  }
+
   render() {
-    const { hearing, user, index, readOnly, hidePreviouslyScheduled } = this.props;
+    const { user, hearing, index, readOnly, hidePreviouslyScheduled } = this.props;
 
     const hide = isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled ? 'hide ' : '';
     const judgeView = user.userHasHearingPrepRole ? 'judge-view' : '';
     const className = `${hide}${judgeView}`;
-    const { virtualHearingModalActive, initialState } = this.state;
+    const { initialState } = this.state;
 
     return (
       <div {...docketRowStyle} key={hearing.externalId} className={className}>
@@ -364,7 +371,7 @@ class DailyDocketRow extends React.Component {
             readOnly={readOnly}
             update={this.update}
             hearing={hearing}
-            initialState={this.state.initialState}
+            initialState={initialState}
             user={user}
             index={index}
           />
@@ -374,7 +381,7 @@ class DailyDocketRow extends React.Component {
           {this.getRightColumn()}
         </div>
         <VirtualHearingModal
-          show={user.userCanScheduleVirtualHearings && virtualHearingModalActive && hearing.isVirtual}
+          show={this.showModal()}
           hearing={hearing}
           timeWasEdited={initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
           virtualHearing={hearing.virtualHearing || {}}
@@ -395,7 +402,7 @@ class DailyDocketRow extends React.Component {
               this.closeAodModal();
             }}
             onCancel={() => {
-              this.updateAodMotion(this.state.initialState.advanceOnDocketMotion);
+              this.updateAodMotion(initialState.advanceOnDocketMotion);
               this.closeAodModal();
             }}
           />
