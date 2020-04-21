@@ -273,7 +273,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def veteran_ssn
-    vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
+    vbms_id.ends_with?("C") ? veteran&.ssn : sanitized_vbms_id
   end
 
   def congressional_interest_addresses
@@ -935,7 +935,7 @@ class LegacyAppeal < CaseflowRecord
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
-      return bfcorlid unless bfcorlid =~ /\d/
+      return bfcorlid unless bfcorlid.match?(/\d/)
 
       numeric = bfcorlid.gsub(/[^0-9]/, "")
 
