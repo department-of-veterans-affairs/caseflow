@@ -45,7 +45,7 @@ module Collectors::StatsCollector
     # "dsva_appeals.stats_collector_job." prepended, let's just stick with a 150 character limit.
     return false if metric_name.length > 150
 
-    return true if metric_name =~ /\A[a-zA-Z][a-zA-Z\d_\.]*\Z/
+    return true if metric_name.match?(/\A[a-zA-Z][a-zA-Z\d_\.]*\Z/)
 
     false
   end

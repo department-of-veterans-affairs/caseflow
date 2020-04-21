@@ -265,7 +265,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
         return 0
       end
 
-      return num_left_to_max
+      num_left_to_max
     else
       (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
     end
