@@ -138,7 +138,7 @@ class HearingDetails extends React.Component {
     if (virtualHearing) {
       // Reset the jobCompleted so that we dont disable the hearings dropdown
       // Addresses issue where frontend overrides backend on cancelling hearing change
-      // TODO: Refactor to get state from the backend
+      // REMINDER: Refactor to get state from the backend
       this.updateVirtualHearing({
         ...virtualHearing,
         jobCompleted: true,
