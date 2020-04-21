@@ -61,11 +61,6 @@ class VirtualHearing < CaseflowRecord
     status == :pending
   end
 
-  # Hearings can be activated only if the conference is created and emails sent
-  def activate?
-    active? && all_emails_sent?
-  end
-
   # Determines if the hearing conference has been created
   def active?
     status == :active
@@ -87,11 +82,14 @@ class VirtualHearing < CaseflowRecord
     :pending
   end
 
-  # Sets the virtual hearing status to active
-  def activate!
+  # Hearings can be established only if the conference has been created and emails sent
+  def established!
+    return false unless active? && all_emails_sent?
+
     establishment.clear_error!
     establishment.processed!
     update(request_cancelled: false)
+    true
   end
 
   # Sets the virtual hearing status to cancelled

@@ -44,7 +44,7 @@ FactoryBot.define do
         virtual_hearing.cancel!
       elsif evaluator.status == :active
         virtual_hearing.conference_id = "0"
-        virtual_hearing.activate!
+        virtual_hearing.established!
       end
     end
   end

@@ -88,7 +88,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
     scenario "async job is completed" do
       virtual_hearing.conference_id = "0"
-      virtual_hearing.activate!
+      virtual_hearing.established!
       visit "hearings/" + hearing.external_id.to_s + "/details"
       hearing.reload
       expect(find(".dropdown-hearingType")).to have_no_css(".is-disabled")

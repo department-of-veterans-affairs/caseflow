@@ -44,15 +44,13 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     virtual_hearing.establishment.attempted!
 
-    create_conference if !virtual_hearing.active?
+    # successfully creating a conference will make the virtual hearing active
+    create_conference unless virtual_hearing.active?
 
-    send_emails(email_type)
+    # when a conference has been created and emails sent, the virtual hearing can be established
+    send_emails(email_type) if virtual_hearing.active?
 
-    if virtual_hearing.activate?
-      virtual_hearing.activate!
-    else
-      fail IncompleteError
-    end
+    fail IncompleteError unless virtual_hearing.established!
   end
 
   private
@@ -95,12 +93,10 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def send_emails(email_type)
-    if virtual_hearing.active?
-      VirtualHearings::SendEmail.new(
-        virtual_hearing: virtual_hearing,
-        type: email_type
-      ).call
-    end
+    VirtualHearings::SendEmail.new(
+      virtual_hearing: virtual_hearing,
+      type: email_type
+    ).call
   end
 
   def pexip_error_display(response)
