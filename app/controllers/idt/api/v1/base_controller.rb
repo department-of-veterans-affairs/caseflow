@@ -38,7 +38,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
                  user.dispatch_user_in_vacols? ||
                  user.intake_user?
     unless has_access
-      return render json: { message: "User must be attorney, judge, dispatch, or intake" }, status: :forbidden
+      render json: { message: "User must be attorney, judge, dispatch, or intake" }, status: :forbidden
     end
   end
 

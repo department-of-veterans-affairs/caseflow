@@ -18,7 +18,7 @@ module TaskExtensionForHearings
     tasks = appeal.tasks.closed.order(closed_at: :desc).where(type: HearingTask.name)
     return tasks.first&.hearing if appeal.is_a?(Appeal)
 
-    tasks.map(&:hearing).detect(&:vacols_hearing_exists?)
+    tasks.map(&:hearing).compact.detect(&:vacols_hearing_exists?)
   end
 
   def create_change_hearing_disposition_task(instructions = nil)

@@ -11,7 +11,7 @@ class JudgeTeamRoleChecker < DataIntegrityChecker
 
   class << self
     def judge_teams_with_incorrect_number_of_leads
-      JudgeTeam.all.reject { |jt| jt.judge_team_roles.select { |role| role.is_a?(JudgeTeamLead) }.count == 1 }
+      JudgeTeam.all.reject { |jt| jt.judge_team_roles.count { |role| role.is_a?(JudgeTeamLead) } == 1 }
     end
 
     def non_admin_judge_team_leads
@@ -20,7 +20,7 @@ class JudgeTeamRoleChecker < DataIntegrityChecker
 
     def judge_teams_with_incorrect_number_of_leads_messages
       judge_teams_with_incorrect_number_of_leads.map do |jt|
-        lead_count = jt.judge_team_roles.select { |role| role.is_a?(JudgeTeamLead) }.count
+        lead_count = jt.judge_team_roles.count { |role| role.is_a?(JudgeTeamLead) }
         "JudgeTeam #{jt.name} has the incorrect number of associated JudgeTeamLeads: #{lead_count}."
       end
     end
