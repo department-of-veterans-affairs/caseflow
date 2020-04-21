@@ -45,7 +45,7 @@ const AssignHearingModal = (props) => {
   }
 
   const toggleFullHearingDayWarning = () => {
-    const selectedHearingDay = (assignHearingForm).hearingDay || hearingDay;
+    const selectedHearingDay = assignHearingForm.hearingDay || hearingDay;
 
     if (!selectedHearingDay) {
       return;
@@ -63,7 +63,7 @@ const AssignHearingModal = (props) => {
       });
     }
     toggleFullHearingDayWarning();
-  }, []);
+  }, [assignHearingForm]);
 
   const resetAppealDetails = () => {
     ApiUtil.get(`/appeals/${appeal.externalId}`).then((response) => {
