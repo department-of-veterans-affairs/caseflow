@@ -190,8 +190,9 @@ class VirtualHearingModal extends React.Component {
 
     if (this.props.type === 'change_to_virtual') {
       this.props.update({
-        veteranEmail: this.props.hearing.veteranEmailAddress,
-        representativeEmail: this.props.hearing.representativeEmailAddress
+        veteranEmail: this.props.virtualHearing.veteranEmail || this.props.hearing.veteranEmailAddress,
+        representativeEmail:
+          this.props.virtualHearing.representativeEmail || this.props.hearing.representativeEmailAddress
       });
     }
   }
@@ -251,6 +252,7 @@ class VirtualHearingModal extends React.Component {
           <typeSettings.element {...this.props} vetEmailError={vetEmailError} repEmailError={repEmailError} />
         )}
       </Modal>
+
     );
   }
 }
