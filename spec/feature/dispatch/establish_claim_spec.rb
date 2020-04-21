@@ -509,6 +509,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
 
         # Select no special issues and move forward
         click_label("noSpecialIssues")
+        expect(page).to have_no_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
         click_on "Route claim"
 
         # Success!
