@@ -267,17 +267,17 @@ export class EstablishClaimDecision extends React.Component {
 
 EstablishClaimDecision.propTypes = {
   decisionType: PropTypes.string.isRequired,
-  handleToggleCancelTaskModal: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  showSpecialIssueError: PropTypes.func,
   handleSpecialIssueFieldChange: PropTypes.func,
+  handleSubmit: PropTypes.func.isRequired,
+  handleToggleCancelTaskModal: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
   pdfLink: PropTypes.string.isRequired,
   pdfjsLink: PropTypes.string.isRequired,
+  showSpecialIssueError: PropTypes.func,
   specialIssues: PropTypes.object.isRequired,
-  task: PropTypes.object.isRequired,
-  loading: PropTypes.bool,
+  specialIssuesError: PropTypes.bool,
   specialIssuesRevamp: PropTypes.bool,
-  specialIssuesError: PropTypes.bool
+  task: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
