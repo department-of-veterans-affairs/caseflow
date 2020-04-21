@@ -66,7 +66,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     context "CSS_ID in URL is valid" do
       it "returns 200" do
         [user.id, user.css_id].each do |user_id_path|
-          get :index, params: { user_id: user_id_path }
+          get :index, params: { user_id: user_id_path, rest: "/assign" }
           expect(response.status).to eq 200
         end
       end
@@ -74,8 +74,20 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     context "css_id in URL is invalid" do
       it "returns 400" do
         [-1, "BAD_CSS_ID"].each do |user_id_path|
-          get :index, params: { user_id: user_id_path }
+          get :index, params: { user_id: user_id_path, rest: "/assign" }
           expect(response.status).to eq 400
+        end
+      end
+    end
+    context "CSS_ID in URL is in mixed case" do
+      def downcase_random_characters(str)
+        str.chars.map { |c| [true, false].sample ? c.downcase : c }.join
+      end
+      it "returns status 308 and redirects to a CSS_ID" do
+        [user.css_id.downcase, downcase_random_characters(user.css_id), "Bad_Css_id"].each do |user_id_path|
+          get :index, params: { user_id: user_id_path, rest: "/assign" }
+          expect(response.status).to eq 308
+          expect(response).to redirect_to("/queue/#{user_id_path.upcase}/assign")
         end
       end
     end

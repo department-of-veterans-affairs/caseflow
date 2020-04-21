@@ -14,6 +14,9 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
+    # Why 'and return'? See https://stackoverflow.com/questions/34842427/redirect-to-vs-redirect-to-and-return
+    redirect_using_valid_cssid and return if invalid_cssid
+
     fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
 
     user_role = (params[:role] || user.vacols_roles.first).try(:downcase)
@@ -33,6 +36,19 @@ class LegacyTasksController < ApplicationController
         end
       end
     end
+  end
+
+  def redirect_using_valid_cssid
+    params.merge!(user_id: to_valid_cssid)
+
+    # Permit all parameters in order to call `redirect_to`, otherwise we get
+    # error "unable to convert unpermitted parameters to hash".
+    # This should be secure since the permitted params will be checked again after the redirect.
+    params.permit!
+
+    pp "updated params",params
+    # Default status is 302 Found (temporarily moved), so return 308 Permanent Redirect instead
+    redirect_to(params, status: :permanent_redirect)
   end
 
   def create
@@ -90,6 +106,15 @@ class LegacyTasksController < ApplicationController
   end
 
   private
+
+  # could also detect positive_integer?(params[:user_id]) here and map to CSS_ID in to_valid_cssid to simplify `user`
+  def invalid_cssid
+    params[:user_id] =~ /[a-z]/
+  end
+
+  def to_valid_cssid
+    params[:user_id]&.upcase
+  end
 
   def user
     @user ||= begin
