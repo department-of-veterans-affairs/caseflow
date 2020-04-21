@@ -41,10 +41,11 @@ class AddedIssue extends React.PureComponent {
   }
 
   getEligibility() {
-    const { issue, formType, legacyOptInApproved } = this.props;
-
     let errorMsg = '';
+    const { issue, formType, legacyOptInApproved } = this.props;
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
+    const legacyIssueEligibleWithExemption = issue.eligibleForSocOptInWithExemption &&
+      issue.untimelyExemptionCovid === 'true';
 
     if (
       issue.titleOfActiveReview ||
@@ -72,7 +73,7 @@ class AddedIssue extends React.PureComponent {
     } else if (issue.vacolsId) {
       if (!legacyOptInApproved) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn;
-      } else if (issue.eligibleForSocOptIn === false) {
+      } else if (!issue.eligibleForSocOptIn && !legacyIssueEligibleWithExemption) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
       }
     } else if (issue.beforeAma && formType !== 'supplemental_claim') {
@@ -153,6 +154,8 @@ AddedIssue.propTypes = {
     decisionReviewTitle: PropTypes.string,
     editedDescription: PropTypes.string,
     eligibleForSocOptIn: PropTypes.bool,
+    eligibleForSocOptInWithExemption: PropTypes.bool,
+    untimelyExemptionCovid: PropTypes.string,
     endProductCleared: PropTypes.bool,
     ineligibleReason: PropTypes.string,
     isUnidentified: PropTypes.bool,

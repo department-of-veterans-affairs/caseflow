@@ -385,10 +385,26 @@ module IntakeHelpers
         bfkey: "vacols2",
         bfcorlid: "#{veteran_file_number}S",
         bfdnod: 4.years.ago,
-        bfdsoc: 4.months.ago,
+        bfdsoc: Date.new(2019,12,31),
         case_issues: [
           create(:case_issue, :intervertebral_disc_syndrome),
           create(:case_issue, :degenerative_arthritis_of_the_spine)
+        ]
+      ))
+  end
+
+  def setup_active_ineligible_with_exemption(veteran_file_number)
+    create(:legacy_appeal, vacols_case:
+      create(
+        :case,
+        :status_active,
+        bfkey: "vacols5",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 2.years.ago,
+        bfdsoc: Date.new(2020,2,2),
+        case_issues: [
+          create(:case_issue, :rheumatoid_arthritis),
+          create(:case_issue, :osteomyelitis)
         ]
       ))
   end
@@ -428,6 +444,7 @@ module IntakeHelpers
   def setup_legacy_opt_in_appeals(veteran_file_number)
     setup_active_eligible_legacy_appeal(veteran_file_number)
     setup_active_ineligible_legacy_appeal(veteran_file_number)
+    setup_active_ineligible_with_exemption(veteran_file_number)
     setup_inactive_eligible_legacy_appeal(veteran_file_number)
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
   end
