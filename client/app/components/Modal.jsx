@@ -94,6 +94,7 @@ export default class Modal extends React.Component {
       confirmButton,
       cancelButton,
       title,
+      icon,
       customStyles
     } = this.props;
 
@@ -109,6 +110,8 @@ export default class Modal extends React.Component {
         </div>
       );
     }
+
+    const iconStyling = { float: "left", width: "30%", marginTop: "1rem", color: "#323a45" };
 
     return (
       <section
@@ -130,8 +133,13 @@ export default class Modal extends React.Component {
           >
             {closeSymbolHtml()}
           </button>
-          <h1 id="modal_id-title">{title}</h1>
-          <div {...modalTextStyling}>{children}</div>
+          <div display="flex">
+            {icon && <i className={`fa fa-2x fa-${icon}`} style={iconStyling} />}
+            <div>
+              <h1 id="modal_id-title">{title}</h1>
+              <div {...modalTextStyling}>{children}</div>
+            </div>
+          </div>
           {noDivider ? '' : <div className="cf-modal-divider" />}
           <div className="cf-modal-controls">{modalButtons}</div>
         </div>
@@ -163,7 +171,8 @@ Modal.propTypes = {
   label: PropTypes.string,
   noDivider: PropTypes.bool,
   specialContent: PropTypes.func,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  icon: PropTypes.string
 };
 
 Modal.defaultProps = {

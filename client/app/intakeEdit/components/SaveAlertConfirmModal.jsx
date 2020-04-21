@@ -19,6 +19,7 @@ class SaveAlertConfirmModal extends React.PureComponent {
         visible
         closeHandler={this.props.onClose}
         title={this.props.title}
+        icon={this.props.icon}
       >
         {this.props.children}
       </Modal>

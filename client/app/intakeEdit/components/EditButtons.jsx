@@ -138,6 +138,13 @@ class SaveButtonUnconnected extends React.Component {
     const originalIssueNumberCopy = sprintf(COPY.CORRECT_REQUEST_ISSUES_ORIGINAL_NUMBER, this.state.originalIssueNumber,
       pluralize('issue', this.state.originalIssueNumber), this.props.state.addedIssues.length);
 
+    const removeReviewBody = processedInCaseflow ?
+      <React.Fragment>
+        <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT}</p>
+        <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT_CONFIRM}</p>
+      </React.Fragment> :
+      <React.Fragment><p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT}</p></React.Fragment>
+
     return <span>
       {this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
         title={COPY.CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TITLE}
@@ -150,14 +157,15 @@ class SaveButtonUnconnected extends React.Component {
       </SaveAlertConfirmModal>}
 
       {this.state.showModals.reviewRemovedModal && <SaveAlertConfirmModal
-        title={COPY.CORRECT_REQUEST_ISSUES_REMOVE_MODAL_TITLE}
+        title={processedInCaseflow ?
+          COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE :
+          COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TITLE}
         buttonText={COPY.CORRECT_REQUEST_ISSUES_REMOVE_MODAL_BUTTON}
         onClose={() => this.closeModal('reviewRemovedModal')}
-        onConfirm={() => this.confirmModal('reviewRemovedModal')}>
+        onConfirm={() => this.confirmModal('reviewRemovedModal')}
+        icon="warning">
         <p>{originalIssueNumberCopy}</p>
-        <p>{processedInCaseflow ?
-          COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW :
-          COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS}</p>
+        {removeReviewBody}
       </SaveAlertConfirmModal>}
 
       { this.state.showModals.unidentifiedIssueModal && <SaveAlertConfirmModal
