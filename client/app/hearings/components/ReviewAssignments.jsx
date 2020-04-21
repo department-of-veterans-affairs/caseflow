@@ -26,8 +26,9 @@ const REQUEST_TYPE_LABELS = {
 };
 /* eslint-enable id-length */
 
-export default class ReviewAssignments extends React.Component {
+export const ModalWrapper = ({ children }) => <div className="cf-modal-scroll">{children}</div>;
 
+export default class ReviewAssignments extends React.Component {
   getAlertTitle = () => {
     if (this.props.schedulePeriod.type === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
       return COPY.HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO;
@@ -47,95 +48,123 @@ export default class ReviewAssignments extends React.Component {
   };
 
   getAlertButtons = () => {
-    return <React.Fragment>
-      <Link
-        name="go-back"
-        button="secondary"
-        to="/schedule/build/upload">
-        Go back
-      </Link>
-      <Button
-        name="confirmAssignments"
-        button="primary"
-        willNeverBeLoading
-        onClick={this.props.onClickConfirmAssignments}
-      >
-        Confirm assignments
-      </Button>
-    </React.Fragment>;
+    return (
+      <React.Fragment>
+        <Link name="go-back" button="secondary" to="/schedule/build/upload">
+          Go back
+        </Link>
+        <Button
+          name="confirmAssignments"
+          button="primary"
+          willNeverBeLoading
+          onClick={this.props.onClickConfirmAssignments}
+        >
+          Confirm assignments
+        </Button>
+      </React.Fragment>
+    );
   };
 
   modalConfirmButton = () => {
-    return <Button
-      classNames={['usa-button-secondary']}
-      onClick={this.props.onConfirmAssignmentsUpload}
-    >Confirm upload
-    </Button>;
+    return (
+      <Button classNames={['usa-button-secondary']} onClick={this.props.onConfirmAssignmentsUpload}>
+        Confirm upload
+      </Button>
+    );
   };
 
   modalCancelButton = () => {
-    return <Button linkStyling onClick={this.props.onClickCloseModal}>Go back</Button>;
+    return (
+      <Button linkStyling onClick={this.props.onClickCloseModal}>
+        Go back
+      </Button>
+    );
   };
 
   modalMessage = () => {
-    return <div>
-      <p>{COPY.HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_BODY}</p>
-      <p><b>Schedule type: </b>{SPREADSHEET_TYPES[this.props.schedulePeriod.type].display}</p>
-      <p><b>Date range: </b>{this.props.schedulePeriod.startDate} to {this.props.schedulePeriod.endDate}</p>
-    </div>;
+    return (
+      <div>
+        <p>{COPY.HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_BODY}</p>
+        <p>
+          <b>Schedule type: </b>
+          {SPREADSHEET_TYPES[this.props.schedulePeriod.type].display}
+        </p>
+        <p>
+          <b>Date range: </b>
+          {this.props.schedulePeriod.startDate} to {this.props.schedulePeriod.endDate}
+        </p>
+      </div>
+    );
   };
 
   render() {
-
     const { spErrorDetails } = this.props;
     let title = 'The assignments algorithm was unable to run successfully.';
 
     if (this.props.schedulePeriodError) {
-      let message = <span>Please confirm the information in the spreadsheet is valid and
-      <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
-        contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357
-        or by creating a ticket
-        via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
-      </span>;
+      let message = (
+        <span>
+          Please confirm the information in the spreadsheet is valid and
+          <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please contact the Caseflow team
+          via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via{' '}
+          <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">
+            YourIT
+          </a>
+          .
+        </span>
+      );
 
       if (spErrorDetails) {
         if (this.props.spErrorDetails.type === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
-          message = <span>You have allocated too many hearing days to the {spErrorDetails.details.ro_key},
-          the maximum number of allocations is {spErrorDetails.details.max_allocation}.<br></br>
-          Please check your spreadsheet and upload the file again using the "Go back" link below.<br></br>
-          <Link to="/schedule/build/upload"> Go back</Link>
-          </span>;
+          message = (
+            <span>
+              You have allocated too many hearing days to the {spErrorDetails.details.ro_key}, the maximum number of
+              allocations is {spErrorDetails.details.max_allocation}.<br />
+              Please check your spreadsheet and upload the file again using the "Go back" link below.<br />
+              <Link to="/schedule/build/upload"> Go back</Link>
+            </span>
+          );
         } else if (this.props.spErrorDetails.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
           title = 'We were unable to assign judges to the schedule.';
 
-          message = <span>We could not assign a judge to every hearing day. Please check the following dates in<br></br>
-          your file and try again using the "Go back" link below:<br></br>
-            {spErrorDetails.details.dates &&
-            spErrorDetails.details.dates.map((date, i) => <span key={i}>{date}<br></br></span>)}
-            <span className="cf-push-left" ><Link to="/schedule/build/upload">{'<'} Go back</Link></span>
-          </span>;
+          message = (
+            <span>
+              We could not assign a judge to every hearing day. Please check the following dates in<br />
+              your file and try again using the "Go back" link below:<br />
+              {spErrorDetails.details.dates &&
+                spErrorDetails.details.dates.map((date, i) => (
+                  <span key={i}>
+                    {date}
+                    <br />
+                  </span>
+                ))}
+              <span className="cf-push-left">
+                <Link to="/schedule/build/upload">{'<'} Go back</Link>
+              </span>
+            </span>
+          );
         }
       }
 
-      return <StatusMessage
-        type="alert"
-        title={title}
-        messageText={message}
-      />;
+      return <StatusMessage type="alert" title={title} messageText={message} />;
     }
 
     if (this.props.schedulePeriod.finalized) {
-      return <StatusMessage
-        type="status"
-        title="This page has expired."
-        messageText={<Link to="/schedule">Go back to home</Link>}
-      />;
+      return (
+        <StatusMessage
+          type="status"
+          title="This page has expired."
+          messageText={<Link to="/schedule">Go back to home</Link>}
+        />
+      );
     } else if (this.props.schedulePeriod.canFinalize === false) {
-      return <StatusMessage
-        type="status"
-        title="Schedule is being submitted to VACOLS."
-        messageText={<Link to="/schedule">Go back to home</Link>}
-      />;
+      return (
+        <StatusMessage
+          type="status"
+          title="Schedule is being submitted to VACOLS."
+          messageText={<Link to="/schedule">Go back to home</Link>}
+        />
+      );
     }
 
     let hearingAssignmentColumns = [
@@ -177,9 +206,11 @@ export default class ReviewAssignments extends React.Component {
       judge: hearingDay.judgeName
     }));
 
-    return <AppSegment filledBackground>
-      {this.props.displayConfirmationModal && <div className="cf-modal-scroll">
+    return (
+      <AppSegment filledBackground>
         <Modal
+          Wrapper={ModalWrapper}
+          show={this.props.displayConfirmationModal}
           title={COPY.HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_TITLE}
           closeHandler={this.props.onClickCloseModal}
           noDivider
@@ -188,20 +219,25 @@ export default class ReviewAssignments extends React.Component {
         >
           {this.modalMessage()}
         </Modal>
-      </div>}
-      <Alert
-        type="info"
-        title={this.getAlertTitle()}
-        message={<div>{this.getAlertMessage()}{this.getAlertButtons()}</div>}
-      />
-      <Table
-        styling={tableStyling}
-        columns={hearingAssignmentColumns}
-        rowObjects={hearingAssignmentRows}
-        summary="hearing-assignments"
-        slowReRendersAreOk
-      />
-    </AppSegment>;
+        <Alert
+          type="info"
+          title={this.getAlertTitle()}
+          message={
+            <div>
+              {this.getAlertMessage()}
+              {this.getAlertButtons()}
+            </div>
+          }
+        />
+        <Table
+          styling={tableStyling}
+          columns={hearingAssignmentColumns}
+          rowObjects={hearingAssignmentRows}
+          summary="hearing-assignments"
+          slowReRendersAreOk
+        />
+      </AppSegment>
+    );
   }
 }
 

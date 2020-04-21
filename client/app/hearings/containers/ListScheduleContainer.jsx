@@ -16,20 +16,13 @@ import {
   onResetDeleteSuccessful,
   onAssignHearingRoom
 } from '../actions/hearingScheduleActions';
-import {
-  selectVlj,
-  selectHearingCoordinator,
-  setNotes
-} from '../actions/dailyDocketActions';
+import { selectVlj, selectHearingCoordinator, setNotes } from '../actions/dailyDocketActions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../../components/Alert';
 import COPY from '../../../COPY';
-import {
-  formatDateStr,
-  getMinutesToMilliseconds
-} from '../../util/DateUtil';
+import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
@@ -58,7 +51,7 @@ export class ListScheduleContainer extends React.Component {
 
   switchListView = (view) => {
     this.setState({ view });
-  }
+  };
 
   componentDidMount = () => {
     this.props.onSelectedHearingDayChange('');
@@ -79,8 +72,10 @@ export class ListScheduleContainer extends React.Component {
     let requestUrl = '/hearings/hearing_day.json';
 
     if (this.props.startDate && this.props.endDate) {
-      if (!moment(this.props.startDate, dateFormatString, true).isValid() ||
-        !moment(this.props.endDate, dateFormatString, true).isValid()) {
+      if (
+        !moment(this.props.startDate, dateFormatString, true).isValid() ||
+        !moment(this.props.endDate, dateFormatString, true).isValid()
+      ) {
         return this.props.onInputInvalidDates();
       }
 
@@ -100,15 +95,10 @@ export class ListScheduleContainer extends React.Component {
     });
   };
 
-  createHearingPromise = (params = { showAll: false }) => Promise.all([
-    this.loadHearingSchedule(params)
-  ]);
+  createHearingPromise = (params = { showAll: false }) => Promise.all([this.loadHearingSchedule(params)]);
 
   openModal = () => {
-    this.setState({ showModalAlert: false,
-      modalOpen: true,
-      serverError: false,
-      noRoomsAvailable: false });
+    this.setState({ showModalAlert: false, modalOpen: true, serverError: false, noRoomsAvailable: false });
     this.props.onSelectedHearingDayChange('');
     this.props.selectRequestType('');
     this.props.onRegionalOfficeChange('');
@@ -139,7 +129,6 @@ export class ListScheduleContainer extends React.Component {
     }
 
     return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
-
   };
 
   getAlertMessage = () => {
@@ -174,7 +163,7 @@ export class ListScheduleContainer extends React.Component {
     }
 
     return COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER;
-  }
+  };
 
   render() {
     const user = this.props.user;
@@ -182,41 +171,40 @@ export class ListScheduleContainer extends React.Component {
     return (
       <React.Fragment>
         <QueueCaseSearchBar />
-        {(this.state.showModalAlert || this.props.successfulHearingDayDelete) &&
+        {(this.state.showModalAlert || this.props.successfulHearingDayDelete) && (
           <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
             {this.getAlertMessage()}
           </Alert>
-        }
-        { this.props.invalidDates && <Alert type="error" title="Please enter valid dates." /> }
+        )}
+        {this.props.invalidDates && <Alert type="error" title="Please enter valid dates." />}
         <AppSegment filledBackground>
-          <h1 className="cf-push-left">
-            {this.getHeader()}
-          </h1>
+          <h1 className="cf-push-left">{this.getHeader()}</h1>
           <div className="cf-push-right">
-            {user.userCanAssignHearingSchedule &&
-            <span className="cf-push-left" {...actionButtonsStyling}>
-              <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
-            </span>
-            }
-            {user.userCanBuildHearingSchedule &&
-            <span className="cf-push-left">
-              <Link button="secondary" to="/schedule/build">Build Schedule</Link>
-            </span>
-            }
+            {user.userCanAssignHearingSchedule && (
+              <span className="cf-push-left" {...actionButtonsStyling}>
+                <Link button="primary" to="/schedule/assign">
+                  Schedule Veterans
+                </Link>
+              </span>
+            )}
+            {user.userCanBuildHearingSchedule && (
+              <span className="cf-push-left">
+                <Link button="secondary" to="/schedule/build">
+                  Build Schedule
+                </Link>
+              </span>
+            )}
           </div>
-          <div className="cf-help-divider" {...hearingSchedStyling} ></div>
+          <div className="cf-help-divider" {...hearingSchedStyling} />
           <ListSchedule
             hearingSchedule={this.props.hearingSchedule}
             onApply={this.createHearingPromise}
             openModal={this.openModal}
             user={user}
             view={this.state.view}
-            switchListView={this.switchListView} />
-          {this.state.modalOpen &&
-            <HearingDayAddModal
-              closeModal={this.closeModal}
-              cancelModal={this.cancelModal} />
-          }
+            switchListView={this.switchListView}
+          />
+          <HearingDayAddModal show={this.state.modalOpen} closeModal={this.closeModal} cancelModal={this.cancelModal} />
         </AppSegment>
       </React.Fragment>
     );
@@ -238,21 +226,25 @@ const mapStateToProps = (state) => ({
   invalidDates: state.hearingSchedule.invalidDates
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onViewStartDateChange,
-  onViewEndDateChange,
-  onReceiveHearingSchedule,
-  onInputInvalidDates,
-  onResetInvalidDates,
-  onSelectedHearingDayChange,
-  selectRequestType,
-  selectVlj,
-  selectHearingCoordinator,
-  setNotes,
-  onAssignHearingRoom,
-  onRegionalOfficeChange,
-  onResetDeleteSuccessful
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      onViewStartDateChange,
+      onViewEndDateChange,
+      onReceiveHearingSchedule,
+      onInputInvalidDates,
+      onResetInvalidDates,
+      onSelectedHearingDayChange,
+      selectRequestType,
+      selectVlj,
+      selectHearingCoordinator,
+      setNotes,
+      onAssignHearingRoom,
+      onRegionalOfficeChange,
+      onResetDeleteSuccessful
+    },
+    dispatch
+  );
 
 ListScheduleContainer.propTypes = {
   endDate: PropTypes.string,
@@ -277,4 +269,9 @@ ListScheduleContainer.propTypes = {
   user: PropTypes.object
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListScheduleContainer));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(ListScheduleContainer)
+);

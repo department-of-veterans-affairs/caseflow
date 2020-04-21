@@ -8,20 +8,12 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import { fullWidth } from '../../queue/constants';
-import {
-  RegionalOfficeDropdown,
-  HearingCoordinatorDropdown,
-  JudgeDropdown
-} from '../../components/DataDropdowns';
+import { RegionalOfficeDropdown, HearingCoordinatorDropdown, JudgeDropdown } from '../../components/DataDropdowns';
 import DateSelector from '../../components/DateSelector';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import { bindActionCreators } from 'redux';
-import {
-  selectVlj,
-  selectHearingCoordinator,
-  setNotes
-} from '../actions/dailyDocketActions';
+import { selectVlj, selectHearingCoordinator, setNotes } from '../actions/dailyDocketActions';
 import {
   onSelectedHearingDayChange,
   selectRequestType,
@@ -57,17 +49,18 @@ const statusMsgDetailStyle = css({
   color: '#e31c3d'
 });
 
-const requestTypeOptions = [
-  { label: 'Video',
-    value: 'V' },
-  { label: 'Central',
-    value: 'C' }
-];
+const requestTypeOptions = [{ label: 'Video', value: 'V' }, { label: 'Central', value: 'C' }];
 
 const titleStyling = css({
   marginBottom: 0,
   padding: 0
 });
+
+export const ModalWrapper = ({ children }) => (
+  <AppSegment filledBackground>
+    <div className="cf-modal-scroll">{children}</div>
+  </AppSegment>
+);
 
 class HearingDayAddModal extends React.Component {
   constructor(props) {
@@ -87,19 +80,18 @@ class HearingDayAddModal extends React.Component {
   }
 
   modalConfirmButton = () => {
-    return <Button
-      classNames={['usa-button-secondary']}
-      onClick={this.onClickConfirm}
-    >Confirm
-    </Button>;
+    return (
+      <Button classNames={['usa-button-secondary']} onClick={this.onClickConfirm}>
+        Confirm
+      </Button>
+    );
   };
 
   onClickConfirm = () => {
     let errorMessages = [];
     let roErrorMessages = [];
 
-    this.setState({ serverError: false,
-      noRoomsAvailableError: false });
+    this.setState({ serverError: false, noRoomsAvailableError: false });
 
     if (this.props.selectedHearingDay === '') {
       this.setState({ dateError: true });
@@ -152,14 +144,16 @@ class HearingDayAddModal extends React.Component {
       assign_room: this.props.roomRequired
     };
 
-    if (this.props.selectedRegionalOffice &&
+    if (
+      this.props.selectedRegionalOffice &&
       this.props.selectedRegionalOffice.value !== '' &&
-      this.props.requestType.value !== 'C') {
+      this.props.requestType.value !== 'C'
+    ) {
       data.regional_office = this.props.selectedRegionalOffice.value;
     }
 
-    ApiUtil.post('/hearings/hearing_day.json', { data }).
-      then((response) => {
+    ApiUtil.post('/hearings/hearing_day.json', { data }).then(
+      (response) => {
         const resp = ApiUtil.convertToCamelCase(response.body);
 
         const newHearings = Object.assign({}, this.props.hearingSchedule);
@@ -169,40 +163,50 @@ class HearingDayAddModal extends React.Component {
 
         this.props.onReceiveHearingSchedule(newHearings);
         this.props.closeModal();
-
-      }, (error) => {
-        if (error.response.body && error.response.body.errors &&
-        error.response.body.errors[0].status === 400) {
+      },
+      (error) => {
+        if (error.response.body && error.response.body.errors && error.response.body.errors[0].status === 400) {
           this.setState({ noRoomsAvailableError: error.response.body.errors[0] });
         } else {
-        // All other server errors
+          // All other server errors
           this.setState({ serverError: true });
         }
-      });
+      }
+    );
   };
 
   getDateTypeErrorMessages = () => {
-    return <div>
-      <span {...statusMsgTitleStyle}>Cannot create a New Hearing Day</span>
-      <ul {...statusMsgDetailStyle} >
-        {
-          this.state.errorMessages.map((item, i) => <li key={i}>{item}</li>)
-        }
-      </ul></div>;
+    return (
+      <div>
+        <span {...statusMsgTitleStyle}>Cannot create a New Hearing Day</span>
+        <ul {...statusMsgDetailStyle}>
+          {this.state.errorMessages.map((item, i) => (
+            <li key={i}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    );
   };
 
   getRoErrorMessages = () => {
-    return <div>
-      <span {...statusMsgTitleStyle}>Hearing type is a Video hearing</span>
-      <ul {...statusMsgDetailStyle} >
-        {
-          this.state.roErrorMessages.map((item, i) => <li key={i}>{item}</li>)
-        }
-      </ul></div>;
+    return (
+      <div>
+        <span {...statusMsgTitleStyle}>Hearing type is a Video hearing</span>
+        <ul {...statusMsgDetailStyle}>
+          {this.state.roErrorMessages.map((item, i) => (
+            <li key={i}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    );
   };
 
   modalCancelButton = () => {
-    return <Button linkStyling onClick={this.onCancelModal}>Go back</Button>;
+    return (
+      <Button linkStyling onClick={this.onCancelModal}>
+        Go back
+      </Button>
+    );
   };
 
   onCancelModal = () => {
@@ -220,16 +224,13 @@ class HearingDayAddModal extends React.Component {
 
     switch ((value || {}).value) {
     case 'V':
-      this.setState({ videoSelected: true,
-        centralOfficeSelected: false });
+      this.setState({ videoSelected: true, centralOfficeSelected: false });
       break;
     case 'C':
-      this.setState({ videoSelected: false,
-        centralOfficeSelected: true });
+      this.setState({ videoSelected: false, centralOfficeSelected: true });
       break;
     default:
-      this.setState({ videoSelected: false,
-        centralOfficeSelected: false });
+      this.setState({ videoSelected: false, centralOfficeSelected: false });
     }
   };
 
@@ -239,9 +240,7 @@ class HearingDayAddModal extends React.Component {
   };
 
   resetErrorState = debounce(() => {
-    this.setState({ dateError: false,
-      typeError: false,
-      roError: false });
+    this.setState({ dateError: false, typeError: false, roError: false });
   }, 250);
 
   onVljChange = (value) => {
@@ -261,12 +260,12 @@ class HearingDayAddModal extends React.Component {
   };
 
   getAlertTitle = () => {
-    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.title :
-      'An error has occurred';
+    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.title : 'An error has occurred';
   };
 
   getAlertMessage = () => {
-    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.detail :
+    return this.state.noRoomsAvailableError ?
+      this.state.noRoomsAvailableError.detail :
       'You are unable to complete this action.';
   };
 
@@ -275,96 +274,109 @@ class HearingDayAddModal extends React.Component {
   };
 
   modalMessage = () => {
-    return <React.Fragment>
-      <div {...fullWidth} {...css({ marginBottom: '0' })} >
-        {!this.showAlert() && <React.Fragment>
-          <p {...spanStyling} >Please select the details of the new hearing day </p>
-          <b {...titleStyling} >Select Hearing Date</b>
-        </React.Fragment>}
-        {this.showAlert() &&
-          <Alert type="error"
-            title={this.getAlertTitle()}
-            scrollOnAlert={false}>
-            {this.getAlertMessage()}
-          </Alert>}
-        <DateSelector
-          name="hearingDate"
-          label={false}
-          errorMessage={this.state.dateError ?
-            this.getDateTypeErrorMessages() : null}
-          value={this.props.selectedHearingDay}
-          onChange={this.onHearingDateChange}
-          type="date"
-        />
-        <SearchableDropdown
-          name="requestType"
-          label="Select Hearing Type"
-          strongLabel
-          errorMessage={(!this.state.dateError && this.state.typeError) ? this.getDateTypeErrorMessages() : null}
-          value={this.props.requestType}
-          onChange={this.onRequestTypeChange}
-          options={requestTypeOptions} />
-        {this.state.videoSelected &&
-        <RegionalOfficeDropdown
-          label="Select Regional Office (RO)"
-          errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
-          onChange={(value, label) => this.onRegionalOfficeChange({
-            value,
-            label
-          })}
-          value={this.props.selectedRegionalOffice.value} />
-        }
-        {(this.state.videoSelected || this.state.centralOfficeSelected) &&
-        <React.Fragment>
-          <JudgeDropdown
-            name="vlj"
-            label="Select VLJ (Optional)"
-            value={this.props.vlj.value}
-            onChange={(value, label) => this.onVljChange({
-              value,
-              label
-            })} />
-          <HearingCoordinatorDropdown
-            name="coordinator"
-            label="Select Hearing Coordinator (Optional)"
-            value={this.props.coordinator.value}
-            onChange={(value, label) => this.onCoordinatorChange({
-              value,
-              label
-            })} />
-        </React.Fragment>
-        }
-        <TextareaField
-          name="Notes (Optional)"
-          strongLabel
-          onChange={this.onNotesChange}
-          textAreaStyling={notesFieldStyling}
-          value={this.props.notes} />
-        <Checkbox
-          name="roomRequired"
-          label="Assign Board Hearing Room"
-          strongLabel
-          value={this.props.roomRequired}
-          onChange={this.onRoomRequired}
-          {...roomRequiredStyling} />
-      </div>
-    </React.Fragment>;
+    return (
+      <React.Fragment>
+        <div {...fullWidth} {...css({ marginBottom: '0' })}>
+          {!this.showAlert() && (
+            <React.Fragment>
+              <p {...spanStyling}>Please select the details of the new hearing day </p>
+              <b {...titleStyling}>Select Hearing Date</b>
+            </React.Fragment>
+          )}
+          {this.showAlert() && (
+            <Alert type="error" title={this.getAlertTitle()} scrollOnAlert={false}>
+              {this.getAlertMessage()}
+            </Alert>
+          )}
+          <DateSelector
+            name="hearingDate"
+            label={false}
+            errorMessage={this.state.dateError ? this.getDateTypeErrorMessages() : null}
+            value={this.props.selectedHearingDay}
+            onChange={this.onHearingDateChange}
+            type="date"
+          />
+          <SearchableDropdown
+            name="requestType"
+            label="Select Hearing Type"
+            strongLabel
+            errorMessage={!this.state.dateError && this.state.typeError ? this.getDateTypeErrorMessages() : null}
+            value={this.props.requestType}
+            onChange={this.onRequestTypeChange}
+            options={requestTypeOptions}
+          />
+          {this.state.videoSelected && (
+            <RegionalOfficeDropdown
+              label="Select Regional Office (RO)"
+              errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
+              onChange={(value, label) =>
+                this.onRegionalOfficeChange({
+                  value,
+                  label
+                })
+              }
+              value={this.props.selectedRegionalOffice.value}
+            />
+          )}
+          {(this.state.videoSelected || this.state.centralOfficeSelected) && (
+            <React.Fragment>
+              <JudgeDropdown
+                name="vlj"
+                label="Select VLJ (Optional)"
+                value={this.props.vlj.value}
+                onChange={(value, label) =>
+                  this.onVljChange({
+                    value,
+                    label
+                  })
+                }
+              />
+              <HearingCoordinatorDropdown
+                name="coordinator"
+                label="Select Hearing Coordinator (Optional)"
+                value={this.props.coordinator.value}
+                onChange={(value, label) =>
+                  this.onCoordinatorChange({
+                    value,
+                    label
+                  })
+                }
+              />
+            </React.Fragment>
+          )}
+          <TextareaField
+            name="Notes (Optional)"
+            strongLabel
+            onChange={this.onNotesChange}
+            textAreaStyling={notesFieldStyling}
+            value={this.props.notes}
+          />
+          <Checkbox
+            name="roomRequired"
+            label="Assign Board Hearing Room"
+            strongLabel
+            value={this.props.roomRequired}
+            onChange={this.onRoomRequired}
+            {...roomRequiredStyling}
+          />
+        </div>
+      </React.Fragment>
+    );
   };
 
   render() {
-
-    return <AppSegment filledBackground>
-      <div className="cf-modal-scroll">
-        <Modal
-          title="Add Hearing Day"
-          closeHandler={this.onCancelModal}
-          confirmButton={this.modalConfirmButton()}
-          cancelButton={this.modalCancelButton()}
-        >
-          {this.modalMessage()}
-        </Modal>
-      </div>
-    </AppSegment>;
+    return (
+      <Modal
+        Wrapper={ModalWrapper}
+        show={this.props.show}
+        title="Add Hearing Day"
+        closeHandler={this.onCancelModal}
+        confirmButton={this.modalConfirmButton()}
+        cancelButton={this.modalCancelButton()}
+      >
+        {this.modalMessage()}
+      </Modal>
+    );
   }
 }
 
@@ -417,15 +429,24 @@ const mapStateToProps = (state) => ({
   roomRequired: state.hearingSchedule.roomRequired
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onSelectedHearingDayChange,
-  onRegionalOfficeChange,
-  selectRequestType,
-  selectVlj,
-  selectHearingCoordinator,
-  setNotes,
-  onAssignHearingRoom,
-  onReceiveHearingSchedule
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      onSelectedHearingDayChange,
+      onRegionalOfficeChange,
+      selectRequestType,
+      selectVlj,
+      selectHearingCoordinator,
+      setNotes,
+      onAssignHearingRoom,
+      onReceiveHearingSchedule
+    },
+    dispatch
+  );
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HearingDayAddModal));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(HearingDayAddModal)
+);

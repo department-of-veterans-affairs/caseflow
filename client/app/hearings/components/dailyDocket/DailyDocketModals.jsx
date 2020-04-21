@@ -8,29 +8,28 @@ import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 
-export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay, dailyDocket }) => (
-  <div>
-    <Modal
-      title={COPY.REMOVE_HEARING_DAY_MESSAGE_TITLE}
-      closeHandler={onCancelRemoveHearingDay}
-      confirmButton={
-        <Button classNames={['usa-button-secondary']} onClick={deleteHearingDay}>
-          Confirm
-        </Button>
-      }
-      cancelButton={
-        <Button linkStyling onClick={onCancelRemoveHearingDay}>
-          Go back
-        </Button>
-      }
-    >
-      {sprintf(
-        COPY.REMOVE_HEARING_DAY_MESSAGE_DETAIL,
-        dailyDocket.readableRequestType,
-        moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY')
-      )}
-    </Modal>
-  </div>
+export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay, dailyDocket, show }) => (
+  <Modal
+    show={show}
+    title={COPY.REMOVE_HEARING_DAY_MESSAGE_TITLE}
+    closeHandler={onCancelRemoveHearingDay}
+    confirmButton={
+      <Button classNames={['usa-button-secondary']} onClick={deleteHearingDay}>
+        Confirm
+      </Button>
+    }
+    cancelButton={
+      <Button linkStyling onClick={onCancelRemoveHearingDay}>
+        Go back
+      </Button>
+    }
+  >
+    {sprintf(
+      COPY.REMOVE_HEARING_DAY_MESSAGE_DETAIL,
+      dailyDocket.readableRequestType,
+      moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY')
+    )}
+  </Modal>
 );
 
 RemoveHearingModal.propTypes = {
@@ -39,26 +38,25 @@ RemoveHearingModal.propTypes = {
   dailyDocket: PropTypes.object
 };
 
-export const LockModal = ({ updateLockHearingDay, onCancelDisplayLockModal, dailyDocket }) => (
-  <div>
-    <Modal
-      title={dailyDocket.lock ? COPY.UNLOCK_HEARING_DAY_MESSAGE_TITLE : COPY.LOCK_HEARING_DAY_MESSAGE_TITLE}
-      closeHandler={onCancelDisplayLockModal}
-      confirmButton={
-        <Button classNames={['usa-button-secondary']} onClick={updateLockHearingDay(!dailyDocket.lock)}>
-          Confirm
-        </Button>
-      }
-      cancelButton={
-        <Button linkStyling onClick={onCancelDisplayLockModal}>
-          Go back
-        </Button>
-      }
-    >
-      {dailyDocket.lock && COPY.UNLOCK_HEARING_DAY_MESSAGE_DETAIL}
-      {!dailyDocket.lock && COPY.LOCK_HEARING_DAY_MESSAGE_DETAIL}
-    </Modal>
-  </div>
+export const LockModal = ({ updateLockHearingDay, onCancelDisplayLockModal, dailyDocket, show }) => (
+  <Modal
+    show={show}
+    title={dailyDocket.lock ? COPY.UNLOCK_HEARING_DAY_MESSAGE_TITLE : COPY.LOCK_HEARING_DAY_MESSAGE_TITLE}
+    closeHandler={onCancelDisplayLockModal}
+    confirmButton={
+      <Button classNames={['usa-button-secondary']} onClick={updateLockHearingDay(!dailyDocket.lock)}>
+        Confirm
+      </Button>
+    }
+    cancelButton={
+      <Button linkStyling onClick={onCancelDisplayLockModal}>
+        Go back
+      </Button>
+    }
+  >
+    {dailyDocket.lock && COPY.UNLOCK_HEARING_DAY_MESSAGE_DETAIL}
+    {!dailyDocket.lock && COPY.LOCK_HEARING_DAY_MESSAGE_DETAIL}
+  </Modal>
 );
 
 LockModal.propTypes = {
@@ -67,27 +65,26 @@ LockModal.propTypes = {
   dailyDocket: PropTypes.object
 };
 
-export const AodModal = ({ onConfirm, onCancel, advanceOnDocketMotion }) => (
-  <div>
-    <Modal
-      title="There is a prior AOD decision"
-      closeHandler={onCancel}
-      cancelButton={
-        <Button linkStyling onClick={onCancel}>
-          Cancel
-        </Button>
-      }
-      confirmButton={
-        <Button classNames={['usa-button-secondary']} onClick={onConfirm}>
-          Confirm
-        </Button>
-      }
-    >
-      This AOD was&nbsp;<strong>{advanceOnDocketMotion.granted ? 'granted' : 'denied'}</strong>&nbsp;on&nbsp;
-      {moment(advanceOnDocketMotion.date).format('MM/DD/YYYY')}&nbsp;by Judge&nbsp;{advanceOnDocketMotion.judgeName}.
-      &nbsp;Changing this AOD will override this previous decision.
-    </Modal>
-  </div>
+export const AodModal = ({ onConfirm, onCancel, advanceOnDocketMotion, show }) => (
+  <Modal
+    show={show}
+    title="There is a prior AOD decision"
+    closeHandler={onCancel}
+    cancelButton={
+      <Button linkStyling onClick={onCancel}>
+        Cancel
+      </Button>
+    }
+    confirmButton={
+      <Button classNames={['usa-button-secondary']} onClick={onConfirm}>
+        Confirm
+      </Button>
+    }
+  >
+    This AOD was&nbsp;<strong>{advanceOnDocketMotion.granted ? 'granted' : 'denied'}</strong>&nbsp;on&nbsp;
+    {moment(advanceOnDocketMotion.date).format('MM/DD/YYYY')}&nbsp;by Judge&nbsp;{advanceOnDocketMotion.judgeName}.
+    &nbsp;Changing this AOD will override this previous decision.
+  </Modal>
 );
 
 AodModal.propTypes = {
@@ -95,6 +92,8 @@ AodModal.propTypes = {
   onCancel: PropTypes.func,
   advanceOnDocketMotion: PropTypes.object
 };
+
+export const DispositionModalWrapper = ({ children }) => <div className="cf-modal-scroll">{children}</div>;
 
 export class DispositionModal extends React.Component {
   COPY = {
@@ -147,29 +146,29 @@ export class DispositionModal extends React.Component {
   };
 
   render() {
-    const { hearing, fromDisposition, toDisposition, onCancel } = this.props;
+    const { hearing, fromDisposition, toDisposition, onCancel, show } = this.props;
     const hearingType = hearing.docketName === 'legacy' && !hearing.dispositionEditable ? 'VACOLS' : 'CASEFLOW';
 
     return (
-      <div className="cf-modal-scroll">
-        <Modal
-          closeHandler={onCancel}
-          confirmButton={this.confirmButton()}
-          cancelButton={this.cancelButton()}
-          title={this.COPY[hearingType].title}
-        >
-          <div>
-            <p>
-              Previous Disposition:{' '}
-              <strong>{hearing.disposition ? HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[fromDisposition] : 'None'}</strong>
-            </p>
-            <p>
-              New Disposition: <strong>{HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[toDisposition]}</strong>
-            </p>
-          </div>
-          {this.COPY[hearingType].body}
-        </Modal>
-      </div>
+      <Modal
+        Wrapper={DispositionModalWrapper}
+        show={show}
+        closeHandler={onCancel}
+        confirmButton={this.confirmButton()}
+        cancelButton={this.cancelButton()}
+        title={this.COPY[hearingType].title}
+      >
+        <div>
+          <p>
+            Previous Disposition:{' '}
+            <strong>{hearing.disposition ? HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[fromDisposition] : 'None'}</strong>
+          </p>
+          <p>
+            New Disposition: <strong>{HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[toDisposition]}</strong>
+          </p>
+        </div>
+        {this.COPY[hearingType].body}
+      </Modal>
     );
   }
 }

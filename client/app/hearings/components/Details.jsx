@@ -289,7 +289,8 @@ class HearingDetails extends React.Component {
           <h2>Hearing Details</h2>
           <DetailsOverview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
-          {this.state.virtualHearingModalOpen && <VirtualHearingModal
+          <VirtualHearingModal
+            show={    this.state.virtualHearingModalOpen}
             hearing={this.props.hearing}
             virtualHearing={virtualHearingForm}
             update={this.updateVirtualHearing}
@@ -297,7 +298,7 @@ class HearingDetails extends React.Component {
             closeModal={this.closeVirtualHearingModal}
             reset={this.resetVirtualHearing}
             type={this.state.virtualHearingModalType}
-            {...editedEmails} />}
+            {...editedEmails} />
           <DetailsInputs
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}

@@ -7,7 +7,6 @@ import Modal from '../../../components/Modal';
 import { trashCan } from '../../../components/RenderFunctions';
 
 class HearingWorksheetIssueDelete extends PureComponent {
-
   handleModalOpen = (issueId) => () => {
     this.props.toggleIssueDeleteModal(issueId, true);
   };
@@ -22,39 +21,39 @@ class HearingWorksheetIssueDelete extends PureComponent {
   };
 
   render() {
-    let {
-      issue,
-      appealKey
-    } = this.props;
+    let { issue, appealKey } = this.props;
 
-    return <div>
-      <button
-        id={`cf-issue-delete-${issue.appeal_id}${issue.id}`}
-        className="cf-issue-delete"
-        onClick={this.handleModalOpen(issue.id)}
-        alt="Remove Issue Confirmation"
-        name="Delete Issue"
-        aria-label="Delete Issue"
-        type="button">
-        {trashCan()}
-      </button>
-      { issue.isShowingModal && <Modal
-        buttons = {[
-          { classNames: ['cf-modal-link', 'cf-btn-link'],
-            name: 'Cancel',
-            onClick: this.handleModalClose(issue.id)
-          },
-          { classNames: ['usa-button', 'usa-button-secondary'],
-            name: 'Confirm delete',
-            onClick: this.onDeleteIssue(issue.id)
-          }]}
-        closeHandler={this.handleModalClose(issue.id)}
-        title = "Delete Issue Row">
-        <p>Are you sure you want to remove this issue from Appeal Stream {appealKey + 1} on the worksheet? </p>
-        { issue.from_vacols && <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p> }
-      </Modal>
-      }
-    </div>;
+    return (
+      <div>
+        <button
+          id={`cf-issue-delete-${issue.appeal_id}${issue.id}`}
+          className="cf-issue-delete"
+          onClick={this.handleModalOpen(issue.id)}
+          alt="Remove Issue Confirmation"
+          name="Delete Issue"
+          aria-label="Delete Issue"
+          type="button"
+        >
+          {trashCan()}
+        </button>
+        <Modal
+          show={issue.isShowingModal}
+          buttons={[
+            { classNames: ['cf-modal-link', 'cf-btn-link'], name: 'Cancel', onClick: this.handleModalClose(issue.id) },
+            {
+              classNames: ['usa-button', 'usa-button-secondary'],
+              name: 'Confirm delete',
+              onClick: this.onDeleteIssue(issue.id)
+            }
+          ]}
+          closeHandler={this.handleModalClose(issue.id)}
+          title="Delete Issue Row"
+        >
+          <p>Are you sure you want to remove this issue from Appeal Stream {appealKey + 1} on the worksheet? </p>
+          {issue.from_vacols && <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p>}
+        </Modal>
+      </div>
+    );
   }
 }
 
@@ -62,10 +61,14 @@ const mapStateToProps = (state) => ({
   worksheet: state.hearingWorksheet
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleIssueDeleteModal,
-  onDeleteIssue
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      toggleIssueDeleteModal,
+      onDeleteIssue
+    },
+    dispatch
+  );
 
 HearingWorksheetIssueDelete.propTypes = {
   issue: PropTypes.object.isRequired,

@@ -349,8 +349,9 @@ class DailyDocketRow extends React.Component {
     });
   };
 
-  renderVirtualHearingModal = (user, hearing) => (
+  renderVirtualHearingModal = (user, hearing, show) => (
     <VirtualHearingModal
+      show={show}
       hearing={hearing}
       timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
       virtualHearing={hearing.virtualHearing || {}}
@@ -388,23 +389,23 @@ class DailyDocketRow extends React.Component {
           {this.getLeftColumn()}
           {this.getRightColumn()}
         </div>
-        {user.userCanScheduleVirtualHearings &&
-          this.state.virtualHearingModalActive &&
-          hearing.isVirtual &&
-          this.renderVirtualHearingModal(user, hearing)}
-        {this.state.aodModalActive && (
-          <AodModal
-            advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
-            onConfirm={() => {
-              this.saveHearing();
-              this.closeAodModal();
-            }}
-            onCancel={() => {
-              this.updateAodMotion(this.state.initialState.advanceOnDocketMotion);
-              this.closeAodModal();
-            }}
-          />
+        {this.renderVirtualHearingModal(
+          user,
+          hearing,
+          user.userCanScheduleVirtualHearings && this.state.virtualHearingModalActive && hearing.isVirtual
         )}
+        <AodModal
+          show={this.state.aodModalActive}
+          advanceOnDocketMotion={hearing.advanceOnDocketMotion || {}}
+          onConfirm={() => {
+            this.saveHearing();
+            this.closeAodModal();
+          }}
+          onCancel={() => {
+            this.updateAodMotion(this.state.initialState.advanceOnDocketMotion);
+            this.closeAodModal();
+          }}
+        />
         {this.state.startPolling && this.startPolling()}
       </div>
     );

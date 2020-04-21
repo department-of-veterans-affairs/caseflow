@@ -155,22 +155,20 @@ export default class DailyDocket extends React.Component {
       <AppSegment filledBackground>
         {editedDispositionModalProps && <DispositionModal {...this.state.editedDispositionModalProps} />}
 
-        {displayRemoveHearingDayModal && (
-          <RemoveHearingModal
-            dailyDocket={dailyDocket}
-            onCancelRemoveHearingDay={onCancelRemoveHearingDay}
-            onClickRemoveHearingDay={onClickRemoveHearingDay}
-            deleteHearingDay={deleteHearingDay}
-          />
-        )}
+        <RemoveHearingModal
+          show={Boolean(displayRemoveHearingDayModal)}
+          dailyDocket={dailyDocket}
+          onCancelRemoveHearingDay={onCancelRemoveHearingDay}
+          onClickRemoveHearingDay={onClickRemoveHearingDay}
+          deleteHearingDay={deleteHearingDay}
+        />
 
-        {displayLockModal && (
-          <LockModal
-            dailyDocket={dailyDocket}
-            updateLockHearingDay={updateLockHearingDay}
-            onCancelDisplayLockModal={onCancelDisplayLockModal}
-          />
-        )}
+        <LockModal
+          show={Boolean(displayLockModal)}
+          dailyDocket={dailyDocket}
+          updateLockHearingDay={updateLockHearingDay}
+          onCancelDisplayLockModal={onCancelDisplayLockModal}
+        />
 
         <Alerts
           dailyDocket={dailyDocket}
