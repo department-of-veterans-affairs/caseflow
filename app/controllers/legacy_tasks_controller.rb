@@ -60,7 +60,7 @@ class LegacyTasksController < ApplicationController
 
     # Default status is 302 Found (temporarily moved), so return 308 Permanent Redirect instead.
     # For security, `only_path: true` will limit the redirect to the current host
-    redirect_to(unchecked_params.merge(only_path: true), status: :permanent_redirect)
+    redirect_to(unchecked_params.merge(:only_path => true), status: :permanent_redirect)
   end
 
   def create
