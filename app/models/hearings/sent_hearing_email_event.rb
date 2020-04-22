@@ -5,7 +5,6 @@ class SentHearingEmailEvent < CaseflowRecord
   belongs_to :sent_by, class_name: "User"
 
   before_create :assign_sent_at_time
-  before_create :assign_sent_by_user
 
   # Allows all keys specified in `MailRecipient::RECIPIENT_TITLES`
   enum recipient_role: MailRecipient::RECIPIENT_TITLES.map { |key, _| [key, key.to_s] }.to_h,
@@ -28,9 +27,5 @@ class SentHearingEmailEvent < CaseflowRecord
 
   def assign_sent_at_time
     self.sent_at ||= Time.now.utc
-  end
-
-  def assign_sent_by_user
-    self.sent_by ||= RequestStore[:current_user]
   end
 end

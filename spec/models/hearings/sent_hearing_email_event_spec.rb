@@ -11,16 +11,12 @@ describe SentHearingEmailEvent do
       SentHearingEmailEvent.create(
         hearing: hearing,
         email_type: email_type,
-        recipient_role: recipient_role
+        recipient_role: recipient_role,
+        sent_by: user
       )
     end
 
-    before do
-      User.authenticate!(user: user)
-    end
-
-    it "automatically sets the sent_by user, and sent_at date" do
-      expect(subject.sent_by).to eq(user)
+    it "automatically sets the sent_at date" do
       expect(subject.sent_at).not_to be(nil)
     end
 

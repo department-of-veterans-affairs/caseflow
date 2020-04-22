@@ -9,8 +9,7 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
     let(:create_job) do
       VirtualHearings::CreateConferenceJob.new(
         hearing_id: virtual_hearing.hearing_id,
-        hearing_type: virtual_hearing.hearing_type,
-        updated_by_id: virtual_hearing.created_by.id
+        hearing_type: virtual_hearing.hearing_type
       )
     end
 

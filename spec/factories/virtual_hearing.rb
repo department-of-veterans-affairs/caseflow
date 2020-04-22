@@ -15,6 +15,7 @@ FactoryBot.define do
     representative_email { "caseflow-representative@test.com" }
     representative_email_sent { false }
     association :created_by, factory: :user
+    association :updated_by, factory: :user
     establishment { nil }
 
     transient do

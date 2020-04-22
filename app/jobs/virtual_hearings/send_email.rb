@@ -94,22 +94,23 @@ class VirtualHearings::SendEmail
     return false if email.nil?
 
     msg = email.deliver_now!
+  rescue StandardError => error
+    Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
 
+    false
+  else
     SentHearingEmailEvent.create!(
       hearing: virtual_hearing.hearing,
       email_type: type,
       email_address: recipient.email,
       external_message_id: external_message_id(msg),
-      recipient_role: recipient.title.downcase
+      recipient_role: recipient.title.downcase,
+      sent_by: virtual_hearing.updated_by
     )
 
     Rails.logger.info("Sent #{type} email to #{recipient.title}!")
 
     true
-  rescue StandardError => error
-    Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
-
-    false
   end
 
   def judge_recipient
