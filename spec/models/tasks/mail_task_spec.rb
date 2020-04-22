@@ -278,25 +278,17 @@ describe MailTask, :postgres do
     context "for an EvidenceOrArgumentMailTask" do
       let(:task_class) { EvidenceOrArgumentMailTask }
 
-      context "when the appeal has a pending hearing task" do
-        before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
-
-        it "should route to hearing admin branch" do
-          expect(subject).to eq(HearingAdmin.singleton)
-        end
-      end
-
       context "when the appeal is not active" do
         before { allow(task_class).to receive(:case_active?).and_return(false) }
 
-        it "should raise an error" do
-          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        it "should route to VLJ support staff" do
+          expect(subject).to eq(Colocated.singleton)
         end
       end
 
-      context "when the appeal is active and has no pending_hearing_task" do
-        it "should route to VLJ support staff" do
-          expect(subject).to eq(Colocated.singleton)
+      context "when the appeal is active" do
+        it "should route to the Mail Team" do
+          expect(subject).to eq(MailTeam.singleton)
         end
       end
     end
