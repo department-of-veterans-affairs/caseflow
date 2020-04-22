@@ -577,7 +577,12 @@ RSpec.feature "Reader", :all_dbs do
             document_id: documents[1].id,
             y: 300,
             page: 3
-          )
+          ),
+          Generators::Annotation.create(
+            comment: "comment with a * char in it",
+            document_id: documents[0].id,
+            y: 250
+          ),
         ]
       end
 
@@ -590,6 +595,10 @@ RSpec.feature "Reader", :all_dbs do
 
         # A doc without a comment should not show up
         expect(page.has_no_content?(documents[2].type)).to eq(true)
+
+        # Filter properly escapes characters
+        fill_in "searchBar", with: "*"
+        expect(page).to have_content(annotations[6].comment)
 
         # Filtering the document list should work in "Comments" mode.
         fill_in "searchBar", with: "form"

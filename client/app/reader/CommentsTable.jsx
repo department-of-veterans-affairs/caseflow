@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import _, {escapeRegExp} from 'lodash';
 import { connect } from 'react-redux';
 
 import { getAnnotationsPerDocument } from './selectors';
@@ -24,7 +24,7 @@ export const getRowObjects = (documents, annotationsPerDocument, searchQuery = '
         return true;
       }
 
-      const query = new RegExp(searchQuery, 'i');
+      const query = new RegExp(escapeRegExp(searchQuery), 'i');
 
       return note.comment.match(query) || note.docType.match(query);
     }).
