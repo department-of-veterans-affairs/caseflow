@@ -12,7 +12,9 @@ const modalTextStyling = css({ width: '100%',
 
 const iconStyling = css({
   float: "left",
-  width: "25%",
+  flexGrow: 0,
+  flexShrink: 0,
+  flexBasis: "13%",
   marginTop: "1rem",
   color: "#323a45"
 });
