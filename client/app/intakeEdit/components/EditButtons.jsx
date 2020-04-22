@@ -143,7 +143,7 @@ class SaveButtonUnconnected extends React.Component {
         <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT}</p>
         <p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT_CONFIRM}</p>
       </React.Fragment> :
-      <React.Fragment><p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT}</p></React.Fragment>
+      <React.Fragment><p>{COPY.CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT}</p></React.Fragment>;
 
     return <span>
       {this.state.showModals.issueChangeModal && <SaveAlertConfirmModal

@@ -11,12 +11,12 @@ const modalTextStyling = css({ width: '100%',
   fontFamily: 'Source Sans Pro' });
 
 const iconStyling = css({
-  float: "left",
+  float: 'left',
   flexGrow: 0,
   flexShrink: 0,
-  flexBasis: "13%",
-  marginTop: "1rem",
-  color: "#323a45"
+  flexBasis: '13%',
+  marginTop: '1rem',
+  color: '#323a45'
 });
 
 export default class Modal extends React.Component {
@@ -140,7 +140,7 @@ export default class Modal extends React.Component {
           >
             {closeSymbolHtml()}
           </button>
-          <div style={{display: "flex"}}>
+          <div style={{ display: 'flex' }}>
             {icon && <i className={`fa fa-2x fa-${icon}`} {...iconStyling} />}
             <div>
               <h1 id="modal_id-title">{title}</h1>

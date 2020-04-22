@@ -50,13 +50,13 @@ export default class StyleGuideModal extends React.PureComponent {
         in your modal (see below code snippets).
         Whenever possible, use a close link as the left action.</p>
       <div className="usa-grid">
-        <div class="usa-width-one-half">
+        <div className="usa-width-one-half">
           <Button
             name="Launch modal"
             onClick={this.handleModalOpen}
             classNames={['usa-button', 'usa-button-secondary']} />
         </div>
-        <div class="usa-width-one-half">
+        <div className="usa-width-one-half">
           <Button
             name="Launch icon modal"
             onClick={this.handleIconModalOpen}
