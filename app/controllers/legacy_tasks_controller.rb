@@ -14,13 +14,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
-    # Why 'and return'? See https://stackoverflow.com/questions/34842427/redirect-to-vs-redirect-to-and-return
-    redirect_using_valid_cssid and return if invalid_cssid
-
-    fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
-
-    user_role = (params[:role] || user.vacols_roles.first).try(:downcase)
-    return invalid_role_error unless ROLES.include?(user_role)
+    return if invalid_parameters?
 
     respond_to do |format|
       format.html do
@@ -38,17 +32,29 @@ class LegacyTasksController < ApplicationController
     end
   end
 
+  def invalid_parameters?
+    # Why '&& return'? See https://stackoverflow.com/questions/34842427/redirect-to-vs-redirect-to-and-return
+    return redirect_using_valid_cssid if invalid_cssid
+
+    fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
+
+    user_role = (params[:role] || user.vacols_roles.first).try(:downcase)
+    return invalid_role_error unless ROLES.include?(user_role)
+
+    nil
+  end
+
   def redirect_using_valid_cssid
-    params.merge!(user_id: to_valid_cssid)
+    params[:user_id] = to_valid_cssid
 
     # Permit all parameters in order to call `redirect_to`, otherwise we get
     # error "unable to convert unpermitted parameters to hash".
     # This should be secure since the permitted params will be checked again after the redirect.
     params.permit!
 
-    pp "updated params",params
-    # Default status is 302 Found (temporarily moved), so return 308 Permanent Redirect instead
-    redirect_to(params, status: :permanent_redirect)
+    # Default status is 302 Found (temporarily moved), so return 308 Permanent Redirect instead.
+    # For security, `only_path: true` will limit the redirect to the current host
+    redirect_to(params.merge(only_path: true), status: :permanent_redirect)
   end
 
   def create
