@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
 
@@ -26,5 +27,14 @@ class SaveAlertConfirmModal extends React.PureComponent {
     </span>;
   }
 }
+
+SaveAlertConfirmModal.propTypes = {
+  buttonText: PropTypes.string,
+  children: PropTypes.node,
+  icon: PropTypes.string,
+  onClose: PropTypes.func,
+  onConfirm: PropTypes.func,
+  title: PropTypes.string
+};
 
 export default SaveAlertConfirmModal;
