@@ -1399,8 +1399,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
 
         click_edit_submit
-        expect(page).to have_content("Remove review?")
-        expect(page).to have_content("This review and all tasks associated with it will be removed.")
+        expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE)
+        expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT)
         click_intake_confirm
         sleep 1
 
