@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
+  include CssIdConcern
+
   before_action :deny_non_bva_admins, only: [:represented_organizations, :update]
 
   def index
     return filter_by_role if params[:role]
-    return filter_by_css_id_or_name if params[:css_id]
+    return filter_by_css_id_or_name if css_id
 
     render json: {}, status: :ok
   end
@@ -34,6 +36,14 @@ class UsersController < ApplicationController
 
   private
 
+  def css_id
+    return nil unless params[:css_id]
+
+    return to_valid_css_id(params[:css_id]) if invalid_css_id?(params[:css_id])
+
+    params[:css_id]
+  end
+
   def filter_by_role
     finder = UserFinder.new(role: params[:role])
     users = finder.users
@@ -54,7 +64,7 @@ class UsersController < ApplicationController
 
   def filter_by_css_id_or_name
     # the param name is css_id for convenience but we are more generous in what we search.
-    finder = UserFinder.new(css_id: params[:css_id], name: params[:css_id])
+    finder = UserFinder.new(css_id: css_id, name: css_id)
     users = finder.users || []
     if params[:exclude_org]
       org = Organization.find_by_name_or_url(params[:exclude_org])
@@ -64,7 +74,7 @@ class UsersController < ApplicationController
   end
 
   def user
-    unless params[:css_id] || params[:id]
+    unless css_id || params[:id]
       fail(
         Caseflow::Error::InvalidParameter,
         parameter: "css_id or id",
@@ -72,7 +82,7 @@ class UsersController < ApplicationController
       )
     end
 
-    @user ||= params[:id] ? User.find(params[:id]) : User.find_by_css_id(params[:css_id])
+    @user ||= params[:id] ? User.find(params[:id]) : User.find_by_css_id(css_id)
   end
 
   def user_to_modify

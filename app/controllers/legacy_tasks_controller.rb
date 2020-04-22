@@ -2,6 +2,7 @@
 
 class LegacyTasksController < ApplicationController
   include Errors
+  include CssIdConcern
 
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
@@ -34,18 +35,21 @@ class LegacyTasksController < ApplicationController
 
   def invalid_parameters?
     # Why '&& return'? See https://stackoverflow.com/questions/34842427/redirect-to-vs-redirect-to-and-return
-    return redirect_using_valid_cssid if invalid_cssid
+    return redirect_using_valid_cssid if invalid_css_id?(params[:user_id])
 
     fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
 
-    user_role = (params[:role] || user.vacols_roles.first).try(:downcase)
     return invalid_role_error unless ROLES.include?(user_role)
 
     nil
   end
 
+  def user_role
+    (params[:role] || user.vacols_roles.first).try(:downcase)
+  end
+
   def redirect_using_valid_cssid
-    params[:user_id] = to_valid_cssid
+    params[:user_id] = to_valid_css_id(params[:user_id])
 
     # Permit all parameters in order to call `redirect_to`, otherwise we get
     # error "unable to convert unpermitted parameters to hash".
@@ -112,15 +116,6 @@ class LegacyTasksController < ApplicationController
   end
 
   private
-
-  # could also detect positive_integer?(params[:user_id]) here and map to CSS_ID in to_valid_cssid to simplify `user`
-  def invalid_cssid
-    params[:user_id] =~ /[a-z]/
-  end
-
-  def to_valid_cssid
-    params[:user_id]&.upcase
-  end
 
   def user
     @user ||= begin
