@@ -1,9 +1,10 @@
 import React from 'react';
 import { css } from 'glamor';
 
-import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
+import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES';
 import { COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 const issueListStyling = css({
   paddingLeft: '1em'
@@ -28,8 +29,12 @@ const issueClosedStatusStyling = css({
   color: COLORS.RED_DARK
 });
 
+const issueErrorStyling = css({
+  borderLeft: '4px solid #cd2026'
+});
+
 export const AmaIssue = (props) => {
-  return <li key={props.index} {...singleIssueStyling}>
+  return <li key={props.index} {...singleIssueStyling} {...props.customStyle}>
     <div {...issueContentStyling}><strong>Benefit type</strong>: {BENEFIT_TYPES[props.issue.program]}</div>
     <div {...issueContentStyling}><strong>Issue</strong>: {props.issue.description}</div>
     { props.issue.diagnostic_code &&
@@ -57,21 +62,39 @@ export default class AmaIssueList extends React.PureComponent {
       {requestIssues.map((issue, i) => {
         const error = errorMessages && errorMessages[issue.id];
 
-        return <div key={i}>
+        return <React.Fragment>
           { error &&
             <span className="usa-input-error-message">
               {error}
             </span>
           }
-          <div className={error ? 'usa-input-error' : ''}>
-            <AmaIssue
-              issue={issue}
-              index={i} >
-              {children}
-            </AmaIssue>
-          </div>
-        </div>;
+          <AmaIssue
+            issue={issue}
+            index={i}
+            customStyle={error && issueErrorStyling} >
+            {children}
+          </AmaIssue>
+        </React.Fragment>;
       })}
     </ol>;
   }
 }
+
+AmaIssue.propTypes = {
+  index: PropTypes.number,
+  customStyle: PropTypes.object,
+  issue: PropTypes.shape({
+    program: PropTypes.string,
+    description: PropTypes.string,
+    diagnostic_code: PropTypes.string,
+    notes: PropTypes.string,
+    closed_status: PropTypes.string
+  }),
+  children: PropTypes.node
+};
+
+AmaIssueList.propTypes = {
+  children: PropTypes.node,
+  requestIssues: PropTypes.array,
+  errorMessages: PropTypes.object
+};
