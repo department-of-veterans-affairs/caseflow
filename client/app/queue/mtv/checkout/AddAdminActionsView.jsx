@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useMemo } from 'react';
+import PropTypes from 'prop-types';
 
 import QueueFlowPage from '../../components/QueueFlowPage';
 import COPY from '../../../../COPY';
@@ -7,11 +8,16 @@ import { MotionToVacateContext } from './MotionToVacateContext';
 import { adminActionTemplate } from '../../colocatedTasks/AddColocatedTaskView';
 import { AddColocatedTaskForm } from '../../colocatedTasks/AddColocatedTaskForm';
 import styles from './AddAdminActionsView.module.scss';
+import Alert from '../../../components/Alert';
+// import { useSelector } from 'react-redux';
+// import { getAllTasksForAppeal } from '../../selectors';
 
-export const AddAdminActionsView = () => {
+export const AddAdminActionsView = ({ appeal }) => {
   const [ctx, setCtx] = useContext(MotionToVacateContext);
 
-  const [adminActions, setAdminActions] = useState([adminActionTemplate()]);
+  const initVals = ctx.adminActions?.length ? [...ctx.adminActions] : [adminActionTemplate()];
+  const [adminActions, setAdminActions] = useState(initVals);
+
   const addItem = () => setAdminActions((prev) => [...prev, adminActionTemplate()]);
   const removeItem = (id) => setAdminActions((prev) => [...prev.filter((item) => item.key !== id)]);
   const updateItem = (value, idx) =>
@@ -26,20 +32,38 @@ export const AddAdminActionsView = () => {
       return updated;
     });
 
+  // TODO: update our error checking to check for duplicates in existing tasks from the appeal, not just ones added in this screen
+  // const appealTasks = useSelector((state) => getAllTasksForAppeal(state, { appealId: appeal.id }));
+  const dupeError = useMemo(() => {
+    // See if uniq set is smaller than array
+    return new Set(adminActions.map((item) => item.type + item.instructions)).size !== adminActions.length;
+  }, [adminActions]);
+
   const onSubmit = () => setCtx({ ...ctx, adminActions });
 
   return (
     <QueueFlowPage
-      //   validateForm={this.validateForm}
+      appealId={appeal.externalId}
+      validateForm={() => !dupeError}
+      disableNext={dupeError}
       getNextStepUrl={() => ctx.getNextUrl('admin_actions')}
       getPrevStepUrl={() => ctx.getPrevUrl('admin_actions')}
-      goToNextStep={() => Boolean(onSubmit())}
+      goToNextStep={() => {
+        onSubmit();
+
+        return true;
+      }}
     >
       <h1>{COPY.ADD_COLOCATED_TASK_SUBHEAD}</h1>
       <hr />
       <section>
+        {dupeError && (
+          <Alert title="Error" type="error">
+            Duplicate admin actions detected
+          </Alert>
+        )}
         {adminActions.map((item, idx) => (
-          <React.Fragment key={item.key}>
+          <div className="admin-action-item" key={item.key}>
             <AddColocatedTaskForm onChange={(value) => updateItem(value, idx)} value={item} />
             {adminActions.length > 1 && (
               <Button
@@ -50,7 +74,7 @@ export const AddAdminActionsView = () => {
                 onClick={() => removeItem(item.key)}
               />
             )}
-          </React.Fragment>
+          </div>
         ))}
         <div className={styles.controls}>
           <Button
@@ -61,12 +85,10 @@ export const AddAdminActionsView = () => {
           />
         </div>
       </section>
-      {/* {error && (
-        <Alert title={error.title} type="error">
-          {error.detail}
-        </Alert>
-      )} */}
-      {/* {this.actionFormList(adminActions)} */}
     </QueueFlowPage>
   );
+};
+
+AddAdminActionsView.propTypes = {
+  appeal: PropTypes.object.isRequired
 };
