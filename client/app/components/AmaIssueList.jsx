@@ -28,8 +28,12 @@ const issueClosedStatusStyling = css({
   color: COLORS.RED_DARK
 });
 
+const issueErrorStyling = css({
+  borderLeft: "4px solid #cd2026"
+});
+
 export const AmaIssue = (props) => {
-  return <li key={props.index} {...singleIssueStyling}>
+  return <li key={props.index} {...singleIssueStyling} {...props.customStyle}>
     <div {...issueContentStyling}><strong>Benefit type</strong>: {BENEFIT_TYPES[props.issue.program]}</div>
     <div {...issueContentStyling}><strong>Issue</strong>: {props.issue.description}</div>
     { props.issue.diagnostic_code &&
@@ -57,20 +61,19 @@ export default class AmaIssueList extends React.PureComponent {
       {requestIssues.map((issue, i) => {
         const error = errorMessages && errorMessages[issue.id];
 
-        return <div key={i}>
+        return <React.Fragment>
           { error &&
             <span className="usa-input-error-message">
               {error}
             </span>
           }
-          <div className={error ? 'usa-input-error' : ''}>
-            <AmaIssue
-              issue={issue}
-              index={i} >
-              {children}
-            </AmaIssue>
-          </div>
-        </div>;
+          <AmaIssue
+            issue={issue}
+            index={i}
+            customStyle={error && issueErrorStyling} >
+            {children}
+          </AmaIssue>
+        </React.Fragment>
       })}
     </ol>;
   }

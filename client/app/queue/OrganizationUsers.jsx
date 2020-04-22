@@ -18,9 +18,8 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 const userStyle = css({ margin: '2rem 0 3rem',
   borderBottom: '1rem solid gray',
   borderWidth: '1px' });
-const topUserStyle = css({ margin: '2rem 0 3rem',
+const topUserStyle = css({ margin: '2rem 0 2rem',
   borderTop: '1rem solid gray',
-  borderBottom: '1rem solid gray',
   borderWidth: '1px',
   paddingTop: '2.5rem' });
 const buttonPaddingStyle = css({ marginRight: '1rem',
@@ -243,17 +242,19 @@ export default class OrganizationUsers extends React.PureComponent {
     const judgeTeam = this.state.judgeTeam;
     const listOfUsers = this.state.organizationUsers.map((user, i) => {
       const { judge, attorney, admin } = user.attributes;
-      const style = i === 0 ? topUserStyle : userStyle;
+      const topStyle = i === 0 ? topUserStyle : {};
 
-      return <div {...style}>
-        <li key={user.id}>{this.formatName(user)}
+      return <React.Fragment>
+        <li key={user.id} {...topStyle}>{this.formatName(user)}
           { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
           { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> } &nbsp;</li>
-        { judgeTeam && !judge && this.decisionDraftingButton(user, attorney) }
-        { this.adminButton(user, admin) }
-        { this.removeUserButton(user) }
-      </div>;
+        <div {...userStyle}>
+          { judgeTeam && !judge && this.decisionDraftingButton(user, attorney) }
+          { this.adminButton(user, admin) }
+          { this.removeUserButton(user) }
+        </div>
+      </React.Fragment>;
     });
 
     return <React.Fragment>
