@@ -34,7 +34,6 @@ class LegacyTasksController < ApplicationController
   end
 
   def invalid_parameters?
-    # Why '&& return'? See https://stackoverflow.com/questions/34842427/redirect-to-vs-redirect-to-and-return
     return redirect_using_valid_cssid if invalid_css_id?(params[:user_id])
 
     fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
