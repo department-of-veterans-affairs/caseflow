@@ -55,11 +55,12 @@ class LegacyTasksController < ApplicationController
     # error "unable to convert unpermitted parameters to hash".
     # This should be secure since we're not saving the params and
     # the permitted params will be checked again after the redirect.
-    params.permit!
+    # `params.permit!` causes CodeClimate Brakeman warnings.
+    unchecked_params = params.permit(params.keys)
 
     # Default status is 302 Found (temporarily moved), so return 308 Permanent Redirect instead.
     # For security, `only_path: true` will limit the redirect to the current host
-    redirect_to(params.merge(only_path: true), status: :permanent_redirect)
+    redirect_to(unchecked_params.merge(only_path: true), status: :permanent_redirect)
   end
 
   def create
