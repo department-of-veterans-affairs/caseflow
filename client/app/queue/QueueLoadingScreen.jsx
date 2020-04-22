@@ -3,6 +3,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -107,8 +108,11 @@ class QueueLoadingScreen extends React.PureComponent {
     if (this.isUserId(userUrlParam)) {
       const targetUserId = parseInt(userUrlParam, 10);
 
-      return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) =>
-        this.props.setTargetUser(resp.body.user));
+      return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) => {
+        const updatedUrl = this.props.match.path.replace(":userId", resp.body.user.css_id)
+        this.props.history.replace(updatedUrl) 
+        this.props.setTargetUser(resp.body.user)
+      });
     }
 
     return ApiUtil.get(`/user?css_id=${userUrlParam}`).then((resp) =>
@@ -213,4 +217,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setTargetUser
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen));
