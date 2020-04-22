@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _, {escapeRegExp} from 'lodash';
+import _, { escapeRegExp } from 'lodash';
 import { connect } from 'react-redux';
 
 import { getAnnotationsPerDocument } from './selectors';
@@ -11,13 +11,15 @@ export const getRowObjects = (documents, annotationsPerDocument, searchQuery = '
   const groupedAnnotations = _(annotationsPerDocument).
     map((notes) =>
       notes.map((note) => {
+        // eslint-disable-next-line camelcase
         const { type, serialized_receipt_date } = documents.filter((doc) => doc.id === note.documentId)[0];
 
         return _.extend({}, note, {
           docType: type,
           serialized_receipt_date
         });
-      })).
+      })
+    ).
     flatten().
     filter((note) => {
       if (!searchQuery) {
@@ -28,56 +30,62 @@ export const getRowObjects = (documents, annotationsPerDocument, searchQuery = '
 
       return note.comment.match(query) || note.docType.match(query);
     }).
-    groupBy((note) => note.relevant_date ? 'relevant_date' : 'serialized_receipt_date').
+    groupBy((note) => (note.relevant_date ? 'relevant_date' : 'serialized_receipt_date')).
     value();
 
   // groupBy returns { relevant_date: [notes w/relevant_date], serialized_receipt_date: [notes w/out] }
-  return _.sortBy(groupedAnnotations.relevant_date, 'relevant_date').
-    concat(_.sortBy(groupedAnnotations.serialized_receipt_date, 'serialized_receipt_date'));
+  return _.sortBy(groupedAnnotations.relevant_date, 'relevant_date').concat(
+    _.sortBy(groupedAnnotations.serialized_receipt_date, 'serialized_receipt_date')
+  );
 };
 
 class CommentsTable extends React.PureComponent {
-  getCommentColumn = () => [{
-    header: 'Sorted by relevant date',
-    valueFunction: (comment, idx) => <Comment
-      key={comment.uuid}
-      id={`comment-${idx}`}
-      page={comment.page}
-      onJumpToComment={this.props.onJumpToComment(comment)}
-      uuid={comment.uuid}
-      date={comment.relevant_date}
-      docType={comment.docType}
-      horizontalLayout>
-      {comment.comment}
-    </Comment>
-  }];
+  getCommentColumn = () => [
+    {
+      header: 'Sorted by relevant date',
+      valueFunction: (comment, idx) => (
+        <Comment
+          key={comment.uuid}
+          id={`comment-${idx}`}
+          page={comment.page}
+          onJumpToComment={this.props.onJumpToComment(comment)}
+          uuid={comment.uuid}
+          date={comment.relevant_date}
+          docType={comment.docType}
+          horizontalLayout
+        >
+          {comment.comment}
+        </Comment>
+      )
+    }
+  ];
 
   getKeyForRow = (rowNumber, object) => object.uuid;
 
   render() {
-    const {
-      documents,
-      annotationsPerDocument,
-      searchQuery
-    } = this.props;
+    const { documents, annotationsPerDocument, searchQuery } = this.props;
 
-    return <div>
-      <Table
-        columns={this.getCommentColumn}
-        rowObjects={getRowObjects(documents, annotationsPerDocument, searchQuery)}
-        className="documents-table full-width"
-        bodyClassName="cf-document-list-body"
-        getKeyForRow={this.getKeyForRow}
-        headerClassName="comments-table-header"
-        rowClassNames={_.constant('borderless')}
-      />
-    </div>;
+    return (
+      <div>
+        <Table
+          columns={this.getCommentColumn}
+          rowObjects={getRowObjects(documents, annotationsPerDocument, searchQuery)}
+          className="documents-table full-width"
+          bodyClassName="cf-document-list-body"
+          getKeyForRow={this.getKeyForRow}
+          headerClassName="comments-table-header"
+          rowClassNames={_.constant('borderless')}
+        />
+      </div>
+    );
   }
 }
 
 CommentsTable.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onJumpToComment: PropTypes.func.isRequired
+  onJumpToComment: PropTypes.func.isRequired,
+  annotationsPerDocument: PropTypes.array,
+  searchQuery: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({

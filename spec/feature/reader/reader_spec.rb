@@ -582,7 +582,7 @@ RSpec.feature "Reader", :all_dbs do
             comment: "comment with a * char in it",
             document_id: documents[0].id,
             y: 250
-          ),
+          )
         ]
       end
 
