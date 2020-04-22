@@ -10,6 +10,13 @@ import { css } from 'glamor';
 const modalTextStyling = css({ width: '100%',
   fontFamily: 'Source Sans Pro' });
 
+const iconStyling = css({
+  float: "left",
+  width: "25%",
+  marginTop: "1rem",
+  color: "#323a45"
+});
+
 export default class Modal extends React.Component {
   constructor(props) {
     super(props);
@@ -111,8 +118,6 @@ export default class Modal extends React.Component {
       );
     }
 
-    const iconStyling = { float: "left", width: "30%", marginTop: "1rem", color: "#323a45" };
-
     return (
       <section
         className={`cf-modal active ${className}`}
@@ -133,8 +138,8 @@ export default class Modal extends React.Component {
           >
             {closeSymbolHtml()}
           </button>
-          <div display="flex">
-            {icon && <i className={`fa fa-2x fa-${icon}`} style={iconStyling} />}
+          <div style={{display: "flex"}}>
+            {icon && <i className={`fa fa-2x fa-${icon}`} {...iconStyling} />}
             <div>
               <h1 id="modal_id-title">{title}</h1>
               <div {...modalTextStyling}>{children}</div>
