@@ -14,10 +14,16 @@ describe VirtualHearings::DeleteConferencesJob do
 
       it "creates events for emails sent", :aggregate_failures do
         subject
-        expect(hearing.email_events.count).to eq(2)
-        expect(hearing.email_events.sent_to_veteran.count).to eq(1)
-        expect(hearing.email_events.sent_to_representative.count).to eq(1)
-        expect(hearing.email_events.sent_to_judge.count).to eq(0) # judge should not receive cancellation email
+        virtual_hearing.reload
+        events = SentHearingEmailEvent.where(hearing_id: hearing.id)
+        expect(events.count).to eq 2
+        expect(events.where(sent_by_id: virtual_hearing.updated_by_id).count).to eq 2
+        expect(events.where(email_type: "cancellation").count).to eq 2
+        expect(events.where(email_address: virtual_hearing.veteran_email).count).to eq 1
+        expect(events.where(recipient_role: "veteran").count).to eq 1
+        expect(events.where(email_address: virtual_hearing.representative_email).count).to eq 1
+        expect(events.where(recipient_role: "representative").count).to eq 1
+        expect(events.where(recipient_role: "judge").count).to eq 0
       end
     end
 
