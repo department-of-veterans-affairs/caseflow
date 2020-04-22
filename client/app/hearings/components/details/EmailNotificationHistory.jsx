@@ -33,16 +33,16 @@ const columns = [
   }
 ];
 
-const rows = [
-  {
-    emailAddress: 'something',
-    sentAt: '2020-04-21 17:48:27 UTC',
-    sentTo: 'someone',
-    sentBy: 'someoneelse'
-  }
-];
+// const rows = [
+//   {
+//     emailAddress: 'something',
+//     sentAt: '2020-04-21 17:48:27 UTC',
+//     sentTo: 'someone',
+//     sentBy: 'someoneelse'
+//   }
+// ];
 
-export const EmailNotificationHistory = () => (
+export const EmailNotificationHistory = ({ rows }) => (
   <Accordion style="bordered" defaultActiveKey={[COPY.EMAIL_NOTIFICATION_HISTORY_TITLE]}>
     <AccordionSection title={COPY.EMAIL_NOTIFICATION_HISTORY_TITLE}>
       <div>{COPY.EMAIL_NOTIFICATION_HISTORY_INTRO}</div>
