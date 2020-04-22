@@ -13,6 +13,7 @@ export default class StyleGuideModal extends React.PureComponent {
 
     this.state = {
       modal: false,
+      iconModal: false,
       value: ''
     };
   }
@@ -25,8 +26,17 @@ export default class StyleGuideModal extends React.PureComponent {
     this.setState({ modal: false });
   };
 
+  handleIconModalOpen = () => {
+    this.setState({ iconModal: true });
+  };
+
+  handleIconModalClose = () => {
+    this.setState({ iconModal: false });
+  };
+
   render() {
     let styleGuideModal = this.state.modal;
+    let styleGuideIconModal = this.state.iconModal;
 
     return <div>
       <StyleGuideComponentTitle
@@ -39,11 +49,20 @@ export default class StyleGuideModal extends React.PureComponent {
         and action buttons. There are modal-specific classes that must be included
         in your modal (see below code snippets).
         Whenever possible, use a close link as the left action.</p>
-      <p><Button
-        name="Launch modal"
-        onClick={this.handleModalOpen}
-        classNames={['usa-button', 'usa-button-secondary']}
-      /></p>
+      <div className="usa-grid">
+        <div class="usa-width-one-half">
+          <Button
+            name="Launch modal"
+            onClick={this.handleModalOpen}
+            classNames={['usa-button', 'usa-button-secondary']} />
+        </div>
+        <div class="usa-width-one-half">
+          <Button
+            name="Launch icon modal"
+            onClick={this.handleIconModalOpen}
+            classNames={['usa-button', 'usa-button-secondary']} />
+        </div>
+      </div>
       { styleGuideModal && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -71,6 +90,26 @@ export default class StyleGuideModal extends React.PureComponent {
           }}
           value={this.state.value}
         />
+      </Modal>
+      }
+      { styleGuideIconModal && <Modal
+        buttons = {[
+          { classNames: ['cf-modal-link', 'cf-btn-link'],
+            name: 'Close',
+            onClick: this.handleIconModalClose
+          },
+          { classNames: ['usa-button', 'usa-button-secondary'],
+            name: 'Proceed with action',
+            onClick: this.handleIconModalClose
+          }
+        ]}
+        closeHandler={this.handleIconModalClose}
+        title = "This is a Modal with an icon"
+        icon="warning">
+        <p>
+          This is a modal with an icon. Icons are optional on modals and are set by the designer in the mockup.
+          These icons come from the Font Awesome package, which is set in the U.S. Design standards.
+        </p>
       </Modal>
       }
     </div>;
