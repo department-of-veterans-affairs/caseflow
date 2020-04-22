@@ -83,7 +83,7 @@ export default class IssuesList extends React.Component {
               className="issue"
               data-key={`issue-${issue.index}`}
               key={`issue-${issue.index}`}
-              id={`issue-${issue.referenceId}`}>
+              id={`issue-${issue.id}`}>
 
               <AddedIssue
                 issue={issue}
