@@ -80,9 +80,9 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       end
     end
     context "CSS_ID in URL is in mixed case" do
+      let(:randomly_downcase) { ->(char) { [true, false].sample ? char.downcase : char } }
 
       def downcase_random_characters(str)
-        randomly_downcase = ->(char) { [true, false].sample ? char.downcase : char }
         str.chars.map(&randomly_downcase).join
       end
 
