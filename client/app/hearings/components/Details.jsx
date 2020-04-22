@@ -173,7 +173,8 @@ class HearingDetails extends React.Component {
   }
 
   handleSave = (editedEmails) => {
-    const virtual = this.props.hearing.isVirtual || this.props.hearing.wasVirtual
+    const virtual = this.props.hearing.isVirtual || this.props.hearing.wasVirtual;
+
     if (
       virtual &&
       (!this.props.formData.virtualHearingForm.representativeEmail ||
