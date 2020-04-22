@@ -158,14 +158,15 @@ class AddIssueManager extends React.Component {
         formType,
         submitText: this.requiresTimelyRules() ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
-        onSubmit: ({ vacolsId, vacolsSequenceId, eligibleForSocOptIn }) => {
+        onSubmit: ({ vacolsId, vacolsSequenceId, eligibleForSocOptIn, eligibleForSocOptInWithExemption }) => {
           this.setState(
             {
               currentIssue: {
                 ...this.state.currentIssue,
                 vacolsId,
                 vacolsSequenceId,
-                eligibleForSocOptIn
+                eligibleForSocOptIn,
+                eligibleForSocOptInWithExemption
               }
             },
             () => {
@@ -287,7 +288,7 @@ class AddIssueManager extends React.Component {
     const { formType } = this.props;
     const vacolsIdCheck = currentIssue?.vacolsId;
     const legacyIssueIsTimely = !vacolsIdCheck || !this.props.intakeData.legacyOptInApproved ||
-      currentIssue?.eligibleForSocOptIn;
+      currentIssue?.eligibleForSocOptIn || !currentIssue?.eligibleForSocOptInWithExemption;
     const requestIssueIsTimely = currentIssue?.timely;
 
     if (formType === 'appeal') {
