@@ -21,17 +21,7 @@ class AddedIssue extends React.PureComponent {
       return true;
     }
 
-    let existingRequestIssue;
-
-    if (issue.ratingIssueReferenceId) {
-      existingRequestIssue = filter(requestIssues, { rating_issue_reference_id: issue.ratingIssueReferenceId })[0];
-    }
-
-    if (!existingRequestIssue && issue.ratingDecisionReferenceId) {
-      existingRequestIssue = filter(requestIssues, {
-        rating_decision_reference_id: issue.ratingDecisionReferenceId
-      })[0];
-    }
+    const existingRequestIssue = issue.id && filter(requestIssues, { id: parseInt(issue.id, 10) })[0];
 
     if (existingRequestIssue && !existingRequestIssue.ineligible_reason) {
       return false;
@@ -41,10 +31,10 @@ class AddedIssue extends React.PureComponent {
   }
 
   getEligibility() {
-    const { issue, formType, legacyOptInApproved } = this.props;
-
     let errorMsg = '';
+    const { issue, formType, legacyOptInApproved } = this.props;
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
+    const legacyIssueEligibleWithExemption = issue.eligibleForSocOptInWithExemption && issue.untimelyExemptionCovid;
 
     if (
       issue.titleOfActiveReview ||
@@ -72,7 +62,7 @@ class AddedIssue extends React.PureComponent {
     } else if (issue.vacolsId) {
       if (!legacyOptInApproved) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn;
-      } else if (issue.eligibleForSocOptIn === false) {
+      } else if (!issue.eligibleForSocOptIn && !legacyIssueEligibleWithExemption) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
       }
     } else if (issue.beforeAma && formType !== 'supplemental_claim') {
@@ -130,7 +120,7 @@ class AddedIssue extends React.PureComponent {
         {issue.vacolsId && !eligibleState.errorMsg && (
           <div className="issue-vacols">
             <span className="msg">
-              {issue.referenceId ? COPY.VACOLS_OPTIN_ISSUE_CLOSED_EDIT : COPY.VACOLS_OPTIN_ISSUE_NEW}:
+              {issue.id ? COPY.VACOLS_OPTIN_ISSUE_CLOSED_EDIT : COPY.VACOLS_OPTIN_ISSUE_NEW}:
             </span>
             <span className="desc">{legacyIssue(issue, this.props.legacyAppeals).description}</span>
           </div>
@@ -153,13 +143,15 @@ AddedIssue.propTypes = {
     decisionReviewTitle: PropTypes.string,
     editedDescription: PropTypes.string,
     eligibleForSocOptIn: PropTypes.bool,
+    eligibleForSocOptInWithExemption: PropTypes.bool,
+    untimelyExemptionCovid: PropTypes.bool,
     endProductCleared: PropTypes.bool,
     ineligibleReason: PropTypes.string,
     isUnidentified: PropTypes.bool,
     notes: PropTypes.string,
     ratingDecisionReferenceId: PropTypes.string,
     ratingIssueReferenceId: PropTypes.string,
-    referenceId: PropTypes.string,
+    id: PropTypes.string,
     sourceReviewType: PropTypes.string,
     text: PropTypes.string,
     timely: PropTypes.bool,
