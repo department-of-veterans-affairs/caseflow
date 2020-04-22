@@ -15,10 +15,10 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
-const userStyle = css({ margin: '2rem 0 3rem',
+const userStyle = css({ margin: '.5rem 0 3rem',
   borderBottom: '1rem solid gray',
   borderWidth: '1px' });
-const topUserStyle = css({ margin: '2rem 0 2rem',
+const topUserStyle = css({ marginTop: '2rem',
   borderTop: '1rem solid gray',
   borderWidth: '1px',
   paddingTop: '2.5rem' });
