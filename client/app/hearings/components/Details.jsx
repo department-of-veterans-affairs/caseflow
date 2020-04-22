@@ -11,7 +11,7 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, pollVirtualHearingData } from '../utils';
+import { deepDiff, toggleCancelled, pollVirtualHearingData } from '../utils';
 import _ from 'lodash';
 
 import DetailsInputs from './details/DetailsInputs';
@@ -141,7 +141,14 @@ class HearingDetails extends React.Component {
     const { hearing: { virtualHearing } } = this.props;
 
     if (virtualHearing) {
-      this.updateVirtualHearing(virtualHearing);
+      // Reset the jobCompleted so that we dont disable the hearings dropdown
+      // Addresses issue where frontend overrides backend on cancelling hearing change
+      // REMINDER: Refactor to get state from the backend
+      this.updateVirtualHearing({
+        ...virtualHearing,
+        jobCompleted: true,
+        requestCancelled: this.state.initialFormData.virtualHearingForm?.requestCancelled
+      });
     } else {
       this.updateVirtualHearing(null);
     }
@@ -185,7 +192,7 @@ class HearingDetails extends React.Component {
     }
   };
 
-  submit = () => {
+  submit = (form = '') => {
     const { hearing: { externalId } } = this.props;
     const { updated } = this.state;
 
@@ -193,10 +200,10 @@ class HearingDetails extends React.Component {
       return;
     }
 
+    const { init, current } = toggleCancelled(this.state.initialFormData, this.props.formData, form);
+
     // only send updated properties
-    const {
-      hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm
-    } = deepDiff(this.state.initialFormData, this.props.formData);
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = deepDiff(init, current);
 
     const data = {
       hearing: {
@@ -224,6 +231,7 @@ class HearingDetails extends React.Component {
         success: true,
         error: false
       });
+
       // set hearing on DetailsContainer then reset initialFormData
       this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
@@ -318,7 +326,7 @@ class HearingDetails extends React.Component {
             hearing={this.props.hearing}
             virtualHearing={virtualHearingForm}
             update={this.updateVirtualHearing}
-            submit={() => this.submit().then(this.closeVirtualHearingModal)}
+            submit={() => this.submit('virtualHearingForm').then(this.closeVirtualHearingModal)}
             closeModal={this.closeVirtualHearingModal}
             reset={this.resetVirtualHearing}
             type={this.state.virtualHearingModalType}

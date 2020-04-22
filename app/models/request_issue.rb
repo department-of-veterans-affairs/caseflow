@@ -858,13 +858,19 @@ class RequestIssue < CaseflowRecord
     return unless vacols_id
     return unless decision_review.serialized_legacy_appeals.any?
 
-    unless vacols_issue.eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
+    unless issue_eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
 
+  def issue_eligible_for_opt_in?
+    vacols_issue.eligible_for_opt_in?(covid_flag: covid_timeliness_exempt)
+  end
+
   def legacy_appeal_eligible_for_opt_in?
-    vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(decision_review.receipt_date)
+    vacols_issue.legacy_appeal.eligible_for_opt_in?(
+      receipt_date: decision_review.receipt_date, covid_flag: covid_timeliness_exempt
+    )
   end
 
   def check_for_active_request_issue_by_rating!
