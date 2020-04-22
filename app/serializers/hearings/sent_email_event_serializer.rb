@@ -7,5 +7,7 @@ class SentEmailEventSerializer
   attribute :email_type
   attribute :email_address
   attribute :sent_at
-  attribute :sent_by
+  attribute :sent_by do |object|
+    object.sent_by.username
+  end
 end

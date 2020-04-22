@@ -76,6 +76,9 @@ class LegacyHearingSerializer
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
     end
   end
+  attribute :email_events do |object|
+    SentEmailEventSerializer.new(object.email_events).serializable_hash[:data][:attributes]
+  end
   attribute :was_virtual, &:was_virtual?
   attribute :witness
 end
