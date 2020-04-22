@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -18,7 +18,10 @@ export const AddColocatedTaskForm = ({
   const [type, setType] = useState(value.type);
   const [instructions, setInstructions] = useState(value.instructions);
 
-  useEffect(() => onChange({ type: type?.value, instructions }), [type, instructions]);
+  // SearchableDropdown requires obj for `value` prop
+  const selectedType = useMemo(() => (type ? actionTypes.find((opt) => opt.value === type) : null), [type]);
+
+  useEffect(() => onChange({ type, instructions }), [type, instructions]);
 
   return (
     <div className="colocated-task-form">
@@ -29,8 +32,8 @@ export const AddColocatedTaskForm = ({
           label={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
           options={actionTypes}
-          onChange={(val) => setType(val)}
-          value={type}
+          onChange={(opt) => setType(opt.value)}
+          value={selectedType}
         />
       </div>
       <div className={styles.field}>
