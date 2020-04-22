@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-feature "Appeal Edit issues", :all_db do
+feature "Appeal Edit issues", :all_dbs do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(post_good_cause_eligibility_date)
+    Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
@@ -453,7 +453,7 @@ feature "Appeal Edit issues", :all_db do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 04\/01\/2020\nWithdrawal pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -493,7 +493,7 @@ feature "Appeal Edit issues", :all_db do
 
       expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 04\/01\/2020\nWithdrawal pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -512,7 +512,7 @@ feature "Appeal Edit issues", :all_db do
       visit "appeals/#{appeal.uuid}/edit/"
 
       expect(page).to have_content(
-        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 04\/01\/2020\s*Withdrawn on/i
+        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/10\/2019\s*Withdrawn on/i
       )
     end
 
@@ -537,7 +537,7 @@ feature "Appeal Edit issues", :all_db do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 04\/01\/2020\nWithdrawal pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 

@@ -1433,7 +1433,7 @@ describe RequestIssue, :all_dbs do
     end
 
     context "Issues with decision dates before AMA" do
-      let(:receipt_date) { post_ama_start_date + 1.days}
+      let(:receipt_date) { post_ama_start_date + 1.day }
       let(:profile_date) { Constants::DATES["AMA_ACTIVATION"].to_date - 5.days }
 
       it "flags nonrating issues before AMA" do
@@ -1529,7 +1529,7 @@ describe RequestIssue, :all_dbs do
       it "flags the legacy issue optin for rollback" do
         subject
         expect(rating_request_issue.closed_at).to eq(Time.zone.now)
-        expect(legacy_issue_optin.reload.rollback_created_at).to eq(Time.zone.now)
+        expect(legacy_issue_optin.reload.rollback_created_at).to be_within(1.second).of Time.zone.now
       end
     end
   end
