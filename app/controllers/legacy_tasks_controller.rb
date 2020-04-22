@@ -53,7 +53,8 @@ class LegacyTasksController < ApplicationController
 
     # Permit all parameters in order to call `redirect_to`, otherwise we get
     # error "unable to convert unpermitted parameters to hash".
-    # This should be secure since the permitted params will be checked again after the redirect.
+    # This should be secure since we're not saving the params and
+    # the permitted params will be checked again after the redirect.
     params.permit!
 
     # Default status is 302 Found (temporarily moved), so return 308 Permanent Redirect instead.

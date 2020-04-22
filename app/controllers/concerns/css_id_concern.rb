@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+#
 module CssIdConcern
   extend ActiveSupport::Concern
 
-  # could also detect positive_integer?(params[:user_id]) here and map to CSS_ID in to_valid_cssid to simplify `user`
+  # :reek:UtilityFunction
   def invalid_css_id?(css_id)
     css_id =~ /[a-z]/
   end
