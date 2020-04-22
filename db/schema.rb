@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_16_161705) do
+ActiveRecord::Schema.define(version: 2020_04_21_231908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1129,7 +1129,7 @@ ActiveRecord::Schema.define(version: 2020_04_16_161705) do
 
   create_table "sent_hearing_email_events", comment: "Events related to hearings notification emails", force: :cascade do |t|
     t.string "email_address", comment: "Address the email was sent to"
-    t.string "email_type", comment: "The type of email sent: cancellation, confirmation, update"
+    t.string "email_type", comment: "The type of email sent: cancellation, confirmation, updated_time_confirmation"
     t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
     t.bigint "hearing_id", null: false, comment: "Associated hearing"
     t.string "hearing_type", null: false
@@ -1377,6 +1377,7 @@ ActiveRecord::Schema.define(version: 2020_04_16_161705) do
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
     t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the virtual hearing"
     t.string "veteran_email", comment: "Veteran's email address"
     t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"
     t.index ["alias"], name: "index_virtual_hearings_on_alias"
@@ -1384,6 +1385,7 @@ ActiveRecord::Schema.define(version: 2020_04_16_161705) do
     t.index ["created_by_id"], name: "index_virtual_hearings_on_created_by_id"
     t.index ["hearing_type", "hearing_id"], name: "index_virtual_hearings_on_hearing_type_and_hearing_id"
     t.index ["updated_at"], name: "index_virtual_hearings_on_updated_at"
+    t.index ["updated_by_id"], name: "index_virtual_hearings_on_updated_by_id"
   end
 
   create_table "vso_configs", force: :cascade do |t|
@@ -1445,4 +1447,5 @@ ActiveRecord::Schema.define(version: 2020_04_16_161705) do
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "user_quotas", "users"
+  add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
 end
