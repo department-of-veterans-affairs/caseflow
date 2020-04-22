@@ -109,9 +109,10 @@ class QueueLoadingScreen extends React.PureComponent {
       const targetUserId = parseInt(userUrlParam, 10);
 
       return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) => {
-        const updatedUrl = this.props.match.path.replace(":userId", resp.body.user.css_id)
-        this.props.history.replace(updatedUrl) 
-        this.props.setTargetUser(resp.body.user)
+        const updatedUrl = this.props.match.path.replace(':userId', resp.body.user.css_id);
+
+        this.props.history.replace(updatedUrl);
+        this.props.setTargetUser(resp.body.user);
       });
     }
 
@@ -176,6 +177,7 @@ QueueLoadingScreen.propTypes = {
   children: PropTypes.node,
   fetchAllAttorneys: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
+  history: PropTypes.object,
   // `loadedUserId` is set by `setUserId`
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,

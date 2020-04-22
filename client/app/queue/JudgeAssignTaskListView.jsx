@@ -47,7 +47,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
     } = this.props;
 
     const { url } = organizations[0];
-    
+  
     const chosenUserId = targetUserId || userId;
 
     return <AppSegment filledBackground styling={containerStyles}>
