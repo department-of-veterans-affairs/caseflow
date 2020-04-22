@@ -240,10 +240,6 @@
     "value": "modal/send_to_schedule_veterans_list",
     "func": "send_to_schedule_veterans_list"
   },
-  "SEND_TO_TEAM": {
-    "label": "Send to team",
-    "value": "modal/send_colocated_task"
-  },
   "SEND_TO_TRANSLATION": {
     "label": "Assign to Translation team",
     "value": "modal/assign_to_translation_team",
