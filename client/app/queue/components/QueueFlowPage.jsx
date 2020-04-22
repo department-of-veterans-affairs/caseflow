@@ -16,7 +16,7 @@ import {
   resetDecisionOptions
 } from '../QueueActions';
 
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import DecisionViewFooter from './DecisionViewFooter';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Modal from '../../components/Modal';
@@ -59,6 +59,7 @@ class QueueFlowPage extends React.PureComponent {
       callback: this.goToNextStep,
       loading: this.props.savePending,
       name: 'next-button',
+      disabled: this.props.disableNext,
       displayText: this.props.continueBtnText,
       loadingText: 'Submitting...',
       styling: css({ marginLeft: '1rem' })
@@ -178,8 +179,12 @@ class QueueFlowPage extends React.PureComponent {
 
 QueueFlowPage.propTypes = {
   children: PropTypes.node.isRequired,
+  cancelCheckoutModal: PropTypes.bool,
   continueBtnText: PropTypes.string,
+  disableNext: PropTypes.bool,
   hideCancelButton: PropTypes.bool,
+  hideModal: PropTypes.func,
+  highlightInvalidFormItems: PropTypes.func,
   validateForm: PropTypes.func,
   goToNextStep: PropTypes.func,
   goToPrevStep: PropTypes.func,
@@ -187,11 +192,19 @@ QueueFlowPage.propTypes = {
   getPrevStepUrl: PropTypes.func,
   appealId: PropTypes.string.isRequired,
   nextStep: PropTypes.string,
-  prevStep: PropTypes.string
+  prevStep: PropTypes.string,
+  history: PropTypes.object,
+  checkoutStagedAppeal: PropTypes.func,
+  resetDecisionOptions: PropTypes.func,
+  savePending: PropTypes.bool,
+  saveSuccessful: PropTypes.bool,
+  showModal: PropTypes.func,
+  stagedAppeals: PropTypes.array
 };
 
 QueueFlowPage.defaultProps = {
   continueBtnText: 'Continue',
+  disableNext: false,
   hideCancelButton: false,
   validateForm: null,
   goToNextStep: null,
