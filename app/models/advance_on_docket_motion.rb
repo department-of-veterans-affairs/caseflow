@@ -17,15 +17,16 @@ class AdvanceOnDocketMotion < CaseflowRecord
 
   class << self
     def granted_for_person?(person_id, appeal_receipt_date)
-      where(
-        granted: true,
-        created_at: appeal_receipt_date..DateTime::Infinity.new,
-        person_id: person_id
-      ).any?
+      eligable_motions(person_id, appeal_receipt_date).where(granted: true).any?
     end
 
-    def create_or_update_by_person_id(person_id, attrs)
-      motion = find_or_create_by(person_id: person_id)
+    def eligable_motions(person_id, appeal_receipt_date)
+      where(created_at: appeal_receipt_date..DateTime::Infinity.new, person_id: person_id)
+    end
+
+    def create_or_update_by_appeal(appeal, attrs)
+      person_id = appeal.claimant.person.id
+      motion = eligable_motions(person_id, appeal.receipt_date).first || create(person_id: person_id)
 
       motion.update(attrs)
     end
