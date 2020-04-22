@@ -1,9 +1,10 @@
 import React from 'react';
 import { css } from 'glamor';
 
-import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
+import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES';
 import { COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 const issueListStyling = css({
   paddingLeft: '1em'
@@ -29,7 +30,7 @@ const issueClosedStatusStyling = css({
 });
 
 const issueErrorStyling = css({
-  borderLeft: "4px solid #cd2026"
+  borderLeft: '4px solid #cd2026'
 });
 
 export const AmaIssue = (props) => {
@@ -73,8 +74,27 @@ export default class AmaIssueList extends React.PureComponent {
             customStyle={error && issueErrorStyling} >
             {children}
           </AmaIssue>
-        </React.Fragment>
+        </React.Fragment>;
       })}
     </ol>;
   }
 }
+
+AmaIssue.propTypes = {
+  index: PropTypes.number,
+  customStyle: PropTypes.object,
+  issue: PropTypes.shape({
+    program: PropTypes.string,
+    description: PropTypes.string,
+    diagnostic_code: PropTypes.string,
+    notes: PropTypes.string,
+    closed_status: PropTypes.string
+  }),
+  children: PropTypes.node
+};
+
+AmaIssueList.propTypes = {
+  children: PropTypes.node,
+  requestIssues: PropTypes.array,
+  errorMessages: PropTypes.object
+};

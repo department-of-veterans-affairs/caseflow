@@ -15,7 +15,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
-const userStyle = css({ margin: '.5rem 0 3rem',
+const buttonStyle = css({ margin: '.5rem 0 3rem',
   borderBottom: '1rem solid gray',
   borderWidth: '1px' });
 const topUserStyle = css({ marginTop: '2rem',
@@ -249,7 +249,7 @@ export default class OrganizationUsers extends React.PureComponent {
           { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
           { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> } &nbsp;</li>
-        <div {...userStyle}>
+        <div {...buttonStyle}>
           { judgeTeam && !judge && this.decisionDraftingButton(user, attorney) }
           { this.adminButton(user, admin) }
           { this.removeUserButton(user) }
