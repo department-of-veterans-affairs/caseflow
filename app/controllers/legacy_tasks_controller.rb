@@ -119,11 +119,7 @@ class LegacyTasksController < ApplicationController
   private
 
   def user
-    @user ||= begin
-                return User.find(params[:user_id]) if positive_integer?(params[:user_id])
-
-                User.find_by(css_id: params[:user_id])
-              end
+    @user ||= positive_integer?(params[:user_id]) ? User.find(params[:user_id]) : User.find_by(css_id: params[:user_id])
   end
   helper_method :user
 
