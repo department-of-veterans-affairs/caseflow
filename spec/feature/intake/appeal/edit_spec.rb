@@ -4,7 +4,7 @@ feature "Appeal Edit issues", :all_db do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(Date.new(2020, 4, 21))
+    Timecop.freeze(post_good_cause_eligibility_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs

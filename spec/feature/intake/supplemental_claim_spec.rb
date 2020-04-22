@@ -4,7 +4,7 @@ feature "Supplemental Claim Intake", :all_dbs do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(Date.new(2020, 4, 21))
+    Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original

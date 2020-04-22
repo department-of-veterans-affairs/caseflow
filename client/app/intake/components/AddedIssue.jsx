@@ -21,7 +21,7 @@ class AddedIssue extends React.PureComponent {
       return true;
     }
 
-    const existingRequestIssue = issue.id && filter(requestIssues, { id: parseInt(issue.id) })[0];
+    const existingRequestIssue = issue.id && filter(requestIssues, { id: parseInt(issue.id, 10) })[0];
 
     if (existingRequestIssue && !existingRequestIssue.ineligible_reason) {
       return false;
@@ -34,8 +34,7 @@ class AddedIssue extends React.PureComponent {
     let errorMsg = '';
     const { issue, formType, legacyOptInApproved } = this.props;
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
-    const legacyIssueEligibleWithExemption = issue.eligibleForSocOptInWithExemption &&
-      Boolean(issue.untimelyExemptionCovid) && formType !== 'appeal';
+    const legacyIssueEligibleWithExemption = issue.eligibleForSocOptInWithExemption && issue.untimelyExemptionCovid;
 
     if (
       issue.titleOfActiveReview ||

@@ -4,7 +4,7 @@ feature "Appeal Intake", :all_dbs do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(Date.new(2020, 4, 21))
+    Timecop.freeze(post_good_cause_eligibility_date)
   end
 
   let!(:current_user) do

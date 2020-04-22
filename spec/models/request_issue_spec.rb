@@ -2,8 +2,11 @@
 
 describe RequestIssue, :all_dbs do
   before do
-    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.zone.now)
+    FeatureToggle.enable!(:use_ama_activation_date)
   end
+
+  after { FeatureToggle.disable!(:use_ama_activation_date) }
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:contested_rating_decision_reference_id) { nil }
@@ -31,11 +34,12 @@ describe RequestIssue, :all_dbs do
       legacy_opt_in_approved: legacy_opt_in_approved,
       same_office: same_office,
       benefit_type: benefit_type,
-      receipt_date: receipt_date
+      receipt_date: receipt_date,
+      intake: create(:intake)
     )
   end
 
-  let(:receipt_date) { 1.month.ago }
+  let(:receipt_date) { post_ama_start_date }
 
   let(:rating_promulgation_date) { (receipt_date - 40.days).in_time_zone }
 
@@ -1159,8 +1163,8 @@ describe RequestIssue, :all_dbs do
       )
       Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
+        promulgation_date: Constants::DATES["AMA_ACTIVATION"].to_date - 5.days,
+        profile_date: Constants::DATES["AMA_ACTIVATION"].to_date - 10.days,
         issues: [
           { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
           { decision_text: "Issue before AMA Activation from RAMP",
@@ -1182,14 +1186,14 @@ describe RequestIssue, :all_dbs do
     end
 
     it "flags nonrating request issue as untimely when decision date is older than receipt_date" do
-      nonrating_request_issue.decision_date = receipt_date - 400
+      nonrating_request_issue.decision_date = receipt_date - 400.days
       nonrating_request_issue.validate_eligibility!
 
       expect(nonrating_request_issue.untimely?).to eq(true)
     end
 
     it "flags unidentified request issue as untimely when decision date is older than receipt_date" do
-      unidentified_issue.decision_date = receipt_date - 450
+      unidentified_issue.decision_date = receipt_date - 450.days
       unidentified_issue.validate_eligibility!
 
       expect(unidentified_issue.untimely?).to eq(true)
@@ -1429,10 +1433,11 @@ describe RequestIssue, :all_dbs do
     end
 
     context "Issues with decision dates before AMA" do
-      let(:profile_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days }
+      let(:receipt_date) { post_ama_start_date + 1.days}
+      let(:profile_date) { Constants::DATES["AMA_ACTIVATION"].to_date - 5.days }
 
       it "flags nonrating issues before AMA" do
-        nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days
+        nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION"].to_date - 5.days
         nonrating_request_issue.validate_eligibility!
 
         expect(nonrating_request_issue.ineligible_reason).to eq("before_ama")
@@ -1454,7 +1459,7 @@ describe RequestIssue, :all_dbs do
         end
 
         it "does not apply before AMA checks" do
-          nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days
+          nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION"].to_date - 5.days
           nonrating_request_issue.validate_eligibility!
 
           expect(nonrating_request_issue.ineligible_reason).to_not eq("before_ama")
