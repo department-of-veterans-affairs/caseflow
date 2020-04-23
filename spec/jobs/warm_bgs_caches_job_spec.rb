@@ -63,7 +63,9 @@ describe WarmBgsCachesJob, :all_dbs do
       before do
         claimant_participant_id = open_appeal.claimant.power_of_attorney.claimant_participant_id
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id).with(claimant_participant_id) do
-          Fakes::BGSServicePOA.default_vsos_mapped.first.tap { |poa| poa[:claimant_participant_id] = claimant_participant_id }
+          Fakes::BGSServicePOA.default_vsos_mapped.first.tap do |poa|
+            poa[:claimant_participant_id] = claimant_participant_id
+          end
         end
       end
 

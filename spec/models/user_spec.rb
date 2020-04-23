@@ -395,7 +395,7 @@ describe User, :all_dbs do
   context "#when BGS data is setup" do
     let(:participant_id) { "123456" }
     let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VOS_PARTICIPANT_ID }
-    let(:vso_participant_ids) { Fakes::BGSServicePOA::default_vsos }
+    let(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)

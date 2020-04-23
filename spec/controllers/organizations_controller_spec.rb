@@ -6,7 +6,7 @@ describe OrganizationsController, :postgres, type: :controller do
     let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VOS_PARTICIPANT_ID }
     let(:vso) { Vso.create!(participant_id: vso_participant_id, url: "american-legion", name: "Vso") }
     let(:user) { create(:user, roles: ["VSO"]) }
-    let(:vso_participant_ids) { Fakes::BGSServicePOA::default_vsos }
+    let(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)

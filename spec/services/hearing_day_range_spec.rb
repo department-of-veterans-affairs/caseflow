@@ -223,7 +223,7 @@ describe HearingDayRange, :all_dbs do
     let!(:track_veteran_task_four) { create(:track_veteran_task, appeal: hearing_four.appeal, assigned_to: vso) }
     let(:start_date) { Time.zone.now + 1.day - 1.month }
     let(:end_date) { Time.zone.now - 1.day + 1.year }
-    let!(:vso_participant_ids) { Fakes::BGSServicePOA::default_vsos }
+    let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos }
 
     subject { HearingDayRange.new(start_date, end_date).upcoming_days_for_vso_user(current_user) }
 

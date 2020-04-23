@@ -7,6 +7,7 @@ class Fakes::BGSServicePOA
   VIETNAM_VETERANS_VOS_PARTICIPANT_ID = "789"
 
   class << self
+    # rubocop:disable Metrics/MethodLength
     def default_vsos
       [
         {
@@ -31,6 +32,7 @@ class Fakes::BGSServicePOA
         }
       ]
     end
+    # rubocop:enable Metrics/MethodLength
 
     def default_vsos_mapped
       default_vsos.map { |poa| get_poa_from_bgs_poa(poa) }
