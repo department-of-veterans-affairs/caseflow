@@ -33,7 +33,7 @@
       "enabled": false,
     },
     "listitem": {
-      "enabled": false,
+      "enabled": true,
     },
     "duplicate-id-aria": {
       "enabled": false,

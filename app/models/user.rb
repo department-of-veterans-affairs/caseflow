@@ -107,7 +107,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def administer_org_users?
-    admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
+    admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
   end
 
   def can_view_overtime_status?

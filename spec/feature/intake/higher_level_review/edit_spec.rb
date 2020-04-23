@@ -1344,13 +1344,15 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
         click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
 
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        expect(page).to have_content("Review Removed")
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         # going back to the edit page does not show any requested issues
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
         expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
         expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
       end
@@ -1397,8 +1399,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
 
         click_edit_submit
-        expect(page).to have_content("Remove review?")
-        expect(page).to have_content("This review and all tasks associated with it will be removed.")
+        expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE)
+        expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT)
         click_intake_confirm
         sleep 1
 
