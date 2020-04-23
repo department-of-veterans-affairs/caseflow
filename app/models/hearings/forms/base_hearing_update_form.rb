@@ -81,27 +81,34 @@ class BaseHearingUpdateForm
   end
 
   def start_async_job?
-    (hearing.virtual_hearing.pending? || !hearing.virtual_hearing.all_emails_sent?) &&
-      !hearing.virtual_hearing.cancelled?
+    !hearing.virtual_hearing.all_emails_sent?
   end
 
   def start_async_job
     return if !start_async_job?
 
-    hearing.virtual_hearing.establishment.submit_for_processing!
-
-    job_args = {
-      hearing_id: hearing.id,
-      hearing_type: hearing.class.name,
-      # TODO: Ideally, this would use symbols, but symbols can't be serialized for ActiveJob.
-      # Rails 6 supports passing symbols to a job.
-      email_type: only_time_updated? ? "updated_time_confirmation" : "confirmation"
-    }
-
-    if run_async?
-      VirtualHearings::CreateConferenceJob.perform_later(job_args)
+    if virtual_hearing_cancelled?
+      if run_async?
+        VirtualHearings::DeleteConferencesJob.perform_later
+      else
+        VirtualHearings::DeleteConferencesJob.perform_now
+      end
     else
-      VirtualHearings::CreateConferenceJob.perform_now(job_args)
+      hearing.virtual_hearing.establishment.submit_for_processing!
+
+      job_args = {
+        hearing_id: hearing.id,
+        hearing_type: hearing.class.name,
+        # TODO: Ideally, this would use symbols, but symbols can't be serialized for ActiveJob.
+        # Rails 6 supports passing symbols to a job.
+        email_type: only_time_updated? ? "updated_time_confirmation" : "confirmation"
+      }
+
+      if run_async?
+        VirtualHearings::CreateConferenceJob.perform_later(job_args)
+      else
+        VirtualHearings::CreateConferenceJob.perform_now(job_args)
+      end
     end
   end
 

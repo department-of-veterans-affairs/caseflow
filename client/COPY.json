@@ -709,7 +709,7 @@
     },
     "CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
-      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+      "MESSAGE": " Emails to the Veteran and POA / Representative are in progress."
     },
     "CHANGED_VETERAN_AND_POA_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",

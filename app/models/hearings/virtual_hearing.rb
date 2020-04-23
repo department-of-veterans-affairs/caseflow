@@ -48,7 +48,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   def job_completed?
-    active? && all_emails_sent?
+    (active? || cancelled?) && all_emails_sent?
   end
 
   # Determines if the hearing has been cancelled
