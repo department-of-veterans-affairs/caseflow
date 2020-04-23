@@ -6,6 +6,7 @@ export POSTGRES_HOST=appeals-db
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 export RAILS_ENV=development
+export DEPLOY_ENV=demo
 export NLS_LANG=AMERICAN_AMERICA.US7ASCII
 export REDIS_URL_CACHE=redis://appeals-redis:6379/0/cache/
 export REDIS_URL_SIDEKIQ=redis://appeals-redis:6379
