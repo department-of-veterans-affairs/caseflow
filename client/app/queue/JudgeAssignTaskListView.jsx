@@ -46,6 +46,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
       match
     } = this.props;
 
+    const { url } = organizations[0];
+    
     const chosenUserId = targetUserId || userId;
 
     return <AppSegment filledBackground styling={containerStyles}>
@@ -57,13 +59,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
         <div className="usa-width-one-fourth">
           <ul className="usa-sidenav-list">
             <li>
-              <NavLink to={`${organizations[0]}`} activeClassName="usa-current" exact>
+              <NavLink to={`${url}`} activeClassName="usa-current" exact>
                 Cases to Assign ({unassignedTasksCount})
               </NavLink>
             </li>
             {attorneysOfJudge.
               map((attorney) => <li key={attorney.id}>
-                <NavLink to={`${organizations[0]}/${attorney.id}`} activeClassName="usa-current" exact>
+                <NavLink to={`${url}/${attorney.id}`} activeClassName="usa-current" exact>
                   {attorney.full_name} ({attorney.active_task_count})
                 </NavLink>
               </li>)}
