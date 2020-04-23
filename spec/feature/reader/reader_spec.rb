@@ -581,7 +581,7 @@ RSpec.feature "Reader", :all_dbs do
           Generators::Annotation.create(
             comment: "comment with a * char in it",
             document_id: documents[0].id,
-            y: 250
+            y: 350
           )
         ]
       end
@@ -625,10 +625,10 @@ RSpec.feature "Reader", :all_dbs do
       # :nocov:
       scenario "Leave annotation with keyboard" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-        assert_selector(".commentIcon-container", count: 5)
+        assert_selector(".commentIcon-container", count: 6)
         find("body").send_keys [:alt, "c"]
         expect(page).to have_css(".cf-pdf-placing-comment")
-        assert_selector(".commentIcon-container", count: 6)
+        assert_selector(".commentIcon-container", count: 7)
 
         def placing_annotation_icon_position
           element_position "[data-placing-annotation-icon]"
@@ -692,12 +692,12 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_css(".page")
 
         # Click on the second to last comment icon (last comment icon is off screen)
-        all(".commentIcon-container", wait: 3, count: documents[0].annotations.size)[annotations.size - 3].click
+        all(".commentIcon-container", wait: 3, count: documents[0].annotations.size)[annotations.size - 4].click
 
         # Make sure the comment icon and comment are shown as selected
         expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"
 
-        id = "#{annotations[annotations.size - 3].id}-filter-1"
+        id = "#{annotations[annotations.size - 4].id}-filter-1"
 
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
@@ -718,8 +718,8 @@ RSpec.feature "Reader", :all_dbs do
         element_class = "ReactVirtualized__Grid__innerScrollContainer"
         original_scroll = scrolled_amount(element_class)
 
-        # Click on the off screen comment (0 through 3 are on screen)
-        find("#comment4").click
+        # Click on the off screen comment (0 through 4 are on screen)
+        find("#comment5").click
         after_click_scroll = scrolled_amount(element_class)
 
         expect(after_click_scroll - original_scroll).to be > 0
