@@ -34,7 +34,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def invalid_parameters?
-    return redirect_using_valid_cssid if invalid_css_id?(params[:user_id])
+    return redirect_using_valid_css_id if invalid_css_id?(params[:user_id])
 
     fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
 
