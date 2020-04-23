@@ -47,7 +47,7 @@ class LegacyTasksController < ApplicationController
     (params[:role] || user.vacols_roles.first).try(:downcase)
   end
 
-  def redirect_using_valid_cssid
+  def redirect_using_valid_css_id
     params[:user_id] = to_valid_css_id(params[:user_id])
 
     # Permit all parameters in order to call `redirect_to`, otherwise we get
