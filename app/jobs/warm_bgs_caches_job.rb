@@ -39,25 +39,25 @@ class WarmBgsCachesJob < CaseflowJob
   end
 
   def warm_poa_for_oldest_cached_records
-    poa_records_to_check = 1000
     start_time = Time.zone.now
-    oldest_bgs_poa_records.limit(poa_records_to_check).each do |bgs_poa|
+    oldest_bgs_poa_records.limit(1000).each do |bgs_poa|
       bgs_poa.update_cached_attributes! if bgs_poa.stale_attributes?
     end
     datadog_report_time_segment(segment: "warm_poa_bgs", start_time: start_time)
   end
 
   def warm_poa_for_oldest_claimants
-    claimants_to_check = 1400
     start_time = Time.zone.now
-    oldest_claimants_for_open_appeals.limit(claimants_to_check).each do |claimant|
+    oldest_claimants_with_poa.each do |claimant|
       bgs_poa = claimant.power_of_attorney
-      next unless bgs_poa
-
       bgs_poa.save! if bgs_poa.stale_attributes?
       claimant.update!(updated_at: Time.zone.now)
     end
     datadog_report_time_segment(segment: "warm_poa_claimants", start_time: start_time)
+  end
+
+  def oldest_claimants_with_poa
+    oldest_claimants_for_open_appeals.limit(1400).select { |claimant| claimant.power_of_attorney.present? }
   end
 
   def claimants_for_open_appeals
