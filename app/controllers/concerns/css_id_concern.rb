@@ -4,7 +4,7 @@ module CssIdConcern
   extend ActiveSupport::Concern
 
   # :reek:UtilityFunction
-  def invalid_css_id?(css_id)
+  def non_normalized_css_id?(css_id)
     css_id =~ /[a-z]/
   end
 
