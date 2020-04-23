@@ -142,6 +142,9 @@ class BgsPowerOfAttorney < CaseflowRecord
   def fetch_bgs_record_by_claimant_participant_id
     pid = self[:claimant_participant_id]
     poa = [bgs.fetch_poas_by_participant_id(pid)].flatten[0] || bgs.fetch_poas_by_participant_ids([pid])[pid]
+
+    return unless poa
+
     poa[:claimant_participant_id] ||= pid
     poa
   end
