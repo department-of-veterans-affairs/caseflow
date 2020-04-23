@@ -491,7 +491,7 @@
   "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL": "Add new team members",
   "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT": "User CSS ID to add",
   "USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL": "Edit current team members",
-  "USER_MANAGEMENT_ADMIN_RIGHTS_HEADING": "Add team admin / Remove admin rights: ",
+  "USER_MANAGEMENT_ADMIN_RIGHTS_HEADING": "Add / Remove admin rights: ",
   "USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION": "Determines which users have the same team admin rights as the Judge Team Lead to request, assign, and view atorneys' cases.",
   "USER_MANAGEMENT_REMOVE_USER_HEADING": "Remove from team: ",
   "USER_MANAGEMENT_REMOVE_USER_DESCRIPTION": "Remove a user from this judge team.",
@@ -502,7 +502,7 @@
   "USER_MANAGEMENT_ADMIN_LABEL": "Team Admin",
   "USER_MANAGEMENT_DISABLE_DECISION_DRAFTING_BUTTON_TEXT": "Disable decision drafting",
   "USER_MANAGEMENT_ENABLE_DECISION_DRAFTING_BUTTON_TEXT": "Enable decision drafting",
-  "USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Add team admin",
+  "USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Add admin rights",
   "USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Remove admin rights",
   "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove from team",
 
