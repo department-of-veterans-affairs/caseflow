@@ -121,7 +121,7 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
     bgs_attr ||= attr_name
-    self[attr_name] = begin
+    self[attr_name] ||= begin
       return if bgs_record == :not_found
 
       bgs_record.dig(bgs_attr)
