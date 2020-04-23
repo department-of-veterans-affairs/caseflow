@@ -5,11 +5,13 @@ class VirtualHearing < CaseflowRecord
 
   belongs_to :hearing, polymorphic: true
   belongs_to :created_by, class_name: "User"
+  belongs_to :updated_by, class_name: "User", optional: true
 
   # Tracks the progress of the job that creates the virtual hearing in Pexip.
   has_one :establishment, class_name: "VirtualHearingEstablishment"
 
   before_create :assign_created_by_user
+  before_update :assign_updated_by_user
 
   validates :veteran_email, presence: true, on: :create
   validates_email_format_of :judge_email, allow_nil: true
@@ -61,11 +63,6 @@ class VirtualHearing < CaseflowRecord
     status == :pending
   end
 
-  # Hearings can be activated only if the conference is created and emails sent
-  def activate?
-    active? && all_emails_sent?
-  end
-
   # Determines if the hearing conference has been created
   def active?
     status == :active
@@ -87,8 +84,12 @@ class VirtualHearing < CaseflowRecord
     :pending
   end
 
-  # Sets the virtual hearing status to active
-  def activate!
+  # Hearings can be established only if the conference has been created and emails sent
+  def can_be_established?
+    active? && all_emails_sent?
+  end
+
+  def established!
     establishment.clear_error!
     establishment.processed!
     update(request_cancelled: false)
@@ -107,6 +108,10 @@ class VirtualHearing < CaseflowRecord
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
+  end
+
+  def assign_updated_by_user
+    self.updated_by = RequestStore[:current_user] if RequestStore[:current_user].present?
   end
 
   def associated_hearing_is_video
