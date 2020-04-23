@@ -34,9 +34,21 @@ class WarmBgsCachesJob < CaseflowJob
     # assuming we have 40k open appeals/claimants at any given time,
     # we want to check about 1400 a day to cycle through them all once a month.
 
-    claimants_to_check = 1400
-    poa_records_to_check = 1000
+    warm_poa_for_oldest_claimants
+    warm_poa_for_oldest_cached_records
+  end
 
+  def warm_poa_for_oldest_cached_records
+    poa_records_to_check = 1000
+    start_time = Time.zone.now
+    oldest_bgs_poa_records.limit(poa_records_to_check).each do |bgs_poa|
+      bgs_poa.update_cached_attributes! if bgs_poa.stale_attributes?
+    end
+    datadog_report_time_segment(segment: "warm_poa_bgs", start_time: start_time)
+  end
+
+  def warm_poa_for_oldest_claimants
+    claimants_to_check = 1400
     start_time = Time.zone.now
     oldest_claimants_for_open_appeals.limit(claimants_to_check).each do |claimant|
       bgs_poa = claimant.power_of_attorney
@@ -46,12 +58,6 @@ class WarmBgsCachesJob < CaseflowJob
       claimant.update!(updated_at: Time.zone.now)
     end
     datadog_report_time_segment(segment: "warm_poa_claimants", start_time: start_time)
-
-    start_time = Time.zone.now
-    oldest_bgs_poa_records.limit(poa_records_to_check).each do |bgs_poa|
-      bgs_poa.update_cached_attributes! if bgs_poa.stale_attributes?
-    end
-    datadog_report_time_segment(segment: "warm_poa_bgs", start_time: start_time)
   end
 
   def claimants_for_open_appeals

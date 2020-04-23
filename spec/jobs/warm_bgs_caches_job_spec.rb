@@ -91,7 +91,8 @@ describe WarmBgsCachesJob, :all_dbs do
 
       context "bgs POA error" do
         before do
-          allow_any_instance_of(BgsPowerOfAttorney).to receive(:fetch_bgs_record).and_raise(BGS::ShareError.new("error!"))
+          error = BGS::ShareError.new("error!")
+          allow_any_instance_of(BgsPowerOfAttorney).to receive(:fetch_bgs_record).and_raise(error)
         end
 
         it "captures exceptions" do

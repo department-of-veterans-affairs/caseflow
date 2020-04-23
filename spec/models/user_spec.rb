@@ -395,6 +395,7 @@ describe User, :all_dbs do
   context "#when BGS data is setup" do
     let(:participant_id) { "123456" }
     let(:vso_participant_id) { "123456" }
+    let(:known_vso_participant_id) { "2452383" }
 
     let(:vso_participant_ids) do
       [
@@ -411,7 +412,7 @@ describe User, :all_dbs do
             legacy_poa_cd: "071",
             nm: "PARALYZED VETERANS OF AMERICA, INC.",
             org_type_nm: "POA National Organization",
-            ptcpnt_id: "2452383"
+            ptcpnt_id: known_vso_participant_id
           }
         }
       ]
