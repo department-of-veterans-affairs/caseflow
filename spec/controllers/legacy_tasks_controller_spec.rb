@@ -80,14 +80,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       end
     end
     context "CSS_ID in URL is in mixed case" do
-      let(:randomly_downcase) { ->(char) { [true, false].sample ? char.downcase : char } }
-
-      def downcase_random_characters(str)
-        str.chars.map(&randomly_downcase).join
-      end
-
       it "returns status 308 and redirects to a CSS_ID" do
-        [user.css_id.downcase, downcase_random_characters(user.css_id), "Bad_Css_id"].each do |user_id_path|
+        [user.css_id.downcase, "Bad_Css_id"].each do |user_id_path|
           get :index, params: { user_id: user_id_path, rest: "/assign" }
           expect(response.status).to eq 308
           expect(response).to redirect_to("/queue/#{user_id_path.upcase}/assign")

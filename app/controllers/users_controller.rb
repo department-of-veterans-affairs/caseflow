@@ -43,7 +43,7 @@ class UsersController < ApplicationController
   def valid_css_id_or_nil
     return nil unless params[:css_id].presence
 
-    return to_valid_css_id(params[:css_id]) if invalid_css_id?(params[:css_id])
+    return normalize_css_id(params[:css_id]) if non_normalized_css_id?(params[:css_id])
 
     params[:css_id]
   end

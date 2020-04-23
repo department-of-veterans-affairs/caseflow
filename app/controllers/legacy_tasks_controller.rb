@@ -34,7 +34,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def invalid_parameters?
-    return redirect_using_valid_css_id if invalid_css_id?(params[:user_id])
+    return redirect_using_valid_css_id if non_normalized_css_id?(params[:user_id])
 
     fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
 
@@ -48,7 +48,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def redirect_using_valid_css_id
-    params[:user_id] = to_valid_css_id(params[:user_id])
+    params[:user_id] = normalize_css_id(params[:user_id])
 
     # Permit all parameters in order to call `redirect_to`, otherwise we get
     # error "unable to convert unpermitted parameters to hash".
