@@ -10,16 +10,20 @@ describe OrganizationsController, :postgres, type: :controller do
     let(:vso_participant_ids) do
       [
         {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: vso_participant_id
+          power_of_attorney: {
+            legacy_poa_cd: "070",
+            nm: "VIETNAM VETERANS OF AMERICA",
+            org_type_nm: "POA National Organization",
+            ptcpnt_id: vso_participant_id
+          }
         },
         {
-          legacy_poa_cd: "071",
-          nm: "PARALYZED VETERANS OF AMERICA, INC.",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: "2452383"
+          power_of_attorney: {
+            legacy_poa_cd: "071",
+            nm: "PARALYZED VETERANS OF AMERICA, INC.",
+            org_type_nm: "POA National Organization",
+            ptcpnt_id: "2452383"
+          }
         }
       ]
     end
