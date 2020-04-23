@@ -122,7 +122,7 @@ class AddedIssue extends React.PureComponent {
             <span className="msg">
               {issue.id ? COPY.VACOLS_OPTIN_ISSUE_CLOSED_EDIT : COPY.VACOLS_OPTIN_ISSUE_NEW}:
             </span>
-            <span className="desc">{legacyIssue(issue, this.props.legacyAppeals).description}</span>
+            <span className="desc">{legacyIssue(issue, this.props.legacyAppeals)?.description}</span>
           </div>
         )}
         {issue.withdrawalPending && <p>Withdrawal pending</p>}
