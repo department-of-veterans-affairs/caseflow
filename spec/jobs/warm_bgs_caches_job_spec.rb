@@ -59,6 +59,26 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(@poa_sync).to eq(2) # once for open appeal, once because it's among 1000 oldest
     end
 
+    context "BGS POA changes at BGS" do
+      before do
+        claimant_participant_id = open_appeal.claimant.power_of_attorney.claimant_participant_id
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id).with(claimant_participant_id) do
+          Fakes::BGSServicePOA.default_vsos_mapped.first.tap { |poa| poa[:claimant_participant_id] = claimant_participant_id }
+        end
+      end
+
+      it "updates local cache to refer to same BGSPowerOfAttorney record with different attributes" do
+        expect(BgsPowerOfAttorney.all.count).to eq(1) # created by open_appeal
+
+        old_poa_name = open_appeal.claimant.representative_name
+
+        expect { described_class.perform_now }.to_not raise_error
+
+        expect(BgsPowerOfAttorney.all.count).to eq(1)
+        expect(open_appeal.reload.claimant.representative_name).to_not eq(old_poa_name)
+      end
+    end
+
     context "errors" do
       before do
         allow(Raven).to receive(:capture_exception) { @raven_called = true }

@@ -54,7 +54,7 @@ class WarmBgsCachesJob < CaseflowJob
       bgs_poa = claimant.power_of_attorney
       next unless bgs_poa
 
-      bgs_poa.update_cached_attributes! if bgs_poa.stale_attributes?
+      bgs_poa.save! if bgs_poa.stale_attributes?
       claimant.update!(updated_at: Time.zone.now)
     end
     datadog_report_time_segment(segment: "warm_poa_claimants", start_time: start_time)

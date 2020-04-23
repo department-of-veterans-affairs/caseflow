@@ -42,6 +42,12 @@ class BgsPowerOfAttorney < CaseflowRecord
     def find_or_load_by_file_number(file_number)
       find_by(file_number: file_number) || new(file_number: file_number)
     end
+
+    # In theory, both these BGS calls should return the same thing.
+    # We try both services if necessary mostly for backwards compatability in tests.
+    def fetch_bgs_poa_by_participant_id(pid)
+      [bgs.fetch_poas_by_participant_id(pid)].flatten[0] || bgs.fetch_poas_by_participant_ids([pid])[pid]
+    end
   end
 
   def representative_name
@@ -89,10 +95,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_cached_attributes!
-    transaction do
-      CACHED_BGS_ATTRIBUTES.each { |attr| send(attr) }
-      self.last_synced_at = Time.zone.now
-    end
+    stale_attributes.each { |attr| send(attr) }
+    self.last_synced_at = Time.zone.now
   end
 
   def found?
@@ -117,13 +121,10 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
     bgs_attr ||= attr_name
-    self[attr_name] ||= begin
+    self[attr_name] = begin
       return if bgs_record == :not_found
 
-      return unless bgs_record.dig(bgs_attr)
-
-      update!(attr_name => bgs_record[bgs_attr]) if persisted?
-      bgs_record[bgs_attr]
+      bgs_record.dig(bgs_attr)
     end
   end
 
@@ -137,11 +138,9 @@ class BgsPowerOfAttorney < CaseflowRecord
     end
   end
 
-  # In theory, both these BGS calls should return the same thing.
-  # We try both services if necessary mostly for backwards compatability in tests.
   def fetch_bgs_record_by_claimant_participant_id
     pid = self[:claimant_participant_id]
-    poa = [bgs.fetch_poas_by_participant_id(pid)].flatten[0] || bgs.fetch_poas_by_participant_ids([pid])[pid]
+    poa = self.class.fetch_bgs_poa_by_participant_id(pid)
 
     return unless poa
 
