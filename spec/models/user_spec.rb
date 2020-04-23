@@ -394,29 +394,8 @@ describe User, :all_dbs do
 
   context "#when BGS data is setup" do
     let(:participant_id) { "123456" }
-    let(:vso_participant_id) { "123456" }
-    let(:known_vso_participant_id) { "2452383" }
-
-    let(:vso_participant_ids) do
-      [
-        {
-          power_of_attorney: {
-            legacy_poa_cd: "070",
-            nm: "VIETNAM VETERANS OF AMERICA",
-            org_type_nm: "POA National Organization",
-            ptcpnt_id: vso_participant_id
-          }
-        },
-        {
-          power_of_attorney: {
-            legacy_poa_cd: "071",
-            nm: "PARALYZED VETERANS OF AMERICA, INC.",
-            org_type_nm: "POA National Organization",
-            ptcpnt_id: known_vso_participant_id
-          }
-        }
-      ]
-    end
+    let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VOS_PARTICIPANT_ID }
+    let(:vso_participant_ids) { Fakes::BGSServicePOA::default_vsos }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)

@@ -215,7 +215,7 @@ describe HearingDayRange, :all_dbs do
     let!(:case_hearing_four) { create(:case_hearing, vdkey: hearing_day_four.id) }
     let!(:hearing_three) { create(:hearing, :with_tasks, hearing_day: hearing_day_three) }
     let!(:hearing_four) { create(:legacy_hearing, hearing_day: hearing_day_four, case_hearing: case_hearing_four) }
-    let!(:vso_participant_id) { "789" }
+    let!(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VOS_PARTICIPANT_ID }
     let!(:vso) { create(:vso, participant_id: vso_participant_id) }
     let!(:current_user) { User.authenticate!(css_id: "VSO_USER", roles: ["VSO"]) }
     let!(:track_veteran_task_one) { create(:track_veteran_task, appeal: hearing_one.appeal, assigned_to: vso) }
@@ -223,18 +223,7 @@ describe HearingDayRange, :all_dbs do
     let!(:track_veteran_task_four) { create(:track_veteran_task, appeal: hearing_four.appeal, assigned_to: vso) }
     let(:start_date) { Time.zone.now + 1.day - 1.month }
     let(:end_date) { Time.zone.now - 1.day + 1.year }
-    let!(:vso_participant_ids) do
-      [
-        {
-          power_of_attorney: {
-            legacy_poa_cd: "070",
-            nm: "VIETNAM VETERANS OF AMERICA",
-            org_type_nm: "POA National Organization",
-            ptcpnt_id: vso_participant_id
-          }
-        }
-      ]
-    end
+    let!(:vso_participant_ids) { Fakes::BGSServicePOA::default_vsos }
 
     subject { HearingDayRange.new(start_date, end_date).upcoming_days_for_vso_user(current_user) }
 

@@ -5,7 +5,7 @@ RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
   include TaskHelpers
 
   let(:participant_id) { "123456" }
-  let(:vso_participant_id) { "789" }
+  let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VOS_PARTICIPANT_ID }
   let(:url) { "american-legion" }
   let(:name) { "American Legion" }
 
@@ -22,30 +22,7 @@ RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
     User.authenticate!(roles: ["VSO"])
   end
 
-  let(:vso_participant_ids) do
-    [
-      {
-        file_number: "00000000",
-        ptcpnt_id: "1111",
-        power_of_attorney: {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: vso_participant_id
-        }
-      },
-      {
-        file_number: "66666666",
-        ptcpnt_id: "2222",
-        power_of_attorney: {
-          legacy_poa_cd: "071",
-          nm: "PARALYZED VETERANS OF AMERICA, INC.",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: "2452383"
-        }
-      }
-    ]
-  end
+  let(:vso_participant_ids) { Fakes::BGSServicePOA::default_vsos }
 
   before do
     allow_any_instance_of(BGSService).to receive(:get_participant_id_for_user)
