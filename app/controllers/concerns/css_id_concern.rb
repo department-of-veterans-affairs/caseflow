@@ -8,7 +8,7 @@ module CssIdConcern
     css_id =~ /[a-z]/
   end
 
-  def to_valid_css_id(css_id)
+  def normalize_css_id(css_id)
     css_id&.upcase
   end
 end
