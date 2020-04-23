@@ -157,7 +157,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         expect(page).to have_content(appeal.docket_number)
       end
 
-      fscenario "navigating between review and assign task queues" do
+      scenario "navigating between review and assign task queues" do
         visit "/queue"
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
