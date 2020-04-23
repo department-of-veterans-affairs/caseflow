@@ -384,14 +384,12 @@ FactoryBot.define do
 
         after(:build) do |_task, evaluator|
           if evaluator.assigned_by
-            existing_staff_record = VACOLS::Staff.where(
-              sdomainid: evaluator.assigned_by.css_id, svlj: "J", sactive: "A"
-            ).first
+            existing_staff_record = VACOLS::Staff.pure_judge.find_by_css_id(evaluator.assigned_by.css_id)
             create(:staff, :judge_role, user: evaluator.assigned_by) if existing_staff_record.blank?
           end
 
           if evaluator.assigned_to
-            existing_staff_record = VACOLS::Staff.where(sdomainid: evaluator.assigned_to.css_id, sactive: "A").first
+            existing_staff_record = VACOLS::Staff.active.find_by_css_id(evaluator.assigned_to.css_id)
             create(:staff, :attorney_role, user: evaluator.assigned_to) if existing_staff_record.blank?
           end
         end

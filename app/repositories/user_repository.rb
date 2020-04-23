@@ -36,6 +36,7 @@ class UserRepository
       true
     end
 
+    #  TODO: where do we use this?
     def css_ids_by_vlj_ids(vlj_ids)
       users = VACOLS::Staff.where(sattyid: vlj_ids)
 
@@ -65,10 +66,11 @@ class UserRepository
 
     private
 
+    # TODO: Convenience methods for all these or vacols to caseflow symbol mapping
     def cached_staff_record(css_id)
       # Staff records rarely get updated so caching in Redis for 24 hours
       Rails.cache.fetch("#{Rails.env}_staff_record_#{css_id}") do
-        VACOLS::Staff.find_by(sdomainid: css_id)
+        VACOLS::Staff.find_by_css_id(css_id)
       end
     end
 

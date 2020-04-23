@@ -22,13 +22,13 @@ FactoryBot.define do
 
       after(:create) do |vacols_case, evaluator|
         if evaluator.user
-          existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
+          existing_staff = VACOLS::Staff.find_by_css_id(evaluator.user.css_id)
           staff = (existing_staff || create(:staff, user: evaluator.user))
           slogid = staff.slogid
           sattyid = staff.sattyid
         end
         if evaluator.assigner
-          existing_assigner = VACOLS::Staff.find_by_sdomainid(evaluator.assigner.css_id)
+          existing_assigner = VACOLS::Staff.find_by_css_id(evaluator.assigner.css_id)
           assigner_slogid = (existing_assigner || create(:staff, user: evaluator.assigner)).slogid
         end
         vacols_case.update!(bfcurloc: slogid) if slogid
