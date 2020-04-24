@@ -99,19 +99,27 @@ class VirtualHearings::SendEmail
 
     false
   else
+    Rails.logger.info("Sent #{type} email to #{recipient.title}!")
+
+    create_sent_hearing_email_event(recipient, external_message_id(msg))
+
+    true
+  end
+
+  # :nocov:
+  def create_sent_hearing_email_event(recipient, external_id)
     SentHearingEmailEvent.create!(
       hearing: virtual_hearing.hearing,
       email_type: type,
       email_address: recipient.email,
-      external_message_id: external_message_id(msg),
+      external_message_id: external_id,
       recipient_role: recipient.title.downcase,
       sent_by: virtual_hearing.updated_by
     )
-
-    Rails.logger.info("Sent #{type} email to #{recipient.title}!")
-
-    true
+  rescue StandardError => error
+    Raven.capture_exception(error)
   end
+  # :nocov:
 
   def judge_recipient
     MailRecipient.new(
