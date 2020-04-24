@@ -54,6 +54,7 @@ class ColocatedTask < Task
         begin
           super(user, parent)
         rescue Caseflow::Error::ActionForbiddenError => error
+          # We want to allow task creation if done from attorney checkout on a vacate & de novo
           raise error unless de_novo_atty_checkout?(user, parent)
 
           true
