@@ -15,6 +15,7 @@ FactoryBot.define do
     representative_email { "caseflow-representative@test.com" }
     representative_email_sent { false }
     association :created_by, factory: :user
+    association :updated_by, factory: :user
     establishment { nil }
 
     transient do
@@ -44,7 +45,7 @@ FactoryBot.define do
         virtual_hearing.cancel!
       elsif evaluator.status == :active
         virtual_hearing.conference_id = "0"
-        virtual_hearing.activate!
+        virtual_hearing.established!
       end
     end
   end
