@@ -12,19 +12,15 @@ class AdvanceOnDocketMotion < CaseflowRecord
   }
 
   scope :granted, -> { where(granted: true) }
-  scope :for_person, ->(person_id) { where(person_id: person_id) }
   scope :eligable_due_to_age, -> { age }
   scope :eligable_due_to_date, lambda { |receipt_date|
     where(created_at: receipt_date..DateTime::Infinity.new).where.not(id: age)
   }
+  scope :for_person, ->(person_id) { where(person_id: person_id) }
 
   class << self
     def granted_for_person?(person_id, appeal_receipt_date)
       eligable_due_to_date(appeal_receipt_date).or(eligable_due_to_age).for_person(person_id).granted.any?
-    end
-
-    def eligable_motions_for_appeal(person_id, appeal_receipt_date)
-      eligable_due_to_date(appeal_receipt_date).for_person(person_id)
     end
 
     def create_or_update_by_appeal(appeal, attrs)
