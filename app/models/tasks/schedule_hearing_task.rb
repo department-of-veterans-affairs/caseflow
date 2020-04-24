@@ -47,9 +47,9 @@ class ScheduleHearingTask < Task
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
-    hearing = most_recent_closed_hearing_on_appeal
+    hearing_task = most_recent_closed_hearing_task_on_appeal
 
-    if hearing&.disposition.blank?
+    if hearing_task&.hearing&.disposition.blank?
       fail Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR
     end
 
