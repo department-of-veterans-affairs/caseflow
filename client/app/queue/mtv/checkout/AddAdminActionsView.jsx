@@ -9,8 +9,6 @@ import { adminActionTemplate } from '../../colocatedTasks/AddColocatedTaskView';
 import { AddColocatedTaskForm } from '../../colocatedTasks/AddColocatedTaskForm';
 import styles from './AddAdminActionsView.module.scss';
 import Alert from '../../../components/Alert';
-// import { useSelector } from 'react-redux';
-// import { getAllTasksForAppeal } from '../../selectors';
 
 export const AddAdminActionsView = ({ appeal }) => {
   const [ctx, setCtx] = useContext(MotionToVacateContext);
@@ -32,10 +30,8 @@ export const AddAdminActionsView = ({ appeal }) => {
       return updated;
     });
 
-  // TODO: update our error checking to check for duplicates in existing tasks from the appeal, not just ones added in this screen
-  // const appealTasks = useSelector((state) => getAllTasksForAppeal(state, { appealId: appeal.id }));
   const dupeError = useMemo(() => {
-    // See if uniq set is smaller than array
+    // See if uniq set is smaller than array of added actions
     return new Set(adminActions.map((item) => item.type + item.instructions)).size !== adminActions.length;
   }, [adminActions]);
 

@@ -844,7 +844,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
           fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
         end
 
-        # TODO: expand this to check for existing admin actions on the appeal
         expect(page).to have_content("Duplicate admin actions detected")
 
         # step "removes the duplicate and submits the form for a new admin action"
@@ -1038,8 +1037,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
   end
 
   def add_colocated_users
-    create_list(:user, 6).each do |u|
-      colocated_org.add_user(u)
+    create_list(:user, 6).each do |user|
+      colocated_org.add_user(user)
     end
   end
 
