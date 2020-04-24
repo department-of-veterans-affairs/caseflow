@@ -230,7 +230,6 @@ const DetailsInputs = (props) => {
         virtualHearing={virtualHearing}
         wasVirtual={wasVirtual}
       />
-      {/* TODO: Change to rows.length > 0 where rows = emails_sent list */}
       {hearing?.emailEvents.length > 0 && <EmailNotificationHistory rows={hearing.emailEvents} />}
       {!isLegacy && (
         <React.Fragment>
