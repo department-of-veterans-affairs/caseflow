@@ -837,9 +837,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
 
-        expect(all('div.admin-action-item').count).to eq 2
+        expect(all("div.admin-action-item").count).to eq 2
 
-        within all('div.admin-action-item')[1] do
+        within all("div.admin-action-item")[1] do
           click_dropdown(text: selected_opt_0)
           fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
         end

@@ -46,9 +46,6 @@ export const SubmitVacatedDecisionsView = ({ appeal }) => {
   const handleSuccess = async () => {
     const { adminActions } = ctx;
 
-    // TODO: Adjust this logic to account for rules re creating child tasks of tasks to which one isn't assigned
-    // Currently attorney can't create child tasks of the judge task, which is what we're trying to do here
-
     // Create admin actions, if any exist with values set
     if (adminActions?.map((item) => Boolean(item.type)).length) {
       const { externalId } = appeal;
