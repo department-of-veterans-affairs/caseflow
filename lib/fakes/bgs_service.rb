@@ -241,10 +241,10 @@ class Fakes::BGSService
       participant_ids.map do |participant_id|
         vso = if participant_id.starts_with?("CLAIMANT_WITH_PVA_AS_VSO")
                 {
-                  legacy_poa_cd: "071",
-                  nm: "PARALYZED VETERANS OF AMERICA, INC.",
-                  org_type_nm: "POA National Organization",
-                  ptcpnt_id: "2452383"
+                  legacy_poa_cd: Fakes::BGSServicePOA::PARALYZED_VETERANS_LEGACY_POA_CD,
+                  nm: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME,
+                  org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+                  ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
                 }
               else
                 {
