@@ -22,8 +22,6 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   validates :claimant_participant_id, :poa_participant_id, :representative_name, :representative_type, presence: true
 
-  CACHE_TTL = 30.days
-
   before_save :update_cached_attributes!
 
   class << self
