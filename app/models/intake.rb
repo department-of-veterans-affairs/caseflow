@@ -41,6 +41,12 @@ class Intake < CaseflowRecord
 
   after_initialize :strip_file_number
 
+  scope :updated_since_for_appeals, ->(since) do
+    select(:detail_id)
+      .where("#{table_name}.updated_at >= ?", since)
+      .where("detail_type='Appeal'")
+  end
+
   def strip_file_number
     return if veteran_file_number.nil?
 
