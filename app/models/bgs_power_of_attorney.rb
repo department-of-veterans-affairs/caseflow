@@ -98,7 +98,10 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def save_with_updated_bgs_record!
-    stale_attributes.each { |attr| self[attr] = nil }
+    stale_attributes.each do |attr|
+      self[attr] = nil # local object attr empty, should trigger re-fetch of bgs record
+      send(attr)
+    end
     save!
   end
 
