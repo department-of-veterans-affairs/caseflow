@@ -11,7 +11,7 @@ class VirtualHearing < CaseflowRecord
   has_one :establishment, class_name: "VirtualHearingEstablishment"
 
   before_create :assign_created_by_user
-  before_update :assign_updated_by_user
+  before_save :assign_updated_by_user
 
   validates :veteran_email, presence: true, on: :create
   validates_email_format_of :judge_email, allow_nil: true
