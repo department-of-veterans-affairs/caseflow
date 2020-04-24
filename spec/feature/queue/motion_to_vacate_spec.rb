@@ -4,6 +4,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
   include QueueHelpers
 
   let!(:lit_support_team) { LitigationSupport.singleton }
+  let(:colocated_org) { Colocated.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
   let!(:appeal) do
     create(:appeal, receipt_date: receipt_date)
@@ -744,6 +745,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
     context "Vacate & de Novo" do
       let(:vacate_type) { "vacate_and_de_novo" }
 
+      before do
+        add_colocated_users
+      end
+
       it "correctly handles checkout flow" do
         User.authenticate!(user: drafting_attorney)
 
@@ -781,6 +786,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         # step "fills in and submits the form for two identical admin actions"
         action = ColocatedTask.actions_assigned_to_colocated.sample
+        action_class = ColocatedTask.find_subclass_by_action(action).name
         selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS[action]
         instructions = generate_words(5)
 
@@ -800,7 +806,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
           fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
         end
 
-        
         # TODO: expand this to check for existing admin actions on the appeal
         expect(page).to have_content("Duplicate admin actions detected")
 
@@ -842,8 +847,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
           "sent to #{judge.full_name} for review."
         )
 
-        expect(vacate_stream.decision_issues.size).to eq(4)
-        expect(vacate_stream.tasks.size).to eq(4)
+        expect(vacate_stream.decision_issues.size).to eq(3)
+        expect(vacate_stream.tasks.size).to eq(5)
+        expect(vacate_stream.tasks.find { |item| item[:type] == action_class }).to_not be_nil
       end
     end
   end
@@ -991,5 +997,11 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   def valid_document_id
     "12345-12345678"
+  end
+
+  def add_colocated_users
+    create_list(:user, 6).each do |u|
+      colocated_org.add_user(u)
+    end
   end
 end
