@@ -184,9 +184,6 @@ const DetailsInputs = (props) => {
   const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
   const enableVirtualHearings = userCanScheduleVirtualHearings && requestType !== 'Central';
 
-  console.log('EVENTS: ', hearing?.emailEvents);
-  console.log('EVENTS LENGTH: ', hearing?.emailEvents.length > 0);
-
   return (
     <React.Fragment>
       <div {...rowThirds}>
@@ -279,7 +276,8 @@ DetailsInputs.propTypes = {
     evidenceWindowWaived: PropTypes.bool,
     notes: PropTypes.string,
     bvaPoc: PropTypes.string,
-    scheduledForIsPast: PropTypes.bool
+    scheduledForIsPast: PropTypes.bool,
+    emailEvents: PropTypes.array
   }),
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,
