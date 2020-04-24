@@ -51,10 +51,20 @@ class ColocatedTask < Task
 
     def verify_user_can_create!(user, parent)
       if parent
-        super(user, parent)
+        begin
+          super(user, parent)
+        rescue Caseflow::Error::ActionForbiddenError => error
+          raise error unless de_novo_atty_checkout?(user, parent)
+
+          true
+        end
       elsif !(user.attorney_in_vacols? || user.judge_in_vacols?)
         fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
       end
+    end
+
+    def de_novo_atty_checkout?(user, parent)
+      (parent.appeal.vacate_type == "vacate_and_de_novo") && user.attorney_in_vacols?
     end
 
     def default_assignee
