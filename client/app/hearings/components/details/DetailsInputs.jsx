@@ -184,6 +184,9 @@ const DetailsInputs = (props) => {
   const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
   const enableVirtualHearings = userCanScheduleVirtualHearings && requestType !== 'Central';
 
+  console.log('EVENTS: ', hearing?.emailEvents);
+  console.log('EVENTS LENGTH: ', hearing?.emailEvents.length > 0);
+
   return (
     <React.Fragment>
       <div {...rowThirds}>
@@ -231,7 +234,7 @@ const DetailsInputs = (props) => {
         wasVirtual={wasVirtual}
       />
       {/* TODO: Change to rows.length > 0 where rows = emails_sent list */}
-      {hearing.emailEvents.length > 0 && <EmailNotificationHistory rows={hearing.emailEvents} />}
+      {hearing?.emailEvents.length > 0 && <EmailNotificationHistory rows={hearing.emailEvents} />}
       {!isLegacy && (
         <React.Fragment>
           <div className="cf-help-divider" />

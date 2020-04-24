@@ -3,7 +3,7 @@
 class SentEmailEventSerializer
   include FastJsonapi::ObjectSerializer
 
-  attribute :recipient_role
+  attribute :sent_to, &:sent_to_role
   attribute :email_type
   attribute :email_address
   attribute :sent_at
