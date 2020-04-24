@@ -129,19 +129,19 @@ cached_appeal_attributes,,,,,,,,
 cached_appeal_attributes,appeal_id,integer,,,,,x,
 cached_appeal_attributes,appeal_type,string,,,,,x,
 cached_appeal_attributes,assignee_label,string,,,,,,Who is currently most responsible for the appeal
-cached_appeal_attributes,case_type,string,,,,,,"The case type, i.e. original, post remand, CAVC remand, etc"
-cached_appeal_attributes,closest_regional_office_city,string,,,,,,Closest regional office to the veteran
-cached_appeal_attributes,closest_regional_office_key,string,,,,,,Closest regional office to the veteran in 4 character key
+cached_appeal_attributes,case_type,string,,,,,x,"The case type, i.e. original, post remand, CAVC remand, etc"
+cached_appeal_attributes,closest_regional_office_city,string,,,,,x,Closest regional office to the veteran
+cached_appeal_attributes,closest_regional_office_key,string,,,,,x,Closest regional office to the veteran in 4 character key
 cached_appeal_attributes,created_at,datetime,,,,,,
 cached_appeal_attributes,docket_number,string,,,,,,
-cached_appeal_attributes,docket_type,string,,,,,,
-cached_appeal_attributes,is_aod,boolean,,,,,,Whether the case is Advanced on Docket
+cached_appeal_attributes,docket_type,string,,,,,x,
+cached_appeal_attributes,is_aod,boolean,,,,,x,Whether the case is Advanced on Docket
 cached_appeal_attributes,issue_count,integer,,,,,,Number of issues on the appeal.
-cached_appeal_attributes,power_of_attorney_name,string,,,,,,'Firstname Lastname' of power of attorney
-cached_appeal_attributes,suggested_hearing_location,string,,,,,,"Suggested hearing location in 'City, State (Facility Type)' format"
+cached_appeal_attributes,power_of_attorney_name,string,,,,,x,'Firstname Lastname' of power of attorney
+cached_appeal_attributes,suggested_hearing_location,string,,,,,x,"Suggested hearing location in 'City, State (Facility Type)' format"
 cached_appeal_attributes,updated_at,datetime,,,,,x,
 cached_appeal_attributes,vacols_id,string,,,,,x,
-cached_appeal_attributes,veteran_name,string,,,,,,"'LastName, FirstName' of the veteran"
+cached_appeal_attributes,veteran_name,string,,,,,x,"'LastName, FirstName' of the veteran"
 cached_user_attributes,,,,,,,,VACOLS cached staff table attributes
 cached_user_attributes,created_at,datetime ∗,x,,,,,
 cached_user_attributes,sactive,string ∗,x,,,,,
@@ -866,6 +866,16 @@ schedule_periods,start_date,date ∗,x,,,,,
 schedule_periods,type,string ∗,x,,,,,
 schedule_periods,updated_at,datetime ∗,x,,,,x,
 schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
+sent_hearing_email_events,,,,,,,,Events related to hearings notification emails
+sent_hearing_email_events,email_address,string,,,,,,Address the email was sent to
+sent_hearing_email_events,email_type,string,,,,,,"The type of email sent: cancellation, confirmation, updated_time_confirmation"
+sent_hearing_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email
+sent_hearing_email_events,hearing_id,integer (8) ∗ FK,x,,x,,x,Associated hearing
+sent_hearing_email_events,hearing_type,string ∗,x,,,,x,
+sent_hearing_email_events,id,integer (8) PK,x,x,,,,
+sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
+sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
+sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
 special_issue_lists,,,,,,,,
 special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
 special_issue_lists,appeal_type,string,,,,,x,
@@ -1034,8 +1044,9 @@ virtual_hearings,judge_email,string,,,,,,Judge's email address
 virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge
 virtual_hearings,representative_email,string,,,,,,Veteran's representative's email address
 virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran's representative
-virtual_hearings,status,string ∗,x,,,,,The status of the Pexip conference
+virtual_hearings,request_cancelled,boolean,,,,,,Determines whether the user has cancelled the virtual hearing request
 virtual_hearings,updated_at,datetime ∗,x,,,,x,
+virtual_hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recently updated the virtual hearing
 virtual_hearings,veteran_email,string ∗,x,,,,,Veteran's email address
 virtual_hearings,veteran_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran
 virtual_hearing_establishments,,,,,,,,

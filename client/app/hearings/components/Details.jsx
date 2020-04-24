@@ -11,7 +11,7 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, pollVirtualHearingData } from '../utils';
+import { deepDiff, toggleCancelled, pollVirtualHearingData } from '../utils';
 import _ from 'lodash';
 
 import DetailsInputs from './details/DetailsInputs';
@@ -57,6 +57,7 @@ class HearingDetails extends React.Component {
       loading: false,
       success: false,
       error: false,
+      virtualHearingErrors: {},
       virtualHearingModalOpen: false,
       virtualHearingModalType: null,
       startPolling: null,
@@ -105,6 +106,7 @@ class HearingDetails extends React.Component {
         veteranEmail: virtualHearing.veteranEmail,
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status,
+        requestCancelled: virtualHearing.requestCancelled,
         // not used in form
         jobCompleted: virtualHearing.jobCompleted,
         clientHost: virtualHearing.clientHost,
@@ -128,14 +130,25 @@ class HearingDetails extends React.Component {
 
   updateVirtualHearing = (values) => {
     this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
-    this.setState({ updated: true });
+
+    this.setState({
+      updated: !_.isEmpty(deepDiff(values, this.state.initialFormData.virtualHearingForm)),
+      virtualHearingErrors: {}
+    });
   }
 
   resetVirtualHearing = () => {
     const { hearing: { virtualHearing } } = this.props;
 
     if (virtualHearing) {
-      this.updateVirtualHearing(virtualHearing);
+      // Reset the jobCompleted so that we dont disable the hearings dropdown
+      // Addresses issue where frontend overrides backend on cancelling hearing change
+      // REMINDER: Refactor to get state from the backend
+      this.updateVirtualHearing({
+        ...virtualHearing,
+        jobCompleted: true,
+        requestCancelled: this.state.initialFormData.virtualHearingForm?.requestCancelled
+      });
     } else {
       this.updateVirtualHearing(null);
     }
@@ -159,7 +172,30 @@ class HearingDetails extends React.Component {
     this.setState({ updated: true });
   }
 
-  submit = () => {
+  handleSave = (editedEmails) => {
+    const virtual = this.props.hearing.isVirtual || this.props.hearing.wasVirtual;
+
+    if (
+      virtual &&
+      (!this.props.formData.virtualHearingForm.representativeEmail ||
+      !this.props.formData.virtualHearingForm.veteranEmail)
+    ) {
+      this.setState({
+        loading: false,
+        success: false,
+        virtualHearingErrors: {
+          vetEmail: !this.props.formData.virtualHearingForm.veteranEmail && 'Veteran email is required',
+          repEmail: !this.props.formData.virtualHearingForm.representativeEmail && 'Representative email is required'
+        }
+      });
+    } else if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
+      this.openVirtualHearingModal({ type: 'change_email' });
+    } else {
+      this.submit();
+    }
+  };
+
+  submit = (form = '') => {
     const { hearing: { externalId } } = this.props;
     const { updated } = this.state;
 
@@ -167,10 +203,10 @@ class HearingDetails extends React.Component {
       return;
     }
 
+    const { init, current } = toggleCancelled(this.state.initialFormData, this.props.formData, form);
+
     // only send updated properties
-    const {
-      hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm
-    } = deepDiff(this.state.initialFormData, this.props.formData);
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = deepDiff(init, current);
 
     const data = {
       hearing: {
@@ -198,6 +234,7 @@ class HearingDetails extends React.Component {
         success: true,
         error: false
       });
+
       // set hearing on DetailsContainer then reset initialFormData
       this.props.setHearing(hearing, () => {
         const initialFormData = this.getInitialFormData();
@@ -292,12 +329,13 @@ class HearingDetails extends React.Component {
             hearing={this.props.hearing}
             virtualHearing={virtualHearingForm}
             update={this.updateVirtualHearing}
-            submit={() => this.submit().then(this.closeVirtualHearingModal)}
+            submit={() => this.submit('virtualHearingForm').then(this.closeVirtualHearingModal)}
             closeModal={this.closeVirtualHearingModal}
             reset={this.resetVirtualHearing}
             type={this.state.virtualHearingModalType}
             {...editedEmails} />}
           <DetailsInputs
+            errors={this.state.virtualHearingErrors}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
             updateVirtualHearing={this.updateVirtualHearing}
@@ -323,13 +361,7 @@ class HearingDetails extends React.Component {
                 disabled={!this.state.updated || this.state.disabled}
                 loading={this.state.loading}
                 className="usa-button"
-                onClick={() => {
-                  if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
-                    this.openVirtualHearingModal({ type: 'change_email' });
-                  } else {
-                    this.submit();
-                  }
-                }}
+                onClick={() => this.handleSave(editedEmails)}
                 styling={css({ float: 'right' })}
               >Save</Button>
             </span>

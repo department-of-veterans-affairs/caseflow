@@ -464,6 +464,11 @@ describe User, :all_dbs do
       before { session["user"]["roles"] = ["Admin Intake"] }
       it { is_expected.to be_truthy }
     end
+
+    context "when user is a BVA admin" do
+      before { Bva.singleton.add_user(user) }
+      it { is_expected.to be_truthy }
+    end
   end
 
   context "#appeal_has_task_assigned_to_user?" do

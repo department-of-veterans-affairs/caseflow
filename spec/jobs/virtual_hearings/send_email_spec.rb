@@ -17,13 +17,25 @@ describe VirtualHearings::SendEmail do
   end
   let(:email_type) { nil }
   let(:judge_recipient) do
-    MailRecipient.new(name: "TEST", email: "america@example.com", title: :judge)
+    MailRecipient.new(
+      name: "TEST",
+      email: "america@example.com",
+      title: MailRecipient::RECIPIENT_TITLES[:judge]
+    )
   end
   let(:veteran_recipient) do
-    MailRecipient.new(name: "TEST", email: "america@example.com", title: :veteran)
+    MailRecipient.new(
+      name: "TEST",
+      email: "america@example.com",
+      title: MailRecipient::RECIPIENT_TITLES[:veteran]
+    )
   end
   let(:representative_recipient) do
-    MailRecipient.new(name: "TEST", email: "america@example.com", title: :representative)
+    MailRecipient.new(
+      name: "TEST",
+      email: "america@example.com",
+      title: MailRecipient::RECIPIENT_TITLES[:representative]
+    )
   end
   let(:send_email_job) do
     VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: email_type)

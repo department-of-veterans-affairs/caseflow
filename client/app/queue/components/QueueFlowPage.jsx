@@ -33,11 +33,16 @@ class QueueFlowPage extends React.PureComponent {
     const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)?/;
 
     if (!newPathInCheckoutFlow.exec(pathname) && pathname !== '/queue') {
-      return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}`;
+      return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${this.cancelAttorneyCheckoutMsg()}`;
     }
 
     return true;
   });
+
+  cancelAttorneyCheckoutMsg = () => {
+    return this.props.featureToggles.special_issues_revamp ?
+      COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_SPECIAL_ISSUES : COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT;
+  }
 
   withUnblockedTransition = (callback = _.noop) => {
     this.unblockTransitions();
@@ -167,7 +172,7 @@ class QueueFlowPage extends React.PureComponent {
           onClick: this.cancelFlow
         }]}
         closeHandler={() => this.props.hideModal('cancelCheckout')}>
-        {COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}
+        {this.cancelAttorneyCheckoutMsg()}
       </Modal>
     </div>}
     <AppSegment filledBackground>
@@ -182,9 +187,11 @@ QueueFlowPage.propTypes = {
   cancelCheckoutModal: PropTypes.bool,
   continueBtnText: PropTypes.string,
   disableNext: PropTypes.bool,
+  featureToggles: PropTypes.shape({
+    special_issues_revamp: PropTypes.bool
+  }),
   hideCancelButton: PropTypes.bool,
-  hideModal: PropTypes.func,
-  highlightInvalidFormItems: PropTypes.func,
+  history: PropTypes.object,
   validateForm: PropTypes.func,
   goToNextStep: PropTypes.func,
   goToPrevStep: PropTypes.func,
@@ -193,13 +200,15 @@ QueueFlowPage.propTypes = {
   appealId: PropTypes.string.isRequired,
   nextStep: PropTypes.string,
   prevStep: PropTypes.string,
-  history: PropTypes.object,
-  checkoutStagedAppeal: PropTypes.func,
-  resetDecisionOptions: PropTypes.func,
   savePending: PropTypes.bool,
   saveSuccessful: PropTypes.bool,
+  stagedAppeals: PropTypes.array,
+  // provided by mapDispatchToProps
+  highlightInvalidFormItems: PropTypes.func,
   showModal: PropTypes.func,
-  stagedAppeals: PropTypes.array
+  hideModal: PropTypes.func,
+  checkoutStagedAppeal: PropTypes.func,
+  resetDecisionOptions: PropTypes.func
 };
 
 QueueFlowPage.defaultProps = {
@@ -218,6 +227,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     cancelCheckoutModal: state.ui.modals.cancelCheckout,
+    featureToggles: state.ui.featureToggles,
     savePending,
     saveSuccessful,
     stagedAppeals: Object.keys(state.queue.stagedChanges.appeals),

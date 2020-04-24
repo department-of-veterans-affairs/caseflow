@@ -5,12 +5,14 @@ module HasVirtualHearing
 
   included do
     has_one :virtual_hearing, -> { order(id: :desc) }, as: :hearing
+
+    has_many :email_events, class_name: "SentHearingEmailEvent"
   end
 
   def virtual?
     [
-      VirtualHearing.statuses[:pending],
-      VirtualHearing.statuses[:active]
+      :pending,
+      :active
     ].include? virtual_hearing&.status
   end
 
