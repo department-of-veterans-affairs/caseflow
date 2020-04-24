@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
+import sprintf from 'sprintf-js';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
+import AOD_REASONS from '../../constants/AOD_REASONS';
 
 import {
   appealWithDetailSelector
@@ -10,10 +13,9 @@ import {
 import { setAppealAod } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
-import { requestSave } from './uiReducer/uiActions';
+import { requestSave, showErrorMessage } from './uiReducer/uiActions';
 import QueueFlowModal from './components/QueueFlowModal';
-
-const GRANTED = 'granted';
+import StringUtil from '../util/StringUtil';
 
 class AdvancedOnDocketMotionView extends React.Component {
   constructor(props) {
@@ -33,24 +35,26 @@ class AdvancedOnDocketMotionView extends React.Component {
     const {
       appeal
     } = this.props;
+    const {
+      reason,
+      granted
+    } = this.state;
+
     const payload = {
       data: {
         advance_on_docket_motions: {
-          reason: this.state.reason,
-          granted: this.state.granted === GRANTED
+          reason,
+          granted
         }
       }
     };
     const successMsg = {
-      title: 'AOD status updated'
+      title: sprintf(COPY.ADVANCE_ON_DOCKET_MOTION_SUCCESS_MESSAGE,
+        granted ? 'granted' : 'denied', StringUtil.snakeCaseToSentence(reason))
     };
 
     return this.props.requestSave(`/appeals/${appeal.externalId}/advance_on_docket_motions`, payload, successMsg).
-      then(() => {
-        if (this.state.granted === GRANTED) {
-          this.props.setAppealAod(appeal.externalId);
-        }
-      }).
+      then(() => this.props.setAppealAod(appeal.externalId, granted)).
       catch(() => {
         // handle the error from the frontend
       });
@@ -58,13 +62,15 @@ class AdvancedOnDocketMotionView extends React.Component {
 
   render = () => {
     const {
-      highlightFormItems
+      highlightFormItems,
+      appeal
     } = this.props;
 
     return <QueueFlowModal
       title={COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE}
       submit={this.submit}
       validateForm={this.validateForm}
+      pathAfterSubmit={`/queue/appeals/${appeal.externalId}`}
     >
       <h3>{COPY.ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN}</h3>
       <SearchableDropdown
@@ -77,9 +83,9 @@ class AdvancedOnDocketMotionView extends React.Component {
         onChange={(option) => option && this.setState({ granted: option.value })}
         options={[
           { label: 'Granted',
-            value: GRANTED },
+            value: true },
           { label: 'Denied',
-            value: 'denied' }
+            value: false }
         ]} />
       <h3>{COPY.ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN}</h3>
       <SearchableDropdown
@@ -90,19 +96,23 @@ class AdvancedOnDocketMotionView extends React.Component {
         placeholder={COPY.ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN_PLACEHOLDER}
         value={this.state.reason}
         onChange={(option) => option && this.setState({ reason: option.value })}
-        options={[
-          { label: 'Financial distress',
-            value: 'financial_distress' },
-          { label: 'Age',
-            value: 'age' },
-          { label: 'Serious illness',
-            value: 'serious_illness' },
-          { label: 'Other',
-            value: 'other' }
-        ]} />
+        options={Object.keys(AOD_REASONS).map((reason) => (
+          {
+            label: StringUtil.snakeCaseToSentence(reason),
+            value: reason
+          }))} />
     </QueueFlowModal>;
   }
 }
+
+AdvancedOnDocketMotionView.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string
+  }),
+  requestSave: PropTypes.func,
+  setAppealAod: PropTypes.func,
+  highlightFormItems: PropTypes.func
+};
 
 const mapStateToProps = (state, ownProps) => {
   const {
@@ -117,6 +127,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
+  showErrorMessage,
   setAppealAod
 }, dispatch);
 

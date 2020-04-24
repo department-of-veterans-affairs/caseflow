@@ -5,10 +5,10 @@ class AdvanceOnDocketMotion < CaseflowRecord
   belongs_to :user
 
   enum reason: {
-    financial_distress: "financial_distress",
-    age: "age",
-    serious_illness: "serious_illness",
-    other: "other"
+    Constants.AOD_REASONS.financial_distress.to_sym => Constants.AOD_REASONS.financial_distress,
+    Constants.AOD_REASONS.age.to_sym => Constants.AOD_REASONS.age,
+    Constants.AOD_REASONS.serious_illness.to_sym => Constants.AOD_REASONS.serious_illness,
+    Constants.AOD_REASONS.other.to_sym => Constants.AOD_REASONS.other
   }
 
   scope :granted, -> { where(granted: true) }

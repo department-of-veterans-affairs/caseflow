@@ -20,7 +20,7 @@ class AdvanceOnDocketMotionsController < ApplicationController
   end
 
   def aod_params
-    params.require("advance_on_docket_motions").permit(:granted, :reason)
+    params.require(:advance_on_docket_motions).permit(:granted, :reason)
   end
 
   def appeal
