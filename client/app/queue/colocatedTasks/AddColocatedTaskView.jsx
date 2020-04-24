@@ -8,15 +8,13 @@ import { css } from 'glamor';
 import { uniqueId, sortedUniqBy } from 'lodash';
 import { sprintf } from 'sprintf-js';
 
-import TextareaField from '../../components/TextareaField';
-import SearchableDropdown from '../../components/SearchableDropdown';
 import Alert from '../../components/Alert';
 
 import { highlightInvalidFormItems, requestSave } from '../uiReducer/uiActions';
 import { setAppealAttrs, onReceiveTasks, deleteTask } from '../QueueActions';
 
 import { appealWithDetailSelector, taskById } from '../selectors';
-import { fullWidth, marginBottom, marginTop } from '../constants';
+import { fullWidth, marginBottom } from '../constants';
 import COPY from '../../../COPY';
 import Button from '../../components/Button';
 
@@ -63,8 +61,7 @@ class AddColocatedTaskView extends React.PureComponent {
     this.setState({ adminActions: [...this.state.adminActions, adminActionTemplate()] });
   };
 
-  validateForm = () =>
-    this.state.adminActions.every((action) => Boolean(action.type) && Boolean(action.instructions));
+  validateForm = () => this.state.adminActions.every((action) => Boolean(action.type) && Boolean(action.instructions));
 
   getNextStepUrl = () => taskActionData(this.props).redirect_after;
 
