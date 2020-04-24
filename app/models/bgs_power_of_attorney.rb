@@ -99,6 +99,11 @@ class BgsPowerOfAttorney < CaseflowRecord
     self.last_synced_at = Time.zone.now
   end
 
+  def save_with_updated_bgs_record!
+    stale_attributes.each { |attr| self[attr] = nil }
+    save!
+  end
+
   def found?
     return false if not_found?
 
@@ -116,7 +121,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def stale_attributes
-    CACHED_BGS_ATTRIBUTES.select { |attr| self[attr].nil? || self[attr] != bgs_record[attr] }
+    CACHED_BGS_ATTRIBUTES.select { |attr| self[attr].nil? || self[attr].to_s != bgs_record[attr].to_s }
   end
 
   def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)

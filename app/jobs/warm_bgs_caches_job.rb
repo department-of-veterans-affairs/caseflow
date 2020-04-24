@@ -50,7 +50,7 @@ class WarmBgsCachesJob < CaseflowJob
     start_time = Time.zone.now
     oldest_claimants_with_poa.each do |claimant|
       bgs_poa = claimant.power_of_attorney
-      bgs_poa.save! if bgs_poa.stale_attributes?
+      bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
       claimant.update!(updated_at: Time.zone.now)
     end
     datadog_report_time_segment(segment: "warm_poa_claimants", start_time: start_time)

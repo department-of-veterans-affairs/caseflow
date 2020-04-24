@@ -64,6 +64,7 @@ detectors:
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
+      - Fakes::BGSService#fetch_poas_by_participant_ids
       - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase

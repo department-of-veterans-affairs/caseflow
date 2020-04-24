@@ -18,6 +18,10 @@ class Fakes::BGSService
   cattr_accessor :generate_tracked_items_requests
   attr_accessor :client
 
+  DEFAULT_VSO_POA_FILE_NUMBER = 216_979_849
+  VSO_PARTICIPANT_ID = "4623321"
+  DEFAULT_PARTICIPANT_ID = "781162"
+
   class << self
     def can_access_cache_key(user, vbms_id)
       "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
@@ -215,7 +219,7 @@ class Fakes::BGSService
   # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
     record = (self.class.power_of_attorney_records || {})[file_number]
-    record ||= default_vso_power_of_attorney_record if file_number == 216_979_849
+    record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
     record ||= default_power_of_attorney_record
 
     get_poa_from_bgs_poa(record)
@@ -231,6 +235,8 @@ class Fakes::BGSService
 
   # rubocop:disable Metrics/MethodLength
   def fetch_poas_by_participant_ids(participant_ids)
+    return {} if participant_ids == ["no-such-pid"]
+
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
         vso = if participant_id.starts_with?("CLAIMANT_WITH_PVA_AS_VSO")
@@ -454,9 +460,6 @@ class Fakes::BGSService
   end
 
   private
-
-  VSO_PARTICIPANT_ID = "4623321"
-  DEFAULT_PARTICIPANT_ID = "781162"
 
   def current_user
     RequestStore[:current_user]
