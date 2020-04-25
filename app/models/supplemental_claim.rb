@@ -5,11 +5,11 @@ class SupplementalClaim < ClaimReview
 
   belongs_to :decision_review_remanded, polymorphic: true
 
-  scope :updated_since_for_appeals, ->(since) do
+  scope :updated_since_for_appeals, lambda { |since|
     select(:decision_review_remanded_id)
       .where("#{table_name}.updated_at >= ?", since)
       .where("#{table_name}.decision_review_remanded_type='Appeal'")
-  end
+  }
 
   def ui_hash
     Intake::SupplementalClaimSerializer.new(self).serializable_hash[:data][:attributes]
