@@ -14,7 +14,7 @@ describe Representative, :postgres do
     create(:user, roles: ["VSO"])
   end
 
-  let(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos }
+  let(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
   describe ".create!" do
     it "sets the role to VSO" do

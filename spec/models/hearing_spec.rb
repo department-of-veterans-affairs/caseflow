@@ -74,7 +74,7 @@ describe Hearing, :postgres do
     let!(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
     let!(:vso) { create(:vso, participant_id: vso_participant_id) }
     let!(:track_veteran_task) { create(:track_veteran_task, appeal: hearing.appeal, assigned_to: vso) }
-    let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos }
+    let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)

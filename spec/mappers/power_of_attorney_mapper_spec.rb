@@ -83,9 +83,32 @@ describe PowerOfAttorneyMapper do
       end
     end
 
-    context "#get_poa_from_bgs_poa" do
+    context "#get_claimant_poa_from_bgs_poa" do
       let(:attorney_poa) { { power_of_attorney: { nm: "Steve Holtz", org_type_nm: "POA Attorney" } } }
       let(:unknown_type_poa) { { power_of_attorney: { nm: "Mrs. Featherbottom", org_type_nm: "unfamiliar_type" } } }
+      let(:no_poa) { { message: "No POA found for 1234567" } }
+
+      it "maps BGS rep type to our rep type" do
+        poa = poa_mapper.new.get_claimant_poa_from_bgs_poa(attorney_poa)
+        expect(poa[:representative_name]).to eq("Steve Holtz")
+        expect(poa[:representative_type]).to eq("Attorney")
+      end
+
+      it "classifies rep type as 'Other' if we haven't categorized it" do
+        poa = poa_mapper.new.get_claimant_poa_from_bgs_poa(unknown_type_poa)
+        expect(poa[:representative_name]).to eq("Mrs. Featherbottom")
+        expect(poa[:representative_type]).to eq("Other")
+      end
+
+      it "when no poa is found" do
+        poa = poa_mapper.new.get_claimant_poa_from_bgs_poa(no_poa)
+        expect(poa).to eq({})
+      end
+    end
+
+    context "#get_poa_from_bgs_poa" do
+      let(:attorney_poa) { { nm: "Steve Holtz", org_type_nm: "POA Attorney" } }
+      let(:unknown_type_poa) { { nm: "Mrs. Featherbottom", org_type_nm: "unfamiliar_type" } }
       let(:no_poa) { { message: "No POA found for 1234567" } }
 
       it "maps BGS rep type to our rep type" do

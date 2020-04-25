@@ -13,7 +13,7 @@ module PowerOfAttorneyMapper
 
   # used by fetch_poas_by_participant_id (for User)
   def get_poa_from_bgs_poa(bgs_rep = {})
-    return {} unless bgs_rep
+    return {} unless bgs_rep&.dig(:org_type_nm)
 
     bgs_type = bgs_rep[:org_type_nm]
     {

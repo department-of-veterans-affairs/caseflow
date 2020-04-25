@@ -30,7 +30,7 @@ RSpec.feature "List Schedule for VSO", :all_dbs do
     let!(:vso) { create(:vso, participant_id: vso_participant_id) }
     let!(:track_veteran_task_one) { create(:track_veteran_task, appeal: hearing_one.appeal, assigned_to: vso) }
     let!(:track_veteran_task_two) { create(:track_veteran_task, appeal: legacy_hearing.appeal, assigned_to: vso) }
-    let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos }
+    let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)

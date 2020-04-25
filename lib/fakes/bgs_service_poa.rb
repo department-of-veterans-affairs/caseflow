@@ -42,5 +42,9 @@ class Fakes::BGSServicePOA
     def default_vsos_mapped
       default_vsos.map { |poa| get_poa_from_bgs_poa(poa) }
     end
+
+    def default_vsos_poas
+      default_vsos.map { |vso| vso[:power_of_attorney] }
+    end
   end
 end
