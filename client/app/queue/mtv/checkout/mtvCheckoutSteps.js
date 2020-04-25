@@ -9,6 +9,7 @@ export const views = {
 export const getSteps = ({ caseType, vacateType }) => {
   switch (vacateType?.toLowerCase()) {
   case 'straight_vacate':
+    return ['review_vacatures', 'submit'];
   case 'vacate_and_de_novo':
     return ['review_vacatures', 'admin_actions', 'submit'];
   case 'vacate_and_readjudication':
