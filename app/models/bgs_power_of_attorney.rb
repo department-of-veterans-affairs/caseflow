@@ -146,7 +146,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     pid = self[:claimant_participant_id]
     poa = self.class.fetch_bgs_poa_by_participant_id(pid)
 
-    return unless poa.present?
+    return if poa.blank?
 
     poa[:claimant_participant_id] ||= pid
     poa

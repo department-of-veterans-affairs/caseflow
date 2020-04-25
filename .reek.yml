@@ -129,6 +129,9 @@ detectors:
       - RequestIssue
       - BulkTaskReassignment
       - Task
+  TooManyConstants:
+    exclude:
+      - Fakes::BGSServicePOA
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
@@ -164,6 +167,7 @@ detectors:
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - PendingIncompleteAndUncancelledTaskTimersQuery#call
+      - PowerOfAttorneyMapper#get_claimant_poa_from_bgs_poa
       - Reporter#average
       - Reporter#median
       - Reporter#seconds_to_hms
