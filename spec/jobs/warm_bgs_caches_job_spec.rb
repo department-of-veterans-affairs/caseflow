@@ -61,11 +61,11 @@ describe WarmBgsCachesJob, :all_dbs do
 
     context "BGS POA changes at BGS" do
       before do
-        claimant_participant_id = open_appeal.claimant.power_of_attorney.claimant_participant_id
-        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id).with(claimant_participant_id) do
-          Fakes::BGSServicePOA.default_vsos_mapped.first.tap do |poa|
-            poa[:claimant_participant_id] = claimant_participant_id
-          end
+        claimant_pid = open_appeal.claimant.power_of_attorney.claimant_participant_id
+        new_bgs_record = { claimant_pid => Fakes::BGSServicePOA.default_vsos_mapped.first }
+        new_bgs_record[claimant_pid][:claimant_participant_id] = claimant_pid
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with([claimant_pid]) do
+          new_bgs_record
         end
       end
 

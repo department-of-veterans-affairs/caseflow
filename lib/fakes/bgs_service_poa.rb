@@ -10,37 +10,66 @@ class Fakes::BGSServicePOA
   PARALYZED_VETERANS_VSO_NAME = "PARALYZED VETERANS OF AMERICA, INC."
   VIETNAM_VETERANS_VSO_NAME = "VIETNAM VETERANS OF AMERICA"
   POA_NATIONAL_ORGANIZATION = "POA National Organization"
+  AMERICAN_LEGION_VSO_NAME = "AMERICAN LEGION"
 
   class << self
-    # rubocop:disable Metrics/MethodLength
-    def default_vsos
-      [
-        {
-          file_number: "070-claimant-appeal-file-number",
-          ptcpnt_id: "070-claimant-participant-id",
-          power_of_attorney: {
-            legacy_poa_cd: VIETNAM_VETERANS_LEGACY_POA_CD,
-            nm: VIETNAM_VETERANS_VSO_NAME,
-            org_type_nm: POA_NATIONAL_ORGANIZATION,
-            ptcpnt_id: VIETNAM_VETERANS_VSO_PARTICIPANT_ID
-          }
-        },
-        {
-          file_number: "071-claimant-appeal-file-number",
-          ptcpnt_id: "071-claimant-participant-id",
-          power_of_attorney: {
-            legacy_poa_cd: PARALYZED_VETERANS_LEGACY_POA_CD,
-            nm: PARALYZED_VETERANS_VSO_NAME,
-            org_type_nm: POA_NATIONAL_ORGANIZATION,
-            ptcpnt_id: PARALYZED_VETERANS_VSO_PARTICIPANT_ID
-          }
+    def vietnam_veterans_vso
+      {
+        file_number: "070-claimant-appeal-file-number",
+        ptcpnt_id: "070-claimant-participant-id",
+        power_of_attorney: {
+          legacy_poa_cd: VIETNAM_VETERANS_LEGACY_POA_CD,
+          nm: VIETNAM_VETERANS_VSO_NAME,
+          org_type_nm: POA_NATIONAL_ORGANIZATION,
+          ptcpnt_id: VIETNAM_VETERANS_VSO_PARTICIPANT_ID
         }
-      ]
+      }
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def paralyzed_veterans_vso
+      {
+        file_number: "071-claimant-appeal-file-number",
+        ptcpnt_id: "071-claimant-participant-id",
+        power_of_attorney: {
+          legacy_poa_cd: PARALYZED_VETERANS_LEGACY_POA_CD,
+          nm: PARALYZED_VETERANS_VSO_NAME,
+          org_type_nm: POA_NATIONAL_ORGANIZATION,
+          ptcpnt_id: PARALYZED_VETERANS_VSO_PARTICIPANT_ID
+        }
+      }
+    end
+
+    def american_legion_vso
+      {
+        file_number: "072-claimant-appeal-file-number",
+        ptcpnt_id: "072-claimant-participant-id",
+        power_of_attorney: {
+          legacy_poa_cd: "072",
+          nm: AMERICAN_LEGION_VSO_NAME,
+          org_type_nm: POA_NATIONAL_ORGANIZATION,
+          ptcpnt_id: "54321"
+        }
+      }
+    end
+
+    def vietnam_veterans_vso_mapped
+      get_claimant_poa_from_bgs_poa(vietnam_veterans_vso)
+    end
+
+    def paralyzed_veterans_vso_mapped
+      get_claimant_poa_from_bgs_poa(paralyzed_veterans_vso)
+    end
+
+    def american_legion_vso_mapped
+      get_claimant_poa_from_bgs_poa(american_legion_vso)
+    end
+
+    def default_vsos
+      [vietnam_veterans_vso, paralyzed_veterans_vso]
+    end
 
     def default_vsos_mapped
-      default_vsos.map { |poa| get_poa_from_bgs_poa(poa) }
+      default_vsos.map { |poa| get_claimant_poa_from_bgs_poa(poa) }
     end
 
     def default_vsos_poas
