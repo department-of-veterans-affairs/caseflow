@@ -26,7 +26,7 @@ RSpec.feature "List Schedule for VSO", :all_dbs do
     let!(:hearing_one) { create(:hearing, :with_tasks, hearing_day: hearing_day_one) }
     let!(:hearing_two) { create(:hearing, :with_tasks, hearing_day: hearing_day_two) }
     let!(:legacy_hearing) { create(:legacy_hearing, case_hearing: create(:case_hearing, vdkey: hearing_day_three.id)) }
-    let!(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VOS_PARTICIPANT_ID }
+    let!(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
     let!(:vso) { create(:vso, participant_id: vso_participant_id) }
     let!(:track_veteran_task_one) { create(:track_veteran_task, appeal: hearing_one.appeal, assigned_to: vso) }
     let!(:track_veteran_task_two) { create(:track_veteran_task, appeal: legacy_hearing.appeal, assigned_to: vso) }

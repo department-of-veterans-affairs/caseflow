@@ -495,10 +495,10 @@ class Fakes::BGSService
       file_number: "216979849",
       power_of_attorney:
         {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: "2452415"
+          legacy_poa_cd: Fakes::BGSServicePOA::VIETNAM_VETERANS_LEGACY_POA_CD,
+          nm: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_NAME,
+          org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+          ptcpnt_id: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID
         },
       ptcpnt_id: "600085544"
     }
@@ -508,18 +508,18 @@ class Fakes::BGSService
     [
       {
         power_of_attorney: {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: "2452415"
+          legacy_poa_cd: Fakes::BGSServicePOA::VIETNAM_VETERANS_LEGACY_POA_CD,
+          nm: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_NAME,
+          org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+          ptcpnt_id: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID
         }
       },
       {
         power_of_attorney: {
-          legacy_poa_cd: "071",
-          nm: "PARALYZED VETERANS OF AMERICA, INC.",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: "2452383"
+          legacy_poa_cd: Fakes::BGSServicePOA::PARALYZED_VETERANS_LEGACY_POA_CD,
+          nm: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME,
+          org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+          ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
         }
       }
     ]

@@ -4,9 +4,11 @@ class Fakes::BGSServicePOA
   include PowerOfAttorneyMapper
 
   PARALYZED_VETERANS_VSO_PARTICIPANT_ID = "2452383"
-  VIETNAM_VETERANS_VOS_PARTICIPANT_ID = "789"
+  VIETNAM_VETERANS_VSO_PARTICIPANT_ID = "2452415"
   PARALYZED_VETERANS_LEGACY_POA_CD = "071"
+  VIETNAM_VETERANS_LEGACY_POA_CD = "070"
   PARALYZED_VETERANS_VSO_NAME = "PARALYZED VETERANS OF AMERICA, INC."
+  VIETNAM_VETERANS_VSO_NAME = "VIETNAM VETERANS OF AMERICA"
   POA_NATIONAL_ORGANIZATION = "POA National Organization"
 
   class << self
@@ -17,10 +19,10 @@ class Fakes::BGSServicePOA
           file_number: "070-claimant-appeal-file-number",
           ptcpnt_id: "070-claimant-participant-id",
           power_of_attorney: {
-            legacy_poa_cd: "070",
-            nm: "VIETNAM VETERANS OF AMERICA",
+            legacy_poa_cd: VIETNAM_VETERANS_LEGACY_POA_CD,
+            nm: VIETNAM_VETERANS_VSO_NAME,
             org_type_nm: POA_NATIONAL_ORGANIZATION,
-            ptcpnt_id: VIETNAM_VETERANS_VOS_PARTICIPANT_ID
+            ptcpnt_id: VIETNAM_VETERANS_VSO_PARTICIPANT_ID
           }
         },
         {

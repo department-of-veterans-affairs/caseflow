@@ -2,7 +2,7 @@
 
 describe Representative, :postgres do
   let(:participant_id) { "123456" }
-  let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VOS_PARTICIPANT_ID }
+  let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
 
   let(:vso) do
     Representative.create(

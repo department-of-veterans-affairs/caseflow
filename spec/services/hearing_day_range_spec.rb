@@ -215,7 +215,7 @@ describe HearingDayRange, :all_dbs do
     let!(:case_hearing_four) { create(:case_hearing, vdkey: hearing_day_four.id) }
     let!(:hearing_three) { create(:hearing, :with_tasks, hearing_day: hearing_day_three) }
     let!(:hearing_four) { create(:legacy_hearing, hearing_day: hearing_day_four, case_hearing: case_hearing_four) }
-    let!(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VOS_PARTICIPANT_ID }
+    let!(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
     let!(:vso) { create(:vso, participant_id: vso_participant_id) }
     let!(:current_user) { User.authenticate!(css_id: "VSO_USER", roles: ["VSO"]) }
     let!(:track_veteran_task_one) { create(:track_veteran_task, appeal: hearing_one.appeal, assigned_to: vso) }

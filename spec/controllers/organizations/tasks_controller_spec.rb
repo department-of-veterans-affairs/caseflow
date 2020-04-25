@@ -5,7 +5,7 @@ RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
   include TaskHelpers
 
   let(:participant_id) { "123456" }
-  let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VOS_PARTICIPANT_ID }
+  let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
   let(:url) { "american-legion" }
   let(:name) { "American Legion" }
 
