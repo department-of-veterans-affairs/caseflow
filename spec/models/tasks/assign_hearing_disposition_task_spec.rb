@@ -307,13 +307,10 @@ describe AssignHearingDispositionTask, :all_dbs do
               create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_pva)])
             end
             let(:poa) do
-              {
-                representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
-                representative_type: "POA National Organization",
-                participant_id: "2452383",
-                file_number: appeal.veteran_file_number,
-                claimant_participant_id: participant_id_with_pva
-              }
+              Fakes::BGSServicePOA.paralyzed_veterans_vso_mapped.tap do |poa|
+                poa[:claimant_participant_id] = participant_id_with_pva
+                poa[:file_number] = appeal.veteran_file_number
+              end
             end
 
             before do
@@ -321,11 +318,11 @@ describe AssignHearingDispositionTask, :all_dbs do
                 name: "Paralyzed Veterans Of America",
                 role: "VSO",
                 url: "paralyzed-veterans-of-america",
-                participant_id: "2452383"
+                participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
               )
 
-              allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id)
-                .with(participant_id_with_pva).and_return(poa)
+              allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+                .with([participant_id_with_pva]).and_return(participant_id_with_pva => poa)
               allow_any_instance_of(BGSService).to receive(:fetch_poa_by_file_number)
                 .with(appeal.veteran_file_number).and_return(poa)
             end
