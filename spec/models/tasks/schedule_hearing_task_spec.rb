@@ -124,6 +124,7 @@ describe ScheduleHearingTask, :all_dbs do
       context "for legacy appeal" do
         let(:vacols_case) { create(:case) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+        let(:veteran_participant_id) { "0000" }
         let(:schedule_hearing_task) do
           create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_management_user)
         end
@@ -148,6 +149,7 @@ describe ScheduleHearingTask, :all_dbs do
             allow(BGSService).to receive(:power_of_attorney_records).and_return(
               appeal.veteran_file_number => {
                 file_number: appeal.veteran_file_number,
+                ptcpnt_id: veteran_participant_id,
                 power_of_attorney: {
                   legacy_poa_cd: "3QQ",
                   nm: "Clarence Darrow",
