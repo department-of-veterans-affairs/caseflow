@@ -225,6 +225,8 @@ class Fakes::BGSService
     get_poa_from_bgs_poa(record)
   end
 
+  # The participant_id here is for a User, not a Claimant.
+  # I.e. returns the list of VSOs that a User represents.
   def fetch_poas_by_participant_id(participant_id)
     if participant_id == VSO_PARTICIPANT_ID
       return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa) }
@@ -233,6 +235,8 @@ class Fakes::BGSService
     []
   end
 
+  # The participant IDs here are for Claimants.
+  # I.e. returns the list of POAs that represent the Claimants.
   # rubocop:disable Metrics/MethodLength
   def fetch_poas_by_participant_ids(participant_ids)
     return {} if participant_ids == ["no-such-pid"]

@@ -11,7 +11,22 @@ module PowerOfAttorneyMapper
     base.extend(PowerOfAttorneyMapper)
   end
 
-  def get_poa_from_bgs_poa(bgs_record = {})
+  # used by fetch_poas_by_participant_id (for User)
+  def get_poa_from_bgs_poa(bgs_rep = {})
+    return {} unless bgs_rep
+
+    bgs_type = bgs_rep[:org_type_nm]
+    {
+      representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",
+      representative_name: bgs_rep[:nm],
+      # Used to find the POA address
+      participant_id: bgs_rep[:ptcpnt_id]
+    }
+  end
+
+  # used by fetch_poas_by_participant_ids (for Claimants)
+  # and fetch_poa_by_file_number
+  def get_claimant_poa_from_bgs_poa(bgs_record = {})
     return {} unless bgs_record.dig(:power_of_attorney)
 
     bgs_rep = bgs_record[:power_of_attorney]
@@ -32,7 +47,7 @@ module PowerOfAttorneyMapper
 
   def get_hash_of_poa_from_bgs_poas(bgs_resp)
     [bgs_resp].flatten.each_with_object({}) do |poa, hsh|
-      hsh[poa[:ptcpnt_id]] = get_poa_from_bgs_poa(poa)
+      hsh[poa[:ptcpnt_id]] = get_claimant_poa_from_bgs_poa(poa)
     end
   end
 

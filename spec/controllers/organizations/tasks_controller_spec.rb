@@ -22,7 +22,7 @@ RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
     User.authenticate!(roles: ["VSO"])
   end
 
-  let(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos }
+  let(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos.map { |vso| vso[:power_of_attorney] } }
 
   before do
     allow_any_instance_of(BGSService).to receive(:get_participant_id_for_user)

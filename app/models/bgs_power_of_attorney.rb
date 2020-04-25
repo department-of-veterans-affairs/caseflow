@@ -41,10 +41,8 @@ class BgsPowerOfAttorney < CaseflowRecord
       find_by(file_number: file_number) || new(file_number: file_number)
     end
 
-    # In theory, both these BGS calls should return the same thing.
-    # We try both services if necessary mostly for backwards compatability in tests.
     def fetch_bgs_poa_by_participant_id(pid)
-      [bgs.fetch_poas_by_participant_id(pid)].flatten[0] || bgs.fetch_poas_by_participant_ids([pid])[pid]
+      bgs.fetch_poas_by_participant_ids([pid])[pid]
     end
   end
 
@@ -148,7 +146,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     pid = self[:claimant_participant_id]
     poa = self.class.fetch_bgs_poa_by_participant_id(pid)
 
-    return unless poa
+    return unless poa.present?
 
     poa[:claimant_participant_id] ||= pid
     poa

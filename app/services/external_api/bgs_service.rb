@@ -106,6 +106,7 @@ class ExternalApi::BGSService
     person[:file_nbr] if person
   end
 
+  # For Claimant POA
   def fetch_poa_by_file_number(file_number)
     DBService.release_db_connections
 
@@ -115,12 +116,14 @@ class ExternalApi::BGSService
                                       name: "org.find_poas_by_file_number") do
         client.org.find_poas_by_file_number(file_number)
       end
-      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa)
+      @poas[file_number] = get_claimant_poa_from_bgs_poa(bgs_poa)
     end
 
     @poas[file_number]
   end
 
+  # The participant_id here is for a User, not a Claimant.
+  # I.e. returns the list of VSOs that a User represents.
   def fetch_poas_by_participant_id(participant_id)
     DBService.release_db_connections
 
@@ -136,6 +139,8 @@ class ExternalApi::BGSService
     @poa_by_participant_ids[participant_id]
   end
 
+  # The participant IDs here are for Claimants.
+  # I.e. returns the list of POAs that represent the Claimants.
   def fetch_poas_by_participant_ids(participant_ids)
     DBService.release_db_connections
 
