@@ -16,7 +16,6 @@ class Intake::RequestIssueSerializer
   attribute :ramp_claim_id
   attribute :vacols_id
   attribute :vacols_sequence_id
-  attribute :vacols_issue, &:vacols_issue.try(:intake_attributes)
   attribute :ineligible_reason
   attribute :ineligible_due_to_id
   attribute :decision_review_title, &:review_title
@@ -27,6 +26,9 @@ class Intake::RequestIssueSerializer
   attribute :end_product_code
   attribute :verified_unidentified_issue
   attribute :editable, &:editable?
+  attribute :vacols_issue do |object|
+    object.vacols_issue.try(:intake_attributes)
+  end
   attribute :end_product_cleared do |object|
     object.end_product_establishment&.status_cleared?
   end

@@ -307,6 +307,10 @@ feature "Higher Level Review Edit issues", :all_dbs do
           "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
         )
         expect(page).to have_content(
+          "#{COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT}:\nService connection, limitation of thigh motion (extension)"
+        )
+
+        expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
         expect(page).to have_content("#{eligible_request_issue.contention_text}\nDecision date: #{Time.zone.today.mdY}")
