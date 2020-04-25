@@ -222,14 +222,14 @@ class Fakes::BGSService
     record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
     record ||= default_power_of_attorney_record
 
-    get_poa_from_bgs_poa(record)
+    get_claimant_poa_from_bgs_poa(record)
   end
 
   # The participant_id here is for a User, not a Claimant.
   # I.e. returns the list of VSOs that a User represents.
   def fetch_poas_by_participant_id(participant_id)
     if participant_id == VSO_PARTICIPANT_ID
-      return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa) }
+      return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa[:power_of_attorney]) }
     end
 
     []
