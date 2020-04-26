@@ -18,6 +18,10 @@ class WarmBgsCachesJob < CaseflowJob
   private
 
   def warm_poa_caches
+    # We do 2 passes to update our POA cache (bgs_power_of_attorney table).
+    # 1. Look at the 1000 oldest cached records and update them.
+    # 2. Look at Claimants w/o POA associated record and create cached record.
+
     # we average about 10k Claimant rows created a week.
     # we very rarely update the Claimant record after we create it.
     # so we can use the Claimant.updated_at to reflect how recently we've
@@ -28,13 +32,32 @@ class WarmBgsCachesJob < CaseflowJob
     # we only care about Appeal Claimants because that's all
     # UpdateCachedAppealsAttributesJob cares about.
     # assuming we have 40k open appeals/claimants at any given time,
-    # and we cache each one for 30 days, we want to cache about 1400 a day.
+    # we want to check about 1400 a day to cycle through them all once a month.
+
+    warm_poa_for_oldest_claimants
+    warm_poa_for_oldest_cached_records
+  end
+
+  def warm_poa_for_oldest_cached_records
     start_time = Time.zone.now
-    oldest_claimants_for_open_appeals.limit(1400).each do |claimant|
-      claimant.representative_name # updates_cache
+    oldest_bgs_poa_records.limit(1000).each do |bgs_poa|
+      bgs_poa.update_cached_attributes! if bgs_poa.stale_attributes?
+    end
+    datadog_report_time_segment(segment: "warm_poa_bgs", start_time: start_time)
+  end
+
+  def warm_poa_for_oldest_claimants
+    start_time = Time.zone.now
+    oldest_claimants_with_poa.each do |claimant|
+      bgs_poa = claimant.power_of_attorney
+      bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
       claimant.update!(updated_at: Time.zone.now)
     end
-    datadog_report_time_segment(segment: "warm_poa_caches", start_time: start_time)
+    datadog_report_time_segment(segment: "warm_poa_claimants", start_time: start_time)
+  end
+
+  def oldest_claimants_with_poa
+    oldest_claimants_for_open_appeals.limit(1400).select { |claimant| claimant.power_of_attorney.present? }
   end
 
   def claimants_for_open_appeals
@@ -43,6 +66,10 @@ class WarmBgsCachesJob < CaseflowJob
 
   def oldest_claimants_for_open_appeals
     claimants_for_open_appeals.order(updated_at: :asc)
+  end
+
+  def oldest_bgs_poa_records
+    BgsPowerOfAttorney.order(last_synced_at: :asc)
   end
 
   def open_appeals_from_tasks
