@@ -59,6 +59,8 @@ class PowerOfAttorney
 
   def bgs_power_of_attorney
     @bgs_power_of_attorney ||= BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
+  rescue ActiveRecord::RecordInvalid # not found at BGS
+    BgsPowerOfAttorney.new(file_number: file_number) # empty object to satisfy caller.
   end
 
   class << self
