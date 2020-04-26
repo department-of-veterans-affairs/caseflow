@@ -58,7 +58,7 @@ class PowerOfAttorney
   private
 
   def bgs_power_of_attorney
-    @bgs_power_of_attorney ||= BgsPowerOfAttorney.find_or_load_by_file_number(file_number)
+    @bgs_power_of_attorney ||= BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
   end
 
   class << self

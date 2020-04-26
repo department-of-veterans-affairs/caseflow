@@ -41,7 +41,7 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_poa_for_oldest_cached_records
     start_time = Time.zone.now
     oldest_bgs_poa_records.limit(1000).each do |bgs_poa|
-      bgs_poa.update_cached_attributes! if bgs_poa.stale_attributes?
+      bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
     end
     datadog_report_time_segment(segment: "warm_poa_bgs", start_time: start_time)
   end
