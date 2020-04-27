@@ -23,6 +23,26 @@ class SentHearingEmailEvent < CaseflowRecord
     !new_record?
   end
 
+  def sent_to_role
+    # Set the available recipient roles
+    roles = MailRecipient::RECIPIENT_TITLES.values.map(&:downcase)
+
+    case recipient_role
+    when "judge"
+      "VLJ Email"
+    when "veteran"
+      "Veteran Email"
+    when "representative"
+      "POA/Representative Email"
+    else
+      fail(
+        Caseflow::Error::InvalidParameter,
+        parameter: "recipient_role",
+        message: "recipient_role must be one of #{roles}, received: #{recipient_role}"
+      )
+    end
+  end
+
   private
 
   def assign_sent_at_time
