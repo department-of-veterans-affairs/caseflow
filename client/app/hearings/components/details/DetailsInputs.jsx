@@ -183,8 +183,6 @@ const DetailsInputs = (props) => {
   const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
   const enableVirtualHearings = userCanScheduleVirtualHearings && requestType !== 'Central';
 
-  console.log('HEARING READ-ONLY: ', virtualHearing);
-
   return (
     <React.Fragment>
       <div {...rowThirds}>
