@@ -3,6 +3,7 @@
 class DecisionDocument < CaseflowRecord
   include Asyncable
   include UploadableDocument
+  include HasAppealUpdatedSince
 
   class NoFileError < StandardError; end
   class NotYetSubmitted < StandardError; end
