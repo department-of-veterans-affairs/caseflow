@@ -652,12 +652,8 @@ DEPENDENCIES
   pry-byebug
   puma (~> 3.12.4)
   rack (~> 2.0.6)
-<<<<<<< HEAD
-  rails (= 5.2.4.2)
-=======
   rack-headers_filter
-  rails (= 5.2.4.1)
->>>>>>> Add Rack::HeadersFilter to remove X-Forwarded-For
+  rails (= 5.2.4.2)
   rails-erd
   rainbow
   rb-readline
