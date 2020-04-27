@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Alert from '../../../components/Alert';
-import { MTV_CHECKOUT_RETURN_TO_JUDGE_ALERT_TITLE } from '../../../../COPY';
-import { REVIEW_VACATE_RETURN_TO_JUDGE } from '../../../../constants/TASK_ACTIONS';
+import Alert from '../../../../components/Alert';
+import { MTV_CHECKOUT_RETURN_TO_JUDGE_ALERT_TITLE } from '../../../../../COPY';
+import { REVIEW_VACATE_RETURN_TO_JUDGE } from '../../../../../constants/TASK_ACTIONS';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const ReturnToJudgeAlert = ({ to = `review_vacatures/${REVIEW_VACATE_RETURN_TO_JUDGE.value}` }) => {
