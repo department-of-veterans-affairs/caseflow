@@ -129,7 +129,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
     bgs_attr ||= attr_name
     self[attr_name] ||= begin
-      return if bgs_record == :not_found
+      return if not_found?
 
       bgs_record.dig(bgs_attr)
     end
@@ -139,7 +139,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     if self[:claimant_participant_id]
       fetch_bgs_record_by_claimant_participant_id
     elsif self[:file_number]
-      bgs.fetch_poa_by_file_number(self[:file_number])
+      fetch_bgs_record_by_file_number
     else
       fail "Must define claimant_participant_id or file_number"
     end
@@ -147,11 +147,32 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   def fetch_bgs_record_by_claimant_participant_id
     pid = self[:claimant_participant_id]
+    not_found_flag = "bgs-participant-poa-not-found-#{pid}"
+    return if Rails.cache.fetch(not_found_flag)
+
     poa = self.class.fetch_bgs_poa_by_participant_id(pid)
 
-    return if poa.blank?
+    if poa.blank?
+      Rails.cache.write(not_found_flag, expires_in: 24.hours)
+      return
+    end
 
     poa[:claimant_participant_id] ||= pid
+    poa
+  end
+
+  def fetch_bgs_record_by_file_number
+    file_number = self[:file_number]
+    not_found_flag = "bgs-participant-poa-not-found-#{file_number}"
+    return if Rails.cache.fetch(not_found_flag)
+
+    poa = bgs.fetch_poa_by_file_number(file_number)
+
+    if poa.blank?
+      Rails.cache.write(not_found_flag, expires_in: 24.hours)
+      return
+    end
+
     poa
   end
 
