@@ -354,7 +354,7 @@ class Appeal < DecisionReview
   end
 
   def representatives
-    vso_participant_ids = power_of_attorneys.map(&:participant_id).compact.uniq
+    vso_participant_ids = power_of_attorneys.compact.map(&:participant_id).compact.uniq
     Representative.where(participant_id: vso_participant_ids)
   end
 
