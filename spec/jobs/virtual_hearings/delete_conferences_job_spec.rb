@@ -9,7 +9,7 @@ describe VirtualHearings::DeleteConferencesJob do
           type: :cancellation
         ).and_call_original
         expect(job).to receive(:send_cancellation_emails).with(virtual_hearing).and_call_original
-        
+
         subject
         virtual_hearing.reload
         expect(virtual_hearing.conference_deleted).to eq(true)
@@ -31,7 +31,7 @@ describe VirtualHearings::DeleteConferencesJob do
         expect(events.where(recipient_role: "representative").count).to eq 1
         expect(events.where(recipient_role: "judge").count).to eq 0
       end
-      
+
       it "does not send emails if they have already been sent" do
         virtual_hearing.update(
           veteran_email_sent: true,
