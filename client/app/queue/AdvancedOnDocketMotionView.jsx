@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import sprintf from 'sprintf-js';
+import { sprintf } from 'sprintf-js';
 
 import COPY from '../../COPY';
 import AOD_REASONS from '../../constants/AOD_REASONS';
@@ -13,7 +13,7 @@ import {
 import { setAppealAod } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
-import { requestSave, showErrorMessage } from './uiReducer/uiActions';
+import { requestSave } from './uiReducer/uiActions';
 import QueueFlowModal from './components/QueueFlowModal';
 import StringUtil from '../util/StringUtil';
 
@@ -127,7 +127,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  showErrorMessage,
   setAppealAod
 }, dispatch);
 
