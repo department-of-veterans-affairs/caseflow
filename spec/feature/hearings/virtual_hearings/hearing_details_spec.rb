@@ -161,7 +161,9 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       expect(page).to have_content(
-        "conference=#{virtual_hearing.formatted_alias_with_host}&pin=#{virtual_hearing.host_pin}#&join=1&role=host"
+        "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&
+        pin=#{virtual_hearing.host_pin}#
+        &join=1&role=host"
       )
     end
   end
