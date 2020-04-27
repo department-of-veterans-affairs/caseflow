@@ -118,6 +118,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
       let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
       let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
+      let!(:task16) { create(:ama_judge_task, :on_hold, assigned_to: user, assigned_by: user) }
       let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
       let!(:task15) do
         create(:ama_judge_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
@@ -126,7 +127,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "judge" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.size).to eq 3
+        expect(response_body.size).to eq 2
 
         assigned = response_body.find { |task| task["id"] == task8.id.to_s }
         expect(assigned["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
@@ -139,7 +140,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(in_progress["attributes"]["placed_on_hold_at"]).to be nil
 
         # Ensure we include recently completed tasks
-        expect(response_body.count { |task| task["id"] == task10.id.to_s }).to eq 1
+        expect(response_body.count { |task| task["id"] == task10.id.to_s }).to eq 0
+        expect(response_body.count { |task| task["id"] == task16.id.to_s }).to eq 0
       end
     end
 
