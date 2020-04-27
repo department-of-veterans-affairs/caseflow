@@ -153,7 +153,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     poa = self.class.fetch_bgs_poa_by_participant_id(pid)
 
     if poa.blank?
-      Rails.cache.write(not_found_flag, expires_in: 24.hours)
+      Rails.cache.write(not_found_flag, true, expires_in: 24.hours)
       return
     end
 
@@ -169,7 +169,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     poa = bgs.fetch_poa_by_file_number(file_number)
 
     if poa.blank?
-      Rails.cache.write(not_found_flag, expires_in: 24.hours)
+      Rails.cache.write(not_found_flag, true, expires_in: 24.hours)
       return
     end
 
