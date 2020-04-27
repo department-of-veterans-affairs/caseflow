@@ -63,7 +63,7 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
 
     return <QueueFlowModal
       title={COPY.CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE}
-      pathAfterSubmit={`/queue/appeals/${appeal.externalId}`}
+      pathAfterSubmit="/queue"
       submit={this.submit}
       validateForm={this.validateForm}
     >
