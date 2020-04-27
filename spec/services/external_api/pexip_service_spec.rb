@@ -15,7 +15,7 @@ describe ExternalApi::PexipService do
   describe "#create_conference" do
     let(:body) do
       {
-        "aliases": [{ "alias": "1111111" }, { "alias": "BVA1111111" }, { "alias": "BVA1111111.care.va.gov" }],
+        "aliases": [{ "alias": "BVA1111111" }, { "alias": "BVA1111111@care.va.gov" }, { "alias": "1111111" }],
         "allow_guests": true,
         "description": "Created by Caseflow",
         "enable_chat": "yes",
