@@ -110,7 +110,7 @@ class HearingDetails extends React.Component {
         // not used in form
         jobCompleted: virtualHearing.jobCompleted,
         clientHost: virtualHearing.clientHost,
-        alias: virtualHearing.alias,
+        aliasWithHost: virtualHearing.aliasWithHost,
         hostPin: virtualHearing.hostPin,
         guestPin: virtualHearing.guestPin
       }
@@ -277,7 +277,7 @@ class HearingDetails extends React.Component {
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      // response includes jobCompleted, alias, and hostPin
+      // response includes jobCompleted, aliasWithHost, and hostPin
       const resp = ApiUtil.convertToCamelCase(response);
 
       if (resp.jobCompleted) {
