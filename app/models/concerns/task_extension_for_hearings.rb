@@ -20,7 +20,7 @@ module TaskExtensionForHearings
     return tasks.first if appeal.is_a?(Appeal)
 
     # Legacy appeals can be orphaned, so find the first un-orphaned one.
-    tasks.detect { |task| task.hearing.vacols_hearing_exists? }
+    tasks.detect { |task| task.hearing&.vacols_hearing_exists? }
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
