@@ -118,7 +118,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def format_alias_with_host(conference_alias)
-    "BVA#{alias_with_host}@#{ENV['PEXIP_CLIENT_HOST']}"
+    "BVA#{conference_alias}@#{ENV['PEXIP_CLIENT_HOST']}"
   end
 
   def assign_virtual_hearing_alias_and_pins
