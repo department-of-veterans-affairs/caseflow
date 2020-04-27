@@ -41,7 +41,7 @@ describe AdvanceOnDocketMotion, :postgres do
     end
 
     describe "#eligable_due_to_date" do
-      it "Returns all motions created after reciept date, but not age related motions" do
+      it "Returns all motions created after receipt date, but not age related motions" do
         non_age_motions = described_class.where.not(id: described_class.age)
         expect(described_class.eligable_due_to_date(1.day.ago).count).to eq non_age_motions.count / creation_dates.count
         expect(described_class.eligable_due_to_date(31.days.ago).count).to eq non_age_motions.count
