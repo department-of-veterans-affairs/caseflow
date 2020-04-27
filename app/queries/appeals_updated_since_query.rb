@@ -17,6 +17,8 @@ class AppealsUpdatedSinceQuery
   SKIP_ASSOCIATIONS = %w[
     appeal_views
     claims_folder_searches
+    job_notes
+    record_synced_by_job
     request_decision_issues
     request_issues_updates
   ].freeze
@@ -28,20 +30,19 @@ class AppealsUpdatedSinceQuery
   end
 
   def build_query
-    clauses = associated_clauses
-    clauses << "appeals.updated_at >= ?"
-    number_of_placeholders = Array.new(clauses.size, since_date)
-    appeals_joined_distinct.where(clauses.join(" OR "), *number_of_placeholders)
+    Appeal.established.where("appeals.updated_at >= ?", since_date)
+      .or(Appeal.established.where("appeals.id IN (#{clauses_union})"))
   end
 
-  def appeals_joined_distinct
-    Appeal.established.left_joins(association_names.map(&:to_sym)).distinct
+  def clauses_union
+    updated_since_for_appeals_relations.map(&:arel).map(&:to_sql).join("\n UNION ")
   end
 
-  def associated_clauses
+  def updated_since_for_appeals_relations
     association_names.map do |association_name|
       association = Appeal.reflections[association_name]
-      "#{association.table_name}.updated_at >= ?"
+      assoc_klass = association.klass
+      assoc_klass.updated_since_for_appeals(since_date)
     end
   end
 end

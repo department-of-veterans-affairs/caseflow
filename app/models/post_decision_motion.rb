@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class PostDecisionMotion < CaseflowRecord
+  include HasSimpleAppealUpdatedSince
+
   belongs_to :appeal
   belongs_to :task, optional: false
 

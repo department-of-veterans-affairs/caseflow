@@ -2,6 +2,7 @@
 
 class Claimant < CaseflowRecord
   include AssociatedBgsRecord
+  include HasDecisionReviewUpdatedSince
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
