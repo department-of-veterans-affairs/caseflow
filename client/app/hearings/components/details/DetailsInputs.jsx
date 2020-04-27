@@ -18,7 +18,8 @@ import {
   genericRow,
   maxWidthFormInput,
   rowThirds,
-  rowThirdsWithFinalSpacer
+  rowThirdsWithFinalSpacer,
+  enablePadding
 } from './style';
 import COPY from '../../../../COPY';
 import Checkbox from '../../../components/Checkbox';
@@ -31,7 +32,7 @@ import TranscriptionRequestInputs from './TranscriptionRequestInputs';
 import VirtualHearingLink from '../VirtualHearingLink';
 
 // Displays the emails associated with the virtual hearing.
-const EmailSection = ({ hearing, virtualHearing, isVirtual, wasVirtual, readOnly, updateVirtualHearing }) => {
+const EmailSection = ({ hearing, virtualHearing, isVirtual, wasVirtual, readOnly, updateVirtualHearing, errors }) => {
   const showEmailFields = (isVirtual || wasVirtual) && virtualHearing;
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
 
@@ -42,15 +43,21 @@ const EmailSection = ({ hearing, virtualHearing, isVirtual, wasVirtual, readOnly
   return (
     <div {...rowThirdsWithFinalSpacer}>
       <TextField
+        errorMessage={errors?.vetEmail}
         name="Veteran Email for Notifications"
         value={virtualHearing.veteranEmail}
         strongLabel
-        className={[classnames('cf-form-textinput', 'cf-inline-field')]}
+        className={[
+          classnames('cf-form-textinput', 'cf-inline-field', {
+            [enablePadding]: errors?.vetEmail
+          })
+        ]}
         readOnly={readOnlyEmails}
         onChange={(veteranEmail) => updateVirtualHearing({ veteranEmail })}
         inputStyling={maxWidthFormInput}
       />
       <TextField
+        errorMessage={errors?.repEmail}
         name="POA/Representative Email for Notifications"
         value={virtualHearing.representativeEmail}
         strongLabel
@@ -65,6 +72,10 @@ const EmailSection = ({ hearing, virtualHearing, isVirtual, wasVirtual, readOnly
 };
 
 EmailSection.propTypes = {
+  errors: PropTypes.shape({
+    vetEmail: PropTypes.string,
+    repEmail: PropTypes.string
+  }),
   hearing: PropTypes.shape({
     scheduledForIsPast: PropTypes.bool
   }),
@@ -80,7 +91,15 @@ EmailSection.propTypes = {
 };
 
 // Displays the virtual hearing link and emails.
-const VirtualHearingSection = ({ hearing, virtualHearing, isVirtual, wasVirtual, readOnly, updateVirtualHearing }) => {
+const VirtualHearingSection = ({
+  hearing,
+  virtualHearing,
+  isVirtual,
+  wasVirtual,
+  readOnly,
+  updateVirtualHearing,
+  errors
+}) => {
   if (!isVirtual && !wasVirtual) {
     return null;
   }
@@ -115,6 +134,7 @@ const VirtualHearingSection = ({ hearing, virtualHearing, isVirtual, wasVirtual,
         </div>
       )}
       <EmailSection
+        errors={errors}
         hearing={hearing}
         virtualHearing={virtualHearing}
         isVirtual={isVirtual}
@@ -133,6 +153,10 @@ VirtualHearingSection.propTypes = {
   updateVirtualHearing: PropTypes.func,
   virtualHearing: PropTypes.shape({
     jobCompleted: PropTypes.bool
+  }),
+  errors: PropTypes.shape({
+    vetEmail: PropTypes.string,
+    repEmail: PropTypes.string
   }),
   wasVirtual: PropTypes.bool
 };
@@ -178,7 +202,8 @@ const DetailsInputs = (props) => {
     updateTranscription,
     updateVirtualHearing,
     virtualHearing,
-    wasVirtual
+    wasVirtual,
+    errors
   } = props;
   const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
   const enableVirtualHearings = userCanScheduleVirtualHearings && requestType !== 'Central';
@@ -222,6 +247,7 @@ const DetailsInputs = (props) => {
         </React.Fragment>
       )}
       <VirtualHearingSection
+        errors={errors}
         hearing={hearing}
         isVirtual={isVirtual}
         readOnly={readOnly}
@@ -267,6 +293,10 @@ const DetailsInputs = (props) => {
 };
 
 DetailsInputs.propTypes = {
+  errors: PropTypes.shape({
+    vetEmail: PropTypes.string,
+    repEmail: PropTypes.string
+  }),
   hearing: PropTypes.shape({
     judgeId: PropTypes.string,
     room: PropTypes.string,

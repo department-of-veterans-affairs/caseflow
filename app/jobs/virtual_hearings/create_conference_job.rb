@@ -5,15 +5,25 @@
 class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   queue_with_priority :high_priority
 
-  retry_on Caseflow::Error::PexipApiError, attempts: 5 do |_job, exception|
+  class IncompleteError < StandardError; end
+
+  # Retry if the virtual hearing is not in the expected state by the end of the job.
+  # Note: The empty block is necessary, otherwise the job isn't retried!
+  retry_on(IncompleteError, attempts: 5) { |_job, _exception| nil }
+
+  # Retry if Pexip returns an invalid response.
+  retry_on Caseflow::Error::PexipApiError, attempts: 5 do |job, exception|
+    kwargs = job.arguments.first
     extra = {
-      hearing_id: virtual_hearing.hearing_id,
-      hearing_type: virtual_hearing.hearing_type
+      hearing_id: kwargs[:hearing_id],
+      hearing_type: kwargs[:hearing_type]
     }
 
-    capture_exception(exception, extra: extra)
+    Raven.capture_exception(exception, extra: extra)
   end
 
+  # Log the timezone of the job. This is primarily used for debugging context around times
+  # that appear in the hearings notification emails.
   before_perform do |job|
     kwargs = job.arguments.first
     hearing_id = kwargs[:hearing_id]
@@ -32,17 +42,16 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     virtual_hearing.establishment.attempted!
 
-    create_conference if !virtual_hearing.conference_id || !virtual_hearing.alias
+    # successfully creating a conference will make the virtual hearing active
+    create_conference unless virtual_hearing.active?
 
-    if virtual_hearing.conference_id
-      VirtualHearings::SendEmail.new(
-        virtual_hearing: virtual_hearing,
-        type: email_type
-      ).call
-    end
+    # when a conference has been created and emails sent, the virtual hearing can be established
+    send_emails(email_type) if virtual_hearing.active?
 
-    if virtual_hearing.activate?
-      virtual_hearing.activate!
+    if virtual_hearing.can_be_established?
+      virtual_hearing.established!
+    else
+      fail IncompleteError
     end
   end
 
@@ -83,6 +92,13 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     DataDogService.increment_counter(metric_name: "created_conference.successful", **updated_metric_info)
 
     virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
+  end
+
+  def send_emails(email_type)
+    VirtualHearings::SendEmail.new(
+      virtual_hearing: virtual_hearing,
+      type: email_type
+    ).call
   end
 
   def pexip_error_display(response)

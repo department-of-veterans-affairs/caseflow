@@ -10,18 +10,15 @@ class VirtualHearings::SendEmail
 
   def call
     if !virtual_hearing.veteran_email_sent
-      send_email(veteran_recipient)
-      virtual_hearing.veteran_email_sent = true
+      virtual_hearing.veteran_email_sent = send_email(veteran_recipient)
     end
 
     if should_judge_receive_email?
-      send_email(judge_recipient)
-      virtual_hearing.judge_email_sent = true
+      virtual_hearing.judge_email_sent = send_email(judge_recipient)
     end
 
     if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
-      send_email(representative_recipient)
-      virtual_hearing.representative_email_sent = true
+      virtual_hearing.representative_email_sent = send_email(representative_recipient)
     end
 
     virtual_hearing.save!
@@ -37,15 +34,37 @@ class VirtualHearings::SendEmail
 
     case type.to_s
     when "confirmation"
-      VirtualHearingMailer.confirmation(args)
+      VirtualHearingMailer.confirmation(**args)
     when "cancellation"
-      VirtualHearingMailer.cancellation(args)
+      VirtualHearingMailer.cancellation(**args)
     when "updated_time_confirmation"
-      VirtualHearingMailer.updated_time_confirmation(args)
+      VirtualHearingMailer.updated_time_confirmation(**args)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
   end
+
+  # :nocov:
+  def external_message_id(msg)
+    if msg.is_a?(GovDelivery::TMS::EmailMessage)
+      response = msg.response
+      response_external_url = response.body.dig("_links", "self")
+
+      DataDogService.increment_counter(
+        app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
+        metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+        metric_name: "emails.submitted"
+      )
+
+      Rails.logger.info(
+        "[Virtual Hearing: #{virtual_hearing.id}] " \
+        "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
+      )
+
+      response_external_url
+    end
+  end
+  # :nocov:
 
   def send_email(recipient)
     # Why are we using `deliver_now!`? The documentation mentions that it ignores the flags:
@@ -72,30 +91,35 @@ class VirtualHearings::SendEmail
     # the email after it has been accepted by GovDelivery.
     email = email_for_recipient(recipient)
 
-    return if email.nil?
+    return false if email.nil?
 
     msg = email.deliver_now!
+  rescue StandardError => error
+    Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
 
-    # :nocov:
-    if msg.is_a?(GovDelivery::TMS::EmailMessage)
-      response = msg.response
-      response_external_url = response.body.dig("_links", "self")
-
-      DataDogService.increment_counter(
-        app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
-        metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-        metric_name: "emails.submitted"
-      )
-
-      Rails.logger.info(
-        "[Virtual Hearing: #{virtual_hearing.id}] " \
-        "GovDelivery returned (code: #{response.status}) (external url: #{response_external_url})"
-      )
-    end
-    # :nocov:
-
+    false
+  else
     Rails.logger.info("Sent #{type} email to #{recipient.title}!")
+
+    create_sent_hearing_email_event(recipient, external_message_id(msg))
+
+    true
   end
+
+  # :nocov:
+  def create_sent_hearing_email_event(recipient, external_id)
+    SentHearingEmailEvent.create!(
+      hearing: virtual_hearing.hearing,
+      email_type: type,
+      email_address: recipient.email,
+      external_message_id: external_id,
+      recipient_role: recipient.title.downcase,
+      sent_by: virtual_hearing.updated_by
+    )
+  rescue StandardError => error
+    Raven.capture_exception(error)
+  end
+  # :nocov:
 
   def judge_recipient
     MailRecipient.new(
