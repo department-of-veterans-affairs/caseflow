@@ -8,10 +8,11 @@ class WarmBgsCachesJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
     RequestStore.store[:application] = "hearings"
 
+    warm_poa_caches # run first since other warmers benefit from it being updated.
     warm_participant_caches
     warm_veteran_attribute_caches
     warm_people_caches
-    warm_poa_caches
+
     datadog_report_runtime(metric_group_name: "warm_bgs_caches_job")
   end
 
@@ -41,7 +42,7 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_poa_for_oldest_cached_records
     start_time = Time.zone.now
     oldest_bgs_poa_records.limit(1000).each do |bgs_poa|
-      bgs_poa.update_cached_attributes! if bgs_poa.stale_attributes?
+      bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
     end
     datadog_report_time_segment(segment: "warm_poa_bgs", start_time: start_time)
   end
