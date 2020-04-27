@@ -34,7 +34,7 @@ class Claimant < CaseflowRecord
            allow_nil: true
 
   def representative_participant_id
-    power_of_attorney.participant_id
+    power_of_attorney&.participant_id
   end
 
   def person
