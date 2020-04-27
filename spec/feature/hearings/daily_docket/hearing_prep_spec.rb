@@ -89,7 +89,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
           user_id: current_user.id,
           person_id: person.id,
           granted: true,
-          reason: "age"
+          reason: "serious_illness"
         )
       end
 

@@ -20,11 +20,11 @@ class AdvanceOnDocketMotion < CaseflowRecord
 
   class << self
     def granted_for_person?(person_id, appeal_receipt_date)
-      eligable_granted_motions(person_id, appeal_receipt_date).any?
+      eligable_granted_motions(person_id, appeal_receipt_date).granted.any?
     end
 
-    def eligable_granted_motions(person_id, appeal_receipt_date)
-      eligable_due_to_date(appeal_receipt_date).or(eligable_due_to_age).for_person(person_id).granted
+    def eligable_motions(person_id, appeal_receipt_date)
+      eligable_due_to_date(appeal_receipt_date).or(eligable_due_to_age).for_person(person_id)
     end
 
     def create_or_update_by_appeal(appeal, attrs)
