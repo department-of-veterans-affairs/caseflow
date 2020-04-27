@@ -17,17 +17,19 @@ describe InitialTasksFactory, :postgres do
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
         .with([participant_id_with_pva]).and_return(
           participant_id_with_pva => {
-            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
-            representative_type: "POA National Organization",
-            participant_id: "2452383"
+            representative_name: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME,
+            representative_type: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+            participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID,
+            file_number: "66660000"
           }
         )
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
         .with([participant_id_with_aml]).and_return(
           participant_id_with_aml => {
-            representative_name: "VIETNAM VETERANS OF AMERICA",
-            representative_type: "POA National Organization",
-            participant_id: "2452415"
+            representative_name: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_NAME,
+            representative_type: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+            participant_id: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID,
+            file_number: "66661111"
           }
         )
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
@@ -39,7 +41,7 @@ describe InitialTasksFactory, :postgres do
         name: "Paralyzed Veterans Of America",
         role: "VSO",
         url: "paralyzed-veterans-of-america",
-        participant_id: "2452383"
+        participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
       )
     end
 

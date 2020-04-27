@@ -65,7 +65,8 @@ feature "AmaQueue", :all_dbs do
         appeals.first.claimant.participant_id => {
           representative_name: poa_name,
           representative_type: "POA Attorney",
-          participant_id: participant_id
+          participant_id: participant_id,
+          file_number: appeals.first.veteran_file_number
         }
       )
     end
