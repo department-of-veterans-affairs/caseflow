@@ -41,29 +41,6 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
           expect(motions.first.reason).to eq("financial_distress")
         end
       end
-
-      context "where old case has an existing aod motion" do
-        let!(:aod_motion) do
-          AdvanceOnDocketMotion.create(
-            created_at: 5.days.ago,
-            person: appeal.claimant.person,
-            granted: false,
-            user: aod_user,
-            reason: "age"
-          )
-        end
-
-        it "creates a new aod motion" do
-          subject
-          motions = appeal.claimant.person.advance_on_docket_motions
-          expect(motions.count).to eq 2
-          expect(motions.first.granted).to be(false)
-          expect(motions.first.reason).to eq("age")
-          expect(motions.second.granted).to be(true)
-          expect(motions.second.reason).to eq("financial_distress")
-          expect(appeal.aod?).to be true
-        end
-      end
     end
     context "request to create as non-aod" do
       let(:non_aod_user) { create(:user) }
