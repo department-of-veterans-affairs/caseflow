@@ -49,7 +49,7 @@ describe AdvanceOnDocketMotion, :postgres do
     end
 
     describe "#for_person" do
-      it "Returns all motions related to povided person" do
+      it "Returns all motions related to provided person" do
         expect(described_class.for_person(people_ids.first).count).to eq motions.count / people_ids.count
         expect(described_class.for_person(people_ids.first).pluck(:person_id).uniq).to eq [people_ids.first]
       end
