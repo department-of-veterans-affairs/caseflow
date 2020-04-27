@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_21_231908) do
+ActiveRecord::Schema.define(version: 2020_04_27_152555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -152,6 +152,27 @@ ActiveRecord::Schema.define(version: 2020_04_21_231908) do
     t.index ["appeal_id", "appeal_type"], name: "index_available_hearing_locations_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_available_hearing_locations_on_updated_at"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
+  end
+
+  create_table "bgs_power_of_attorneys", comment: "Power of Attorney (POA) cached from BGS", force: :cascade do |t|
+    t.string "authzn_change_clmant_addrs_ind", comment: "Authorization for POA to change claimant address"
+    t.string "authzn_poa_access_ind", comment: "Authorization for POA access"
+    t.string "claimant_participant_id", null: false, comment: "Claimant participant ID -- use as FK to claimants"
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "file_number", comment: "Claimant file number"
+    t.datetime "last_synced_at", comment: "The last time BGS was checked"
+    t.string "legacy_poa_cd", comment: "Legacy POA code"
+    t.string "poa_participant_id", null: false, comment: "POA participant ID -- use as FK to people"
+    t.string "representative_name", null: false, comment: "POA name"
+    t.string "representative_type", null: false, comment: "POA type"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["claimant_participant_id", "file_number"], name: "bgs_poa_pid_fn_unique_idx", unique: true
+    t.index ["created_at"], name: "index_bgs_power_of_attorneys_on_created_at"
+    t.index ["last_synced_at"], name: "index_bgs_power_of_attorneys_on_last_synced_at"
+    t.index ["poa_participant_id"], name: "index_bgs_power_of_attorneys_on_poa_participant_id"
+    t.index ["representative_name"], name: "index_bgs_power_of_attorneys_on_representative_name"
+    t.index ["representative_type"], name: "index_bgs_power_of_attorneys_on_representative_type"
+    t.index ["updated_at"], name: "index_bgs_power_of_attorneys_on_updated_at"
   end
 
   create_table "board_grant_effectuations", comment: "Represents the work item of updating records in response to a granted issue on a Board appeal. Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.", force: :cascade do |t|
