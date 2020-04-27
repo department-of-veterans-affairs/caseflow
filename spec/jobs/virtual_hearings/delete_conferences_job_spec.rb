@@ -42,13 +42,31 @@ describe VirtualHearings::DeleteConferencesJob do
         create(:virtual_hearing, status: :cancelled, hearing: hearing, conference_deleted: false)
       end
 
-      it "updates the appropriate fields", :aggregate_failures do
+      it "updates the appropriate fields and sends cancellation emails", :aggregate_failures do
+        expect(VirtualHearings::SendEmail).to receive(:new).with(
+          virtual_hearing: virtual_hearing,
+          type: :cancellation
+        ).and_call_original
+        expect(job).to receive(:send_cancellation_emails).with(virtual_hearing).and_call_original
+
         subject
         virtual_hearing.reload
         expect(virtual_hearing.conference_deleted).to eq(true)
         expect(virtual_hearing.veteran_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
         expect(virtual_hearing.judge_email_sent).to eq(false) # judge should not receive cancellation email
+      end
+
+      it "does not send emails if they have already been sent" do
+        virtual_hearing.update(
+          veteran_email_sent: true,
+          representative_email_sent: true
+        )
+        expect(VirtualHearings::SendEmail).not_to receive(:new)
+        expect(job).not_to receive(:send_cancellation_emails)
+
+        subject
+        virtual_hearing.reload
       end
     end
 
