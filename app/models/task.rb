@@ -15,6 +15,7 @@ class Task < CaseflowRecord
 
   include PrintsTaskTree
   include TaskExtensionForHearings
+  include HasAppealUpdatedSince
 
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"

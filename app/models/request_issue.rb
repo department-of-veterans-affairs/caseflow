@@ -10,6 +10,7 @@ class RequestIssue < CaseflowRecord
   include Asyncable
   include HasBusinessLine
   include DecisionSyncable
+  include HasDecisionReviewUpdatedSince
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
