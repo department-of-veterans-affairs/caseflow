@@ -85,8 +85,8 @@ class BaseHearingUpdateForm
   end
 
   def start_async_job
-    start_cancel_job if !start_async_job? && virtual_hearing_cancelled?
-    start_activate_job if !start_async_job?
+    start_cancel_job if start_async_job? && virtual_hearing_cancelled?
+    start_activate_job if start_async_job?
   end
 
   def start_cancel_job
