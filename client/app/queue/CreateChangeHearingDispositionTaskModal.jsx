@@ -63,15 +63,14 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
 
     return <QueueFlowModal
       title={COPY.CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE}
-      pathAfterSubmit={`/queue/appeals/${this.props.appeal.externalId}`}
+      pathAfterSubmit={`/queue/appeals/${appeal.externalId}`}
       submit={this.submit}
       validateForm={this.validateForm}
     >
-      {error && (
+      {error &&
         <Alert title={error.title} type="error">
           {error.detail}
         </Alert>
-        )
       }
 
       <p>{COPY.CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_BODY}</p>
@@ -91,6 +90,10 @@ CreateChangeHearingDispositionTaskModal.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
     veteranFullName: PropTypes.string
+  }),
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
   }),
   highlightFormItems: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
