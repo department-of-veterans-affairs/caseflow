@@ -273,7 +273,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def veteran_ssn
-    vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
+    vbms_id.ends_with?("C") ? veteran&.ssn : sanitized_vbms_id
   end
 
   def congressional_interest_addresses
@@ -762,14 +762,20 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def matchable_to_request_issue?(receipt_date)
-    issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
+    return false unless issues.any?
+    return true if active?
+
+    covid_flag = FeatureToggle.enabled?(:covid_timeliness_exemption, user: RequestStore.store[:current_user])
+
+    eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag)
   end
 
-  def eligible_for_soc_opt_in?(receipt_date)
+  def eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless receipt_date
     return false unless soc_date
 
-    soc_date_eligible_for_opt_in?(receipt_date) || nod_date_eligible_for_opt_in?(receipt_date)
+    soc_eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag) ||
+      nod_eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag)
   end
 
   def serializer_class
@@ -849,20 +855,25 @@ class LegacyAppeal < CaseflowRecord
 
   private
 
-  def soc_date_eligible_for_opt_in?(receipt_date)
-    soc_eligible_date = receipt_date - 60.days
-    earliest_eligible_date = [soc_eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
+  def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
+    return false unless soc_date
+
+    soc_eligible = receipt_date - 60.days
+    eligible_date = covid_flag ? [soc_eligible, Constants::DATES["SOC_COVID_ELIGIBLE"].to_date].min : soc_eligible
+    earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    soc_date >= earliest_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= earliest_eligible_date }
+    ([soc_date] + ssoc_dates).any? { |soc_date| soc_date >= earliest_eligible_date }
   end
 
-  def nod_date_eligible_for_opt_in?(receipt_date)
+  def nod_eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless nod_date
 
-    nod_eligible_date = receipt_date - 372.days
+    nod_eligible = receipt_date - 372.days
+    eligible_date = covid_flag ? [nod_eligible, Constants::DATES["NOD_COVID_ELIGIBLE"].to_date].min : nod_eligible
+    earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
-    nod_date >= nod_eligible_date
+    nod_date >= earliest_eligible_date
   end
 
   def bgs_address_service
@@ -924,7 +935,7 @@ class LegacyAppeal < CaseflowRecord
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
-      return bfcorlid unless bfcorlid =~ /\d/
+      return bfcorlid unless bfcorlid.match?(/\d/)
 
       numeric = bfcorlid.gsub(/[^0-9]/, "")
 

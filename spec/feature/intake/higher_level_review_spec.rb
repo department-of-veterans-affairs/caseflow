@@ -1378,6 +1378,47 @@ feature "Higher-Level Review", :all_dbs do
           )
         end
 
+        scenario "vacols issues closed" do
+          start_higher_level_review(veteran, legacy_opt_in_approved: true)
+          visit "/intake/add_issues"
+
+          click_intake_add_issue
+          expect(page).to have_content("Next")
+          add_intake_rating_issue(/Left knee granted$/)
+
+          add_intake_rating_issue("Service connection, limitation of thigh motion (extension)")
+          expect(page).to have_content(
+            "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, limitation of thigh motion (extension)"
+          )
+
+          click_intake_finish
+
+          # confirmation page shows vacols issue closed
+          expect(page).to have_content("VACOLS issue has been closed")
+          expect(page).to have_content("Service connection, limitation of thigh motion (extension)")
+
+          # Go to edit page
+          click_on "correct the issues"
+
+          expect(page).to have_content(
+            "#{COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT}:\nService connection, limitation of thigh motion (extension)"
+          )
+
+          click_intake_add_issue
+          expect(page).to have_content("Next")
+          add_intake_rating_issue("Looks like a VACOLS issue")
+          add_intake_rating_issue("Service connection, ankylosis of hip")
+
+          expect(page).to have_content(
+            "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
+          )
+
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+          expect(page).to have_content("Claim Issues Saved")
+          expect(page).to have_content("Contention: Looks like a VACOLS issue")
+        end
+
         context "with unidentified issue on legacy opt-in" do
           before do
             FeatureToggle.enable!(:verify_unidentified_issue)
@@ -1406,8 +1447,10 @@ feature "Higher-Level Review", :all_dbs do
 
             # Expect legacy opt in issue modal to show
             expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-            add_intake_rating_issue("impairment of hip")
-            expect(page).to have_content("Service connection, impairment of hip")
+
+            add_intake_rating_issue("ankylosis of hip")
+
+            expect(page).to have_content("Service connection, ankylosis of hip")
           end
 
           scenario "with legacy opt in not approved" do

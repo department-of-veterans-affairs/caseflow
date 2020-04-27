@@ -262,11 +262,12 @@ class LegacyHearing < CaseflowRecord
   end
 
   def current_issue_count
-    active_appeal_streams.map(&:worksheet_issues).flatten
-      .reject do |issue|
-      issue.deleted? || (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?)
-    end
-      .count
+    active_appeal_streams
+      .map(&:worksheet_issues)
+      .flatten
+      .count do |issue|
+        !(issue.deleted? || (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?))
+      end
   end
 
   # If we do not yet have the military_service saved in Caseflow's DB, then

@@ -74,7 +74,7 @@ class DocketCoordinator
   #        [      TargetNumber = DecisionInPeriod * ProportionOfHearingsInDocket ]
   #
   def target_number_of_ama_hearings(time_period)
-    decisions_in_days = (time_period.to_f / 1.year.to_f) * nonpriority_decisions_per_year
+    decisions_in_days = (time_period.to_f / 1.year) * nonpriority_decisions_per_year
     (decisions_in_days * docket_proportions[:hearing]).round
   end
 

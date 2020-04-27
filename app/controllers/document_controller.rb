@@ -44,12 +44,10 @@ class DocumentController < ApplicationController
       ) do |t|
         t.update!(first_viewed_at: Time.zone.now)
       end
-    # rubocop:disable Lint/HandleExceptions
     rescue ActiveRecord::RecordNotUnique
       # We can ignore this exception because the race condition that causes it
       # means that another thread just created this record.
     end
-    # rubocop:enable Lint/HandleExceptions
     render json: {}
   end
 

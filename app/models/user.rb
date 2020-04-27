@@ -107,7 +107,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def administer_org_users?
-    admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
+    admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
   end
 
   def can_view_overtime_status?
@@ -293,7 +293,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     judge_team_judges.each do |judge|
       orgs << {
         name: "Assign #{judge.css_id}",
-        url: format("/queue/%s/assign", judge.id)
+        url: "/queue/#{judge.id}/assign"
       }
     end
 

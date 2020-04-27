@@ -25,7 +25,7 @@ class SlackService
   end
 
   def format_slack_msg(msg, title, channel)
-    channel.prepend("#") unless channel =~ /^#/
+    channel.prepend("#") unless channel.match?(/^#/)
 
     {
       username: "Caseflow (#{aws_env})",

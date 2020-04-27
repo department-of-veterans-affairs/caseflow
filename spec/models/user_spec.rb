@@ -394,24 +394,8 @@ describe User, :all_dbs do
 
   context "#when BGS data is setup" do
     let(:participant_id) { "123456" }
-    let(:vso_participant_id) { "123456" }
-
-    let(:vso_participant_ids) do
-      [
-        {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: vso_participant_id
-        },
-        {
-          legacy_poa_cd: "071",
-          nm: "PARALYZED VETERANS OF AMERICA, INC.",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: "2452383"
-        }
-      ]
-    end
+    let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
+    let(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)
@@ -462,6 +446,11 @@ describe User, :all_dbs do
 
     context "when user with roles that contain Admin Intake" do
       before { session["user"]["roles"] = ["Admin Intake"] }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user is a BVA admin" do
+      before { Bva.singleton.add_user(user) }
       it { is_expected.to be_truthy }
     end
   end
