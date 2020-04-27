@@ -25,7 +25,7 @@ describe CachedUser, :all_dbs do
         described_class.sync_from_vacols
 
         staff = VACOLS::Staff.first
-        cached_user = described_class.find_by_css_id(staff.sdomainid)
+        cached_user = described_class.find_by_sdomainid(staff.sdomainid)
 
         staff.stafkey = "foobar"
         staff.save!
