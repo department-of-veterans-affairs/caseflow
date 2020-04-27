@@ -41,12 +41,18 @@ class VirtualHearing < CaseflowRecord
       (representative_email.nil? || representative_email_sent)
   end
 
+  # After a certain point after this change gets merged, alias_with_host will never be nil
+  # so we can rid of this logic then
+  def get_alias_with_host
+    alias_with_host.nil? ? "BVA#{alias_name}@#{client_host}" : alias_with_host
+  end
+
   def guest_link
-    "#{base_url}?conference=#{alias_name}&pin=#{guest_pin}#&join=1&role=guest"
+    "#{base_url}?conference=#{get_alias_with_host}&pin=#{guest_pin}#&join=1&role=guest"
   end
 
   def host_link
-    "#{base_url}?conference=#{alias_name}&pin=#{host_pin}#&join=1&role=host"
+    "#{base_url}?conference=#{get_alias_with_host}&pin=#{host_pin}#&join=1&role=host"
   end
 
   def job_completed?
@@ -100,10 +106,14 @@ class VirtualHearing < CaseflowRecord
     update(request_cancelled: true)
   end
 
+  def client_host
+    ENV['PEXIP_CLIENT_HOST']
+  end
+
   private
 
   def base_url
-    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/bva-app/"
+    "https://#{client_host || 'localhost'}/bva-app/"
   end
 
   def assign_created_by_user
