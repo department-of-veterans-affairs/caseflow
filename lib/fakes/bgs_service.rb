@@ -18,6 +18,10 @@ class Fakes::BGSService
   cattr_accessor :generate_tracked_items_requests
   attr_accessor :client
 
+  DEFAULT_VSO_POA_FILE_NUMBER = 216_979_849
+  VSO_PARTICIPANT_ID = "4623321"
+  DEFAULT_PARTICIPANT_ID = "781162"
+
   class << self
     def can_access_cache_key(user, vbms_id)
       "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
@@ -214,31 +218,39 @@ class Fakes::BGSService
 
   # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
+    return {} if file_number == "no-such-file-number"
+
     record = (self.class.power_of_attorney_records || {})[file_number]
-    record ||= default_vso_power_of_attorney_record if file_number == 216_979_849
+    record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
     record ||= default_power_of_attorney_record
 
-    get_poa_from_bgs_poa(record[:power_of_attorney])
+    get_claimant_poa_from_bgs_poa(record)
   end
 
+  # The participant_id here is for a User, not a Claimant.
+  # I.e. returns the list of VSOs that a User represents.
   def fetch_poas_by_participant_id(participant_id)
     if participant_id == VSO_PARTICIPANT_ID
-      return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa) }
+      return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa[:power_of_attorney]) }
     end
 
     []
   end
 
+  # The participant IDs here are for Claimants.
+  # I.e. returns the list of POAs that represent the Claimants.
   # rubocop:disable Metrics/MethodLength
   def fetch_poas_by_participant_ids(participant_ids)
+    return {} if participant_ids == ["no-such-pid"]
+
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
         vso = if participant_id.starts_with?("CLAIMANT_WITH_PVA_AS_VSO")
                 {
-                  legacy_poa_cd: "071",
-                  nm: "PARALYZED VETERANS OF AMERICA, INC.",
-                  org_type_nm: "POA National Organization",
-                  ptcpnt_id: "2452383"
+                  legacy_poa_cd: Fakes::BGSServicePOA::PARALYZED_VETERANS_LEGACY_POA_CD,
+                  nm: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME,
+                  org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+                  ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
                 }
               else
                 {
@@ -251,6 +263,7 @@ class Fakes::BGSService
 
         {
           ptcpnt_id: participant_id,
+          file_number: "00001234",
           power_of_attorney: vso
         }
       end
@@ -454,9 +467,6 @@ class Fakes::BGSService
 
   private
 
-  VSO_PARTICIPANT_ID = "4623321"
-  DEFAULT_PARTICIPANT_ID = "781162"
-
   def current_user
     RequestStore[:current_user]
   end
@@ -487,10 +497,10 @@ class Fakes::BGSService
       file_number: "216979849",
       power_of_attorney:
         {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: "2452415"
+          legacy_poa_cd: Fakes::BGSServicePOA::VIETNAM_VETERANS_LEGACY_POA_CD,
+          nm: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_NAME,
+          org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+          ptcpnt_id: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID
         },
       ptcpnt_id: "600085544"
     }
@@ -499,16 +509,20 @@ class Fakes::BGSService
   def default_vsos_by_participant_id
     [
       {
-        legacy_poa_cd: "070",
-        nm: "VIETNAM VETERANS OF AMERICA",
-        org_type_nm: "POA National Organization",
-        ptcpnt_id: "2452415"
+        power_of_attorney: {
+          legacy_poa_cd: Fakes::BGSServicePOA::VIETNAM_VETERANS_LEGACY_POA_CD,
+          nm: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_NAME,
+          org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+          ptcpnt_id: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID
+        }
       },
       {
-        legacy_poa_cd: "071",
-        nm: "PARALYZED VETERANS OF AMERICA, INC.",
-        org_type_nm: "POA National Organization",
-        ptcpnt_id: "2452383"
+        power_of_attorney: {
+          legacy_poa_cd: Fakes::BGSServicePOA::PARALYZED_VETERANS_LEGACY_POA_CD,
+          nm: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME,
+          org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+          ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
+        }
       }
     ]
   end
