@@ -14,7 +14,7 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
 
       subject do
         post :create, params: { appeal_id: appeal.uuid, advance_on_docket_motions: {
-          reason: "financial_distress", granted: "granted"
+          reason: Constants.AOD_REASONS.financial_distress, granted: "granted"
         } }
       end
 
@@ -29,7 +29,7 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
             person: appeal.claimant.person,
             granted: false,
             user: aod_user,
-            reason: "serious_illness"
+            reason: Constants.AOD_REASONS.serious_illness
           )
         end
 
@@ -38,7 +38,7 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
           motions = appeal.claimant.person.advance_on_docket_motions
           expect(motions.count).to eq 1
           expect(motions.first.granted).to be(true)
-          expect(motions.first.reason).to eq("financial_distress")
+          expect(motions.first.reason).to eq(Constants.AOD_REASONS.financial_distress)
         end
       end
     end
@@ -52,7 +52,7 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
 
       it "should NOT create and return FORBIDDEN 403" do
         post :create, params: { appeal_id: appeal.uuid, advance_on_docket_motions: {
-          reason: "financial_distress", granted: "granted"
+          reason: Constants.AOD_REASONS.financial_distress, granted: "granted"
         } }
         expect(response.status).to eq 403
       end
