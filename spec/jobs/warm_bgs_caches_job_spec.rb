@@ -33,11 +33,9 @@ describe WarmBgsCachesJob, :all_dbs do
       appeal.veteran.update!(ssn: nil)
 
       @people_sync = 0
-      @poa_sync = 0
       @slack_msg = nil
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
       allow_any_instance_of(Person).to receive(:update_cached_attributes!) { @people_sync += 1 }
-      allow_any_instance_of(BgsPowerOfAttorney).to receive(:update_cached_attributes!) { @poa_sync += 1 }
     end
 
     it "fetches all hearings and warms the Rails cache" do
@@ -53,10 +51,10 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(bgs_address_service).to have_received(:fetch_bgs_record).once
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
-      expect(BgsPowerOfAttorney.all.count).to eq(1)
+      expect(BgsPowerOfAttorney.all.count).to eq(2) # open_appeal + appeal
+      expect(appeal.representative_name).to_not be_nil
       expect(@slack_msg).to be_nil
       expect(@people_sync).to eq(6)
-      expect(@poa_sync).to eq(2) # once for open appeal, once because it's among 1000 oldest
     end
 
     context "BGS POA changes at BGS" do
@@ -71,12 +69,12 @@ describe WarmBgsCachesJob, :all_dbs do
 
       it "updates local cache to refer to same BGSPowerOfAttorney record with different attributes" do
         expect(BgsPowerOfAttorney.all.count).to eq(1) # created by open_appeal
+        expect(open_appeal.claimant.power_of_attorney).to eq(BgsPowerOfAttorney.first)
 
         old_poa_name = open_appeal.claimant.representative_name
 
         expect { described_class.perform_now }.to_not raise_error
 
-        expect(BgsPowerOfAttorney.all.count).to eq(1)
         expect(open_appeal.reload.claimant.representative_name).to_not eq(old_poa_name)
       end
     end
