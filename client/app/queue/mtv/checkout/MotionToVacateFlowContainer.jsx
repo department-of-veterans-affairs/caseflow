@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams, useRouteMatch, Switch, Route, generatePath } from 'react-router';
-import { appealWithDetailSelector } from '../selectors';
+import { appealWithDetailSelector } from '../../selectors';
 import { MotionToVacateContextProvider } from './MotionToVacateContext';
 import { AddDecisionIssuesView } from './AddDecisionIssuesView';
 import { ReviewVacatedDecisionIssuesView } from './ReviewVacatedDecisionIssuesView';
@@ -9,7 +9,7 @@ import { getSteps, getNextStep, getPrevStep } from './mtvCheckoutSteps';
 import { SubmitVacatedDecisionsView } from './SubmitVacatedDecisionsView';
 import { MotionToVacateCheckoutProgressBar } from './MotionToVacateCheckoutProgressBar';
 import { ReturnToJudgeModalContainer } from './returnToJudge/ReturnToJudgeModalContainer';
-import { REVIEW_VACATE_RETURN_TO_JUDGE } from '../../../constants/TASK_ACTIONS';
+import { REVIEW_VACATE_RETURN_TO_JUDGE } from '../../../../constants/TASK_ACTIONS';
 
 export const MotionToVacateFlowContainer = () => {
   const { path } = useRouteMatch();

@@ -8,7 +8,7 @@ import { AddressMotionToVacateView } from './AddressMotionToVacateView';
 import { ReturnToLitSupportModal } from './ReturnToLitSupportModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { returnToLitSupport } from './mtvActions';
-import { MotionToVacateFlowContainer } from './MotionToVacateFlowContainer';
+import { MotionToVacateFlowContainer } from './checkout/MotionToVacateFlowContainer';
 import { appealWithDetailSelector } from '../selectors';
 
 const RoutedReturnToLitSupport = (props) => {
