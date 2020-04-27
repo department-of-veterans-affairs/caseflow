@@ -43,16 +43,16 @@ class VirtualHearing < CaseflowRecord
 
   # After a certain point after this change gets merged, alias_with_host will never be nil
   # so we can rid of this logic then
-  def formatted_alias_with_host
+  def formatted_alias_or_alias_with_host
     alias_with_host.nil? ? "BVA#{alias_name}@#{client_host}" : alias_with_host
   end
 
   def guest_link
-    "#{base_url}?conference=#{formatted_alias_with_host}&pin=#{guest_pin}#&join=1&role=guest"
+    "#{base_url}?conference=#{formatted_alias_or_alias_with_host}&pin=#{guest_pin}#&join=1&role=guest"
   end
 
   def host_link
-    "#{base_url}?conference=#{formatted_alias_with_host}&pin=#{host_pin}#&join=1&role=host"
+    "#{base_url}?conference=#{formatted_alias_or_alias_with_host}&pin=#{host_pin}#&join=1&role=host"
   end
 
   def job_completed?

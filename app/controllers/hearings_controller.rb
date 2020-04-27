@@ -63,7 +63,7 @@ class HearingsController < HearingsApplicationController
   def virtual_hearing_job_status
     render json: {
       job_completed: hearing.virtual_hearing&.job_completed?,
-      alias_with_host: hearing.virtual_hearing&.get_alias_with_host,
+      alias_with_host: hearing.virtual_hearing&.formatted_alias_or_alias_with_host,
       host_pin: hearing.virtual_hearing&.host_pin
     }
   end
