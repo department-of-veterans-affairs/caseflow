@@ -59,7 +59,7 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
   }
 
   render = () => {
-    const { appeal, error, highlightFormItems } = this.props;
+    const { error, highlightFormItems } = this.props;
 
     return <QueueFlowModal
       title={COPY.CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE}
