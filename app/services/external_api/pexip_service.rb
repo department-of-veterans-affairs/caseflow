@@ -15,7 +15,7 @@ class ExternalApi::PexipService
 
   def create_conference(host_pin:, guest_pin:, name:)
     body = {
-      "aliases": [{ "alias": name }, { "alias": "BVA#{name}" }, { "alias": "BVA#{name}.#{client_host}" }],
+      "aliases": [{ "alias": "BVA#{name}" }, { "alias": "BVA#{name}@#{client_host}" }, { "alias": name }],
       "allow_guests": true,
       "description": "Created by Caseflow",
       "enable_chat": "yes",

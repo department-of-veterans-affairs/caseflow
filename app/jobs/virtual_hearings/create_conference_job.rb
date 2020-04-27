@@ -117,6 +117,10 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     virtual_hearing.alias.nil? || virtual_hearing.host_pin.nil? || virtual_hearing.guest_pin.nil?
   end
 
+  def format_alias_with_host(alias_with_host)
+    "BVA#{alias_with_host}@#{ENV['PEXIP_CLIENT_HOST']}"
+  end
+
   def assign_virtual_hearing_alias_and_pins
     # Using pessimistic locking here because no other processes should be reading
     # the record while maximum is being calculated.
@@ -124,6 +128,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       max_alias = VirtualHearing.maximum(:alias)
       conference_alias = max_alias ? (max_alias.to_i + 1).to_s.rjust(7, "0") : "0000001"
       virtual_hearing.alias = conference_alias
+      virtual_hearing.alias_with_host = format_alias_with_host(conference_alias)
       virtual_hearing.host_pin = rand(1000..9999)
       virtual_hearing.guest_pin = rand(1000..9999)
       virtual_hearing.save!

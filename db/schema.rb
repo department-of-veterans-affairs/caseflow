@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_21_231908) do
+ActiveRecord::Schema.define(version: 2020_04_27_151605) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1384,6 +1384,7 @@ ActiveRecord::Schema.define(version: 2020_04_21_231908) do
 
   create_table "virtual_hearings", force: :cascade do |t|
     t.string "alias", comment: "Alias for conference in Pexip"
+    t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false
@@ -1402,6 +1403,7 @@ ActiveRecord::Schema.define(version: 2020_04_21_231908) do
     t.string "veteran_email", comment: "Veteran's email address"
     t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"
     t.index ["alias"], name: "index_virtual_hearings_on_alias"
+    t.index ["alias_with_host"], name: "index_virtual_hearings_on_alias_with_host"
     t.index ["conference_id"], name: "index_virtual_hearings_on_conference_id"
     t.index ["created_by_id"], name: "index_virtual_hearings_on_created_by_id"
     t.index ["hearing_type", "hearing_id"], name: "index_virtual_hearings_on_hearing_type_and_hearing_id"
