@@ -2,7 +2,7 @@
 
 describe Representative, :postgres do
   let(:participant_id) { "123456" }
-  let(:vso_participant_id) { "789" }
+  let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
 
   let(:vso) do
     Representative.create(
@@ -14,22 +14,7 @@ describe Representative, :postgres do
     create(:user, roles: ["VSO"])
   end
 
-  let(:vso_participant_ids) do
-    [
-      {
-        legacy_poa_cd: "070",
-        nm: "VIETNAM VETERANS OF AMERICA",
-        org_type_nm: "POA National Organization",
-        ptcpnt_id: vso_participant_id
-      },
-      {
-        legacy_poa_cd: "071",
-        nm: "PARALYZED VETERANS OF AMERICA, INC.",
-        org_type_nm: "POA National Organization",
-        ptcpnt_id: "2452383"
-      }
-    ]
-  end
+  let(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
   describe ".create!" do
     it "sets the role to VSO" do

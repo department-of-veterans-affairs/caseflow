@@ -306,23 +306,25 @@ describe AssignHearingDispositionTask, :all_dbs do
             let(:appeal) do
               create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_pva)])
             end
+            let(:poa) do
+              Fakes::BGSServicePOA.paralyzed_veterans_vso_mapped.tap do |poa|
+                poa[:claimant_participant_id] = participant_id_with_pva
+                poa[:file_number] = appeal.veteran_file_number
+              end
+            end
 
             before do
               Vso.create(
                 name: "Paralyzed Veterans Of America",
                 role: "VSO",
                 url: "paralyzed-veterans-of-america",
-                participant_id: "2452383"
+                participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
               )
 
               allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
-                .with([participant_id_with_pva]).and_return(
-                  participant_id_with_pva => {
-                    representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
-                    representative_type: "POA National Organization",
-                    participant_id: "2452383"
-                  }
-                )
+                .with([participant_id_with_pva]).and_return(participant_id_with_pva => poa)
+              allow_any_instance_of(BGSService).to receive(:fetch_poa_by_file_number)
+                .with(appeal.veteran_file_number).and_return(poa)
             end
 
             it "creates an IHP task" do
@@ -370,6 +372,7 @@ describe AssignHearingDispositionTask, :all_dbs do
             allow(BGSService).to receive(:power_of_attorney_records).and_return(
               appeal.veteran_file_number => {
                 file_number: appeal.veteran_file_number,
+                ptcpnt_id: "4567",
                 power_of_attorney: {
                   legacy_poa_cd: "3QQ",
                   nm: "Clarence Darrow",

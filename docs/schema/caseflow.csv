@@ -109,6 +109,19 @@ available_hearing_locations,state,string,,,,,,
 available_hearing_locations,updated_at,datetime ∗,x,,,,x,
 available_hearing_locations,veteran_file_number,string,,,,,x,
 available_hearing_locations,zip_code,string,,,,,,
+bgs_power_of_attorneys,,,,,,,,Power of Attorney (POA) cached from BGS
+bgs_power_of_attorneys,authzn_change_clmant_addrs_ind,string,,,,,,Authorization for POA to change claimant address
+bgs_power_of_attorneys,authzn_poa_access_ind,string,,,,,,Authorization for POA access
+bgs_power_of_attorneys,claimant_participant_id,string ∗,x,,,,x,Claimant participant ID -- use as FK to claimants
+bgs_power_of_attorneys,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
+bgs_power_of_attorneys,file_number,string ∗,x,,,,x,Claimant file number
+bgs_power_of_attorneys,id,integer (8) PK,x,x,,,,
+bgs_power_of_attorneys,last_synced_at,datetime,,,,,x,The last time BGS was checked
+bgs_power_of_attorneys,legacy_poa_cd,string,,,,,,Legacy POA code
+bgs_power_of_attorneys,poa_participant_id,string ∗,x,,,,x,POA participant ID -- use as FK to people
+bgs_power_of_attorneys,representative_name,string ∗,x,,,,x,POA name
+bgs_power_of_attorneys,representative_type,string ∗,x,,,,x,POA type
+bgs_power_of_attorneys,updated_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 board_grant_effectuations,,,,,,,,Represents the work item of updating records in response to a granted issue on a Board appeal. Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.
 board_grant_effectuations,appeal_id,integer (8) ∗ FK,x,,x,,x,The ID of the appeal containing the granted issue being effectuated.
 board_grant_effectuations,contention_reference_id,string,,,,,x,"The ID of the contention created in VBMS. Indicates successful creation of the contention. If the EP has been rated, this contention could have been connected to a rating issue. That connection is used to map the rating issue back to the decision issue."
@@ -866,16 +879,6 @@ schedule_periods,start_date,date ∗,x,,,,,
 schedule_periods,type,string ∗,x,,,,,
 schedule_periods,updated_at,datetime ∗,x,,,,x,
 schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
-sent_hearing_email_events,,,,,,,,Events related to hearings notification emails
-sent_hearing_email_events,email_address,string,,,,,,Address the email was sent to
-sent_hearing_email_events,email_type,string,,,,,,"The type of email sent: cancellation, confirmation, updated_time_confirmation"
-sent_hearing_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email
-sent_hearing_email_events,hearing_id,integer (8) ∗ FK,x,,x,,x,Associated hearing
-sent_hearing_email_events,hearing_type,string ∗,x,,,,x,
-sent_hearing_email_events,id,integer (8) PK,x,x,,,,
-sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
-sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
-sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
 special_issue_lists,,,,,,,,
 special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
 special_issue_lists,appeal_type,string,,,,,x,
@@ -1044,9 +1047,8 @@ virtual_hearings,judge_email,string,,,,,,Judge's email address
 virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge
 virtual_hearings,representative_email,string,,,,,,Veteran's representative's email address
 virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran's representative
-virtual_hearings,request_cancelled,boolean,,,,,,Determines whether the user has cancelled the virtual hearing request
+virtual_hearings,status,string ∗,x,,,,,The status of the Pexip conference
 virtual_hearings,updated_at,datetime ∗,x,,,,x,
-virtual_hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recently updated the virtual hearing
 virtual_hearings,veteran_email,string ∗,x,,,,,Veteran's email address
 virtual_hearings,veteran_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran
 virtual_hearing_establishments,,,,,,,,
