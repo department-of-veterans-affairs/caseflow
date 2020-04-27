@@ -81,7 +81,7 @@ class LookupParticipantIdModal extends React.Component {
 
       this.setState({
         alert: 'error',
-        error: error.detail
+        error: error?.detail
       });
     }
   };

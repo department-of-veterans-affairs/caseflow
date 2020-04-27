@@ -10,7 +10,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
 
   # :nocov:
   rescue_from StandardError do |error|
-    Raven.capture_exception(error)
+    log_error(error)
     if error.class.method_defined?(:serialize_response)
       render(error.serialize_response)
     else
@@ -71,5 +71,13 @@ class Idt::Api::V1::BaseController < ActionController::Base
 
   def feature_enabled?(feature)
     FeatureToggle.enabled?(feature, user: user)
+  end
+
+  private
+
+  def log_error(error)
+    Raven.capture_exception(error)
+    Rails.logger.error(error)
+    Rails.logger.error(error.backtrace.join("\n"))
   end
 end

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VbmsUploadedDocument < CaseflowRecord
+  include HasSimpleAppealUpdatedSince
+
   belongs_to :appeal, optional: false
   validates :document_type, presence: true
 
