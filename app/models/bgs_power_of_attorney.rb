@@ -20,7 +20,7 @@ class BgsPowerOfAttorney < CaseflowRecord
   delegate :email_address,
            to: :person, prefix: :representative
 
-  validates :claimant_participant_id, :poa_participant_id, :representative_name, :representative_type, presence: true
+  validates :claimant_participant_id, :poa_participant_id, :file_number, :representative_name, :representative_type, presence: true
 
   before_save :update_cached_attributes!
 
