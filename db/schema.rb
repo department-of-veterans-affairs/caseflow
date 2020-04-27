@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_21_231908) do
+ActiveRecord::Schema.define(version: 2020_04_27_152555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -159,7 +159,7 @@ ActiveRecord::Schema.define(version: 2020_04_21_231908) do
     t.string "authzn_poa_access_ind", comment: "Authorization for POA access"
     t.string "claimant_participant_id", null: false, comment: "Claimant participant ID -- use as FK to claimants"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.string "file_number", null: false, comment: "Claimant file number"
+    t.string "file_number", comment: "Claimant file number"
     t.datetime "last_synced_at", comment: "The last time BGS was checked"
     t.string "legacy_poa_cd", comment: "Legacy POA code"
     t.string "poa_participant_id", null: false, comment: "POA participant ID -- use as FK to people"

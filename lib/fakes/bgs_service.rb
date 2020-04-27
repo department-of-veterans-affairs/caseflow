@@ -218,6 +218,8 @@ class Fakes::BGSService
 
   # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
+    return {} if file_number == "no-such-file-number"
+
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
     record ||= default_power_of_attorney_record
