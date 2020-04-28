@@ -115,6 +115,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     context "when getting tasks for a judge" do
       let(:role) { :judge_role }
+      let(:attorney) { create(:user) }
+      let!(:judge_team) { JudgeTeam.create_for_judge(user).tap { |team| team.add_user(attorney) } }
 
       let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
       let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
@@ -123,6 +125,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let!(:task15) do
         create(:ama_judge_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
       end
+      let!(:task17) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: user) }
 
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "judge" }
@@ -139,9 +142,10 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(in_progress["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(in_progress["attributes"]["placed_on_hold_at"]).to be nil
 
-        # Ensure we don't include recently completed tasks
+        # Ensure we don't include recently completed tasks, on hold tasks, or attorney tasks
         expect(response_body.count { |task| task["id"] == task10.id.to_s }).to eq 0
         expect(response_body.count { |task| task["id"] == task16.id.to_s }).to eq 0
+        expect(response_body.count { |task| task["id"] == task17.id.to_s }).to eq 0
       end
     end
 
