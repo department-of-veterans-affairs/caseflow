@@ -13,7 +13,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
   def check_row_content(event, index)
     # Format the date the same as moment
-    formatted_date = event.sent_at.strftime("%b %d, %Y, %l:%M %P %Z").gsub!(/DT/, "ST")
+    formatted_date = event.sent_at.strftime("%b %d, %Y, %-l:%M %P %Z").gsub(/DT/, "ST")
 
     expect(find("#table-row-#{index} > td:first-child")).to have_content(event.sent_to_role)
     expect(find("#table-row-#{index} > td:nth-child(2)")).to have_content(event.email_address)
