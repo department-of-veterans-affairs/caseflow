@@ -41,7 +41,6 @@ describe VirtualHearings::DeleteConferencesJob do
         expect(job).not_to receive(:send_cancellation_emails)
 
         subject
-        virtual_hearing.reload
       end
     end
 
