@@ -27,8 +27,10 @@ import TranscriptionDetailsInputs from './TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './TranscriptionRequestInputs';
 import { HearingLinks } from './HearingLinks';
+import { EmailNotificationHistory } from './EmailNotificationHistory';
 
 // Displays the emails associated with the virtual hearing.
+
 const EmailSection = ({ hearing, virtualHearing, isVirtual, wasVirtual, readOnly, updateVirtualHearing, errors }) => {
   const showEmailFields = (isVirtual || wasVirtual) && virtualHearing;
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
@@ -241,6 +243,7 @@ const DetailsInputs = (props) => {
         virtualHearing={virtualHearing}
         wasVirtual={wasVirtual}
       />
+      {hearing?.emailEvents.length > 0 && <EmailNotificationHistory rows={hearing.emailEvents} />}
       {!isLegacy && (
         <React.Fragment>
           <div className="cf-help-divider" />
@@ -289,7 +292,8 @@ DetailsInputs.propTypes = {
     evidenceWindowWaived: PropTypes.bool,
     notes: PropTypes.string,
     bvaPoc: PropTypes.string,
-    scheduledForIsPast: PropTypes.bool
+    scheduledForIsPast: PropTypes.bool,
+    emailEvents: PropTypes.array
   }),
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,

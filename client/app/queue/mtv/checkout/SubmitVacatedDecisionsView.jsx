@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { MotionToVacateContext } from './MotionToVacateContext';
 import { useDispatch } from 'react-redux';
-import { editStagedAppeal, stageAppeal, setDecisionOptions } from '../QueueActions';
-import SubmitDecisionView from '../SubmitDecisionView';
+import { editStagedAppeal, stageAppeal, setDecisionOptions } from '../../QueueActions';
+import SubmitDecisionView from '../../SubmitDecisionView';
 import { useParams } from 'react-router';
-import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES';
+import DECISION_TYPES from '../../../../constants/APPEAL_DECISION_TYPES';
 
 export const SubmitVacatedDecisionsView = ({ appeal }) => {
   const [ctx] = useContext(MotionToVacateContext);
