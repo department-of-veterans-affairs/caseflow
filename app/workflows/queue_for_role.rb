@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 class QueueForRole
-  QUEUE_ROLE_MAPPER = {
-    attorney: AttorneyQueue,
-    judge: JudgeQueue
-  }
-
   def initialize(user_role)
     if user_role.nil?
       fail ArgumentError, "expected user role"
@@ -15,11 +10,21 @@ class QueueForRole
   end
 
   def create(**args)
-    queue = QUEUE_ROLE_MAPPER[user_role.to_sym]
-    queue ? queue.new(**args) : GenericQueue.new(**args)
+    queue.new(**args)
   end
 
   private
+
+  def queue
+    case user_role
+    when "attorney"
+      AttorneyQueue
+    when "judge"
+      JudgeQueue
+    else
+      GenericQueue
+    end
+  end
 
   attr_reader :user_role
 end
