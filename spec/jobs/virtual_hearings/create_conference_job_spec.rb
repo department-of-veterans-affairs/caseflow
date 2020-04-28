@@ -26,7 +26,7 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
       expect(virtual_hearing.conference_id).to eq(9001)
       expect(virtual_hearing.status).to eq(:active)
       expect(virtual_hearing.alias).to eq("0000001")
-      expect(virtual_hearing.alias_with_host).to eq(VirtualHearing.formatted_alias("0000001"))
+      expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
       expect(virtual_hearing.host_pin.nil?).to eq(false)
       expect(virtual_hearing.guest_pin.nil?).to eq(false)
     end

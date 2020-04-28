@@ -37,7 +37,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     check_email_event_headers
     check_email_event_rows(hearing, row_count)
   end
-  
+
   let(:current_user) do
     create(
       :user,
@@ -47,9 +47,9 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       email: "test@gmail.com"
     )
   end
-  
+
   let(:pexip_url) { "fake.va.gov" }
-  
+
   before do
     create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG")
     create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO")
