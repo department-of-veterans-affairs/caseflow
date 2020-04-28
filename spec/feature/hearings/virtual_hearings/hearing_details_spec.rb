@@ -2,6 +2,7 @@
 
 RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   let(:current_user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
+  let(:pexip_url) { "fake.va.gov" }
 
   before do
     create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG")
@@ -9,6 +10,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     HearingsManagement.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
     FeatureToggle.enable!(:schedule_virtual_hearings)
+
+    stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
   end
 
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO13") }

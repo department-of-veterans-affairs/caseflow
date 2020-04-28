@@ -1,12 +1,19 @@
 # frozen_string_literal: true
 
 describe ExternalApi::PexipService do
+  let(:pexip_url) { "fake.url.va.gov" }
+  let(:pexip_mngmt) { "fake.mngmt.va.gov"}
+
+  before do
+    stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
+  end
+
   let(:pexip_service) do
     ExternalApi::PexipService.new(
-      host: "vapnnevnpmn.care.va.gov",
+      host: pexip_mngmt,
       user_name: "pexip",
       password: "1234",
-      client_host: "care.va.gov"
+      client_host: pexip_url
     )
   end
 
@@ -15,7 +22,7 @@ describe ExternalApi::PexipService do
   describe "#create_conference" do
     let(:body) do
       {
-        "aliases": [{ "alias": "BVA1111111" }, { "alias": "BVA1111111@care.va.gov" }, { "alias": "1111111" }],
+        "aliases": [{ "alias": "BVA1111111" }, { "alias": "BVA1111111@#{pexip_url}" }, { "alias": "1111111" }],
         "allow_guests": true,
         "description": "Created by Caseflow",
         "enable_chat": "yes",
