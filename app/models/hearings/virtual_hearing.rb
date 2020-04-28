@@ -2,8 +2,12 @@
 
 class VirtualHearing < CaseflowRecord
   class << self
+    def client_host_or_default
+      ENV["PEXIP_CLIENT_HOST"] || "care.evn.va.gov"
+    end
+
     def formatted_alias(alias_name)
-      "BVA#{alias_name}@#{ENV['PEXIP_CLIENT_HOST']}"
+      "BVA#{alias_name}@#{client_host_or_default}"
     end
   end
 
@@ -115,7 +119,7 @@ class VirtualHearing < CaseflowRecord
   private
 
   def base_url
-    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/bva-app/"
+    "https://#{VirtualHearing.client_host_or_default}/bva-app/"
   end
 
   def assign_created_by_user
