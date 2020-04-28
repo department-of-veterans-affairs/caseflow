@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class VirtualHearing < CaseflowRecord
+  class << self
+    def formatted_alias(alias_name)
+      "BVA#{alias_name}@#{ENV['PEXIP_CLIENT_HOST']}"
+    end
+  end
+
   alias_attribute :alias_name, :alias
 
   belongs_to :hearing, polymorphic: true
@@ -44,7 +50,7 @@ class VirtualHearing < CaseflowRecord
   # After a certain point after this change gets merged, alias_with_host will never be nil
   # so we can rid of this logic then
   def formatted_alias_or_alias_with_host
-    alias_with_host.nil? ? "BVA#{alias_name}@#{client_host}" : alias_with_host
+    alias_with_host.nil? ? VirtualHearing.formatted_alias(alias_name) : alias_with_host
   end
 
   def guest_link
@@ -108,12 +114,8 @@ class VirtualHearing < CaseflowRecord
 
   private
 
-  def client_host
-    ENV["PEXIP_CLIENT_HOST"]
-  end
-
   def base_url
-    "https://#{client_host || 'localhost'}/bva-app/"
+    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/bva-app/"
   end
 
   def assign_created_by_user
