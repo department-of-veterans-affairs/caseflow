@@ -884,9 +884,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
           "sent to #{judge.full_name} for review."
         )
 
+        judge_task = vacate_stream.tasks.find_by(type: 'JudgeDecisionReviewTask');
+
         expect(vacate_stream.decision_issues.size).to eq(3)
         expect(vacate_stream.tasks.size).to eq(5)
         expect(vacate_stream.tasks.find { |item| item[:type] == action_class }).to_not be_nil
+        expect(judge_task.status).to eq(Constants.TASK_STATUSES.on_hold)
       end
     end
   end
