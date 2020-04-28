@@ -350,7 +350,7 @@ class Appeal < DecisionReview
            to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
-    claimants.map(&:power_of_attorney)
+    claimants.map(&:power_of_attorney).compact
   end
 
   def representatives

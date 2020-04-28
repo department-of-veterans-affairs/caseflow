@@ -1,25 +1,17 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { sprintf } from 'sprintf-js';
-
-import COPY from '../../COPY';
-
-import {
-  taskById,
-  appealWithDetailSelector
-} from './selectors';
+import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import * as React from 'react';
 
 import { onReceiveAmaTasks } from './QueueActions';
-
-import TextareaField from '../components/TextareaField';
+import { requestSave } from './uiReducer/uiActions';
+import { taskById, appealWithDetailSelector } from './selectors';
+import Alert from '../components/Alert';
+import COPY from '../../COPY';
 import QueueFlowModal from './components/QueueFlowModal';
-
-import {
-  requestSave
-} from './uiReducer/uiActions';
+import TextareaField from '../components/TextareaField';
 
 class CreateChangeHearingDispositionTaskModal extends React.Component {
   constructor(props) {
@@ -54,10 +46,11 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
 
     return this.props.requestSave(`/tasks/${task.taskId}/request_hearing_disposition_change`, payload, successMsg).
       then((resp) => {
-        this.props.onReceiveAmaTasks(resp.body.tasks.data);
+        this.props.onReceiveAmaTasks(resp.body.tasks);
       }).
-      catch(() => {
+      catch((err) => {
         // handle the error from the frontend
+        throw err;
       });
   }
 
@@ -66,16 +59,20 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
   }
 
   render = () => {
-    const {
-      highlightFormItems
-    } = this.props;
+    const { error, highlightFormItems } = this.props;
 
     return <QueueFlowModal
       title={COPY.CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE}
-      pathAfterSubmit = "/queue"
+      pathAfterSubmit="/queue"
       submit={this.submit}
       validateForm={this.validateForm}
     >
+      {error &&
+        <Alert title={error.title} type="error">
+          {error.detail}
+        </Alert>
+      }
+
       <p>{COPY.CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_BODY}</p>
 
       <TextareaField
@@ -94,6 +91,10 @@ CreateChangeHearingDispositionTaskModal.propTypes = {
     externalId: PropTypes.string,
     veteranFullName: PropTypes.string
   }),
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  }),
   highlightFormItems: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
   requestSave: PropTypes.func,
@@ -103,12 +104,11 @@ CreateChangeHearingDispositionTaskModal.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const {
-    highlightFormItems
-  } = state.ui;
+  const { highlightFormItems, messages } = state.ui;
 
   return {
     highlightFormItems,
+    error: messages.error,
     task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };

@@ -88,7 +88,8 @@ class HearingDetails extends React.Component {
         scheduledForIsPast: hearing.scheduledForIsPast,
         // Transcription Request
         transcriptRequested: hearing.transcriptRequested,
-        transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
+        transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+        emailEvents: _.values(hearing.emailEvents)
       },
       transcriptionDetailsForm: {
         // Transcription Details
