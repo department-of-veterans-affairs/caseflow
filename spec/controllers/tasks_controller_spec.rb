@@ -403,23 +403,27 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
             expect(response_body.first["id"]).to eq parent.id.to_s
 
+            # Ensure there is a colocated org parent task for the AddressVerificationColocatedTask
             expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.second["attributes"]["label"]).to eq "Address verification"
 
+            # Ensure there is a AddressVerificationColocatedTask user task created
             expect(response_body.third["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.third["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.third["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.third["attributes"]["label"]).to eq "Address verification"
-            # assignee should be the same person
-            id = response_body.third["attributes"]["assigned_to"]["id"]
-            expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
 
+            # Ensure there is a MissingRecordsColocatedTask user task created
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
             expect(response_body.last["attributes"]["label"]).to eq "Missing records"
+
+            # Assignee should be the same person for the two user tasks
+            id = response_body.third["attributes"]["assigned_to"]["id"]
+            expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
           end
         end
       end
