@@ -99,6 +99,6 @@ class IntakeStartValidator
   #      https://github.com/department-of-veterans-affairs/caseflow/issues/13389
   # This bypass is allowed for MailTeam users at Station 101.
   def user_bypasses_same_station_check?
-    MailTeam.singleton.users.include?(intake.user) && intake.user.station_id == User::BOARD_STATION_ID
+    BvaIntake.singleton.users.include?(intake.user) && intake.user.station_id == User::BOARD_STATION_ID
   end
 end
