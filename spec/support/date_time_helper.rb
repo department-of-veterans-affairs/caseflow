@@ -2,7 +2,7 @@
 
 module DateTimeHelper
   def post_ama_start_date
-    ama_start_date + 100.days
+    ama_start_date + 200.days
   end
 
   def ama_start_date
