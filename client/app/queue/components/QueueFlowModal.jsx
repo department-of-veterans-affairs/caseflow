@@ -81,8 +81,7 @@ QueueFlowModal.propTypes = {
   pathAfterSubmit: PropTypes.string,
   // submit should return a promise on which .then() can be called
   submit: PropTypes.func,
-  validateForm: PropTypes.func,
-  reloadPageAfterSubmit: PropTypes.bool
+  validateForm: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
