@@ -132,7 +132,6 @@ class HearingDetails extends React.Component {
   updateVirtualHearing = (values) => {
     this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
 
-
     // Calculate the form changes
     const updates = getChanges(this.state.initialFormData, values);
 
