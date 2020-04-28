@@ -33,18 +33,18 @@ describe AdvanceOnDocketMotion, :postgres do
       end
     end
 
-    describe "#eligable_due_to_age" do
+    describe "#eligible_due_to_age" do
       it "Returns all motions where the advance reason is age related" do
-        expect(described_class.eligable_due_to_age.count).to eq motions.count / motion_reasons.count
-        expect(described_class.eligable_due_to_age.pluck(:reason).uniq).to eq [described_class.reasons[:age]]
+        expect(described_class.eligible_due_to_age.count).to eq motions.count / motion_reasons.count
+        expect(described_class.eligible_due_to_age.pluck(:reason).uniq).to eq [described_class.reasons[:age]]
       end
     end
 
-    describe "#eligable_due_to_date" do
+    describe "#eligible_due_to_date" do
       it "Returns all motions created after receipt date, but not age related motions" do
         non_age_motions = described_class.where.not(id: described_class.age)
-        expect(described_class.eligable_due_to_date(1.day.ago).count).to eq non_age_motions.count / creation_dates.count
-        expect(described_class.eligable_due_to_date(31.days.ago).count).to eq non_age_motions.count
+        expect(described_class.eligible_due_to_date(1.day.ago).count).to eq non_age_motions.count / creation_dates.count
+        expect(described_class.eligible_due_to_date(31.days.ago).count).to eq non_age_motions.count
       end
     end
 
