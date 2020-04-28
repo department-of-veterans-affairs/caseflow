@@ -29,33 +29,22 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
       .where(id: completed_dispatch_tasks(Appeal.name))
   end
 
-  def stuck_appeals
-    stuck_query(Appeal.name)
-  end
-
   def completed_dispatch_tasks(klass_name)
     tasks_for(klass_name).where(type: [BvaDispatchTask.name], status: completed)
   end
 
-  def established_appeals
-    Appeal.where.not(established_at: nil)
-  end
-
   def appeals_with_zero_tasks
-    established_appeals.left_outer_joins(:tasks).where(tasks: { id: nil })
+    Appeal.established.left_outer_joins(:tasks).where(tasks: { id: nil })
   end
 
   def tasks_for(klass_name)
     Task.select(:appeal_id).where(appeal_type: klass_name)
   end
 
-  def stuck_query(klass_name)
-    klass = klass_name.constantize
-    table = klass.table_name
-    klass.where.not(id: tasks_for(klass_name).closed)
-      .where.not(id: tasks_for(klass_name).where(type: RootTask.name, status: cancelled))
+  def stuck_appeals
+    Appeal.established.active
       .joins(:tasks)
-      .group("#{table}.id")
+      .group("appeals.id")
       .having("count(tasks) = count(case when tasks.status = 'on_hold' then 1 end)")
   end
 end
