@@ -47,30 +47,28 @@ class ScheduleHearingTask < Task
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
-    hearing = most_recent_closed_hearing_on_appeal
+    hearing_task = most_recent_closed_hearing_task_on_appeal
 
-    if hearing&.disposition.blank?
+    if hearing_task&.hearing&.disposition.blank?
       fail Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR
     end
 
-    # get the current hearing task for later use before it is cancelled.
-    hearing_task = hearing.hearing_task
+    multi_transaction do
+      # cancel my children, myself, and my hearing task ancestor
+      children.open.update_all(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+      update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+      ancestor_task_of_type(HearingTask)&.update!(
+        status: Constants.TASK_STATUSES.cancelled,
+        closed_at: Time.zone.now
+      )
 
-    if hearing_task.cancelled?
-      fail Caseflow::Error::ActionForbiddenError, message: "Hearing Task already cancelled"
+      # cancel the old HearingTask and create a new one associated with the same hearing
+      new_hearing_task = hearing_task.cancel_and_recreate
+      HearingTaskAssociation.create!(hearing: hearing_task.hearing, hearing_task: new_hearing_task)
+
+      # create a ChangeHearingDispositionTask on the new HearingTask
+      new_hearing_task.create_change_hearing_disposition_task(instructions)
     end
-
-    # cancel my children, myself, and my hearing task ancestor
-    children.open.update_all(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
-    update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
-    ancestor_task_of_type(HearingTask)&.update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
-
-    # cancel the old HearingTask and create a new one associated with the same hearing
-    new_hearing_task = hearing_task.cancel_and_recreate
-    HearingTaskAssociation.create!(hearing: hearing, hearing_task: new_hearing_task)
-
-    # create a ChangeHearingDispositionTask on the new HearingTask
-    new_hearing_task.create_change_hearing_disposition_task(instructions)
   end
 
   def available_actions(user)
