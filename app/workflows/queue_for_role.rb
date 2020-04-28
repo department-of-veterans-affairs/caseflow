@@ -4,7 +4,7 @@ class QueueForRole
   QUEUE_ROLE_MAPPER = {
     attorney: AttorneyQueue,
     judge: JudgeQueue
-  }
+  }.freeze
 
   def initialize(user_role)
     if user_role.nil?
