@@ -1227,7 +1227,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
-        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawal pending/i)
+        expect(page).to have_content(
+          /[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawal pending/i
+        )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
