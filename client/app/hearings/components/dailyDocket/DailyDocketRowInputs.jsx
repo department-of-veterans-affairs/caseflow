@@ -361,6 +361,7 @@ PreppedCheckbox.propTypes = {
 export const StaticVirtualHearing = ({ hearing, user }) => (
   <div>
     <VirtualHearingLink
+      label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL}
       user={user}
       hearing={hearing}
       isVirtual={hearing.isVirtual}
