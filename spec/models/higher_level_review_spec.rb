@@ -8,7 +8,7 @@ describe HigherLevelReview, :postgres do
   let(:veteran_file_number) { "64205555" }
   let(:ssn) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, ssn: ssn) }
-  let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+  let(:receipt_date) { ama_test_start_date + 1 }
   let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
@@ -83,7 +83,7 @@ describe HigherLevelReview, :postgres do
         end
 
         context "when it is before AMA begin date" do
-          let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 1 }
+          let(:receipt_date) { ama_test_start_date - 1 }
 
           it "adds an error to receipt_date" do
             is_expected.to be false
