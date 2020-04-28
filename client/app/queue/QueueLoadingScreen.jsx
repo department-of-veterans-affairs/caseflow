@@ -108,7 +108,7 @@ class QueueLoadingScreen extends React.PureComponent {
       const targetUserId = parseInt(userUrlParam, 10);
 
       return ApiUtil.get(`/user?id=${targetUserId}`).then((resp) =>
-      this.props.setTargetUser(resp.body.user));
+        this.props.setTargetUser(resp.body.user));
     }
 
     return ApiUtil.get(`/user?css_id=${userUrlParam}`).then((resp) =>
