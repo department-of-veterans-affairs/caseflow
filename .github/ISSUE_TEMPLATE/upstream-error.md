@@ -1,6 +1,15 @@
+---
+name: Upstream Error
+about: Template for Upstream Errors
+title: ''
+labels: ' Source: Upstream Error, Team: Foxtrot'
+assignees: ''
+
+---
 # Upstream Error
 
 ## Description
+<!-- Optional: add any additional information you have here, or delete the section -->
 
 ## Impacted Reviews
 

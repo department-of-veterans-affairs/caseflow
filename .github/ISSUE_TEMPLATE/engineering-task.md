@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ## Description
-
+<!-- Optional: add any additional information you have here, or delete the section -->
 
 ## Acceptance criteria
 - [ ] Update documentation: [link]
