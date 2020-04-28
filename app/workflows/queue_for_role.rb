@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 class QueueForRole
+<<<<<<< HEAD
+=======
+  QUEUE_ROLE_MAPPER = {
+    attorney: AttorneyQueue,
+    judge: JudgeQueue
+  }.freeze
+
+>>>>>>> a49969dbe1f4832cadb3375715210570c8b8440d
   def initialize(user_role)
     if user_role.nil?
       fail ArgumentError, "expected user role"
