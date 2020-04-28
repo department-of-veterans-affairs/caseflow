@@ -74,9 +74,9 @@ class TasksController < ApplicationController
     param_groups.each do |task_type, param_group|
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
-    tasks.flatten!
+    modified_tasks = [parent_tasks_from_params, tasks].flatten!
 
-    tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
+    tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + modified_tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
   rescue ActiveRecord::RecordInvalid => error
@@ -204,6 +204,10 @@ class TasksController < ApplicationController
 
   def task
     @task ||= Task.find(params[:id])
+  end
+
+  def parent_tasks_from_params
+    Task.where(id: create_params.map { |params| params[:parent_id] })
   end
 
   def create_params
