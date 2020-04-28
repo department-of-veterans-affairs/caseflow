@@ -187,6 +187,11 @@ export const toggleCancelled = (first, second, form) =>
       current: second
     };
 
+/**
+ * Method to construct virtual hearing links
+ * @param {Object} virtualHearing -- The virtual hearing to construct URLs
+ * @returns {Object} -- New object with the host and guest links formatted
+ */
 export const constructURLs = (virtualHearing) => {
   // Don't construct if the virtual hearing is empty
   if (!virtualHearing) {

@@ -2,24 +2,10 @@ import { css } from 'glamor';
 import React from 'react';
 import VirtualHearingLink from '../VirtualHearingLink';
 import { COLORS } from '../../../constants/AppConstants';
-import { rowThirds, labelPadding, labelPaddingFirst, hearingLinksContainer } from './style';
+import { rowThirds, labelPadding, labelPaddingFirst, hearingLinksContainer, copyButtonStyles } from './style';
 import COPY from '../../../../COPY';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { constructURLs } from '../../utils';
-
-const styling = {
-  borderColor: COLORS.PRIMARY,
-  borderWidth: '2px',
-  color: COLORS.PRIMARY,
-  ':hover': {
-    backgroundColor: 'transparent',
-    color: COLORS.PRIMARY,
-    borderColor: COLORS.PRIMARY,
-    borderBottomWidth: '2px'
-  },
-  '& > svg path': { fill: COLORS.PRIMARY },
-  '&:hover > svg path': { fill: COLORS.PRIMARY }
-};
 
 export const VirtualHearingLinkDetails = ({ alias, pin, role, link, hearing }) => (
   <React.Fragment>
@@ -32,7 +18,7 @@ export const VirtualHearingLinkDetails = ({ alias, pin, role, link, hearing }) =
       {pin}
     </div>
     {!hearing.scheduledForIsPast && (
-      <CopyTextButton label="" styling={styling} text={`Copy ${role} Link`} textToCopy={link} />
+      <CopyTextButton label="" styling={copyButtonStyles} text={`Copy ${role} Link`} textToCopy={link} />
     )}
   </React.Fragment>
 );
