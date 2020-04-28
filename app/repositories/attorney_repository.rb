@@ -11,7 +11,7 @@ class AttorneyRepository
 
     # Returns CSS_IDs of pure attorneys and acting judges (who are normally attorneys)
     def find_all_having_attorney_ids_excluding_judges
-      VACOLS::Staff.css_ids_from_records(VACOLS::Staff.attorney)
+      VACOLS::Staff.css_ids_from_records_with_css_ids(VACOLS::Staff.attorney)
     end
   end
 end

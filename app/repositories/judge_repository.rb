@@ -3,7 +3,7 @@
 class JudgeRepository
   # Includes acting judges, who are normally attorneys
   def self.find_all_judges
-    css_ids = VACOLS::Staff.css_ids_from_records(VACOLS::Staff.judge)
+    css_ids = VACOLS::Staff.css_ids_from_records_with_css_ids(VACOLS::Staff.judge)
 
     User.batch_find_by_css_id_or_create_with_default_station_id(css_ids)
   end

@@ -15,7 +15,7 @@ class VACOLS::Staff < VACOLS::Record
   scope :judge,                 ->          { pure_judge.or(acting_judge) }
   scope :attorney,              ->          { pure_attorney.or(acting_judge) }
 
-  def self.css_ids_from_records(staff_records)
+  def self.css_ids_from_records_with_css_ids(staff_records)
     staff_records.having_css_id.pluck(:sdomainid).map(&:upcase)
   end
 end
