@@ -109,7 +109,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_selector(:css, "a[href='#{guest_link}']")
     end
   end
-  
+
   context "initial hearing type is Video" do
     scenario "email notification history is not displayed" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
