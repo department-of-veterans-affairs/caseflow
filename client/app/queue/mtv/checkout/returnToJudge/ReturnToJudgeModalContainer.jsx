@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { ReturnToJudgeModal } from './ReturnToJudgeModal';
 import { useDispatch, useSelector } from 'react-redux';
-import ApiUtil from '../../../util/ApiUtil';
-import { showSuccessMessage } from '../../uiReducer/uiActions';
-import { returnToJudgeAlert } from '../mtvMessages';
-import { appealWithDetailSelector } from '../../selectors';
+import ApiUtil from '../../../../util/ApiUtil';
+import { showSuccessMessage } from '../../../uiReducer/uiActions';
+import { returnToJudgeAlert } from '../../mtvMessages';
+import { appealWithDetailSelector } from '../../../selectors';
 
 export const ReturnToJudgeModalContainer = () => {
   const { goBack, push } = useHistory();
@@ -24,6 +24,7 @@ export const ReturnToJudgeModalContainer = () => {
 
     try {
       const { body } = await ApiUtil.post(url, { data });
+      // eslint-disable-next-line camelcase
       const judge = body?.task?.data?.attributes?.assigned_to;
 
       dispatch(

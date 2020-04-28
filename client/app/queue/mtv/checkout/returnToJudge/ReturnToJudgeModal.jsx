@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Modal from '../../../components/Modal';
+import Modal from '../../../../components/Modal';
 import {
   MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_TITLE,
   MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_DESCRIPTION,
   MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_INSTRUCTIONS_LABEL,
   MODAL_CANCEL_BUTTON
-} from '../../../../COPY';
-import StringUtil from '../../../util/StringUtil';
-import TextareaField from '../../../components/TextareaField';
+} from '../../../../../COPY';
+import StringUtil from '../../../../util/StringUtil';
+import TextareaField from '../../../../components/TextareaField';
 import { noop } from 'lodash';
 
 export const ReturnToJudgeModal = ({

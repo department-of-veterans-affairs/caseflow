@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 
 import { upperFirst } from 'lodash';
 
-import COPY from '../../../COPY';
-import Modal from '../../components/Modal';
-import SelectIssueDispositionDropdown from '../components/SelectIssueDispositionDropdown';
-import TextareaField from '../../components/TextareaField';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
-import SearchableDropdown from '../../components/SearchableDropdown';
+import COPY from '../../../../COPY';
+import Modal from '../../../components/Modal';
+import SelectIssueDispositionDropdown from '../../components/SelectIssueDispositionDropdown';
+import TextareaField from '../../../components/TextareaField';
+import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
+import SearchableDropdown from '../../../components/SearchableDropdown';
 
 import cx from 'classnames';
 import styles from './AddEditDecisionIssueModal.module.scss';

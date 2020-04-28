@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import ProgressBar from '../../components/ProgressBar';
+import ProgressBar from '../../../components/ProgressBar';
 import { views } from './mtvCheckoutSteps';
 
 const generateSections = (steps, current) =>
