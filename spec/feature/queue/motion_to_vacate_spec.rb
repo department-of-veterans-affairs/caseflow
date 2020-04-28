@@ -848,7 +848,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         # step "removes the duplicate and submits the form for a new admin action"
 
-        within all('div.admin-action-item')[1] do
+        within all("div.admin-action-item")[1] do
           click_on COPY::ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL
         end
 
