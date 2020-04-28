@@ -1,11 +1,11 @@
 import React, { useContext, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import COPY from '../../../COPY';
+import COPY from '../../../../COPY';
 
-import QueueFlowPage from '../components/QueueFlowPage';
-import AmaIssueList from '../../components/AmaIssueList';
-import DecisionIssues from '../components/DecisionIssues';
+import QueueFlowPage from '../../components/QueueFlowPage';
+import AmaIssueList from '../../../components/AmaIssueList';
+import DecisionIssues from '../../components/DecisionIssues';
 import { MotionToVacateContext } from './MotionToVacateContext';
 import { AddEditDecisionIssueModal } from './AddEditDecisionIssueModal';
 import uuid from 'uuid';
@@ -29,6 +29,7 @@ export const AddDecisionIssuesView = ({ appeal }) => {
   const connectedRequestIssues = useMemo(
     () =>
       appeal.issues.filter((issue) => {
+        // eslint-disable-next-line camelcase
         return state?.decisionIssue?.request_issue_ids?.includes(issue.id);
       }),
     [state.decisionIssue, appeal.issues]

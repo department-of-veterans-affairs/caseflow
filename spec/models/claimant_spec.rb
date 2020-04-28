@@ -123,6 +123,29 @@ describe Claimant, :postgres do
     end
   end
 
+  context "#power_of_attorney" do
+    let(:claimant) { create(:claimant) }
+
+    subject { claimant.power_of_attorney }
+
+    it "returns BgsPowerOfAttorney" do
+      expect(subject).to be_a BgsPowerOfAttorney
+    end
+
+    context "when PID and file number do not match BGS" do
+      let(:claimant) do
+        create(:claimant,
+               participant_id: "no-such-pid",
+               decision_review: build(:appeal, veteran_file_number: "no-such-file-number"))
+      end
+
+      it "returns nil" do
+        expect(subject).to be_nil
+        expect(claimant.representative_name).to be_nil
+      end
+    end
+  end
+
   context "#valid?" do
     context "participant_id" do
       let(:participant_id) { "1234" }
