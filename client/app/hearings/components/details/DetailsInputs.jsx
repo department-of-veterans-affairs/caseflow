@@ -117,6 +117,7 @@ const VirtualHearingSection = ({
         hearing={hearing}
         virtualHearing={virtualHearing}
         isVirtual={isVirtual}
+        wasVirtual={wasVirtual}
       />
       <EmailSection
         errors={errors}

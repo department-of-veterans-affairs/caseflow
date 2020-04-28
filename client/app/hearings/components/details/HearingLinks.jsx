@@ -7,7 +7,7 @@ import COPY from '../../../../COPY';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { constructURLs } from '../../utils';
 
-export const VirtualHearingLinkDetails = ({ alias, pin, role, link, hearing }) => (
+export const VirtualHearingLinkDetails = ({ alias, pin, role, link, hearing, wasVirtual }) => (
   <React.Fragment>
     <div {...labelPaddingFirst}>
       <strong>Conference Room: </strong>
@@ -17,18 +17,18 @@ export const VirtualHearingLinkDetails = ({ alias, pin, role, link, hearing }) =
       <strong>PIN: </strong>
       {pin}
     </div>
-    {!hearing.scheduledForIsPast && (
+    {!hearing?.scheduledForIsPast && !wasVirtual && (
       <CopyTextButton label="" styling={copyButtonStyles} text={`Copy ${role} Link`} textToCopy={link} />
     )}
   </React.Fragment>
 );
 
-export const LinkContainer = ({ link, user, hearing, isVirtual, virtualHearing, role, label }) => (
+export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virtualHearing, role, label }) => (
   <div id={`${role.toLowerCase()}-hearings-link`} {...css({ marginTop: '1.5rem' })}>
     <strong>{label}: </strong>
-    {virtualHearing?.jobCompleted ? (
+    {virtualHearing?.jobCompleted || wasVirtual ? (
       <React.Fragment>
-        {hearing.scheduledForIsPast ? (
+        {hearing?.scheduledForIsPast || wasVirtual ? (
           <span>Expired</span>
         ) : (
           <VirtualHearingLink
@@ -41,11 +41,12 @@ export const LinkContainer = ({ link, user, hearing, isVirtual, virtualHearing, 
           />
         )}
         <VirtualHearingLinkDetails
+          wasVirtual={wasVirtual}
           hearing={hearing}
           link={link}
           role={role}
-          alias={virtualHearing.alias}
-          pin={role === 'VLJ' ? virtualHearing.hostPin : virtualHearing.guestPin}
+          alias={virtualHearing?.alias}
+          pin={role === 'VLJ' ? virtualHearing?.hostPin : virtualHearing?.guestPin}
         />
       </React.Fragment>
     ) : (
@@ -54,13 +55,14 @@ export const LinkContainer = ({ link, user, hearing, isVirtual, virtualHearing, 
   </div>
 );
 
-export const HearingLinks = ({ hearing, virtualHearing, isVirtual, label, user }) => {
+export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, label, user }) => {
   const { hostLink, guestLink } = constructURLs(virtualHearing);
 
   return (
-    isVirtual && (
+    (isVirtual || wasVirtual) && (
       <div {...rowThirds} {...hearingLinksContainer}>
         <LinkContainer
+          wasVirtual={wasVirtual}
           role="VLJ"
           link={hostLink}
           user={user}
@@ -70,6 +72,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, label, user }
           label={label}
         />
         <LinkContainer
+          wasVirtual={wasVirtual}
           label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
           role="Guest"
           link={guestLink}

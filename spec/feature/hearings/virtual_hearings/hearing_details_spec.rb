@@ -20,6 +20,23 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
   let(:fill_in_veteran_email) { "email@testingEmail.com" }
 
+  def check_virtual_hearings_links_expired(virtual_hearing)
+    within "#vlj-hearings-link" do
+      expect(page).to have_content(
+        "VLJ Link: Expired\n" \
+        "Conference Room: BVA#{virtual_hearing.alias}@care.va.gov\n" \
+        "PIN: #{virtual_hearing.host_pin}"
+      )
+    end
+    within "#guest-hearings-link" do
+      expect(page).to have_content(
+        "Guest Link: Expired\n" \
+        "Conference Room: BVA#{virtual_hearing.alias}@care.va.gov\n" \
+        "PIN: #{virtual_hearing.guest_pin}"
+      )
+    end
+  end
+
   def check_virtual_hearings_links(virtual_hearing, label)
     # Construct the Virtual Hearing Links
     client_host = ENV["PEXIP_CLIENT_HOST"] || "care.evn.va.gov"
@@ -129,7 +146,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       # Test the links are not present
-      within "#host-hearings-link" do
+      within "#vlj-hearings-link" do
         expect(page).to have_content("Scheduling in progress")
       end
       within "#guest-hearings-link" do
@@ -137,7 +154,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       end
     end
 
-    context "emails have been sent" do
+    context "after the virtual hearing is scheduled" do
       let!(:hearing_day) { create(:hearing_day, scheduled_for: Date.yesterday - 2) }
       before do
         # Mock the conference details
@@ -158,20 +175,14 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         hearing.update(hearing_day: hearing_day)
         visit "hearings/" + hearing.external_id.to_s + "/details"
         hearing.reload
-        within "#vlj-hearings-link" do
-          expect(page).to have_content(
-            "VLJ Link: Expired\n" \
-            "Conference Room: BVA#{virtual_hearing.alias}@care.va.gov\n" \
-            "PIN: #{virtual_hearing.host_pin}"
-          )
-        end
-        within "#guest-hearings-link" do
-          expect(page).to have_content(
-            "Guest Link: Expired\n" \
-            "Conference Room: BVA#{virtual_hearing.alias}@care.va.gov\n" \
-            "PIN: #{virtual_hearing.guest_pin}"
-          )
-        end
+        check_virtual_hearings_links_expired(virtual_hearing)
+      end
+
+      scenario "displays expired when the virtual hearing is cancelled" do
+        virtual_hearing.update(request_cancelled: true)
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        hearing.reload
+        check_virtual_hearings_links_expired(virtual_hearing)
       end
     end
   end
