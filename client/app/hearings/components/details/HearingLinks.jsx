@@ -8,8 +8,31 @@ import CopyTextButton from '../../../components/CopyTextButton';
 import { constructURLs } from '../../utils';
 import PropTypes from 'prop-types';
 
-export const VirtualHearingLinkDetails = ({ alias, pin, role, link, hearing, wasVirtual }) => (
+export const VirtualHearingLinkDetails = ({
+  alias,
+  pin,
+  role,
+  link,
+  hearing,
+  wasVirtual,
+  isVirtual,
+  user,
+  label,
+  virtualHearing
+}) => (
   <React.Fragment>
+    {hearing?.scheduledForIsPast || wasVirtual ? (
+      <span>Expired</span>
+    ) : (
+      <VirtualHearingLink
+        label={label}
+        user={user}
+        virtualHearing={virtualHearing}
+        isVirtual={isVirtual}
+        link={link}
+        hearing={hearing}
+      />
+    )}
     <div {...labelPaddingFirst}>
       <strong>Conference Room: </strong>
       {`BVA${alias}@care.va.gov`}
@@ -30,7 +53,11 @@ VirtualHearingLinkDetails.propTypes = {
   role: PropTypes.string,
   link: PropTypes.string,
   hearing: PropTypes.object,
-  wasVirtual: PropTypes.bool
+  wasVirtual: PropTypes.bool,
+  isVirtual: PropTypes.bool,
+  user: PropTypes.object,
+  label: PropTypes.string,
+  virtualHearing: PropTypes.object
 };
 
 export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virtualHearing, role, label }) => (
@@ -38,19 +65,11 @@ export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virt
     <strong>{label}: </strong>
     {virtualHearing?.jobCompleted || wasVirtual ? (
       <React.Fragment>
-        {hearing?.scheduledForIsPast || wasVirtual ? (
-          <span>Expired</span>
-        ) : (
-          <VirtualHearingLink
-            label={COPY.OPEN_VIRTUAL_HEARINGS_LINK}
-            link={link}
-            user={user}
-            hearing={hearing}
-            isVirtual={isVirtual}
-            virtualHearing={virtualHearing}
-          />
-        )}
         <VirtualHearingLinkDetails
+          label={COPY.OPEN_VIRTUAL_HEARINGS_LINK}
+          user={user}
+          virtualHearing={virtualHearing}
+          isVirtual={isVirtual}
           wasVirtual={wasVirtual}
           hearing={hearing}
           link={link}
