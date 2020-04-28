@@ -85,14 +85,14 @@ describe VideoHearingDayRequestTypeQuery do
           :hearing_day,
           regional_office: "RO01",
           request_type: HearingDay::REQUEST_TYPES[:video],
-          scheduled_for: Date.today - 1.week
+          scheduled_for: Time.zone.today - 1.week
         )
       end
       let(:hearing) do
         create(
           :hearing,
           :held,
-          hearing_day: hearing_day,
+          hearing_day: hearing_day
         )
       end
       # Virtual hearing has already been cleaned up successfully.
