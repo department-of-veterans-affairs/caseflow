@@ -2,7 +2,7 @@
 
 module DateTimeHelper
   def post_ama_start_date
-    Time.zone.today
+    Time.zone.today.in_time_zone
   end
 
   def ama_start_date
