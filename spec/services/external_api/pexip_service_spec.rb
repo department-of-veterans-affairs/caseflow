@@ -2,7 +2,7 @@
 
 describe ExternalApi::PexipService do
   let(:pexip_url) { "fake.url.va.gov" }
-  let(:pexip_mngmt) { "fake.mngmt.va.gov"}
+  let(:pexip_mngmt) { "fake.mngmt.va.gov" }
 
   before do
     stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
