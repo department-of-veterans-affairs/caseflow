@@ -2,6 +2,7 @@ import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
 import _ from 'lodash';
+import querystring from 'querystring';
 
 import ExponentialPolling from '../components/ExponentialPolling';
 
@@ -185,3 +186,30 @@ export const toggleCancelled = (first, second, form) =>
       init: first,
       current: second
     };
+
+export const constructURLs = (virtualHearing) => {
+  // Don't construct if the virtual hearing is empty
+  if (!virtualHearing) {
+    return {};
+  }
+  const { guestPin, hostPin, alias, clientHost } = virtualHearing;
+
+  const guestQS = querystring.stringify({
+    conference: alias,
+    pin: `${guestPin}#`,
+    join: 1,
+    role: 'guest'
+  });
+
+  const hostQS = querystring.stringify({
+    conference: alias,
+    pin: `${hostPin}#`,
+    join: 1,
+    role: 'host'
+  });
+
+  return {
+    hostLink: `https://${clientHost}/bva-app/?${decodeURIComponent(hostQS)}`,
+    guestLink: `https://${clientHost}/bva-app/?${decodeURIComponent(guestQS)}`
+  };
+};

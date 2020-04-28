@@ -1,9 +1,7 @@
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import classnames from 'classnames';
 
-import { COLORS } from '../../../constants/AppConstants';
 import { HearingsUserContext } from '../../HearingsUserContext';
 import {
   JudgeDropdown,
@@ -15,7 +13,6 @@ import {
   columnDoubleSpacer,
   columnThird,
   flexParent,
-  genericRow,
   maxWidthFormInput,
   rowThirds,
   rowThirdsWithFinalSpacer,
@@ -29,7 +26,7 @@ import TextareaField from '../../../components/TextareaField';
 import TranscriptionDetailsInputs from './TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './TranscriptionRequestInputs';
-import VirtualHearingLink from '../VirtualHearingLink';
+import { HearingLinks } from './HearingLinks';
 
 // Displays the emails associated with the virtual hearing.
 const EmailSection = ({ hearing, virtualHearing, isVirtual, wasVirtual, readOnly, updateVirtualHearing, errors }) => {
@@ -114,25 +111,13 @@ const VirtualHearingSection = ({
     <React.Fragment>
       <div className="cf-help-divider" />
       <h3>{wasVirtual && 'Previous '}Virtual Hearing Details</h3>
-      {isVirtual && (
-        <div {...genericRow}>
-          <strong>{virtualHearingLabel}</strong>
-          <div {...css({ marginTop: '1.5rem' })}>
-            {virtualHearing?.jobCompleted && (
-              <VirtualHearingLink
-                user={user}
-                hearing={hearing}
-                showFullLink
-                isVirtual={isVirtual}
-                virtualHearing={virtualHearing}
-              />
-            )}
-            {!virtualHearing?.jobCompleted && (
-              <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>
-            )}
-          </div>
-        </div>
-      )}
+      <HearingLinks
+        user={user}
+        label={virtualHearingLabel}
+        hearing={hearing}
+        virtualHearing={virtualHearing}
+        isVirtual={isVirtual}
+      />
       <EmailSection
         errors={errors}
         hearing={hearing}
