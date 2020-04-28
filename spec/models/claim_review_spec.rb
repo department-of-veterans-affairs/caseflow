@@ -23,7 +23,7 @@ describe ClaimReview, :postgres do
     )
   end
 
-  let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+  let(:receipt_date) { ama_test_start_date + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
