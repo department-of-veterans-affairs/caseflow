@@ -22,7 +22,6 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   validates :claimant_participant_id,
             :poa_participant_id,
-            :file_number,
             :representative_name,
             :representative_type, presence: true
 
