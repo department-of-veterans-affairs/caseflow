@@ -8,9 +8,7 @@ class DecisionReviewProcessJob < CaseflowJob
 
   def perform(thing_to_establish)
     # Temporarily stop establishing claims due to VBMS bug
-    if FeatureToggle.enabled?(:disable_claim_establishment, user: RequestStore.store[:current_user])
-      return
-    end
+    return if FeatureToggle.enabled?(:disable_claim_establishment, user: RequestStore.store[:current_user])
 
     @decision_review = thing_to_establish
 
