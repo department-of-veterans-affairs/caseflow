@@ -572,6 +572,18 @@ describe Appeal, :all_dbs do
         expect(appeal.power_of_attorneys[1].representative_name)
           .to eq(Fakes::BGSServicePOA::AMERICAN_LEGION_VSO_NAME)
       end
+
+      context "one claimant has no POA" do
+        before do
+          allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+            .with([participant_id_with_pva]).and_return({})
+          allow(appeal).to receive(:veteran_file_number) { "no-such-file-number" }
+        end
+
+        it "ignores nil values" do
+          expect(appeal.power_of_attorneys.count).to eq(1)
+        end
+      end
     end
 
     context "#representatives" do
