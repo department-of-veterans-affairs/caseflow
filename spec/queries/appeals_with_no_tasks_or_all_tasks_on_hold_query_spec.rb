@@ -8,6 +8,7 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
     hearing_task = create(:hearing_task, parent: appeal.root_task)
     schedule_hearing_task = create(:schedule_hearing_task, parent: hearing_task)
     appeal.root_task.descendants.each(&:on_hold!)
+    schedule_hearing_task.completed!
     appeal
   end
   let!(:appeal_with_decision_documents) do
