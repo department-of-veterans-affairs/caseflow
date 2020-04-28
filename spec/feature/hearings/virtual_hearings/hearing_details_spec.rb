@@ -137,7 +137,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       end
     end
 
-    fcontext "emails have been sent" do
+    context "emails have been sent" do
       let!(:hearing_day) { create(:hearing_day, scheduled_for: Date.yesterday - 2) }
       before do
         # Mock the conference details
