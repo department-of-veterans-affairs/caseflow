@@ -1371,7 +1371,7 @@ describe RequestIssue, :all_dbs do
       end
 
       context "when legacy opt in is approved" do
-        let(:receipt_date) { Date.new(2020, 4, 10) }
+        let(:receipt_date) { Time.zone.today }
         let(:legacy_opt_in_approved) { true }
 
         context "when legacy issue is eligible" do
