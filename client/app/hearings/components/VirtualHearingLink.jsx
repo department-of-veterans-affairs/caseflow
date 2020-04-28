@@ -61,7 +61,8 @@ VirtualHearingLink.propTypes = {
     hostPin: PropTypes.number,
     alias: PropTypes.string,
     jobCompleted: PropTypes.bool
-  }).isRequired
+  }).isRequired,
+  label: PropTypes.string
 };
 
 VirtualHearingLink.defaultProps = {

@@ -57,5 +57,6 @@ export default class CopyTextButton extends React.PureComponent {
 CopyTextButton.propTypes = {
   text: PropTypes.string.isRequired,
   textToCopy: PropTypes.string,
-  label: PropTypes.string
+  label: PropTypes.string,
+  styling: PropTypes.object
 };

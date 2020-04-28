@@ -6,6 +6,7 @@ import { rowThirds, labelPadding, labelPaddingFirst, hearingLinksContainer, copy
 import COPY from '../../../../COPY';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { constructURLs } from '../../utils';
+import PropTypes from 'prop-types';
 
 export const VirtualHearingLinkDetails = ({ alias, pin, role, link, hearing, wasVirtual }) => (
   <React.Fragment>
@@ -22,6 +23,15 @@ export const VirtualHearingLinkDetails = ({ alias, pin, role, link, hearing, was
     )}
   </React.Fragment>
 );
+
+VirtualHearingLinkDetails.propTypes = {
+  alias: PropTypes.string,
+  pin: PropTypes.number,
+  role: PropTypes.string,
+  link: PropTypes.string,
+  hearing: PropTypes.object,
+  wasVirtual: PropTypes.bool
+};
 
 export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virtualHearing, role, label }) => (
   <div id={`${role.toLowerCase()}-hearings-link`} {...css({ marginTop: '1.5rem' })}>
@@ -55,6 +65,17 @@ export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virt
   </div>
 );
 
+LinkContainer.propTypes = {
+  link: PropTypes.string,
+  user: PropTypes.object,
+  hearing: PropTypes.object,
+  isVirtual: PropTypes.bool,
+  wasVirtual: PropTypes.bool,
+  virtualHearing: PropTypes.object,
+  label: PropTypes.string,
+  role: PropTypes.string
+};
+
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, label, user }) => {
   const { hostLink, guestLink } = constructURLs(virtualHearing);
 
@@ -85,4 +106,13 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, l
       </div>
     )
   );
+};
+
+HearingLinks.propTypes = {
+  user: PropTypes.object,
+  hearing: PropTypes.object,
+  isVirtual: PropTypes.bool,
+  wasVirtual: PropTypes.bool,
+  virtualHearing: PropTypes.object,
+  label: PropTypes.string
 };
