@@ -79,6 +79,42 @@ describe VideoHearingDayRequestTypeQuery do
       end
     end
 
+    context "single ama virtual hearing that has been held" do
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          regional_office: "RO01",
+          request_type: HearingDay::REQUEST_TYPES[:video],
+          scheduled_for: Date.today - 1.week
+        )
+      end
+      let(:hearing) do
+        create(
+          :hearing,
+          :held,
+          hearing_day: hearing_day,
+        )
+      end
+      # Virtual hearing has already been cleaned up successfully.
+      let!(:virtual_hearing) do
+        create(
+          :virtual_hearing,
+          :initialized,
+          :all_emails_sent,
+          conference_deleted: true,
+          hearing: hearing,
+          status: :active
+        )
+      end
+
+      it "sanity check: hearing is virtual" do
+        expect(hearing.reload.virtual?).to be true
+      end
+
+      include_examples "it returns correct hash with expected key and value",
+                       "Virtual"
+    end
+
     context "single legacy virtual hearing" do
       let!(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
       let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: legacy_hearing) }
