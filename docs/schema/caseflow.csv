@@ -879,6 +879,16 @@ schedule_periods,start_date,date ∗,x,,,,,
 schedule_periods,type,string ∗,x,,,,,
 schedule_periods,updated_at,datetime ∗,x,,,,x,
 schedule_periods,user_id,integer (8) ∗ FK,x,,x,,x,
+sent_hearing_email_events,,,,,,,,Events related to hearings notification emails
+sent_hearing_email_events,email_address,string,,,,,,Address the email was sent to
+sent_hearing_email_events,email_type,string,,,,,,"The type of email sent: cancellation, confirmation, updated_time_confirmation"
+sent_hearing_email_events,external_message_id,string,,,,,,The ID returned by the GovDelivery API when we send an email
+sent_hearing_email_events,hearing_id,integer (8) ∗ FK,x,,x,,x,Associated hearing
+sent_hearing_email_events,hearing_type,string ∗,x,,,,x,
+sent_hearing_email_events,id,integer (8) PK,x,x,,,,
+sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
+sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
+sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
 special_issue_lists,,,,,,,,
 special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
 special_issue_lists,appeal_type,string,,,,,x,
@@ -1034,6 +1044,7 @@ veterans,ssn,string,,,,,x,The cached Social Security Number
 veterans,updated_at,datetime,,,,,x,
 virtual_hearings,,,,,,,,
 virtual_hearings,alias,string,,,,,x,Alias for conference in Pexip
+virtual_hearings,alias_with_host,string,,,,,,Alias for conference in pexip with client_host
 virtual_hearings,conference_deleted,boolean ∗,x,,,,,Whether or not the conference was deleted from Pexip
 virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
 virtual_hearings,created_at,datetime ∗,x,,,,,
@@ -1047,8 +1058,9 @@ virtual_hearings,judge_email,string,,,,,,Judge's email address
 virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge
 virtual_hearings,representative_email,string,,,,,,Veteran's representative's email address
 virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran's representative
-virtual_hearings,status,string ∗,x,,,,,The status of the Pexip conference
+virtual_hearings,request_cancelled,boolean,,,,,,Determines whether the user has cancelled the virtual hearing request
 virtual_hearings,updated_at,datetime ∗,x,,,,x,
+virtual_hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recently updated the virtual hearing
 virtual_hearings,veteran_email,string ∗,x,,,,,Veteran's email address
 virtual_hearings,veteran_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran
 virtual_hearing_establishments,,,,,,,,
