@@ -5,6 +5,8 @@ describe JudgeRepository, :all_dbs do
     judges = create_list(:staff, 3, :judge_role)
     acting_judges = create_list(:staff, 3, :attorney_judge_role)
     attorneys = create_list(:staff, 3, :attorney_role)
+    # These users have an svlj value of "A" that allows them to see reports in vacols, but no attyid because they are
+    # not a judge or an attorney. we should not return these users when querying all judges
     reporting_only_users = create_list(:staff, 3, :attorney_judge_role, sattyid: nil)
 
     judges.each_with_index do |s, index|
