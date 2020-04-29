@@ -14,7 +14,6 @@ Please explain the changes you made here.
 
  BEFORE|AFTER
  ---|---
-  |
 
 ### Code Documentation Updates
 - [ ] Add or update code comments at the top of the class, module, and/or component.
