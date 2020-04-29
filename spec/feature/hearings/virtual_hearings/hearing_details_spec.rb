@@ -318,9 +318,10 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       expect(page).to have_content(
+        "join=1&media=&escalate=1&" \
         "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-        "pin=#{virtual_hearing.host_pin}#" \
-        "&join=1&role=host"
+        "pin=#{virtual_hearing.host_pin}#&" \
+        "role=host" \
       )
     end
   end
