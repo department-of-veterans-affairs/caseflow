@@ -39,9 +39,8 @@ class JudgeDecisionReviewTask < JudgeTask
       fail(
         Caseflow::Error::DuplicateUserTask,
         appeal_id: appeal.id,
-        task_type: self.class.name,
-        assignee_type: assigned_to.class.name,
-        parent_id: parent&.id
+        veteran_id: appeal.veteran_file_number,
+        task_type: self.class.name
       )
     end
   end

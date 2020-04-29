@@ -105,8 +105,7 @@ class RootTask < Task
         Caseflow::Error::DuplicateOrgTask,
         appeal_id: appeal.id,
         task_type: self.class.name,
-        assignee_type: assigned_to.class.name,
-        parent_id: parent&.id
+        assignee_type: assigned_to.class.name
       )
     end
   end
