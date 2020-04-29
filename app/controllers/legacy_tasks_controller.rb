@@ -18,7 +18,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
-    return if validate_params
+    return if needs_redirect?
 
     respond_to do |format|
       format.html do
@@ -36,10 +36,7 @@ class LegacyTasksController < ApplicationController
     end
   end
 
-  def validate_params
-    validate_user_id
-
-    validate_user_role
+  def needs_redirect?
     # fixes incorrectly cased css_id param
     return (use_normalized_css_id && redirect_to_updated_url) if non_normalized_css_id?(params[:user_id])
     # changes param from user_id to css_id if user is judge
