@@ -25,7 +25,7 @@ class VirtualHearingLink extends React.PureComponent {
     const { virtualHearing } = this.props;
     const qs = querystring.stringify(
       {
-        conference: virtualHearing.alias,
+        conference: virtualHearing.aliasWithHost,
         pin: `${this.getPin()}#`,
         join: 1,
         role: this.role()
@@ -92,7 +92,7 @@ VirtualHearingLink.propTypes = {
     clientHost: PropTypes.string,
     guestPin: PropTypes.number,
     hostPin: PropTypes.number,
-    alias: PropTypes.string,
+    aliasWithHost: PropTypes.string,
     jobCompleted: PropTypes.bool
   }).isRequired
 };
