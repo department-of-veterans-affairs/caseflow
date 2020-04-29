@@ -323,7 +323,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
 
     it "displays an error if the distribution request is invalid" do
-      create(:ama_judge_assign_task, :in_progress, assigned_at: 40.days.ago, assigned_to: judge_one.user, appeal: appeal_one)
+      create(:ama_judge_assign_task, assigned_at: 40.days.ago, assigned_to: judge_one.user, appeal: appeal_one)
 
       visit("/queue/#{judge_one.user.id}/assign")
       click_on("Request more cases")
@@ -333,7 +333,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
 
     it "queues the case distribution if the request is valid" do
-      create(:ama_judge_assign_task, :in_progress, assigned_at: 10.days.ago, assigned_to: judge_one.user, appeal: appeal_one)
+      create(:ama_judge_assign_task, assigned_at: 10.days.ago, assigned_to: judge_one.user, appeal: appeal_one)
 
       visit("/queue/#{judge_one.user.id}/assign")
       click_on("Request more cases")
