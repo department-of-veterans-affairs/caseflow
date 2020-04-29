@@ -10,9 +10,12 @@ Please explain the changes you made here.
 1. Go to ...
 
 ### User Facing Changes
-
  - [ ] Screenshots of UI changes added to PR & Original Issue
- 
+
+ BEFORE|AFTER
+ ---|---
+  |
+
 ### Code Documentation Updates
 - [ ] Add or update code comments at the top of the class, module, and/or component.
 
