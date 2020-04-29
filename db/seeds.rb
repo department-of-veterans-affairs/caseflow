@@ -909,7 +909,7 @@ class SeedDB
   end
 
   def create_task_at_judge_assignment(appeal, judge, assigned_at = Time.zone.yesterday)
-    FactoryBot.create(:ama_judge_task,
+    FactoryBot.create(:ama_judge_assign_task,
                       assigned_to: judge,
                       assigned_at: assigned_at,
                       appeal: appeal,
@@ -1138,7 +1138,7 @@ class SeedDB
 
     3.times do
       FactoryBot.create(
-        :ama_judge_task,
+        :ama_judge_assign_task,
         :in_progress,
         assigned_to: User.find_by(css_id: "BVAEBECKER"),
         appeal: FactoryBot.create(:appeal)

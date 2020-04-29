@@ -10,7 +10,7 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
     let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
     let!(:second_judge_staff) { create(:staff, :judge_role, sdomainid: second_judge.css_id) }
 
-    let!(:assign_tasks) { Array.new(3) { create(:ama_judge_task, assigned_to: judge, parent: create(:root_task)) } }
+    let!(:assign_tasks) { Array.new(3) { create(:ama_judge_assign_task, assigned_to: judge, parent: create(:root_task)) } }
     let!(:assignee) { attorney }
     let!(:params) do
       assign_tasks.map do |assign_task|
@@ -75,7 +75,6 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
 
         it_behaves_like "attorney task assignment"
       end
-    end
 
     context "when cases will be assigned to an acting judge" do
       let!(:second_judge_staff) { create(:staff, :attorney_judge_role, sdomainid: second_judge.css_id) }
