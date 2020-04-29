@@ -113,6 +113,14 @@ describe VideoHearingDayRequestTypeQuery do
 
       include_examples "it returns correct hash with expected key and value",
                        "Virtual"
+
+      context "with a legacy hearing" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+        let(:hearing) { create(:legacy_hearing, disposition: disposition, hearing_day: hearing_day) }
+
+        include_examples "it returns correct hash with expected key and value",
+                         "Virtual"
+      end
     end
 
     context "single legacy virtual hearing" do
