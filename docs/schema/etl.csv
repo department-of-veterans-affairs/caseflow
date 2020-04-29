@@ -185,4 +185,4 @@ users,status_updated_at,datetime,,,,,,When the user's status was last updated
 users,stitle,string (16),,,,,,VACOLS cached_user_attributes.stitle
 users,svlj,string (1),,,,,,
 users,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
-users,user_id,integer ∗,x,,,,x,ID of the User
+users,user_id,integer ∗,x,,,,,ID of the User

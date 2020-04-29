@@ -125,7 +125,7 @@ class Hearing < CaseflowRecord
 
   def advance_on_docket_motion
     # we're only really interested if the AOD was granted
-    AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
+    AdvanceOnDocketMotion.for_person(claimant_id).order("granted DESC NULLS LAST").first
   end
 
   def scheduled_for
