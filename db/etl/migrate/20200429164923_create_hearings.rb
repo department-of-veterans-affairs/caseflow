@@ -81,13 +81,13 @@ class CreateHearings < ActiveRecord::Migration[5.2]
       t.string "hearing_location_address", comment: "hearing_locations.address"
       t.string "hearing_location_city", comment: "hearing_locations.city"
       t.string "hearing_location_classification", comment: "hearing_locations.classification"
-      t.datetime "hearing_location_created_at", null: false, comment: "hearing_locations.created_at"
+      t.datetime "hearing_location_created_at", comment: "hearing_locations.created_at"
       t.float "hearing_location_distance", comment: "hearing_locations.distance"
       t.string "hearing_location_facility_id", comment: "hearing_locations.facility_id"
       t.string "hearing_location_facility_type", comment: "hearing_locations.facility_type"
       t.string "hearing_location_name", comment: "hearing_locations.name"
       t.string "hearing_location_state", comment: "hearing_locations.state"
-      t.datetime "hearing_location_updated_at", null: false, comment: "hearing_locations.updated_at"
+      t.datetime "hearing_location_updated_at", comment: "hearing_locations.updated_at"
       t.string "hearing_location_zip_code", comment: "hearing_locations.zip_code"
 
       t.index ["hearing_location_id"]

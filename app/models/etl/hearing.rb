@@ -99,8 +99,8 @@ class ETL::Hearing < ETL::Record
       ].each do |attr|
         target["hearing_location_#{attr}"] = hearing_location[attr]
       end
-  
-      target    
+
+      target
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
