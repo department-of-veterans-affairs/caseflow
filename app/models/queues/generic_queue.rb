@@ -7,7 +7,7 @@ class GenericQueue
   end
 
   def tasks
-    (relevant_tasks + relevant_attorney_tasks)
+    relevant_tasks
   end
 
   private
@@ -15,20 +15,8 @@ class GenericQueue
   attr_reader :limit, :user
 
   def relevant_tasks
-    Task.incomplete_or_recently_closed
+    Task.incomplete_or_recently_closed.visible_in_queue_table_view
       .where(assigned_to: user)
-      .includes(*task_includes)
-      .order(created_at: :asc)
-      .limit(limit)
-  end
-
-  def relevant_attorney_tasks
-    return [] unless user.is_a?(User)
-
-    # If the user is a judge there will be attorneys in the list, if the user is not a judge the list of attorneys will
-    # be an empty set and this function will also then return an empty set.
-    AttorneyTask.incomplete_or_recently_closed
-      .where(assigned_to: Judge.new(user).attorneys)
       .includes(*task_includes)
       .order(created_at: :asc)
       .limit(limit)
