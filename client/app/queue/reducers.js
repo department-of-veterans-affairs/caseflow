@@ -592,7 +592,7 @@ const setAppealAod = (state, action) => {
     appeals: {
       [action.payload.externalAppealId]: {
         isAdvancedOnDocket: {
-          $set: true
+          $set: action.payload.granted
         }
       }
     }
