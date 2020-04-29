@@ -2,6 +2,13 @@
 
 describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
   let!(:appeal_with_zero_tasks) { create(:appeal) }
+  let!(:appeal_with_one_task) { create(:root_task, :assigned).appeal }
+  let!(:appeal_with_two_tasks_not_distribution) do
+    appeal = create(:appeal)
+    create(:root_task, appeal: appeal)
+    create(:track_veteran_task, :assigned, appeal: appeal)
+    appeal
+  end
   let!(:appeal_with_tasks) { create(:appeal, :with_post_intake_tasks) }
   let!(:appeal_with_all_tasks_on_hold) do
     appeal = create(:appeal, :with_post_intake_tasks)
@@ -26,7 +33,13 @@ describe AppealsWithNoTasksOrAllTasksOnHoldQuery, :postgres do
     subject { described_class.new.call }
 
     let(:stuck_appeals) do
-      [appeal_with_zero_tasks, appeal_with_all_tasks_on_hold, dispatched_appeal_on_hold]
+      [
+        appeal_with_zero_tasks,
+        appeal_with_one_task,
+        appeal_with_all_tasks_on_hold,
+        appeal_with_two_tasks_not_distribution,
+        dispatched_appeal_on_hold
+      ]
     end
 
     it "returns array of appeals that look stuck" do

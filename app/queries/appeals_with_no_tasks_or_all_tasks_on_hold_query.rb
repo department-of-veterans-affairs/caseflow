@@ -2,7 +2,13 @@
 
 class AppealsWithNoTasksOrAllTasksOnHoldQuery
   def call
-    [stuck_appeals, appeals_with_zero_tasks, dispatched_appeals_on_hold].flatten
+    [
+      stuck_appeals,
+      appeals_with_zero_tasks,
+      appeals_with_one_task,
+      appeals_with_two_tasks_not_distribution,
+      dispatched_appeals_on_hold
+    ].flatten.uniq
   end
 
   def ama_appeal_stuck?(appeal)
@@ -35,6 +41,17 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
 
   def appeals_with_zero_tasks
     Appeal.established.left_outer_joins(:tasks).where(tasks: { id: nil })
+  end
+
+  def appeals_with_one_task
+    Appeal.established.active.joins(:tasks).group("appeals.id").having("count(tasks) = 1")
+  end
+
+  def appeals_with_two_tasks_not_distribution
+    Appeal.established.active
+      .joins(:tasks)
+      .group("appeals.id")
+      .having("count(tasks) = 2 AND count(case when tasks.type = ? then 1 end) = 0", DistributionTask.name)
   end
 
   def tasks_for(klass_name)
