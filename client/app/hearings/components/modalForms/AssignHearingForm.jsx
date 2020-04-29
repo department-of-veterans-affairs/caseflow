@@ -1,52 +1,63 @@
-import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import React, { useContext, useEffect } from 'react';
 import _ from 'lodash';
 
-import ApiUtil from '../../../util/ApiUtil';
-
+import { HearingsFormContext, UPDATE_ASSIGN_HEARING } from '../../contexts/HearingsFormContext';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../../components/DataDropdowns';
+import ApiUtil from '../../../util/ApiUtil';
 import HearingTime from './HearingTime';
-import { HearingsFormContext, UPDATE_ASSIGN_HEARING } from '../../contexts/HearingsFormContext';
 
 const AssignHearingForm = (props) => {
   const { appeal, initialRegionalOffice, initialHearingDate, showErrorMessages } = props;
 
   const hearingsFormContext = useContext(HearingsFormContext);
   const assignHearingForm = hearingsFormContext.state.hearingForms?.assignHearingForm || {};
-  const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString } = assignHearingForm;
+  const { hearingLocation, hearingDay, scheduledTimeString } = assignHearingForm;
   const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
-  const dynamic = regionalOffice !== appeal.closestRegionalOffice || _.isEmpty(appeal.availableHearingLocations);
+  const regionalOffice = assignHearingForm.regionalOffice || initialRegionalOffice;
+  const dynamic = regionalOffice !== appeal.closestRegionalOffice || _.isEmpty(availableHearingLocations);
 
-  const getErrorMessages = (newValues) => {
-    const values = { ...assignHearingForm, ...newValues };
+  useEffect(
+    () => {
+      const getErrorMessages = () => {
+        const errorMessages = {
+          hearingDay: hearingDay?.hearingId ? null : 'Please select a hearing date',
+          hearingLocation: hearingLocation ? null : 'Please select a hearing location',
+          scheduledTimeString: scheduledTimeString ? null : 'Please select a hearing time'
+        };
 
-    const errorMessages = {
-      hearingDay: values.hearingDay && values.hearingDay.hearingId ?
-        false : 'Please select a hearing date',
-      hearingLocation: values.hearingLocation ? false : 'Please select a hearing location',
-      scheduledTimeString: values.scheduledTimeString ? false : 'Please select a hearing time'
-    };
+        return {
+          ...errorMessages,
+          hasErrorMessages: (
+            errorMessages.hearingDay ||
+            errorMessages.hearingLocation ||
+            errorMessages.scheduledTimeString
+          )
+        };
+      };
 
-    return {
-      ...errorMessages,
-      hasErrorMessages: (errorMessages.hearingDay || errorMessages.hearingLocation ||
-        errorMessages.scheduledTimeString) !== false
-    };
-  };
+      const getApiFormattedValues = () => {
+        return {
+          scheduled_time_string: scheduledTimeString,
+          hearing_day_id: hearingDay?.hearingId,
+          hearing_location: hearingLocation ? ApiUtil.convertToSnakeCase(hearingLocation) : null
+        };
+      };
 
-  const getApiFormattedValues = (newValues) => {
-    const values = { ...assignHearingForm, ...newValues };
-
-    return {
-      scheduled_time_string: values.scheduledTimeString,
-      hearing_day_id: values.hearingDay ? values.hearingDay.hearingId : null,
-      hearing_location: values.hearingLocation ? ApiUtil.convertToSnakeCase(values.hearingLocation) : null
-    };
-  };
+      hearingsFormContext.dispatch({
+        type: UPDATE_ASSIGN_HEARING,
+        payload: {
+          errorMessages: getErrorMessages(),
+          apiFormattedValues: getApiFormattedValues()
+        }
+      });
+    },
+    [hearingDay, hearingLocation, scheduledTimeString]
+  );
 
   const getErrorMessage = (valueKey) => {
     if (showErrorMessages) {
@@ -56,27 +67,24 @@ const AssignHearingForm = (props) => {
     return '';
   };
 
-  const onChange = (newValues) => {
-    hearingsFormContext.dispatch({ type: UPDATE_ASSIGN_HEARING,
-      payload: {
-        ...newValues,
-        errorMessages: getErrorMessages(newValues),
-        apiFormattedValues: getApiFormattedValues(newValues)
-      } });
-  };
-
   const onRegionalOfficeChange = (regionalOfficeVal) => {
     const newValues = {
-      regionalOffice: regionalOfficeVal, hearingLocation: null, scheduledTimeString: null, hearingDay: null
+      regionalOffice: regionalOfficeVal,
+      hearingLocation: null,
+      scheduledTimeString: null,
+      hearingDay: null
     };
 
-    onChange(newValues);
+    hearingsFormContext.dispatch({
+      type: UPDATE_ASSIGN_HEARING,
+      payload: newValues
+    });
   };
 
   return (
     <div>
       <RegionalOfficeDropdown
-        value={regionalOffice || initialRegionalOffice}
+        value={regionalOffice}
         onChange={onRegionalOfficeChange}
         validateValueOnMount
       />
@@ -89,14 +97,24 @@ const AssignHearingForm = (props) => {
           dynamic={dynamic}
           staticHearingLocations={availableHearingLocations}
           value={hearingLocation}
-          onChange={(value) => onChange({ hearingLocation: value })}
+          onChange={(value) => {
+            hearingsFormContext.dispatch({
+              type: UPDATE_ASSIGN_HEARING,
+              payload: { hearingLocation: value }
+            });
+          }}
         />
         <HearingDateDropdown
           errorMessage={getErrorMessage('hearingDay')}
           key={`hearingDate__${regionalOffice}`}
           regionalOffice={regionalOffice}
           value={hearingDay || initialHearingDate}
-          onChange={(value) => onChange({ hearingDay: value })}
+          onChange={(value) => {
+            hearingsFormContext.dispatch({
+              type: UPDATE_ASSIGN_HEARING,
+              payload: { hearingDay: value }
+            });
+          }}
           validateValueOnMount
         />
         <HearingTime
@@ -104,7 +122,12 @@ const AssignHearingForm = (props) => {
           key={`hearingTime__${regionalOffice}`}
           regionalOffice={regionalOffice}
           value={scheduledTimeString}
-          onChange={(value) => onChange({ scheduledTimeString: value })}
+          onChange={(value) => {
+            hearingsFormContext.dispatch({
+              type: UPDATE_ASSIGN_HEARING,
+              payload: { scheduledTimeString: value }
+            });
+          }}
         />
       </React.Fragment>}
     </div>

@@ -1,13 +1,12 @@
-import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-
-import SearchableDropdown from '../../../components/SearchableDropdown';
-import TextareaField from '../../../components/TextareaField';
+import React, { useContext, useEffect } from 'react';
 
 import {
   HearingsFormContext,
   UPDATE_SCHEDULE_HEARING_LATER_WITH_ADMIN_ACTION
 } from '../../contexts/HearingsFormContext';
+import SearchableDropdown from '../../../components/SearchableDropdown';
+import TextareaField from '../../../components/TextareaField';
 
 const ScheduleHearingLaterWithAdminActionForm = (props) => {
   const { adminActionOptions, showErrorMessages } = props;
@@ -15,32 +14,37 @@ const ScheduleHearingLaterWithAdminActionForm = (props) => {
   const scheduleHearingLaterWithAdminActionForm =
     hearingsFormContext.state.hearingForms?.scheduleHearingLaterWithAdminActionForm || {};
 
-  const getErrorMessages = (newValues) => {
-    const values = { ...scheduleHearingLaterWithAdminActionForm, ...newValues };
+  useEffect(
+    () => {
+      const getErrorMessages = () => {
+        return {
+          withAdminActionKlass: (
+            scheduleHearingLaterWithAdminActionForm.withAdminActionKlass ? null : 'Please enter an action'
+          ),
+          hasErrorMessages: !scheduleHearingLaterWithAdminActionForm.withAdminActionKlass
+        };
+      };
 
-    return {
-      withAdminActionKlass: values.withAdminActionKlass ? false : 'Please enter an action',
-      hasErrorMessages: !values.withAdminActionKlass
-    };
-  };
+      const getApiFormattedValues = () => {
+        return {
+          with_admin_action_klass: scheduleHearingLaterWithAdminActionForm.withAdminActionKlass,
+          admin_action_instructions: scheduleHearingLaterWithAdminActionForm.adminActionInstructions
+        };
+      };
 
-  const getApiFormattedValues = (newValues) => {
-    const values = { ...scheduleHearingLaterWithAdminActionForm, ...newValues };
-
-    return {
-      with_admin_action_klass: values.withAdminActionKlass,
-      admin_action_instructions: values.adminActionInstructions
-    };
-  };
-
-  const onChange = (value) => {
-    hearingsFormContext.dispatch({ type: UPDATE_SCHEDULE_HEARING_LATER_WITH_ADMIN_ACTION,
-      payload: {
-        ...value,
-        errorMessages: getErrorMessages(value),
-        apiFormattedValues: getApiFormattedValues(value)
-      } });
-  };
+      hearingsFormContext.dispatch({
+        type: UPDATE_SCHEDULE_HEARING_LATER_WITH_ADMIN_ACTION,
+        payload: {
+          errorMessages: getErrorMessages(),
+          apiFormattedValues: getApiFormattedValues()
+        }
+      });
+    },
+    [
+      scheduleHearingLaterWithAdminActionForm.withAdminActionKlass,
+      scheduleHearingLaterWithAdminActionForm.adminActionInstructions
+    ]
+  );
 
   return (
     <div>
@@ -53,14 +57,28 @@ const ScheduleHearingLaterWithAdminActionForm = (props) => {
         name="postponementReason"
         options={adminActionOptions}
         value={scheduleHearingLaterWithAdminActionForm?.withAdminActionKlass}
-        onChange={(val) => onChange({ withAdminActionKlass: val ? val.value : null })}
+        onChange={(val) => {
+          hearingsFormContext.dispatch({
+            type: UPDATE_SCHEDULE_HEARING_LATER_WITH_ADMIN_ACTION,
+            payload: {
+              withAdminActionKlass: val?.value
+            }
+          });
+        }}
       />
       <TextareaField
         label="Instructions"
         strongLabel
         name="adminActionInstructions"
         value={scheduleHearingLaterWithAdminActionForm?.adminActionInstructions}
-        onChange={(val) => onChange({ adminActionInstructions: val })}
+        onChange={(val) => {
+          hearingsFormContext.dispatch({
+            type: UPDATE_SCHEDULE_HEARING_LATER_WITH_ADMIN_ACTION,
+            payload: {
+              adminActionInstructions: val
+            }
+          });
+        }}
       />
     </div>
   );
