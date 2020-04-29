@@ -4,6 +4,9 @@ class LegacyTasksController < ApplicationController
   include Errors
   include CssIdConcern
 
+  before_action :validate_user_id, only: [:index]
+  before_action :validate_user_role, only: [:index]
+
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
   rescue_from Caseflow::Error::LegacyCaseAlreadyAssignedError do |e|
@@ -34,9 +37,9 @@ class LegacyTasksController < ApplicationController
   end
 
   def validate_params
-    fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
+    validate_user_id
 
-    return invalid_role_error unless ROLES.include?(user_role)
+    validate_user_role
     # fixes incorrectly cased css_id param
     return (use_normalized_css_id && redirect_to_updated_url) if non_normalized_css_id?(params[:user_id])
     # changes param from user_id to css_id if user is judge
@@ -50,7 +53,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def use_css_id
-    params[:user_id] = User.find(params[:user_id]).css_id
+    params[:user_id] = user.css_id
   end
 
   def use_normalized_css_id
@@ -124,6 +127,14 @@ class LegacyTasksController < ApplicationController
   end
 
   private
+
+  def validate_user_id
+    fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
+  end
+
+  def validate_user_role
+    return invalid_role_error unless ROLES.include?(user_role)
+  end
 
   def user
     @user ||= positive_integer?(params[:user_id]) ? User.find(params[:user_id]) : User.find_by_css_id(params[:user_id])
