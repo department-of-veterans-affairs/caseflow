@@ -654,10 +654,11 @@ export const setSpecialIssues = (specialIssues) => ({
   }
 });
 
-export const setAppealAod = (externalAppealId) => ({
+export const setAppealAod = (externalAppealId, granted) => ({
   type: ACTIONS.SET_APPEAL_AOD,
   payload: {
-    externalAppealId
+    externalAppealId,
+    granted
   }
 });
 

@@ -316,7 +316,7 @@ describe User, :all_dbs do
       it "returns assigned cases link for judge" do
         is_expected.to include(
           name: "Assign #{user.css_id}",
-          url: format("/queue/%<id>s/assign", id: user.id)
+          url: format("/queue/%<id>s/assign", id: user.css_id)
         )
       end
     end
@@ -328,7 +328,7 @@ describe User, :all_dbs do
         user.reload
         is_expected.to include(
           name: "Assign #{user.css_id}",
-          url: format("/queue/%<id>s/assign", id: user.id)
+          url: format("/queue/%<id>s/assign", id: user.css_id)
         )
       end
     end
@@ -354,7 +354,7 @@ describe User, :all_dbs do
         it "returns assigned cases link for judge" do
           is_expected.to include(
             name: "Assign #{judge.css_id}",
-            url: format("/queue/%<id>s/assign", id: judge.id)
+            url: format("/queue/%<id>s/assign", id: judge.css_id)
           )
           is_expected.not_to include(
             name: "Assign #{user.css_id}",
@@ -713,8 +713,8 @@ describe User, :all_dbs do
 
     it { is_expected.to be_falsey }
 
-    context "when the user is a member of the Mail Team" do
-      before { MailTeam.singleton.add_user(user) }
+    context "when the user is a member of the BVA Intake Team" do
+      before { BvaIntake.singleton.add_user(user) }
 
       it { is_expected.to be_truthy }
     end
