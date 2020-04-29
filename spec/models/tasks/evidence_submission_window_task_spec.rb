@@ -53,14 +53,14 @@ describe EvidenceSubmissionWindowTask, :postgres do
   end
 
   context "timer_delay" do
-    context "parent is not a AssignHearingDispositionTask" do
+    context "hearing is in the evidence submission docket" do
       before { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
 
       let(:task) do
         appeal.tasks.last
       end
 
-      it "is marked as complete and vso tasks are created in 90 days" do
+      it "is marked as complete and vso tasks are created in 90 days from receipt date" do
         TaskTimerJob.perform_now
         expect(task.reload.status).to eq("assigned")
 
@@ -114,6 +114,54 @@ describe EvidenceSubmissionWindowTask, :postgres do
           TaskTimerJob.perform_now
           expect(task.reload.status).to eq("completed")
         end
+      end
+    end
+
+    context "hearing is not in the evidences submission docket and the hearing request is withdrawn" do
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task) }
+      let!(:schedule_hearing_task) do
+        create(
+          :schedule_hearing_task,
+          :cancelled,
+          parent: hearing_task,
+          appeal: appeal
+        )
+      end
+      let!(:task) do
+        appeal.update(docket_type: Constants.AMA_DOCKETS.hearing)
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: Bva.singleton, parent: hearing_task)
+      end
+
+      it "sets the timer to end 90 days after the hearing request is withdrawn" do
+        TaskTimerJob.perform_now
+        expect(task.reload.status).to eq("assigned")
+
+        Timecop.travel(receipt_date + 90.days) do
+          TaskTimerJob.perform_now
+          expect(task.reload.status).to eq("assigned")
+        end
+
+        Timecop.travel(schedule_hearing_task.closed_at + 91.days) do
+          TaskTimerJob.perform_now
+          expect(task.reload.status).to eq("completed")
+        end
+      end
+    end
+
+    context "hearing is not in the evidences submission docket" \
+            "and the hearing request is withdrawn with no scheduled hearing task" do
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task) }
+
+      before do
+        appeal.update(docket_type: Constants.AMA_DOCKETS.hearing)
+      end
+
+      it "fails with error EvidenceSubmissionWindowTask::NoAssociatedScheduledHearingTask" do
+        expect do
+          EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: Bva.singleton, parent: hearing_task)
+        end.to raise_error(EvidenceSubmissionWindowTask::NoAssociatedScheduledHearingTask)
       end
     end
   end
