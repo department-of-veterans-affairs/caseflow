@@ -276,7 +276,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           advance_on_docket_motion: {
             user_id: user.id,
             person_id: ama_hearing.appeal.appellant.id,
-            reason: AdvanceOnDocketMotion.reasons[:age],
+            reason: Constants.AOD_REASONS.age,
             granted: true
           },
           hearing: { notes: "Test" }
@@ -285,7 +285,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         expect(response.status).to eq 200
         ama_hearing.reload
         expect(ama_hearing.advance_on_docket_motion.person.id).to eq ama_hearing.appeal.appellant.id
-        expect(ama_hearing.advance_on_docket_motion.reason).to eq AdvanceOnDocketMotion.reasons[:age]
+        expect(ama_hearing.advance_on_docket_motion.reason).to eq Constants.AOD_REASONS.age
         expect(ama_hearing.advance_on_docket_motion.granted).to eq true
       end
     end
