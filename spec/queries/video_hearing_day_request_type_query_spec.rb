@@ -79,7 +79,7 @@ describe VideoHearingDayRequestTypeQuery do
       end
     end
 
-    context "single ama virtual hearing that has been held" do
+    context "single virtual hearing that has been held" do
       let(:hearing_day) do
         create(
           :hearing_day,
@@ -107,14 +107,16 @@ describe VideoHearingDayRequestTypeQuery do
         )
       end
 
-      it "sanity check: hearing is virtual" do
-        expect(hearing.reload.virtual?).to be true
+      context "hearing is an ama hearing" do
+        it "sanity check: hearing is virtual" do
+          expect(hearing.reload.virtual?).to be true
+        end
+
+        include_examples "it returns correct hash with expected key and value",
+                         "Virtual"
       end
 
-      include_examples "it returns correct hash with expected key and value",
-                       "Virtual"
-
-      context "with a legacy hearing" do
+      context "hearing is a legacy hearing" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
         let(:hearing) { create(:legacy_hearing, disposition: disposition, hearing_day: hearing_day) }
 
@@ -140,7 +142,7 @@ describe VideoHearingDayRequestTypeQuery do
       end
     end
 
-    context "mix of legacy and ama and video and virtaul hearings" do
+    context "mix of legacy and ama and video and virtual hearings" do
       let(:hearings) do
         [
           create(:hearing, hearing_day: hearing_day),
