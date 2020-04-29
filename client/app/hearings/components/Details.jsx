@@ -46,7 +46,7 @@ const inputFix = css({
 
 const HearingDetails = (props) => {
   const {
-    hearing, saveHearing, setHearing, goBack
+    hearing, saveHearing, setHearing, goBack, disabled
   } = props;
 
   const {
@@ -54,7 +54,7 @@ const HearingDetails = (props) => {
     externalId, veteranFirstName, veteranLastName,
     veteranFileNumber, room, notes, evidenceWindowWaived,
     scheduledForIsPast, docketName, transcriptSentDate,
-    disabled, readableRequestType
+    readableRequestType
   } = hearing;
 
   const [loading, setLoading] = useState(false);
