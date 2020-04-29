@@ -35,7 +35,7 @@ export const VirtualHearingLinkDetails = ({
     )}
     <div {...labelPaddingFirst}>
       <strong>Conference Room: </strong>
-      {`BVA${alias}@care.va.gov`}
+      {`${alias}`}
     </div>
     <div {...labelPadding}>
       <strong>PIN: </strong>
@@ -74,7 +74,7 @@ export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virt
           hearing={hearing}
           link={link}
           role={role}
-          alias={virtualHearing?.alias}
+          alias={virtualHearing?.aliasWithHost}
           pin={role === 'VLJ' ? virtualHearing?.hostPin : virtualHearing?.guestPin}
         />
       </React.Fragment>

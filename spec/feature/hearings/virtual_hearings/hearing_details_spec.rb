@@ -73,44 +73,38 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     within "#vlj-hearings-link" do
       expect(page).to have_content(
         "VLJ Link: Expired\n" \
-        "Conference Room: BVA#{virtual_hearing.alias}@care.va.gov\n" \
+        "Conference Room: #{virtual_hearing.alias_with_host}\n" \
         "PIN: #{virtual_hearing.host_pin}"
       )
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
         "Guest Link: Expired\n" \
-        "Conference Room: BVA#{virtual_hearing.alias}@care.va.gov\n" \
+        "Conference Room: #{virtual_hearing.alias_with_host}\n" \
         "PIN: #{virtual_hearing.guest_pin}"
       )
     end
   end
 
   def check_virtual_hearings_links(virtual_hearing, label)
-    # Construct the Virtual Hearing Links
-    client_host = ENV["PEXIP_CLIENT_HOST"] || "care.evn.va.gov"
-    base_link = "https://#{client_host}/bva-app/?conference=#{virtual_hearing.alias}&"
-    host_link = "#{base_link}pin=#{virtual_hearing.host_pin}#&join=1&role=host"
-    guest_link = "#{base_link}pin=#{virtual_hearing.guest_pin}#&join=1&role=guest"
-
     # Test the hearing link details
     within "#vlj-hearings-link" do
       expect(page).to have_content(
         "VLJ Link: #{label} \n" \
-        "Conference Room: BVA#{virtual_hearing.alias}@care.va.gov\n" \
+        "Conference Room: #{virtual_hearing.alias_with_host}\n" \
         "PIN: #{virtual_hearing.host_pin}\n" \
         "Copy VLJ Link "
       )
-      expect(page).to have_selector(:css, "a[href='#{host_link}']")
+      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.host_link}']")
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
         "Guest Link: #{label} \n" \
-        "Conference Room: BVA#{virtual_hearing.alias}@care.va.gov\n" \
+        "Conference Room: #{virtual_hearing.alias_with_host}\n" \
         "PIN: #{virtual_hearing.guest_pin}\n" \
         "Copy Guest Link "
       )
-      expect(page).to have_selector(:css, "a[href='#{guest_link}']")
+      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.guest_link}']")
     end
   end
 
