@@ -6,6 +6,7 @@ detectors:
     exclude:
       - BulkTaskAssignment
       - Hearing#override_full_hearing_day_validation
+      - PowerOfAttorney
       - QueueConfig
       - RatingDecision
   BooleanParameter:
