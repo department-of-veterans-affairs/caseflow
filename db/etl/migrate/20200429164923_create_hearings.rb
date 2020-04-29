@@ -47,6 +47,10 @@ class CreateHearings < ActiveRecord::Migration[5.2]
 
       t.string "witness", comment: "hearings.witness"
 
+      # virtual attribute to capture hearing request type
+      t.string "hearing_request_type", null: false, comment: "Calculated based on virtual_hearings and hearing_day.request_type"
+      t.index ["hearing_request_type"]
+
       # Hearing Day attributes
       t.string "hearing_day_bva_poc", comment: "hearing_days.bva_poc"
       t.datetime "hearing_day_created_at", null: false, comment: "hearing_days.created_at"
