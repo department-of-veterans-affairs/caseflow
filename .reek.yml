@@ -122,6 +122,7 @@ detectors:
     enabled: false
   RepeatedConditional:
     exclude:
+      - BgsPowerOfAttorney
       - HearingLocation
       - JudgeTeam
       - LegacyAppeal

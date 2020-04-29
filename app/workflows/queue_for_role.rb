@@ -10,10 +10,21 @@ class QueueForRole
   end
 
   def create(**args)
-    (user_role == "attorney") ? AttorneyQueue.new(**args) : GenericQueue.new(**args)
+    queue.new(**args)
   end
 
   private
+
+  def queue
+    case user_role
+    when "attorney"
+      AttorneyQueue
+    when "judge"
+      JudgeQueue
+    else
+      GenericQueue
+    end
+  end
 
   attr_reader :user_role
 end

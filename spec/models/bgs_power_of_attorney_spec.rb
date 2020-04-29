@@ -22,6 +22,16 @@ describe BgsPowerOfAttorney do
         expect(described_class.count).to eq(1)
       end
     end
+
+    context "BGS has no record" do
+      let(:claimant_participant_id) { "no-such-pid" }
+      let(:file_number) { "no-such-file-number" }
+
+      it "does not write db record, creates cache flag for 404" do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(Rails.cache.fetch("bgs-participant-poa-not-found-no-such-pid")).to eq(true)
+      end
+    end
   end
 
   describe ".find_or_create_by_file_number" do
@@ -40,6 +50,16 @@ describe BgsPowerOfAttorney do
       it "fetches existing record" do
         expect(subject).to eq(poa)
         expect(described_class.count).to eq(1)
+      end
+    end
+
+    context "BGS has no record" do
+      let(:claimant_participant_id) { "no-such-pid" }
+      let(:file_number) { "no-such-file-number" }
+
+      it "does not write db record, creates cache flag for 404" do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(Rails.cache.fetch("bgs-participant-poa-not-found-no-such-file-number")).to eq(true)
       end
     end
   end
