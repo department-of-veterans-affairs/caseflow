@@ -107,7 +107,7 @@ describe LegacyAppeal, :all_dbs do
 
   context "#eligible_for_opt_in? and #matchable_to_request_issue?" do
     let(:receipt_date) { Date.new(2020, 4, 10) }
-    let(:ama_date) { Constants::DATES["AMA_ACTIVATION"].to_date }
+    let(:ama_date) { ama_start_date }
     let(:ineligible_soc_date) { receipt_date - 60.days - 1.day }
     let(:ineligible_nod_date) { receipt_date - 372.days - 1.day }
     let(:eligible_soc_date) { receipt_date - 60.days + 1.day }
@@ -125,7 +125,7 @@ describe LegacyAppeal, :all_dbs do
       scenario "when the ssoc date is before AMA was launched" do
         allow(appeal).to receive(:active?).and_return(true)
         allow(appeal).to receive(:issues).and_return(issues)
-        allow(appeal).to receive(:soc_date).and_return(Constants::DATES["AMA_ACTIVATION"].to_date - 1.day)
+        allow(appeal).to receive(:soc_date).and_return(ama_start_date - 1.day)
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(false)
