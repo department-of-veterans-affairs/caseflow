@@ -900,6 +900,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
     expect(page).to have_css(".usa-alert-warning")
     alert = find(".usa-alert-warning")
     expect(alert).to have_content("Check CAVC for conflict of jurisdiction")
+    expect(alert).to have_content(
+      [
+        "If there is a Notice of Appeal (NOA) on file at the CAVC website,",
+        "use the Actions Menu to notify Litigation Support."
+      ].join(" ")
+    )
   end
 
   def verify_cavc_conflict_action

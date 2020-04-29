@@ -59,7 +59,7 @@ VirtualHearingLink.propTypes = {
     clientHost: PropTypes.string,
     guestPin: PropTypes.number,
     hostPin: PropTypes.number,
-    alias: PropTypes.string,
+    aliasWithHost: PropTypes.string,
     jobCompleted: PropTypes.bool
   }).isRequired,
   label: PropTypes.string
