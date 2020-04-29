@@ -1,19 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
-  let(:current_user) do
-    create(
-      :user,
-      :judge,
-      css_id: "BVATWARNER",
-      roles: ["Build HearSched"],
-      email: "test@gmail.com"
-    )
-  end
-
   def check_row_content(event, index)
     # Format the date the same as moment
-    formatted_date = event.sent_at.strftime("%b %d, %Y,%l:%M %P %Z").gsub!(/DT/, "ST")
+    formatted_date = event.sent_at.strftime("%b %d, %Y, %-l:%M %P %Z").gsub(/DT/, "ST")
 
     expect(find("#table-row-#{index} > td:first-child")).to have_content(event.sent_to_role)
     expect(find("#table-row-#{index} > td:nth-child(2)")).to have_content(event.email_address)
@@ -48,12 +38,26 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     check_email_event_rows(hearing, row_count)
   end
 
+  let(:current_user) do
+    create(
+      :user,
+      :judge,
+      css_id: "BVATWARNER",
+      roles: ["Build HearSched"],
+      email: "test@gmail.com"
+    )
+  end
+
+  let(:pexip_url) { "fake.va.gov" }
+
   before do
     create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG")
     create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO")
     HearingsManagement.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
     FeatureToggle.enable!(:schedule_virtual_hearings)
+
+    stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
   end
 
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO13") }
@@ -314,7 +318,9 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       expect(page).to have_content(
-        "conference=#{virtual_hearing.alias}&pin=#{virtual_hearing.host_pin}#&join=1&role=host"
+        "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+        "pin=#{virtual_hearing.host_pin}#" \
+        "&join=1&role=host"
       )
     end
   end
