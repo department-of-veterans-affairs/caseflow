@@ -58,11 +58,11 @@ class VirtualHearing < CaseflowRecord
   end
 
   def guest_link
-    "#{base_url}?conference=#{formatted_alias_or_alias_with_host}&pin=#{guest_pin}#&join=1&role=guest"
+    "#{base_url}?join=1&media=&escalate=1&conference=#{formatted_alias_or_alias_with_host}&pin=#{guest_pin}#&role=guest"
   end
 
   def host_link
-    "#{base_url}?conference=#{formatted_alias_or_alias_with_host}&pin=#{host_pin}#&join=1&role=host"
+    "#{base_url}?join=1&media=&escalate=1&conference=#{formatted_alias_or_alias_with_host}&pin=#{host_pin}#&role=host"
   end
 
   def job_completed?
