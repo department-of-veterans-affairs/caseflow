@@ -46,7 +46,7 @@ describe PowerOfAttorney, :all_dbs do
 
     context "by claimant_participant_id" do
       let(:power_of_attorney) do
-         PowerOfAttorney.new(vacols_id: vacols_case.bfkey, claimant_participant_id: "123")
+        PowerOfAttorney.new(vacols_id: vacols_case.bfkey, claimant_participant_id: "123")
       end
 
       it "returns BGS values" do
@@ -61,10 +61,10 @@ describe PowerOfAttorney, :all_dbs do
 
   context "when BGS POA does not exist" do
     let(:power_of_attorney) do
-       PowerOfAttorney.new(
-         vacols_id: vacols_case.bfkey,
-         file_number: "no-such-file-number",
-         claimant_participant_id: "no-such-pid"
+      PowerOfAttorney.new(
+        vacols_id: vacols_case.bfkey,
+        file_number: "no-such-file-number",
+        claimant_participant_id: "no-such-pid"
       )
     end
 
