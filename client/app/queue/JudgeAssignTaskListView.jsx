@@ -57,13 +57,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
         <div className="usa-width-one-fourth">
           <ul className="usa-sidenav-list">
             <li>
-              <NavLink to={`/queue/${chosenUserId}/assign`} activeClassName="usa-current" exact>
+              <NavLink to={`/queue/${targetUserCssId}/assign`} activeClassName="usa-current" exact>
                 Cases to Assign ({unassignedTasksCount})
               </NavLink>
             </li>
             {attorneysOfJudge.
               map((attorney) => <li key={attorney.id}>
-                <NavLink to={`/queue/${chosenUserId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
+                <NavLink to={`/queue/${targetUserCssId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
                   {attorney.full_name} ({attorney.active_task_count})
                 </NavLink>
               </li>)}
