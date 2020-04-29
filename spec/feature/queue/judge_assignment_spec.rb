@@ -164,7 +164,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id))
         click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.user.css_id)
 
-        expect(page).to have_current_path("/queue/#{judge_one.user.id}/assign")
+        expect(page).to have_current_path("/queue/#{judge_one.user.css_id}/assign")
         expect(page).to have_content("Assign 2 Cases")
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
