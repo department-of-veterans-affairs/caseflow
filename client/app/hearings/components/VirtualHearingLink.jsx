@@ -26,7 +26,7 @@ class VirtualHearingLink extends React.PureComponent {
     const qs = querystring.stringify(
       {
         join: 1,
-        media:,
+        media: '',
         escalate: 1,
         conference: virtualHearing.aliasWithHost,
         pin: `${this.getPin()}#`,
