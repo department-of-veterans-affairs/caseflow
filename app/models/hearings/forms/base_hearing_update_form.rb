@@ -106,7 +106,7 @@ class BaseHearingUpdateForm
   end
 
   def updates_requiring_email?
-    virtual_hearing_attributes&.key?(:status) || scheduled_time_string.present?
+    virtual_hearing_attributes&.key?(:request_cancelled) || scheduled_time_string.present?
   end
 
   def veteran_email_sent_flag
@@ -124,7 +124,7 @@ class BaseHearingUpdateForm
   end
 
   def virtual_hearing_cancelled?
-    virtual_hearing_attributes&.dig(:status) == "cancelled"
+    virtual_hearing_attributes&.dig(:request_cancelled) == true
   end
 
   def virtual_hearing_updates
@@ -158,9 +158,16 @@ class BaseHearingUpdateForm
       @virtual_hearing_created = true
     end
 
+    # Merge the hearing ID into the DataDog metrics
     updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: hearing&.id })
 
-    if !virtual_hearing_created?
+    # Handle the status toggle of the virtual hearing
+    if virtual_hearing_cancelled?
+      # Update the virtual hearings
+      virtual_hearing.update(virtual_hearing_updates)
+
+      DataDogService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
+    elsif !virtual_hearing_created?
       virtual_hearing.update(virtual_hearing_updates)
       virtual_hearing.establishment.restart!
       DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)

@@ -326,7 +326,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def veteran_names_for_file_numbers(veteran_file_numbers)
     Veteran.where(file_number: veteran_file_numbers).map do |veteran|
       # Matches how last names are split and sorted on the front end (see: TaskTable.detailsColumn.getSortValue)
-      [veteran.file_number, "#{veteran.last_name.split(' ').last}, #{veteran.first_name}"]
+      [veteran.file_number, "#{veteran.last_name&.split(' ')&.last}, #{veteran.first_name}"]
     end.to_h
   end
 end

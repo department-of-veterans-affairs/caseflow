@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_05_223053) do
+ActiveRecord::Schema.define(version: 2020_04_27_152555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -152,6 +152,27 @@ ActiveRecord::Schema.define(version: 2020_04_05_223053) do
     t.index ["appeal_id", "appeal_type"], name: "index_available_hearing_locations_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_available_hearing_locations_on_updated_at"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
+  end
+
+  create_table "bgs_power_of_attorneys", comment: "Power of Attorney (POA) cached from BGS", force: :cascade do |t|
+    t.string "authzn_change_clmant_addrs_ind", comment: "Authorization for POA to change claimant address"
+    t.string "authzn_poa_access_ind", comment: "Authorization for POA access"
+    t.string "claimant_participant_id", null: false, comment: "Claimant participant ID -- use as FK to claimants"
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "file_number", comment: "Claimant file number"
+    t.datetime "last_synced_at", comment: "The last time BGS was checked"
+    t.string "legacy_poa_cd", comment: "Legacy POA code"
+    t.string "poa_participant_id", null: false, comment: "POA participant ID -- use as FK to people"
+    t.string "representative_name", null: false, comment: "POA name"
+    t.string "representative_type", null: false, comment: "POA type"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["claimant_participant_id", "file_number"], name: "bgs_poa_pid_fn_unique_idx", unique: true
+    t.index ["created_at"], name: "index_bgs_power_of_attorneys_on_created_at"
+    t.index ["last_synced_at"], name: "index_bgs_power_of_attorneys_on_last_synced_at"
+    t.index ["poa_participant_id"], name: "index_bgs_power_of_attorneys_on_poa_participant_id"
+    t.index ["representative_name"], name: "index_bgs_power_of_attorneys_on_representative_name"
+    t.index ["representative_type"], name: "index_bgs_power_of_attorneys_on_representative_type"
+    t.index ["updated_at"], name: "index_bgs_power_of_attorneys_on_updated_at"
   end
 
   create_table "board_grant_effectuations", comment: "Represents the work item of updating records in response to a granted issue on a Board appeal. Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.", force: :cascade do |t|
@@ -1127,6 +1148,19 @@ ActiveRecord::Schema.define(version: 2020_04_05_223053) do
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
   end
 
+  create_table "sent_hearing_email_events", comment: "Events related to hearings notification emails", force: :cascade do |t|
+    t.string "email_address", comment: "Address the email was sent to"
+    t.string "email_type", comment: "The type of email sent: cancellation, confirmation, updated_time_confirmation"
+    t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
+    t.bigint "hearing_id", null: false, comment: "Associated hearing"
+    t.string "hearing_type", null: false
+    t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
+    t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
+    t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
+    t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
+    t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
+  end
+
   create_table "special_issue_lists", force: :cascade do |t|
     t.bigint "appeal_id"
     t.string "appeal_type"
@@ -1350,6 +1384,7 @@ ActiveRecord::Schema.define(version: 2020_04_05_223053) do
 
   create_table "virtual_hearings", force: :cascade do |t|
     t.string "alias", comment: "Alias for conference in Pexip"
+    t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false
@@ -1362,8 +1397,9 @@ ActiveRecord::Schema.define(version: 2020_04_05_223053) do
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
-    t.string "status", default: "pending", null: false, comment: "The status of the Pexip conference"
+    t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the virtual hearing"
     t.string "veteran_email", comment: "Veteran's email address"
     t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"
     t.index ["alias"], name: "index_virtual_hearings_on_alias"
@@ -1371,6 +1407,7 @@ ActiveRecord::Schema.define(version: 2020_04_05_223053) do
     t.index ["created_by_id"], name: "index_virtual_hearings_on_created_by_id"
     t.index ["hearing_type", "hearing_id"], name: "index_virtual_hearings_on_hearing_type_and_hearing_id"
     t.index ["updated_at"], name: "index_virtual_hearings_on_updated_at"
+    t.index ["updated_by_id"], name: "index_virtual_hearings_on_updated_by_id"
   end
 
   create_table "vso_configs", force: :cascade do |t|
@@ -1432,4 +1469,5 @@ ActiveRecord::Schema.define(version: 2020_04_05_223053) do
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "user_quotas", "users"
+  add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
 end

@@ -73,12 +73,6 @@ describe Claimant, :postgres do
         expect(claimant.zip).to eq zip_code
         expect(claimant.country).to eq country
       end
-
-      it "calls Rails.cache.write when accessing #zip" do
-        expect(Rails.cache).to receive(:write).with(any_args)
-        expect(Rails.cache).to receive(:write).with("person-zip-20001", true).once
-        claimant.zip
-      end
     end
   end
 
@@ -125,6 +119,45 @@ describe Claimant, :postgres do
       it "returns false" do
         claimant = create(:claimant)
         expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
+      end
+    end
+  end
+
+  context "#power_of_attorney" do
+    let(:claimant) { create(:claimant) }
+
+    subject { claimant.power_of_attorney }
+
+    it "returns BgsPowerOfAttorney" do
+      expect(subject).to be_a BgsPowerOfAttorney
+    end
+
+    context "when PID and file number do not match BGS" do
+      let(:claimant) do
+        create(:claimant,
+               participant_id: "no-such-pid",
+               decision_review: build(:appeal, veteran_file_number: "no-such-file-number"))
+      end
+
+      let!(:bgs_service) { BGSService.new }
+
+      before do
+        allow(BGSService).to receive(:new) { bgs_service }
+        allow(bgs_service).to receive(:fetch_poa_by_file_number).and_call_original
+        allow(bgs_service).to receive(:fetch_poas_by_participant_ids).and_call_original
+      end
+
+      it "returns nil" do
+        expect(subject).to be_nil
+        expect(claimant.representative_name).to be_nil
+      end
+
+      it "calls BGS only once" do
+        # rely on cache marker to avoid multiple BGS calls
+        10.times { subject }
+
+        expect(bgs_service).to have_received(:fetch_poa_by_file_number).once
+        expect(bgs_service).to have_received(:fetch_poas_by_participant_ids).once
       end
     end
   end

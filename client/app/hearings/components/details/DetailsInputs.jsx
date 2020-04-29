@@ -22,7 +22,8 @@ import {
   genericRow,
   maxWidthFormInput,
   rowThirds,
-  rowThirdsWithFinalSpacer
+  rowThirdsWithFinalSpacer,
+  enablePadding
 } from './style';
 import COPY from '../../../../COPY';
 import Checkbox from '../../../components/Checkbox';
@@ -33,10 +34,11 @@ import TranscriptionDetailsInputs from './TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './TranscriptionRequestInputs';
 import VirtualHearingLink from '../VirtualHearingLink';
+import { EmailNotificationHistory } from './EmailNotificationHistory';
 
 // Displays the emails associated with the virtual hearing.
 const EmailSection = (
-  { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, dispatch }
+  { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, dispatch, errors }
 ) => {
   const showEmailFields = (isVirtual || wasVirtual) && virtualHearing;
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
@@ -48,15 +50,21 @@ const EmailSection = (
   return (
     <div {...rowThirdsWithFinalSpacer}>
       <TextField
+        errorMessage={errors?.vetEmail}
         name="Veteran Email for Notifications"
         value={virtualHearing.veteranEmail}
         strongLabel
-        className={[classnames('cf-form-textinput', 'cf-inline-field')]}
+        className={[
+          classnames('cf-form-textinput', 'cf-inline-field', {
+            [enablePadding]: errors?.vetEmail
+          })
+        ]}
         readOnly={readOnlyEmails}
         onChange={(veteranEmail) => dispatch({ type: UPDATE_VIRTUAL_HEARING, payload: { veteranEmail } })}
         inputStyling={maxWidthFormInput}
       />
       <TextField
+        errorMessage={errors?.repEmail}
         name="POA/Representative Email for Notifications"
         value={virtualHearing.representativeEmail}
         strongLabel
@@ -72,6 +80,10 @@ const EmailSection = (
 
 EmailSection.propTypes = {
   dispatch: PropTypes.func,
+  errors: PropTypes.shape({
+    vetEmail: PropTypes.string,
+    repEmail: PropTypes.string
+  }),
   hearing: PropTypes.shape({
     scheduledForIsPast: PropTypes.bool
   }),
@@ -87,28 +99,27 @@ EmailSection.propTypes = {
 
 // Displays the virtual hearing link and emails.
 const VirtualHearingSection = (
-  { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, dispatch }
+  { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, dispatch, errors }
 ) => {
   if (!isVirtual && !wasVirtual) {
     return null;
   }
 
   const user = useContext(HearingsUserContext);
-  const virtualHearingLabel = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
-    COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
-    COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
+  const virtualHearingLabel =
+    virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
+      COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
+      COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
   return (
     <React.Fragment>
       <div className="cf-help-divider" />
-      <h3>
-        {wasVirtual && 'Previous '}Virtual Hearing Details
-      </h3>
-      {isVirtual &&
+      <h3>{wasVirtual && 'Previous '}Virtual Hearing Details</h3>
+      {isVirtual && (
         <div {...genericRow}>
           <strong>{virtualHearingLabel}</strong>
           <div {...css({ marginTop: '1.5rem' })}>
-            {virtualHearing?.jobCompleted &&
+            {virtualHearing?.jobCompleted && (
               <VirtualHearingLink
                 user={user}
                 hearing={hearing}
@@ -116,16 +127,15 @@ const VirtualHearingSection = (
                 isVirtual={isVirtual}
                 virtualHearing={virtualHearing}
               />
-            }
-            {!virtualHearing?.jobCompleted &&
-              <span {...css({ color: COLORS.GREY_MEDIUM })}>
-                {COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}
-              </span>
-            }
+            )}
+            {!virtualHearing?.jobCompleted && (
+              <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>
+            )}
           </div>
         </div>
-      }
+      )}
       <EmailSection
+        errors={errors}
         hearing={hearing}
         virtualHearing={virtualHearing}
         isVirtual={isVirtual}
@@ -144,6 +154,10 @@ VirtualHearingSection.propTypes = {
   readOnly: PropTypes.bool,
   virtualHearing: PropTypes.shape({
     jobCompleted: PropTypes.bool
+  }),
+  errors: PropTypes.shape({
+    vetEmail: PropTypes.string,
+    repEmail: PropTypes.string
   }),
   wasVirtual: PropTypes.bool
 };
@@ -197,7 +211,8 @@ const DetailsInputs = (props) => {
     requestType,
     transcription,
     virtualHearing,
-    wasVirtual
+    wasVirtual,
+    errors
   } = props;
   const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
   const enableVirtualHearings = userCanScheduleVirtualHearings && requestType !== 'Central';
@@ -225,7 +240,7 @@ const DetailsInputs = (props) => {
           onChange={(room) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { room } })}
         />
       </div>
-      {enableVirtualHearings &&
+      {enableVirtualHearings && (
         <React.Fragment>
           <div className="cf-help-divider" />
           <div {...flexParent}>
@@ -240,8 +255,9 @@ const DetailsInputs = (props) => {
             <div {...columnDoubleSpacer} />
           </div>
         </React.Fragment>
-      }
+      )}
       <VirtualHearingSection
+        errors={errors}
         hearing={hearing}
         isVirtual={isVirtual}
         readOnly={readOnly}
@@ -249,7 +265,8 @@ const DetailsInputs = (props) => {
         wasVirtual={wasVirtual}
         dispatch={dispatch}
       />
-      {!isLegacy &&
+      {hearing?.emailEvents.length > 0 && <EmailNotificationHistory rows={hearing.emailEvents} />}
+      {!isLegacy && (
         <React.Fragment>
           <div className="cf-help-divider" />
           <div>
@@ -265,7 +282,7 @@ const DetailsInputs = (props) => {
             />
           </div>
         </React.Fragment>
-      }
+      )}
       <div className="cf-help-divider" />
       <TextareaField
         name="Notes"
@@ -275,26 +292,31 @@ const DetailsInputs = (props) => {
         value={hearing?.notes || ''}
         onChange={(notes) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { notes } })}
       />
-      {!isLegacy &&
+      {!isLegacy && (
         <TranscriptionSection
           hearing={hearing}
           readOnly={readOnly}
           transcription={transcription}
           dispatch={dispatch}
         />
-      }
+      )}
     </React.Fragment>
   );
 };
 
 DetailsInputs.propTypes = {
+  errors: PropTypes.shape({
+    vetEmail: PropTypes.string,
+    repEmail: PropTypes.string
+  }),
   hearing: PropTypes.shape({
     judgeId: PropTypes.string,
     room: PropTypes.string,
     evidenceWindowWaived: PropTypes.bool,
     notes: PropTypes.string,
     bvaPoc: PropTypes.string,
-    scheduledForIsPast: PropTypes.bool
+    scheduledForIsPast: PropTypes.bool,
+    emailEvents: PropTypes.array
   }),
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,

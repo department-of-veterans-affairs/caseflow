@@ -444,7 +444,8 @@ export const initialAssignTasksToUser = ({
         tasks: {
           assigned_to_id: assigneeId,
           type: 'JudgeCaseAssignmentToAttorney',
-          appeal_id: oldTask.appealId
+          appeal_id: oldTask.appealId,
+          judge_id: previousAssigneeId
         }
       }
     }
@@ -653,10 +654,11 @@ export const setSpecialIssues = (specialIssues) => ({
   }
 });
 
-export const setAppealAod = (externalAppealId) => ({
+export const setAppealAod = (externalAppealId, granted) => ({
   type: ACTIONS.SET_APPEAL_AOD,
   payload: {
-    externalAppealId
+    externalAppealId,
+    granted
   }
 });
 

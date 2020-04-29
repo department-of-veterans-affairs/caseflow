@@ -63,7 +63,7 @@ class HearingsController < HearingsApplicationController
   def virtual_hearing_job_status
     render json: {
       job_completed: hearing.virtual_hearing&.job_completed?,
-      alias: hearing.virtual_hearing&.alias,
+      alias_with_host: hearing.virtual_hearing&.formatted_alias_or_alias_with_host,
       host_pin: hearing.virtual_hearing&.host_pin
     }
   end
@@ -100,7 +100,7 @@ class HearingsController < HearingsApplicationController
   ].freeze
 
   VIRTUAL_HEARING_ATTRIBUTES = [
-    :veteran_email, :judge_email, :representative_email, :status
+    :veteran_email, :judge_email, :representative_email, :request_cancelled
   ].freeze
 
   def update_params_legacy

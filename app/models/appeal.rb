@@ -166,6 +166,10 @@ class Appeal < DecisionReview
       .order(:created_at).last
   end
 
+  def overtime?
+    latest_attorney_case_review&.overtime
+  end
+
   def reviewing_judge_name
     task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
@@ -346,11 +350,11 @@ class Appeal < DecisionReview
            to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
-    claimants.map(&:power_of_attorney)
+    claimants.map(&:power_of_attorney).compact
   end
 
   def representatives
-    vso_participant_ids = power_of_attorneys.map(&:participant_id) - [nil]
+    vso_participant_ids = power_of_attorneys.map(&:participant_id).compact.uniq
     Representative.where(participant_id: vso_participant_ids)
   end
 

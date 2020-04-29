@@ -15,6 +15,7 @@ class Task < CaseflowRecord
 
   include PrintsTaskTree
   include TaskExtensionForHearings
+  include HasAppealUpdatedSince
 
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
@@ -59,6 +60,10 @@ class Task < CaseflowRecord
 
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
+  scope :recently_closed, -> { closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
+
+  scope :incomplete_or_recently_closed, -> { open.or(recently_closed) }
+
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
     where.not(
@@ -89,14 +94,6 @@ class Task < CaseflowRecord
 
     def open_statuses
       active_statuses.concat([Constants.TASK_STATUSES.on_hold])
-    end
-
-    def recently_closed
-      closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now)
-    end
-
-    def incomplete_or_recently_closed
-      open.or(recently_closed)
     end
 
     def create_many_from_params(params_array, current_user)

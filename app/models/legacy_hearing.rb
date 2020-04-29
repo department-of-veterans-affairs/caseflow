@@ -31,6 +31,7 @@ class LegacyHearing < CaseflowRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
+  has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :hearing_id
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location
@@ -262,11 +263,12 @@ class LegacyHearing < CaseflowRecord
   end
 
   def current_issue_count
-    active_appeal_streams.map(&:worksheet_issues).flatten
-      .reject do |issue|
-      issue.deleted? || (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?)
-    end
-      .count
+    active_appeal_streams
+      .map(&:worksheet_issues)
+      .flatten
+      .count do |issue|
+        !(issue.deleted? || (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?))
+      end
   end
 
   # If we do not yet have the military_service saved in Caseflow's DB, then

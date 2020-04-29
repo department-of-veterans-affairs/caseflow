@@ -14,11 +14,13 @@ module TaskExtensionForHearings
     available_hearing_admin_actions(user) | available_hearing_mgmt_actions(user)
   end
 
-  def most_recent_closed_hearing_on_appeal
+  def most_recent_closed_hearing_task_on_appeal
     tasks = appeal.tasks.closed.order(closed_at: :desc).where(type: HearingTask.name)
-    return tasks.first&.hearing if appeal.is_a?(Appeal)
 
-    tasks.map(&:hearing).detect(&:vacols_hearing_exists?)
+    return tasks.first if appeal.is_a?(Appeal)
+
+    # Legacy appeals can be orphaned, so find the first un-orphaned one.
+    tasks.detect { |task| task.hearing&.vacols_hearing_exists? }
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
@@ -51,7 +53,7 @@ module TaskExtensionForHearings
     return [] unless type == ScheduleHearingTask.name
     return [] unless HearingsManagement.singleton.user_has_access?(user)
 
-    return [] if most_recent_closed_hearing_on_appeal&.disposition.blank?
+    return [] if most_recent_closed_hearing_task_on_appeal&.hearing&.disposition.blank?
 
     [
       Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h

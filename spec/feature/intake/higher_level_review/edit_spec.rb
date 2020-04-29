@@ -28,6 +28,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
   let!(:ratings_with_legacy_issues) do
     generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
+  let(:request_issue_decision_mdY) { request_issue.decision_or_promulgation_date.mdY }
 
   let(:legacy_opt_in_approved) { false }
 
@@ -307,6 +308,10 @@ feature "Higher Level Review Edit issues", :all_dbs do
           "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
         )
         expect(page).to have_content(
+          "#{COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT}:\nService connection, limitation of thigh motion (extension)"
+        )
+
+        expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
         expect(page).to have_content("#{eligible_request_issue.contention_text}\nDecision date: #{Time.zone.today.mdY}")
@@ -516,11 +521,13 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       click_intake_add_issue
       click_intake_no_matching_issues
+
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
         date: pre_ama_start_date.to_date.mdY
       )
+      add_untimely_exemption_response("Yes")
 
       safe_click("#button-submit-update")
 
@@ -1220,7 +1227,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
-        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawal pending/i)
+        expect(page).to have_content(
+          /[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawal pending/i
+        )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -1268,7 +1277,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
         expect(page).to have_content(/Requested issues\s*[0-9]+\. Left knee granted/i)
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawal pending/i
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1290,7 +1299,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawn on/i
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
         )
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
@@ -1344,13 +1353,15 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
         click_remove_intake_issue_dropdown("Apportionment")
         click_edit_submit_and_confirm
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
 
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        expect(page).to have_content("Review Removed")
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         # going back to the edit page does not show any requested issues
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
         expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
         expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
       end
@@ -1397,8 +1408,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
 
         click_edit_submit
-        expect(page).to have_content("Remove review?")
-        expect(page).to have_content("This review and all tasks associated with it will be removed.")
+        expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE)
+        expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TEXT)
         click_intake_confirm
         sleep 1
 

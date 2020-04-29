@@ -28,7 +28,8 @@ describe EvidenceSubmissionWindowTask, :postgres do
         participant_id_with_pva => {
           representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
           representative_type: "POA National Organization",
-          participant_id: "2452383"
+          participant_id: "2452383",
+          file_number: "66660000"
         }
       )
     allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)

@@ -212,6 +212,19 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
           expect(response_body["user"]["css_id"]).to eq(user.css_id)
         end
       end
+
+      context "when a valid css_id parameter in mixed case is provided" do
+        let(:params) { { css_id: user.css_id.downcase } }
+
+        it "returns a valid response with the expected user" do
+          subject
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+          expect(response_body["user"]["id"]).to eq(user.id)
+          expect(response_body["user"]["css_id"]).to eq(user.css_id)
+        end
+      end
     end
 
     context "when searching by user id" do
@@ -236,7 +249,7 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
         end
       end
 
-      context "when a valid css_id parameter is provided" do
+      context "when a valid id parameter is provided" do
         let(:params) { { id: user.id } }
 
         it "returns a valid response with the expected user" do

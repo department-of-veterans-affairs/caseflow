@@ -30,7 +30,7 @@ feature "AmaQueue", :all_dbs do
 
       step "views their case details which does not have the view docs link" do
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
-        expect(page).to_not have_content("Veteran Documents")
+        expect(page).to_not have_content(COPY::TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL)
       end
     end
   end
@@ -65,7 +65,8 @@ feature "AmaQueue", :all_dbs do
         appeals.first.claimant.participant_id => {
           representative_name: poa_name,
           representative_type: "POA Attorney",
-          participant_id: participant_id
+          participant_id: participant_id,
+          file_number: appeals.first.veteran_file_number
         }
       )
     end
@@ -195,12 +196,12 @@ feature "AmaQueue", :all_dbs do
 
         click_on "Submit"
 
-        expect(page).to have_content("AOD status updated")
+        expect(page).to have_content("AOD status has been granted due to Serious illness")
         expect(page).to have_content("AOD")
         motion = appeals.first.claimant.person.advance_on_docket_motions.first
 
         expect(motion.granted).to eq(true)
-        expect(motion.reason).to eq("serious_illness")
+        expect(motion.reason).to eq(Constants.AOD_REASONS.serious_illness)
       end
 
       context "when there is an error loading addresses" do
