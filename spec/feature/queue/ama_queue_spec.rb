@@ -196,12 +196,12 @@ feature "AmaQueue", :all_dbs do
 
         click_on "Submit"
 
-        expect(page).to have_content("AOD status updated")
+        expect(page).to have_content("AOD status has been granted due to Serious illness")
         expect(page).to have_content("AOD")
         motion = appeals.first.claimant.person.advance_on_docket_motions.first
 
         expect(motion.granted).to eq(true)
-        expect(motion.reason).to eq("serious_illness")
+        expect(motion.reason).to eq(Constants.AOD_REASONS.serious_illness)
       end
 
       context "when there is an error loading addresses" do
