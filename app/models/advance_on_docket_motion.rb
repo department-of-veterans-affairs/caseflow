@@ -4,28 +4,32 @@ class AdvanceOnDocketMotion < CaseflowRecord
   belongs_to :person
   belongs_to :user
 
-  enum status: {
-    granted: "granted",
-    denied: "denied"
-  }
   enum reason: {
-    financial_distress: "financial_distress",
-    age: "age",
-    serious_illness: "serious_illness",
-    other: "other"
+    Constants.AOD_REASONS.financial_distress.to_sym => Constants.AOD_REASONS.financial_distress,
+    Constants.AOD_REASONS.age.to_sym => Constants.AOD_REASONS.age,
+    Constants.AOD_REASONS.serious_illness.to_sym => Constants.AOD_REASONS.serious_illness,
+    Constants.AOD_REASONS.other.to_sym => Constants.AOD_REASONS.other
   }
+
+  scope :granted, -> { where(granted: true) }
+  scope :eligible_due_to_age, -> { age }
+  scope :eligible_due_to_date, lambda { |receipt_date|
+    where(created_at: receipt_date..DateTime::Infinity.new).where.not(id: age)
+  }
+  scope :for_person, ->(person_id) { where(person_id: person_id) }
 
   class << self
     def granted_for_person?(person_id, appeal_receipt_date)
-      where(
-        granted: true,
-        created_at: appeal_receipt_date..DateTime::Infinity.new,
-        person_id: person_id
-      ).any?
+      eligible_motions(person_id, appeal_receipt_date).granted.any?
     end
 
-    def create_or_update_by_person_id(person_id, attrs)
-      motion = find_or_create_by(person_id: person_id)
+    def eligible_motions(person_id, appeal_receipt_date)
+      eligible_due_to_date(appeal_receipt_date).or(eligible_due_to_age).for_person(person_id)
+    end
+
+    def create_or_update_by_appeal(appeal, attrs)
+      person_id = appeal.claimant.person.id
+      motion = eligible_due_to_date(appeal.receipt_date).for_person(person_id).first || create(person_id: person_id)
 
       motion.update(attrs)
     end

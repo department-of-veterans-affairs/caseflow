@@ -99,7 +99,7 @@ describe SupplementalClaim, :postgres do
         end
 
         context "when it is before AMA begin date" do
-          let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 1 }
+          let(:receipt_date) { ama_test_start_date - 1 }
 
           it "adds an error to receipt_date" do
             is_expected.to be false

@@ -25,6 +25,10 @@ FactoryBot.define do
     updated_by { create(:user) }
     virtual_hearing { nil }
 
+    trait :held do
+      disposition { Constants.HEARING_DISPOSITION_TYPES.held }
+    end
+
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|
         create(:hearing_task_association,

@@ -27,6 +27,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
   let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+  let(:request_issue_decision_mdY) { request_issue.decision_or_promulgation_date.mdY }
   let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
 
   let(:decision_review_remanded) { nil }
@@ -592,7 +593,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
-        expect(page).to have_content("1. PTSD denied\nDecision date: 05/10/2019\nWithdrawal pending")
+        expect(page).to have_content("1. PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -639,7 +640,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
         expect(page).to have_content(
-          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
+          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -662,7 +663,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         expect(find("div", class: "issue-container", match: :first)).to have_content("Left knee granted")
         expect(find("div", class: "withdrawn-issue")).to have_content(
-          "PTSD denied\nDecision date: 05/10/2019\nWithdrawn on"
+          "PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawn on"
         )
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
