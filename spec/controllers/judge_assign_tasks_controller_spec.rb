@@ -76,6 +76,22 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
         it_behaves_like "attorney task assignment"
       end
 
+      context "when the assignment encounters an error" do
+        before { create(:ama_judge_decision_review_task, assigned_to: judge, parent: assign_tasks.last.parent) }
+
+        it "Returns an error and creates no tasks" do
+          subject
+
+          expect(response.status).to eq 400
+          response_body = JSON.parse(response.body)
+
+          expect(JudgeAssignTask.open.count).to eq assign_tasks.count
+          expect(JudgeDecisionReviewTask.open.count).to eq 1
+          expect(AttorneyTask.open.count).to eq 0
+        end
+      end
+    end
+
     context "when cases will be assigned to an acting judge" do
       let!(:second_judge_staff) { create(:staff, :attorney_judge_role, sdomainid: second_judge.css_id) }
       let!(:assignee) { second_judge }

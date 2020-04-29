@@ -177,6 +177,42 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
   end
 
+  context "Encounters an error assigning a case" do
+    scenario "when assignbing from their assign queue" do
+      judge_task_one = create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
+      judge_task_two = create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
+      create(:ama_judge_decision_review_task, assigned_to: judge_one.user, appeal: appeal_two)
+
+      step "visits their assign queue" do
+        visit "/queue/#{judge_one.user.css_id}/assign"
+
+        expect(page).to have_content("#{attorney_one.full_name} (0)")
+        case_rows = page.find_all("tr[id^='table-row-']")
+        expect(case_rows.length).to eq(2)
+      end
+
+      step "checks both cases and assigns them to an attorney" do
+        scroll_to(".usa-table-borderless")
+        check judge_task_one.id.to_s, allow_label_click: true
+        check judge_task_two.id.to_s, allow_label_click: true
+
+        safe_click ".Select"
+        click_dropdown(text: attorney_one.full_name)
+
+        click_on "Assign 2 cases"
+        expect(page).to have_content("#{attorney_one.full_name} (0)")
+        expect(page).to have_content("Error assigning tasks")
+        expect(page).to have_content("Veteran's (#{appeal_two.veteran_file_number}) appeal (#{appeal_two.id}) already "\
+                                     "has an open task of type #{JudgeDecisionReviewTask.name}")
+
+        visit "/queue/#{judge_one.user.css_id}/assign"
+        expect(page).to have_content("#{attorney_one.full_name} (0)")
+        case_rows = page.find_all("tr[id^='table-row-']")
+        expect(case_rows.length).to eq(2)
+      end
+    end
+  end
+
   describe "Reassigning a legacy appeal to another judge from the case details page" do
     let!(:vacols_case) { create(:case, staff: vacols_user_one) }
     let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }

@@ -100,9 +100,10 @@ class AssignWidget extends React.PureComponent {
             casePlural: pluralize('case', selectedTasks.length)
           })
         });
-      }, () => {
+      }, (error) => {
         this.props.resetSaveState();
 
+        const errorMessages = error.response.body?.errors;
         const errorDetail = this.props.isModal && userId ?
           <React.Fragment>
             <Link to={`/queue/${userId}/assign`}>{COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK}</Link>
@@ -111,7 +112,7 @@ class AssignWidget extends React.PureComponent {
 
         return this.props.showErrorMessage({
           title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
-          detail: errorDetail });
+          detail: errorMessages?.length ? errorMessages[0].title : errorDetail });
       });
   }
 
