@@ -60,9 +60,11 @@ detectors:
       - VirtualHearings::DeleteConferencesJob#delete_conference
       - VirtualHearings::DeleteConferencesJob#perform
       - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
+      - VirtualHearings::SendEmail#external_message_id
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
+      - Fakes::BGSService#fetch_poas_by_participant_ids
       - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
@@ -100,6 +102,7 @@ detectors:
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReview::ContestableIssueFinder#initialize
       - QueueRepository#assign_case_to_attorney!
+      - VirtualHearings::CreateConferenceJob#perform
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReview::IntakeError#potential_error_code
@@ -119,6 +122,7 @@ detectors:
     enabled: false
   RepeatedConditional:
     exclude:
+      - BgsPowerOfAttorney
       - HearingLocation
       - JudgeTeam
       - LegacyAppeal
@@ -126,6 +130,9 @@ detectors:
       - RequestIssue
       - BulkTaskReassignment
       - Task
+  TooManyConstants:
+    exclude:
+      - Fakes::BGSServicePOA
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
@@ -161,6 +168,7 @@ detectors:
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - PendingIncompleteAndUncancelledTaskTimersQuery#call
+      - PowerOfAttorneyMapper#get_claimant_poa_from_bgs_poa
       - Reporter#average
       - Reporter#median
       - Reporter#seconds_to_hms

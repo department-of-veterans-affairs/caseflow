@@ -4,6 +4,7 @@ class Hearing < CaseflowRecord
   include HasHearingTask
   include HasVirtualHearing
   include HearingTimeConcern
+  include HasSimpleAppealUpdatedSince
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -14,6 +15,7 @@ class Hearing < CaseflowRecord
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
   has_many :hearing_issue_notes
+  has_many :email_events, class_name: "SentHearingEmailEvent"
 
   class HearingDayFull < StandardError; end
 
@@ -123,7 +125,7 @@ class Hearing < CaseflowRecord
 
   def advance_on_docket_motion
     # we're only really interested if the AOD was granted
-    AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
+    AdvanceOnDocketMotion.for_person(claimant_id).order("granted DESC NULLS LAST").first
   end
 
   def scheduled_for

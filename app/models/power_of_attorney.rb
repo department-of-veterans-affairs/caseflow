@@ -32,6 +32,12 @@ class PowerOfAttorney
            :participant_id,
            to: :bgs_power_of_attorney, prefix: :bgs
 
+  class << self
+    def repository
+      PowerOfAttorneyRepository
+    end
+  end
+
   def update_vacols_rep_info!(appeal:, representative_type:, representative_name:, address:)
     repo = self.class.repository
     vacols_code = repo.get_vacols_rep_code_from_poa(representative_type, representative_name)
@@ -58,12 +64,12 @@ class PowerOfAttorney
   private
 
   def bgs_power_of_attorney
-    @bgs_power_of_attorney ||= BgsPowerOfAttorney.new(file_number: file_number)
+    @bgs_power_of_attorney ||= fetch_bgs_power_of_attorney || BgsPowerOfAttorney.new(file_number: file_number)
   end
 
-  class << self
-    def repository
-      PowerOfAttorneyRepository
-    end
+  def fetch_bgs_power_of_attorney
+    BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
+  rescue ActiveRecord::RecordInvalid # not found at BGS
+    nil
   end
 end

@@ -1163,8 +1163,8 @@ describe RequestIssue, :all_dbs do
       )
       Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: Constants::DATES["AMA_ACTIVATION"].to_date - 5.days,
-        profile_date: Constants::DATES["AMA_ACTIVATION"].to_date - 10.days,
+        promulgation_date: ama_start_date - 5.days,
+        profile_date: ama_start_date - 10.days,
         issues: [
           { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
           { decision_text: "Issue before AMA Activation from RAMP",
@@ -1371,7 +1371,7 @@ describe RequestIssue, :all_dbs do
       end
 
       context "when legacy opt in is approved" do
-        let(:receipt_date) { Date.new(2020, 4, 10) }
+        let(:receipt_date) { Time.zone.today }
         let(:legacy_opt_in_approved) { true }
 
         context "when legacy issue is eligible" do
@@ -1433,11 +1433,11 @@ describe RequestIssue, :all_dbs do
     end
 
     context "Issues with decision dates before AMA" do
-      let(:receipt_date) { post_ama_start_date + 1.day }
-      let(:profile_date) { Constants::DATES["AMA_ACTIVATION"].to_date - 5.days }
+      let(:receipt_date) { ama_start_date + 5.days }
+      let(:profile_date) { ama_start_date - 5.days }
 
       it "flags nonrating issues before AMA" do
-        nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION"].to_date - 5.days
+        nonrating_request_issue.decision_date = ama_start_date - 5.days
         nonrating_request_issue.validate_eligibility!
 
         expect(nonrating_request_issue.ineligible_reason).to eq("before_ama")
@@ -1459,7 +1459,7 @@ describe RequestIssue, :all_dbs do
         end
 
         it "does not apply before AMA checks" do
-          nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION"].to_date - 5.days
+          nonrating_request_issue.decision_date = ama_start_date - 5.days
           nonrating_request_issue.validate_eligibility!
 
           expect(nonrating_request_issue.ineligible_reason).to_not eq("before_ama")
