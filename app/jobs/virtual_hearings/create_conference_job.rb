@@ -4,6 +4,7 @@
 # that is switched to virtual hearing.
 class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   queue_with_priority :high_priority
+  application_attr :hearing_schedule
 
   class IncompleteError < StandardError; end
 
@@ -24,6 +25,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   retry_on Caseflow::Error::PexipApiError, attempts: 5 do |job, exception|
     kwargs = job.arguments.first
     extra = {
+      application: job.class.app_name.to_s,
       hearing_id: kwargs[:hearing_id],
       hearing_type: kwargs[:hearing_type]
     }
