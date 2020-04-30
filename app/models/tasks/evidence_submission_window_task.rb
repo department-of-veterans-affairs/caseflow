@@ -22,11 +22,11 @@ class EvidenceSubmissionWindowTask < Task
     # Timer should be at receipt date if the appeal is in the ESW docket
     from_date ||= appeal.receipt_date if appeal.evidence_submission_docket?
 
-    # Set the scheduled hearing task
-    task = scheduled_hearing_task(from_date)
+    # Timer should end when the hearing task was cancelled
+    from_date ||= cancelled_schedule_hearing_task&.closed_at
 
-    # Timer should be the date the hearing was withdrawn for all other appeals
-    from_date ||= task.closed_at
+    # Fail if there is no schedule hearing task
+    fail CouldNotCalculateTimerEndsDateForEvidenceSubmissionWindowTask if from_date.nil?
 
     # Add 90 days to the timer based on the date above
     from_date + 90.days
@@ -36,7 +36,7 @@ class EvidenceSubmissionWindowTask < Task
     appeal.hearings.max_by(&:id)
   end
 
-  class NoAssociatedScheduledHearingTask < StandardError
+  class CouldNotCalculateTimerEndsDateForEvidenceSubmissionWindowTask < StandardError
     def initialize
       super("Expected to find an associated scheduled hearing task")
     end
@@ -48,16 +48,11 @@ class EvidenceSubmissionWindowTask < Task
     self.assigned_to ||= MailTeam.singleton
   end
 
-  def scheduled_hearing_task(from_date)
+  def cancelled_schedule_hearing_task
     # Get the schedule hearing task
-    task = parent.children.find_by(
+    parent.children.find_by(
       type: ScheduleHearingTask.name,
       status: Constants.TASK_STATUSES.cancelled
     )
-
-    fail NoAssociatedScheduledHearingTask if !from_date && task.nil?
-
-    # Return the task if it is found
-    task
   end
 end

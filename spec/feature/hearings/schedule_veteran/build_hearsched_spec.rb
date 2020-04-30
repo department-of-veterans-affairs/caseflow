@@ -339,7 +339,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       expect(page).to have_content("There are no schedulable veterans")
     end
 
-    scenario "Withdraw Veteran's hearing request" do
+    fscenario "Withdraw Veteran's hearing request" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
