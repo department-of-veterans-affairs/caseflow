@@ -8,7 +8,7 @@ import CopyTextButton from '../../../components/CopyTextButton';
 import PropTypes from 'prop-types';
 
 export const VirtualHearingLinkDetails = ({
-  alias,
+  aliasWithHost,
   pin,
   role,
   link,
@@ -34,7 +34,7 @@ export const VirtualHearingLinkDetails = ({
     )}
     <div {...labelPaddingFirst}>
       <strong>Conference Room: </strong>
-      {`${alias}`}
+      {`${aliasWithHost}`}
     </div>
     <div {...labelPadding}>
       <strong>PIN: </strong>
@@ -47,7 +47,7 @@ export const VirtualHearingLinkDetails = ({
 );
 
 VirtualHearingLinkDetails.propTypes = {
-  alias: PropTypes.string,
+  aliasWithHost: PropTypes.string,
   pin: PropTypes.number,
   role: PropTypes.string,
   link: PropTypes.string,
@@ -73,7 +73,7 @@ export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virt
           hearing={hearing}
           link={link}
           role={role}
-          alias={virtualHearing?.aliasWithHost}
+          aliasWithHost={virtualHearing?.aliasWithHost}
           pin={role === 'VLJ' ? virtualHearing?.hostPin : virtualHearing?.guestPin}
         />
       </React.Fragment>
