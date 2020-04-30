@@ -199,7 +199,7 @@ describe VirtualHearingMailer do
 
         it "is in correct format" do
           expect(virtual_hearing.host_link).to eq(
-            "https://#{pexip_url}/bva-app/?join=1&media=&escalate=1&" \
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
             "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
             "pin=#{virtual_hearing.host_pin}#&role=host"
           )
@@ -216,7 +216,7 @@ describe VirtualHearingMailer do
 
         it "is in correct format" do
           expect(virtual_hearing.guest_link).to eq(
-            "https://#{pexip_url}/bva-app/?join=1&media=&escalate=1&" \
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
             "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
             "pin=#{virtual_hearing.guest_pin}#&role=guest"
           )
