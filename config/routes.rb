@@ -124,11 +124,10 @@ Rails.application.routes.draw do
       resources :advance_on_docket_motions, only: [:create]
       get 'tasks', to: "tasks#for_appeal"
       patch 'update'
+      post 'work_mode', to: "work_modes#create"
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
-
-  match "/appeals/:appeal_id/work_mode" => "work_modes#update", via: [:put, :post]
 
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
 

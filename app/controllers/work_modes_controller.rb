@@ -7,7 +7,7 @@ class WorkModesController < ApplicationController
     redirect_to "/unauthorized"
   end
 
-  def update
+  def create
     work_mode = WorkMode.create_or_update_by_appeal(appeal, overtime: overtime_param)
 
     render json: { work_mode: work_mode }
@@ -24,7 +24,6 @@ class WorkModesController < ApplicationController
   end
 
   def validate_modification_access_to_overtime
-    # TODO: allow an SSC to modify; SSC will not have any tasks assigned
     current_user.judge? && current_user.appeal_has_task_assigned_to_user?(appeal)
   end
 
