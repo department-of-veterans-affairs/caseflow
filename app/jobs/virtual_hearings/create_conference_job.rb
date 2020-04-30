@@ -23,6 +23,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   # Retry if Pexip returns an invalid response.
   retry_on Caseflow::Error::PexipApiError, attempts: 5 do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+
     kwargs = job.arguments.first
     extra = {
       application: job.class.app_name.to_s,
@@ -85,6 +87,11 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   def create_conference
     assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
+
+    Rails.logger.info(
+      "Trying to create conference for hearing (#{virtual_hearing.hearing_type}" \
+      "#{virtual_hearing.hearing_id})..."
+    )
 
     pexip_response = create_pexip_conference
 
