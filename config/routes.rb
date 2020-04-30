@@ -128,6 +128,8 @@ Rails.application.routes.draw do
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
+  match "/appeals/:appeal_id/work_mode" => "work_modes#update", via: [:put, :post]
+
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
 
   resources :regional_offices, only: [:index]

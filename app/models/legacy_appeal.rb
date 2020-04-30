@@ -29,6 +29,7 @@ class LegacyAppeal < CaseflowRecord
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :claimants, -> { Claimant.none }
   has_one :cached_vacols_case, class_name: "CachedAppeal", foreign_key: :vacols_id, primary_key: :vacols_id
+  has_one :work_mode, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -638,6 +639,8 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def overtime?
+    return !!work_mode&.overtime if FeatureToggle.enabled?(:overtime_revamp)
+
     QueueMapper::OVERTIME_WORK_PRODUCTS.key?(das_assignments.max_by(&:created_at).try(:work_product))
   end
 

@@ -25,6 +25,7 @@ class Appeal < DecisionReview
   has_one :special_issue_list
   has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
+  has_one :work_mode, as: :appeal
 
   enum stream_type: {
     "original": "original",
@@ -167,6 +168,8 @@ class Appeal < DecisionReview
   end
 
   def overtime?
+    return !!work_mode&.overtime if FeatureToggle.enabled?(:overtime_revamp)
+
     latest_attorney_case_review&.overtime
   end
 
