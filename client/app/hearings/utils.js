@@ -186,3 +186,15 @@ export const toggleCancelled = (first, second, form) =>
       init: first,
       current: second
     };
+
+/**
+ * Method to calculate hearing details changes accounting for cancelled virtual hearings
+ * @param {Object} init -- The initial form details
+ * @param {Object} current -- The current form details
+ */
+export const getChanges = (first, second) => {
+  // Handle cancelled status
+  const { init, current } = toggleCancelled(first, second, 'virtualHearingForm');
+
+  return deepDiff(init, current);
+};
