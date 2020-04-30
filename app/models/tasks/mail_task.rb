@@ -83,7 +83,7 @@ class MailTask < Task
   end
 
   def hide_from_task_snapshot
-    super || assigned_to.eql?(MailTeam.singleton)
+    super || (assigned_to.eql?(MailTeam.singleton) && !active?)
   end
 
   def blocking?
