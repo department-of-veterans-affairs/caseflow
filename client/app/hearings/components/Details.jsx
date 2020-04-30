@@ -11,7 +11,7 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, toggleCancelled, pollVirtualHearingData, detailsColumns, getChanges } from '../utils';
+import { deepDiff, pollVirtualHearingData, detailsColumns, getChanges } from '../utils';
 import _ from 'lodash';
 
 import DetailsForm from './details/DetailsForm';
