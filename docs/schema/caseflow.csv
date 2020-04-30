@@ -114,7 +114,7 @@ bgs_power_of_attorneys,authzn_change_clmant_addrs_ind,string,,,,,,Authorization 
 bgs_power_of_attorneys,authzn_poa_access_ind,string,,,,,,Authorization for POA access
 bgs_power_of_attorneys,claimant_participant_id,string ∗,x,,,,x,Claimant participant ID -- use as FK to claimants
 bgs_power_of_attorneys,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
-bgs_power_of_attorneys,file_number,string ∗,x,,,,x,Claimant file number
+bgs_power_of_attorneys,file_number,string,,,,,x,Claimant file number
 bgs_power_of_attorneys,id,integer (8) PK,x,x,,,,
 bgs_power_of_attorneys,last_synced_at,datetime,,,,,x,The last time BGS was checked
 bgs_power_of_attorneys,legacy_poa_cd,string,,,,,,Legacy POA code

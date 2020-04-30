@@ -713,8 +713,8 @@ describe User, :all_dbs do
 
     it { is_expected.to be_falsey }
 
-    context "when the user is a member of the Mail Team" do
-      before { MailTeam.singleton.add_user(user) }
+    context "when the user is a member of the BVA Intake Team" do
+      before { BvaIntake.singleton.add_user(user) }
 
       it { is_expected.to be_truthy }
     end
