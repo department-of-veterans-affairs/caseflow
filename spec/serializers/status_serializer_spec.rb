@@ -8,7 +8,7 @@ describe StatusSerializer, :all_dbs do
   context "#appeal" do
     let(:judge) { create(:user) }
     let!(:hearings_user) { create(:hearings_coordinator) }
-    let!(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+    let!(:receipt_date) { ama_test_start_date + 1 }
     let(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let!(:appeal_root_task) { create(:root_task, :in_progress, appeal: appeal) }
 

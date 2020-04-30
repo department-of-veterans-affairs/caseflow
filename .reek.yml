@@ -6,6 +6,7 @@ detectors:
     exclude:
       - BulkTaskAssignment
       - Hearing#override_full_hearing_day_validation
+      - PowerOfAttorney
       - QueueConfig
       - RatingDecision
   BooleanParameter:
@@ -122,6 +123,7 @@ detectors:
     enabled: false
   RepeatedConditional:
     exclude:
+      - BgsPowerOfAttorney
       - HearingLocation
       - JudgeTeam
       - LegacyAppeal
@@ -153,6 +155,7 @@ detectors:
       - AddressMapper#get_address_from_veteran_record
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
       - ETL::Builder#last_built
+      - ETL::HearingSyncer#filter?
       - ETL::Syncer#filter?
       - ETL::TaskSyncer#filter?
       - Fakes::BGSService

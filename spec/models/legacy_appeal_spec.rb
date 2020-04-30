@@ -107,7 +107,7 @@ describe LegacyAppeal, :all_dbs do
 
   context "#eligible_for_opt_in? and #matchable_to_request_issue?" do
     let(:receipt_date) { Date.new(2020, 4, 10) }
-    let(:ama_date) { Constants::DATES["AMA_ACTIVATION"].to_date }
+    let(:ama_date) { ama_start_date }
     let(:ineligible_soc_date) { receipt_date - 60.days - 1.day }
     let(:ineligible_nod_date) { receipt_date - 372.days - 1.day }
     let(:eligible_soc_date) { receipt_date - 60.days + 1.day }
@@ -125,7 +125,7 @@ describe LegacyAppeal, :all_dbs do
       scenario "when the ssoc date is before AMA was launched" do
         allow(appeal).to receive(:active?).and_return(true)
         allow(appeal).to receive(:issues).and_return(issues)
-        allow(appeal).to receive(:soc_date).and_return(Constants::DATES["AMA_ACTIVATION"].to_date - 1.day)
+        allow(appeal).to receive(:soc_date).and_return(ama_start_date - 1.day)
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(false)
@@ -1820,6 +1820,34 @@ describe LegacyAppeal, :all_dbs do
 
     it "returns poa loaded with BGS values by default" do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
+
+    context "appellant is not veteran" do
+      before do
+        allow(appeal).to receive(:veteran_file_number) { "no-such-file-number" }
+        allow_any_instance_of(BGSService).to receive(:fetch_person_by_ssn).with(appellant_ssn) do
+          { ptcpnt_id: appellant_pid, ssn_nbr: appellant_ssn }
+        end
+      end
+
+      let(:vacols_case) { create(:case, :representative_american_legion, correspondent: correspondent) }
+      let(:appellant_ssn) { "666001234" }
+      let(:appellant_pid) { "1234" }
+      let(:poa_pid) { "1234567" } # defined in Fakes::BGSService
+      let(:correspondent) do
+        create(
+          :correspondent,
+          appellant_first_name: "David",
+          appellant_middle_initial: "D",
+          appellant_last_name: "Schwimmer",
+          ssn: appellant_ssn
+        )
+      end
+
+      it "uses appellant to load BGS POA" do
+        expect(appeal.power_of_attorney.bgs_representative_name).to eq "Attorney McAttorneyFace"
+        expect(appeal.power_of_attorney.bgs_participant_id).to eq poa_pid
+      end
     end
 
     context "#power_of_attorney.bgs_representative_address" do
