@@ -61,16 +61,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   def perform(hearing_id:, hearing_type:, email_type: :confirmation)
     set_virtual_hearing(hearing_id, hearing_type)
 
-    Rails.logger.info(
-      "Virtual Hearing for hearing (#{virtual_hearing.hearing_type} [#{virtual_hearing.hearing_id}])"
-    )
-    Rails.logger.info(
-      "Emails Sent: (" \
-      "veteran: [#{virtual_hearing.veteran_email_sent} | null?: #{virtual_hearing.veteran_email.nil?}], " \
-      "rep: [#{virtual_hearing.representative_email_sent} | null?: #{virtual_hearing.representative_email.nil?}], " \
-      "judge: [#{virtual_hearing.judge_email_sent} | null?: #{virtual_hearing.judge_email.nil?}])"
-    )
-    Rails.logger.info("Active?: (#{virtual_hearing.active?})")
+    log_virtual_hearing_state
 
     virtual_hearing.establishment.attempted!
 
@@ -112,6 +103,23 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     fail VirtualHearingNotCreatedError if virtual_hearing.nil?
   end
 
+  def log_virtual_hearing_state
+    Rails.logger.info(
+      "Virtual Hearing for hearing (#{virtual_hearing.hearing_type} [#{virtual_hearing.hearing_id}])"
+    )
+    Rails.logger.info(
+      "Emails Sent: (" \
+      "veteran: [#{virtual_hearing.veteran_email_sent} | null?: #{virtual_hearing.veteran_email.nil?}], " \
+      "rep: [#{virtual_hearing.representative_email_sent} | null?: #{virtual_hearing.representative_email.nil?}], " \
+      "judge: [#{virtual_hearing.judge_email_sent} | null?: #{virtual_hearing.judge_email.nil?}])"
+    )
+    Rails.logger.info("Active?: (#{virtual_hearing.active?})")
+  end
+
+  def create_conference_datadog_tags
+    datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
+  end
+
   def create_conference
     assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
 
@@ -122,8 +130,6 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     pexip_response = create_pexip_conference
 
-    updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
-
     Rails.logger.info("Pexip response: #{pexip_response.inspect}")
 
     if pexip_response.error
@@ -133,12 +139,12 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
       virtual_hearing.establishment.update_error!(error_display)
 
-      DataDogService.increment_counter(metric_name: "created_conference.failed", **updated_metric_info)
+      DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
 
       fail pexip_response.error
     end
 
-    DataDogService.increment_counter(metric_name: "created_conference.successful", **updated_metric_info)
+    DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
     virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
   end
