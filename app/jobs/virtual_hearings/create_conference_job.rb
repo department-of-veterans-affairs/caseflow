@@ -43,7 +43,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     email_type = kwargs[:email_type] || :confirmation
 
     Rails.logger.info(
-      "Creating Pexip conference for hearing (#{hearing_id}) and sending #{email_type} email"
+      "#{self.class.name} for hearing (#{hearing_id}) and sending #{email_type} email"
     )
     Rails.logger.info(
       "Timezones for #{self.class.name} are (zone: #{Time.zone.name}) (getlocal: #{Time.now.getlocal.zone})"
@@ -53,7 +53,16 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   def perform(hearing_id:, hearing_type:, email_type: :confirmation)
     set_virtual_hearing(hearing_id, hearing_type)
 
-    fail VirtualHearingNotCreatedError if virtual_hearing.nil?
+    Rails.logger.info(
+      "Virtual Hearing for hearing (#{virtual_hearing.hearing_type} [#{virtual_hearing.hearing_id}])"
+    )
+    Rails.logger.info(
+      "Emails Sent: (" \
+      "veteran: [#{virtual_hearing.veteran_email_sent} | null?: #{virtual_hearing.veteran_email.nil?}], " \
+      "rep: [#{virtual_hearing.representative_email_sent} | null?: #{virtual_hearing.representative_email.nil?}], " \
+      "judge: [#{virtual_hearing.judge_email_sent} | null?: #{virtual_hearing.judge_email.nil?}])"
+    )
+    Rails.logger.info("Active?: (#{virtual_hearing.active?})")
 
     virtual_hearing.establishment.attempted!
 
@@ -64,8 +73,15 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     send_emails(email_type) if virtual_hearing.active?
 
     if virtual_hearing.can_be_established?
+      Rails.logger.info("Attempting to flag virtual hearing establishment as processed...")
+
       virtual_hearing.established!
     else
+      Rails.logger.error(
+        "Virtual Hearing can't be established with state: " \
+        "(email sent?: #{virtual_hearing.all_emails_sent?}, active?: #{virtual_hearing.active?})"
+      )
+
       fail IncompleteError
     end
   end
@@ -83,14 +99,16 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     else
       fail ArgumentError, "Invalid hearing type supplied to job: `#{hearing_type}`"
     end
+
+    fail VirtualHearingNotCreatedError if virtual_hearing.nil?
   end
 
   def create_conference
     assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
 
     Rails.logger.info(
-      "Trying to create conference for hearing (#{virtual_hearing.hearing_type}" \
-      "#{virtual_hearing.hearing_id})..."
+      "Trying to create conference for hearing (#{virtual_hearing.hearing_type} " \
+      "[#{virtual_hearing.hearing_id}])..."
     )
 
     pexip_response = create_pexip_conference
