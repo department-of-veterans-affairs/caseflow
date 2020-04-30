@@ -15,6 +15,7 @@ nohup /opt/datadog-agent/embedded/bin/system-probe --config=/etc/datadog-agent/s
 nohup /opt/datadog-agent/embedded/bin/process-agent --config=/etc/datadog-agent/datadog.yaml --sysprobe-config=/etc/datadog-agent/system-probe.yaml --pid=/opt/datadog-agent/run/process-agent.pid > dd-system-probe.out &
 
 echo "Waiting for dependencies to properly start up - 120 seconds"
+date
 sleep 120
 
 echo "Starting Appeals App"
