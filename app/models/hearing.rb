@@ -90,6 +90,12 @@ class Hearing < CaseflowRecord
     HEARING_TYPES[request_type.to_sym]
   end
 
+  def hearing_request_type
+    return "Virtual" if virtual?
+
+    readable_request_type
+  end
+
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
       task.type == TrackVeteranTask.name &&
