@@ -9,6 +9,7 @@ class ETL::Builder
     AttorneyCaseReview
     DecisionIssue
     Hearing
+    LegacyHearing
     Organization
     OrganizationsUser
     Person

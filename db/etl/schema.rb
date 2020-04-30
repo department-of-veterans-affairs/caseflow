@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_164923) do
+ActiveRecord::Schema.define(version: 2020_04_30_152234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -231,7 +231,10 @@ ActiveRecord::Schema.define(version: 2020_04_29_164923) do
     t.string "hearing_location_zip_code", comment: "hearing_locations.zip_code"
     t.string "hearing_request_type", null: false, comment: "Calculated based on virtual_hearings and hearing_day.request_type"
     t.datetime "hearing_updated_at", comment: "hearings.updated_at"
+    t.string "judge_css_id", comment: "users.css_id"
+    t.string "judge_full_name", comment: "users.full_name"
     t.integer "judge_id", comment: "hearings.judge_id"
+    t.string "judge_sattyid", comment: "users.sattyid"
     t.string "military_service", comment: "hearings.military_service"
     t.string "notes", comment: "hearings.notes"
     t.boolean "prepped", comment: "hearings.prepped"
@@ -241,12 +244,14 @@ ActiveRecord::Schema.define(version: 2020_04_29_164923) do
     t.text "summary", comment: "hearings.summary"
     t.boolean "transcript_requested", comment: "hearings.transcript_requested"
     t.date "transcript_sent_date", comment: "hearings.transcript_sent_date"
+    t.string "type", comment: "Hearing (AMA) or LegacyHearing"
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Hearing"
     t.string "updated_by_user_css_id", limit: 20, comment: "users.css_id"
     t.string "updated_by_user_full_name", limit: 255, comment: "users.full_name"
     t.string "updated_by_user_sattyid", limit: 20, comment: "users.sattyid"
-    t.uuid "uuid", null: false, comment: "Unique identifier for the Hearing"
+    t.uuid "uuid", comment: "Unique identifier for the Hearing"
+    t.string "vacols_id", comment: "When type=LegacyHearing, this column points at the VACOLS case id"
     t.string "witness", comment: "hearings.witness"
     t.index ["appeal_id"], name: "index_hearings_on_appeal_id"
     t.index ["created_at"], name: "index_hearings_on_created_at"
@@ -261,8 +266,11 @@ ActiveRecord::Schema.define(version: 2020_04_29_164923) do
     t.index ["hearing_location_updated_at"], name: "index_hearings_on_hearing_location_updated_at"
     t.index ["hearing_request_type"], name: "index_hearings_on_hearing_request_type"
     t.index ["hearing_updated_at"], name: "index_hearings_on_hearing_updated_at"
+    t.index ["judge_id"], name: "index_hearings_on_judge_id"
+    t.index ["type"], name: "index_hearings_on_type"
     t.index ["updated_at"], name: "index_hearings_on_updated_at"
     t.index ["uuid"], name: "index_hearings_on_uuid"
+    t.index ["vacols_id"], name: "index_hearings_on_vacols_id"
   end
 
   create_table "organizations", comment: "Copy of Organizations table", force: :cascade do |t|
