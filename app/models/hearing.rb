@@ -14,7 +14,6 @@ class Hearing < CaseflowRecord
   has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
-  has_one :virtual_hearing, as: :hearing
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
 
@@ -92,7 +91,7 @@ class Hearing < CaseflowRecord
   end
 
   def hearing_request_type
-    return "Virtual" if virtual_hearing.present?
+    return "Virtual" if virtual?
 
     readable_request_type
   end
