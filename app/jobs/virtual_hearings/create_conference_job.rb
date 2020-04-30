@@ -8,10 +8,18 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   class IncompleteError < StandardError; end
 
+  class VirtualHearingRequestCancelled < StandardError; end
+
   # We are observing some lag (replication?) when creating the virtual hearing for the first time
   # in the database. This error is thrown if the virtual hearing is not visible in the database
   # at the time this job is started.
   class VirtualHearingNotCreatedError < StandardError; end
+
+  discard_on(VirtualHearingRequestCancelled) do |job, _exception|
+    Rails.logger.warn(
+      "Discarding #{job.class.name} (#{job.job_id}) because virtual hearing request was cancelled"
+    )
+  end
 
   retry_on(IncompleteError, attempts: 5) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
@@ -100,6 +108,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       fail ArgumentError, "Invalid hearing type supplied to job: `#{hearing_type}`"
     end
 
+    fail VirtualHearingRequestCancelled if virtual_hearing.cancelled?
     fail VirtualHearingNotCreatedError if virtual_hearing.nil?
   end
 
