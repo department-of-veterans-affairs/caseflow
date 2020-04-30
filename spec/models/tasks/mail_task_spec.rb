@@ -50,6 +50,22 @@ describe MailTask, :postgres do
       end
     end
 
+    context "when the default assignee is the mail team" do
+      before do
+        allow(task_class).to receive(:child_task_assignee).and_return(MailTeam.singleton)
+      end
+
+      it "should not create any child tasks" do
+        expect { task_class.create_from_params(params, user) }.to_not raise_error
+        expect(root_task.children.length).to eq(1)
+
+        mail_task = root_task.children[0]
+        expect(mail_task.class).to eq(task_class)
+        expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.children.length).to eq(0)
+      end
+    end
+
     context "when user is not a member of the mail team" do
       let(:non_mail_user) { create(:user) }
 
