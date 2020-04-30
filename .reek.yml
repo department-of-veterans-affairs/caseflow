@@ -156,6 +156,7 @@ detectors:
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
       - ETL::Builder#last_built
       - ETL::HearingSyncer#filter?
+      - ETL::LegacyHearingSyncer#filter?
       - ETL::Syncer#filter?
       - ETL::TaskSyncer#filter?
       - Fakes::BGSService
