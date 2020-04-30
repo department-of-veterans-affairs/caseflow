@@ -17,4 +17,10 @@ module HasVirtualHearing
   def was_virtual?
     !virtual_hearing.nil? && !virtual?
   end
+
+  def hearing_request_type
+    return "Virtual" if virtual?
+
+    readable_request_type
+  end
 end
