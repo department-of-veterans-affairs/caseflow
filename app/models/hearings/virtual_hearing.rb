@@ -9,6 +9,10 @@ class VirtualHearing < CaseflowRecord
     def formatted_alias(alias_name)
       "BVA#{alias_name}@#{client_host_or_default}"
     end
+
+    def base_url
+      "https://#{client_host_or_default}/bva-app/"
+    end
   end
 
   alias_attribute :alias_name, :alias
@@ -58,11 +62,15 @@ class VirtualHearing < CaseflowRecord
   end
 
   def guest_link
-    "#{base_url}?join=1&media=&escalate=1&conference=#{formatted_alias_or_alias_with_host}&pin=#{guest_pin}#&role=guest"
+    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+    "conference=#{formatted_alias_or_alias_with_host}&" \
+    "pin=#{guest_pin}#&role=guest"
   end
 
   def host_link
-    "#{base_url}?join=1&media=&escalate=1&conference=#{formatted_alias_or_alias_with_host}&pin=#{host_pin}#&role=host"
+    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+    "conference=#{formatted_alias_or_alias_with_host}&" \
+    "pin=#{host_pin}#&role=host"
   end
 
   def job_completed?
@@ -117,10 +125,6 @@ class VirtualHearing < CaseflowRecord
   end
 
   private
-
-  def base_url
-    "https://#{VirtualHearing.client_host_or_default}/bva-app/"
-  end
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
