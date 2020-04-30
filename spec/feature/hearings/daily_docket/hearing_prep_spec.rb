@@ -66,7 +66,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
           user_id: create(:user).id,
           person_id: person.id,
           granted: false,
-          reason: "age"
+          reason: Constants.AOD_REASONS.age
         )
       end
 
@@ -89,7 +89,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
           user_id: current_user.id,
           person_id: person.id,
           granted: true,
-          reason: "age"
+          reason: Constants.AOD_REASONS.serious_illness
         )
       end
 
@@ -103,7 +103,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         expect(AdvanceOnDocketMotion.count).to eq(1)
         judge_motion = AdvanceOnDocketMotion.first
         expect(judge_motion.granted).to eq(false)
-        expect(judge_motion.reason).to eq("financial_distress")
+        expect(judge_motion.reason).to eq(Constants.AOD_REASONS.financial_distress)
       end
     end
 
@@ -120,7 +120,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         expect(AdvanceOnDocketMotion.count).to eq(1)
         judge_motion = AdvanceOnDocketMotion.first
         expect(judge_motion.granted).to eq(true)
-        expect(judge_motion.reason).to eq("financial_distress")
+        expect(judge_motion.reason).to eq(Constants.AOD_REASONS.financial_distress)
       end
     end
   end

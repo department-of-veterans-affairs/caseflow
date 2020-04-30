@@ -1384,6 +1384,7 @@ ActiveRecord::Schema.define(version: 2020_04_27_152555) do
 
   create_table "virtual_hearings", force: :cascade do |t|
     t.string "alias", comment: "Alias for conference in Pexip"
+    t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false

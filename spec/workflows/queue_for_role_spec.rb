@@ -14,6 +14,12 @@ describe QueueForRole do
   context "for a judge" do
     let(:role) { "judge" }
 
+    it { expect(subject).to be_instance_of(JudgeQueue) }
+  end
+
+  context "for a colocated user" do
+    let(:role) { "colocated" }
+
     it { expect(subject).to be_instance_of(GenericQueue) }
   end
 
