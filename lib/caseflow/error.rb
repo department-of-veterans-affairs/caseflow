@@ -197,7 +197,7 @@ module Caseflow::Error
       @task_type = args[:task_type]
       @assignee_type = args[:assignee_type]
       @code = args[:code] || 400
-      @message = args[:message] || "Veteran's (#{@veteran_id}) appeal (#{@appeal_id}) already has an open task of type"\
+      @message = args[:message] || "Veteran's (#{@veteran_id}) appeal (#{@appeal_id}) already has an open task type of"\
                                    " #{@task_type} assigned to #{assignee_type}. Please refresh the page. Contact "\
                                    "support if this error persists."
     end
@@ -211,7 +211,7 @@ module Caseflow::Error
       @veteran_id = args[:veteran_id]
       @task_type = args[:task_type]
       @code = args[:code] || 400
-      @message = args[:message] || "Veteran's (#{@veteran_id}) appeal (#{@appeal_id}) already has an open task of type"\
+      @message = args[:message] || "Veteran's (#{@veteran_id}) appeal (#{@appeal_id}) already has an open task type of"\
                                    " #{@task_type} assigned to a user. Please refresh the page. Contact support if " \
                                    "this error persists."
     end
