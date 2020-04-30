@@ -186,35 +186,3 @@ export const toggleCancelled = (first, second, form) =>
       init: first,
       current: second
     };
-
-/**
- * Method to construct virtual hearing links
- * @param {Object} virtualHearing -- The virtual hearing to construct URLs
- * @returns {Object} -- New object with the host and guest links formatted
- */
-export const constructURLs = (virtualHearing) => {
-  // Don't construct if the virtual hearing is empty
-  if (!virtualHearing) {
-    return {};
-  }
-  const { guestPin, hostPin, alias, clientHost } = virtualHearing;
-
-  const guestQS = querystring.stringify({
-    conference: alias,
-    pin: `${guestPin}#`,
-    join: 1,
-    role: 'guest'
-  });
-
-  const hostQS = querystring.stringify({
-    conference: alias,
-    pin: `${hostPin}#`,
-    join: 1,
-    role: 'host'
-  });
-
-  return {
-    hostLink: `https://${clientHost}/bva-app/?${decodeURIComponent(hostQS)}`,
-    guestLink: `https://${clientHost}/bva-app/?${decodeURIComponent(guestQS)}`
-  };
-};

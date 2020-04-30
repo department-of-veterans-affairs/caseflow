@@ -16,7 +16,6 @@ import VirtualHearingLink from '../VirtualHearingLink';
 import { DISPOSITION_OPTIONS } from '../../constants';
 import { COLORS } from '../../../constants/AppConstants';
 import COPY from '../../../../COPY';
-import { constructURLs } from '../../utils';
 
 const staticSpacing = css({ marginTop: '5px' });
 
@@ -366,7 +365,7 @@ export const StaticVirtualHearing = ({ hearing, user }) => (
       hearing={hearing}
       isVirtual={hearing.isVirtual}
       virtualHearing={hearing.virtualHearing}
-      link={constructURLs(hearing.virtualHearing).hostLink}
+      link={hearing?.virtualHearing?.hostLink}
     />
     {!hearing.virtualHearing.jobCompleted && (
       <div {...staticSpacing}>

@@ -73,14 +73,14 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     within "#vlj-hearings-link" do
       expect(page).to have_content(
         "VLJ Link: Expired\n" \
-        "Conference Room: #{virtual_hearing.alias_with_host}\n" \
+        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.host_pin}"
       )
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
         "Guest Link: Expired\n" \
-        "Conference Room: #{virtual_hearing.alias_with_host}\n" \
+        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.guest_pin}"
       )
     end
@@ -91,7 +91,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     within "#vlj-hearings-link" do
       expect(page).to have_content(
         "VLJ Link: #{label} \n" \
-        "Conference Room: #{virtual_hearing.alias_with_host}\n" \
+        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.host_pin}\n" \
         "Copy VLJ Link "
       )
@@ -100,7 +100,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     within "#guest-hearings-link" do
       expect(page).to have_content(
         "Guest Link: #{label} \n" \
-        "Conference Room: #{virtual_hearing.alias_with_host}\n" \
+        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.guest_pin}\n" \
         "Copy Guest Link "
       )

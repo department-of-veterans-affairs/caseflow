@@ -5,7 +5,6 @@ import { COLORS } from '../../../constants/AppConstants';
 import { rowThirds, labelPadding, labelPaddingFirst, hearingLinksContainer, copyButtonStyles } from './style';
 import COPY from '../../../../COPY';
 import CopyTextButton from '../../../components/CopyTextButton';
-import { constructURLs } from '../../utils';
 import PropTypes from 'prop-types';
 
 export const VirtualHearingLinkDetails = ({
@@ -96,15 +95,13 @@ LinkContainer.propTypes = {
 };
 
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, label, user }) => {
-  const { hostLink, guestLink } = constructURLs(virtualHearing);
-
   return (
     (isVirtual || wasVirtual) && (
       <div {...rowThirds} {...hearingLinksContainer}>
         <LinkContainer
           wasVirtual={wasVirtual}
           role="VLJ"
-          link={hostLink}
+          link={virtualHearing?.hostLink}
           user={user}
           hearing={hearing}
           isVirtual={isVirtual}
@@ -115,7 +112,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, l
           wasVirtual={wasVirtual}
           label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
           role="Guest"
-          link={guestLink}
+          link={virtualHearing?.guestLink}
           user={user}
           hearing={hearing}
           isVirtual={isVirtual}
