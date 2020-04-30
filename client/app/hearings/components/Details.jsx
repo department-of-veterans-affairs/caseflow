@@ -11,7 +11,7 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, toggleCancelled, pollVirtualHearingData, detailsColumns } from '../utils';
+import { deepDiff, toggleCancelled, pollVirtualHearingData, detailsColumns, getChanges } from '../utils';
 import _ from 'lodash';
 
 import DetailsForm from './details/DetailsForm';
@@ -132,8 +132,11 @@ class HearingDetails extends React.Component {
   updateVirtualHearing = (values) => {
     this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
 
+    // Calculate the form changes
+    const updates = getChanges(this.state.initialFormData, values);
+
     this.setState({
-      updated: !_.isEmpty(deepDiff(values, this.state.initialFormData.virtualHearingForm)),
+      updated: !_.isEmpty(updates),
       virtualHearingErrors: {}
     });
   }
@@ -196,7 +199,7 @@ class HearingDetails extends React.Component {
     }
   };
 
-  submit = (form = '') => {
+  submit = () => {
     const { hearing: { externalId } } = this.props;
     const { updated } = this.state;
 
@@ -204,10 +207,11 @@ class HearingDetails extends React.Component {
       return;
     }
 
-    const { init, current } = toggleCancelled(this.state.initialFormData, this.props.formData, form);
-
     // only send updated properties
-    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = deepDiff(init, current);
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = getChanges(
+      this.state.initialFormData,
+      this.props.formData
+    );
 
     const data = {
       hearing: {
@@ -339,7 +343,7 @@ class HearingDetails extends React.Component {
             hearing={this.props.hearing}
             virtualHearing={virtualHearingForm}
             update={this.updateVirtualHearing}
-            submit={() => this.submit('virtualHearingForm').then(this.closeVirtualHearingModal)}
+            submit={() => this.submit().then(this.closeVirtualHearingModal)}
             closeModal={this.closeVirtualHearingModal}
             reset={this.resetVirtualHearing}
             type={this.state.virtualHearingModalType}

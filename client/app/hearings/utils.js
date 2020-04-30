@@ -190,6 +190,18 @@ export const toggleCancelled = (first, second, form) =>
     };
 
 /**
+ * Method to calculate hearing details changes accounting for cancelled virtual hearings
+ * @param {Object} init -- The initial form details
+ * @param {Object} current -- The current form details
+ */
+export const getChanges = (first, second) => {
+  // Handle cancelled status
+  const { init, current } = toggleCancelled(first, second, 'virtualHearingForm');
+
+  return deepDiff(init, current);
+};
+
+/**
  * Method to produce Hearing Details Column values
  * @param {Object} hearing -- Hearing column values
  */
