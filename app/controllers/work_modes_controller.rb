@@ -26,5 +26,4 @@ class WorkModesController < ApplicationController
   def validate_modification_access_to_overtime
     current_user.judge? && current_user.appeal_has_task_assigned_to_user?(appeal)
   end
-
 end
