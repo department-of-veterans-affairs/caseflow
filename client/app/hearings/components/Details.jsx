@@ -11,16 +11,16 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, toggleCancelled, pollVirtualHearingData } from '../utils';
+import { deepDiff, toggleCancelled, pollVirtualHearingData, detailsColumns } from '../utils';
 import _ from 'lodash';
 
-import DetailsInputs from './details/DetailsInputs';
-import DetailsOverview from './details/DetailsOverview';
+import DetailsForm from './details/DetailsForm';
 import {
   onChangeFormData, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
 } from '../../components/common/actions';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
+import { listStyling, listItemStyling } from './details/style';
 
 const row = css({
   marginLeft: '-15px',
@@ -324,7 +324,16 @@ class HearingDetails extends React.Component {
 
           <div className="cf-help-divider" />
           <h2>Hearing Details</h2>
-          <DetailsOverview hearing={this.props.hearing} />
+          <div {...listStyling}>
+            {detailsColumns(this.props.hearing).map((col, i) => (
+              <div key={i} {...listItemStyling}>
+                <h4>{col.label}</h4>
+                <div>
+                  {col.value}
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="cf-help-divider" />
           {this.state.virtualHearingModalOpen && <VirtualHearingModal
             hearing={this.props.hearing}
@@ -335,7 +344,7 @@ class HearingDetails extends React.Component {
             reset={this.resetVirtualHearing}
             type={this.state.virtualHearingModalType}
             {...editedEmails} />}
-          <DetailsInputs
+          <DetailsForm
             errors={this.state.virtualHearingErrors}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
