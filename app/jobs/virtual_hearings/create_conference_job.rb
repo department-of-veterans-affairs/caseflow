@@ -7,9 +7,18 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   class IncompleteError < StandardError; end
 
-  # Retry if the virtual hearing is not in the expected state by the end of the job.
-  # Note: The empty block is necessary, otherwise the job isn't retried!
-  retry_on(IncompleteError, attempts: 5) { |_job, _exception| nil }
+  # We are observing some lag (replication?) when creating the virtual hearing for the first time
+  # in the database. This error is thrown if the virtual hearing is not visible in the database
+  # at the time this job is started.
+  class VirtualHearingNotCreatedError < StandardError; end
+
+  retry_on(IncompleteError, attempts: 5) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
+
+  retry_on(VirtualHearingNotCreatedError, attempts: 5) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
 
   # Retry if Pexip returns an invalid response.
   retry_on Caseflow::Error::PexipApiError, attempts: 5 do |job, exception|
@@ -39,6 +48,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   def perform(hearing_id:, hearing_type:, email_type: :confirmation)
     set_virtual_hearing(hearing_id, hearing_type)
+
+    fail VirtualHearingNotCreatedError if virtual_hearing.nil?
 
     virtual_hearing.establishment.attempted!
 
