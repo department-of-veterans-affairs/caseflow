@@ -1,12 +1,20 @@
 module Seeds
   class Intake < Base
     def seed!
+      create_intake_users
       create_higher_level_review_tasks
       create_ama_appeals
       create_higher_level_reviews_and_supplemental_claims
+      create_inbox_messages
     end
 
     private
+
+    def create_intake_users
+      ["Mail Intake", "Admin Intake"].each do |role|
+        User.create(css_id: "#{role.tr(' ', '')}_LOCAL", roles: [role], station_id: "101", full_name: "Jame Local #{role} Smith")
+      end
+    end
 
     def create_higher_level_review_tasks
       6.times do
@@ -241,6 +249,35 @@ module Seeds
         receipt_date: Time.zone.now,
         benefit_type: "compensation"
       )
+    end
+
+    def create_inbox_messages
+      user = User.find_or_create_by(css_id: "BVASYELLOW", station_id: "101")
+  
+      veteran1 = FactoryBot.create(:veteran)
+      veteran2 = FactoryBot.create(:veteran)
+  
+      appeal1 = FactoryBot.create(:appeal, veteran_file_number: veteran1.file_number)
+      appeal2 = FactoryBot.create(
+        :legacy_appeal,
+        vacols_case: FactoryBot.create(:case),
+        vbms_id: "#{veteran2.file_number}S"
+      )
+  
+      message1 = <<~MSG
+        <a href="/queue/appeals/#{appeal1.uuid}">Veteran ID #{veteran1.file_number}</a> - Virtual hearing not scheduled
+        Caseflow is having trouble contacting the virtual hearing scheduler.
+        For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
+      MSG
+  
+      message2 = <<~MSG
+        <a href="/queue/appeals/#{appeal2.vacols_id}">Veteran ID #{veteran2.file_number}</a> - Hearing time not updated
+        Caseflow is having trouble contacting the virtual hearing scheduler.
+        For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
+      MSG
+  
+      Message.create(text: message1, detail: appeal1, user: user)
+      Message.create(text: message2, detail: appeal2, user: user)
     end
   end
 end

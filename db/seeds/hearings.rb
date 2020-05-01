@@ -4,6 +4,7 @@ module Seeds
   class Hearings
     def seed!
       create_hearing_days
+      create_ama_hearing_appeals
     end
 
     private
@@ -116,6 +117,44 @@ module Seeds
       # The current user var should be set to nil at the start of this
       # function. Restore it before executing the next seed function.
       RequestStore[:current_user] = nil
+    end
+
+    def create_ama_hearing_appeals
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+      notes = "Pain disorder with 100\% evaluation per examination"
+  
+      FactoryBot.create(
+        :appeal,
+        :with_post_intake_tasks,
+        number_of_claimants: 1,
+        veteran_file_number: "808415990",
+        docket_type: Constants.AMA_DOCKETS.hearing,
+        closest_regional_office: "RO17",
+        request_issues: FactoryBot.create_list(
+          :request_issue, 1, :rating, contested_issue_description: description, notes: notes
+        )
+      )
+      FactoryBot.create(
+        :appeal,
+        :with_post_intake_tasks,
+        number_of_claimants: 1,
+        veteran_file_number: "992190636",
+        docket_type: Constants.AMA_DOCKETS.hearing,
+        closest_regional_office: "RO17",
+        request_issues: FactoryBot.create_list(
+          :request_issue, 8, :rating, contested_issue_description: description, notes: notes
+        )
+      )
+  
+      user = User.find_by(css_id: "BVATWARNER")
+      HearingDay.create(
+        regional_office: "RO17",
+        request_type: "V",
+        scheduled_for: 5.days.from_now,
+        room: "001",
+        created_by: user,
+        updated_by: user
+      )
     end
   end
 end
