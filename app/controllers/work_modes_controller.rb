@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Controller to allow work modes (e.g., overtime) to be modified.
+# Only allows judges who have an assigned task on this appeal to toggle overtime.
+
 class WorkModesController < ApplicationController
   before_action :validate_modification_access_to_overtime
 

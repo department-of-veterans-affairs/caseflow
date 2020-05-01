@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Model to represent the mode in which a user (e.g., an attorney) is working on a case.
+# Specifically, the `overtime` field captures whether the appeal is being worked as overtime for the attorney.
+
 class WorkMode < ApplicationRecord
   belongs_to :appeal, polymorphic: true
 

@@ -83,7 +83,7 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
     end
 
     context "for AMA appeal" do
-      let!(:judge_assign_task) { create(:ama_judge_task, parent: create(:root_task), assigned_to: judge) }
+      let(:judge_assign_task) { create(:ama_judge_task, parent: create(:root_task), assigned_to: judge) }
       let(:appeal) { judge_assign_task.appeal }
       let(:appeal_id) { appeal.uuid }
 
