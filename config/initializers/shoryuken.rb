@@ -10,8 +10,6 @@ if Rails.application.config.sqs_endpoint
   Shoryuken::Client.sqs.config[:endpoint] = URI(Rails.application.config.sqs_endpoint)
 end
 
-Rails.logger = Shoryuken.logger
-
 if Rails.application.config.sqs_create_queues
   # create the development queues
   Shoryuken::Client.sqs.create_queue({ queue_name: ActiveJob::Base.queue_name_prefix + '_low_priority' })
@@ -19,6 +17,7 @@ if Rails.application.config.sqs_create_queues
 end
 
 Shoryuken.configure_server do |config|
+  Rails.logger = Shoryuken.logger
 
   # register all shoryuken middleware
   config.server_middleware do |chain|
