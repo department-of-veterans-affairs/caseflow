@@ -57,6 +57,10 @@ jobs:
           name: Restore yarn cache
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
+      - run:
+          name: yarn install
+          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
       - save_cache:
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
           paths:
