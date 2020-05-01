@@ -3,7 +3,6 @@ module Seeds
     def seed!
       create_intake_users
       create_higher_level_review_tasks
-      create_ama_appeals
       create_higher_level_reviews_and_supplemental_claims
       create_inbox_messages
     end
