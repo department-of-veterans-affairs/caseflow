@@ -4,17 +4,38 @@
 # that is switched to virtual hearing.
 class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   queue_with_priority :high_priority
+  application_attr :hearing_schedule
 
   class IncompleteError < StandardError; end
 
-  # Retry if the virtual hearing is not in the expected state by the end of the job.
-  # Note: The empty block is necessary, otherwise the job isn't retried!
-  retry_on(IncompleteError, attempts: 5) { |_job, _exception| nil }
+  class VirtualHearingRequestCancelled < StandardError; end
+
+  # We are observing some lag (replication?) when creating the virtual hearing for the first time
+  # in the database. This error is thrown if the virtual hearing is not visible in the database
+  # at the time this job is started.
+  class VirtualHearingNotCreatedError < StandardError; end
+
+  discard_on(VirtualHearingRequestCancelled) do |job, _exception|
+    Rails.logger.warn(
+      "Discarding #{job.class.name} (#{job.job_id}) because virtual hearing request was cancelled"
+    )
+  end
+
+  retry_on(IncompleteError, attempts: 5) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
+
+  retry_on(VirtualHearingNotCreatedError, attempts: 5) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
 
   # Retry if Pexip returns an invalid response.
   retry_on Caseflow::Error::PexipApiError, attempts: 5 do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+
     kwargs = job.arguments.first
     extra = {
+      application: job.class.app_name.to_s,
       hearing_id: kwargs[:hearing_id],
       hearing_type: kwargs[:hearing_type]
     }
@@ -30,7 +51,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     email_type = kwargs[:email_type] || :confirmation
 
     Rails.logger.info(
-      "Creating Pexip conference for hearing (#{hearing_id}) and sending #{email_type} email"
+      "#{self.class.name} for hearing (#{hearing_id}) and sending #{email_type} email"
     )
     Rails.logger.info(
       "Timezones for #{self.class.name} are (zone: #{Time.zone.name}) (getlocal: #{Time.now.getlocal.zone})"
@@ -42,6 +63,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     set_virtual_hearing(hearing_id, hearing_type)
 
+    log_virtual_hearing_state
+
     virtual_hearing.establishment.attempted!
 
     # successfully creating a conference will make the virtual hearing active
@@ -51,8 +74,15 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     send_emails(email_type) if virtual_hearing.active?
 
     if virtual_hearing.can_be_established?
+      Rails.logger.info("Attempting to flag virtual hearing establishment as processed...")
+
       virtual_hearing.established!
     else
+      Rails.logger.error(
+        "Virtual Hearing can't be established with state: " \
+        "(email sent?: #{virtual_hearing.all_emails_sent?}, active?: #{virtual_hearing.active?})"
+      )
+
       fail IncompleteError
     end
   end
@@ -70,6 +100,28 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     else
       fail ArgumentError, "Invalid hearing type supplied to job: `#{hearing_type}`"
     end
+
+    fail VirtualHearingRequestCancelled if virtual_hearing.cancelled?
+    fail VirtualHearingNotCreatedError if virtual_hearing.nil?
+  end
+
+  def log_virtual_hearing_state
+    Rails.logger.info(
+      "Virtual Hearing for hearing (#{virtual_hearing.hearing_type} [#{virtual_hearing.hearing_id}])"
+    )
+    Rails.logger.info(
+      "Emails Sent: (" \
+      "veteran: [#{virtual_hearing.veteran_email_sent} | null?: #{virtual_hearing.veteran_email.nil?}], " \
+      "rep: [#{virtual_hearing.representative_email_sent} | null?: #{virtual_hearing.representative_email.nil?}], " \
+      "judge: [#{virtual_hearing.judge_email_sent} | null?: #{virtual_hearing.judge_email.nil?}])"
+    )
+    Rails.logger.info("Active?: (#{virtual_hearing.active?})")
+    Rails.logger.info("Virtual Hearing Updated At: (#{virtual_hearing.updated_at})")
+    Rails.logger.info("Establishment Updated At: (#{virtual_hearing.establishment.updated_at})")
+  end
+
+  def create_conference_datadog_tags
+    datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
   end
 
   def ensure_current_user_is_set
@@ -79,23 +131,28 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   def create_conference
     assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
 
+    Rails.logger.info(
+      "Trying to create conference for hearing (#{virtual_hearing.hearing_type} " \
+      "[#{virtual_hearing.hearing_id}])..."
+    )
+
     pexip_response = create_pexip_conference
 
-    updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
+    Rails.logger.info("Pexip response: #{pexip_response.inspect}")
 
     if pexip_response.error
-      Rails.logger.info("Pexip response: #{pexip_response}")
       error_display = pexip_error_display(pexip_response)
-      Rails.logger.error "CreateConferenceJob failed: #{error_display}"
+
+      Rails.logger.error("CreateConferenceJob failed: #{error_display}")
 
       virtual_hearing.establishment.update_error!(error_display)
 
-      DataDogService.increment_counter(metric_name: "created_conference.failed", **updated_metric_info)
+      DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
 
       fail pexip_response.error
     end
 
-    DataDogService.increment_counter(metric_name: "created_conference.successful", **updated_metric_info)
+    DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
     virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
   end
