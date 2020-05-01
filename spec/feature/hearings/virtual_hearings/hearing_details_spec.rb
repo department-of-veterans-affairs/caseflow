@@ -208,7 +208,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       hearing.reload
 
       # Check the Email Notification History
-      check_email_event_table(hearing, 2)
+      check_email_event_table(hearing, 4)
     end
   end
 
@@ -300,28 +300,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
       # Check the Email Notification History
       check_email_event_table(hearing, 2)
-    end
-  end
-
-  context "User has the correct link" do
-    let!(:virtual_hearing) do
-      create(
-        :virtual_hearing,
-        :initialized,
-        :all_emails_sent,
-        status: :active,
-        hearing: hearing
-      )
-    end
-
-    scenario "user has the host link" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
-
-      expect(page).to have_content(
-        "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-        "pin=#{virtual_hearing.host_pin}#" \
-        "&join=1&role=host"
-      )
     end
   end
 
