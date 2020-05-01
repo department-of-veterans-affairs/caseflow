@@ -128,7 +128,8 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
         let!(:vacols_attorney) { create(:staff, :attorney_role, user: current_user) }
 
         let(:judge_review_task) { create(:ama_judge_decision_review_task, parent: create(:root_task)) }
-        let(:attorney_task) { create(:ama_attorney_task, parent: judge_review_task, assigned_by: judge, assigned_to: current_user) }
+        let(:attorney_task) { create(:ama_attorney_task, parent: judge_review_task,
+                                     assigned_by: judge, assigned_to: current_user) }
         let(:judge_assign_task) { create(:ama_judge_task, parent: attorney_task.root_task, assigned_to: judge) }
 
         include_examples "unauthorized user toggles overtime"
