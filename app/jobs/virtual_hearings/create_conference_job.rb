@@ -38,7 +38,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def perform(hearing_id:, hearing_type:, email_type: :confirmation)
-    RequestStore.store[:current_user] ||= User.system_user
+    ensure_current_user_is_set
 
     set_virtual_hearing(hearing_id, hearing_type)
 
@@ -70,6 +70,10 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     else
       fail ArgumentError, "Invalid hearing type supplied to job: `#{hearing_type}`"
     end
+  end
+
+  def ensure_current_user_is_set
+    RequestStore.store[:current_user] ||= User.system_user
   end
 
   def create_conference
