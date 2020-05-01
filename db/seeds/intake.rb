@@ -40,7 +40,7 @@ module Seeds
 
     def create_higher_level_reviews_and_supplemental_claims
       veteran_file_number = "682007349"
-      veteran = Veteran.find_by(file_number: veteran_file_number)
+      veteran = Veteran.find_or_create_by_file_number(veteran_file_number)
 
       ep_rating_code = "030HLRR"
       ep_nonrating_code = "030HLRNR"

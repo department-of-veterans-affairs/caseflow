@@ -29,7 +29,7 @@ module Seeds
     private
 
     def date_shift
-       @date_shift ||= Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
+      @date_shift ||= Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
     end
 
     def vacols_models
