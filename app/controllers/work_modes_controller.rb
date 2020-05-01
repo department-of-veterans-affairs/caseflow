@@ -13,7 +13,7 @@ class WorkModesController < ApplicationController
   def create
     appeal.overtime = overtime_param
 
-    render json: { work_mode: appeal.reload.work_mode }
+    render json: { work_mode: appeal.work_mode }
   end
 
   private
