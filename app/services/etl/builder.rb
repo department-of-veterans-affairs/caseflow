@@ -8,6 +8,8 @@ class ETL::Builder
     Appeal
     AttorneyCaseReview
     DecisionIssue
+    Hearing
+    LegacyHearing
     Organization
     OrganizationsUser
     Person

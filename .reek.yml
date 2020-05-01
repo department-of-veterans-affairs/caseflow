@@ -155,6 +155,8 @@ detectors:
       - AddressMapper#get_address_from_veteran_record
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
       - ETL::Builder#last_built
+      - ETL::HearingSyncer#filter?
+      - ETL::LegacyHearingSyncer#filter?
       - ETL::Syncer#filter?
       - ETL::TaskSyncer#filter?
       - Fakes::BGSService
