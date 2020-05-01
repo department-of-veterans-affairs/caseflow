@@ -84,6 +84,7 @@ detectors:
       - RequestIssueReporter#as_csv
       - Seeds::Hearings
       - Seeds::Tasks#create_colocated_legacy_tasks
+      - Seeds::Users#create_aod_user_and_tasks
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
