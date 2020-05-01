@@ -846,7 +846,7 @@ feature "Appeal Intake", :all_dbs do
              benefit_type: "nca",
              veteran_file_number: veteran_no_ratings.file_number)
     end
-    # decision_issue_date needs to be before reciept date to show up
+    # decision_issue_date needs to be before receipt date to show up
     let(:decision_issue_date) { receipt_date - 2.days }
     let!(:decision_issues) do
       [

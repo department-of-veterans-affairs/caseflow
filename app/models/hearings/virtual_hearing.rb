@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 class VirtualHearing < CaseflowRecord
+  class << self
+    def client_host_or_default
+      ENV["PEXIP_CLIENT_HOST"] || "care.evn.va.gov"
+    end
+
+    def formatted_alias(alias_name)
+      "BVA#{alias_name}@#{client_host_or_default}"
+    end
+  end
+
   alias_attribute :alias_name, :alias
 
   belongs_to :hearing, polymorphic: true
@@ -41,16 +51,22 @@ class VirtualHearing < CaseflowRecord
       (representative_email.nil? || representative_email_sent)
   end
 
+  # After a certain point after this change gets merged, alias_with_host will never be nil
+  # so we can rid of this logic then
+  def formatted_alias_or_alias_with_host
+    alias_with_host.nil? ? VirtualHearing.formatted_alias(alias_name) : alias_with_host
+  end
+
   def guest_link
-    "#{base_url}?conference=#{alias_name}&pin=#{guest_pin}#&join=1&role=guest"
+    "#{base_url}?conference=#{formatted_alias_or_alias_with_host}&pin=#{guest_pin}#&join=1&role=guest"
   end
 
   def host_link
-    "#{base_url}?conference=#{alias_name}&pin=#{host_pin}#&join=1&role=host"
+    "#{base_url}?conference=#{formatted_alias_or_alias_with_host}&pin=#{host_pin}#&join=1&role=host"
   end
 
   def job_completed?
-    active? && all_emails_sent?
+    (active? || cancelled?) && all_emails_sent?
   end
 
   # Determines if the hearing has been cancelled
@@ -103,15 +119,17 @@ class VirtualHearing < CaseflowRecord
   private
 
   def base_url
-    "https://#{ENV['PEXIP_CLIENT_HOST'] || 'localhost'}/bva-app/"
+    "https://#{VirtualHearing.client_host_or_default}/bva-app/"
   end
 
   def assign_created_by_user
-    self.created_by ||= RequestStore[:current_user]
+    self.created_by ||= RequestStore.store[:current_user]
   end
 
   def assign_updated_by_user
-    self.updated_by = RequestStore[:current_user] if RequestStore[:current_user].present?
+    return if RequestStore.store[:current_user] == User.system_user && updated_by.present?
+
+    self.updated_by = RequestStore.store[:current_user] if RequestStore.store[:current_user].present?
   end
 
   def associated_hearing_is_video

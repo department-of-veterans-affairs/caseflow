@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_27_152555) do
+ActiveRecord::Schema.define(version: 2020_04_29_184512) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1384,6 +1384,7 @@ ActiveRecord::Schema.define(version: 2020_04_27_152555) do
 
   create_table "virtual_hearings", force: :cascade do |t|
     t.string "alias", comment: "Alias for conference in Pexip"
+    t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false
@@ -1416,6 +1417,15 @@ ActiveRecord::Schema.define(version: 2020_04_27_152555) do
     t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_vso_configs_on_organization_id"
     t.index ["updated_at"], name: "index_vso_configs_on_updated_at"
+  end
+
+  create_table "work_modes", comment: "Captures user's current work mode for appeals being worked", force: :cascade do |t|
+    t.integer "appeal_id", null: false, comment: "Appeal ID -- use as FK to AMA appeals and legacy appeals"
+    t.string "appeal_type", null: false, comment: "Whether appeal_id is for AMA or legacy appeals"
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.boolean "overtime", default: false, comment: "Whether the appeal is currently marked as being worked as overtime"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["appeal_type", "appeal_id"], name: "index_work_modes_on_appeal_type_and_appeal_id", unique: true
   end
 
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|

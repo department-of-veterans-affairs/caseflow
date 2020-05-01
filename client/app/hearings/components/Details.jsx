@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,16 +12,18 @@ import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, toggleCancelled, pollVirtualHearingData } from '../utils';
+import { deepDiff, pollVirtualHearingData, getChanges } from '../utils';
 import _ from 'lodash';
 
-import DetailsInputs from './details/DetailsInputs';
-import DetailsOverview from './details/DetailsOverview';
+import DetailsForm from './details/DetailsForm';
 import {
   onChangeFormData, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
 } from '../../components/common/actions';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
+import { listStyling, listItemStyling } from './details/style';
+import { Link } from 'react-router-dom';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
 
 const row = css({
   marginLeft: '-15px',
@@ -111,9 +114,11 @@ class HearingDetails extends React.Component {
         // not used in form
         jobCompleted: virtualHearing.jobCompleted,
         clientHost: virtualHearing.clientHost,
-        alias: virtualHearing.alias,
+        aliasWithHost: virtualHearing.aliasWithHost,
         hostPin: virtualHearing.hostPin,
-        guestPin: virtualHearing.guestPin
+        guestPin: virtualHearing.guestPin,
+        hostLink: virtualHearing.hostLink,
+        guestLink: virtualHearing.guestLink
       }
     };
   }
@@ -132,8 +137,11 @@ class HearingDetails extends React.Component {
   updateVirtualHearing = (values) => {
     this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
 
+    // Calculate the form changes
+    const updates = getChanges(this.state.initialFormData, values);
+
     this.setState({
-      updated: !_.isEmpty(deepDiff(values, this.state.initialFormData.virtualHearingForm)),
+      updated: !_.isEmpty(updates),
       virtualHearingErrors: {}
     });
   }
@@ -196,7 +204,7 @@ class HearingDetails extends React.Component {
     }
   };
 
-  submit = (form = '') => {
+  submit = () => {
     const { hearing: { externalId } } = this.props;
     const { updated } = this.state;
 
@@ -204,10 +212,11 @@ class HearingDetails extends React.Component {
       return;
     }
 
-    const { init, current } = toggleCancelled(this.state.initialFormData, this.props.formData, form);
-
     // only send updated properties
-    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = deepDiff(init, current);
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = getChanges(
+      this.state.initialFormData,
+      this.props.formData
+    );
 
     const data = {
       hearing: {
@@ -278,7 +287,7 @@ class HearingDetails extends React.Component {
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      // response includes jobCompleted, alias, and hostPin
+      // response includes jobCompleted, aliasWithHost, and hostPin
       const resp = ApiUtil.convertToCamelCase(response);
 
       if (resp.jobCompleted) {
@@ -291,6 +300,48 @@ class HearingDetails extends React.Component {
       return !response.job_completed;
     });
   }
+
+  columns = [{
+    label: 'Hearing Date',
+    value:
+      this.props.hearing?.readableRequestType === 'Travel' ? (
+        <strong>{DateUtil.formatDateStr(this.props.hearing?.scheduledFor)}</strong>
+      ) : (
+        <Link to={`/schedule/docket/${this.props.hearing?.hearingDayId}`}>
+          <strong>{DateUtil.formatDateStr(this.props.hearing?.scheduledFor)}</strong>
+        </Link>
+      )
+  },
+  {
+    label: 'Docket Number',
+    value: (
+      <span>
+        <DocketTypeBadge name={this.props.hearing?.docketName} number={this.props.hearing?.docketNumber} />
+        {this.props.hearing?.docketNumber}
+      </span>
+    )
+  },
+  {
+    label: 'Regional office',
+    value: this.props.hearing?.regionalOfficeName
+  },
+  {
+    label: 'Hearing Location',
+    value: this.props.hearing?.readableLocation
+  },
+  {
+    label: 'Disposition',
+    value: this.props.hearing?.disposition
+  },
+  {
+    label: 'Type',
+    value: this.props.hearing?.isVirtual ? 'Virtual' : this.props.hearing?.readableRequestType
+  },
+  {
+    label: 'AOD Status',
+    value: this.props.hearing?.aod || 'None'
+  }
+  ]
 
   render() {
     const {
@@ -324,18 +375,27 @@ class HearingDetails extends React.Component {
 
           <div className="cf-help-divider" />
           <h2>Hearing Details</h2>
-          <DetailsOverview hearing={this.props.hearing} />
+          <div {...listStyling}>
+            {this.columns.map((col, i) => (
+              <div key={i} {...listItemStyling}>
+                <h4>{col.label}</h4>
+                <div>
+                  {col.value}
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="cf-help-divider" />
           {this.state.virtualHearingModalOpen && <VirtualHearingModal
             hearing={this.props.hearing}
             virtualHearing={virtualHearingForm}
             update={this.updateVirtualHearing}
-            submit={() => this.submit('virtualHearingForm').then(this.closeVirtualHearingModal)}
+            submit={() => this.submit().then(this.closeVirtualHearingModal)}
             closeModal={this.closeVirtualHearingModal}
             reset={this.resetVirtualHearing}
             type={this.state.virtualHearingModalType}
             {...editedEmails} />}
-          <DetailsInputs
+          <DetailsForm
             errors={this.state.virtualHearingErrors}
             updateTranscription={this.updateTranscription}
             updateHearing={this.updateHearing}
