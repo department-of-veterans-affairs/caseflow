@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_30_152234) do
+ActiveRecord::Schema.define(version: 2020_05_01_211351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -203,7 +203,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_152234) do
     t.string "hearing_day_created_by_user_full_name", limit: 255, comment: "users.full_name"
     t.string "hearing_day_created_by_user_sattyid", limit: 20, comment: "users.sattyid"
     t.datetime "hearing_day_deleted_at", comment: "hearing_days.deleted_at"
-    t.integer "hearing_day_id", null: false, comment: "hearings.hearing_day_id"
+    t.integer "hearing_day_id", comment: "hearings.hearing_day_id"
     t.integer "hearing_day_judge_id", comment: "hearing_days.judge_id"
     t.boolean "hearing_day_lock", comment: "hearing_days.lock"
     t.text "hearing_day_notes", comment: "hearing_days.notes"
