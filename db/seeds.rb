@@ -2,6 +2,9 @@
 
 require "database_cleaner"
 
+# because db/seeds is not in the autoload path, we must load them explicitly here
+Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+
 class SeedDB
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
@@ -12,46 +15,33 @@ class SeedDB
     Fakes::VeteranStore.new.clear!
   end
 
-  def perform_seeding_jobs
-    # Active Jobs which populate tables based on seed data
-    UpdateCachedAppealsAttributesJob.perform_now
-    NightlySyncsJob.perform_now
-  end
-
   def call_and_log_seed_step(step)
-    Rails.logger.debug("Starting seed step #{step}")
-    send(step)
-    Rails.logger.debug("Finished seed step #{step}")
+    msg = "Starting seed step #{step}"
+    Rails.logger.debug(msg)
+
+    if step.is_a?(Symbol)
+      send(step)
+    else
+      step.new.seed!
+    end
+
+    msg = "Finished seed step #{step}"
+    Rails.logger.debug(msg)
   end
 
   def seed
     call_and_log_seed_step :clean_db
 
-    # Annotations and tags don't come from VACOLS, so our seeding should
-    # create them in all envs
-    call_and_log_seed_step :create_annotations
-    call_and_log_seed_step :create_tags
-
-    call_and_log_seed_step :create_users
-    call_and_log_seed_step :create_ama_appeals
-    call_and_log_seed_step :create_hearing_days
-    call_and_log_seed_step :create_tasks
-    call_and_log_seed_step :create_higher_level_review_tasks
-    call_and_log_seed_step :setup_dispatch
-    call_and_log_seed_step :create_previously_held_hearing_data
-    call_and_log_seed_step :create_legacy_issues_eligible_for_opt_in
-    call_and_log_seed_step :create_higher_level_reviews_and_supplemental_claims
-    call_and_log_seed_step :create_ama_hearing_appeals
-    call_and_log_seed_step :create_board_grant_tasks
-    call_and_log_seed_step :create_veteran_record_request_tasks
-    call_and_log_seed_step :create_intake_users
-    call_and_log_seed_step :create_inbox_messages
-    call_and_log_seed_step :perform_seeding_jobs
-    call_and_log_seed_step :setup_motion_to_vacate
+    call_and_log_seed_step Seeds::Annotations
+    call_and_log_seed_step Seeds::Tags
+    call_and_log_seed_step Seeds::Users # TODO must run this before others
+    call_and_log_seed_step Seeds::Tasks
+    call_and_log_seed_step Seeds::Hearings
+    call_and_log_seed_step Seeds::Intake
+    call_and_log_seed_step Seeds::Dispatch
+    call_and_log_seed_step Seeds::Jobs
+    call_and_log_seed_step Seeds::MTV
   end
 end
-# rubocop:enable Metrics/MethodLength
-# rubocop:enable Metrics/AbcSize
-# rubocop:enable Metrics/ClassLength
 
 SeedDB.new.seed
