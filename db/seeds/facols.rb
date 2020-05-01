@@ -9,7 +9,6 @@ module Seeds
     end
 
     def local_vacols_seed!
-      date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
       hearing_date_shift = Time.now.utc.beginning_of_day - Time.utc(2017, 7, 25)
 
       vacols_models.each do |model|
@@ -23,7 +22,15 @@ module Seeds
       create_issrefs
     end
 
+    def local_vacols_staff!
+      VacolsCSVReader.new(VACOLS::Staff, date_shift).call
+    end
+
     private
+
+    def date_shift
+       @date_shift ||= Time.now.utc.beginning_of_day - Time.utc(2017, 12, 10)
+    end
 
     def vacols_models
       [
