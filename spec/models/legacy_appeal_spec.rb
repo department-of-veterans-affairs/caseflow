@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'appeal_shared_examples'
+require_relative "appeal_shared_examples"
 
 describe LegacyAppeal, :all_dbs do
   before do
