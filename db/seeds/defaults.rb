@@ -17,7 +17,7 @@ module Seeds
       create_ramp_elections(9)
       create_api_key
     end
-  
+
     def create_default_users
       @users.push(
         User.create(
@@ -37,7 +37,7 @@ module Seeds
       @users.push(User.create(css_id: "Mail Intake", station_id: "283", full_name: "Kwame MailIntake Nkrumah"))
       @users.push(User.create(css_id: "Admin Intake", station_id: "283", full_name: "Ash AdminIntake Ketchum"))
     end
-  
+
     def create_legacy_appeals(number)
       legacy_appeals = Array.new(number) do |i|
         Generators::LegacyAppeal.create(
@@ -48,11 +48,11 @@ module Seeds
           }
         )
       end
-  
+
       @legacy_appeals.push(*legacy_appeals)
       @legacy_appeals.push(LegacyAppeal.create(vacols_id: "reader_id1", vbms_id: "reader_id1"))
     end
-  
+
     def create_dispatch_tasks(number)
       num_appeals = @legacy_appeals.length
       tasks = Array.new(number) do |i|
@@ -63,24 +63,24 @@ module Seeds
         )
         establish_claim
       end
-  
+
       # creating user quotas for the existing team quotas
       team_quota = EstablishClaim.todays_quota
       UserQuota.create(team_quota: team_quota, user: @users[3])
       UserQuota.create(team_quota: team_quota, user: @users[4])
       UserQuota.create(team_quota: team_quota, user: @users[5])
-  
+
       # Give each user a task in a different state
       tasks[0].assign!(@users[0])
-  
+
       tasks[1].assign!(@users[1])
       tasks[1].start!
-  
+
       tasks[2].assign!(@users[2])
       tasks[2].start!
       tasks[2].review!
       tasks[2].complete!(status: :routed_to_arc)
-  
+
       # assigning and moving the task to complete for
       # user at index 3
       5.times do |_index|
@@ -90,9 +90,9 @@ module Seeds
         task.review!
         task.complete!(status: :routed_to_arc)
       end
-  
+
       task = EstablishClaim.assign_next_to!(@users[4])
-  
+
       # assigning and moving the task to complete for
       # user at index 5
       3.times do |_index|
@@ -101,18 +101,18 @@ module Seeds
         task.review!
         task.complete!(status: :routed_to_arc)
       end
-  
+
       task = EstablishClaim.assign_next_to!(@users[6])
-  
+
       # Create one task with no decision documents
       EstablishClaim.create(
         appeal: tasks[2].appeal,
         created_at: 5.days.ago
       )
-  
+
       @tasks.push(*tasks)
     end
-  
+
     def create_ramp_elections(number)
       number.times do |i|
         RampElection.create!(
@@ -120,7 +120,7 @@ module Seeds
           notice_date: 1.week.ago
         )
       end
-  
+
       %w[11555555 12555555].each do |i|
         RampElection.create!(
           veteran_file_number: i,
@@ -128,7 +128,7 @@ module Seeds
         )
       end
     end
-  
+
     def create_api_key
       ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
     end

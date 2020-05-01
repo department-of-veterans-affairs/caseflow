@@ -38,18 +38,18 @@ module Seeds
                           appeal: higher_level_review)
       end
     end
-  
+
     def create_higher_level_reviews_and_supplemental_claims
       veteran_file_number = "682007349"
       veteran = Veteran.find_by(file_number: veteran_file_number)
-  
+
       ep_rating_code = "030HLRR"
       ep_nonrating_code = "030HLRNR"
-  
+
       one_day_in_seconds = 60 * 60 * 24
       two_days_in_seconds = 2 * one_day_in_seconds
       thirty_days_in_seconds = 30 * one_day_in_seconds
-  
+
       higher_level_review = HigherLevelReview.create!(
         veteran_file_number: veteran_file_number,
         receipt_date: Time.zone.now - thirty_days_in_seconds,
@@ -61,7 +61,7 @@ module Seeds
         participant_id: "5382910292",
         payee_code: "10"
       )
-  
+
       EndProductEstablishment.create!(
         source: higher_level_review,
         veteran_file_number: veteran.file_number,
@@ -73,7 +73,7 @@ module Seeds
         synced_status: "CAN",
         claimant_participant_id: veteran.participant_id
       )
-  
+
       EndProductEstablishment.create!(
         source: higher_level_review,
         veteran_file_number: veteran.file_number,
@@ -85,7 +85,7 @@ module Seeds
         synced_status: nil,
         claimant_participant_id: veteran.participant_id
       )
-  
+
       EndProductEstablishment.create!(
         source: higher_level_review,
         veteran_file_number: veteran.file_number,
@@ -97,7 +97,7 @@ module Seeds
         synced_status: "PEND",
         claimant_participant_id: veteran.participant_id
       )
-  
+
       EndProductEstablishment.create!(
         source: higher_level_review,
         veteran_file_number: veteran.file_number,
@@ -110,7 +110,7 @@ module Seeds
         last_synced_at: Time.zone.now - one_day_in_seconds,
         claimant_participant_id: veteran.participant_id
       )
-  
+
       EndProductEstablishment.create!(
         source: higher_level_review,
         veteran_file_number: veteran.file_number,
@@ -123,7 +123,7 @@ module Seeds
         last_synced_at: Time.zone.now - two_days_in_seconds,
         claimant_participant_id: veteran.participant_id
       )
-  
+
       EndProductEstablishment.create!(
         source: higher_level_review,
         veteran_file_number: veteran.file_number,
@@ -135,7 +135,7 @@ module Seeds
         synced_status: "LOL",
         claimant_participant_id: veteran.participant_id
       )
-  
+
       eligible_request_issue = RequestIssue.create!(
         decision_review: higher_level_review,
         nonrating_issue_category: "Military Retired Pay",
@@ -145,7 +145,7 @@ module Seeds
         benefit_type: "compensation",
         decision_date: Date.new(2018, 5, 1)
       )
-  
+
       untimely_request_issue = RequestIssue.create!(
         decision_review: higher_level_review,
         nonrating_issue_category: "Active Duty Adjustments",
@@ -155,13 +155,13 @@ module Seeds
         benefit_type: "compensation",
         ineligible_reason: :untimely
       )
-  
+
       higher_level_review.create_issues!([
                                            eligible_request_issue,
                                            untimely_request_issue
                                          ])
       higher_level_review.establish!
-  
+
       SupplementalClaim.create(
         veteran_file_number: veteran.file_number,
         receipt_date: Time.zone.now,
@@ -171,29 +171,29 @@ module Seeds
 
     def create_inbox_messages
       user = User.find_or_create_by(css_id: "BVASYELLOW", station_id: "101")
-  
+
       veteran1 = FactoryBot.create(:veteran)
       veteran2 = FactoryBot.create(:veteran)
-  
+
       appeal1 = FactoryBot.create(:appeal, veteran_file_number: veteran1.file_number)
       appeal2 = FactoryBot.create(
         :legacy_appeal,
         vacols_case: FactoryBot.create(:case),
         vbms_id: "#{veteran2.file_number}S"
       )
-  
+
       message1 = <<~MSG
         <a href="/queue/appeals/#{appeal1.uuid}">Veteran ID #{veteran1.file_number}</a> - Virtual hearing not scheduled
         Caseflow is having trouble contacting the virtual hearing scheduler.
         For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
       MSG
-  
+
       message2 = <<~MSG
         <a href="/queue/appeals/#{appeal2.vacols_id}">Veteran ID #{veteran2.file_number}</a> - Hearing time not updated
         Caseflow is having trouble contacting the virtual hearing scheduler.
         For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.
       MSG
-  
+
       Message.create(text: message1, detail: appeal1, user: user)
       Message.create(text: message2, detail: appeal2, user: user)
     end
