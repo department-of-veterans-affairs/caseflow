@@ -2,11 +2,8 @@ import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
 import _ from 'lodash';
-import * as DateUtil from '../util/DateUtil';
-import { Link } from 'react-router-dom';
 
 import ExponentialPolling from '../components/ExponentialPolling';
-import DocketTypeBadge from '../components/DocketTypeBadge';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -200,61 +197,3 @@ export const getChanges = (first, second) => {
 
   return deepDiff(init, current);
 };
-
-/**
- * Method to produce Hearing Details Column values
- * @param {Object} hearing -- Hearing column values
- */
-export const detailsColumns = ({
-  scheduledFor,
-  docketName,
-  docketNumber,
-  regionalOfficeName,
-  readableLocation,
-  disposition,
-  readableRequestType,
-  hearingDayId,
-  aod,
-  isVirtual
-}) => [
-  {
-    label: 'Hearing Date',
-    value:
-      readableRequestType === 'Travel' ? (
-        <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
-      ) : (
-        <Link to={`/schedule/docket/${hearingDayId}`}>
-          <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
-        </Link>
-      )
-  },
-  {
-    label: 'Docket Number',
-    value: (
-      <span>
-        <DocketTypeBadge name={docketName} number={docketNumber} />
-        {docketNumber}
-      </span>
-    )
-  },
-  {
-    label: 'Regional office',
-    value: regionalOfficeName
-  },
-  {
-    label: 'Hearing Location',
-    value: readableLocation
-  },
-  {
-    label: 'Disposition',
-    value: disposition
-  },
-  {
-    label: 'Type',
-    value: isVirtual ? 'Virtual' : readableRequestType
-  },
-  {
-    label: 'AOD Status',
-    value: aod || 'None'
-  }
-];
