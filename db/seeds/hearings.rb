@@ -3,12 +3,16 @@
 module Seeds
   class Hearings < Base
     def seed!
+      prev_user = RequestStore[:current_user]
+      RequestStore[:current_user] = created_by_user
       create_hearing_days
       create_ama_hearing_appeals
+      RequestStore[:current_user] = prev_user
     end
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def create_ama_hearing(day)
       veteran = create(
         :veteran,
@@ -64,32 +68,29 @@ module Seeds
         hearing_task: parent_hearing_task
       )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def create_case_hearing(day, ro_key)
-      case ro_key
-      when "RO17"
-        folder_nr = "3620725"
-      when "RO45"
-        folder_nr = "3411278"
-      when "C"
-        folder_nr = "3542942"
-      end
+      folder_map = {
+        "RO17" => "3620725",
+        "RO45" => "3411278",
+        "C" => "3542942"
+      }
 
       create(
         :case_hearing,
-        folder_nr: folder_nr,
+        folder_nr: folder_map[ro_key],
         vdkey: day.id,
         board_member: User.find_by_css_id("BVAAABSHIRE").vacols_attorney_id.to_i
       )
     end
 
+    def created_by_user
+      @created_by_user ||= User.find_or_create_by(css_id: "BVATWARNER", station_id: "101")
+    end
+
+    # rubocop:disable Metrics/MethodLength
     def create_hearing_days
-      user = User.find_by(css_id: "BVATWARNER")
-
-      # Set the current user var here, which is used to populate the
-      # created by field.
-      RequestStore[:current_user] = user
-
       %w[C RO17 RO19 RO31 RO43 RO45].each do |ro_key|
         (1..5).each do |index|
           day = HearingDay.create!(
@@ -98,8 +99,8 @@ module Seeds
             judge: User.find_by_css_id("BVAAABSHIRE"),
             request_type: (ro_key == "C") ? "C" : "V",
             scheduled_for: Time.zone.today + (index * 11).days,
-            created_by: user,
-            updated_by: user
+            created_by: created_by_user,
+            updated_by: created_by_user
           )
 
           case index
@@ -113,12 +114,10 @@ module Seeds
           end
         end
       end
-
-      # The current user var should be set to nil at the start of this
-      # function. Restore it before executing the next seed function.
-      RequestStore[:current_user] = nil
     end
+    # rubocop:enable Metrics/MethodLength
 
+    # rubocop:disable Metrics/MethodLength
     def create_ama_hearing_appeals
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
@@ -156,6 +155,7 @@ module Seeds
         updated_by: user
       )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def create_previously_held_hearing_data
       user = User.find_by_css_id("BVAAABSHIRE")
