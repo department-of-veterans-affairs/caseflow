@@ -10,30 +10,7 @@ class ETL::Hearing < ETL::Record
       :hearing_id
     end
 
-    private
-
-    # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/AbcSize
-    def merge_original_attributes_to_target(original, target)
-      # memoize
-      hearing_day = original.hearing_day
-      hearing_location = original.hearing_location
-
-      # hearing attributes
-      target.hearing_id = original.id
-      target.appeal_id = original.appeal_id
-      target.hearing_created_at = original.created_at
-      target.hearing_updated_at = original.updated_at
-      target.bva_poc = original.bva_poc
-      target.created_by_id = original.created_by_id
-      target.created_by_user_css_id = original.created_by&.css_id
-      target.created_by_user_full_name = original.created_by&.full_name
-      target.created_by_user_sattyid = original.created_by&.vacols_user&.sattyid
-      target.updated_by_id = original.updated_by_id
-      target.updated_by_user_css_id = original.updated_by&.css_id
-      target.updated_by_user_full_name = original.updated_by&.full_name
-      target.updated_by_user_sattyid = original.updated_by&.vacols_user&.sattyid
-
+    def mirrored_hearing_attributes
       [
         :disposition,
         :evidence_window_waived,
@@ -48,14 +25,10 @@ class ETL::Hearing < ETL::Record
         :transcript_sent_date,
         :uuid,
         :witness
-      ].each do |attr|
-        target[attr] = original[attr]
-      end
+      ]
+    end
 
-      target.hearing_request_type = original.hearing_request_type
-
-      # hearing day
-      target.hearing_day_id = original.hearing_day_id
+    def mirrored_hearing_day_attributes
       [
         :bva_poc,
         :created_at,
@@ -68,22 +41,10 @@ class ETL::Hearing < ETL::Record
         :room,
         :scheduled_for,
         :updated_at
-      ].each do |attr|
-        target["hearing_day_#{attr}"] = hearing_day[attr]
-      end
-      target.hearing_day_created_by_id = hearing_day.created_by_id
-      target.hearing_day_created_by_user_css_id = hearing_day.created_by&.css_id
-      target.hearing_day_created_by_user_full_name = hearing_day.created_by&.full_name
-      target.hearing_day_created_by_user_sattyid = hearing_day.created_by&.vacols_user&.sattyid
-      target.hearing_day_updated_by_id = hearing_day.updated_by_id
-      target.hearing_day_updated_by_user_css_id = hearing_day.updated_by&.css_id
-      target.hearing_day_updated_by_user_full_name = hearing_day.updated_by&.full_name
-      target.hearing_day_updated_by_user_sattyid = hearing_day.updated_by&.vacols_user&.sattyid
+      ]
+    end
 
-      # hearing location
-      return target if hearing_location.blank?
-
-      target.hearing_location_id = hearing_location.id
+    def mirrored_hearing_location_attributes
       [
         :address,
         :city,
@@ -96,9 +57,73 @@ class ETL::Hearing < ETL::Record
         :state,
         :updated_at,
         :zip_code
-      ].each do |attr|
-        target["hearing_location_#{attr}"] = hearing_location[attr]
+      ]
+    end
+
+    private
+
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
+    def merge_original_attributes_to_target(original, target)
+      # memoize
+      hearing_day = original.hearing_day
+      hearing_location = original.hearing_location
+      judge = original.judge
+      created_by = user_cache(original.created_by_id)
+      updated_by = user_cache(original.updated_by_id)
+
+      # hearing attributes
+      target.hearing_id = original.id
+      target.appeal_id = original.appeal_id
+      target.hearing_created_at = original.created_at
+      target.hearing_updated_at = original.updated_at
+      target.bva_poc = original.bva_poc
+      target.created_by_id = original.created_by_id
+      target.created_by_user_css_id = created_by&.css_id
+      target.created_by_user_full_name = created_by&.full_name
+      target.created_by_user_sattyid = created_by&.vacols_user&.sattyid
+      target.updated_by_id = original.updated_by_id
+      target.updated_by_user_css_id = updated_by&.css_id
+      target.updated_by_user_full_name = updated_by&.full_name
+      target.updated_by_user_sattyid = updated_by&.vacols_user&.sattyid
+      target.judge_css_id = judge&.css_id
+      target.judge_full_name = judge&.full_name
+      target.judge_sattyid = judge&.vacols_user&.sattyid
+
+      mirrored_hearing_attributes.each do |attr|
+        target[attr] = original[attr]
       end
+
+      target.hearing_request_type = original.hearing_request_type
+
+      # hearing day
+      if hearing_day.present?
+        target.hearing_day_id = original.hearing_day_id
+        mirrored_hearing_day_attributes.each do |attr|
+          target["hearing_day_#{attr}"] = hearing_day[attr]
+        end
+        hearing_day_created_by = user_cache(hearing_day.created_by_id)
+        target.hearing_day_created_by_id = hearing_day.created_by_id
+        target.hearing_day_created_by_user_css_id = hearing_day_created_by&.css_id
+        target.hearing_day_created_by_user_full_name = hearing_day_created_by&.full_name
+        target.hearing_day_created_by_user_sattyid = hearing_day_created_by&.vacols_user&.sattyid
+        hearing_day_updated_by = user_cache(hearing_day.updated_by_id)
+        target.hearing_day_updated_by_id = hearing_day.updated_by_id
+        target.hearing_day_updated_by_user_css_id = hearing_day_updated_by&.css_id
+        target.hearing_day_updated_by_user_full_name = hearing_day_updated_by&.full_name
+        target.hearing_day_updated_by_user_sattyid = hearing_day_updated_by&.vacols_user&.sattyid
+      end
+
+      # hearing location
+      if hearing_location.present?
+        target.hearing_location_id = hearing_location.id
+        mirrored_hearing_location_attributes.each do |attr|
+          target["hearing_location_#{attr}"] = hearing_location[attr]
+        end
+      end
+
+      # STI does not work on the base class so we set explicitly
+      target.type = name
 
       target
     end

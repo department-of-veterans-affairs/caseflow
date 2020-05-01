@@ -114,7 +114,7 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
       end
 
       it "job goes back on queue and logs if error", :aggregate_failures do
-        expect(Rails.logger).to receive(:error).exactly(5).times
+        expect(Rails.logger).to receive(:error).exactly(6).times
 
         expect do
           perform_enqueued_jobs do
