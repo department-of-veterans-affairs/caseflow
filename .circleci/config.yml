@@ -389,6 +389,7 @@ workflows:
   version: 2
   build:
     jobs:
+      - development
       - rspec
       - js_tests
       - lint
