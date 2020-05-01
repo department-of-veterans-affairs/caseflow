@@ -59,6 +59,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def perform(hearing_id:, hearing_type:, email_type: :confirmation)
+    ensure_current_user_is_set
+
     set_virtual_hearing(hearing_id, hearing_type)
 
     log_virtual_hearing_state
@@ -118,6 +120,10 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   def create_conference_datadog_tags
     datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
+  end
+
+  def ensure_current_user_is_set
+    RequestStore.store[:current_user] ||= User.system_user
   end
 
   def create_conference
