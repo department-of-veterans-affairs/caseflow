@@ -114,6 +114,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       "judge: [#{virtual_hearing.judge_email_sent} | null?: #{virtual_hearing.judge_email.nil?}])"
     )
     Rails.logger.info("Active?: (#{virtual_hearing.active?})")
+    Rails.logger.info("Virtual Hearing Updated At: (#{virtual_hearing.updated_at})")
+    Rails.logger.info("Establishment Updated At: (#{virtual_hearing.establishment.updated_at})")
   end
 
   def create_conference_datadog_tags
