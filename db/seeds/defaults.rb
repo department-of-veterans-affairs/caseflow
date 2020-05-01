@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Seeds
   class Defaults
     def initialize
@@ -85,7 +87,6 @@ module Seeds
       # user at index 3
       5.times do |_index|
         task = EstablishClaim.assign_next_to!(@users[3])
-        binding.pry
         task.start!
         task.review!
         task.complete!(status: :routed_to_arc)
