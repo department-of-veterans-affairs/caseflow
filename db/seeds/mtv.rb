@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Seeds
   class MTV < Base
     def seed!
@@ -17,10 +19,10 @@ module Seeds
       )
 
       jdr_task = create(:ama_judge_decision_review_task, :completed,
-                                   assigned_to: mtv_judge, assigned_by: nil, appeal: appeal, parent: appeal.root_task)
+                        assigned_to: mtv_judge, assigned_by: nil, appeal: appeal, parent: appeal.root_task)
 
       attorney_task = create(:ama_attorney_task, :completed, assigned_by: mtv_judge,
-                                                                        assigned_to: drafting_attorney, appeal: appeal, parent: jdr_task)
+                                                             assigned_to: drafting_attorney, appeal: appeal, parent: jdr_task)
 
       2.times do |idx|
         create(
@@ -53,13 +55,13 @@ module Seeds
 
     def send_mtv_to_judge(appeal, judge, lit_support_user, mail_task, recommendation)
       create(:judge_address_motion_to_vacate_task,
-                        :assigned,
-                        appeal: appeal,
-                        assigned_by: lit_support_user,
-                        assigned_to: judge,
-                        assigned_at: Time.zone.now,
-                        parent: mail_task,
-                        instructions: "I recommend #{recommendation}.")
+             :assigned,
+             appeal: appeal,
+             assigned_by: lit_support_user,
+             assigned_to: judge,
+             assigned_at: Time.zone.now,
+             parent: mail_task,
+             instructions: "I recommend #{recommendation}.")
     end
 
     def judge_addresses_mtv(jam_task, disposition, vacate_type, assigned_to)

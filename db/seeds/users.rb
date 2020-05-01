@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Seeds
   class Users < Base
     DEVELOPMENT_JUDGE_TEAMS = {

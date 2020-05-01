@@ -356,18 +356,18 @@ module Seeds
 
     def create_task_at_judge_assignment(appeal, judge, assigned_at = Time.zone.yesterday)
       create(:ama_judge_task,
-                        assigned_to: judge,
-                        assigned_at: assigned_at,
-                        appeal: appeal,
-                        parent: create_root_task(appeal))
+             assigned_to: judge,
+             assigned_at: assigned_at,
+             appeal: appeal,
+             parent: create_root_task(appeal))
     end
 
     def create_task_at_judge_review(appeal, judge, attorney)
       parent = create(:ama_judge_decision_review_task,
-                                 :in_progress,
-                                 assigned_to: judge,
-                                 appeal: appeal,
-                                 parent: create_root_task(appeal))
+                      :in_progress,
+                      assigned_to: judge,
+                      appeal: appeal,
+                      parent: create_root_task(appeal))
       child = create(
         :ama_attorney_task,
         assigned_to: attorney,
@@ -542,15 +542,15 @@ module Seeds
 
       3.times do |index|
         board_grant_task = create(:board_grant_effectuation_task,
-                                             status: "assigned",
-                                             assigned_to: nca)
+                                  status: "assigned",
+                                  assigned_to: nca)
 
         request_issues = create_list(:request_issue, 3,
-                                                :nonrating,
-                                                contested_issue_description: "#{index} #{description}",
-                                                notes: "#{index} #{notes}",
-                                                benefit_type: nca.url,
-                                                decision_review: board_grant_task.appeal)
+                                     :nonrating,
+                                     contested_issue_description: "#{index} #{description}",
+                                     notes: "#{index} #{notes}",
+                                     benefit_type: nca.url,
+                                     decision_review: board_grant_task.appeal)
 
         request_issues.each do |request_issue|
           # create matching decision issue
@@ -572,8 +572,8 @@ module Seeds
 
       3.times do |_index|
         create(:veteran_record_request_task,
-                          status: "assigned",
-                          assigned_to: nca)
+               status: "assigned",
+               assigned_to: nca)
       end
     end
 
@@ -609,20 +609,20 @@ module Seeds
       case_issues = []
       %w[5240 5241 5242 5243 5250].each do |lev2|
         case_issues << create(:case_issue,
-                                         issprog: "02",
-                                         isscode: "15",
-                                         isslev1: "04",
-                                         isslev2: lev2)
+                              issprog: "02",
+                              isscode: "15",
+                              isslev1: "04",
+                              isslev2: lev2)
       end
       correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: 100)
       folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
       vacols_case = create(:case_with_soc,
-                                      :status_advance,
-                                      case_issues: case_issues,
-                                      correspondent: correspondent,
-                                      folder: folder,
-                                      bfkey: legacy_vacols_id,
-                                      bfcorlid: veteran_file_number_legacy_opt_in)
+                           :status_advance,
+                           case_issues: case_issues,
+                           correspondent: correspondent,
+                           folder: folder,
+                           bfkey: legacy_vacols_id,
+                           bfcorlid: veteran_file_number_legacy_opt_in)
       create(:legacy_appeal, vacols_case: vacols_case)
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Seeds
   class Intake < Base
     def seed!
@@ -26,15 +28,15 @@ module Seeds
         )
         3.times do
           create(:request_issue,
-                            :nonrating,
-                            end_product_establishment: epe,
-                            veteran_participant_id: veteran.participant_id,
-                            decision_review: higher_level_review)
+                 :nonrating,
+                 end_product_establishment: epe,
+                 veteran_participant_id: veteran.participant_id,
+                 decision_review: higher_level_review)
         end
         nca = BusinessLine.find_or_create_by(name: "National Cemetery Administration", url: "nca")
         create(:higher_level_review_task,
-                          assigned_to: nca,
-                          appeal: higher_level_review)
+               assigned_to: nca,
+               appeal: higher_level_review)
       end
     end
 
