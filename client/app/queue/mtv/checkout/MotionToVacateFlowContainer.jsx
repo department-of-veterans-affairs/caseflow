@@ -10,6 +10,7 @@ import { SubmitVacatedDecisionsView } from './SubmitVacatedDecisionsView';
 import { MotionToVacateCheckoutProgressBar } from './MotionToVacateCheckoutProgressBar';
 import { ReturnToJudgeModalContainer } from './returnToJudge/ReturnToJudgeModalContainer';
 import { REVIEW_VACATE_RETURN_TO_JUDGE } from '../../../../constants/TASK_ACTIONS';
+import { AddAdminActionsView } from './AddAdminActionsView';
 
 export const MotionToVacateFlowContainer = () => {
   const { path } = useRouteMatch();
@@ -42,6 +43,11 @@ export const MotionToVacateFlowContainer = () => {
             <Route path={`${path}/add_decisions`}>
               <MotionToVacateCheckoutProgressBar steps={steps} current="add_decisions" />
               <AddDecisionIssuesView appeal={appeal} />
+            </Route>
+
+            <Route path={`${path}/admin_actions`}>
+              <MotionToVacateCheckoutProgressBar steps={steps} current="admin_actions" />
+              <AddAdminActionsView appeal={appeal} />
             </Route>
 
             <Route path={`${path}/submit`}>
