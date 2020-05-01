@@ -8,7 +8,9 @@ describe Seeds::Tasks, :all_dbs do
       # TODO these are expensive to run, esp Facols.
       # make Seeds::Tasks less dependent on them.
       Seeds::Users.new.seed!
-      #Seeds::Facols.new.seed!
+      puts "start facols seed #{Time.zone.now}"
+      Seeds::Facols.new.seed!
+      puts "end facols seed #{Time.zone.now}"
     end
 
     it "creates all kinds of appeals and tasks" do

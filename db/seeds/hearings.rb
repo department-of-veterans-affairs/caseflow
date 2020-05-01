@@ -156,5 +156,15 @@ module Seeds
         updated_by: user
       )
     end
+
+    def create_previously_held_hearing_data
+      user = User.find_by_css_id("BVAAABSHIRE")
+      appeal = LegacyAppeal.find_or_create_by(vacols_id: "3617215", vbms_id: "994806951S")
+  
+      return if ([appeal.type] - ["Post Remand", "Original"]).empty? &&
+                appeal.hearings.map(&:disposition).include?(:held)
+  
+      FactoryBot.create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
+    end
   end
 end

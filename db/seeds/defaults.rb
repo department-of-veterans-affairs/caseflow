@@ -4,7 +4,6 @@ module Seeds
       @legacy_appeals = []
       @tasks = []
       @users = []
-      @ama_appeals = []
     end
 
     def seed!
