@@ -227,7 +227,7 @@ const DetailsForm = (props) => {
               requestType={requestType}
               updateVirtualHearing={updateVirtualHearing}
               openModal={openVirtualHearingModal}
-              readOnly={hearing?.scheduledForIsPast || (isVirtual && !virtualHearing?.jobCompleted)}
+              readOnly={hearing?.scheduledForIsPast || ((isVirtual || wasVirtual) && !virtualHearing?.jobCompleted)}
               styling={columnThird}
             />
             <div {...columnDoubleSpacer} />

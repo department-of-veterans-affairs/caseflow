@@ -247,7 +247,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       hearing.reload
 
       # Check the Email Notification History
-      check_email_event_table(hearing, 2)
+      check_email_event_table(hearing, 4)
     end
   end
 
