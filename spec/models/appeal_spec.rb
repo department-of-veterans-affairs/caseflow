@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'appeal_shared_examples'
+
 describe Appeal, :all_dbs do
   include IntakeHelpers
 
@@ -258,19 +260,7 @@ describe Appeal, :all_dbs do
   end
 
   context "#overtime" do
-    before { FeatureToggle.enable!(:overtime_revamp) }
-
-    after { FeatureToggle.disable!(:overtime_revamp) }
-
-    it "updates #overtime?" do
-      expect(appeal.overtime?).to be(false)
-
-      appeal.overtime = true
-      expect(appeal.overtime?).to be(true)
-
-      appeal.overtime = false
-      expect(appeal.overtime?).to be(false)
-    end
+    include_examples "toggle overtime"
   end
 
   context "#contestable_issues" do
