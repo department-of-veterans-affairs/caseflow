@@ -1,6 +1,15 @@
 import { css } from 'glamor';
 import { COLORS } from '../../../constants/AppConstants';
 
+export const labelPaddingFirst = css({
+  paddingBottom: 5,
+  paddingTop: 5
+});
+
+export const labelPadding = css({
+  paddingBottom: 15
+});
+
 export const maxWidthFormInput = css({
   display: 'block',
   maxWidth: '100%'
@@ -94,3 +103,21 @@ export const rowThirdsWithFinalSpacer = css(rowThirds, {
 export const enablePadding = css({
   paddingLeft: '15px !important'
 });
+
+export const hearingLinksContainer = css({
+  marginBottom: 38
+});
+
+export const copyButtonStyles = {
+  borderColor: COLORS.PRIMARY,
+  borderWidth: '2px',
+  color: COLORS.PRIMARY,
+  ':hover': {
+    backgroundColor: 'transparent',
+    color: COLORS.PRIMARY,
+    borderColor: COLORS.PRIMARY,
+    borderBottomWidth: '2px'
+  },
+  '& > svg path': { fill: COLORS.PRIMARY },
+  '&:hover > svg path': { fill: COLORS.PRIMARY }
+};

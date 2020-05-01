@@ -2,6 +2,7 @@ import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
 import _ from 'lodash';
+import querystring from 'querystring';
 
 import ExponentialPolling from '../components/ExponentialPolling';
 

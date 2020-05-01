@@ -116,7 +116,9 @@ class HearingDetails extends React.Component {
         clientHost: virtualHearing.clientHost,
         aliasWithHost: virtualHearing.aliasWithHost,
         hostPin: virtualHearing.hostPin,
-        guestPin: virtualHearing.guestPin
+        guestPin: virtualHearing.guestPin,
+        hostLink: virtualHearing.hostLink,
+        guestLink: virtualHearing.guestLink
       }
     };
   }
