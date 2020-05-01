@@ -29,6 +29,7 @@ detectors:
   UncommunicativeVariableName:
     exclude:
       - Address
+      - Seeds::Intake#create_inbox_messages
       - Fakes::PersistentStore#convert_dates_from
   UncommunicativeMethodName:
     exclude:

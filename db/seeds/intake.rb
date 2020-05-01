@@ -13,7 +13,12 @@ module Seeds
 
     def create_intake_users
       ["Mail Intake", "Admin Intake"].each do |role|
-        User.create(css_id: "#{role.tr(' ', '')}_LOCAL", roles: [role], station_id: "101", full_name: "Jame Local #{role} Smith")
+        User.create(
+          css_id: "#{role.tr(' ', '')}_LOCAL",
+          roles: [role],
+          station_id: "101",
+          full_name: "Jame Local #{role} Smith"
+        )
       end
     end
 
@@ -40,6 +45,8 @@ module Seeds
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def create_higher_level_reviews_and_supplemental_claims
       veteran_file_number = "682007349"
       veteran = Veteran.find_or_create_by_file_number(veteran_file_number)
@@ -169,7 +176,10 @@ module Seeds
         benefit_type: "compensation"
       )
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
+    # rubocop:disable Metrics/MethodLength
     def create_inbox_messages
       user = User.find_or_create_by(css_id: "BVASYELLOW", station_id: "101")
 
@@ -198,5 +208,6 @@ module Seeds
       Message.create(text: message1, detail: appeal1, user: user)
       Message.create(text: message2, detail: appeal2, user: user)
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end
