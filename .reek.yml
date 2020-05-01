@@ -30,6 +30,7 @@ detectors:
     exclude:
       - Address
       - Seeds::Intake#create_inbox_messages
+      - Seeds::MTV#setup_motion_to_vacate
       - Fakes::PersistentStore#convert_dates_from
   UncommunicativeMethodName:
     exclude:
@@ -105,6 +106,8 @@ detectors:
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReview::ContestableIssueFinder#initialize
       - QueueRepository#assign_case_to_attorney!
+      - Seeds::MTV#judge_addresses_mtv
+      - Seeds::MTV#send_mtv_to_judge
       - VirtualHearings::CreateConferenceJob#perform
   ManualDispatch:
     exclude:

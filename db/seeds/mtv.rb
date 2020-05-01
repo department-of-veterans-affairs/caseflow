@@ -8,6 +8,7 @@ module Seeds
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def create_decided_appeal(file_number, mtv_judge, drafting_attorney)
       veteran = create(:veteran, file_number: file_number)
       appeal = create(
@@ -21,8 +22,14 @@ module Seeds
       jdr_task = create(:ama_judge_decision_review_task, :completed,
                         assigned_to: mtv_judge, assigned_by: nil, appeal: appeal, parent: appeal.root_task)
 
-      attorney_task = create(:ama_attorney_task, :completed, assigned_by: mtv_judge,
-                                                             assigned_to: drafting_attorney, appeal: appeal, parent: jdr_task)
+      create(
+        :ama_attorney_task,
+        :completed,
+        assigned_by: mtv_judge,
+        assigned_to: drafting_attorney,
+        appeal: appeal,
+        parent: jdr_task
+      )
 
       2.times do |idx|
         create(
@@ -47,10 +54,23 @@ module Seeds
 
     def create_motion_to_vacate_mail_task(appeal)
       lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
-      lit_support_org = LitigationSupport.singleton
       mail_user = User.find_by(css_id: "JOLLY_POSTMAN")
-      mail_team_task = create(:vacate_motion_mail_task, :on_hold, appeal: appeal, parent: appeal.root_task, assigned_by: mail_user)
-      create(:vacate_motion_mail_task, :assigned, appeal: appeal, assigned_to: lit_support_user, assigned_by: lit_support_user, parent: mail_team_task, instructions: ["Initial instructions"])
+      mail_team_task = create(
+        :vacate_motion_mail_task,
+        :on_hold,
+        appeal: appeal,
+        parent: appeal.root_task,
+        assigned_by: mail_user
+      )
+      create(
+        :vacate_motion_mail_task,
+        :assigned,
+        appeal: appeal,
+        assigned_to: lit_support_user,
+        assigned_by: lit_support_user,
+        parent: mail_team_task,
+        instructions: ["Initial instructions"]
+      )
     end
 
     def send_mtv_to_judge(appeal, judge, lit_support_user, mail_task, recommendation)
@@ -74,6 +94,7 @@ module Seeds
       PostDecisionMotionUpdater.new(jam_task, params).process
     end
 
+    # rubocop:disable Metrics/AbcSize
     def setup_motion_to_vacate
       lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
       mtv_judge = User.find_by(css_id: "BVAAABSHIRE")
@@ -87,7 +108,9 @@ module Seeds
 
       # These are ready for the Lit Support user to send_to_judge
       ("000100010".."000100012").each do |file_number|
-        create_decided_appeal(file_number, mtv_judge, drafting_attorney).tap { |a| create_motion_to_vacate_mail_task(a) }
+        create_decided_appeal(file_number, mtv_judge, drafting_attorney).tap do |appeal|
+          create_motion_to_vacate_mail_task(appeal)
+        end
       end
 
       # These are ready to be addressed by the Judge
@@ -165,14 +188,20 @@ module Seeds
         [jdr_task, attorney_task].each { |t| t.update!(status: "completed") }
         root_task = vacate_stream.tasks.find_by(type: "RootTask")
         BvaDispatchTask.create_from_root_task(root_task)
-        dispatch_user = vacate_stream.tasks.reload.find_by(type: "BvaDispatchTask", assigned_to_type: "User").assigned_to
+        dispatch_user = vacate_stream.tasks
+          .reload.find_by(type: "BvaDispatchTask", assigned_to_type: "User").assigned_to
         last_six = file_number[-6..-1]
         citation_number = "A19#{last_six}"
         outcode_params = {
-          citation_number: citation_number, decision_date: Time.zone.now, redacted_document_location: "\\\\bvacofil1.dva.va.gov\\archdata$\\arch1901\\#{citation_number}.txt", file: last_six
+          citation_number: citation_number,
+          decision_date: Time.zone.now,
+          redacted_document_location: "\\\\bvacofil1.dva.va.gov\\archdata$\\arch1901\\#{citation_number}.txt",
+          file: last_six
         }
         BvaDispatchTask.outcode(vacate_stream.reload, outcode_params, dispatch_user)
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
   end
 end
