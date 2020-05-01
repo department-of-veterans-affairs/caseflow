@@ -1,28 +1,8 @@
 # frozen_string_literal: true
 
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
-
 require "database_cleaner"
 
-# rubocop:disable Metrics/ClassLength
-# rubocop:disable Metrics/MethodLength
-# rubocop:disable Metrics/AbcSize
 class SeedDB
-
-  ### Hearings Setup ###
-
-  ### End Hearings Setup ###
-
-  def create_annotations
-    Generators::Annotation.create(comment: "Hello World!", document_id: 1, x: 300, y: 400)
-    Generators::Annotation.create(comment: "This is an example comment", document_id: 2)
-  end
 
   def create_tags
     DocumentsTag.create(
