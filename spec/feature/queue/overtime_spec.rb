@@ -42,7 +42,6 @@ RSpec.feature "Overtime", :all_dbs do
   let(:current_user) { judge_user }
 
   let(:overtime) { false }
-  let(:work_products) { overtime ? QueueMapper::OVERTIME_WORK_PRODUCTS : QueueMapper::WORK_PRODUCTS }
   let!(:legacy_appeal) do
     create(
       :legacy_appeal,
@@ -51,8 +50,7 @@ RSpec.feature "Overtime", :all_dbs do
         :case,
         :assigned,
         assigner: attorney_user,
-        user: judge_user,
-        work_product: work_products.keys.first
+        user: judge_user
       )
     )
   end
@@ -65,13 +63,8 @@ RSpec.feature "Overtime", :all_dbs do
   end
 
   before do
-    create(
-      :attorney_case_review,
-      task_id: AttorneyTask.find_by(appeal: appeal).id,
-      reviewing_judge: judge_user,
-      attorney: attorney_user,
-      overtime: overtime
-    )
+    appeal.overtime = overtime
+    legacy_appeal.overtime = overtime
     User.authenticate!(user: current_user)
     FeatureToggle.enable!(:overtime_revamp)
   end

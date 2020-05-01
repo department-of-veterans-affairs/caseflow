@@ -11,9 +11,9 @@ class WorkModesController < ApplicationController
   end
 
   def create
-    work_mode = WorkMode.create_or_update_by_appeal(appeal, overtime: overtime_param)
+    appeal.overtime = overtime_param
 
-    render json: { work_mode: work_mode }
+    render json: { work_mode: appeal.reload.work_mode }
   end
 
   private

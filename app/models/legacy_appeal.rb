@@ -644,6 +644,10 @@ class LegacyAppeal < CaseflowRecord
     QueueMapper::OVERTIME_WORK_PRODUCTS.key?(das_assignments.max_by(&:created_at).try(:work_product))
   end
 
+  def overtime=(overtime)
+    WorkMode.create_or_update_by_appeal(self, overtime: overtime)
+  end
+
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
