@@ -177,7 +177,7 @@ TranscriptionSection.propTypes = {
   updateTranscription: PropTypes.func
 };
 
-const DetailsInputs = (props) => {
+const DetailsForm = (props) => {
   const {
     hearing,
     isLegacy,
@@ -227,7 +227,7 @@ const DetailsInputs = (props) => {
               requestType={requestType}
               updateVirtualHearing={updateVirtualHearing}
               openModal={openVirtualHearingModal}
-              readOnly={hearing?.scheduledForIsPast || (isVirtual && !virtualHearing?.jobCompleted)}
+              readOnly={hearing?.scheduledForIsPast || ((isVirtual || wasVirtual) && !virtualHearing?.jobCompleted)}
               styling={columnThird}
             />
             <div {...columnDoubleSpacer} />
@@ -281,7 +281,7 @@ const DetailsInputs = (props) => {
   );
 };
 
-DetailsInputs.propTypes = {
+DetailsForm.propTypes = {
   errors: PropTypes.shape({
     vetEmail: PropTypes.string,
     repEmail: PropTypes.string
@@ -314,4 +314,4 @@ DetailsInputs.propTypes = {
   updateTranscription: PropTypes.func
 };
 
-export default DetailsInputs;
+export default DetailsForm;
