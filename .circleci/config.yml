@@ -88,7 +88,7 @@ jobs:
       - run:
           name: make seed-dbs
           command: |
-            ~/project/ci-bin/capture-log "make seed-dbs"
+            ~/project/ci-bin/capture-log "make -f Makefile.example seed-dbs"
 
       - run:
           name: Assets Precompile
