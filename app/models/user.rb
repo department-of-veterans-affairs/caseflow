@@ -103,7 +103,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_intake_appeals?
-    MailTeam.singleton.users.include?(self)
+    BvaIntake.singleton.users.include?(self)
   end
 
   def administer_org_users?
@@ -293,7 +293,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     judge_team_judges.each do |judge|
       orgs << {
         name: "Assign #{judge.css_id}",
-        url: "/queue/#{judge.id}/assign"
+        url: "/queue/#{judge.css_id}/assign"
       }
     end
 
