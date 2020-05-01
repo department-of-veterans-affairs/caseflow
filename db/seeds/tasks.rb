@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Seeds
+  # rubocop:disable Metrics/ClassLength
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   class Tasks < Base
     def initialize
       @ama_appeals = []
@@ -74,7 +77,7 @@ module Seeds
       end
       # Create AMA tasks ready for distribution
       (1..30).each do |num|
-        vet_file_number = format("3213213%02d", num)
+        vet_file_number = format("3213213%<num>02d", num: num)
         create(
           :appeal,
           :ready_for_distribution,
@@ -137,8 +140,7 @@ module Seeds
     end
 
     def create_bva_dispatch_user_with_tasks
-      u = User.find_by(css_id: "BVAGWHITE")
-      BvaDispatch.singleton.add_user(u)
+      BvaDispatch.singleton.add_user(User.find_or_create_by(css_id: "BVAGWHITE", station_id: "101"))
 
       [42, 66, 13].each do |rand_seed|
         create_task_at_bva_dispatch(rand_seed)
@@ -210,7 +212,9 @@ module Seeds
       BvaDispatchTask.create_from_root_task(root_task)
     end
 
-    def create_task_at_quality_review(judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin")
+    def create_task_at_quality_review(
+      judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin"
+    )
       vet = create(
         :veteran,
         file_number: Faker::Number.number(digits: 9).to_s,
@@ -347,7 +351,7 @@ module Seeds
 
       LegacyAppeal.find_or_create_by_vacols_id(vacols_id) if vacols_id.present?
     rescue ActiveRecord::RecordNotFound
-      puts "Could not load FACOLS record for vacols_id #{vacols_id} -- are FACOLS seeds present?"
+      Rails.logger.error("Could not load FACOLS record for vacols_id #{vacols_id} -- are FACOLS seeds present?")
     end
 
     def create_root_task(appeal)
@@ -379,7 +383,9 @@ module Seeds
       create(:attorney_case_review, task_id: child.id)
     end
 
-    def create_task_at_colocated(appeal, judge, attorney, trait = ColocatedTask.actions_assigned_to_colocated.sample.to_sym)
+    def create_task_at_colocated(
+      appeal, judge, attorney, trait = ColocatedTask.actions_assigned_to_colocated.sample.to_sym
+    )
       parent = create(
         :ama_judge_decision_review_task,
         assigned_to: judge,
@@ -516,12 +522,12 @@ module Seeds
       # Initialize the attorney and judge case issue list
       attorney_case_issues = []
       judge_case_issues = []
-      %w[5240 5241 5242 5243 5250].each do |lev2|
+      %w[5240 5241 5242 5243 5250].each do |level|
         # Assign every other case issue to attorney
-        case_issues = lev2.to_i.even? ? attorney_case_issues : judge_case_issues
+        case_issues = level.to_i.even? ? attorney_case_issues : judge_case_issues
 
         # Create issue and push into the case issues list
-        case_issues << create(:case_issue, issprog: "02", isscode: "15", isslev1: "04", isslev2: lev2)
+        case_issues << create(:case_issue, issprog: "02", isscode: "15", isslev1: "04", isslev2: level)
       end
 
       # Update the Case with the Issues
@@ -607,12 +613,12 @@ module Seeds
       VACOLS::CaseIssue.where(isskey: legacy_vacols_id).delete_all
 
       case_issues = []
-      %w[5240 5241 5242 5243 5250].each do |lev2|
+      %w[5240 5241 5242 5243 5250].each do |level|
         case_issues << create(:case_issue,
                               issprog: "02",
                               isscode: "15",
                               isslev1: "04",
-                              isslev2: lev2)
+                              isslev2: level)
       end
       correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: 100)
       folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
@@ -626,4 +632,7 @@ module Seeds
       create(:legacy_appeal, vacols_case: vacols_case)
     end
   end
+  # rubocop:enable Metrics/ClassLength
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 end

@@ -21,6 +21,7 @@ detectors:
       - Fakes::BGSService
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
+      - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
       - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
       - VBMSCaseflowLogger#log
@@ -44,6 +45,7 @@ detectors:
     exclude:
       - HearingSerializerBase
       - LegacyDocket
+      - Seeds::Tasks
       - TaskTreeRenderModule
   DuplicateMethodCall:
     enabled: false
@@ -80,6 +82,7 @@ detectors:
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
       - Seeds::Hearings
+      - Seeds::Tasks#create_colocated_legacy_tasks
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
@@ -108,6 +111,7 @@ detectors:
       - QueueRepository#assign_case_to_attorney!
       - Seeds::MTV#judge_addresses_mtv
       - Seeds::MTV#send_mtv_to_judge
+      - Seeds::Tasks#create_task_at_colocated
       - VirtualHearings::CreateConferenceJob#perform
   ManualDispatch:
     exclude:
