@@ -3,7 +3,7 @@
 require_relative "../../lib/helpers/vacols_csv_reader"
 
 module Seeds
-  class Facols
+  class Facols < Base
     def seed!
       local_vacols_seed!
     end
@@ -61,31 +61,31 @@ module Seeds
       # Issref_dump.csv has 1 Fiduciary issue
       return if VACOLS::Issref.where(**fiduciary_issue).count > 1
 
-      FactoryBot.create(
+      create(
         :issref,
         **fiduciary_issue,
         iss_code: "01",
         iss_desc: "Fiduciary Appointment"
       )
-      FactoryBot.create(
+      create(
         :issref,
         **fiduciary_issue,
         iss_code: "02",
         iss_desc: "Hub Manager removal of a fiduciary under 13.500"
       )
-      FactoryBot.create(
+      create(
         :issref,
         **fiduciary_issue,
         iss_code: "03",
         iss_desc: "Hub Manager misuse determination under 13.400"
       )
-      FactoryBot.create(
+      create(
         :issref,
         **fiduciary_issue,
         iss_code: "04",
         iss_desc: "RO Director decision upon recon of a misuse determ"
       )
-      FactoryBot.create(
+      create(
         :issref,
         **fiduciary_issue,
         iss_code: "05",

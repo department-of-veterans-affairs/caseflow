@@ -9,5 +9,9 @@ module Seeds
     def build(*args)
       FactoryBot.build(*args)
     end
+
+    def create_list(*args)
+      FactoryBot.create_list(*args)
+    end
   end
 end

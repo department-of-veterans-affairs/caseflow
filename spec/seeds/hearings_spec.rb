@@ -5,7 +5,7 @@ describe Seeds::Hearings do
     subject { described_class.new.seed! }
 
     before do
-      Seeds::Users.new.seed! # TODO remove dependency
+      Seeds::Users.new.seed! # to do: remove dependency
     end
 
     it "creates all kinds of hearings" do

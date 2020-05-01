@@ -17,22 +17,22 @@ module Seeds
 
     def create_higher_level_review_tasks
       6.times do
-        veteran = FactoryBot.create(:veteran)
-        epe = FactoryBot.create(:end_product_establishment, veteran_file_number: veteran.file_number)
-        higher_level_review = FactoryBot.create(
+        veteran = create(:veteran)
+        epe = create(:end_product_establishment, veteran_file_number: veteran.file_number)
+        higher_level_review = create(
           :higher_level_review,
           end_product_establishments: [epe],
           veteran_file_number: veteran.file_number
         )
         3.times do
-          FactoryBot.create(:request_issue,
+          create(:request_issue,
                             :nonrating,
                             end_product_establishment: epe,
                             veteran_participant_id: veteran.participant_id,
                             decision_review: higher_level_review)
         end
         nca = BusinessLine.find_or_create_by(name: "National Cemetery Administration", url: "nca")
-        FactoryBot.create(:higher_level_review_task,
+        create(:higher_level_review_task,
                           assigned_to: nca,
                           appeal: higher_level_review)
       end
@@ -171,13 +171,13 @@ module Seeds
     def create_inbox_messages
       user = User.find_or_create_by(css_id: "BVASYELLOW", station_id: "101")
 
-      veteran1 = FactoryBot.create(:veteran)
-      veteran2 = FactoryBot.create(:veteran)
+      veteran1 = create(:veteran)
+      veteran2 = create(:veteran)
 
-      appeal1 = FactoryBot.create(:appeal, veteran_file_number: veteran1.file_number)
-      appeal2 = FactoryBot.create(
+      appeal1 = create(:appeal, veteran_file_number: veteran1.file_number)
+      appeal2 = create(
         :legacy_appeal,
-        vacols_case: FactoryBot.create(:case),
+        vacols_case: create(:case),
         vbms_id: "#{veteran2.file_number}S"
       )
 

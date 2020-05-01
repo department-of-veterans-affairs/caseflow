@@ -9,7 +9,7 @@ module Seeds
     def seed!
       create_ama_appeals
       create_tasks
-      create_legacy_issues_eligible_for_opt_in # TODO move to Seeds::Intake
+      create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
     end
 
     private
@@ -17,15 +17,15 @@ module Seeds
     def create_ama_appeals
       notes = "Pain disorder with 100\% evaluation per examination"
 
-      FactoryBot.create(
+      create(
         :appeal,
         claimants: [
-          FactoryBot.build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO"),
-          FactoryBot.build(:claimant, participant_id: "OTHER_CLAIMANT")
+          build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO"),
+          build(:claimant, participant_id: "OTHER_CLAIMANT")
         ],
         veteran_file_number: "701305078",
         docket_type: Constants.AMA_DOCKETS.direct_review,
-        request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
+        request_issues: create_list(:request_issue, 3, :nonrating, notes: notes)
       )
 
       es = Constants.AMA_DOCKETS.evidence_submission
@@ -43,12 +43,12 @@ module Seeds
         { number_of_claimants: 1, veteran_file_number: "162726229", docket_type: dr, request_issue_count: 8 },
         { number_of_claimants: 1, veteran_file_number: "760362568", docket_type: dr, request_issue_count: 8 }
       ].each do |params|
-        @ama_appeals << FactoryBot.create(
+        @ama_appeals << create(
           :appeal,
           number_of_claimants: params[:number_of_claimants],
           veteran_file_number: params[:veteran_file_number],
           docket_type: params[:docket_type],
-          request_issues: FactoryBot.create_list(
+          request_issues: create_list(
             :request_issue, params[:request_issue_count], :nonrating, notes: notes
           )
         )
@@ -59,7 +59,7 @@ module Seeds
         { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
         { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 }
       ].each do |params|
-        FactoryBot.create(
+        create(
           :appeal,
           :assigned_to_judge,
           number_of_claimants: params[:number_of_claimants],
@@ -67,7 +67,7 @@ module Seeds
           veteran_file_number: params[:veteran_file_number],
           docket_type: params[:docket_type],
           closest_regional_office: "RO17",
-          request_issues: FactoryBot.create_list(
+          request_issues: create_list(
             :request_issue, params[:request_issue_count], :nonrating, notes: notes
           )
         )
@@ -75,7 +75,7 @@ module Seeds
       # Create AMA tasks ready for distribution
       (1..30).each do |num|
         vet_file_number = format("3213213%02d", num)
-        FactoryBot.create(
+        create(
           :appeal,
           :ready_for_distribution,
           number_of_claimants: 1,
@@ -83,7 +83,7 @@ module Seeds
           veteran_file_number: vet_file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review,
           closest_regional_office: "RO17",
-          request_issues: FactoryBot.create_list(
+          request_issues: create_list(
             :request_issue, 2, :nonrating, notes: notes
           )
         )
@@ -108,9 +108,9 @@ module Seeds
     end
 
     def create_ama_distribution_tasks
-      veteran = FactoryBot.create(:veteran, first_name: "Julius", last_name: "Hodge")
-      appeal = FactoryBot.create(:appeal, veteran: veteran, docket_type: Constants.AMA_DOCKETS.evidence_submission)
-      FactoryBot.create(
+      veteran = create(:veteran, first_name: "Julius", last_name: "Hodge")
+      appeal = create(:appeal, veteran: veteran, docket_type: Constants.AMA_DOCKETS.evidence_submission)
+      create(
         :request_issue,
         :nonrating,
         notes: "Pain disorder with 100\% evaluation per examination",
@@ -147,7 +147,7 @@ module Seeds
 
     def create_task_at_bva_dispatch(seed = Faker::Number.number(digits: 3))
       Faker::Config.random = Random.new(seed)
-      vet = FactoryBot.create(
+      vet = create(
         :veteran,
         file_number: Faker::Number.number(digits: 9).to_s,
         first_name: Faker::Name.first_name,
@@ -156,31 +156,31 @@ module Seeds
 
       notes = "Pain disorder with 100\% evaluation per examination"
 
-      appeal = FactoryBot.create(
+      appeal = create(
         :appeal,
         :with_post_intake_tasks,
         number_of_claimants: 1,
         veteran_file_number: vet.file_number,
         docket_type: Constants.AMA_DOCKETS.hearing,
         closest_regional_office: "RO17",
-        request_issues: FactoryBot.create_list(
+        request_issues: create_list(
           :request_issue, 1, :nonrating, notes: notes
         )
       )
 
       root_task = appeal.root_task
-      judge = FactoryBot.create(:user, station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
-      FactoryBot.create(:staff, :judge_role, user: judge)
-      judge_task = FactoryBot.create(
+      judge = create(:user, station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
+      create(:staff, :judge_role, user: judge)
+      judge_task = create(
         :ama_judge_decision_review_task,
         assigned_to: judge,
         appeal: appeal,
         parent: root_task
       )
 
-      atty = FactoryBot.create(:user, station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
-      FactoryBot.create(:staff, :attorney_role, user: atty)
-      atty_task = FactoryBot.create(
+      atty = create(:user, station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
+      create(:staff, :attorney_role, user: atty)
+      atty_task = create(
         :ama_attorney_task,
         :in_progress,
         assigned_to: atty,
@@ -193,7 +193,7 @@ module Seeds
       judge_team.add_user(atty)
 
       appeal.request_issues.each do |request_issue|
-        FactoryBot.create(
+        create(
           :decision_issue,
           :nonrating,
           disposition: "allowed",
@@ -211,7 +211,7 @@ module Seeds
     end
 
     def create_task_at_quality_review(judge_name = "Madhu Judge_CaseAtQR Burnham", attorney_name = "Bailey Attorney_CaseAtQR Eoin")
-      vet = FactoryBot.create(
+      vet = create(
         :veteran,
         file_number: Faker::Number.number(digits: 9).to_s,
         first_name: Faker::Name.first_name,
@@ -219,27 +219,27 @@ module Seeds
       )
       notes = "Pain disorder with 100\% evaluation per examination"
 
-      appeal = FactoryBot.create(
+      appeal = create(
         :appeal,
         :with_post_intake_tasks,
         number_of_claimants: 1,
         veteran_file_number: vet.file_number,
         docket_type: Constants.AMA_DOCKETS.direct_review,
         closest_regional_office: "RO17",
-        request_issues: FactoryBot.create_list(
+        request_issues: create_list(
           :request_issue, 1, :nonrating, notes: notes
         )
       )
       root_task = appeal.root_task
 
-      judge = FactoryBot.create(:user, station_id: 101)
+      judge = create(:user, station_id: 101)
       judge.update!(full_name: judge_name) if judge_name
-      FactoryBot.create(:staff, :judge_role, user: judge)
+      create(:staff, :judge_role, user: judge)
       judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
-      atty = FactoryBot.create(:user, station_id: 101)
+      atty = create(:user, station_id: 101)
       atty.update!(full_name: attorney_name) if attorney_name
-      FactoryBot.create(:staff, :attorney_role, user: atty)
+      create(:staff, :attorney_role, user: atty)
       atty_task_params = { appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }
       atty_task = AttorneyTask.create!(atty_task_params)
 
@@ -265,24 +265,24 @@ module Seeds
         create_legacy_case_with_open_schedule_hearing_task(regional_office)
 
         30.times do
-          appeal = FactoryBot.create(
+          appeal = create(
             :appeal,
             :hearing_docket,
             claimants: [
-              FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10**10)}")
+              create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO_#{rand(10**10)}")
             ],
             closest_regional_office: regional_office
           )
 
-          FactoryBot.create(:available_hearing_locations, regional_office, appeal: appeal)
+          create(:available_hearing_locations, regional_office, appeal: appeal)
 
-          root_task = FactoryBot.create(:root_task, appeal: appeal)
-          distribution_task = FactoryBot.create(
+          root_task = create(:root_task, appeal: appeal)
+          distribution_task = create(
             :distribution_task,
             appeal: appeal,
             parent: root_task
           )
-          parent_hearing_task = FactoryBot.create(
+          parent_hearing_task = create(
             :hearing_task,
             parent: distribution_task,
             appeal: appeal
@@ -290,7 +290,7 @@ module Seeds
 
           schedule_hearing_task_status = [:completed, :in_progress].sample
 
-          FactoryBot.create(
+          create(
             :schedule_hearing_task,
             schedule_hearing_task_status,
             parent: parent_hearing_task,
@@ -300,12 +300,12 @@ module Seeds
           # For completed hearing tasks, generate additional tasks too.
           next unless schedule_hearing_task_status == :completed
 
-          disposition_task = FactoryBot.create(
+          disposition_task = create(
             :assign_hearing_disposition_task,
             parent: parent_hearing_task,
             appeal: appeal
           )
-          FactoryBot.create(
+          create(
             [:no_show_hearing_task, :evidence_submission_window_task].sample,
             parent: disposition_task,
             appeal: appeal
@@ -316,23 +316,23 @@ module Seeds
 
     def create_change_hearing_disposition_task
       hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
-      hearing_day = FactoryBot.create(:hearing_day, created_by: hearings_member, updated_by: hearings_member)
-      veteran = FactoryBot.create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
-      appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
-      root_task = FactoryBot.create(:root_task, appeal: appeal)
-      distribution_task = FactoryBot.create(:distribution_task, parent: root_task)
-      parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task)
-      FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task)
+      hearing_day = create(:hearing_day, created_by: hearings_member, updated_by: hearings_member)
+      veteran = create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
+      appeal = create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
+      root_task = create(:root_task, appeal: appeal)
+      distribution_task = create(:distribution_task, parent: root_task)
+      parent_hearing_task = create(:hearing_task, parent: distribution_task)
+      create(:assign_hearing_disposition_task, parent: parent_hearing_task)
 
-      hearing = FactoryBot.create(
+      hearing = create(
         :hearing,
         appeal: appeal,
         hearing_day: hearing_day,
         created_by: hearings_member,
         updated_by: hearings_member
       )
-      FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
-      FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task)
+      create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
+      create(:change_hearing_disposition_task, parent: parent_hearing_task)
     end
 
     def create_legacy_case_with_open_schedule_hearing_task(ro_key)
@@ -351,11 +351,11 @@ module Seeds
     end
 
     def create_root_task(appeal)
-      FactoryBot.create(:root_task, appeal: appeal)
+      create(:root_task, appeal: appeal)
     end
 
     def create_task_at_judge_assignment(appeal, judge, assigned_at = Time.zone.yesterday)
-      FactoryBot.create(:ama_judge_task,
+      create(:ama_judge_task,
                         assigned_to: judge,
                         assigned_at: assigned_at,
                         appeal: appeal,
@@ -363,12 +363,12 @@ module Seeds
     end
 
     def create_task_at_judge_review(appeal, judge, attorney)
-      parent = FactoryBot.create(:ama_judge_decision_review_task,
+      parent = create(:ama_judge_decision_review_task,
                                  :in_progress,
                                  assigned_to: judge,
                                  appeal: appeal,
                                  parent: create_root_task(appeal))
-      child = FactoryBot.create(
+      child = create(
         :ama_attorney_task,
         assigned_to: attorney,
         assigned_by: judge,
@@ -376,18 +376,18 @@ module Seeds
         appeal: appeal
       )
       child.update(status: :completed)
-      FactoryBot.create(:attorney_case_review, task_id: child.id)
+      create(:attorney_case_review, task_id: child.id)
     end
 
     def create_task_at_colocated(appeal, judge, attorney, trait = ColocatedTask.actions_assigned_to_colocated.sample.to_sym)
-      parent = FactoryBot.create(
+      parent = create(
         :ama_judge_decision_review_task,
         assigned_to: judge,
         appeal: appeal,
         parent: create_root_task(appeal)
       )
 
-      atty_task = FactoryBot.create(
+      atty_task = create(
         :ama_attorney_task,
         assigned_to: attorney,
         assigned_by: judge,
@@ -398,7 +398,7 @@ module Seeds
       org_task_args = { appeal: appeal,
                         parent: atty_task,
                         assigned_by: attorney }
-      FactoryBot.create(:ama_colocated_task, trait, org_task_args)
+      create(:ama_colocated_task, trait, org_task_args)
     end
 
     def create_colocated_legacy_tasks(attorney)
@@ -411,19 +411,19 @@ module Seeds
       ].each do |attrs|
         org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                           assigned_by: attorney }
-        FactoryBot.create(:colocated_task, attrs[:trait], org_task_args)
+        create(:colocated_task, attrs[:trait], org_task_args)
       end
     end
 
     def create_task_at_attorney_review(appeal, judge, attorney)
-      parent = FactoryBot.create(
+      parent = create(
         :ama_judge_decision_review_task,
         assigned_to: judge,
         appeal: appeal,
         parent: create_root_task(appeal)
       )
 
-      FactoryBot.create(
+      create(
         :ama_attorney_task,
         :in_progress,
         assigned_to: attorney,
@@ -445,7 +445,7 @@ module Seeds
       create_task_at_judge_review(@ama_appeals[2], judge, attorney)
       create_task_at_judge_review(@ama_appeals[3], judge, attorney)
       create_task_at_colocated(@ama_appeals[4], judge, attorney)
-      create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, :translation)
+      create_task_at_colocated(create(:appeal), judge, attorney, :translation)
       create_task_at_attorney_review(@ama_appeals[5], judge, attorney)
       create_task_at_attorney_review(@ama_appeals[6], judge, attorney)
       create_task_at_judge_assignment(@ama_appeals[7], judge)
@@ -459,24 +459,24 @@ module Seeds
       create_colocated_legacy_tasks(attorney)
 
       5.times do
-        FactoryBot.create(
+        create(
           :ama_task,
           assigned_by: judge,
           assigned_to: Translation.singleton,
-          parent: FactoryBot.create(:root_task)
+          parent: create(:root_task)
         )
       end
 
       3.times do
-        FactoryBot.create(
+        create(
           :ama_judge_task,
           :in_progress,
           assigned_to: User.find_by(css_id: "BVAEBECKER"),
-          appeal: FactoryBot.create(:appeal)
+          appeal: create(:appeal)
         )
       end
 
-      FactoryBot.create_list(
+      create_list(
         :appeal,
         8,
         :with_post_intake_tasks,
@@ -490,17 +490,17 @@ module Seeds
       attorney = User.find_by(css_id: "BVASCASPER1")
       judge = User.find_by(css_id: "BVAAABSHIRE")
 
-      acting_judge = FactoryBot.create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
-      FactoryBot.create(:staff, :attorney_judge_role, user: acting_judge)
+      acting_judge = create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
+      create(:staff, :attorney_judge_role, user: acting_judge)
 
       JudgeTeam.create_for_judge(acting_judge)
       JudgeTeam.for_judge(judge).add_user(acting_judge)
 
       create_appeal_at_judge_assignment(judge: acting_judge)
-      create_task_at_attorney_review(FactoryBot.create(:appeal), judge, acting_judge)
-      create_task_at_attorney_review(FactoryBot.create(:appeal), acting_judge, attorney)
-      create_task_at_judge_review(FactoryBot.create(:appeal), judge, acting_judge)
-      create_task_at_judge_review(FactoryBot.create(:appeal), acting_judge, attorney)
+      create_task_at_attorney_review(create(:appeal), judge, acting_judge)
+      create_task_at_attorney_review(create(:appeal), acting_judge, attorney)
+      create_task_at_judge_review(create(:appeal), judge, acting_judge)
+      create_task_at_judge_review(create(:appeal), acting_judge, attorney)
 
       # Create Acting Judge Legacy Appeals
       create_legacy_appeal_at_acting_judge
@@ -521,7 +521,7 @@ module Seeds
         case_issues = lev2.to_i.even? ? attorney_case_issues : judge_case_issues
 
         # Create issue and push into the case issues list
-        case_issues << FactoryBot.create(:case_issue, issprog: "02", isscode: "15", isslev1: "04", isslev2: lev2)
+        case_issues << create(:case_issue, issprog: "02", isscode: "15", isslev1: "04", isslev2: lev2)
       end
 
       # Update the Case with the Issues
@@ -531,7 +531,7 @@ module Seeds
       # Create the Judge and Attorney Legacy Appeals
       [vacols_case_attorney, vacols_case_judge].each do |vacols_case|
         # Assign the Vacols Case to the new Legacy Appeal
-        FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+        create(:legacy_appeal, vacols_case: vacols_case)
       end
     end
 
@@ -541,11 +541,11 @@ module Seeds
       notes = "Pain disorder with 80\% evaluation per examination"
 
       3.times do |index|
-        board_grant_task = FactoryBot.create(:board_grant_effectuation_task,
+        board_grant_task = create(:board_grant_effectuation_task,
                                              status: "assigned",
                                              assigned_to: nca)
 
-        request_issues = FactoryBot.create_list(:request_issue, 3,
+        request_issues = create_list(:request_issue, 3,
                                                 :nonrating,
                                                 contested_issue_description: "#{index} #{description}",
                                                 notes: "#{index} #{notes}",
@@ -554,7 +554,7 @@ module Seeds
 
         request_issues.each do |request_issue|
           # create matching decision issue
-          FactoryBot.create(
+          create(
             :decision_issue,
             :nonrating,
             disposition: "allowed",
@@ -571,7 +571,7 @@ module Seeds
       nca = BusinessLine.find_by(name: "National Cemetery Administration")
 
       3.times do |_index|
-        FactoryBot.create(:veteran_record_request_task,
+        create(:veteran_record_request_task,
                           status: "assigned",
                           assigned_to: nca)
       end
@@ -581,7 +581,7 @@ module Seeds
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
 
-      FactoryBot.create(
+      create(
         :appeal,
         :assigned_to_judge,
         number_of_claimants: 1,
@@ -590,7 +590,7 @@ module Seeds
         veteran_file_number: Generators::Random.unique_ssn,
         docket_type: Constants.AMA_DOCKETS.direct_review,
         closest_regional_office: "RO17",
-        request_issues: FactoryBot.create_list(
+        request_issues: create_list(
           :request_issue, 2, :rating, contested_issue_description: description, notes: notes
         )
       )
@@ -608,7 +608,7 @@ module Seeds
 
       case_issues = []
       %w[5240 5241 5242 5243 5250].each do |lev2|
-        case_issues << FactoryBot.create(:case_issue,
+        case_issues << create(:case_issue,
                                          issprog: "02",
                                          isscode: "15",
                                          isslev1: "04",
@@ -616,14 +616,14 @@ module Seeds
       end
       correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: 100)
       folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
-      vacols_case = FactoryBot.create(:case_with_soc,
+      vacols_case = create(:case_with_soc,
                                       :status_advance,
                                       case_issues: case_issues,
                                       correspondent: correspondent,
                                       folder: folder,
                                       bfkey: legacy_vacols_id,
                                       bfcorlid: veteran_file_number_legacy_opt_in)
-      FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+      create(:legacy_appeal, vacols_case: vacols_case)
     end
   end
 end

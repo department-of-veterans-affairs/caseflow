@@ -6,7 +6,7 @@ describe Seeds::MTV do
 
     before do
       Seeds::Users.new.seed! # TOODO
-      Seeds::Facols.new.local_vacols_staff! # TODO
+      Seeds::Facols.new.local_vacols_staff! # to do:
     end
 
     it "creates all kinds of motions to vacate" do

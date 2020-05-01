@@ -1,5 +1,5 @@
 module Seeds
-  class MTV
+  class MTV < Base
     def seed!
       setup_motion_to_vacate
     end
@@ -7,8 +7,8 @@ module Seeds
     private
 
     def create_decided_appeal(file_number, mtv_judge, drafting_attorney)
-      veteran = FactoryBot.create(:veteran, file_number: file_number)
-      appeal = FactoryBot.create(
+      veteran = create(:veteran, file_number: file_number)
+      appeal = create(
         :appeal,
         :outcoded,
         number_of_claimants: 1,
@@ -16,14 +16,14 @@ module Seeds
         stream_type: "original"
       )
 
-      jdr_task = FactoryBot.create(:ama_judge_decision_review_task, :completed,
+      jdr_task = create(:ama_judge_decision_review_task, :completed,
                                    assigned_to: mtv_judge, assigned_by: nil, appeal: appeal, parent: appeal.root_task)
 
-      attorney_task = FactoryBot.create(:ama_attorney_task, :completed, assigned_by: mtv_judge,
+      attorney_task = create(:ama_attorney_task, :completed, assigned_by: mtv_judge,
                                                                         assigned_to: drafting_attorney, appeal: appeal, parent: jdr_task)
 
       2.times do |idx|
-        FactoryBot.create(
+        create(
           :decision_issue,
           :rating,
           decision_review: appeal,
@@ -32,7 +32,7 @@ module Seeds
       end
 
       2.times do |idx|
-        FactoryBot.create(
+        create(
           :decision_issue,
           :nonrating,
           decision_review: appeal,
@@ -47,12 +47,12 @@ module Seeds
       lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
       lit_support_org = LitigationSupport.singleton
       mail_user = User.find_by(css_id: "JOLLY_POSTMAN")
-      mail_team_task = FactoryBot.create(:vacate_motion_mail_task, :on_hold, appeal: appeal, parent: appeal.root_task, assigned_by: mail_user)
-      FactoryBot.create(:vacate_motion_mail_task, :assigned, appeal: appeal, assigned_to: lit_support_user, assigned_by: lit_support_user, parent: mail_team_task, instructions: ["Initial instructions"])
+      mail_team_task = create(:vacate_motion_mail_task, :on_hold, appeal: appeal, parent: appeal.root_task, assigned_by: mail_user)
+      create(:vacate_motion_mail_task, :assigned, appeal: appeal, assigned_to: lit_support_user, assigned_by: lit_support_user, parent: mail_team_task, instructions: ["Initial instructions"])
     end
 
     def send_mtv_to_judge(appeal, judge, lit_support_user, mail_task, recommendation)
-      FactoryBot.create(:judge_address_motion_to_vacate_task,
+      create(:judge_address_motion_to_vacate_task,
                         :assigned,
                         appeal: appeal,
                         assigned_by: lit_support_user,

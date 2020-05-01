@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
-  class Dispatch
+  class Dispatch < Base
     def seed!
       setup_dispatch
     end

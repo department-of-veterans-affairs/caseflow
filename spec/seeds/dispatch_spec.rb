@@ -5,7 +5,7 @@ describe Seeds::Dispatch do
     subject { described_class.new.seed! }
 
     before do
-      # TODO these are expensive to run, esp Facols.
+      # to do: these are expensive to run, esp Facols.
       #Seeds::Users.new.seed!
       puts "start facols seed #{Time.zone.now}"
       Seeds::Facols.new.seed!

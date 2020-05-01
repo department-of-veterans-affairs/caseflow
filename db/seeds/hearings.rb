@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
-  class Hearings
+  class Hearings < Base
     def seed!
       create_hearing_days
       create_ama_hearing_appeals
@@ -10,38 +10,38 @@ module Seeds
     private
 
     def create_ama_hearing(day)
-      veteran = FactoryBot.create(
+      veteran = create(
         :veteran,
         first_name: Faker::Name.first_name,
         last_name: Faker::Name.last_name
       )
 
-      appeal = FactoryBot.create(
+      appeal = create(
         :appeal,
         veteran_file_number: veteran.file_number,
-        claimants: [FactoryBot.create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")],
+        claimants: [create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")],
         docket_type: Constants.AMA_DOCKETS.hearing
       )
 
-      root_task = FactoryBot.create(:root_task, appeal: appeal)
-      distribution_task = FactoryBot.create(
+      root_task = create(:root_task, appeal: appeal)
+      distribution_task = create(
         :distribution_task,
         appeal: appeal,
         parent: root_task
       )
-      parent_hearing_task = FactoryBot.create(
+      parent_hearing_task = create(
         :hearing_task,
         parent: distribution_task,
         appeal: appeal
       )
 
-      FactoryBot.create(
+      create(
         :schedule_hearing_task,
         :completed,
         parent: parent_hearing_task,
         appeal: appeal
       )
-      FactoryBot.create(
+      create(
         :assign_hearing_disposition_task,
         :in_progress,
         parent: parent_hearing_task,
@@ -50,7 +50,7 @@ module Seeds
 
       TrackVeteranTask.sync_tracking_tasks(appeal)
 
-      hearing = FactoryBot.create(
+      hearing = create(
         :hearing,
         hearing_day: day,
         appeal: appeal,
@@ -58,7 +58,7 @@ module Seeds
         scheduled_time: "9:00AM"
       )
 
-      FactoryBot.create(
+      create(
         :hearing_task_association,
         hearing: hearing,
         hearing_task: parent_hearing_task
@@ -75,7 +75,7 @@ module Seeds
         folder_nr = "3542942"
       end
 
-      FactoryBot.create(
+      create(
         :case_hearing,
         folder_nr: folder_nr,
         vdkey: day.id,
@@ -123,25 +123,25 @@ module Seeds
       description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       notes = "Pain disorder with 100\% evaluation per examination"
 
-      FactoryBot.create(
+      create(
         :appeal,
         :with_post_intake_tasks,
         number_of_claimants: 1,
         veteran_file_number: "808415990",
         docket_type: Constants.AMA_DOCKETS.hearing,
         closest_regional_office: "RO17",
-        request_issues: FactoryBot.create_list(
+        request_issues: create_list(
           :request_issue, 1, :rating, contested_issue_description: description, notes: notes
         )
       )
-      FactoryBot.create(
+      create(
         :appeal,
         :with_post_intake_tasks,
         number_of_claimants: 1,
         veteran_file_number: "992190636",
         docket_type: Constants.AMA_DOCKETS.hearing,
         closest_regional_office: "RO17",
-        request_issues: FactoryBot.create_list(
+        request_issues: create_list(
           :request_issue, 8, :rating, contested_issue_description: description, notes: notes
         )
       )
@@ -164,7 +164,7 @@ module Seeds
       return if ([appeal.type] - ["Post Remand", "Original"]).empty? &&
                 appeal.hearings.map(&:disposition).include?(:held)
 
-      FactoryBot.create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
+      create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
     end
   end
 end
