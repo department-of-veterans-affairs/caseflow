@@ -155,7 +155,10 @@ hearings,hearing_location_zip_code,string,,,,,,hearing_locations.zip_code
 hearings,hearing_request_type,string ∗,x,,,,x,Calculated based on virtual_hearings and hearing_day.request_type
 hearings,hearing_updated_at,datetime,,,,,x,hearings.updated_at
 hearings,id,integer (8) PK,x,x,,,,
-hearings,judge_id,integer,,,,,,hearings.judge_id
+hearings,judge_css_id,string,,,,,,users.css_id
+hearings,judge_full_name,string,,,,,,users.full_name
+hearings,judge_id,integer,,,,,x,hearings.judge_id
+hearings,judge_sattyid,string,,,,,,users.sattyid
 hearings,military_service,string,,,,,,hearings.military_service
 hearings,notes,string,,,,,,hearings.notes
 hearings,prepped,boolean,,,,,,hearings.prepped
@@ -165,12 +168,14 @@ hearings,scheduled_time,time ∗,x,,,,,hearings.scheduled_time
 hearings,summary,text,,,,,,hearings.summary
 hearings,transcript_requested,boolean,,,,,,hearings.transcript_requested
 hearings,transcript_sent_date,date,,,,,,hearings.transcript_sent_date
+hearings,type,string,,,,,x,Hearing (AMA) or LegacyHearing
 hearings,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
 hearings,updated_by_id,integer (8),,,,,,The ID of the user who most recently updated the Hearing
 hearings,updated_by_user_css_id,string (20),,,,,,users.css_id
 hearings,updated_by_user_full_name,string (255),,,,,,users.full_name
 hearings,updated_by_user_sattyid,string (20),,,,,,users.sattyid
-hearings,uuid,uuid ∗,x,,,,x,Unique identifier for the Hearing
+hearings,uuid,uuid,,,,,x,Unique identifier for the Hearing
+hearings,vacols_id,string,,,,,x,"When type=LegacyHearing, this column points at the VACOLS case id"
 hearings,witness,string,,,,,,hearings.witness
 organizations,,,,,,,,Copy of Organizations table
 organizations,created_at,datetime,,,,,x,
