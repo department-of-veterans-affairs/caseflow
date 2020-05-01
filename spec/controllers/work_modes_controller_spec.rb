@@ -9,7 +9,9 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
     let(:judge) { create(:user) }
     let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
 
-    before { User.authenticate!(user: judge) }
+    let(:current_user) { judge }
+
+    before { User.authenticate!(user: current_user) }
 
     let(:overtime_value) { true }
     subject { post :create, params: { overtime: overtime_value, appeal_id: appeal_id } }
@@ -22,7 +24,7 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
       end
     end
 
-    shared_examples "an appeal with overtime" do
+    shared_examples "an appeal that can be worked overtime" do
       context "when overtime parameter is nil or not provided" do
         let(:overtime_value) { nil }
         it "raises error" do
@@ -87,7 +89,7 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
       let(:appeal) { judge_assign_task.appeal }
       let(:appeal_id) { appeal.uuid }
 
-      it_behaves_like "an appeal with overtime"
+      it_behaves_like "an appeal that can be worked overtime"
     end
 
     context "for legacy appeal" do
@@ -97,7 +99,40 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
       let(:root_task) { create(:root_task, appeal: appeal) }
       let!(:judge_assign_task) { JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge) }
 
-      it_behaves_like "an appeal with overtime"
+      it_behaves_like "an appeal that can be worked overtime"
+    end
+
+    context "when non-judge user modifies overtime" do
+      let(:current_user) { create(:user) }
+
+      let(:judge_assign_task) { create(:ama_judge_task, parent: create(:root_task), assigned_to: judge) }
+
+      let(:appeal) { judge_assign_task.appeal }
+      let(:appeal_id) { appeal.uuid }
+
+      shared_examples "unauthorized user toggles overtime" do
+        it "returns error" do
+          expect(appeal.work_mode).to be_nil
+          expect(appeal.overtime?).to eq(false)
+          subject
+          expect(appeal.reload.overtime?).to eq(false)
+          expect(response.status).to eq(403)
+        end
+      end
+
+      context "when user is any user" do
+        include_examples "unauthorized user toggles overtime"
+      end
+
+      context "when user is an attorney assigned to the case" do
+        let!(:vacols_attorney) { create(:staff, :attorney_role, user: current_user) }
+
+        let(:judge_review_task) { create(:ama_judge_decision_review_task, parent: create(:root_task)) }
+        let(:attorney_task) { create(:ama_attorney_task, parent: judge_review_task, assigned_by: judge, assigned_to: current_user) }
+        let(:judge_assign_task) { create(:ama_judge_task, parent: attorney_task.root_task, assigned_to: judge) }
+
+        include_examples "unauthorized user toggles overtime"
+      end
     end
   end
 end

@@ -6,13 +6,8 @@
 class WorkModesController < ApplicationController
   before_action :validate_modification_access_to_overtime
 
-  rescue_from Caseflow::Error::UserRepositoryError do
-    redirect_to "/unauthorized"
-  end
-
   def create
     appeal.overtime = overtime_param
-
     render json: { work_mode: appeal.work_mode }
   end
 
@@ -27,6 +22,10 @@ class WorkModesController < ApplicationController
   end
 
   def validate_modification_access_to_overtime
-    current_user.judge? && current_user.appeal_has_task_assigned_to_user?(appeal)
+    unless current_user.judge? && current_user.appeal_has_task_assigned_to_user?(appeal)
+      msg = "Only judges assigned to this appeal can toggle overtime"
+      fail(Caseflow::Error::ActionForbiddenError, message: msg)
+    end
+    true
   end
 end
