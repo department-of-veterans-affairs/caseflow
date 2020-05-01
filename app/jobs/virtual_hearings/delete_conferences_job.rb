@@ -5,6 +5,8 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   application_attr :hearing_schedule
 
   def perform
+    ensure_current_user_is_set
+
     VirtualHearingRepository.cancelled_hearings_with_pending_emails.each do |virtual_hearing|
       Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
 
@@ -19,6 +21,10 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   end
 
   private
+
+  def ensure_current_user_is_set
+    RequestStore.store[:current_user] ||= User.system_user
+  end
 
   def send_cancellation_emails(virtual_hearing)
     VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
