@@ -200,8 +200,8 @@ export const tasks = [
       },
       {
         label: 'Notify Litigation Support of Possible Conflict of Jurisdiction',
-        value: 'modal/assign_to_pulac_cerullo',
-        func: 'assign_to_pulac_cerullo_data',
+        value: 'modal/flag_conflict_of_jurisdiction',
+        func: 'flag_conflict_of_jurisdiction_data',
         data: {
           selected: {
             id: 6,
