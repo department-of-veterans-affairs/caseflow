@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Seeds
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   class Users < Base
     DEVELOPMENT_JUDGE_TEAMS = {
       "BVAAABSHIRE" => { attorneys: %w[BVAEERDMAN BVARDUBUQUE BVALSHIELDS] },
@@ -26,7 +28,11 @@ module Seeds
       User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
       User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
       User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
-      dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "Geoffrey BVADispatchAdmin_NoCases Black")
+      dispatch_admin = User.create(
+        css_id: "BVAGBLACK",
+        station_id: 101,
+        full_name: "Geoffrey BVADispatchAdmin_NoCases Black"
+      )
       OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
       case_review_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
       OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
@@ -77,11 +83,21 @@ module Seeds
       create(:staff, :colocated_role, user: secondary_user, sdept: "DSP")
       Colocated.singleton.add_user(secondary_user)
 
-      user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Laura Co-located_Cases Sporer", roles: %w[Reader])
+      user = User.create(
+        css_id: "BVALSPORER",
+        station_id: 101,
+        full_name: "Laura Co-located_Cases Sporer",
+        roles: %w[Reader]
+      )
       create(:staff, :colocated_role, user: user, sdept: "DSP")
       Colocated.singleton.add_user(user)
 
-      admin = User.create(css_id: "VLJ_SUPPORT_ADMIN", station_id: 101, full_name: "John VLJSupportAdmin Smith", roles: %w[Reader])
+      admin = User.create(
+        css_id: "VLJ_SUPPORT_ADMIN",
+        station_id: 101,
+        full_name: "John VLJSupportAdmin Smith",
+        roles: %w[Reader]
+      )
       create(:staff, :colocated_role, user: admin, sdept: "DSP")
       OrganizationsUser.make_user_admin(admin, Colocated.singleton)
     end
@@ -145,7 +161,11 @@ module Seeds
     end
 
     def create_transcription_team
-      transcription_member = User.find_or_create_by(css_id: "TRANSCRIPTION_USER", station_id: 101, full_name: "Noel TranscriptionUser Vasquez")
+      transcription_member = User.find_or_create_by(
+        css_id: "TRANSCRIPTION_USER",
+        station_id: 101,
+        full_name: "Noel TranscriptionUser Vasquez"
+      )
       TranscriptionTeam.singleton.add_user(transcription_member)
     end
 
@@ -156,12 +176,22 @@ module Seeds
     end
 
     def create_edit_hearings_user
-      hearings_user = User.create(css_id: "BVASYELLOW", station_id: 101, full_name: "Stacy BuildAndEditHearingSchedule Yellow", roles: ["Edit HearSched", "Build HearSched"])
+      hearings_user = User.create(
+        css_id: "BVASYELLOW",
+        station_id: 101,
+        full_name: "Stacy BuildAndEditHearingSchedule Yellow",
+        roles: ["Edit HearSched", "Build HearSched"]
+      )
       HearingsManagement.singleton.add_user(hearings_user)
     end
 
     def create_non_admin_hearing_coordinator_user
-      hearings_user = User.create(css_id: "BVANHALE", station_id: 101, full_name: "Nisha NonAdminHearingCoordinator Hale", roles: ["Edit HearSched"])
+      hearings_user = User.create(
+        css_id: "BVANHALE",
+        station_id: 101,
+        full_name: "Nisha NonAdminHearingCoordinator Hale",
+        roles: ["Edit HearSched"]
+      )
       HearingsManagement.singleton.add_user(hearings_user)
     end
 
@@ -270,4 +300,6 @@ module Seeds
       User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Blair CaseSearchAccessNoQueueAccess Lyon")
     end
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 end
