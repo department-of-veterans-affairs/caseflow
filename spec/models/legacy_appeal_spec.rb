@@ -297,6 +297,24 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context "#overtime" do
+    let!(:vacols_case) { create(:case) }
+
+    before { FeatureToggle.enable!(:overtime_revamp) }
+
+    after { FeatureToggle.disable!(:overtime_revamp) }
+
+    it "updates #overtime?" do
+      expect(appeal.overtime?).to be(false)
+
+      appeal.overtime = true
+      expect(appeal.overtime?).to be(true)
+
+      appeal.overtime = false
+      expect(appeal.overtime?).to be(false)
+    end
+  end
+
   context "#nod" do
     let(:vacols_case) do
       create(:case_with_nod)
