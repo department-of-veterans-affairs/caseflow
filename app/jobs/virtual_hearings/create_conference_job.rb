@@ -38,6 +38,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def perform(hearing_id:, hearing_type:, email_type: :confirmation)
+    RequestStore.store[:current_user] = User.system_user
+
     set_virtual_hearing(hearing_id, hearing_type)
 
     virtual_hearing.establishment.attempted!
