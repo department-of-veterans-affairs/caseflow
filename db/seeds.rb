@@ -37,19 +37,6 @@ class SeedDB
   end
 
   ### Hearings Setup ###
-  def create_legacy_case_with_open_schedule_hearing_task(ro_key)
-    case ro_key
-    when "RO17"
-      vacols_id = "2668454"
-    when "RO45"
-      vacols_id = "3261587"
-    when nil
-      vacols_id = "3019752"
-    end
-
-    LegacyAppeal.find_or_create_by_vacols_id(vacols_id) if vacols_id.present?
-  end
-
   def create_ama_hearing(day)
     veteran = FactoryBot.create(
       :veteran,
