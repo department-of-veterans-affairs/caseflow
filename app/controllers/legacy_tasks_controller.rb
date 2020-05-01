@@ -4,6 +4,9 @@ class LegacyTasksController < ApplicationController
   include Errors
   include CssIdConcern
 
+  before_action :validate_user_id, only: [:index]
+  before_action :validate_user_role, only: [:index]
+
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
   rescue_from Caseflow::Error::LegacyCaseAlreadyAssignedError do |e|
@@ -15,7 +18,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
-    return if invalid_parameters?
+    return if needs_redirect?
 
     respond_to do |format|
       format.html do
@@ -33,12 +36,11 @@ class LegacyTasksController < ApplicationController
     end
   end
 
-  def invalid_parameters?
-    return redirect_using_normalized_css_id if non_normalized_css_id?(params[:user_id])
-
-    fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
-
-    return invalid_role_error unless ROLES.include?(user_role)
+  def needs_redirect?
+    # fixes incorrectly cased css_id param
+    return (use_normalized_css_id && redirect_to_updated_url) if non_normalized_css_id?(params[:user_id])
+    # changes param from user_id to css_id if user is judge
+    return (use_css_id && redirect_to_updated_url) if positive_integer?(params[:user_id])
 
     nil
   end
@@ -47,9 +49,15 @@ class LegacyTasksController < ApplicationController
     (params[:role] || user.vacols_roles.first).try(:downcase)
   end
 
-  def redirect_using_normalized_css_id
-    params[:user_id] = normalize_css_id(params[:user_id])
+  def use_css_id
+    params[:user_id] = user.css_id
+  end
 
+  def use_normalized_css_id
+    params[:user_id] = normalize_css_id(params[:user_id])
+  end
+
+  def redirect_to_updated_url
     # Permit all parameters in order to call `redirect_to`, otherwise we get
     # error "unable to convert unpermitted parameters to hash".
     # This should be secure since we're not saving the params and
@@ -117,8 +125,16 @@ class LegacyTasksController < ApplicationController
 
   private
 
+  def validate_user_id
+    fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
+  end
+
+  def validate_user_role
+    return invalid_role_error unless ROLES.include?(user_role)
+  end
+
   def user
-    @user ||= positive_integer?(params[:user_id]) ? User.find(params[:user_id]) : User.find_by(css_id: params[:user_id])
+    @user ||= positive_integer?(params[:user_id]) ? User.find(params[:user_id]) : User.find_by_css_id(params[:user_id])
   end
   helper_method :user
 
