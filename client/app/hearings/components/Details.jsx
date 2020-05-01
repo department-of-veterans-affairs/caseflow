@@ -299,6 +299,48 @@ class HearingDetails extends React.Component {
     });
   }
 
+  columns = [{
+    label: 'Hearing Date',
+    value:
+      this.props.hearing?.readableRequestType === 'Travel' ? (
+        <strong>{DateUtil.formatDateStr(this.props.hearing?.scheduledFor)}</strong>
+      ) : (
+        <Link to={`/schedule/docket/${this.props.hearing?.hearingDayId}`}>
+          <strong>{DateUtil.formatDateStr(this.props.hearing?.scheduledFor)}</strong>
+        </Link>
+      )
+  },
+  {
+    label: 'Docket Number',
+    value: (
+      <span>
+        <DocketTypeBadge name={this.props.hearing?.docketName} number={this.props.hearing?.docketNumber} />
+        {this.props.hearing?.docketNumber}
+      </span>
+    )
+  },
+  {
+    label: 'Regional office',
+    value: this.props.hearing?.regionalOfficeName
+  },
+  {
+    label: 'Hearing Location',
+    value: this.props.hearing?.readableLocation
+  },
+  {
+    label: 'Disposition',
+    value: this.props.hearing?.disposition
+  },
+  {
+    label: 'Type',
+    value: this.props.hearing?.isVirtual ? 'Virtual' : this.props.hearing?.readableRequestType
+  },
+  {
+    label: 'AOD Status',
+    value: this.props.hearing?.aod || 'None'
+  }
+  ]
+
   render() {
     const {
       isVirtual,
@@ -332,47 +374,7 @@ class HearingDetails extends React.Component {
           <div className="cf-help-divider" />
           <h2>Hearing Details</h2>
           <div {...listStyling}>
-            {[{
-              label: 'Hearing Date',
-              value:
-                this.props.hearing?.readableRequestType === 'Travel' ? (
-                  <strong>{DateUtil.formatDateStr(this.props.hearing?.scheduledFor)}</strong>
-                ) : (
-                  <Link to={`/schedule/docket/${this.props.hearing?.hearingDayId}`}>
-                    <strong>{DateUtil.formatDateStr(this.props.hearing?.scheduledFor)}</strong>
-                  </Link>
-                )
-            },
-            {
-              label: 'Docket Number',
-              value: (
-                <span>
-                  <DocketTypeBadge name={this.props.hearing?.docketName} number={this.props.hearing?.docketNumber} />
-                  {this.props.hearing?.docketNumber}
-                </span>
-              )
-            },
-            {
-              label: 'Regional office',
-              value: this.props.hearing?.regionalOfficeName
-            },
-            {
-              label: 'Hearing Location',
-              value: this.props.hearing?.readableLocation
-            },
-            {
-              label: 'Disposition',
-              value: this.props.hearing?.disposition
-            },
-            {
-              label: 'Type',
-              value: this.props.hearing?.isVirtual ? 'Virtual' : this.props.hearing?.readableRequestType
-            },
-            {
-              label: 'AOD Status',
-              value: this.props.hearing?.aod || 'None'
-            }
-            ].map((col, i) => (
+            {this.columns.map((col, i) => (
               <div key={i} {...listItemStyling}>
                 <h4>{col.label}</h4>
                 <div>
