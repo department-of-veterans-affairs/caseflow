@@ -1,7 +1,7 @@
 version: 2.1
 jobs:
   # validate our demo/development setup
-  development:
+  demo:
     docker:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
@@ -389,7 +389,7 @@ workflows:
   version: 2
   build:
     jobs:
-      - development
+      - demo
       - rspec
       - js_tests
       - lint
