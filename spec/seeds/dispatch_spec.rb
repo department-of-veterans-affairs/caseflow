@@ -6,7 +6,6 @@ describe Seeds::Dispatch do
 
     before do
       # to do: these are expensive to run, esp Facols.
-      #Seeds::Users.new.seed!
       puts "start facols seed #{Time.zone.now}"
       Seeds::Facols.new.seed!
       puts "end facols seed #{Time.zone.now}"
@@ -16,4 +15,4 @@ describe Seeds::Dispatch do
       expect { subject }.to_not raise_error
     end
   end
-end     
+end

@@ -14,4 +14,4 @@ describe Seeds::MTV do
       expect(BvaDispatchTask.count).to eq(6)
     end
   end
-end     
+end

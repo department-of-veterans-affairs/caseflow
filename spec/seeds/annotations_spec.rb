@@ -8,4 +8,4 @@ describe Seeds::Annotations do
       expect { subject }.to_not raise_error
     end
   end
-end     
+end

@@ -19,4 +19,4 @@ describe Seeds::Tasks, :all_dbs do
       expect(Appeal.count).to be > 200
     end
   end
-end     
+end

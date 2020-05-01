@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Seeds::Users do
   describe "#seed!" do
     subject { described_class.new.seed! }
@@ -8,4 +10,4 @@ describe Seeds::Users do
       expect(Organization.count).to eq(25)
     end
   end
-end     
+end

@@ -8,4 +8,4 @@ describe Seeds::Jobs do
       expect { subject }.to_not raise_error
     end
   end
-end     
+end

@@ -13,4 +13,4 @@ describe Seeds::Hearings do
       expect(Hearing.count).to eq(16)
     end
   end
-end     
+end

@@ -13,4 +13,4 @@ describe Seeds::Intake do
       expect(HigherLevelReview.count).to eq(10)
     end
   end
-end     
+end
