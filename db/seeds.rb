@@ -3,18 +3,6 @@
 require "database_cleaner"
 
 class SeedDB
-
-  def create_tags
-    DocumentsTag.create(
-      tag_id: Generators::Tag.create(text: "Service Connected").id,
-      document_id: 1
-    )
-    DocumentsTag.create(
-      tag_id: Generators::Tag.create(text: "Right Knee").id,
-      document_id: 2
-    )
-  end
-
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
     cm = CacheManager.new
