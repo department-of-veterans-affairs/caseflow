@@ -83,6 +83,7 @@ class Generators::Veteran
         service: [{ branch_of_service: "Army",
                     entered_on_duty_date: "02132002",
                     released_active_duty_date: "12212003",
+                    pay_grade: "E4",
                     char_of_svc_code: "HON" },
                   { branch_of_service: "Navy",
                     entered_on_duty_date: "07022006",

@@ -31,6 +31,7 @@ class Veteran < CaseflowRecord
     validate :validate_city
     validate :validate_date_of_birth
     validate :validate_name_suffix
+    validate :validate_veteran_pay_grade
   end
 
   delegate :full_address, to: :address
@@ -48,6 +49,42 @@ class Veteran < CaseflowRecord
 
   # Germany and Australia should be temporary additions until VBMS bug is fixed
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
+
+  VETERAN_PAYEE_GRADES = %w[
+    nil
+    AC
+    E1
+    E2
+    E3
+    E4
+    E5
+    E6
+    E7
+    E8
+    E9
+    E9S
+    E
+    E10
+    O1
+    O10
+    O10S
+    O2
+    O3
+    O4
+    O5
+    O6
+    O7
+    O8
+    O9
+    O
+    O11
+    W1
+    W2
+    W3
+    W4
+    W5
+    WO
+  ].freeze
 
   # C&P Live = '1', C&P Death = '2'
   BENEFIT_TYPE_CODE_LIVE = "1"
@@ -188,6 +225,12 @@ class Veteran < CaseflowRecord
   alias address_line_3 address_line3
   alias gender sex
 
+  def pay_grades
+    return unless service
+
+    service.map { |s| s[:pay_grade] }.compact
+  end
+
   def validate_address_line
     [:address_line1, :address_line2, :address_line3].each do |address|
       address_line = instance_variable_get("@#{address}")
@@ -218,6 +261,10 @@ class Veteran < CaseflowRecord
   def validate_name_suffix
     # This regex validation checks for punctuations in the name suffix
     errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
+  end
+
+  def validate_veteran_pay_grade
+    errors.add(:pay_grades, "invalid_pay_grade") if pay_grades.none? { |pay| VETERAN_PAYEE_GRADES.include?(pay.strip) }
   end
 
   def ratings
