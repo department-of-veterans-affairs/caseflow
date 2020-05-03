@@ -9,6 +9,8 @@ class WorkModesController < ApplicationController
   def create
     appeal.overtime = overtime_param
     render json: { work_mode: appeal.work_mode }
+  rescue Caseflow::Error::WorkModeCouldNotUpdateError
+    render json: { params: params, work_mode: appeal.work_mode }, status: :internal_server_error
   end
 
   private

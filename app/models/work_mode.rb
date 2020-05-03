@@ -9,12 +9,10 @@ class WorkMode < ApplicationRecord
   validates :appeal_id, presence: true
   validates :appeal_type, presence: true
 
-  class WorkModeCouldNotUpdateError < StandardError; end
-
   def self.create_or_update_by_appeal(appeal, attrs)
     work_mode = appeal.work_mode || WorkMode.new(appeal: appeal).tap { appeal.reload }
     return work_mode if work_mode.update(attrs)
 
-    fail WorkModeCouldNotUpdateError
+    fail Caseflow::Error::WorkModeCouldNotUpdateError
   end
 end

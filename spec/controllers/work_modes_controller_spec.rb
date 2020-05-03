@@ -32,6 +32,29 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
         end
       end
 
+      context "when overtime cannot be updated" do
+        context "when appeal.work_mode cannot update" do
+          before do
+            appeal.work_mode = WorkMode.create_or_update_by_appeal(appeal, overtime: false)
+            expect(appeal.work_mode).to receive(:update).and_return(false)
+          end
+          it "raises error" do
+            expect { WorkMode.create_or_update_by_appeal(appeal, overtime: overtime_value) }
+              .to raise_error(Caseflow::Error::WorkModeCouldNotUpdateError)
+          end
+        end
+        context "when WorkMode.create_or_update_by_appeal throws error" do
+          before do
+            expect(WorkMode).to receive(:create_or_update_by_appeal)
+              .and_raise(Caseflow::Error::WorkModeCouldNotUpdateError)
+          end
+          it "returns error status" do
+            subject
+            expect(response.status).to eq(500)
+          end
+        end
+      end
+
       context "when appeal's overtime is not yet set" do
         context "when setting overtime to true" do
           it "sets overtime to true" do
