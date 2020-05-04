@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_04_133723) do
+ActiveRecord::Schema.define(version: 2020_05_04_204154) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -197,8 +197,8 @@ ActiveRecord::Schema.define(version: 2020_05_04_133723) do
     t.boolean "evidence_window_waived", comment: "hearings.evidence_window_waived"
     t.datetime "hearing_created_at", comment: "hearings.created_at"
     t.string "hearing_day_bva_poc", comment: "hearing_days.bva_poc"
-    t.datetime "hearing_day_created_at", null: false, comment: "hearing_days.created_at"
-    t.bigint "hearing_day_created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
+    t.datetime "hearing_day_created_at", comment: "hearing_days.created_at"
+    t.bigint "hearing_day_created_by_id", comment: "The ID of the user who created the Hearing Day"
     t.string "hearing_day_created_by_user_css_id", limit: 50, comment: "users.css_id"
     t.string "hearing_day_created_by_user_full_name", limit: 255, comment: "users.full_name"
     t.string "hearing_day_created_by_user_sattyid", limit: 20, comment: "users.sattyid"
@@ -208,11 +208,11 @@ ActiveRecord::Schema.define(version: 2020_05_04_133723) do
     t.boolean "hearing_day_lock", comment: "hearing_days.lock"
     t.text "hearing_day_notes", comment: "hearing_days.notes"
     t.string "hearing_day_regional_office", comment: "hearing_days.regional_office"
-    t.string "hearing_day_request_type", null: false, comment: "hearing_days.request_type"
+    t.string "hearing_day_request_type", comment: "hearing_days.request_type"
     t.string "hearing_day_room", comment: "The room at BVA where the hearing will take place"
-    t.date "hearing_day_scheduled_for", null: false, comment: "hearing_days.scheduled_for"
-    t.datetime "hearing_day_updated_at", null: false, comment: "hearing_days.updated_at"
-    t.bigint "hearing_day_updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
+    t.date "hearing_day_scheduled_for", comment: "hearing_days.scheduled_for"
+    t.datetime "hearing_day_updated_at", comment: "hearing_days.updated_at"
+    t.bigint "hearing_day_updated_by_id", comment: "The ID of the user who most recently updated the Hearing Day"
     t.string "hearing_day_updated_by_user_css_id", limit: 50, comment: "users.css_id"
     t.string "hearing_day_updated_by_user_full_name", limit: 255, comment: "users.full_name"
     t.string "hearing_day_updated_by_user_sattyid", limit: 20, comment: "users.sattyid"
