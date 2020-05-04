@@ -120,8 +120,8 @@ hearings,disposition,string,,,,,,hearings.disposition
 hearings,evidence_window_waived,boolean,,,,,,hearings.evidence_window_waived
 hearings,hearing_created_at,datetime,,,,,x,hearings.created_at
 hearings,hearing_day_bva_poc,string,,,,,,hearing_days.bva_poc
-hearings,hearing_day_created_at,datetime ∗,x,,,,x,hearing_days.created_at
-hearings,hearing_day_created_by_id,integer (8) ∗,x,,,,,The ID of the user who created the Hearing Day
+hearings,hearing_day_created_at,datetime,,,,,x,hearing_days.created_at
+hearings,hearing_day_created_by_id,integer (8),,,,,,The ID of the user who created the Hearing Day
 hearings,hearing_day_created_by_user_css_id,string (50),,,,,,users.css_id
 hearings,hearing_day_created_by_user_full_name,string (255),,,,,,users.full_name
 hearings,hearing_day_created_by_user_sattyid,string (20),,,,,,users.sattyid
@@ -131,11 +131,11 @@ hearings,hearing_day_judge_id,integer,,,,,,hearing_days.judge_id
 hearings,hearing_day_lock,boolean,,,,,,hearing_days.lock
 hearings,hearing_day_notes,text,,,,,,hearing_days.notes
 hearings,hearing_day_regional_office,string,,,,,,hearing_days.regional_office
-hearings,hearing_day_request_type,string ∗,x,,,,,hearing_days.request_type
+hearings,hearing_day_request_type,string,,,,,,hearing_days.request_type
 hearings,hearing_day_room,string,,,,,,The room at BVA where the hearing will take place
-hearings,hearing_day_scheduled_for,date ∗,x,,,,,hearing_days.scheduled_for
-hearings,hearing_day_updated_at,datetime ∗,x,,,,x,hearing_days.updated_at
-hearings,hearing_day_updated_by_id,integer (8) ∗,x,,,,,The ID of the user who most recently updated the Hearing Day
+hearings,hearing_day_scheduled_for,date,,,,,,hearing_days.scheduled_for
+hearings,hearing_day_updated_at,datetime,,,,,x,hearing_days.updated_at
+hearings,hearing_day_updated_by_id,integer (8),,,,,,The ID of the user who most recently updated the Hearing Day
 hearings,hearing_day_updated_by_user_css_id,string (50),,,,,,users.css_id
 hearings,hearing_day_updated_by_user_full_name,string (255),,,,,,users.full_name
 hearings,hearing_day_updated_by_user_sattyid,string (20),,,,,,users.sattyid
