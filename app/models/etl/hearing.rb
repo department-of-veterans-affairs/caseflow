@@ -3,7 +3,7 @@
 # transformed Hearing model, with associations "flattened" for reporting.
 
 class ETL::Hearing < ETL::Record
-  belongs_to :appeal, foreign_key: :appeal_id, foreign_type: "ETL::Appeal"
+  belongs_to :appeal, primary_key: :appeal_id, foreign_key: :appeal_id, class_name: "ETL::Appeal"
 
   class << self
     def origin_primary_key

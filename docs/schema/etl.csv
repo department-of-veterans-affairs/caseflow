@@ -14,7 +14,7 @@ appeals,claimant_id,integer (8),,,,,x,claimants.id
 appeals,claimant_last_name,string,,,,,,people.last_name
 appeals,claimant_middle_name,string,,,,,,people.middle_name
 appeals,claimant_name_suffix,string,,,,,,people.name_suffix
-appeals,claimant_participant_id,string (20),,,,,x,claimants.participant_id
+appeals,claimant_participant_id,string (50),,,,,x,claimants.participant_id
 appeals,claimant_payee_code,string (20),,,,,,claimants.payee_code
 appeals,claimant_person_id,integer (8),,,,,x,people.id
 appeals,closest_regional_office,string (20),,,,,,The code for the regional office closest to the Veteran on the appeal.
@@ -44,7 +44,7 @@ appeals,veteran_participant_id,string (20),,,,,x,veterans.participant_id
 attorney_case_reviews,,,,,,,,Denormalized attorney_case_reviews
 attorney_case_reviews,appeal_id,integer (8) ∗,x,,,,x,tasks.appeal_id
 attorney_case_reviews,appeal_type,string ∗,x,,,,x,tasks.appeal_type
-attorney_case_reviews,attorney_css_id,string (20) ∗,x,,,,,users.css_id
+attorney_case_reviews,attorney_css_id,string (50) ∗,x,,,,,users.css_id
 attorney_case_reviews,attorney_full_name,string (255) ∗,x,,,,,users.full_name
 attorney_case_reviews,attorney_id,integer (8) ∗,x,,,,x,attorney_case_reviews.attorney_id
 attorney_case_reviews,attorney_sattyid,string (20),,,,,,users.sattyid
@@ -57,7 +57,7 @@ attorney_case_reviews,overtime,boolean,,,,,,attorney_case_reviews.overtime
 attorney_case_reviews,review_created_at,datetime ∗,x,,,,x,attorney_case_reviews.created_at
 attorney_case_reviews,review_id,integer (8) ∗,x,,,,x,attorney_case_reviews.id
 attorney_case_reviews,review_updated_at,datetime ∗,x,,,,x,attorney_case_reviews.updated_at
-attorney_case_reviews,reviewing_judge_css_id,string (20) ∗,x,,,,,users.css_id
+attorney_case_reviews,reviewing_judge_css_id,string (50) ∗,x,,,,,users.css_id
 attorney_case_reviews,reviewing_judge_full_name,string (255) ∗,x,,,,,users.full_name
 attorney_case_reviews,reviewing_judge_id,integer (8) ∗,x,,,,x,attorney_case_reviews.reviewing_judge_id
 attorney_case_reviews,reviewing_judge_sattyid,string (20),,,,,,users.sattyid
@@ -113,7 +113,7 @@ hearings,appeal_id,integer ∗,x,,,,x,ID of the associated Appeal
 hearings,bva_poc,string,,,,,,hearings.bva_poc
 hearings,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
 hearings,created_by_id,integer (8),,,,,,The ID of the user who created the Hearing
-hearings,created_by_user_css_id,string (20),,,,,,users.css_id
+hearings,created_by_user_css_id,string (50),,,,,,users.css_id
 hearings,created_by_user_full_name,string (255),,,,,,users.full_name
 hearings,created_by_user_sattyid,string (20),,,,,,users.sattyid
 hearings,disposition,string,,,,,,hearings.disposition
@@ -122,7 +122,7 @@ hearings,hearing_created_at,datetime,,,,,x,hearings.created_at
 hearings,hearing_day_bva_poc,string,,,,,,hearing_days.bva_poc
 hearings,hearing_day_created_at,datetime ∗,x,,,,x,hearing_days.created_at
 hearings,hearing_day_created_by_id,integer (8) ∗,x,,,,,The ID of the user who created the Hearing Day
-hearings,hearing_day_created_by_user_css_id,string (20),,,,,,users.css_id
+hearings,hearing_day_created_by_user_css_id,string (50),,,,,,users.css_id
 hearings,hearing_day_created_by_user_full_name,string (255),,,,,,users.full_name
 hearings,hearing_day_created_by_user_sattyid,string (20),,,,,,users.sattyid
 hearings,hearing_day_deleted_at,datetime,,,,,x,hearing_days.deleted_at
@@ -136,7 +136,7 @@ hearings,hearing_day_room,string,,,,,,The room at BVA where the hearing will tak
 hearings,hearing_day_scheduled_for,date ∗,x,,,,,hearing_days.scheduled_for
 hearings,hearing_day_updated_at,datetime ∗,x,,,,x,hearing_days.updated_at
 hearings,hearing_day_updated_by_id,integer (8) ∗,x,,,,,The ID of the user who most recently updated the Hearing Day
-hearings,hearing_day_updated_by_user_css_id,string (20),,,,,,users.css_id
+hearings,hearing_day_updated_by_user_css_id,string (50),,,,,,users.css_id
 hearings,hearing_day_updated_by_user_full_name,string (255),,,,,,users.full_name
 hearings,hearing_day_updated_by_user_sattyid,string (20),,,,,,users.sattyid
 hearings,hearing_id,integer (8) ∗,x,,,,x,ID of the Hearing
@@ -171,7 +171,7 @@ hearings,transcript_sent_date,date,,,,,,hearings.transcript_sent_date
 hearings,type,string,,,,,x,Hearing (AMA) or LegacyHearing
 hearings,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
 hearings,updated_by_id,integer (8),,,,,,The ID of the user who most recently updated the Hearing
-hearings,updated_by_user_css_id,string (20),,,,,,users.css_id
+hearings,updated_by_user_css_id,string (50),,,,,,users.css_id
 hearings,updated_by_user_full_name,string (255),,,,,,users.full_name
 hearings,updated_by_user_sattyid,string (20),,,,,,users.sattyid
 hearings,uuid,uuid,,,,,x,Unique identifier for the Hearing
@@ -204,21 +204,21 @@ people,id,integer (8) PK,x,x,,,,
 people,last_name,string (50),,,,,,"Person last name, cached from BGS"
 people,middle_name,string (50),,,,,,"Person middle name, cached from BGS"
 people,name_suffix,string (20),,,,,,"Person name suffix, cached from BGS"
-people,participant_id,string (20) ∗,x,,,,x,
+people,participant_id,string (50) ∗,x,,,,x,
 people,updated_at,datetime ∗,x,,,,x,
 tasks,,,,,,,,Denormalized Tasks with User/Organization
 tasks,appeal_id,integer (8) ∗ FK,x,,x,,x,tasks.appeal_id
 tasks,appeal_type,string ∗,x,,,,x,tasks.appeal_type
 tasks,assigned_at,datetime,,,,,,tasks.assigned_at
 tasks,assigned_by_id,integer (8),,,,,,tasks.assigned_by_id
-tasks,assigned_by_user_css_id,string (20),,,,,,users.css_id
+tasks,assigned_by_user_css_id,string (50),,,,,,users.css_id
 tasks,assigned_by_user_full_name,string (255),,,,,,users.full_name
 tasks,assigned_by_user_sattyid,string (20),,,,,,users.sattyid
 tasks,assigned_to_id,integer (8) ∗,x,,,,x,tasks.assigned_to_id
 tasks,assigned_to_org_name,string (255),,,,,,organizations.name
 tasks,assigned_to_org_type,string (50),,,,,,organizations.type
 tasks,assigned_to_type,string ∗,x,,,,x,tasks.assigned_to_type
-tasks,assigned_to_user_css_id,string (20),,,,,,users.css_id
+tasks,assigned_to_user_css_id,string (50),,,,,,users.css_id
 tasks,assigned_to_user_full_name,string (255),,,,,,users.full_name
 tasks,assigned_to_user_sattyid,string (20),,,,,,users.sattyid
 tasks,closed_at,datetime,,,,,,tasks.closed_at
@@ -236,7 +236,7 @@ tasks,task_updated_at,datetime,,,,,,tasks.updated_at
 tasks,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
 users,,,,,,,,Combined Caseflow/VACOLS user lookups
 users,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
-users,css_id,string (20) ∗,x,,,,,CSEM (Active Directory) username
+users,css_id,string (50) ∗,x,,,,,CSEM (Active Directory) username
 users,email,string (255),,,,,,CSEM email
 users,full_name,string (255),,,,,,CSEM full name
 users,id,integer (8) PK,x,x,,,,
