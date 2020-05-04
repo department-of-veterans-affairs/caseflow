@@ -126,7 +126,7 @@ hearings,hearing_day_created_by_user_css_id,string (20),,,,,,users.css_id
 hearings,hearing_day_created_by_user_full_name,string (255),,,,,,users.full_name
 hearings,hearing_day_created_by_user_sattyid,string (20),,,,,,users.sattyid
 hearings,hearing_day_deleted_at,datetime,,,,,x,hearing_days.deleted_at
-hearings,hearing_day_id,integer ∗,x,,,,x,hearings.hearing_day_id
+hearings,hearing_day_id,integer,,,,,x,hearings.hearing_day_id
 hearings,hearing_day_judge_id,integer,,,,,,hearing_days.judge_id
 hearings,hearing_day_lock,boolean,,,,,,hearing_days.lock
 hearings,hearing_day_notes,text,,,,,,hearing_days.notes
