@@ -29,11 +29,11 @@ class Fakes::RatingStore < Fakes::PersistentStore
     ratings = fetch_and_inflate(participant_id) || {}
     ratings[:profiles] ||= {}
     date_key = self.class.normed_profile_date_key(profile_date).to_sym
-    if ratings[:profiles][date_key] # already exists
-      ratings[:profiles][date_key] = merge_rating_profiles(ratings[:profiles][date_key], record)
-    else
-      ratings[:profiles][date_key] = record
-    end
+    ratings[:profiles][date_key] = if ratings[:profiles][date_key] # already exists
+                                     merge_rating_profiles(ratings[:profiles][date_key], record)
+                                   else
+                                     record
+                                   end
     deflate_and_store(participant_id, ratings)
   end
 
