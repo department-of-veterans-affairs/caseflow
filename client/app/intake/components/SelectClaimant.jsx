@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -9,6 +9,10 @@ import {
   LIVING_PAYEE_CODES
 } from '../constants';
 import COPY from '../../../COPY';
+import { useSelector } from 'react-redux';
+import Button from '../../components/Button';
+import classes from './SelectClaimant.module.scss';
+import { AddClaimantModal } from './AddClaimantModal';
 
 const email = React.createElement(
   'a',
@@ -46,6 +50,10 @@ export const SelectClaimant = (props) => {
     payeeCodeError,
     setPayeeCode
   } = props;
+
+  const { attorneyFees } = useSelector((state) => state.featureToggles);
+  const [showClaimantModal, setShowClaimantModal] = useState(false);
+  const handleAddClaimant = () => setShowClaimantModal((value) => !value);
 
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
   const shouldShowPayeeCode = () => {
@@ -109,6 +117,19 @@ export const SelectClaimant = (props) => {
 
       {showClaimants && hasRelationships && claimantOptions()}
       {showClaimants && !hasRelationships && noClaimantsCopy}
+
+      {attorneyFees && (
+        <>
+          <Button
+            classNames={['usa-button-secondary', classes.button]}
+            name="+ Add Claimant"
+            id="button-addClaimant"
+            onClick={handleAddClaimant}
+          />
+
+          {showClaimantModal && <AddClaimantModal />}
+        </>
+      )}
     </div>
   );
 };
