@@ -10,7 +10,6 @@ assignees: ''
 # Manual Data Fixes
 
 ## Description
-<!-- Optional: add any additional information you have here, or delete the section -->
 
 ## Background/context/resources/related
 

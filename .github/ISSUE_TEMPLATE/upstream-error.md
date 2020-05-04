@@ -9,7 +9,6 @@ assignees: ''
 # Upstream Error
 
 ## Description
-<!-- Optional: add any additional information you have here, or delete the section -->
 
 ## Impacted Reviews
 
