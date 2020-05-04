@@ -534,6 +534,40 @@ feature "Intake", :all_dbs do
           )
         end
       end
+
+      context "invalid name suffix character" do
+        let(:service) { [{ branch_of_service: "army", pay_grade: "not valid" }] }
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            address_line1: "1234",
+            name_suffix: "JR",
+            service: service
+          )
+        end
+
+        scenario "veteran has invalid name suffix character" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content(
+            "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again"
+          )
+        end
+      end
     end
   end
 end
