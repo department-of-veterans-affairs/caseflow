@@ -66,8 +66,8 @@ class UserRepository
     private
 
     def cached_staff_record(css_id)
-      # Staff records rarely get updated so caching in Redis for 24 hours
-      Rails.cache.fetch("#{Rails.env}_staff_record_#{css_id}") do
+      # User role updates often happen in the morning, so 24 hours is probably too long.
+      Rails.cache.fetch("#{Rails.env}_staff_record_#{css_id}", expires_in: 1.hour) do
         VACOLS::Staff.find_by_sdomainid(css_id)
       end
     end
