@@ -126,7 +126,7 @@ class LegacyTasksController < ApplicationController
   private
 
   def validate_user_id
-    fail(Caseflow::Error::InvalidUserId, user_id: params[:user_id]) unless user
+    fail(ActiveRecord::RecordNotFound, user_id: params[:user_id]) unless user
   end
 
   def validate_user_role
