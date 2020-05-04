@@ -53,7 +53,10 @@ export const SelectClaimant = (props) => {
 
   const { attorneyFees } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
-  const handleAddClaimant = () => setShowClaimantModal((value) => !value);
+  const openAddClaimantModal = () => setShowClaimantModal(true);
+  const handleAddClaimant = (claimant) => {
+    // stub — add to redux here
+  };
 
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
   const shouldShowPayeeCode = () => {
@@ -124,10 +127,12 @@ export const SelectClaimant = (props) => {
             classNames={['usa-button-secondary', classes.button]}
             name="+ Add Claimant"
             id="button-addClaimant"
-            onClick={handleAddClaimant}
+            onClick={openAddClaimantModal}
           />
 
-          {showClaimantModal && <AddClaimantModal />}
+          {showClaimantModal && (
+            <AddClaimantModal onCancel={() => setShowClaimantModal(false)} onSubmit={handleAddClaimant} />
+          )}
         </>
       )}
     </div>
