@@ -66,7 +66,7 @@ class UserRepository
     private
 
     def cached_staff_record(css_id)
-      # User role updates often happen in the morning, so 24 hours is probably too long.
+      # Cache long enough to improve performance, but not so long that VACOLS drifts out of sync
       Rails.cache.fetch("#{Rails.env}_staff_record_#{css_id}", expires_in: 1.hour) do
         VACOLS::Staff.find_by_sdomainid(css_id)
       end
