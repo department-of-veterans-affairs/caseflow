@@ -93,7 +93,7 @@ class IntakesController < ApplicationController
         unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user),
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
         verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user),
-        attorneyFees: FeatureToggle.enabled?(:attorney_fees, user: current_user),
+        attorneyFees: FeatureToggle.enabled?(:attorney_fees, user: current_user)
       }
     }
   rescue StandardError => error
