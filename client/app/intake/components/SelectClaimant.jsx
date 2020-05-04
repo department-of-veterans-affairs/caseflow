@@ -122,7 +122,7 @@ export const SelectClaimant = (props) => {
       {showClaimants && hasRelationships && claimantOptions()}
       {showClaimants && !hasRelationships && noClaimantsCopy}
 
-      {attorneyFees && (
+      {attorneyFees && veteranIsNotClaimant && (
         <>
           <Button
             classNames={['usa-button-secondary', classes.button]}
