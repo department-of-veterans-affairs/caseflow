@@ -1,7 +1,7 @@
 ---
 name: Upstream Error
 about: Template for Upstream Errors
-title: ''
+title: 'Upstream Error'
 labels: ' Source: Upstream Error, Team: Foxtrot'
 assignees: ''
 
@@ -15,8 +15,6 @@ assignees: ''
 ## Background/Context/Resources (such as related issues, Slack threads)
 
 ## YourIT ticket and defect number
-
-## The title should start with ```Upstream Error |```
 
 ## Labels added include "upstream error" and "foxtrot"
 

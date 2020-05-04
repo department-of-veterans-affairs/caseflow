@@ -1,7 +1,7 @@
 ---
 name: Manual Data Fixes
 about: Template for Manual Data Fixes
-title: ''
+title: 'Manual Fix'
 labels: 'Eng: Data'
 assignees: ''
 
@@ -16,8 +16,6 @@ assignees: ''
 ## Instances reported and fixed (checked)
 
 ## Script for processing
-
-## The title should start with ```Manual Fix |```
 
 ## Labels to add include "Eng: Data"
 
