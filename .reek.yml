@@ -77,6 +77,7 @@ detectors:
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
+      - StuckVirtualHearingsChecker#build_report
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
@@ -176,6 +177,7 @@ detectors:
       - Reporter#seconds_to_hms
       - Reporter#percent
       - ScheduleHearingTaskPager#sorted_tasks
+      - StuckVirtualHearingsChecker#stuck_virtual_hearings
       - VBMSCaseflowLogger#log
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link
