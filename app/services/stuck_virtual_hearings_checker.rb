@@ -9,7 +9,7 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
   def stuck_virtual_hearings
     VirtualHearingRepository.hearings_with_pending_conference_or_emails.select do |virtual_hearing|
-      virtual_hearing.updated_at < Time.now - 2.hours
+      virtual_hearing.updated_at < Time.zone.now - 2.hours
     end
   end
 
@@ -23,7 +23,7 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
     stuck_count = stuck_virtual_hearings.count
 
-    add_to_report "Found #{stuck_count} stuck virtual hearing#{stuck_count > 1 ? 's': ''}: "
+    add_to_report "Found #{stuck_count} stuck #{(stuck_count > 1) ? 'virtual hearings' : 'virtual hearing'}: "
     stuck_virtual_hearings.each do |stuck_vh|
       add_to_report "VirtualHearing.find(#{stuck_vh.id}) last processed at #{stuck_vh.establishment.processed_at}"
     end
