@@ -54,8 +54,9 @@ export const SelectClaimant = (props) => {
   const { attorneyFees } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const openAddClaimantModal = () => setShowClaimantModal(true);
-  const handleAddClaimant = (claimant) => {
-    // stub — add to redux here
+  const handleAddClaimant = (newClaimant) => {
+    // eslint-disable-next-line
+    console.log('claimant', newClaimant);
   };
 
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
