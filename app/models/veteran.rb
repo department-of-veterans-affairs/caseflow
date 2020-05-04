@@ -264,7 +264,7 @@ class Veteran < CaseflowRecord
   end
 
   def validate_veteran_pay_grade
-    errors.add(:pay_grades, "invalid_pay_grade") if pay_grades.none? { |pay| VETERAN_PAYEE_GRADES.include?(pay.strip) }
+    errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.none? { |pay| VETERAN_PAYEE_GRADES.include?(pay.strip) }
   end
 
   def ratings

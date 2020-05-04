@@ -535,7 +535,7 @@ feature "Intake", :all_dbs do
         end
       end
 
-      context "invalid name suffix character" do
+      context "invalid pay grade" do
         let(:service) { [{ branch_of_service: "army", pay_grade: "not valid" }] }
         let(:veteran) do
           Generators::Veteran.build(
@@ -549,7 +549,7 @@ feature "Intake", :all_dbs do
           )
         end
 
-        scenario "veteran has invalid name suffix character" do
+        scenario "veteran has invalid pay grade" do
           visit "/intake"
           select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
           safe_click ".cf-submit.usa-button"
