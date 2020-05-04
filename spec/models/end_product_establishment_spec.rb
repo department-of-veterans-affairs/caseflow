@@ -1067,6 +1067,7 @@ describe EndProductEstablishment, :postgres do
       context "when rating is before established_at date" do
         let!(:another_rating) do
           Generators::PromulgatedRating.build(
+            profile_date: end_product_establishment.established_at + 1.day,
             participant_id: veteran.participant_id,
             promulgation_date: end_product_establishment.established_at + 1.day,
             associated_claims: []

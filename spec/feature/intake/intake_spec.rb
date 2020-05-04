@@ -80,8 +80,8 @@ feature "Intake", :all_dbs do
         expect(page).to have_current_path("/intake/search")
       end
 
-      context "when the user is on the Mail Team" do
-        before { MailTeam.singleton.add_user(current_user) }
+      context "when the user is on the BVA Intake team" do
+        before { BvaIntake.singleton.add_user(current_user) }
 
         it "allows the user to intake appeals" do
           visit "/intake"

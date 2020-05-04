@@ -1,19 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
-  let(:current_user) do
-    create(
-      :user,
-      :judge,
-      css_id: "BVATWARNER",
-      roles: ["Build HearSched"],
-      email: "test@gmail.com"
-    )
-  end
-
   def check_row_content(event, index)
     # Format the date the same as moment
-    formatted_date = event.sent_at.strftime("%b %d, %Y,%l:%M %P %Z").gsub!(/DT/, "ST")
+    formatted_date = event.sent_at.strftime("%b %d, %Y, %-l:%M %P %Z").gsub(/DT/, "ST")
 
     expect(find("#table-row-#{index} > td:first-child")).to have_content(event.sent_to_role)
     expect(find("#table-row-#{index} > td:nth-child(2)")).to have_content(event.email_address)
@@ -48,12 +38,26 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     check_email_event_rows(hearing, row_count)
   end
 
+  let(:current_user) do
+    create(
+      :user,
+      :judge,
+      css_id: "BVATWARNER",
+      roles: ["Build HearSched"],
+      email: "test@gmail.com"
+    )
+  end
+
+  let(:pexip_url) { "fake.va.gov" }
+
   before do
     create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG")
     create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO")
     HearingsManagement.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
     FeatureToggle.enable!(:schedule_virtual_hearings)
+
+    stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
   end
 
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO13") }
@@ -64,6 +68,45 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
   let(:fill_in_veteran_email) { "email@testingEmail.com" }
+
+  def check_virtual_hearings_links_expired(virtual_hearing)
+    within "#vlj-hearings-link" do
+      expect(page).to have_content(
+        "VLJ Link: Expired\n" \
+        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
+        "PIN: #{virtual_hearing.host_pin}"
+      )
+    end
+    within "#guest-hearings-link" do
+      expect(page).to have_content(
+        "Guest Link: Expired\n" \
+        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
+        "PIN: #{virtual_hearing.guest_pin}"
+      )
+    end
+  end
+
+  def check_virtual_hearings_links(virtual_hearing, label)
+    # Test the hearing link details
+    within "#vlj-hearings-link" do
+      expect(page).to have_content(
+        "VLJ Link: #{label} \n" \
+        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
+        "PIN: #{virtual_hearing.host_pin}\n" \
+        "Copy VLJ Link "
+      )
+      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.host_link}']")
+    end
+    within "#guest-hearings-link" do
+      expect(page).to have_content(
+        "Guest Link: #{label} \n" \
+        "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
+        "PIN: #{virtual_hearing.guest_pin}\n" \
+        "Copy Guest Link "
+      )
+      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.guest_link}']")
+    end
+  end
 
   context "initial hearing type is Video" do
     scenario "email notification history is not displayed" do
@@ -204,7 +247,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       hearing.reload
 
       # Check the Email Notification History
-      check_email_event_table(hearing, 2)
+      check_email_event_table(hearing, 4)
     end
   end
 
@@ -212,6 +255,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     let!(:virtual_hearing) do
       create(
         :virtual_hearing,
+        :initialized,
         :all_emails_sent,
         status: :active,
         hearing: hearing
@@ -235,6 +279,60 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(virtual_hearing.cancelled?).to eq(true)
       expect(page).to have_content(hearing.readable_request_type)
     end
+
+    scenario "user has the host and guest links" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing")
+    end
+  end
+
+  context "Links display correctly when scheduling Virtual Hearings" do
+    let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
+
+    scenario "displays in progress when emails are being generated" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      # Test the links are not present
+      within "#vlj-hearings-link" do
+        expect(page).to have_content("Scheduling in progress")
+      end
+      within "#guest-hearings-link" do
+        expect(page).to have_content("Scheduling in progress")
+      end
+    end
+
+    context "after the virtual hearing is scheduled" do
+      let!(:hearing_day) { create(:hearing_day, scheduled_for: Date.yesterday - 2) }
+      before do
+        # Mock the conference details
+        virtual_hearing.alias_name = rand(1..9).to_s[0..6]
+        virtual_hearing.guest_pin = rand(1..9).to_s[0..3].to_i
+        virtual_hearing.host_pin = rand(1..9).to_s[0..3].to_i
+        virtual_hearing.conference_id = "0"
+        virtual_hearing.established!
+        hearing.reload
+      end
+
+      scenario "displays details when the date is before the hearing date" do
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing")
+      end
+
+      scenario "displays expired when the date is after the hearing date" do
+        hearing.update(hearing_day: hearing_day)
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        hearing.reload
+        check_virtual_hearings_links_expired(virtual_hearing)
+      end
+
+      scenario "displays expired when the virtual hearing is cancelled" do
+        virtual_hearing.update(request_cancelled: true)
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        hearing.reload
+        check_virtual_hearings_links_expired(virtual_hearing)
+      end
+    end
   end
 
   context "Hearing type dropdown and vet and poa fields are disabled while async job is running" do
@@ -248,7 +346,12 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     end
 
     scenario "async job is completed" do
+      # Mock the conference details
+      virtual_hearing.alias_name = rand(1..9).to_s[0..6]
+      virtual_hearing.guest_pin = rand(1..9).to_s[0..3].to_i
+      virtual_hearing.host_pin = rand(1..9).to_s[0..3].to_i
       virtual_hearing.conference_id = "0"
+
       virtual_hearing.established!
       visit "hearings/" + hearing.external_id.to_s + "/details"
       hearing.reload
@@ -296,26 +399,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
       # Check the Email Notification History
       check_email_event_table(hearing, 2)
-    end
-  end
-
-  context "User has the correct link" do
-    let!(:virtual_hearing) do
-      create(
-        :virtual_hearing,
-        :initialized,
-        :all_emails_sent,
-        status: :active,
-        hearing: hearing
-      )
-    end
-
-    scenario "user has the host link" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
-
-      expect(page).to have_content(
-        "conference=#{virtual_hearing.alias}&pin=#{virtual_hearing.host_pin}#&join=1&role=host"
-      )
     end
   end
 

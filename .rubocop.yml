@@ -96,6 +96,8 @@ Metrics/ClassLength:
 
 Metrics/AbcSize:
   Max: 30
+  Exclude:
+    - app/jobs/virtual_hearings/create_conference_job.rb
 
 Style/DoubleNegation:
   Enabled: false
