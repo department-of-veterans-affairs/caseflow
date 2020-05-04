@@ -15,6 +15,22 @@ describe StuckVirtualHearingsChecker, :postgres do
     end
   end
 
+  context "there is a stuck virtual hearing but it was updated less than 2 hours ago" do
+    let!(:virtual_hearing_too_recent) do
+      create(
+        :virtual_hearing, :all_emails_sent,
+        updated_at: Time.zone.now,
+        hearing: create(:hearing, regional_office: "RO13")
+      )
+    end
+
+    it "does not generate a report" do
+      subject.call
+
+      # does not report a virtual hearing that was updated less than 2 hours ago
+      expect(subject.report?).to be_falsey
+    end
+  end
   context "there is a virtual hearing with pending conference" do
     let!(:virtual_hearing) {
       create(
