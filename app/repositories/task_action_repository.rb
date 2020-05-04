@@ -293,7 +293,7 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_pulac_cerullo_data(_task, _user)
+    def flag_conflict_of_jurisdiction_data(_task, _user)
       org = PulacCerullo.singleton
       {
         selected: org,
