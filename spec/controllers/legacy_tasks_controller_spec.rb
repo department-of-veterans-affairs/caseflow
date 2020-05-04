@@ -73,10 +73,10 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       end
     end
     context "CSS_ID in URL is invalid" do
-      it "returns 400" do
+      it "returns 404" do
         [-1, "BAD_CSS_ID", ""].each do |user_id_path|
           get :index, params: { user_id: user_id_path, rest: "/assign" }
-          expect(response.status).to eq 400
+          expect(response.status).to eq 404
         end
       end
     end
