@@ -638,7 +638,11 @@ export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
       dispatch(setQueueConfig(resp.body.queue_config));
     }).
-    catch((error) => dispatch(errorTasksAndAppealsOfAttorney({ attorneyId: userId, error })));
+    catch((error) => {
+      dispatch(errorTasksAndAppealsOfAttorney({ attorneyId: userId, error }));
+      // rethrow error so that QueueLoadingScreen can catch and display error
+      throw error;
+    });
 
 export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,
