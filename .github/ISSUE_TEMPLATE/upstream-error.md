@@ -1,7 +1,7 @@
 ---
 name: Upstream Error
 about: Template for Upstream Errors
-title: 'Upstream Error'
+title: 'Upstream Error |'
 labels: ' Source: Upstream Error, Team: Foxtrot '
 assignees: ''
 ---

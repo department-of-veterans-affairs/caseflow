@@ -1,7 +1,7 @@
 ---
 name: Manual Data Fix
 about: Template for Manual Data Fixes
-title: 'Manual Fix'
+title: 'Manual Fix |'
 labels: 'Eng: Data'
 assignees: ''
 ---
