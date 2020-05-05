@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../components/Modal';
-import { ADD_CLAIMANT_MODAL_DESCRIPTION } from '../../../COPY';
+import { ADD_CLAIMANT_MODAL_TITLE, ADD_CLAIMANT_MODAL_DESCRIPTION } from '../../../COPY';
 import ReactMarkdown from 'react-markdown';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -31,7 +31,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit }) => {
   ];
 
   return (
-    <Modal title="Add Claimant" buttons={buttons}>
+    <Modal title={ADD_CLAIMANT_MODAL_TITLE} buttons={buttons}>
       <div>
         <ReactMarkdown source={ADD_CLAIMANT_MODAL_DESCRIPTION} />
       </div>
