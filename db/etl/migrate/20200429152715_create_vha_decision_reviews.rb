@@ -5,16 +5,16 @@ class CreateVhaDecisionReviews < ActiveRecord::Migration[5.2]
       t.index ["created_at"]
       t.index ["updated_at"]
 
-      # Do we want these? I prepended 'record_'
-      t.datetime "record_created_at"
-      t.datetime "record_updated_at"
+      t.datetime "decision_review_created_at"
+      t.datetime "decision_review_updated_at"
+      t.index ["decision_review_created_at"]
+      t.index ["decision_review_updated_at"]
 
       t.bigint "decision_review_id", null: false, comment: "ID of the Decision Review -- may be used as FK to decision_issues"
       t.string "decision_review_type", null: false, comment: "The type of the Decision Review -- may be used as FK to decision_issues"
       t.index ["decision_review_id", "decision_review_type"], unique: true
 
       # attributes that Appeal, HLR, and SC all have in common
-      # Do we need to consider LegacyAppeal or RampRefilings?
 
       # TODO verify LoB == benefit type, check on nonrating issues in particular
       t.string "benefit_type", null: false, limit: 15, comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
@@ -27,14 +27,13 @@ class CreateVhaDecisionReviews < ActiveRecord::Migration[5.2]
       t.date "receipt_date", comment: "The date that the Higher Level Review form was received by central mail. This is used to determine which issues are eligible to be appealed based on timeliness.  Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established."
       t.index ["receipt_date"]
 
-      # Should this have a prefix like `decision_review_uuid`?
       t.uuid "uuid", null: false, comment: "The universally unique identifier for the Decision Review"
       t.index ["uuid"]
 
-      t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Higher Level Review is for."
+      t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Decision Review is for."
       t.index ["veteran_file_number"]
 
-      t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Higher Level Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
+      t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Decision Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
       t.index ["veteran_is_not_claimant"]
 
       # attributes unique to HLR
@@ -75,39 +74,6 @@ class CreateVhaDecisionReviews < ActiveRecord::Migration[5.2]
 
       t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
       t.index ["target_decision_date"]
-
-      # DecisionIssue attributes
-      t.date "caseflow_decision_date", comment: "This is a decision date for decision issues where decisions are entered in Caseflow, such as for appeals or for decision reviews with a business line that is not processed in VBMS."
-      t.index ["caseflow_decision_date"]
-
-      t.string "decision_text", comment: "If decision resulted in a change to a rating, the rating issue's decision text."
-
-      t.string "description", comment: "Optional description that the user can input for decisions made in Caseflow."
-
-      t.string "diagnostic_code", comment: "If a decision resulted in a rating, this is the rating issue's diagnostic code."
-      t.index ["diagnostic_code"]
-
-      t.string "disposition", comment: "The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values."
-      t.index ["disposition"]
-
-      t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
-      t.index ["end_product_last_action_date"]
-
-      t.string "participant_id", null: false, comment: "The Veteran's participant id."
-      t.index ["participant_id"]
-
-      t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating can have multiple issues). This is unique per rating issue."
-      t.index ["rating_issue_reference_id"]
-
-      t.datetime "rating_profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
-      t.index ["rating_profile_date"]
-
-      t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
-      t.index ["rating_promulgation_date"]
-
-      # Desired?
-      t.datetime "decision_issue_deleted_at"
-
     end
   end
 end
