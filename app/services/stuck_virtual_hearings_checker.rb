@@ -7,15 +7,17 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
     build_report(stuck_virtual_hearings)
   end
 
+  # sending to appeals-tango for now, might later change to #appeals-hearings
+  def slack_channel
+    "#appeals-tango"
+  end
+
+  private
+
   def stuck_virtual_hearings
     VirtualHearingRepository.hearings_with_pending_conference_or_emails.select do |virtual_hearing|
       virtual_hearing.updated_at < Time.zone.now - 2.hours
     end
-  end
-
-  # sending to appeals-tango for now, might later change to #appeals-hearings
-  def slack_channel
-    "#appeals-tango"
   end
 
   def build_report(stuck_virtual_hearings)
@@ -25,9 +27,10 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
     add_to_report "Found #{stuck_count} stuck #{'virtual hearing'.pluralize(stuck_count)}: "
     stuck_virtual_hearings.each do |stuck_vh|
-      add_to_report "VirtualHearing.find(#{stuck_vh.id}) last processed at #{stuck_vh.establishment.processed_at}"
+      add_to_report "`VirtualHearing.find(#{stuck_vh.id})` last attempted at #{stuck_vh.establishment.attempted_at}"
     end
 
-    add_to_report "The #{'virtual hearing'.pluralize(stuck_count)} may not progress without manual intervention"
+    add_to_report "If a virtual hearing is in this state, Caseflow may not be displaying the information that " \
+      "users need to prepare for the hearing, and notification emails may not have been sent."
   end
 end
