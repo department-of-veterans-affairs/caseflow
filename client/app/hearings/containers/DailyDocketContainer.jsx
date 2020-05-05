@@ -121,7 +121,7 @@ export class DailyDocketContainer extends React.Component {
     // always send full AOD data
     return ApiUtil.convertToSnakeCase(
       {
-        ...hearing.advanceOnDocketMotion,
+        ..._.omit(hearing.advanceOnDocketMotion, ['date', 'judgeName', 'userId']),
         ...aodMotionForm,
         person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId
       }
