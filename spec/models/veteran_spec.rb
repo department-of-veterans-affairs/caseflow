@@ -51,7 +51,7 @@ describe Veteran, :all_dbs do
   let(:zip_code) { "94117" }
   let(:address_line3) { "Daisies" }
   let(:date_of_birth) { "12/21/1989" }
-  let(:service) { [{ branch_of_service: "army"}] }
+  let(:service) { [{ branch_of_service: "army", pay_grade: "E4"}] }
   let(:ssn) { "123456789" }
 
   context ".find_or_create_by_file_number" do
@@ -248,7 +248,7 @@ describe Veteran, :all_dbs do
         first_name: "June",
         last_name: "Juniper",
         name_suffix: name_suffix,
-        service: [{ branch_of_service: "army" }],
+        service: [{ branch_of_service: "army", pay_grade: "E4"}],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
