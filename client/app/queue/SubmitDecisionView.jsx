@@ -99,7 +99,7 @@ class SubmitDecisionView extends React.PureComponent {
     return prevPath;
   };
 
-  goToNextStep = () => {
+  goToNextStep = async () => {
     const {
       task: { taskId },
       appeal: { issues, decisionIssues, veteranFullName, externalId: appealId, isLegacyAppeal },
@@ -119,14 +119,16 @@ class SubmitDecisionView extends React.PureComponent {
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.
-      requestSave(`/case_reviews/${taskId}/complete`, payload, { title: successMsg }).
-      then(() => {
-        this.props.deleteAppeal(appealId);
-      }).
-      catch(() => {
-        // handle the error from the frontend
-      });
+    try {
+      const res = await this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, { title: successMsg });
+
+      // Perform onSuccess hook, if exists
+      await this.props.onSuccess?.(res);
+
+      this.props.deleteAppeal(appealId);
+    } catch (error) {
+      // handle the error from the frontend
+    }
   };
 
   getJudgeValueForSuccessMessage = (judges, decision) => {
@@ -294,7 +296,8 @@ SubmitDecisionView.propTypes = {
   prevUrl: PropTypes.string,
   setDecisionOptions: PropTypes.func,
   requestSave: PropTypes.func,
-  deleteAppeal: PropTypes.func
+  deleteAppeal: PropTypes.func,
+  onSuccess: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
