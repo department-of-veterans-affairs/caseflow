@@ -31,7 +31,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit }) => {
   ];
 
   return (
-    <Modal title={ADD_CLAIMANT_MODAL_TITLE} buttons={buttons}>
+    <Modal title={ADD_CLAIMANT_MODAL_TITLE} buttons={buttons} closeHandler={onCancel}>
       <div>
         <ReactMarkdown source={ADD_CLAIMANT_MODAL_DESCRIPTION} />
       </div>
