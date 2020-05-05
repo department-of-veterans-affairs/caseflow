@@ -50,6 +50,22 @@ describe MailTask, :postgres do
       end
     end
 
+    context "when the default assignee is the mail team" do
+      before do
+        allow(task_class).to receive(:child_task_assignee).and_return(MailTeam.singleton)
+      end
+
+      it "should not create any child tasks" do
+        expect { task_class.create_from_params(params, user) }.to_not raise_error
+        expect(root_task.children.length).to eq(1)
+
+        mail_task = root_task.children[0]
+        expect(mail_task.class).to eq(task_class)
+        expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.children.length).to eq(0)
+      end
+    end
+
     context "when user is not a member of the mail team" do
       let(:non_mail_user) { create(:user) }
 
@@ -278,25 +294,17 @@ describe MailTask, :postgres do
     context "for an EvidenceOrArgumentMailTask" do
       let(:task_class) { EvidenceOrArgumentMailTask }
 
-      context "when the appeal has a pending hearing task" do
-        before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
-
-        it "should route to hearing admin branch" do
-          expect(subject).to eq(HearingAdmin.singleton)
-        end
-      end
-
       context "when the appeal is not active" do
         before { allow(task_class).to receive(:case_active?).and_return(false) }
 
-        it "should raise an error" do
-          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        it "should route to VLJ support staff" do
+          expect(subject).to eq(Colocated.singleton)
         end
       end
 
-      context "when the appeal is active and has no pending_hearing_task" do
-        it "should route to VLJ support staff" do
-          expect(subject).to eq(Colocated.singleton)
+      context "when the appeal is active" do
+        it "should route to the Mail Team" do
+          expect(subject).to eq(MailTeam.singleton)
         end
       end
     end

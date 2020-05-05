@@ -604,19 +604,19 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         User.authenticate!(user: mail_team_user)
       end
 
-      context "when an EvidenceOrArgumentMailTask is created for an inactive appeal" do
+      context "when an AddressChangeMailTask is created for an inactive appeal" do
         let(:root_task) { create(:root_task) }
 
         let(:params) do
           [{
             "external_id": root_task.appeal.external_id,
-            "type": EvidenceOrArgumentMailTask.name,
+            "type": AddressChangeMailTask.name,
             "parent_id": root_task.id
           }]
         end
 
         before do
-          allow(EvidenceOrArgumentMailTask).to receive(:case_active?).and_return(false)
+          allow(AddressChangeMailTask).to receive(:case_active?).and_return(false)
         end
 
         it "returns a response indicating failure to create task" do
