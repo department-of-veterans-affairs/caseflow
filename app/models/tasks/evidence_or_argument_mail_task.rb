@@ -6,10 +6,8 @@ class EvidenceOrArgumentMailTask < MailTask
   end
 
   def self.default_assignee(parent)
-    fail Caseflow::Error::MailRoutingError unless case_active?(parent)
+    return Colocated.singleton unless case_active?(parent)
 
-    return HearingAdmin.singleton if pending_hearing_task?(parent)
-
-    Colocated.singleton
+    MailTeam.singleton
   end
 end

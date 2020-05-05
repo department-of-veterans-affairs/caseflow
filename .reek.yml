@@ -171,6 +171,7 @@ detectors:
       - ETL::Syncer#filter?
       - ETL::TaskSyncer#filter?
       - Fakes::BGSService
+      - Fakes::RatingStore
       - Fakes::PexipService
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob

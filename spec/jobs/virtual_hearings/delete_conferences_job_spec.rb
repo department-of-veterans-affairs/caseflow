@@ -4,6 +4,12 @@ describe VirtualHearings::DeleteConferencesJob do
   context "#perform" do
     shared_examples "sends emails to veteran and representative" do
       it "updates the appropriate fields", :aggregate_failures do
+        expect(VirtualHearings::SendEmail).to receive(:new).with(
+          virtual_hearing: virtual_hearing,
+          type: :cancellation
+        ).and_call_original
+        expect(job).to receive(:send_cancellation_emails).with(virtual_hearing).and_call_original
+
         subject
         virtual_hearing.reload
         expect(virtual_hearing.conference_deleted).to eq(true)
@@ -24,6 +30,17 @@ describe VirtualHearings::DeleteConferencesJob do
         expect(events.where(email_address: virtual_hearing.representative_email).count).to eq 1
         expect(events.where(recipient_role: "representative").count).to eq 1
         expect(events.where(recipient_role: "judge").count).to eq 0
+      end
+
+      it "does not send emails if they have already been sent" do
+        virtual_hearing.update(
+          veteran_email_sent: true,
+          representative_email_sent: true
+        )
+        expect(VirtualHearings::SendEmail).not_to receive(:new)
+        expect(job).not_to receive(:send_cancellation_emails)
+
+        subject
       end
     end
 
