@@ -51,7 +51,9 @@ class MailTask < Task
           )
         end
 
-        unless child_task_assignee(parent_task, params).eql? MailTeam.singleton
+        if child_task_assignee(parent_task, params).eql? MailTeam.singleton
+          return parent_task
+        else
           params = modify_params_for_create(params)
           create_child_task(parent_task, user, params)
         end
