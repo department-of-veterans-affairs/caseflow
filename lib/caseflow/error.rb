@@ -189,30 +189,30 @@ module Caseflow::Error
   end
 
   class DuplicateOrgTask < SerializableError
-    attr_accessor :appeal_id, :veteran_id, :task_type, :assignee_type
+    attr_accessor :docket_number, :task_type, :assignee_type
 
     def initialize(args)
-      @appeal_id = args[:appeal_id]
-      @veteran_id = args[:veteran_id]
+      @docket_number = args[:docket_number]
       @task_type = args[:task_type]
       @assignee_type = args[:assignee_type]
       @code = args[:code] || 400
-      @message = args[:message] || "Veteran's (#{@veteran_id}) appeal (#{@appeal_id}) already has an open task type of"\
-                                   " #{@task_type} assigned to #{assignee_type}. Please refresh the page. Contact "\
+      @title = "Error assigning tasks"
+      @message = args[:message] || "Docket (#{@docket_number}) already has an open task type of "\
+                                   "#{@task_type} assigned to #{assignee_type}. Please refresh the page. Contact "\
                                    "support if this error persists."
     end
   end
 
   class DuplicateUserTask < SerializableError
-    attr_accessor :appeal_id, :veteran_id, :task_type
+    attr_accessor :docket_number, :task_type
 
     def initialize(args)
-      @appeal_id = args[:appeal_id]
-      @veteran_id = args[:veteran_id]
+      @docket_number = args[:docket_number]
       @task_type = args[:task_type]
       @code = args[:code] || 400
-      @message = args[:message] || "Veteran's (#{@veteran_id}) appeal (#{@appeal_id}) already has an open task type of"\
-                                   " #{@task_type} assigned to a user. Please refresh the page. Contact support if " \
+      @title = "Error assigning tasks"
+      @message = args[:message] || "Docket (#{@docket_number}) already has an open task type of "\
+                                   "#{@task_type} assigned to a user. Please refresh the page. Contact support if " \
                                    "this error persists."
     end
   end

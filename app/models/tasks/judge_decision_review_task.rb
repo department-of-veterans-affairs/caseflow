@@ -38,8 +38,7 @@ class JudgeDecisionReviewTask < JudgeTask
     ).any? && assigned_to.is_a?(User)
       fail(
         Caseflow::Error::DuplicateUserTask,
-        appeal_id: appeal.id,
-        veteran_id: appeal.veteran_file_number,
+        docket_number: appeal.docket_number,
         task_type: self.class.name
       )
     end
