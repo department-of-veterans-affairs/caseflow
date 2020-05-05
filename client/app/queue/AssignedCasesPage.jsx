@@ -44,7 +44,7 @@ class AssignedCasesPage extends React.Component {
     if (!attorneysOfJudge.find((attorney) => attorney.id.toString() === attorneyId)) {
       this.props.showErrorMessage({
         title: COPY.CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE,
-        detail: 'You cannot load cases for attorneys outside of your team.'
+        detail: 'Attorney is not part of the specified judge\'s team.'
       });
 
       return;

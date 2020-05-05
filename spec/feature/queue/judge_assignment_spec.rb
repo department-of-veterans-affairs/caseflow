@@ -106,6 +106,44 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
   end
 
+  context "Cannot view attorney's cases in other teams" do
+    before { User.authenticate!(user: judge_two.user) }
+    scenario "attempts to view other team's attorney's cases fail" do
+      step "visit own assign page" do
+        visit "/queue/#{judge_two.user.css_id}/assign"
+        expect(page).to have_content("Assign 0 Cases")
+      end
+
+      step "visit external attorney's cases" do
+        visit "/queue/#{judge_two.user.css_id}/assign/#{attorney_one.id}"
+        expect(page).to have_content("Attorney is not part of the specified judge's team.")
+        visit "/queue/#{judge_one.user.css_id}/assign/#{attorney_one.id}"
+        expect(page).to have_content("Additional access needed")
+      end
+    end
+
+    context "When :scm_view_judge_assign_queue feature is enabled" do
+      before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
+      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
+      scenario "attempts to view other team's attorney's cases fail" do
+        step "visit external attorney's cases" do
+          visit "/queue/#{judge_two.user.css_id}/assign/#{attorney_one.id}"
+          expect(page).to have_content("Attorney is not part of the specified judge's team.")
+          visit "/queue/#{judge_one.user.css_id}/assign/#{attorney_one.id}"
+          expect(page).to have_content("Additional access needed")
+        end
+
+        step "succeed after user added to SpecialCaseMovementTeam" do
+          SpecialCaseMovementTeam.singleton.add_user(judge_two.user)
+          visit "/queue/#{judge_two.user.css_id}/assign/#{attorney_one.id}"
+          expect(page).to have_content("Attorney is not part of the specified judge's team.")
+          visit "/queue/#{judge_one.user.css_id}/assign/#{attorney_one.id}"
+          expect(page).to have_content("#{attorney_one.full_name}'s Cases")
+        end
+      end
+    end
+  end
+
   context "Can view their queue" do
     let(:appeal) { create(:appeal) }
     let(:veteran) { appeal.veteran }
