@@ -53,7 +53,7 @@ describe StuckVirtualHearingsChecker, :postgres do
 
       report_lines = subject.report.split("\n")
       expect(report_lines).to include("Found 1 stuck virtual hearing: ")
-      expect(report_lines).to include("VirtualHearing.find(#{virtual_hearing_pending.id}) last processed at ")
+      expect(report_lines).to include("`VirtualHearing.find(#{virtual_hearing_pending.id})` last attempted at ")
     end
   end
 
@@ -78,7 +78,7 @@ describe StuckVirtualHearingsChecker, :postgres do
 
       report_lines = subject.report.split("\n")
       expect(report_lines).to include("Found 1 stuck virtual hearing: ")
-      expect(report_lines).to include("VirtualHearing.find(#{virtual_hearing_no_emails.id}) last processed at ")
+      expect(report_lines).to include("`VirtualHearing.find(#{virtual_hearing_no_emails.id})` last attempted at ")
     end
   end
 
@@ -108,15 +108,15 @@ describe StuckVirtualHearingsChecker, :postgres do
     end
 
     it "builds a report containing one virtual hearing with pending conference and one where all emails haven't sent" do
-      virtual_hearing_pending.establishment.processed!
+      virtual_hearing_pending.establishment.attempted!
 
       subject.call
 
       report_lines = subject.report.split("\n")
       expect(report_lines).to include("Found 2 stuck virtual hearings: ")
-      expect(report_lines).to include("VirtualHearing.find(#{virtual_hearing_pending.id}) " \
-        "last processed at #{virtual_hearing_pending.establishment.processed_at}")
-      expect(report_lines).to include("VirtualHearing.find(#{virtual_hearing_no_emails.id}) last processed at ")
+      expect(report_lines).to include("`VirtualHearing.find(#{virtual_hearing_pending.id})` " \
+        "last attempted at #{virtual_hearing_pending.establishment.attempted_at}")
+      expect(report_lines).to include("`VirtualHearing.find(#{virtual_hearing_no_emails.id})` last attempted at ")
     end
   end
 end
