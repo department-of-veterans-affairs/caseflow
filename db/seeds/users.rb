@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Create Users/Organizations used by other seed classes.
+
 module Seeds
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength

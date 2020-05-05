@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Motion to Vacate seeds
+
 module Seeds
   class MTV < Base
     def seed!

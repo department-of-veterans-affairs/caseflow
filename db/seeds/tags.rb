@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Create tag seeds
+
 module Seeds
   class Tags
     def seed!

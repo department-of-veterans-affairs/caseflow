@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# abstract base class for all Seed:: classes.
+# inherit from this class for common util methods that (currently)
+# wrap around FactoryBot
+
 module Seeds
   class Base
     private

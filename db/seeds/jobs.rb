@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# run jobs that require/create seed data
+
 module Seeds
   class Jobs
     def seed!

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# create intake-related seeds
+
 module Seeds
   class Intake < Base
     def seed!

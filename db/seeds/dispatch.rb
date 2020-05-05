@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# create dispatch seeds
+
 module Seeds
   class Dispatch < Base
     def seed!

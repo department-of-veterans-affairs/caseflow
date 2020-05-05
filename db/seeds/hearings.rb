@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# create Hearing seeds
+
 module Seeds
   class Hearings < Base
     def seed!

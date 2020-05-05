@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# create tasks and their related appeals
+# to do: split this up more logically for legacy, AMA, etc.
+
 module Seeds
   # rubocop:disable Metrics/ClassLength
   # rubocop:disable Metrics/AbcSize

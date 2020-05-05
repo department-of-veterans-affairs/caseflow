@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# create annotation seeds
+
 module Seeds
   class Annotations
     def seed!
