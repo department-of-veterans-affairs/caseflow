@@ -6,7 +6,7 @@ RSpec.shared_examples "Change hearing disposition" do
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:hearing_task) { create(:hearing_task, parent: root_task) }
-  let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+  let(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
   let!(:change_task) { create(:change_hearing_disposition_task, parent: hearing_task) }
   let(:instructions_text) { "This is why I'm changing this hearing's disposition." }
 
@@ -87,24 +87,45 @@ RSpec.shared_examples "Change hearing disposition" do
     end
   end
 
-  scenario "change hearing disposition to cancelled" do
-    step "visit the hearing admin organization queue and click on the veteran's name" do
-      visit "/organizations/#{HearingAdmin.singleton.url}"
-      expect(page).to have_content("Unassigned (1)")
-      click_on veteran_link_text
+  context "change hearing disposition to cancelled" do
+    scenario "with hearing task association" do
+      step "visit the hearing admin organization queue and click on the veteran's name" do
+        visit "/organizations/#{HearingAdmin.singleton.url}"
+        expect(page).to have_content("Unassigned (1)")
+        click_on veteran_link_text
+      end
+
+      step "change the hearing disposition to cancelled" do
+        click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+        click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
+        fill_in "Notes", with: instructions_text
+        click_button("Submit")
+        expect(page).to have_content("Successfully changed hearing disposition to Cancelled")
+      end
+
+      step "return to the hearing admin organization queue and verify that the task is no longer there" do
+        click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
+        expect(page).to have_content("Unassigned (0)")
+      end
     end
 
-    step "change the hearing disposition to cancelled" do
-      click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-      click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
-      fill_in "Notes", with: instructions_text
-      click_button("Submit")
-      expect(page).to have_content("Successfully changed hearing disposition to Cancelled")
-    end
+    fscenario "with missing hearing task association" do
+      # association.delete
+      # hearing_task.reload
 
-    step "return to the hearing admin organization queue and verify that the task is no longer there" do
-      click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
-      expect(page).to have_content("Unassigned (0)")
+      step "visit the hearing admin organization queue and click on the veteran's name" do
+        visit "/organizations/#{HearingAdmin.singleton.url}"
+        expect(page).to have_content("Unassigned (1)")
+        click_on veteran_link_text
+      end
+
+      step "change the hearing disposition to cancelled" do
+        click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+        click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
+        fill_in "Notes", with: instructions_text
+        click_button("Submit")
+        expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+      end
     end
   end
 

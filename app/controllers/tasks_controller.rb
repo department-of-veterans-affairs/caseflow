@@ -97,6 +97,9 @@ class TasksController < ApplicationController
     tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
+  rescue ActiveRecord::RecordInvalid => error
+    # byebug
+    invalid_record_error(task.errors)
   end
 
   def for_appeal

@@ -138,6 +138,16 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_hearing_disposition(disposition:)
+    # Ensure the hearing exists
+    if hearing.nil?
+      fail ActiveRecord::RecordInvalid
+    end
+
+    # Ensure the hearing task association exists
+    if hearing_task.hearing_task_association.nil?
+      HearingTaskAssociation.create!(hearing: hearing, hearing_task: hearing_task)
+    end
+
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: disposition)
     else
