@@ -192,7 +192,7 @@ class Veteran < CaseflowRecord
   def pay_grades
     return unless service
 
-    service.map { |s| s[:pay_grade] }.compact
+    service.map { |services| services[:pay_grade] }.compact
   end
 
   def validate_address_line
