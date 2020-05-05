@@ -50,42 +50,6 @@ class Veteran < CaseflowRecord
   # Germany and Australia should be temporary additions until VBMS bug is fixed
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
-  VETERAN_PAYEE_GRADES = %w[
-    nil
-    AC
-    E1
-    E2
-    E3
-    E4
-    E5
-    E6
-    E7
-    E8
-    E9
-    E9S
-    E
-    E10
-    O1
-    O10
-    O10S
-    O2
-    O3
-    O4
-    O5
-    O6
-    O7
-    O8
-    O9
-    O
-    O11
-    W1
-    W2
-    W3
-    W4
-    W5
-    WO
-  ].freeze
-
   # C&P Live = '1', C&P Death = '2'
   BENEFIT_TYPE_CODE_LIVE = "1"
   BENEFIT_TYPE_CODE_DEATH = "2"
@@ -264,7 +228,9 @@ class Veteran < CaseflowRecord
   end
 
   def validate_veteran_pay_grade
-    errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.none? { |pay| VETERAN_PAYEE_GRADES.include?(pay.strip) }
+    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades.any? do |pay_grade|
+      Constants.PAY_GRADES.valid_codes.exclude?(pay_grade.strip)
+    end
   end
 
   def ratings
@@ -306,7 +272,7 @@ class Veteran < CaseflowRecord
 
     return response.data if response.success?
 
-    raise response.error # rubocop:disable Style/SignalException
+    fail response.error
   end
 
   def stale?
