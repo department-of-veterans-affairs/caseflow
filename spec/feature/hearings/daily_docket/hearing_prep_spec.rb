@@ -106,6 +106,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         judge_motion = AdvanceOnDocketMotion.first
         expect(judge_motion.granted).to eq(false)
         expect(judge_motion.reason).to eq(Constants.AOD_REASONS.financial_distress)
+        expect(judge_motion.user_id).to eq(current_user.id)
       end
 
       context "with age being the reason" do
@@ -124,6 +125,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
             judge_motion = AdvanceOnDocketMotion.order(created_at: :desc).first
             expect(judge_motion.granted).to eq(true)
             expect(judge_motion.reason).to eq(Constants.AOD_REASONS.financial_distress)
+            expect(judge_motion.user_id).to eq(current_user.id)
           end
 
           step "reload page and check saved AOD" do
