@@ -12,7 +12,7 @@ class CreateVhaDecisionReviews < ActiveRecord::Migration[5.2]
 
       t.bigint "decision_review_id", null: false, comment: "ID of the Decision Review -- may be used as FK to decision_issues"
       t.string "decision_review_type", null: false, comment: "The type of the Decision Review -- may be used as FK to decision_issues"
-      t.index ["decision_review_id", "decision_review_type"], unique: true
+      t.index ["decision_review_id", "decision_review_type"], unique: true, name: "idx_vha_decision_review_id_and_type"
 
       # attributes that Appeal, HLR, and SC all have in common
 
