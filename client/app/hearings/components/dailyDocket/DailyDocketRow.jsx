@@ -181,25 +181,33 @@ class DailyDocketRow extends React.Component {
       return;
     }
 
-    const hearing = deepDiff(this.state.initialState, this.props.hearing);
+    const hearingChanges = {
+      ...deepDiff(this.state.initialState, this.props.hearing),
+      // Ignored for Legacy Hearings.
+      // A new AOD is created for every update, so the full object needs to be passed.
+      advanceOnDocketMotion: this.props.hearing.advanceOnDocketMotion
+    };
 
-    return this.props.saveHearing(this.props.hearing.externalId, hearing).then((response) => {
-      const alerts = response.body?.alerts;
+    return this.props.
+      saveHearing(this.props.hearing.externalId, hearingChanges).
+      then((response) => {
+        const alerts = response.body?.alerts;
 
-      if (alerts.hearing) {
-        this.props.onReceiveAlerts(alerts.hearing);
-      }
-      if (!_.isEmpty(alerts.virtual_hearing)) {
-        this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
-        this.setState({ startPolling: true });
-      }
+        if (alerts.hearing) {
+          this.props.onReceiveAlerts(alerts.hearing);
+        }
 
-      this.setState({
-        initialState: { ...this.props.hearing },
-        editedFields: [],
-        edited: false
+        if (!_.isEmpty(alerts.virtual_hearing)) {
+          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
+          this.setState({ startPolling: true });
+        }
+
+        this.setState({
+          initialState: { ...this.props.hearing },
+          editedFields: [],
+          edited: false
+        });
       });
-    });
   };
 
   saveThenUpdateDisposition = (toDisposition) => {
@@ -207,23 +215,32 @@ class DailyDocketRow extends React.Component {
       ...this.props.hearing,
       disposition: toDisposition
     };
-    const hearingChanges = deepDiff(this.state.initialState, hearingWithDisp);
+    const hearingChanges = {
+      ...deepDiff(this.state.initialState, hearingWithDisp),
+      // Ignored for Legacy Hearings.
+      // A new AOD is created for every update, so the full object needs to be passed.
+      advanceOnDocketMotion: this.props.hearing.advanceOnDocketMotion
+    };
 
-    return this.props.saveHearing(hearingWithDisp.externalId, hearingChanges).then((response) => {
-      const alerts = response.body?.alerts;
+    return this.props.
+      saveHearing(hearingWithDisp.externalId, hearingChanges).
+      then((response) => {
+        const alerts = response.body?.alerts;
 
-      if (alerts.hearing) {
-        this.props.onReceiveAlerts(alerts.hearing);
-      }
-      this.update(hearingWithDisp);
-      if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
-        this.setState({
-          initialState: hearingWithDisp,
-          editedFields: [],
-          edited: false
-        });
-      }
-    });
+        if (alerts.hearing) {
+          this.props.onReceiveAlerts(alerts.hearing);
+        }
+
+        this.update(hearingWithDisp);
+
+        if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
+          this.setState({
+            initialState: hearingWithDisp,
+            editedFields: [],
+            edited: false
+          });
+        }
+      });
   };
 
   isAmaHearing = () => this.props.hearing.docketName === 'hearing';
