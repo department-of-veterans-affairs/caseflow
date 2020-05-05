@@ -144,7 +144,7 @@ SelectClaimant.propTypes = {
   benefitType: PropTypes.string,
   formType: PropTypes.string,
   isVeteranDeceased: PropTypes.bool,
-  veteranIsNotClaimant: PropTypes.oneOf([PropTypes.string, PropTypes.bool]),
+  veteranIsNotClaimant: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   veteranIsNotClaimantError: PropTypes.string,
   setVeteranIsNotClaimant: PropTypes.func,
   claimant: PropTypes.string,
