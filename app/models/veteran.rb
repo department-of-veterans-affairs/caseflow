@@ -228,7 +228,7 @@ class Veteran < CaseflowRecord
   end
 
   def validate_veteran_pay_grade
-    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades.any? do |pay_grade|
+    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grade|
       Constants.PAY_GRADES.valid_codes.exclude?(pay_grade.strip)
     end
   end
