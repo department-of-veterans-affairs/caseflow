@@ -8,7 +8,6 @@ import { NavLink } from 'react-router-dom';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
-  resetErrorMessages,
   resetSuccessMessages,
   resetSaveState
 } from './uiReducer/uiActions';
@@ -32,7 +31,6 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
-    this.props.resetErrorMessages();
   };
 
   render = () => {
@@ -90,7 +88,6 @@ class JudgeAssignTaskListView extends React.PureComponent {
 JudgeAssignTaskListView.propTypes = {
   attorneysOfJudge: PropTypes.array.isRequired,
   resetSuccessMessages: PropTypes.func,
-  resetErrorMessages: PropTypes.func,
   resetSaveState: PropTypes.func,
   clearCaseSelectSearch: PropTypes.func,
   match: PropTypes.object,
@@ -122,7 +119,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     clearCaseSelectSearch,
-    resetErrorMessages,
     resetSuccessMessages,
     resetSaveState
   }, dispatch)
