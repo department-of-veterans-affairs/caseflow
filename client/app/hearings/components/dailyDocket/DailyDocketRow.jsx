@@ -181,12 +181,7 @@ class DailyDocketRow extends React.Component {
       return;
     }
 
-    const hearingChanges = {
-      ...deepDiff(this.state.initialState, this.props.hearing),
-      // Ignored for Legacy Hearings.
-      // A new AOD is created for every update, so the full object needs to be passed.
-      advanceOnDocketMotion: this.props.hearing.advanceOnDocketMotion
-    };
+    const hearingChanges = deepDiff(this.state.initialState, this.props.hearing);
 
     return this.props.
       saveHearing(this.props.hearing.externalId, hearingChanges).
@@ -215,12 +210,7 @@ class DailyDocketRow extends React.Component {
       ...this.props.hearing,
       disposition: toDisposition
     };
-    const hearingChanges = {
-      ...deepDiff(this.state.initialState, hearingWithDisp),
-      // Ignored for Legacy Hearings.
-      // A new AOD is created for every update, so the full object needs to be passed.
-      advanceOnDocketMotion: this.props.hearing.advanceOnDocketMotion
-    };
+    const hearingChanges = deepDiff(this.state.initialState, hearingWithDisp);
 
     return this.props.
       saveHearing(hearingWithDisp.externalId, hearingChanges).
