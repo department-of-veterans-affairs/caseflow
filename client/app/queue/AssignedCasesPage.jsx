@@ -20,7 +20,7 @@ import Alert from '../components/Alert';
 import COPY from '../../COPY';
 
 /**
- * Component showing the cases assigned to a specific attorney referenced with `attorneyId`.
+ * Component showing the cases assigned to a specific attorney referenced by `attorneyId`.
  */
 class AssignedCasesPage extends React.Component {
   componentDidMount = () => {
@@ -96,9 +96,11 @@ class AssignedCasesPage extends React.Component {
       return this.props.renderLoadingError(attorneyAppealsLoadingState[attorneyId].error);
     }
 
+    /* eslint-disable camelcase */
     const attorneyName = attorneysOfJudge.find(
       (attorney) => attorney.id.toString() === attorneyId
-    )?.full_name; // eslint-disable-line camelcase
+    )?.full_name;
+    /* eslint-enable camelcase */
 
     return <React.Fragment>
       <h2>{attorneyName || attorneyId}'s Cases</h2>
