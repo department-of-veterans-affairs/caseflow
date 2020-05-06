@@ -24,7 +24,7 @@ describe MailTask, :postgres do
 
     context "when root_task exists for appeal" do
       it "creates AodMotionMailTask assigned to MailTeam and AodTeam" do
-        expect { task_class.create_from_params(params, user) }.to_not raise_error
+        expect(task_class.create_from_params(params, user)).to eq root_task.children[0].children[0]
         expect(root_task.children.length).to eq(1)
 
         mail_task = root_task.children[0]
@@ -56,7 +56,7 @@ describe MailTask, :postgres do
       end
 
       it "should not create any child tasks" do
-        expect { task_class.create_from_params(params, user) }.to_not raise_error
+        expect(task_class.create_from_params(params, user)).to eq root_task.children[0]
         expect(root_task.children.length).to eq(1)
 
         mail_task = root_task.children[0]
