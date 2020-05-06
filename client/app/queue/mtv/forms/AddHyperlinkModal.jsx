@@ -28,7 +28,7 @@ export const AddHyperlinkModal = ({ onSubmit, onCancel }) => {
   ];
 
   return (
-    <Modal buttons={buttons} title={MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_TITLE}>
+    <Modal buttons={buttons} title={MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_TITLE} closeHandler={onCancel}>
       <div className="cf-margin-bottom-2rem">{MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS}</div>
 
       <TextField

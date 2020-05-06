@@ -128,6 +128,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           fill_in("motionFile", with: atty_hyperlinks[0][:link])
 
+          # verify hyperlink modal works
+          check_hyperlink_modal
+
           fill_and_check_other_hyperlinks(atty_hyperlinks)
 
           # Ensure it has pre-selected judge previously assigned to case
@@ -1071,6 +1074,14 @@ RSpec.feature "Motion to vacate", :all_dbs do
         link: "https://example.com/file2.pdf"
       }
     ]
+  end
+
+  def check_hyperlink_modal
+    click_button(text: "+ Add hyperlink")
+    expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_TITLE)
+    expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS)
+    click_button(text: "Cancel")
+    expect(page).to_not have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS)
   end
 
   def fill_and_check_other_hyperlinks(atty_hyperlinks)
