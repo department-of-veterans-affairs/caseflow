@@ -92,7 +92,10 @@ class AssignedCasesPage extends React.Component {
     if (attorneyAppealsLoadingState[attorneyId].state === 'FAILED') {
       return this.props.renderLoadingError(attorneyAppealsLoadingState[attorneyId].error);
     }
-    const attorneyName = attorneysOfJudge.find((attorney) => attorney.id.toString() === attorneyId)?.full_name;
+
+    const attorneyName = attorneysOfJudge.find(
+      (attorney) => attorney.id.toString() === attorneyId
+    )?.full_name; // eslint-disable-line camelcase
 
     return <React.Fragment>
       <h2>{attorneyName || attorneyId}'s Cases</h2>
