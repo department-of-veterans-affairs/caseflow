@@ -309,7 +309,7 @@ class LegacyAppeal < CaseflowRecord
   def power_of_attorney
     # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
     # when a contesting claimant is present. Refactor so we surface all POA data.
-    @power_of_attorney ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
+    @power_of_attorney ||= new_power_of_attorney.tap do |poa|
       # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
       poa.class.repository.set_vacols_values(
         poa: poa,
@@ -922,6 +922,18 @@ class LegacyAppeal < CaseflowRecord
 
   def status_eligible_for_ramp?
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+  end
+
+  def new_power_of_attorney
+    PowerOfAttorney.new(
+      file_number: veteran_file_number,
+      claimant_participant_id: claimant_participant_id,
+      vacols_id: vacols_id
+    )
+  end
+
+  def claimant_participant_id
+    person_for_appellant&.dig(:ptcpnt_id)
   end
 
   class << self

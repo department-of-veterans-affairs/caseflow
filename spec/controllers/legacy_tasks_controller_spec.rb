@@ -16,18 +16,20 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     context "user is an attorney" do
       let(:role) { :attorney_role }
 
-      it "should process the request succesfully" do
+      it "should return status 308 and redirect" do
         get :index, params: { user_id: user.id }
-        expect(response.status).to eq 200
+        expect(response.status).to eq 308
+        expect(response).to redirect_to("/queue/#{user.css_id}")
       end
     end
 
     context "user is a judge" do
       let(:role) { :judge_role }
 
-      it "should process the request succesfully" do
+      it "should return status 308 and redirect" do
         get :index, params: { user_id: user.id }
-        expect(response.status).to eq 200
+        expect(response.status).to eq 308
+        expect(response).to redirect_to("/queue/#{user.css_id}")
       end
     end
 
@@ -49,9 +51,10 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         expect(response.status).to eq(400)
       end
 
-      it "should return a valid response when we explicitly pass the role as a parameter" do
+      it "should return status 308 and redirect when we explicitly pass the role as a parameter" do
         get :index, params: { user_id: caseflow_only_user.id, role: "attorney" }
-        expect(response.status).to eq(200)
+        expect(response.status).to eq(308)
+        expect(response).to redirect_to("/queue/#{caseflow_only_user.css_id}?role=attorney")
       end
     end
   end
@@ -65,17 +68,15 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
 
     context "CSS_ID in URL is valid" do
       it "returns 200" do
-        [user.id, user.css_id].each do |user_id_path|
-          get :index, params: { user_id: user_id_path, rest: "/assign" }
-          expect(response.status).to eq 200
-        end
+        get :index, params: { user_id: user.css_id, rest: "/assign" }
+        expect(response.status).to eq 200
       end
     end
-    context "css_id in URL is invalid" do
-      it "returns 400" do
+    context "CSS_ID in URL is invalid" do
+      it "returns 404" do
         [-1, "BAD_CSS_ID", ""].each do |user_id_path|
           get :index, params: { user_id: user_id_path, rest: "/assign" }
-          expect(response.status).to eq 400
+          expect(response.status).to eq 404
         end
       end
     end
@@ -86,6 +87,13 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           expect(response.status).to eq 308
           expect(response).to redirect_to("/queue/#{user_id_path.upcase}/assign")
         end
+      end
+    end
+    context "User is using USER_ID in the url" do
+      it "returns status 308 and redirects to a CSS_ID" do
+        get :index, params: { user_id: user.id, rest: "/assign" }
+        expect(response.status).to eq 308
+        expect(response).to redirect_to("/queue/#{user.css_id}/assign")
       end
     end
   end

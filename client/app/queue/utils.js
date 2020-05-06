@@ -96,6 +96,7 @@ const taskAttributesFromRawTask = (task) => {
       pgId: task.attributes.assigned_by.pg_id
     },
     taskId: task.id,
+    parentId: task.attributes.parent_id,
     label: task.attributes.label,
     documentId: task.attributes.document_id,
     externalHearingId: task.attributes.external_hearing_id,
