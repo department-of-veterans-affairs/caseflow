@@ -54,11 +54,7 @@ export const SelectClaimant = (props) => {
   const { attorneyFees } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const openAddClaimantModal = () => setShowClaimantModal(true);
-  const handleAddClaimant = (newClaimant) => {
-    // eslint-disable-next-line
-    console.log('claimant', newClaimant);
-  };
-
+  const handleAddClaimant = ({ participantId }) => setClaimant(participantId);
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
   const shouldShowPayeeCode = () => {
     return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension');
