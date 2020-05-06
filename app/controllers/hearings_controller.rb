@@ -139,7 +139,7 @@ class HearingsController < HearingsApplicationController
   def advance_on_docket_motion_params
     if params.key?(:advance_on_docket_motion)
       params[:advance_on_docket_motion]
-        .permit(:user_id, :person_id, :reason, :granted)
+        .permit(:person_id, :reason, :granted)
         .tap { |aod_params| aod_params.empty? || aod_params.require([:person_id, :reason]) }
     end
   end
