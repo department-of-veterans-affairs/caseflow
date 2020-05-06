@@ -9,6 +9,10 @@ class VirtualHearing < CaseflowRecord
     def formatted_alias(alias_name)
       "BVA#{alias_name}@#{client_host_or_default}"
     end
+
+    def base_url
+      "https://#{client_host_or_default}/bva-app/"
+    end
   end
 
   alias_attribute :alias_name, :alias
@@ -58,15 +62,19 @@ class VirtualHearing < CaseflowRecord
   end
 
   def guest_link
-    "#{base_url}?conference=#{formatted_alias_or_alias_with_host}&pin=#{guest_pin}#&join=1&role=guest"
+    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+    "conference=#{formatted_alias_or_alias_with_host}&" \
+    "pin=#{guest_pin}#&role=guest"
   end
 
   def host_link
-    "#{base_url}?conference=#{formatted_alias_or_alias_with_host}&pin=#{host_pin}#&join=1&role=host"
+    "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+    "conference=#{formatted_alias_or_alias_with_host}&" \
+    "pin=#{host_pin}#&role=host"
   end
 
   def job_completed?
-    active? && all_emails_sent?
+    (active? || cancelled?) && all_emails_sent?
   end
 
   # Determines if the hearing has been cancelled
@@ -118,16 +126,14 @@ class VirtualHearing < CaseflowRecord
 
   private
 
-  def base_url
-    "https://#{VirtualHearing.client_host_or_default}/bva-app/"
-  end
-
   def assign_created_by_user
-    self.created_by ||= RequestStore[:current_user]
+    self.created_by ||= RequestStore.store[:current_user]
   end
 
   def assign_updated_by_user
-    self.updated_by = RequestStore[:current_user] if RequestStore[:current_user].present?
+    return if RequestStore.store[:current_user] == User.system_user && updated_by.present?
+
+    self.updated_by = RequestStore.store[:current_user] if RequestStore.store[:current_user].present?
   end
 
   def associated_hearing_is_video

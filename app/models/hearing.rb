@@ -90,12 +90,6 @@ class Hearing < CaseflowRecord
     HEARING_TYPES[request_type.to_sym]
   end
 
-  def hearing_request_type
-    return "Virtual" if virtual?
-
-    readable_request_type
-  end
-
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
       task.type == TrackVeteranTask.name &&
@@ -131,7 +125,10 @@ class Hearing < CaseflowRecord
 
   def advance_on_docket_motion
     # we're only really interested if the AOD was granted
-    AdvanceOnDocketMotion.for_person(claimant_id).order("granted DESC NULLS LAST").first
+    AdvanceOnDocketMotion
+      .for_person(claimant_id)
+      .order("granted DESC NULLS LAST, created_at DESC")
+      .first
   end
 
   def scheduled_for
