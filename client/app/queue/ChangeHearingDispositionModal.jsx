@@ -72,7 +72,7 @@ class ChangeHearingDispositionModal extends React.Component {
       then((resp) => {
         this.props.onReceiveAmaTasks(resp.body.tasks.data);
       }).
-      catch((error) => {
+      catch(() => {
         // handle the error from the frontend
       });
   };
