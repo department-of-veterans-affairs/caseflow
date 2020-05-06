@@ -217,6 +217,8 @@ class Intake < CaseflowRecord
     raise error
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def veteran_invalid_fields
     missing_fields = veteran.errors.details
       .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
@@ -240,6 +242,8 @@ class Intake < CaseflowRecord
 
     name_suffix_invalid = veteran.errors.details[:name_suffix]&.any? { |e| e[:error] == "invalid_character" }
 
+    pay_grade_invalid = veteran.errors.details[:pay_grades]&.any? { |e| e[:error] == "invalid_pay_grade" }
+
     {
       veteran_missing_fields: missing_fields,
       veteran_address_too_long: address_too_long,
@@ -247,9 +251,12 @@ class Intake < CaseflowRecord
       veteran_city_invalid_fields: city_invalid_characters,
       veteran_city_too_long: city_too_long,
       veteran_date_of_birth_invalid: date_of_birth,
-      veteran_name_suffix_invalid: name_suffix_invalid
+      veteran_name_suffix_invalid: name_suffix_invalid,
+      veteran_pay_grade_invalid: pay_grade_invalid
     }
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   # Optionally implement this methods in subclass
   def validate_detail_on_start
