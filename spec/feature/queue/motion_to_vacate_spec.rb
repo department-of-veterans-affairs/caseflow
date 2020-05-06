@@ -1080,7 +1080,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     click_button(text: "+ Add hyperlink")
     expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_TITLE)
     expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS)
-    click_button(text: "Cancel")
+    find("#Add-hyperlink-button-id-0").click
     expect(page).to_not have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS)
   end
 
