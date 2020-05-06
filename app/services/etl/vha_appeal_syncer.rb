@@ -5,13 +5,21 @@ class ETL::VhaAppealSyncer < ETL::VhaDecisionReviewSyncer
     ::Appeal
   end
 
+  def target_class
+    ETL::VhaAppeal
+  end
+
   def filter?(original)
+    # TODO: incorporate this into AppealsUpdatedSinceQuery
     original.request_issues.map(&:benefit_type).include?("vha")
   end
 
   protected
 
-  # TODO: def instances_needing_update
-    # super.where(benefit_type: "vha")
-  # end
+  def instances_needing_update
+    return origin_class.established unless incremental?
+
+    AppealsUpdatedSinceQuery.new(since_date: since).call
+  end
+
 end

@@ -37,9 +37,11 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
         subject
 
         appeal = ETL::VhaAppeal.first
-        expect(appeal.veteran_dob).to_not be_nil
-        expect(appeal.claimant_dob).to_not be_nil
-        expect(appeal.aod_due_to_dob).to_not be_nil
+        expect(appeal.benefit_type).to_not be_nil
+        expect(appeal.decision_review_id).to_not be_nil
+        expect(appeal.decision_review_type).to_not be_nil
+        expect(appeal.uuid).to_not be_nil
+        expect(appeal.veteran_file_number).to_not be_nil
       end
     end
 
@@ -55,7 +57,7 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
 
     context "Appeal is not yet established" do
       let!(:appeal) { create(:appeal, established_at: nil) }
-      let(:etl_build_table) { ETL::BuildTable.where(table_name: "appeals").last }
+      let(:etl_build_table) { ETL::BuildTable.where(table_name: "vha_decision_reviews").last }
 
       it "skips non-established Appeals" do
         subject

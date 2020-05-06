@@ -14,7 +14,8 @@ class ETL::VhaDecisionReview < ETL::Record
   self.inheritance_column = :decision_review_type
 
   STI_TYPE_HASH = {
-    Appeal.name => ETL::VhaAppeal.name,
+    Appeal.name => 'ETL::VhaAppeal',
+    # Appeal.name => ETL::VhaAppeal.name, # causes: Circular dependency detected while autoloading constant ETL::VhaAppeal (RuntimeError)
     HigherLevelReview.name => ETL::VhaHigherLevelReview.name,
     SupplementalClaim.name => ETL::VhaSupplementalClaim.name
   }.freeze
@@ -23,12 +24,10 @@ class ETL::VhaDecisionReview < ETL::Record
 
   class << self
     def find_sti_class(type_name)
-      puts "------- #{type_name}"
       super(STI_TYPE_HASH[type_name])
     end
 
     def sti_name
-      puts "======= #{self.name}"
       INVERTED_STI_TYPE_HASH[self.name]
     end
 
@@ -74,8 +73,8 @@ class ETL::VhaDecisionReview < ETL::Record
       ]
     end
 
-    def unique_attributes_method_name(klass)
-      "unique_#{klass.underscore}_attributes".to_sym
+    def unique_attributes_method_name(klass_name)
+      "unique_#{klass_name.underscore}_attributes".to_sym
     end
 
     def merge_original_attributes_to_target(original, target)
@@ -89,10 +88,12 @@ class ETL::VhaDecisionReview < ETL::Record
         target[attr] = original[attr]
       end
 
-      send(unique_attributes_method_name, original.class.name).each do |attr|
+      send(unique_attributes_method_name(original.class.name)).each do |attr|
         target[attr] = original[attr]
       end
 
+      # TEMP
+      target[:benefit_type] = "vha" if original.class == Appeal && !target[:benefit_type]
       # to do: based on VHA feedback we might need to add more calculated values
 
       target
