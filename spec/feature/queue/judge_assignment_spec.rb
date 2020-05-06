@@ -107,35 +107,37 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   end
 
   context "Cannot view attorney's cases in other teams" do
-    shared_examples "accessing to other teams" do
-      it "visit external attorney's cases" do
+    shared_examples "accessing other teams" do
+      it "fails visiting attorney's cases in other teams" do
         visit "/queue/#{judge_two.user.css_id}/assign/#{attorney_one.id}"
         expect(page).to have_content("Attorney is not part of the specified judge's team.")
+
         visit "/queue/#{judge_one.user.css_id}/assign/#{attorney_one.id}"
         expect(page).to have_content("Additional access needed")
       end
     end
 
     before { User.authenticate!(user: judge_two.user) }
-    context "attempts to view other team's attorney's cases fail" do
-      it "visit own assign page" do
+    context "attempt to view other team's attorney's cases" do
+      it "allows visiting own case assign page" do
         visit "/queue/#{judge_two.user.css_id}/assign"
         expect(page).to have_content("Assign 0 Cases")
       end
 
-      include_examples "accessing to other teams"
+      include_examples "accessing other teams"
     end
 
     context "When :scm_view_judge_assign_queue feature is enabled" do
       before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
       after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
-      context "attempts to view other team's attorney's cases fail" do
-        include_examples "accessing to other teams"
+      context "attempt to view other team's attorney's cases" do
+        include_examples "accessing other teams"
 
-        it "succeed after user added to SpecialCaseMovementTeam" do
+        it "succeeds after user is added to SpecialCaseMovementTeam" do
           SpecialCaseMovementTeam.singleton.add_user(judge_two.user)
           visit "/queue/#{judge_two.user.css_id}/assign/#{attorney_one.id}"
           expect(page).to have_content("Attorney is not part of the specified judge's team.")
+
           visit "/queue/#{judge_one.user.css_id}/assign/#{attorney_one.id}"
           expect(page).to have_content("#{attorney_one.full_name}'s Cases")
         end

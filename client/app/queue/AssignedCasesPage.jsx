@@ -90,7 +90,7 @@ class AssignedCasesPage extends React.Component {
     }
 
     if (attorneyAppealsLoadingState[attorneyId].state === 'FAILED') {
-      return this.props.renderLoadingError(attorneyAppealsLoadingState[attorneyId].error)
+      return this.props.renderLoadingError(attorneyAppealsLoadingState[attorneyId].error);
     }
     const attorneyName = attorneysOfJudge.find((attorney) => attorney.id.toString() === attorneyId)?.full_name;
 
@@ -128,6 +128,7 @@ AssignedCasesPage.propTypes = {
   fetchAmaTasksOfUser: PropTypes.func,
   attorneysOfJudge: PropTypes.array,
   reassignTasksToUser: PropTypes.func,
+  renderLoadingError: PropTypes.func,
   tasksOfAttorney: PropTypes.array,
   selectedTasks: PropTypes.array,
   success: PropTypes.object,
