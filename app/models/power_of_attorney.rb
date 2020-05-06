@@ -70,7 +70,7 @@ class PowerOfAttorney
 
   def fetch_bgs_power_of_attorney
     fetch_bgs_power_of_attorney_by_file_number || fetch_bgs_power_of_attorney_by_claimant_participant_id
-  rescue BgsPOANotFound
+  rescue BgsPowerOfAttorney::BgsPOANotFound
     nil
   end
 
