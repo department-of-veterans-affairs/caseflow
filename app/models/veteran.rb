@@ -192,7 +192,7 @@ class Veteran < CaseflowRecord
   def pay_grades
     return unless service
 
-    service.map { |services| services[:pay_grade] }.compact
+    service.map { |service| service[:pay_grade] }.compact
   end
 
   def validate_address_line
@@ -228,6 +228,8 @@ class Veteran < CaseflowRecord
   end
 
   def validate_veteran_pay_grade
+    # list of valid pay grades came from
+    # http://vbacoda.vba.va.gov/plsql/typ_val1.list_val?env=CERT&typ_grp=PAY_GRADE_TYPE [vbacoda.vba.va.gov]
     return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grade|
       Constants.PAY_GRADES.valid_codes.exclude?(pay_grade.strip)
     end
