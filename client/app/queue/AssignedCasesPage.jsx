@@ -53,7 +53,7 @@ class AssignedCasesPage extends React.Component {
     if (!attorneyAppealsLoadingState || !(attorneyId in attorneyAppealsLoadingState)) {
 
       /*
-        Note race condition: fetchTasksAndAppealsOfAttorney sets attorneyAppealsLoadingState but
+        Note race condition: fetchTasksAndAppealsOfAttorney sets attorneyAppealsLoadingState (in Redux) but
         fetchAmaTasksOfUser can return 403 Forbidden error (and sets attorneyAppealsLoadingState to 'FAILURE').
         If fetchAmaTasksOfUser returns first, fetchTasksAndAppealsOfAttorney will later override the error.
         To remedy, setTasksAndAppealsOfAttorney (in reducers.js) does not update attorneyAppealsLoadingState
@@ -62,6 +62,16 @@ class AssignedCasesPage extends React.Component {
       this.props.fetchTasksAndAppealsOfAttorney(attorneyId, { role: 'judge' });
       this.props.fetchAmaTasksOfUser(attorneyId, 'attorney');
     }
+  }
+
+  renderLoadingError = (loadingStateError) => {
+    const { loadingError } = loadingStateError;
+
+    if (!loadingError.response) {
+      return <StatusMessage title="Timeout">Error fetching cases</StatusMessage>;
+    }
+
+    return <StatusMessage title={loadingError.response.statusText}>Error fetching cases</StatusMessage>;
   }
 
   render = () => {
@@ -80,18 +90,12 @@ class AssignedCasesPage extends React.Component {
     }
 
     if (attorneyAppealsLoadingState[attorneyId].state === 'FAILED') {
-      const { error: loadingError } = attorneyAppealsLoadingState[attorneyId];
-
-      if (!loadingError.response) {
-        return <StatusMessage title="Timeout">Error fetching cases</StatusMessage>;
-      }
-
-      return <StatusMessage title={loadingError.response.statusText}>Error fetching cases</StatusMessage>;
+      return this.props.renderLoadingError(attorneyAppealsLoadingState[attorneyId].error)
     }
-    const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0]?.full_name;
+    const attorneyName = attorneysOfJudge.find((attorney) => attorney.id.toString() === attorneyId)?.full_name;
 
     return <React.Fragment>
-      <h2>{attorneyName}'s Cases</h2>
+      <h2>{attorneyName || attorneyId}'s Cases</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       <AssignWidget
