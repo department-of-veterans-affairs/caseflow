@@ -114,6 +114,8 @@ class ETL::Syncer
     !!since
   end
 
+  protected
+
   def instances_needing_update
     return origin_class.where("updated_at >= ?", since) if incremental?
 

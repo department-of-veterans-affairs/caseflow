@@ -11,7 +11,27 @@
 # To make it simple for VHA to pull the data they need, we're reporting data as a single table.
 
 class ETL::VhaDecisionReview < ETL::Record
+  self.inheritance_column = :decision_review_type
+
+  STI_TYPE_HASH = {
+    Appeal.name => ETL::VhaAppeal.name,
+    HigherLevelReview.name => ETL::VhaHigherLevelReview.name,
+    SupplementalClaim.name => ETL::VhaSupplementalClaim.name
+  }.freeze
+
+  INVERTED_STI_TYPE_HASH = STI_TYPE_HASH.invert
+
   class << self
+    def find_sti_class(type_name)
+      puts "------- #{type_name}"
+      super(STI_TYPE_HASH[type_name])
+    end
+
+    def sti_name
+      puts "======= #{self.name}"
+      INVERTED_STI_TYPE_HASH[self.name]
+    end
+
     private
 
     def common_decision_review_attributes

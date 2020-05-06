@@ -8,4 +8,10 @@ class ETL::VhaAppealSyncer < ETL::VhaDecisionReviewSyncer
   def filter?(original)
     original.request_issues.map(&:benefit_type).include?("vha")
   end
+
+  protected
+
+  # TODO: def instances_needing_update
+    # super.where(benefit_type: "vha")
+  # end
 end

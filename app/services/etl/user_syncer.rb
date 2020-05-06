@@ -9,7 +9,7 @@ class ETL::UserSyncer < ETL::Syncer
     ETL::User
   end
 
-  private
+  protected
 
   def instances_needing_update
     return origin_class unless incremental?

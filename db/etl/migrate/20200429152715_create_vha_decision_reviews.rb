@@ -67,6 +67,10 @@ class CreateVhaDecisionReviews < ActiveRecord::Migration[5.2]
       t.string "stream_docket_number", comment: "Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
       t.index ["stream_docket_number"]
 
+      # Question for Peter: Do we want default values?
+      #   organizations.status and users.status has a default: "active";
+      #   organizations_users.admin has default: false
+      #   tasks.instructions has default: []
       t.string "stream_type", default: "Original", comment: "When multiple appeals have the same docket number, they are differentiated by appeal stream type, depending on the work being done on each appeal."
       t.index ["stream_type"]
 

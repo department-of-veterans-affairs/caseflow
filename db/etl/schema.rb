@@ -413,8 +413,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_141923) do
     t.index ["created_at"], name: "index_vha_decision_reviews_on_created_at"
     t.index ["decision_review_created_at"], name: "index_vha_decision_reviews_on_decision_review_created_at"
     t.index ["decision_review_id", "decision_review_type"], name: "idx_vha_decision_review_id_and_type", unique: true
-    t.index ["decision_review_remanded_id"], name: "index_vha_decision_reviews_on_decision_review_remanded_id"
-    t.index ["decision_review_remanded_type"], name: "index_vha_decision_reviews_on_decision_review_remanded_type"
+    t.index ["decision_review_remanded_id", "decision_review_remanded_type"], name: "idx_vha_decision_review_remanded_id_and_type"
     t.index ["decision_review_updated_at"], name: "index_vha_decision_reviews_on_decision_review_updated_at"
     t.index ["docket_range_date"], name: "index_vha_decision_reviews_on_docket_range_date"
     t.index ["docket_type"], name: "index_vha_decision_reviews_on_docket_type"
