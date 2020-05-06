@@ -213,7 +213,7 @@ class HearingDetails extends React.Component {
     }
 
     // only send updated properties
-    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = getChanges(
+    const { hearingDetailsForm, virtualHearingForm } = getChanges(
       this.state.initialFormData,
       this.props.formData
     );
@@ -222,7 +222,7 @@ class HearingDetails extends React.Component {
       hearing: {
         ...(hearingDetailsForm || {}),
         transcription_attributes: {
-          ...(transcriptionDetailsForm || {})
+          ...(this.props.formData.transcriptionDetailsForm || {})
         },
         virtual_hearing_attributes: {
           ...(virtualHearingForm || {})
