@@ -535,5 +535,48 @@ feature "Intake", :all_dbs do
         end
       end
     end
+
+    context "Adding new claimant" do
+      let(:hlr) { create(:higher_level_review, veteran_file_number: "12341234") }
+      let(:intake) { HigherLevelReviewIntake.new(veteran_file_number: "12341234", user: current_user) }
+
+      before do
+        intake.start!
+      end
+
+      context "without attorney_fees feature toggle" do
+        it "doesn't allow adding new claimants" do
+          visit "/intake"
+
+          expect(page).to have_current_path("/intake/review_request")
+
+          within_fieldset("Is the claimant someone other than the Veteran?") do
+            find("label", text: "Yes", match: :prefer_exact).click
+          end
+
+          expect(page).to_not have_content("+ Add Claimant")
+        end
+      end
+
+      context "with attorney_fees feature toggle" do
+        before { FeatureToggle.enable!(:attorney_fees) }
+        after { FeatureToggle.disable!(:attorney_fees) }
+
+        it "allows adding new claimants" do
+          visit "/intake"
+
+          expect(page).to have_current_path("/intake/review_request")
+
+          within_fieldset("Is the claimant someone other than the Veteran?") do
+            find("label", text: "Yes", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("+ Add Claimant")
+
+          click_button("+ Add Claimant")
+          expect(page).to have_content(COPY::ADD_CLAIMANT_MODAL_TITLE)
+        end
+      end
+    end
   end
 end
