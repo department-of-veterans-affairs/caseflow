@@ -4,6 +4,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   include AssociatedBgsRecord
   include BgsService
 
+  class BgsPOANotFound < StandardError; end
+
   has_many :claimants, primary_key: :claimant_participant_id, foreign_key: :participant_id
 
   CACHED_BGS_ATTRIBUTES = [
@@ -141,7 +143,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     elsif self[:file_number]
       fetch_bgs_record_by_file_number
     else
-      fail "Must define claimant_participant_id or file_number"
+      fail BgsPOANotFound, "Must define claimant_participant_id or file_number"
     end
   end
 
