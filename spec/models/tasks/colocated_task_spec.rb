@@ -575,4 +575,97 @@ describe ColocatedTask, :all_dbs do
       expect(parent_task.children.open.first.label).to eq task_class.label
     end
   end
+
+  describe "special handling for Motion to Vacate attorney checkout flow" do
+    let(:vacate_type) { "vacate_and_de_novo" }
+
+    let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:receipt_date) { Time.zone.today - 20 }
+    let!(:appeal) do
+      create(:appeal, receipt_date: receipt_date)
+    end
+
+    let!(:decision_issues) do
+      3.times do |idx|
+        create(
+          :decision_issue,
+          :rating,
+          decision_review: appeal,
+          disposition: "denied",
+          description: "Decision issue description #{idx}",
+          decision_text: "decision issue"
+        )
+      end
+    end
+
+    let!(:root_task) { create(:root_task, appeal: appeal) }
+
+    let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
+
+    let(:vacate_motion_mail_task) do
+      create(:vacate_motion_mail_task, assigned_to: motions_attorney, parent: root_task)
+    end
+    let(:judge_address_motion_to_vacate_task) do
+      create(:judge_address_motion_to_vacate_task,
+             appeal: appeal,
+             assigned_to: judge,
+             parent: vacate_motion_mail_task
+      )
+    end
+    let(:post_decision_motion_params) do
+      {
+        instructions: "I am granting this",
+        disposition: "granted",
+        vacate_type: vacate_type,
+        assigned_to_id: attorney
+      }
+    end
+    let(:post_decision_motion_updater) do
+      PostDecisionMotionUpdater.new(judge_address_motion_to_vacate_task, post_decision_motion_params)
+    end
+    let(:vacate_stream) { Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate") }
+    let(:attorney_task) { AttorneyTask.find_by(assigned_to: attorney) }
+    let(:parent) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: vacate_stream ) }
+
+    let(:params_list) do
+      [{
+        assigned_by: attorney,
+        type: AojColocatedTask.name,
+        parent_id: parent.id,
+        appeal: vacate_stream
+      }]
+    end
+
+    before do
+      create(:staff, :judge_role, sdomainid: judge.css_id)
+      judge_team.add_user(attorney)
+
+      FeatureToggle.enable!(:review_motion_to_vacate)
+
+      post_decision_motion_updater.process
+      appeal.reload
+
+      judge_address_motion_to_vacate_task.update(status: Constants.TASK_STATUSES.completed)
+    end
+
+    after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    context "vacate & de novo" do
+      it "passes validation and creates child tasks" do
+        expect { subject }.not_to raise_error
+        expect(ColocatedTask.all.count).to eq 2
+      end
+    end
+
+    context "other vacate type" do
+      let(:vacate_type) { "straight_vacate" }
+
+      it "doesn't pass" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+        expect(ColocatedTask.all.count).to eq 0
+      end
+    end
+  end
 end

@@ -66,7 +66,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   end
 
   context "Virtual Hearing Link" do
-    let(:vlj_virtual_hearing_link) { COPY::VLJ_VIRTUAL_HEARING_LINK_LABEL }
+    let(:vlj_virtual_hearing_link) { COPY::VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL }
 
     context "Hearing Coordinator view" do
       scenario "User has the host link" do

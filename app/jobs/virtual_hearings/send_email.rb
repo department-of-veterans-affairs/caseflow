@@ -93,6 +93,8 @@ class VirtualHearings::SendEmail
 
     return false if email.nil?
 
+    Rails.logger.info("Sending email to #{recipient.inspect}...")
+
     msg = email.deliver_now!
   rescue StandardError => error
     Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")

@@ -58,7 +58,7 @@ describe Hearing, :postgres do
           user_id: create(:user).id,
           person_id: hearing.claimant_id,
           granted: granted,
-          reason: "age"
+          reason: Constants.AOD_REASONS.age
         )
       end
     end

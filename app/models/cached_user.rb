@@ -12,7 +12,7 @@ class CachedUser < CaseflowRecord
 
   class << self
     def sync_from_vacols
-      VACOLS::Staff.where.not(sdomainid: nil).find_each do |staff|
+      VACOLS::Staff.having_css_id.find_each do |staff|
         # we set attributes both in find_or_create_by block for not-null constraints
         # on initial creation, and to update stale attributes
         cached_user = find_or_create_by(sdomainid: staff.sdomainid) do |cuser|

@@ -33,6 +33,10 @@ const StringUtil = {
       });
   },
 
+  capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  },
+
   leftPad(string, width, padding = '0') {
     let padded = '';
 
@@ -51,19 +55,22 @@ const StringUtil = {
   },
 
   // https://coderwall.com/p/iprsng/convert-snake-case-to-camelcase
-  snakeCaseToCamelCase(variable) {
+  snakeCaseToCamelCase(variable = '') {
     // convert key from camelCase to snake_case
-    return variable.replace(/(_\w)/g, (found) => found[1].toUpperCase());
+    return variable?.replace(/(_\w)/g, (found) => found[1].toUpperCase()) ?? '';
   },
+
   // convert snake_case to Capitalized Words
-  snakeCaseToCapitalized(variable) {
-    return variable.
-      replace(/_/g, ' ').
-      split(' ').
-      map((word) => {
-        return word[0].toUpperCase() + word.substr(1);
-      }).
-      join(' ');
+  snakeCaseToCapitalized(variable = '') {
+    return (
+      variable
+        ?.replace(/_/g, ' ')
+        .split(' ')
+        .map((word) => {
+          return word[0].toUpperCase() + word.substr(1);
+        })
+        .join(' ') ?? ''
+    );
   },
 
   // convert snake_case to a sentence with the first letter capitalized
