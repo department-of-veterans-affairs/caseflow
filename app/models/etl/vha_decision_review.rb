@@ -59,6 +59,9 @@ class ETL::VhaDecisionReview < ETL::Record
     end
 
     def merge_original_attributes_to_target(original, target)
+      target.decision_review_created_at = original.created_at
+      target.decision_review_updated_at = original.updated_at
+
       target.decision_review_id = original.id
       target.decision_review_type = original.class.name
 
