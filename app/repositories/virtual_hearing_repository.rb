@@ -41,5 +41,11 @@ class VirtualHearingRepository
           )
         SQL
     end
+
+    def hearings_with_pending_conference_or_emails
+      VirtualHearing.select do |virtual_hearing|
+        virtual_hearing.pending? || !virtual_hearing.all_emails_sent?
+      end
+    end
   end
 end
