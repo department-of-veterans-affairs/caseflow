@@ -98,8 +98,9 @@ class TasksController < ApplicationController
 
     render json: { tasks: json_tasks(tasks_to_return) }
   rescue ActiveRecord::RecordInvalid => error
-    # byebug
-    invalid_record_error(task.errors)
+    Raven.capture_exception(error)
+  rescue Caseflow::Error::VacolsRecordNotFound => error
+    Raven.capture_exception(error)
   end
 
   def for_appeal

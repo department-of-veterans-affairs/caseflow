@@ -139,7 +139,9 @@ class AssignHearingDispositionTask < Task
 
   def update_hearing_disposition(disposition:)
     # Ensure the hearing exists
-    if hearing.nil?
+    if hearing.nil? && hearing.is_a?(LegacyHearing)
+      fail Caseflow::Error::VacolsRecordNotFound => error
+    elsif hearing.nil?
       fail ActiveRecord::RecordInvalid
     end
 

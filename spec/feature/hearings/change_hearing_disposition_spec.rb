@@ -109,22 +109,24 @@ RSpec.shared_examples "Change hearing disposition" do
       end
     end
 
-    fscenario "with missing hearing task association" do
-      # association.delete
-      # hearing_task.reload
-
+    scenario "with missing hearing task association" do
       step "visit the hearing admin organization queue and click on the veteran's name" do
         visit "/organizations/#{HearingAdmin.singleton.url}"
         expect(page).to have_content("Unassigned (1)")
         click_on veteran_link_text
       end
 
-      step "change the hearing disposition to cancelled" do
+      step "change the hearing disposition to postponed" do
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
         click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
         fill_in "Notes", with: instructions_text
         click_button("Submit")
-        expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+
+        if hearing.is_a?(LegacyHearing)
+          allow(Raven).to receive(:capture_exception).with(Caseflow::Error::VacolsRecordNotFound) { @raven_called = true }
+        else
+          allow(Raven).to receive(:capture_exception).with(ActiveRecord::RecordInvalid) { @raven_called = true }
+        end
       end
     end
   end
