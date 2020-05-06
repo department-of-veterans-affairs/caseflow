@@ -19,6 +19,9 @@ import Alert from '../components/Alert';
 
 import COPY from '../../COPY';
 
+/**
+ * Component showing the cases assigned to a specific attorney referenced with `attorneyId`.
+ */
 class AssignedCasesPage extends React.Component {
   componentDidMount = () => {
     this.props.resetSuccessMessages();

@@ -23,6 +23,11 @@ const containerStyles = css({
   position: 'relative'
 });
 
+/**
+ * Case assignment page used by judges to request new cases and assign cases to their attorneys.
+ * Cases to be assigned are rendered by component UnassignedCasesPage.
+ * Cases that have been assigned are rendered by component AssignedCasesPage.
+ */
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();

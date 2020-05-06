@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Controller that handles requests about tasks.
+# Often used by Caseflow Queue.
 class TasksController < ApplicationController
   include Errors
 
