@@ -138,12 +138,7 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_hearing_disposition(disposition:)
-    # Ensure the hearing exists
-    if hearing.nil? && hearing.is_a?(LegacyHearing)
-      fail Caseflow::Error::VacolsRecordNotFound => error
-    elsif hearing.nil?
-      fail ActiveRecord::RecordInvalid
-    end
+    check_hearing_exists(hearing)
 
     # Ensure the hearing task association exists
     if hearing_task.hearing_task_association.nil?
@@ -154,6 +149,15 @@ class AssignHearingDispositionTask < Task
       hearing.update_caseflow_and_vacols(disposition: disposition)
     else
       hearing.update(disposition: disposition)
+    end
+  end
+
+  def check_hearing_exists(hearing)
+    # Ensure the hearing exists
+    if hearing.nil? && hearing.is_a?(LegacyHearing)
+      fail Caseflow::Error::VacolsRecordNotFound => error
+    elsif hearing.nil?
+      fail ActiveRecord::RecordInvalid
     end
   end
 

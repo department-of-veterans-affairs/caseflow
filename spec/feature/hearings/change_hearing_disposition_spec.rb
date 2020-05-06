@@ -123,7 +123,8 @@ RSpec.shared_examples "Change hearing disposition" do
         click_button("Submit")
 
         if hearing.is_a?(LegacyHearing)
-          allow(Raven).to receive(:capture_exception).with(Caseflow::Error::VacolsRecordNotFound) { @raven_called = true }
+          allow(Raven).to receive(:capture_exception)
+            .with(Caseflow::Error::VacolsRecordNotFound) { @raven_called = true }
         else
           allow(Raven).to receive(:capture_exception).with(ActiveRecord::RecordInvalid) { @raven_called = true }
         end
