@@ -168,7 +168,7 @@ export const reset = (obj) => Object.keys(obj).reduce((result, item) => ({ ...re
  * @returns {Object} -- The initial and current values that will be compared later
  */
 export const toggleCancelled = (first, second, form) =>
-  first && second && !second[form]?.requestCancelled && first[form]?.status === 'cancelled' ?
+  !second[form]?.requestCancelled && first[form]?.status === 'cancelled' ?
     {
       init: {
         ...first,
