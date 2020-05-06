@@ -26,7 +26,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     let!(:hearing) { create(:hearing, :with_tasks) }
     let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
 
-    scenario "User can update fields", skip: "Test is flakey" do
+    scenario "User can update fields" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
