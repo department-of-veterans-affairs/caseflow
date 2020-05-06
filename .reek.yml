@@ -21,6 +21,7 @@ detectors:
       - Fakes::BGSService
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
+      - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
       - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
       - VBMSCaseflowLogger#log
@@ -29,6 +30,9 @@ detectors:
   UncommunicativeVariableName:
     exclude:
       - Address
+      - Seeds::Intake#create_inbox_messages
+      - Seeds::MTV#setup_motion_to_vacate
+      - Seeds::Users
       - Fakes::PersistentStore#convert_dates_from
   UncommunicativeMethodName:
     exclude:
@@ -42,6 +46,7 @@ detectors:
     exclude:
       - HearingSerializerBase
       - LegacyDocket
+      - Seeds::Tasks
       - TaskTreeRenderModule
   DuplicateMethodCall:
     enabled: false
@@ -77,6 +82,9 @@ detectors:
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
+      - Seeds::Hearings
+      - Seeds::Tasks#create_colocated_legacy_tasks
+      - Seeds::Users#create_aod_user_and_tasks
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
@@ -103,6 +111,9 @@ detectors:
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReview::ContestableIssueFinder#initialize
       - QueueRepository#assign_case_to_attorney!
+      - Seeds::MTV#judge_addresses_mtv
+      - Seeds::MTV#send_mtv_to_judge
+      - Seeds::Tasks#create_task_at_colocated
       - VirtualHearings::CreateConferenceJob#perform
   ManualDispatch:
     exclude:
