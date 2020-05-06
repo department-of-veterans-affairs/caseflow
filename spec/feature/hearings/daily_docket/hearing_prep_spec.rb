@@ -66,7 +66,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
           user_id: create(:user).id,
           person_id: person.id,
           granted: false,
-          reason: "age"
+          reason: Constants.AOD_REASONS.age
         )
       end
 
@@ -84,12 +84,14 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
     end
 
     context "with an existing AOD motion made by same judge" do
+      let(:reason) { Constants.AOD_REASONS.serious_illness }
+
       before do
         AdvanceOnDocketMotion.create!(
           user_id: current_user.id,
           person_id: person.id,
           granted: true,
-          reason: "age"
+          reason: reason
         )
       end
 
@@ -103,7 +105,36 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         expect(AdvanceOnDocketMotion.count).to eq(1)
         judge_motion = AdvanceOnDocketMotion.first
         expect(judge_motion.granted).to eq(false)
-        expect(judge_motion.reason).to eq("financial_distress")
+        expect(judge_motion.reason).to eq(Constants.AOD_REASONS.financial_distress)
+        expect(judge_motion.user_id).to eq(current_user.id)
+      end
+
+      context "with age being the reason" do
+        # Age as an AOD reason functions a bit differently than other AOD reasons.
+        let(:reason) { Constants.AOD_REASONS.age }
+
+        scenario "judge can change AOD reason without changing Granted/Denied status" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+
+          step "change AOD" do
+            click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
+            click_button("Save")
+
+            expect(page).to have_content("You have successfully updated")
+            expect(AdvanceOnDocketMotion.count).to eq(2)
+            judge_motion = AdvanceOnDocketMotion.order(created_at: :desc).first
+            expect(judge_motion.granted).to eq(true)
+            expect(judge_motion.reason).to eq(Constants.AOD_REASONS.financial_distress)
+            expect(judge_motion.user_id).to eq(current_user.id)
+          end
+
+          step "reload page and check saved AOD" do
+            visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+
+            expect(page.find(".dropdown-#{hearing.external_id}-aod")).to have_content("Granted")
+            expect(page.find(".dropdown-#{hearing.external_id}-aodReason")).to have_content("Financial Distress")
+          end
+        end
       end
     end
 
@@ -120,7 +151,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         expect(AdvanceOnDocketMotion.count).to eq(1)
         judge_motion = AdvanceOnDocketMotion.first
         expect(judge_motion.granted).to eq(true)
-        expect(judge_motion.reason).to eq("financial_distress")
+        expect(judge_motion.reason).to eq(Constants.AOD_REASONS.financial_distress)
       end
     end
   end

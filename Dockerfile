@@ -2,7 +2,7 @@ FROM ruby:2.5.3-slim
 MAINTAINER Development and Operations team @ Department of Veterans Affairs
 
 # Build variables
-ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https
+ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https pdftk
 ENV CASEFLOW git nodejs yarn
 
 # Environment (system) variables

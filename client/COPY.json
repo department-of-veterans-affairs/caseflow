@@ -389,6 +389,8 @@
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN": "Reason",
   "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN_PLACEHOLDER": "Select grant or deny",
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN_PLACEHOLDER": "Select a type",
+  "ADVANCE_ON_DOCKET_MOTION_GRANTED": "granted",
+  "ADVANCE_ON_DOCKET_MOTION_SUCCESS_MESSAGE": "AOD status has been %s due to %s",
 
   "TASK_ACTION_DROPDOWN_BOX_LABEL": "Select an action…",
 
@@ -397,8 +399,8 @@
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
   "NOTIFY_OGC_OF": "Notify OGC of %s",
-  "PULAC_CERULLO_MODAL_TITLE": "Notify Pulac Cerullo team of Conflict of Jurisdiction",
-  "PULAC_CERULLO_MODAL_BODY_1": "This case will be assigned to a person/team who will determine if it is a Pulac or Cerullo case. It will return to the 'Assigned' tab in your Queue when it can be worked again.",
+  "PULAC_CERULLO_MODAL_TITLE": "Notify Litigation Support of Possible Conflict of Jurisdiction",
+  "PULAC_CERULLO_MODAL_BODY_1": "This case will be assigned to a team who will determine if there is a conflict of jurisdiction.",
   "PULAC_CERULLO_MODAL_BODY_2": "It will return to your Queue when it can be worked again.",
   "PULAC_CERULLO_SUCCESS_TITLE": "Case assigned to Litigation Support",
   "PULAC_CERULLO_SUCCESS_DETAIL": "%s's case will return to your Queue when it can be worked again.",
@@ -711,7 +713,7 @@
     },
     "CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
-      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
     },
     "CHANGED_VETERAN_AND_POA_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",
@@ -766,8 +768,11 @@
     }
   },
 
-  "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Virtual Hearing Link",
+  "VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL": "VLJ Virtual Hearing Link",
+  "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
+  "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
+  "OPEN_VIRTUAL_HEARINGS_LINK": "Open Virtual Hearing",
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }

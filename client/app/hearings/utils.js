@@ -2,6 +2,7 @@ import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import moment from 'moment-timezone';
 import _ from 'lodash';
+import querystring from 'querystring';
 
 import ExponentialPolling from '../components/ExponentialPolling';
 
@@ -185,3 +186,15 @@ export const toggleCancelled = (first, second, form) =>
       init: first,
       current: second
     };
+
+/**
+ * Method to calculate hearing details changes accounting for cancelled virtual hearings
+ * @param {Object} init -- The initial form details
+ * @param {Object} current -- The current form details
+ */
+export const getChanges = (first, second) => {
+  // Handle cancelled status
+  const { init, current } = toggleCancelled(first, second, 'virtualHearingForm');
+
+  return deepDiff(init, current);
+};

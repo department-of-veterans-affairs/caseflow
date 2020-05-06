@@ -33,12 +33,44 @@ describe PowerOfAttorney, :all_dbs do
     end
   end
 
-  it "returns bgs values" do
-    expect(power_of_attorney.bgs_representative_name).to eq "Clarence Darrow"
+  context "when BGS POA exists" do
+    context "by file_number" do
+      it "returns BGS values" do
+        expect(power_of_attorney.bgs_representative_name).to eq "Clarence Darrow"
+      end
+
+      it "returns BGS address" do
+        expect(power_of_attorney.bgs_representative_address[:city]).to eq "SAN FRANCISCO"
+      end
+    end
+
+    context "by claimant_participant_id" do
+      let(:power_of_attorney) do
+        PowerOfAttorney.new(vacols_id: vacols_case.bfkey, claimant_participant_id: "123")
+      end
+
+      it "returns BGS values" do
+        expect(power_of_attorney.bgs_representative_name).to eq "Attorney McAttorneyFace"
+      end
+
+      it "returns BGS address" do
+        expect(power_of_attorney.bgs_representative_address[:city]).to eq "SAN FRANCISCO"
+      end
+    end
   end
 
-  it "returns bgs address" do
-    expect(power_of_attorney.bgs_representative_address[:city]).to eq "SAN FRANCISCO"
+  context "when BGS POA does not exist" do
+    let(:power_of_attorney) do
+      PowerOfAttorney.new(
+        vacols_id: vacols_case.bfkey,
+        file_number: "no-such-file-number",
+        claimant_participant_id: "no-such-pid"
+      )
+    end
+
+    it "returns nil" do
+      expect(power_of_attorney.bgs_representative_name).to be_nil
+    end
   end
 
   describe "error handling" do

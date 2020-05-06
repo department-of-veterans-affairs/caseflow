@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
-describe VirtualHearings::CreateConferenceJob, :all_dbs do
+describe VirtualHearings::CreateConferenceJob do
   include ActiveJob::TestHelper
 
   context ".perform" do
     let(:hearing) { create(:hearing, regional_office: "RO06") }
-    let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+    let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
     let(:create_job) do
       VirtualHearings::CreateConferenceJob.new(
-        hearing_id: virtual_hearing.hearing_id,
-        hearing_type: virtual_hearing.hearing_type
+        hearing_id: hearing.id,
+        hearing_type: hearing.class.name
       )
+    end
+    let(:pexip_url) { "fake.va.gov" }
+    before do
+      stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
     end
 
     subject { create_job }
@@ -22,6 +26,7 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
       expect(virtual_hearing.conference_id).to eq(9001)
       expect(virtual_hearing.status).to eq(:active)
       expect(virtual_hearing.alias).to eq("0000001")
+      expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
       expect(virtual_hearing.host_pin.nil?).to eq(false)
       expect(virtual_hearing.guest_pin.nil?).to eq(false)
     end
@@ -109,7 +114,7 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
       end
 
       it "job goes back on queue and logs if error", :aggregate_failures do
-        expect(Rails.logger).to receive(:error).exactly(5).times
+        expect(Rails.logger).to receive(:error).exactly(6).times
 
         expect do
           perform_enqueued_jobs do
@@ -144,6 +149,69 @@ describe VirtualHearings::CreateConferenceJob, :all_dbs do
 
         virtual_hearing.reload
         expect(virtual_hearing.hearing.email_events.count).to eq(0)
+      end
+    end
+
+    context "when the virtual hearing is not immediately available" do
+      let(:virtual_hearing) { nil }
+
+      after do
+        clear_enqueued_jobs
+      end
+
+      it "throws an error" do
+        # VirtualHearings::CreateConferenceJob#perform_now doesn't throw because the error is caught
+        # by retry_on.
+        expect { subject.perform(subject.arguments.first) }.to raise_error(
+          VirtualHearings::CreateConferenceJob::VirtualHearingNotCreatedError
+        )
+      end
+
+      it "retries job" do
+        expect do
+          perform_enqueued_jobs do
+            VirtualHearings::CreateConferenceJob.perform_later(subject.arguments.first)
+          end
+        end.to(
+          have_performed_job(VirtualHearings::CreateConferenceJob)
+            .exactly(5)
+            .times
+        )
+      end
+    end
+
+    context "when the virtual hearing is cancelled already" do
+      let!(:virtual_hearing) do
+        create(
+          :virtual_hearing,
+          :all_emails_sent,
+          :initialized,
+          hearing: hearing,
+          status: :cancelled
+        )
+      end
+
+      after do
+        clear_enqueued_jobs
+      end
+
+      it "throws an error" do
+        # VirtualHearings::CreateConferenceJob#perform_now doesn't throw because the error is caught
+        # by retry_on.
+        expect { subject.perform(subject.arguments.first) }.to raise_error(
+          VirtualHearings::CreateConferenceJob::VirtualHearingRequestCancelled
+        )
+      end
+
+      it "does not retry job" do
+        expect do
+          perform_enqueued_jobs do
+            VirtualHearings::CreateConferenceJob.perform_later(subject.arguments.first)
+          end
+        end.to(
+          have_performed_job(VirtualHearings::CreateConferenceJob)
+            .exactly(:once)
+        )
       end
     end
   end
