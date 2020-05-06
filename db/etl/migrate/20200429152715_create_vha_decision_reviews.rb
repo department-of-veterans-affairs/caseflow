@@ -45,10 +45,8 @@ class CreateVhaDecisionReviews < ActiveRecord::Migration[5.2]
 
       # attributes unique to SC
       t.bigint "decision_review_remanded_id", comment: "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here."
-      t.index ["decision_review_remanded_id"]
-
       t.string "decision_review_remanded_type", comment: "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review."
-      t.index ["decision_review_remanded_type"]
+      t.index ["decision_review_remanded_id", "decision_review_remanded_type"], name: "idx_vha_decision_review_remanded_id_and_type"
 
       # attributes unique to Appeal
       t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
