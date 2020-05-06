@@ -91,7 +91,7 @@ class AssignedCasesPage extends React.Component {
     const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0]?.full_name;
 
     return <React.Fragment>
-      <h2>{attorneyName || attorneyId}'s Cases</h2>
+      <h2>{attorneyName}'s Cases</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       <AssignWidget
