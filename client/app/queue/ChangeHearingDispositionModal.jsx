@@ -74,7 +74,6 @@ class ChangeHearingDispositionModal extends React.Component {
       }).
       catch((error) => {
         // handle the error from the frontend
-        console.log(error);
       });
   };
 
