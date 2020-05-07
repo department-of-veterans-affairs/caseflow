@@ -40,9 +40,9 @@ class HearingLocation < CaseflowRecord
     full_addr = [street_address, facility_address(key)["address_2"], facility_address(key)["address_3"]]
       .reject(&:blank?).join(" ")
 
-    return unless full_addr.present?
+    return if full_addr.blank?
 
-    "#{full_addr}, #{[city, state, zip_code].reject(&:blank?).join(" ")}"
+    "#{full_addr}, #{[city, state, zip_code].reject(&:blank?).join(' ')}"
   end
 
   private

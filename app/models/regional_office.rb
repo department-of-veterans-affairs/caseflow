@@ -59,9 +59,9 @@ class RegionalOffice
     full_addr = [street_address, facility_location_hash["address_2"], facility_location_hash["address_3"]]
       .reject(&:blank?).join(" ")
 
-    return unless full_addr.present?
+    return if full_addr.blank?
 
-    "#{full_addr}, #{[city, state, zip_code].reject(&:blank?).join(" ")}"
+    "#{full_addr}, #{[city, state, zip_code].reject(&:blank?).join(' ')}"
   end
 
   def zip_code
