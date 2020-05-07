@@ -50,5 +50,19 @@ describe ETLBuilderJob, :etl, :all_dbs do
         expect(@slack_msg).to be_nil
       end
     end
+
+    context "when deleted row is swept up" do
+      before do
+        ETL::Builder.new.full
+        Appeal.last.delete
+        Appeal.last.touch
+      end
+
+      it "sends INFO message to slack" do
+        Timecop.travel(1.hour.ago) { subject }
+
+        expect(@slack_msg).to include("[INFO] ETL swept up 1 deleted records")
+      end
+    end
   end
 end
