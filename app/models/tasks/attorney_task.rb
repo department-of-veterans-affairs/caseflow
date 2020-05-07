@@ -10,8 +10,8 @@ class AttorneyTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
 
-  validate :assigned_by_role_is_valid
-  validate :assigned_to_role_is_valid
+  validate :assigned_by_role_is_valid, on: :create
+  validate :assigned_to_role_is_valid, on: :create
   validate :child_attorney_tasks_are_completed, on: :create
 
   after_update :send_back_to_judge_assign, if: :attorney_task_just_cancelled?
