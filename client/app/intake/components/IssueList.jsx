@@ -73,6 +73,7 @@ export default class IssuesList extends React.Component {
             !issue.isUnidentified);
           const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key && editableIssueType &&
             editableIssueProperties);
+          const removableIssue = editPage && issue.editable && !issue.examScheduled;
 
           const issueActionOptions = this.generateIssueActionOptions(
             issue, userCanWithdrawIssues, intakeData.isDtaError
@@ -97,8 +98,12 @@ export default class IssuesList extends React.Component {
                 <span {...nonEditableIssueStyling}>{COPY.INTAKE_RATING_MAY_BE_PROCESS}</span>
               </div> }
 
+              { issue.examScheduled && <div className="issue-action">
+                <span {...nonEditableIssueStyling}>{COPY.INTAKE_CONTENTION_HAS_EXAM_SCHEDULED}</span>
+              </div> }
+
               <div className="issue-action">
-                {editPage && issue.editable && !_.isEmpty(issueActionOptions) && <Dropdown
+                {removableIssue && !_.isEmpty(issueActionOptions) && <Dropdown
                   name={`issue-action-${issue.index}`}
                   label="Actions"
                   hideLabel

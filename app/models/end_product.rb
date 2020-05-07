@@ -294,6 +294,10 @@ class EndProduct
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
   end
 
+  def bgs_contentions
+    @bgs_contentions ||= claim_id ? BgsContention.fetch_all(claim_id) : nil
+  end
+
   def limited_poa
     @limited_poa ||= fetch_limited_poa
   end
