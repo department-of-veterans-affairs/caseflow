@@ -14,6 +14,18 @@ describe ETLBuilderJob, :etl, :all_dbs do
         metric_name: "runtime",
         metric_value: anything
       )
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job_segment",
+        metric_group: "etl_builder",
+        metric_name: "runtime",
+        metric_value: anything
+      )
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job_segment",
+        metric_group: "etl_sweeper",
+        metric_name: "runtime",
+        metric_value: anything
+      )
       ETL::Builder::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
     end
 

@@ -6,11 +6,12 @@
 class ETL::Sweeper
   include ETLClasses
 
-  def call(etl_build)
+  def call
+    total_swept = 0
     syncer_klasses.each do |klass|
-      sweep_targets(klass.new(etl_build: etl_build))
+      total_swept += sweep_targets(klass.new(etl_build: true))
     end
-    etl_build
+    total_swept
   end
 
   private
@@ -21,6 +22,7 @@ class ETL::Sweeper
     origin_klass = syncer.origin_class
     target_klass = syncer.target_class
 
+    swept = 0
     target_klass.find_in_batches.with_index do |targets, batch|
       Rails.logger.debug("Starting #{target_klass.name} sweep batch #{batch}")
 
@@ -29,7 +31,7 @@ class ETL::Sweeper
       Rails.logger.debug("Found #{origin_pks_count} #{target_klass.name} PKs")
 
       origin_rows = origin_klass.unscoped.where(id: origin_pks).pluck(:id)
-      origin_rows_count = origin_rows.count 
+      origin_rows_count = origin_rows.count
       Rails.logger.debug("Found #{origin_rows_count} #{origin_klass.name} rows")
 
       next if origin_rows_count == origin_pks_count # no deletions, next batch
@@ -38,6 +40,8 @@ class ETL::Sweeper
       Rails.logger.debug("Target rows to sweep: #{origin_rows_deleted}")
 
       target_klass.where(target_klass.origin_primary_key => origin_rows_deleted).delete_all
+      swept += origin_rows_deleted.count
     end
+    swept
   end
 end
