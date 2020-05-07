@@ -4,18 +4,7 @@
 # We define a special `full` method to bypass the checkpoint marker.
 
 class ETL::Builder
-  ETL_KLASSES = %w[
-    Appeal
-    AttorneyCaseReview
-    DecisionIssue
-    Hearing
-    LegacyHearing
-    Organization
-    OrganizationsUser
-    Person
-    Task
-    User
-  ].freeze
+  include ETLClasses
 
   def initialize(since: checkpoint_time)
     @since = since
@@ -66,10 +55,6 @@ class ETL::Builder
     end
     build_record.update!(finished_at: Time.zone.now, status: status, comments: comments)
     build_record
-  end
-
-  def syncer_klasses
-    ETL_KLASSES.map { |klass| "ETL::#{klass}Syncer".constantize }
   end
 
   def checkpoint_time
