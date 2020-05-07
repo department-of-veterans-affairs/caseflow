@@ -271,7 +271,12 @@ VirtualHearingModal.propTypes = {
     veteranEmailAddress: PropTypes.string,
     representativeEmailAddress: PropTypes.string
   }).isRequired,
-  type: PropTypes.oneOf(['change_to_virtual', 'change_from_virtual', 'change_email', 'change_hearing_time']).isRequired,
+  type: PropTypes.oneOf([
+    'change_to_virtual',
+    'change_from_virtual',
+    'change_email',
+    'change_hearing_time'
+  ]).isRequired,
   timeWasEdited: PropTypes.bool,
   repEmailEdited: PropTypes.bool,
   vetEmailEdited: PropTypes.bool,
