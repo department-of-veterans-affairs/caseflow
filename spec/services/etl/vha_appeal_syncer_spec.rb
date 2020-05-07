@@ -5,6 +5,9 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
 
   include_context "AMA Tableau SQL"
 
+  let!(:vha_request_issue) { create(:request_issue, benefit_type: "vha") }
+  # let!(:vha_appeal) { create(:appeal, request_issues: [vha_request_issue]) }
+
   let(:etl_build) { ETL::Build.create }
 
   describe "#origin_class" do
@@ -26,11 +29,17 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
       expect(ETL::VhaAppeal.count).to eq(0)
     end
 
+    def vha_appeal_ids
+      RequestIssue.select(:decision_review_id).where(benefit_type: "vha", decision_review_type: :Appeal)
+    end
+
     context "BVA status distribution" do
       it "has expected distribution" do
+        expect(RequestIssue.where(benefit_type: "vha").count).to eq(1)
+        expect(Appeal.where(id: vha_appeal_ids).count).to eq(1)
         subject
 
-        expect(ETL::VhaAppeal.count).to eq(13)
+        expect(ETL::VhaAppeal.count).to eq(1)
       end
 
       it "populates person attributes" do
@@ -62,9 +71,9 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
       it "skips non-established Appeals" do
         subject
 
-        expect(ETL::VhaAppeal.count).to eq(13)
+        expect(ETL::VhaAppeal.count).to eq(1)
         expect(etl_build_table.rows_rejected).to eq(0) # not part of .filter so we can't know about it.
-        expect(etl_build_table.rows_inserted).to eq(13)
+        expect(etl_build_table.rows_inserted).to eq(1)
       end
     end
 
@@ -82,7 +91,7 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
       it "syncs" do
         expect { subject }.to_not raise_error
 
-        expect(ETL::VhaAppeal.count).to eq(14)
+        expect(ETL::VhaAppeal.count).to eq(1)
       end
     end
   end
