@@ -185,18 +185,18 @@ const TYPES = {
 };
 
 const VirtualHearingModal = (props) => {
-  const { closeModal, hearing, virtualHearing, reset, submit, type } = props
+  const { closeModal, hearing, virtualHearing, reset, submit, type } = props;
   const [vetEmailError, setVetEmailError] = useState(null);
   const [repEmailError, setRepEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const typeSettings = TYPES[type];
-  const veteranEmail = type === 'change_to_virtual'
-    ? virtualHearing.veteranEmail || hearing.veteranEmailAddress
-    : virtualHearing.veteranEmail;
-  const representativeEmail = type === 'change_to_virtual'
-    ? virtualHearing.representativeEmail || hearing.representativeEmailAddress
-    : virtualHearing.representativeEmail;
+  const veteranEmail = type === 'change_to_virtual' ?
+    virtualHearing.veteranEmail || hearing.veteranEmailAddress :
+    virtualHearing.veteranEmail;
+  const representativeEmail = type === 'change_to_virtual' ?
+    virtualHearing.representativeEmail || hearing.representativeEmailAddress :
+    virtualHearing.representativeEmail;
 
   const validateForm = () => {
     if (_.isEmpty(veteranEmail)) {
@@ -209,7 +209,9 @@ const VirtualHearingModal = (props) => {
   };
 
   const onSubmit = () => {
-    if (!validateForm) { return }
+    if (!validateForm) {
+      return;
+    }
 
     setLoading(true);
 
@@ -226,12 +228,12 @@ const VirtualHearingModal = (props) => {
         setRepEmailError(msg.indexOf('Representative') === -1 ? null : INVALID_EMAIL_FORMAT);
         setVetEmailError(msg.indexOf('Veteran') === -1 ? null : INVALID_EMAIL_FORMAT);
       });
-  }
+  };
 
   const onReset = () => {
     reset();
     closeModal();
-  }
+  };
 
   return (
     <div>
@@ -240,7 +242,7 @@ const VirtualHearingModal = (props) => {
         closeHandler={onReset}
         confirmButton={
           <Button
-            name='submit-virtual-hearing'
+            name="submit-virtual-hearing"
             classNames={['usa-button-secondary']}
             disabled={success}
             loading={loading}
@@ -251,7 +253,7 @@ const VirtualHearingModal = (props) => {
         }
         cancelButton={
           <Button
-            name='cancel-virtual-hearing'
+            name="cancel-virtual-hearing"
             linkStyling
             disabled={loading || success}
             onClick={onReset}
