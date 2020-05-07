@@ -18,4 +18,8 @@ module Taskable
       .detect { |t| t.is_a?(JudgeTask) }
       .try(:assigned_to)
   end
+
+  def overtime=(overtime)
+    WorkMode.create_or_update_by_appeal(self, overtime: overtime)
+  end
 end
