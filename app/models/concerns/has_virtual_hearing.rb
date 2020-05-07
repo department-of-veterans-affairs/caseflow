@@ -23,4 +23,8 @@ module HasVirtualHearing
 
     readable_request_type
   end
+
+  def hearing_location_or_regional_office
+    location.nil? ? regional_office : location
+  end
 end
