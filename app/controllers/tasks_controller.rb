@@ -97,10 +97,14 @@ class TasksController < ApplicationController
     tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
-  rescue ActiveRecord::RecordInvalid => error
+  rescue AssignHearingDispositionTask::HearingAssociationMissing => error
     Raven.capture_exception(error)
-  rescue Caseflow::Error::VacolsRecordNotFound => error
-    Raven.capture_exception(error)
+    render json: {
+      "errors": [
+        "title": "Missing Associated Hearing",
+        "detail": error
+      ]
+    }, status: :bad_request
   end
 
   def for_appeal

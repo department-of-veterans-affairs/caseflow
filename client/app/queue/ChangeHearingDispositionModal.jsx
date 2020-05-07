@@ -19,12 +19,14 @@ import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
 import { requestPatch } from './uiReducer/uiActions';
+import Alert from '../components/Alert';
 
 class ChangeHearingDispositionModal extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      error: null,
       selectedValue: null,
       instructions: ''
     };
@@ -72,8 +74,18 @@ class ChangeHearingDispositionModal extends React.Component {
       then((resp) => {
         this.props.onReceiveAmaTasks(resp.body.tasks.data);
       }).
-      catch(() => {
-        // handle the error from the frontend
+      catch((e) => {
+        // Process the error from the response
+        const message = e?.message ? JSON.parse(e?.message) : {};
+        const error = _.isArray(message.errors) ? message.errors[0] : e;
+
+        // Set the state with the error to show the message
+        this.setState({
+          error
+        });
+
+        // Throw the error to prevent the Modal from closing
+        throw error;
       });
   };
 
@@ -82,6 +94,7 @@ class ChangeHearingDispositionModal extends React.Component {
   };
 
   render = () => {
+    const { error } = this.state;
     const { appeal, highlightFormItems, task } = this.props;
 
     const hearing = _.find(appeal.hearings, { externalId: task.externalHearingId });
@@ -98,6 +111,11 @@ class ChangeHearingDispositionModal extends React.Component {
         submit={this.submit}
         validateForm={this.validateForm}
       >
+        {error && (
+          <Alert title={error.title} type="error">
+            {error.detail}
+          </Alert>
+        )}
         <p>
           Changing the hearing disposition for this case will close all the open tasks and will remove the case from the
           current workflow.

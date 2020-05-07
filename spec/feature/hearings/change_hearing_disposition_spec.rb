@@ -6,7 +6,7 @@ RSpec.shared_examples "Change hearing disposition" do
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:hearing_task) { create(:hearing_task, parent: root_task) }
-  let(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+  let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
   let!(:change_task) { create(:change_hearing_disposition_task, parent: hearing_task) }
   let(:instructions_text) { "This is why I'm changing this hearing's disposition." }
 
@@ -108,21 +108,29 @@ RSpec.shared_examples "Change hearing disposition" do
         expect(page).to have_content("Unassigned (0)")
       end
     end
+  end
 
-    scenario "with missing hearing task association" do
+  context "hearing task is missing association to hearing" do
+    before do
+      association.destroy
+      hearing_task.reload
+    end
+
+    scenario "when changing hearing disposition" do
       step "visit the hearing admin organization queue and click on the veteran's name" do
         visit "/organizations/#{HearingAdmin.singleton.url}"
         expect(page).to have_content("Unassigned (1)")
         click_on veteran_link_text
       end
 
-      step "change the hearing disposition to postponed" do
+      step "change the hearing disposition to cancelled" do
+        expect(Raven).to receive(:capture_exception)
+          .with(AssignHearingDispositionTask::HearingAssociationMissing) { @raven_called = true }
+
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
+        click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
         fill_in "Notes", with: instructions_text
         click_button("Submit")
-
-        allow(Raven).to receive(:capture_exception).with(ActiveRecord::RecordInvalid) { @raven_called = true }
       end
     end
   end

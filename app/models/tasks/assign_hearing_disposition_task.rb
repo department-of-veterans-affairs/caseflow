@@ -14,6 +14,7 @@ class AssignHearingDispositionTask < Task
   class HearingDispositionNotPostponed < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
   class HearingDispositionNotHeld < StandardError; end
+  class HearingAssociationMissing < StandardError; end
 
   class << self
     def create_assign_hearing_disposition_task!(appeal, parent, hearing)
@@ -138,24 +139,13 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_hearing_disposition(disposition:)
-    check_hearing_exists(hearing)
-
-    # Ensure the hearing task association exists
-    if hearing_task.hearing_task_association.nil?
-      HearingTaskAssociation.create!(hearing: hearing, hearing_task: hearing_task)
-    end
+    # Ensure the hearing exists
+    fail HearingAssociationMissing if hearing.nil?
 
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: disposition)
     else
       hearing.update(disposition: disposition)
-    end
-  end
-
-  def check_hearing_exists(hearing)
-    # Ensure the hearing exists
-    if hearing.nil?
-      fail ActiveRecord::RecordInvalid
     end
   end
 
