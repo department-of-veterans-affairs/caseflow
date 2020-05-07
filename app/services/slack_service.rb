@@ -2,6 +2,11 @@
 
 class SlackService
   DEFAULT_CHANNEL = "#appeals-job-alerts"
+  COLORS = {
+    error: "#ff0000",
+    info: "#cccccc",
+    warn: "#ffff00"
+  }.freeze
 
   def initialize(url:)
     @url = url
@@ -24,6 +29,16 @@ class SlackService
     HTTPClient.new
   end
 
+  def pick_color(title, msg)
+    if title =~ /error/i || msg =~ /error/i
+      COLORS[:error]
+    elsif title =~ /warn/i || msg =~ /warn/i
+      COLORS[:warn]
+    else
+      COLORS[:info]
+    end
+  end
+
   def format_slack_msg(msg, title, channel)
     channel.prepend("#") unless channel.match?(/^#/)
 
@@ -33,7 +48,7 @@ class SlackService
       attachments: [
         {
           title: title,
-          color: "#ccc",
+          color: pick_color(title, msg),
           text: msg
         }
       ]

@@ -101,11 +101,16 @@ export class DailyDocketContainer extends React.Component {
   formatHearingFormData = (hearingFormData) => {
     const { virtualHearing, location, ...rest } = hearingFormData;
 
-    return ApiUtil.convertToSnakeCase(_.omitBy({
-      ...rest,
-      hearing_location_attributes: location,
-      virtual_hearing_attributes: virtualHearing || {}
-    }, _.isUndefined));
+    return ApiUtil.convertToSnakeCase(
+      _.omitBy(
+        {
+          ..._.omit(rest, ['advanceOnDocketMotion']),
+          hearing_location_attributes: location,
+          virtual_hearing_attributes: virtualHearing || {}
+        },
+        _.isUndefined
+      )
+    );
   };
 
   formatAodMotionForm = (aodMotionForm, hearing) => {
@@ -113,12 +118,14 @@ export class DailyDocketContainer extends React.Component {
       return {};
     }
 
-    // always send reason and person_id
-    return ApiUtil.convertToSnakeCase({
-      ...aodMotionForm,
-      person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId,
-      reason: aodMotionForm.reason || hearing.advanceOnDocketMotion.reason
-    });
+    // always send full AOD data
+    return ApiUtil.convertToSnakeCase(
+      {
+        ..._.omit(hearing.advanceOnDocketMotion, ['date', 'judgeName', 'userId']),
+        ...aodMotionForm,
+        person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId
+      }
+    );
   }
 
   saveHearing = (hearingId, hearingFormData) => {

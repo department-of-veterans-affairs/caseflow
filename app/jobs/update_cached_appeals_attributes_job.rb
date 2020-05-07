@@ -202,7 +202,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def log_error(start_time, err)
     duration = time_ago_in_words(start_time)
     msg = "UpdateCachedAppealsAttributesJob failed after running for #{duration}. Fatal error: #{err.message}"
-    slack_msg = "UpdateCachedAppealsAttributesJob failed after running for #{duration}. See Sentry for error"
+    slack_msg = "[ERROR] UpdateCachedAppealsAttributesJob failed after running for #{duration}. See Sentry for error"
 
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
