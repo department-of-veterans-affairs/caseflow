@@ -4,6 +4,7 @@ class Hearing < CaseflowRecord
   include HasHearingTask
   include HasVirtualHearing
   include HearingTimeConcern
+  include HearingLocationConcern
   include HasSimpleAppealUpdatedSince
 
   belongs_to :hearing_day
