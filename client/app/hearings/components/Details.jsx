@@ -189,7 +189,8 @@ const HearingDetails = (props) => {
       hearing: {
         ...(hearingDetailsForm || {}),
         transcription_attributes: {
-          ...(this.props.formData.transcriptionDetailsForm || {})
+          // Always send full transcription details because a new record is created each update
+          ...(hearingForms.transcriptionDetailsForm || {})
         },
         virtual_hearing_attributes: {
           ...(virtualHearingForm || {})
