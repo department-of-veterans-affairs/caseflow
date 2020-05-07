@@ -55,7 +55,7 @@ class HearingLocation < CaseflowRecord
     facility_id == "vba_372"
   end
 
-  def facility_address(key)
-    Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[key]
+  def facility_address(location_key)
+    Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[location_key]
   end
 end
