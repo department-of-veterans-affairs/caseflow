@@ -24,6 +24,6 @@ class ETL::Build < ETL::Record
   end
 
   def build_for(table_name)
-    etl_build_tables.find { |ebt| ebt.table_name == table_name }
+    etl_build_tables.find { |ebt| ebt.table_name == table_name } # .find_by(table_name: ...)?
   end
 end

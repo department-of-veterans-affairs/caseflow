@@ -57,7 +57,7 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
 
     context "Appeal is not yet established" do
       let!(:appeal) { create(:appeal, established_at: nil) }
-      let(:etl_build_table) { ETL::BuildTable.where(table_name: "vha_decision_reviews").last }
+      let(:etl_build_table) { ETL::BuildTable.find_by(table_name: "vha_decision_reviews") }
 
       it "skips non-established Appeals" do
         subject
