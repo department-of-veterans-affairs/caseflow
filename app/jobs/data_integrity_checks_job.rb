@@ -13,6 +13,7 @@ class DataIntegrityChecksJob < CaseflowJob
     PendingIncompleteAndUncancelledTaskTimersChecker
     ReviewsWithDuplicateEpErrorChecker
     StuckAppealsChecker
+    StuckVirtualHearingsChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 

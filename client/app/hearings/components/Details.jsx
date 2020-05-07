@@ -136,7 +136,7 @@ const HearingDetails = (props) => {
     hearingsFormDispatch({ type: UPDATE_VIRTUAL_HEARING, payload: newVirtualHearingValues });
 
     // Calculate the form changes
-    const updates = getChanges(initialFormData, newVirtualHearingValues);
+    const updates = getChanges(this.state.initialFormData, { virtualHearingsForm: newVirtualHearingValues });
 
     hearingsFormDispatch({
       type: SET_UPDATED,
