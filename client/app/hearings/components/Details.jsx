@@ -90,7 +90,7 @@ const HearingDetails = (props) => {
         emailEvents: _.values(hearing.emailEvents),
         // Transcription Request
         transcriptRequested: hearing.transcriptRequested,
-        transcriptSentDate: DateUtil.formatDateStr(transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+        transcriptSentDate: DateUtil.formatDateStr(transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
       },
       transcriptionDetailsForm: {
         // Transcription Details
