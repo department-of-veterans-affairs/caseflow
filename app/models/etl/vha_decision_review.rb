@@ -13,22 +13,13 @@
 class ETL::VhaDecisionReview < ETL::Record
   self.inheritance_column = :decision_review_type
 
-  STI_TYPE_HASH = {
-    Appeal.name => 'ETL::VhaAppeal',
-    # Appeal.name => ETL::VhaAppeal.name, # causes: Circular dependency detected while autoloading constant ETL::VhaAppeal (RuntimeError)
-    HigherLevelReview.name => ETL::VhaHigherLevelReview.name,
-    SupplementalClaim.name => ETL::VhaSupplementalClaim.name
-  }.freeze
-
-  INVERTED_STI_TYPE_HASH = STI_TYPE_HASH.invert
-
   class << self
     def find_sti_class(type_name)
-      super(STI_TYPE_HASH[type_name])
+      super("ETL::Vha#{type_name}")
     end
 
     def sti_name
-      INVERTED_STI_TYPE_HASH[self.name]
+      name.delete_prefix('ETL::Vha')
     end
 
     private
