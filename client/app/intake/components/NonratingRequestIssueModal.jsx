@@ -240,8 +240,9 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   render() {
-    const { formType, intakeData, onCancel } = this.props;
+    const { formType, intakeData, onCancel, featureToggles } = this.props;
     const { benefitType, category, selectedNonratingIssueId } = this.state;
+    const attorneyFeature = featureToggles.attorneyFees;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -251,6 +252,11 @@ class NonratingRequestIssueModal extends React.Component {
       selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection ?
         this.getAdditionalDetails() :
         null;
+
+    // remove this logic when attorney_fee featureToggle is turned on
+    // and instead call nonratingRequestIssueCategories(benefitType)
+    const compensationCategories = nonratingRequestIssueCategories(
+      benefitType === 'compensation' && attorneyFeature ? 'compensation_all' : benefitType);
 
     const benefitTypeElement =
       formType === 'appeal' ? <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown /> : null;
@@ -272,7 +278,7 @@ class NonratingRequestIssueModal extends React.Component {
                 label="Issue category"
                 strongLabel
                 placeholder="Select or enter..."
-                options={nonratingRequestIssueCategories(benefitType)}
+                options={compensationCategories}
                 value={category}
                 onChange={this.categoryOnChange}
               />
@@ -299,7 +305,8 @@ NonratingRequestIssueModal.propTypes = {
   formType: PropTypes.string,
   activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
-  addedIssues: PropTypes.array
+  addedIssues: PropTypes.array,
+  featureToggles: PropTypes.object
 };
 
 NonratingRequestIssueModal.defaultProps = {
