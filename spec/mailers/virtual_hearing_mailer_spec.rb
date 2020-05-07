@@ -267,7 +267,7 @@ describe VirtualHearingMailer do
       end
 
       context "with ama hearing" do
-        include_context "legacy hearing"
+        include_context "ama hearing"
 
         it_behaves_like "email body has correct hearing location"
       end
