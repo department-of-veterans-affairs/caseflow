@@ -80,7 +80,9 @@ ReadOnlyEmails.propTypes = {
   showAllEmails: PropTypes.bool
 };
 
-const Emails = ({ virtualHearing, update, vetEmailError, repEmailError }) => (
+const Emails = (
+  { readOnly, virtualHearing, update, vetEmailError, repEmailError }
+) => (
   <React.Fragment>
     <TextField
       strongLabel
@@ -88,6 +90,7 @@ const Emails = ({ virtualHearing, update, vetEmailError, repEmailError }) => (
       name="vet-email"
       label="Veteran Email"
       errorMessage={vetEmailError}
+      readOnly={readOnly}
       onChange={(veteranEmail) => update({ veteranEmail })}
     />
     <TextField
@@ -96,12 +99,14 @@ const Emails = ({ virtualHearing, update, vetEmailError, repEmailError }) => (
       name="rep-email"
       label="POA/Representative Email"
       errorMessage={repEmailError}
+      readOnly={readOnly}
       onChange={(representativeEmail) => update({ representativeEmail })}
     />
   </React.Fragment>
 );
 
 Emails.propTypes = {
+  readOnly: PropTypes.bool,
   virtualHearing: PropTypes.shape({
     veteranEmail: PropTypes.string,
     representativeEmail: PropTypes.string
@@ -184,6 +189,7 @@ const VirtualHearingModal = (props) => {
   const [vetEmailError, setVetEmailError] = useState(null);
   const [repEmailError, setRepEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const typeSettings = TYPES[type];
   const veteranEmail = type === 'change_to_virtual'
     ? virtualHearing.veteranEmail || hearing.veteranEmailAddress
@@ -208,9 +214,12 @@ const VirtualHearingModal = (props) => {
     setLoading(true);
 
     submit()
-      .then(() => setLoading(false))
-      .then(closeModal)
-      .catch((error) => {
+      ?.then(() => {
+        setLoading(false);
+        setSuccess(true);
+      })
+      ?.then(closeModal)
+      ?.catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
         const msg = error.response.body.errors[0].message;
 
@@ -233,6 +242,7 @@ const VirtualHearingModal = (props) => {
           <Button
             name='submit-virtual-hearing'
             classNames={['usa-button-secondary']}
+            disabled={success}
             loading={loading}
             onClick={onSubmit}
           >
@@ -243,7 +253,7 @@ const VirtualHearingModal = (props) => {
           <Button
             name='cancel-virtual-hearing'
             linkStyling
-            disabled={loading}
+            disabled={loading || success}
             onClick={onReset}
           >
             Cancel
@@ -254,6 +264,7 @@ const VirtualHearingModal = (props) => {
 
         <typeSettings.element
           {...props}
+          readOnly={success}
           vetEmailError={vetEmailError}
           repEmailError={repEmailError}
         />
