@@ -92,7 +92,7 @@ describe StatsCollectorJob do
       end
       let(:runtime_gauges) do
         emitted_gauges.select { |gauge| gauge[:metric_name] == "runtime" }
-          .map { |gauge| [gauge[:metric_group], gauge] }.to_h
+          .index_by { |gauge| gauge[:metric_group] }
       end
 
       context "with a daily collector" do
@@ -134,10 +134,10 @@ describe StatsCollectorJob do
           # check failing collector
           expect(runtime_gauges["stats_collector_job.failing_collector"][:metric_value]).not_to be_nil
           failure_msg = "failing_collector failed after running for less than a minute. Fatal error: meant to fail"
-          expect(slack_msg).to include(failure_msg)
+          expect(slack_msg.any? { |msg| msg.include?(failure_msg) }).to be_truthy
           # individual collector fails, but job completes
           success_msg = "StatsCollectorJob completed after running for less than a minute."
-          expect(slack_msg).to include(success_msg)
+          expect(slack_msg.any? { |msg| msg.include?(success_msg) }).to be_truthy
 
           # check subsequent collector
           expect(runtime_gauges["stats_collector_job"][:metric_value]).not_to be_nil
