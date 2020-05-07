@@ -46,7 +46,7 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
         subject
 
         appeal = ETL::VhaAppeal.first
-        expect(appeal.benefit_type).to_not be_nil
+        expect(appeal.benefit_type).to eq("vha")
         expect(appeal.decision_review_id).to_not be_nil
         expect(appeal.decision_review_type).to_not be_nil
         expect(appeal.uuid).to_not be_nil

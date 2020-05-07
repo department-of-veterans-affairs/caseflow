@@ -19,7 +19,7 @@ class ETL::VhaDecisionReview < ETL::Record
     end
 
     def sti_name
-      name.delete_prefix('ETL::Vha')
+      name.delete_prefix("ETL::Vha")
     end
 
     private
@@ -83,8 +83,12 @@ class ETL::VhaDecisionReview < ETL::Record
         target[attr] = original[attr]
       end
 
-      # TEMP
-      target[:benefit_type] = "vha" if original.class == Appeal && !target[:benefit_type]
+      if original.class == Appeal
+        unique_benefit_types = original.request_issues.pluck(:benefit_type).uniq
+        target[:benefit_type] = unique_benefit_types.first if unique_benefit_types.size == 1
+        # QUESTION: Do we want to note (eg, in another column) if an appeal has request_issues of non-VHA benefit_type?
+      end
+
       # to do: based on VHA feedback we might need to add more calculated values
 
       target
