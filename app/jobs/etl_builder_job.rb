@@ -20,8 +20,13 @@ class ETLBuilderJob < CaseflowJob
 
   def sweep_etl
     start = Time.zone.now
-    ETL::Sweeper.new.call
+    swept = ETL::Sweeper.new.call
     datadog_report_time_segment(segment: "etl_sweeper", start_time: start)
+
+    return unless swept > 0
+
+    msg = "[INFO] ETL swept up #{swept} deleted records -- see logs for details"
+    slack_service.send_notification(msg, "ETL::Sweeper", SLACK_CHANNEL)
   end
 
   def build_etl
@@ -31,7 +36,7 @@ class ETLBuilderJob < CaseflowJob
 
     return unless etl_build.built == 0
 
-    msg = "ETL failed to sync any records"
+    msg = "[WARN] ETL failed to sync any records"
     slack_service.send_notification(msg, self.class.to_s, SLACK_CHANNEL)
   end
 end

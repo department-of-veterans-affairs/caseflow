@@ -39,7 +39,7 @@ describe ETLBuilderJob, :etl, :all_dbs do
       it "sends alert to Slack" do
         Timecop.travel(Time.zone.now + 1.hour) { subject }
 
-        expect(@slack_msg).to eq "ETL failed to sync any records"
+        expect(@slack_msg).to eq "[WARN] ETL failed to sync any records"
       end
     end
 
