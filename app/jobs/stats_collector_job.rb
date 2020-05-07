@@ -96,7 +96,7 @@ class StatsCollectorJob < CaseflowJob
     msg = "#{self.class.name} completed after running for #{duration}."
     Rails.logger.info(msg)
 
-    slack_service.send_notification(msg)
+    slack_service.send_notification("[INFO] #{msg}") # may not need this
   end
 
   def log_error(collector_name, err)
