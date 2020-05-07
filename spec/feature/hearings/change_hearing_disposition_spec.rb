@@ -110,7 +110,7 @@ RSpec.shared_examples "Change hearing disposition" do
     end
   end
 
-  context "hearing task is missing association to hearing" do
+  fcontext "hearing task is missing association to hearing" do
     before do
       association.destroy
       hearing_task.reload
@@ -131,6 +131,10 @@ RSpec.shared_examples "Change hearing disposition" do
         click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
         fill_in "Notes", with: instructions_text
         click_button("Submit")
+
+        expect(page).to have_content("Hearing task (#{change_task.id}) is missing an associated hearing. " \
+        "This means that either the hearing was deleted in VACOLS or " \
+        "the hearing association has been deleted.")
       end
     end
   end
