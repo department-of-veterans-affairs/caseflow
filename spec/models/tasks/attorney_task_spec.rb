@@ -100,9 +100,7 @@ describe AttorneyTask, :all_dbs do
     end
     let(:update_params) { { status: Task.statuses[:on_hold] } }
 
-    subject do
-      attorney_task.update(update_params)
-    end
+    subject { attorney_task.update(update_params) }
 
     context "when not updating the assigner or assignee" do
       it "does not check the assignee or the assigner roles and the task is valid" do
