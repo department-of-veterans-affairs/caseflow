@@ -7,7 +7,7 @@ describe SlackService do
   before do
     @http_params = nil
     allow(HTTPClient).to receive(:new) { http_agent }
-    allow(http_agent).to receive(:post) do |url, params|
+    allow(http_agent).to receive(:post) do |_url, params|
       @http_params = params
       "response"
     end
@@ -30,28 +30,28 @@ describe SlackService do
     context "title contains ERROR" do
       it "picks red color" do
         slack_service.send_notification("filler message contents", "[ERROR] ouch!")
-        expect(@http_params[:body]).to match /"#ff0000"/
+        expect(@http_params[:body]).to match(/"#ff0000"/)
       end
     end
 
     context "message contains error" do
       it "picks red color" do
         slack_service.send_notification("there was an error")
-        expect(@http_params[:body]).to match /"#ff0000"/
+        expect(@http_params[:body]).to match(/"#ff0000"/)
       end
     end
 
     context "message contains warning" do
       it "picks yellow color" do
         slack_service.send_notification("a warning of something")
-        expect(@http_params[:body]).to match /"#ffff00"/
+        expect(@http_params[:body]).to match(/"#ffff00"/)
       end
     end
 
     context "no magic string" do
       it "defaults to gray" do
         slack_service.send_notification("hello world")
-        expect(@http_params[:body]).to match /"#cccccc"/
+        expect(@http_params[:body]).to match(/"#cccccc"/)
       end
     end
   end
