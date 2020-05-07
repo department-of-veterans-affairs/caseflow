@@ -124,14 +124,14 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         expect(page).to have_content("Assign 0 Cases")
       end
 
-      include_examples "accessing other teams"
+      include_examples "accessing assigned queue for attorney not on attorney's team"
     end
 
     context "When :scm_view_judge_assign_queue feature is enabled" do
       before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
       after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
       context "attempt to view other team's attorney's cases" do
-        include_examples "accessing other teams"
+        include_examples "accessing assigned queue for attorney not on attorney's team"
 
         it "succeeds after user is added to SpecialCaseMovementTeam" do
           SpecialCaseMovementTeam.singleton.add_user(judge_two.user)
