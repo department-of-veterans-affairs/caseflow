@@ -74,10 +74,10 @@ class ChangeHearingDispositionModal extends React.Component {
       then((resp) => {
         this.props.onReceiveAmaTasks(resp.body.tasks.data);
       }).
-      catch((e) => {
+      catch((err) => {
         // Process the error from the response
-        const message = e?.message ? JSON.parse(e?.message) : {};
-        const error = _.isArray(message.errors) ? message.errors[0] : e;
+        const message = err?.message ? JSON.parse(err?.message) : {};
+        const error = _.isArray(message.errors) ? message.errors[0] : err;
 
         // Set the state with the error to show the message
         this.setState({
