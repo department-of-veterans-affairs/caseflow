@@ -21,7 +21,6 @@ describe SlackService do
   context "when it is run in the uat environment" do
     it "does not make post request" do
       stub_const("ENV", "DEPLOY_ENV" => "uat")
-      #expect_any_instance_of(HTTPClient).to_not receive(:post)
       slack_service.send_notification("filler message contents")
       expect(@http_params).to be_nil
     end
