@@ -107,7 +107,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   end
 
   context "Cannot view attorney's cases in other teams" do
-    shared_examples "accessing other teams" do
+    shared_examples "accessing assigned queue for attorney not on attorney's team" do
       it "fails visiting attorney's cases in other teams" do
         visit "/queue/#{judge_two.user.css_id}/assign/#{attorney_one.id}"
         expect(page).to have_content("Attorney is not part of the specified judge's team.")
