@@ -183,6 +183,7 @@ const VirtualHearingModal = (props) => {
   const { closeModal, hearing, virtualHearing, reset, submit, type } = props
   const [vetEmailError, setVetEmailError] = useState(null);
   const [repEmailError, setRepEmailError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const typeSettings = TYPES[type];
   const veteranEmail = type === 'change_to_virtual'
     ? virtualHearing.veteranEmail || hearing.veteranEmailAddress
@@ -204,7 +205,10 @@ const VirtualHearingModal = (props) => {
   const onSubmit = () => {
     if (!validateForm) { return }
 
+    setLoading(true);
+
     submit()
+      .then(() => setLoading(false))
       .then(closeModal)
       .catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
@@ -226,12 +230,22 @@ const VirtualHearingModal = (props) => {
         title={typeSettings.title}
         closeHandler={onReset}
         confirmButton={
-          <Button classNames={['usa-button-secondary']} onClick={onSubmit}>
+          <Button
+            name='submit-virtual-hearing'
+            classNames={['usa-button-secondary']}
+            loading={loading}
+            onClick={onSubmit}
+          >
             {typeSettings.button || COPY.VIRTUAL_HEARING_CHANGE_HEARING_BUTTON}
           </Button>
         }
         cancelButton={
-          <Button linkStyling onClick={onReset}>
+          <Button
+            name='cancel-virtual-hearing'
+            linkStyling
+            disabled={loading}
+            onClick={onReset}
+          >
             Cancel
           </Button>
         }
