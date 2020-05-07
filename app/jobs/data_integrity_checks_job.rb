@@ -41,6 +41,6 @@ class DataIntegrityChecksJob < CaseflowJob
   private
 
   def send_to_slack(checker)
-    slack_service.send_notification(checker.report, checker.class.name, checker.slack_channel)
+    slack_service.send_notification("[WARN] #{checker.report}", checker.class.name, checker.slack_channel)
   end
 end
