@@ -7,14 +7,14 @@ import DateSelector from '../../../components/DateSelector';
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import TRANSCRIPTION_PROBLEM_TYPES from
-  '../../../../constants/TRANSCRIPTION_PROBLEM_TYPES.json';
+  '../../../../constants/TRANSCRIPTION_PROBLEM_TYPES';
 import TRANSCRIPTION_REQUESTED_REMEDIES from
-  '../../../../constants/TRANSCRIPTION_REQUESTED_REMEDIES.json';
+  '../../../../constants/TRANSCRIPTION_REQUESTED_REMEDIES';
 
 const TRANSCRIPTION_PROBLEM_OPTIONS = _.concat(
   _.map(
     _.values(TRANSCRIPTION_PROBLEM_TYPES),
-    (value) => ( { label: value, value } )
+    (value) => ({ label: value, value })
   ),
   [
     {
@@ -27,7 +27,7 @@ const TRANSCRIPTION_PROBLEM_OPTIONS = _.concat(
 const TRANSCRIPTION_REMEDIES_OPTIONS = _.concat(
   _.map(
     _.values(TRANSCRIPTION_REQUESTED_REMEDIES),
-    (value) => ( { displayText: value, value } )
+    (value) => ({ displayText: value, value })
   ),
   [
     {
