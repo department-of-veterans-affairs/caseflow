@@ -106,7 +106,7 @@ push(){
 
 download(){
   # get circleci latest image from this same repo
-  facols_image=$(cat ${THIS_SCRIPT_DIR}/../../.circleci/config.yml| grep facols | awk '{print $3}')
+  facols_image=$(cat ${THIS_SCRIPT_DIR}/../../.circleci/config.yml| grep -m 1 facols | awk '{print $3}')
   eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
   docker pull $facols_image
   docker tag $facols_image vacols_db:latest
