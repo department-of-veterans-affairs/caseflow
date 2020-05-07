@@ -259,7 +259,7 @@ VirtualHearingModal.propTypes = {
   virtualHearing: PropTypes.shape({
     veteranEmail: PropTypes.string,
     representativeEmail: PropTypes.string
-  }),
+  }).isRequired,
   hearing: PropTypes.shape({
     scheduledFor: PropTypes.string,
     scheduledTimeString: PropTypes.string,
