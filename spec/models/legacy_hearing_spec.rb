@@ -483,4 +483,24 @@ describe LegacyHearing, :all_dbs do
       end
     end
   end
+
+  context "#hearing_location_or_regional_office" do
+    subject { legacy_hearing.hearing_location_or_regional_office }
+
+    context "hearing location is nil" do
+      let(:legacy_hearing) { create(:legacy_hearing, regional_office: nil) }
+
+      it "returns regional office" do
+        expect(subject).to eq(legacy_hearing.regional_office)
+      end
+    end
+
+    context "hearing location is not nil" do
+      let(:legacy_hearing) { create(:legacy_hearing, regional_office: regional_office) }
+
+      it "returns hearing location" do
+        expect(subject).to eq(legacy_hearing.location)
+      end
+    end
+  end
 end
