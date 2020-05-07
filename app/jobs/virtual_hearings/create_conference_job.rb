@@ -101,8 +101,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       fail ArgumentError, "Invalid hearing type supplied to job: `#{hearing_type}`"
     end
 
-    fail VirtualHearingRequestCancelled if virtual_hearing.cancelled?
     fail VirtualHearingNotCreatedError if virtual_hearing.nil?
+    fail VirtualHearingRequestCancelled if virtual_hearing.cancelled?
   end
 
   def log_virtual_hearing_state

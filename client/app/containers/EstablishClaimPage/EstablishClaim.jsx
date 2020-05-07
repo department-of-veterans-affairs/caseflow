@@ -222,12 +222,12 @@ export class EstablishClaim extends React.Component {
       (error) => {
         this.props.performEstablishClaimFailure();
         // eslint-disable-next-line
-        const errorMessage = CREATE_EP_ERRORS[error.response.body?.error_code] || CREATE_EP_ERRORS.default;
+        const errorMessage = CREATE_EP_ERRORS[error.response?.body?.error_code] || CREATE_EP_ERRORS.default;
 
         const nextModifier = this.validModifiers()[1];
 
         // eslint-disable-next-line
-        if (error.response.body?.error_code === 'duplicate_ep' && nextModifier) {
+        if (error.response?.body?.error_code === 'duplicate_ep' && nextModifier) {
           this.props.onDuplicateEP(nextModifier);
         }
 

@@ -101,7 +101,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
     Raven.capture_exception(err)
 
-    slack_service.send_notification(msg)
+    slack_service.send_notification("[ERROR] #{msg}")
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
