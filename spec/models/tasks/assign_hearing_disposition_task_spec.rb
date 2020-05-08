@@ -260,7 +260,7 @@ describe AssignHearingDispositionTask, :all_dbs do
 
   context "disposition updates" do
     let(:disposition) { nil }
-    let(:appeal) { create(:appeal) }
+    let(:appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing) }
     let(:root_task) { create(:root_task, appeal: appeal) }
     let(:distribution_task) { create(:distribution_task, parent: root_task) }
     let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
