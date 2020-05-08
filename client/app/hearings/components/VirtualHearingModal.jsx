@@ -209,17 +209,14 @@ const VirtualHearingModal = (props) => {
   };
 
   const onSubmit = () => {
-    if (!validateForm) {
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
 
     submit()
-      ?.then(() => {
-        setLoading(false);
-        setSuccess(true);
-      })
+      ?.then(() => setSuccess(true))
       ?.then(closeModal)
       ?.catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
@@ -227,7 +224,8 @@ const VirtualHearingModal = (props) => {
 
         setRepEmailError(msg.indexOf('Representative') === -1 ? null : INVALID_EMAIL_FORMAT);
         setVetEmailError(msg.indexOf('Veteran') === -1 ? null : INVALID_EMAIL_FORMAT);
-      });
+      })
+      ?.finally(() => setLoading(false));
   };
 
   const onReset = () => {
