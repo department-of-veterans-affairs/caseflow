@@ -3,8 +3,6 @@
 require_relative "./vha_shared_examples"
 
 describe ETL::VhaHigherLevelReviewSyncer, :etl, :all_dbs do
-  include SQLHelpers
-
   let(:origin_class) { HigherLevelReview }
   let(:target_class) { ETL::VhaHigherLevelReview }
   before do
@@ -12,7 +10,7 @@ describe ETL::VhaHigherLevelReviewSyncer, :etl, :all_dbs do
     create(:higher_level_review, benefit_type: "vha")
   end
 
-  def vha_decision_reviews_count
+  def originals_count
     origin_class.where(benefit_type: "vha").count
   end
 

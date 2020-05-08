@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 # Shared examples used by vha_*_syncer_spec.rb files for Appeal, HLR, and SC
+# Consuming specs must define these methods:
+#  originals_count
+#
 
 shared_examples "VHA decision review sync" do
   let(:etl_build) { ETL::Build.create }
@@ -24,9 +27,10 @@ shared_examples "VHA decision review sync" do
       expect(target_class.count).to eq(0)
     end
 
-    context "BVA status distribution" do
-      it "has expected distribution" do
-        expect(vha_decision_reviews_count).to eq(1)
+    context "full sync" do
+      it "original/target counts match" do
+        expect(originals_count).to eq(1)
+
         subject
 
         expect(target_class.count).to eq(1)
@@ -35,12 +39,12 @@ shared_examples "VHA decision review sync" do
       it "populates expected attributes" do
         subject
 
-        dr = target_class.first
-        expect(dr.benefit_type).to eq("vha")
-        expect(dr.decision_review_id).to_not be_nil
-        expect(dr.decision_review_type).to_not be_nil
-        expect(dr.uuid).to_not be_nil
-        expect(dr.veteran_file_number).to_not be_nil
+        target = target_class.first
+        expect(target.benefit_type).to eq("vha")
+        expect(target.decision_review_id).to_not be_nil
+        expect(target.decision_review_type).to_not be_nil
+        expect(target.uuid).to_not be_nil
+        expect(target.veteran_file_number).to_not be_nil
       end
     end
 
