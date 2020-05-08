@@ -239,6 +239,41 @@ describe VirtualHearingMailer do
     end
   end
 
+  shared_examples_for "email body has correct hearing location" do
+    describe "hearing_location is not nil" do
+      it "shows correct hearing location" do
+        expect(subject.html_part.body).to include(hearing.location.full_address)
+        expect(subject.html_part.body).to include(hearing.hearing_location.name)
+      end
+    end
+
+    describe "hearing_location is nil" do
+      it "shows correct hearing location" do
+        hearing.update!(hearing_location: nil)
+        expect(subject.html_part.body).to include(hearing.regional_office.full_address)
+        expect(subject.html_part.body).to include(hearing.regional_office.name)
+      end
+    end
+  end
+
+  shared_examples_for "cancellation email body has the correct hearing location" do
+    describe "#cancellation" do
+      include_context "cancellation email"
+
+      context "with legacy hearing" do
+        include_context "legacy hearing"
+
+        it_behaves_like "email body has correct hearing location"
+      end
+
+      context "with ama hearing" do
+        include_context "ama hearing"
+
+        it_behaves_like "email body has correct hearing location"
+      end
+    end
+  end
+
   context "for judge" do
     include_context "ama hearing"
 
@@ -280,6 +315,7 @@ describe VirtualHearingMailer do
       "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
     )
     it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:veteran])
+    it_behaves_like("cancellation email body has the correct hearing location")
   end
 
   context "for representative" do
@@ -299,5 +335,6 @@ describe VirtualHearingMailer do
       "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
     )
     it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:representative])
+    it_behaves_like("cancellation email body has the correct hearing location")
   end
 end
