@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_04_204154) do
+ActiveRecord::Schema.define(version: 2020_05_08_141923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -240,7 +240,7 @@ ActiveRecord::Schema.define(version: 2020_05_04_204154) do
     t.boolean "prepped", comment: "hearings.prepped"
     t.string "representative_name", comment: "hearings.representative_name"
     t.string "room", comment: "hearings.room"
-    t.time "scheduled_time", null: false, comment: "hearings.scheduled_time"
+    t.time "scheduled_time", comment: "hearings.scheduled_time"
     t.text "summary", comment: "hearings.summary"
     t.boolean "transcript_requested", comment: "hearings.transcript_requested"
     t.date "transcript_sent_date", comment: "hearings.transcript_sent_date"
@@ -379,5 +379,4 @@ ActiveRecord::Schema.define(version: 2020_05_04_204154) do
     t.index ["updated_at"], name: "index_users_on_updated_at"
     t.index ["user_id"], name: "index_users_on_user_id"
   end
-
 end

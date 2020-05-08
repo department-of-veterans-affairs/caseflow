@@ -164,7 +164,7 @@ hearings,notes,string,,,,,,hearings.notes
 hearings,prepped,boolean,,,,,,hearings.prepped
 hearings,representative_name,string,,,,,,hearings.representative_name
 hearings,room,string,,,,,,hearings.room
-hearings,scheduled_time,time ∗,x,,,,,hearings.scheduled_time
+hearings,scheduled_time,time ∗,,,,,,hearings.scheduled_time
 hearings,summary,text,,,,,,hearings.summary
 hearings,transcript_requested,boolean,,,,,,hearings.transcript_requested
 hearings,transcript_sent_date,date,,,,,,hearings.transcript_sent_date
