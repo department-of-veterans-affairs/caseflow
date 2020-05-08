@@ -314,7 +314,7 @@ FactoryBot.define do
         parent { create(:ama_task, appeal: appeal) }
       end
 
-      factory :ama_judge_task, class: JudgeAssignTask do
+      factory :ama_judge_assign_task, class: JudgeAssignTask do
       end
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do

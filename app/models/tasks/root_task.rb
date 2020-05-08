@@ -103,10 +103,9 @@ class RootTask < Task
     ).any?
       fail(
         Caseflow::Error::DuplicateOrgTask,
-        appeal_id: appeal.id,
+        docket_number: appeal.docket_number,
         task_type: self.class.name,
-        assignee_type: assigned_to.class.name,
-        parent_id: parent&.id
+        assignee_type: assigned_to.class.name
       )
     end
   end
