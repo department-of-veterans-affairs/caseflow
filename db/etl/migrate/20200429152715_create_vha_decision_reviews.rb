@@ -15,9 +15,7 @@ class CreateVhaDecisionReviews < ActiveRecord::Migration[5.2]
       t.index ["decision_review_id", "decision_review_type"], unique: true, name: "idx_vha_decision_review_id_and_type"
 
       # attributes that Appeal, HLR, and SC all have in common
-
-      # TODO verify LoB == benefit type, check on nonrating issues in particular
-      t.string "benefit_type", null: false, limit: 15, comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
+      t.string "benefit_type", null: false, comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
       t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
       t.datetime "establishment_submitted_at", comment: "Timestamp for when the Higher Level Review was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
 
@@ -67,11 +65,7 @@ class CreateVhaDecisionReviews < ActiveRecord::Migration[5.2]
       t.string "stream_docket_number", comment: "Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
       t.index ["stream_docket_number"]
 
-      # Question for Peter: Do we want default values?
-      #   organizations.status and users.status has a default: "active";
-      #   organizations_users.admin has default: false
-      #   tasks.instructions has default: []
-      t.string "stream_type", default: "Original", comment: "When multiple appeals have the same docket number, they are differentiated by appeal stream type, depending on the work being done on each appeal."
+      t.string "stream_type", comment: "When multiple appeals have the same docket number, they are differentiated by appeal stream type, depending on the work being done on each appeal."
       t.index ["stream_type"]
 
       t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."

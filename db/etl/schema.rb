@@ -379,11 +379,9 @@ ActiveRecord::Schema.define(version: 2020_05_08_141923) do
     t.index ["updated_at"], name: "index_users_on_updated_at"
     t.index ["user_id"], name: "index_users_on_user_id"
   end
-<<<<<<< HEAD
-=======
 
   create_table "vha_decision_reviews", comment: "VHA-specific decision reviews", force: :cascade do |t|
-    t.string "benefit_type", limit: 15, null: false, comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
+    t.string "benefit_type", null: false, comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.datetime "decision_review_created_at"
@@ -403,7 +401,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_141923) do
     t.date "receipt_date", comment: "The date that the Higher Level Review form was received by central mail. This is used to determine which issues are eligible to be appealed based on timeliness.  Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established."
     t.boolean "same_office", comment: "Whether the Veteran wants their issues to be reviewed by the same office where they were previously reviewed. This creates a special issue on all of the contentions created on this Higher Level Review."
     t.string "stream_docket_number", comment: "Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
-    t.string "stream_type", default: "Original", comment: "When multiple appeals have the same docket number, they are differentiated by appeal stream type, depending on the work being done on each appeal."
+    t.string "stream_type", comment: "When multiple appeals have the same docket number, they are differentiated by appeal stream type, depending on the work being done on each appeal."
     t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.uuid "uuid", null: false, comment: "The universally unique identifier for the Decision Review"
