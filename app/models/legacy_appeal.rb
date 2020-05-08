@@ -641,7 +641,7 @@ class LegacyAppeal < CaseflowRecord
   def overtime?
     return !!work_mode&.overtime if FeatureToggle.enabled?(:overtime_revamp)
 
-    QueueMapper::OVERTIME_WORK_PRODUCTS.key?(das_assignments.max_by(&:created_at).try(:work_product))
+    false
   end
 
   attr_writer :issues

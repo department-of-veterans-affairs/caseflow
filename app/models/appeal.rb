@@ -170,7 +170,7 @@ class Appeal < DecisionReview
   def overtime?
     return !!work_mode&.overtime if FeatureToggle.enabled?(:overtime_revamp)
 
-    latest_attorney_case_review&.overtime
+    false
   end
 
   def reviewing_judge_name
