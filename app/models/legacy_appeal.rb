@@ -638,12 +638,6 @@ class LegacyAppeal < CaseflowRecord
     das_assignments.max_by(&:created_at).try(:assigned_by_name)
   end
 
-  def overtime?
-    return !!work_mode&.overtime if FeatureToggle.enabled?(:overtime_revamp)
-
-    false
-  end
-
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)

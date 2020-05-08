@@ -167,12 +167,6 @@ class Appeal < DecisionReview
       .order(:created_at).last
   end
 
-  def overtime?
-    return !!work_mode&.overtime if FeatureToggle.enabled?(:overtime_revamp)
-
-    false
-  end
-
   def reviewing_judge_name
     task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
