@@ -4,18 +4,19 @@
 
 class ETL::LegacyHearing < ETL::Hearing
   class << self
-    def mirrored_hearing_attributes
-      super + [:vacols_id]
-    end
-
     private
 
     def merge_original_attributes_to_target(original, target)
       super
-
-      target.judge_id = original.user_id
+    rescue Caseflow::Error::VacolsRecordNotFound => err
+      Rails.logger.error(err)
+      target
+    ensure
+      # whether we catch an error or not, make sure these are populated
+      target.hearing_request_type ||= "unknown"
+      target.vacols_id = original.vacols_id
       target.scheduled_time = original.scheduled_for
-
+      target.judge_id = original.user_id
       target
     end
   end
