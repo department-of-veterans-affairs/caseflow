@@ -180,7 +180,7 @@ const HearingDetails = (props) => {
     }
 
     // only send updated properties
-    const { hearingDetailsForm, virtualHearingForm } = getChanges(
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = getChanges(
       initialFormData,
       hearingForms
     );
@@ -190,7 +190,7 @@ const HearingDetails = (props) => {
         ...(hearingDetailsForm || {}),
         transcription_attributes: {
           // Always send full transcription details because a new record is created each update
-          ...(hearingForms.transcriptionDetailsForm || {})
+          ...(transcriptionDetailsForm ? hearingForms.transcriptionDetailsForm : {})
         },
         virtual_hearing_attributes: {
           ...(virtualHearingForm || {})
