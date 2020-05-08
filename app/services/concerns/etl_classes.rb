@@ -16,6 +16,9 @@ module ETLClasses
     Person
     Task
     User
+    VhaAppeal
+    VhaHigherLevelReview
+    VhaSupplementalClaim
   ].freeze
 
   private
