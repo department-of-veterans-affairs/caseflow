@@ -202,7 +202,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         click_on "Assign 2 cases"
         expect(page).to have_content("#{attorney_one.full_name} (0)")
         expect(page).to have_content("Error assigning tasks")
-        expect(page).to have_content("Veteran's (#{appeal_two.veteran_file_number}) appeal (#{appeal_two.id}) already "\
+        expect(page).to have_content("Docket (#{appeal_two.docket_number}) already "\
                                      "has an open task type of #{JudgeDecisionReviewTask.name}")
 
         visit "/queue/#{judge_one.user.css_id}/assign"
