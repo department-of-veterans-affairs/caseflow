@@ -7,7 +7,8 @@ describe ETL::VhaHigherLevelReviewSyncer, :etl, :all_dbs do
   let(:target_class) { ETL::VhaHigherLevelReview }
   before do
     create(:higher_level_review)
-    create(:higher_level_review, benefit_type: "vha")
+    create(:higher_level_review, :processed)
+    create(:higher_level_review, :processed, benefit_type: "vha")
   end
 
   def originals_count

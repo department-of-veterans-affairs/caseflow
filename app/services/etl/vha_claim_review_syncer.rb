@@ -4,6 +4,6 @@ class ETL::VhaClaimReviewSyncer < ETL::VhaDecisionReviewSyncer
   protected
 
   def instances_needing_update
-    super.where(benefit_type: "vha")
+    super.processed.where(benefit_type: "vha")
   end
 end

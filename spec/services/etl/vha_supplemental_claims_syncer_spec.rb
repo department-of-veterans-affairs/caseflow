@@ -7,7 +7,8 @@ describe ETL::VhaSupplementalClaimSyncer, :etl, :all_dbs do
   let(:target_class) { ETL::VhaSupplementalClaim }
   before do
     create(:supplemental_claim)
-    create(:supplemental_claim, benefit_type: "vha")
+    create(:supplemental_claim, :processed)
+    create(:supplemental_claim, :processed, benefit_type: "vha")
   end
 
   def originals_count
