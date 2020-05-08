@@ -87,7 +87,7 @@ const HearingDetails = (props) => {
         room,
         notes,
         scheduledForIsPast,
-        emailEvents: _.values(hearing.emailEvents),
+        emailEvents: _.values(hearing?.emailEvents),
         // Transcription Request
         transcriptRequested: hearing.transcriptRequested,
         transcriptSentDate: DateUtil.formatDateStr(transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
