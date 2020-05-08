@@ -240,9 +240,8 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   render() {
-    const { formType, intakeData, onCancel, featureToggles } = this.props;
+    const { formType, intakeData, onCancel, featureToggles: { attorneyFees } } = this.props;
     const { benefitType, category, selectedNonratingIssueId } = this.state;
-    const attorneyFeature = featureToggles.attorneyFees;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -256,7 +255,7 @@ class NonratingRequestIssueModal extends React.Component {
     // remove this logic when attorney_fee featureToggle is turned on
     // and instead call nonratingRequestIssueCategories(benefitType)
     const compensationCategories = nonratingRequestIssueCategories(
-      benefitType === 'compensation' && attorneyFeature ? 'compensation_all' : benefitType);
+      benefitType === 'compensation' && attorneyFees ? 'compensation_all' : benefitType);
 
     const benefitTypeElement =
       formType === 'appeal' ? <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown /> : null;
