@@ -9,10 +9,11 @@ describe ETL::VhaSupplementalClaimSyncer, :etl, :all_dbs do
     create(:supplemental_claim)
     create(:supplemental_claim, :processed)
     create(:supplemental_claim, :processed, benefit_type: "vha")
+    create(:supplemental_claim, benefit_type: "vha")
   end
 
   def originals_count
-    origin_class.where(benefit_type: "vha").count
+    origin_class.processed.where(benefit_type: "vha").count
   end
 
   include_examples "VHA decision review sync"
