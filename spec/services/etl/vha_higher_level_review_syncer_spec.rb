@@ -13,5 +13,5 @@ describe ETL::VhaHigherLevelReviewSyncer, :etl, :all_dbs do
     origin_class.where(benefit_type: "vha").count
   end
 
-  include_examples "decision review sync"
+  include_examples "VHA decision review sync"
 end

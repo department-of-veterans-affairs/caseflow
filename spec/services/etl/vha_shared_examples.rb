@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-shared_examples "decision review sync" do
+# Shared examples used by vha_*_syncer_spec.rb files for Appeal, HLR, and SC
 
+shared_examples "VHA decision review sync" do
   let(:etl_build) { ETL::Build.create }
 
   describe "#origin_class" do
