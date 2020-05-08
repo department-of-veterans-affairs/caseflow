@@ -7,23 +7,12 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
+import SearchableDropdown from '../components/SearchableDropdown';
 
 import COPY from '../../COPY';
 import USER_STATUSES from '../../constants/USER_STATUSES';
-import TextField from '../components/TextField';
 
 const buttonPaddingStyle = css({ margin: '0 1rem' });
-
-const textFieldStyling = css({
-  padding: '0 1.5rem',
-  width: '50%'
-});
-
-const searchButtonStyling = css({
-  marginBottom: '1rem',
-  textAlign: 'right',
-  width: '100%'
-});
 
 export default class UserManagement extends React.PureComponent {
   constructor(props) {
@@ -33,7 +22,8 @@ export default class UserManagement extends React.PureComponent {
       loading: false,
       error: null,
       changingActiveStatus: {},
-      selectedUser: null
+      selectedUser: null,
+      remainingUsers: [],
     };
   }
 
@@ -85,11 +75,14 @@ export default class UserManagement extends React.PureComponent {
     });
   }
 
-  search = () => {
-    ApiUtil.get(`/user?css_id=${this.state.css_id}`).then((response) => {
+  selectUser = (user) => {
+    ApiUtil.get(`/user?css_id=${user.value.attributes.css_id}`).then((response) => {
       const user = response.body.user;
 
-      this.setState({ selectedUser: user });
+      this.setState({
+        selectedUser: user,
+        remainingUsers: [],
+      });
     }, (error) => {
       this.setState({
         error: {
@@ -99,13 +92,6 @@ export default class UserManagement extends React.PureComponent {
       });
     });
   }
-
-  setCssId = (value) => this.setState({
-    css_id: value,
-    selectedUser: null,
-    error: null,
-    success: null
-  });
 
   selectedUserDisplay = (user) => {
     return <span>{this.formatName(user)} &nbsp;
@@ -128,28 +114,55 @@ export default class UserManagement extends React.PureComponent {
   mainContent = () => {
     return <React.Fragment>
       <div>
-        <div {...textFieldStyling}>
-          <TextField
-            name="CSS ID"
-            value={this.state.css_id}
-            onChange={this.setCssId}
-          />
-        </div>
-        <div {...searchButtonStyling}>
-          <Button name="Search" onClick={this.search} />
-        </div>
+        <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
+        <SearchableDropdown
+          name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
+          hideLabel
+          searchable
+          placeholder={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT}
+          value={null}
+          onChange={this.selectUser}
+          async={this.asyncLoadUser} />
       </div>
       <div>{this.state.selectedUser && this.selectedUserDisplay(this.state.selectedUser)}</div>
     </React.Fragment>;
   }
 
+  asyncLoadUser = (inputValue) => {
+    // don't search till we have min length input
+    if (inputValue.length < 2) {
+      return Promise.reject();
+    }
+
+    return ApiUtil.get(`/users?css_id=${inputValue}`).then((response) => {
+      const users = response.body.users.data;
+
+      this.setState({
+        remainingUsers: users
+      });
+
+      return { options: this.dropdownOptions() };
+    });
+  }
+
+  dropdownOptions = () => {
+    return this.state.remainingUsers.map((user) => {
+      return { label: this.formatNameForSearch(user),
+        value: user };
+    });
+  };
+
+  formatNameForSearch = (user) => {
+    return `${user.attributes.full_name} (${user.attributes.css_id})`;
+  };
+
   render = () => <AppSegment filledBackground>
-    { this.state.error && <Alert title={this.state.error.title} type="error">{this.state.error.body}</Alert> }
-    { this.state.success && <Alert title={this.state.success.title} type="success">{this.state.success.body}</Alert> }
-    <div>
-      <h1>{COPY.USER_MANAGEMENT_STATUS_PAGE_TITLE}</h1>
-      <p>{COPY.USER_MANAGEMENT_PAGE_DESCRIPTION}</p>
-      {this.mainContent()}
-    </div>
-  </AppSegment>
+      { this.state.error && <Alert title={this.state.error.title} type="error">{this.state.error.body}</Alert> }
+      { this.state.success && <Alert title={this.state.success.title} type="success">{this.state.success.body}</Alert> }
+      <div>
+        <h1>{COPY.USER_MANAGEMENT_STATUS_PAGE_TITLE}</h1>
+        <p>{COPY.USER_MANAGEMENT_PAGE_DESCRIPTION}</p>
+        {this.mainContent()}
+      </div>
+    </AppSegment>
 }
