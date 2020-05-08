@@ -178,7 +178,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
   end
 
   context "Encounters an error assigning a case" do
-    scenario "when assignbing from their assign queue" do
+    scenario "when assigning from their assign queue" do
       judge_task_one = create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
       judge_task_two = create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
       create(:ama_judge_decision_review_task, assigned_to: judge_one.user, appeal: appeal_two)
