@@ -8,6 +8,16 @@
 # then sync and save the corresponding target_class instance.
 
 class ETL::Syncer
+  class << self
+    def origin_class
+      new(etl_build: false).origin_class
+    end
+
+    def target_class
+      new(etl_build: false).target_class
+    end
+  end
+
   def initialize(since: nil, etl_build:)
     @orig_since = since # different name since we calculate since()
     @etl_build = etl_build
