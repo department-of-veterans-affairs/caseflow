@@ -100,7 +100,9 @@ export const DecisionHyperlinks = ({ onChange, disposition }) => {
 
       <Button onClick={() => setShowModal(true)}>+ Add hyperlink</Button>
 
-      {showModal && <AddHyperlinkModal onSubmit={(value) => addHyperlink(value)} />}
+      {showModal && (
+        <AddHyperlinkModal onSubmit={(value) => addHyperlink(value)} onCancel={() => setShowModal(false)} />
+      )}
     </>
   );
 };

@@ -32,7 +32,7 @@ export const AddColocatedTaskForm = ({
           label={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
           options={actionTypes}
-          onChange={(opt) => setType(opt.value)}
+          onChange={(opt) => setType(opt?.value)}
           value={selectedType}
         />
       </div>

@@ -156,7 +156,8 @@ export default class Modal extends React.Component {
 }
 
 Modal.defaultProps = {
-  buttons: []
+  buttons: [],
+  className: ''
 };
 
 Modal.propTypes = {
@@ -180,8 +181,4 @@ Modal.propTypes = {
   specialContent: PropTypes.func,
   title: PropTypes.string.isRequired,
   icon: PropTypes.string
-};
-
-Modal.defaultProps = {
-  className: ''
 };
