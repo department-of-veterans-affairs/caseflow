@@ -22,11 +22,14 @@ class ETL::VhaDecisionReview < ETL::Record
       name.delete_prefix("ETL::Vha")
     end
 
+    def unique_attributes
+      fail "subclass #{self} must implement unique_attributes method"
+    end
+
     private
 
     def common_decision_review_attributes
       [
-        :benefit_type,
         :establishment_processed_at,
         :establishment_submitted_at,
         :legacy_opt_in_approved,
@@ -35,37 +38,6 @@ class ETL::VhaDecisionReview < ETL::Record
         :veteran_file_number,
         :veteran_is_not_claimant
       ]
-    end
-
-    def unique_higher_level_review_attributes
-      [
-        :informal_conference,
-        :same_office
-      ]
-    end
-
-    def unique_supplemental_claim_attributes
-      [
-        :decision_review_remanded_id,
-        :decision_review_remanded_type
-      ]
-    end
-
-    def unique_appeal_attributes
-      [
-        :closest_regional_office,
-        :docket_range_date,
-        :docket_type,
-        :established_at,
-        :poa_participant_id,
-        :stream_docket_number,
-        :stream_type,
-        :target_decision_date
-      ]
-    end
-
-    def unique_attributes_method_name(klass_name)
-      "unique_#{klass_name.underscore}_attributes".to_sym
     end
 
     def merge_original_attributes_to_target(original, target)
@@ -79,14 +51,8 @@ class ETL::VhaDecisionReview < ETL::Record
         target[attr] = original[attr]
       end
 
-      send(unique_attributes_method_name(original.class.name)).each do |attr|
+      target.class.unique_attributes.each do |attr|
         target[attr] = original[attr]
-      end
-
-      if original.class == Appeal
-        unique_benefit_types = original.request_issues.pluck(:benefit_type).uniq
-        target[:benefit_type] = unique_benefit_types.first if unique_benefit_types.size == 1
-        # QUESTION: Do we want to note (eg, in another column) if an appeal has request_issues of non-VHA benefit_type?
       end
 
       # to do: based on VHA feedback we might need to add more calculated values
