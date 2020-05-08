@@ -19,7 +19,7 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
     Appeal.where(id: vha_appeal_ids).count
   end
 
-  include_examples "decision review sync"
+  include_examples "VHA decision review sync"
 
   describe "Appeal#call" do
     let(:etl_build) { ETL::Build.create }
