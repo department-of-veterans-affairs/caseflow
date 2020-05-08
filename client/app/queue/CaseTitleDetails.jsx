@@ -139,11 +139,11 @@ export class CaseTitleDetails extends React.PureComponent {
   }
 
   changeRoute = () => {
-    const {  
+    const {
       history,
-      appealId,
+      appealId
     } = this.props;
-    
+
     history.push(`/queue/appeals/${appealId}/modal/set_overtime_status`);
   };
 
@@ -259,7 +259,7 @@ export class CaseTitleDetails extends React.PureComponent {
           <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
           <div>{appeal.assignedAttorney.full_name}</div>
         </React.Fragment> }
-        { appeal.assignedJudge.css_id === this.props.userCssId && featureToggles.overtime_revamp &&
+      { featureToggles.overtime_revamp &&
         <React.Fragment>
           <h4>{COPY.TASK_SNAPSHOT_OVERTIME_LABEL}</h4>
           <Button
@@ -267,7 +267,9 @@ export class CaseTitleDetails extends React.PureComponent {
             styling={overtimeButton}
             onClick={this.changeRoute} >
             <span>{clockIcon()}</span>
-            <span {...overtimeLink}>&nbsp;{appeal.overtime ? COPY.TASK_SNAPSHOT_IS_OVERTIME : COPY.TASK_SNAPSHOT_IS_NOT_OVERTIME }</span>
+            <span {...overtimeLink}>&nbsp;{appeal.overtime ? 
+            COPY.TASK_SNAPSHOT_IS_OVERTIME : COPY.TASK_SNAPSHOT_IS_NOT_OVERTIME }
+            </span>
           </Button>
         </React.Fragment> }
     </CaseDetailTitleScaffolding>;
@@ -279,6 +281,7 @@ CaseTitleDetails.propTypes = {
   appealId: PropTypes.string.isRequired,
   canEditAod: PropTypes.bool,
   featureToggles: PropTypes.object,
+  history: PropTypes.object,
   redirectUrl: PropTypes.string,
   requestPatch: PropTypes.func.isRequired,
   taskType: PropTypes.string,
@@ -301,7 +304,7 @@ const mapStateToProps = (state, ownProps) => {
     featureToggles,
     userIsVsoEmployee
   };
-};
+}
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,

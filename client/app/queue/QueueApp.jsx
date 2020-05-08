@@ -480,7 +480,7 @@ class QueueApp extends React.PureComponent {
                 render={this.routedAdvancedOnDocketMotion}
               />
               <Route
-                path={`/queue/appeals/:appealId/modal/set_overtime_status`}
+                path="/queue/appeals/:appealId/modal/set_overtime_status"
                 render={this.routedSetOvertimeStatusModal}
               />
               <Route
