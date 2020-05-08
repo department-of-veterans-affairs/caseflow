@@ -1,68 +1,29 @@
 # frozen_string_literal: true
 
+require_relative "./vha_shared_examples"
+
 describe ETL::VhaAppealSyncer, :etl, :all_dbs do
   include SQLHelpers
 
   include_context "AMA Tableau SQL"
 
-  let!(:vha_request_issue) { create(:request_issue, benefit_type: "vha") }
-  # let!(:vha_appeal) { create(:appeal, request_issues: [vha_request_issue]) }
+  let(:origin_class) { Appeal }
+  let(:target_class) { ETL::VhaAppeal }
+  before { create(:request_issue, benefit_type: "vha") }
 
-  let(:etl_build) { ETL::Build.create }
-
-  describe "#origin_class" do
-    subject { described_class.new(etl_build: etl_build).origin_class }
-
-    it { is_expected.to eq Appeal }
+  def vha_appeal_ids
+    RequestIssue.select(:decision_review_id).where(benefit_type: "vha", decision_review_type: :Appeal)
   end
 
-  describe "#target_class" do
-    subject { described_class.new(etl_build: etl_build).target_class }
-
-    it { is_expected.to eq ETL::VhaAppeal }
+  def vha_decision_reviews_count
+    Appeal.where(id: vha_appeal_ids).count
   end
 
-  describe "#call" do
+  include_examples "decision review sync"
+
+  describe "Appeal#call" do
+    let(:etl_build) { ETL::Build.create }
     subject { described_class.new(etl_build: etl_build).call }
-
-    before do
-      expect(ETL::VhaAppeal.count).to eq(0)
-    end
-
-    def vha_appeal_ids
-      RequestIssue.select(:decision_review_id).where(benefit_type: "vha", decision_review_type: :Appeal)
-    end
-
-    context "BVA status distribution" do
-      it "has expected distribution" do
-        expect(RequestIssue.where(benefit_type: "vha").count).to eq(1)
-        expect(Appeal.where(id: vha_appeal_ids).count).to eq(1)
-        subject
-
-        expect(ETL::VhaAppeal.count).to eq(1)
-      end
-
-      it "populates person attributes" do
-        subject
-
-        appeal = ETL::VhaAppeal.first
-        expect(appeal.benefit_type).to eq("vha")
-        expect(appeal.decision_review_id).to_not be_nil
-        expect(appeal.decision_review_type).to_not be_nil
-        expect(appeal.uuid).to_not be_nil
-        expect(appeal.veteran_file_number).to_not be_nil
-      end
-    end
-
-    context "sync tomorrow" do
-      subject { described_class.new(since: Time.zone.now + 1.day, etl_build: etl_build).call }
-
-      it "does not sync" do
-        subject
-
-        expect(ETL::VhaAppeal.count).to eq(0)
-      end
-    end
 
     context "Appeal is not yet established" do
       let!(:appeal) { create(:appeal, established_at: nil) }
@@ -71,12 +32,11 @@ describe ETL::VhaAppealSyncer, :etl, :all_dbs do
       it "skips non-established Appeals" do
         subject
 
-        expect(ETL::VhaAppeal.count).to eq(1)
+        expect(target_class.count).to eq(1)
         expect(etl_build_table.rows_rejected).to eq(0) # not part of .filter so we can't know about it.
         expect(etl_build_table.rows_inserted).to eq(1)
       end
     end
-
     context "Appeal has no claimant" do
       let!(:appeal) do
         # no factory because we do not want claimant
