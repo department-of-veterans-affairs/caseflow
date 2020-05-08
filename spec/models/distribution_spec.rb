@@ -420,7 +420,7 @@ describe Distribution, :all_dbs do
     context "when the judge has 8 or fewer unassigned appeals" do
       before do
         5.times { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: Time.zone.today) }
-        3.times { create(:ama_judge_task, assigned_to: judge, assigned_at: Time.zone.today) }
+        3.times { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: Time.zone.today) }
       end
 
       it "validates" do
@@ -431,7 +431,7 @@ describe Distribution, :all_dbs do
     context "when the judge has 8 or more unassigned appeals" do
       before do
         5.times { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: Time.zone.today) }
-        4.times { create(:ama_judge_task, assigned_to: judge, assigned_at: Time.zone.today) }
+        4.times { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: Time.zone.today) }
       end
 
       it "does not validate" do
@@ -441,7 +441,7 @@ describe Distribution, :all_dbs do
     end
 
     context "when the judge has an appeal that has waited more than 30 days" do
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, assigned_at: 31.days.ago) }
+      let!(:task) { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: 31.days.ago) }
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
