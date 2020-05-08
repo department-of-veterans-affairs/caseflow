@@ -20,12 +20,12 @@ export const SetOvertimeStatusModal = (props) => {
     if (overtime) {
       successMsg = {
         title: sprintf(COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS, props.appeal.veteranFullName)
-        };
+      };
     } else {
       successMsg = {
         title: sprintf(COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_SUCCESS, props.appeal.veteranFullName),
         detail: COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_SUCCESS_DETAIL
-      }; 
+      };
     }
 
     const payload = { data: { overtime: !overtime } };
@@ -45,15 +45,15 @@ export const SetOvertimeStatusModal = (props) => {
         submit={submit}>
         {COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_CONFIRMATION}
       </QueueFlowModal> }
-      { !overtime && 
+      { !overtime &&
       <QueueFlowModal
         pathAfterSubmit={`/queue/appeals/${externalId}`}
         title={COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_HEADER}
         submit={submit}>
         {COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_CONFIRMATION}
-        </QueueFlowModal> } 
+      </QueueFlowModal> }
     </React.Fragment>
-  )
+  );
 };
 
 SetOvertimeStatusModal.propTypes = {

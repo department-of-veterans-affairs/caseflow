@@ -14,33 +14,37 @@ class QueueFlowModal extends React.PureComponent {
 
     this.state = {
       loading: false,
-      _isMounted: false
+      isMounted: false
     };
   }
 
   componentDidMount() {
-    this.setState({ _isMounted: true });
+    this.setState({ isMounted: true });
   }
 
   componentWillUnmount() {
-    this.setState({ _isMounted: false });
- }
+    this.setState({ isMounted: false });
+  }
 
   cancelHandler = () => this.props.onCancel ? this.props.onCancel() : this.props.history.goBack();
 
   closeHandler = () => this.props.history.replace(this.props.pathAfterSubmit);
 
-  setLoading = (loading) => this.state._isMounted && this.setState({ loading });
+  setLoading = (loading) => this.state.isMounted && this.setState({ loading });
 
   submit = () => {
-    const { validateForm, highlightInvalidFormItems } = this.props;
+    const { validateForm } = this.props;
 
     if (validateForm && !validateForm()) {
       return highlightInvalidFormItems(true);
     }
 
     highlightInvalidFormItems(false);
-    this.state._isMounted && this.setState({ loading: true });
+    
+    
+    if (this.state.isMounted) {
+      return this.setState({ loading: true });
+    }
 
     this.props.
       submit().

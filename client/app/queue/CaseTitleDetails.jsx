@@ -267,8 +267,8 @@ export class CaseTitleDetails extends React.PureComponent {
             styling={overtimeButton}
             onClick={this.changeRoute} >
             <span>{clockIcon()}</span>
-            <span {...overtimeLink}>&nbsp;{appeal.overtime ? 
-            COPY.TASK_SNAPSHOT_IS_OVERTIME : COPY.TASK_SNAPSHOT_IS_NOT_OVERTIME }
+            <span {...overtimeLink}>&nbsp;{appeal.overtime ?
+              COPY.TASK_SNAPSHOT_IS_OVERTIME : COPY.TASK_SNAPSHOT_IS_NOT_OVERTIME }
             </span>
           </Button>
         </React.Fragment> }
@@ -294,7 +294,7 @@ CaseTitleDetails.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { userRole, userCssId, canEditAod, featureToggles, userIsVsoEmployee  } = state.ui;
+  const { userRole, userCssId, canEditAod, featureToggles, userIsVsoEmployee } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
@@ -304,10 +304,10 @@ const mapStateToProps = (state, ownProps) => {
     featureToggles,
     userIsVsoEmployee
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch,
+  requestPatch
 }, dispatch);
 
 export default (withRouter(
