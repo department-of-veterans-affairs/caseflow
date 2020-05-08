@@ -49,8 +49,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
   context "Can move appeals between attorneys" do
     scenario "submits draft decision" do
-      judge_task_one = create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
-      judge_task_two = create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
+      judge_task_one = create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
+      judge_task_two = create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
 
       visit "/queue"
 
@@ -151,13 +151,13 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     let!(:root_task) { create(:root_task, appeal: appeal) }
 
     before do
-      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
-      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
+      create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
+      create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
     end
 
     context "there's another in-progress JudgeAssignTask" do
       let!(:judge_task) do
-        create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, parent: root_task)
+        create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, parent: root_task)
       end
 
       scenario "viewing the assign task queue" do
@@ -216,6 +216,42 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
   end
 
+  context "Encounters an error assigning a case" do
+    scenario "when assigning from their assign queue" do
+      judge_task_one = create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
+      judge_task_two = create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
+      create(:ama_judge_decision_review_task, assigned_to: judge_one.user, appeal: appeal_two)
+
+      step "visits their assign queue" do
+        visit "/queue/#{judge_one.user.css_id}/assign"
+
+        expect(page).to have_content("#{attorney_one.full_name} (0)")
+        case_rows = page.find_all("tr[id^='table-row-']")
+        expect(case_rows.length).to eq(2)
+      end
+
+      step "checks both cases and assigns them to an attorney" do
+        scroll_to(".usa-table-borderless")
+        check judge_task_one.id.to_s, allow_label_click: true
+        check judge_task_two.id.to_s, allow_label_click: true
+
+        safe_click ".Select"
+        click_dropdown(text: attorney_one.full_name)
+
+        click_on "Assign 2 cases"
+        expect(page).to have_content("#{attorney_one.full_name} (0)")
+        expect(page).to have_content("Error assigning tasks")
+        expect(page).to have_content("Docket (#{appeal_two.docket_number}) already "\
+                                     "has an open task type of #{JudgeDecisionReviewTask.name}")
+
+        visit "/queue/#{judge_one.user.css_id}/assign"
+        expect(page).to have_content("#{attorney_one.full_name} (0)")
+        case_rows = page.find_all("tr[id^='table-row-']")
+        expect(case_rows.length).to eq(2)
+      end
+    end
+  end
+
   describe "Reassigning a legacy appeal to another judge from the case details page" do
     let!(:vacols_case) { create(:case, staff: vacols_user_one) }
     let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
@@ -265,7 +301,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
   describe "Reassigning an ama appeal to a judge from the case details page" do
     before do
-      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
+      create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
     end
 
     it "should allow us to assign a case to a judge from the case details page" do
@@ -295,7 +331,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     let!(:vacols_user_two) { create(:staff, :attorney_judge_role, user: judge_two.user) }
 
     before do
-      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
+      create(:ama_judge_assign_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
     end
 
     it "should allow us to assign an ama appeal to an acting judge from the 'Assign to attorney' action'" do
@@ -326,7 +362,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
 
     it "displays an error if the distribution request is invalid" do
-      create(:ama_judge_task, :in_progress, assigned_at: 40.days.ago, assigned_to: judge_one.user, appeal: appeal_one)
+      create(:ama_judge_assign_task, assigned_at: 40.days.ago, assigned_to: judge_one.user, appeal: appeal_one)
 
       visit("/queue/#{judge_one.user.id}/assign")
       click_on("Request more cases")
@@ -336,7 +372,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
     end
 
     it "queues the case distribution if the request is valid" do
-      create(:ama_judge_task, :in_progress, assigned_at: 10.days.ago, assigned_to: judge_one.user, appeal: appeal_one)
+      create(:ama_judge_assign_task, assigned_at: 10.days.ago, assigned_to: judge_one.user, appeal: appeal_one)
 
       visit("/queue/#{judge_one.user.id}/assign")
       click_on("Request more cases")
