@@ -219,7 +219,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
     let(:hold_length) { 30 }
 
     let!(:judge_task) do
-      create(:ama_judge_task, :completed, parent: root_task, assigned_to: judge_user)
+      create(:ama_judge_assign_task, :completed, parent: root_task, assigned_to: judge_user)
     end
     let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
 
