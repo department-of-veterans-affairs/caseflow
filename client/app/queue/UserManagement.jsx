@@ -114,12 +114,12 @@ export default class UserManagement extends React.PureComponent {
   mainContent = () => {
     return <React.Fragment>
       <div>
-        <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
+        <h2>{COPY.USER_MANAGEMENT_FIND_USER_DROPDOWN_NAME}</h2>
         <SearchableDropdown
-          name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
+          name={COPY.USER_MANAGEMENT_FIND_USER_DROPDOWN_NAME}
           hideLabel
           searchable
-          placeholder={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT}
+          placeholder={COPY.USER_MANAGEMENT_DROPDOWN_TEXT}
           value={null}
           onChange={this.selectUser}
           async={this.asyncLoadUser} />
