@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
@@ -117,16 +117,23 @@ ChangeFromVirtual.propTypes = {
 const ChangeToVirtual = (props) => {
   const { hearing, readOnly, repEmailError, update, vetEmailError, virtualHearing } = props;
 
+  // Prefill veteran email address and representative email on mount.
+  useEffect(() => {
+    if (_.isUndefined(virtualHearing.veteranEmail)) {
+      update({ veteranEmail: hearing.veteranEmailAddress });
+    }
+
+    if (_.isUndefined(virtualHearing.representativeEmail)) {
+      update({ representativeEmail: hearing.representativeEmailAddress });
+    }
+  }, []);
+
   return (
     <React.Fragment>
       <DateTime {...props} />
       <TextField
         strongLabel
-        value={
-          _.isUndefined(virtualHearing.veteranEmail)
-            ? hearing.veteranEmailAddress
-            : virtualHearing.veteranEmail
-        }
+        value={virtualHearing.veteranEmail}
         name="vet-email"
         label="Veteran Email"
         errorMessage={vetEmailError}
@@ -135,11 +142,7 @@ const ChangeToVirtual = (props) => {
       />
       <TextField
         strongLabel
-        value={
-          _.isUndefined(virtualHearing.representativeEmail)
-            ? hearing.representativeEmailAddress
-            : virtualHearing.representativeEmail
-        }
+        value={virtualHearing.representativeEmail}
         name="rep-email"
         label="POA/Representative Email"
         errorMessage={repEmailError}
