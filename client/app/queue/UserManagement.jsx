@@ -27,7 +27,75 @@ export default class UserManagement extends React.PureComponent {
     };
   }
 
+  // Format functions
   formatName = (user) => `${user.full_name} (${user.css_id})`;
+
+  formatNameForSearch = (user) => {
+    return `${user.attributes.full_name} (${user.attributes.css_id})`;
+  };
+
+  // Search functions
+  asyncLoadUser = (inputValue) => {
+    // don't search till we have min length input
+    if (inputValue.length < 2) {
+      return Promise.reject();
+    }
+
+    return ApiUtil.get(`/users?css_id=${inputValue}`).then((response) => {
+      const users = response.body.users.data;
+
+      this.setState({
+        remainingUsers: users
+      });
+
+      return { options: this.dropdownOptions() };
+    });
+  }
+
+  dropdownOptions = () => {
+    return this.state.remainingUsers.map((user) => {
+      return { label: this.formatNameForSearch(user),
+        value: user };
+    });
+  };
+
+  selectUser = (selection) => {
+    ApiUtil.get(`/user?css_id=${selection.value.attributes.css_id}`).then((response) => {
+      const user = response.body.user;
+
+      this.setState({
+        selectedUser: user,
+        remainingUsers: []
+      });
+    }, (error) => {
+      this.setState({
+        error: {
+          title: COPY.USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE,
+          body: error.message
+        }
+      });
+    });
+  }
+
+  //Status functions
+
+  selectedUserDisplay = (user) => {
+    return <span>{this.formatName(user)} &nbsp;
+      <span {...buttonPaddingStyle}>
+        { user.status === USER_STATUSES.inactive ?
+          <Button
+            name={COPY.USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT}
+            classNames={['usa-button-primary']}
+            loading={this.state.changingActiveStatus[user.id]}
+            onClick={this.toggleUserStatus(user, USER_STATUSES.active)} /> :
+          <Button
+            name={COPY.USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT}
+            classNames={['usa-button-secondary']}
+            loading={this.state.changingActiveStatus[user.id]}
+            onClick={this.toggleUserStatus(user, USER_STATUSES.inactive)} /> }
+      </span>
+    </span>;
+  }
 
   toggleUserStatus = (user, status) => () => {
     this.setState({
@@ -75,41 +143,7 @@ export default class UserManagement extends React.PureComponent {
     });
   }
 
-  selectUser = (selection) => {
-    ApiUtil.get(`/user?css_id=${selection.value.attributes.css_id}`).then((response) => {
-      const user = response.body.user;
-
-      this.setState({
-        selectedUser: user,
-        remainingUsers: []
-      });
-    }, (error) => {
-      this.setState({
-        error: {
-          title: COPY.USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE,
-          body: error.message
-        }
-      });
-    });
-  }
-
-  selectedUserDisplay = (user) => {
-    return <span>{this.formatName(user)} &nbsp;
-      <span {...buttonPaddingStyle}>
-        { user.status === USER_STATUSES.inactive ?
-          <Button
-            name={COPY.USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT}
-            classNames={['usa-button-primary']}
-            loading={this.state.changingActiveStatus[user.id]}
-            onClick={this.toggleUserStatus(user, USER_STATUSES.active)} /> :
-          <Button
-            name={COPY.USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT}
-            classNames={['usa-button-secondary']}
-            loading={this.state.changingActiveStatus[user.id]}
-            onClick={this.toggleUserStatus(user, USER_STATUSES.inactive)} /> }
-      </span>
-    </span>;
-  }
+  // main function
 
   mainContent = () => {
     return <React.Fragment>
@@ -127,34 +161,6 @@ export default class UserManagement extends React.PureComponent {
       <div>{this.state.selectedUser && this.selectedUserDisplay(this.state.selectedUser)}</div>
     </React.Fragment>;
   }
-
-  asyncLoadUser = (inputValue) => {
-    // don't search till we have min length input
-    if (inputValue.length < 2) {
-      return Promise.reject();
-    }
-
-    return ApiUtil.get(`/users?css_id=${inputValue}`).then((response) => {
-      const users = response.body.users.data;
-
-      this.setState({
-        remainingUsers: users
-      });
-
-      return { options: this.dropdownOptions() };
-    });
-  }
-
-  dropdownOptions = () => {
-    return this.state.remainingUsers.map((user) => {
-      return { label: this.formatNameForSearch(user),
-        value: user };
-    });
-  };
-
-  formatNameForSearch = (user) => {
-    return `${user.attributes.full_name} (${user.attributes.css_id})`;
-  };
 
   render = () => <AppSegment filledBackground>
     { this.state.error && <Alert title={this.state.error.title} type="error">{this.state.error.body}</Alert> }
