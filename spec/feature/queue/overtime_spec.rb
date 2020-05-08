@@ -42,21 +42,10 @@ RSpec.feature "Overtime", :all_dbs do
   let(:current_user) { judge_user }
 
   let(:overtime) { false }
-  let!(:legacy_appeal) do
-    create(
-      :legacy_appeal,
-      :with_veteran,
-      vacols_case: create(
-        :case,
-        :assigned,
-        assigner: attorney_user,
-        user: judge_user
-      )
-    )
-  end
+  let(:vacols_case) { create(:case, :assigned, assigner: attorney_user, user: judge_user) }
+  let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
   let!(:appeal) do
-    create(:appeal,
-           :at_judge_review,
+    create(:appeal, :at_judge_review,
            veteran: create(:veteran),
            associated_attorney: attorney_user,
            associated_judge: judge_user)
