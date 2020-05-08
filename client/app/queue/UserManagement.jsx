@@ -38,15 +38,15 @@ export default class UserManagement extends React.PureComponent {
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
+      this.setState({ remainingUsers: [] });
+
       return Promise.reject();
     }
 
     return ApiUtil.get(`/users?css_id=${inputValue}`).then((response) => {
       const users = response.body.users.data;
 
-      this.setState({
-        remainingUsers: users
-      });
+      this.setState({ remainingUsers: users });
 
       return { options: this.dropdownOptions() };
     });
@@ -63,10 +63,7 @@ export default class UserManagement extends React.PureComponent {
     ApiUtil.get(`/user?css_id=${selection.value.attributes.css_id}`).then((response) => {
       const user = response.body.user;
 
-      this.setState({
-        selectedUser: user,
-        remainingUsers: []
-      });
+      this.setState({ selectedUser: user });
     }, (error) => {
       this.setState({
         error: {
@@ -77,7 +74,7 @@ export default class UserManagement extends React.PureComponent {
     });
   }
 
-  //Status functions
+  // Status functions
 
   selectedUserDisplay = (user) => {
     return <span>{this.formatName(user)} &nbsp;
