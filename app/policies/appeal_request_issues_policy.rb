@@ -16,11 +16,11 @@ class AppealRequestIssuesPolicy
   attr_reader :user, :appeal
 
   def editable_by_case_review_team_member?
-    current_user_is_case_review_team_member? && case_is_not_in_active_review?
+    current_user_can_edit_issues? && case_is_not_in_active_review?
   end
 
-  def current_user_is_case_review_team_member?
-    CaseReview.singleton.user_has_access?(user)
+  def current_user_can_edit_issues?
+    user.can_edit_issues?
   end
 
   def case_is_not_in_active_review?
@@ -28,7 +28,7 @@ class AppealRequestIssuesPolicy
   end
 
   def hearing_is_assigned_to_judge_user
-    FeatureToggle.enabled?(:allow_judge_edit_issues) && appeal.hearings.last&.judge == user
+    appeal.hearings.last&.judge == user
   end
 
   def case_is_in_active_review_by_current_user?
