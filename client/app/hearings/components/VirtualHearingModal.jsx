@@ -264,7 +264,7 @@ const VirtualHearingModal = (props) => {
 
         <typeSettings.element
           {...props}
-          readOnly={success}
+          readOnly={loading || success}
           vetEmailError={vetEmailError}
           repEmailError={repEmailError}
         />
