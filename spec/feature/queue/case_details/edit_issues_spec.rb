@@ -5,7 +5,7 @@ RSpec.feature "Edit Issues", :all_dbs do
     it "does not show 'Correct Issues' link" do
       visit("/queue/appeals/#{appeal.uuid}")
 
-      expect(page).not_to have_content(COPY::CORRECT_REQUEST_ISSUES_LINK)
+      expect(page).to have_no_content(COPY::CORRECT_REQUEST_ISSUES_LINK)
     end
   end
 

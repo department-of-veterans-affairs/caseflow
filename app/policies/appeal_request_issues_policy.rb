@@ -20,7 +20,7 @@ class AppealRequestIssuesPolicy
   end
 
   def current_user_can_edit_issues?
-    user.can_edit_issues?
+    user&.can_edit_issues?
   end
 
   def case_is_not_in_active_review?
