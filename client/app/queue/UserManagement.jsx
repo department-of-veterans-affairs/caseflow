@@ -30,10 +30,6 @@ export default class UserManagement extends React.PureComponent {
   // Format functions
   formatName = (user) => `${user.full_name} (${user.css_id})`;
 
-  formatNameForSearch = (user) => {
-    return `${user.attributes.full_name} (${user.attributes.css_id})`;
-  };
-
   // Search functions
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
@@ -54,7 +50,7 @@ export default class UserManagement extends React.PureComponent {
 
   dropdownOptions = () => {
     return this.state.remainingUsers.map((user) => {
-      return { label: this.formatNameForSearch(user),
+      return { label: this.formatName(user.attributes),
         value: user };
     });
   };
