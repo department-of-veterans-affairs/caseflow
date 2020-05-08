@@ -118,12 +118,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let(:attorney) { create(:user) }
       let!(:judge_team) { JudgeTeam.create_for_judge(user).tap { |team| team.add_user(attorney) } }
 
-      let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
-      let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
-      let!(:task16) { create(:ama_judge_task, :on_hold, assigned_to: user, assigned_by: user) }
-      let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
+      let!(:task8) { create(:ama_judge_assign_task, assigned_to: user, assigned_by: user) }
+      let!(:task9) { create(:ama_judge_assign_task, :in_progress, assigned_to: user, assigned_by: user) }
+      let!(:task16) { create(:ama_judge_assign_task, :on_hold, assigned_to: user, assigned_by: user) }
+      let!(:task10) { create(:ama_judge_assign_task, :completed, assigned_to: user, assigned_by: user) }
       let!(:task15) do
-        create(:ama_judge_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
+        create(:ama_judge_assign_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
       end
       let!(:task17) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: user) }
 
