@@ -109,6 +109,40 @@ describe RegionalOffice do
     end
   end
 
+  context ".full_address" do
+    RegionalOffice.all.each do |ro|
+      it "regional office (#{ro.key}) does not throw when full_address is called" do
+        expect { ro.full_address }.not_to raise_error
+      end
+    end
+
+    it "RO87 has nil address" do
+      ro = RegionalOffice.find!("RO87")
+
+      expect(ro.full_address).to eq nil
+    end
+
+    it "RO55 has correct address" do
+      ro = RegionalOffice.find!("RO55")
+
+      expect(ro.full_address).to eq "50 Carr 165, San Juan PR 00968"
+    end
+
+    it "RO50 has correct address" do
+      ro = RegionalOffice.find!("RO50")
+
+      expect(ro.full_address).to eq "2200 Fort Roots Drive Bldg. 65, Little Rock AR 72114"
+    end
+  end
+
+  context ".name" do
+    RegionalOffice.all.each do |ro|
+      it "regional office (#{ro.key}) does not throw when name is called" do
+        expect { ro.name }.not_to raise_error
+      end
+    end
+  end
+
   context ".zip_code" do
     RegionalOffice.all.each do |ro|
       it "regional office (#{ro.key}) does not throw when zip_code is called" do

@@ -5,10 +5,7 @@ require "models/concerns/has_virtual_hearing_examples"
 describe LegacyHearing, :all_dbs do
   it_should_behave_like "a model that can have a virtual hearing" do
     let(:instance_of_class) do
-      create(
-        :legacy_hearing,
-        hearing_day: create(:hearing_day, regional_office: "RO42", request_type: HearingDay::REQUEST_TYPES[:video])
-      )
+      create(:legacy_hearing, regional_office: "RO42")
     end
   end
 
@@ -483,6 +480,26 @@ describe LegacyHearing, :all_dbs do
         it "returns false" do
           expect(hearing.scheduled_for_past?).to be(false)
         end
+      end
+    end
+  end
+
+  context "#hearing_location_or_regional_office" do
+    subject { legacy_hearing.hearing_location_or_regional_office }
+
+    context "hearing location is nil" do
+      let(:legacy_hearing) { create(:legacy_hearing, regional_office: nil) }
+
+      it "returns regional office" do
+        expect(subject).to eq(legacy_hearing.regional_office)
+      end
+    end
+
+    context "hearing location is not nil" do
+      let(:legacy_hearing) { create(:legacy_hearing, regional_office: regional_office) }
+
+      it "returns hearing location" do
+        expect(subject).to eq(legacy_hearing.location)
       end
     end
   end
