@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
+import { getOptionsFromObject } from '../../utils';
 import { rowThirds } from './style';
 import DateSelector from '../../../components/DateSelector';
 import RadioField from '../../../components/RadioField';
@@ -11,30 +12,22 @@ import TRANSCRIPTION_PROBLEM_TYPES from
 import TRANSCRIPTION_REQUESTED_REMEDIES from
   '../../../../constants/TRANSCRIPTION_REQUESTED_REMEDIES';
 
-const TRANSCRIPTION_PROBLEM_OPTIONS = _.concat(
-  _.map(
-    _.values(TRANSCRIPTION_PROBLEM_TYPES),
-    (value) => ({ label: value, value })
-  ),
-  [
-    {
-      label: '',
-      value: null
-    }
-  ]
+const TRANSCRIPTION_PROBLEM_OPTIONS = getOptionsFromObject(
+  TRANSCRIPTION_PROBLEM_TYPES,
+  {
+    label: 'None',
+    value: null
+  },
+  (value) => ({ label: value, value })
 );
 
-const TRANSCRIPTION_REMEDIES_OPTIONS = _.concat(
-  _.map(
-    _.values(TRANSCRIPTION_REQUESTED_REMEDIES),
-    (value) => ({ displayText: value, value })
-  ),
-  [
-    {
-      value: '',
-      displayText: 'None'
-    }
-  ]
+const TRANSCRIPTION_REMEDIES_OPTIONS = getOptionsFromObject(
+  TRANSCRIPTION_REQUESTED_REMEDIES,
+  {
+    displayText: 'None',
+    value: ''
+  },
+  (value) => ({ displayText: value, value })
 );
 
 const TranscriptionProblemInputs = ({ transcription, update, readOnly }) => (
