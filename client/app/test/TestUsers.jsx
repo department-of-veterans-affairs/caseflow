@@ -24,7 +24,8 @@ export default class TestUsers extends React.PureComponent {
       isSwitching: false,
       isLoggingIn: false,
       reseedingError: null,
-      isReseeding: false
+      isReseeding: false,
+      remainingUsers: []
     };
   }
 
@@ -32,7 +33,10 @@ export default class TestUsers extends React.PureComponent {
     catch((err) => {
       console.warn(err);
     });
-  handleUserSelect = ({ value }) => this.setState({ userSelect: value });
+  handleUserSelect = (selection) => {
+      this.setState({ userSelect: selection.value.id });
+  }
+
   handleUserSwitch = () => {
     this.setState({ isSwitching: true });
     ApiUtil.post(`/test/set_user/${this.state.userSelect}`).then(() => {
@@ -42,6 +46,33 @@ export default class TestUsers extends React.PureComponent {
         console.warn(err);
       });
   };
+
+  asyncLoadUser = (inputValue) => {
+    // don't search till we have min length input
+    if (inputValue.length < 2) {
+      this.setState({ remainingUsers: [] });
+
+      return Promise.reject();
+    }
+
+    return ApiUtil.get(`/users?css_id=${inputValue}`).then((response) => {
+      console.log(response.body.users);
+      const users = response.body.users.data;
+
+      this.setState({ remainingUsers: users });
+
+      return { options: this.dropdownOptions() };
+    });
+  }
+
+  dropdownOptions = () => {
+    return this.state.remainingUsers.map((user) => {
+      return { label: this.formatName(user.attributes),
+        value: user };
+    });
+  };
+
+  formatName = (user) => `${user.full_name} (${user.css_id})`;
 
   userIdOnChange = (value) => this.setState({ userId: value });
   featureToggleOnChange = (value, deletedValue) => {
@@ -86,11 +117,6 @@ export default class TestUsers extends React.PureComponent {
   }
 
   render() {
-    const userOptions = this.props.testUsersList.map((user) => ({
-      value: user.id,
-      label: `${user.css_id} at ${user.station_id} - ${user.full_name}`
-    }));
-
     const featureOptions = this.props.featuresList.map((feature) => ({
       value: feature,
       label: feature,
@@ -177,9 +203,9 @@ export default class TestUsers extends React.PureComponent {
                   <SearchableDropdown
                     name="Test user dropdown"
                     hideLabel
-                    options={userOptions} searchable
                     onChange={this.handleUserSelect}
-                    value={this.state.userSelect} />
+                    value={this.state.userSelect}
+                    async={this.asyncLoadUser} />
                   <Button
                     onClick={this.handleUserSwitch}
                     name="Switch user"
@@ -252,7 +278,6 @@ export default class TestUsers extends React.PureComponent {
 TestUsers.propTypes = {
   currentUser: PropTypes.object.isRequired,
   isGlobalAdmin: PropTypes.bool,
-  testUsersList: PropTypes.array.isRequired,
   featuresList: PropTypes.array.isRequired,
   veteranRecords: PropTypes.array.isRequired,
   appSelectList: PropTypes.array.isRequired,
