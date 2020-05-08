@@ -362,7 +362,7 @@ module Seeds
     end
 
     def create_task_at_judge_assignment(appeal, judge, assigned_at = Time.zone.yesterday)
-      create(:ama_judge_task,
+      create(:ama_judge_assign_task,
              assigned_to: judge,
              assigned_at: assigned_at,
              appeal: appeal,
@@ -478,7 +478,7 @@ module Seeds
 
       3.times do
         create(
-          :ama_judge_task,
+          :ama_judge_assign_task,
           :in_progress,
           assigned_to: User.find_by(css_id: "BVAEBECKER"),
           appeal: create(:appeal)
