@@ -29,8 +29,7 @@ class CachedUser < CaseflowRecord
   end
 
   def sync_with_staff(staff)
-    # RE: `keep_if`: Do you intend to mutate attributes? See https://news.ycombinator.com/item?id=2247352
-    staff_attributes = staff.attributes.keep_if { |attr| CachedUser.staff_column_names.include?(attr) }
+    staff_attributes = staff.attributes.select { |attr| CachedUser.staff_column_names.include?(attr) }
     assign_attributes(staff_attributes)
   end
 end
