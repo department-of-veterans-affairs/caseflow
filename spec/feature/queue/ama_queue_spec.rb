@@ -75,7 +75,7 @@ feature "AmaQueue", :all_dbs do
     let(:participant_id) { "600153863" }
     let!(:root_task) { create(:root_task, appeal: appeals.first) }
     let!(:parent_task) do
-      create(:ama_judge_task, assigned_to: judge_user, parent: root_task)
+      create(:ama_judge_assign_task, assigned_to: judge_user, parent: root_task)
     end
 
     let(:poa_name) { "Test POA" }
@@ -436,7 +436,7 @@ feature "AmaQueue", :all_dbs do
     end
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:judge_task) do
-      create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :assigned)
+      create(:ama_judge_assign_task, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
     before do

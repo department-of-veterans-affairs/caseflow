@@ -134,7 +134,7 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
         end
 
         let(:root_task) { create(:root_task) }
-        let(:task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
+        let(:task) { create(:ama_judge_assign_task, assigned_to: judge, parent: root_task) }
 
         before do
           # Add somebody to the BVA dispatch team so automatic task assignment for AMA cases succeeds.
@@ -200,7 +200,7 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
             let!(:quality_review_task) do
               create(:qr_task, assigned_to: qr_user, parent: quality_review_organization_task)
             end
-            let!(:task) { create(:ama_judge_task, assigned_to: judge, parent: quality_review_task) }
+            let!(:task) { create(:ama_judge_assign_task, assigned_to: judge, parent: quality_review_task) }
 
             it "should not create a new QR task" do
               expect(QualityReviewTask.count).to eq(2)
