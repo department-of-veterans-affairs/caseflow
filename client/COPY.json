@@ -399,8 +399,8 @@
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
   "NOTIFY_OGC_OF": "Notify OGC of %s",
-  "PULAC_CERULLO_MODAL_TITLE": "Notify Pulac Cerullo team of Conflict of Jurisdiction",
-  "PULAC_CERULLO_MODAL_BODY_1": "This case will be assigned to a person/team who will determine if it is a Pulac or Cerullo case. It will return to the 'Assigned' tab in your Queue when it can be worked again.",
+  "PULAC_CERULLO_MODAL_TITLE": "Notify Litigation Support of Possible Conflict of Jurisdiction",
+  "PULAC_CERULLO_MODAL_BODY_1": "This case will be assigned to a team who will determine if there is a conflict of jurisdiction.",
   "PULAC_CERULLO_MODAL_BODY_2": "It will return to your Queue when it can be worked again.",
   "PULAC_CERULLO_SUCCESS_TITLE": "Case assigned to Litigation Support",
   "PULAC_CERULLO_SUCCESS_DETAIL": "%s's case will return to your Queue when it can be worked again.",
@@ -573,6 +573,8 @@
   "INCIDENT_FLASH_ERROR_END": " with the Veteran's SSN.  Request to temporarily unlock the flash, wait for confirmation, and try again.",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below or if the claimant's information needs updated, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
+  "ADD_CLAIMANT_MODAL_TITLE": "Add Claimant",
+  "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, please select whether or not the claimant is an attorney and search for their name. Please note: at this time, you are only able to add attorneys as claimants. If you need to add another claimant and you have access, please add them to the Corporate Database. If you do not have access, please [email](mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database) for assistance.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
   "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",
@@ -584,6 +586,7 @@
   "INTAKE_VETERAN_NAME_SUFFIX_ERROR": "Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.) in VBMS or Share and try again.",
   "INTAKE_VETERAN_DATE_OF_BIRTH_ERROR": "Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\" (please include zeros) in VBMS or Share and try again.",
   "INTAKE_REQUEST_ISSUE_UNTIMELY": "Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.",
+  "INTAKE_VETERAN_PAY_GRADE_INVALID": "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again.",
   "INTAKE_LEGACY_ISSUE_UNTIMELY": "Please note: The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
 
@@ -713,7 +716,7 @@
     },
     "CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
-      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
     },
     "CHANGED_VETERAN_AND_POA_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",

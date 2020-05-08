@@ -1,5 +1,112 @@
 version: 2.1
 jobs:
+  # validate our demo/development setup
+  demo:
+    docker:
+      # The first image listed is the image that all steps run inside of.
+      # This can be modified by steps, or can be built as a separate
+      # customized container.
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+        environment:
+          - DBUS_SESSION_BUS_ADDRESS: /dev/null
+          - RAILS_ENV: test
+          - NODE_ENV: test
+          - BUNDLE_PATH: vendor/bundle
+          - COVERAGE_DIR: /home/circleci/coverage
+          - POSTGRES_HOST: localhost
+          - POSTGRES_USER: root
+      # This is the circleci provided Postgres container. We can
+      # configure it via environment variables.
+      - image: circleci/postgres:9.6
+        environment:
+          - POSTGRES_USER: root
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: caseflow_certification_test
+
+      # This is our homespun VACOLS container. An oracle db with some special sauce.
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
+
+      # This is the circleci provided Redis container.
+      - image: circleci/redis:4.0.10
+    resource_class: large
+    steps:
+      - checkout
+
+      - run:
+          name: Setup testfiles directory
+          command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
+
+      - run:
+          name: Ruby version
+          command: ruby -v
+
+      - restore_cache:
+          keys:
+            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: Bundle install
+          command: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/project/vendor/bundle
+
+      - restore_cache:
+          name: Restore yarn cache
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+
+      - run:
+          name: yarn install
+          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - save_cache:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - public/assets
+            - tmp/cache/assets/sprockets
+
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Database setup
+          command: |
+            ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
+            ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
+
+      - run:
+          name: Wait for FACOLS to be ready
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+
+      - run:
+          name: make seed-dbs
+          command: |
+            ~/project/ci-bin/capture-log "make -f Makefile.example seed-dbs"
+
+      - run:
+          name: Assets Precompile
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake assets:precompile"
+
+      - store_artifacts:
+          name: Store test results as artifact
+          path: ~/test-results
+
+      - store_artifacts:
+          name: Store run logs
+          path: ~/logs
+
   rspec:
     docker:
       # The first image listed is the image that all steps run inside of.
@@ -60,11 +167,6 @@ jobs:
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
-
-      - run:
-          name: Assets Precompile
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake assets:precompile"
 
       - save_cache:
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
@@ -291,6 +393,7 @@ workflows:
   version: 2
   build:
     jobs:
+      - demo
       - rspec
       - js_tests
       - lint

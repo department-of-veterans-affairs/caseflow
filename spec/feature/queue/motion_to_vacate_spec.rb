@@ -4,6 +4,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
   include QueueHelpers
 
   let!(:lit_support_team) { LitigationSupport.singleton }
+  let(:colocated_org) { Colocated.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
   let!(:appeal) do
     create(:appeal, receipt_date: receipt_date)
@@ -127,6 +128,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           fill_in("motionFile", with: atty_hyperlinks[0][:link])
 
+          # verify hyperlink modal works
+          check_hyperlink_modal
+
           fill_and_check_other_hyperlinks(atty_hyperlinks)
 
           # Ensure it has pre-selected judge previously assigned to case
@@ -190,6 +194,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_TITLE)
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
         find("button", class: "usa-button", text: "Notify").click
@@ -591,6 +596,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
       ].join("/")
     end
 
+    let(:admin_actions_path) do
+      [
+        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+        "motion_to_vacate_checkout/admin_actions"
+      ].join("/")
+    end
+
     let(:submit_decisions_path) do
       [
         "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
@@ -771,6 +783,119 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(vacate_stream.decision_issues.size).to eq(4)
       end
     end
+
+    context "Vacate & de Novo" do
+      let(:vacate_type) { "vacate_and_de_novo" }
+
+      before do
+        add_colocated_users
+      end
+
+      it "correctly handles checkout flow" do
+        User.authenticate!(user: drafting_attorney)
+
+        visit "/queue/appeals/#{vacate_stream.uuid}"
+
+        check_cavc_alert
+        verify_cavc_conflict_action
+
+        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+
+        expect(page.current_path).to eq(review_decisions_path)
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Admin Actions")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(admin_actions_path)
+
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(review_decisions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(admin_actions_path)
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Admin Actions")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+
+        expect(page).to have_content(COPY::ADD_COLOCATED_TASK_SUBHEAD)
+
+        # step "fills in and submits the form for two identical admin actions"
+        action = ColocatedTask.actions_assigned_to_colocated.sample
+        action_class = ColocatedTask.find_subclass_by_action(action).name
+        selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS[action]
+        instructions = generate_words(5)
+
+        click_dropdown(text: selected_opt_0) do
+          visible_options = page.find_all(".Select-option")
+          expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
+        end
+
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+
+        click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
+
+        expect(all("div.admin-action-item").count).to eq 2
+
+        within all("div.admin-action-item")[1] do
+          click_dropdown(text: selected_opt_0)
+          fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+        end
+
+        expect(page).to have_content("Duplicate admin actions detected")
+
+        # step "removes the duplicate and submits the form for a new admin action"
+
+        within all("div.admin-action-item")[1] do
+          click_on COPY::ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL
+        end
+
+        # Time to move to step 3
+
+        # Verify navigation
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(admin_actions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Admin Actions")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
+
+        fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge.full_name)
+        fill_in "notes", with: "all done"
+
+        click_on "Submit"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
+          "sent to #{judge.full_name} for review."
+        )
+
+        judge_task = vacate_stream.tasks.find_by(type: 'JudgeDecisionReviewTask');
+
+        expect(vacate_stream.decision_issues.size).to eq(3)
+        expect(vacate_stream.tasks.size).to eq(5)
+        expect(vacate_stream.tasks.find { |item| item[:type] == action_class }).to_not be_nil
+        expect(judge_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+      end
+    end
   end
 
   describe "Attorney Completes Denied / Dismissed Motion to Vacate Task" do
@@ -924,6 +1049,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
     "12345-12345678"
   end
 
+  def add_colocated_users
+    create_list(:user, 6).each do |user|
+      colocated_org.add_user(user)
+    end
+  end
+
   def generate_atty_hyperlinks(disposition)
     [
       {
@@ -943,6 +1074,14 @@ RSpec.feature "Motion to vacate", :all_dbs do
         link: "https://example.com/file2.pdf"
       }
     ]
+  end
+
+  def check_hyperlink_modal
+    click_button(text: "+ Add hyperlink")
+    expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_TITLE)
+    expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS)
+    find("#Add-hyperlink-button-id-0").click
+    expect(page).to_not have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS)
   end
 
   def fill_and_check_other_hyperlinks(atty_hyperlinks)

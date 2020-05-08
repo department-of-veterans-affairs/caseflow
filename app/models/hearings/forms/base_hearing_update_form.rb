@@ -81,13 +81,26 @@ class BaseHearingUpdateForm
   end
 
   def start_async_job?
-    (hearing.virtual_hearing.pending? || !hearing.virtual_hearing.all_emails_sent?) &&
-      !hearing.virtual_hearing.cancelled?
+    !hearing.virtual_hearing.all_emails_sent?
   end
 
   def start_async_job
-    return if !start_async_job?
+    if start_async_job? && virtual_hearing_cancelled?
+      start_cancel_job
+    elsif start_async_job?
+      start_activate_job
+    end
+  end
 
+  def start_cancel_job
+    if run_async?
+      VirtualHearings::DeleteConferencesJob.perform_later
+    else
+      VirtualHearings::DeleteConferencesJob.perform_now
+    end
+  end
+
+  def start_activate_job
     hearing.virtual_hearing.establishment.submit_for_processing!
 
     job_args = {

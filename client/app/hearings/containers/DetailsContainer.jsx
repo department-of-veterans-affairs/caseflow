@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
-import { HearingsUserContext } from '../HearingsUserContext';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
 import HearingDetails from '../components/Details';
@@ -43,6 +43,14 @@ class HearingDetailsContainer extends React.Component {
     }
   };
 
+  saveHearing = (data) => {
+    const { externalId } = this.state.hearing;
+
+    return ApiUtil.patch(`/hearings/${externalId}`, {
+      data: ApiUtil.convertToSnakeCase(data)
+    });
+  }
+
   render() {
     const { userInHearingOrTranscriptionOrganization } = this.context;
 
@@ -61,6 +69,7 @@ class HearingDetailsContainer extends React.Component {
           disabled={!userInHearingOrTranscriptionOrganization}
           hearing={this.state.hearing}
           setHearing={this.setHearing}
+          saveHearing={this.saveHearing}
           goBack={this.goBack}
         />
       </LoadingDataDisplay>

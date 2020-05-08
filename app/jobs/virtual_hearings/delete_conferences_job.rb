@@ -5,20 +5,30 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   application_attr :hearing_schedule
 
   def perform
+    ensure_current_user_is_set
+
+    VirtualHearingRepository.cancelled_hearings_with_pending_emails.each do |virtual_hearing|
+      Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
+
+      send_cancellation_emails(virtual_hearing)
+    end
+
     count_deleted_and_log(VirtualHearingRepository.ready_for_deletion) do |virtual_hearing|
       Rails.logger.info("Deleting Pexip conference for hearing (#{virtual_hearing.hearing_id})")
 
       process_virtual_hearing(virtual_hearing)
     end
-
-    VirtualHearingRepository.cancelled_hearings_with_pending_emails.each do |virtual_hearing|
-      Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
-
-      VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
-    end
   end
 
   private
+
+  def ensure_current_user_is_set
+    RequestStore.store[:current_user] ||= User.system_user
+  end
+
+  def send_cancellation_emails(virtual_hearing)
+    VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
+  end
 
   def count_deleted_and_log(enumerable)
     failed = removed = 0
@@ -50,12 +60,6 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     return false unless deleted_conference
 
     virtual_hearing.update(conference_deleted: true)
-
-    if virtual_hearing.cancelled?
-      Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
-
-      VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
-    end
 
     true
   end

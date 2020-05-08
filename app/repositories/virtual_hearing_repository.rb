@@ -29,14 +29,23 @@ class VirtualHearingRepository
         .cancelled
         .where(<<-SQL)
           (
-            NOT virtual_hearings.judge_email_sent
-            OR NOT virtual_hearings.veteran_email_sent
+            NOT virtual_hearings.veteran_email_sent
+            OR (
+              NOT virtual_hearings.judge_email_sent = null
+              AND NOT virtual_hearings.judge_email_sent
+            )
             OR (
               NOT virtual_hearings.representative_email = null
               AND NOT virtual_hearings.representative_email_sent
             )
           )
         SQL
+    end
+
+    def hearings_with_pending_conference_or_emails
+      VirtualHearing.select do |virtual_hearing|
+        virtual_hearing.pending? || !virtual_hearing.all_emails_sent?
+      end
     end
   end
 end
