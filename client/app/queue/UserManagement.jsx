@@ -23,7 +23,7 @@ export default class UserManagement extends React.PureComponent {
       error: null,
       changingActiveStatus: {},
       selectedUser: null,
-      remainingUsers: [],
+      remainingUsers: []
     };
   }
 
@@ -75,13 +75,13 @@ export default class UserManagement extends React.PureComponent {
     });
   }
 
-  selectUser = (user) => {
-    ApiUtil.get(`/user?css_id=${user.value.attributes.css_id}`).then((response) => {
+  selectUser = (selection) => {
+    ApiUtil.get(`/user?css_id=${selection.value.attributes.css_id}`).then((response) => {
       const user = response.body.user;
 
       this.setState({
         selectedUser: user,
-        remainingUsers: [],
+        remainingUsers: []
       });
     }, (error) => {
       this.setState({
@@ -157,12 +157,12 @@ export default class UserManagement extends React.PureComponent {
   };
 
   render = () => <AppSegment filledBackground>
-      { this.state.error && <Alert title={this.state.error.title} type="error">{this.state.error.body}</Alert> }
-      { this.state.success && <Alert title={this.state.success.title} type="success">{this.state.success.body}</Alert> }
-      <div>
-        <h1>{COPY.USER_MANAGEMENT_STATUS_PAGE_TITLE}</h1>
-        <p>{COPY.USER_MANAGEMENT_PAGE_DESCRIPTION}</p>
-        {this.mainContent()}
-      </div>
-    </AppSegment>
+    { this.state.error && <Alert title={this.state.error.title} type="error">{this.state.error.body}</Alert> }
+    { this.state.success && <Alert title={this.state.success.title} type="success">{this.state.success.body}</Alert> }
+    <div>
+      <h1>{COPY.USER_MANAGEMENT_STATUS_PAGE_TITLE}</h1>
+      <p>{COPY.USER_MANAGEMENT_PAGE_DESCRIPTION}</p>
+      {this.mainContent()}
+    </div>
+  </AppSegment>
 }
