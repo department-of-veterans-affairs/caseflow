@@ -2,6 +2,7 @@ import { css } from 'glamor';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import Modal from '../components/Modal';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
@@ -14,19 +15,24 @@ import DocketTypeBadge from './../components/DocketTypeBadge';
 import CopyTextButton from '../components/CopyTextButton';
 import ReaderLink from './ReaderLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { pencilSymbol } from '../components/RenderFunctions';
+import { pencilSymbol, clockIcon } from '../components/RenderFunctions';
 
 import COPY from '../../COPY';
 import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
-
-import {
-  requestPatch
-} from './uiReducer/uiActions';
+import { requestPatch } from './uiReducer/uiActions';
 
 const editButton = css({
   float: 'right',
   marginLeft: '0.5rem'
+});
+
+const overtimeButton = css({
+  padding: '0rem'
+});
+
+const overtimeLink = css({
+  display: 'inline-block'
 });
 
 const containingDivStyling = css({
@@ -132,13 +138,23 @@ export class CaseTitleDetails extends React.PureComponent {
       });
   }
 
+  changeRoute = () => {
+    const {  
+      history,
+      appealId,
+    } = this.props;
+    
+    history.push(`/queue/appeals/${appealId}/modal/set_overtime_status`);
+  };
+
   render = () => {
     const {
       appeal,
       appealId,
       redirectUrl,
       taskType,
-      userIsVsoEmployee
+      userIsVsoEmployee,
+      featureToggles
     } = this.props;
 
     const {
@@ -243,6 +259,17 @@ export class CaseTitleDetails extends React.PureComponent {
           <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
           <div>{appeal.assignedAttorney.full_name}</div>
         </React.Fragment> }
+        { appeal.assignedJudge.css_id === this.props.userCssId && featureToggles.overtime_revamp &&
+        <React.Fragment>
+          <h4>{COPY.TASK_SNAPSHOT_OVERTIME_LABEL}</h4>
+          <Button
+            linkStyling
+            styling={overtimeButton}
+            onClick={this.changeRoute} >
+            <span>{clockIcon()}</span>
+            <span {...overtimeLink}>&nbsp;{appeal.overtime ? COPY.TASK_SNAPSHOT_IS_OVERTIME : COPY.TASK_SNAPSHOT_IS_NOT_OVERTIME }</span>
+          </Button>
+        </React.Fragment> }
     </CaseDetailTitleScaffolding>;
   };
 }
@@ -251,26 +278,35 @@ CaseTitleDetails.propTypes = {
   appeal: PropTypes.object.isRequired,
   appealId: PropTypes.string.isRequired,
   canEditAod: PropTypes.bool,
+  featureToggles: PropTypes.object,
   redirectUrl: PropTypes.string,
   requestPatch: PropTypes.func.isRequired,
   taskType: PropTypes.string,
   userIsVsoEmployee: PropTypes.bool.isRequired,
-  userCanAccessReader: PropTypes.bool
+  userCanAccessReader: PropTypes.bool,
+  userRole: PropTypes.string,
+  userCssId: PropTypes.string,
+  resetDecisionOptions: PropTypes.func,
+  stageAppeal: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { userRole, canEditAod } = state.ui;
+  const { userRole, userCssId, canEditAod, featureToggles, userIsVsoEmployee  } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
+    userCssId,
     canEditAod,
-    userIsVsoEmployee: state.ui.userIsVsoEmployee
+    featureToggles,
+    userIsVsoEmployee
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch
+  requestPatch,
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(CaseTitleDetails));
+export default (withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(CaseTitleDetails)
+));

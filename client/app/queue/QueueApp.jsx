@@ -49,6 +49,7 @@ import AddPrivateBarModal from './AddPrivateBarModal';
 import LookupParticipantIdModal from './LookupParticipantIdModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
+import SetOvertimeStatusModal from './SetOvertimeStatusModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
 import BulkAssignModal from './components/BulkAssignModal';
@@ -252,6 +253,8 @@ class QueueApp extends React.PureComponent {
   routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
 
   routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
+
+  routedSetOvertimeStatusModal = (props) => <SetOvertimeStatusModal {...props.match.params} />;
 
   routedChangeHearingDisposition = (props) => <ChangeHearingDispositionModal {...props.match.params} />;
 
@@ -476,6 +479,10 @@ class QueueApp extends React.PureComponent {
               <Route
                 path="/queue/appeals/:appealId/modal/advanced_on_docket_motion"
                 render={this.routedAdvancedOnDocketMotion}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/modal/set_overtime_status`}
+                render={this.routedSetOvertimeStatusModal}
               />
               <Route
                 path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_ATTORNEY.value}`}
