@@ -12,7 +12,7 @@ class Hearing < CaseflowRecord
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
   belongs_to :updated_by, class_name: "User"
-  has_one :transcription
+  has_one :transcription, -> { order(created_at: :desc) }
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
   has_many :hearing_issue_notes
@@ -21,7 +21,7 @@ class Hearing < CaseflowRecord
   class HearingDayFull < StandardError; end
 
   accepts_nested_attributes_for :hearing_issue_notes
-  accepts_nested_attributes_for :transcription
+  accepts_nested_attributes_for :transcription, reject_if: proc { |attributes| attributes.blank? }
   accepts_nested_attributes_for :hearing_location
 
   alias_attribute :location, :hearing_location
