@@ -70,7 +70,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       #
       #   See: https://github.com/department-of-veterans-affairs/caseflow/issues/14130
       #
-      scenario "can update transcription fields individually" do
+      scenario "can update fields without side-effects to transcription" do
         visit "hearings/#{hearing.external_id}/details"
 
         step "ensure page has existing transcription details" do
@@ -90,6 +90,24 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
           visit "hearings/#{hearing.external_id}/details"
 
+          expect(
+            page.find(".dropdown-problemType .Select-value")
+          ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
+          expect(
+            find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
+          ).to be_checked
+          expect(Transcription.count).to be(2)
+        end
+
+        step "changing notes preserves already populated fields and doesn't create new transcription" do
+          fill_in "Notes", with: "Test Notes Test Notes"
+          click_button("Save")
+
+          expect(page).to have_content(expected_alert)
+
+          visit "hearings/#{hearing.external_id}/details"
+
+          expect(page).to have_content("Test Notes Test Notes")
           expect(
             page.find(".dropdown-problemType .Select-value")
           ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
