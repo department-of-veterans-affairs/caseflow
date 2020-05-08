@@ -365,7 +365,6 @@ class QueueApp extends React.PureComponent {
               />
 
               <PageRoute
-                exact
                 path="/queue/appeals/:appealId"
                 title="Case Details | Caseflow"
                 render={this.routedQueueDetailWithLoadingScreen}
