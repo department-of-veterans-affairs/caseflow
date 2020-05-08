@@ -332,6 +332,10 @@ describe AppealStatusApiDecorator, :all_dbs do
         create(:evidence_submission_window_task, :in_progress, appeal: appeal, assigned_to: Bva.singleton)
       end
 
+      before do
+        appeal.update(docket_type: Constants.AMA_DOCKETS.evidence_submission)
+      end
+
       it "has an evidentiary_period alert" do
         expect(subject.count).to eq(1)
         expect(subject[0][:type]).to eq("evidentiary_period")
