@@ -80,42 +80,6 @@ ReadOnlyEmails.propTypes = {
   showAllEmails: PropTypes.bool
 };
 
-const Emails = (
-  { readOnly, virtualHearing, update, vetEmailError, repEmailError }
-) => (
-  <React.Fragment>
-    <TextField
-      strongLabel
-      value={virtualHearing.veteranEmail}
-      name="vet-email"
-      label="Veteran Email"
-      errorMessage={vetEmailError}
-      readOnly={readOnly}
-      onChange={(veteranEmail) => update({ veteranEmail })}
-    />
-    <TextField
-      strongLabel
-      value={virtualHearing.representativeEmail}
-      name="rep-email"
-      label="POA/Representative Email"
-      errorMessage={repEmailError}
-      readOnly={readOnly}
-      onChange={(representativeEmail) => update({ representativeEmail })}
-    />
-  </React.Fragment>
-);
-
-Emails.propTypes = {
-  readOnly: PropTypes.bool,
-  virtualHearing: PropTypes.shape({
-    veteranEmail: PropTypes.string,
-    representativeEmail: PropTypes.string
-  }),
-  vetEmailError: PropTypes.bool,
-  repEmailError: PropTypes.bool,
-  update: PropTypes.func
-};
-
 const ChangeHearingTime = (props) => (
   <React.Fragment>
     <DateTime {...props} />
@@ -150,13 +114,57 @@ ChangeFromVirtual.propTypes = {
   })
 };
 
-const ChangeToVirtual = (props) => (
-  <React.Fragment>
-    <DateTime {...props} />
-    <Emails {...props} />
-    <p dangerouslySetInnerHTML={{ __html: COPY.VIRTUAL_HEARING_MODAL_CONFIRMATION }} />
-  </React.Fragment>
-);
+const ChangeToVirtual = (props) => {
+  const { hearing, readOnly, repEmailError, update, vetEmailError, virtualHearing } = props;
+
+  return (
+    <React.Fragment>
+      <DateTime {...props} />
+      <TextField
+        strongLabel
+        value={
+          _.isUndefined(virtualHearing.veteranEmail)
+            ? hearing.veteranEmailAddress
+            : virtualHearing.veteranEmail
+        }
+        name="vet-email"
+        label="Veteran Email"
+        errorMessage={vetEmailError}
+        readOnly={readOnly}
+        onChange={(veteranEmail) => update({ veteranEmail })}
+      />
+      <TextField
+        strongLabel
+        value={
+          _.isUndefined(virtualHearing.representativeEmail)
+            ? hearing.representativeEmailAddress
+            : virtualHearing.representativeEmail
+        }
+        name="rep-email"
+        label="POA/Representative Email"
+        errorMessage={repEmailError}
+        readOnly={readOnly}
+        onChange={(representativeEmail) => update({ representativeEmail })}
+      />
+      <p dangerouslySetInnerHTML={{ __html: COPY.VIRTUAL_HEARING_MODAL_CONFIRMATION }} />
+    </React.Fragment>
+  );
+};
+
+ChangeToVirtual.propTypes = {
+  hearing: PropTypes.shape({
+    representativeEmailAddress: PropTypes.string,
+    veteranEmailAddress: PropTypes.string
+  }),
+  readOnly: PropTypes.bool,
+  repEmailError: PropTypes.string,
+  update: PropTypes.func,
+  vetEmailError: PropTypes.string,
+  virtualHearing: PropTypes.shape({
+    representativeEmail: PropTypes.string,
+    veteranEmail: PropTypes.string
+  })
+};
 
 const INVALID_EMAIL_FORMAT = 'Please enter a valid email address';
 
@@ -191,15 +199,9 @@ const VirtualHearingModal = (props) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const typeSettings = TYPES[type];
-  const veteranEmail = type === 'change_to_virtual' ?
-    virtualHearing.veteranEmail || hearing.veteranEmailAddress :
-    virtualHearing.veteranEmail;
-  const representativeEmail = type === 'change_to_virtual' ?
-    virtualHearing.representativeEmail || hearing.representativeEmailAddress :
-    virtualHearing.representativeEmail;
 
   const validateForm = () => {
-    if (_.isEmpty(veteranEmail)) {
+    if (_.isEmpty(virtualHearing.veteranEmail)) {
       setVetEmailError(INVALID_EMAIL_FORMAT);
 
       return false;
