@@ -8,8 +8,8 @@ class ETL::LegacyHearing < ETL::Hearing
 
     def merge_original_attributes_to_target(original, target)
       super
-    rescue Caseflow::Error::VacolsRecordNotFound => err
-      Rails.logger.error(err)
+    rescue Caseflow::Error::VacolsRecordNotFound => error
+      Rails.logger.error(error)
       target
     ensure
       # whether we catch an error or not, make sure these are populated
