@@ -9,7 +9,8 @@ import Button from '../components/Button';
 import { bindActionCreators } from 'redux';
 
 import {
-  appealWithDetailSelector
+  appealWithDetailSelector,
+  tasksByAssigneeCssIdSelector
 } from './selectors';
 import DocketTypeBadge from './../components/DocketTypeBadge';
 import CopyTextButton from '../components/CopyTextButton';
@@ -154,13 +155,17 @@ export class CaseTitleDetails extends React.PureComponent {
       redirectUrl,
       taskType,
       userIsVsoEmployee,
-      featureToggles
+      featureToggles,
+      task,
+      userCssId
     } = this.props;
 
     const {
       highlightModal,
       documentIdError
     } = this.state;
+
+    const showOvertimeButton = (task[0].assignedTo?.cssId === userCssId) || (appeal?.assignedJudge?.css_id === userCssId) && true;
 
     return <CaseDetailTitleScaffolding>
       <React.Fragment>
@@ -259,7 +264,7 @@ export class CaseTitleDetails extends React.PureComponent {
           <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
           <div>{appeal.assignedAttorney.full_name}</div>
         </React.Fragment> }
-      { featureToggles.overtime_revamp &&
+      { featureToggles.overtime_revamp && showOvertimeButton &&
         <React.Fragment>
           <h4>{COPY.TASK_SNAPSHOT_OVERTIME_LABEL}</h4>
           <Button
@@ -289,6 +294,7 @@ CaseTitleDetails.propTypes = {
   userCanAccessReader: PropTypes.bool,
   userRole: PropTypes.string,
   userCssId: PropTypes.string,
+  taskCssId: PropTypes.object,
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func
 };
@@ -298,6 +304,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
+    task: tasksByAssigneeCssIdSelector(state),
     userRole,
     userCssId,
     canEditAod,

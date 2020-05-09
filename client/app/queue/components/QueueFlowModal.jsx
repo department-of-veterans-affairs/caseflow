@@ -39,12 +39,8 @@ class QueueFlowModal extends React.PureComponent {
       return highlightInvalidFormItems(true);
     }
 
-    highlightInvalidFormItems(false);
-    
-    
-    if (this.state.isMounted) {
-      return this.setState({ loading: true });
-    }
+    highlightInvalidFormItems(false);   
+    this.setState({ loading: true });
 
     this.props.
       submit().
