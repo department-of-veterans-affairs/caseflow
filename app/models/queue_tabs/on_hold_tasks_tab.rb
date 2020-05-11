@@ -17,6 +17,16 @@ class OnHoldTasksTab < QueueTab
 
   def tasks
     Task.includes(*task_includes).visible_in_queue_table_view.on_hold.where(assigned_to: assignee)
+      .or(legacy_colocated_tasks)
+  end
+
+  def legacy_colocated_tasks
+    Task.includes(*task_includes).open.where(
+      assigned_by: assignee,
+      assigned_to_type: Organization.name,
+      appeal_type: LegacyAppeal.name,
+      type: ColocatedTask.subclasses.map(&:name)
+    )
   end
 
   # rubocop:disable Metrics/AbcSize
