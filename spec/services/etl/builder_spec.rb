@@ -96,7 +96,7 @@ describe ETL::Builder, :etl, :all_dbs do
     context "BVA status distribution" do
       it "syncs all records" do
         Timecop.freeze(Time.zone.now.round) do
-          described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
+          described_class.syncer_klasses.each { |klass| expect(klass.target_class.all.count).to eq(0) }
 
           expect(ETL::Appeal.count).to eq(0)
 
@@ -129,10 +129,9 @@ describe ETL::Builder, :etl, :all_dbs do
     before do
       # create meta for "previous" run
       etl_build = ETL::Build.create(started_at: last_build_time)
-      described_class::ETL_KLASSES.each do |klass|
-        model = klass.constantize
+      described_class.syncer_klasses.each do |syncer_klass|
         ETL::BuildTable.create(
-          table_name: model.table_name,
+          table_name: syncer_klass.target_class.table_name,
           started_at: last_build_time,
           etl_build: etl_build
         ).complete!
@@ -145,7 +144,7 @@ describe ETL::Builder, :etl, :all_dbs do
     context "BVA status distribution" do
       it "syncs only records that have changed" do
         Timecop.freeze(Time.zone.now.round) do
-          described_class::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
+          described_class.syncer_klasses.each { |klass| expect(klass.target_class.all.count).to eq(0) }
 
           build = subject
 
