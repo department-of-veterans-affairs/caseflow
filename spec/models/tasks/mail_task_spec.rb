@@ -11,7 +11,7 @@ describe MailTask, :postgres do
   describe ".create_from_params" do
     # Use AodMotionMailTask because we do create subclasses of MailTask, never MailTask itself.
     let(:task_class) { AodMotionMailTask }
-    let(:params) { { appeal: root_task.appeal, parent_id: root_task_id, type: task_class.name } }
+    let(:params) { { appeal: root_task.appeal, parent_id: root_task_id, type: task_class.name, instructions: "Test" } }
     let(:root_task_id) { root_task.id }
 
     context "when no root_task exists for appeal" do
@@ -30,11 +30,13 @@ describe MailTask, :postgres do
         mail_task = root_task.children[0]
         expect(mail_task.class).to eq(task_class)
         expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.instructions).to eq(params[:instructions])
         expect(mail_task.children.length).to eq(1)
 
         child_task = mail_task.children[0]
         expect(child_task.class).to eq(task_class)
         expect(child_task.assigned_to).to eq(AodTeam.singleton)
+        expect(child_task.instructions).to eq(params[:instructions])
         expect(child_task.children.length).to eq(0)
       end
     end
