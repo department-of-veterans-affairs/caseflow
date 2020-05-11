@@ -16,11 +16,18 @@ module ETLClasses
     Person
     Task
     User
+    VhaAppeal
+    VhaHigherLevelReview
+    VhaSupplementalClaim
   ].freeze
 
-  private
+  class_methods do
+    def syncer_klasses
+      ETL_KLASSES.map { |klass| "ETL::#{klass}Syncer".constantize }
+    end
+  end
 
   def syncer_klasses
-    ETL_KLASSES.map { |klass| "ETL::#{klass}Syncer".constantize }
+    self.class.syncer_klasses
   end
 end
