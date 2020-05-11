@@ -13,11 +13,9 @@ module CollectDataDogMetrics
   end
 
   def collect_postgres_metrics
-    conns = ActiveRecord::Base.connection_pool.connections
-
-    active = conns.count { |c| c.in_use? && c.owner.alive? }
-    dead = conns.count { |c| c.in_use? && !c.owner.alive? }
-    idle = conns.count { |c| !c.in_use? }
+    active = ActiveRecord::Base.connection_pool.connections.count { |c| c.in_use? && c.owner&.alive? }
+    dead = ActiveRecord::Base.connection_pool.connections.count { |c| c.in_use? && !c.owner&.alive? }
+    idle = ActiveRecord::Base.connection_pool.connections.count { |c| !c.in_use? }
 
     emit_datadog_point("postgres", "active", active)
     emit_datadog_point("postgres", "dead", dead)
