@@ -41,13 +41,12 @@ class DataIntegrityChecksJob < CaseflowJob
   private
 
   def report_msg(msg)
-    unless msg =~ /\[(INFO|WARN|ERROR)\]/
-      return "[WARN] #{msg}"
-    end
+    return "[WARN] #{msg}" unless msg.match?(/\[(INFO|WARN|ERROR)\]/)
+
     msg
   end
 
   def send_to_slack(checker)
-    slack_service.send_notification("#{report_msg(checker.report)}", checker.class.name, checker.slack_channel)
+    slack_service.send_notification(report_msg(checker.report), checker.class.name, checker.slack_channel)
   end
 end
