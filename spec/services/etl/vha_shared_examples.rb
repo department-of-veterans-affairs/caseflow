@@ -9,13 +9,13 @@ shared_examples "VHA decision review sync" do
   let(:etl_build) { ETL::Build.create }
 
   describe "#origin_class" do
-    subject { described_class.new(etl_build: etl_build).origin_class }
+    subject { described_class.new(etl_build: false).origin_class }
 
     it { is_expected.to eq origin_class }
   end
 
   describe "#target_class" do
-    subject { described_class.new(etl_build: etl_build).target_class }
+    subject { described_class.new(etl_build: false).target_class }
 
     it { is_expected.to eq target_class }
   end

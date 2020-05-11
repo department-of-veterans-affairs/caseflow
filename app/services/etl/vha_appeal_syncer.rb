@@ -17,6 +17,8 @@ class ETL::VhaAppealSyncer < ETL::VhaDecisionReviewSyncer
     where_vha_request_issues(AppealsUpdatedSinceQuery.new(since_date: since).call)
   end
 
+  private
+
   def where_vha_request_issues(query)
     query.where(id: vha_appeal_ids)
   end
