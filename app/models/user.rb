@@ -337,7 +337,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.default_active_tab
-    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end
 
   def assigned_tasks_tab

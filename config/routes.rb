@@ -217,10 +217,11 @@ Rails.application.routes.draw do
     patch "/messages/:id", to: "inbox#update"
   end
 
-  resources :users, only: [:index, :update]
-  resources :users, only: [:index] do
+  resources :users, only: [:index, :update] do
+    resources :task_pages, only: [:index], controller: 'users/task_pages'
     get 'represented_organizations', on: :member
   end
+
   get 'user', to: 'users#search'
   get 'user_info/represented_organizations'
 

@@ -78,6 +78,7 @@ class UsersController < ApplicationController
   end
 
   def user
+    params[:id] = params[:user_id] if params[:user_id] && !params[:id]
     unless css_id || params[:id]
       fail(
         Caseflow::Error::InvalidParameter,
