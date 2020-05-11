@@ -36,14 +36,13 @@ class ExternalApi::EfolderService
       response_body = JSON.parse(response.body)
       response_body["documents"]
     rescue JSON::ParserError => error
-      handle_json_parser_error(error)
+      handle_json_parser_error(error, response)
     end
   end
 
-  def self.handle_json_parser_error(error)
-    if response.code != 200
-      # re-throw so we try again, but don't log to sentry
-      # these are likely 502 gateway errors from EE.
+  def self.handle_json_parser_error(error, response)
+    if response.code == 502
+      # re-throw so we try again, but don't log to sentry.
       fail Caseflow::Error::TransientError, message: response.body, code: response.code
     else
       fail error
