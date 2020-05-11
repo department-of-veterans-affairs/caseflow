@@ -73,6 +73,7 @@ class AttorneyTaskListView extends React.PureComponent {
         assignedTasks={this.props.workableTasks}
         onHoldTasks={this.props.onHoldTasks}
         completedTasks={this.props.completedTasks}
+        paginationOptions={this.props.paginationOptions}
       />
     </AppSegment>;
   }
@@ -86,8 +87,7 @@ const mapStateToProps = (state) => {
       }
     },
     ui: {
-      messages,
-      organizations
+      messages
     }
   } = state;
 
@@ -97,7 +97,6 @@ const mapStateToProps = (state) => {
     completedTasks: completeTasksByAssigneeCssIdSelector(state),
     success: messages.success,
     error: messages.error,
-    organizations,
     taskDecision
   });
 };
@@ -124,7 +123,7 @@ AttorneyTaskListView.propTypes = {
   resetErrorMessages: PropTypes.func,
   showErrorMessage: PropTypes.func,
   onHoldTasks: PropTypes.array,
-  organizations: PropTypes.array,
+  paginationOptions: PropTypes.object,
   success: PropTypes.shape({
     title: PropTypes.string,
     detail: PropTypes.string

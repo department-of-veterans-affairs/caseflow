@@ -110,12 +110,12 @@ class QueueApp extends React.PureComponent {
     const { userRole } = this.props;
 
     if (userRole === USER_ROLE_TYPES.attorney) {
-      return <AttorneyTaskListView />;
+      return <AttorneyTaskListView paginationOptions={querystring.parse(window.location.search.slice(1))} />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
       return <JudgeDecisionReviewTaskListView {...this.props} />;
     }
 
-    return <ColocatedTaskListView />;
+    return <ColocatedTaskListView paginationOptions={querystring.parse(window.location.search.slice(1))} />;
   };
 
   routedQueueList = () => (
