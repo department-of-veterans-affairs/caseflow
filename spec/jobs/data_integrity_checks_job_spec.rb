@@ -7,6 +7,7 @@ describe DataIntegrityChecksJob do
   let(:reviews_with_duplicate_ep_error_checker) { ReviewsWithDuplicateEpErrorChecker.new }
   let(:stuck_virtual_hearings_checker) { StuckVirtualHearingsChecker.new }
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
+  let(:slack_messages) { [] }
 
   before do
     allow(ExpiredAsyncJobsChecker).to receive(:new).and_return(expired_async_jobs_checker)
@@ -28,7 +29,7 @@ describe DataIntegrityChecksJob do
       allow(checker).to receive(:report?).and_call_original
       allow(checker).to receive(:report).and_call_original
     end
-    allow(slack_service).to receive(:send_notification) { |msg| @slack_msg = msg }
+    allow(slack_service).to receive(:send_notification) { |msg| slack_messages << msg }
 
     @emitted_gauges = []
     allow(DataDogService).to receive(:emit_gauge) do |args|
@@ -86,7 +87,8 @@ describe DataIntegrityChecksJob do
 
     context "expired async jobs exist" do
       before do
-        expired_async_jobs_checker.add_to_report "1 expired async job"
+        expired_async_jobs_checker.add_to_report "[INFO] 1 expired async job"
+        untracked_legacy_appeals_checker.add_to_report "legacy appeals are untracked"
       end
 
       it "sends slack notification if there is a report" do
@@ -95,8 +97,9 @@ describe DataIntegrityChecksJob do
         expect(expired_async_jobs_checker).to have_received(:call).once
         expect(expired_async_jobs_checker).to have_received(:report?).once
         expect(expired_async_jobs_checker).to have_received(:report).once
-        expect(slack_service).to have_received(:send_notification)
-        expect(@slack_msg).to match(/^\[WARN\]/)
+        expect(slack_service).to have_received(:send_notification).twice
+        expect(slack_messages.any? { |msg| msg =~ /^\[INFO\] 1 expired async job/ }).to eq(true)
+        expect(slack_messages.any? { |msg| msg =~ /^\[WARN\] legacy appeals are untracked/ }).to eq(true)
       end
     end
 

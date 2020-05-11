@@ -41,7 +41,7 @@ class DataIntegrityChecksJob < CaseflowJob
   private
 
   def report_msg(msg)
-    unless msg =~ /\[INFO|WARN|ERROR\]/
+    unless msg =~ /\[(INFO|WARN|ERROR)\]/
       return "[WARN] #{msg}"
     end
     msg
