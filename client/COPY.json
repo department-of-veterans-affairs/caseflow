@@ -771,6 +771,13 @@
     }
   },
 
+  "VIRTUAL_HEARING_ERROR_ALERTS": {
+    "JOB_IS_RUNNING": {
+      "TITLE": "Update to Virtual Hearing failed",
+      "MESSAGE": "A job to create or update the virtual hearings is already running. Please try again later." 
+    }
+  },
+
   "VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL": "VLJ Virtual Hearing Link",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
   "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",

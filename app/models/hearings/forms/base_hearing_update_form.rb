@@ -67,13 +67,21 @@ class BaseHearingUpdateForm
     #   1. Any virtual hearing attributes are set
     #   2. Hearing time is being changed
     #   3. Judge is being changed
-    return true if virtual_hearing_attributes.present?
-
     if hearing.virtual?
-      return scheduled_time_string.present? || judge_id.present?
+      virtual_hearing = hearing.virtual_hearing
+
+      # If there's a job running, the virtual hearing shouldn't be changed, and
+      # an error should be reported to the user.
+      if virtual_hearing.pending? || !virtual_hearing.job_completed?
+        add_virtual_hearing_job_running_alert
+
+        return false
+      end
+
+      return true if scheduled_time_string.present? || judge_id.present?
     end
 
-    false
+    return virtual_hearing_attributes.present?
   end
 
   def only_time_updated?
@@ -187,13 +195,6 @@ class BaseHearingUpdateForm
     end
   end
 
-  def add_update_hearing_alert
-    hearing_alerts << UserAlert.new(
-      title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
-      type: UserAlert::TYPES[:success]
-    ).to_hash
-  end
-
   def veteran_full_name
     @veteran_full_name ||= hearing.appeal&.veteran&.name&.to_s || "the veteran"
   end
@@ -228,6 +229,21 @@ class BaseHearingUpdateForm
     elsif only_emails_updated?
       email_change_type
     end
+  end
+
+  def add_update_hearing_alert
+    hearing_alerts << UserAlert.new(
+      title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
+      type: UserAlert::TYPES[:success]
+    ).to_hash
+  end
+
+  def add_virtual_hearing_job_running_alert
+    hearing_alerts << UserAlert.new(
+      title: COPY::VIRTUAL_HEARING_ERROR_ALERTS["JOB_IS_RUNNING"]["TITLE"],
+      message: COPY::VIRTUAL_HEARING_ERROR_ALERTS["JOB_IS_RUNNING"]["MESSAGE"],
+      type: UserAlert::TYPES[:error]
+    )
   end
 
   def add_virtual_hearing_alert
