@@ -40,6 +40,21 @@ describe ETL::LegacyHearingSyncer, :etl, :all_dbs do
       end
     end
 
+    context "VACOLS hearing not found" do
+      before do
+        create(:legacy_hearing, vacols_id: "no-such-vacols-record")
+        allow(Rails.logger).to receive(:error).and_call_original
+      end
+
+      it "rescues Caseflow::Error::VacolsRecordNotFound and continues" do
+        subject
+
+        expect(LegacyHearing.count).to eq(3)
+        expect(ETL::LegacyHearing.count).to eq(3)
+        expect(Rails.logger).to have_received(:error).once
+      end
+    end
+
     context "orphaned Hearing" do
       let!(:orphaned_hearing) { create(:legacy_hearing) }
       let(:etl_build_table) { ETL::BuildTable.where(table_name: "hearings").last }
