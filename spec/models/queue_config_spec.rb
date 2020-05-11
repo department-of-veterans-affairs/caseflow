@@ -232,7 +232,8 @@ describe QueueConfig, :postgres do
           let!(:on_hold_tasks) { create_list(:ama_task, 5, :on_hold, assigned_to: assignee) }
           let!(:completed_tasks) { create_list(:ama_task, 7, :completed, assigned_to: assignee) }
 
-          before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
+          before { FeatureToggle.enable!(:user_queue_pagination) }
+          after { FeatureToggle.disable!(:user_queue_pagination) }
 
           it "returns the tasks in the correct tabs" do
             tabs = subject
