@@ -108,7 +108,7 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
     end
 
     context "for AMA appeal" do
-      let(:judge_assign_task) { create(:ama_judge_task, parent: create(:root_task), assigned_to: judge) }
+      let(:judge_assign_task) { create(:ama_judge_assign_task, parent: create(:root_task), assigned_to: judge) }
       let(:appeal) { judge_assign_task.appeal }
       let(:appeal_id) { appeal.uuid }
 
@@ -128,7 +128,7 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
     context "when non-judge user modifies overtime" do
       let(:current_user) { create(:user) }
 
-      let(:judge_assign_task) { create(:ama_judge_task, parent: create(:root_task), assigned_to: judge) }
+      let(:judge_assign_task) { create(:ama_judge_assign_task, parent: create(:root_task), assigned_to: judge) }
 
       let(:appeal) { judge_assign_task.appeal }
       let(:appeal_id) { appeal.uuid }
@@ -159,7 +159,7 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
             assigned_to: current_user
           )
         end
-        let(:judge_assign_task) { create(:ama_judge_task, parent: attorney_task.root_task, assigned_to: judge) }
+        let(:judge_assign_task) { create(:ama_judge_assign_task, parent: attorney_task.root_task, assigned_to: judge) }
 
         include_examples "unauthorized user toggles overtime"
       end
