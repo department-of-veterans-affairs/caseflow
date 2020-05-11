@@ -3,6 +3,8 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
+import querystring from 'querystring';
+
 
 import BulkAssignButton from './components/BulkAssignButton';
 import QueueTable from './QueueTable';
@@ -26,12 +28,13 @@ import { fullWidth } from './constants';
 
 class QueueTableBuilder extends React.PureComponent {
 
+  paginationOptions = () => querystring.parse(window.location.search.slice(1));
+
   calculateActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
-    const { paginationOptions = {} } = this.props;
-    const activeTab = paginationOptions.tab || config.active_tab;
+    const activeTab = this.paginationOptions().tab || config.active_tab;
     const index = _.indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
@@ -84,7 +87,7 @@ class QueueTableBuilder extends React.PureComponent {
     (tabConfig.columns || []).map((column) => this.createColumnObject(column, config, tasks));
 
   taskTableTabFactory = (tabConfig, config) => {
-    const { paginationOptions = {} } = this.props;
+    const paginationOptions = this.paginationOptions();
     const tasks = config.use_task_pages_api ?
       tasksWithAppealsFromRawTasks(tabConfig.tasks) :
       this.tasksForTab(tabConfig.name);

@@ -110,12 +110,12 @@ class QueueApp extends React.PureComponent {
     const { userRole } = this.props;
 
     if (userRole === USER_ROLE_TYPES.attorney) {
-      return <AttorneyTaskListView paginationOptions={querystring.parse(window.location.search.slice(1))} />;
+      return <AttorneyTaskListView />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
       return <JudgeDecisionReviewTaskListView {...this.props} />;
     }
 
-    return <ColocatedTaskListView paginationOptions={querystring.parse(window.location.search.slice(1))} />;
+    return <ColocatedTaskListView />;
   };
 
   routedQueueList = () => (
@@ -277,7 +277,7 @@ class QueueApp extends React.PureComponent {
 
     return (
       <OrganizationQueueLoadingScreen urlToLoad={`${url}/tasks`}>
-        <OrganizationQueue {...this.props} paginationOptions={querystring.parse(window.location.search.slice(1))} />
+        <OrganizationQueue {...this.props} />
       </OrganizationQueueLoadingScreen>
     );
   };

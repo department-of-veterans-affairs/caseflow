@@ -37,7 +37,7 @@ class OrganizationQueue extends React.PureComponent {
           type="success"
           styling={alertStyling} />
       }
-      <QueueTableBuilder paginationOptions={this.props.paginationOptions} />
+      <QueueTableBuilder />
     </AppSegment>;
   };
 }
@@ -46,10 +46,8 @@ OrganizationQueue.propTypes = {
   clearCaseSelectSearch: PropTypes.func,
   onHoldTasks: PropTypes.array,
   organizations: PropTypes.array,
-  config: PropTypes.object,
   success: PropTypes.object,
-  tasksAssignedByBulk: PropTypes.object,
-  paginationOptions: PropTypes.object
+  tasksAssignedByBulk: PropTypes.object
 };
 
 const mapStateToProps = (state) => {
@@ -58,8 +56,7 @@ const mapStateToProps = (state) => {
   return {
     success,
     organizations: state.ui.organizations,
-    tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
-    config: state.queue.queueConfig
+    tasksAssignedByBulk: state.queue.tasksAssignedByBulk
   };
 };
 
