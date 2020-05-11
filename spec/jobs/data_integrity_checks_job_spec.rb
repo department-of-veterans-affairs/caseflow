@@ -5,7 +5,9 @@ describe DataIntegrityChecksJob do
   let(:open_hearing_tasks_without_active_descendants_checker) { OpenHearingTasksWithoutActiveDescendantsChecker.new }
   let(:untracked_legacy_appeals_checker) { UntrackedLegacyAppealsChecker.new }
   let(:reviews_with_duplicate_ep_error_checker) { ReviewsWithDuplicateEpErrorChecker.new }
+  let(:stuck_virtual_hearings_checker) { StuckVirtualHearingsChecker.new }
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
+  let(:slack_messages) { [] }
 
   before do
     allow(ExpiredAsyncJobsChecker).to receive(:new).and_return(expired_async_jobs_checker)
@@ -14,18 +16,20 @@ describe DataIntegrityChecksJob do
     )
     allow(UntrackedLegacyAppealsChecker).to receive(:new).and_return(untracked_legacy_appeals_checker)
     allow(ReviewsWithDuplicateEpErrorChecker).to receive(:new).and_return(reviews_with_duplicate_ep_error_checker)
+    allow(StuckVirtualHearingsChecker).to receive(:new).and_return(stuck_virtual_hearings_checker)
     allow(SlackService).to receive(:new).and_return(slack_service)
     [
       expired_async_jobs_checker,
       open_hearing_tasks_without_active_descendants_checker,
       untracked_legacy_appeals_checker,
-      reviews_with_duplicate_ep_error_checker
+      reviews_with_duplicate_ep_error_checker,
+      stuck_virtual_hearings_checker
     ].each do |checker|
       allow(checker).to receive(:call).and_call_original
       allow(checker).to receive(:report?).and_call_original
       allow(checker).to receive(:report).and_call_original
     end
-    allow(slack_service).to receive(:send_notification).and_return(true)
+    allow(slack_service).to receive(:send_notification) { |msg| slack_messages << msg }
 
     @emitted_gauges = []
     allow(DataDogService).to receive(:emit_gauge) do |args|
@@ -74,12 +78,17 @@ describe DataIntegrityChecksJob do
       expect(reviews_with_duplicate_ep_error_checker).to have_received(:report?).once
       expect(reviews_with_duplicate_ep_error_checker).to_not have_received(:report)
 
+      expect(stuck_virtual_hearings_checker).to have_received(:call).once
+      expect(stuck_virtual_hearings_checker).to have_received(:report?).once
+      expect(stuck_virtual_hearings_checker).to_not have_received(:report)
+
       expect(slack_service).to_not have_received(:send_notification)
     end
 
     context "expired async jobs exist" do
       before do
-        expired_async_jobs_checker.add_to_report "1 expired async job"
+        expired_async_jobs_checker.add_to_report "[INFO] 1 expired async job"
+        untracked_legacy_appeals_checker.add_to_report "legacy appeals are untracked"
       end
 
       it "sends slack notification if there is a report" do
@@ -88,7 +97,9 @@ describe DataIntegrityChecksJob do
         expect(expired_async_jobs_checker).to have_received(:call).once
         expect(expired_async_jobs_checker).to have_received(:report?).once
         expect(expired_async_jobs_checker).to have_received(:report).once
-        expect(slack_service).to have_received(:send_notification)
+        expect(slack_service).to have_received(:send_notification).twice
+        expect(slack_messages.any? { |msg| msg =~ /^\[INFO\] 1 expired async job/ }).to eq(true)
+        expect(slack_messages.any? { |msg| msg =~ /^\[WARN\] legacy appeals are untracked/ }).to eq(true)
       end
     end
 

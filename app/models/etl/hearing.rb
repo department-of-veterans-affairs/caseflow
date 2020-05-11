@@ -3,7 +3,7 @@
 # transformed Hearing model, with associations "flattened" for reporting.
 
 class ETL::Hearing < ETL::Record
-  belongs_to :appeal, foreign_key: :appeal_id, foreign_type: "ETL::Appeal"
+  belongs_to :appeal, primary_key: :appeal_id, foreign_key: :appeal_id, class_name: "ETL::Appeal"
 
   class << self
     def origin_primary_key
@@ -77,7 +77,6 @@ class ETL::Hearing < ETL::Record
       target.appeal_id = original.appeal_id
       target.hearing_created_at = original.created_at
       target.hearing_updated_at = original.updated_at
-      target.bva_poc = original.bva_poc
       target.created_by_id = original.created_by_id
       target.created_by_user_css_id = created_by&.css_id
       target.created_by_user_full_name = created_by&.full_name
@@ -93,8 +92,6 @@ class ETL::Hearing < ETL::Record
       mirrored_hearing_attributes.each do |attr|
         target[attr] = original[attr]
       end
-
-      target.hearing_request_type = original.hearing_request_type
 
       # hearing day
       if hearing_day.present?
@@ -124,6 +121,10 @@ class ETL::Hearing < ETL::Record
 
       # STI does not work on the base class so we set explicitly
       target.type = name
+
+      # do these last as they may raise exceptions in legacy hearings
+      target.bva_poc = original.bva_poc
+      target.hearing_request_type = original.hearing_request_type
 
       target
     end

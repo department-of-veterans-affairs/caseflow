@@ -69,7 +69,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let(:role) { :attorney_role }
 
       it "should process the request succesfully" do
-        get :index, params: { user_id: create(:user).id, role: "attorney" }
+        get :index, params: { user_id: user.id, role: "attorney" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 0
@@ -118,12 +118,12 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let(:attorney) { create(:user) }
       let!(:judge_team) { JudgeTeam.create_for_judge(user).tap { |team| team.add_user(attorney) } }
 
-      let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
-      let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
-      let!(:task16) { create(:ama_judge_task, :on_hold, assigned_to: user, assigned_by: user) }
-      let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
+      let!(:task8) { create(:ama_judge_assign_task, assigned_to: user, assigned_by: user) }
+      let!(:task9) { create(:ama_judge_assign_task, :in_progress, assigned_to: user, assigned_by: user) }
+      let!(:task16) { create(:ama_judge_assign_task, :on_hold, assigned_to: user, assigned_by: user) }
+      let!(:task10) { create(:ama_judge_assign_task, :completed, assigned_to: user, assigned_by: user) }
       let!(:task15) do
-        create(:ama_judge_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
+        create(:ama_judge_assign_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
       end
       let!(:task17) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: user) }
 
@@ -604,19 +604,19 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         User.authenticate!(user: mail_team_user)
       end
 
-      context "when an EvidenceOrArgumentMailTask is created for an inactive appeal" do
+      context "when an AddressChangeMailTask is created for an inactive appeal" do
         let(:root_task) { create(:root_task) }
 
         let(:params) do
           [{
             "external_id": root_task.appeal.external_id,
-            "type": EvidenceOrArgumentMailTask.name,
+            "type": AddressChangeMailTask.name,
             "parent_id": root_task.id
           }]
         end
 
         before do
-          allow(EvidenceOrArgumentMailTask).to receive(:case_active?).and_return(false)
+          allow(AddressChangeMailTask).to receive(:case_active?).and_return(false)
         end
 
         it "returns a response indicating failure to create task" do

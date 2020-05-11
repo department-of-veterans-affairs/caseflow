@@ -6,6 +6,7 @@ class LegacyHearing < CaseflowRecord
   include AppealConcern
   include HasHearingTask
   include HasVirtualHearing
+  include HearingLocationConcern
   include HearingTimeConcern
 
   # When these instance variable getters are called, first check if we've

@@ -4,6 +4,7 @@ class Hearing < CaseflowRecord
   include HasHearingTask
   include HasVirtualHearing
   include HearingTimeConcern
+  include HearingLocationConcern
   include HasSimpleAppealUpdatedSince
 
   belongs_to :hearing_day
@@ -11,7 +12,7 @@ class Hearing < CaseflowRecord
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
   belongs_to :updated_by, class_name: "User"
-  has_one :transcription
+  has_one :transcription, -> { order(created_at: :desc) }
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
   has_many :hearing_issue_notes
@@ -20,7 +21,7 @@ class Hearing < CaseflowRecord
   class HearingDayFull < StandardError; end
 
   accepts_nested_attributes_for :hearing_issue_notes
-  accepts_nested_attributes_for :transcription
+  accepts_nested_attributes_for :transcription, reject_if: proc { |attributes| attributes.blank? }
   accepts_nested_attributes_for :hearing_location
 
   alias_attribute :location, :hearing_location
@@ -125,7 +126,10 @@ class Hearing < CaseflowRecord
 
   def advance_on_docket_motion
     # we're only really interested if the AOD was granted
-    AdvanceOnDocketMotion.for_person(claimant_id).order("granted DESC NULLS LAST").first
+    AdvanceOnDocketMotion
+      .for_person(claimant_id)
+      .order("granted DESC NULLS LAST, created_at DESC")
+      .first
   end
 
   def scheduled_for

@@ -14,6 +14,7 @@ describe VirtualHearingMailer do
   let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
   let(:recipient_title) { nil }
   let(:recipient) { MailRecipient.new(name: "LastName", email: "email@test.com", title: recipient_title) }
+  let(:pexip_url) { "fake.va.gov" }
 
   shared_context "ama hearing" do
     let(:hearing) do
@@ -62,6 +63,8 @@ describe VirtualHearingMailer do
   before do
     # Freeze the time to when this fix is made to workaround a potential DST bug.
     Timecop.freeze(Time.utc(2020, 1, 20, 16, 50, 0))
+
+    stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
   end
 
   shared_examples_for "sends an email" do
@@ -187,6 +190,90 @@ describe VirtualHearingMailer do
     end
   end
 
+  shared_examples_for "email body has the correct link" do |recipient|
+    if recipient == MailRecipient::RECIPIENT_TITLES[:judge]
+      describe "#link" do
+        it "is host link" do
+          expect(subject.html_part.body).to include(virtual_hearing.host_link)
+        end
+
+        it "is in correct format" do
+          expect(virtual_hearing.host_link).to eq(
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+            "pin=#{virtual_hearing.host_pin}#&role=host"
+          )
+        end
+      end
+    end
+
+    if recipient == MailRecipient::RECIPIENT_TITLES[:veteran] ||
+       recipient == MailRecipient::RECIPIENT_TITLES[:representative]
+      describe "#link" do
+        it "is guest link" do
+          expect(subject.html_part.body).to include(virtual_hearing.guest_link)
+        end
+
+        it "is in correct format" do
+          expect(virtual_hearing.guest_link).to eq(
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+            "pin=#{virtual_hearing.guest_pin}#&role=guest"
+          )
+        end
+      end
+    end
+  end
+
+  shared_examples_for "email body has the correct link for types" do |recipient|
+    describe "#confirmation" do
+      include_context "confirmation email"
+
+      it_behaves_like "email body has the correct link", recipient
+    end
+
+    describe "#updated_time_confirmation" do
+      include_context "updated time confirmation email"
+
+      it_behaves_like "email body has the correct link", recipient
+    end
+  end
+
+  shared_examples_for "email body has correct hearing location" do
+    describe "hearing_location is not nil" do
+      it "shows correct hearing location" do
+        expect(subject.html_part.body).to include(hearing.location.full_address)
+        expect(subject.html_part.body).to include(hearing.hearing_location.name)
+      end
+    end
+
+    describe "hearing_location is nil" do
+      it "shows correct hearing location" do
+        hearing.update!(hearing_location: nil)
+        expect(subject.html_part.body).to include(hearing.regional_office.full_address)
+        expect(subject.html_part.body).to include(hearing.regional_office.name)
+      end
+    end
+  end
+
+  shared_examples_for "cancellation email body has the correct hearing location" do
+    describe "#cancellation" do
+      include_context "cancellation email"
+
+      context "with legacy hearing" do
+        include_context "legacy hearing"
+
+        it_behaves_like "email body has correct hearing location"
+      end
+
+      context "with ama hearing" do
+        include_context "ama hearing"
+
+        it_behaves_like "email body has correct hearing location"
+      end
+    end
+  end
+
   context "for judge" do
     include_context "ama hearing"
 
@@ -208,6 +295,7 @@ describe VirtualHearingMailer do
       expected_legacy_times,
       [:confirmation, :updated_time_confirmation]
     )
+    it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:judge])
   end
 
   context "for veteran" do
@@ -226,6 +314,8 @@ describe VirtualHearingMailer do
     it_behaves_like(
       "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
     )
+    it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:veteran])
+    it_behaves_like("cancellation email body has the correct hearing location")
   end
 
   context "for representative" do
@@ -244,5 +334,7 @@ describe VirtualHearingMailer do
     it_behaves_like(
       "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
     )
+    it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:representative])
+    it_behaves_like("cancellation email body has the correct hearing location")
   end
 end

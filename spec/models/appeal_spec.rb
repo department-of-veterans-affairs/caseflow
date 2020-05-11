@@ -882,8 +882,8 @@ describe Appeal, :all_dbs do
       let!(:judge) { create(:user) }
       let!(:judge2) { create(:user) }
       let!(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal, created_at: 1.day.ago) }
-      let!(:task2) { create(:ama_judge_task, assigned_to: judge2, appeal: appeal) }
+      let!(:task) { create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal, created_at: 1.day.ago) }
+      let!(:task2) { create(:ama_judge_assign_task, assigned_to: judge2, appeal: appeal) }
 
       subject { appeal.assigned_judge }
 
