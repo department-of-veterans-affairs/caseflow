@@ -28,7 +28,7 @@ describe DataIntegrityChecksJob do
       allow(checker).to receive(:report?).and_call_original
       allow(checker).to receive(:report).and_call_original
     end
-    allow(slack_service).to receive(:send_notification).and_return(true)
+    allow(slack_service).to receive(:send_notification) { |msg| @slack_msg = msg }
 
     @emitted_gauges = []
     allow(DataDogService).to receive(:emit_gauge) do |args|
@@ -96,6 +96,7 @@ describe DataIntegrityChecksJob do
         expect(expired_async_jobs_checker).to have_received(:report?).once
         expect(expired_async_jobs_checker).to have_received(:report).once
         expect(slack_service).to have_received(:send_notification)
+        expect(@slack_msg).to match(/^\[WARN\]/)
       end
     end
 
