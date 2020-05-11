@@ -63,25 +63,23 @@ class BaseHearingUpdateForm
   end
 
   def should_create_or_update_virtual_hearing?
+    virtual_hearing = hearing&.virtual_hearing
+
+    # If there's a job running, the virtual hearing shouldn't be changed.
+    if virtual_hearing&.pending? || virtual_hearing&.job_completed? == false
+      add_virtual_hearing_job_running_alert
+
+      return false
+    end
+
     # If any are true:
     #   1. Any virtual hearing attributes are set
     #   2. Hearing time is being changed
     #   3. Judge is being changed
-    if hearing.virtual?
-      virtual_hearing = hearing.virtual_hearing
-
-      # If there's a job running, the virtual hearing shouldn't be changed, and
-      # an error should be reported to the user.
-      if virtual_hearing.pending? || !virtual_hearing.job_completed?
-        add_virtual_hearing_job_running_alert
-
-        return false
-      end
-
-      return true if scheduled_time_string.present? || judge_id.present?
-    end
-
-    return virtual_hearing_attributes.present?
+    (
+      virtual_hearing_attributes.present? ||
+      (hearing.virtual? && (scheduled_time_string.present? || judge_id.present?))
+    )
   end
 
   def only_time_updated?
