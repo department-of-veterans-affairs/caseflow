@@ -14,7 +14,7 @@ class BaseHearingUpdateForm
   def update
     virtual_hearing_changed = false
 
-    transaction do
+    ActiveRecord::Base.transaction do
       update_hearing
       add_update_hearing_alert if show_update_alert?
       if should_create_or_update_virtual_hearing?
