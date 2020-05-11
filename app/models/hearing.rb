@@ -18,6 +18,7 @@ class Hearing < CaseflowRecord
   has_many :email_events, class_name: "SentHearingEmailEvent"
 
   class HearingDayFull < StandardError; end
+  class HearingRequestTypeInvalid < StandardError; end
 
   accepts_nested_attributes_for :hearing_issue_notes
   accepts_nested_attributes_for :transcription
@@ -58,6 +59,7 @@ class Hearing < CaseflowRecord
   attr_accessor :override_full_hearing_day_validation
 
   HEARING_TYPES = {
+    R: "Virtual",
     V: "Video",
     T: "Travel",
     C: "Central"
@@ -80,10 +82,18 @@ class Hearing < CaseflowRecord
   end
 
   def readable_location
-    return "Washington, DC" if request_type == HearingDay::REQUEST_TYPES[:central]
-    return "#{location.city}, #{location.state}" if location
+    case request_type
+    when HearingDay::REQUEST_TYPES[:central]
+      "Washington, DC"
+    when HearingDay::REQUEST_TYPES[:video], HearingDay::REQUEST_TYPE[:travel]
+      return "#{location.city}, #{location.state}" if location
 
-    nil
+      nil
+    when HearingDay::REQUEST_TYPES[:virtual]
+      nil
+    else
+      fail HearingRequestTypeInvalid, "invalid request type #{request_type}"
+    end
   end
 
   def readable_request_type

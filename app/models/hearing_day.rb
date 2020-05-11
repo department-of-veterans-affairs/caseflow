@@ -15,6 +15,7 @@ class HearingDay < CaseflowRecord
   class HearingDayHasChildrenRecords < StandardError; end
 
   REQUEST_TYPES = {
+    virtual: "R",
     video: "V",
     travel: "T",
     central: "C"

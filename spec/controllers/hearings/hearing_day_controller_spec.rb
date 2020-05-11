@@ -105,4 +105,107 @@ describe Hearings::HearingDayController, :all_dbs do
       end
     end
   end
+
+  context "POST create" do
+    let(:params) { {} }
+
+    subject { post :create, params: params, as: :json }
+
+    context "virtual only hearing day" do
+      let(:params) do
+        {
+          request_type: HearingDay::REQUEST_TYPES[:virtual],
+          assign_room: false,
+          scheduled_for: Time.zone.now.to_date - 2.days
+        }
+      end
+
+      it "returns an empty room" do
+        expect(subject.status).to eq 201
+        hearing_day = JSON.parse(subject.body)
+        expect(hearing_day["room"]).to eq nil
+        expect(hearing_day["hearing"]["readable_request_type"]).to eq "Virtual"
+        expect(hearing_day["hearing"]["request_type"]).to eq "R"
+      end
+    end
+
+    context "when the room is provided as a parameter" do
+      context "video hearing day" do
+        let(:params) do
+          {
+            request_type: HearingDay::REQUEST_TYPES[:video],
+            assign_room: true,
+            scheduled_for: Time.zone.now.to_date - 2.days
+          }
+        end
+
+        it "returns the first available video hearing room when no room has been provided" do
+          expect(subject.status).to eq 201
+          hearing_day = JSON.parse(subject.body)
+          expect(hearing_day["hearing"]["room"]).to eq Constants::HEARING_ROOMS_LIST["1"]["label"]
+          expect(hearing_day["hearing"]["readable_request_type"]).to eq "Video"
+          expect(hearing_day["hearing"]["request_type"]).to eq "V"
+        end
+      end
+
+      context "central office hearing day" do
+        let(:params) do
+          {
+            request_type: HearingDay::REQUEST_TYPES[:central],
+            assign_room: true,
+            scheduled_for: Time.zone.now.to_date - 2.days
+          }
+        end
+        it "returns the first available central office hearing room when no room has been provided" do
+          expect(subject.status).to eq 201
+          hearing_day = JSON.parse(subject.body)
+          expect(hearing_day["hearing"]["room"]).to eq Constants::HEARING_ROOMS_LIST["2"]["label"]
+          expect(hearing_day["hearing"]["readable_request_type"]).to eq "Central"
+          expect(hearing_day["hearing"]["request_type"]).to eq "C"
+        end
+      end
+    end
+
+    context "when no room is provided as a parameter and assign_room is false" do
+      fcontext "video hearing day" do
+        let(:params) do
+          {
+            request_type: HearingDay::REQUEST_TYPES[:video],
+            assign_room: false,
+            scheduled_for: Time.zone.now.to_date - 2.days,
+            room: Constants::HEARING_ROOMS_LIST["1"]["label"]
+          }
+        end
+
+        it "returns the first available video hearing room when no room has been provided" do
+          expect(subject.status).to eq 201
+          hearing_day = JSON.parse(subject.body)
+          byebug
+          expect(hearing_day["hearing"]["room"]).to eq Constants::HEARING_ROOMS_LIST["1"]["label"]
+          expect(hearing_day["hearing"]["readable_request_type"]).to eq "Video"
+          expect(hearing_day["hearing"]["request_type"]).to eq "V"
+        end
+      end
+
+      context "central office hearing day" do
+        let(:params) do
+          {
+            request_type: HearingDay::REQUEST_TYPES[:central],
+            assign_room: false,
+            scheduled_for: Time.zone.now.to_date - 2.days,
+            room: Constants::HEARING_ROOMS_LIST["8"]["label"]
+          }
+        end
+
+        it "returns the first available central office hearing room when no room has been provided" do
+          expect(subject.status).to eq 201
+          hearing_day = JSON.parse(subject.body)
+          byebug
+          expect(hearing_day["hearing"]["room"]).to eq Constants::HEARING_ROOMS_LIST["8"]["label"]
+          expect(hearing_day["hearing"]["readable_request_type"]).to eq "Central"
+          expect(hearing_day["hearing"]["request_type"]).to eq "C"
+        end
+      end
+    end
+  end
 end
