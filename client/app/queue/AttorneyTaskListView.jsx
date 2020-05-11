@@ -74,6 +74,7 @@ class AttorneyTaskListView extends React.PureComponent {
         onHoldTasks={this.props.onHoldTasks}
         completedTasks={this.props.completedTasks}
         paginationOptions={this.props.paginationOptions}
+        requireDasRecord
       />
     </AppSegment>;
   }

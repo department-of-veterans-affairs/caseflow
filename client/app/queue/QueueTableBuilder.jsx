@@ -4,21 +4,21 @@ import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
 
+import BulkAssignButton from './components/BulkAssignButton';
 import QueueTable from './QueueTable';
 import TabWindow from '../components/TabWindow';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
-import { completedToNameColumn, daysOnHoldColumn, daysWaitingColumn, detailsColumn, docketNumberColumn,
-  badgesColumn, issueCountColumn, readerLinkColumn, readerLinkColumnWithNewDocsIcon, regionalOfficeColumn,
-  taskColumn, taskCompletedDateColumn, typeColumn } from './components/TaskTableColumns';
+import { assignedToColumn, completedToNameColumn, daysOnHoldColumn, daysWaitingColumn, detailsColumn,
+  docketNumberColumn, badgesColumn, issueCountColumn, readerLinkColumn, readerLinkColumnWithNewDocsIcon,
+  regionalOfficeColumn, taskColumn, taskCompletedDateColumn, typeColumn } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { fullWidth } from './constants';
 
 /**
- * A component to create a queue table's tabs and columns from a queue config and the user's tasks
- * The required props are:
+ * A component to create a queue table's tabs and columns from a queue config or the assignee's tasks
+ * The props are:
  * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  * - @onHoldTasks {array[object]} array of task objects to appear in the on hold tab
  * - @completedTasks {array[object]} array of task objects to appear in the completed tab
@@ -58,19 +58,20 @@ class QueueTableBuilder extends React.PureComponent {
   filterValuesForColumn = (column) => column && column.filterable && column.filter_options;
 
   createColumnObject = (column, config, tasks) => {
-    const requireDasRecord = config.userRole === USER_ROLE_TYPES.attorney;
+    const { requireDasRecord } = this.props;
     const filterOptions = this.filterValuesForColumn(column);
     const functionForColumn = {
       [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(tasks, filterOptions, requireDasRecord),
+      [QUEUE_CONFIG.COLUMNS.BADGES.name]: badgesColumn(tasks),
       [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(tasks, requireDasRecord, config.userRole),
       [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(tasks, filterOptions, requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name]: readerLinkColumn(requireDasRecord, true),
-      [QUEUE_CONFIG.COLUMNS.BADGES.name]: badgesColumn(tasks),
       [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name]: readerLinkColumnWithNewDocsIcon(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name]: regionalOfficeColumn(tasks, filterOptions),
+      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: assignedToColumn(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions)
@@ -92,6 +93,7 @@ class QueueTableBuilder extends React.PureComponent {
       label: sprintf(tabConfig.label, tabConfig.total_task_count),
       page: <React.Fragment>
         <p className="cf-margin-top-0">{tabConfig.description}</p>
+        { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
         <QueueTable
           key={tabConfig.name}
           columns={this.columnsFromConfig(config, tabConfig, tasks)}
@@ -100,9 +102,9 @@ class QueueTableBuilder extends React.PureComponent {
           casesPerPage={config.tasks_per_page}
           numberOfPages={tabConfig.task_page_count}
           totalTaskCount={tabConfig.total_task_count}
-          useTaskPagesApi={config.use_task_pages_api}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
           tabPaginationOptions={paginationOptions.tab === tabConfig.name && paginationOptions}
+          useTaskPagesApi={config.use_task_pages_api}
           enablePagination
         />
       </React.Fragment>
@@ -138,7 +140,8 @@ QueueTableBuilder.propTypes = {
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number
   }),
-  paginationOptions: PropTypes.object
+  paginationOptions: PropTypes.object,
+  requireDasRecord: PropTypes.bool
 };
 
 export default (connect(mapStateToProps)(QueueTableBuilder));
