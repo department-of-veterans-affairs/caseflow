@@ -69,7 +69,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let(:role) { :attorney_role }
 
       it "should process the request succesfully" do
-        get :index, params: { user_id: create(:user).id, role: "attorney" }
+        get :index, params: { user_id: user.id, role: "attorney" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 0
