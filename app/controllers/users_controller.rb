@@ -27,7 +27,7 @@ class UsersController < ApplicationController
   end
 
   def represented_organizations
-    render json: { represented_organizations: User.find(params[:id]).vsos_user_represents }
+    render json: { represented_organizations: User.find(id).vsos_user_represents }
   end
 
   def judge
@@ -77,9 +77,12 @@ class UsersController < ApplicationController
     render json: { users: json_users(users) }
   end
 
+  def id
+    @id ||= params[:id] || params[:user_id]
+  end
+
   def user
-    params[:id] = params[:user_id] if params[:user_id] && !params[:id]
-    unless css_id || params[:id]
+    unless css_id || id
       fail(
         Caseflow::Error::InvalidParameter,
         parameter: "css_id or id",
@@ -87,7 +90,7 @@ class UsersController < ApplicationController
       )
     end
 
-    @user ||= params[:id] ? User.find(params[:id]) : User.find_by_css_id(css_id)
+    @user ||= id ? User.find(id) : User.find_by_css_id(css_id)
   end
 
   def user_to_modify
