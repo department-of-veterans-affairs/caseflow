@@ -196,7 +196,7 @@ const TYPES = {
 };
 
 const VirtualHearingModal = (props) => {
-  const { closeModal, hearing, virtualHearing, reset, submit, type } = props;
+  const { closeModal, virtualHearing, reset, submit, type } = props;
   const [vetEmailError, setVetEmailError] = useState(null);
   const [repEmailError, setRepEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -220,7 +220,7 @@ const VirtualHearingModal = (props) => {
 
     setLoading(true);
 
-    submit()
+    return submit()
       ?.then(() => setSuccess(true))
       ?.then(closeModal)
       ?.catch((error) => {
@@ -276,7 +276,7 @@ const VirtualHearingModal = (props) => {
       </Modal>
     </div>
   );
-}
+};
 
 VirtualHearingModal.propTypes = {
   virtualHearing: PropTypes.shape({
