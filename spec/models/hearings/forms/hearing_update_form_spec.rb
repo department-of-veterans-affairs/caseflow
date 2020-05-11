@@ -9,7 +9,7 @@ describe HearingUpdateForm, :all_dbs do
     let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
     let(:params) do
       {
-        hearing: hearing,
+        hearing: hearing.reload,
         virtual_hearing_attributes: {
           veteran_email: "veteran@example.com",
           representative_email: "representative@example.com"
@@ -26,20 +26,49 @@ describe HearingUpdateForm, :all_dbs do
       allow(create_conference_job).to receive(:perform_now) # and do nothing
     end
 
+    subject { HearingUpdateForm.new(params) }
+
     context "updating a virtual hearing" do
-      let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
-
-      it "sends an update event to datadog" do
-        expect(DataDogService).to receive(:increment_counter).with(
-          hash_including(
-            metric_name: "updated_virtual_hearing.successful",
-            metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-            attrs: { hearing_id: hearing.id }
+      context "that is initialized and all emails have been sent" do
+        let!(:virtual_hearing) do
+          create(
+            :virtual_hearing,
+            :initialized,
+            :all_emails_sent,
+            status: :active,
+            hearing: hearing
           )
-        )
+        end
 
-        form = HearingUpdateForm.new(params)
-        form.update
+        it "sends an update event to datadog" do
+          expect(DataDogService).to receive(:increment_counter).with(
+            hash_including(
+              metric_name: "updated_virtual_hearing.successful",
+              metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+              attrs: { hearing_id: hearing.id }
+            )
+          )
+          subject.update
+        end
+      end
+
+      context "that is initialized, but emails were not all sent" do
+        let!(:virtual_hearing) do
+          create(
+            :virtual_hearing,
+            :initialized,
+            status: :active,
+            hearing: hearing
+          )
+        end
+
+        it "returns an alert error", :aggregate_failures do
+          form = subject
+          form.update
+
+          expect(form.hearing_alerts.size).to be(1)
+          expect(form.hearing_alerts.detect { |alert| alert.type == "error" }).not_to be_nil
+        end
       end
     end
 
@@ -52,9 +81,7 @@ describe HearingUpdateForm, :all_dbs do
             attrs: { hearing_id: hearing.id }
           )
         )
-
-        form = HearingUpdateForm.new(params)
-        form.update
+        subject.update
       end
     end
   end
