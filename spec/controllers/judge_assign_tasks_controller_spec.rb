@@ -10,7 +10,9 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
     let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
     let!(:second_judge_staff) { create(:staff, :judge_role, sdomainid: second_judge.css_id) }
 
-    let!(:assign_tasks) { Array.new(3) { create(:ama_judge_task, assigned_to: judge, parent: create(:root_task)) } }
+    let!(:assign_tasks) do
+      Array.new(3) { create(:ama_judge_assign_task, assigned_to: judge, parent: create(:root_task)) }
+    end
     let!(:assignee) { attorney }
     let!(:params) do
       assign_tasks.map do |assign_task|
@@ -74,6 +76,19 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
         after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
         it_behaves_like "attorney task assignment"
+      end
+
+      context "when the assignment encounters an error" do
+        before { create(:ama_judge_decision_review_task, assigned_to: judge, parent: assign_tasks.last.parent) }
+
+        it "Returns an error and creates no tasks" do
+          subject
+
+          expect(response.status).to eq 400
+          expect(JudgeAssignTask.open.count).to eq assign_tasks.count
+          expect(JudgeDecisionReviewTask.open.count).to eq 1
+          expect(AttorneyTask.open.count).to eq 0
+        end
       end
     end
 

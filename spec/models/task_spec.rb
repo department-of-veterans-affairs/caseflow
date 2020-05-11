@@ -5,7 +5,7 @@ describe Task, :all_dbs do
     describe ".structure" do
       let(:root_task) { create(:root_task) }
       let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task) }
-      let(:judge_task) { create(:ama_judge_task, :completed, parent: root_task) }
+      let(:judge_task) { create(:ama_judge_assign_task, :completed, parent: root_task) }
       let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
 
       subject { root_task.structure(:id, :status) }
@@ -1464,7 +1464,7 @@ describe Task, :all_dbs do
 
     context "when the task has a grandparent of the same type, but a different parent" do
       let(:grandparent_task) { create(:colocated_task, :ihp, assigned_to: user) }
-      let(:parent_task) { create(:ama_judge_task, parent: grandparent_task, assigned_to: user) }
+      let(:parent_task) { create(:ama_judge_assign_task, parent: grandparent_task, assigned_to: user) }
       let(:task) { create(:colocated_task, :ihp, parent: parent_task, assigned_to: user) }
 
       it "should should return itself" do
@@ -1490,7 +1490,7 @@ describe Task, :all_dbs do
 
     context "when the task has no children of the same type" do
       let(:task) { create(:colocated_task, assigned_to: user) }
-      let(:child_task) { create(:ama_judge_task, parent: task) }
+      let(:child_task) { create(:ama_judge_assign_task, parent: task) }
 
       it "should should return itself" do
         expect(subject.id).to eq(task.id)
@@ -1499,7 +1499,7 @@ describe Task, :all_dbs do
 
     context "when the task has a grandchild of the same type, but a different child" do
       let(:task) { create(:colocated_task, :ihp, assigned_to: user) }
-      let(:child_task) { create(:ama_judge_task, type: JudgeAssignTask.name, parent: task) }
+      let(:child_task) { create(:ama_judge_assign_task, type: JudgeAssignTask.name, parent: task) }
       let(:grandchild_task) { create(:colocated_task, :ihp, parent: child_task, assigned_to: user) }
 
       it "should should return itself" do
