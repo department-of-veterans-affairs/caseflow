@@ -157,7 +157,8 @@ export class CaseTitleDetails extends React.PureComponent {
       userIsVsoEmployee,
       featureToggles,
       task,
-      userCssId
+      userCssId,
+      userRole
     } = this.props;
 
     const {
@@ -165,7 +166,12 @@ export class CaseTitleDetails extends React.PureComponent {
       documentIdError
     } = this.state;
 
-    const showOvertimeButton = (task[0].assignedTo?.cssId === userCssId) || (appeal?.assignedJudge?.css_id === userCssId) && true;
+    // if it's a Legacy appeal, check if the current user matches the user assigned
+    // the appeal task and is a judge user, if it's an ama appeal check if the user is
+    // the judge assigned to the appeal
+    const showOvertimeButton = (((task[0]?.assignedTo?.cssId === userCssId) &&
+    // eslint-disable-next-line camelcase
+    userRole === 'Judge') || (appeal?.assignedJudge?.css_id === userCssId)) && true;
 
     return <CaseDetailTitleScaffolding>
       <React.Fragment>
@@ -296,7 +302,8 @@ CaseTitleDetails.propTypes = {
   userCssId: PropTypes.string,
   taskCssId: PropTypes.object,
   resetDecisionOptions: PropTypes.func,
-  stageAppeal: PropTypes.func
+  stageAppeal: PropTypes.func,
+  task: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {

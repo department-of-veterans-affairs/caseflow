@@ -39,7 +39,7 @@ class QueueFlowModal extends React.PureComponent {
       return highlightInvalidFormItems(true);
     }
 
-    highlightInvalidFormItems(false);   
+    highlightInvalidFormItems(false);
     this.setState({ loading: true });
 
     this.props.
