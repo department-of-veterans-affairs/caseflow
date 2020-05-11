@@ -49,7 +49,7 @@ describe Users::TaskPagesController, :postgres, type: :controller do
       expect(task_pager).to receive(:total_task_count)
 
       # Prevent this call from actually firing since it will fail due to the instance_double.
-      allow_any_instance_of(::Users::TaskPagesController).to receive(:json_tasks).and_return([])
+      allow_any_instance_of(TaskPaginationConcern).to receive(:json_tasks).and_return([])
 
       subject
     end
