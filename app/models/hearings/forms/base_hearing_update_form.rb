@@ -237,9 +237,15 @@ class BaseHearingUpdateForm
   end
 
   def add_virtual_hearing_job_running_alert
+    alert_key = if hearing.virtual_hearing.updated_by != RequestStore[:current_user]
+                  "ANOTHER_USER_IS_UPDATING"
+                else
+                  "JOB_IS_RUNNING"
+                end
+
     hearing_alerts << UserAlert.new(
-      title: COPY::VIRTUAL_HEARING_ERROR_ALERTS["JOB_IS_RUNNING"]["TITLE"],
-      message: COPY::VIRTUAL_HEARING_ERROR_ALERTS["JOB_IS_RUNNING"]["MESSAGE"],
+      title: COPY::VIRTUAL_HEARING_ERROR_ALERTS[alert_key]["TITLE"],
+      message: COPY::VIRTUAL_HEARING_ERROR_ALERTS[alert_key]["MESSAGE"],
       type: UserAlert::TYPES[:error]
     )
   end
