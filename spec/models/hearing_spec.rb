@@ -185,7 +185,7 @@ describe Hearing, :postgres do
       end
     end
   end
-  
+
   context "#hearing_location_or_regional_office" do
     subject { hearing.hearing_location_or_regional_office }
 
