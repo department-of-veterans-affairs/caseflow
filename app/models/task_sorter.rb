@@ -26,7 +26,10 @@ class TaskSorter
 
     # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
     # application, and conditional logic to only join sometimes adds unnecessary complexity.
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).joins(left_join_from_users_clause).order(order_clause)
+    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
+      .joins(left_join_from_users_clause)
+      .joins(join_assignees_clause)
+      .order(order_clause)
   end
 
   private
@@ -73,6 +76,16 @@ class TaskSorter
 
   def assigner_order_clause
     "substring(users.full_name,\'([a-zA-Z]+)$\') #{sort_order}"
+  end
+
+  def assignees_table
+    "(SELECT id, 'Organization' AS type, name AS assignee_label FROM organizations " \
+      "UNION " \
+    "SELECT id, 'User' AS type, full_name AS assignee_label FROM users) AS assignees"
+  end
+
+  def join_assignees_clause
+    "INNER JOIN #{assignees_table} ON assignees.id = tasks.assigned_to_id AND assignees.type = tasks.assigned_to_type"
   end
 
   def left_join_from_users_clause
