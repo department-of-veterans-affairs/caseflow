@@ -11,7 +11,7 @@ class Contention
   def text
     return unless description
 
-    truncate(remove_newlines(replaces_invalid_character))
+    truncate(remove_newlines(ascii_description))
   end
 
   private
@@ -20,7 +20,7 @@ class Contention
     description.gsub(/\s*[\r\n]+\s*/, " ")
   end
 
-  def replaces_invalid_character
+  def ascii_description
     AsciiConverter.new(string: description).convert
   end
 
