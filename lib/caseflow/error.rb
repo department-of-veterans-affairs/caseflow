@@ -20,6 +20,12 @@ module Caseflow::Error
     attr_accessor :code, :message, :title
   end
 
+  class TransientError < SerializableError
+    def ignorable?
+      true
+    end
+  end
+
   class EfolderError < SerializableError; end
   class DocumentRetrievalError < EfolderError; end
   class EfolderAccessForbidden < EfolderError; end
