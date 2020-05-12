@@ -277,7 +277,7 @@ class QueueApp extends React.PureComponent {
 
     return (
       <OrganizationQueueLoadingScreen urlToLoad={`${url}/tasks`}>
-        <OrganizationQueue {...this.props} paginationOptions={querystring.parse(window.location.search.slice(1))} />
+        <OrganizationQueue {...this.props} />
       </OrganizationQueueLoadingScreen>
     );
   };

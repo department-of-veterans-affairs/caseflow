@@ -13,12 +13,11 @@ module CollectDataDogMetrics
   end
 
   def collect_postgres_metrics
-    # safe-navigating c.owner&.alive? even though c.in_use? is aliased to
-    # c.owner, because we were occasionally seeing the following error:
-    # NoMethodError: undefined method 'alive?' for nil:NilClass
-    active = ActiveRecord::Base.connection_pool.connections.count { |c| c.in_use? && c.owner&.alive? }
-    dead = ActiveRecord::Base.connection_pool.connections.count { |c| c.in_use? && !c.owner&.alive? }
-    idle = ActiveRecord::Base.connection_pool.connections.count { |c| !c.in_use? }
+    conns = ActiveRecord::Base.connection_pool.connections
+
+    active = conns.count { |c| c.in_use? && c.owner.alive? }
+    dead = conns.count { |c| c.in_use? && !c.owner.alive? }
+    idle = conns.count { |c| !c.in_use? }
 
     emit_datadog_point("postgres", "active", active)
     emit_datadog_point("postgres", "dead", dead)
