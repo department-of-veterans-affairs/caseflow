@@ -6,9 +6,17 @@ class SentHearingEmailEvent < CaseflowRecord
 
   before_create :assign_sent_at_time
 
+  # Add compatibility with old data where the role was called veteran instead of
+  # appellant.
+  RECIPIENT_ROLES = MailRecipient::RECIPIENT_TITLES.keys.append(:veteran)
+
   # Allows all keys specified in `MailRecipient::RECIPIENT_TITLES`
-  enum recipient_role: MailRecipient::RECIPIENT_TITLES.map { |key, _| [key, key.to_s] }.to_h,
+  enum recipient_role: RECIPIENT_ROLES.map { |key| [key, key.to_s] }.to_h,
        _prefix: :sent_to
+
+  # Overrides the generated method for compatibility with old data prior to:
+  #   https://github.com/department-of-veterans-affairs/caseflow/issues/14147
+  scope :sent_to_appellant, -> { where(recipient_role: [:veteran, :appellant]) }
 
   # Email types are specified in `SendEmail#email_for_recipient`
   enum email_type: (
@@ -24,13 +32,10 @@ class SentHearingEmailEvent < CaseflowRecord
   end
 
   def sent_to_role
-    # Set the available recipient roles
-    roles = MailRecipient::RECIPIENT_TITLES.values.map(&:downcase)
-
     case recipient_role
     when "judge"
       "VLJ Email"
-    when "appellant"
+    when "appellant", "veteran"
       "Appellant Email"
     when "representative"
       "POA/Representative Email"
@@ -38,7 +43,7 @@ class SentHearingEmailEvent < CaseflowRecord
       fail(
         Caseflow::Error::InvalidParameter,
         parameter: "recipient_role",
-        message: "recipient_role must be one of #{roles}, received: #{recipient_role}"
+        message: "recipient_role must be one of #{RECIPIENT_ROLES}, received: #{recipient_role}"
       )
     end
   end
