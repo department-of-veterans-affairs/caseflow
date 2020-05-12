@@ -137,8 +137,8 @@ class BaseHearingUpdateForm
     virtual_hearing_attributes&.key?(:request_cancelled) || scheduled_time_string.present?
   end
 
-  def veteran_email_sent_flag
-    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:veteran_email))
+  def appellant_email_sent_flag
+    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:appellant_email))
   end
 
   def representative_email_sent_flag
@@ -159,7 +159,7 @@ class BaseHearingUpdateForm
     # The email sent flag should always be set to false if any changes are made.
     # The judge_email_sent flag should not be set to false if virtual hearing is cancelled.
     emails_sent_updates = {
-      veteran_email_sent: veteran_email_sent_flag,
+      appellant_email_sent: appellant_email_sent_flag,
       judge_email_sent: judge_email_sent_flag,
       representative_email_sent: representative_email_sent_flag
     }.reject { |_k, email_sent| email_sent == true }
@@ -180,7 +180,7 @@ class BaseHearingUpdateForm
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
-      new_virtual_hearing.veteran_email = virtual_hearing_attributes[:veteran_email]
+      new_virtual_hearing.appellant_email = virtual_hearing_attributes[:appellant_email]
       new_virtual_hearing.judge_email = hearing.judge&.email
       new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
       @virtual_hearing_created = true
@@ -210,7 +210,7 @@ class BaseHearingUpdateForm
   end
 
   def only_emails_updated?
-    email_changed = virtual_hearing_attributes&.key?(:veteran_email) ||
+    email_changed = virtual_hearing_attributes&.key?(:appellant_email) ||
                     virtual_hearing_attributes&.key?(:representative_email) ||
                     judge_id.present?
 
@@ -218,9 +218,9 @@ class BaseHearingUpdateForm
   end
 
   def email_change_type
-    if virtual_hearing_attributes&.key?(:veteran_email) && virtual_hearing_attributes&.key?(:representative_email)
+    if virtual_hearing_attributes&.key?(:appellant_email) && virtual_hearing_attributes&.key?(:representative_email)
       "CHANGED_VETERAN_AND_POA_EMAIL"
-    elsif virtual_hearing_attributes&.key?(:veteran_email)
+    elsif virtual_hearing_attributes&.key?(:appellant_email)
       "CHANGED_VETERAN_EMAIL"
     elsif virtual_hearing_attributes&.key?(:representative_email)
       "CHANGED_POA_EMAIL"
