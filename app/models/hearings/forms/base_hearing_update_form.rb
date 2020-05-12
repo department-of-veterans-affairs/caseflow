@@ -72,17 +72,23 @@ class BaseHearingUpdateForm
   end
 
   def should_create_or_update_virtual_hearing?
+    virtual_hearing = hearing&.virtual_hearing
+
+    # If there's a job running, the virtual hearing shouldn't be changed.
+    if virtual_hearing&.pending? || virtual_hearing&.job_completed? == false
+      add_virtual_hearing_job_running_alert
+
+      return false
+    end
+
     # If any are true:
     #   1. Any virtual hearing attributes are set
     #   2. Hearing time is being changed
     #   3. Judge is being changed
-    return true if virtual_hearing_attributes.present?
-
-    if hearing.virtual?
-      return scheduled_time_string.present? || judge_id.present?
-    end
-
-    false
+    (
+      virtual_hearing_attributes.present? ||
+      (hearing.virtual? && (scheduled_time_string.present? || judge_id.present?))
+    )
   end
 
   def only_time_updated?
@@ -199,13 +205,6 @@ class BaseHearingUpdateForm
     end
   end
 
-  def add_update_hearing_alert
-    hearing_alerts << UserAlert.new(
-      title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
-      type: UserAlert::TYPES[:success]
-    ).to_hash
-  end
-
   def veteran_full_name
     @veteran_full_name ||= hearing.appeal&.veteran&.name&.to_s || "the veteran"
   end
@@ -240,6 +239,27 @@ class BaseHearingUpdateForm
     elsif only_emails_updated?
       email_change_type
     end
+  end
+
+  def add_update_hearing_alert
+    hearing_alerts << UserAlert.new(
+      title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
+      type: UserAlert::TYPES[:success]
+    ).to_hash
+  end
+
+  def add_virtual_hearing_job_running_alert
+    alert_key = if hearing.virtual_hearing.updated_by != RequestStore[:current_user]
+                  "ANOTHER_USER_IS_UPDATING"
+                else
+                  "JOB_IS_RUNNING"
+                end
+
+    hearing_alerts << UserAlert.new(
+      title: COPY::VIRTUAL_HEARING_ERROR_ALERTS[alert_key]["TITLE"],
+      message: COPY::VIRTUAL_HEARING_ERROR_ALERTS[alert_key]["MESSAGE"],
+      type: UserAlert::TYPES[:error]
+    )
   end
 
   def add_virtual_hearing_alert
