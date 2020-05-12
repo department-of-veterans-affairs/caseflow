@@ -259,6 +259,10 @@ class LegacyAppeal < CaseflowRecord
     !!appellant_first_name
   end
 
+  def appellant_email_address
+    person_for_appellant&.[](:email_addr)
+  end
+
   def person_for_appellant
     return nil if appellant_ssn.blank?
 
