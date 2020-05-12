@@ -875,7 +875,8 @@ export const sample1 = {
       useAmaActivationDate: true,
       editContentionText: true,
       correctClaimReviews: true,
-      unidentifiedIssueDecisionDate: true
+      unidentifiedIssueDecisionDate: true,
+      attorneyFees: true
     },
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
