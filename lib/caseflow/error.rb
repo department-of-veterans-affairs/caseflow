@@ -332,4 +332,6 @@ module Caseflow::Error
   class PexipNotFoundError < PexipApiError; end
   class PexipBadRequestError < PexipApiError; end
   class PexipMethodNotAllowedError < PexipApiError; end
+
+  class WorkModeCouldNotUpdateError < StandardError; end
 end
