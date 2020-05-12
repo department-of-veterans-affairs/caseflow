@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "appeal_shared_examples"
+
 describe Appeal, :all_dbs do
   include IntakeHelpers
 
@@ -255,6 +257,10 @@ describe Appeal, :all_dbs do
     it "returns the latest record" do
       expect(subject).to eq attorney_case_review2
     end
+  end
+
+  context "#overtime" do
+    include_examples "toggle overtime"
   end
 
   context "#contestable_issues" do
