@@ -111,6 +111,15 @@ describe TaskPager, :all_dbs do
       it "returns a single task" do
         expect(subject.count).to eq(1)
       end
+
+      context "when the assignee is a user" do
+        let(:assignee) { create(:user) }
+        let(:tab_name) { Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME }
+
+        it "returns a single task" do
+          expect(subject.count).to eq(1)
+        end
+      end
     end
   end
 
@@ -184,6 +193,16 @@ describe TaskPager, :all_dbs do
         it "sorts tasks in reserve by closed_at value" do
           expected_order = created_tasks.sort_by(&:closed_at).reverse
           expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+        end
+
+        context "when the assignee is a user" do
+          let(:assignee) { create(:user) }
+          let(:tab_name) { Constants.QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME }
+
+          it "sorts tasks in reserve by closed_at value" do
+            expected_order = created_tasks.sort_by(&:closed_at).reverse
+            expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+          end
         end
       end
     end
@@ -435,6 +454,16 @@ describe TaskPager, :all_dbs do
         it "returns all translation and FOIA tasks assigned to the current organization", :aggregate_failures do
           expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
           expect(subject.length).to eq(translation_tasks.count + foia_tasks.count)
+        end
+
+        context "when the assignee is a user" do
+          let(:assignee) { create(:user) }
+          let(:tab_name) { Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME }
+
+          it "returns all translation and FOIA tasks assigned to the current organization", :aggregate_failures do
+            expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
+            expect(subject.length).to eq(translation_tasks.count + foia_tasks.count)
+          end
         end
       end
     end
