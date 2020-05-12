@@ -1050,6 +1050,7 @@ virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
 virtual_hearings,created_at,datetime ∗,x,,,,,
 virtual_hearings,created_by_id,integer (8) ∗ FK,x,,x,,x,User who created the virtual hearing
 virtual_hearings,guest_pin,integer,,,,,,PIN number for guests of Pexip conference
+virtual_hearings,guest_pin_long,integer (8),,,,,,Increase the size of the guest pin column
 virtual_hearings,hearing_id,integer (8) FK,,,x,,x,Associated hearing
 virtual_hearings,hearing_type,string,,,,,x,
 virtual_hearings,host_pin,integer,,,,,,PIN number for host of Pexip conference
