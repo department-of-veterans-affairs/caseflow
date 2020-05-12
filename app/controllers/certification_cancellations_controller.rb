@@ -4,6 +4,10 @@ class CertificationCancellationsController < ApplicationController
   before_action :verify_authentication
   before_action :verify_access
 
+  def set_application
+    RequestStore.store[:application] = "certifications"
+  end
+
   def create
     @certification_cancellation = CertificationCancellation.new(certification_cancellation_params)
 

@@ -3,6 +3,10 @@
 class CertificationsController < ApplicationController
   before_action :verify_access, :check_certification_out_of_service
 
+  def set_application
+    RequestStore.store[:application] = "certifications"
+  end
+
   def new
     certification.async_start!
     react_routed
