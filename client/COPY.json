@@ -783,6 +783,17 @@
     }
   },
 
+  "VIRTUAL_HEARING_ERROR_ALERTS": {
+    "JOB_IS_RUNNING": {
+      "TITLE": "Unable to save changes",
+      "MESSAGE": "Updates to this hearing are already in progress. Refresh the page to see the latest changes and try again." 
+    },
+    "ANOTHER_USER_IS_UPDATING": {
+      "TITLE": "Unable to save changes",
+      "MESSAGE": "Another Caseflow user is updating this hearing. Refresh the page to see their changes and try again."
+    }
+  },
+
   "VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL": "VLJ Virtual Hearing Link",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
   "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",
