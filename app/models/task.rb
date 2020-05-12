@@ -81,6 +81,10 @@ class Task < CaseflowRecord
 
   scope :assigned_to_organization, -> { where(assigned_to_type: Organization.name) }
 
+  scope :with_assignees, -> { joins(Task.joins_with_assignees_clause) }
+
+  scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
+
   ############################################################################################
   ## class methods
   class << self
@@ -175,6 +179,21 @@ class Task < CaseflowRecord
         assigned_to: params[:assigned_to] || child_task_assignee(parent, params),
         instructions: params[:instructions]
       )
+    end
+
+    def joins_with_assigners_clause
+      "LEFT JOIN (SELECT id, full_name AS display_name FROM users) AS assigners ON assigners.id = tasks.assigned_by_id"
+    end
+
+    def assignees_table_clause
+      "(SELECT id, 'Organization' AS type, name AS display_name FROM organizations " \
+        "UNION " \
+      "SELECT id, 'User' AS type, full_name AS display_name FROM users) AS assignees"
+    end
+
+    def joins_with_assignees_clause
+      "INNER JOIN #{Task.assignees_table_clause} ON " \
+      "assignees.id = tasks.assigned_to_id AND assignees.type = tasks.assigned_to_type"
     end
   end
 

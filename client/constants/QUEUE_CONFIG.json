@@ -60,7 +60,9 @@
     },
     "TASK_ASSIGNEE": {
       "filterable": true,
-      "name": "assignedToColumn"
+      "name": "assignedToColumn",
+      "sorting_table": "assignees",
+      "sorting_columns": ["display_name"]
     },
     "TASK_ASSIGNER": {
       "name": "completedToNameColumn"
