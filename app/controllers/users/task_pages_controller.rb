@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-class Organizations::TaskPagesController < OrganizationsController
+class Users::TaskPagesController < UsersController
   include TaskPaginationConcern
 
-  before_action :verify_organization_access, only: [:index]
-  before_action :verify_role_access, only: [:index]
-
-  # /organizations/{org.url}/task_pages?
+  # /users/{user.id}/task_pages?
   #   tab=on_hold&
   #   sort_by=case_details_link&
   #   order=desc&
@@ -31,11 +28,7 @@ class Organizations::TaskPagesController < OrganizationsController
 
   private
 
-  def organization_url
-    params[:organization_url]
-  end
-
   def assignee
-    organization
+    user
   end
 end
