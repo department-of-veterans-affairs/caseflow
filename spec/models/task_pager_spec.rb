@@ -455,16 +455,6 @@ describe TaskPager, :all_dbs do
           expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
           expect(subject.length).to eq(translation_tasks.count + foia_tasks.count)
         end
-
-        context "when the assignee is a user" do
-          let(:assignee) { create(:user) }
-          let(:tab_name) { Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME }
-
-          it "returns all translation and FOIA tasks assigned to the current organization", :aggregate_failures do
-            expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
-            expect(subject.length).to eq(translation_tasks.count + foia_tasks.count)
-          end
-        end
       end
     end
   end
