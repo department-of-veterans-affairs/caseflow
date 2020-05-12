@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_184512) do
+ActiveRecord::Schema.define(version: 2020_05_08_210719) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -152,6 +152,21 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.index ["appeal_id", "appeal_type"], name: "index_available_hearing_locations_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_available_hearing_locations_on_updated_at"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
+  end
+
+  create_table "bgs_attorneys", comment: "Attorney data cached from BGS — used for claimants", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.datetime "last_synced_at", comment: "The last time BGS was checked"
+    t.string "legacy_poa_cd", comment: "Legacy POA code"
+    t.string "name", null: false, comment: "Name"
+    t.string "participant_id", null: false, comment: "Participant ID"
+    t.string "type", null: false, comment: "Type of Record"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["created_at"], name: "index_bgs_attorneys_on_created_at"
+    t.index ["last_synced_at"], name: "index_bgs_attorneys_on_last_synced_at"
+    t.index ["name"], name: "index_bgs_attorneys_on_name"
+    t.index ["participant_id"], name: "index_bgs_attorneys_on_participant_id"
+    t.index ["updated_at"], name: "index_bgs_attorneys_on_updated_at"
   end
 
   create_table "bgs_power_of_attorneys", comment: "Power of Attorney (POA) cached from BGS", force: :cascade do |t|
