@@ -36,9 +36,8 @@ class TrackVeteranTask < Task
     new_task_count = 0
     closed_task_count = 0
 
-    tasks_to_sync = appeal.tasks.open.where(
-      type: [TrackVeteranTask.name, InformalHearingPresentationTask.name],
-      assigned_to_type: Organization.name
+    tasks_to_sync = appeal.tasks.open.assigned_to_organization.where(
+      type: [TrackVeteranTask.name, InformalHearingPresentationTask.name]
     )
     cached_representatives = tasks_to_sync.map(&:assigned_to)
     fresh_representatives = appeal.representatives

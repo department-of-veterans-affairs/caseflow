@@ -447,12 +447,12 @@ feature "Task queue", :all_dbs do
     before do
       organization.add_user(organization_user)
       User.authenticate!(user: organization_user)
-      Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+      Task.on_hold.where(assigned_to: organization)
         .each_with_index do |task, idx|
           child_task = create(:ama_task, parent: task)
           child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
         end
-      Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+      Task.active.where(assigned_to: organization)
         .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
     end
 

@@ -77,6 +77,10 @@ class Task < CaseflowRecord
                                  )
                                }
 
+  scope :assigned_to_user, -> { where(assigned_to_type: User.name) }
+
+  scope :assigned_to_organization, -> { where(assigned_to_type: Organization.name) }
+
   ############################################################################################
   ## class methods
   class << self

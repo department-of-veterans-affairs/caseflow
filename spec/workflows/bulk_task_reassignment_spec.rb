@@ -259,7 +259,7 @@ describe BulkTaskReassignment, :all_dbs do
               end
               parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
 
-              new_tasks = Task.open.where(assigned_to_type: User.name)
+              new_tasks = Task.open.assigned_to_user
               new_tasks.each do |task|
                 expect(task.instructions).to include format(COPY::BULK_REASSIGN_INSTRUCTIONS, "reassigned", user.css_id)
               end
@@ -284,7 +284,7 @@ describe BulkTaskReassignment, :all_dbs do
               end
               parent_tasks.each { |task| expect(task.reload.on_hold?).to eq true }
 
-              new_tasks = Task.open.where(assigned_to_type: User.name)
+              new_tasks = Task.open.assigned_to_user
               new_tasks.each do |task|
                 expect(task.instructions).to include format(COPY::BULK_REASSIGN_INSTRUCTIONS, "reassigned", user.css_id)
               end

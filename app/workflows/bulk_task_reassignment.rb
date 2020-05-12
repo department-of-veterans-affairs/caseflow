@@ -254,7 +254,7 @@ class BulkTaskReassignment
   end
 
   def reassign_tasks_with_parent_org_tasks(tasks)
-    parents_assigned_to_orgs = Task.where(id: tasks.pluck(:parent_id), assigned_to_type: Organization.name)
+    parents_assigned_to_orgs = Task.assigned_to_organization.where(id: tasks.pluck(:parent_id))
     tasks_with_parent_org_tasks = tasks.where(parent: parents_assigned_to_orgs)
 
     parents_assigned_to_orgs.distinct.pluck(:assigned_to_id).each do |org_id|
@@ -310,7 +310,7 @@ class BulkTaskReassignment
 
   # Cancels all user tasks and makes the parent tasks available for manual reassignment
   def reassign_tasks_with_parent_user_tasks(tasks)
-    parents_assigned_to_users = Task.where(id: tasks.pluck(:parent_id), assigned_to_type: User.name)
+    parents_assigned_to_users = Task.assigned_to_user.where(id: tasks.pluck(:parent_id))
     tasks_with_parent_user_tasks = tasks.where(parent: parents_assigned_to_users)
 
     if tasks_with_parent_user_tasks.any?
