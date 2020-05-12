@@ -25,6 +25,7 @@ class Appeal < DecisionReview
   has_one :special_issue_list
   has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
+  has_one :work_mode, as: :appeal
 
   enum stream_type: {
     "original": "original",
@@ -164,10 +165,6 @@ class Appeal < DecisionReview
     @latest_attorney_case_review = AttorneyCaseReview
       .where(task_id: tasks.pluck(:id))
       .order(:created_at).last
-  end
-
-  def overtime?
-    latest_attorney_case_review&.overtime
   end
 
   def reviewing_judge_name
