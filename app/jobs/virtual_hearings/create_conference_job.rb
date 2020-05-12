@@ -111,7 +111,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     )
     Rails.logger.info(
       "Emails Sent: (" \
-      "veteran: [#{virtual_hearing.veteran_email_sent} | null?: #{virtual_hearing.veteran_email.nil?}], " \
+      "appellant: [#{virtual_hearing.appellant_email_sent} | null?: #{virtual_hearing.appellant_email.nil?}], " \
       "rep: [#{virtual_hearing.representative_email_sent} | null?: #{virtual_hearing.representative_email.nil?}], " \
       "judge: [#{virtual_hearing.judge_email_sent} | null?: #{virtual_hearing.judge_email.nil?}])"
     )
