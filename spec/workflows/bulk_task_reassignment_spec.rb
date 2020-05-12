@@ -57,7 +57,7 @@ describe BulkTaskReassignment, :all_dbs do
         before do
           tasks.each { |task| task.update!(type: FoiaTask.name) }
           parent_tasks.map do |parent|
-            create(:ama_judge_task, assigned_to: user, parent: parent)
+            create(:ama_judge_assign_task, assigned_to: user, parent: parent)
             create(:ama_judge_decision_review_task, assigned_to: user, parent: parent)
           end
         end
@@ -82,7 +82,7 @@ describe BulkTaskReassignment, :all_dbs do
       end
 
       context "the tasks are JudgeAssignTasks" do
-        let(:task_type) { :ama_judge_task }
+        let(:task_type) { :ama_judge_assign_task }
 
         context "with open children" do
           let(:child_tasks) { tasks.map { |task| create(:task, parent: task) } }
@@ -323,7 +323,7 @@ describe BulkTaskReassignment, :all_dbs do
     subject { BulkTaskReassignment.new(user).perform_dry_run }
 
     context "the tasks are JudgeAssignTasks" do
-      let(:task_type) { :ama_judge_task }
+      let(:task_type) { :ama_judge_assign_task }
 
       it "only describes what changes will be made" do
         judge_assign_message = "Would cancel #{task_count} JudgeAssignTasks with ids #{ids_output} and create " \

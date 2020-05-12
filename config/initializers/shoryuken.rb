@@ -17,6 +17,7 @@ if Rails.application.config.sqs_create_queues
 end
 
 Shoryuken.configure_server do |config|
+  Rails.logger = Shoryuken.logger
 
   # register all shoryuken middleware
   config.server_middleware do |chain|

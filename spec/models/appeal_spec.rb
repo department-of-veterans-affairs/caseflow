@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "appeal_shared_examples"
+
 describe Appeal, :all_dbs do
   include IntakeHelpers
 
@@ -255,6 +257,10 @@ describe Appeal, :all_dbs do
     it "returns the latest record" do
       expect(subject).to eq attorney_case_review2
     end
+  end
+
+  context "#overtime" do
+    include_examples "toggle overtime"
   end
 
   context "#contestable_issues" do
@@ -876,8 +882,8 @@ describe Appeal, :all_dbs do
       let!(:judge) { create(:user) }
       let!(:judge2) { create(:user) }
       let!(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal, created_at: 1.day.ago) }
-      let!(:task2) { create(:ama_judge_task, assigned_to: judge2, appeal: appeal) }
+      let!(:task) { create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal, created_at: 1.day.ago) }
+      let!(:task2) { create(:ama_judge_assign_task, assigned_to: judge2, appeal: appeal) }
 
       subject { appeal.assigned_judge }
 
