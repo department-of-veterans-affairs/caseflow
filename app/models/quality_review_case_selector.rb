@@ -17,7 +17,7 @@ class QualityReviewCaseSelector
       QualityReviewTask
         .not_cancelled
         .created_this_month
-        .where(assigned_to_type: Organization.name)
+        .assigned_to_organization
         .size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
     end
   end
