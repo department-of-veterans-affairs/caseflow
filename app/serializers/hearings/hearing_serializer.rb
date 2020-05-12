@@ -21,6 +21,7 @@ class HearingSerializer
   attribute :appeal_id
   attribute :appellant_address_line_1, if: for_full
   attribute :appellant_city, if: for_full
+  attribute :appellant_email_address
   attribute :appellant_first_name, if: for_full
   attribute :appellant_last_name, if: for_full
   attribute :appellant_state, if: for_full

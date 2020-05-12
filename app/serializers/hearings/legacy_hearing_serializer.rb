@@ -14,6 +14,7 @@ class LegacyHearingSerializer
   attribute :appellant_address_line_2
   attribute :appellant_city
   attribute :appellant_country
+  attribute :appellant_email_address
   attribute :appellant_first_name
   attribute :appellant_last_name
   attribute :appellant_state
