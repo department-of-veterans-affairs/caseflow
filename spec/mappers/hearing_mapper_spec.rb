@@ -12,6 +12,15 @@ describe HearingMapper do
 
     subject { HearingMapper.bfha_vacols_code(hearing) }
 
+    context "when disposition is held and it is a virtual hearing" do
+      let(:hearing_disp) { "H" }
+      let(:hearing_type) { HearingDay::REQUEST_TYPES[:virtual] }
+
+      it "fails with an invalid request type code error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidRequestTypeCode)
+      end
+    end
+
     context "when disposition is held and it is central office hearing" do
       let(:hearing_disp) { "H" }
       let(:hearing_type) { HearingDay::REQUEST_TYPES[:central] }

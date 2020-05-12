@@ -115,6 +115,7 @@ describe Hearings::HearingDayController, :all_dbs do
       let(:params) do
         {
           request_type: HearingDay::REQUEST_TYPES[:virtual],
+          regional_office: "RO42",
           assign_room: false,
           scheduled_for: Time.zone.now.to_date - 2.days
         }
@@ -129,17 +130,18 @@ describe Hearings::HearingDayController, :all_dbs do
       end
     end
 
-    context "when the room is provided as a parameter" do
+    context "when no room is provided as a parameter and assign_room is false" do
       context "video hearing day" do
         let(:params) do
           {
             request_type: HearingDay::REQUEST_TYPES[:video],
+            regional_office: "RO42",
             assign_room: true,
             scheduled_for: Time.zone.now.to_date - 2.days
           }
         end
 
-        it "returns the first available video hearing room when no room has been provided" do
+        it "returns the first available video hearing room" do
           expect(subject.status).to eq 201
           hearing_day = JSON.parse(subject.body)
           expect(hearing_day["hearing"]["room"]).to eq Constants::HEARING_ROOMS_LIST["1"]["label"]
@@ -152,11 +154,12 @@ describe Hearings::HearingDayController, :all_dbs do
         let(:params) do
           {
             request_type: HearingDay::REQUEST_TYPES[:central],
+            regional_office: "",
             assign_room: true,
             scheduled_for: Time.zone.now.to_date - 2.days
           }
         end
-        it "returns the first available central office hearing room when no room has been provided" do
+        it "returns the first available central office hearing room" do
           expect(subject.status).to eq 201
           hearing_day = JSON.parse(subject.body)
           expect(hearing_day["hearing"]["room"]).to eq Constants::HEARING_ROOMS_LIST["2"]["label"]
@@ -166,22 +169,22 @@ describe Hearings::HearingDayController, :all_dbs do
       end
     end
 
-    context "when no room is provided as a parameter and assign_room is false" do
-      fcontext "video hearing day" do
+    context "when the room is provided as a parameter" do
+      context "video hearing day" do
         let(:params) do
           {
             request_type: HearingDay::REQUEST_TYPES[:video],
+            regional_office: "RO42",
             assign_room: false,
             scheduled_for: Time.zone.now.to_date - 2.days,
-            room: Constants::HEARING_ROOMS_LIST["1"]["label"]
+            room: "8"
           }
         end
 
-        it "returns the first available video hearing room when no room has been provided" do
+        it "returns the provided video hearing room" do
           expect(subject.status).to eq 201
           hearing_day = JSON.parse(subject.body)
-          byebug
-          expect(hearing_day["hearing"]["room"]).to eq Constants::HEARING_ROOMS_LIST["1"]["label"]
+          expect(hearing_day["hearing"]["room"]).to eq Constants::HEARING_ROOMS_LIST["8"]["label"]
           expect(hearing_day["hearing"]["readable_request_type"]).to eq "Video"
           expect(hearing_day["hearing"]["request_type"]).to eq "V"
         end
@@ -191,20 +194,38 @@ describe Hearings::HearingDayController, :all_dbs do
         let(:params) do
           {
             request_type: HearingDay::REQUEST_TYPES[:central],
+            regional_office: nil,
             assign_room: false,
             scheduled_for: Time.zone.now.to_date - 2.days,
-            room: Constants::HEARING_ROOMS_LIST["8"]["label"]
+            room: "8"
           }
         end
 
-        it "returns the first available central office hearing room when no room has been provided" do
+        it "returns the provided central office hearing room" do
           expect(subject.status).to eq 201
           hearing_day = JSON.parse(subject.body)
-          byebug
           expect(hearing_day["hearing"]["room"]).to eq Constants::HEARING_ROOMS_LIST["8"]["label"]
           expect(hearing_day["hearing"]["readable_request_type"]).to eq "Central"
           expect(hearing_day["hearing"]["request_type"]).to eq "C"
         end
+      end
+    end
+
+    context "when request type is invalid" do
+      let(:params) do
+        {
+          request_type: "abcdefg",
+          regional_office: "RO42",
+          assign_room: false,
+          scheduled_for: Time.zone.now.to_date - 2.days
+        }
+      end
+
+      it "returns an active record error with details" do
+        expect(subject.status).to eq 400
+        hearing_day = JSON.parse(subject.body)
+        expect(hearing_day["errors"][0]["title"]).to eq "ActiveRecord::RecordInvalid"
+        expect(hearing_day["errors"][0]["detail"]).to eq "Validation failed: Request type is invalid"
       end
     end
   end

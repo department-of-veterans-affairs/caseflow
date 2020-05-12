@@ -104,4 +104,85 @@ describe Hearing, :postgres do
       it { is_expected.to eq(true) }
     end
   end
+
+  context "#readable_location" do
+    context "with virtual only hearing day" do
+      let!(:hearing_day) do
+        create(
+          :hearing_day,
+          scheduled_for: Time.zone.now.to_date,
+          regional_office: "RO42",
+          request_type: HearingDay::REQUEST_TYPES[:virtual]
+        )
+      end
+      let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+
+      it "returns nil for the hearing day location" do
+        expect(hearing.readable_location).to eq nil
+      end
+    end
+
+    context "with video or travel hearing day" do
+      let!(:video_hearing_day) do
+        create(
+          :hearing_day,
+          scheduled_for: Time.zone.now.to_date,
+          regional_office: "RO42",
+          request_type: HearingDay::REQUEST_TYPES[:video]
+        )
+      end
+      let!(:travel_hearing_day) do
+        create(
+          :hearing_day,
+          scheduled_for: Time.zone.now.to_date,
+          regional_office: "RO42",
+          request_type: HearingDay::REQUEST_TYPES[:travel]
+        )
+      end
+      let(:video_hearing) { create(:hearing, hearing_day: video_hearing_day) }
+      let(:travel_hearing) { create(:hearing, hearing_day: travel_hearing_day) }
+      let(:hearing_location) do
+        create(:hearing_location, regional_office: "RO42")
+      end
+      let(:video_hearing_with_location) do
+        create(
+          :hearing,
+          hearing_day: video_hearing_day,
+          hearing_location: hearing_location
+        )
+      end
+      let(:travel_hearing_with_location) do
+        create(
+          :hearing,
+          hearing_day: travel_hearing_day,
+          hearing_location: hearing_location
+        )
+      end
+
+      it "returns nil when no location is set" do
+        expect(video_hearing.readable_location).to eq nil
+        expect(travel_hearing.readable_location).to eq nil
+      end
+
+      it "returns the formatted location name when location is set" do
+        expect(travel_hearing_with_location.readable_location).to eq "Casper, WY"
+        expect(video_hearing_with_location.readable_location).to eq "Casper, WY"
+      end
+    end
+
+    context "with central office hearing day" do
+      let!(:hearing_day) do
+        create(
+          :hearing_day,
+          scheduled_for: Time.zone.now.to_date,
+          request_type: HearingDay::REQUEST_TYPES[:central]
+        )
+      end
+      let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+
+      it "returns the formatted location name" do
+        expect(hearing.readable_location).to eq "Washington, DC"
+      end
+    end
+  end
 end

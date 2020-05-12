@@ -8,6 +8,7 @@ module HearingMapper
   class InvalidNotesError < StandardError; end
   class InvalidAddOnError < StandardError; end
   class InvalidRepresentativeNameError < StandardError; end
+  class InvalidRequestTypeCode < StandardError; end
 
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
@@ -79,6 +80,9 @@ module HearingMapper
       return "1" if type == :C
       return "2" if type == :T
       return "6" if type == :V
+
+      # Fail if any other request type is passed
+      fail InvalidRequestTypeCode
     end
 
     def representative_name_to_vacols_format(value)

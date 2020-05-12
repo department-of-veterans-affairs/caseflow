@@ -85,7 +85,7 @@ class Hearing < CaseflowRecord
     case request_type
     when HearingDay::REQUEST_TYPES[:central]
       "Washington, DC"
-    when HearingDay::REQUEST_TYPES[:video], HearingDay::REQUEST_TYPE[:travel]
+    when HearingDay::REQUEST_TYPES[:video], HearingDay::REQUEST_TYPES[:travel]
       return "#{location.city}, #{location.state}" if location
 
       nil

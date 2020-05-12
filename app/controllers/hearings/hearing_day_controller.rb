@@ -52,7 +52,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   def create
     return no_available_rooms unless hearing_day_rooms.rooms_are_available?
 
-    hearing_day = HearingDay.create(
+    hearing_day = HearingDay.create!(
       create_params.merge(room: hearing_day_rooms.available_room)
     )
 
