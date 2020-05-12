@@ -123,7 +123,6 @@ AttorneyTaskListView.propTypes = {
   resetErrorMessages: PropTypes.func,
   showErrorMessage: PropTypes.func,
   onHoldTasks: PropTypes.array,
-  paginationOptions: PropTypes.object,
   success: PropTypes.shape({
     title: PropTypes.string,
     detail: PropTypes.string
