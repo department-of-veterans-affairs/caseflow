@@ -108,8 +108,16 @@ class QueueColumn
   end
 
   def assignee_options(tasks)
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
-      .group(:assignee_label).count.each_pair.map do |option, count|
+    org_options = tasks.assigned_to_organization
+      .joins("INNER JOIN organizations ON tasks.assigned_to_id = organizations.id")
+      .group("organizations.name")
+      .count(:all)
+    user_options = tasks.assigned_to_user
+      .joins("INNER JOIN users ON tasks.assigned_to_id = users.id")
+      .group("users.full_name") # Confirm with design
+      .count(:all)
+
+    org_options.merge(user_options).each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end
