@@ -40,7 +40,6 @@ class ColocatedTaskListView extends React.PureComponent {
         assignedTasks={this.props.assignedTasks}
         onHoldTasks={this.props.onHoldTasks}
         completedTasks={this.props.completedTasks}
-        paginationOptions={this.props.paginationOptions}
       />
     </AppSegment>;
   };
@@ -70,6 +69,5 @@ ColocatedTaskListView.propTypes = {
   completedTasks: PropTypes.array,
   hideSuccessMessage: PropTypes.func,
   onHoldTasks: PropTypes.array,
-  paginationOptions: PropTypes.object,
   success: PropTypes.object
 };

@@ -90,9 +90,10 @@ class QueueTableBuilder extends React.PureComponent {
     const tasks = config.use_task_pages_api ?
       tasksWithAppealsFromRawTasks(tabConfig.tasks) :
       this.tasksForTab(tabConfig.name);
+    const totalTaskCount = config.use_task_pages_api ? tabConfig.total_task_count : tasks.length;
 
     return {
-      label: sprintf(tabConfig.label, tabConfig.total_task_count),
+      label: sprintf(tabConfig.label, totalTaskCount),
       page: <React.Fragment>
         <p className="cf-margin-top-0">{tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
@@ -103,7 +104,7 @@ class QueueTableBuilder extends React.PureComponent {
           getKeyForRow={(_rowNumber, task) => task.uniqueId}
           casesPerPage={config.tasks_per_page}
           numberOfPages={tabConfig.task_page_count}
-          totalTaskCount={tabConfig.total_task_count}
+          totalTaskCount={totalTaskCount}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
           tabPaginationOptions={paginationOptions.tab === tabConfig.name && paginationOptions}
           useTaskPagesApi={config.use_task_pages_api}
@@ -142,7 +143,6 @@ QueueTableBuilder.propTypes = {
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number
   }),
-  paginationOptions: PropTypes.object,
   requireDasRecord: PropTypes.bool
 };
 
