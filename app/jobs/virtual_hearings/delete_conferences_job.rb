@@ -4,23 +4,72 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
+  class DeleteConferencesJobFailure < StandardError; end
+  class EmailsFailedToSend < StandardError; end # error for when emails failed to send
+
+  before_perform do
+    Rails.logger.info(
+      "#{self.class.name} for deleting Pexip conferences and sending cancellation emails"
+    )
+  end
+
+  retry_on(DeleteConferencesJobFailure, attempts: 5) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+
+    vh_with_pexip_errors = exception_list[Caseflow::Error::PexipApiError]
+    if pexip_errors
+      Rails.logger.info("Failed to delete conferences for the following hearings: " \
+        "#{vh_pexip_errors.map { |vh| vh.hearing_id}}")
+
+    vh_with_email_errors = exception_list[EmailsFailedToSend]
+    if vh_with_email_errors
+      Rails.logger.info("Failed to send emails for the following hearings: " \
+        "#{vh_with_email_errors.map { |vh| vh.hearing_id}}")
+
+    extra = {
+      application: job.class.app_name.to_s,
+    }
+
+    capture_exception(exception: exception, extra: extra)
+  end
+
   def perform
     ensure_current_user_is_set
+    @exception_list = {}
 
     VirtualHearingRepository.cancelled_hearings_with_pending_emails.each do |virtual_hearing|
+      log_virtual_hearing_state(virtual_hearing)
+
       Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
 
       send_cancellation_emails(virtual_hearing)
     end
 
     count_deleted_and_log(VirtualHearingRepository.ready_for_deletion) do |virtual_hearing|
+      log_virtual_hearing_state(virtual_hearing)
+
       Rails.logger.info("Deleting Pexip conference for hearing (#{virtual_hearing.hearing_id})")
 
       process_virtual_hearing(virtual_hearing)
     end
+
+
+    # raise DeleteConferencesJobFailure if EmailsFailedToSend and/or PexipApiErrors were raised
+    fail DeleteConferencesJobFailure if exception_list
   end
 
   private
+
+  def exception_list
+    @exception_list ||= {}
+  end
+
+  def log_virtual_hearing_state(virtual_hearing)
+    super
+
+    Rails.logger.info("Cancelled?: (#{virtual_hearing.cancelled?})")
+    Rails.logger.info("Pexip conference id: (#{virtual_hearing.conference_id?})")
+  end
 
   def ensure_current_user_is_set
     RequestStore.store[:current_user] ||= User.system_user
@@ -28,6 +77,20 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
   def send_cancellation_emails(virtual_hearing)
     VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
+
+    if !virtual_hearing.reload.all_emails_sent?
+      fail EmailsFailedToSend #failing so we can log errors
+    end
+
+  rescue EmailsFailedToSend => error
+    Rails.logger.info("Failed to send all emails for hearing (#{virtual_hearing.hearing_id})")
+    (exception_list[error] ||= []) << virtual_hearing # add the virtual hearing to the exception list
+
+    extra = {
+      hearing_id: virtual_hearing.hearing_id,
+      virtual_hearing_id: virtual_hearing.id,
+    }
+    capture_exception(error: error, extra: extra)
   end
 
   def count_deleted_and_log(enumerable)
@@ -68,18 +131,20 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   def delete_conference(virtual_hearing)
     response = client.delete_conference(conference_id: virtual_hearing.conference_id)
 
+    Rails.logger.info("Pexip response: #{response}")
+
     fail response.error unless response.success?
 
     true
   rescue Caseflow::Error::PexipNotFoundError
-    Rails.logger.info("Pexip response: #{response}")
     Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
 
     # Assume the conference was already deleted if it's no longer in Pexip.
     true
   rescue Caseflow::Error::PexipApiError => error
-    Rails.logger.info("Pexip response: #{response}")
-    Rails.logger.error("Failed to delete conference from Pexip with error: (#{error.code}) #{error.message}")
+    Rails.logger.error("Failed to delete conference from Pexip for hearing (#{virtual_hearing.hearing_id})" \
+      " with error: (#{error.code}) #{error.message}")
+    (exception_list[error] ||= []) << virtual_hearing # add the virtual hearing to the exception list
 
     capture_exception(
       error: error,

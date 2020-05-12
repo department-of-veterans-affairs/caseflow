@@ -107,6 +107,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   def log_virtual_hearing_state(virtual_hearing)
     super
+
     Rails.logger.info("Active?: (#{virtual_hearing.active?})")
     Rails.logger.info("Virtual Hearing Updated At: (#{virtual_hearing.updated_at})")
     Rails.logger.info("Establishment Updated At: (#{virtual_hearing.establishment.updated_at})")
