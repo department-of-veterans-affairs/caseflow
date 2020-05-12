@@ -201,9 +201,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         context "when using task pages api" do
           before do
             expect(QueueForRole).not_to receive(:new)
-            FeatureToggle.enable!(:user_queue_pagination, users: [user.css_id])
+            allow_any_instance_of(User).to receive(:use_task_pages_api?).and_return(true)
           end
-          after { FeatureToggle.disable!(:user_queue_pagination, users: [user.css_id]) }
 
           it "gets tasks from task pager, not queue for role" do
             get :index, params: { user_id: user.id, role: "unknown" }
