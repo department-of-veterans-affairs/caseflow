@@ -17,16 +17,21 @@ FactoryBot.define do
     association :created_by, factory: :user
     association :updated_by, factory: :user
     establishment { nil }
+    guest_pin_long { nil }
 
     transient do
       status { nil }
     end
 
+    trait :alias_guest_pin do
+      guest_pin_long { rand(1_000_000_000..9_999_999_999).to_s[0..9].to_i }
+    end
+
     trait :initialized do
       alias_name { rand(1..9).to_s[0..6] }
       conference_id { rand(1..9) }
-      guest_pin { rand(1..9).to_s[0..3].to_i }
-      host_pin { rand(1..9).to_s[0..3].to_i }
+      guest_pin { rand(1000..9999).to_s[0..3].to_i }
+      host_pin { rand(1_000_000..9_999_999).to_s[0..6].to_i }
     end
 
     trait :all_emails_sent do

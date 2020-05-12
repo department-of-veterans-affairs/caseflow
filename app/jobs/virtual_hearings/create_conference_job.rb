@@ -188,8 +188,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       conference_alias = max_alias ? (max_alias.to_i + 1).to_s.rjust(7, "0") : "0000001"
       virtual_hearing.alias = conference_alias
       virtual_hearing.alias_with_host = VirtualHearing.formatted_alias(conference_alias)
-      virtual_hearing.host_pin = rand(1000..9999)
-      virtual_hearing.guest_pin = rand(1000..9999)
+      virtual_hearing.host_pin = rand(1_000_000..9_999_999)
+      virtual_hearing.guest_pin_long = rand(1_000_000_000..9_999_999_999)
       virtual_hearing.save!
     end
   end

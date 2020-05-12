@@ -61,6 +61,11 @@ class VirtualHearing < CaseflowRecord
     alias_with_host.nil? ? VirtualHearing.formatted_alias(alias_name) : alias_with_host
   end
 
+  # Override the guest pin
+  def guest_pin
+    guest_pin_long || self[:guest_pin]
+  end
+
   def guest_link
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \

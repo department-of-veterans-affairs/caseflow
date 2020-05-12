@@ -1,6 +1,47 @@
 # frozen_string_literal: true
 
 describe VirtualHearing, :all_dbs do
+  context "#guest_pin" do
+    let(:virtual_hearing) do
+      create(
+        :virtual_hearing,
+        :initialized,
+        hearing: create(
+          :hearing,
+          hearing_day: create(
+            :hearing_day,
+            regional_office: "RO42",
+            request_type: HearingDay::REQUEST_TYPES[:video]
+          )
+        )
+      )
+    end
+    let(:virtual_hearing_aliased) do
+      create(
+        :virtual_hearing,
+        :alias_guest_pin,
+        hearing: create(
+          :hearing,
+          hearing_day: create(
+            :hearing_day,
+            regional_office: "RO42",
+            request_type: HearingDay::REQUEST_TYPES[:video]
+          )
+        )
+      )
+    end
+
+    it "returns the database column when guest_pin_long is nil" do
+      expect(virtual_hearing.guest_pin_long).to eq nil
+      expect(virtual_hearing.guest_pin.to_s.length).to eq 4
+    end
+
+    it "returns the aliased guest_pin_long when set" do
+      expect(virtual_hearing[:guest_pin].to_s.length).to eq 4
+      expect(virtual_hearing_aliased.guest_pin.to_s.length).to eq 10
+    end
+  end
+
   context "validation tests" do
     let(:virtual_hearing) { build(:virtual_hearing) }
 

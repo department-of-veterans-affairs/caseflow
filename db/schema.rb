@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_184512) do
+ActiveRecord::Schema.define(version: 2020_05_12_181946) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1390,6 +1390,7 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
+    t.bigint "guest_pin_long", comment: "Increase the size of the guest pin column"
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"

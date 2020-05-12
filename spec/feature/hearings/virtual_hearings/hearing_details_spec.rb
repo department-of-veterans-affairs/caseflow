@@ -307,8 +307,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       before do
         # Mock the conference details
         virtual_hearing.alias_name = rand(1..9).to_s[0..6]
-        virtual_hearing.guest_pin = rand(1..9).to_s[0..3].to_i
-        virtual_hearing.host_pin = rand(1..9).to_s[0..3].to_i
+        virtual_hearing.guest_pin = rand(1..9).to_s[0..9].to_i
+        virtual_hearing.host_pin = rand(1..9).to_s[0..6].to_i
         virtual_hearing.conference_id = "0"
         virtual_hearing.established!
         hearing.reload
