@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe HearingsController, :all_dbs, type: :controller do
+RSpec.describe HearingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:legacy_hearing) { create(:legacy_hearing) }
@@ -104,11 +104,14 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           let!(:virtual_hearing) do
             create(
               :virtual_hearing,
+              :initialized,
+              status: :active,
               hearing: hearing,
               veteran_email: "existing_veteran_email@caseflow.gov",
               veteran_email_sent: true,
               judge_email: "existing_judge_email@caseflow.gov",
-              judge_email_sent: true
+              judge_email_sent: true,
+              representative_email: nil
             )
           end
 
@@ -171,9 +174,14 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           let!(:virtual_hearing) do
             create(
               :virtual_hearing,
+              :initialized,
+              status: :active,
               hearing: hearing,
               veteran_email: "existing_veteran_email@caseflow.gov",
-              representative_email: "existing_rep_email@casfelow.gov"
+              veteran_email_sent: true,
+              judge_email: nil,
+              representative_email: "existing_rep_email@casfelow.gov",
+              representative_email_sent: true
             )
           end
 
@@ -193,6 +201,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           create(
             :virtual_hearing,
             :all_emails_sent,
+            status: :active,
             hearing: hearing,
             conference_id: "000000"
           )
@@ -217,6 +226,8 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       let!(:virtual_hearing) do
         create(
           :virtual_hearing,
+          :initialized,
+          status: :active,
           hearing: hearing,
           veteran_email: "existing_veteran_email@caseflow.gov",
           veteran_email_sent: true,
