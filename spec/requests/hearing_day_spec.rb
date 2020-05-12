@@ -101,8 +101,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
     it "Create new adhoc hearing day on a full day. Room assignment not required, hence is empty string." do
       mar_hearing_days
 
-      post "/hearings/hearing_day", params: { regional_office: "RO10",
-                                              request_type: HearingDay::REQUEST_TYPES[:central],
+      post "/hearings/hearing_day", params: { request_type: HearingDay::REQUEST_TYPES[:central],
                                               scheduled_for: "14-Mar-2019", assign_room: false }
       expect(response).to be_successful
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
