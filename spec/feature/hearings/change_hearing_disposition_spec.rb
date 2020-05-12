@@ -110,7 +110,7 @@ RSpec.shared_examples "Change hearing disposition" do
     end
   end
 
-  fcontext "hearing task is missing association to hearing" do
+  context "hearing task is missing association to hearing" do
     before do
       association.destroy
       hearing_task.reload
