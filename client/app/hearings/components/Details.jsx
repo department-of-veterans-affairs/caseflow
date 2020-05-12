@@ -87,10 +87,10 @@ const HearingDetails = (props) => {
         room,
         notes,
         scheduledForIsPast,
+        emailEvents: _.values(hearing?.emailEvents),
         // Transcription Request
         transcriptRequested: hearing.transcriptRequested,
-        transcriptSentDate: DateUtil.formatDateStr(transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
-        emailEvents: _.values(hearing.emailEvents)
+        transcriptSentDate: DateUtil.formatDateStr(transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
       },
       transcriptionDetailsForm: {
         // Transcription Details
@@ -187,7 +187,8 @@ const HearingDetails = (props) => {
       hearing: {
         ...(hearingDetailsForm || {}),
         transcription_attributes: {
-          ...(transcriptionDetailsForm || {})
+          // Always send full transcription details because a new record is created each update
+          ...(transcriptionDetailsForm ? hearingForms.transcriptionDetailsForm : {})
         },
         virtual_hearing_attributes: {
           ...(virtualHearingForm || {})

@@ -166,6 +166,7 @@ detectors:
     exclude:
       - AddressMapper#get_address_from_veteran_record
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
+      - ETLClasses#syncer_klasses
       - ETL::Builder#last_built
       - ETL::HearingSyncer#filter?
       - ETL::LegacyHearingSyncer#filter?

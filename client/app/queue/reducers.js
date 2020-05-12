@@ -469,6 +469,10 @@ const requestTasksAndAppealsOfAttorney = (state, action) => {
 };
 
 const setTasksAndAppealsOfAttorney = (state, action) => {
+  if (state.attorneyAppealsLoadingState[action.payload.attorneyId]?.state === 'FAILED') {
+    return state;
+  }
+
   return update(state, {
     attorneyAppealsLoadingState: {
       [action.payload.attorneyId]: {

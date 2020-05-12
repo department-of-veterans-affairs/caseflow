@@ -12,15 +12,24 @@ class BaseHearingUpdateForm
                 :witness
 
   def update
+    virtual_hearing_changed = false
+
     ActiveRecord::Base.transaction do
       update_hearing
       add_update_hearing_alert if show_update_alert?
       if should_create_or_update_virtual_hearing?
         create_or_update_virtual_hearing
-        hearing.reload
-        start_async_job
-        add_virtual_hearing_alert
+
+        virtual_hearing_changed = true
       end
+    end
+
+    if virtual_hearing_changed
+      # reload hearing so new virtual hearing changes are visible
+      hearing.reload
+
+      start_async_job
+      add_virtual_hearing_alert
     end
   end
 
@@ -91,8 +100,11 @@ class BaseHearingUpdateForm
   end
 
   def start_async_job
-    start_cancel_job if start_async_job? && virtual_hearing_cancelled?
-    start_activate_job if start_async_job?
+    if start_async_job? && virtual_hearing_cancelled?
+      start_cancel_job
+    elsif start_async_job?
+      start_activate_job
+    end
   end
 
   def start_cancel_job

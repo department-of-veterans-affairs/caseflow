@@ -10,8 +10,8 @@ class AttorneyTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
 
-  validate :assigned_by_role_is_valid
-  validate :assigned_to_role_is_valid
+  validate :assigned_by_role_is_valid, if: :will_save_change_to_assigned_by_id?
+  validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
   validate :child_attorney_tasks_are_completed, on: :create
 
   after_update :send_back_to_judge_assign, if: :attorney_task_just_cancelled?
@@ -72,7 +72,7 @@ class AttorneyTask < Task
   end
 
   def assigned_by_role_is_valid
-    if assigned_by && (!assigned_by.judge_in_vacols? && !assigned_by.can_act_on_behalf_of_judges?)
+    if assigned_by && (!assigned_by.judge? && !assigned_by.can_act_on_behalf_of_judges?)
       errors.add(:assigned_by, "has to be a judge or special case movement team member")
     end
   end
