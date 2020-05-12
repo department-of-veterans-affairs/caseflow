@@ -12,13 +12,13 @@ describe BgsAddressService do
   describe "#fetch_cached_addresses" do
     it "retrieves only cached addresses" do
       addresses = {
-        "123" => {"address": "address one"},
-        "456" => {"address": "address two"}
+        "123" => { "address": "address one" },
+        "456" => { "address": "address two" }
       }
       addresses.each do |pid, value|
         Rails.cache.write(BgsAddressService.cache_key_for_participant_id(pid), value)
       end
-      expect(BgsAddressService.fetch_cached_addresses(["123", "456", "789"])).to eq(addresses)
+      expect(BgsAddressService.fetch_cached_addresses(%w[123 456 789])).to eq(addresses)
     end
   end
 end
