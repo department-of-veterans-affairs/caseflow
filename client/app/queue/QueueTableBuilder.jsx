@@ -5,7 +5,6 @@ import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
 import querystring from 'querystring';
 
-
 import BulkAssignButton from './components/BulkAssignButton';
 import QueueTable from './QueueTable';
 import TabWindow from '../components/TabWindow';
