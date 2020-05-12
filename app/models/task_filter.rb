@@ -45,7 +45,7 @@ class TaskFilter
       when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
         "cached_appeal_attributes.case_type"
       when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
-        "cached_appeal_attributes.assignee_label"
+        "assignees.display_name"
       when Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME
         "cached_appeal_attributes.power_of_attorney_name"
       when Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME
@@ -67,7 +67,9 @@ class TaskFilter
   end
 
   def filtered_tasks
-    where_clause.empty? ? tasks : tasks.joins(CachedAppeal.left_join_from_tasks_clause).where(*where_clause)
+    return tasks if where_clause.empty?
+
+    tasks.with_assignees.joins(CachedAppeal.left_join_from_tasks_clause).where(*where_clause)
   end
 
   # filter_params = ["col=docketNumberColumn&val=legacy|evidence_submission", "col=taskColumn&val=TranslationTask"]
