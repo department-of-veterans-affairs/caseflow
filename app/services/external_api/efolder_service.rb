@@ -9,7 +9,7 @@ class ExternalApi::EfolderService
     "Efolder-document-count-#{file_number}"
   end
 
-  # asychronous background job
+  # spawns asychronous FetchEfolderDocumentCountJob background job
   def self.document_count(file_number, user)
     efolder_doc_count_bgjob_key = "Efolder-document-count-bgjob-#{file_number}"
 
@@ -28,13 +28,24 @@ class ExternalApi::EfolderService
     DOCUMENT_COUNT_DEFERRED
   end
 
-  # synchronous API call
+  # synchronous API call used by the FetchEfolderDocumentCountJob background job
   def self.fetch_document_count(file_number, user)
     Rails.cache.fetch(document_count_cache_key(file_number), expires_in: 4.hours) do
       headers = { "FILE-NUMBER" => file_number }
       response = send_efolder_request("/api/v2/document_counts", user, headers)
       response_body = JSON.parse(response.body)
       response_body["documents"]
+    rescue JSON::ParserError => error
+      handle_json_parser_error(error, response)
+    end
+  end
+
+  def self.handle_json_parser_error(error, response)
+    if response.code == 502
+      # re-throw so we try again, but don't log to sentry.
+      fail Caseflow::Error::TransientError, message: response.body, code: response.code
+    else
+      fail error
     end
   end
 

@@ -47,7 +47,8 @@ class MailTask < Task
           parent_task = create!(
             appeal: parent_task.appeal,
             parent_id: parent_if_blocking_task(parent_task).id,
-            assigned_to: MailTeam.singleton
+            assigned_to: MailTeam.singleton,
+            instructions: [params[:instructions]]
           )
         end
 

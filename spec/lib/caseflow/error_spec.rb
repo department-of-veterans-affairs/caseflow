@@ -28,4 +28,18 @@ describe "Caseflow::Error" do
       end
     end
   end
+
+  describe "TransientError" do
+    let(:error_type) { Caseflow::Error::TransientError }
+
+    subject { fail error_type, message: "oops!" }
+
+    context ".ignorable?" do
+      it "acts like ignorable BGS or VBMS error" do
+        expect { subject }.to raise_error(error_type) do |error|
+          expect(error).to be_ignorable
+        end
+      end
+    end
+  end
 end
