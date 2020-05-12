@@ -12,13 +12,23 @@ describe Contention do
     it "truncates description to 255 bytes" do
       expect(utf8_text.length).to eq(177)
       expect(utf8_text.bytesize).to eq(273)
-      expect(subject.text.bytesize).to eq(254) # 255 would break a multi-byte codepoint
+      expect(subject.text.bytesize).to eq(198) # 255 would break a multi-byte codepoint
     end
 
     it "removes newlines" do
-      expect(subject.text).to include("entitlement to compensation under 38 U.S.C. § 1151 for")
+      expect(subject.text).to include("entitlement to compensation under 38 U.S.C. SS 1151 for")
       expect(subject.text).not_to include("\n")
       expect(subject.text).not_to include("\r")
+    end
+
+    context "has  invalid characters " do
+      let(:utf8_text) do
+        "Sandra’needsáëëçüñżλφθΩ�:smile_cat:�towork"
+      end
+
+      it "replaces characters" do
+        expect(subject.text).to include("Sandra'needsaeecunzlphthO:smile_cat:towork")
+      end
     end
   end
 end

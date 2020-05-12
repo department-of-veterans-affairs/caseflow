@@ -185,4 +185,24 @@ describe Hearing, :postgres do
       end
     end
   end
+  
+  context "#hearing_location_or_regional_office" do
+    subject { hearing.hearing_location_or_regional_office }
+
+    context "hearing location is nil" do
+      let(:hearing) { create(:hearing, regional_office: nil) }
+
+      it "returns regional office" do
+        expect(subject).to eq(hearing.regional_office)
+      end
+    end
+
+    context "hearing location is not nil" do
+      let(:hearing) { create(:hearing, regional_office: "RO42") }
+
+      it "returns hearing location" do
+        expect(subject).to eq(hearing.location)
+      end
+    end
+  end
 end

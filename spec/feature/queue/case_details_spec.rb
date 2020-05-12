@@ -859,7 +859,7 @@ RSpec.feature "Case details", :all_dbs do
       let!(:appeal) { create(:appeal) }
       let!(:appeal2) { create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-      let!(:assign_task) { create(:ama_judge_task, assigned_to: user, parent: root_task) }
+      let!(:assign_task) { create(:ama_judge_assign_task, assigned_to: user, parent: root_task) }
       let!(:judge_task) do
         create(
           :ama_judge_decision_review_task,

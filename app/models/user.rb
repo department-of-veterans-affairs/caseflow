@@ -102,6 +102,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
   end
 
+  def can_edit_issues?
+    CaseReview.singleton.users.include?(self) || can_intake_appeals?
+  end
+
   def can_intake_appeals?
     BvaIntake.singleton.users.include?(self)
   end
@@ -152,7 +156,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     if appeal.class.name == "LegacyAppeal"
       fail_if_no_access_to_legacy_task!(appeal.vacols_id)
     else
-      appeal.tasks.any? do |task|
+      appeal.tasks.includes(:assigned_to).any? do |task|
         task.assigned_to == self
       end
     end
