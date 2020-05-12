@@ -28,27 +28,14 @@ class Hearing < CaseflowRecord
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
-  delegate :request_type, to: :hearing_day
-  delegate :veteran_first_name, to: :appeal
-  delegate :veteran_last_name, to: :appeal
-  delegate :appellant_first_name, to: :appeal
-  delegate :appellant_last_name, to: :appeal
-  delegate :appellant_address_line_1, to: :appeal
-  delegate :appellant_city, to: :appeal
-  delegate :appellant_state, to: :appeal
-  delegate :appellant_zip, to: :appeal
-  delegate :veteran_age, to: :appeal
-  delegate :veteran_gender, to: :appeal
-  delegate :veteran_file_number, to: :appeal
-  delegate :veteran_email_address, to: :appeal
-  delegate :docket_number, to: :appeal
-  delegate :docket_name, to: :appeal
-  delegate :request_issues, to: :appeal
-  delegate :decision_issues, to: :appeal
-  delegate :available_hearing_locations, :closest_regional_office, :advanced_on_docket?, to: :appeal
-  delegate :external_id, to: :appeal, prefix: true
+  delegate :appellant_first_name, :appellant_last_name, :appellant_address_line_1,
+           :appellant_city, :appellant_state, :appellant_zip, :appellant_email_address,
+           :veteran_age, :veteran_gender, :veteran_first_name, :veteran_last_name, :veteran_file_number, 
+           :veteran_email_address, :docket_number, :docket_name, :request_issues, :decision_issues, 
+           :available_hearing_locations, :closest_regional_office, :advanced_on_docket?, :external_id,
+           to: :appeal
+  delegate :hearing_day_full?, :request_type, to: :hearing_day
   delegate :regional_office, to: :hearing_day, prefix: true
-  delegate :hearing_day_full?, to: :hearing_day
   delegate :timezone, :name, to: :regional_office, prefix: true
 
   after_create :update_fields_from_hearing_day
