@@ -14,6 +14,10 @@ class LegacyAppealRepresentative
     Representative.where(participant_id: [representative_participant_id] - [nil])
   end
 
+  def vso_rep?
+    !Vso.where(participant_id: representative_participant_id).empty?
+  end
+
   def representative_participant_id
     power_of_attorney.bgs_participant_id
   end
