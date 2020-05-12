@@ -160,8 +160,6 @@ const HearingDetails = (props) => {
     } else {
       hearingsFormDispatch({ type: UPDATE_VIRTUAL_HEARING, payload: null });
     }
-
-    closeVirtualHearingModal();
   };
 
   const getEditedEmails = () => {
@@ -353,7 +351,7 @@ const HearingDetails = (props) => {
           hearing={hearing}
           virtualHearing={hearingForms?.virtualHearingForm}
           update={updateVirtualHearing}
-          submit={() => submit().then(closeVirtualHearingModal)}
+          submit={submit}
           closeModal={closeVirtualHearingModal}
           reset={resetVirtualHearing}
           type={virtualHearingModalType}
