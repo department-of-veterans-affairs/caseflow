@@ -114,6 +114,9 @@ class TasksController < ApplicationController
 
     tasks = TasksForAppeal.new(appeal: appeal, user: current_user, user_role: user_role).call
 
+    # Create or update appeal view for this appeal and user
+    appeal.appeal_views.find_or_create_by(user: current_user).update!(last_viewed_at: Time.zone.now)
+
     render json: { tasks: json_tasks(tasks)[:data] }
   end
 
