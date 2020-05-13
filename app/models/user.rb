@@ -257,22 +257,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     RegionalOffice::STATIONS[station_id]
   end
 
-  def current_case_assignments_with_views
-    appeals = current_case_assignments
-    opened_appeals = viewed_appeals(appeals.map(&:id))
-
-    appeal_streams = LegacyAppeal.fetch_appeal_streams(appeals)
-    appeal_stream_hearings = get_appeal_stream_hearings(appeal_streams)
-
-    appeals.map do |appeal|
-      appeal.to_hash(
-        viewed: opened_appeals[appeal.id],
-        issues: appeal.issues,
-        hearings: appeal_stream_hearings[appeal.id]
-      )
-    end
-  end
-
   def current_case_assignments
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
@@ -404,12 +388,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|
       acc[appeal_id] = appeal_hearings(appeals.map(&:id))
       acc
-    end
-  end
-
-  def viewed_appeals(appeal_ids)
-    appeal_views.where(appeal_id: appeal_ids).each_with_object({}) do |appeal_view, object|
-      object[appeal_view.appeal_id] = true
     end
   end
 
