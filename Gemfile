@@ -8,7 +8,7 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "40561cdf7fc0b939d811f4bc489c598f42f5d51c"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "b6d05017344a861b4b858c037f8b277e25ea84f2"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
@@ -45,9 +45,7 @@ gem "pg", platforms: :ruby
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 3.12.4"
-# rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
-# Explicitly define rack version here to avoid that.
-gem "rack", "~> 2.0.6"
+gem "rack", "~> 2.2.0"
 gem "rails", "5.2.4.2"
 # Used to colorize output for rake tasks
 gem "rainbow"

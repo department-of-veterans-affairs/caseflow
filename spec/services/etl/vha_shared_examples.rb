@@ -48,6 +48,25 @@ shared_examples "VHA decision review sync" do
       end
     end
 
+    # our find_by_primary_key must be polymorphic
+    context "incremental with overlapping PKs" do
+      let(:appeal) { create(:appeal) }
+      let(:hlr) { create(:higher_level_review) }
+      let(:sc) { create(:supplemental_claim) }
+      let(:syncer) { described_class.new(etl_build: etl_build) }
+
+      before do
+        ETL::VhaAppeal.sync_with_original(appeal).save
+        ETL::VhaHigherLevelReview.sync_with_original(hlr).save
+        ETL::VhaSupplementalClaim.sync_with_original(sc).save
+      end
+
+      it "does not cause ActiveRecord::RecordNotUnique error" do
+        syncer.call
+        expect { syncer.call }.to_not raise_error
+      end
+    end
+
     context "sync tomorrow" do
       subject { described_class.new(since: Time.zone.now + 1.day, etl_build: etl_build).call }
 
