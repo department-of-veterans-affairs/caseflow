@@ -6,9 +6,19 @@
 class RatingIssue
   include ActiveModel::Model
 
-  attr_accessor :reference_id, :decision_text, :profile_date, :associated_end_products,
-                :promulgation_date, :participant_id, :rba_contentions_data, :diagnostic_code,
-                :benefit_type
+  attr_accessor(
+    :associated_end_products,
+    :benefit_type,
+    :decision_text,
+    :diagnostic_code,
+    :participant_id,
+    :percent_number,
+    :profile_date,
+    :promulgation_date,
+    :rba_contentions_data,
+    :reference_id,
+    :subject_text
+  )
 
   class << self
     def from_bgs_hash(rating, bgs_data)

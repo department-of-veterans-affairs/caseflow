@@ -5,22 +5,22 @@ describe RatingProfileDisability do
 
   let(:disability_hash) do
     {
-      dis_sn: "dis_sn88",
+      dis_sn: "dis_sn89",
       dis_dt: date - 6.days,
       disability_evaluations: [
         { # least recent
-          dgnstc_tc: "dgnstc_tc7",
+          dgnstc_tc: "dgnstc_tc71",
           prcnt_no: 20,
           conv_begin_dt: date - 9.days,
           begin_dt: date - 8.days,
           dis_dt: date - 1.day
         },
         { # no dt
-          dgnstc_tc: "dgnstc_tc2",
+          dgnstc_tc: "dgnstc_tc21",
           prcnt_no: 50
         },
         {
-          dgnstc_tc: "dgnstc_tc9",
+          dgnstc_tc: "dgnstc_tc91",
           prcnt_no: 65,
           conv_begin_dt: date - 3.days,
           begin_dt: date - 13.days,
@@ -32,7 +32,7 @@ describe RatingProfileDisability do
           dis_dt: date - 20.days
         },
         { # most recent /with/ prcnt_no
-          dgnstc_tc: "dgnstc_tc52",
+          dgnstc_tc: "dgnstc_tc521",
           prcnt_no: 33,
           conv_begin_dt: date - 2.days,
           begin_dt: date - 9.days,
@@ -51,7 +51,7 @@ describe RatingProfileDisability do
     subject { described_class.new(disability_hash).evaluations_sorted_most_recent_to_oldest }
     it("returns the evaluations array sorted") do
       expect(subject.map { |e| e[:dgnstc_tc] }).to eq(
-        [nil, "dgnstc_tc52", "dgnstc_tc9", "dgnstc_tc7", "dgnstc_tc2"]
+        [nil, "dgnstc_tc521", "dgnstc_tc91", "dgnstc_tc71", "dgnstc_tc21"]
       )
     end
   end
