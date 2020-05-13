@@ -534,6 +534,83 @@ feature "Intake", :all_dbs do
           )
         end
       end
+
+      context "invalid pay grade" do
+        let(:service) { [{ branch_of_service: "army", pay_grade: "not valid" }] }
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+            sex: nil,
+            ssn: nil,
+            country: "USA",
+            address_line1: "1234",
+            name_suffix: "JR",
+            service: service
+          )
+        end
+
+        scenario "veteran has invalid pay grade" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content(
+            "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again"
+          )
+        end
+      end
+    end
+
+    context "Adding new claimant" do
+      let(:hlr) { create(:higher_level_review, veteran_file_number: "12341234") }
+      let(:intake) { HigherLevelReviewIntake.new(veteran_file_number: "12341234", user: current_user) }
+
+      before do
+        intake.start!
+      end
+
+      context "without attorney_fees feature toggle" do
+        it "doesn't allow adding new claimants" do
+          visit "/intake"
+
+          expect(page).to have_current_path("/intake/review_request")
+
+          within_fieldset("Is the claimant someone other than the Veteran?") do
+            find("label", text: "Yes", match: :prefer_exact).click
+          end
+
+          expect(page).to_not have_content("+ Add Claimant")
+        end
+      end
+
+      context "with attorney_fees feature toggle" do
+        before { FeatureToggle.enable!(:attorney_fees) }
+        after { FeatureToggle.disable!(:attorney_fees) }
+
+        it "allows adding new claimants" do
+          visit "/intake"
+
+          expect(page).to have_current_path("/intake/review_request")
+
+          within_fieldset("Is the claimant someone other than the Veteran?") do
+            find("label", text: "Yes", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("+ Add Claimant")
+
+          click_button("+ Add Claimant")
+          expect(page).to have_content(COPY::ADD_CLAIMANT_MODAL_TITLE)
+        end
+      end
     end
   end
 end

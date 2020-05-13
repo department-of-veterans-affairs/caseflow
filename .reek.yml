@@ -22,6 +22,7 @@ detectors:
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
+      - SlackService#pick_color
       - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
       - VBMSCaseflowLogger#log
@@ -165,6 +166,7 @@ detectors:
     exclude:
       - AddressMapper#get_address_from_veteran_record
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
+      - ETLClasses#syncer_klasses
       - ETL::Builder#last_built
       - ETL::HearingSyncer#filter?
       - ETL::LegacyHearingSyncer#filter?

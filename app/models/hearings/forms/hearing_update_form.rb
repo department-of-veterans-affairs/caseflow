@@ -8,7 +8,7 @@ class HearingUpdateForm < BaseHearingUpdateForm
   protected
 
   def update_hearing
-    Transcription.find_or_create_by(hearing: hearing)
+    Transcription.find_or_create_by(hearing: hearing) unless transcription_attributes.blank?
     hearing.update!(hearing_updates)
     update_advance_on_docket_motion unless advance_on_docket_motion_attributes.blank?
   end
