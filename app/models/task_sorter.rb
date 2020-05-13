@@ -26,7 +26,7 @@ class TaskSorter
 
     # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
     # application, and conditional logic to only join sometimes adds unnecessary complexity.
-    tasks.with_assignees.with_assigners.joins(CachedAppeal.left_join_from_tasks_clause).order(order_clause)
+    tasks.with_assignees.with_assigners.with_cached_appeals.order(order_clause)
   end
 
   private

@@ -85,6 +85,8 @@ class Task < CaseflowRecord
 
   scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
 
+  scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause)}
+
   ############################################################################################
   ## class methods
   class << self
@@ -194,6 +196,12 @@ class Task < CaseflowRecord
     def joins_with_assignees_clause
       "INNER JOIN #{Task.assignees_table_clause} ON " \
       "assignees.id = tasks.assigned_to_id AND assignees.type = tasks.assigned_to_type"
+    end
+
+    def joins_with_cached_appeals_clause
+      "left join #{CachedAppeal.table_name} "\
+      "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
+      "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
     end
   end
 
