@@ -6,7 +6,6 @@
 
 class RatingDecision
   include ActiveModel::Model
-  include LatestRatingDisabilityEvaluation
 
   # the flexible window for calculating the contestable decision date.
   # this is the number of days +/- the effective date.

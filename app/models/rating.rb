@@ -4,7 +4,6 @@
 
 class Rating
   include ActiveModel::Model
-  include LatestRatingDisabilityEvaluation
 
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
