@@ -225,6 +225,39 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
   end
 
+  context "missing hearing association" do
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
+
+    let(:hearing) do
+      create(
+        :hearing,
+        appeal: appeal,
+        evidence_window_waived: evidence_window_waived
+      )
+    end
+    let!(:disposition_task) do
+      create(
+        :assign_hearing_disposition_task,
+        :in_progress,
+        parent: hearing_task
+      )
+    end
+
+    subject do
+      disposition_task.send(
+        :update_hearing_disposition,
+        disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+      )
+    end
+
+    it "fails with missing hearing association error" do
+      expect { subject }.to raise_error(AssignHearingDispositionTask::HearingAssociationMissing)
+    end
+  end
+
   context "disposition updates" do
     let(:disposition) { nil }
     let(:appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing) }
