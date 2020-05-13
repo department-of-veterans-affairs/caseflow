@@ -11,6 +11,21 @@ module PowerOfAttorneyMapper
     base.extend(PowerOfAttorneyMapper)
   end
 
+  # parse the BGS claimants.find_poa_by_file_number response
+  def get_claimant_poa_from_bgs_claimants_poa(bgs_record = {})
+    bgs_record ||= {}
+    return {} unless bgs_record.dig(:relationship_name)
+
+    {
+      participant_id: bgs_record[:person_org_ptcpnt_id],
+      representative_name: bgs_record[:person_org_name],
+      representative_type: bgs_record[:person_organization_name],
+      authzn_change_clmant_addrs_ind: bgs_record[:authzn_change_clmant_addrs_ind],
+      authzn_poa_access_ind: bgs_record[:authzn_poa_access_ind],
+      veteran_participant_id: bgs_record[:veteran_ptcpnt_id]
+    }
+  end
+
   # used by fetch_poas_by_participant_id (for User)
   def get_poa_from_bgs_poa(bgs_rep = {})
     return {} unless bgs_rep&.dig(:org_type_nm)
