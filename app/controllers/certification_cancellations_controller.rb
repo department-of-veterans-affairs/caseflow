@@ -16,6 +16,10 @@ class CertificationCancellationsController < ApplicationController
 
   private
 
+  def set_application
+    RequestStore.store[:application] = :certification
+  end
+
   def certification_cancellation_params
     params.require(:certification_cancellation).permit(:certification_id, :cancellation_reason, :other_reason, :email)
   end
