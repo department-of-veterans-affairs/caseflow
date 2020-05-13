@@ -28,6 +28,10 @@ class ETL::VhaDecisionReview < ETL::Record
 
     private
 
+    def find_by_primary_key(original)
+      find_by(decision_review_type: original.class.name, decision_review_id: original.id)
+    end
+
     def common_decision_review_attributes
       [
         :establishment_processed_at,
