@@ -358,16 +358,16 @@ class DailyDocketRow extends React.Component {
 
   renderVirtualHearingModal = (user, hearing) => (
     <VirtualHearingModal
+      closeModal={this.closeVirtualHearingModal}
       hearing={hearing}
       timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
       virtualHearing={hearing.virtualHearing || {}}
       reset={() => {
         this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });
-        this.closeVirtualHearingModal();
       }}
       user={user}
       update={this.updateVirtualHearing}
-      submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
+      submit={this.saveHearing}
       type="change_hearing_time"
     />
   );

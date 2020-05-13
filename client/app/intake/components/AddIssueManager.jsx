@@ -120,13 +120,14 @@ class AddIssueManager extends React.Component {
   };
 
   setupNonratingRequestIssueModal = () => {
-    const { intakeData, formType } = this.props;
+    const { intakeData, formType, featureToggles } = this.props;
 
     return {
       component: NonratingRequestIssueModal,
       props: {
         intakeData,
         formType,
+        featureToggles,
         submitText: this.hasLegacyAppeals() ? 'Next' : 'Add this issue',
         onCancel: () => this.cancel(),
         onSkip: () => this.setState({ currentModal: 'UnidentifiedIssuesModal' }),
