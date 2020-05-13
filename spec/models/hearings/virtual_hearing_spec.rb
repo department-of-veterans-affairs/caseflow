@@ -5,7 +5,6 @@ describe VirtualHearing, :all_dbs do
     let(:virtual_hearing) do
       create(
         :virtual_hearing,
-        :initialized,
         hearing: create(
           :hearing,
           hearing_day: create(
@@ -19,7 +18,7 @@ describe VirtualHearing, :all_dbs do
     let(:virtual_hearing_aliased) do
       create(
         :virtual_hearing,
-        :alias_guest_pin,
+        :initialized,
         hearing: create(
           :hearing,
           hearing_day: create(
@@ -31,14 +30,23 @@ describe VirtualHearing, :all_dbs do
       )
     end
 
-    it "returns the database column when guest_pin_long is nil" do
+    it "returns the database column when override is nil" do
+      # Set the DB columns to ensure they can still be accessed for older hearings
+      virtual_hearing.update(guest_pin: rand(1000..9999).to_s[0..3].to_i)
+      virtual_hearing.update(host_pin: rand(1000..9999).to_s[0..3].to_i)
+      virtual_hearing.reload
+
       expect(virtual_hearing.guest_pin_long).to eq nil
       expect(virtual_hearing.guest_pin.to_s.length).to eq 4
+      expect(virtual_hearing.host_pin_long).to eq nil
+      expect(virtual_hearing.host_pin.to_s.length).to eq 4
     end
 
-    it "returns the aliased guest_pin_long when set" do
-      expect(virtual_hearing[:guest_pin].to_s.length).to eq 4
-      expect(virtual_hearing_aliased.guest_pin.to_s.length).to eq 10
+    it "returns the aliased pins when set" do
+      expect(virtual_hearing_aliased[:guest_pin]).to eq nil
+      expect(virtual_hearing_aliased.guest_pin.to_s.length).to eq 11
+      expect(virtual_hearing_aliased[:host_pin]).to eq nil
+      expect(virtual_hearing_aliased.host_pin.to_s.length).to eq 8
     end
   end
 

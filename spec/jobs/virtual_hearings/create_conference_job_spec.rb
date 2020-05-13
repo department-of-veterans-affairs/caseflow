@@ -27,8 +27,8 @@ describe VirtualHearings::CreateConferenceJob do
       expect(virtual_hearing.status).to eq(:active)
       expect(virtual_hearing.alias).to eq("0000001")
       expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
-      expect(virtual_hearing.host_pin.to_s.length).to eq(7)
-      expect(virtual_hearing.guest_pin.to_s.length).to eq(10)
+      expect(virtual_hearing.host_pin.to_s.length).to eq(8)
+      expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
     end
 
     it "sends confirmation emails if success and is processed", :aggregate_failures do
