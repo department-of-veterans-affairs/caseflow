@@ -62,7 +62,7 @@ class VirtualHearing < CaseflowRecord
     alias_with_host.nil? ? VirtualHearing.formatted_alias(alias_name) : alias_with_host
   end
 
-  # Returns a random host and alias pin
+  # Returns a random host and guest pin
   def generate_conference_pins
     self.guest_pin_long = "#{rand(1_000_000_000..9_999_999_999).to_s[0..9]}#"
     self.host_pin_long = "#{rand(1_000_000..9_999_999).to_s[0..9]}#"
