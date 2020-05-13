@@ -128,6 +128,22 @@ describe ScheduleHearingTask, :all_dbs do
         let(:schedule_hearing_task) do
           create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_management_user)
         end
+        let(:participant_id) { "1234" }
+
+        before do
+          allow(BGSService).to receive(:power_of_attorney_records).and_return(
+            appeal.veteran_file_number => {
+              file_number: appeal.veteran_file_number,
+              ptcpnt_id: veteran_participant_id,
+              power_of_attorney: {
+                legacy_poa_cd: "3QQ",
+                nm: "Clarence Darrow",
+                org_type_nm: "POA Attorney",
+                ptcpnt_id: participant_id
+              }
+            }
+          )
+        end
 
         shared_examples "route to case storage location" do
           it "completes the task and updates the location to case storage" do
@@ -146,22 +162,6 @@ describe ScheduleHearingTask, :all_dbs do
         end
 
         context "with non-VSO representative" do
-          let(:participant_id) { "1234" }
-
-          before do
-            allow(BGSService).to receive(:power_of_attorney_records).and_return(
-              appeal.veteran_file_number => {
-                file_number: appeal.veteran_file_number,
-                ptcpnt_id: veteran_participant_id,
-                power_of_attorney: {
-                  legacy_poa_cd: "3QQ",
-                  nm: "Clarence Darrow",
-                  org_type_nm: "POA Attorney",
-                  ptcpnt_id: participant_id
-                }
-              }
-            )
-          end
           include_examples "route to case storage location"
 
           it "has at least 1 representative" do
@@ -170,23 +170,7 @@ describe ScheduleHearingTask, :all_dbs do
         end
 
         context "with VSO" do
-          let(:participant_id) { "1234" }
           let!(:vso) { create(:vso, name: "test", participant_id: participant_id) }
-
-          before do
-            allow(BGSService).to receive(:power_of_attorney_records).and_return(
-              appeal.veteran_file_number => {
-                file_number: appeal.veteran_file_number,
-                ptcpnt_id: veteran_participant_id,
-                power_of_attorney: {
-                  legacy_poa_cd: "3QQ",
-                  nm: "Clarence Darrow",
-                  org_type_nm: "POA Attorney",
-                  ptcpnt_id: participant_id
-                }
-              }
-            )
-          end
 
           it "completes the task and updates the location to service organization" do
             schedule_hearing_task.update_from_params(update_params, hearings_management_user)
