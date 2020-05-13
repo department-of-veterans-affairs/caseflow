@@ -18,6 +18,10 @@ class TasksForAppeal
     # This change filters them out from the Queue page
     tasks = all_tasks_except_for_decision_review_tasks
 
+    # Mark ama tasks in progress if any are assigned to the requesting user, indicating that they have started work on
+    # this task if they have gone to the case details page of this appeal
+    tasks.assigned.where(assigned_to: user).each(&:in_progress!)
+
     return (legacy_appeal_tasks + tasks).uniq if appeal.is_a?(LegacyAppeal)
 
     tasks
