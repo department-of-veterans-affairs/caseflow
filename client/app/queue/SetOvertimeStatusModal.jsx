@@ -38,20 +38,12 @@ export const SetOvertimeStatusModal = (props) => {
 
   return (
     <React.Fragment>
-      { overtime &&
       <QueueFlowModal
         pathAfterSubmit={`/queue/appeals/${externalId}`}
-        title={COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_HEADER}
+        title={overtime ? COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_HEADER : COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_HEADER}
         submit={submit}>
-        {COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_CONFIRMATION}
-      </QueueFlowModal> }
-      { !overtime &&
-      <QueueFlowModal
-        pathAfterSubmit={`/queue/appeals/${externalId}`}
-        title={COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_HEADER}
-        submit={submit}>
-        {COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_CONFIRMATION}
-      </QueueFlowModal> }
+        {overtime ? COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_CONFIRMATION : COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_CONFIRMATION}
+      </QueueFlowModal>
     </React.Fragment>
   );
 };
