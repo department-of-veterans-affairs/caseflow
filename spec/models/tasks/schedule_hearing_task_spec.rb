@@ -129,7 +129,7 @@ describe ScheduleHearingTask, :all_dbs do
           create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_management_user)
         end
 
-        context "with no VSO" do
+        shared_examples "route to case storage location" do
           it "completes the task and updates the location to case storage" do
             schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
@@ -138,6 +138,34 @@ describe ScheduleHearingTask, :all_dbs do
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
             expect(vacols_case.bfha).to eq("5")
             expect(vacols_case.bfhr).to eq("5")
+          end
+        end
+
+        context "with no representatives" do
+          include_examples "route to case storage location"
+        end
+
+        context "with non-VSO representative" do
+          let(:participant_id) { "1234" }
+
+          before do
+            allow(BGSService).to receive(:power_of_attorney_records).and_return(
+              appeal.veteran_file_number => {
+                file_number: appeal.veteran_file_number,
+                ptcpnt_id: veteran_participant_id,
+                power_of_attorney: {
+                  legacy_poa_cd: "3QQ",
+                  nm: "Clarence Darrow",
+                  org_type_nm: "POA Attorney",
+                  ptcpnt_id: participant_id
+                }
+              }
+            )
+          end
+          include_examples "route to case storage location"
+
+          it "has at least 1 representative" do
+            expect(appeal.legacy_appeal_representative.representative_participant_id).to eq "1234"
           end
         end
 

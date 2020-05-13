@@ -94,10 +94,10 @@ class ScheduleHearingTask < Task
 
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
-      location = if appeal.representatives.empty?
-                   LegacyAppeal::LOCATION_CODES[:case_storage]
-                 else
+      location = if appeal.vso_rep?
                    LegacyAppeal::LOCATION_CODES[:service_organization]
+                 else
+                   LegacyAppeal::LOCATION_CODES[:case_storage]
                  end
 
       AppealRepository.withdraw_hearing!(appeal)
