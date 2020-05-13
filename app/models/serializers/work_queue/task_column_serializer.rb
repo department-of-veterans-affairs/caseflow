@@ -136,14 +136,15 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :assigned_to do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]
+    assignee = object.assigned_to
 
     if serialize_attribute?(params, columns)
       {
-        css_id: object.assigned_to.try(:css_id),
-        is_organization: object.assigned_to.is_a?(Organization),
-        name: object.appeal.assigned_to_location,
-        type: object.assigned_to.class.name,
-        id: object.assigned_to.id
+        css_id: assignee.try(:css_id),
+        is_organization: assignee.is_a?(Organization),
+        name: assignee.is_a?(Organization) ? assignee.name : assignee.full_name,
+        type: assignee.class.name,
+        id: assignee.id
       }
     else
       {
