@@ -106,8 +106,7 @@ class QueueColumn
   end
 
   def assignee_options(tasks)
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
-      .group(:assignee_label).count.each_pair.map do |option, count|
+    tasks.with_cached_appeals.group(:assignee_label).count.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end

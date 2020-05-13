@@ -67,7 +67,7 @@ class TaskFilter
   end
 
   def filtered_tasks
-    where_clause.empty? ? tasks : tasks.joins(CachedAppeal.left_join_from_tasks_clause).where(*where_clause)
+    where_clause.empty? ? tasks : tasks.with_cached_appeals.where(*where_clause)
   end
 
   # filter_params = ["col=docketNumberColumn&val=legacy|evidence_submission", "col=taskColumn&val=TranslationTask"]
