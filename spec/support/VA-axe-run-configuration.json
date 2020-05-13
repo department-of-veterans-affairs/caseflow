@@ -21,7 +21,7 @@
       "enabled": false,
     },
     "aria-required-children": {
-      "enabled": false,
+      "enabled": true,
     },
     "list": {
       "enabled": false,
