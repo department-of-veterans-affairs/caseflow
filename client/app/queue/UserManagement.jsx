@@ -7,23 +7,12 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
+import SearchableDropdown from '../components/SearchableDropdown';
 
 import COPY from '../../COPY';
 import USER_STATUSES from '../../constants/USER_STATUSES';
-import TextField from '../components/TextField';
 
 const buttonPaddingStyle = css({ margin: '0 1rem' });
-
-const textFieldStyling = css({
-  padding: '0 1.5rem',
-  width: '50%'
-});
-
-const searchButtonStyling = css({
-  marginBottom: '1rem',
-  textAlign: 'right',
-  width: '100%'
-});
 
 export default class UserManagement extends React.PureComponent {
   constructor(props) {
@@ -33,11 +22,73 @@ export default class UserManagement extends React.PureComponent {
       loading: false,
       error: null,
       changingActiveStatus: {},
-      selectedUser: null
+      selectedUser: null,
+      remainingUsers: []
     };
   }
 
+  // Format functions
   formatName = (user) => `${user.full_name} (${user.css_id})`;
+
+  // Search functions
+  asyncLoadUser = (inputValue) => {
+    // don't search till we have min length input
+    if (inputValue.length < 2) {
+      this.setState({ remainingUsers: [] });
+
+      return Promise.reject();
+    }
+
+    return ApiUtil.get(`/users?css_id=${inputValue}`).then((response) => {
+      const users = response.body.users.data;
+
+      this.setState({ remainingUsers: users });
+
+      return { options: this.dropdownOptions() };
+    });
+  }
+
+  dropdownOptions = () => {
+    return this.state.remainingUsers.map((user) => {
+      return { label: this.formatName(user.attributes),
+        value: user };
+    });
+  };
+
+  selectUser = (selection) => {
+    ApiUtil.get(`/user?css_id=${selection.value.attributes.css_id}`).then((response) => {
+      const user = response.body.user;
+
+      this.setState({ selectedUser: user });
+    }, (error) => {
+      this.setState({
+        error: {
+          title: COPY.USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE,
+          body: error.message
+        }
+      });
+    });
+  }
+
+  // Status functions
+
+  selectedUserDisplay = (user) => {
+    return <span>{this.formatName(user)} &nbsp;
+      <span {...buttonPaddingStyle}>
+        { user.status === USER_STATUSES.inactive ?
+          <Button
+            name={COPY.USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT}
+            classNames={['usa-button-primary']}
+            loading={this.state.changingActiveStatus[user.id]}
+            onClick={this.toggleUserStatus(user, USER_STATUSES.active)} /> :
+          <Button
+            name={COPY.USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT}
+            classNames={['usa-button-secondary']}
+            loading={this.state.changingActiveStatus[user.id]}
+            onClick={this.toggleUserStatus(user, USER_STATUSES.inactive)} /> }
+      </span>
+    </span>;
+  }
 
   toggleUserStatus = (user, status) => () => {
     this.setState({
@@ -85,59 +136,20 @@ export default class UserManagement extends React.PureComponent {
     });
   }
 
-  search = () => {
-    ApiUtil.get(`/user?css_id=${this.state.css_id}`).then((response) => {
-      const user = response.body.user;
-
-      this.setState({ selectedUser: user });
-    }, (error) => {
-      this.setState({
-        error: {
-          title: COPY.USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE,
-          body: error.message
-        }
-      });
-    });
-  }
-
-  setCssId = (value) => this.setState({
-    css_id: value,
-    selectedUser: null,
-    error: null,
-    success: null
-  });
-
-  selectedUserDisplay = (user) => {
-    return <span>{this.formatName(user)} &nbsp;
-      <span {...buttonPaddingStyle}>
-        { user.status === USER_STATUSES.inactive ?
-          <Button
-            name={COPY.USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT}
-            classNames={['usa-button-primary']}
-            loading={this.state.changingActiveStatus[user.id]}
-            onClick={this.toggleUserStatus(user, USER_STATUSES.active)} /> :
-          <Button
-            name={COPY.USER_MANAGEMENT_GIVE_USER_INACTIVE_STATUS_BUTTON_TEXT}
-            classNames={['usa-button-secondary']}
-            loading={this.state.changingActiveStatus[user.id]}
-            onClick={this.toggleUserStatus(user, USER_STATUSES.inactive)} /> }
-      </span>
-    </span>;
-  }
+  // main function
 
   mainContent = () => {
     return <React.Fragment>
       <div>
-        <div {...textFieldStyling}>
-          <TextField
-            name="CSS ID"
-            value={this.state.css_id}
-            onChange={this.setCssId}
-          />
-        </div>
-        <div {...searchButtonStyling}>
-          <Button name="Search" onClick={this.search} />
-        </div>
+        <h2>{COPY.USER_MANAGEMENT_FIND_USER_DROPDOWN_NAME}</h2>
+        <SearchableDropdown
+          name={COPY.USER_MANAGEMENT_FIND_USER_DROPDOWN_NAME}
+          hideLabel
+          searchable
+          placeholder={COPY.USER_MANAGEMENT_DROPDOWN_TEXT}
+          value={null}
+          onChange={this.selectUser}
+          async={this.asyncLoadUser} />
       </div>
       <div>{this.state.selectedUser && this.selectedUserDisplay(this.state.selectedUser)}</div>
     </React.Fragment>;

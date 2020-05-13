@@ -39,7 +39,7 @@ class JudgeTeam < Organization
 
   def judge
     if use_judge_team_roles?
-      judge_team_roles.detect { |role| role.is_a?(JudgeTeamLead) }.organizations_user.user
+      judge_team_roles.includes(:organizations_user, :user).detect { |role| role.is_a?(JudgeTeamLead) }.user
     else
       admins.first
     end

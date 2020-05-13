@@ -1170,6 +1170,7 @@ components:
       type: string
       enum:
         - compensation
+        - compensation_all
         - pension
         - fiduciary
         - insurance
@@ -1199,6 +1200,32 @@ components:
     NonratingIssueCategory:
       type: string
       enum:
+        # for benefit type:  compensation_all
+        - Unknown issue category
+        - Apportionment
+        - Incarceration Adjustments
+        - Audit Error Worksheet (DFAS)
+        - Active Duty Adjustments
+        - Drill Pay Adjustments
+        - Character of discharge determinations
+        - Contested Claims (other than apportionment)
+        - Constested Claims - Apportionment
+        - Constested Claims - Attorney fees
+        - Constested Claims - Dependents Indemnity Compensation (DIC)
+        - Constested Claims - Insurance
+        - Constested Claims - Loan Guaranty (LGY)
+        - Constested Claims - Veteran death
+        - Income/net worth (pension)
+        - Dependent child - Adopted
+        - Dependent child - Stepchild
+        - Dependent child - Biological
+        - Dependency Spouse - Common law marriage
+        - Dependency Spouse - Inference of marriage
+        - Dependency Spouse - Deemed valid marriage
+        - Military Retired Pay
+        - Contested Claims (other than apportionment)
+        - Lack of Qualifying Service
+        - Other non-rated
         # for benefit type:  compensation
         - Unknown issue category
         - Apportionment
@@ -1215,7 +1242,6 @@ components:
         - Dependency Spouse - Inference of marriage
         - Dependency Spouse - Deemed valid marriage
         - Military Retired Pay
-        - Contested Claims (other than apportionment)
         - Lack of Qualifying Service
         - Other non-rated
         # for benefit type:  pension
