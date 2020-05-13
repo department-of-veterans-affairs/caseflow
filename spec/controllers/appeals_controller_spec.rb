@@ -537,17 +537,26 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
   end
 
   describe "GET appeals/:id.json" do
+    let(:appeal) { create_legacy_appeal_with_hearings }
+    let(:user) { User.authenticate!(roles: ["System Admin"]) }
+
+    subject { get :show, params: { appeal_id: appeal.vacols_id }, as: :json }
+
     it "should succeed" do
-      appeal = create_legacy_appeal_with_hearings
-
-      User.authenticate!(roles: ["System Admin"])
-      get :show, params: { appeal_id: appeal.vacols_id }, as: :json
-
+      subject
       appeal_json = JSON.parse(response.body)["appeal"]["attributes"]
 
       assert_response :success
       expect(appeal_json["available_hearing_locations"][0]["city"]).to eq "Holdrege"
       expect(appeal_json["hearings"][0]["type"]).to eq "Video"
+    end
+
+    it "should create an appeal view for the user if it does not exist" do
+      expect(appeal.appeal_views.where(user: user).count).to eq 0
+      subject
+      expect(appeal.appeal_views.where(user: user).count).to eq 1
+      subject
+      expect(appeal.appeal_views.where(user: user).count).to eq 1
     end
   end
 
