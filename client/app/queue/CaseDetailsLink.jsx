@@ -23,7 +23,7 @@ class CaseDetailsLink extends React.PureComponent {
     }
 
     const linkStyling = css({
-      fontWeight: (task.status === 'assigned') ? 'bold' : null
+      fontWeight: task.startedAt ? null : 'bold'
     });
 
     return <span {...linkStyling} id={`veteran-name-for-task-${task.taskId}`}>

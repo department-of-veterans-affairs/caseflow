@@ -81,6 +81,7 @@ const taskAttributesFromRawTask = (task) => {
     closestRegionalOffice: task.attributes.closest_regional_office,
     createdAt: task.attributes.created_at,
     closedAt: task.attributes.closed_at,
+    startedAt: task.attributes.started_at,
     assigneeName: task.attributes.assignee_name,
     assignedTo: {
       cssId: task.attributes.assigned_to.css_id,
@@ -179,6 +180,7 @@ export const prepareLegacyTasksForStore = (tasks) => {
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       closedAt: null,
+      startedAt: task.attributes.started_at,
       assigneeName: task.attributes.assignee_name,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
