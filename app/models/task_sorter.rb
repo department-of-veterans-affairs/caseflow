@@ -67,7 +67,7 @@ class TaskSorter
   # postgres to use as a reference for sorting as a task's label is not stored in the database.
   def task_type_order_clause
     task_types_sorted_by_label = Task.descendants.sort_by(&:label).map(&:name)
-    task_type_sort_position = "type in '#{task_types_sorted_by_label.join(',')}'"
+    task_type_sort_position = "tasks.type in '#{task_types_sorted_by_label.join(',')}'"
     "position(#{task_type_sort_position}) #{sort_order}"
   end
 

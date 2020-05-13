@@ -38,7 +38,7 @@ class WorkQueue::TaskSerializer
 
     {
       css_id: assignee.try(:css_id),
-      full_name: assignee.try(:cssfull_name_id),
+      full_name: assignee.try(:full_name),
       is_organization: assignee.is_a?(Organization),
       name: assignee.is_a?(Organization) ? assignee.name : assignee.full_name,
       type: assignee.class.name,
