@@ -179,14 +179,19 @@ class Task < CaseflowRecord
       )
     end
 
+    def assigners_table_clause
+      "(SELECT id, full_name AS display_name FROM users) AS assigners"
+    end
+
     def joins_with_assigners_clause
-      "LEFT JOIN (SELECT id, full_name AS display_name FROM users) AS assigners ON assigners.id = tasks.assigned_by_id"
+      "LEFT JOIN #{Task.assigners_table_clause} ON assigners.id = tasks.assigned_by_id"
     end
 
     def assignees_table_clause
       "(SELECT id, 'Organization' AS type, name AS display_name FROM organizations " \
-        "UNION " \
-      "SELECT id, 'User' AS type, full_name AS display_name FROM users) AS assignees"
+      "UNION " \
+      "SELECT id, 'User' AS type, full_name AS display_name FROM users)" \
+      "AS assignees"
     end
 
     def joins_with_assignees_clause
