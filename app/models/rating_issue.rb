@@ -13,29 +13,34 @@ class RatingIssue
   class << self
     def from_bgs_hash(rating, bgs_data)
       new(
-        reference_id: bgs_data[:rba_issue_id],
-        rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
-        profile_date: rating.profile_date,
-        decision_text: bgs_data[:decn_txt],
         associated_end_products: rating.associated_end_products,
-        promulgation_date: rating.promulgation_date,
-        participant_id: rating.participant_id,
+        benefit_type: rating.pension? ? :pension : :compensation,
+        decision_text: bgs_data[:decn_txt],
         diagnostic_code: bgs_data[:dgnstc_tc],
-        benefit_type: rating.pension? ? :pension : :compensation
+        participant_id: rating.participant_id,
+        percent_number: bgs_data[:prcnt_no],
+        profile_date: rating.profile_date,
+        promulgation_date: rating.promulgation_date,
+        rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
+        reference_id: bgs_data[:rba_issue_id],
+        subject_text: bgs_data[:subjct_txt]
       )
     end
 
     def deserialize(serialized_hash)
       new(
-        participant_id: serialized_hash[:participant_id],
-        reference_id: serialized_hash[:reference_id],
-        decision_text: serialized_hash[:decision_text],
-        associated_end_products: deserialize_end_products(serialized_hash),
-        promulgation_date: serialized_hash[:promulgation_date],
-        profile_date: serialized_hash[:profile_date],
-        rba_contentions_data: serialized_hash[:rba_contentions_data],
-        diagnostic_code: serialized_hash[:diagnostic_code],
-        benefit_type: serialized_hash[:benefit_type]
+        serialized_hash.slice(
+          :benefit_type,
+          :decision_text,
+          :diagnostic_code,
+          :participant_id,
+          :percent_number,
+          :profile_date,
+          :promulgation_date,
+          :rba_contentions_data,
+          :reference_id,
+          :subject_text
+        ).merge(associated_end_products: deserialize_end_products(serialized_hash))
       )
     end
 
