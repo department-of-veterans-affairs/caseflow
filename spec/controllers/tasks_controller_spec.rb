@@ -850,9 +850,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       before { User.authenticate!(user: colocated_user) }
 
       it "should return ColocatedTasks" do
-        expect(appeal.appeal_views.where(user: colocated_user).count).to eq 0
         get :for_appeal, params: { appeal_id: appeal.uuid, role: "colocated" }
-        expect(appeal.appeal_views.where(user: colocated_user).count).to eq 1
 
         assert_response :success
         response_body = JSON.parse(response.body)

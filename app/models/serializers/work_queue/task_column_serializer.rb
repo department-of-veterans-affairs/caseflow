@@ -62,7 +62,7 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
-  attribute :started_at do
+  attribute :started_at do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]
 
     if serialize_attribute?(params, columns)
