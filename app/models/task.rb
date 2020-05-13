@@ -85,7 +85,7 @@ class Task < CaseflowRecord
 
   scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
 
-  scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause)}
+  scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
   ############################################################################################
   ## class methods
