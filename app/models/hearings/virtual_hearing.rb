@@ -32,6 +32,7 @@ class VirtualHearing < CaseflowRecord
   validates_email_format_of :veteran_email
   validates_email_format_of :representative_email, allow_nil: true
   validate :associated_hearing_is_video, on: :create
+  validate :hearing_is_not_virtual, on: :create
 
   scope :eligible_for_deletion,
         lambda {
@@ -155,6 +156,12 @@ class VirtualHearing < CaseflowRecord
   def associated_hearing_is_video
     if hearing.request_type != HearingDay::REQUEST_TYPES[:video]
       errors.add(:hearing, "must be a video hearing")
+    end
+  end
+
+  def hearing_is_not_virtual
+    if hearing.virtual?
+      errors.add(:hearing, "hearing is already a virtual hearing")
     end
   end
 end
