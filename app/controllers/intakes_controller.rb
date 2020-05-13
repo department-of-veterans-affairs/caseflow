@@ -62,6 +62,10 @@ class IntakesController < ApplicationController
     }, status: :bad_request
   end
 
+  def attorneys
+    render json: AttorneySearch.new(params[:query]).fetch_attorneys.map(&:name)
+  end
+
   def error
     intake.save_error!(code: params[:error_code])
     render json: {}
