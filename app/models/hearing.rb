@@ -32,8 +32,9 @@ class Hearing < CaseflowRecord
            :appellant_city, :appellant_state, :appellant_zip, :appellant_email_address,
            :veteran_age, :veteran_gender, :veteran_first_name, :veteran_last_name, :veteran_file_number, 
            :veteran_email_address, :docket_number, :docket_name, :request_issues, :decision_issues, 
-           :available_hearing_locations, :closest_regional_office, :advanced_on_docket?, :external_id,
+           :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
+  delegate :external_id, to: :appeal, prefix: true
   delegate :hearing_day_full?, :request_type, to: :hearing_day
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :timezone, :name, to: :regional_office, prefix: true
