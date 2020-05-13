@@ -68,14 +68,13 @@ class QueueColumn
   private
 
   def case_type_options(tasks)
-    options = tasks.joins(CachedAppeal.left_join_from_tasks_clause)
-      .group(:case_type).count.each_pair.map do |option, count|
+    options = tasks.with_cached_appeals.group(:case_type).count.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end
 
     # Add the AOD option as the first option in the list.
-    aod_counts = tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:is_aod).count[true]
+    aod_counts = tasks.with_cached_appeals.group(:is_aod).count[true]
     if aod_counts
       aod_option_key = Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key
       aod_option_label = self.class.format_option_label("AOD", aod_counts)
@@ -86,15 +85,14 @@ class QueueColumn
   end
 
   def docket_type_options(tasks)
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).group(:docket_type).count.each_pair.map do |option, count|
+    tasks.with_cached_appeals.group(:docket_type).count.each_pair.map do |option, count|
       label = self.class.format_option_label(Constants::DOCKET_NAME_FILTERS[option], count)
       self.class.filter_option_hash(option, label)
     end
   end
 
   def regional_office_options(tasks)
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
-      .group(:closest_regional_office_city).count.each_pair.map do |option, count|
+    tasks.with_cached_appeals.group(:closest_regional_office_city).count.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end

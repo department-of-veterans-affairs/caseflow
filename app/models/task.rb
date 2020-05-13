@@ -77,6 +77,8 @@ class Task < CaseflowRecord
                                  )
                                }
 
+  scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
+
   ############################################################################################
   ## class methods
   class << self
@@ -171,6 +173,12 @@ class Task < CaseflowRecord
         assigned_to: params[:assigned_to] || child_task_assignee(parent, params),
         instructions: params[:instructions]
       )
+    end
+
+    def joins_with_cached_appeals_clause
+      "left join #{CachedAppeal.table_name} "\
+      "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
+      "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
     end
   end
 
