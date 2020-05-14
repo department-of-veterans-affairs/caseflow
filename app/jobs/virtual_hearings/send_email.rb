@@ -24,6 +24,10 @@ class VirtualHearings::SendEmail
 
   private
 
+  delegate :hearing, to: :virtual_hearing
+  delegate :appeal, to: :hearing
+  delegate :veteran, to: :appeal
+
   def email_for_recipient(recipient)
     args = {
       mail_recipient: recipient,
@@ -96,7 +100,7 @@ class VirtualHearings::SendEmail
     msg = email.deliver_now!
   rescue StandardError => error
     Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
-    Rails.logger.warn(error.backtrace.join($/))
+    Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
 
     false
   else
@@ -139,8 +143,6 @@ class VirtualHearings::SendEmail
   end
 
   def veteran_recipient
-    veteran = virtual_hearing.hearing.appeal.veteran
-
     if veteran.first_name.nil? || veteran.last_name.nil?
       veteran.update_cached_attributes!
     end
