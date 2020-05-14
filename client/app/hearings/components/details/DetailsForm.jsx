@@ -299,29 +299,13 @@ DetailsForm.propTypes = {
     appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string
   }),
-  hearing: PropTypes.shape({
-    judgeId: PropTypes.string,
-    room: PropTypes.string,
-    evidenceWindowWaived: PropTypes.bool,
-    notes: PropTypes.string,
-    bvaPoc: PropTypes.string,
-    scheduledForIsPast: PropTypes.bool,
-    emailEvents: PropTypes.array
-  }),
+  isLegacy: PropTypes.bool,
+  isVirtual: PropTypes.bool,
+  openVirtualHearingModal: PropTypes.func,
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,
-  isLegacy: PropTypes.bool,
-  openVirtualHearingModal: PropTypes.func,
-  virtualHearing: PropTypes.shape({
-    appellantEmail: PropTypes.string,
-    representativeEmail: PropTypes.string,
-    status: PropTypes.string,
-    jobCompleted: PropTypes.bool
-  }),
-  isVirtual: PropTypes.bool,
   updateVirtualHearing: PropTypes.func,
-  wasVirtual: PropTypes.bool,
-  transcription: PropTypes.object
+  wasVirtual: PropTypes.bool
 };
 
 export default DetailsForm;

@@ -357,14 +357,14 @@ const HearingDetails = (props) => {
           {...editedEmails} />}
         <DetailsForm
           errors={virtualHearingErrors}
-          updateVirtualHearing={updateVirtualHearing}
-          scheduledForIsPast={scheduledForIsPast}
           isLegacy={isLegacy}
-          openVirtualHearingModal={openVirtualHearingModal}
-          requestType={readableRequestType}
-          readOnly={disabled}
           isVirtual={isVirtual}
-          wasVirtual={wasVirtual} />
+          openVirtualHearingModal={openVirtualHearingModal}
+          readOnly={disabled}
+          requestType={readableRequestType}
+          updateVirtualHearing={updateVirtualHearing}
+          wasVirtual={wasVirtual}
+        />
         <div>
           <a
             className="button-link"
