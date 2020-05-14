@@ -5,7 +5,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   application_attr :hearing_schedule
 
   class DeleteConferencesJobFailure < StandardError; end
-  class EmailsFailedToSend < StandardError; end # error for when emails failed to send
+  class EmailsFailedToSend < StandardError; end # error for when emails fail to send
 
   before_perform do
     Rails.logger.info(
@@ -16,21 +16,11 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   retry_on(DeleteConferencesJobFailure, attempts: 5) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
 
-    vh_with_pexip_errors = exception_list[Caseflow::Error::PexipApiError]
-    if pexip_errors
-      Rails.logger.info("Failed to delete conferences for the following hearings: " \
-        "#{vh_pexip_errors.map { |vh| vh.hearing_id}}")
-
-    vh_with_email_errors = exception_list[EmailsFailedToSend]
-    if vh_with_email_errors
-      Rails.logger.info("Failed to send emails for the following hearings: " \
-        "#{vh_with_email_errors.map { |vh| vh.hearing_id}}")
-
     extra = {
       application: job.class.app_name.to_s,
     }
 
-    capture_exception(exception: exception, extra: extra)
+    Raven.capture_exception(exception: exception, extra: extra)
   end
 
   def perform
@@ -53,9 +43,20 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
       process_virtual_hearing(virtual_hearing)
     end
 
+    vh_with_pexip_errors = exception_list[Caseflow::Error::PexipApiError]
+    if vh_with_pexip_errors
+      Rails.logger.info("Failed to delete conferences for the following hearings: " \
+        "#{vh_with_pexip_errors.map { |vh| vh.hearing_id}}")
+    end
+
+    vh_with_email_errors = exception_list[EmailsFailedToSend]
+    if vh_with_email_errors
+      Rails.logger.info("Failed to send emails for the following hearings: " \
+        "#{vh_with_email_errors.map { |vh| vh.hearing_id}}")
+    end
 
     # raise DeleteConferencesJobFailure if EmailsFailedToSend and/or PexipApiErrors were raised
-    fail DeleteConferencesJobFailure if exception_list
+    fail DeleteConferencesJobFailure if exception_list.present?
   end
 
   private
@@ -77,14 +78,13 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
   def send_cancellation_emails(virtual_hearing)
     VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
-
-    if !virtual_hearing.reload.all_emails_sent?
+    if !virtual_hearing.reload.cancellation_emails_sent?
       fail EmailsFailedToSend #failing so we can log errors
     end
 
   rescue EmailsFailedToSend => error
     Rails.logger.info("Failed to send all emails for hearing (#{virtual_hearing.hearing_id})")
-    (exception_list[error] ||= []) << virtual_hearing # add the virtual hearing to the exception list
+    (exception_list[EmailsFailedToSend] ||= []) << virtual_hearing # add the virtual hearing to the exception list
 
     extra = {
       hearing_id: virtual_hearing.hearing_id,
@@ -144,8 +144,8 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   rescue Caseflow::Error::PexipApiError => error
     Rails.logger.error("Failed to delete conference from Pexip for hearing (#{virtual_hearing.hearing_id})" \
       " with error: (#{error.code}) #{error.message}")
-    (exception_list[error] ||= []) << virtual_hearing # add the virtual hearing to the exception list
 
+    (exception_list[Caseflow::Error::PexipApiError] ||= []) << virtual_hearing # add the virtual hearing to the exception list
     capture_exception(
       error: error,
       extra: {
