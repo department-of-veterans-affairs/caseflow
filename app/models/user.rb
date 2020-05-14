@@ -153,7 +153,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def appeal_has_task_assigned_to_user?(appeal)
-    if appeal.class.name == "LegacyAppeal"
+    if appeal.is_a?(LegacyAppeal)
       fail_if_no_access_to_legacy_task!(appeal.vacols_id)
     else
       appeal.tasks.includes(:assigned_to).any? do |task|
