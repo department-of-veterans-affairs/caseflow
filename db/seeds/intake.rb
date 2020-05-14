@@ -214,9 +214,7 @@ module Seeds
     # rubocop:enable Metrics/MethodLength
 
     def create_bgs_attorneys
-      5000.times do |idx|
-          create(:bgs_attorney)
-      end
+      5000.times { create(:bgs_attorney) }
     end
   end
 end
