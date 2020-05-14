@@ -92,29 +92,28 @@ module Seeds
       @created_by_user ||= User.find_or_create_by(css_id: "BVATWARNER", station_id: "101")
     end
 
-    # rubocop:disable Metrics/MethodLength
+    def hearing_day_for_ro(ro_key, scheduled_for)
+      HearingDay.create!(
+        regional_office: (ro_key == "C") ? nil : ro_key,
+        room: "1",
+        judge: User.find_by_css_id("BVAAABSHIRE"),
+        request_type: (ro_key == "C") ? "C" : "V",
+        scheduled_for: scheduled_for,
+        created_by: created_by_user,
+        updated_by: created_by_user
+      )
+    end
+
     def create_hearing_days
       %w[C RO17 RO19 RO31 RO43 RO45].each do |ro_key|
         (1..5).each do |index|
-          day = HearingDay.create!(
-            regional_office: (ro_key == "C") ? nil : ro_key,
-            room: "1",
-            judge: User.find_by_css_id("BVAAABSHIRE"),
-            request_type: (ro_key == "C") ? "C" : "V",
-            scheduled_for: Time.zone.today + (index * 11).days,
-            created_by: created_by_user,
-            updated_by: created_by_user
-          )
+          day = hearing_day_for_ro(ro_key, Time.zone.today + (index * 11).days)
 
           case index
           when 1
-            (1..2).each do |_|
-              create_ama_hearing(day)
-            end
+            2.times { create_ama_hearing(day) }
           when 2
-            (1..2).each do |_|
-              create_case_hearing(day, ro_key)
-            end
+            2.times { create_case_hearing(day, ro_key) }
           when 3
             create_case_hearing(day, ro_key)
             create_ama_hearing(day)
@@ -122,7 +121,6 @@ module Seeds
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     # rubocop:disable Metrics/MethodLength
     def create_ama_hearing_appeals
