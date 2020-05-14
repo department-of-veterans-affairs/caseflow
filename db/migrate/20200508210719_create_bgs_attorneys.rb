@@ -5,8 +5,7 @@ class CreateBgsAttorneys < ActiveRecord::Migration[5.2]
       t.datetime "last_synced_at", comment: "The last time BGS was checked"
       t.string "participant_id", null: false, comment: "Participant ID"
       t.string "name", null: false, comment: "Name"
-      t.string "type", null: false, comment: "Type of Record"
-      t.string "legacy_poa_cd", comment: "Legacy POA code"
+      t.string "record_type", null: false, comment: "Type of Record"
 
       t.index ["created_at"]
       t.index ["updated_at"]
