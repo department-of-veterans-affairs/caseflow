@@ -165,7 +165,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_210719) do
     t.index ["created_at"], name: "index_bgs_attorneys_on_created_at"
     t.index ["last_synced_at"], name: "index_bgs_attorneys_on_last_synced_at"
     t.index ["name"], name: "index_bgs_attorneys_on_name"
-    t.index ["participant_id"], name: "index_bgs_attorneys_on_participant_id"
+    t.index ["participant_id"], name: "index_bgs_attorneys_on_participant_id", unique: true
     t.index ["updated_at"], name: "index_bgs_attorneys_on_updated_at"
   end
 

@@ -11,7 +11,7 @@ class CreateBgsAttorneys < ActiveRecord::Migration[5.2]
       t.index ["created_at"]
       t.index ["updated_at"]
       t.index ["last_synced_at"]
-      t.index ["participant_id"]
+      t.index ["participant_id"], unique: true
       t.index ["name"]
     end
   end
