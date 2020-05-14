@@ -714,19 +714,19 @@
   "VIRTUAL_HEARING_PROGRESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
       "TITLE": "We're scheduling %s's virtual hearing",
-      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the Veteran, POA / Representative, and VLJ are in progress.</li></ul>"
+      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the %{appellant_title}, POA / Representative, and VLJ are in progress.</li></ul>"
     },
     "CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
-      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
+      "MESSAGE": "Emails to the %{appellant_title} and POA / Representative are in progress."
     },
-    "CHANGED_VETERAN_AND_POA_EMAIL": {
+    "CHANGED_APPELLANT_AND_POA_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",
-      "MESSAGE": "Emails to the Veteran and POA / Representative are in progress."
+      "MESSAGE": "Emails to the %{appellant_title} and POA / Representative are in progress."
     },
-    "CHANGED_VETERAN_EMAIL": {
+    "CHANGED_APPELLANT_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",
-      "MESSAGE": "Email to Veteran is in progress."
+      "MESSAGE": "Email to %{appellant_title} is in progress."
     },
     "CHANGED_POA_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",
@@ -738,18 +738,18 @@
     },
     "CHANGED_HEARING_TIME": {
       "TITLE": "We're updating the hearing time of %s's hearing",
-      "MESSAGE": "Emails to the Veteran, POA / Representative, and VLJ are in progress."
+      "MESSAGE": "Emails to the %{appellant_title}, POA / Representative, and VLJ are in progress."
     }
   },
 
   "VIRTUAL_HEARING_SUCCESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
       "TITLE": "You have successfully scheduled %s's virtual hearing.",
-      "MESSAGE": "Email notifications were sent to the Veteran, POA/Representative, and VLJ."
+      "MESSAGE": "Email notifications were sent to the %{appellant_title}, POA/Representative, and VLJ."
     },
     "CHANGED_FROM_VIRTUAL": {
       "TITLE": "You have successfully updated the type of %s's hearing.",
-      "MESSAGE": "Email notifications were sent to the Veteran and POA/Representative."
+      "MESSAGE": "Email notifications were sent to the %{appellant_title} and POA/Representative."
     },
     "CHANGED_APPELLANT_AND_POA_EMAIL": {
       "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
@@ -769,7 +769,7 @@
     },
     "CHANGED_HEARING_TIME": {
       "TITLE": "You have successfully updated the time of %s's virtual hearing",
-      "MESSAGE": "Email notifications were sent to the Veteran and POA/Representative."
+      "MESSAGE": "Email notifications were sent to the %{appellant_title} and POA/Representative."
     }
   },
 

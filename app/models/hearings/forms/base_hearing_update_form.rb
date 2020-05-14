@@ -205,10 +205,6 @@ class BaseHearingUpdateForm
     end
   end
 
-  def veteran_full_name
-    @veteran_full_name ||= hearing.appeal&.veteran&.name&.to_s || "the veteran"
-  end
-
   def only_emails_updated?
     email_changed = virtual_hearing_attributes&.key?(:appellant_email) ||
                     virtual_hearing_attributes&.key?(:representative_email) ||
@@ -242,6 +238,8 @@ class BaseHearingUpdateForm
   end
 
   def add_update_hearing_alert
+    veteran_full_name = hearing.appeal&.veteran&.name || "the veteran"
+
     hearing_alerts << UserAlert.new(
       title: COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % veteran_full_name,
       type: UserAlert::TYPES[:success]
@@ -266,13 +264,13 @@ class BaseHearingUpdateForm
     nested_alert = VirtualHearingUserAlertBuilder.new(
       change_type: change_type,
       alert_type: :info,
-      veteran_full_name: veteran_full_name
+      appeal: hearing.appeal
     ).call.to_hash
 
     nested_alert[:next] = VirtualHearingUserAlertBuilder.new(
       change_type: change_type,
       alert_type: :success,
-      veteran_full_name: veteran_full_name
+      appeal: hearing.appeal
     ).call.to_hash
 
     @virtual_hearing_alert = nested_alert
