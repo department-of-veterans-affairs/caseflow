@@ -219,9 +219,9 @@ class BaseHearingUpdateForm
 
   def email_change_type
     if virtual_hearing_attributes&.key?(:appellant_email) && virtual_hearing_attributes&.key?(:representative_email)
-      "CHANGED_VETERAN_AND_POA_EMAIL"
+      "CHANGED_APPELLANT_AND_POA_EMAIL"
     elsif virtual_hearing_attributes&.key?(:appellant_email)
-      "CHANGED_VETERAN_EMAIL"
+      "CHANGED_APPELLANT_EMAIL"
     elsif virtual_hearing_attributes&.key?(:representative_email)
       "CHANGED_POA_EMAIL"
     elsif judge_id.present?

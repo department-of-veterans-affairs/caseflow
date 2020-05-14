@@ -751,11 +751,11 @@
       "TITLE": "You have successfully updated the type of %s's hearing.",
       "MESSAGE": "Email notifications were sent to the Veteran and POA/Representative."
     },
-    "CHANGED_VETERAN_AND_POA_EMAIL": {
+    "CHANGED_APPELLANT_AND_POA_EMAIL": {
       "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
       "MESSAGE": ""
     },
-    "CHANGED_VETERAN_EMAIL": {
+    "CHANGED_APPELLANT_EMAIL": {
       "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
       "MESSAGE": ""
     },
