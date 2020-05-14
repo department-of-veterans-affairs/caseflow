@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 
 import {
   appealWithDetailSelector,
-  tasksByAssigneeCssIdSelector
+  tasksByAddedByCssIdSelector
 } from './selectors';
 import DocketTypeBadge from './../components/DocketTypeBadge';
 import CopyTextButton from '../components/CopyTextButton';
@@ -166,10 +166,7 @@ export class CaseTitleDetails extends React.PureComponent {
       documentIdError
     } = this.state;
 
-    // if it's a Legacy appeal, check if the current user matches the user assigned
-    // the appeal task and is a judge user, if it's an ama appeal check if the user is
-    // the judge assigned to the appeal
-    const showOvertimeButton = (((task[0]?.assignedTo?.cssId === userCssId) &&
+    const showOvertimeButton = (((task[0]?.addedByCssId === userCssId) &&
     // eslint-disable-next-line camelcase
     userRole === 'Judge') || (appeal?.assignedJudge?.css_id === userCssId)) && true;
 
@@ -311,7 +308,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    task: tasksByAssigneeCssIdSelector(state),
+    task: tasksByAddedByCssIdSelector(state),
     userRole,
     userCssId,
     canEditAod,
