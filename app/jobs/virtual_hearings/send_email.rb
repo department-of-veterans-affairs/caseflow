@@ -96,6 +96,7 @@ class VirtualHearings::SendEmail
     msg = email.deliver_now!
   rescue StandardError => error
     Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
+    Rails.logger.warn(error.backtrace.join($/))
 
     false
   else
