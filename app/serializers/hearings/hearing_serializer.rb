@@ -23,6 +23,9 @@ class HearingSerializer
   attribute :appellant_city, if: for_full
   attribute :appellant_email_address
   attribute :appellant_first_name, if: for_full
+  attribute :appellant_is_not_veteran do |hearing|
+    hearing.appeal.appellant_is_not_veteran
+  end
   attribute :appellant_last_name, if: for_full
   attribute :appellant_state, if: for_full
   attribute :appellant_zip, if: for_full

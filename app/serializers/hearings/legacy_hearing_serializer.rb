@@ -16,6 +16,9 @@ class LegacyHearingSerializer
   attribute :appellant_country
   attribute :appellant_email_address
   attribute :appellant_first_name
+  attribute :appellant_is_not_veteran do |hearing|
+    hearing.appeal.appellant_is_not_veteran
+  end
   attribute :appellant_last_name
   attribute :appellant_state
   attribute :appellant_zip
