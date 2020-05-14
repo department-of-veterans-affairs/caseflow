@@ -1050,9 +1050,11 @@ virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
 virtual_hearings,created_at,datetime ∗,x,,,,,
 virtual_hearings,created_by_id,integer (8) ∗ FK,x,,x,,x,User who created the virtual hearing
 virtual_hearings,guest_pin,integer,,,,,,PIN number for guests of Pexip conference
+virtual_hearings,guest_pin_long,string (11),,,,,,Change the guest pin to store a longer pin with the # sign trailing
 virtual_hearings,hearing_id,integer (8) FK,,,x,,x,Associated hearing
 virtual_hearings,hearing_type,string,,,,,x,
 virtual_hearings,host_pin,integer,,,,,,PIN number for host of Pexip conference
+virtual_hearings,host_pin_long,string (8),,,,,,Change the host pin to store a longer pin with the # sign trailing
 virtual_hearings,id,integer (8) PK,x,x,,,,
 virtual_hearings,judge_email,string,,,,,,Judge's email address
 virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge
