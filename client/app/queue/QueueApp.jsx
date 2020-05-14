@@ -1,4 +1,7 @@
 /* eslint-disable max-lines */
+
+import { hot } from 'react-hot-loader/root';
+
 import querystring from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -700,7 +703,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default connect(
+export default hot(connect(
   mapStateToProps,
   mapDispatchToProps
-)(QueueApp);
+)(QueueApp));

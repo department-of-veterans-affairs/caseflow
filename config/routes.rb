@@ -284,7 +284,6 @@ Rails.application.routes.draw do
 
   get 'whats-new' => 'whats_new#show'
 
-  get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
   get 'stats', to: 'stats#show'
 
