@@ -34,7 +34,7 @@ class VirtualHearing < CaseflowRecord
   validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
 
-  # TODO: Finish migration from veteran_email => appellant_email.
+  # T0D0: Finish migration from veteran_email => appellant_email.
   alias_attribute :appellant_email, :veteran_email
   alias_attribute :appellant_email_sent, :veteran_email_sent
 

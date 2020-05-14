@@ -1,3 +1,4 @@
+import { sprintf } from 'sprintf-js';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';

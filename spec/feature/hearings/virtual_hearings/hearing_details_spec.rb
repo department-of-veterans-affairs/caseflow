@@ -132,7 +132,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
-      fill_in "vet-email", with: fill_in_veteran_email
+      fill_in "appellant-email", with: fill_in_veteran_email
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
       expect(page).to have_content(expected_alert)
@@ -166,7 +166,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
       # Fill email address and confirm changes to close the Modal
-      fill_in "vet-email", with: fill_in_veteran_email
+      fill_in "appellant-email", with: fill_in_veteran_email
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
       expect(page).to have_content(expected_alert)
 
@@ -188,7 +188,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
       # Fill email address and confirm changes to close the Modal
-      fill_in "vet-email", with: fill_in_veteran_email
+      fill_in "appellant-email", with: fill_in_veteran_email
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
       expect(page).to have_content(expected_alert)
 

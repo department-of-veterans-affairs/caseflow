@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class VirtualHearingUserAlertBuilder
-
   def initialize(change_type:, alert_type:, appeal:)
     @change_type = change_type
     @alert_type = alert_type
@@ -23,7 +22,7 @@ class VirtualHearingUserAlertBuilder
   def message
     appellant_title = appeal.appellant_is_not_veteran ? "Appellant" : "Veteran"
 
-    copy["MESSAGE"] % { appellant_title: appellant_title }
+    format(copy["MESSAGE"], { appellant_title: appellant_title })
   end
 
   def copy
