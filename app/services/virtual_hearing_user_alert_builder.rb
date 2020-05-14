@@ -22,7 +22,7 @@ class VirtualHearingUserAlertBuilder
   def message
     appellant_title = appeal.appellant_is_not_veteran ? "Appellant" : "Veteran"
 
-    format(copy["MESSAGE"], { appellant_title: appellant_title })
+    format(copy["MESSAGE"], appellant_title: appellant_title)
   end
 
   def copy
