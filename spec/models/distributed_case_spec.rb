@@ -23,4 +23,4 @@ describe DistributedCase do
       expect(distributed_case.reload.case_id).to match(/123-redistributed-/)
     end
   end
-end   
+end
