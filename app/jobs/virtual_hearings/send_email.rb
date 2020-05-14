@@ -10,18 +10,16 @@ class VirtualHearings::SendEmail
 
   def call
     if !virtual_hearing.veteran_email_sent
-      virtual_hearing.veteran_email_sent = send_email(veteran_recipient)
+      virtual_hearing.update!(veteran_email_sent: send_email(veteran_recipient))
     end
 
     if should_judge_receive_email?
-      virtual_hearing.judge_email_sent = send_email(judge_recipient)
+      virtual_hearing.update!(judge_email_sent: send_email(judge_recipient))
     end
 
     if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
-      virtual_hearing.representative_email_sent = send_email(representative_recipient)
+      virtual_hearing.update!(representative_email_sent: send_email(representative_recipient))
     end
-
-    virtual_hearing.save!
   end
 
   private
