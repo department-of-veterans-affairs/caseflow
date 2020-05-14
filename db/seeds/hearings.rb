@@ -26,7 +26,8 @@ module Seeds
         :appeal,
         veteran_file_number: veteran.file_number,
         claimants: [create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")],
-        docket_type: Constants.AMA_DOCKETS.hearing
+        docket_type: Constants.AMA_DOCKETS.hearing,
+        veteran_is_not_claimant: Faker::Boolean.boolean
       )
 
       root_task = create(:root_task, appeal: appeal)
@@ -107,9 +108,13 @@ module Seeds
 
           case index
           when 1
-            create_ama_hearing(day)
+            (1..2).each do |_|
+              create_ama_hearing(day)
+            end
           when 2
-            create_case_hearing(day, ro_key)
+            (1..2).each do |_|
+              create_case_hearing(day, ro_key)
+            end
           when 3
             create_case_hearing(day, ro_key)
             create_ama_hearing(day)
