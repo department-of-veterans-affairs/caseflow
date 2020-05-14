@@ -51,16 +51,18 @@ DateTime.propTypes = {
   timeWasEdited: PropTypes.bool
 };
 
-const ReadOnlyEmails = ({ virtualHearing, repEmailEdited, vetEmailEdited, showAllEmails = false }) => (
+const ReadOnlyEmails = (
+  { hearing, virtualHearing, appellantEmailEdited, representativeEmailEdited, showAllEmails = false }
+) => (
   <React.Fragment>
-    {(vetEmailEdited || showAllEmails) && (
+    {(appellantEmailEdited || showAllEmails) && (
       <p>
-        <strong>Veteran Email</strong>
+        <strong>{hearing.appellantIsNotVeteran ? 'Appellant' : 'Veteran'} Email</strong>
         <br />
-        {virtualHearing.veteranEmail}
+        {virtualHearing.appellantEmail}
       </p>
     )}
-    {(repEmailEdited || showAllEmails) && (
+    {(representativeEmailEdited || showAllEmails) && (
       <p>
         <strong>Representative Email</strong>
         <br />
@@ -71,12 +73,15 @@ const ReadOnlyEmails = ({ virtualHearing, repEmailEdited, vetEmailEdited, showAl
 );
 
 ReadOnlyEmails.propTypes = {
+  hearing: PropTypes.shape({
+    appellantIsNotVeteran: PropTypes.bool
+  }),
   virtualHearing: PropTypes.shape({
-    veteranEmail: PropTypes.string,
+    appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string
   }),
-  vetEmailEdited: PropTypes.bool,
-  repEmailEdited: PropTypes.bool,
+  appellantEmailEdited: PropTypes.bool,
+  representativeEmailEdited: PropTypes.bool,
   showAllEmails: PropTypes.bool
 };
 
@@ -115,12 +120,14 @@ ChangeFromVirtual.propTypes = {
 };
 
 const ChangeToVirtual = (props) => {
-  const { hearing, readOnly, repEmailError, update, vetEmailError, virtualHearing } = props;
+  const {
+    hearing, readOnly, representativeEmailError, update, appellantEmailError, virtualHearing
+  } = props;
 
-  // Prefill veteran email address and representative email on mount.
+  // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
-    if (_.isUndefined(virtualHearing.veteranEmail)) {
-      update({ veteranEmail: hearing.veteranEmailAddress });
+    if (_.isUndefined(virtualHearing.appellantEmail)) {
+      update({ appellantEmail: hearing.appellantEmailAddress });
     }
 
     if (_.isUndefined(virtualHearing.representativeEmail)) {
@@ -133,19 +140,19 @@ const ChangeToVirtual = (props) => {
       <DateTime {...props} />
       <TextField
         strongLabel
-        value={virtualHearing.veteranEmail}
-        name="vet-email"
-        label="Veteran Email"
-        errorMessage={vetEmailError}
+        value={virtualHearing.appellantEmail}
+        name="appellant-email"
+        label={`${hearing.appellantIsNotVeteran ? 'Appellant' : 'Veteran'} Email`}
+        errorMessage={appellantEmailError}
         readOnly={readOnly}
-        onChange={(veteranEmail) => update({ veteranEmail })}
+        onChange={(appellantEmail) => update({ appellantEmail })}
       />
       <TextField
         strongLabel
         value={virtualHearing.representativeEmail}
-        name="rep-email"
+        name="representative-email"
         label="POA/Representative Email"
-        errorMessage={repEmailError}
+        errorMessage={representativeEmailError}
         readOnly={readOnly}
         onChange={(representativeEmail) => update({ representativeEmail })}
       />
@@ -156,16 +163,17 @@ const ChangeToVirtual = (props) => {
 
 ChangeToVirtual.propTypes = {
   hearing: PropTypes.shape({
-    representativeEmailAddress: PropTypes.string,
-    veteranEmailAddress: PropTypes.string
+    appellantEmailAddress: PropTypes.string,
+    appellantIsNotVeteran: PropTypes.bool,
+    representativeEmailAddress: PropTypes.string
   }),
   readOnly: PropTypes.bool,
-  repEmailError: PropTypes.string,
+  representativeEmailError: PropTypes.string,
   update: PropTypes.func,
-  vetEmailError: PropTypes.string,
+  appellantEmailError: PropTypes.string,
   virtualHearing: PropTypes.shape({
-    representativeEmail: PropTypes.string,
-    veteranEmail: PropTypes.string
+    appellantEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
   })
 };
 
@@ -197,15 +205,15 @@ const TYPES = {
 
 const VirtualHearingModal = (props) => {
   const { closeModal, virtualHearing, reset, submit, type } = props;
-  const [vetEmailError, setVetEmailError] = useState(null);
-  const [repEmailError, setRepEmailError] = useState(null);
+  const [appellantEmailError, setAppellantEmailError] = useState(null);
+  const [representativeEmailError, setRepresentativeEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const typeSettings = TYPES[type];
 
   const validateForm = () => {
-    if (_.isEmpty(virtualHearing.veteranEmail)) {
-      setVetEmailError(INVALID_EMAIL_FORMAT);
+    if (_.isEmpty(virtualHearing.appellantEmail)) {
+      setAppellantEmailError(INVALID_EMAIL_FORMAT);
 
       return false;
     }
@@ -227,8 +235,8 @@ const VirtualHearingModal = (props) => {
         // Details.jsx re-throws email invalid error that we catch here.
         const msg = error.response.body.errors[0].message;
 
-        setRepEmailError(msg.indexOf('Representative') === -1 ? null : INVALID_EMAIL_FORMAT);
-        setVetEmailError(msg.indexOf('Veteran') === -1 ? null : INVALID_EMAIL_FORMAT);
+        setRepresentativeEmailError(msg.indexOf('Representative') === -1 ? null : INVALID_EMAIL_FORMAT);
+        setAppellantEmailError(msg.indexOf('Veteran') === -1 ? null : INVALID_EMAIL_FORMAT);
       })
       ?.finally(() => setLoading(false));
   };
@@ -270,8 +278,8 @@ const VirtualHearingModal = (props) => {
         <typeSettings.element
           {...props}
           readOnly={loading || success}
-          vetEmailError={vetEmailError}
-          repEmailError={repEmailError}
+          appellantEmailError={appellantEmailError}
+          representativeEmailError={representativeEmailError}
         />
       </Modal>
     </div>
@@ -280,7 +288,8 @@ const VirtualHearingModal = (props) => {
 
 VirtualHearingModal.propTypes = {
   virtualHearing: PropTypes.shape({
-    veteranEmail: PropTypes.string,
+    appellantEmail: PropTypes.string,
+
     representativeEmail: PropTypes.string
   }).isRequired,
   hearing: PropTypes.shape({
@@ -291,7 +300,8 @@ VirtualHearingModal.propTypes = {
     location: PropTypes.shape({
       name: PropTypes.string
     }),
-    veteranEmailAddress: PropTypes.string,
+    appellantEmailAddress: PropTypes.string,
+    appellantIsNotVeteran: PropTypes.bool,
     representativeEmailAddress: PropTypes.string
   }).isRequired,
   type: PropTypes.oneOf([
@@ -301,8 +311,8 @@ VirtualHearingModal.propTypes = {
     'change_hearing_time'
   ]).isRequired,
   timeWasEdited: PropTypes.bool,
-  repEmailEdited: PropTypes.bool,
-  vetEmailEdited: PropTypes.bool,
+  representativeEmailEdited: PropTypes.bool,
+  appellantEmailEdited: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,

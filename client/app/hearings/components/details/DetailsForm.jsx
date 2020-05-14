@@ -47,17 +47,17 @@ const EmailSection = (
   return (
     <div {...rowThirdsWithFinalSpacer}>
       <TextField
-        errorMessage={errors?.vetEmail}
+        errorMessage={errors?.appellantEmail}
         name="Veteran Email for Notifications"
-        value={virtualHearing.veteranEmail}
+        value={virtualHearing.appellantEmail}
         strongLabel
         className={[
           classnames('cf-form-textinput', 'cf-inline-field', {
-            [enablePadding]: errors?.vetEmail
+            [enablePadding]: errors?.appellantEmail
           })
         ]}
         readOnly={readOnlyEmails}
-        onChange={(veteranEmail) => dispatch({ type: UPDATE_VIRTUAL_HEARING, payload: { veteranEmail } })}
+        onChange={(appellantEmail) => dispatch({ type: UPDATE_VIRTUAL_HEARING, payload: { appellantEmail } })}
         inputStyling={maxWidthFormInput}
       />
       <TextField
@@ -78,14 +78,14 @@ const EmailSection = (
 EmailSection.propTypes = {
   dispatch: PropTypes.func,
   errors: PropTypes.shape({
-    vetEmail: PropTypes.string,
-    repEmail: PropTypes.string
+    appellantEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
   }),
   hearing: PropTypes.shape({
     scheduledForIsPast: PropTypes.bool
   }),
   virtualHearing: PropTypes.shape({
-    veteranEmail: PropTypes.string,
+    appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string,
     jobCompleted: PropTypes.bool
   }),
@@ -142,8 +142,8 @@ VirtualHearingSection.propTypes = {
     jobCompleted: PropTypes.bool
   }),
   errors: PropTypes.shape({
-    vetEmail: PropTypes.string,
-    repEmail: PropTypes.string
+    appellantEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
   }),
   wasVirtual: PropTypes.bool
 };
@@ -296,8 +296,8 @@ const DetailsForm = (props) => {
 
 DetailsForm.propTypes = {
   errors: PropTypes.shape({
-    vetEmail: PropTypes.string,
-    repEmail: PropTypes.string
+    appellantEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
   }),
   hearing: PropTypes.shape({
     judgeId: PropTypes.string,
@@ -313,7 +313,7 @@ DetailsForm.propTypes = {
   isLegacy: PropTypes.bool,
   openVirtualHearingModal: PropTypes.func,
   virtualHearing: PropTypes.shape({
-    veteranEmail: PropTypes.string,
+    appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string,
     status: PropTypes.string,
     jobCompleted: PropTypes.bool
