@@ -139,8 +139,16 @@ class VirtualHearings::SendEmail
   end
 
   def veteran_recipient
+    veteran = virtual_hearing.hearing.appeal.veteran
+
+    if veteran.first_name.nil? || veteran.last_name.nil?
+      veteran.update_cached_attributes!
+    end
+
+    fail "Veteran name is not populated" unless veteran.first_name.present? && veteran.last_name.present?
+
     MailRecipient.new(
-      name: virtual_hearing.hearing.appeal.veteran&.first_name,
+      name: veteran.first_name,
       email: virtual_hearing.veteran_email,
       title: MailRecipient::RECIPIENT_TITLES[:veteran]
     )
