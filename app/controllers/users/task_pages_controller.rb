@@ -3,6 +3,7 @@
 class Users::TaskPagesController < UsersController
   include TaskPaginationConcern
 
+  # This request:
   # /users/{user.id}/task_pages?
   #   tab=on_hold&
   #   sort_by=case_details_link&
@@ -11,6 +12,7 @@ class Users::TaskPagesController < UsersController
   #   filter[]=col%3Dtask_action%26val%3Dtranslation&
   #   page=3
   #
+  # Will be parsed into these params:
   # params = <ActionController::Parameters {
   #   "tab"=>"on_hold",
   #   "sort_by"=>"case_details_link",

@@ -190,7 +190,7 @@ describe TaskPager, :all_dbs do
       context "with desc sort_order" do
         let(:sort_order) { Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC }
 
-        it "sorts tasks in reserve by closed_at value" do
+        it "sorts tasks in reverse by closed_at value" do
           expected_order = created_tasks.sort_by(&:closed_at).reverse
           expect(subject.map(&:id)).to eq(expected_order.map(&:id))
         end
@@ -199,7 +199,7 @@ describe TaskPager, :all_dbs do
           let(:assignee) { create(:user) }
           let(:tab_name) { Constants.QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME }
 
-          it "sorts tasks in reserve by closed_at value" do
+          it "sorts tasks in reverse by closed_at value" do
             expected_order = created_tasks.sort_by(&:closed_at).reverse
             expect(subject.map(&:id)).to eq(expected_order.map(&:id))
           end

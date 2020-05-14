@@ -30,6 +30,17 @@ shared_examples "paged assignee tasks" do
     expect(subject["total_task_count"]).to eq(task_count)
   end
 
+  context "when the number of tasks are greater than the tasks per page" do
+    let(:number_of_pages) { 2 }
+    let(:task_count) { TaskPager::TASKS_PER_PAGE * number_of_pages }
+
+    it "only returns the tasks per page" do
+      expect(subject["tasks"]["data"].size).to eq(TaskPager::TASKS_PER_PAGE)
+      expect(subject["task_page_count"]).to eq(number_of_pages)
+      expect(subject["total_task_count"]).to eq(task_count)
+    end
+  end
+
   it "returns correct tasks_per_page" do
     expect(subject["tasks_per_page"]).to eq(TaskPager::TASKS_PER_PAGE)
   end

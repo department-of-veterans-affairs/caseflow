@@ -6,6 +6,7 @@ class Organizations::TaskPagesController < OrganizationsController
   before_action :verify_organization_access, only: [:index]
   before_action :verify_role_access, only: [:index]
 
+  # This request:
   # /organizations/{org.url}/task_pages?
   #   tab=on_hold&
   #   sort_by=case_details_link&
@@ -14,6 +15,7 @@ class Organizations::TaskPagesController < OrganizationsController
   #   filter[]=col%3Dtask_action%26val%3Dtranslation&
   #   page=3
   #
+  # Will be parsed into these params:
   # params = <ActionController::Parameters {
   #   "tab"=>"on_hold",
   #   "sort_by"=>"case_details_link",
