@@ -159,7 +159,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_140953) do
     t.datetime "last_synced_at", comment: "The last time BGS was checked"
     t.string "name", null: false, comment: "Name"
     t.string "participant_id", null: false, comment: "Participant ID"
-    t.string "record_type", null: false, comment: "Type of Record"
+    t.string "record_type", null: false, comment: "Known types: POA State Organization, POA National Organization, POA Attorney, POA Agent, POA Local/Regional Organization"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["created_at"], name: "index_bgs_attorneys_on_created_at"
     t.index ["last_synced_at"], name: "index_bgs_attorneys_on_last_synced_at"

@@ -5,7 +5,7 @@ class CreateBgsAttorneys < ActiveRecord::Migration[5.2]
       t.datetime "last_synced_at", comment: "The last time BGS was checked"
       t.string "participant_id", null: false, comment: "Participant ID"
       t.string "name", null: false, comment: "Name"
-      t.string "record_type", null: false, comment: "Type of Record"
+      t.string "record_type", null: false, comment: "Known types: #{record_types.join(', ')}"
 
       t.index ["created_at"]
       t.index ["updated_at"]
@@ -13,5 +13,15 @@ class CreateBgsAttorneys < ActiveRecord::Migration[5.2]
       t.index ["participant_id"], unique: true
       t.index ["name"]
     end
+  end
+
+  def record_types
+    [
+      "POA State Organization",
+      "POA National Organization",
+      "POA Attorney",
+      "POA Agent",
+      "POA Local/Regional Organization"
+    ]
   end
 end
