@@ -1,6 +1,55 @@
 # frozen_string_literal: true
 
 describe VirtualHearing do
+  context "#guest_pin" do
+    let(:virtual_hearing) do
+      create(
+        :virtual_hearing,
+        hearing: create(
+          :hearing,
+          hearing_day: create(
+            :hearing_day,
+            regional_office: "RO42",
+            request_type: HearingDay::REQUEST_TYPES[:video]
+          )
+        )
+      )
+    end
+    let(:virtual_hearing_aliased) do
+      create(
+        :virtual_hearing,
+        :initialized,
+        hearing: create(
+          :hearing,
+          hearing_day: create(
+            :hearing_day,
+            regional_office: "RO42",
+            request_type: HearingDay::REQUEST_TYPES[:video]
+          )
+        )
+      )
+    end
+
+    it "returns the database column when override is nil" do
+      # Set the DB columns to ensure they can still be accessed for older hearings
+      virtual_hearing.update(guest_pin: rand(1000..9999).to_s[0..3].to_i)
+      virtual_hearing.update(host_pin: rand(1000..9999).to_s[0..3].to_i)
+      virtual_hearing.reload
+
+      expect(virtual_hearing.guest_pin_long).to eq nil
+      expect(virtual_hearing.guest_pin.to_s.length).to eq 4
+      expect(virtual_hearing.host_pin_long).to eq nil
+      expect(virtual_hearing.host_pin.to_s.length).to eq 4
+    end
+
+    it "returns the aliased pins when set" do
+      expect(virtual_hearing_aliased[:guest_pin]).to eq nil
+      expect(virtual_hearing_aliased.guest_pin.to_s.length).to eq 11
+      expect(virtual_hearing_aliased[:host_pin]).to eq nil
+      expect(virtual_hearing_aliased.host_pin.to_s.length).to eq 8
+    end
+  end
+
   context "validation tests" do
     let(:virtual_hearing) { build(:virtual_hearing) }
 
