@@ -2,7 +2,7 @@
 
 describe VirtualHearings::DeleteConferencesJob do
   context "#perform" do
-    shared_examples "sends emails to veteran and representative" do
+    shared_examples "sends emails to appellant and representative" do
       it "updates the appropriate fields", :aggregate_failures do
         expect(VirtualHearings::SendEmail).to receive(:new).with(
           virtual_hearing: virtual_hearing,
@@ -13,7 +13,7 @@ describe VirtualHearings::DeleteConferencesJob do
         subject
         virtual_hearing.reload
         expect(virtual_hearing.conference_deleted).to eq(true)
-        expect(virtual_hearing.veteran_email_sent).to eq(true)
+        expect(virtual_hearing.appellant_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
         expect(virtual_hearing.judge_email_sent).to eq(false) # judge should not receive cancellation email
       end
@@ -25,8 +25,8 @@ describe VirtualHearings::DeleteConferencesJob do
         expect(events.count).to eq 2
         expect(events.where(sent_by_id: virtual_hearing.updated_by_id).count).to eq 2
         expect(events.where(email_type: "cancellation").count).to eq 2
-        expect(events.where(email_address: virtual_hearing.veteran_email).count).to eq 1
-        expect(events.where(recipient_role: "veteran").count).to eq 1
+        expect(events.where(email_address: virtual_hearing.appellant_email).count).to eq 1
+        expect(events.where(recipient_role: "appellant").count).to eq 1
         expect(events.where(email_address: virtual_hearing.representative_email).count).to eq 1
         expect(events.where(recipient_role: "representative").count).to eq 1
         expect(events.where(recipient_role: "judge").count).to eq 0
@@ -34,7 +34,7 @@ describe VirtualHearings::DeleteConferencesJob do
 
       it "does not send emails if they have already been sent" do
         virtual_hearing.update(
-          veteran_email_sent: true,
+          appellant_email_sent: true,
           representative_email_sent: true
         )
         expect(VirtualHearings::SendEmail).not_to receive(:new)
@@ -56,7 +56,7 @@ describe VirtualHearings::DeleteConferencesJob do
         subject
         virtual_hearing.reload
         expect(virtual_hearing.conference_deleted).to eq(true)
-        expect(virtual_hearing.veteran_email_sent).to eq(false)
+        expect(virtual_hearing.appellant_email_sent).to eq(false)
         expect(virtual_hearing.representative_email_sent).to eq(false)
         expect(virtual_hearing.judge_email_sent).to eq(false)
       end
@@ -86,7 +86,7 @@ describe VirtualHearings::DeleteConferencesJob do
           :virtual_hearing,
           hearing: hearing,
           conference_deleted: true,
-          veteran_email_sent: true,
+          appellant_email_sent: true,
           representative_email_sent: true,
           judge_email_sent: true
         )
@@ -105,7 +105,7 @@ describe VirtualHearings::DeleteConferencesJob do
         create(:virtual_hearing, status: :cancelled, hearing: hearing, conference_deleted: false)
       end
 
-      include_examples "sends emails to veteran and representative"
+      include_examples "sends emails to appellant and representative"
     end
 
     context "for a cancelled virtual hearing that was cleaned up, but the emails failed to send initially" do
@@ -113,7 +113,7 @@ describe VirtualHearings::DeleteConferencesJob do
         create(:virtual_hearing, status: :cancelled, hearing: hearing, conference_deleted: true)
       end
 
-      include_examples "sends emails to veteran and representative"
+      include_examples "sends emails to appellant and representative"
     end
 
     context "for virtual hearing that already occurred" do
