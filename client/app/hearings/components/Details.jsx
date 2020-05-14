@@ -52,7 +52,7 @@ const HearingDetails = (props) => {
   } = props;
 
   const {
-    aod, bvaPoc, judgeId, isVirtual, wasVirtual,
+    aod, appellantIsNotVeteran, bvaPoc, judgeId, isVirtual, wasVirtual,
     externalId, veteranFirstName, veteranLastName,
     veteranFileNumber, room, notes, evidenceWindowWaived,
     scheduledFor, scheduledForIsPast, docketName, docketNumber,
@@ -81,6 +81,7 @@ const HearingDetails = (props) => {
 
     return {
       hearingDetailsForm: {
+        appellantIsNotVeteran,
         bvaPoc,
         judgeId: judgeId ? judgeId.toString() : null,
         evidenceWindowWaived: evidenceWindowWaived || false,

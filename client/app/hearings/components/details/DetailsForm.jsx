@@ -2,17 +2,23 @@ import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import classnames from 'classnames';
 
-import { HearingsUserContext } from '../../contexts/HearingsUserContext';
+import { EmailNotificationHistory } from './EmailNotificationHistory';
+import { HearingLinks } from './HearingLinks';
 import {
   HearingsFormContext,
   UPDATE_HEARING_DETAILS, UPDATE_TRANSCRIPTION, UPDATE_VIRTUAL_HEARING
 } from '../../contexts/HearingsFormContext';
+import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
   HearingRoomDropdown
 } from '../../../components/DataDropdowns/index';
-import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../../utils';
+import {
+  VIRTUAL_HEARING_HOST,
+  getAppellantTitleForHearing,
+  virtualHearingRoleForUser
+} from '../../utils';
 import {
   columnDoubleSpacer,
   columnThird,
@@ -30,25 +36,25 @@ import TextareaField from '../../../components/TextareaField';
 import TranscriptionDetailsInputs from './TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './TranscriptionRequestInputs';
-import { HearingLinks } from './HearingLinks';
-import { EmailNotificationHistory } from './EmailNotificationHistory';
 
 // Displays the emails associated with the virtual hearing.
 const EmailSection = (
   { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, dispatch, errors }
 ) => {
   const showEmailFields = (isVirtual || wasVirtual) && virtualHearing;
-  const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
 
   if (!showEmailFields) {
     return null;
   }
 
+  const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
+  const appellantTitle = getAppellantTitleForHearing(hearing);
+
   return (
     <div {...rowThirdsWithFinalSpacer}>
       <TextField
         errorMessage={errors?.appellantEmail}
-        name="Veteran Email for Notifications"
+        name={`${appellantTitle} Email for Notifications`}
         value={virtualHearing.appellantEmail}
         strongLabel
         className={[
@@ -82,6 +88,7 @@ EmailSection.propTypes = {
     representativeEmail: PropTypes.string
   }),
   hearing: PropTypes.shape({
+    appellantIsNotVeteran: PropTypes.bool,
     scheduledForIsPast: PropTypes.bool
   }),
   virtualHearing: PropTypes.shape({
