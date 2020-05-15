@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
+RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   def check_row_content(event, index)
     # Format the date the same as moment
     formatted_date = event.sent_at.strftime("%b %d, %Y, %-l:%M %P %Z").gsub(/DT/, "ST")
@@ -123,8 +123,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
-      expect(page).to have_field("Veteran Email for Notifications", with: pre_loaded_veteran_email)
-      expect(page).to have_field("POA/Representative Email for Notifications", with: pre_loaded_rep_email)
+      expect(page).to have_field("appellant-email", with: pre_loaded_veteran_email)
+      expect(page).to have_field("representative-email", with: pre_loaded_rep_email)
     end
 
     scenario "hearing is switched to 'Virtual'" do
