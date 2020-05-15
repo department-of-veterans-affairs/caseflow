@@ -154,6 +154,20 @@ ActiveRecord::Schema.define(version: 2020_05_13_140953) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
+  create_table "bgs_attorneys", comment: "Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.datetime "last_synced_at", comment: "The last time BGS was checked"
+    t.string "name", null: false, comment: "Name"
+    t.string "participant_id", null: false, comment: "Participant ID"
+    t.string "record_type", null: false, comment: "Known types: POA State Organization, POA National Organization, POA Attorney, POA Agent, POA Local/Regional Organization"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["created_at"], name: "index_bgs_attorneys_on_created_at"
+    t.index ["last_synced_at"], name: "index_bgs_attorneys_on_last_synced_at"
+    t.index ["name"], name: "index_bgs_attorneys_on_name"
+    t.index ["participant_id"], name: "index_bgs_attorneys_on_participant_id", unique: true
+    t.index ["updated_at"], name: "index_bgs_attorneys_on_updated_at"
+  end
+
   create_table "bgs_power_of_attorneys", comment: "Power of Attorney (POA) cached from BGS", force: :cascade do |t|
     t.string "authzn_change_clmant_addrs_ind", comment: "Authorization for POA to change claimant address"
     t.string "authzn_poa_access_ind", comment: "Authorization for POA access"
