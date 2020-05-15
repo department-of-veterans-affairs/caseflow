@@ -86,7 +86,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     end
   end
 
-  def check_virtual_hearings_links(virtual_hearing, label, show_link = true)
+  def check_virtual_hearings_links(virtual_hearing, label, disable_link = false)
     # Test the hearing link details
     within "#vlj-hearings-link" do
       expect(page).to have_content(
@@ -96,9 +96,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         "Copy VLJ Link "
       )
 
-      if show_link
-        expect(page).to have_selector(:css, "a[href='#{virtual_hearing.host_link}']")
-      end
+      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.host_link}']") unless disable_link
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
@@ -107,9 +105,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         "PIN: #{virtual_hearing.guest_pin}\n" \
         "Copy Guest Link "
       )
-      if show_link
-        expect(page).to have_selector(:css, "a[href='#{virtual_hearing.guest_link}']")
-      end
+
+      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.guest_link}']") unless disable_link
     end
   end
 
@@ -344,7 +341,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         )
         visit "hearings/" + hearing.external_id.to_s + "/details"
         hearing.reload
-        check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing", false)
+        check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing", true)
       end
     end
   end
