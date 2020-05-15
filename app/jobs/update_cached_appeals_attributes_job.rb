@@ -227,10 +227,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     ).pluck(:id)
   end
 
+  # Builds a hash of appeal_id => rep name
   def representative_names_for_appeals(appeals)
-    # builds a hash of appeal_id => rep name
-    Claimant.where(decision_review_id: appeals, decision_review_type: Appeal.name).map do |claimant|
-      [claimant.decision_review_id, claimant.representative_name]
+    claimants = Claimant.where(decision_review_id: appeals, decision_review_type: Appeal.name)
+    claimant_rep_hash = BgsPowerOfAttorney.where(claimant_participant_id: claimants.pluck(:participant_id)).map do |rep|
+      [rep.claimant_participant_id, rep.representative_name]
+    end.to_h
+    claimants.map do |claimant|
+      [claimant.decision_review_id, claimant_rep_hash[claimant.participant_id]]
     end.to_h
   end
 
