@@ -287,7 +287,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   end
 
   context "Links display correctly when scheduling Virtual Hearings" do
-    let!(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+    let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
 
     scenario "displays in progress when the virtual hearing is being scheduled" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -309,9 +309,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         virtual_hearing.generate_conference_pins
         virtual_hearing.conference_id = "0"
         virtual_hearing.established!
-        virtual_hearing.veteran_email_sent = true
-        virtual_hearing.representative_email_sent = true
-        virtual_hearing.judge_email_sent = true
         hearing.reload
       end
 
@@ -341,6 +338,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
           judge_email_sent: false
         )
         visit "hearings/" + hearing.external_id.to_s + "/details"
+        hearing.reload
         check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing")
       end
     end
