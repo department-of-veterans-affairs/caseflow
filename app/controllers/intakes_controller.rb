@@ -63,7 +63,10 @@ class IntakesController < ApplicationController
   end
 
   def attorneys
-    render json: AttorneySearch.new(params[:query]).fetch_attorneys.map(&:name)
+    results = AttorneySearch.new(params[:query]).fetch_attorneys.map do |attorney|
+      attorney.as_json.extract!("name", "participant_id")
+    end
+    render json: results
   end
 
   def error
