@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-# This is for caching (POA) attorney records from BGS for use in adding claimants 
+
+# This is for caching (POA) attorney records from BGS for use in adding claimants
 # who might not already be associated with a record (hence the use of a different model/table)
 
 class BgsAttorney < CaseflowRecord
