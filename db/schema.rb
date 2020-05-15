@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_184512) do
+ActiveRecord::Schema.define(version: 2020_05_13_140953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1390,9 +1390,11 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
+    t.string "guest_pin_long", limit: 11, comment: "Change the guest pin to store a longer pin with the # sign trailing"
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"
+    t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"

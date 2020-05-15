@@ -17,13 +17,13 @@
     "pretty:format": "yarn run pretty --write",
     "build": "webpack --config webpack.config.js",
     "build:test": "NODE_ENV=test yarn run build",
-    "build:demo": "NODE_ENV=development yarn run build",
+    "build:demo": "NODE_ENV=development yarn run build && yarn build:storybook",
     "build:production": "NODE_ENV=production yarn run build",
     "dev:clear-build": "rm ../app/assets/javascripts/*webpack* || true",
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
     "dev:hot": "yarn run dev:clear-build && NODE_ENV=development node webpack-hot-server.js",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build:storybook": "build-storybook -o ../public/storybook"
   },
   "cacheDirectories": [
     "node_modules",

@@ -50,11 +50,9 @@ const mapStateToProps = (state) => {
 
   return {
     success,
-    organizations: state.ui.organizations,
     assignedTasks: newTasksByAssigneeCssIdSelector(state),
     onHoldTasks: onHoldTasksByAssigneeCssIdSelector(state),
-    completedTasks: completeTasksByAssigneeCssIdSelector(state),
-    queueConfig: state.queue.queueConfig
+    completedTasks: completeTasksByAssigneeCssIdSelector(state)
   };
 };
 
@@ -71,7 +69,5 @@ ColocatedTaskListView.propTypes = {
   completedTasks: PropTypes.array,
   hideSuccessMessage: PropTypes.func,
   onHoldTasks: PropTypes.array,
-  organizations: PropTypes.array,
-  queueConfig: PropTypes.object,
   success: PropTypes.object
 };
