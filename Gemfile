@@ -17,7 +17,7 @@ gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/conn
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "ddtrace"
 gem "dogstatsd-ruby"
-gem "fast_jsonapi"
+gem 'fast_jsonapi', '~> 1.7.1', git: 'https://github.com/fast-jsonapi/fast_jsonapi'
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"

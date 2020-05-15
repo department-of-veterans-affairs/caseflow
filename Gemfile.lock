@@ -64,6 +64,13 @@ GIT
       selenium-webdriver
 
 GIT
+  remote: https://github.com/fast-jsonapi/fast_jsonapi
+  revision: ac34aa22f7882f54cb7cab352489930c012e1e1b
+  specs:
+    fast_jsonapi (1.7.1)
+      activesupport (>= 4.2)
+
+GIT
   remote: https://github.com/senny/pdfjs_viewer-rails.git
   revision: a4249eacbf70175db63b57e9f364d0a9a79e2b43
   ref: a4249eacbf70175db63b57e9f364d0a9a79e2b43
@@ -238,8 +245,6 @@ GEM
       faraday (~> 0.8)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
-    fast_jsonapi (1.5)
-      activesupport (>= 4.2)
     fasterer (0.6.0)
       colorize (~> 0.7)
       ruby_parser (>= 3.13.0)
@@ -627,7 +632,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails (~> 4.8)
   faker
-  fast_jsonapi
+  fast_jsonapi (~> 1.7.1)!
   fasterer
   foreman
   govdelivery-tms
