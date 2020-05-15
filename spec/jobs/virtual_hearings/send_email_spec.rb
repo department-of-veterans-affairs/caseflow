@@ -58,11 +58,11 @@ describe VirtualHearings::SendEmail do
       context "a cancellation email" do
         let(:email_type) { :cancellation }
 
-        it "calls VirtualHearingMailer.cancellation for everyone but the judge", :aggregate_failures do   
-          # YES for veteran and representative    
-          expect(VirtualHearingMailer)   
-            .to receive(:cancellation)   
-            .once    
+        it "calls VirtualHearingMailer.cancellation for everyone but the judge", :aggregate_failures do
+          # YES for veteran and representative
+          expect(VirtualHearingMailer)
+            .to receive(:cancellation)
+            .once
             .with(mail_recipient: veteran_recipient, virtual_hearing: virtual_hearing)
 
           expect(VirtualHearingMailer)
