@@ -552,7 +552,7 @@ class Task < CaseflowRecord
   def cancelled_by
     return nil unless cancelled?
 
-    record = versions.order(:created_at).where("object_changes LIKE ?", "%#{Task.statuses[:cancelled]}%").last
+    record = versions.order(:created_at).where("object_changes SIMILAR TO ?", "%#{Task.statuses[:cancelled]}%").last
 
     return nil unless record
 

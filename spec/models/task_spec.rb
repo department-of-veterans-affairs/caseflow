@@ -1611,7 +1611,6 @@ describe Task, :all_dbs do
           end
 
           it "returns the most recent canceler" do
-            binding.pry
             expect(subject).to eq new_canceler
           end
         end
