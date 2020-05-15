@@ -158,7 +158,7 @@ class TaskRows extends React.PureComponent {
   }
 
   cancelledByListItem = (task) => {
-    const canceler = task.cancelledBy.cssId;
+    const canceler = task.cancelledBy?.cssId;
 
     return canceler ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCELER_LABEL}</dt>
       <dd>{canceler}</dd></div> : null;
