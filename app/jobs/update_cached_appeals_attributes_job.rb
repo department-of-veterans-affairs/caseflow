@@ -103,7 +103,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     values_to_cache = legacy_appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       # bypass PowerOfAttorney model completely and always prefer BGS cache
-      bgs_poa = BgsPowerOfAttorney.new(file_number: appeal.veteran_file_number)
+      bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
       {
         vacols_id: appeal.vacols_id,
         appeal_id: appeal.id,
@@ -127,6 +127,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                     ] }
   end
   # rubocop:enable Metrics/MethodLength
+
+  def fetch_bgs_power_of_attorney_by_file_number(file_number)
+    return if file_number.blank?
+
+    BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
+  rescue ActiveRecord::RecordInvalid # not found at BGS
+    BgsPowerOfAttorney.new(file_number: file_number)
+  end
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
