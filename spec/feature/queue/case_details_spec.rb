@@ -722,8 +722,7 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
-      scenario "displays task bold in queue",
-               skip: "https://circleci.com/gh/department-of-veterans-affairs/caseflow/65218, bat team investigated" do
+      scenario "displays task bold in queue" do
         visit "/queue"
         vet_name = assigned_task.appeal.veteran_full_name
         fontweight_new = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
