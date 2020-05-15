@@ -1584,7 +1584,6 @@ describe Task, :all_dbs do
         let(:first_version) { task.versions.last }
 
         context "when there is only one version" do
-
           context "when there is no user definted by whodunnit" do
             it "returns nil" do
               expect(subject).to eq nil

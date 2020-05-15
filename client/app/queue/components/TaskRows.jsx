@@ -305,7 +305,7 @@ class TaskRows extends React.PureComponent {
           { moment(appeal.nodDate).format('MM/DD/YYYY') }
         </td>
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-          { <GreenCheckmark /> } </td>
+          <GreenCheckmark /></td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
         </td>
