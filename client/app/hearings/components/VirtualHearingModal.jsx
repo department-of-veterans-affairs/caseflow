@@ -138,7 +138,13 @@ const ChangeToVirtual = (props) => {
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
     if (_.isUndefined(virtualHearing.appellantEmail)) {
-      update({ appellantEmail: hearing.appellantEmailAddress });
+      update(
+        {
+          appellantEmail: hearing.appellantIsNotVeteran ?
+            hearing.appellantEmailAddress :
+            hearing.veteranEmailAddress
+        }
+      );
     }
 
     if (_.isUndefined(virtualHearing.representativeEmail)) {
@@ -180,7 +186,8 @@ ChangeToVirtual.propTypes = {
   hearing: PropTypes.shape({
     appellantEmailAddress: PropTypes.string,
     appellantIsNotVeteran: PropTypes.bool,
-    representativeEmailAddress: PropTypes.string
+    representativeEmailAddress: PropTypes.string,
+    veteranEmailAddress: PropTypes.string
   }),
   readOnly: PropTypes.bool,
   representativeEmailError: PropTypes.string,
@@ -320,7 +327,8 @@ VirtualHearingModal.propTypes = {
     }),
     appellantEmailAddress: PropTypes.string,
     appellantIsNotVeteran: PropTypes.bool,
-    representativeEmailAddress: PropTypes.string
+    representativeEmailAddress: PropTypes.string,
+    veteranEmailAddress: PropTypes.string
   }).isRequired,
   type: PropTypes.oneOf([
     'change_to_virtual',
