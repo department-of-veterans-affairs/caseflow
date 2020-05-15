@@ -9,7 +9,7 @@ class ETL::AppealSyncer < ETL::Syncer
     ETL::Appeal
   end
 
-  private
+  protected
 
   def instances_needing_update
     return origin_class.established unless incremental?

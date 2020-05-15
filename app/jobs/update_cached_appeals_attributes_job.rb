@@ -103,7 +103,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     values_to_cache = legacy_appeals.map do |appeal|
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       # bypass PowerOfAttorney model completely and always prefer BGS cache
-      bgs_poa = BgsPowerOfAttorney.new(file_number: appeal.veteran_file_number)
+      bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
       {
         vacols_id: appeal.vacols_id,
         appeal_id: appeal.id,
@@ -111,7 +111,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
         docket_type: appeal.docket_name, # "legacy"
-        power_of_attorney_name: bgs_poa.representative_name || appeal.representative_name,
+        power_of_attorney_name: (bgs_poa&.representative_name || appeal.representative_name),
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
     end
@@ -127,6 +127,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                     ] }
   end
   # rubocop:enable Metrics/MethodLength
+
+  def fetch_bgs_power_of_attorney_by_file_number(file_number)
+    return if file_number.blank?
+
+    BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
+  rescue ActiveRecord::RecordInvalid # not found at BGS
+    BgsPowerOfAttorney.new(file_number: file_number)
+  end
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
@@ -202,7 +210,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def log_error(start_time, err)
     duration = time_ago_in_words(start_time)
     msg = "UpdateCachedAppealsAttributesJob failed after running for #{duration}. Fatal error: #{err.message}"
-    slack_msg = "UpdateCachedAppealsAttributesJob failed after running for #{duration}. See Sentry for error"
+    slack_msg = "[ERROR] UpdateCachedAppealsAttributesJob failed after running for #{duration}. See Sentry for error"
 
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
@@ -227,11 +235,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     ).pluck(:id)
   end
 
+  # Builds a hash of appeal_id => rep name
   def representative_names_for_appeals(appeals)
-    # builds a hash of appeal_id => rep name
-    Claimant.where(decision_review_id: appeals, decision_review_type: Appeal.name).map do |claimant|
-      [claimant.decision_review_id, claimant.representative_name]
-    end.to_h
+    Claimant.where(decision_review_id: appeals, decision_review_type: Appeal.name).joins(
+      "LEFT JOIN bgs_power_of_attorneys ON bgs_power_of_attorneys.claimant_participant_id = claimants.participant_id"
+    ).pluck("claimants.decision_review_id, bgs_power_of_attorneys.representative_name").to_h
   end
 
   def assignees_for_caseflow_appeal_ids(appeal_ids, appeal_type)

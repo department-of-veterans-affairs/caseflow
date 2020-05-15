@@ -21,6 +21,7 @@ class AppealsUpdatedSinceQuery
     record_synced_by_job
     request_decision_issues
     request_issues_updates
+    work_mode
   ].freeze
 
   attr_reader :since_date

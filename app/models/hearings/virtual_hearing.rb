@@ -32,6 +32,7 @@ class VirtualHearing < CaseflowRecord
   validates_email_format_of :veteran_email
   validates_email_format_of :representative_email, allow_nil: true
   validate :associated_hearing_is_video, on: :create
+  validate :hearing_is_not_virtual, on: :create
 
   scope :eligible_for_deletion,
         lambda {
@@ -61,16 +62,32 @@ class VirtualHearing < CaseflowRecord
     alias_with_host.nil? ? VirtualHearing.formatted_alias(alias_name) : alias_with_host
   end
 
+  # Returns a random host and guest pin
+  def generate_conference_pins
+    self.guest_pin_long = "#{rand(1_000_000_000..9_999_999_999).to_s[0..9]}#"
+    self.host_pin_long = "#{rand(1_000_000..9_999_999).to_s[0..9]}#"
+  end
+
+  # Override the guest pin
+  def guest_pin
+    guest_pin_long || self[:guest_pin]
+  end
+
+  # Override the host pin
+  def host_pin
+    host_pin_long || self[:host_pin]
+  end
+
   def guest_link
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \
-    "pin=#{guest_pin}#&role=guest"
+    "pin=#{guest_pin}&role=guest"
   end
 
   def host_link
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \
-    "pin=#{host_pin}#&role=host"
+    "pin=#{host_pin}&role=host"
   end
 
   def job_completed?
@@ -139,6 +156,12 @@ class VirtualHearing < CaseflowRecord
   def associated_hearing_is_video
     if hearing.request_type != HearingDay::REQUEST_TYPES[:video]
       errors.add(:hearing, "must be a video hearing")
+    end
+  end
+
+  def hearing_is_not_virtual
+    if hearing.virtual?
+      errors.add(:hearing, "hearing is already a virtual hearing")
     end
   end
 end

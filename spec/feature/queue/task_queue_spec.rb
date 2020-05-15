@@ -990,7 +990,7 @@ feature "Task queue", :all_dbs do
 
     context "when it was created through case distribution" do
       before do
-        create(:ama_judge_task, appeal: appeal, assigned_to: judge_user)
+        create(:ama_judge_assign_task, appeal: appeal, assigned_to: judge_user)
         visit("/queue/appeals/#{appeal.external_id}")
       end
 

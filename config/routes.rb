@@ -124,6 +124,7 @@ Rails.application.routes.draw do
       resources :advance_on_docket_motions, only: [:create]
       get 'tasks', to: "tasks#for_appeal"
       patch 'update'
+      post 'work_mode', to: "work_modes#create"
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
@@ -217,10 +218,11 @@ Rails.application.routes.draw do
     patch "/messages/:id", to: "inbox#update"
   end
 
-  resources :users, only: [:index, :update]
-  resources :users, only: [:index] do
+  resources :users, only: [:index, :update] do
+    resources :task_pages, only: [:index], controller: 'users/task_pages'
     get 'represented_organizations', on: :member
   end
+
   get 'user', to: 'users#search'
   get 'user_info/represented_organizations'
 
@@ -282,7 +284,6 @@ Rails.application.routes.draw do
 
   get 'whats-new' => 'whats_new#show'
 
-  get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
   get 'stats', to: 'stats#show'
 

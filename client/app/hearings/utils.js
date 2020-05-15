@@ -198,3 +198,16 @@ export const getChanges = (first, second) => {
 
   return deepDiff(init, current);
 };
+
+/**
+ * Method to transform an object to a list of dropdown or radio options
+ * @param {Object} object -- The object to turn into a list of options
+ * @param {Object} noneOption -- The "None" option
+ * @param {function} transformer -- Transforms the values of the object into options
+ */
+export const getOptionsFromObject = (object, noneOption, transformer) => (
+  _.concat(
+    _.map(_.values(object), transformer),
+    [noneOption]
+  )
+);

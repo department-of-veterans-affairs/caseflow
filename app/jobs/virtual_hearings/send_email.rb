@@ -10,21 +10,23 @@ class VirtualHearings::SendEmail
 
   def call
     if !virtual_hearing.veteran_email_sent
-      virtual_hearing.veteran_email_sent = send_email(veteran_recipient)
+      virtual_hearing.update!(veteran_email_sent: send_email(veteran_recipient))
     end
 
     if should_judge_receive_email?
-      virtual_hearing.judge_email_sent = send_email(judge_recipient)
+      virtual_hearing.update!(judge_email_sent: send_email(judge_recipient))
     end
 
     if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
-      virtual_hearing.representative_email_sent = send_email(representative_recipient)
+      virtual_hearing.update!(representative_email_sent: send_email(representative_recipient))
     end
-
-    virtual_hearing.save!
   end
 
   private
+
+  delegate :hearing, to: :virtual_hearing
+  delegate :appeal, to: :hearing
+  delegate :veteran, to: :appeal
 
   def email_for_recipient(recipient)
     args = {
@@ -98,6 +100,7 @@ class VirtualHearings::SendEmail
     msg = email.deliver_now!
   rescue StandardError => error
     Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
+    Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
 
     false
   else
@@ -140,8 +143,14 @@ class VirtualHearings::SendEmail
   end
 
   def veteran_recipient
+    if veteran.first_name.nil? || veteran.last_name.nil?
+      veteran.update_cached_attributes!
+    end
+
+    fail "Veteran name is not populated" unless veteran.first_name.present? && veteran.last_name.present?
+
     MailRecipient.new(
-      name: virtual_hearing.hearing.appeal.veteran&.first_name,
+      name: veteran.first_name,
       email: virtual_hearing.veteran_email,
       title: MailRecipient::RECIPIENT_TITLES[:veteran]
     )
