@@ -269,6 +269,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     administered_teams.select { |team| team.is_a?(JudgeTeam) }
   end
 
+  def non_administered_judge_teams
+    organizations_users.non_admin.where(organization: JudgeTeam.all)
+  end
+
   def user_info_for_idt
     self.class.user_repository.user_info_for_idt(css_id)
   end
@@ -296,6 +300,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     !!JudgeTeam.for_judge(self) || judge_in_vacols?
   end
 
+  def attorney?
+    non_administered_judge_teams.any? || attorney_in_vacols?
+  end
+
   def update_status!(new_status)
     transaction do
       if new_status.eql?(Constants.USER_STATUSES.inactive)
@@ -309,7 +317,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def use_task_pages_api?
-    false
+    FeatureToggle.enabled?(:user_queue_pagination, user: self) && !attorney? && !judge?
   end
 
   def queue_tabs
@@ -321,7 +329,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.default_active_tab
-    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end
 
   def assigned_tasks_tab
