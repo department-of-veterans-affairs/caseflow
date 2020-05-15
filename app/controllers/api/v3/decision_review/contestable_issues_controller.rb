@@ -4,8 +4,10 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
   before_action :set_veteran_from_header, :set_receipt_date_from_header
 
   def index
-    issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
-    render json: Api::V3::ContestableIssueSerializer.new(issues)
+    issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues.map do |issue|
+      Api::V3::ContestableIssueSerializer.new(issue).serializable_hash[:data]
+    end
+    render json: { data: issues }
   end
 
   private
