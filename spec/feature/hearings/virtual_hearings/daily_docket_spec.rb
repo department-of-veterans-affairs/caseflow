@@ -26,7 +26,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     expect(page).to have_content(
       format(
         COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_HEARING_TIME"]["MESSAGE"],
-        { appellant_title: "Veteran" }
+        appellant_title: "Veteran"
       )
     )
     expect(hearing.virtual_hearing.all_emails_sent?).to eq(true)
