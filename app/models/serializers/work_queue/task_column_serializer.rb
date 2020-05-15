@@ -62,6 +62,14 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :started_at do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]
+
+    if serialize_attribute?(params, columns)
+      object.started_at
+    end
+  end
+
   attribute :issue_count do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]
 
@@ -201,10 +209,6 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :appeal_id do
-    nil
-  end
-
-  attribute :started_at do
     nil
   end
 
