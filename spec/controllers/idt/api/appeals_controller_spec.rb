@@ -174,8 +174,24 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           ]
         end
 
-        let!(:case_review1) { create(:attorney_case_review, document_id: "17325093.1116", task_id: tasks.first.id) }
-        let!(:case_review2) { create(:attorney_case_review, document_id: "17325093.1117", task_id: tasks.first.id) }
+        let!(:case_review1) do
+          create(
+            :attorney_case_review,
+            created_at: Time.zone.now - 1.minute,
+            updated_at: Time.zone.now - 1.minute,
+            document_id: "17325093.1116",
+            task_id: tasks.first.id
+          )
+        end
+        let!(:case_review2) do
+          create(
+            :attorney_case_review,
+            created_at: Time.zone.now,
+            updated_at: Time.zone.now,
+            document_id: "17325093.1117",
+            task_id: tasks.first.id
+          )
+        end
 
         before do
           # cancel one, so it does not show up
