@@ -140,20 +140,10 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
       it_behaves_like "an appeal that can be worked overtime"
 
       context "when appeal is assigned to attorney" do
-        let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: attorney)) }
+        let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: attorney, assigner: judge)) }
 
         it "should have an appeal with a AttorneyLegacyTask" do
           expect(LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id).map(&:class)).to eq([AttorneyLegacyTask])
-        end
-
-        before do
-          allow_any_instance_of(AttorneyLegacyTask).to receive(:assigned_by).and_return(
-            OpenStruct.new(
-              first_name: judge.full_name,
-              last_name: judge.full_name,
-              pg_id: judge.id
-            )
-          )
         end
 
         it_behaves_like "an appeal that can be worked overtime"
@@ -185,16 +175,11 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
       context "when user is an attorney assigned to the case" do
         let!(:vacols_attorney) { create(:staff, :attorney_role, user: current_user) }
 
-        let(:judge_review_task) { create(:ama_judge_decision_review_task, parent: create(:root_task)) }
-        let(:attorney_task) do
-          create(
-            :ama_attorney_task,
-            parent: judge_review_task,
-            assigned_by: judge,
-            assigned_to: current_user
-          )
+        let(:judge_review_task) { create(:ama_judge_decision_review_task, parent: judge_assign_task.root_task) }
+        before do
+          judge_assign_task.completed!
+          create(:ama_attorney_task, parent: judge_review_task, assigned_by: judge, assigned_to: current_user)
         end
-        let(:judge_assign_task) { create(:ama_judge_assign_task, parent: attorney_task.root_task, assigned_to: judge) }
 
         include_examples "unauthorized user toggles overtime"
       end
