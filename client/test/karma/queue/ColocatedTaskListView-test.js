@@ -317,7 +317,7 @@ describe('ColocatedTaskListView', () => {
         }
     ],
     "tasks_per_page": 15,
-    "use_task_pages_api": true
+    "use_task_pages_api": false
 };
 
   /* eslint-disable no-unused-expressions */
