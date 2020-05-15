@@ -9,7 +9,7 @@ export default {
   decorators: []
 };
 
-export const granted = () => <DecisionHyperlinks onChange={action('change', 'standard')} disposition="granted" />;
+export const granted = () => <DecisionHyperlinks onChange={action('change', 'granted')} disposition="granted" />;
 
 granted.story = {
   parameters: {
@@ -19,7 +19,7 @@ granted.story = {
   }
 };
 
-export const denied = () => <DecisionHyperlinks onChange={action('change', 'standard')} disposition="denied" />;
+export const denied = () => <DecisionHyperlinks onChange={action('change', 'denied')} disposition="denied" />;
 
 denied.story = {
   parameters: {
