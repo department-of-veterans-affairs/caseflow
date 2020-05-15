@@ -107,8 +107,8 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
       end
     end
 
-    let(:attorney) { create(:user) }
-    let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:attorney_staff) { create(:staff, :attorney_role) }
+    let(:attorney) { create(:user, css_id: attorney_staff.sdomainid) }
 
     context "for AMA appeal" do
       let(:root_task) { create(:root_task) }
