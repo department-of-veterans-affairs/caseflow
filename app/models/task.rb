@@ -549,6 +549,16 @@ class Task < CaseflowRecord
     open?
   end
 
+  def cancelled_by
+    return nil unless cancelled?
+
+    record = versions.order(:created_at).where("object_changes LIKE ?", "%#{Task.statuses[:cancelled]}%").last
+
+    return nil unless record
+
+    User.find_by_id(record.whodunnit)
+  end
+
   private
 
   def create_and_auto_assign_child_task(options = {})
