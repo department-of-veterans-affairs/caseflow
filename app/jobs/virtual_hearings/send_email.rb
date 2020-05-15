@@ -144,30 +144,33 @@ class VirtualHearings::SendEmail
     )
   end
 
-  def veteran_recipient
-    if appeal.appellant_is_not_veteran
-      MailRecipient.new(
-        name: appeal.appellant_first_name,
-        email: virtual_hearing.appellant_email,
-        title: MailRecipient::RECIPIENT_TITLES[:appellant]
-      )
-    else
-      # Fail-safe check to ensure the recipient of an email is never a deceased veteran.
-      # Handle these on a case-by-case basis.
-      fail RecipientIsDeceasedVeteran if veteran.deceased?
+  def validate_veteran_deceased
+    # Fail-safe check to ensure the recipient of an email is never a deceased veteran.
+    # Handle these on a case-by-case basis.
+    fail RecipientIsDeceasedVeteran if veteran.deceased?
+  end
 
-      if veteran.first_name.nil? || veteran.last_name.nil?
-        veteran.update_cached_attributes!
-      end
+  def validate_veteran_name
+    veteran.update_cached_attributes! if veteran.first_name.nil? || veteran.last_name.nil?
 
-      fail "Veteran name is not populated" unless veteran.first_name.present? && veteran.last_name.present?
+    fail "Veteran name is not populated" unless veteran.first_name.present? && veteran.last_name.present?
+  end
 
-      MailRecipient.new(
-        name: veteran.first_name,
-        email: virtual_hearing.appellant_email,
-        title: MailRecipient::RECIPIENT_TITLES[:appellant]
-      )
-    end
+  def appellant_recipient
+    recipient_name = if appeal.appellant_is_not_veteran
+                       appeal.appellant_first_name
+                     else
+                       validate_veteran_deceased
+                       validate_veteran_name
+
+                       veteran.first_name
+                     end
+
+    MailRecipient.new(
+      name: recipient_name,
+      email: virtual_hearing.appellant_email,
+      title: MailRecipient::RECIPIENT_TITLES[:appellant]
+    )
   end
 
   def should_judge_receive_email?
