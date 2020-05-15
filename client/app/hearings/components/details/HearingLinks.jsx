@@ -62,7 +62,9 @@ VirtualHearingLinkDetails.propTypes = {
 export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virtualHearing, role, label }) => (
   <div id={`${role.toLowerCase()}-hearings-link`} {...css({ marginTop: '1.5rem' })}>
     <strong>{label}: </strong>
-    {virtualHearing?.jobCompleted || wasVirtual ? (
+    {virtualHearing?.status === 'pending' ? (
+      <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>
+    ) : (
       <React.Fragment>
         <VirtualHearingLinkDetails
           label={COPY.OPEN_VIRTUAL_HEARINGS_LINK}
@@ -77,8 +79,6 @@ export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virt
           pin={role === 'VLJ' ? virtualHearing?.hostPin : virtualHearing?.guestPin}
         />
       </React.Fragment>
-    ) : (
-      <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>
     )}
   </div>
 );
