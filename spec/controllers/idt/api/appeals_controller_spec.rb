@@ -174,8 +174,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           ]
         end
 
-        let!(:case_review1) { create(:attorney_case_review, task_id: tasks.first.id) }
-        let!(:case_review2) { create(:attorney_case_review, task_id: tasks.first.id) }
+        let!(:case_review1) { create(:attorney_case_review, document_id: "17325093.1116", task_id: tasks.first.id) }
+        let!(:case_review2) { create(:attorney_case_review, document_id: "17325093.1117", task_id: tasks.first.id) }
 
         before do
           # cancel one, so it does not show up
@@ -210,13 +210,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
           expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
           expect(ama_appeals.first["attributes"]["documents"].first["written_by"])
-            .to eq case_review1.attorney.full_name
-          expect(ama_appeals.first["attributes"]["documents"].first["document_id"])
-            .to eq case_review1.document_id
-          expect(ama_appeals.first["attributes"]["documents"].second["written_by"])
             .to eq case_review2.attorney.full_name
-          expect(ama_appeals.first["attributes"]["documents"].second["document_id"])
+          expect(ama_appeals.first["attributes"]["documents"].first["document_id"])
             .to eq case_review2.document_id
+          expect(ama_appeals.first["attributes"]["documents"].second["written_by"])
+            .to eq case_review1.attorney.full_name
+          expect(ama_appeals.first["attributes"]["documents"].second["document_id"])
+            .to eq case_review1.document_id
         end
 
         it "returns active appeals associated with a file number" do
