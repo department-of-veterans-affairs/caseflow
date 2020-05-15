@@ -316,4 +316,35 @@ describe Rating do
       end
     end
   end
+
+  fcontext "#sorted_ratings_from_bgs_response" do
+    subject { rating.sorted_ratings_from_bgs_response(response:, start_time: 5.days.ago)}
+
+    context "when one or more associated claims have a bnftClmTc matching PMC" do
+    let(:veteran) do
+    Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
+    end
+    let(:receipt_date) { Time.zone.today - 30.days }
+    let(:profile_date) { (receipt_date - 8.days).to_datetime }
+
+      let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+      it "returns true" do
+        binding.pry
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when no associated claims have a bnftClmTc matching PMC" do
+      let(:associated_claims) do
+        [
+          { clm_id: "abc123", bnft_clm_tc: "040SCR" },
+          { clm_id: "dcf345", bnft_clm_tc: "030HLRNR" }
+        ]
+      end
+
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
 end
