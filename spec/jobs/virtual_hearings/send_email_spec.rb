@@ -4,7 +4,16 @@ describe VirtualHearings::SendEmail do
   let(:nyc_ro_eastern) { "RO06" }
   let(:judge_email_sent) { false }
   let(:representative_email_sent) { false }
-
+  let(:veteran_email_sent) { false }
+  let(:veteran) { create(:veteran) }
+  let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
+  let(:hearing) do
+    create(
+      :hearing,
+      appeal: appeal,
+      regional_office: nyc_ro_eastern
+    )
+  end
   let!(:virtual_hearing) do
     create(
       :virtual_hearing,
