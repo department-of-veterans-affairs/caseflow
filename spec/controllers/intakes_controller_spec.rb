@@ -202,7 +202,7 @@ RSpec.describe IntakesController, :postgres do
       get :attorneys, params: { query: "JON SMITH" }
       resp = JSON.parse(response.body, symbolize_names: true)
       expect(resp).to eq [
-        {"name": "JOHN SMITH", "participant_id": "123"}
+        { "name": "JOHN SMITH", "participant_id": "123" }
       ]
     end
   end

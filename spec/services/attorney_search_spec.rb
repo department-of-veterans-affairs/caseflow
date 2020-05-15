@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AttorneySearch do
-  let(:names) {
+  let(:names) do
     [
       "JOHN SMITH",
       "MARILEE NIKOLAUS IV",
@@ -12,12 +12,12 @@ describe AttorneySearch do
       "TAINA TERRANCE-KLEIN",
       "JOHN SMITH"
     ]
-  }
+  end
   let!(:attorneys) { names.map { |name| create(:bgs_attorney, name: name) } }
   let(:search) { AttorneySearch.new(query_text) }
 
-  describe "#first_letter_candidates" do
-    subject { search.first_letter_candidates.map(&:name) }
+  describe "#candidates" do
+    subject { search.candidates.map(&:name) }
 
     context "no words are provided" do
       let(:query_text) { "123 _no_words" }

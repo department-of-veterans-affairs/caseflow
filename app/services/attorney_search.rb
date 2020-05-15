@@ -13,19 +13,14 @@ class AttorneySearch
   end
 
   def fetch_attorneys
-    candidates_by_name = {}
-    first_letter_candidates.each do |atty|
-      (candidates_by_name[atty.name] ||= []) << atty
-    end
-    top_names = top_matched_names(candidates_by_name.keys)
-    top_names.map { |name| candidates_by_name[name] }.flatten
+    top_matched_names.map { |name| candidates_by_name[name] }.flatten
   end
 
   # get all attorneys from PG that have first-letter matches against the query text
-  def first_letter_candidates
+  def candidates
     return [] if first_letters.empty?
 
-    @first_letter_candidates ||= begin
+    @candidates ||= begin
       regexes = first_letters.map { |ch| "\\m" + ch } # \m is POSIX regex for start-of-word
       where = (["name ~* ?"] * regexes.length).join(" AND ")
       BgsAttorney.where(where, *regexes)
@@ -36,16 +31,30 @@ class AttorneySearch
 
   def first_letters
     @first_letters ||= begin
-      query_text.split().map { |word| word[0] }.select { |ch| ch.match(/[a-zA-Z]/) }
+      query_text.split.map { |word| word[0] }.select { |ch| ch.match(/[a-zA-Z]/) }
     end
   end
 
-  def top_matched_names(haystack)
-    return [] if haystack.empty?
+  # return a hash mapping candidate attorney names to a list of attorneys with each name
+  def candidates_by_name
+    @candidates_by_name ||= begin
+      mapping = {}
+      candidates.each do |atty|
+        (mapping[atty.name] ||= []) << atty
+      end
+      mapping
+    end
+  end
 
-    # maps each name in haystack to [name, Dice's coefficient, Levenshtein distance]
-    results = FuzzyMatch.new(haystack).find_all_with_score(query_text)
-    threshold = results[0][1] * RELATIVE_SCORE_THRESHOLD
-    results.select { |res| res[1] >= threshold }.map(&:first)
+  # maps each unique candidate name to [name, Dice's coefficient, Levenshtein distance]
+  def fuzzy_matched_results
+    FuzzyMatch.new(candidates_by_name.keys).find_all_with_score(query_text)
+  end
+
+  def top_matched_names
+    return [] if candidates.empty?
+
+    threshold = fuzzy_matched_results[0][1] * RELATIVE_SCORE_THRESHOLD
+    fuzzy_matched_results.select { |res| res[1] >= threshold }.map(&:first)
   end
 end
