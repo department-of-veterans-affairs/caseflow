@@ -4,7 +4,7 @@ describe VirtualHearings::SendEmail do
   let(:nyc_ro_eastern) { "RO06" }
   let(:judge_email_sent) { false }
   let(:representative_email_sent) { false }
-  let(:veteran_email_sent) { false }
+  let(:appellant_email_sent) { false }
   let(:veteran) { create(:veteran) }
   let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
   let(:hearing) do
@@ -61,7 +61,7 @@ describe VirtualHearings::SendEmail do
 
     context "veteran name is populated" do
       before do
-        allow(send_email_job).to receive(:veteran_recipient).and_return(veteran_recipient)
+        allow(send_email_job).to receive(:appellant_recipient).and_return(appellant_recipient)
       end
 
       context "a cancellation email" do
@@ -72,7 +72,7 @@ describe VirtualHearings::SendEmail do
           expect(VirtualHearingMailer)
             .to receive(:cancellation)
             .once
-            .with(mail_recipient: veteran_recipient, virtual_hearing: virtual_hearing)
+            .with(mail_recipient: appellant_recipient, virtual_hearing: virtual_hearing)
 
           expect(VirtualHearingMailer)
             .to receive(:cancellation)
