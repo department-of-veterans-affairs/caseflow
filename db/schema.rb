@@ -154,7 +154,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_140953) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
-  create_table "bgs_attorneys", comment: "Attorney data cached from BGS — used for claimants", force: :cascade do |t|
+  create_table "bgs_attorneys", comment: "Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.datetime "last_synced_at", comment: "The last time BGS was checked"
     t.string "name", null: false, comment: "Name"

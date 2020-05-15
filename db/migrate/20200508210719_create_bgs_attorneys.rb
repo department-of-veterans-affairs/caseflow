@@ -1,6 +1,6 @@
 class CreateBgsAttorneys < ActiveRecord::Migration[5.2]
   def change
-    create_table :bgs_attorneys, comment: "Attorney data cached from BGS — used for claimants" do |t|
+    create_table :bgs_attorneys, comment: "Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data" do |t|
       t.timestamps null: false, comment: "Standard created_at/updated_at timestamps"
       t.datetime "last_synced_at", comment: "The last time BGS was checked"
       t.string "participant_id", null: false, comment: "Participant ID"
