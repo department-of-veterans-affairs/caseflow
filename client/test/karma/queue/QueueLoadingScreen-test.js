@@ -39,6 +39,7 @@ const serverData = {
           previous_task: {
             assigned_on: '2018-08-02T17:37:03.000Z'
           },
+          started_at: '2018-08-02T17:37:03.000Z',
           task_id: '3625593-2018-07-11',
           label: 'Review',
           user_id: 'BVANKUVALIS',
@@ -96,6 +97,7 @@ describe('QueueLoadingScreen', () => {
         },
         workProduct: 'OTD',
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
+        startedAt: '2018-08-02T17:37:03.000Z',
         status: 'Assigned',
         decisionPreparedBy: null,
         type: 'LegacyJudgeTask',

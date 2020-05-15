@@ -88,9 +88,8 @@ detectors:
       - Seeds::Users#create_aod_user_and_tasks
       - SyncReviewsJob
       - TaskTimerJob
-      - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - UpdateCachedAppealsAttributesJob
       - UserReporter#report_user_related_records
-      - User#current_case_assignments_with_views
       - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
       - WarmBgsCachesJob
@@ -143,6 +142,7 @@ detectors:
       - RequestIssue
       - BulkTaskReassignment
       - Task
+      - UpdateCachedAppealsAttributesJob
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
