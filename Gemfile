@@ -18,6 +18,7 @@ gem "console_tree_renderer", git: "https://github.com/department-of-veterans-aff
 gem "ddtrace"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
+gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
