@@ -111,7 +111,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
         closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
         docket_type: appeal.docket_name, # "legacy"
-        power_of_attorney_name: bgs_poa.representative_name || appeal.representative_name,
+        power_of_attorney_name: (bgs_poa&.representative_name || appeal.representative_name),
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
     end
