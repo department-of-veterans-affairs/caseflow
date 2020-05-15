@@ -197,6 +197,24 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
           expect(data.size).to be(1)
         end
+
+        context "when using task pages api" do
+          before do
+            expect(QueueForRole).not_to receive(:new)
+            allow_any_instance_of(User).to receive(:use_task_pages_api?).and_return(true)
+          end
+
+          it "gets tasks from task pager, not queue for role" do
+            get :index, params: { user_id: user.id, role: "unknown" }
+            expect(response.status).to eq 200
+
+            queue_for_role_tasks = JSON.parse(response.body)["tasks"]["data"]
+            expect(queue_for_role_tasks.size).to be(0)
+
+            paged_tasks = JSON.parse(response.body)["queue_config"]["tabs"].first["tasks"]
+            expect(paged_tasks.size).to be(1)
+          end
+        end
       end
 
       context "when a task is assignable" do
