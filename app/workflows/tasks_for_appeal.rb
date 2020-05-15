@@ -4,7 +4,7 @@
 # We only query vacols for legacy tasks if the user is a judge, attroney, or a users that can act on behalf of judges
 # We also only return tasks assigned to a VSO or a vso employee is the user is a vso employee
 # Because this is currently only called from the case details view of an appeal, we mark any tasks assigned to the
-# requesting as "in progress", indicating they have looked at the case and have presumably started their task
+# requesting user as "in progress", indicating they have looked at the case and have presumably started their task
 class TasksForAppeal
   def initialize(appeal:, user:, user_role:)
     @appeal = appeal
