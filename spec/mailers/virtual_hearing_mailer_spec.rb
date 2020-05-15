@@ -209,7 +209,12 @@ describe VirtualHearingMailer do
 
     if recipient == MailRecipient::RECIPIENT_TITLES[:veteran] ||
        recipient == MailRecipient::RECIPIENT_TITLES[:representative]
+
       describe "#link" do
+        it "has the test link" do
+          expect(subject.html_part.body).to include(VirtualHearingMailer::TEST_LINK)
+        end
+
         it "is guest link" do
           expect(subject.html_part.body).to include(virtual_hearing.guest_link)
         end
