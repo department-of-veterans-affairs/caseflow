@@ -142,7 +142,7 @@ class WorkQueue::TaskColumnSerializer
       {
         css_id: assignee.try(:css_id),
         is_organization: assignee.is_a?(Organization),
-        name: assignee.is_a?(Organization) ? assignee.name : assignee.full_name,
+        name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
         type: assignee.class.name,
         id: assignee.id
       }

@@ -206,14 +206,12 @@ describe QueueColumn, :all_dbs do
 
     context "for the assignee column" do
       let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name }
-      let(:org_1) { create(:organization, name: "Org 1") }
-      let(:org_2) { create(:organization, name: "Org 2") }
-      let(:user_1) { create(:user, full_name: "User 1") }
-      let(:user_2) { create(:user, full_name: "User 2") }
-      let(:org_1_tasks) { Task.where(id: create_list(:task, 1, assigned_to: org_1).map(&:id)) }
-      let(:org_2_tasks) { Task.where(id: create_list(:task, 2, assigned_to: org_2).map(&:id)) }
-      let(:user_1_tasks) { Task.where(id: create_list(:task, 3, assigned_to: user_1).map(&:id)) }
-      let(:user_2_tasks) { Task.where(id: create_list(:task, 4, assigned_to: user_2).map(&:id)) }
+      let(:orgs) { create_list(:organization, 2) }
+      let(:users) { create_list(:user, 2) }
+      let(:org_1_tasks) { Task.where(id: create_list(:task, 1, assigned_to: orgs.first).map(&:id)) }
+      let(:org_2_tasks) { Task.where(id: create_list(:task, 2, assigned_to: orgs.second).map(&:id)) }
+      let(:user_1_tasks) { Task.where(id: create_list(:task, 3, assigned_to: users.first).map(&:id)) }
+      let(:user_2_tasks) { Task.where(id: create_list(:task, 4, assigned_to: users.second).map(&:id)) }
       let(:tasks) do
         Task.where(id: org_1_tasks.map(&:id) + org_2_tasks.map(&:id) + user_1_tasks.map(&:id) + user_2_tasks.map(&:id))
       end
@@ -221,7 +219,7 @@ describe QueueColumn, :all_dbs do
       it "returns an array with all present user names" do
         [org_1_tasks, org_2_tasks, user_1_tasks, user_2_tasks].each do |task_set|
           assignee = task_set.first.assigned_to
-          name = assignee.is_a?(Organization) ? assignee.name : assignee.full_name
+          name = assignee.is_a?(Organization) ? assignee.name : assignee.css_id
           option = QueueColumn.filter_option_hash(name, QueueColumn.format_option_label(name, task_set.count))
 
           expect(subject).to include(option)

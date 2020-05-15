@@ -190,7 +190,7 @@ class Task < CaseflowRecord
     def assignees_table_clause
       "(SELECT id, 'Organization' AS type, name AS display_name FROM organizations " \
       "UNION " \
-      "SELECT id, 'User' AS type, full_name AS display_name FROM users)" \
+      "SELECT id, 'User' AS type, css_id AS display_name FROM users)" \
       "AS assignees"
     end
 

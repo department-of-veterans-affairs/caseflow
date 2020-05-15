@@ -378,9 +378,7 @@ describe TaskFilter, :all_dbs do
 
     context "when filtering by assignee" do
       let(:tasks_per_user) { 3 }
-      let(:users) do
-        [create(:user, full_name: "UserA"), create(:user, full_name: "UserB"), create(:user, full_name: "UserZ")]
-      end
+      let(:users) { create_list(:user, 3) }
       let(:first_user_tasks) { create_list(:ama_task, tasks_per_user, assigned_to: users.first) }
       let(:second_user_tasks) { create_list(:ama_task, tasks_per_user, assigned_to: users.second) }
       let(:third_user_tasks) { create_list(:ama_task, tasks_per_user, assigned_to: users.third) }
@@ -402,9 +400,9 @@ describe TaskFilter, :all_dbs do
         end
       end
 
-      context "when filter includes the first user's name" do
+      context "when filter includes the first user's css_id" do
         let(:filter_params) do
-          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=#{users.first.full_name}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&val=#{users.first.css_id}"]
         end
 
         it "returns only tasks where the closest regional office is Boston" do
@@ -412,10 +410,10 @@ describe TaskFilter, :all_dbs do
         end
       end
 
-      context "when filter includes the first and second users' names" do
+      context "when filter includes the first and second users' css_ids" do
         let(:filter_params) do
           ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name}&"\
-            "val=#{users.first.full_name}|#{users.second.full_name}"]
+            "val=#{users.first.css_id}|#{users.second.css_id}"]
         end
 
         it "returns tasks assigned to the first and second user" do

@@ -233,19 +233,19 @@ describe TaskSorter, :all_dbs do
 
       context "when sorting by assigned to column" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name }
-        let(:org_1) { create(:organization, name: "Org B") }
-        let(:user_1) { create(:user, full_name: "User Z") }
-        let(:user_2) { create(:user, full_name: "User A") }
-        let(:org_1_task) { create(:task, assigned_to: org_1) }
-        let(:user_1_task) { create(:task, assigned_to: user_1) }
-        let(:user_2_task) { create(:task, assigned_to: user_2) }
+        let(:orgs) { create_list(:organization, 2) }
+        let(:users) { create_list(:user, 2) }
+        let(:org_1_task) { create(:task, assigned_to: orgs.first) }
+        let(:org_2_task) { create(:task, assigned_to: orgs.second) }
+        let(:user_1_task) { create(:task, assigned_to: users.first) }
+        let(:user_2_task) { create(:task, assigned_to: users.second) }
         let(:tasks) do
-          Task.where(id: [org_1_task, user_1_task, user_2_task])
+          Task.where(id: [org_1_task, org_2_task, user_1_task, user_2_task])
         end
 
         it "sorts by assigned to" do
           expected_order = tasks.sort_by do |task|
-            task.assigned_to.is_a?(User) ? task.assigned_to.full_name : task.assigned_to.name
+            task.assigned_to.is_a?(User) ? task.assigned_to.css_id : task.assigned_to.name
           end
           expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
         end
