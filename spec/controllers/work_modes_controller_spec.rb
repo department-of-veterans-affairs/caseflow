@@ -107,22 +107,57 @@ RSpec.describe WorkModesController, :all_dbs, type: :controller do
       end
     end
 
+    let(:attorney) { create(:user) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+
     context "for AMA appeal" do
-      let(:judge_assign_task) { create(:ama_judge_assign_task, parent: create(:root_task), assigned_to: judge) }
+      let(:root_task) { create(:root_task) }
+      let(:judge_assign_task) { create(:ama_judge_assign_task, parent: root_task, assigned_to: judge) }
       let(:appeal) { judge_assign_task.appeal }
       let(:appeal_id) { appeal.uuid }
 
       it_behaves_like "an appeal that can be worked overtime"
+
+      context "when appeal is assigned to attorney" do
+        before { judge_assign_task.completed! }
+
+        let(:judge_review_task) { create(:ama_judge_decision_review_task, parent: root_task, assigned_to: judge) }
+        let!(:attorney_task) { create(:ama_attorney_task, assigned_to: attorney, parent: judge_review_task) }
+
+        it_behaves_like "an appeal that can be worked overtime"
+      end
     end
 
     context "for legacy appeal" do
-      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: judge)) }
+      let(:vacols_case) { create(:case, :assigned, user: judge, as_judge_assign_task: true) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
       let(:appeal_id) { appeal.vacols_id }
 
-      let(:root_task) { create(:root_task, appeal: appeal) }
-      let!(:judge_assign_task) { JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge) }
+      it "should have an appeal with a JudgeLegacyAssignTask" do
+        expect(LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id).map(&:class)).to eq([JudgeLegacyAssignTask])
+      end
 
       it_behaves_like "an appeal that can be worked overtime"
+
+      context "when appeal is assigned to attorney" do
+        let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: attorney)) }
+
+        it "should have an appeal with a AttorneyLegacyTask" do
+          expect(LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id).map(&:class)).to eq([AttorneyLegacyTask])
+        end
+
+        before do
+          allow_any_instance_of(AttorneyLegacyTask).to receive(:assigned_by).and_return(
+            OpenStruct.new(
+              first_name: judge.full_name,
+              last_name: judge.full_name,
+              pg_id: judge.id
+            )
+          )
+        end
+
+        it_behaves_like "an appeal that can be worked overtime"
+      end
     end
 
     context "when non-judge user modifies overtime" do
