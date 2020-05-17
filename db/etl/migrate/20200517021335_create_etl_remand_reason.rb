@@ -10,7 +10,7 @@ class CreateEtlRemandReason < ActiveRecord::Migration[5.2]
       t.index ["remand_reason_created_at"]
       t.index ["remand_reason_updated_at"]
 
-      t.string "code"
+      t.string "code", limit: 30
       t.index ["code"]
 
       t.integer "decision_issue_id"

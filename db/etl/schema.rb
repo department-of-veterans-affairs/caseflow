@@ -317,7 +317,7 @@ ActiveRecord::Schema.define(version: 2020_05_17_021335) do
   end
 
   create_table "remand_reasons", comment: "Copy of remand_reasons", force: :cascade do |t|
-    t.string "code"
+    t.string "code", limit: 30
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.integer "decision_issue_id"
     t.boolean "post_aoj"
