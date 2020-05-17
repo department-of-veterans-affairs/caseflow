@@ -207,13 +207,13 @@ people,name_suffix,string (20),,,,,,"Person name suffix, cached from BGS"
 people,participant_id,string (50) ∗,x,,,,x,
 people,updated_at,datetime ∗,x,,,,x,
 remand_reasons,,,,,,,,Copy of remand_reasons
-remand_reasons,code,string (30),,,,,x,
+remand_reasons,code,string (30),,,,,x,remand_reasons.code
 remand_reasons,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
-remand_reasons,decision_issue_id,integer,,,,,x,
+remand_reasons,decision_issue_id,integer,,,,,x,remand_reasons.decision_issue_id
 remand_reasons,id,integer (8) PK,x,x,,,,
-remand_reasons,post_aoj,boolean,,,,,x,
-remand_reasons,remand_reason_created_at,datetime,,,,,x,
-remand_reasons,remand_reason_updated_at,datetime,,,,,x,
+remand_reasons,post_aoj,boolean,,,,,x,remand_reasons.post_aoj
+remand_reasons,remand_reason_created_at,datetime,,,,,x,remand_reasons.created_at
+remand_reasons,remand_reason_updated_at,datetime,,,,,x,remand_reasons.updated_at
 remand_reasons,updated_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
 tasks,,,,,,,,Denormalized Tasks with User/Organization
 tasks,appeal_id,integer (8) ∗ FK,x,,x,,x,tasks.appeal_id

@@ -5,18 +5,18 @@ class CreateEtlRemandReason < ActiveRecord::Migration[5.2]
       t.index ["created_at"]
       t.index ["updated_at"]
 
-      t.datetime "remand_reason_created_at"
-      t.datetime "remand_reason_updated_at"
+      t.datetime "remand_reason_created_at", comment: "remand_reasons.created_at"
+      t.datetime "remand_reason_updated_at", comment: "remand_reasons.updated_at"
       t.index ["remand_reason_created_at"]
       t.index ["remand_reason_updated_at"]
 
-      t.string "code", limit: 30
+      t.string "code", limit: 30, comment: "remand_reasons.code"
       t.index ["code"]
 
-      t.integer "decision_issue_id"
+      t.integer "decision_issue_id", comment: "remand_reasons.decision_issue_id"
       t.index ["decision_issue_id"]
 
-      t.boolean "post_aoj"
+      t.boolean "post_aoj", comment: "remand_reasons.post_aoj"
       t.index ["post_aoj"]
     end
   end

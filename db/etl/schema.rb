@@ -317,12 +317,12 @@ ActiveRecord::Schema.define(version: 2020_05_17_021335) do
   end
 
   create_table "remand_reasons", comment: "Copy of remand_reasons", force: :cascade do |t|
-    t.string "code", limit: 30
+    t.string "code", limit: 30, comment: "remand_reasons.code"
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
-    t.integer "decision_issue_id"
-    t.boolean "post_aoj"
-    t.datetime "remand_reason_created_at"
-    t.datetime "remand_reason_updated_at"
+    t.integer "decision_issue_id", comment: "remand_reasons.decision_issue_id"
+    t.boolean "post_aoj", comment: "remand_reasons.post_aoj"
+    t.datetime "remand_reason_created_at", comment: "remand_reasons.created_at"
+    t.datetime "remand_reason_updated_at", comment: "remand_reasons.updated_at"
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.index ["code"], name: "index_remand_reasons_on_code"
     t.index ["created_at"], name: "index_remand_reasons_on_created_at"
