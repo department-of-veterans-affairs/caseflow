@@ -1,12 +1,18 @@
 # frozen_string_literal: true
 
-require "fuzzy_match"
-
 class AttorneySearch
   # only return results scoring at least this fraction of the top score
   RELATIVE_SCORE_THRESHOLD = 0.5
 
   attr_reader :query_text
+
+  class << self
+    # multiplier for near or exact matches, ramp up from 1x (no bonus) to 1.5x (max bonus)
+    def similarity_multiplier(one, two)
+      lev = FuzzyMatch.score_class.new(one, two).levenshtein_similar
+      lev < 0.75 ? 1 : (lev * 2 - 0.5)
+    end
+  end
 
   def initialize(query_text)
     @query_text = query_text
@@ -46,9 +52,16 @@ class AttorneySearch
     end
   end
 
-  # maps each unique candidate name to [name, Dice's coefficient, Levenshtein distance]
   def fuzzy_matched_results
-    FuzzyMatch.new(candidates_by_name.keys).find_all_with_score(query_text)
+    query_words = query_text.split
+    @fuzzy_matched_results ||= begin
+      # find_all_with_score maps each name to [name, Dice's coefficient, Levenshtein distance]
+      FuzzyMatch.new(candidates_by_name.keys).find_all_with_score(query_text).each do |result|
+        result[0].split.product(query_words).each do |pair|
+          result[1] *= self.class.similarity_multiplier(*pair)
+        end
+      end.sort_by { |result| -result[1] }
+    end
   end
 
   def top_matched_names

@@ -16,6 +16,25 @@ describe AttorneySearch do
   let!(:attorneys) { names.map { |name| create(:bgs_attorney, name: name) } }
   let(:search) { AttorneySearch.new(query_text) }
 
+  describe "#similarity_multiplier" do
+    subject { AttorneySearch.similarity_multiplier(*name_pair) }
+
+    context "names are identical" do
+      let(:name_pair) { ["BARRY", "barry"] }
+      it { is_expected.to eq 1.5 }
+    end
+
+    context "names are nearly the same" do
+      let(:name_pair) { ["BARRY", "barrey"] }
+      it { is_expected.to be_between(1.1, 1.4) }
+    end
+
+    context "names are different" do
+      let(:name_pair) { ["SHERY", "barry"] }
+      it { is_expected.to eq 1 }
+    end
+  end
+
   describe "#candidates" do
     subject { search.candidates.map(&:name) }
 
@@ -59,6 +78,12 @@ describe AttorneySearch do
     context "query approximately matches a hyphenated name" do
       let(:query_text) { "TAINA TERRENCE KLEIN" }
       it { is_expected.to start_with("TAINA TERRANCE-KLEIN") }
+    end
+
+    context "query has exact match on one name but high Dice's coefficient on another" do
+      let(:names) { ["SHERY BARROWS", "BARRY JOHNSTON"] }
+      let(:query_text) { "barry" }
+      it { is_expected.to start_with("BARRY JOHNSTON") }
     end
   end
 end
