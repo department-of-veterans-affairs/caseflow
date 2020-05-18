@@ -180,6 +180,7 @@ Rails.application.routes.draw do
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'
+    get "/attorneys", to: 'intakes#attorneys'
     get "/manager", to: 'intake_manager#index'
     get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
     get "/manager/users/:user_css_id", to: 'intake_manager#user_stats'
@@ -218,10 +219,11 @@ Rails.application.routes.draw do
     patch "/messages/:id", to: "inbox#update"
   end
 
-  resources :users, only: [:index, :update]
-  resources :users, only: [:index] do
+  resources :users, only: [:index, :update] do
+    resources :task_pages, only: [:index], controller: 'users/task_pages'
     get 'represented_organizations', on: :member
   end
+
   get 'user', to: 'users#search'
   get 'user_info/represented_organizations'
 

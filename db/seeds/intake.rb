@@ -9,6 +9,7 @@ module Seeds
       create_higher_level_review_tasks
       create_higher_level_reviews_and_supplemental_claims
       create_inbox_messages
+      create_bgs_attorneys
     end
 
     private
@@ -211,5 +212,9 @@ module Seeds
       Message.create(text: message2, detail: appeal2, user: user)
     end
     # rubocop:enable Metrics/MethodLength
+
+    def create_bgs_attorneys
+      5000.times { create(:bgs_attorney) }
+    end
   end
 end
