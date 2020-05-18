@@ -56,6 +56,7 @@ VirtualHearingLink.propTypes = {
   link: PropTypes.string,
   newWindow: PropTypes.bool,
   virtualHearing: PropTypes.shape({
+    status: PropTypes.string,
     clientHost: PropTypes.string,
     guestPin: PropTypes.number,
     hostPin: PropTypes.number,
