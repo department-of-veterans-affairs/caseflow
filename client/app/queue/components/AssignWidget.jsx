@@ -12,8 +12,7 @@ import {
   showSuccessMessage,
   resetSuccessMessages,
   setSelectedAssignee,
-  setSelectedAssigneeSecondary,
-  highlightInvalidFormItems
+  setSelectedAssigneeSecondary
 } from '../uiReducer/uiActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -87,7 +86,7 @@ class AssignWidget extends React.PureComponent {
     this.props.resetErrorMessages();
 
     if (this.props.isModal) {
-      this.props.highlightInvalidFormItems(true);
+      // QueueFlowModal will call validateForm
     } else if (!this.validateForm()) {
       return;
     }
@@ -258,7 +257,6 @@ AssignWidget.propTypes = {
   setSelectedAssignee: PropTypes.func,
   setSelectedAssigneeSecondary: PropTypes.func,
   selectedTasks: PropTypes.array,
-  highlightInvalidFormItems: PropTypes.func,
   highlightFormItems: PropTypes.bool
 };
 
@@ -285,8 +283,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage,
   resetErrorMessages,
   showSuccessMessage,
-  resetSuccessMessages,
-  highlightInvalidFormItems
+  resetSuccessMessages
 }, dispatch);
 
 export default (connect(
