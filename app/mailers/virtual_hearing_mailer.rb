@@ -7,8 +7,6 @@ class VirtualHearingMailer < ActionMailer::Base
   helper VirtualHearings::VeteranNameHelper
   helper VirtualHearings::CalendarTemplateHelper
 
-  TEST_LINK = "https://care.va.gov/webapp2/conference/test_call?name=Veteran&join=1"
-
   def cancellation(mail_recipient:, virtual_hearing: nil)
     return if mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
 
@@ -24,7 +22,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
-    @test_link = TEST_LINK
+    @test_link = virtual_hearing&.test_link(mail_recipient)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
@@ -35,7 +33,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
-    @test_link = TEST_LINK
+    @test_link = virtual_hearing&.test_link(mail_recipient)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 

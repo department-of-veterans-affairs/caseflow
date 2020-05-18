@@ -90,6 +90,18 @@ class VirtualHearing < CaseflowRecord
     "pin=#{host_pin}&role=host"
   end
 
+  def test_link(title)
+    name = if title == MailRecipient::RECIPIENT_TITLES[:representative]
+             "Representative"
+           elsif hearing&.appeal&.appellant_is_not_veteran
+             "Appellant"
+           else
+             "Veteran"
+           end
+
+   "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+  end
+
   def job_completed?
     (active? || cancelled?) && all_emails_sent?
   end
