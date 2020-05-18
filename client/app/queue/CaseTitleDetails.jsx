@@ -175,13 +175,13 @@ export class CaseTitleDetails extends React.PureComponent {
     const legacyJudgeTask = assigneeTask[0]?.type === ('JudgeLegacyDecisionReviewTask' || 'JudgeLegacyAssignTask');
     // is the current user assigned a legacy judge task if one exists
     const userIsAssignedLegacyJudgeTask = assigneeTask[0]?.assignedTo?.cssId === userCssId;
-    // is the current user assigned an ama judge task if one exists
+    // is the current user the assigned judge on an ama appeal if one exists
     // eslint-disable-next-line camelcase
-    const userIsAssignedAmaJudgeTask = appeal?.assignedJudge?.css_id === userCssId;
+    const userIsAssignedAmaJudge = appeal?.assignedJudge?.css_id === userCssId;
 
     // does the user meet one of the correct combinations of requirements to edit overtime status
     const showOvertimeButton = (((legacyAttorneyTask && userAssignedLegacyAttorneyTask) ||
-    (legacyJudgeTask && userIsAssignedLegacyJudgeTask) || userIsAssignedAmaJudgeTask) &&
+    (legacyJudgeTask && userIsAssignedLegacyJudgeTask) || userIsAssignedAmaJudge) &&
     judge) && true;
 
     return <CaseDetailTitleScaffolding>
