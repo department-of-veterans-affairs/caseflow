@@ -41,7 +41,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Add this claimant',
-      onClick: () => onSubmit({ participantId: claimant.value }),
+      onClick: () => onSubmit({ name: claimant.label, participantId: claimant.value }),
       disabled: isInvalid
     }
   ];
