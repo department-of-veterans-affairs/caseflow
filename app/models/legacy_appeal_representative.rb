@@ -14,7 +14,7 @@ class LegacyAppealRepresentative
     Representative.where(participant_id: [representative_participant_id] - [nil])
   end
 
-  def vso_rep?
+  def representative_is_vso?
     !Vso.where(participant_id: representative_participant_id).empty?
   end
 
