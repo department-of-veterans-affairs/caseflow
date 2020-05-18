@@ -37,8 +37,8 @@ class Rating
       unsorted = ratings.select do |rating|
         rating.promulgation_date && rating.promulgation_date > start_date
       end
-      
-      locked = ratings.select {|rating| rating.promulgation_date.nil?}
+
+      locked = ratings.select { |rating| rating.promulgation_date.nil? }
       locked + unsorted.sort_by(&:promulgation_date).reverse
     end
 
