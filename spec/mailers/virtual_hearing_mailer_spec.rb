@@ -207,7 +207,7 @@ describe VirtualHearingMailer do
       end
     end
 
-    if recipient == MailRecipient::RECIPIENT_TITLES[:veteran] ||
+    if recipient == MailRecipient::RECIPIENT_TITLES[:appellant] ||
        recipient == MailRecipient::RECIPIENT_TITLES[:representative]
       describe "#link" do
         it "is guest link" do
@@ -298,14 +298,14 @@ describe VirtualHearingMailer do
     it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:judge])
   end
 
-  context "for veteran" do
+  context "for appellant" do
     include_context "ama hearing"
 
-    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:veteran] }
+    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:appellant] }
 
     it_behaves_like "sends all email types"
 
-    # we expect the veteran to always see the hearing time in the regional office time zone
+    # we expect the appellant to always see the hearing time in the regional office time zone
 
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "8:30am PST" }
@@ -314,7 +314,7 @@ describe VirtualHearingMailer do
     it_behaves_like(
       "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
     )
-    it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:veteran])
+    it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:appellant])
     it_behaves_like("cancellation email body has the correct hearing location")
   end
 
