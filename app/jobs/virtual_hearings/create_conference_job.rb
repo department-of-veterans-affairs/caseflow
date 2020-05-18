@@ -63,7 +63,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     set_virtual_hearing(hearing_id, hearing_type)
 
-    log_virtual_hearing_state
+    log_virtual_hearing_state(virtual_hearing)
 
     virtual_hearing.establishment.attempted!
 
@@ -105,16 +105,9 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     fail VirtualHearingRequestCancelled if virtual_hearing.cancelled?
   end
 
-  def log_virtual_hearing_state
-    Rails.logger.info(
-      "Virtual Hearing for hearing (#{virtual_hearing.hearing_type} [#{virtual_hearing.hearing_id}])"
-    )
-    Rails.logger.info(
-      "Emails Sent: (" \
-      "veteran: [#{virtual_hearing.veteran_email_sent} | null?: #{virtual_hearing.veteran_email.nil?}], " \
-      "rep: [#{virtual_hearing.representative_email_sent} | null?: #{virtual_hearing.representative_email.nil?}], " \
-      "judge: [#{virtual_hearing.judge_email_sent} | null?: #{virtual_hearing.judge_email.nil?}])"
-    )
+  def log_virtual_hearing_state(virtual_hearing)
+    super
+
     Rails.logger.info("Active?: (#{virtual_hearing.active?})")
     Rails.logger.info("Virtual Hearing Updated At: (#{virtual_hearing.updated_at})")
     Rails.logger.info("Establishment Updated At: (#{virtual_hearing.establishment.updated_at})")
