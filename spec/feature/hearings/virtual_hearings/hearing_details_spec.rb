@@ -111,13 +111,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   end
 
   def ensure_link_present(link, disable)
-    within "#vlj-hearings-link" do
-      expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
-    end
-
-    within "#guest-hearings-link" do
-      expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
-    end
+    expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
   end
 
   context "initial hearing type is Video" do
