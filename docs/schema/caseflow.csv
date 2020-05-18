@@ -149,7 +149,6 @@ board_grant_effectuations,updated_at,datetime,,,,,x,
 cached_appeal_attributes,,,,,,,,
 cached_appeal_attributes,appeal_id,integer,,,,,x,
 cached_appeal_attributes,appeal_type,string,,,,,x,
-cached_appeal_attributes,assignee_label,string,,,,,,Who is currently most responsible for the appeal
 cached_appeal_attributes,case_type,string,,,,,x,"The case type, i.e. original, post remand, CAVC remand, etc"
 cached_appeal_attributes,closest_regional_office_city,string,,,,,x,Closest regional office to the veteran
 cached_appeal_attributes,closest_regional_office_key,string,,,,,x,Closest regional office to the veteran in 4 character key
