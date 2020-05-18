@@ -145,6 +145,11 @@ class VirtualHearing < CaseflowRecord
     update(request_cancelled: true)
   end
 
+  # checks if emails were sent to veteran and reps
+  def cancellation_emails_sent?
+    veteran_email_sent && (representative_email.nil? || representative_email_sent)
+  end
+
   private
 
   def assign_created_by_user
