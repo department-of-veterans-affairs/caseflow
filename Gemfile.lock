@@ -247,6 +247,7 @@ GEM
     foreman (0.85.0)
       thor (~> 0.19.1)
     formatador (0.2.5)
+    fuzzy_match (2.1.0)
     get_process_mem (0.2.4)
       ffi (~> 1.0)
     git (1.5.0)
@@ -630,6 +631,7 @@ DEPENDENCIES
   fast_jsonapi
   fasterer
   foreman
+  fuzzy_match
   govdelivery-tms
   guard-rspec
   holidays (~> 6.4)

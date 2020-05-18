@@ -180,6 +180,7 @@ Rails.application.routes.draw do
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'
+    get "/attorneys", to: 'intakes#attorneys'
     get "/manager", to: 'intake_manager#index'
     get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
     get "/manager/users/:user_css_id", to: 'intake_manager#user_stats'
