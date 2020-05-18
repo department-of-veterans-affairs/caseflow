@@ -215,7 +215,6 @@ ActiveRecord::Schema.define(version: 2020_05_13_140953) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
-    t.string "assignee_label", comment: "Who is currently most responsible for the appeal"
     t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
     t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "closest_regional_office_key", comment: "Closest regional office to the veteran in 4 character key"

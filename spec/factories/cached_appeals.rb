@@ -8,7 +8,6 @@ FactoryBot.define do
     case_type { "Original" }
     is_aod { false }
     appeal_id { rand(1..9_999) }
-    assignee_label  { "BVAAABSHIRE" }
     vacols_id { nil }
   end
 end
