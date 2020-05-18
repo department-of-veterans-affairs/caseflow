@@ -50,6 +50,9 @@ class AssignWidget extends React.PureComponent {
 
       return false;
     }
+
+    return true;
+
   }
 
   validTasks = () => {
@@ -62,12 +65,16 @@ class AssignWidget extends React.PureComponent {
 
       return false;
     }
+
+    return true;
   }
 
   validInstructions = () => {
     if (this.props.isModal && this.state.instructions.length === 0) {
       return false;
     }
+
+    return true;
   }
 
   validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
