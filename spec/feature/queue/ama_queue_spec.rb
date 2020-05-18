@@ -454,12 +454,7 @@ feature "AmaQueue", :all_dbs do
     end
 
     def judge_assign_to_attorney
-      visit "/queue"
-      expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
-
-      find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-      expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
-      click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id)
+      visit "/queue/#{judge_user.css_id}/assign"
 
       click_on veteran_full_name
 
