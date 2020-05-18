@@ -38,11 +38,10 @@ class AssignWidget extends React.PureComponent {
     };
   }
 
-  validateForm = () => {
-    const { selectedAssignee, selectedAssigneeSecondary, selectedTasks, isModal } = this.props;
-    const { instructions } = this.state;
+  validAssignee = () => {
+    const { selectedAssignee } = this.props;
 
-    if (!selectedAssignee) {
+    if (!selectedAssignee || (selectedAssignee === OTHER && !this.props.selectedAssigneeSecondary)) {
       if (!this.props.isModal) {
         this.props.showErrorMessage(
           { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
@@ -51,8 +50,10 @@ class AssignWidget extends React.PureComponent {
 
       return false;
     }
+  }
 
-    if (selectedTasks.length === 0) {
+  validTasks = () => {
+    if (this.props.selectedTasks.length === 0) {
       if (!this.props.isModal) {
         this.props.showErrorMessage(
           { title: COPY.ASSIGN_WIDGET_NO_TASK_TITLE,
@@ -61,23 +62,15 @@ class AssignWidget extends React.PureComponent {
 
       return false;
     }
-
-    if (selectedAssignee === OTHER && !selectedAssigneeSecondary) {
-      if (!this.props.isModal) {
-        this.props.showErrorMessage(
-          { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
-            detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
-      }
-
-      return false;
-    }
-
-    if (isModal && instructions.length === 0) {
-      return false;
-    }
-
-    return true;
   }
+
+  validInstructions = () => {
+    if (this.props.isModal && this.state.instructions.length === 0) {
+      return false;
+    }
+  }
+
+  validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
 
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
