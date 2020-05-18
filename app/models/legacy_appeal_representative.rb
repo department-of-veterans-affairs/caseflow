@@ -16,6 +16,7 @@ class LegacyAppealRepresentative
 
   def representative_is_vso?
     return false if representative_participant_id.blank?
+
     Vso.where(participant_id: representative_participant_id).any?
   end
 
