@@ -14,7 +14,7 @@ class Veteran < CaseflowRecord
   bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
-                    :service, :date_of_birth, :date_of_death, :email_address
+                    :service, :date_of_birth, :email_address
 
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
@@ -55,6 +55,7 @@ class Veteran < CaseflowRecord
 
   # key is local attribute name; value is corresponding bgs attribute name
   CACHED_BGS_ATTRIBUTES = {
+    date_of_death: :date_of_death,
     first_name: :first_name,
     last_name: :last_name,
     middle_name: :middle_name,
@@ -242,6 +243,10 @@ class Veteran < CaseflowRecord
     super || (bgs_record.is_a?(Hash) ? bgs_record[:ssn] : nil)
   end
 
+  def date_of_death
+    super || (bgs_record.is_a?(Hash) ? bgs_record[:date_of_death] : nil)
+  end
+
   def address
     @address ||= Address.new(
       address_line_1: address_line1,
@@ -264,7 +269,7 @@ class Veteran < CaseflowRecord
 
   def stale?
     (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
-      email_address.nil?)
+      email_address.nil? || self[:date_of_death].nil?)
   end
 
   def stale_attributes?
