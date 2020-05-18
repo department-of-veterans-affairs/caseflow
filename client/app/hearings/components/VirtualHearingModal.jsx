@@ -256,9 +256,11 @@ const VirtualHearingModal = (props) => {
       ?.catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
         const msg = error.response.body.errors[0].message;
+        const representativeEmailIsValid = msg.indexOf('Representative') === -1;
+        const appellantEmailIsValid = msg.indexOf('Veteran') === -1 && msg.indexOf('Appellant') === -1;
 
-        setRepresentativeEmailError(msg.indexOf('Representative') === -1 ? null : INVALID_EMAIL_FORMAT);
-        setAppellantEmailError(msg.indexOf('Veteran') === -1 ? null : INVALID_EMAIL_FORMAT);
+        setRepresentativeEmailError(representativeEmailIsValid ? null : INVALID_EMAIL_FORMAT);
+        setAppellantEmailError(appellantEmailIsValid ? null : INVALID_EMAIL_FORMAT);
       })
       ?.finally(() => setLoading(false));
   };
