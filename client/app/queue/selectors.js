@@ -130,12 +130,6 @@ export const tasksByAssignerCssIdSelector = createSelector(
     _.filter(tasks, (task) => task.assignedBy.cssId === cssId)
 );
 
-export const tasksByAddedByCssIdSelector = createSelector(
-  [tasksWithAppealSelector, getUserCssId],
-  (tasks, cssId) =>
-    _.filter(tasks, (task) => task.addedByCssId === cssId)
-);
-
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => incompleteTasksSelector(tasks)

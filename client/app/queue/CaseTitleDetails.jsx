@@ -10,7 +10,8 @@ import { bindActionCreators } from 'redux';
 
 import {
   appealWithDetailSelector,
-  tasksByAddedByCssIdSelector
+  tasksByAssignerCssIdSelector,
+  tasksByAssigneeCssIdSelector
 } from './selectors';
 import DocketTypeBadge from './../components/DocketTypeBadge';
 import CopyTextButton from '../components/CopyTextButton';
@@ -156,7 +157,8 @@ export class CaseTitleDetails extends React.PureComponent {
       taskType,
       userIsVsoEmployee,
       featureToggles,
-      task,
+      assignerTask,
+      assigneeTask,
       userCssId,
       userRole
     } = this.props;
@@ -166,9 +168,21 @@ export class CaseTitleDetails extends React.PureComponent {
       documentIdError
     } = this.state;
 
-    const showOvertimeButton = (((task[0]?.addedByCssId === userCssId) &&
+    const judge = userRole === 'Judge';
+    const legacyAttorneyTask = assignerTask[0]?.type === 'AttorneyLegacyTask';
+    // did the current user assign a legacy attorney task if one exists
+    const userAssignedLegacyAttorneyTask = assignerTask[0]?.assignedBy?.cssId === userCssId;
+    const legacyJudgeTask = assigneeTask[0]?.type === ('JudgeLegacyDecisionReviewTask' || 'JudgeLegacyAssignTask');
+    // is the current user assigned a legacy judge task if one exists
+    const userIsAssignedLegacyJudgeTask = assigneeTask[0]?.assignedTo?.cssId === userCssId;
+    // is the current user assigned an ama judge task if one exists
     // eslint-disable-next-line camelcase
-    userRole === 'Judge') || (appeal?.assignedJudge?.css_id === userCssId)) && true;
+    const userIsAssignedAmaJudgeTask = appeal?.assignedJudge?.css_id === userCssId;
+
+    // does the user meet one of the correct combinations of requirements to edit overtime status
+    const showOvertimeButton = (((legacyAttorneyTask && userAssignedLegacyAttorneyTask) ||
+    (legacyJudgeTask && userIsAssignedLegacyJudgeTask) || userIsAssignedAmaJudgeTask) &&
+    judge) && true;
 
     return <CaseDetailTitleScaffolding>
       <React.Fragment>
@@ -300,7 +314,8 @@ CaseTitleDetails.propTypes = {
   taskCssId: PropTypes.object,
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func,
-  task: PropTypes.object
+  assignerTask: PropTypes.object,
+  assigneeTask: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -308,7 +323,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    task: tasksByAddedByCssIdSelector(state),
+    assignerTask: tasksByAssignerCssIdSelector(state),
+    assigneeTask: tasksByAssigneeCssIdSelector(state),
     userRole,
     userCssId,
     canEditAod,
