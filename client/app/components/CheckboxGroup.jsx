@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const renderCheckbox = (option, onChange, values = {}) => <div className="checkbox" key={option.id}>
+const renderCheckbox = (option, onChange, disabled, values = {}) => <div className="checkbox" key={option.id}>
   <input
     name={option.id}
     onChange={onChange}
     type="checkbox"
     id={option.id}
     checked={values[option.id]}
-    disabled={option.disabled ? 'disabled' : ''}
+    disabled={option.disabled || disabled ? 'disabled' : ''}
   />
   <label htmlFor={option.id}>
     {option.label}
@@ -34,7 +34,8 @@ export default class CheckboxGroup extends React.Component {
       errorState,
       getCheckbox,
       styling,
-      strongLabel
+      strongLabel,
+      disableAll
     } = this.props;
 
     const labelContents = (
@@ -61,7 +62,7 @@ export default class CheckboxGroup extends React.Component {
         {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
-      {options.map((option) => getCheckbox(option, onChange, values))}
+      {options.map((option) => getCheckbox(option, onChange, disableAll, values))}
     </fieldset>;
   }
 }
@@ -93,5 +94,6 @@ CheckboxGroup.propTypes = {
   errorState: PropTypes.bool,
   getCheckbox: PropTypes.func,
   styling: PropTypes.object,
-  strongLabel: PropTypes.bool
+  strongLabel: PropTypes.bool,
+  disableAll: PropTypes.bool
 };
