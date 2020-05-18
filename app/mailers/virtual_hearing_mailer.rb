@@ -22,7 +22,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
-    @test_link = virtual_hearing&.test_link(mail_recipient)
+    @test_link = virtual_hearing&.test_link(mail_recipient.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
@@ -33,7 +33,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
-    @test_link = virtual_hearing&.test_link(mail_recipient)
+    @test_link = virtual_hearing&.test_link(mail_recipient.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
