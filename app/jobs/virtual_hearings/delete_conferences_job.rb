@@ -5,7 +5,9 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   application_attr :hearing_schedule
 
   class DeleteConferencesJobFailure < StandardError; end
-  class EmailsFailedToSend < StandardError; end # error for when emails fail to send
+
+  # error for when emails fail to send
+  class EmailsFailedToSend < StandardError; end
 
   before_perform do
     Rails.logger.info(
@@ -17,7 +19,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
 
     extra = {
-      application: job.class.app_name.to_s,
+      application: job.class.app_name.to_s
     }
 
     Raven.capture_exception(exception: exception, extra: extra)
@@ -59,13 +61,13 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     vh_with_pexip_errors = exception_list[Caseflow::Error::PexipApiError]
     if vh_with_pexip_errors
       Rails.logger.info("Failed to delete conferences for the following hearings: " \
-        "#{vh_with_pexip_errors.map { |vh| vh.hearing_id}}")
+        "#{vh_with_pexip_errors.map(&:hearing_id)}")
     end
 
     vh_with_email_errors = exception_list[EmailsFailedToSend]
     if vh_with_email_errors
       Rails.logger.info("Failed to send emails for the following hearings: " \
-        "#{vh_with_email_errors.map { |vh| vh.hearing_id}}")
+        "#{vh_with_email_errors.map(&:hearing_id)}")
     end
   end
 
@@ -83,8 +85,8 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   def send_cancellation_emails(virtual_hearing)
     VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
 
-    if !virtual_hearing.reload.cancellation_emails_sent?
-      fail EmailsFailedToSend #failing so we can log errors
+    if !virtual_hearing.cancellation_emails_sent?
+      fail EmailsFailedToSend # failing so we can log errors
     end
   rescue EmailsFailedToSend => error
     Rails.logger.info("Failed to send all emails for hearing (#{virtual_hearing.hearing_id})")
@@ -92,7 +94,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
     extra = {
       hearing_id: virtual_hearing.hearing_id,
-      virtual_hearing_id: virtual_hearing.id,
+      virtual_hearing_id: virtual_hearing.id
     }
     capture_exception(error: error, extra: extra)
   end

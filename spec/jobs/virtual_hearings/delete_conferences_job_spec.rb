@@ -4,7 +4,7 @@ describe VirtualHearings::DeleteConferencesJob do
   include ActiveJob::TestHelper
 
   context "#perform" do
-    shared_examples "job is retried" do |count=1|
+    shared_examples "job is retried" do |count = 1|
       it "job retries #{count} #{'time'.pluralize(count)}" do
         subject
         expect(enqueued_jobs.size).to eq(1)
