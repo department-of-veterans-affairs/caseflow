@@ -96,7 +96,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         "Copy VLJ Link "
       )
 
-      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.host_link}']") unless disable_link
+      ensure_link_present(virtual_hearing.host_link, disable_link)
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
@@ -106,7 +106,17 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         "Copy Guest Link "
       )
 
-      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.guest_link}']") unless disable_link
+      ensure_link_present(virtual_hearing.guest_link, disable_link)
+    end
+  end
+
+  def ensure_link_present(link, disable)
+    within "#vlj-hearings-link" do
+      expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
+    end
+
+    within "#guest-hearings-link" do
+      expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
     end
   end
 
