@@ -91,7 +91,8 @@ class VirtualHearing < CaseflowRecord
   end
 
   def test_link(title)
-    "https://care.va.gov/webapp2/conference/test_call?name=#{recipient_name(title)}&join=1"
+    name = title == "Veteran" : email_recipient_veteran : email_recipient_representative
+    "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
   end
 
   def job_completed?
@@ -174,13 +175,15 @@ class VirtualHearing < CaseflowRecord
     end
   end
 
-  def recipient_name(title)
-    if title == MailRecipient::RECIPIENT_TITLES[:representative]
-      "Representative"
-    elsif hearing&.appeal&.appellant_is_not_veteran
+  def email_recipient_veteran
+    if hearing&.appeal&.appellant_is_not_veteran
       "Appellant"
     else
       "Veteran"
     end
+  end
+
+  def email_recipient_representative
+    "Representative"
   end
 end
