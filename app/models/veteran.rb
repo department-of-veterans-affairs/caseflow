@@ -269,15 +269,19 @@ class Veteran < CaseflowRecord
 
   def stale?
     (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
-      email_address.nil? || self[:date_of_death].nil?)
+      email_address.nil?)
   end
 
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
     is_stale = stale?
-    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
+    is_stale ||= stale_bgs_attributes?
     is_stale
+  end
+
+  def stale_bgs_attributes?
+    CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
   end
 
   def update_cached_attributes!
@@ -383,7 +387,7 @@ class Veteran < CaseflowRecord
   end
 
   def deceased?
-    !date_of_death.nil?
+    date_of_death.present?
   end
 
   def alive?
@@ -458,7 +462,7 @@ class Veteran < CaseflowRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn, :date_of_death]
   end
 
   def military_address?
