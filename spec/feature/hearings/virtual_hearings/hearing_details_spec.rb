@@ -86,7 +86,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     end
   end
 
-  def check_virtual_hearings_links(virtual_hearing, label)
+  def check_virtual_hearings_links(virtual_hearing, label, disable_link = false)
     # Test the hearing link details
     within "#vlj-hearings-link" do
       expect(page).to have_content(
@@ -95,7 +95,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         "PIN: #{virtual_hearing.host_pin}\n" \
         "Copy VLJ Link "
       )
-      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.host_link}']")
+
+      ensure_link_present(virtual_hearing.host_link, disable_link)
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
@@ -104,8 +105,13 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         "PIN: #{virtual_hearing.guest_pin}\n" \
         "Copy Guest Link "
       )
-      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.guest_link}']")
+
+      ensure_link_present(virtual_hearing.guest_link, disable_link)
     end
+  end
+
+  def ensure_link_present(link, disable)
+    expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
   end
 
   context "initial hearing type is Video" do
@@ -257,7 +263,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         :virtual_hearing,
         :initialized,
         :all_emails_sent,
-        status: :active,
         hearing: hearing
       )
     end
@@ -290,7 +295,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   context "Links display correctly when scheduling Virtual Hearings" do
     let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
 
-    scenario "displays in progress when emails are being generated" do
+    scenario "displays in progress when the virtual hearing is being scheduled" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       # Test the links are not present
@@ -307,8 +312,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       before do
         # Mock the conference details
         virtual_hearing.alias_name = rand(1..9).to_s[0..6]
-        virtual_hearing.guest_pin = rand(1..9).to_s[0..3].to_i
-        virtual_hearing.host_pin = rand(1..9).to_s[0..3].to_i
+        virtual_hearing.generate_conference_pins
         virtual_hearing.conference_id = "0"
         virtual_hearing.established!
         hearing.reload
@@ -331,6 +335,17 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         visit "hearings/" + hearing.external_id.to_s + "/details"
         hearing.reload
         check_virtual_hearings_links_expired(virtual_hearing)
+      end
+
+      scenario "displays disabled virtual hearing link when changing emails" do
+        virtual_hearing.update(
+          veteran_email_sent: false,
+          representative_email_sent: false,
+          judge_email_sent: false
+        )
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        hearing.reload
+        check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing", true)
       end
     end
   end

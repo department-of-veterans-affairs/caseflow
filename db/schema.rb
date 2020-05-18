@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_184512) do
+ActiveRecord::Schema.define(version: 2020_05_13_140953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -154,6 +154,20 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
+  create_table "bgs_attorneys", comment: "Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.datetime "last_synced_at", comment: "The last time BGS was checked"
+    t.string "name", null: false, comment: "Name"
+    t.string "participant_id", null: false, comment: "Participant ID"
+    t.string "record_type", null: false, comment: "Known types: POA State Organization, POA National Organization, POA Attorney, POA Agent, POA Local/Regional Organization"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["created_at"], name: "index_bgs_attorneys_on_created_at"
+    t.index ["last_synced_at"], name: "index_bgs_attorneys_on_last_synced_at"
+    t.index ["name"], name: "index_bgs_attorneys_on_name"
+    t.index ["participant_id"], name: "index_bgs_attorneys_on_participant_id", unique: true
+    t.index ["updated_at"], name: "index_bgs_attorneys_on_updated_at"
+  end
+
   create_table "bgs_power_of_attorneys", comment: "Power of Attorney (POA) cached from BGS", force: :cascade do |t|
     t.string "authzn_change_clmant_addrs_ind", comment: "Authorization for POA to change claimant address"
     t.string "authzn_poa_access_ind", comment: "Authorization for POA access"
@@ -201,7 +215,6 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
-    t.string "assignee_label", comment: "Who is currently most responsible for the appeal"
     t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
     t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "closest_regional_office_key", comment: "Closest regional office to the veteran in 4 character key"
@@ -1390,9 +1403,11 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
+    t.string "guest_pin_long", limit: 11, comment: "Change the guest pin to store a longer pin with the # sign trailing"
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"
+    t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"

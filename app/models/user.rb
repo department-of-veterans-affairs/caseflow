@@ -257,22 +257,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     RegionalOffice::STATIONS[station_id]
   end
 
-  def current_case_assignments_with_views
-    appeals = current_case_assignments
-    opened_appeals = viewed_appeals(appeals.map(&:id))
-
-    appeal_streams = LegacyAppeal.fetch_appeal_streams(appeals)
-    appeal_stream_hearings = get_appeal_stream_hearings(appeal_streams)
-
-    appeals.map do |appeal|
-      appeal.to_hash(
-        viewed: opened_appeals[appeal.id],
-        issues: appeal.issues,
-        hearings: appeal_stream_hearings[appeal.id]
-      )
-    end
-  end
-
   def current_case_assignments
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
@@ -283,6 +267,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def administered_judge_teams
     administered_teams.select { |team| team.is_a?(JudgeTeam) }
+  end
+
+  def non_administered_judge_teams
+    organizations_users.non_admin.where(organization: JudgeTeam.all)
   end
 
   def user_info_for_idt
@@ -312,6 +300,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     !!JudgeTeam.for_judge(self) || judge_in_vacols?
   end
 
+  def attorney?
+    non_administered_judge_teams.any? || attorney_in_vacols?
+  end
+
   def update_status!(new_status)
     transaction do
       if new_status.eql?(Constants.USER_STATUSES.inactive)
@@ -325,7 +317,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def use_task_pages_api?
-    false
+    FeatureToggle.enabled?(:user_queue_pagination, user: self) && !attorney? && !judge?
   end
 
   def queue_tabs
@@ -337,7 +329,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def self.default_active_tab
-    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end
 
   def assigned_tasks_tab
@@ -404,12 +396,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|
       acc[appeal_id] = appeal_hearings(appeals.map(&:id))
       acc
-    end
-  end
-
-  def viewed_appeals(appeal_ids)
-    appeal_views.where(appeal_id: appeal_ids).each_with_object({}) do |appeal_view, object|
-      object[appeal_view.appeal_id] = true
     end
   end
 
