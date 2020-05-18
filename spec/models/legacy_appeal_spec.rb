@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "appeal_shared_examples"
+
 describe LegacyAppeal, :all_dbs do
   before do
     Timecop.freeze(post_ama_start_date)
@@ -295,6 +297,12 @@ describe LegacyAppeal, :all_dbs do
         subject
       end
     end
+  end
+
+  context "#overtime" do
+    let!(:vacols_case) { create(:case) }
+
+    include_examples "toggle overtime"
   end
 
   context "#nod" do

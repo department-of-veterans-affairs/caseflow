@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Controller that handles requests about tasks.
+# Often used by Caseflow Queue.
 class TasksController < ApplicationController
   include Errors
 
@@ -40,7 +42,7 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
   def index
-    tasks = QueueForRole.new(user_role).create(user: user).tasks
+    tasks = user.use_task_pages_api? ? [] : QueueForRole.new(user_role).create(user: user).tasks
     render json: { tasks: json_tasks(tasks), queue_config: queue_config }
   end
 
@@ -97,6 +99,14 @@ class TasksController < ApplicationController
     tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
+  rescue AssignHearingDispositionTask::HearingAssociationMissing => error
+    Raven.capture_exception(error)
+    render json: {
+      "errors": [
+        "title": "Missing Associated Hearing",
+        "detail": error
+      ]
+    }, status: :bad_request
   end
 
   def for_appeal
@@ -147,13 +157,12 @@ class TasksController < ApplicationController
   end
 
   def verify_view_access
-    return true unless FeatureToggle.enabled?(:scm_view_judge_assign_queue)
-
     return true if user == current_user || Judge.new(current_user).attorneys.include?(user)
 
-    if !SpecialCaseMovementTeam.singleton.user_has_access?(current_user)
-      fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by members of the Case Movement Team."
-    end
+    return true if FeatureToggle.enabled?(:scm_view_judge_assign_queue) &&
+                   current_user.member_of_organization?(SpecialCaseMovementTeam.singleton)
+
+    fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by members of the Case Movement Team."
   end
 
   def verify_task_access

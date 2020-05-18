@@ -11,7 +11,7 @@ class JudgeAssignTasksController < TasksController
   private
 
   def tasks
-    @tasks ||= ActiveRecord::Base.multi_transaction do
+    @tasks ||= ActiveRecord::Base.transaction do
       create_params.map do |create_param|
         judge_assign_task = JudgeAssignTask.find(create_param[:parent_id])
         AttorneyTaskCreator.new(judge_assign_task, create_param).call

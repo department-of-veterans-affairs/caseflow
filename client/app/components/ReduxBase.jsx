@@ -22,16 +22,15 @@ const setupStore = ({ reducer, initialState, analyticsMiddlewareArgs, enhancers 
 
   const composedEnhancers = composeEnhancers(applyMiddleware(...middleware), ...enhancers);
 
-  return createStore(reducer, initialState, composedEnhancers);
+  const store = createStore(reducer, initialState, composedEnhancers);
+
+  return store;
 };
 
 export default function ReduxBase(props) {
   const { children, reducer, initialState, enhancers, analyticsMiddlewareArgs, getStoreRef } = props;
 
-  const store = setupStore({ reducer,
-    initialState,
-    enhancers,
-    analyticsMiddlewareArgs });
+  const store = setupStore({ reducer, initialState, enhancers, analyticsMiddlewareArgs });
 
   // Dispatch relies on direct access to the store. It would be better to use connect(),
   // but for now, we will expose this to grant that access.

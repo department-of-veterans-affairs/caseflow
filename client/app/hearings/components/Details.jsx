@@ -87,10 +87,10 @@ const HearingDetails = (props) => {
         room,
         notes,
         scheduledForIsPast,
+        emailEvents: _.values(hearing?.emailEvents),
         // Transcription Request
         transcriptRequested: hearing.transcriptRequested,
-        transcriptSentDate: DateUtil.formatDateStr(transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
-        emailEvents: _.values(hearing.emailEvents)
+        transcriptSentDate: DateUtil.formatDateStr(transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
       },
       transcriptionDetailsForm: {
         // Transcription Details
@@ -160,8 +160,6 @@ const HearingDetails = (props) => {
     } else {
       hearingsFormDispatch({ type: UPDATE_VIRTUAL_HEARING, payload: null });
     }
-
-    closeVirtualHearingModal();
   };
 
   const getEditedEmails = () => {
@@ -189,7 +187,8 @@ const HearingDetails = (props) => {
       hearing: {
         ...(hearingDetailsForm || {}),
         transcription_attributes: {
-          ...(transcriptionDetailsForm || {})
+          // Always send full transcription details because a new record is created each update
+          ...(transcriptionDetailsForm ? hearingForms.transcriptionDetailsForm : {})
         },
         virtual_hearing_attributes: {
           ...(virtualHearingForm || {})
@@ -352,7 +351,7 @@ const HearingDetails = (props) => {
           hearing={hearing}
           virtualHearing={hearingForms?.virtualHearingForm}
           update={updateVirtualHearing}
-          submit={() => submit().then(closeVirtualHearingModal)}
+          submit={submit}
           closeModal={closeVirtualHearingModal}
           reset={resetVirtualHearing}
           type={virtualHearingModalType}
