@@ -109,6 +109,14 @@ available_hearing_locations,state,string,,,,,,
 available_hearing_locations,updated_at,datetime ∗,x,,,,x,
 available_hearing_locations,veteran_file_number,string,,,,,x,
 available_hearing_locations,zip_code,string,,,,,,
+bgs_attorneys,,,,,,,,Attorney data cached from BGS — used for claimants
+bgs_attorneys,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
+bgs_attorneys,id,integer (8) PK,x,x,,,,
+bgs_attorneys,last_synced_at,datetime,,,,,x,The last time BGS was checked
+bgs_attorneys,name,string ∗,x,,,,x,Name
+bgs_attorneys,participant_id,string ∗,x,,,,x,Participant ID
+bgs_attorneys,record_type,string ∗,x,,,,,"Possible types: POA State Organization,POA National Organization,POA Attorney,POA Agent,POA Local/Regional Organization"
+bgs_attorneys,updated_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 bgs_power_of_attorneys,,,,,,,,Power of Attorney (POA) cached from BGS
 bgs_power_of_attorneys,authzn_change_clmant_addrs_ind,string,,,,,,Authorization for POA to change claimant address
 bgs_power_of_attorneys,authzn_poa_access_ind,string,,,,,,Authorization for POA access
@@ -1049,9 +1057,11 @@ virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
 virtual_hearings,created_at,datetime ∗,x,,,,,
 virtual_hearings,created_by_id,integer (8) ∗ FK,x,,x,,x,User who created the virtual hearing
 virtual_hearings,guest_pin,integer,,,,,,PIN number for guests of Pexip conference
+virtual_hearings,guest_pin_long,string (11),,,,,,Change the guest pin to store a longer pin with the # sign trailing
 virtual_hearings,hearing_id,integer (8) FK,,,x,,x,Associated hearing
 virtual_hearings,hearing_type,string,,,,,x,
 virtual_hearings,host_pin,integer,,,,,,PIN number for host of Pexip conference
+virtual_hearings,host_pin_long,string (8),,,,,,Change the host pin to store a longer pin with the # sign trailing
 virtual_hearings,id,integer (8) PK,x,x,,,,
 virtual_hearings,judge_email,string,,,,,,Judge's email address
 virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge

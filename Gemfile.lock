@@ -47,12 +47,12 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 40561cdf7fc0b939d811f4bc489c598f42f5d51c
-  ref: 40561cdf7fc0b939d811f4bc489c598f42f5d51c
+  revision: b6d05017344a861b4b858c037f8b277e25ea84f2
+  ref: b6d05017344a861b4b858c037f8b277e25ea84f2
   specs:
     bgs (0.2)
       httpclient
-      nokogiri (~> 1.10.4)
+      nokogiri (~> 1.10.8)
       savon (~> 2.12)
 
 GIT
@@ -247,6 +247,7 @@ GEM
     foreman (0.85.0)
       thor (~> 0.19.1)
     formatador (0.2.5)
+    fuzzy_match (2.1.0)
     get_process_mem (0.2.4)
       ffi (~> 1.0)
     git (1.5.0)
@@ -630,6 +631,7 @@ DEPENDENCIES
   fast_jsonapi
   fasterer
   foreman
+  fuzzy_match
   govdelivery-tms
   guard-rspec
   holidays (~> 6.4)

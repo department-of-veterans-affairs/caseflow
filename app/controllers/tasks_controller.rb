@@ -42,7 +42,7 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
   def index
-    tasks = QueueForRole.new(user_role).create(user: user).tasks
+    tasks = user.use_task_pages_api? ? [] : QueueForRole.new(user_role).create(user: user).tasks
     render json: { tasks: json_tasks(tasks), queue_config: queue_config }
   end
 
