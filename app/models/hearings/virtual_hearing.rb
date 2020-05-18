@@ -91,7 +91,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   def test_link(title)
-    name = title == "Veteran" : email_recipient_veteran : email_recipient_representative
+    name = (title == "Veteran") ? email_recipient_veteran : email_recipient_representative
     "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
   end
 
