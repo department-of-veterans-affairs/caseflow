@@ -91,15 +91,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   def test_link(title)
-    name = if title == MailRecipient::RECIPIENT_TITLES[:representative]
-             "Representative"
-           elsif hearing&.appeal&.appellant_is_not_veteran
-             "Appellant"
-           else
-             "Veteran"
-           end
-
-   "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+    "https://care.va.gov/webapp2/conference/test_call?name=#{recipient_name(title)}&join=1"
   end
 
   def job_completed?
@@ -174,6 +166,16 @@ class VirtualHearing < CaseflowRecord
   def hearing_is_not_virtual
     if hearing.virtual?
       errors.add(:hearing, "hearing is already a virtual hearing")
+    end
+  end
+
+  def recipient_name(title)
+    if title == MailRecipient::RECIPIENT_TITLES[:representative]
+      "Representative"
+    elsif hearing&.appeal&.appellant_is_not_veteran
+      "Appellant"
+    else
+      "Veteran"
     end
   end
 end
