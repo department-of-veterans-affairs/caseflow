@@ -139,9 +139,13 @@ class Veteran < CaseflowRecord
   end
 
   def access_error
-    @access_error ||= nil if bgs_record.is_a?(Hash)
+    @access_error ||= nil if bgs_record_found?
   rescue BGS::ShareError => error
     error.message
+  end
+
+  def bgs_record_found?
+    bgs_record.is_a?(Hash)
   end
 
   # When two Veteran records get merged for data clean up, it can lead to multiple active phone numbers
@@ -167,7 +171,7 @@ class Veteran < CaseflowRecord
   end
 
   def incident_flash?
-    bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
+    bgs_record_found? && bgs_record[:block_cadd_ind] == "S"
   end
 
   # Postal code might be stored in address line 3 for international addresses
@@ -240,11 +244,11 @@ class Veteran < CaseflowRecord
   end
 
   def ssn
-    super || (bgs_record.is_a?(Hash) ? bgs_record[:ssn] : nil)
+    super || (bgs_record_found? ? bgs_record[:ssn] : nil)
   end
 
   def date_of_death
-    super || (bgs_record.is_a?(Hash) ? bgs_record[:date_of_death] : nil)
+    super || (bgs_record_found? ? bgs_record[:date_of_death] : nil)
   end
 
   def address
