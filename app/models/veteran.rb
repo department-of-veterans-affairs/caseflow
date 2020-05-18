@@ -387,7 +387,7 @@ class Veteran < CaseflowRecord
   end
 
   def cached_attributes_updatable?
-    accessible? && bgs_record.is_a?(Hash) && stale_attributes?
+    accessible? && bgs_record_found? && stale_attributes?
   end
 
   def deceased?

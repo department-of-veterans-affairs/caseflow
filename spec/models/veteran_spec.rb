@@ -762,7 +762,7 @@ describe Veteran, :all_dbs do
     let(:middle_name) { "Q" }
     let(:name_suffix) { "Esq" }
     let(:ssn) { "666000000" }
-    let(:date_of_death) { "12/31/2019" }
+    let(:date_of_death) { "2019-12-31" }
     let(:bgs_first_name) { first_name }
     let(:bgs_last_name) { last_name }
     let(:bgs_middle_name) { middle_name }
@@ -791,9 +791,25 @@ describe Veteran, :all_dbs do
 
     subject { veteran.stale_attributes? }
 
+    before do
+      veteran.unload_bgs_record # force it to reload from BGS
+    end
+
     context "no difference" do
       it "is false" do
         is_expected.to eq(false)
+      end
+    end
+
+    context "date_of_death does not match BGS" do
+      let(:bgs_date_of_death) { "2020-01-02" }
+
+      before do
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :date_of_death, bgs_date_of_death)
+      end
+
+      it "is true" do
+        is_expected.to eq(true)
       end
     end
 
