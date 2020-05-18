@@ -20,17 +20,17 @@ describe AttorneySearch do
     subject { AttorneySearch.similarity_multiplier(*name_pair) }
 
     context "names are identical" do
-      let(:name_pair) { ["BARRY", "barry"] }
+      let(:name_pair) { %w[BARRY barry] }
       it { is_expected.to eq 1.5 }
     end
 
     context "names are nearly the same" do
-      let(:name_pair) { ["BARRY", "barrey"] }
+      let(:name_pair) { %w[BARRY barrey] }
       it { is_expected.to be_between(1.1, 1.4) }
     end
 
     context "names are different" do
-      let(:name_pair) { ["SHERY", "barry"] }
+      let(:name_pair) { %w[SHERY barry] }
       it { is_expected.to eq 1 }
     end
   end
