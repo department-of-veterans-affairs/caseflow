@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../COPY';
-import { requestSave } from './uiReducer/uiActions';
+import { requestSave, resetSuccessMessages } from './uiReducer/uiActions';
 import { setOvertime } from './QueueActions';
 import { appealWithDetailSelector } from './selectors';
 import QueueFlowModal from './components/QueueFlowModal';
@@ -13,6 +13,11 @@ import QueueFlowModal from './components/QueueFlowModal';
 export const SetOvertimeStatusModal = (props) => {
 
   const { overtime, externalId } = props.appeal;
+
+  const onCancel = () => {
+    props.resetSuccessMessages();
+    props.history.goBack();
+  };
 
   const submit = () => {
     let successMsg;
@@ -41,7 +46,8 @@ export const SetOvertimeStatusModal = (props) => {
       <QueueFlowModal
         pathAfterSubmit={`/queue/appeals/${externalId}`}
         title={overtime ? COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_HEADER : COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_HEADER}
-        submit={submit}>
+        submit={submit}
+        onCancel={onCancel}>
         {overtime ? COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_CONFIRMATION : COPY.TASK_SNAPSHOT_MARK_AS_OVERTIME_CONFIRMATION}
       </QueueFlowModal>
     </React.Fragment>
@@ -53,6 +59,7 @@ SetOvertimeStatusModal.propTypes = {
   externalId: PropTypes.string,
   overtime: PropTypes.object,
   requestSave: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
   setOvertime: PropTypes.func
 };
 
@@ -62,6 +69,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
+  resetSuccessMessages,
   setOvertime
 }, dispatch);
 
