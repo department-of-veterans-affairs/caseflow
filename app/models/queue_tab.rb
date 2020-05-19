@@ -77,7 +77,7 @@ class QueueTab
   end
 
   def recently_closed_tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_completed
   end
 
   def on_hold_task_children

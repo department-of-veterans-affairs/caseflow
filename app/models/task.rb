@@ -60,9 +60,9 @@ class Task < CaseflowRecord
 
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
-  scope :recently_closed, -> { closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
+  scope :recently_completed, -> { complete.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
-  scope :incomplete_or_recently_closed, -> { open.or(recently_closed) }
+  scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
 
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
