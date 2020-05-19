@@ -336,7 +336,7 @@ jobs:
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test
-          - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+          - JEST_FILE: /home/circleci/test-results/jest/clover.xml
           - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
           - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
           - COVERAGE_DIR: /home/circleci/coverage
