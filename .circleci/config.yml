@@ -373,11 +373,11 @@ jobs:
 
       - store_test_results:
           name: Store test results as summary
-          path: test-results
+          path: coverage
 
       - store_artifacts:
           name: Store test results as artifact
-          path: test-results
+          path: coverage
 
       - deploy:
           name: Concatenate all logs
