@@ -43,7 +43,7 @@ class BgsContention
     end
   end
 
-  def exam_scheduled?
+  def exam_requested?
     orig_source_type_code == "EXAM"
   end
 end

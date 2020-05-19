@@ -26,7 +26,7 @@ class Intake::RequestIssueSerializer
   attribute :end_product_code
   attribute :verified_unidentified_issue
   attribute :editable, &:editable?
-  attribute :exam_scheduled, &:exam_scheduled?
+  attribute :exam_requested, &:exam_requested?
   attribute :vacols_issue do |object|
     object.vacols_issue.try(:intake_attributes)
   end

@@ -7,6 +7,7 @@ describe EndProduct do
 
   let(:end_product) do
     EndProduct.new(
+      claim_id: claim_id,
       benefit_type_code: benefit_type_code,
       claim_date: claim_date,
       claim_type_code: claim_type_code,
@@ -20,6 +21,7 @@ describe EndProduct do
     )
   end
 
+  let(:claim_id) { nil }
   let(:claim_type_code) { nil }
   let(:status_type_code) { nil }
   let(:modifier) { nil }
@@ -198,6 +200,36 @@ describe EndProduct do
     context "when suppress_acknowledgement_letter is not a boolean" do
       let(:suppress_acknowledgement_letter) { "shane" }
       it { is_expected.to be_falsey }
+    end
+  end
+
+  context "#bgs_contentions" do
+    subject { end_product.bgs_contentions }
+
+    it "returns an empty array" do
+      expect(subject.count).to eq 0
+    end
+
+    context "detect_contention_exam FeatureToggle is enabled" do
+      before { FeatureToggle.enable!(:detect_contention_exam) }
+      after { FeatureToggle.disable!(:detect_contention_exam) }
+
+      context "when there's no claim ID" do
+        let(:claim_id) { nil }
+        it "returns an empty array" do
+          expect(subject.count).to eq 0
+        end
+      end
+
+      context "when the claim has a contention" do
+        let(:claim_id) { "claim_with_contention" }
+        let!(:contention) { Generators::BgsContention.build(claim_id: claim_id) }
+
+        it "returns contentions" do
+          expect(subject.count).to eq 1
+          expect(subject.first).to be_a(BgsContention)
+        end
+      end
     end
   end
 

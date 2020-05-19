@@ -571,8 +571,8 @@ class RequestIssue < CaseflowRecord
     end_product_establishment&.bgs_contention_for_object(self)
   end
 
-  def exam_scheduled?
-    bgs_contention&.exam_scheduled?
+  def exam_requested?
+    bgs_contention&.exam_requested?
   end
 
   def editable?

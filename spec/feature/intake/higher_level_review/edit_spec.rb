@@ -146,7 +146,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       expect(page).to_not have_content("Remove issue")
       expect(page).to_not have_content("Withdraw issue")
-      expect(page).to have_content(COPY::INTAKE_CONTENTION_HAS_EXAM_SCHEDULED)
+      expect(page).to have_content(COPY::INTAKE_CONTENTION_HAS_EXAM_REQUESTED)
     end
   end
 

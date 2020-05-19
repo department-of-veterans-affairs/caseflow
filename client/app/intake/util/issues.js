@@ -131,7 +131,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       endProductCode: issue.end_product_code,
       withdrawalDate: issue.withdrawal_date,
       editable: issue.editable,
-      examScheduled: issue.exam_scheduled,
+      examRequested: issue.exam_requested,
       isUnidentified: issue.is_unidentified,
       notes: issue.notes,
       category: issue.category,
@@ -336,7 +336,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         endProductCleared: issue.endProductCleared,
         correctionType: issue.correctionType,
         editable: issue.editable,
-        examScheduled: issue.examScheduled,
+        examRequested: issue.examRequested,
         timely: issue.timely,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
@@ -384,7 +384,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         editedDescription: issue.editedDescription,
         correctionType: issue.correctionType,
         editable: issue.editable,
-        examScheduled: issue.examScheduled,
+        examRequested: issue.examRequested,
         decisionIssueId: issue.decisionIssueId,
         ratingIssueReferenceId: issue.ratingIssueReferenceId,
         ratingDecisionReferenceId: issue.ratingDecisionReferenceId
@@ -419,7 +419,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       editedDescription: issue.editedDescription,
       correctionType: issue.correctionType,
       editable: issue.editable,
-      examScheduled: issue.examScheduled,
+      examRequested: issue.examRequested,
       decisionIssueId: issue.decisionIssueId
     };
   });

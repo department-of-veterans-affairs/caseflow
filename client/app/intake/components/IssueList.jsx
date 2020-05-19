@@ -22,7 +22,7 @@ export default class IssuesList extends React.Component {
     if (issue.correctionType && issue.endProductCleared) {
       options.push({ displayText: 'Undo correction',
         value: 'undo_correction' });
-    } else if (issue.correctionType && !issue.examScheduled) {
+    } else if (issue.correctionType && !issue.examRequested) {
       options.push(
         { displayText: 'Remove issue',
           value: 'remove' }
@@ -30,7 +30,7 @@ export default class IssuesList extends React.Component {
     } else if (issue.endProductCleared) {
       options.push({ displayText: 'Correct issue',
         value: 'correct' });
-    } else if (!issue.examScheduled) {
+    } else if (!issue.examRequested) {
       if (!issue.withdrawalDate && !issue.withdrawalPending && !isDtaError) {
         if (userCanWithdrawIssues) {
           options.push(
