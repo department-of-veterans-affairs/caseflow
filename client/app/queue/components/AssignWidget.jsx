@@ -29,7 +29,13 @@ import QueueFlowModal from './QueueFlowModal';
 
 const OTHER = 'OTHER';
 
-class AssignWidget extends React.PureComponent {
+/**
+ * Widget used to assign an AttorneyTask to a user. This can be used as an addition to a page or as a modal by passing
+ * `isModal` to the component. The component displays attorneys on the judge's team first with an option to select any
+ * attorney in caseflow by selecting "Other". The full list of attorneys is preloaded into state for judges in
+ * QueueLoadingScreen.
+ */
+class AssignToAttorneyWidget extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -235,7 +241,7 @@ class AssignWidget extends React.PureComponent {
   }
 }
 
-AssignWidget.propTypes = {
+AssignToAttorneyWidget.propTypes = {
   previousAssigneeId: PropTypes.string,
   userId: PropTypes.number,
   setSavePending: PropTypes.func,
@@ -289,6 +295,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(AssignWidget));
+)(AssignToAttorneyWidget));
 
-export const AssignWidgetModal = (connect(mapStateToProps, mapDispatchToProps)(AssignWidget));
+export const AssignToAttorneyWidgetModal = (connect(mapStateToProps, mapDispatchToProps)(AssignToAttorneyWidget));

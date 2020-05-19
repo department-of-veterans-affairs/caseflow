@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 
-import { AssignWidgetModal } from './components/AssignWidget';
+import { AssignToAttorneyWidgetModal } from './components/AssignToAttorneyWidget';
 
 import COPY from '../../COPY';
 
@@ -47,7 +47,7 @@ class AssignToAttorneyModalView extends React.PureComponent {
       return null;
     }
 
-    return <AssignWidgetModal
+    return <AssignToAttorneyWidgetModal
       isModal
       match={match}
       userId={userId}
