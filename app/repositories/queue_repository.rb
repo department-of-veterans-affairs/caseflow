@@ -168,7 +168,7 @@ class QueueRepository
       end
     end
 
-    def any_task_assigned_by_user?(user, appeal)
+    def any_task_assigned_by_user?(appeal, user)
       VACOLS::Decass.where(defolder: appeal.vacols_id, demdusr: user.vacols_uniq_id).exists?
     end
 
