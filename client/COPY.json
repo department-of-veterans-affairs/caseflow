@@ -259,10 +259,8 @@
   "ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY": "Assignee",
   "ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY": "Other assignee",
   "ASSIGN_WIDGET_BUTTON_TEXT": "Assign %(numCases)s %(casePlural)s",
-  "ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL": "Assign to:",
   "ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL": "Enter the name of an attorney:",
   "ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS": "Error loading attorneys",
-  "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Caseflow Hearings!",
   "HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER": "Welcome to Your Hearing Schedule",
@@ -588,7 +586,6 @@
   "INTAKE_VETERAN_NAME_SUFFIX_ERROR": "Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.) in VBMS or Share and try again.",
   "INTAKE_VETERAN_DATE_OF_BIRTH_ERROR": "Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\" (please include zeros) in VBMS or Share and try again.",
   "INTAKE_REQUEST_ISSUE_UNTIMELY": "Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.",
-  "INTAKE_VETERAN_PAY_GRADE_INVALID": "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again.",
   "INTAKE_LEGACY_ISSUE_UNTIMELY": "Please note: The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
 

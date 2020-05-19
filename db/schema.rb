@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_13_140953) do
+ActiveRecord::Schema.define(version: 2020_05_18_200111) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1368,6 +1368,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_140953) do
   create_table "veterans", force: :cascade do |t|
     t.string "closest_regional_office"
     t.datetime "created_at"
+    t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
     t.string "file_number", null: false
     t.string "first_name"
     t.string "last_name"
