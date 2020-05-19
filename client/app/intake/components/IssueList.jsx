@@ -100,7 +100,7 @@ export default class IssuesList extends React.Component {
               </div> }
 
               <div className="issue-action">
-                {!_.isEmpty(issueActionOptions) && <Dropdown
+                {editPage && issue.editable && !_.isEmpty(issueActionOptions) && <Dropdown
                   name={`issue-action-${issue.index}`}
                   label="Actions"
                   hideLabel

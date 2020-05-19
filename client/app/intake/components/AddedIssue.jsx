@@ -161,7 +161,8 @@ AddedIssue.propTypes = {
     untimelyExemptionNotes: PropTypes.string,
     vacolsId: PropTypes.string,
     withdrawalPending: PropTypes.string,
-    withdrawalDate: PropTypes.string
+    withdrawalDate: PropTypes.string,
+    examScheduled: PropTypes.bool
   }).isRequired,
   issueIdx: PropTypes.number.isRequired,
   legacyAppeals: PropTypes.array,

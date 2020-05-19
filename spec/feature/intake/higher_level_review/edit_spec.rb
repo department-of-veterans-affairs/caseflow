@@ -131,6 +131,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     before do
+      FeatureToggle.enable!(:detect_contention_exam)
       higher_level_review.create_issues!([request_issue])
       higher_level_review.establish!
       higher_level_review.reload
@@ -138,6 +139,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       request_issue.contention.orig_source_type_code = "EXAM"
       Fakes::BGSService.end_product_store.update_contention(request_issue.contention)
     end
+    after { FeatureToggle.disable!(:detect_contention_exam) }
 
     it "prevents removal of request issue" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
