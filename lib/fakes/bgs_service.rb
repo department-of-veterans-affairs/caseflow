@@ -125,6 +125,35 @@ class Fakes::BGSService
     records.values
   end
 
+  def find_contentions_by_claim_id(claim_id)
+    contentions = self.class.end_product_store.inflated_bgs_contentions_for(claim_id)
+
+    if contentions.blank?
+      fail BGS::ShareError, "No benefit claims found with claim id: #{claim_id.to_i}"
+    end
+
+    format_contentions(contentions)
+  end
+
+  def format_contentions(contentions)
+    { contentions: contentions.empty? ? nil : contentions.map{|contention| format_contention(contention)} }
+  end
+
+  def format_contention(contention)
+    {
+      cntntn_id: contention[:reference_id],
+      clmnt_txt: contention[:text],
+      cntntn_type_cd: contention[:type_code],
+      clsfcn_id: contention[:classification_id],
+      clsfcn_txt: contention[:classification_text],
+      med_ind: contention[:medical_indicator],
+      orig_source_type_cd: contention[:orig_source_type_code],
+      begin_dt: contention[:begin_date],
+      clm_id: contention[:claim_id],
+      special_issues: contention[:special_issues]
+    }
+  end
+
   def get_veteran_record(file_number)
     self.class.get_veteran_record(file_number)
   end

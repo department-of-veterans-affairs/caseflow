@@ -22,7 +22,7 @@ export default class IssuesList extends React.Component {
     if (issue.correctionType && issue.endProductCleared) {
       options.push({ displayText: 'Undo correction',
         value: 'undo_correction' });
-    } else if (issue.correctionType) {
+    } else if (issue.correctionType && !issue.examScheduled) {
       options.push(
         { displayText: 'Remove issue',
           value: 'remove' }
@@ -30,17 +30,19 @@ export default class IssuesList extends React.Component {
     } else if (issue.endProductCleared) {
       options.push({ displayText: 'Correct issue',
         value: 'correct' });
-    } else if (!issue.withdrawalDate && !issue.withdrawalPending && !isDtaError) {
-      if (userCanWithdrawIssues) {
+    } else if (!issue.examScheduled) {
+      if (!issue.withdrawalDate && !issue.withdrawalPending && !isDtaError) {
+        if (userCanWithdrawIssues) {
+          options.push(
+            { displayText: 'Withdraw issue',
+              value: 'withdraw' }
+          );
+        }
         options.push(
-          { displayText: 'Withdraw issue',
-            value: 'withdraw' }
+          { displayText: 'Remove issue',
+            value: 'remove' }
         );
       }
-      options.push(
-        { displayText: 'Remove issue',
-          value: 'remove' }
-      );
     }
 
     return options;
@@ -73,7 +75,6 @@ export default class IssuesList extends React.Component {
             !issue.isUnidentified);
           const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key && editableIssueType &&
             editableIssueProperties);
-          const removableIssue = editPage && issue.editable && !issue.examScheduled;
 
           const issueActionOptions = this.generateIssueActionOptions(
             issue, userCanWithdrawIssues, intakeData.isDtaError
@@ -98,12 +99,8 @@ export default class IssuesList extends React.Component {
                 <span {...nonEditableIssueStyling}>{COPY.INTAKE_RATING_MAY_BE_PROCESS}</span>
               </div> }
 
-              { issue.examScheduled && <div className="issue-action">
-                <span {...nonEditableIssueStyling}>{COPY.INTAKE_CONTENTION_HAS_EXAM_SCHEDULED}</span>
-              </div> }
-
               <div className="issue-action">
-                {removableIssue && !_.isEmpty(issueActionOptions) && <Dropdown
+                {!_.isEmpty(issueActionOptions) && <Dropdown
                   name={`issue-action-${issue.index}`}
                   label="Actions"
                   hideLabel

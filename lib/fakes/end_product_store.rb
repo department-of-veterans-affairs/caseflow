@@ -8,6 +8,7 @@ class Fakes::EndProductStore < Fakes::PersistentStore
   end
 
   class Contention < OpenStruct; end
+  class BgsContention < OpenStruct; end
 
   # we call it a "child" because even though Redis has only key:value pairs,
   # logically the object is a child of an EndProduct
@@ -84,6 +85,13 @@ class Fakes::EndProductStore < Fakes::PersistentStore
     children_to_structs(contention_key(claim_id)).map { |struct| Contention.new(struct) }
   end
 
+  def inflated_bgs_contentions_for(claim_id)
+    (fetch_and_inflate(contention_key(claim_id)) || {}).values.map do |hash|
+      hash[:table][:reference_id] = hash[:table][:id]
+      BgsContention.new(hash[:table])
+    end
+  end
+
   def create_disposition(disposition)
     disposition_child_store(disposition).create
   end
@@ -112,7 +120,9 @@ class Fakes::EndProductStore < Fakes::PersistentStore
 
   def contention_child_store(contention)
     claim_id = contention.claim_id
-    ChildStore.new(parent_key: contention_key(claim_id), child: contention, child_key: contention.id)
+    ChildStore.new(
+      parent_key: contention_key(claim_id), child: contention, child_key: contention.id || contention.reference_id
+    )
   end
 
   def disposition_child_store(disposition)

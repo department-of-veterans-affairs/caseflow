@@ -129,6 +129,7 @@ class AddedIssue extends React.PureComponent {
         {issue.withdrawalDate && <p>Withdrawn on {formatDateStr(issue.withdrawalDate)}</p>}
         {issue.endProductCleared && <p>Status: Cleared, waiting for decision</p>}
         {issue.correctionType && <p className="correction-pending">{this.getCorrectionType(issue)}</p>}
+        {issue.examScheduled && <p className="added-issue-note">{COPY.INTAKE_CONTENTION_HAS_EXAM_SCHEDULED}</p>}
       </div>
     );
   }

@@ -568,7 +568,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def bgs_contention
-    end_product_establishment.bgs_contention_for_object(self)
+    end_product_establishment&.bgs_contention_for_object(self)
   end
 
   def exam_scheduled?

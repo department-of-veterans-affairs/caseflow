@@ -30,7 +30,7 @@ class BgsContention
         orig_source_type_code: bgs_data[:orig_source_type_cd],
         begin_date: bgs_data[:begin_dt],
         claim_id: bgs_data[:clm_id],
-        special_issues: ensure_array_of_hashes(bgs_data.dig(:special_issues))
+        special_issues: bgs_data.dig(:special_issues)
       )
     end
 
