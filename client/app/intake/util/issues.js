@@ -15,32 +15,32 @@ const getNonVeteranClaimant = (intakeData) => {
   return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
 };
 
-const getClaimantField = (formType, veteran, intakeData) => {
-    const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
+const getClaimantField = (veteran, intakeData) => {
+  const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
 
-    return [{
-      field: 'Claimant',
-      content: claimant
-    }];
+  return [{
+    field: 'Claimant',
+    content: claimant
+  }];
 };
 
 export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
-    if (formType === 'supplemental_claim') {
-      return true;
-    }
+  if (formType === 'supplemental_claim') {
+    return true;
+  }
 
-    if(!decisionDateStr) {
-      return true
-    }
+  if (!decisionDateStr) {
+    return true;
+  }
 
-    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+  const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
-    // we assume the timezone of the browser for all these.
-    const decisionDate = new Date(decisionDateStr)
-    const receiptDate = new Date(receiptDateStr);
-    const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
+  // we assume the timezone of the browser for all these.
+  const decisionDate = new Date(decisionDateStr);
+  const receiptDate = new Date(receiptDateStr);
+  const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
 
-    return lessThanOneYear;
+  return lessThanOneYear;
 };
 
 export const legacyIssue = (issue, legacyAppeals) => {
@@ -140,7 +140,6 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       ratingDecisionReferenceId: issue.rating_decision_reference_id,
       ratingIssueProfileDate: new Date(issue.rating_issue_profile_date).toISOString(),
       approxDecisionDate: issue.approx_decision_date,
-      decisionIssueId: issue.contested_decision_issue_id,
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,
       verifiedUnidentifiedIssue: issue.verified_unidentified_issue
@@ -228,27 +227,27 @@ const formatRatingRequestIssues = (state) => {
 
 const formatNonratingRequestIssues = (state) => {
   return (state.addedIssues || []).
-  filter((issue) => !issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
-  map((issue) => {
-    return {
-      request_issue_id: issue.id,
-      contested_decision_issue_id: issue.decisionIssueId,
-      benefit_type: issue.benefitType,
-      nonrating_issue_category: issue.category,
-      decision_text: issue.description,
-      decision_date: issue.decisionDate,
-      untimely_exemption: issue.untimelyExemption,
-      untimely_exemption_notes: issue.untimelyExemptionNotes,
-      untimely_exemption_covid: issue.untimelyExemptionCovid,
-      vacols_id: issue.vacolsId,
-      vacols_sequence_id: issue.vacolsSequenceId,
-      ineligible_due_to_id: issue.ineligibleDueToId,
-      ineligible_reason: issue.ineligibleReason,
-      edited_description: issue.editedDescription,
-      withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
-      correction_type: issue.correctionType
-    };
-  });
+    filter((issue) => !issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
+    map((issue) => {
+      return {
+        request_issue_id: issue.id,
+        contested_decision_issue_id: issue.decisionIssueId,
+        benefit_type: issue.benefitType,
+        nonrating_issue_category: issue.category,
+        decision_text: issue.description,
+        decision_date: issue.decisionDate,
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        untimely_exemption_covid: issue.untimelyExemptionCovid,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId,
+        ineligible_due_to_id: issue.ineligibleDueToId,
+        ineligible_reason: issue.ineligibleReason,
+        edited_description: issue.editedDescription,
+        withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
+        correction_type: issue.correctionType
+      };
+    });
 };
 
 export const formatIssues = (state) => {
@@ -311,7 +310,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     fields = [];
   }
 
-  let claimantField = getClaimantField(formType, veteran, intakeData);
+  let claimantField = getClaimantField(veteran, intakeData);
 
   return fields.concat(claimantField);
 };
@@ -322,7 +321,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
 
   return issues.map((issue, index) => {
     if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {
-      const issueText = issue.isUnidentified ? `Unidentified issue: no issue matched for "${issue.description}"` : issue.description
+      const issueText = issue.isUnidentified ?
+        `Unidentified issue: no issue matched for "${issue.description}"` :
+        issue.description;
+
       return {
         index,
         id: issue.id,
