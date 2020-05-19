@@ -373,7 +373,7 @@ jobs:
 
       - store_test_results:
           name: Store test results as summary
-          path: ~/test-results
+          path: test-results
 
       - store_artifacts:
           name: Store test results as artifact
