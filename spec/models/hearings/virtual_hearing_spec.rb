@@ -1,6 +1,43 @@
 # frozen_string_literal: true
 
 describe VirtualHearing do
+  def link(name)
+    "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+  end
+
+  context "#test_link" do
+    let(:virtual_hearing) do
+      build(
+        :virtual_hearing,
+        hearing: build(
+          :hearing,
+          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+        )
+      )
+    end
+
+    it "returns representative link when title is 'Representative'" do
+      recipient = "Representative"
+      expect(virtual_hearing.test_link(recipient)).to eq link(recipient)
+    end
+
+    it "returns appellant link when appellant is not the veteran" do
+      recipient = "Appellant"
+      virtual_hearing.hearing.appeal.update(veteran_is_not_claimant: true)
+      expect(virtual_hearing.test_link("Veteran")).to eq link(recipient)
+    end
+
+    it "returns veteran link when appellant is the veteran" do
+      recipient = "Veteran"
+      expect(virtual_hearing.test_link(recipient)).to eq link(recipient)
+    end
+
+    it "returns veteran link when title is not rep and appellant is the veteran" do
+      recipient = "Something"
+      expect(virtual_hearing.test_link(recipient)).to eq link("Veteran")
+    end
+  end
+
   context "#guest_pin" do
     let(:virtual_hearing) do
       create(
