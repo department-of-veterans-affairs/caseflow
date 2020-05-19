@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VirtualHearings::SendEmail
+  class RecipientIsDeceasedVeteran < StandardError; end
+
   attr_reader :virtual_hearing, :type
 
   def initialize(virtual_hearing:, type:)
@@ -9,8 +11,8 @@ class VirtualHearings::SendEmail
   end
 
   def call
-    if !virtual_hearing.veteran_email_sent
-      virtual_hearing.update!(veteran_email_sent: send_email(veteran_recipient))
+    if !virtual_hearing.appellant_email_sent
+      virtual_hearing.update!(appellant_email_sent: send_email(appellant_recipient))
     end
 
     if should_judge_receive_email?
@@ -114,7 +116,7 @@ class VirtualHearings::SendEmail
   # :nocov:
   def create_sent_hearing_email_event(recipient, external_id)
     SentHearingEmailEvent.create!(
-      hearing: virtual_hearing.hearing,
+      hearing: hearing,
       email_type: type,
       email_address: recipient.email,
       external_message_id: external_id,
@@ -128,7 +130,7 @@ class VirtualHearings::SendEmail
 
   def judge_recipient
     MailRecipient.new(
-      name: virtual_hearing.hearing.judge&.full_name,
+      name: hearing.judge&.full_name,
       email: virtual_hearing.judge_email,
       title: MailRecipient::RECIPIENT_TITLES[:judge]
     )
@@ -136,23 +138,38 @@ class VirtualHearings::SendEmail
 
   def representative_recipient
     MailRecipient.new(
-      name: virtual_hearing.hearing.appeal.representative_name,
+      name: appeal.representative_name,
       email: virtual_hearing.representative_email,
       title: MailRecipient::RECIPIENT_TITLES[:representative]
     )
   end
 
-  def veteran_recipient
-    if veteran.first_name.nil? || veteran.last_name.nil?
-      veteran.update_cached_attributes!
-    end
+  def validate_veteran_deceased
+    # Fail-safe check to ensure the recipient of an email is never a deceased veteran.
+    # Handle these on a case-by-case basis.
+    fail RecipientIsDeceasedVeteran if veteran.deceased?
+  end
+
+  def validate_veteran_name
+    veteran.update_cached_attributes! if veteran.first_name.nil? || veteran.last_name.nil?
 
     fail "Veteran name is not populated" unless veteran.first_name.present? && veteran.last_name.present?
+  end
+
+  def appellant_recipient
+    recipient_name = if appeal.appellant_is_not_veteran
+                       appeal.appellant_first_name
+                     else
+                       validate_veteran_deceased
+                       validate_veteran_name
+
+                       veteran.first_name
+                     end
 
     MailRecipient.new(
-      name: veteran.first_name,
-      email: virtual_hearing.veteran_email,
-      title: MailRecipient::RECIPIENT_TITLES[:veteran]
+      name: recipient_name,
+      email: virtual_hearing.appellant_email,
+      title: MailRecipient::RECIPIENT_TITLES[:appellant]
     )
   end
 
