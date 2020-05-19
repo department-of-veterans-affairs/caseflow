@@ -358,11 +358,11 @@ jobs:
             - ~/.cache/yarn
 
       - run:
-          name: Mocha
+          name: Jest
           command: |
-            mkdir -p ~/test-results/mocha
+            mkdir -p ~/test-results/jest
             pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --require ./test/node/register.js --require ./test/node/setup.js 'test/node/**/*-test.js'"
+            ~/project/ci-bin/capture-log "node_modules/.bin/jest -u"
 
       - run:
           name: Karma
