@@ -15,6 +15,7 @@ import {
   setSelectedAssigneeSecondary
 } from '../uiReducer/uiActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import _ from 'lodash';
@@ -28,36 +29,61 @@ import QueueFlowModal from './QueueFlowModal';
 
 const OTHER = 'OTHER';
 
-class AssignWidget extends React.PureComponent {
-  validateForm = () => {
-    const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
+/**
+ * Widget used to assign an AttorneyTask to a user. This can be used as an addition to a page or as a modal by passing
+ * `isModal` to the component. The component displays attorneys on the judge's team first with an option to select any
+ * attorney in caseflow by selecting "Other". The full list of attorneys is preloaded into state for judges in
+ * QueueLoadingScreen.
+ */
+class AssignToAttorneyWidget extends React.PureComponent {
+  constructor(props) {
+    super(props);
 
-    if (!selectedAssignee) {
-      this.props.showErrorMessage(
-        { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
-          detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
+    this.state = {
+      instructions: this.props.isModal ? this.props.selectedTasks[0].instructions : null
+    };
+  }
+
+  validAssignee = () => {
+    const { selectedAssignee } = this.props;
+
+    if (!selectedAssignee || (selectedAssignee === OTHER && !this.props.selectedAssigneeSecondary)) {
+      if (!this.props.isModal) {
+        this.props.showErrorMessage(
+          { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
+            detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
+      }
 
       return false;
     }
 
-    if (selectedTasks.length === 0) {
-      this.props.showErrorMessage(
-        { title: COPY.ASSIGN_WIDGET_NO_TASK_TITLE,
-          detail: COPY.ASSIGN_WIDGET_NO_TASK_DETAIL });
+    return true;
 
-      return false;
-    }
+  }
 
-    if (selectedAssignee === OTHER && !selectedAssigneeSecondary) {
-      this.props.showErrorMessage(
-        { title: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_TITLE,
-          detail: COPY.ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL });
+  validTasks = () => {
+    if (this.props.selectedTasks.length === 0) {
+      if (!this.props.isModal) {
+        this.props.showErrorMessage(
+          { title: COPY.ASSIGN_WIDGET_NO_TASK_TITLE,
+            detail: COPY.ASSIGN_WIDGET_NO_TASK_DETAIL });
+      }
 
       return false;
     }
 
     return true;
   }
+
+  validInstructions = () => {
+    if (this.props.isModal && this.state.instructions.length === 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
 
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
@@ -84,12 +110,15 @@ class AssignWidget extends React.PureComponent {
       userId
     } = this.props;
 
+    const { instructions } = this.state;
+
     this.props.setSavePending();
 
     return this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId,
-        previousAssigneeId }).
+        previousAssigneeId,
+        instructions }).
       then(() => {
         this.props.resetSaveState();
 
@@ -128,8 +157,11 @@ class AssignWidget extends React.PureComponent {
       selectedAssigneeSecondary,
       attorneys,
       selectedTasks,
-      savePending
+      savePending,
+      highlightFormItems,
+      isModal
     } = this.props;
+    const { instructions } = this.state;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const options = attorneysOfJudge.map(optionFromAttorney).concat([{ label: COPY.ASSIGN_WIDGET_OTHER,
@@ -145,7 +177,7 @@ class AssignWidget extends React.PureComponent {
 
     if (attorneys.data) {
       optionsOther = attorneys.data.map(optionFromAttorney);
-    } else if (this.props.isModal) {
+    } else if (isModal) {
       optionsOther = taskActionData({
         ...this.props,
         task: selectedTasks[0]
@@ -158,11 +190,11 @@ class AssignWidget extends React.PureComponent {
     }
 
     const Widget = <React.Fragment>
-      <p>{COPY.ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL}</p>
       <SearchableDropdown
         name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
         hideLabel
         searchable
+        errorMessage={isModal && highlightFormItems && !selectedOption ? 'Choose one' : null}
         options={options}
         placeholder={COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
         onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
@@ -176,13 +208,23 @@ class AssignWidget extends React.PureComponent {
             name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
             hideLabel
             searchable
+            errorMessage={isModal && highlightFormItems && !selectedOptionOther ? 'Choose one' : null}
             options={optionsOther}
             placeholder={placeholderOther}
             onChange={(option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value })}
             value={selectedOptionOther}
             styling={css({ width: '30rem' })} />
         </React.Fragment>}
-      {!this.props.isModal && <Button
+      {isModal && <React.Fragment>
+        <br />
+        <TextareaField
+          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          id="taskInstructions"
+          onChange={(value) => this.setState({ instructions: value })}
+          value={this.state.instructions} />
+      </React.Fragment> }
+      {!isModal && <Button
         onClick={this.submit}
         name={sprintf(
           COPY.ASSIGN_WIDGET_BUTTON_TEXT,
@@ -192,14 +234,14 @@ class AssignWidget extends React.PureComponent {
         loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
     </React.Fragment>;
 
-    return this.props.isModal ? <QueueFlowModal title={COPY.ASSIGN_WIDGET_MODAL_TITLE}
+    return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
       submit={this.submit} validateForm={this.validateForm}>
       {Widget}
     </QueueFlowModal> : Widget;
   }
 }
 
-AssignWidget.propTypes = {
+AssignToAttorneyWidget.propTypes = {
   previousAssigneeId: PropTypes.string,
   userId: PropTypes.number,
   setSavePending: PropTypes.func,
@@ -220,12 +262,13 @@ AssignWidget.propTypes = {
   }),
   setSelectedAssignee: PropTypes.func,
   setSelectedAssigneeSecondary: PropTypes.func,
-  selectedTasks: PropTypes.array
+  selectedTasks: PropTypes.array,
+  highlightFormItems: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {
   const { attorneysOfJudge, attorneys } = state.queue;
-  const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
+  const { selectedAssignee, selectedAssigneeSecondary, highlightFormItems } = state.ui;
   const { savePending } = state.ui.saveState;
 
   return {
@@ -233,7 +276,8 @@ const mapStateToProps = (state) => {
     selectedAssignee,
     selectedAssigneeSecondary,
     attorneys,
-    savePending
+    savePending,
+    highlightFormItems
   };
 };
 
@@ -251,6 +295,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(AssignWidget));
+)(AssignToAttorneyWidget));
 
-export const AssignWidgetModal = (connect(mapStateToProps, mapDispatchToProps)(AssignWidget));
+export const AssignToAttorneyWidgetModal = (connect(mapStateToProps, mapDispatchToProps)(AssignToAttorneyWidget));

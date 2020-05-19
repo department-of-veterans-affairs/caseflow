@@ -9,7 +9,7 @@ import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser, fetchTasksAndAppealsOfAttorney, fetchAmaTasksOfUser } from './QueueActions';
 import { selectedTasksSelector, getAssignedTasks } from './selectors';
-import AssignWidget from './components/AssignWidget';
+import AssignToAttorneyWidget from './components/AssignToAttorneyWidget';
 import {
   resetErrorMessages,
   resetSuccessMessages,
@@ -106,7 +106,7 @@ class AssignedCasesPage extends React.Component {
       <h2>{attorneyName || attorneyId}'s Cases</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
-      <AssignWidget
+      <AssignToAttorneyWidget
         previousAssigneeId={attorneyId}
         onTaskAssignment={(params) => props.reassignTasksToUser(params)}
         selectedTasks={selectedTasks} />
