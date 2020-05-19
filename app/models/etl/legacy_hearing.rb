@@ -10,14 +10,7 @@ class ETL::LegacyHearing < ETL::Hearing
       super
     rescue Caseflow::Error::VacolsRecordNotFound => error
       Rails.logger.error(error)
-      target
-    ensure
-      # whether we catch an error or not, make sure these are populated
-      target.hearing_request_type ||= "unknown"
-      target.vacols_id = original.vacols_id
-      target.scheduled_time = original.scheduled_for
-      target.judge_id = original.user_id
-      target
+      nil # skip this target
     end
   end
 end
