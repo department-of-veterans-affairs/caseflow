@@ -167,7 +167,7 @@
       "^test/(.*)$": "<rootDir>/test/$1"
     },
     "setupFilesAfterEnv": [
-      "./test/app/setup.js"
+      "./test/node/setup.js"
     ],
     "transformIgnorePatterns": [
       "node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)"
