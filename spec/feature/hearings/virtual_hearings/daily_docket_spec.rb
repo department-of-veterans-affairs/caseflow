@@ -23,7 +23,12 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
 
     hearing.reload
     expect(page).to have_no_content(COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name)
-    expect(page).to have_content(COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_HEARING_TIME"]["MESSAGE"])
+    expect(page).to have_content(
+      format(
+        COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_HEARING_TIME"]["MESSAGE"],
+        appellant_title: "Veteran"
+      )
+    )
     expect(hearing.virtual_hearing.all_emails_sent?).to eq(true)
 
     events = SentHearingEmailEvent.where(hearing_id: hearing.id)
@@ -31,7 +36,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     expect(events.where(sent_by_id: current_user.id).count).to eq 3
     expect(events.where(email_type: "updated_time_confirmation").count).to eq 3
     expect(events.where(email_address: hearing.virtual_hearing.veteran_email).count).to eq 1
-    expect(events.where(recipient_role: "veteran").count).to eq 1
+    expect(events.where(recipient_role: "appellant").count).to eq 1
     expect(events.where(email_address: hearing.virtual_hearing.representative_email).count).to eq 1
     expect(events.where(recipient_role: "representative").count).to eq 1
     expect(events.where(email_address: hearing.virtual_hearing.judge_email).count).to eq 1
