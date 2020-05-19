@@ -201,14 +201,18 @@ describe VirtualHearingMailer do
           expect(virtual_hearing.host_link).to eq(
             "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
             "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-            "pin=#{virtual_hearing.host_pin}#&role=host"
+            "pin=#{virtual_hearing.host_pin}&role=host"
           )
         end
       end
     end
 
-    if recipient == MailRecipient::RECIPIENT_TITLES[:veteran] ||
+    if recipient == MailRecipient::RECIPIENT_TITLES[:appellant] ||
        recipient == MailRecipient::RECIPIENT_TITLES[:representative]
+      it "has the test link" do
+        expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient))
+      end
+
       describe "#link" do
         it "is guest link" do
           expect(subject.html_part.body).to include(virtual_hearing.guest_link)
@@ -218,7 +222,7 @@ describe VirtualHearingMailer do
           expect(virtual_hearing.guest_link).to eq(
             "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
             "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-            "pin=#{virtual_hearing.guest_pin}#&role=guest"
+            "pin=#{virtual_hearing.guest_pin}&role=guest"
           )
         end
       end
@@ -298,14 +302,14 @@ describe VirtualHearingMailer do
     it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:judge])
   end
 
-  context "for veteran" do
+  context "for appellant" do
     include_context "ama hearing"
 
-    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:veteran] }
+    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:appellant] }
 
     it_behaves_like "sends all email types"
 
-    # we expect the veteran to always see the hearing time in the regional office time zone
+    # we expect the appellant to always see the hearing time in the regional office time zone
 
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "8:30am PST" }
@@ -314,7 +318,7 @@ describe VirtualHearingMailer do
     it_behaves_like(
       "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
     )
-    it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:veteran])
+    it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:appellant])
     it_behaves_like("cancellation email body has the correct hearing location")
   end
 

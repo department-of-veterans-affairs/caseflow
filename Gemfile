@@ -18,6 +18,7 @@ gem "console_tree_renderer", git: "https://github.com/department-of-veterans-aff
 gem "ddtrace"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
+gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
@@ -46,7 +47,7 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "~> 3.12.4"
 gem "rack", "~> 2.2.0"
-gem "rails", "5.2.4.2"
+gem "rails", "5.2.4.3"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React

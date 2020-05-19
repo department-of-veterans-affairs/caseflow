@@ -89,6 +89,26 @@ class ExternalApi::BGSService
     }
   end
 
+  # Returns hash with keys
+  #   :brthdy_dt                    :last_nm
+  #   :cmptny_decn_type_cd          :last_nm_key
+  #   :cmptny_decn_type_nm          :middle_nm
+  #   :death_hist_ind               :middle_nm_key
+  #   :dep_nbr                      :mlty_person_ind
+  #   :email_addr                   :person_type_nm
+  #   :fid_decn_categy_type_cd      :ptcpnt_dto
+  #   :fid_decn_categy_type_nm      :ptcpnt_id
+  #   :file_nbr                     :sbstnc_amt
+  #   :first_nm                     :serous_emplmt_hndcap_ind
+  #   :first_nm_key                 :spina_bifida_ind
+  #   :gender_cd,                   :ssn_nbr
+  #   :ins_file_nbr                 :ssn_vrfctn_status_type_cd
+  #   :jrn_dt                       :station_of_jurisdiction
+  #   :jrn_lctn_id                  :svc_nbr
+  #   :jrn_obj_id                   :termnl_digit_nbr
+  #   :jrn_person_id                :vet_ind
+  #   :jrn_status_type_cd
+  #   :jrn_user_id
   def fetch_person_by_ssn(ssn)
     DBService.release_db_connections
 

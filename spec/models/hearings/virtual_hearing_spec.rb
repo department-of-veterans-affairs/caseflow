@@ -1,6 +1,92 @@
 # frozen_string_literal: true
 
 describe VirtualHearing do
+  def link(name)
+    "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+  end
+
+  context "#test_link" do
+    let(:virtual_hearing) do
+      build(
+        :virtual_hearing,
+        hearing: build(
+          :hearing,
+          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+        )
+      )
+    end
+
+    it "returns representative link when title is 'Representative'" do
+      recipient = "Representative"
+      expect(virtual_hearing.test_link(recipient)).to eq link(recipient)
+    end
+
+    it "returns appellant link when appellant is not the veteran" do
+      recipient = "Appellant"
+      virtual_hearing.hearing.appeal.update(veteran_is_not_claimant: true)
+      expect(virtual_hearing.test_link("Veteran")).to eq link(recipient)
+    end
+
+    it "returns veteran link when appellant is the veteran" do
+      recipient = "Veteran"
+      expect(virtual_hearing.test_link(recipient)).to eq link(recipient)
+    end
+
+    it "returns veteran link when title is not rep and appellant is the veteran" do
+      recipient = "Something"
+      expect(virtual_hearing.test_link(recipient)).to eq link("Veteran")
+    end
+  end
+
+  context "#guest_pin" do
+    let(:virtual_hearing) do
+      create(
+        :virtual_hearing,
+        hearing: create(
+          :hearing,
+          hearing_day: create(
+            :hearing_day,
+            regional_office: "RO42",
+            request_type: HearingDay::REQUEST_TYPES[:video]
+          )
+        )
+      )
+    end
+    let(:virtual_hearing_aliased) do
+      create(
+        :virtual_hearing,
+        :initialized,
+        hearing: create(
+          :hearing,
+          hearing_day: create(
+            :hearing_day,
+            regional_office: "RO42",
+            request_type: HearingDay::REQUEST_TYPES[:video]
+          )
+        )
+      )
+    end
+
+    it "returns the database column when override is nil" do
+      # Set the DB columns to ensure they can still be accessed for older hearings
+      virtual_hearing.update(guest_pin: rand(1000..9999).to_s[0..3].to_i)
+      virtual_hearing.update(host_pin: rand(1000..9999).to_s[0..3].to_i)
+      virtual_hearing.reload
+
+      expect(virtual_hearing.guest_pin_long).to eq nil
+      expect(virtual_hearing.guest_pin.to_s.length).to eq 4
+      expect(virtual_hearing.host_pin_long).to eq nil
+      expect(virtual_hearing.host_pin.to_s.length).to eq 4
+    end
+
+    it "returns the aliased pins when set" do
+      expect(virtual_hearing_aliased[:guest_pin]).to eq nil
+      expect(virtual_hearing_aliased.guest_pin.to_s.length).to eq 11
+      expect(virtual_hearing_aliased[:host_pin]).to eq nil
+      expect(virtual_hearing_aliased.host_pin.to_s.length).to eq 8
+    end
+  end
+
   context "validation tests" do
     let(:virtual_hearing) { build(:virtual_hearing) }
 

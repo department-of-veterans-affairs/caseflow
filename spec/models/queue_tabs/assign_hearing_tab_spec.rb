@@ -182,6 +182,8 @@ describe AssignHearingTab do
     let!(:task2) { create(:schedule_hearing_task, assigned_to: assignee, appeal: appeal) }
 
     describe ".power_of_attorney_name_options" do
+      before { create(:bgs_power_of_attorney, claimant_participant_id: appeal.claimant.participant_id) }
+
       subject { tab.power_of_attorney_name_options }
 
       it "returns correct options" do

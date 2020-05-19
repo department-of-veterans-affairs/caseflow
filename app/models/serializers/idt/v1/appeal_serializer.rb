@@ -26,7 +26,7 @@ class Idt::V1::AppealSerializer
   attribute :assigned_by, &:reviewing_judge_name
 
   attribute :documents do |object|
-    object.attorney_case_reviews.map do |document|
+    object.attorney_case_reviews.sort_by(&:updated_at).reverse.map do |document|
       { written_by: document.written_by_name, document_id: document.document_id }
     end
   end
