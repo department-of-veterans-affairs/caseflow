@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_19_214329) do
+ActiveRecord::Schema.define(version: 2020_05_19_221508) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,6 +138,7 @@ ActiveRecord::Schema.define(version: 2020_05_19_214329) do
     t.datetime "rating_profile_date", comment: "decision_issues.rating_profile_date"
     t.datetime "rating_promulgation_date", comment: "decision_issues.rating_promulgation_date"
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["benefit_type"], name: "index_decision_issues_on_benefit_type"
     t.index ["created_at"], name: "index_decision_issues_on_created_at"
     t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
     t.index ["disposition"], name: "index_decision_issues_on_disposition"
