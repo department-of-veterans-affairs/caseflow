@@ -11,7 +11,6 @@ import { highlightInvalidFormItems } from '../uiReducer/uiActions';
 class QueueFlowModal extends React.PureComponent {
   constructor(props) {
     super(props);
-
     this.state = {
       loading: false
     };
