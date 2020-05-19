@@ -336,7 +336,7 @@ jobs:
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test
-          - JEST_FILE: /home/circleci/test-results/jest/coverage/clover.xml
+          - JEST_DIR: /home/circleci/test-results/jest
           - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/test-results/karma
           - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/test-results/karma/karma.xml
           - COVERAGE_DIR: /home/circleci/coverage
