@@ -19,8 +19,6 @@ global.window.requestIdleCallback = (func) => {
   func();
 };
 
-global.window.performance.now = jest.fn().mockReturnValue('RUNNING_IN_NODE');
-
 Object.keys(document.defaultView).forEach((property) => {
   if (typeof global[property] === 'undefined') {
     global[property] = document.defaultView[property];
@@ -31,4 +29,11 @@ global.navigator = {
   userAgent: 'node.js'
 };
 
-global.scrollTo = jest.fn();
+if (jest) {
+  global.window.performance.now = jest.fn().mockReturnValue('RUNNING_IN_NODE');
+  global.scrollTo = jest.fn();
+} else {
+  global.window.performance = {
+    now: () => 'RUNNING_IN_NODE'
+  };
+}
