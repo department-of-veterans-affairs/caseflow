@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const renderCheckbox = (option, onChange, disabled, values = {}) => <div className="checkbox" key={option.id}>
+const renderCheckbox = (option, onChange, values = {}, disabled = false) => <div className="checkbox" key={option.id}>
   <input
     name={option.id}
     onChange={onChange}
@@ -62,7 +62,7 @@ export default class CheckboxGroup extends React.Component {
         {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
-      {options.map((option) => getCheckbox(option, onChange, disableAll, values))}
+      {options.map((option) => getCheckbox(option, onChange, values, disableAll))}
     </fieldset>;
   }
 }
