@@ -90,6 +90,9 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         find("label", text: "No Special Issues").click
         expect(page.find("#blue_water", visible: false).checked?).to eq false
         expect(page.find("#blue_water", visible: false).disabled?).to eq true
+        find("label", text: "No Special Issues").click
+        expect(page.find("#blue_water", visible: false).checked?).to eq false
+        find("label", text: "Blue Water").click
         click_on "Continue"
 
         click_on "Continue"
