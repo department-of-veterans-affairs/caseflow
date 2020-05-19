@@ -20,7 +20,7 @@ namespace :ci do
   task default: :all
 
   desc "Run all non-spec CI scripts"
-  task other: %w[ci:verify_code_coverage lint security]
+  task other: %w[ci:verify_code_coverage lint security mocha]
 
   desc "Verify code coverge (via simplecov) after tests have been run in parallel"
   task :verify_code_coverage do
