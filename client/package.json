@@ -172,7 +172,7 @@
     "transformIgnorePatterns": [
       "node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)"
     ],
-    "collectCoverage": false,
+    "collectCoverage": true,
     "collectCoverageFrom": [
       "app/**/*.js"
     ]
