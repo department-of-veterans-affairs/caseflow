@@ -87,6 +87,17 @@ export const filterPriorIssues = (issues) =>
     /* eslint-enable no-underscore-dangle */
   );
 
+export const VETERAN_TITLE = 'Veteran';
+export const APPELLANT_TITLE = 'Appellant';
+
+/**
+ * Gets the title to use for the appellant of a hearing.
+ * @param {object} hearing -- A hearing
+ */
+export const getAppellantTitleForHearing = (hearing) => (
+  hearing?.appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE
+);
+
 export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
 
@@ -198,3 +209,16 @@ export const getChanges = (first, second) => {
 
   return deepDiff(init, current);
 };
+
+/**
+ * Method to transform an object to a list of dropdown or radio options
+ * @param {Object} object -- The object to turn into a list of options
+ * @param {Object} noneOption -- The "None" option
+ * @param {function} transformer -- Transforms the values of the object into options
+ */
+export const getOptionsFromObject = (object, noneOption, transformer) => (
+  _.concat(
+    _.map(_.values(object), transformer),
+    [noneOption]
+  )
+);

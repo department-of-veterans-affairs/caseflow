@@ -22,6 +22,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     restrictAppealIntakes: {
       $set: Boolean(featureToggles.restrictAppealIntakes)
+    },
+    attorneyFees: {
+      $set: Boolean(featureToggles.attorneyFees)
     }
   });
 };

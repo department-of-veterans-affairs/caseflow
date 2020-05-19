@@ -1,4 +1,7 @@
 /* eslint-disable max-lines */
+
+import { hot } from 'react-hot-loader/root';
+
 import querystring from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -277,7 +280,7 @@ class QueueApp extends React.PureComponent {
 
     return (
       <OrganizationQueueLoadingScreen urlToLoad={`${url}/tasks`}>
-        <OrganizationQueue {...this.props} paginationOptions={querystring.parse(window.location.search.slice(1))} />
+        <OrganizationQueue {...this.props} />
       </OrganizationQueueLoadingScreen>
     );
   };
@@ -700,7 +703,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default connect(
+export default hot(connect(
   mapStateToProps,
   mapDispatchToProps
-)(QueueApp);
+)(QueueApp));

@@ -16,7 +16,7 @@ describe JudgeTask, :all_dbs do
     let(:appeal) { create(:appeal, stream_type: stream_type) }
     let(:stream_type) { "original" }
     let(:subject_task) do
-      create(:ama_judge_task, assigned_to: judge, appeal: appeal)
+      create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end
 
     subject { subject_task.available_actions_unwrapper(user) }
@@ -296,7 +296,7 @@ describe JudgeTask, :all_dbs do
   end
 
   describe "when child task completed" do
-    let(:judge_task) { create(:ama_judge_task) }
+    let(:judge_task) { create(:ama_judge_assign_task) }
 
     subject { child_task.update!(status: Constants.TASK_STATUSES.completed) }
 
