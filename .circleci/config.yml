@@ -360,7 +360,7 @@ jobs:
       - run:
           name: Jest
           command: |
-            mkdir -p ~/test-results
+            mkdir -p ~/test-results/jest
             pushd client
             ~/project/ci-bin/capture-log "node_modules/.bin/jest -u"
 
