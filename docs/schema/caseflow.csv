@@ -109,13 +109,13 @@ available_hearing_locations,state,string,,,,,,
 available_hearing_locations,updated_at,datetime ∗,x,,,,x,
 available_hearing_locations,veteran_file_number,string,,,,,x,
 available_hearing_locations,zip_code,string,,,,,,
-bgs_attorneys,,,,,,,,Attorney data cached from BGS — used for claimants
+bgs_attorneys,,,,,,,,Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data
 bgs_attorneys,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 bgs_attorneys,id,integer (8) PK,x,x,,,,
 bgs_attorneys,last_synced_at,datetime,,,,,x,The last time BGS was checked
 bgs_attorneys,name,string ∗,x,,,,x,Name
 bgs_attorneys,participant_id,string ∗,x,,,,x,Participant ID
-bgs_attorneys,record_type,string ∗,x,,,,,"Possible types: POA State Organization,POA National Organization,POA Attorney,POA Agent,POA Local/Regional Organization"
+bgs_attorneys,record_type,string ∗,x,,,,,"Known types: POA State Organization, POA National Organization, POA Attorney, POA Agent, POA Local/Regional Organization"
 bgs_attorneys,updated_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 bgs_power_of_attorneys,,,,,,,,Power of Attorney (POA) cached from BGS
 bgs_power_of_attorneys,authzn_change_clmant_addrs_ind,string,,,,,,Authorization for POA to change claimant address
@@ -1040,6 +1040,7 @@ vbms_uploaded_documents,uploaded_to_vbms_at,datetime,,,,,,
 veterans,,,,,,,,
 veterans,closest_regional_office,string,,,,,,
 veterans,created_at,datetime,,,,,,
+veterans,date_of_death,date,,,,,,"Date of Death reported by BGS, cached locally"
 veterans,file_number,string ∗,x,,,,x,
 veterans,first_name,string ∗,x,,,,,
 veterans,id,integer (8) PK,x,x,,,,
@@ -1070,7 +1071,7 @@ virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a 
 virtual_hearings,request_cancelled,boolean,,,,,,Determines whether the user has cancelled the virtual hearing request
 virtual_hearings,updated_at,datetime ∗,x,,,,x,
 virtual_hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recently updated the virtual hearing
-virtual_hearings,veteran_email,string ∗,x,,,,,Veteran's email address
+virtual_hearings,veteran_email,string,,,,,,Veteran's email address
 virtual_hearings,veteran_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran
 virtual_hearing_establishments,,,,,,,,
 virtual_hearing_establishments,attempted_at,datetime,,,,,,Async timestamp for most recent attempt to run.

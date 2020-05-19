@@ -40,7 +40,7 @@ RSpec.describe IntakesController, :postgres do
         expect(vet).to_not be_nil
         expect(vet.first_name).to eq "Ed"
         expect(vet.last_name).to eq "Merica"
-        expect(bgs).to have_received(:fetch_veteran_info).exactly(2).times
+        expect(bgs).to have_received(:fetch_veteran_info).exactly(3).times
       end
     end
 

@@ -19,7 +19,7 @@ class AttorneyTaskCreator
       judge_assign_task.slice(:appeal, :assigned_to, :parent).merge(assigned_by: task_params[:assigned_by])
     )
     judge_assign_task.update!(status: Constants.TASK_STATUSES.completed)
-    attorney_task = AttorneyTask.create!(task_params.merge(parent: judge_review_task))
+    attorney_task = AttorneyTask.create!(Task.modify_params_for_create(task_params.merge(parent: judge_review_task)))
     [attorney_task, judge_review_task, judge_assign_task]
   end
 end

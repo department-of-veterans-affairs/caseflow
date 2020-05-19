@@ -7,6 +7,6 @@ FactoryBot.define do
 
     email_address { "test@caseflow.va.gov" }
     email_type { "confirmation" }
-    recipient_role { "veteran" }
+    recipient_role { "appellant" }
   end
 end

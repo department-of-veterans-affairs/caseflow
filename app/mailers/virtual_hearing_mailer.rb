@@ -22,7 +22,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
-    @test_link = test_link
+    @test_link = virtual_hearing&.test_link(mail_recipient.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
@@ -33,7 +33,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
-    @test_link = test_link
+    @test_link = virtual_hearing&.test_link(mail_recipient.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
@@ -57,7 +57,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
   def calendar_invite_name
     case recipient.title
-    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
+    when MailRecipient::RECIPIENT_TITLES[:appellant], MailRecipient::RECIPIENT_TITLES[:representative]
       "BoardHearing.ics"
     when MailRecipient::RECIPIENT_TITLES[:judge]
       "VirtualHearing.ics"
@@ -66,7 +66,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
   def confirmation_subject
     case recipient.title
-    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
+    when MailRecipient::RECIPIENT_TITLES[:appellant], MailRecipient::RECIPIENT_TITLES[:representative]
       "Your Board hearing has been scheduled"
     when MailRecipient::RECIPIENT_TITLES[:judge]
       hearing_date = virtual_hearing.hearing.scheduled_for.to_formatted_s(:short_date)
@@ -79,9 +79,5 @@ class VirtualHearingMailer < ActionMailer::Base
     return virtual_hearing.host_link if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
 
     virtual_hearing.guest_link
-  end
-
-  def test_link
-    "https://vc.va.gov/webapp2/conference/test_call?name=Veteran&join=1"
   end
 end

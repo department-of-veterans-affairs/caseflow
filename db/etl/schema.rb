@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_08_141923) do
+ActiveRecord::Schema.define(version: 2020_05_17_021335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -314,6 +314,23 @@ ActiveRecord::Schema.define(version: 2020_05_08_141923) do
     t.index ["created_at"], name: "index_people_on_created_at"
     t.index ["participant_id"], name: "index_people_on_participant_id"
     t.index ["updated_at"], name: "index_people_on_updated_at"
+  end
+
+  create_table "remand_reasons", comment: "Copy of remand_reasons", force: :cascade do |t|
+    t.string "code", limit: 30, comment: "remand_reasons.code"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.integer "decision_issue_id", comment: "remand_reasons.decision_issue_id"
+    t.boolean "post_aoj", comment: "remand_reasons.post_aoj"
+    t.datetime "remand_reason_created_at", comment: "remand_reasons.created_at"
+    t.datetime "remand_reason_updated_at", comment: "remand_reasons.updated_at"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["code"], name: "index_remand_reasons_on_code"
+    t.index ["created_at"], name: "index_remand_reasons_on_created_at"
+    t.index ["decision_issue_id"], name: "index_remand_reasons_on_decision_issue_id"
+    t.index ["post_aoj"], name: "index_remand_reasons_on_post_aoj"
+    t.index ["remand_reason_created_at"], name: "index_remand_reasons_on_remand_reason_created_at"
+    t.index ["remand_reason_updated_at"], name: "index_remand_reasons_on_remand_reason_updated_at"
+    t.index ["updated_at"], name: "index_remand_reasons_on_updated_at"
   end
 
   create_table "tasks", comment: "Denormalized Tasks with User/Organization", force: :cascade do |t|
