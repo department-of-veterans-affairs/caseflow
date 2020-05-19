@@ -376,10 +376,6 @@ jobs:
           path: ~/test-results
 
       - store_artifacts:
-          name: Store jest test results as artifact
-          path: ~/coverage
-
-      - store_artifacts:
           name: Store test results as artifact
           path: ~/test-results
 
