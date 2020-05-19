@@ -22,7 +22,7 @@ describe DuplicateVeteranParticipantIDFinder, :postgres do
   before do
     allow(bgs_client).to receive(:people) { people_service }
     allow(people_service).to receive(:find_by_ssn) do
-     { ptcpnt_id: second_participant_id }
+      { ptcpnt_id: second_participant_id }
     end
     allow(bgs).to receive(:fetch_veteran_info).with(file_number) { bgs_veteran_record }
     allow(BGSService).to receive(:new) { bgs }
