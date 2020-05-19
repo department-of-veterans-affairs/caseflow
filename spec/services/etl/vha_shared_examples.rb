@@ -56,7 +56,7 @@ shared_examples "VHA decision review sync" do
       let(:syncer) { described_class.new(etl_build: etl_build) }
 
       before do
-        ETL::DecisionReivew::Appeal.sync_with_original(appeal).save
+        ETL::DecisionReview::Appeal.sync_with_original(appeal).save
         ETL::DecisionReview::HigherLevelReview.sync_with_original(hlr).save
         ETL::DecisionReview::SupplementalClaim.sync_with_original(sc).save
       end
