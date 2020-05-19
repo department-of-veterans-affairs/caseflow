@@ -96,6 +96,9 @@ const taskAttributesFromRawTask = (task) => {
       cssId: task.attributes.assigned_by.css_id,
       pgId: task.attributes.assigned_by.pg_id
     },
+    cancelledBy: {
+      cssId: task.attributes.cancelled_by.css_id,
+    },
     taskId: task.id,
     parentId: task.attributes.parent_id,
     label: task.attributes.label,

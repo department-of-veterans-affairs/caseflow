@@ -43,18 +43,11 @@ class LegacyHearing < CaseflowRecord
 
   delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
            :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
-           :veteran_email_address,
+           :veteran_email_address, :appellant_address, :appellant_address_line_1, :appellant_address_line_2,
+           :appellant_city, :appellant_country, :appellant_state, :appellant_zip, :appellant_email_address,
            to: :appeal,
            allow_nil: true
-
-  delegate :external_id,
-           to: :appeal,
-           prefix: true
-
-  delegate :appellant_address, :appellant_address_line_1, :appellant_address_line_2,
-           :appellant_city, :appellant_country, :appellant_state, :appellant_zip,
-           to: :appeal,
-           allow_nil: true
+  delegate :external_id, to: :appeal, prefix: true
 
   delegate :timezone, :name, to: :regional_office, prefix: true
 
