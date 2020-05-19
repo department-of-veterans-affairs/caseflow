@@ -4,7 +4,7 @@ require_relative "./vha_shared_examples"
 
 describe ETL::VhaAppealSyncer, :etl, :all_dbs do
   let(:origin_class) { Appeal }
-  let(:target_class) { ETL::VhaAppeal }
+  let(:target_class) { ETL::DecisionReview::Appeal }
 
   before do
     create(:request_issue, benefit_type: "vha")
