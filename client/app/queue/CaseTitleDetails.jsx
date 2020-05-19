@@ -10,8 +10,8 @@ import { bindActionCreators } from 'redux';
 
 import {
   appealWithDetailSelector,
-  tasksByAssignerCssIdSelector,
-  tasksByAssigneeCssIdSelector
+  legacyJudgeTasksAssignedToUser,
+  legacyAttorneyTasksAssignedByUser
 } from './selectors';
 import DocketTypeBadge from './../components/DocketTypeBadge';
 import CopyTextButton from '../components/CopyTextButton';
@@ -157,8 +157,8 @@ export class CaseTitleDetails extends React.PureComponent {
       taskType,
       userIsVsoEmployee,
       featureToggles,
-      assignerTask,
-      assigneeTask,
+      legacyJudgeTasks,
+      legacyAttorneyTasks,
       userCssId,
       userRole
     } = this.props;
@@ -168,21 +168,12 @@ export class CaseTitleDetails extends React.PureComponent {
       documentIdError
     } = this.state;
 
-    const judge = userRole === 'Judge';
-    const legacyAttorneyTask = assignerTask[0]?.type === 'AttorneyLegacyTask';
-    // did the current user assign a legacy attorney task if one exists
-    const userAssignedLegacyAttorneyTask = assignerTask[0]?.assignedBy?.cssId === userCssId;
-    const legacyJudgeTask = assigneeTask[0]?.type === ('JudgeLegacyDecisionReviewTask' || 'JudgeLegacyAssignTask');
-    // is the current user assigned a legacy judge task if one exists
-    const userIsAssignedLegacyJudgeTask = assigneeTask[0]?.assignedTo?.cssId === userCssId;
-    // is the current user the assigned judge on an ama appeal if one exists
     // eslint-disable-next-line camelcase
     const userIsAssignedAmaJudge = appeal?.assignedJudge?.css_id === userCssId;
+    // is there a legacy judge task assigned to the user or legacy attorney task assigned by the user
+    const relevantLegacyTasks = legacyJudgeTasks.concat(legacyAttorneyTasks);
 
-    // does the user meet one of the correct combinations of requirements to edit overtime status
-    const showOvertimeButton = (((legacyAttorneyTask && userAssignedLegacyAttorneyTask) ||
-    (legacyJudgeTask && userIsAssignedLegacyJudgeTask) || userIsAssignedAmaJudge) &&
-    judge) && true;
+    const showOvertimeButton = userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge);
 
     return <CaseDetailTitleScaffolding>
       <React.Fragment>
@@ -314,8 +305,8 @@ CaseTitleDetails.propTypes = {
   taskCssId: PropTypes.object,
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func,
-  assignerTask: PropTypes.object,
-  assigneeTask: PropTypes.object
+  legacyJudgeTasks: PropTypes.object,
+  legacyAttorneyTasks: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -323,8 +314,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    assignerTask: tasksByAssignerCssIdSelector(state),
-    assigneeTask: tasksByAssigneeCssIdSelector(state),
+    legacyJudgeTasks: legacyJudgeTasksAssignedToUser(state),
+    legacyAttorneyTasks: legacyAttorneyTasksAssignedByUser(state),
     userRole,
     userCssId,
     canEditAod,
