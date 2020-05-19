@@ -51,7 +51,7 @@ describe Veteran, :all_dbs do
   let(:zip_code) { "94117" }
   let(:address_line3) { "Daisies" }
   let(:date_of_birth) { "12/21/1989" }
-  let(:service) { [{ branch_of_service: "army", pay_grade: "E4" }] }
+  let(:service) { [{ branch_of_service: "army" }] }
   let(:ssn) { "123456789" }
 
   context ".find_or_create_by_file_number" do
@@ -248,7 +248,7 @@ describe Veteran, :all_dbs do
         first_name: "June",
         last_name: "Juniper",
         name_suffix: name_suffix,
-        service: [{ branch_of_service: "army", pay_grade: "E4" }],
+        service: [{ branch_of_service: "army" }],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
@@ -473,21 +473,6 @@ describe Veteran, :all_dbs do
            char_of_svc_code: nil }]
       end
       it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003"] }
-    end
-  end
-
-  context "when veteran pay grade is invalid" do
-    subject { veteran.validate_veteran_pay_grade }
-    let(:service) do
-      [{ branch_of_service: "Army",
-         entered_on_duty_date: "06282002",
-         released_active_duty_date: "06282003",
-         pay_grade: "not valid",
-         char_of_svc_code: "TBD" }]
-    end
-
-    it "pay grade invalid" do
-      expect(subject).to eq ["invalid_pay_grade"]
     end
   end
 
