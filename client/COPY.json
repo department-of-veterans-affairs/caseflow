@@ -63,6 +63,7 @@
   "TASK_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE": "Task information",
   "TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL": "Assigned to",
   "TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL": "Assigned by",
+  "TASK_SNAPSHOT_TASK_CANCELER_LABEL": "Cancelled by",
   "TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
   "TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL": "Completed on",
   "TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL": "Cancelled on",
@@ -72,7 +73,6 @@
   "TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Decision Document ID",
   "TASK_SNAPSHOT_EDIT_DOCUMENT_ID_MODAL_TITLE": "Edit document ID",
   "TASK_SNAPSHOT_TASK_TYPE_LABEL": "Task",
-  "TASK_SNAPSHOT_TASK_FROM_LABEL": "Assigned by",
   "TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
   "TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL": "View task instructions",
   "TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL": "Hide task instructions",
@@ -586,7 +586,6 @@
   "INTAKE_VETERAN_NAME_SUFFIX_ERROR": "Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.) in VBMS or Share and try again.",
   "INTAKE_VETERAN_DATE_OF_BIRTH_ERROR": "Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\" (please include zeros) in VBMS or Share and try again.",
   "INTAKE_REQUEST_ISSUE_UNTIMELY": "Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.",
-  "INTAKE_VETERAN_PAY_GRADE_INVALID": "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again.",
   "INTAKE_LEGACY_ISSUE_UNTIMELY": "Please note: The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
 

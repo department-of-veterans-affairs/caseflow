@@ -31,7 +31,6 @@ class Veteran < CaseflowRecord
     validate :validate_city
     validate :validate_date_of_birth
     validate :validate_name_suffix
-    validate :validate_veteran_pay_grade
   end
 
   delegate :full_address, to: :address
@@ -189,12 +188,6 @@ class Veteran < CaseflowRecord
   alias address_line_3 address_line3
   alias gender sex
 
-  def pay_grades
-    return unless service
-
-    service.map { |service| service[:pay_grade] }.compact
-  end
-
   def validate_address_line
     [:address_line1, :address_line2, :address_line3].each do |address|
       address_line = instance_variable_get("@#{address}")
@@ -225,14 +218,6 @@ class Veteran < CaseflowRecord
   def validate_name_suffix
     # This regex validation checks for punctuations in the name suffix
     errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
-  end
-
-  def validate_veteran_pay_grade
-    # list of valid pay grades came from
-    # http://vbacoda.vba.va.gov/plsql/typ_val1.list_val?env=CERT&typ_grp=PAY_GRADE_TYPE [vbacoda.vba.va.gov]
-    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grade|
-      Constants.PAY_GRADES.valid_codes.exclude?(pay_grade.strip)
-    end
   end
 
   def ratings
@@ -274,7 +259,7 @@ class Veteran < CaseflowRecord
 
     return response.data if response.success?
 
-    fail response.error
+    raise response.error # rubocop:disable Style/SignalException
   end
 
   def stale?

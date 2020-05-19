@@ -209,6 +209,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           expect(page).to have_content("ASSIGNED TO\n#{judge_two.user.css_id}")
           expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
           expect(page).to have_content("TASK\n#{JudgeAssignTask.label}")
+          expect(page).to have_content("CANCELLED BY\n#{scm_user.css_id}")
         end
 
         step "reassign a JudgeDecisionReviewTask" do
