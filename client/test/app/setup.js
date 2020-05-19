@@ -19,23 +19,7 @@ global.window.requestIdleCallback = (func) => {
   func();
 };
 
-// JSDOM returns undefined for these properties, so we can mock them out globally here.
-// Every DOM element will now return 100 for its offsetHeight. We gate it with the if
-// statement since when running in watch mode, this definition got called multiple times
-// throwing an error.
-if (!global.window.HTMLElement.prototype.offsetHeight) {
-  Object.defineProperties(global.window.HTMLElement.prototype, {
-    offsetHeight: {
-      get() {
-        return 100;
-      }
-    }
-  });
-}
-
-global.window.performance = {
-  now: () => 'RUNNING_IN_NODE'
-};
+global.window.performance.now = jest.fn().mockReturnValue('RUNNING_IN_NODE');
 
 Object.keys(document.defaultView).forEach((property) => {
   if (typeof global[property] === 'undefined') {
@@ -46,3 +30,5 @@ Object.keys(document.defaultView).forEach((property) => {
 global.navigator = {
   userAgent: 'node.js'
 };
+
+global.scrollTo = jest.fn();

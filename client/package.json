@@ -5,8 +5,8 @@
   "license": "none",
   "version": "0.0.1",
   "scripts": {
-    "test": "yarn run test:karma && yarn run test:legacy",
-    "test:legacy": "NODE_ENV=test mocha  --require ./test/node/register.js --require ./test/node/setup.js 'test/node/**/*-test.js'",
+    "test": "yarn run test:karma && yarn run test:jest",
+    "test:jest": "NODE_ENV=test jest -u",
     "test:karma": "NODE_ENV=test karma start",
     "test:karma:watch": "yarn run test:karma --no-single-run",
     "test:legacy:watch": "yarn run test:legacy --watch",
@@ -64,6 +64,7 @@
     "@storybook/addons": "^5.3.18",
     "@storybook/cli": "^5.3.18",
     "@storybook/react": "^5.3.18",
+    "babel-jest": "^26.0.1",
     "babel-loader": "^8.1.0",
     "classnames": "^2.2.5",
     "core-js": "^3.4.1",
@@ -80,6 +81,7 @@
     "immutability-helper": "^3.0.1",
     "immutable": "^3.8.2",
     "imports-loader": "^0.7.1",
+    "jest": "^26.0.1",
     "lodash": "^4.17.13",
     "mark.js": "^8.11.0",
     "moment": "^2.24.0",
@@ -158,5 +160,21 @@
   "resolutions": {
     "kind-of": ">=6.0.3",
     "ws": "^1.1.5"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^app/(.*)$": "<rootDir>/app/$1",
+      "^test/(.*)$": "<rootDir>/test/$1"
+    },
+    "setupFilesAfterEnv": [
+      "./test/app/setup.js"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)"
+    ],
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "app/**/*.js"
+    ]
   }
 }
