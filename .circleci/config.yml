@@ -377,7 +377,7 @@ jobs:
 
       - store_artifacts:
           name: Store test results as artifact
-          path: ~/test-results
+          path: test-results
 
       - deploy:
           name: Concatenate all logs
