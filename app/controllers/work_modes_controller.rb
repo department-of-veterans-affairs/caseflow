@@ -36,7 +36,7 @@ class WorkModesController < ApplicationController
 
   def current_user_is_assigned_to_appeal?
     # handle case where legacy appeal has an AttorneyLegacyTask assigned by a judge
-    return true if appeal.is_a?(LegacyAppeal) && QueueRepository.any_task_assigned_by_user?(current_user, appeal)
+    return true if appeal.is_a?(LegacyAppeal) && QueueRepository.any_task_assigned_by_user?(appeal, current_user)
 
     current_user.appeal_has_task_assigned_to_user?(appeal)
   end
