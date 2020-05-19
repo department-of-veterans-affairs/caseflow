@@ -298,8 +298,6 @@ class EndProduct
     @bgs_contentions ||= begin
       if claim_id && FeatureToggle.enabled?(:detect_contention_exam, user: RequestStore.store[:current_user])
         BgsContention.fetch_all(claim_id)
-      else
-        nil
       end
     end
   end

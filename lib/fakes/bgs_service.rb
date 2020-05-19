@@ -136,7 +136,7 @@ class Fakes::BGSService
   end
 
   def format_contentions(contentions)
-    { contentions: contentions.map{ |contention| format_contention(contention) } }
+    { contentions: contentions.map { |contention| format_contention(contention) } }
   end
 
   def format_contention(contention)

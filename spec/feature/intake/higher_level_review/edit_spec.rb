@@ -144,7 +144,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
     it "prevents removal of request issue" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
-      expect(page).to_not have_css(".remove-issue")
+      expect(page).to_not have_content("Remove issue")
+      expect(page).to_not have_content("Withdraw issue")
       expect(page).to have_content(COPY::INTAKE_CONTENTION_HAS_EXAM_SCHEDULED)
     end
   end
