@@ -215,7 +215,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
             value={selectedOptionOther}
             styling={css({ width: '30rem' })} />
         </React.Fragment>}
-      {this.props.isModal && <React.Fragment>
+      {isModal && <React.Fragment>
         <br />
         <TextareaField
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
@@ -224,7 +224,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
           onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions} />
       </React.Fragment> }
-      {!this.props.isModal && <Button
+      {!isModal && <Button
         onClick={this.submit}
         name={sprintf(
           COPY.ASSIGN_WIDGET_BUTTON_TEXT,
@@ -234,7 +234,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
         loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
     </React.Fragment>;
 
-    return this.props.isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
+    return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
       submit={this.submit} validateForm={this.validateForm}>
       {Widget}
     </QueueFlowModal> : Widget;
