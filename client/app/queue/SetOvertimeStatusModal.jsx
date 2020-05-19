@@ -57,6 +57,7 @@ export const SetOvertimeStatusModal = (props) => {
 SetOvertimeStatusModal.propTypes = {
   appeal: PropTypes.object,
   externalId: PropTypes.string,
+  history: PropTypes.object,
   overtime: PropTypes.object,
   requestSave: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
