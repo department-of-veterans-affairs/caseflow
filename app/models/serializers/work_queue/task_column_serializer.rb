@@ -277,4 +277,10 @@ class WorkQueue::TaskColumnSerializer
   attribute :available_actions do
     []
   end
+
+  attribute :cancelled_by do
+    {
+      css_id: nil
+    }
+  end
 end
