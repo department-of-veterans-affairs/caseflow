@@ -147,6 +147,7 @@ detectors:
       - BulkTaskReassignment
       - Task
       - UpdateCachedAppealsAttributesJob
+      - Veteran
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
