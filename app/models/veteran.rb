@@ -401,6 +401,7 @@ class Veteran < CaseflowRecord
   def unload_bgs_record
     @bgs_record_loaded = false
     @bgs_record = nil
+    self
   end
 
   private
