@@ -1570,7 +1570,7 @@ describe Task, :all_dbs do
     end
 
     context "when the task is cancelled" do
-      context "when there are no versions to inerrogate" do
+      context "when there are no versions to interrogate" do
         before { task.update_column(:status, Constants.TASK_STATUSES.cancelled) }
 
         it "returns nil" do
@@ -1578,19 +1578,19 @@ describe Task, :all_dbs do
         end
       end
 
-      context "when there are versions to inerrogate" do
+      context "when there are versions to interrogate" do
         before { task.cancelled! }
 
         let(:first_version) { task.versions.last }
 
         context "when there is only one version" do
-          context "when there is no user definted by whodunnit" do
+          context "when there is no user defined by whodunnit" do
             it "returns nil" do
               expect(subject).to eq nil
             end
           end
 
-          context "when there is a user definted by whodunnit" do
+          context "when there is a user defined by whodunnit" do
             before { first_version.update!(whodunnit: canceler.id.to_s) }
 
             it "returns the canceler" do
