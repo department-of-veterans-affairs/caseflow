@@ -27,12 +27,16 @@ class VirtualHearing < CaseflowRecord
   before_create :assign_created_by_user
   before_save :assign_updated_by_user
 
-  validates :veteran_email, presence: true, on: :create
+  validates :appellant_email, presence: true, on: :create
   validates_email_format_of :judge_email, allow_nil: true
-  validates_email_format_of :veteran_email
+  validates_email_format_of :appellant_email
   validates_email_format_of :representative_email, allow_nil: true
   validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
+
+  # T0D0: Finish migration from veteran_email => appellant_email.
+  alias_attribute :appellant_email, :veteran_email
+  alias_attribute :appellant_email_sent, :veteran_email_sent
 
   scope :eligible_for_deletion,
         lambda {
@@ -51,7 +55,7 @@ class VirtualHearing < CaseflowRecord
         -> { where(request_cancelled: true) }
 
   def all_emails_sent?
-    veteran_email_sent &&
+    appellant_email_sent &&
       (judge_email.nil? || judge_email_sent) &&
       (representative_email.nil? || representative_email_sent)
   end
@@ -147,7 +151,7 @@ class VirtualHearing < CaseflowRecord
 
   # checks if emails were sent to veteran and reps
   def cancellation_emails_sent?
-    veteran_email_sent && (representative_email.nil? || representative_email_sent)
+    appellant_email_sent && (representative_email.nil? || representative_email_sent)
   end
 
   private

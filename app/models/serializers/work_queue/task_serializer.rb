@@ -46,6 +46,12 @@ class WorkQueue::TaskSerializer
     }
   end
 
+  attribute :cancelled_by do |object|
+    {
+      css_id: object.cancelled_by.try(:css_id)
+    }
+  end
+
   attribute :assignee_name do |object|
     object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
   end
