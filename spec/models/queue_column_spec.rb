@@ -203,5 +203,28 @@ describe QueueColumn, :all_dbs do
         end
       end
     end
+
+    context "for the assignee column" do
+      let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name }
+      let(:orgs) { create_list(:organization, 2) }
+      let(:users) { create_list(:user, 2) }
+      let(:org_1_tasks) { Task.where(id: create_list(:task, 1, assigned_to: orgs.first).map(&:id)) }
+      let(:org_2_tasks) { Task.where(id: create_list(:task, 2, assigned_to: orgs.second).map(&:id)) }
+      let(:user_1_tasks) { Task.where(id: create_list(:task, 3, assigned_to: users.first).map(&:id)) }
+      let(:user_2_tasks) { Task.where(id: create_list(:task, 4, assigned_to: users.second).map(&:id)) }
+      let(:tasks) do
+        Task.where(id: org_1_tasks.map(&:id) + org_2_tasks.map(&:id) + user_1_tasks.map(&:id) + user_2_tasks.map(&:id))
+      end
+
+      it "returns an array with all present user names" do
+        [org_1_tasks, org_2_tasks, user_1_tasks, user_2_tasks].each do |task_set|
+          assignee = task_set.first.assigned_to
+          name = assignee.is_a?(Organization) ? assignee.name : assignee.css_id
+          option = QueueColumn.filter_option_hash(name, QueueColumn.format_option_label(name, task_set.count))
+
+          expect(subject).to include(option)
+        end
+      end
+    end
   end
 end

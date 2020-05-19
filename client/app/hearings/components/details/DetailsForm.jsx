@@ -2,17 +2,23 @@ import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import classnames from 'classnames';
 
-import { HearingsUserContext } from '../../contexts/HearingsUserContext';
+import { EmailNotificationHistory } from './EmailNotificationHistory';
+import { HearingLinks } from './HearingLinks';
 import {
   HearingsFormContext,
   UPDATE_HEARING_DETAILS, UPDATE_TRANSCRIPTION, UPDATE_VIRTUAL_HEARING
 } from '../../contexts/HearingsFormContext';
+import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
   HearingRoomDropdown
 } from '../../../components/DataDropdowns/index';
-import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../../utils';
+import {
+  VIRTUAL_HEARING_HOST,
+  getAppellantTitleForHearing,
+  virtualHearingRoleForUser
+} from '../../utils';
 import {
   columnDoubleSpacer,
   columnThird,
@@ -30,34 +36,34 @@ import TextareaField from '../../../components/TextareaField';
 import TranscriptionDetailsInputs from './TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './TranscriptionRequestInputs';
-import { HearingLinks } from './HearingLinks';
-import { EmailNotificationHistory } from './EmailNotificationHistory';
 
 // Displays the emails associated with the virtual hearing.
 const EmailSection = (
   { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, dispatch, errors }
 ) => {
   const showEmailFields = (isVirtual || wasVirtual) && virtualHearing;
-  const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
 
   if (!showEmailFields) {
     return null;
   }
 
+  const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
+  const appellantTitle = getAppellantTitleForHearing(hearing);
+
   return (
     <div {...rowThirdsWithFinalSpacer}>
       <TextField
-        errorMessage={errors?.vetEmail}
-        name="Veteran Email for Notifications"
-        value={virtualHearing.veteranEmail}
+        errorMessage={errors?.appellantEmail}
+        name={`${appellantTitle} Email for Notifications`}
+        value={virtualHearing.appellantEmail}
         strongLabel
         className={[
           classnames('cf-form-textinput', 'cf-inline-field', {
-            [enablePadding]: errors?.vetEmail
+            [enablePadding]: errors?.appellantEmail
           })
         ]}
         readOnly={readOnlyEmails}
-        onChange={(veteranEmail) => dispatch({ type: UPDATE_VIRTUAL_HEARING, payload: { veteranEmail } })}
+        onChange={(appellantEmail) => dispatch({ type: UPDATE_VIRTUAL_HEARING, payload: { appellantEmail } })}
         inputStyling={maxWidthFormInput}
       />
       <TextField
@@ -78,14 +84,15 @@ const EmailSection = (
 EmailSection.propTypes = {
   dispatch: PropTypes.func,
   errors: PropTypes.shape({
-    vetEmail: PropTypes.string,
-    repEmail: PropTypes.string
+    appellantEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
   }),
   hearing: PropTypes.shape({
+    appellantIsNotVeteran: PropTypes.bool,
     scheduledForIsPast: PropTypes.bool
   }),
   virtualHearing: PropTypes.shape({
-    veteranEmail: PropTypes.string,
+    appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string,
     jobCompleted: PropTypes.bool
   }),
@@ -142,8 +149,8 @@ VirtualHearingSection.propTypes = {
     jobCompleted: PropTypes.bool
   }),
   errors: PropTypes.shape({
-    vetEmail: PropTypes.string,
-    repEmail: PropTypes.string
+    appellantEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
   }),
   wasVirtual: PropTypes.bool
 };
@@ -296,32 +303,16 @@ const DetailsForm = (props) => {
 
 DetailsForm.propTypes = {
   errors: PropTypes.shape({
-    vetEmail: PropTypes.string,
-    repEmail: PropTypes.string
+    appellantEmail: PropTypes.string,
+    representativeEmail: PropTypes.string
   }),
-  hearing: PropTypes.shape({
-    judgeId: PropTypes.string,
-    room: PropTypes.string,
-    evidenceWindowWaived: PropTypes.bool,
-    notes: PropTypes.string,
-    bvaPoc: PropTypes.string,
-    scheduledForIsPast: PropTypes.bool,
-    emailEvents: PropTypes.array
-  }),
+  isLegacy: PropTypes.bool,
+  isVirtual: PropTypes.bool,
+  openVirtualHearingModal: PropTypes.func,
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,
-  isLegacy: PropTypes.bool,
-  openVirtualHearingModal: PropTypes.func,
-  virtualHearing: PropTypes.shape({
-    veteranEmail: PropTypes.string,
-    representativeEmail: PropTypes.string,
-    status: PropTypes.string,
-    jobCompleted: PropTypes.bool
-  }),
-  isVirtual: PropTypes.bool,
   updateVirtualHearing: PropTypes.func,
-  wasVirtual: PropTypes.bool,
-  transcription: PropTypes.object
+  wasVirtual: PropTypes.bool
 };
 
 export default DetailsForm;

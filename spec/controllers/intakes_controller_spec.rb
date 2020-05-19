@@ -193,4 +193,17 @@ RSpec.describe IntakesController, :postgres do
       end
     end
   end
+
+  describe "#attorneys" do
+    it "returns the names and participant IDs of matching attorneys" do
+      create(:bgs_attorney, name: "JOHN SMITH", participant_id: "123")
+      create(:bgs_attorney, name: "KEANU REEVES", participant_id: "456")
+
+      get :attorneys, params: { query: "JON SMITH" }
+      resp = JSON.parse(response.body, symbolize_names: true)
+      expect(resp).to eq [
+        { "name": "JOHN SMITH", "participant_id": "123" }
+      ]
+    end
+  end
 end

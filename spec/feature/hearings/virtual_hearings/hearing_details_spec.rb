@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
+RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   def check_row_content(event, index)
     # Format the date the same as moment
     formatted_date = event.sent_at.strftime("%b %d, %Y, %-l:%M %P %Z").gsub(/DT/, "ST")
@@ -86,7 +86,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
     end
   end
 
-  def check_virtual_hearings_links(virtual_hearing, label)
+  def check_virtual_hearings_links(virtual_hearing, label, disable_link = false)
     # Test the hearing link details
     within "#vlj-hearings-link" do
       expect(page).to have_content(
@@ -95,7 +95,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         "PIN: #{virtual_hearing.host_pin}\n" \
         "Copy VLJ Link "
       )
-      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.host_link}']")
+
+      ensure_link_present(virtual_hearing.host_link, disable_link)
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
@@ -104,8 +105,13 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         "PIN: #{virtual_hearing.guest_pin}\n" \
         "Copy Guest Link "
       )
-      expect(page).to have_selector(:css, "a[href='#{virtual_hearing.guest_link}']")
+
+      ensure_link_present(virtual_hearing.guest_link, disable_link)
     end
+  end
+
+  def ensure_link_present(link, disable)
+    expect(page).to have_selector(:css, "a[href='#{link}']") unless disable
   end
 
   context "initial hearing type is Video" do
@@ -123,8 +129,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
-      expect(page).to have_field("Veteran Email", with: pre_loaded_veteran_email)
-      expect(page).to have_field("POA/Representative Email", with: pre_loaded_rep_email)
+      expect(page).to have_field("appellant-email", with: pre_loaded_veteran_email)
+      expect(page).to have_field("representative-email", with: pre_loaded_rep_email)
     end
 
     scenario "hearing is switched to 'Virtual'" do
@@ -132,7 +138,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
-      fill_in "vet-email", with: fill_in_veteran_email
+      fill_in "appellant-email", with: fill_in_veteran_email
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
       expect(page).to have_content(expected_alert)
@@ -150,7 +156,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(events.where(sent_by_id: current_user.id).count).to eq 2
       expect(events.where(email_type: "confirmation").count).to eq 2
       expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
-      expect(events.where(recipient_role: "veteran").count).to eq 1
+      expect(events.where(recipient_role: "appellant").count).to eq 1
       expect(events.where(email_address: pre_loaded_rep_email).count).to eq 1
       expect(events.where(recipient_role: "representative").count).to eq 1
 
@@ -166,7 +172,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
       # Fill email address and confirm changes to close the Modal
-      fill_in "vet-email", with: fill_in_veteran_email
+      fill_in "appellant-email", with: fill_in_veteran_email
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
       expect(page).to have_content(expected_alert)
 
@@ -188,7 +194,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
       # Fill email address and confirm changes to close the Modal
-      fill_in "vet-email", with: fill_in_veteran_email
+      fill_in "appellant-email", with: fill_in_veteran_email
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
       expect(page).to have_content(expected_alert)
 
@@ -289,7 +295,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
   context "Links display correctly when scheduling Virtual Hearings" do
     let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, hearing: hearing) }
 
-    scenario "displays in progress when emails are being generated" do
+    scenario "displays in progress when the virtual hearing is being scheduled" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       # Test the links are not present
@@ -329,6 +335,17 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
         visit "hearings/" + hearing.external_id.to_s + "/details"
         hearing.reload
         check_virtual_hearings_links_expired(virtual_hearing)
+      end
+
+      scenario "displays disabled virtual hearing link when changing emails" do
+        virtual_hearing.update(
+          veteran_email_sent: false,
+          representative_email_sent: false,
+          judge_email_sent: false
+        )
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        hearing.reload
+        check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing", true)
       end
     end
   end
@@ -383,15 +400,15 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
-      expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+      expect(page).to have_field("Veteran Email for Notifications", with: fill_in_veteran_email)
+      expect(page).to have_field("POA/Representative Email for Notifications", with: fill_in_rep_email)
 
       events = SentHearingEmailEvent.where(hearing_id: hearing.id)
       expect(events.count).to eq 2
       expect(events.where(sent_by_id: current_user.id).count).to eq 2
       expect(events.where(email_type: "confirmation").count).to eq 2
       expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
-      expect(events.where(recipient_role: "veteran").count).to eq 1
+      expect(events.where(recipient_role: "appellant").count).to eq 1
       expect(events.where(email_address: fill_in_rep_email).count).to eq 1
       expect(events.where(recipient_role: "representative").count).to eq 1
 
