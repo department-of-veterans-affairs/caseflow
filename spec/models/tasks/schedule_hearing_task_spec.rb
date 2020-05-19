@@ -162,11 +162,9 @@ describe ScheduleHearingTask, :all_dbs do
         end
 
         context "with non-VSO representative" do
-          include_examples "route to case storage location"
+          let!(:private_bar) { create(:private_bar, name: "test", participant_id: "098123") }
 
-          it "has at least 1 representative" do
-            expect(appeal.legacy_appeal_representative.representative_participant_id).to eq "1234"
-          end
+          include_examples "route to case storage location"
         end
 
         context "with VSO" do
