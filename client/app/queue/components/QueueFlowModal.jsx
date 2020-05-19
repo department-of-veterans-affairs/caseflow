@@ -11,31 +11,41 @@ import { highlightInvalidFormItems } from '../uiReducer/uiActions';
 class QueueFlowModal extends React.PureComponent {
   constructor(props) {
     super(props);
+
     this.state = {
-      loading: false
+      loading: false,
+      isMounted: false
     };
+  }
+
+  componentDidMount() {
+    this.setState({ isMounted: true });
+  }
+
+  componentWillUnmount() {
+    this.setState({ isMounted: false });
   }
 
   cancelHandler = () => this.props.onCancel ? this.props.onCancel() : this.props.history.goBack();
 
   closeHandler = () => this.props.history.replace(this.props.pathAfterSubmit);
 
-  setLoading = (loading) => this.setState({ loading });
+  setLoading = (loading) => this.state.isMounted && this.setState({ loading });
 
   submit = () => {
     const { validateForm } = this.props;
 
     if (validateForm && !validateForm()) {
-      return this.props.highlightInvalidFormItems(true);
+      return highlightInvalidFormItems(true);
     }
 
-    this.props.highlightInvalidFormItems(false);
+    highlightInvalidFormItems(false);
     this.setState({ loading: true });
 
     this.props.
       submit().
       then(() => this.closeHandler()).
-      finally(() => this.setState({ loading: false }));
+      finally(() => this.state.isMounted && this.setState({ loading: false }));
   };
 
   render = () => {
