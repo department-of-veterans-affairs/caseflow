@@ -8,5 +8,5 @@ module.exports = {
   collectCoverage: true,
   // eslint-disable-next-line no-process-env
   coverageDirectory: process.env.JEST_DIR,
-  collectCoverageFrom: ['app/**/*.js']
+  collectCoverageFrom: ['app/**/*.{js,jsx}']
 };
