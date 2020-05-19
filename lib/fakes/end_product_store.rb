@@ -87,7 +87,7 @@ class Fakes::EndProductStore < Fakes::PersistentStore
 
   def inflated_bgs_contentions_for(claim_id)
     (fetch_and_inflate(contention_key(claim_id)) || {}).values.map do |hash|
-      hash[:table][:reference_id] = hash[:table][:id]
+      hash[:table][:reference_id] = hash[:table][:reference_id] || hash[:table][:id]
       BgsContention.new(hash[:table])
     end
   end
