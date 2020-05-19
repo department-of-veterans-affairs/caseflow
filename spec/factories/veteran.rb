@@ -7,6 +7,7 @@ FactoryBot.define do
     name_suffix { "II" }
     ssn { Generators::Random.unique_ssn }
     email_address { "#{first_name}.#{last_name}@test.com" }
+    date_of_death { nil }
 
     transient do
       bgs_veteran_record do
@@ -36,6 +37,7 @@ FactoryBot.define do
           file_number: veteran.file_number,
           ssn: veteran.ssn,
           email_address: evaluator.email_address,
+          date_of_death: veteran.date_of_death,
           # both for compatability
           ptcpnt_id: veteran.participant_id,
           participant_id: veteran.participant_id

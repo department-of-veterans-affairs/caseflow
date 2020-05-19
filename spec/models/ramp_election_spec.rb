@@ -133,7 +133,7 @@ describe RampElection, :postgres do
             limited_poa_access: nil,
             status_type_code: "PEND"
           },
-          veteran_hash: veteran.reload.to_vbms_hash,
+          veteran_hash: veteran.unload_bgs_record.reload.to_vbms_hash,
           user: nil
         )
 

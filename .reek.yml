@@ -27,6 +27,7 @@ detectors:
       - TaskSorter#sort_requires_case_norm?
       - VBMSCaseflowLogger#log
       - Veteran
+      - VirtualHearing#email_recipient_name
       - JudgeDecisionReviewTask#additional_available_actions
   UncommunicativeVariableName:
     exclude:
@@ -146,6 +147,7 @@ detectors:
       - BulkTaskReassignment
       - Task
       - UpdateCachedAppealsAttributesJob
+      - Veteran
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
