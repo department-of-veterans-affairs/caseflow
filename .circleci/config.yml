@@ -360,7 +360,7 @@ jobs:
       - run:
           name: Jest
           command: |
-            mkdir -p ~/test-results/jest
+            mkdir -p ~/test-results
             pushd client
             ~/project/ci-bin/capture-log "node_modules/.bin/jest -u"
 
@@ -373,11 +373,11 @@ jobs:
 
       - store_test_results:
           name: Store test results as summary
-          path: coverage
+          path: ~/test-results
 
       - store_artifacts:
           name: Store test results as artifact
-          path: coverage
+          path: ~/test-results
 
       - deploy:
           name: Concatenate all logs
