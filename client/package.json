@@ -6,7 +6,7 @@
   "version": "0.0.1",
   "scripts": {
     "test": "yarn run test:karma && yarn run test:jest",
-    "test:jest": "NODE_ENV=test jest --ci --reporters=default --reporters=jest-junit --testResultsProcessor=jest-junit",
+    "test:jest": "NODE_ENV=test jest -u",
     "test:karma": "NODE_ENV=test karma start",
     "test:karma:watch": "yarn run test:karma --no-single-run",
     "test:legacy:watch": "yarn run test:legacy --watch",
