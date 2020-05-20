@@ -130,6 +130,7 @@ detectors:
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
+      - ETL::Hearing#merge_original_attributes_to_target
   MissingSafeMethod:
     enabled: false
   NestedIterators:
