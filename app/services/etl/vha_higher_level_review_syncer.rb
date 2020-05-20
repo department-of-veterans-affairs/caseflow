@@ -6,6 +6,6 @@ class ETL::VhaHigherLevelReviewSyncer < ETL::VhaClaimReviewSyncer
   end
 
   def target_class
-    ETL::VhaHigherLevelReview
+    ETL::DecisionReview::HigherLevelReview
   end
 end
