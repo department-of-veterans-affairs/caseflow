@@ -839,10 +839,6 @@ input {
   }
 }
 
-[type='checkbox']:disabled + label {
-  color: $color-gray-dark;
-}
-
 .cf-inline-form {
   line-height: 4em;
   @include clearfix;
