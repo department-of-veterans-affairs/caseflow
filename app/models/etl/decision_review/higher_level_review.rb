@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ETL::VhaHigherLevelReview < ETL::VhaDecisionReview
+class ETL::DecisionReview::HigherLevelReview < ETL::DecisionReview
   class << self
     def unique_attributes
       [
