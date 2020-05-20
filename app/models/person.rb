@@ -17,6 +17,26 @@ class Person < CaseflowRecord
     :ssn
   ].freeze
 
+  class << self
+    def find_or_create_by_participant_id(participant_id)
+      person = find_by(participant_id: participant_id)
+      return person if person
+
+      person = new(participant_id: participant_id)
+      person.update_cached_attributes! if person.found?
+      person
+    end
+
+    def find_or_create_by_ssn(ssn)
+      person = find_by(ssn: ssn)
+      return person if person
+
+      person = new(ssn: ssn)
+      person.update_cached_attributes! if person.found?
+      person
+    end
+  end
+
   def advanced_on_docket?(appeal_receipt_date)
     advanced_on_docket_based_on_age? || AdvanceOnDocketMotion.granted_for_person?(id, appeal_receipt_date)
   end
@@ -66,6 +86,10 @@ class Person < CaseflowRecord
 
   def advanced_on_docket_based_on_age?
     date_of_birth && date_of_birth < 75.years.ago
+  end
+
+  def found?
+    bgs_person.present? && bgs_person&.dig(:ssn_nbr)
   end
 
   private
