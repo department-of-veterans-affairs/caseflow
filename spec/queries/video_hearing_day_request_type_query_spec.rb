@@ -117,7 +117,7 @@ describe VideoHearingDayRequestTypeQuery do
       end
 
       context "hearing is a legacy hearing" do
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+        let(:disposition) { :H }
         let(:hearing) { create(:legacy_hearing, disposition: disposition, hearing_day: hearing_day) }
 
         include_examples "it returns correct hash with expected key and value",
