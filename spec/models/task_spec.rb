@@ -1555,4 +1555,65 @@ describe Task, :all_dbs do
       end
     end
   end
+
+  describe ".cancelled_by" do
+    let(:task) { create(:ama_task) }
+    let(:canceler) { create(:user) }
+    let(:new_canceler) { create(:user) }
+
+    subject { task.cancelled_by }
+
+    context "when the task is still active" do
+      it "returns nil" do
+        expect(subject).to eq nil
+      end
+    end
+
+    context "when the task is cancelled" do
+      context "when there are no versions to interrogate" do
+        before { task.update_column(:status, Constants.TASK_STATUSES.cancelled) }
+
+        it "returns nil" do
+          expect(subject).to eq nil
+        end
+      end
+
+      context "when there are versions to interrogate" do
+        before { task.cancelled! }
+
+        let(:first_version) { task.versions.last }
+
+        context "when there is only one version" do
+          context "when there is no user defined by whodunnit" do
+            it "returns nil" do
+              expect(subject).to eq nil
+            end
+          end
+
+          context "when there is a user defined by whodunnit" do
+            before { first_version.update!(whodunnit: canceler.id.to_s) }
+
+            it "returns the canceler" do
+              expect(subject).to eq canceler
+            end
+          end
+        end
+
+        context "when there are multiple versions" do
+          before do
+            first_version.update!(whodunnit: canceler.id.to_s)
+            task.paper_trail.save_with_version.update!(
+              object_changes: "\"---\nstatus:\n- in_progress\n- cancelled\n",
+              whodunnit: new_canceler.id.to_s,
+              created_at: first_version.created_at + 1.day
+            )
+          end
+
+          it "returns the most recent canceler" do
+            expect(subject).to eq new_canceler
+          end
+        end
+      end
+    end
+  end
 end
