@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_17_021335) do
+ActiveRecord::Schema.define(version: 2020_05_19_221508) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,6 +138,7 @@ ActiveRecord::Schema.define(version: 2020_05_17_021335) do
     t.datetime "rating_profile_date", comment: "decision_issues.rating_profile_date"
     t.datetime "rating_promulgation_date", comment: "decision_issues.rating_promulgation_date"
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.index ["benefit_type"], name: "index_decision_issues_on_benefit_type"
     t.index ["created_at"], name: "index_decision_issues_on_created_at"
     t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
     t.index ["disposition"], name: "index_decision_issues_on_disposition"
@@ -147,6 +148,56 @@ ActiveRecord::Schema.define(version: 2020_05_17_021335) do
     t.index ["participant_id"], name: "index_decision_issues_on_participant_id"
     t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "index_decision_issues_uniq", unique: true
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
+  end
+
+  create_table "decision_reviews", comment: "Decision Reviews", force: :cascade do |t|
+    t.string "benefit_type", null: false, comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
+    t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.datetime "decision_review_created_at"
+    t.bigint "decision_review_id", null: false, comment: "ID of the Decision Review -- may be used as FK to decision_issues"
+    t.bigint "decision_review_remanded_id", comment: "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here."
+    t.string "decision_review_remanded_type", comment: "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review."
+    t.string "decision_review_type", null: false, comment: "The type of the Decision Review -- may be used as FK to decision_issues"
+    t.datetime "decision_review_updated_at"
+    t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
+    t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
+    t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow by the user."
+    t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
+    t.datetime "establishment_submitted_at", comment: "Timestamp for when the Higher Level Review was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
+    t.boolean "informal_conference", comment: "Indicates whether a Veteran selected on their Higher Level Review form to have an informal conference. This creates a claimant letter and a tracked item in BGS."
+    t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
+    t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
+    t.date "receipt_date", comment: "The date that the Higher Level Review form was received by central mail. This is used to determine which issues are eligible to be appealed based on timeliness.  Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established."
+    t.boolean "same_office", comment: "Whether the Veteran wants their issues to be reviewed by the same office where they were previously reviewed. This creates a special issue on all of the contentions created on this Higher Level Review."
+    t.string "stream_docket_number", comment: "Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
+    t.string "stream_type", comment: "When multiple appeals have the same docket number, they are differentiated by appeal stream type, depending on the work being done on each appeal."
+    t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
+    t.uuid "uuid", null: false, comment: "The universally unique identifier for the Decision Review"
+    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Decision Review is for."
+    t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Decision Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
+    t.index ["closest_regional_office"], name: "index_decision_reviews_on_closest_regional_office"
+    t.index ["created_at"], name: "index_decision_reviews_on_created_at"
+    t.index ["decision_review_created_at"], name: "index_decision_reviews_on_decision_review_created_at"
+    t.index ["decision_review_id", "decision_review_type"], name: "idx_decision_review_id_and_type", unique: true
+    t.index ["decision_review_remanded_id", "decision_review_remanded_type"], name: "idx_decision_review_remanded_id_and_type"
+    t.index ["decision_review_updated_at"], name: "index_decision_reviews_on_decision_review_updated_at"
+    t.index ["docket_range_date"], name: "index_decision_reviews_on_docket_range_date"
+    t.index ["docket_type"], name: "index_decision_reviews_on_docket_type"
+    t.index ["established_at"], name: "index_decision_reviews_on_established_at"
+    t.index ["informal_conference"], name: "index_decision_reviews_on_informal_conference"
+    t.index ["legacy_opt_in_approved"], name: "index_decision_reviews_on_legacy_opt_in_approved"
+    t.index ["poa_participant_id"], name: "index_decision_reviews_on_poa_participant_id"
+    t.index ["receipt_date"], name: "index_decision_reviews_on_receipt_date"
+    t.index ["same_office"], name: "index_decision_reviews_on_same_office"
+    t.index ["stream_docket_number"], name: "index_decision_reviews_on_stream_docket_number"
+    t.index ["stream_type"], name: "index_decision_reviews_on_stream_type"
+    t.index ["target_decision_date"], name: "index_decision_reviews_on_target_decision_date"
+    t.index ["updated_at"], name: "index_decision_reviews_on_updated_at"
+    t.index ["uuid"], name: "index_decision_reviews_on_uuid"
+    t.index ["veteran_file_number"], name: "index_decision_reviews_on_veteran_file_number"
+    t.index ["veteran_is_not_claimant"], name: "index_decision_reviews_on_veteran_is_not_claimant"
   end
 
   create_table "etl_build_tables", comment: "ETL table metadata, one for each table per-build", force: :cascade do |t|
@@ -395,56 +446,6 @@ ActiveRecord::Schema.define(version: 2020_05_17_021335) do
     t.index ["status"], name: "index_users_on_status"
     t.index ["updated_at"], name: "index_users_on_updated_at"
     t.index ["user_id"], name: "index_users_on_user_id"
-  end
-
-  create_table "vha_decision_reviews", comment: "VHA-specific decision reviews", force: :cascade do |t|
-    t.string "benefit_type", null: false, comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
-    t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
-    t.datetime "created_at", null: false, comment: "Default created_at/updated_at for the ETL record"
-    t.datetime "decision_review_created_at"
-    t.bigint "decision_review_id", null: false, comment: "ID of the Decision Review -- may be used as FK to decision_issues"
-    t.bigint "decision_review_remanded_id", comment: "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here."
-    t.string "decision_review_remanded_type", comment: "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review."
-    t.string "decision_review_type", null: false, comment: "The type of the Decision Review -- may be used as FK to decision_issues"
-    t.datetime "decision_review_updated_at"
-    t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
-    t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
-    t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow by the user."
-    t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
-    t.datetime "establishment_submitted_at", comment: "Timestamp for when the Higher Level Review was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
-    t.boolean "informal_conference", comment: "Indicates whether a Veteran selected on their Higher Level Review form to have an informal conference. This creates a claimant letter and a tracked item in BGS."
-    t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
-    t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
-    t.date "receipt_date", comment: "The date that the Higher Level Review form was received by central mail. This is used to determine which issues are eligible to be appealed based on timeliness.  Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established."
-    t.boolean "same_office", comment: "Whether the Veteran wants their issues to be reviewed by the same office where they were previously reviewed. This creates a special issue on all of the contentions created on this Higher Level Review."
-    t.string "stream_docket_number", comment: "Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
-    t.string "stream_type", comment: "When multiple appeals have the same docket number, they are differentiated by appeal stream type, depending on the work being done on each appeal."
-    t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
-    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
-    t.uuid "uuid", null: false, comment: "The universally unique identifier for the Decision Review"
-    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Decision Review is for."
-    t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Decision Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
-    t.index ["closest_regional_office"], name: "index_vha_decision_reviews_on_closest_regional_office"
-    t.index ["created_at"], name: "index_vha_decision_reviews_on_created_at"
-    t.index ["decision_review_created_at"], name: "index_vha_decision_reviews_on_decision_review_created_at"
-    t.index ["decision_review_id", "decision_review_type"], name: "idx_vha_decision_review_id_and_type", unique: true
-    t.index ["decision_review_remanded_id", "decision_review_remanded_type"], name: "idx_vha_decision_review_remanded_id_and_type"
-    t.index ["decision_review_updated_at"], name: "index_vha_decision_reviews_on_decision_review_updated_at"
-    t.index ["docket_range_date"], name: "index_vha_decision_reviews_on_docket_range_date"
-    t.index ["docket_type"], name: "index_vha_decision_reviews_on_docket_type"
-    t.index ["established_at"], name: "index_vha_decision_reviews_on_established_at"
-    t.index ["informal_conference"], name: "index_vha_decision_reviews_on_informal_conference"
-    t.index ["legacy_opt_in_approved"], name: "index_vha_decision_reviews_on_legacy_opt_in_approved"
-    t.index ["poa_participant_id"], name: "index_vha_decision_reviews_on_poa_participant_id"
-    t.index ["receipt_date"], name: "index_vha_decision_reviews_on_receipt_date"
-    t.index ["same_office"], name: "index_vha_decision_reviews_on_same_office"
-    t.index ["stream_docket_number"], name: "index_vha_decision_reviews_on_stream_docket_number"
-    t.index ["stream_type"], name: "index_vha_decision_reviews_on_stream_type"
-    t.index ["target_decision_date"], name: "index_vha_decision_reviews_on_target_decision_date"
-    t.index ["updated_at"], name: "index_vha_decision_reviews_on_updated_at"
-    t.index ["uuid"], name: "index_vha_decision_reviews_on_uuid"
-    t.index ["veteran_file_number"], name: "index_vha_decision_reviews_on_veteran_file_number"
-    t.index ["veteran_is_not_claimant"], name: "index_vha_decision_reviews_on_veteran_is_not_claimant"
   end
 
 end
