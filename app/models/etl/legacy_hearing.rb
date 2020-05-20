@@ -7,7 +7,13 @@ class ETL::LegacyHearing < ETL::HearingRecord
     private
 
     def merge_original_attributes_to_target(original, target)
-      super
+      merge_original_attributes_to_target_shared(original, target)
+
+      target.evidence_window_waived = nil
+      target.scheduled_time = original.scheduled_for
+      target.uuid = original.external_id
+
+      target
     rescue Caseflow::Error::VacolsRecordNotFound => error
       Rails.logger.error(error)
       nil # skip this target
