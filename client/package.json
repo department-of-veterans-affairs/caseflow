@@ -6,7 +6,7 @@
   "version": "0.0.1",
   "scripts": {
     "test": "yarn run test:karma && yarn run test:jest",
-    "test:jest": "NODE_ENV=test jest -u",
+    "test:jest": "NODE_ENV=test jest --ci --reporters=default --reporters=jest-junit --testResultsProcessor=jest-junit",
     "test:karma": "NODE_ENV=test karma start",
     "test:karma:watch": "yarn run test:karma --no-single-run",
     "test:legacy:watch": "yarn run test:legacy --watch",
@@ -139,6 +139,7 @@
     "eslint-plugin-jest": "^23.13.1",
     "eslint-plugin-mocha": "^4.11.0",
     "eslint-plugin-react": "^7.19.0",
+    "jest-junit": "^10.0.0",
     "jsdom": "9.8.3",
     "karma": "^1.6.0",
     "karma-chrome-launcher": "^2.0.0",
