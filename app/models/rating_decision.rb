@@ -31,7 +31,7 @@ class RatingDecision
 
   class << self
     def from_bgs_disability(rating, disability)
-      latest_evaluation = RatingProfileDisability.new(disability).evaluations_sorted_most_recent_to_oldest.first || {}
+      latest_evaluation = RatingProfileDisability.new(disability).most_recent_evaluation || {}
       new(
         type_name: disability[:decn_tn],
         rating_sequence_number: latest_evaluation[:rating_sn],
