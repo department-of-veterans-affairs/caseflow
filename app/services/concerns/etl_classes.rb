@@ -14,6 +14,7 @@ module ETLClasses
     Organization
     OrganizationsUser
     Person
+    RemandReason
     Task
     User
     VhaAppeal
