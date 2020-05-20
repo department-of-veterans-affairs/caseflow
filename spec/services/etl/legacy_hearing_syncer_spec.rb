@@ -75,5 +75,27 @@ describe ETL::LegacyHearingSyncer, :etl, :all_dbs do
         expect(etl_build_table.rows_updated).to eq(0)
       end
     end
+
+    context "with disposition" do
+      let(:video_hearing) do
+        create(
+          :legacy_hearing,
+          hearing_day: hearing_day,
+          regional_office: regional_office,
+          disposition: :H
+        )
+      end
+
+      it "syncs" do
+        subject
+
+        expect(LegacyHearing.count).to eq(2)
+        expect(ETL::LegacyHearing.count).to eq(2)
+        etl_virtual_hearing = ETL::LegacyHearing.find_by(hearing_id: virtual_hearing.hearing_id)
+        etl_regional_hearing = ETL::LegacyHearing.find_by(hearing_id: regional_hearing.id)
+        expect(etl_virtual_hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.held
+        expect(etl_regional_hearing.disposition).to be_nil
+      end
+    end
   end
 end
