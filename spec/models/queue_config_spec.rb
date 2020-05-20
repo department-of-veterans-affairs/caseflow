@@ -76,7 +76,7 @@ describe QueueConfig, :postgres do
         let(:assignee) { user }
 
         it "is the assigned tab" do
-          expect(subject[:active_tab]).to eq(Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME)
+          expect(subject[:active_tab]).to eq(Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME)
         end
       end
     end
@@ -88,7 +88,7 @@ describe QueueConfig, :postgres do
 
       context "with a non-VSO organization assignee" do
         it "does not include a tab for tracking tasks" do
-          expect(subject.length).to eq(3)
+          expect(subject.length).to eq(4)
           expect(subject.pluck(:name)).to_not include(Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME)
         end
 
@@ -117,7 +117,7 @@ describe QueueConfig, :postgres do
           end
         end
 
-        context "when the organization uses the task pages API and has tasks assigned to it" do
+        context "when the organization has assigned tasks" do
           let!(:unassigned_tasks) { create_list(:ama_task, 4, assigned_to: assignee) }
           let!(:assigned_tasks) do
             create_list(:ama_task, 2, parent: create(:ama_task, assigned_to: assignee))
@@ -126,8 +126,6 @@ describe QueueConfig, :postgres do
             create_list(:ama_task, 2, :on_hold, parent: create(:ama_task, assigned_to: assignee))
           end
           let!(:completed_tasks) { create_list(:ama_task, 7, :completed, assigned_to: assignee) }
-
-          before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
 
           it "returns the tasks in the correct tabs" do
             tabs = subject
@@ -234,7 +232,8 @@ describe QueueConfig, :postgres do
           let!(:on_hold_tasks) { create_list(:ama_task, 5, :on_hold, assigned_to: assignee) }
           let!(:completed_tasks) { create_list(:ama_task, 7, :completed, assigned_to: assignee) }
 
-          before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
+          before { FeatureToggle.enable!(:user_queue_pagination, users: [assignee.css_id]) }
+          after { FeatureToggle.disable!(:user_queue_pagination, users: [assignee.css_id]) }
 
           it "returns the tasks in the correct tabs" do
             tabs = subject

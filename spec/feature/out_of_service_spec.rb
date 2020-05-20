@@ -15,7 +15,7 @@ RSpec.feature "Out of Service", :all_dbs do
              skip: "This test is failing because of a bad feature toggle set somewhere" do
       visit "/"
       expect(page).to have_content("Caseflow Help")
-      expect(page).not_to have_content("Technical Difficulties")
+      expect(page.has_no_content?("Technical Difficulties")).to eq(true)
     end
 
     scenario "When out of service is enabled, it shows Out of service page" do

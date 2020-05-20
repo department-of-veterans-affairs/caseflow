@@ -21,7 +21,11 @@ class HearingSerializer
   attribute :appeal_id
   attribute :appellant_address_line_1, if: for_full
   attribute :appellant_city, if: for_full
+  attribute :appellant_email_address
   attribute :appellant_first_name, if: for_full
+  attribute :appellant_is_not_veteran do |hearing|
+    hearing.appeal.appellant_is_not_veteran
+  end
   attribute :appellant_last_name, if: for_full
   attribute :appellant_state, if: for_full
   attribute :appellant_zip, if: for_full
@@ -76,6 +80,11 @@ class HearingSerializer
   attribute :virtual_hearing do |object|
     if object.virtual? || object.was_virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
+    end
+  end
+  attribute :email_events do |object|
+    object.email_events.order(sent_at: :desc).map do |event|
+      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
     end
   end
   attribute :was_virtual, &:was_virtual?

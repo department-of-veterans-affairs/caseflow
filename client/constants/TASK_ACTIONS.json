@@ -70,6 +70,11 @@
     "value": "modal/cancel_task",
     "func": "cancel_foreign_veterans_case_data"
   },
+  "CANCEL_AND_RETURN_TASK": {
+    "label": "Cancel task and return to judge",
+    "value": "modal/cancel_task",
+    "func": "cancel_task_data"
+  },
   "CANCEL_TASK": {
     "label": "Cancel task",
     "value": "modal/cancel_task",
@@ -119,6 +124,10 @@
     "label": "Ready for Dispatch",
     "value": "dispatch_decision/dispositions"
   },
+  "JUDGE_AMA_CHECKOUT_SP_ISSUES": {
+    "label": "Ready for Dispatch",
+    "value": "dispatch_decision/special_issues"
+  },
   "JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER": {
     "label": "Ready for Dispatch",
     "value": "modal/check_cavc"
@@ -133,9 +142,9 @@
     "func": "return_to_attorney_data"
   },
   "LIT_SUPPORT_PULAC_CERULLO": {
-    "label": "Notify Pulac Cerullo team of CAVC Jurisdictional Conflict",
-    "value": "modal/assign_to_pulac_cerullo",
-    "func": "assign_to_pulac_cerullo_data"
+    "label": "Notify Litigation Support of Possible Conflict of Jurisdiction",
+    "value": "modal/flag_conflict_of_jurisdiction",
+    "func": "flag_conflict_of_jurisdiction_data"
   },
   "MARK_COMPLETE": {
     "label": "Mark task complete",
@@ -210,6 +219,10 @@
     "label": "Decision ready for review",
     "value": "draft_decision/dispositions"
   },
+  "REVIEW_AMA_DECISION_SP_ISSUES": {
+    "label": "Decision ready for review",
+    "value": "draft_decision/special_issues"
+  },
   "REVIEW_DECISION_DRAFT": {
     "func": "review_decision_draft"
   },
@@ -226,10 +239,6 @@
     "label": "Send to Schedule Veterans list",
     "value": "modal/send_to_schedule_veterans_list",
     "func": "send_to_schedule_veterans_list"
-  },
-  "SEND_TO_TEAM": {
-    "label": "Send to team",
-    "value": "modal/send_colocated_task"
   },
   "SEND_TO_TRANSLATION": {
     "label": "Assign to Translation team",

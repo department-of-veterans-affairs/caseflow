@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Returns all tasks relevant to an appeal based on the user's role
+# We only query vacols for legacy tasks if the user is a judge, attroney, or a users that can act on behalf of judges
+# We also only return tasks assigned to a VSO or a vso employee is the user is a vso employee
+# Because this is currently only called from the case details view of an appeal, we mark any tasks assigned to the
+# requesting user as "in progress", indicating they have looked at the case and have presumably started their task
 class TasksForAppeal
   def initialize(appeal:, user:, user_role:)
     @appeal = appeal
@@ -18,7 +23,11 @@ class TasksForAppeal
     # This change filters them out from the Queue page
     tasks = all_tasks_except_for_decision_review_tasks
 
-    return (legacy_appeal_tasks + tasks).uniq if legacy_appeal_and_user_is_judge_or_attorney?
+    # Mark ama tasks in progress if any are assigned to the requesting user, indicating that they have started work on
+    # this task if they have gone to the case details page of this appeal
+    tasks.assigned.where(assigned_to: user).each(&:in_progress!)
+
+    return (legacy_appeal_tasks + tasks).uniq if appeal.is_a?(LegacyAppeal)
 
     tasks
   end
@@ -39,11 +48,13 @@ class TasksForAppeal
     appeal.tasks.not_decisions_review.includes(*task_includes)
   end
 
-  def legacy_appeal_and_user_is_judge_or_attorney?
-    %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
+  def user_is_judge_or_attorney?
+    %w[attorney judge].include?(user_role)
   end
 
   def legacy_appeal_tasks
+    return [] unless user_is_judge_or_attorney? || user.can_act_on_behalf_of_judges?
+
     LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
   end
 

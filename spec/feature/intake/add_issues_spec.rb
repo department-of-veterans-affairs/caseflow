@@ -14,7 +14,7 @@ feature "Intake Add Issues Page", :all_dbs do
   let(:profile_date) { 10.days.ago }
   let(:promulgation_date) { 9.days.ago.to_date }
   let!(:rating) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -64,7 +64,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
-      expect(page).not_to have_content("When you finish making changes, click \"Save\" to continue")
+      expect(page.has_no_content?("When you finish making changes, click \"Save\" to continue")).to eq(true)
       expect(page).to have_content("1. Left knee granted\nDecision date: #{promulgation_date.mdY}")
     end
   end
@@ -98,14 +98,14 @@ feature "Intake Add Issues Page", :all_dbs do
         )
 
         expect(page).to have_content("Description for Accrued")
-        expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to_not have_content("Check the Veteran's profile for invalid information")
         expect(page).to have_button("Establish appeal", disabled: false)
 
         # Add a rating issue
         click_intake_add_issue
         add_intake_rating_issue("Left knee granted")
 
-        expect(page).to have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to have_content("Check the Veteran's profile for invalid information")
         expect(page).to have_content(
           "the corporate database, then retry establishing the EP in Caseflow: country."
         )
@@ -113,7 +113,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_button("Establish appeal", disabled: true)
 
         click_remove_intake_issue_by_text("Left knee granted")
-        expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to_not have_content("Check the Veteran's profile for invalid information")
         expect(page).to have_button("Establish appeal", disabled: false)
 
         # Add a compensation nonrating issue
@@ -127,7 +127,7 @@ feature "Intake Add Issues Page", :all_dbs do
         )
 
         expect(page).to have_content("Description for Apportionment")
-        expect(page).to have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to have_content("Check the Veteran's profile for invalid information")
         expect(page).to have_button("Establish appeal", disabled: true)
       end
     end
@@ -143,8 +143,8 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
       edit_contention_text("Left knee granted", "Right knee")
-      expect(page).to_not have_content("Left knee granted")
       expect(page).to have_content("Right knee")
+      expect(page).to have_content("(Originally: Left knee granted)")
       click_intake_finish
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
@@ -178,7 +178,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
   context "When the user adds an untimely issue" do
     before do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: 2.years.ago,
         profile_date: 2.years.ago,
@@ -197,6 +197,36 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Issue 1 is an Untimely Issue")
       find("label", text: "Yes").click
       expect(page).to have_content("Notes")
+    end
+
+    context "with covid_timeliness_exemption feature toggle" do
+      before { FeatureToggle.enable!(:covid_timeliness_exemption) }
+      after { FeatureToggle.disable!(:covid_timeliness_exemption) }
+
+      context "for higher level review" do
+        scenario "When the user selects untimely exemption it shows COVID-19 exemption notice" do
+          start_higher_level_review(veteran)
+          visit "/intake"
+          click_intake_continue
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+          add_intake_rating_issue("Untimely Issue")
+          expect(page).to_not have_content("Notes")
+          expect(page).to have_content("Issue 1 is an Untimely Issue")
+          find("label", text: "Yes").click
+          expect(page).to have_content("This request is related to COVID-19")
+          find('label[for="untimelyExemptionCovid"]').click
+          safe_click ".add-issue"
+          expect(page).to have_content("Untimely Issue")
+          click_on "Establish EP"
+          expect(page).to have_content("Intake completed")
+
+          expect(RequestIssue.all.size).to eq(1)
+          untimely_issue = RequestIssue.first
+          expect(untimely_issue.covid_timeliness_exempt).to eq(true)
+        end
+      end
     end
   end
 
@@ -305,6 +335,277 @@ feature "Intake Add Issues Page", :all_dbs do
       )
 
       expect(unidentified_issue).to_not be_nil
+    end
+  end
+
+  context "show untimely issue modal with covid_timeliness_exemption feature toggle" do
+    before do
+      FeatureToggle.enable!(:covid_timeliness_exemption)
+      setup_legacy_opt_in_appeals(veteran.file_number)
+    end
+    after { FeatureToggle.disable!(:covid_timeliness_exemption) }
+    let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
+    # let!(:ratings_with_legacy_issues) do
+    #   generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
+    # end
+
+    let(:receipt_date) { Time.zone.today - 30.days }
+    let(:promulgation_date) { receipt_date - 10.days }
+    let(:benefit_type) { "compensation" }
+    let(:untimely_days) { 372.days }
+    let(:profile_date) { (receipt_date - 8.days).to_datetime }
+    let(:untimely_promulgation_date) { receipt_date - untimely_days - 1.day }
+    let(:untimely_profile_date) { receipt_date - untimely_days - 3.days }
+
+    let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+    let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+
+    let!(:old_ratings) do
+      Generators::PromulgatedRating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 372.days,
+        profile_date: receipt_date - 372.days,
+        issues: [
+          { reference_id: "abc127", decision_text: "Left knee issue granted" },
+          { reference_id: "def457", decision_text: "PTSD1 denied" }
+        ]
+      )
+    end
+
+    context "on a higher level review" do
+      scenario "when vacols issue is ineligible, but is eligible with an exemption" do
+        start_higher_level_review(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("osteomyelitis")
+
+        # Expect untimely issue modal to show
+        expect(page).to have_content("Issue 1 is an Untimely Issue")
+        expect(page).to have_content(
+          "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested"
+        )
+        find("label", text: "No").click
+        safe_click ".add-issue"
+
+        expect(page).to have_content("PTSD denied is ineligible")
+
+        click_remove_intake_issue_by_text("PTSD denied")
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+        add_intake_rating_issue("osteomyelitis")
+        find("label", text: "Yes").click
+        find('label[for="untimelyExemptionCovid"]').click
+        safe_click ".add-issue"
+
+        expect(page).to have_content("Adding this issue will automatically close VACOLS issue")
+
+        click_on "Establish EP"
+        expect(page).to have_content("Intake completed")
+      end
+
+      scenario "when vacols issue ineligible even with an exemption" do
+        start_higher_level_review(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("lumbosacral strain")
+
+        # Expect untimely issue modal not to show
+        expect(page).to_not have_content("Issue 1 is an Untimely Issue")
+      end
+
+      scenario "when request issue is ineligible" do
+        start_higher_level_review(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee issue granted")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("ankylosis of hip")
+
+        # Expect untimely issue modal to show
+        expect(page).to have_content("Issue 1 is an Untimely Issue")
+        expect(page).to have_content(
+          "The issue requested isn't usually eligible because its decision date is older than what's allowed"
+        )
+      end
+
+      scenario "when request and vacols issue are both ineligible" do
+        start_higher_level_review(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee issue granted")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("osteomyelitis")
+
+        # Expect untimely issue modal to show
+        expect(page).to have_content("Issue 1 is an Untimely Issue")
+        expect(page).to have_content(
+          "its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC "
+        )
+      end
+
+      scenario "when request and vacols issue are both eligible" do
+        start_higher_level_review(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("ankylosis of hip")
+
+        # Expect untimely issue modal not to show
+        expect(page).to_not have_content("Issue 1 is an Untimely Issue")
+      end
+    end
+
+    context "on a supplemental claim" do
+      scenario "when vacols issue is ineligible, but eligible with an exemption" do
+        start_supplemental_claim(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("osteomyelitis")
+
+        # Expect untimely issue modal to show
+        expect(page).to have_content("Issue 1 is an Untimely Issue")
+        expect(page).to have_content(
+          "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested"
+        )
+        find("label", text: "No").click
+        safe_click ".add-issue"
+
+        expect(page).to have_content("PTSD denied is ineligible")
+
+        click_remove_intake_issue_by_text("PTSD denied")
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+        add_intake_rating_issue("osteomyelitis")
+        find("label", text: "Yes").click
+        find('label[for="untimelyExemptionCovid"]').click
+        safe_click ".add-issue"
+
+        expect(page).to have_content("Adding this issue will automatically close VACOLS issue")
+
+        click_on "Establish EP"
+        expect(page).to have_content("Intake completed")
+      end
+
+      scenario "when vacols issue is ineligible even with an exemption" do
+        start_supplemental_claim(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("lumbosacral strain")
+
+        # Expect untimely issue modal to not show
+        expect(page).to_not have_content("Issue 1 is an Untimely Issue")
+      end
+
+      scenario "when vacols issue is eligible on a supplemental claim" do
+        start_supplemental_claim(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("ankylosis of hip")
+
+        # Expect untimely issue modal to show
+        expect(page).to_not have_content("Issue 1 is an Untimely Issue")
+      end
+    end
+
+    context "on an appeal" do
+      scenario "when request issue is ineligible and no vacols id on appeal" do
+        start_appeal(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee issue granted")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        find("label", text: /^No VACOLS issues were found/).click
+        safe_click ".add-issue"
+
+        # Expect untimely issue modal to show
+        expect(page).to have_content("Issue 1 is an Untimely Issue")
+        expect(page).to have_content(
+          "The issue requested isn't usually eligible because its decision date is older than what's allowed"
+        )
+      end
+
+      scenario "when request issue is eligible and vacols issue added on appeal" do
+        start_appeal(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+
+        # Expect legacy opt in issue modal to show
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("lumbosacral strain")
+
+        # Expect untimely issue modal to show
+        expect(page).to_not have_content("Issue 1 is an Untimely Issue")
+      end
+    end
+
+    context "when attorney_fees featureToggle is enabled" do
+      let(:veteran_no_ratings) do
+        Generators::Veteran.build(file_number: "55555555",
+                                  first_name: "Nora",
+                                  last_name: "Attings",
+                                  participant_id: "44444444")
+      end
+
+      context "when attorney_fees featureToggle is enabled" do
+        before { FeatureToggle.enable!(:attorney_fees) }
+        after { FeatureToggle.disable!(:attorney_fees) }
+        scenario "checks for all Compensation categories" do
+          start_higher_level_review(veteran_no_ratings)
+          visit "/intake"
+          click_intake_continue
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+          expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+          find(".Select-control").click
+          expect(page).to have_content("Constested Claims - Attorney fees")
+        end
+      end
+
+      context "when attorney_fees featureToggle is not enabled" do
+        scenario "checks that attorney categories do not exist on compensation" do
+          start_higher_level_review(veteran_no_ratings)
+          visit "/intake"
+          click_intake_continue
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+          expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+          find(".Select-control").click
+          expect(page).to_not have_content("Constested Claims - Attorney fees")
+          expect(page).to have_content("Active Duty Adjustments")
+        end
+      end
     end
   end
 end

@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import React from 'react';
 import _ from 'lodash';
 
-import ApiUtil from '../../util/ApiUtil';
-import LoadingDataDisplay from '../../components/LoadingDataDisplay';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-
+import ApiUtil from '../../util/ApiUtil';
 import HearingDetails from '../components/Details';
+import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 
 class HearingDetailsContainer extends React.Component {
   constructor(props) {
@@ -43,33 +43,44 @@ class HearingDetailsContainer extends React.Component {
     }
   };
 
+  saveHearing = (data) => {
+    const { externalId } = this.state.hearing;
+
+    return ApiUtil.patch(`/hearings/${externalId}`, {
+      data: ApiUtil.convertToSnakeCase(data)
+    });
+  }
+
   render() {
-    return <LoadingDataDisplay
-      createLoadPromise={this.getHearing}
-      loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
-        message: 'Loading the hearing details...'
-      }}
-      failStatusMessageProps={{
-        title: 'Unable to load the details.'
-      }}>
-      <HearingDetails
-        user={this.props.user}
-        disabled={!this.props.user.userInHearingOrTranscriptionOrganization}
-        hearing={this.state.hearing}
-        setHearing={this.setHearing}
-        goBack={this.goBack}
-      />
-    </LoadingDataDisplay>;
+    const { userInHearingOrTranscriptionOrganization } = this.context;
+
+    return (
+      <LoadingDataDisplay
+        createLoadPromise={this.getHearing}
+        loadingComponentProps={{
+          spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
+          message: 'Loading the hearing details...'
+        }}
+        failStatusMessageProps={{
+          title: 'Unable to load the details.'
+        }}
+      >
+        <HearingDetails
+          disabled={!userInHearingOrTranscriptionOrganization}
+          hearing={this.state.hearing}
+          setHearing={this.setHearing}
+          saveHearing={this.saveHearing}
+          goBack={this.goBack}
+        />
+      </LoadingDataDisplay>
+    );
   }
 }
 
+HearingDetailsContainer.contextType = HearingsUserContext;
+
 HearingDetailsContainer.propTypes = {
   hearingId: PropTypes.string.isRequired,
-  user: PropTypes.shape({
-    userInHearingOrTranscriptionOrganization: PropTypes.bool,
-    userCanScheduleVirtualHearings: PropTypes.bool
-  }),
   history: PropTypes.object
 };
 

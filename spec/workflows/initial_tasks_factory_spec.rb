@@ -17,17 +17,19 @@ describe InitialTasksFactory, :postgres do
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
         .with([participant_id_with_pva]).and_return(
           participant_id_with_pva => {
-            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
-            representative_type: "POA National Organization",
-            participant_id: "2452383"
+            representative_name: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME,
+            representative_type: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+            participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID,
+            file_number: "66660000"
           }
         )
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
         .with([participant_id_with_aml]).and_return(
           participant_id_with_aml => {
-            representative_name: "VIETNAM VETERANS OF AMERICA",
-            representative_type: "POA National Organization",
-            participant_id: "2452415"
+            representative_name: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_NAME,
+            representative_type: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
+            participant_id: Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID,
+            file_number: "66661111"
           }
         )
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
@@ -39,7 +41,7 @@ describe InitialTasksFactory, :postgres do
         name: "Paralyzed Veterans Of America",
         role: "VSO",
         url: "paralyzed-veterans-of-america",
-        participant_id: "2452383"
+        participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
       )
     end
 
@@ -58,7 +60,7 @@ describe InitialTasksFactory, :postgres do
         end
 
         it "does not create a tracking task" do
-          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(0)
+          expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(0)
         end
       end
 
@@ -85,7 +87,7 @@ describe InitialTasksFactory, :postgres do
 
         it "creates a tracking task assigned to the VSO" do
           subject
-          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+          expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
           expect(appeal.tasks.detect { |t| t.is_a?(TrackVeteranTask) }.assigned_to).to eq(pva)
         end
 
@@ -102,9 +104,9 @@ describe InitialTasksFactory, :postgres do
           end
 
           it "does not create a duplicate tracking task" do
-            expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+            expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
             subject
-            expect(appeal.reload.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+            expect(appeal.reload.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
           end
         end
       end

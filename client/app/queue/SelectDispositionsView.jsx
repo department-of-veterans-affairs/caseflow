@@ -13,7 +13,7 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import { COLORS } from '../constants/AppConstants';
 
 import {
@@ -26,8 +26,8 @@ import {
   ISSUE_DISPOSITIONS
 } from './constants';
 
-import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
 import uuid from 'uuid';
 import QueueFlowPage from './components/QueueFlowPage';
 
@@ -102,12 +102,12 @@ class SelectDispositionsView extends React.PureComponent {
       checkoutFlow
     } = this.props;
 
-    if (appeal.isLegacyAppeal) {
+    // Once the featureToggle is made permanent, simply return `.../special_issues` for both appeal types
+    if (appeal.isLegacyAppeal || this.props.featureToggles.special_issues_revamp) {
       return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
     }
 
     return `/queue/appeals/${appealId}`;
-
   }
 
   validateForm = () => {
@@ -433,14 +433,29 @@ class SelectDispositionsView extends React.PureComponent {
 }
 
 SelectDispositionsView.propTypes = {
+  appeal: PropTypes.shape({
+    decisionIssues: PropTypes.array,
+    externalId: PropTypes.string,
+    isLegacyAppeal: PropTypes.bool,
+    issues: PropTypes.array
+  }),
   appealId: PropTypes.string.isRequired,
-  checkoutFlow: PropTypes.string.isRequired
+  checkoutFlow: PropTypes.string.isRequired,
+  editStagedAppeal: PropTypes.func,
+  featureToggles: PropTypes.shape({
+    special_issues_revamp: PropTypes.bool
+  }),
+  hideSuccessMessage: PropTypes.func,
+  highlight: PropTypes.bool,
+  setDecisionOptions: PropTypes.func,
+  taskId: PropTypes.string
 };
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   success: state.ui.messages.success,
-  highlight: state.ui.highlightFormItems
+  highlight: state.ui.highlightFormItems,
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

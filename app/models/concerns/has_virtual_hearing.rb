@@ -9,12 +9,18 @@ module HasVirtualHearing
 
   def virtual?
     [
-      VirtualHearing.statuses[:pending],
-      VirtualHearing.statuses[:active]
+      :pending,
+      :active
     ].include? virtual_hearing&.status
   end
 
   def was_virtual?
     !virtual_hearing.nil? && !virtual?
+  end
+
+  def hearing_request_type
+    return "Virtual" if virtual?
+
+    readable_request_type
   end
 end

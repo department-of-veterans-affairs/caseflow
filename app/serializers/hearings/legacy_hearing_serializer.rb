@@ -14,7 +14,11 @@ class LegacyHearingSerializer
   attribute :appellant_address_line_2
   attribute :appellant_city
   attribute :appellant_country
+  attribute :appellant_email_address
   attribute :appellant_first_name
+  attribute :appellant_is_not_veteran do |hearing|
+    hearing.appeal.appellant_is_not_veteran
+  end
   attribute :appellant_last_name
   attribute :appellant_state
   attribute :appellant_zip
@@ -74,6 +78,11 @@ class LegacyHearingSerializer
   attribute :virtual_hearing do |object|
     if object.virtual? || object.was_virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
+    end
+  end
+  attribute :email_events do |object|
+    object.email_events.order(sent_at: :desc).map do |event|
+      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
     end
   end
   attribute :was_virtual, &:was_virtual?

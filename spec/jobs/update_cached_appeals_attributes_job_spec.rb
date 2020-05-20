@@ -15,7 +15,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     before do
       open_appeals.each do |appeal|
         create_list(:bva_dispatch_task, 3, appeal: appeal)
-        create_list(:ama_judge_task, 8, appeal: appeal)
+        create_list(:ama_judge_assign_task, 8, appeal: appeal)
       end
     end
 
@@ -28,7 +28,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     it "does not cache appeals when all appeal tasks are closed" do
-      task_to_close = create(:ama_judge_task,
+      task_to_close = create(:ama_judge_assign_task,
                              appeal: closed_legacy_appeal,
                              status: Constants.TASK_STATUSES.assigned)
       task_to_close.update(status: Constants.TASK_STATUSES.completed)
@@ -91,7 +91,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
       UpdateCachedAppealsAttributesJob.perform_now
 
-      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. Fatal error: #{error_msg}"
+      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. See Sentry for error"
 
       expect(slack_msg).to match(/#{expected_msg}/)
     end

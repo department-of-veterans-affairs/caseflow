@@ -84,10 +84,31 @@ class ExternalApi::BGSService
       middle_name: bgs_info[:middle_nm],
       name_suffix: bgs_info[:suffix_nm],
       birth_date: bgs_info[:brthdy_dt],
-      email_address: bgs_info[:email_addr]
+      email_address: bgs_info[:email_addr],
+      file_number: bgs_info[:file_nbr]
     }
   end
 
+  # Returns hash with keys
+  #   :brthdy_dt                    :last_nm
+  #   :cmptny_decn_type_cd          :last_nm_key
+  #   :cmptny_decn_type_nm          :middle_nm
+  #   :death_hist_ind               :middle_nm_key
+  #   :dep_nbr                      :mlty_person_ind
+  #   :email_addr                   :person_type_nm
+  #   :fid_decn_categy_type_cd      :ptcpnt_dto
+  #   :fid_decn_categy_type_nm      :ptcpnt_id
+  #   :file_nbr                     :sbstnc_amt
+  #   :first_nm                     :serous_emplmt_hndcap_ind
+  #   :first_nm_key                 :spina_bifida_ind
+  #   :gender_cd,                   :ssn_nbr
+  #   :ins_file_nbr                 :ssn_vrfctn_status_type_cd
+  #   :jrn_dt                       :station_of_jurisdiction
+  #   :jrn_lctn_id                  :svc_nbr
+  #   :jrn_obj_id                   :termnl_digit_nbr
+  #   :jrn_person_id                :vet_ind
+  #   :jrn_status_type_cd
+  #   :jrn_user_id
   def fetch_person_by_ssn(ssn)
     DBService.release_db_connections
 
@@ -105,6 +126,7 @@ class ExternalApi::BGSService
     person[:file_nbr] if person
   end
 
+  # For Claimant POA
   def fetch_poa_by_file_number(file_number)
     DBService.release_db_connections
 
@@ -114,12 +136,14 @@ class ExternalApi::BGSService
                                       name: "org.find_poas_by_file_number") do
         client.org.find_poas_by_file_number(file_number)
       end
-      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa[:power_of_attorney])
+      @poas[file_number] = get_claimant_poa_from_bgs_poa(bgs_poa)
     end
 
     @poas[file_number]
   end
 
+  # The participant_id here is for a User, not a Claimant.
+  # I.e. returns the list of VSOs that a User represents.
   def fetch_poas_by_participant_id(participant_id)
     DBService.release_db_connections
 
@@ -135,6 +159,8 @@ class ExternalApi::BGSService
     @poa_by_participant_ids[participant_id]
   end
 
+  # The participant IDs here are for Claimants.
+  # I.e. returns the list of POAs that represent the Claimants.
   def fetch_poas_by_participant_ids(participant_ids)
     DBService.release_db_connections
 
@@ -172,7 +198,7 @@ class ExternalApi::BGSService
   # We cache at 2 levels: the boolean check per user, and the veteran record itself.
   # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
   def can_access?(vbms_id)
-    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 24.hours) do
+    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 2.hours) do
       DBService.release_db_connections
 
       MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
@@ -237,6 +263,23 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "rating_profile.find") do
       client.rating_profile.find(participant_id: participant_id, profile_date: profile_date)
+    end
+  end
+
+  def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: fetch rating profile in range: \
+                           participant_id = #{participant_id}, \
+                           start_date = #{start_date}, \
+                           end_date = #{end_date}",
+                          service: :bgs,
+                          name: "rating_profile.find_in_date_range") do
+      client.rating_profile.find_in_date_range(
+        participant_id: participant_id,
+        start_date: start_date,
+        end_date: end_date
+      )
     end
   end
 

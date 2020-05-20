@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # We must do this async because an EndProductEstablishment may be cleared
-# some indefinite period of time before the Rating Issue(s) are posted.
+# some indefinite period of time before the Rating Issues are posted.
 class DecisionIssueSyncJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :intake

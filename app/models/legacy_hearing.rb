@@ -6,6 +6,7 @@ class LegacyHearing < CaseflowRecord
   include AppealConcern
   include HasHearingTask
   include HasVirtualHearing
+  include HearingLocationConcern
   include HearingTimeConcern
 
   # When these instance variable getters are called, first check if we've
@@ -31,6 +32,7 @@ class LegacyHearing < CaseflowRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
+  has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :hearing_id
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location
@@ -41,18 +43,11 @@ class LegacyHearing < CaseflowRecord
 
   delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
            :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
-           :veteran_email_address,
+           :veteran_email_address, :appellant_address, :appellant_address_line_1, :appellant_address_line_2,
+           :appellant_city, :appellant_country, :appellant_state, :appellant_zip, :appellant_email_address,
            to: :appeal,
            allow_nil: true
-
-  delegate :external_id,
-           to: :appeal,
-           prefix: true
-
-  delegate :appellant_address, :appellant_address_line_1, :appellant_address_line_2,
-           :appellant_city, :appellant_country, :appellant_state, :appellant_zip,
-           to: :appeal,
-           allow_nil: true
+  delegate :external_id, to: :appeal, prefix: true
 
   delegate :timezone, :name, to: :regional_office, prefix: true
 
@@ -262,11 +257,12 @@ class LegacyHearing < CaseflowRecord
   end
 
   def current_issue_count
-    active_appeal_streams.map(&:worksheet_issues).flatten
-      .reject do |issue|
-      issue.deleted? || (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?)
-    end
-      .count
+    active_appeal_streams
+      .map(&:worksheet_issues)
+      .flatten
+      .count do |issue|
+        !(issue.deleted? || (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?))
+      end
   end
 
   # If we do not yet have the military_service saved in Caseflow's DB, then

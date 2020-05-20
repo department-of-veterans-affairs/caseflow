@@ -20,6 +20,12 @@ module Caseflow::Error
     attr_accessor :code, :message, :title
   end
 
+  class TransientError < SerializableError
+    def ignorable?
+      true
+    end
+  end
+
   class EfolderError < SerializableError; end
   class DocumentRetrievalError < EfolderError; end
   class EfolderAccessForbidden < EfolderError; end
@@ -95,6 +101,14 @@ module Caseflow::Error
       @task_type = args[:task_type]
       @code = args[:code] || 400
       @message = args[:message] || "Task status has to be 'assigned' on create for #{@task_type}"
+    end
+  end
+
+  class InvalidUserId < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "\"#{@user_id}\" is not a valid CSS_ID or user ID"
     end
   end
 
@@ -181,28 +195,31 @@ module Caseflow::Error
   end
 
   class DuplicateOrgTask < SerializableError
-    attr_accessor :appeal_id, :task_type, :assignee_type
+    attr_accessor :docket_number, :task_type, :assignee_type
 
     def initialize(args)
-      @appeal_id = args[:appeal_id]
+      @docket_number = args[:docket_number]
       @task_type = args[:task_type]
       @assignee_type = args[:assignee_type]
       @code = args[:code] || 400
-      @message = args[:message] || "Appeal #{@appeal_id} already has an open task of type #{@task_type} assigned to "\
-                                   "#{assignee_type}. No action necessary"
+      @title = "Error assigning tasks"
+      @message = args[:message] || "Docket (#{@docket_number}) already has an open task type of "\
+                                   "#{@task_type} assigned to #{assignee_type}. Please refresh the page. Contact "\
+                                   "support if this error persists."
     end
   end
 
   class DuplicateUserTask < SerializableError
-    attr_accessor :appeal_id, :task_type, :assignee_type
+    attr_accessor :docket_number, :task_type
 
     def initialize(args)
-      @appeal_id = args[:appeal_id]
+      @docket_number = args[:docket_number]
       @task_type = args[:task_type]
-      @assignee_type = args[:assignee_type]
       @code = args[:code] || 400
-      @message = args[:message] || "Appeal #{@appeal_id} already has an open task of type #{@task_type} assigned to "\
-                                   "#{assignee_type}. No action necessary"
+      @title = "Error assigning tasks"
+      @message = args[:message] || "Docket (#{@docket_number}) already has an open task type of "\
+                                   "#{@task_type} assigned to a user. Please refresh the page. Contact support if " \
+                                   "this error persists."
     end
   end
 
@@ -315,4 +332,6 @@ module Caseflow::Error
   class PexipNotFoundError < PexipApiError; end
   class PexipBadRequestError < PexipApiError; end
   class PexipMethodNotAllowedError < PexipApiError; end
+
+  class WorkModeCouldNotUpdateError < StandardError; end
 end

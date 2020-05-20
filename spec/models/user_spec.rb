@@ -316,7 +316,7 @@ describe User, :all_dbs do
       it "returns assigned cases link for judge" do
         is_expected.to include(
           name: "Assign #{user.css_id}",
-          url: format("/queue/%<id>s/assign", id: user.id)
+          url: format("/queue/%<id>s/assign", id: user.css_id)
         )
       end
     end
@@ -328,7 +328,7 @@ describe User, :all_dbs do
         user.reload
         is_expected.to include(
           name: "Assign #{user.css_id}",
-          url: format("/queue/%<id>s/assign", id: user.id)
+          url: format("/queue/%<id>s/assign", id: user.css_id)
         )
       end
     end
@@ -354,7 +354,7 @@ describe User, :all_dbs do
         it "returns assigned cases link for judge" do
           is_expected.to include(
             name: "Assign #{judge.css_id}",
-            url: format("/queue/%<id>s/assign", id: judge.id)
+            url: format("/queue/%<id>s/assign", id: judge.css_id)
           )
           is_expected.not_to include(
             name: "Assign #{user.css_id}",
@@ -394,24 +394,8 @@ describe User, :all_dbs do
 
   context "#when BGS data is setup" do
     let(:participant_id) { "123456" }
-    let(:vso_participant_id) { "123456" }
-
-    let(:vso_participant_ids) do
-      [
-        {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: vso_participant_id
-        },
-        {
-          legacy_poa_cd: "071",
-          nm: "PARALYZED VETERANS OF AMERICA, INC.",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: "2452383"
-        }
-      ]
-    end
+    let(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
+    let(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)
@@ -464,6 +448,11 @@ describe User, :all_dbs do
       before { session["user"]["roles"] = ["Admin Intake"] }
       it { is_expected.to be_truthy }
     end
+
+    context "when user is a BVA admin" do
+      before { Bva.singleton.add_user(user) }
+      it { is_expected.to be_truthy }
+    end
   end
 
   context "#appeal_has_task_assigned_to_user?" do
@@ -490,36 +479,6 @@ describe User, :all_dbs do
 
       it "should return false" do
         expect(user.appeal_has_task_assigned_to_user?(appeal)).to eq(false)
-      end
-    end
-  end
-
-  context "#current_case_assignments_with_views" do
-    subject { user.current_case_assignments_with_views[0] }
-
-    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)) }
-
-    it "returns nil when no cases have been viewed" do
-      is_expected.to include(
-        "vbms_id" => appeal.vbms_id,
-        "vacols_id" => appeal.vacols_id,
-        "veteran_full_name" => appeal.veteran_full_name,
-        "viewed" => nil
-      )
-    end
-
-    context "has hash with view" do
-      before do
-        AppealView.create(user_id: user.id, appeal: appeal)
-      end
-
-      it do
-        is_expected.to include(
-          "vbms_id" => appeal.vbms_id,
-          "vacols_id" => appeal.vacols_id,
-          "veteran_full_name" => appeal.veteran_full_name,
-          "viewed" => true
-        )
       end
     end
   end
@@ -710,10 +669,24 @@ describe User, :all_dbs do
     end
 
     context "when the user is a member of Case review Organization" do
-      before { BvaIntake.singleton.add_user(user) }
+      before { CaseReview.singleton.add_user(user) }
       it "returns true" do
         expect(subject).to eq(true)
       end
+    end
+  end
+
+  describe "#can_intake_appeals?" do
+    let(:user) { create(:user) }
+
+    subject { user.can_intake_appeals? }
+
+    it { is_expected.to be_falsey }
+
+    context "when the user is a member of the BVA Intake Team" do
+      before { BvaIntake.singleton.add_user(user) }
+
+      it { is_expected.to be_truthy }
     end
   end
 

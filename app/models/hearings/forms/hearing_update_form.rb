@@ -8,9 +8,9 @@ class HearingUpdateForm < BaseHearingUpdateForm
   protected
 
   def update_hearing
-    Transcription.find_or_create_by(hearing: hearing)
+    Transcription.find_or_create_by(hearing: hearing) unless transcription_attributes.blank?
     hearing.update!(hearing_updates)
-    update_advance_on_docket_motion unless advance_on_docket_motion_attributes.nil?
+    update_advance_on_docket_motion unless advance_on_docket_motion_attributes.blank?
   end
 
   def hearing_updated?
@@ -20,9 +20,9 @@ class HearingUpdateForm < BaseHearingUpdateForm
   private
 
   def update_advance_on_docket_motion
-    AdvanceOnDocketMotion.create_or_update_by_person_id(
-      advance_on_docket_motion_attributes[:person_id],
-      advance_on_docket_motion_attributes
+    AdvanceOnDocketMotion.create_or_update_by_appeal(
+      hearing.appeal,
+      advance_on_docket_motion_attributes.merge(user: RequestStore[:current_user])
     )
   end
 

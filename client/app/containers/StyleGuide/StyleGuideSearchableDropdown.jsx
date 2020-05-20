@@ -62,10 +62,19 @@ export default class StyleGuideSearchableDropdown extends React.PureComponent {
           onChange={this.onChange}
           required
         />
+        <h3 id="disabled-dropdown">Disabled Single Select Searchable Dropdown</h3>
+        <SearchableDropdown
+          label="Searchable dropdown"
+          name="single-select-countries"
+          options={options}
+          onChange={this.onChange}
+          required
+          readOnly
+        />
         <h3 id="multi-dropdown">Creatable Searchable Multiselect Dropdown</h3>
         <SearchableDropdown
           creatable
-          label="Click in the box below to select, type, or add issue(s)"
+          label="Click in the box below to select, type, or add issues"
           name="multi-select-countries"
           options={options}
           required

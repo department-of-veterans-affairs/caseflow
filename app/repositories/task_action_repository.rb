@@ -24,12 +24,12 @@ class TaskActionRepository
     end
 
     def cancel_task_data(task, _user = nil)
-      assigner_name = task.assigned_by&.full_name || "the assigner"
+      return_to_name = task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : task_assigner_name(task)
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, assigner_name),
+        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigner_name)
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
       }
     end
 
@@ -47,10 +47,7 @@ class TaskActionRepository
         modal_title: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE,
         modal_body: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL,
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
-        message_detail: format(
-          COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL,
-          task.assigned_by&.full_name || "the assigner"
-        )
+        message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, task_assigner_name(task))
       }
     end
 
@@ -118,10 +115,10 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_attorney_data(task, _user = nil)
+    def assign_to_attorney_data(task, user)
       {
         selected: nil,
-        options: nil,
+        options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
     end
@@ -296,7 +293,7 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_pulac_cerullo_data(_task, _user)
+    def flag_conflict_of_jurisdiction_data(_task, _user)
       org = PulacCerullo.singleton
       {
         selected: org,
@@ -325,13 +322,24 @@ class TaskActionRepository
 
     def review_decision_draft(task, user)
       action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
-      action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
-      action = Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.ama? && task.appeal.vacate?
+      action = select_ama_review_decision_action(task) if task.ama?
 
       TaskActionHelper.build_hash(action, task, user).merge(returns_complete_hash: true)
     end
 
     private
+
+    def select_ama_review_decision_action(task)
+      return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
+
+      return Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h if FeatureToggle.enabled?(:special_issues_revamp)
+
+      Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
+    end
+
+    def task_assigner_name(task)
+      task.assigned_by&.full_name || "the assigner"
+    end
 
     def users_to_options(users)
       users.map do |user|

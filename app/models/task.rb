@@ -15,12 +15,14 @@ class Task < CaseflowRecord
 
   include PrintsTaskTree
   include TaskExtensionForHearings
+  include HasAppealUpdatedSince
 
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
+  has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id
 
   validates :assigned_to, :appeal, :type, :status, presence: true
   validate :status_is_valid_on_create, on: :create
@@ -58,6 +60,10 @@ class Task < CaseflowRecord
 
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
+  scope :recently_closed, -> { closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
+
+  scope :incomplete_or_recently_closed, -> { open.or(recently_closed) }
+
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
     where.not(
@@ -70,6 +76,12 @@ class Task < CaseflowRecord
                                    type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
                                  )
                                }
+
+  scope :with_assignees, -> { joins(Task.joins_with_assignees_clause) }
+
+  scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
+
+  scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
   ############################################################################################
   ## class methods
@@ -88,14 +100,6 @@ class Task < CaseflowRecord
 
     def open_statuses
       active_statuses.concat([Constants.TASK_STATUSES.on_hold])
-    end
-
-    def recently_closed
-      closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now)
-    end
-
-    def incomplete_or_recently_closed
-      open.or(recently_closed)
     end
 
     def create_many_from_params(params_array, current_user)
@@ -174,6 +178,32 @@ class Task < CaseflowRecord
         instructions: params[:instructions]
       )
     end
+
+    def assigners_table_clause
+      "(SELECT id, full_name AS display_name FROM users) AS assigners"
+    end
+
+    def joins_with_assigners_clause
+      "LEFT JOIN #{Task.assigners_table_clause} ON assigners.id = tasks.assigned_by_id"
+    end
+
+    def assignees_table_clause
+      "(SELECT id, 'Organization' AS type, name AS display_name FROM organizations " \
+      "UNION " \
+      "SELECT id, 'User' AS type, css_id AS display_name FROM users)" \
+      "AS assignees"
+    end
+
+    def joins_with_assignees_clause
+      "INNER JOIN #{Task.assignees_table_clause} ON " \
+      "assignees.id = tasks.assigned_to_id AND assignees.type = tasks.assigned_to_type"
+    end
+
+    def joins_with_cached_appeals_clause
+      "left join #{CachedAppeal.table_name} "\
+      "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
+      "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
+    end
   end
 
   ########################################################################################
@@ -226,10 +256,9 @@ class Task < CaseflowRecord
     ).any? && assigned_to.is_a?(Organization)
       fail(
         Caseflow::Error::DuplicateOrgTask,
-        appeal_id: appeal.id,
+        docket_number: appeal.docket_number,
         task_type: self.class.name,
-        assignee_type: assigned_to.class.name,
-        parent_id: parent&.id
+        assignee_type: assigned_to.class.name
       )
     end
   end
@@ -550,6 +579,18 @@ class Task < CaseflowRecord
 
   def stays_with_reassigned_parent?
     open?
+  end
+
+  def cancelled_by
+    return nil unless cancelled?
+
+    any_status_matcher = Constants::TASK_STATUSES.keys.join("|")
+    task_cancelled_version_matcher = "%status:\\n- (#{any_status_matcher})\\n- #{Constants.TASK_STATUSES.cancelled}%"
+    record = versions.order(:created_at).where("object_changes SIMILAR TO ?", task_cancelled_version_matcher).last
+
+    return nil unless record
+
+    User.find_by_id(record.whodunnit)
   end
 
   private

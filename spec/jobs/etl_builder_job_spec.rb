@@ -14,7 +14,19 @@ describe ETLBuilderJob, :etl, :all_dbs do
         metric_name: "runtime",
         metric_value: anything
       )
-      ETL::Builder::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job_segment",
+        metric_group: "etl_builder",
+        metric_name: "runtime",
+        metric_value: anything
+      )
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job_segment",
+        metric_group: "etl_sweeper",
+        metric_name: "runtime",
+        metric_value: anything
+      )
+      ETL::Builder.syncer_klasses.each { |klass| expect(klass.target_class.all.count).to eq(0) }
     end
 
     subject { described_class.perform_now }
@@ -27,7 +39,7 @@ describe ETLBuilderJob, :etl, :all_dbs do
       it "sends alert to Slack" do
         Timecop.travel(Time.zone.now + 1.hour) { subject }
 
-        expect(@slack_msg).to eq "ETL failed to sync any records"
+        expect(@slack_msg).to eq "[WARN] ETL failed to sync any records"
       end
     end
 
@@ -36,6 +48,20 @@ describe ETLBuilderJob, :etl, :all_dbs do
         Timecop.travel(1.hour.ago) { subject }
 
         expect(@slack_msg).to be_nil
+      end
+    end
+
+    context "when deleted row is swept up" do
+      before do
+        ETL::Builder.new.full
+        Appeal.last.delete
+        Appeal.last.touch
+      end
+
+      it "sends INFO message to slack" do
+        Timecop.travel(1.hour.ago) { subject }
+
+        expect(@slack_msg).to include("[INFO] ETL swept up 1 deleted records")
       end
     end
   end

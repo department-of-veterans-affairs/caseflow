@@ -11,7 +11,7 @@ describe MailTask, :postgres do
   describe ".create_from_params" do
     # Use AodMotionMailTask because we do create subclasses of MailTask, never MailTask itself.
     let(:task_class) { AodMotionMailTask }
-    let(:params) { { appeal: root_task.appeal, parent_id: root_task_id, type: task_class.name } }
+    let(:params) { { appeal: root_task.appeal, parent_id: root_task_id, type: task_class.name, instructions: "Test" } }
     let(:root_task_id) { root_task.id }
 
     context "when no root_task exists for appeal" do
@@ -24,17 +24,19 @@ describe MailTask, :postgres do
 
     context "when root_task exists for appeal" do
       it "creates AodMotionMailTask assigned to MailTeam and AodTeam" do
-        expect { task_class.create_from_params(params, user) }.to_not raise_error
+        expect(task_class.create_from_params(params, user)).to eq root_task.children[0].children[0]
         expect(root_task.children.length).to eq(1)
 
         mail_task = root_task.children[0]
         expect(mail_task.class).to eq(task_class)
         expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.instructions).to eq(params[:instructions])
         expect(mail_task.children.length).to eq(1)
 
         child_task = mail_task.children[0]
         expect(child_task.class).to eq(task_class)
         expect(child_task.assigned_to).to eq(AodTeam.singleton)
+        expect(child_task.instructions).to eq(params[:instructions])
         expect(child_task.children.length).to eq(0)
       end
     end
@@ -47,6 +49,22 @@ describe MailTask, :postgres do
       it "should not create any mail tasks" do
         expect { task_class.create_from_params(params, user) }.to raise_error(StandardError)
         expect(root_task.children.length).to eq(0)
+      end
+    end
+
+    context "when the default assignee is the mail team" do
+      before do
+        allow(task_class).to receive(:child_task_assignee).and_return(MailTeam.singleton)
+      end
+
+      it "should not create any child tasks" do
+        expect(task_class.create_from_params(params, user)).to eq root_task.children[0]
+        expect(root_task.children.length).to eq(1)
+
+        mail_task = root_task.children[0]
+        expect(mail_task.class).to eq(task_class)
+        expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.children.length).to eq(0)
       end
     end
 
@@ -238,8 +256,8 @@ describe MailTask, :postgres do
     context "for an AppealWithdrawalMailTask" do
       let(:task_class) { AppealWithdrawalMailTask }
 
-      it "should always route to BVA Intake" do
-        expect(subject).to eq(BvaIntake.singleton)
+      it "should always route to Case Review" do
+        expect(subject).to eq(CaseReview.singleton)
       end
     end
 
@@ -278,25 +296,17 @@ describe MailTask, :postgres do
     context "for an EvidenceOrArgumentMailTask" do
       let(:task_class) { EvidenceOrArgumentMailTask }
 
-      context "when the appeal has a pending hearing task" do
-        before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
-
-        it "should route to hearing admin branch" do
-          expect(subject).to eq(HearingAdmin.singleton)
-        end
-      end
-
       context "when the appeal is not active" do
         before { allow(task_class).to receive(:case_active?).and_return(false) }
 
-        it "should raise an error" do
-          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        it "should route to VLJ support staff" do
+          expect(subject).to eq(Colocated.singleton)
         end
       end
 
-      context "when the appeal is active and has no pending_hearing_task" do
-        it "should route to VLJ support staff" do
-          expect(subject).to eq(Colocated.singleton)
+      context "when the appeal is active" do
+        it "should route to the Mail Team" do
+          expect(subject).to eq(MailTeam.singleton)
         end
       end
     end

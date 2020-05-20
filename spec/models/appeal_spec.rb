@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "appeal_shared_examples"
+
 describe Appeal, :all_dbs do
   include IntakeHelpers
 
@@ -255,6 +257,10 @@ describe Appeal, :all_dbs do
     it "returns the latest record" do
       expect(subject).to eq attorney_case_review2
     end
+  end
+
+  context "#overtime" do
+    include_examples "toggle overtime"
   end
 
   context "#contestable_issues" do
@@ -544,39 +550,45 @@ describe Appeal, :all_dbs do
         name: "Paralyzed Veterans Of America",
         role: "VSO",
         url: "paralyzed-veterans-of-america",
-        participant_id: "9876"
+        participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
       )
     end
 
     before do
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
-        .with([participant_id_with_pva]).and_return(
-          participant_id_with_pva => {
-            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
-            representative_type: "POA National Organization",
-            participant_id: "9876"
-          }
-        )
+        .with([participant_id_with_pva]) do
+          { participant_id_with_pva => Fakes::BGSServicePOA.paralyzed_veterans_vso_mapped }
+        end
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
-        .with([participant_id_with_aml]).and_return(
-          participant_id_with_aml => {
-            representative_name: "AMERICAN LEGION",
-            representative_type: "POA National Organization",
-            participant_id: "54321"
-          }
-        )
+        .with([participant_id_with_aml]) do
+          { participant_id_with_aml => Fakes::BGSServicePOA.american_legion_vso_mapped }
+        end
     end
 
     context "#power_of_attorney" do
       it "returns the first claimant's power of attorney" do
-        expect(appeal.power_of_attorney.representative_name).to eq("AMERICAN LEGION")
+        expect(appeal.power_of_attorney.representative_name).to eq(Fakes::BGSServicePOA::AMERICAN_LEGION_VSO_NAME)
       end
     end
 
     context "#power_of_attorneys" do
       it "returns all claimants power of attorneys" do
-        expect(appeal.power_of_attorneys[0].representative_name).to eq("PARALYZED VETERANS OF AMERICA, INC.")
-        expect(appeal.power_of_attorneys[1].representative_name).to eq("AMERICAN LEGION")
+        expect(appeal.power_of_attorneys[0].representative_name)
+          .to eq(Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME)
+        expect(appeal.power_of_attorneys[1].representative_name)
+          .to eq(Fakes::BGSServicePOA::AMERICAN_LEGION_VSO_NAME)
+      end
+
+      context "one claimant has no POA" do
+        before do
+          allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+            .with([participant_id_with_pva]).and_return({})
+          allow(appeal).to receive(:veteran_file_number) { "no-such-file-number" }
+        end
+
+        it "ignores nil values" do
+          expect(appeal.power_of_attorneys.count).to eq(1)
+        end
       end
     end
 
@@ -870,8 +882,8 @@ describe Appeal, :all_dbs do
       let!(:judge) { create(:user) }
       let!(:judge2) { create(:user) }
       let!(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal, created_at: 1.day.ago) }
-      let!(:task2) { create(:ama_judge_task, assigned_to: judge2, appeal: appeal) }
+      let!(:task) { create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal, created_at: 1.day.ago) }
+      let!(:task2) { create(:ama_judge_assign_task, assigned_to: judge2, appeal: appeal) }
 
       subject { appeal.assigned_judge }
 

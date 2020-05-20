@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "appeal_shared_examples"
+
 describe LegacyAppeal, :all_dbs do
   before do
     Timecop.freeze(post_ama_start_date)
@@ -105,10 +107,13 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
-  context "#eligible_for_soc_opt_in? and #matchable_to_request_issue?" do
-    let(:soc_eligible_date) { receipt_date - 60.days }
-    let(:nod_eligible_date) { receipt_date - 372.days }
-    let(:receipt_date) { Time.zone.today }
+  context "#eligible_for_opt_in? and #matchable_to_request_issue?" do
+    let(:receipt_date) { Date.new(2020, 4, 10) }
+    let(:ama_date) { ama_start_date }
+    let(:ineligible_soc_date) { receipt_date - 60.days - 1.day }
+    let(:ineligible_nod_date) { receipt_date - 372.days - 1.day }
+    let(:eligible_soc_date) { receipt_date - 60.days + 1.day }
+    let(:eligible_nod_date) { receipt_date - 372.days + 1.day }
 
     let(:vacols_case) do
       create(:case, bfcorlid: "123456789S")
@@ -117,67 +122,67 @@ describe LegacyAppeal, :all_dbs do
     let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1, disposition: nil)] }
 
     context "when the ssoc date is before when AMA was launched" do
-      let(:ama_date) { Constants::DATES["AMA_ACTIVATION"].to_date }
       let(:receipt_date) { ama_date + 1.day }
 
       scenario "when the ssoc date is before AMA was launched" do
         allow(appeal).to receive(:active?).and_return(true)
         allow(appeal).to receive(:issues).and_return(issues)
-        allow(appeal).to receive(:soc_date).and_return(Constants::DATES["AMA_ACTIVATION"].to_date - 1.day)
+        allow(appeal).to receive(:soc_date).and_return(ama_start_date - 1.day)
 
-        expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
-        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date: receipt_date)).to eq(true)
       end
     end
 
     scenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)
       allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
+      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
     scenario "when is active and soc is not eligible but ssoc is" do
       allow(appeal).to receive(:active?).and_return(true)
       allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
-      allow(appeal).to receive(:ssoc_dates).and_return([soc_eligible_date + 1.day])
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
+      allow(appeal).to receive(:ssoc_dates).and_return([eligible_soc_date])
+      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
+      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
     scenario "when is not active but is eligible" do
       allow(appeal).to receive(:active?).and_return(false)
       allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+      allow(appeal).to receive(:soc_date).and_return(eligible_soc_date)
+      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
+      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
     scenario "when is not active or eligible" do
       allow(appeal).to receive(:active?).and_return(false)
       allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
+      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
     end
 
     scenario "when is active or eligible but has no issues" do
       allow(appeal).to receive(:active?).and_return(true)
       allow(appeal).to receive(:issues).and_return([])
-      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
-      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date + 1.day)
+      allow(appeal).to receive(:soc_date).and_return(eligible_soc_date)
+      allow(appeal).to receive(:nod_date).and_return(eligible_nod_date)
 
-      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
+      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
     end
 
@@ -190,8 +195,37 @@ describe LegacyAppeal, :all_dbs do
         allow(appeal).to receive(:soc_date).and_return(Time.zone.today)
         allow(appeal).to receive(:nod_date).and_return(Time.zone.today)
 
-        expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
+    end
+
+    context "when allowing covid-related timeliness exemptions" do
+      before { FeatureToggle.enable!(:covid_timeliness_exemption) }
+      after { FeatureToggle.disable!(:covid_timeliness_exemption) }
+      let(:soc_covid_eligible_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date }
+      let(:nod_covid_eligible_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date }
+
+      scenario "when NOD date is eligible with covid-related exemption" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(soc_covid_eligible_date - 1.day)
+        allow(appeal).to receive(:nod_date).and_return(nod_covid_eligible_date + 1.day)
+
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(true)
+      end
+
+      scenario "when SOC date is only eligible with a covid-related extension" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(soc_covid_eligible_date + 1.day)
+        allow(appeal).to receive(:nod_date).and_return(nod_covid_eligible_date - 1.day)
+
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(true)
       end
     end
   end
@@ -263,6 +297,12 @@ describe LegacyAppeal, :all_dbs do
         subject
       end
     end
+  end
+
+  context "#overtime" do
+    let!(:vacols_case) { create(:case) }
+
+    include_examples "toggle overtime"
   end
 
   context "#nod" do
@@ -1748,11 +1788,13 @@ describe LegacyAppeal, :all_dbs do
         )
       end
 
-      it { expect(subject.length).to eq(4) }
-      it { is_expected.to include("Foreign claim - compensation claims, dual claims, appeals") }
-      it { is_expected.to include("Vocational Rehabilitation and Employment") }
-      it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
-      it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
+      it "has expected issues", :aggregate_failures do
+        expect(subject.length).to eq(4)
+        is_expected.to include("Foreign claim - compensation claims, dual claims, appeals")
+        is_expected.to include("Vocational Rehabilitation and Employment")
+        is_expected.to include(/Education - GI Bill, dependents educational assistance/)
+        is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands")
+      end
     end
   end
 
@@ -1788,6 +1830,34 @@ describe LegacyAppeal, :all_dbs do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
     end
 
+    context "appellant is not veteran" do
+      before do
+        allow(appeal).to receive(:veteran_file_number) { "no-such-file-number" }
+        allow_any_instance_of(BGSService).to receive(:fetch_person_by_ssn).with(appellant_ssn) do
+          { ptcpnt_id: appellant_pid, ssn_nbr: appellant_ssn }
+        end
+      end
+
+      let(:vacols_case) { create(:case, :representative_american_legion, correspondent: correspondent) }
+      let(:appellant_ssn) { "666001234" }
+      let(:appellant_pid) { "1234" }
+      let(:poa_pid) { "1234567" } # defined in Fakes::BGSService
+      let(:correspondent) do
+        create(
+          :correspondent,
+          appellant_first_name: "David",
+          appellant_middle_initial: "D",
+          appellant_last_name: "Schwimmer",
+          ssn: appellant_ssn
+        )
+      end
+
+      it "uses appellant to load BGS POA" do
+        expect(appeal.power_of_attorney.bgs_representative_name).to eq "Attorney McAttorneyFace"
+        expect(appeal.power_of_attorney.bgs_participant_id).to eq poa_pid
+      end
+    end
+
     context "#power_of_attorney.bgs_representative_address" do
       subject { appeal.power_of_attorney.bgs_representative_address }
 
@@ -1813,9 +1883,12 @@ describe LegacyAppeal, :all_dbs do
       ]
     end
 
-    it { is_expected.to include("02-01") }
-    it { is_expected.to include("02-02") }
-    it { is_expected.to_not include("02-03") }
+    it "has expected issues", :aggregate_failures do
+      is_expected.to include("02-01")
+      is_expected.to include("02-02")
+      is_expected.to_not include("02-03")
+    end
+
     it "returns uniqued issue categories" do
       expect(subject.length).to eq(2)
     end

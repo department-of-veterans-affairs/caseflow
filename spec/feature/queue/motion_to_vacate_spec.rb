@@ -4,6 +4,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
   include QueueHelpers
 
   let!(:lit_support_team) { LitigationSupport.singleton }
+  let(:colocated_org) { Colocated.singleton }
   let(:receipt_date) { Time.zone.today - 20 }
   let!(:appeal) do
     create(:appeal, receipt_date: receipt_date)
@@ -43,6 +44,17 @@ RSpec.feature "Motion to vacate", :all_dbs do
     let!(:judge_review_task) do
       create(:ama_judge_decision_review_task, :completed,
              assigned_to: judge2, appeal: appeal, created_at: receipt_date + 3.days, parent: root_task)
+    end
+
+    let(:atty_disposition) { "granted" }
+    let(:atty_notes) { "Here is some context from Attorney to the judge" }
+    let(:atty_hyperlinks) { generate_atty_hyperlinks(atty_disposition) }
+    let(:atty_instructions) do
+      format_mtv_attorney_instructions(
+        notes: atty_notes,
+        disposition: atty_disposition,
+        hyperlinks: atty_hyperlinks
+      )
     end
 
     before do
@@ -105,49 +117,75 @@ RSpec.feature "Motion to vacate", :all_dbs do
         create(:vacate_motion_mail_task, assigned_to: motions_attorney, parent: root_task)
       end
 
-      it "motions attorney recommends grant decision to judge" do
-        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
+      context "recommends a disposition of granted" do
+        let(:atty_disposition) { "granted" }
 
-        find("label[for=disposition_granted]").click
-        fill_in("instructions", with: "Attorney context/instructions for judge")
+        it "processes correctly" do
+          send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
 
-        # Ensure it has pre-selected judge previously assigned to case
-        expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+          find("label[for=disposition_granted]").click
+          fill_in("instructions", with: atty_notes)
 
-        click_button(text: "Submit")
+          fill_in("motionFile", with: atty_hyperlinks[0][:link])
 
-        # Return back to user's queue
-        expect(page).to have_current_path("/queue")
+          # verify hyperlink modal works
+          check_hyperlink_modal
 
-        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
-        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+          fill_and_check_other_hyperlinks(atty_hyperlinks)
 
-        # Verify new task was created
-        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
-        expect(judge_task).to_not be_nil
+          # Ensure it has pre-selected judge previously assigned to case
+          expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+
+          task = submit_and_fetch_task(judge2)
+          expect(task.instructions.first).to include("I recommend granting a vacatur")
+          expect(task[:instructions]).to eq [atty_instructions]
+        end
       end
 
-      it "motions attorney recommends denied decision to judge and fills in hyperlink" do
-        send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
-        find("label[for=disposition_denied]").click
-        expect(page).to have_content("Optional")
-        expect(page).to have_content(
-          format(COPY::JUDGE_ADDRESS_MTV_HYPERLINK_LABEL, "denial")
-        )
-        fill_in("hyperlink", with: hyperlink)
-        fill_in("instructions", with: "Attorney context/instructions for judge")
-        click_dropdown(text: judge2.display_name)
-        click_button(text: "Submit")
+      context "recommends a partial vacatur" do
+        let(:atty_disposition) { "partially_granted" }
 
-        # Return back to user's queue
-        expect(page).to have_current_path("/queue")
+        it "processes correctly" do
+          send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
 
-        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge2.display_name))
-        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+          find("label[for=disposition_partially_granted]").click
+          fill_in("instructions", with: atty_notes)
 
-        # Verify new task was created
-        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge2)
-        expect(judge_task).to_not be_nil
+          fill_in("motionFile", with: atty_hyperlinks[0][:link])
+
+          fill_and_check_other_hyperlinks(atty_hyperlinks)
+
+          # Ensure it has pre-selected judge previously assigned to case
+          expect(dropdown_selected_value(find(".dropdown-judge"))).to eq judge2.display_name
+
+          task = submit_and_fetch_task(judge2)
+          expect(task.instructions.first).to include("I recommend granting a partial vacatur")
+          expect(task[:instructions]).to eq [atty_instructions]
+        end
+      end
+
+      context "recommends a denial of vacatur" do
+        let(:atty_disposition) { "denied" }
+
+        it "processes correctly" do
+          send_to_judge(user: motions_attorney, appeal: appeal, motions_attorney_task: motions_attorney_task)
+          find("label[for=disposition_denied]").click
+          expect(page).to have_content("Optional")
+
+          fill_in("instructions", with: atty_notes)
+
+          fill_in("decisionDraft", with: atty_hyperlinks[1][:link])
+
+          fill_in("motionFile", with: atty_hyperlinks[0][:link])
+
+          fill_and_check_other_hyperlinks(atty_hyperlinks)
+
+          click_dropdown(text: judge2.display_name)
+
+          task = submit_and_fetch_task(judge2)
+          expect(task.instructions.first).to include("I recommend denial")
+          expect(task[:instructions]).to eq [atty_instructions]
+        end
       end
 
       it "motions attorney triggers Pulac-Cerullo" do
@@ -156,12 +194,28 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
+        expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_TITLE)
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
         find("button", class: "usa-button", text: "Notify").click
 
         expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_TITLE)
         expect(page).to have_content(COPY::PULAC_CERULLO_SUCCESS_DETAIL.gsub("%s", appeal.veteran_full_name))
+      end
+
+      def submit_and_fetch_task(judge)
+        click_button(text: "Submit")
+
+        # Return back to user's queue
+        expect(page).to have_current_path("/queue")
+
+        expect(page).to have_content(format(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_TITLE, judge.display_name))
+        expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL)
+
+        # Verify new task was created
+        judge_task = JudgeAddressMotionToVacateTask.find_by(assigned_to: judge)
+        expect(judge_task).to_not be_nil
+        judge_task
       end
     end
   end
@@ -187,12 +241,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
     let(:atty_notes) { "Notes from attorney" }
     let(:atty_disposition) { "granted" }
-    let(:atty_hyperlink) { nil }
+    let(:atty_hyperlinks) { generate_atty_hyperlinks(atty_disposition) }
     let(:atty_instructions) do
       format_mtv_attorney_instructions(
         notes: atty_notes,
         disposition: atty_disposition,
-        hyperlink: hyperlink
+        hyperlinks: atty_hyperlinks
       )
     end
     let(:judge_address_motion_to_vacate_task) do
@@ -205,7 +259,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
     let(:atty_option_txt) { "#{drafting_attorney.full_name} (Orig. Attorney)" }
     let(:judge_notes) { "Here's why I made my decision..." }
-    let(:return_to_lit_support_instructions) { "\n\nYou forgot the denial draft" }
+    let(:return_to_lit_support_instructions) { "\n\nYou forgot the decision draft" }
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -324,7 +378,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       expect(dropdown_selected_value(find(".dropdown-attorney"))).to eq atty_option_txt
 
       issues_to_select = [1, 3]
-      issues_to_select.each { |idx| select_issue_for_vacature(idx) }
+      issues_to_select.each { |idx| select_issue_for_vacatur(idx) }
 
       click_button(text: "Submit")
 
@@ -385,40 +439,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
       end
     end
 
-    it "judge returns to lit support due to missing denial draft" do
-      address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
-      find("label[for=disposition_denied]").click
-
-      find("a", text: "return to the motions attorney").click
-
-      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_TITLE)
-      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS)
-      find("div.cf-modal-body").fill_in("instructions",
-                                        with: return_to_lit_support_instructions,
-                                        fill_options: { clear: :none })
-
-      click_button(text: "Submit")
-
-      # Return back to user's queue
-      expect(page).to have_current_path("/queue")
-      expect(page).to have_content(
-        format(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE, appeal.veteran_full_name)
-      )
-      expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL)
-
-      motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
-      expect(motion).to be_nil
-
-      expect(judge_address_motion_to_vacate_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
-
-      expect(vacate_motion_mail_task.reload.status).to eq Constants.TASK_STATUSES.assigned
-      expect(vacate_motion_mail_task.instructions.length).to eq 2
-
-      expected_instructions = COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS +
-                              return_to_lit_support_instructions
-      expect(vacate_motion_mail_task.instructions).to include(expected_instructions)
-    end
-
     context "dismissal" do
       let(:atty_disposition) { "dismissed" }
       let(:atty_hyperlink) { "https://efolder.link/file" }
@@ -463,6 +483,58 @@ RSpec.feature "Motion to vacate", :all_dbs do
           Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
         )
         expect(new_task.instructions.join("")).to eq(instructions)
+      end
+    end
+
+    describe "judge returns case to lit support" do
+      context "disposition: granted" do
+        let(:disposition) { "granted" }
+
+        it "allows proper return to lit support" do
+          return_to_lit_support(disposition: disposition)
+        end
+      end
+
+      context "disposition: denied" do
+        let(:disposition) { "denied" }
+
+        it "allows proper return to lit support" do
+          return_to_lit_support(disposition: disposition)
+        end
+      end
+
+      def return_to_lit_support(disposition:)
+        address_motion_to_vacate(user: judge, appeal: appeal, judge_task: judge_address_motion_to_vacate_task)
+        find("label[for=disposition_#{disposition}]").click
+
+        find("a", text: "return to the motions attorney").click
+
+        expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_TITLE)
+        expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS)
+        find("div.cf-modal-body").fill_in("instructions",
+                                          with: return_to_lit_support_instructions,
+                                          fill_options: { clear: :none })
+
+        click_button(text: "Submit")
+
+        # Return back to user's queue
+        expect(page).to have_current_path("/queue")
+        expect(page).to have_content(
+          format(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE, appeal.veteran_full_name)
+        )
+        expect(page).to have_content(COPY::RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL)
+
+        motion = PostDecisionMotion.find_by(task: judge_address_motion_to_vacate_task)
+        expect(motion).to be_nil
+
+        expect(judge_address_motion_to_vacate_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+
+        expect(vacate_motion_mail_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+        expect(vacate_motion_mail_task.instructions.length).to eq 2
+
+        expected_instructions = COPY::RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS +
+                                return_to_lit_support_instructions
+        expect(vacate_motion_mail_task.instructions).to include(expected_instructions)
       end
     end
   end
@@ -521,6 +593,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
       [
         "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
         "motion_to_vacate_checkout/add_decisions"
+      ].join("/")
+    end
+
+    let(:admin_actions_path) do
+      [
+        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+        "motion_to_vacate_checkout/admin_actions"
       ].join("/")
     end
 
@@ -704,6 +783,119 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(vacate_stream.decision_issues.size).to eq(4)
       end
     end
+
+    context "Vacate & de Novo" do
+      let(:vacate_type) { "vacate_and_de_novo" }
+
+      before do
+        add_colocated_users
+      end
+
+      it "correctly handles checkout flow" do
+        User.authenticate!(user: drafting_attorney)
+
+        visit "/queue/appeals/#{vacate_stream.uuid}"
+
+        check_cavc_alert
+        verify_cavc_conflict_action
+
+        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+
+        expect(page.current_path).to eq(review_decisions_path)
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Admin Actions")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(admin_actions_path)
+
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(review_decisions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(admin_actions_path)
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Admin Actions")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+
+        expect(page).to have_content(COPY::ADD_COLOCATED_TASK_SUBHEAD)
+
+        # step "fills in and submits the form for two identical admin actions"
+        action = ColocatedTask.actions_assigned_to_colocated.sample
+        action_class = ColocatedTask.find_subclass_by_action(action).name
+        selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS[action]
+        instructions = generate_words(5)
+
+        click_dropdown(text: selected_opt_0) do
+          visible_options = page.find_all(".Select-option")
+          expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
+        end
+
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+
+        click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
+
+        expect(all("div.admin-action-item").count).to eq 2
+
+        within all("div.admin-action-item")[1] do
+          click_dropdown(text: selected_opt_0)
+          fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+        end
+
+        expect(page).to have_content("Duplicate admin actions detected")
+
+        # step "removes the duplicate and submits the form for a new admin action"
+
+        within all("div.admin-action-item")[1] do
+          click_on COPY::ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL
+        end
+
+        # Time to move to step 3
+
+        # Verify navigation
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        safe_click "#button-back-button"
+
+        expect(page.current_path).to eq(admin_actions_path)
+
+        safe_click "#button-next-button"
+
+        expect(page.current_path).to eq(submit_decisions_path)
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Admin Actions")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
+
+        fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge.full_name)
+        fill_in "notes", with: "all done"
+
+        click_on "Submit"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
+          "sent to #{judge.full_name} for review."
+        )
+
+        judge_task = vacate_stream.tasks.find_by(type: 'JudgeDecisionReviewTask');
+
+        expect(vacate_stream.decision_issues.size).to eq(3)
+        expect(vacate_stream.tasks.size).to eq(5)
+        expect(vacate_stream.tasks.find { |item| item[:type] == action_class }).to_not be_nil
+        expect(judge_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+      end
+    end
   end
 
   describe "Attorney Completes Denied / Dismissed Motion to Vacate Task" do
@@ -833,6 +1025,12 @@ RSpec.feature "Motion to vacate", :all_dbs do
     expect(page).to have_css(".usa-alert-warning")
     alert = find(".usa-alert-warning")
     expect(alert).to have_content("Check CAVC for conflict of jurisdiction")
+    expect(alert).to have_content(
+      [
+        "If there is a Notice of Appeal (NOA) on file at the CAVC website,",
+        "use the Actions Menu to notify Litigation Support."
+      ].join(" ")
+    )
   end
 
   def verify_cavc_conflict_action
@@ -843,11 +1041,57 @@ RSpec.feature "Motion to vacate", :all_dbs do
     action_dropdown.click
   end
 
-  def select_issue_for_vacature(issue_id)
+  def select_issue_for_vacatur(issue_id)
     find(".checkbox-wrapper-issues").find("label[for=\"#{issue_id}\"]").click
   end
 
   def valid_document_id
     "12345-12345678"
+  end
+
+  def add_colocated_users
+    create_list(:user, 6).each do |user|
+      colocated_org.add_user(user)
+    end
+  end
+
+  def generate_atty_hyperlinks(disposition)
+    [
+      {
+        type: "draft of the motion",
+        link: "https://example.com/motion_file.pdf"
+      },
+      {
+        type: "draft of the %s",
+        link: %w[denied dismissed].include?(disposition) ? "https://example.com/decision_draft.pdf" : ""
+      },
+      {
+        type: "Supplementary File 1",
+        link: "https://example.com/file1.pdf"
+      },
+      {
+        type: "Supplementary File 2",
+        link: "https://example.com/file2.pdf"
+      }
+    ]
+  end
+
+  def check_hyperlink_modal
+    click_button(text: "+ Add hyperlink")
+    expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_TITLE)
+    expect(page).to have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS)
+    find("#Add-hyperlink-button-id-0").click
+    expect(page).to_not have_content(COPY::MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS)
+  end
+
+  def fill_and_check_other_hyperlinks(atty_hyperlinks)
+    atty_hyperlinks[2..3].each do |item|
+      click_button(text: "+ Add hyperlink")
+      fill_in("type", with: item[:type])
+      fill_in("link", with: item[:link])
+      click_button(text: "Save")
+      expect(page).to have_content(item[:type])
+      expect(page).to have_content(item[:link])
+    end
   end
 end

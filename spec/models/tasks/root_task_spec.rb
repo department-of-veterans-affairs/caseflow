@@ -189,8 +189,18 @@ describe RootTask, :postgres do
         end
       end
 
-      context "when the child task is a ReturnedUndeliverableCorrespondenceMailTask" do
-        let(:task_factory) { :returned_undeliverable_correspondence_mail_task }
+      context "when the child task is a MailTask" do
+        let(:task_factory) do
+          [
+            :appeal_withdrawal_mail_task,
+            :appeal_withdrawal_bva_task,
+            :returned_undeliverable_correspondence_mail_task,
+            :aod_motion_mail_task,
+            :reconsideration_motion_mail_task,
+            :vacate_motion_mail_task,
+            :congressional_interest_mail_task
+          ].sample
+        end
 
         # Automatic task assignment requires there to be members of the BVA dispatch team.
         before { BvaDispatch.singleton.add_user(create(:user)) }

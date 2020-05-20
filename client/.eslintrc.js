@@ -20,7 +20,14 @@ module.exports = {
         ignore: [],
         customValidators: []
       }
-    ]
+    ],
+    // Adding next two rules to avoid bug in babel-eslint:
+    // https://github.com/babel/babel-eslint/issues/799
+    indent: [
+      'warn', 2,
+      { ignoredNodes: ['TemplateLiteral'] }
+    ],
+    'template-curly-spacing': 'off'
   },
   settings: {
     react: {

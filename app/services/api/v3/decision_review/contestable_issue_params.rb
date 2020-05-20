@@ -20,12 +20,12 @@ class Api::V3::DecisionReview::ContestableIssueParams
   attr_reader :ids
 
   def initialize(
-        decision_review_class:,
-        veteran:,
-        receipt_date:,
-        benefit_type:,
-        params:
-      )
+    decision_review_class:,
+    veteran:,
+    receipt_date:,
+    benefit_type:,
+    params:
+  )
     @decision_review_class = decision_review_class
     @veteran = veteran
     @receipt_date = receipt_date
@@ -59,6 +59,7 @@ class Api::V3::DecisionReview::ContestableIssueParams
   #   nonrating_issue_category
   #   notes
   #   untimely_exemption
+  #   untimely_exemption_covid
   #   untimely_exemption_notes
   #   vacols_id
   #   vacols_sequence_id

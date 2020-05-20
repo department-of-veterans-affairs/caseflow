@@ -30,7 +30,6 @@ import {
   handleLockHearingServerError,
   onResetLockHearingAfterError
 } from '../actions/dailyDocketActions';
-import { onReceiveAlerts } from '../../components/common/actions';
 import DailyDocket from '../components/dailyDocket/DailyDocket';
 import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
 import HearingDayEditModal from '../components/HearingDayEditModal';
@@ -102,11 +101,16 @@ export class DailyDocketContainer extends React.Component {
   formatHearingFormData = (hearingFormData) => {
     const { virtualHearing, location, ...rest } = hearingFormData;
 
-    return ApiUtil.convertToSnakeCase(_.omitBy({
-      ...rest,
-      hearing_location_attributes: location,
-      virtual_hearing_attributes: virtualHearing || {}
-    }, _.isUndefined));
+    return ApiUtil.convertToSnakeCase(
+      _.omitBy(
+        {
+          ..._.omit(rest, ['advanceOnDocketMotion']),
+          hearing_location_attributes: location,
+          virtual_hearing_attributes: virtualHearing || {}
+        },
+        _.isUndefined
+      )
+    );
   };
 
   formatAodMotionForm = (aodMotionForm, hearing) => {
@@ -114,12 +118,14 @@ export class DailyDocketContainer extends React.Component {
       return {};
     }
 
-    // always send reason and person_id
-    return ApiUtil.convertToSnakeCase({
-      ...aodMotionForm,
-      person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId,
-      reason: aodMotionForm.reason || hearing.advanceOnDocketMotion.reason
-    });
+    // always send full AOD data
+    return ApiUtil.convertToSnakeCase(
+      {
+        ..._.omit(hearing.advanceOnDocketMotion, ['date', 'judgeName', 'userId']),
+        ...aodMotionForm,
+        person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId
+      }
+    );
   }
 
   saveHearing = (hearingId, hearingFormData) => {
@@ -134,9 +140,8 @@ export class DailyDocketContainer extends React.Component {
         const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
 
         this.props.onReceiveSavedHearing(hearingResp);
-        this.props.onReceiveAlerts(response.body.alerts);
 
-        return true;
+        return response;
       }, (err) => {
         this.props.handleDailyDocketServerError(err);
 
@@ -325,7 +330,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDisplayLockModal,
   onCancelDisplayLockModal,
   onUpdateLock,
-  onReceiveAlerts,
   onResetLockSuccessMessage,
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
@@ -382,7 +386,6 @@ DailyDocketContainer.propTypes = {
   onReceiveDailyDocket: PropTypes.func,
   onReceiveSavedHearing: PropTypes.func,
   onReceiveHearing: PropTypes.func,
-  onReceiveAlerts: PropTypes.func,
   onResetSaveSuccessful: PropTypes.func,
   onResetLockHearingAfterError: PropTypes.func,
   onResetLockSuccessMessage: PropTypes.func,

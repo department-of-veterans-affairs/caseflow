@@ -8,7 +8,6 @@ import { NavLink } from 'react-router-dom';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
-  resetErrorMessages,
   resetSuccessMessages,
   resetSaveState
 } from './uiReducer/uiActions';
@@ -24,6 +23,11 @@ const containerStyles = css({
   position: 'relative'
 });
 
+/**
+ * Case assignment page used by judges to request new cases and assign cases to their attorneys.
+ * Cases to be assigned are rendered by component UnassignedCasesPage.
+ * Cases that have been assigned are rendered by component AssignedCasesPage.
+ */
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
@@ -32,18 +36,20 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
-    this.props.resetErrorMessages();
   };
 
   render = () => {
     const { userId,
       userCssId,
+      targetUserId,
       targetUserCssId,
       attorneysOfJudge,
       organizations,
       unassignedTasksCount,
       match
     } = this.props;
+
+    const chosenUserId = targetUserId || userId;
 
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
@@ -54,13 +60,13 @@ class JudgeAssignTaskListView extends React.PureComponent {
         <div className="usa-width-one-fourth">
           <ul className="usa-sidenav-list">
             <li>
-              <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
+              <NavLink to={`/queue/${targetUserCssId}/assign`} activeClassName="usa-current" exact>
                 Cases to Assign ({unassignedTasksCount})
               </NavLink>
             </li>
             {attorneysOfJudge.
               map((attorney) => <li key={attorney.id}>
-                <NavLink to={`/queue/${userId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
+                <NavLink to={`/queue/${targetUserCssId}/assign/${attorney.id}`} activeClassName="usa-current" exact>
                   {attorney.full_name} ({attorney.active_task_count})
                 </NavLink>
               </li>)}
@@ -71,7 +77,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             exact
             path={match.url}
             title="Cases to Assign | Caseflow"
-            render={() => <UnassignedCasesPage userId={userId.toString()} />}
+            render={() => <UnassignedCasesPage userId={chosenUserId.toString()} />}
           />
           <PageRoute
             path={`${match.url}/:attorneyId`}
@@ -87,10 +93,10 @@ class JudgeAssignTaskListView extends React.PureComponent {
 JudgeAssignTaskListView.propTypes = {
   attorneysOfJudge: PropTypes.array.isRequired,
   resetSuccessMessages: PropTypes.func,
-  resetErrorMessages: PropTypes.func,
   resetSaveState: PropTypes.func,
   clearCaseSelectSearch: PropTypes.func,
   match: PropTypes.object,
+  targetUserId: PropTypes.number,
   targetUserCssId: PropTypes.string,
   userCssId: PropTypes.string,
   userId: PropTypes.number,
@@ -98,7 +104,7 @@ JudgeAssignTaskListView.propTypes = {
   organizations: PropTypes.array
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   const {
     queue: {
       attorneysOfJudge
@@ -108,17 +114,16 @@ const mapStateToProps = (state, ownProps) => {
   return {
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
     userCssId: state.ui.userCssId,
-    targetUserCssId: state.ui.targetUserCssId,
+    targetUserId: state.ui.targetUser?.id,
+    targetUserCssId: state.ui.targetUser?.cssId,
     tasksByUserId: getTasksByUserId(state),
-    attorneysOfJudge,
-    userId: ownProps.match.params.userId
+    attorneysOfJudge
   };
 };
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     clearCaseSelectSearch,
-    resetErrorMessages,
     resetSuccessMessages,
     resetSaveState
   }, dispatch)

@@ -1,4 +1,6 @@
-require: rubocop-performance
+require:
+  - rubocop-performance
+  - rubocop-rails
 
 AllCops:
   Exclude:
@@ -13,6 +15,7 @@ AllCops:
     - 'client/node_modules/**/*'
     - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
   TargetRailsVersion: 5.1
+  TargetRubyVersion: 2.5
   UseCache: true
 
 Bundler/OrderedGems:
@@ -30,9 +33,6 @@ Style/Documentation:
 
 Style/ClassAndModuleChildren:
   Enabled: false
-
-Metrics/LineLength:
-  Max: 120
 
 Metrics/BlockLength:
   Enabled: false
@@ -74,6 +74,11 @@ Rails/FilePath:
 Rails/HasManyOrHasOneDependent:
   Enabled: false
 
+Rails/HelperInstanceVariable:
+  Enabled: true
+  Exclude:
+    - app/helpers/test/hearings_profile_helper.rb
+
 Rails/InverseOf:
   Enabled: false
 
@@ -91,6 +96,8 @@ Metrics/ClassLength:
 
 Metrics/AbcSize:
   Max: 30
+  Exclude:
+    - app/jobs/virtual_hearings/create_conference_job.rb
 
 Style/DoubleNegation:
   Enabled: false
@@ -128,6 +135,10 @@ Style/IfUnlessModifier:
 Style/RedundantBegin:
   Enabled: false
 
+Style/FormatStringToken:
+  Enabled: true
+  EnforcedStyle: annotated
+
 Naming/FileName:
   Enabled: false
 
@@ -139,6 +150,13 @@ Naming/VariableNumber:
 
 Lint/UriEscapeUnescape:
   Enabled: false
+
+Lint/SuppressedException:
+  Enabled: true
+  AllowComments: true
+
+Layout/LineLength:
+  Max: 120
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented

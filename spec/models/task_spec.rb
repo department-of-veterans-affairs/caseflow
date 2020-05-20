@@ -5,7 +5,7 @@ describe Task, :all_dbs do
     describe ".structure" do
       let(:root_task) { create(:root_task) }
       let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task) }
-      let(:judge_task) { create(:ama_judge_task, :completed, parent: root_task) }
+      let(:judge_task) { create(:ama_judge_assign_task, :completed, parent: root_task) }
       let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
 
       subject { root_task.structure(:id, :status) }
@@ -1464,7 +1464,7 @@ describe Task, :all_dbs do
 
     context "when the task has a grandparent of the same type, but a different parent" do
       let(:grandparent_task) { create(:colocated_task, :ihp, assigned_to: user) }
-      let(:parent_task) { create(:ama_judge_task, parent: grandparent_task, assigned_to: user) }
+      let(:parent_task) { create(:ama_judge_assign_task, parent: grandparent_task, assigned_to: user) }
       let(:task) { create(:colocated_task, :ihp, parent: parent_task, assigned_to: user) }
 
       it "should should return itself" do
@@ -1490,7 +1490,7 @@ describe Task, :all_dbs do
 
     context "when the task has no children of the same type" do
       let(:task) { create(:colocated_task, assigned_to: user) }
-      let(:child_task) { create(:ama_judge_task, parent: task) }
+      let(:child_task) { create(:ama_judge_assign_task, parent: task) }
 
       it "should should return itself" do
         expect(subject.id).to eq(task.id)
@@ -1499,7 +1499,7 @@ describe Task, :all_dbs do
 
     context "when the task has a grandchild of the same type, but a different child" do
       let(:task) { create(:colocated_task, :ihp, assigned_to: user) }
-      let(:child_task) { create(:ama_judge_task, type: JudgeAssignTask.name, parent: task) }
+      let(:child_task) { create(:ama_judge_assign_task, type: JudgeAssignTask.name, parent: task) }
       let(:grandchild_task) { create(:colocated_task, :ihp, parent: child_task, assigned_to: user) }
 
       it "should should return itself" do
@@ -1552,6 +1552,67 @@ describe Task, :all_dbs do
         expect(Raven).to have_received(:capture_message).exactly(1).times
         expect(parent_task.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(parent_task.children.count).to eq(1)
+      end
+    end
+  end
+
+  describe ".cancelled_by" do
+    let(:task) { create(:ama_task) }
+    let(:canceler) { create(:user) }
+    let(:new_canceler) { create(:user) }
+
+    subject { task.cancelled_by }
+
+    context "when the task is still active" do
+      it "returns nil" do
+        expect(subject).to eq nil
+      end
+    end
+
+    context "when the task is cancelled" do
+      context "when there are no versions to interrogate" do
+        before { task.update_column(:status, Constants.TASK_STATUSES.cancelled) }
+
+        it "returns nil" do
+          expect(subject).to eq nil
+        end
+      end
+
+      context "when there are versions to interrogate" do
+        before { task.cancelled! }
+
+        let(:first_version) { task.versions.last }
+
+        context "when there is only one version" do
+          context "when there is no user defined by whodunnit" do
+            it "returns nil" do
+              expect(subject).to eq nil
+            end
+          end
+
+          context "when there is a user defined by whodunnit" do
+            before { first_version.update!(whodunnit: canceler.id.to_s) }
+
+            it "returns the canceler" do
+              expect(subject).to eq canceler
+            end
+          end
+        end
+
+        context "when there are multiple versions" do
+          before do
+            first_version.update!(whodunnit: canceler.id.to_s)
+            task.paper_trail.save_with_version.update!(
+              object_changes: "\"---\nstatus:\n- in_progress\n- cancelled\n",
+              whodunnit: new_canceler.id.to_s,
+              created_at: first_version.created_at + 1.day
+            )
+          end
+
+          it "returns the most recent canceler" do
+            expect(subject).to eq new_canceler
+          end
+        end
       end
     end
   end

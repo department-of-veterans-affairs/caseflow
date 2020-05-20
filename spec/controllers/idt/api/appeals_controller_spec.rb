@@ -39,7 +39,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let!(:tasks) do
           [
-            create(:ama_judge_task, assigned_to: user, appeal: ama_appeals.first),
+            create(:ama_judge_assign_task, assigned_to: user, appeal: ama_appeals.first),
             create(:ama_judge_decision_review_task, assigned_to: user, appeal: ama_appeals.second)
           ]
         end
@@ -174,8 +174,24 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           ]
         end
 
-        let!(:case_review1) { create(:attorney_case_review, task_id: tasks.first.id) }
-        let!(:case_review2) { create(:attorney_case_review, task_id: tasks.first.id) }
+        let!(:case_review1) do
+          create(
+            :attorney_case_review,
+            created_at: Time.zone.now - 1.minute,
+            updated_at: Time.zone.now - 1.minute,
+            document_id: "17325093.1116",
+            task_id: tasks.first.id
+          )
+        end
+        let!(:case_review2) do
+          create(
+            :attorney_case_review,
+            created_at: Time.zone.now,
+            updated_at: Time.zone.now,
+            document_id: "17325093.1117",
+            task_id: tasks.first.id
+          )
+        end
 
         before do
           # cancel one, so it does not show up
@@ -210,13 +226,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
           expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
           expect(ama_appeals.first["attributes"]["documents"].first["written_by"])
-            .to eq case_review1.attorney.full_name
-          expect(ama_appeals.first["attributes"]["documents"].first["document_id"])
-            .to eq case_review1.document_id
-          expect(ama_appeals.first["attributes"]["documents"].second["written_by"])
             .to eq case_review2.attorney.full_name
-          expect(ama_appeals.first["attributes"]["documents"].second["document_id"])
+          expect(ama_appeals.first["attributes"]["documents"].first["document_id"])
             .to eq case_review2.document_id
+          expect(ama_appeals.first["attributes"]["documents"].second["written_by"])
+            .to eq case_review1.attorney.full_name
+          expect(ama_appeals.first["attributes"]["documents"].second["document_id"])
+            .to eq case_review1.document_id
         end
 
         it "returns active appeals associated with a file number" do
@@ -260,16 +276,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
 
         context "an AMA appeal id URL parameter is passed" do
-          before do
-            allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
-              ama_appeals.first.claimant.participant_id => {
-                representative_name: "POA Name",
-                representative_type: "POA Attorney",
-                participant_id: "600153863"
-              }
-            )
-          end
-
           let(:params) { { appeal_id: ama_appeals.first.uuid } }
           let!(:request_issue1) { create(:request_issue, decision_review: ama_appeals.first) }
           let!(:request_issue2) { create(:request_issue, decision_review: ama_appeals.first) }
@@ -284,30 +290,33 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response.status).to eq 200
               response_body = JSON.parse(response.body)["data"]
 
-              expect(response_body["attributes"]["case_details_url"])
-                .to end_with "queue/appeals/#{ama_appeals.first.external_id}"
+              appeal = ama_appeals.first
+              poa = appeal.claimant.power_of_attorney
 
-              expect(response_body["attributes"]["veteran_first_name"]).to eq ama_appeals.first.veteran_first_name
-              expect(response_body["attributes"]["veteran_last_name"]).to eq ama_appeals.first.veteran_last_name
+              expect(response_body["attributes"]["case_details_url"])
+                .to end_with "queue/appeals/#{appeal.external_id}"
+
+              expect(response_body["attributes"]["veteran_first_name"]).to eq appeal.veteran_first_name
+              expect(response_body["attributes"]["veteran_last_name"]).to eq appeal.veteran_last_name
               expect(response_body["attributes"]["veteran_name_suffix"]).to eq "II"
-              expect(response_body["attributes"]["file_number"]).to eq ama_appeals.first.veteran_file_number
+              expect(response_body["attributes"]["file_number"]).to eq appeal.veteran_file_number
 
               expect(response_body["attributes"]["representative_address"]).to eq(nil)
-              expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket?
+              expect(response_body["attributes"]["aod"]).to eq appeal.advanced_on_docket?
               expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
               expect(response_body["attributes"]["status"]).to eq "assigned_to_attorney"
               expect(response_body["attributes"]["veteran_is_deceased"]).to eq false
-              expect(response_body["attributes"]["veteran_ssn"]).to eq ama_appeals.first.veteran_ssn
+              expect(response_body["attributes"]["veteran_ssn"]).to eq appeal.veteran_ssn
               expect(response_body["attributes"]["veteran_death_date"]).to eq nil
               expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq true
-              expect(response_body["attributes"]["appellants"][0]["first_name"])
-                .to eq ama_appeals.first.appellant_first_name
-              expect(response_body["attributes"]["appellants"][0]["last_name"])
-                .to eq ama_appeals.first.appellant_last_name
+              expect(response_body["attributes"]["appellants"][0]["first_name"]).to eq appeal.appellant_first_name
+              expect(response_body["attributes"]["appellants"][0]["last_name"]).to eq appeal.appellant_last_name
+              expect(response_body["attributes"]["appellants"][0]["representative"]["name"])
+                .to eq poa.representative_name
               expect(response_body["attributes"]["appellants"][0]["representative"]["type"])
-                .to eq ama_appeals.first.representative_type
+                .to eq poa.representative_type
             end
           end
 

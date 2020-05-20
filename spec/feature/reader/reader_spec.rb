@@ -186,7 +186,7 @@ RSpec.feature "Reader", :all_dbs do
         # When the "clear filters" button is clicked, the filtering message is reset,
         # and focus goes back on the Document toggle.
         find("#clear-filters").click
-        expect(page).not_to have_content("Filtering by:")
+        expect(page.has_no_content?("Filtering by:")).to eq(true)
         expect(find("#button-documents")["class"]).to have_content("usa-button")
       end
     end
@@ -577,6 +577,11 @@ RSpec.feature "Reader", :all_dbs do
             document_id: documents[1].id,
             y: 300,
             page: 3
+          ),
+          Generators::Annotation.create(
+            comment: "comment with a * char in it",
+            document_id: documents[0].id,
+            y: 350
           )
         ]
       end
@@ -589,16 +594,20 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_content("how's it going")
 
         # A doc without a comment should not show up
-        expect(page).not_to have_content(documents[2].type)
+        expect(page.has_no_content?(documents[2].type)).to eq(true)
+
+        # Filter properly escapes characters
+        fill_in "searchBar", with: "*"
+        expect(page).to have_content(annotations[6].comment)
 
         # Filtering the document list should work in "Comments" mode.
         fill_in "searchBar", with: "form"
-        expect(page).not_to have_content(documents[0].type)
+        expect(page.has_no_content?(documents[0].type)).to eq(true)
         expect(page).to have_content(documents[1].type)
 
         click_on "Documents"
-        expect(page).not_to have_content("another comment")
-        expect(page).not_to have_content("how's it going")
+        expect(page.has_no_content?("another comment")).to eq(true)
+        expect(page.has_no_content?("how's it going")).to eq(true)
       end
 
       def element_position(selector)
@@ -616,10 +625,10 @@ RSpec.feature "Reader", :all_dbs do
       # :nocov:
       scenario "Leave annotation with keyboard" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-        assert_selector(".commentIcon-container", count: 5)
+        assert_selector(".commentIcon-container", count: 6)
         find("body").send_keys [:alt, "c"]
         expect(page).to have_css(".cf-pdf-placing-comment")
-        assert_selector(".commentIcon-container", count: 6)
+        assert_selector(".commentIcon-container", count: 7)
 
         def placing_annotation_icon_position
           element_position "[data-placing-annotation-icon]"
@@ -683,12 +692,12 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_css(".page")
 
         # Click on the second to last comment icon (last comment icon is off screen)
-        all(".commentIcon-container", wait: 3, count: documents[0].annotations.size)[annotations.size - 3].click
+        all(".commentIcon-container", wait: 3, count: documents[0].annotations.size)[annotations.size - 4].click
 
         # Make sure the comment icon and comment are shown as selected
         expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"
 
-        id = "#{annotations[annotations.size - 3].id}-filter-1"
+        id = "#{annotations[annotations.size - 4].id}-filter-1"
 
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
@@ -709,8 +718,8 @@ RSpec.feature "Reader", :all_dbs do
         element_class = "ReactVirtualized__Grid__innerScrollContainer"
         original_scroll = scrolled_amount(element_class)
 
-        # Click on the off screen comment (0 through 3 are on screen)
-        find("#comment4").click
+        # Click on the off screen comment (0 through 4 are on screen)
+        find("#comment5").click
         after_click_scroll = scrolled_amount(element_class)
 
         expect(after_click_scroll - original_scroll).to be > 0
@@ -865,9 +874,9 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to have_content("Procedural")
 
       click_accordion_header(2)
-      expect(page).to_not have_content("Select or tag issue(s)")
+      expect(page).to_not have_content("Select or tag issues")
       click_accordion_header(2)
-      expect(page).to have_content("Select or tag issue(s)")
+      expect(page).to have_content("Select or tag issues")
 
       click_accordion_header(3)
       expect(page).to_not have_content("Add a comment")

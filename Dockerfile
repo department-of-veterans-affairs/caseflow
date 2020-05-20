@@ -2,7 +2,7 @@ FROM ruby:2.5.3-slim
 MAINTAINER Development and Operations team @ Department of Veterans Affairs
 
 # Build variables
-ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https
+ENV BUILD build-essential postgresql-client libaio1 libpq-dev libsqlite3-dev curl software-properties-common apt-transport-https pdftk
 ENV CASEFLOW git nodejs yarn
 
 # Environment (system) variables
@@ -10,6 +10,7 @@ ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
     ORACLE_HOME="/opt/oracle/instantclient_12_2" \
     LANG="AMERICAN_AMERICA.US7ASCII" \
     RAILS_ENV="development" \
+    DEPLOY_ENV="demo" \
     PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 # install oracle deps
@@ -39,7 +40,8 @@ RUN apt -y update && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get clean && apt-get autoclean && apt-get autoremove
 
-
+# install datadog agent
+RUN DD_INSTALL_ONLY=true DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=$(cat config/datadog.key) bash -c "$(curl -L https://raw.githubusercontent.com/DataDog/datadog-agent/master/cmd/agent/install_script.sh)"
 
 RUN bundle install && \
     cd client && \

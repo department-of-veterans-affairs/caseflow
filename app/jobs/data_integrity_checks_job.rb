@@ -10,8 +10,10 @@ class DataIntegrityChecksJob < CaseflowJob
     LegacyAppealsWithNoVacolsCase
     OpenHearingTasksWithoutActiveDescendantsChecker
     OpenTasksWithClosedAtChecker
+    PendingIncompleteAndUncancelledTaskTimersChecker
     ReviewsWithDuplicateEpErrorChecker
     StuckAppealsChecker
+    StuckVirtualHearingsChecker
     UntrackedLegacyAppealsChecker
   ].freeze
 
@@ -27,6 +29,10 @@ class DataIntegrityChecksJob < CaseflowJob
       if checker.report?
         send_to_slack(checker)
       end
+    # don't retry via normal shoryuken, just log and move to next checker.
+    rescue StandardError => error
+      log_error(error, extra: { checker: klass })
+      slack_service.send_notification("Error running #{klass}", klass, checker.slack_channel)
     end
 
     datadog_report_runtime(metric_group_name: "data_integrity_checks_job")
@@ -34,8 +40,13 @@ class DataIntegrityChecksJob < CaseflowJob
 
   private
 
+  def report_msg(msg)
+    return "[WARN] #{msg}" unless msg.match?(/\[(INFO|WARN|ERROR)\]/)
+
+    msg
+  end
+
   def send_to_slack(checker)
-    slack = SlackService.new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
-    slack.send_notification(checker.report, checker.class.name, checker.slack_channel)
+    slack_service.send_notification(report_msg(checker.report), checker.class.name, checker.slack_channel)
   end
 end

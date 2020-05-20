@@ -33,6 +33,7 @@ feature "Appeal Edit issues", :all_dbs do
   let!(:ratings_with_legacy_issues) do
     generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
+  let(:request_issue_decision_mdY) { rating_request_issue.decision_or_promulgation_date.mdY }
 
   let(:legacy_opt_in_approved) { false }
 
@@ -80,7 +81,7 @@ feature "Appeal Edit issues", :all_dbs do
 
     # remove an issue
     click_remove_intake_issue_dropdown(nonrating_request_issue.description)
-    expect(page).not_to have_content(nonrating_request_issue.description)
+    expect(page.has_no_content?(nonrating_request_issue.description)).to eq(true)
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # add a different issue
@@ -99,7 +100,7 @@ feature "Appeal Edit issues", :all_dbs do
     # going back to edit page should show those issues
     visit "appeals/#{appeal.uuid}/edit/"
     expect(page).to have_content("Left knee granted")
-    expect(page).not_to have_content("nonrating description")
+    expect(page.has_no_content?("nonrating description")).to eq(true)
 
     # canceling should redirect to queue
     click_on "Cancel"
@@ -115,7 +116,7 @@ feature "Appeal Edit issues", :all_dbs do
     expect(page).to have_button("Save", disabled: true)
     # remove
     click_remove_intake_issue_dropdown(issue_description)
-    expect(page).not_to have_content(issue_description)
+    expect(page.has_no_content?(issue_description)).to eq(true)
     expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # re-add
@@ -324,21 +325,21 @@ feature "Appeal Edit issues", :all_dbs do
         description: "Description for Accrued",
         date: 1.day.ago.to_date.mdY
       )
-      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to_not have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: false)
 
       # Add a rating issue
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
-      expect(page).to have_content("The Veteran's profile has missing or invalid information")
-      expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+      expect(page).to have_content("Check the Veteran's profile for invalid information")
+      expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
       expect(page).to have_content(
         "the corporate database, then retry establishing the EP in Caseflow: country"
       )
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
       click_remove_intake_issue_dropdown("Left knee granted")
-      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to_not have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: false)
 
       # Add a compensation nonrating issue
@@ -350,7 +351,7 @@ feature "Appeal Edit issues", :all_dbs do
         description: "Description for Apportionment",
         date: 2.days.ago.to_date.mdY
       )
-      expect(page).to have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: true)
     end
   end
@@ -371,7 +372,7 @@ feature "Appeal Edit issues", :all_dbs do
         date: 1.day.ago.to_date.mdY
       )
 
-      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to_not have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: false)
 
       click_edit_submit_and_confirm
@@ -453,7 +454,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -493,7 +494,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -507,11 +508,12 @@ feature "Appeal Edit issues", :all_dbs do
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
 
       sleep 1
+
       # reload to verify that the new issues populate the form
       visit "appeals/#{appeal.uuid}/edit/"
 
       expect(page).to have_content(
-        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/10\/2019\s*Withdrawn on/i
+        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: #{request_issue_decision_mdY}\s*Withdrawn on/i
       )
     end
 
@@ -536,7 +538,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -621,8 +623,8 @@ feature "Appeal Edit issues", :all_dbs do
                )).to_not be_nil
 
         visit "appeals/#{appeal.uuid}/edit"
-        expect(page).not_to have_content(existing_request_issues.first.description)
-        expect(page).not_to have_content(existing_request_issues.second.description)
+        expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
+        expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
@@ -672,8 +674,8 @@ feature "Appeal Edit issues", :all_dbs do
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
           visit "appeals/#{appeal.uuid}/edit"
-          expect(page).not_to have_content(existing_request_issues.first.description)
-          expect(page).not_to have_content(existing_request_issues.second.description)
+          expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
+          expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
           expect(cancelled_task.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(cancelled_task.closed_at).to eq(Time.zone.now)
         end

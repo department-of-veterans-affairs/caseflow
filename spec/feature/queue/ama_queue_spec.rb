@@ -30,7 +30,7 @@ feature "AmaQueue", :all_dbs do
 
       step "views their case details which does not have the view docs link" do
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
-        expect(page).to_not have_content("Veteran Documents")
+        expect(page).to_not have_content(COPY::TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL)
       end
     end
   end
@@ -65,7 +65,8 @@ feature "AmaQueue", :all_dbs do
         appeals.first.claimant.participant_id => {
           representative_name: poa_name,
           representative_type: "POA Attorney",
-          participant_id: participant_id
+          participant_id: participant_id,
+          file_number: appeals.first.veteran_file_number
         }
       )
     end
@@ -74,7 +75,7 @@ feature "AmaQueue", :all_dbs do
     let(:participant_id) { "600153863" }
     let!(:root_task) { create(:root_task, appeal: appeals.first) }
     let!(:parent_task) do
-      create(:ama_judge_task, assigned_to: judge_user, parent: root_task)
+      create(:ama_judge_assign_task, assigned_to: judge_user, parent: root_task)
     end
 
     let(:poa_name) { "Test POA" }
@@ -195,12 +196,12 @@ feature "AmaQueue", :all_dbs do
 
         click_on "Submit"
 
-        expect(page).to have_content("AOD status updated")
+        expect(page).to have_content("AOD status has been granted due to Serious illness")
         expect(page).to have_content("AOD")
         motion = appeals.first.claimant.person.advance_on_docket_motions.first
 
         expect(motion.granted).to eq(true)
-        expect(motion.reason).to eq("serious_illness")
+        expect(motion.reason).to eq(Constants.AOD_REASONS.serious_illness)
       end
 
       context "when there is an error loading addresses" do
@@ -435,7 +436,7 @@ feature "AmaQueue", :all_dbs do
     end
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:judge_task) do
-      create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :assigned)
+      create(:ama_judge_assign_task, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
     before do
@@ -453,17 +454,13 @@ feature "AmaQueue", :all_dbs do
     end
 
     def judge_assign_to_attorney
-      visit "/queue"
-      expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
-
-      find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-      expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
-      click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id)
+      visit "/queue/#{judge_user.css_id}/assign"
 
       click_on veteran_full_name
 
       click_dropdown(prompt: "Select an action", text: "Assign to attorney")
       click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
       click_on "Submit"
 
@@ -483,7 +480,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
 
@@ -509,7 +506,7 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "Select-option", text: "Remanded").click
 
         click_on "Save"
-        expect(page).not_to have_content("This field is required")
+        expect(page.has_no_content?("This field is required")).to eq(true)
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -555,7 +552,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         expect(page).to have_content("Allowed")
@@ -602,7 +599,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
 
@@ -673,7 +670,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         click_on "Continue"
@@ -762,6 +759,7 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+          fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
           click_on "Submit"
 
@@ -776,7 +774,7 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-          expect(page).not_to have_content("Select special issues")
+          expect(page.has_no_content?("Select special issues")).to eq(true)
 
           expect(page).to have_content("Add decisions")
 
@@ -802,7 +800,7 @@ feature "AmaQueue", :all_dbs do
           find("div", class: "Select-option", text: "Remanded").click
 
           click_on "Save"
-          expect(page).not_to have_content("This field is required")
+          expect(page.has_no_content?("This field is required")).to eq(true)
           click_on "Continue"
 
           expect(page).to have_content("Select Remand Reasons")

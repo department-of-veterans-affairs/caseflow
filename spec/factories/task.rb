@@ -314,7 +314,7 @@ FactoryBot.define do
         parent { create(:ama_task, appeal: appeal) }
       end
 
-      factory :ama_judge_task, class: JudgeAssignTask do
+      factory :ama_judge_assign_task, class: JudgeAssignTask do
       end
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
@@ -358,7 +358,7 @@ FactoryBot.define do
       end
 
       factory :appeal_withdrawal_bva_task, class: AppealWithdrawalMailTask do
-        assigned_to { BvaIntake.singleton }
+        assigned_to { CaseReview.singleton }
         parent { create(:appeal_withdrawal_mail_task, appeal: appeal) }
       end
 
@@ -384,14 +384,12 @@ FactoryBot.define do
 
         after(:build) do |_task, evaluator|
           if evaluator.assigned_by
-            existing_staff_record = VACOLS::Staff.where(
-              sdomainid: evaluator.assigned_by.css_id, svlj: "J", sactive: "A"
-            ).first
+            existing_staff_record = VACOLS::Staff.pure_judge.find_by_sdomainid(evaluator.assigned_by.css_id)
             create(:staff, :judge_role, user: evaluator.assigned_by) if existing_staff_record.blank?
           end
 
           if evaluator.assigned_to
-            existing_staff_record = VACOLS::Staff.where(sdomainid: evaluator.assigned_to.css_id, sactive: "A").first
+            existing_staff_record = VACOLS::Staff.active.find_by_sdomainid(evaluator.assigned_to.css_id)
             create(:staff, :attorney_role, user: evaluator.assigned_to) if existing_staff_record.blank?
           end
         end

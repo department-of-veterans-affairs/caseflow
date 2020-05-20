@@ -47,12 +47,17 @@ class MailTask < Task
           parent_task = create!(
             appeal: parent_task.appeal,
             parent_id: parent_if_blocking_task(parent_task).id,
-            assigned_to: MailTeam.singleton
+            assigned_to: MailTeam.singleton,
+            instructions: [params[:instructions]]
           )
         end
 
-        params = modify_params_for_create(params)
-        create_child_task(parent_task, user, params)
+        if child_task_assignee(parent_task, params).eql? MailTeam.singleton
+          parent_task
+        else
+          params = modify_params_for_create(params)
+          create_child_task(parent_task, user, params)
+        end
       end
     end
 
@@ -83,7 +88,7 @@ class MailTask < Task
   end
 
   def hide_from_task_snapshot
-    super || assigned_to.eql?(MailTeam.singleton)
+    super || (assigned_to.eql?(MailTeam.singleton) && !active?)
   end
 
   def blocking?

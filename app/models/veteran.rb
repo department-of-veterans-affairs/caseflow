@@ -14,19 +14,23 @@ class Veteran < CaseflowRecord
   bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
-                    :service, :date_of_birth, :date_of_death, :email_address
-
-  validates :first_name, :last_name, presence: true, on: :bgs
-  validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
-  validate :validate_address_line, on: :bgs
-  validates :city, length: { maximum: 30 }, on: :bgs
-  validate :validate_city, on: :bgs
+                    :service, :date_of_birth, :email_address
 
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
     validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
     validates :state, presence: true, if: :state_is_required?, on: :bgs
     validates :city, presence: true, unless: :military_address?, on: :bgs
+  end
+
+  with_options on: :bgs do
+    validates :first_name, :last_name, presence: true
+    validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }
+    validate :validate_address_line
+    validates :city, length: { maximum: 30 }
+    validate :validate_city
+    validate :validate_date_of_birth
+    validate :validate_name_suffix
   end
 
   delegate :full_address, to: :address
@@ -51,6 +55,7 @@ class Veteran < CaseflowRecord
 
   # key is local attribute name; value is corresponding bgs attribute name
   CACHED_BGS_ATTRIBUTES = {
+    date_of_death: :date_of_death,
     first_name: :first_name,
     last_name: :last_name,
     middle_name: :middle_name,
@@ -134,9 +139,13 @@ class Veteran < CaseflowRecord
   end
 
   def access_error
-    @access_error ||= nil if bgs_record.is_a?(Hash)
+    @access_error ||= nil if bgs_record_found?
   rescue BGS::ShareError => error
     error.message
+  end
+
+  def bgs_record_found?
+    bgs_record.is_a?(Hash)
   end
 
   # When two Veteran records get merged for data clean up, it can lead to multiple active phone numbers
@@ -162,13 +171,22 @@ class Veteran < CaseflowRecord
   end
 
   def incident_flash?
-    bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
+    bgs_record_found? && bgs_record[:block_cadd_ind] == "S"
   end
 
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
-    @zip_code || (@address_line3 if (@address_line3 || "").match?(/(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/))
+    zip_code = bgs_record&.[](:zip_code)
+    zip_code ||= (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
+
+    # Write to cache for research purposes. Will remove!
+    # See:
+    #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
+    Rails.cache.write("person-zip-#{zip_code}", true) if zip_code.present?
+
+    zip_code
   end
+
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2
@@ -187,19 +205,34 @@ class Veteran < CaseflowRecord
     end
   end
 
+  def validate_date_of_birth
+    return if date_of_birth.blank?
+
+    unless date_of_birth.match?(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d/)
+      errors.add(:date_of_birth, "invalid_date_of_birth")
+    end
+  end
+
   def validate_city
-    return if city.blank?
+    return true if city.blank?
 
     # This regex validation is used in VBMS to validate address of veteran
     errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
   end
 
-  def timely_ratings(from_date:)
-    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
+  def validate_name_suffix
+    # This regex validation checks for punctuations in the name suffix
+    errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
   end
 
   def ratings
-    @ratings ||= Rating.fetch_all(participant_id)
+    @ratings ||= begin
+      if FeatureToggle.enabled?(:ratings_at_issue, user: RequestStore.store[:current_user])
+        RatingAtIssue.fetch_all(participant_id)
+      else
+        PromulgatedRating.fetch_all(participant_id)
+      end
+    end
   end
 
   def decision_issues
@@ -211,7 +244,11 @@ class Veteran < CaseflowRecord
   end
 
   def ssn
-    super || (bgs_record.is_a?(Hash) ? bgs_record[:ssn] : nil)
+    super || (bgs_record_found? ? bgs_record[:ssn] : nil)
+  end
+
+  def date_of_death
+    super || (bgs_record_found? ? bgs_record[:date_of_death] : nil)
   end
 
   def address
@@ -243,8 +280,12 @@ class Veteran < CaseflowRecord
     return false unless accessible? && bgs_record.is_a?(Hash)
 
     is_stale = stale?
-    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
+    is_stale ||= stale_bgs_attributes?
     is_stale
+  end
+
+  def stale_bgs_attributes?
+    CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
   end
 
   def update_cached_attributes!
@@ -346,11 +387,11 @@ class Veteran < CaseflowRecord
   end
 
   def cached_attributes_updatable?
-    accessible? && bgs_record.is_a?(Hash) && stale_attributes?
+    accessible? && bgs_record_found? && stale_attributes?
   end
 
   def deceased?
-    !date_of_death.nil?
+    date_of_death.present?
   end
 
   def alive?
@@ -360,6 +401,7 @@ class Veteran < CaseflowRecord
   def unload_bgs_record
     @bgs_record_loaded = false
     @bgs_record = nil
+    self
   end
 
   private
@@ -425,7 +467,7 @@ class Veteran < CaseflowRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn, :date_of_death]
   end
 
   def military_address?

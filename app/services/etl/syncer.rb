@@ -8,6 +8,16 @@
 # then sync and save the corresponding target_class instance.
 
 class ETL::Syncer
+  class << self
+    def origin_class
+      new(etl_build: false).origin_class
+    end
+
+    def target_class
+      new(etl_build: false).target_class
+    end
+  end
+
   def initialize(since: nil, etl_build:)
     @orig_since = since # different name since we calculate since()
     @etl_build = etl_build
@@ -34,6 +44,8 @@ class ETL::Syncer
         saved = 0
         originals.reject { |original| filter?(original) }.each do |original|
           target = target_class.sync_with_original(original)
+          next unless target
+
           if target.persisted?
             updated += 1
           else
@@ -113,6 +125,8 @@ class ETL::Syncer
   def incremental?
     !!since
   end
+
+  protected
 
   def instances_needing_update
     return origin_class.where("updated_at >= ?", since) if incremental?

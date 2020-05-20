@@ -6,6 +6,7 @@ detectors:
     exclude:
       - BulkTaskAssignment
       - Hearing#override_full_hearing_day_validation
+      - PowerOfAttorney
       - QueueConfig
       - RatingDecision
   BooleanParameter:
@@ -20,13 +21,20 @@ detectors:
       - Fakes::BGSService
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
+      - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
+      - SlackService#pick_color
       - Task#actions_allowable?
       - TaskSorter#sort_requires_case_norm?
       - VBMSCaseflowLogger#log
       - Veteran
+      - VirtualHearing#email_recipient_name
+      - JudgeDecisionReviewTask#additional_available_actions
   UncommunicativeVariableName:
     exclude:
       - Address
+      - Seeds::Intake#create_inbox_messages
+      - Seeds::MTV#setup_motion_to_vacate
+      - Seeds::Users
       - Fakes::PersistentStore#convert_dates_from
   UncommunicativeMethodName:
     exclude:
@@ -40,6 +48,7 @@ detectors:
     exclude:
       - HearingSerializerBase
       - LegacyDocket
+      - Seeds::Tasks
       - TaskTreeRenderModule
   DuplicateMethodCall:
     enabled: false
@@ -56,12 +65,17 @@ detectors:
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
+      - VirtualHearings::CreateConferenceJob#log_virtual_hearing_state
       - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#log_virtual_hearing_state
       - VirtualHearings::DeleteConferencesJob#perform
       - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
+      - VirtualHearings::DeleteConferencesJob#send_cancellation_emails
+      - VirtualHearings::SendEmail#external_message_id
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
       - Fakes::BGSServiceRecordMaker
+      - Fakes::BGSService#fetch_poas_by_participant_ids
       - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - HearingSerializerBase
@@ -73,11 +87,13 @@ detectors:
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
+      - Seeds::Hearings
+      - Seeds::Tasks#create_colocated_legacy_tasks
+      - Seeds::Users#create_aod_user_and_tasks
       - SyncReviewsJob
       - TaskTimerJob
-      - UpdateCachedAppealsAttributesJob#assignees_for_vacols_id
+      - UpdateCachedAppealsAttributesJob
       - UserReporter#report_user_related_records
-      - User#current_case_assignments_with_views
       - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
       - VideoHearingDayRequestTypeQuery#call
@@ -99,6 +115,11 @@ detectors:
       - ExternalApi::VBMSService#self.create_contentions!
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReview::ContestableIssueFinder#initialize
+      - QueueRepository#assign_case_to_attorney!
+      - Seeds::MTV#judge_addresses_mtv
+      - Seeds::MTV#send_mtv_to_judge
+      - Seeds::Tasks#create_task_at_colocated
+      - VirtualHearings::CreateConferenceJob#perform
   ManualDispatch:
     exclude:
       - Api::V3::DecisionReview::IntakeError#potential_error_code
@@ -118,6 +139,7 @@ detectors:
     enabled: false
   RepeatedConditional:
     exclude:
+      - BgsPowerOfAttorney
       - HearingLocation
       - JudgeTeam
       - LegacyAppeal
@@ -125,6 +147,11 @@ detectors:
       - RequestIssue
       - BulkTaskReassignment
       - Task
+      - UpdateCachedAppealsAttributesJob
+      - Veteran
+  TooManyConstants:
+    exclude:
+      - Fakes::BGSServicePOA
   TooManyInstanceVariables:
     exclude:
       - AmaAppealDispatch
@@ -145,29 +172,35 @@ detectors:
     exclude:
       - AddressMapper#get_address_from_veteran_record
       - ClaimReviewAsyncStatsReporter#seconds_to_hms
+      - ETLClasses#syncer_klasses
       - ETL::Builder#last_built
+      - ETL::HearingSyncer#filter?
+      - ETL::LegacyHearingSyncer#filter?
       - ETL::Syncer#filter?
       - ETL::TaskSyncer#filter?
+      - Fakes::BGSService
+      - Fakes::RatingStore
+      - Fakes::PexipService
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings
+      - JudgeLegacyDecisionReviewTask#review_action
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_priority_appeals
-      - JudgeLegacyDecisionReviewTask#review_action
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
-      - Fakes::BGSService
-      - Fakes::PexipService
-      - VBMSCaseflowLogger#log
+      - PendingIncompleteAndUncancelledTaskTimersQuery#call
+      - PowerOfAttorneyMapper#get_claimant_poa_from_bgs_poa
       - Reporter#average
       - Reporter#median
       - Reporter#seconds_to_hms
       - Reporter#percent
+      - ScheduleHearingTaskPager#sorted_tasks
+      - VBMSCaseflowLogger#log
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link
       - VirtualHearings::VeteranNameHelper#formatted_veteran_name
-      - ScheduleHearingTaskPager#sorted_tasks
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

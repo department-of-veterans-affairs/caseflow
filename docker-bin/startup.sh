@@ -5,8 +5,18 @@ THIS_SCRIPT_DIR=$(dirname $0)
 # Set variables for application
 source $THIS_SCRIPT_DIR/env.sh
 
-echo "Waiting for dependencies to properly start up - 90 seconds"
-sleep 90
+echo "Start DBus"
+dbus-daemon --system
+
+echo "Start Datadog"
+nohup /opt/datadog-agent/bin/agent/agent run -p /opt/datadog-agent/run/agent.pid > dd-agent.out &
+nohup /opt/datadog-agent/embedded/bin/trace-agent --config /etc/datadog-agent/datadog.yaml --pid /opt/datadog-agent/run/trace-agent.pid > dd-trace.out &
+nohup /opt/datadog-agent/embedded/bin/system-probe --config=/etc/datadog-agent/system-probe.yaml --pid=/opt/datadog-agent/run/system-probe.pid > dd-probe.out &
+nohup /opt/datadog-agent/embedded/bin/process-agent --config=/etc/datadog-agent/datadog.yaml --sysprobe-config=/etc/datadog-agent/system-probe.yaml --pid=/opt/datadog-agent/run/process-agent.pid > dd-system-probe.out &
+
+echo "Waiting for dependencies to properly start up - 240 seconds"
+date
+sleep 240
 
 echo "Starting Appeals App"
 date

@@ -61,7 +61,7 @@ class Organization < CaseflowRecord
   end
 
   def use_task_pages_api?
-    false
+    true
   end
 
   def add_user(user)
@@ -139,10 +139,6 @@ class Organization < CaseflowRecord
 
   def completed_tasks_tab
     ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
-  end
-
-  def ama_task_serializer
-    WorkQueue::TaskSerializer
   end
 
   private

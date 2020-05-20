@@ -29,6 +29,7 @@ class LegacyAppeal < CaseflowRecord
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :claimants, -> { Claimant.none }
   has_one :cached_vacols_case, class_name: "CachedAppeal", foreign_key: :vacols_id, primary_key: :vacols_id
+  has_one :work_mode, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -258,6 +259,10 @@ class LegacyAppeal < CaseflowRecord
     !!appellant_first_name
   end
 
+  def appellant_email_address
+    person_for_appellant&.[](:email_addr)
+  end
+
   def person_for_appellant
     return nil if appellant_ssn.blank?
 
@@ -273,7 +278,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def veteran_ssn
-    vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
+    vbms_id.ends_with?("C") ? veteran&.ssn : sanitized_vbms_id
   end
 
   def congressional_interest_addresses
@@ -309,7 +314,7 @@ class LegacyAppeal < CaseflowRecord
   def power_of_attorney
     # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
     # when a contesting claimant is present. Refactor so we surface all POA data.
-    @power_of_attorney ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
+    @power_of_attorney ||= new_power_of_attorney.tap do |poa|
       # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
       poa.class.repository.set_vacols_values(
         poa: poa,
@@ -758,14 +763,20 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def matchable_to_request_issue?(receipt_date)
-    issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
+    return false unless issues.any?
+    return true if active?
+
+    covid_flag = FeatureToggle.enabled?(:covid_timeliness_exemption, user: RequestStore.store[:current_user])
+
+    eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag)
   end
 
-  def eligible_for_soc_opt_in?(receipt_date)
+  def eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless receipt_date
     return false unless soc_date
 
-    soc_date_eligible_for_opt_in?(receipt_date) || nod_date_eligible_for_opt_in?(receipt_date)
+    soc_eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag) ||
+      nod_eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag)
   end
 
   def serializer_class
@@ -845,20 +856,25 @@ class LegacyAppeal < CaseflowRecord
 
   private
 
-  def soc_date_eligible_for_opt_in?(receipt_date)
-    soc_eligible_date = receipt_date - 60.days
-    earliest_eligible_date = [soc_eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
+  def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
+    return false unless soc_date
+
+    soc_eligible = receipt_date - 60.days
+    eligible_date = covid_flag ? [soc_eligible, Constants::DATES["SOC_COVID_ELIGIBLE"].to_date].min : soc_eligible
+    earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    soc_date >= earliest_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= earliest_eligible_date }
+    ([soc_date] + ssoc_dates).any? { |soc_date| soc_date >= earliest_eligible_date }
   end
 
-  def nod_date_eligible_for_opt_in?(receipt_date)
+  def nod_eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless nod_date
 
-    nod_eligible_date = receipt_date - 372.days
+    nod_eligible = receipt_date - 372.days
+    eligible_date = covid_flag ? [nod_eligible, Constants::DATES["NOD_COVID_ELIGIBLE"].to_date].min : nod_eligible
+    earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
-    nod_date >= nod_eligible_date
+    nod_date >= earliest_eligible_date
   end
 
   def bgs_address_service
@@ -909,6 +925,18 @@ class LegacyAppeal < CaseflowRecord
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
+  def new_power_of_attorney
+    PowerOfAttorney.new(
+      file_number: veteran_file_number,
+      claimant_participant_id: claimant_participant_id,
+      vacols_id: vacols_id
+    )
+  end
+
+  def claimant_participant_id
+    person_for_appellant&.dig(:ptcpnt_id)
+  end
+
   class << self
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
@@ -920,7 +948,7 @@ class LegacyAppeal < CaseflowRecord
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
-      return bfcorlid unless bfcorlid =~ /\d/
+      return bfcorlid unless bfcorlid.match?(/\d/)
 
       numeric = bfcorlid.gsub(/[^0-9]/, "")
 

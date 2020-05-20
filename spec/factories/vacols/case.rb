@@ -33,14 +33,21 @@ FactoryBot.define do
         end
         vacols_case.update!(bfcurloc: slogid) if slogid
 
+        # Set the Work Product
+        deprod = if evaluator.work_product && evaluator.work_product.length > 3
+                   evaluator.work_product[0..2].upcase
+                 else
+                   evaluator.work_product
+                 end
+
         create_list(
           :decass,
           evaluator.decass_count,
-          evaluator.work_product,
+          deprod: deprod,
           defolder: vacols_case.bfkey,
           deadusr: slogid || "TEST",
           demdusr: assigner_slogid || "ASSIGNER",
-          dereceive: (evaluator.user&.vacols_roles&.include?("judge")) ? Time.zone.today : nil,
+          dereceive: evaluator.user&.vacols_roles&.include?("judge") ? Time.zone.today : nil,
           dedocid: evaluator.document_id || nil,
           deatty: sattyid || "100"
         )

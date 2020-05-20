@@ -153,8 +153,15 @@ class TaskRows extends React.PureComponent {
   assignedByListItem = (task) => {
     const assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
 
-    return assignor ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt>
+    return assignor ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
       <dd>{assignor}</dd></div> : null;
+  }
+
+  cancelledByListItem = (task) => {
+    const canceler = task.cancelledBy?.cssId;
+
+    return canceler ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCELER_LABEL}</dt>
+      <dd>{canceler}</dd></div> : null;
   }
 
   taskLabelListItem = (task) => {
@@ -243,6 +250,7 @@ class TaskRows extends React.PureComponent {
           { timeline && timelineTitle }
           { this.assignedToListItem(task) }
           { this.assignedByListItem(task) }
+          { this.cancelledByListItem(task) }
           { this.taskLabelListItem(task) }
           { this.taskInstructionsListItem(task) }
         </CaseDetailsDescriptionList>
@@ -297,7 +305,7 @@ class TaskRows extends React.PureComponent {
           { moment(appeal.nodDate).format('MM/DD/YYYY') }
         </td>
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-          { <GreenCheckmark /> } </td>
+          <GreenCheckmark /></td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
         </td>

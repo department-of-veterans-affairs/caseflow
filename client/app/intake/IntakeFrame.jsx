@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 
+import { hot } from 'react-hot-loader/root';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -114,7 +116,7 @@ class IntakeFrame extends React.PureComponent {
               <Route
                 exact
                 path={PAGE_PATHS.BEGIN}
-                component={SelectFormButton} />
+                render={({ history }) => <SelectFormButton {...this.props} history={history} />} />
               <Route
                 exact
                 path={PAGE_PATHS.REVIEW}
@@ -142,7 +144,7 @@ class IntakeFrame extends React.PureComponent {
   }
 }
 
-export default connect(
+export default hot(connect(
   ({ intake }) => ({
     intakeId: intake.id,
     unreadMessages: intake.unreadMessages,
@@ -154,4 +156,4 @@ export default connect(
     toggleCancelModal,
     submitCancel
   }, dispatch)
-)(IntakeFrame);
+)(IntakeFrame));

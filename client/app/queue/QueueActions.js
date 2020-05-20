@@ -417,7 +417,7 @@ const dispatchOldTasks = (dispatch, oldTasks, resp) => {
 };
 
 export const initialAssignTasksToUser = ({
-  tasks, assigneeId, previousAssigneeId
+  tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => {
   const amaTasks = tasks.filter((oldTask) => oldTask.appealType === 'Appeal');
   const legacyTasks = tasks.filter((oldTask) => oldTask.appealType === 'LegacyAppeal');
@@ -430,7 +430,8 @@ export const initialAssignTasksToUser = ({
         tasks: amaTasks.map((oldTask) => ({
           external_id: oldTask.externalAppealId,
           parent_id: oldTask.taskId,
-          assigned_to_id: assigneeId
+          assigned_to_id: assigneeId,
+          instructions
         }))
       }
     }
@@ -444,7 +445,8 @@ export const initialAssignTasksToUser = ({
         tasks: {
           assigned_to_id: assigneeId,
           type: 'JudgeCaseAssignmentToAttorney',
-          appeal_id: oldTask.appealId
+          appeal_id: oldTask.appealId,
+          judge_id: previousAssigneeId
         }
       }
     }
@@ -476,7 +478,7 @@ export const initialAssignTasksToUser = ({
 };
 
 export const reassignTasksToUser = ({
-  tasks, assigneeId, previousAssigneeId
+  tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
@@ -486,7 +488,8 @@ export const reassignTasksToUser = ({
       data: {
         task: {
           type: 'AttorneyTask',
-          assigned_to_id: assigneeId
+          assigned_to_id: assigneeId,
+          instructions
         }
       }
     };
@@ -636,6 +639,11 @@ export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
     then((resp) => {
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
       dispatch(setQueueConfig(resp.body.queue_config));
+    }).
+    catch((error) => {
+      dispatch(errorTasksAndAppealsOfAttorney({ attorneyId: userId, error }));
+      // rethrow error so that QueueLoadingScreen can catch and display error
+      throw error;
     });
 
 export const setAppealAttrs = (appealId, attributes) => ({
@@ -653,10 +661,15 @@ export const setSpecialIssues = (specialIssues) => ({
   }
 });
 
-export const setAppealAod = (externalAppealId) => ({
+export const clearSpecialIssues = () => ({
+  type: ACTIONS.CLEAR_SPECIAL_ISSUE
+});
+
+export const setAppealAod = (externalAppealId, granted) => ({
   type: ACTIONS.SET_APPEAL_AOD,
   payload: {
-    externalAppealId
+    externalAppealId,
+    granted
   }
 });
 

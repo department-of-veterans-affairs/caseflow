@@ -2,6 +2,10 @@
 
 class LegacyTasksController < ApplicationController
   include Errors
+  include CssIdConcern
+
+  before_action :validate_user_id, only: [:index]
+  before_action :validate_user_role, only: [:index]
 
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
@@ -14,8 +18,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
-    user_role = (params[:role] || user.vacols_roles.first).try(:downcase)
-    return invalid_role_error unless ROLES.include?(user_role)
+    return if needs_redirect?
 
     respond_to do |format|
       format.html do
@@ -31,6 +34,39 @@ class LegacyTasksController < ApplicationController
         end
       end
     end
+  end
+
+  def needs_redirect?
+    # fixes incorrectly cased css_id param
+    return (use_normalized_css_id && redirect_to_updated_url) if non_normalized_css_id?(params[:user_id])
+    # changes param from user_id to css_id if user is judge
+    return (use_css_id && redirect_to_updated_url) if positive_integer?(params[:user_id])
+
+    nil
+  end
+
+  def user_role
+    (params[:role] || user.vacols_roles.first).try(:downcase)
+  end
+
+  def use_css_id
+    params[:user_id] = user.css_id
+  end
+
+  def use_normalized_css_id
+    params[:user_id] = normalize_css_id(params[:user_id])
+  end
+
+  def redirect_to_updated_url
+    # Permit all parameters in order to call `redirect_to`, otherwise we get
+    # error "unable to convert unpermitted parameters to hash".
+    # This should be secure since we're not saving the params and
+    # the permitted params will be checked again after the redirect.
+    # For security, `only_path: true` will limit the redirect to the current host.
+    unchecked_params = params.merge(only_path: true).permit(params.keys)
+
+    # Default status is 302 Found (temporarily moved), so return 308 Permanent Redirect instead.
+    redirect_to(unchecked_params, status: :permanent_redirect)
   end
 
   def create
@@ -89,20 +125,38 @@ class LegacyTasksController < ApplicationController
 
   private
 
+  def validate_user_id
+    fail(ActiveRecord::RecordNotFound, user_id: params[:user_id]) unless user
+  end
+
+  def validate_user_role
+    return invalid_role_error unless ROLES.include?(user_role)
+  end
+
   def user
-    @user ||= User.find(params[:user_id])
+    @user ||= positive_integer?(params[:user_id]) ? User.find(params[:user_id]) : User.find_by_css_id(params[:user_id])
   end
   helper_method :user
+
+  def positive_integer?(param)
+    /\A\d+\z/.match(param)
+  end
 
   def appeal
     @appeal ||= LegacyAppeal.find(legacy_task_params[:appeal_id])
   end
 
   def legacy_task_params
-    params.require("tasks")
+    task_params = params.require("tasks")
       .permit(:appeal_id)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
+
+    # If a judge id is passed to the back end, assigned_by is not the judge this case is currently assigned to in order
+    # to allow SCM users to assign cases to attorneys for judges.
+    return task_params.merge(judge: User.find_by(id: params[:tasks][:judge_id])) if params[:tasks][:judge_id]
+
+    task_params
   end
 
   def json_task(task)

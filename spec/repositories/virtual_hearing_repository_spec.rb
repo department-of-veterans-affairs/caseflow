@@ -13,7 +13,7 @@ describe VirtualHearingRepository, :all_dbs do
       )
     end
     let(:hearing) { create(:hearing, regional_office: regional_office, hearing_day: hearing_day) }
-    let!(:virtual_hearing) { create(:virtual_hearing, :initialized, :active, hearing: hearing) }
+    let!(:virtual_hearing) { create(:virtual_hearing, :initialized, status: :active, hearing: hearing) }
 
     subject { VirtualHearingRepository.ready_for_deletion }
 
@@ -27,7 +27,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for pending hearing" do
-        let(:virtual_hearing) { create(:virtual_hearing, :pending, hearing: hearing) }
+        let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
         it "does not return the virtual hearing" do
           expect(subject).to eq []
@@ -35,7 +35,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for cancelled hearing" do
-        let(:virtual_hearing) { create(:virtual_hearing, :cancelled, hearing: hearing) }
+        let(:virtual_hearing) { create(:virtual_hearing, status: :cancelled, hearing: hearing) }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
@@ -63,7 +63,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for cancelled hearing" do
-        let(:virtual_hearing) { create(:virtual_hearing, :cancelled, hearing: hearing) }
+        let(:virtual_hearing) { create(:virtual_hearing, status: :cancelled, hearing: hearing) }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
@@ -71,7 +71,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for pending hearing" do
-        let(:virtual_hearing) { create(:virtual_hearing, :pending, hearing: hearing) }
+        let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
         it "does not return the virtual hearing" do
           expect(subject).to eq []

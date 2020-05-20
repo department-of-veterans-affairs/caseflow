@@ -70,7 +70,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_button("Scheduled Veterans", exact: true)
       expect(VACOLS::Case.where(bfcorlid: "123454787S"))
       click_button("Legacy Veterans Waiting", exact: true)
-      expect(page).not_to have_content("123454787S")
+      expect(page.has_no_content?("123454787S")).to eq(true)
       expect(page).to have_content("There are no schedulable veterans")
       expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
     end
@@ -131,7 +131,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_button("Scheduled Veterans", exact: true)
       expect(VACOLS::Case.where(bfcorlid: "123456789S"))
       click_button("Legacy Veterans Waiting", exact: true)
-      expect(page).not_to have_content("123456789S")
+      expect(page.has_no_content?("123456789S")).to eq(true)
       expect(page).to have_content("There are no schedulable veterans")
       expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
     end
@@ -256,7 +256,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       User.authenticate!(user: other_user)
       visit "/queue"
 
-      expect(page).to have_content("Bob Smith")
+      expect(page).to have_content(appeal.veteran_full_name)
     end
 
     scenario "Schedule Veteran for a video hearing with admin actions that can be put on hold and completed" do
@@ -652,6 +652,16 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       create(:schedule_hearing_task, appeal: appeal_three)
     end
 
+    def create_cached_poas
+      Appeal.all.each_with_index do |appeal, i|
+        create(
+          :bgs_power_of_attorney,
+          claimant_participant_id: appeal.claimant.participant_id,
+          representative_name: "Attorney #{i}"
+        )
+      end
+    end
+
     def navigate_to_ama_tab
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
@@ -722,17 +732,8 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
     context "Filter by PowerOfAttorneyName column" do
       before do
-        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["1"]).and_return(
-          "1" => { representative_type: "Attorney", representative_name: "Attorney 1", participant_id: "1" }
-        )
-        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["2"]).and_return(
-          "2" => { representative_type: "Attorney", representative_name: "Attorney 2", participant_id: "2" }
-        )
-        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with(["3"]).and_return(
-          "3" => { representative_type: "Attorney", representative_name: "Attorney 3", participant_id: "3" }
-        )
-
         create_ama_appeals
+        create_cached_poas
         cache_appeals
         navigate_to_ama_tab
       end

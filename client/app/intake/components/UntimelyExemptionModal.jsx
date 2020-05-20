@@ -1,115 +1,154 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
+import { useSelector } from 'react-redux';
+import Checkbox from '../../components/Checkbox';
+import { css } from 'glamor';
+import COPY from '../../../COPY';
 
-class UntimelyExemptionModal extends React.Component {
-  constructor(props) {
-    super(props);
+const generateButtons = ({ cancelText, onCancel, onSubmit, submitText, skipText, onSkip, state, isInvalid }) => {
+  const btns = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+      name: cancelText,
+      onClick: onCancel
+    },
+    {
+      classNames: ['usa-button', 'add-issue'],
+      name: submitText,
+      onClick: () => onSubmit({ ...state }),
+      disabled: isInvalid()
+    }
+  ];
 
-    this.state = {
-      untimelyExemption: '',
-      untimelyExemptionNotes: ''
-    };
+  if (onSkip) {
+    btns.push({
+      classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
+      name: skipText,
+      onClick: onSkip
+    });
   }
 
-  onAddIssue = () => {
-    const { untimelyExemption, untimelyExemptionNotes } = this.state;
+  return btns;
+};
 
-    this.props.onSubmit({ untimelyExemption,
-      untimelyExemptionNotes });
-  };
+export const UntimelyExemptionModal = ({
+  intakeData,
+  currentIssue,
+  onSubmit,
+  formType,
+  submitText = 'Add this issue',
+  onCancel,
+  cancelText = 'Cancel adding this issue',
+  onSkip,
+  skipText = 'None of these match, see more options'
+}) => {
+  const { covidTimelinessExemption } = useSelector((state) => state.featureToggles);
 
-  radioOnChange = (value) => {
-    this.setState({
-      untimelyExemption: value
-    });
-  };
+  const [state, setState] = useState({
+    untimelyExemption: '',
+    untimelyExemptionNotes: '',
+    untimelyExemptionCovid: false
+  });
 
-  untimelyExemptionNotesOnChange = (value) => {
-    this.setState({
-      untimelyExemptionNotes: value
-    });
-  };
+  const isInvalid = () => !state.untimelyExemption;
 
-  getModalButtons() {
-    const btns = [
-      {
-        classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-        name: this.props.cancelText,
-        onClick: this.props.onCancel
-      },
-      {
-        classNames: ['usa-button', 'add-issue'],
-        name: this.props.submitText,
-        onClick: this.onAddIssue,
-        disabled: !this.state.untimelyExemption
+  const buttons = useMemo(
+    () =>
+      generateButtons({
+        cancelText,
+        onCancel,
+        onSubmit,
+        submitText,
+        skipText,
+        onSkip,
+        state,
+        isInvalid
+      }),
+    [cancelText, onCancel, submitText, skipText, onSkip, state]
+  );
+
+  const issueNumber = (intakeData.addedIssues || []).length + 1;
+  const issue = currentIssue;
+
+  const descriptionText = () => {
+    let errorMsg = '';
+    const vacolsIssueIneligible = issue.vacolsId && !issue.eligibleForSocOptIn;
+    const requestIssueUntimely = !issue.timely && !(formType === 'supplemental_claim');
+
+    if (covidTimelinessExemption) {
+      if (vacolsIssueIneligible && requestIssueUntimely) {
+        errorMsg = COPY.INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY;
+      } else if (vacolsIssueIneligible) {
+        errorMsg = COPY.INTAKE_LEGACY_ISSUE_UNTIMELY;
+      } else if (requestIssueUntimely) {
+        errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
       }
-    ];
 
-    if (this.props.onSkip) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: this.props.skipText,
-        onClick: this.props.onSkip
-      });
+    } else {
+      errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
     }
 
-    return btns;
-  }
+    return errorMsg;
+  };
 
-  render() {
-    const { intakeData, onCancel, currentIssue } = this.props;
+  return (
+    <div className="intake-add-issues">
+      <Modal buttons={buttons} visible closeHandler={onCancel} title={`Issue ${issueNumber} is an Untimely Issue`}>
+        <p>
+          <strong>Requested issue:</strong> {issue.description}
+        </p>
+        <p {...css({ marginBottom: '20px !important' })}>
+          {descriptionText()}
+        </p>
+        <RadioField
+          name="untimely-exemption"
+          label="Did the applicant request an extension to the date requirements?"
+          strongLabel
+          vertical
+          options={BOOLEAN_RADIO_OPTIONS}
+          onChange={(val) => setState({ ...state, untimelyExemption: val })}
+          value={state.untimelyExemption === null ? null : state.untimelyExemption.toString()}
+        />
 
-    const issueNumber = (intakeData.addedIssues || []).length + 1;
-    const issue = currentIssue;
+        {state.untimelyExemption === 'true' && (
+          <>
+            {covidTimelinessExemption && (
+              <Checkbox
+                name="untimelyExemptionCovid"
+                label="This request is related to COVID-19"
+                onChange={(val) => setState({ ...state, untimelyExemptionCovid: val })}
+                value={state.untimelyExemptionCovid}
+              />
+            )}
 
-    return (
-      <div className="intake-add-issues">
-        <Modal
-          buttons={this.getModalButtons()}
-          visible
-          closeHandler={onCancel}
-          title={`Issue ${issueNumber} is an Untimely Issue`}
-        >
-          <p>
-            <strong>Requested issue:</strong> {issue.description}
-          </p>
-          <p>The issue requested isn't usually eligible because its decision date is older than what's allowed.</p>
-          <RadioField
-            name="untimely-exemption"
-            label="Did the applicant request an extension to the date requirements?"
-            strongLabel
-            vertical
-            options={BOOLEAN_RADIO_OPTIONS}
-            onChange={this.radioOnChange}
-            value={this.state.untimelyExemption === null ? null : this.state.untimelyExemption.toString()}
-          />
-
-          {this.state.untimelyExemption === 'true' && (
             <TextField
               name="Notes"
               optional
               strongLabel
-              value={this.state.untimelyExemptionNotes}
-              onChange={this.untimelyExemptionNotesOnChange}
+              value={state.untimelyExemptionNotes}
+              onChange={(untimelyExemptionNotes) => setState({ ...state, untimelyExemptionNotes })}
             />
-          )}
-        </Modal>
-      </div>
-    );
-  }
-}
+          </>
+        )}
+      </Modal>
+    </div>
+  );
+};
 
 UntimelyExemptionModal.propTypes = {
-  onSubmit: PropTypes.func,
+  intakeData: PropTypes.object.isRequired,
+  currentIssue: PropTypes.object.isRequired,
+  onSubmit: PropTypes.func.isRequired,
   submitText: PropTypes.string,
   onCancel: PropTypes.func,
   cancelText: PropTypes.string,
   onSkip: PropTypes.func,
+  formType: PropTypes.string,
   skipText: PropTypes.string
 };
 

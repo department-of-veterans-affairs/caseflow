@@ -1,4 +1,7 @@
 /* eslint-disable max-lines */
+
+import { hot } from 'react-hot-loader/root';
+
 import querystring from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -9,6 +12,7 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
+  setCanViewOvertimeStatus,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
@@ -30,7 +34,7 @@ import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
-import AddColocatedTaskView from './AddColocatedTaskView';
+import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -81,6 +85,7 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
+    this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
@@ -121,8 +126,12 @@ class QueueApp extends React.PureComponent {
   );
 
   routedJudgeQueueList = (label) => ({ match }) => (
-    <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} match={match} userRole={USER_ROLE_TYPES.judge}
-      loadAttorneys={label === 'assign'} >
+    <QueueLoadingScreen
+      {...this.propsForQueueLoadingScreen()}
+      match={match}
+      userRole={USER_ROLE_TYPES.judge}
+      loadAttorneys={label === 'assign'}
+    >
       {label === 'assign' ? (
         <JudgeAssignTaskListView {...this.props} match={match} />
       ) : (
@@ -205,7 +214,7 @@ class QueueApp extends React.PureComponent {
 
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
 
-  routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} {...props.match.params} />;
+  routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />;
 
   routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
@@ -257,13 +266,24 @@ class QueueApp extends React.PureComponent {
     return <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
   };
 
-  routedBulkAssignTaskModal = (props) => <BulkAssignModal {...props} />;
+  routedBulkAssignTaskModal = (props) => {
+    const { match } = props;
+    const pageRoute = match.path.replace('modal/bulk_assign_tasks', '');
 
-  routedOrganization = (props) => (
-    <OrganizationQueueLoadingScreen urlToLoad={`${props.location.pathname}/tasks`}>
-      <OrganizationQueue {...this.props} paginationOptions={querystring.parse(window.location.search.slice(1))} />
-    </OrganizationQueueLoadingScreen>
-  );
+    return <BulkAssignModal {...props} onCancel={() => props.history.push(pageRoute)} />;
+  };
+
+  routedOrganization = (props) => {
+    const {
+      match: { url }
+    } = props;
+
+    return (
+      <OrganizationQueueLoadingScreen urlToLoad={`${url}/tasks`}>
+        <OrganizationQueue {...this.props} />
+      </OrganizationQueueLoadingScreen>
+    );
+  };
 
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
@@ -426,6 +446,18 @@ class QueueApp extends React.PureComponent {
                 path="/queue/appeals/:appealId/tasks/:taskId/colocated_task"
                 title="Add Colocated Task | Caseflow"
                 render={this.routedAddColocatedTask}
+              />
+
+              <PageRoute
+                exact
+                path="/organizations/:organization/users"
+                title="Organization Users | Caseflow"
+                render={this.routedOrganizationUsers}
+              />
+              <PageRoute
+                path="/organizations/:organization"
+                title="Organization Queue | Caseflow"
+                render={this.routedOrganization}
               />
 
               <PageRoute
@@ -602,22 +634,12 @@ class QueueApp extends React.PureComponent {
                 title="Change Task Type | Caseflow"
                 render={this.routedChangeTaskTypeModal}
               />
+
               <Route
                 path="/organizations/:organization/modal/bulk_assign_tasks"
                 render={this.routedBulkAssignTaskModal}
               />
-              <PageRoute
-                exact
-                path={['/organizations/:organization', '/organizations/:organization/modal/:modalType']}
-                title="Organization Queue | Caseflow"
-                render={this.routedOrganization}
-              />
-              <PageRoute
-                exact
-                path="/organizations/:organization/users"
-                title="Organization Users | Caseflow"
-                render={this.routedOrganizationUsers}
-              />
+
               <Route path="/team_management/add_judge_team" render={this.routedAddJudgeTeam} />
               <Route path="/team_management/add_vso" render={this.routedAddVsoModal} />
               <Route path="/team_management/add_private_bar" render={this.routedAddPrivateBarModal} />
@@ -642,6 +664,7 @@ QueueApp.propTypes = {
   dropdownUrls: PropTypes.array,
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
+  setCanViewOvertimeStatus: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -657,7 +680,8 @@ QueueApp.propTypes = {
   applicationUrls: PropTypes.array,
   flash: PropTypes.array,
   reviewActionType: PropTypes.string,
-  userCanViewHearingSchedule: PropTypes.bool
+  userCanViewHearingSchedule: PropTypes.bool,
+  userCanViewOvertimeStatus: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -668,6 +692,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
+      setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserRole,
       setUserCssId,
@@ -678,7 +703,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default connect(
+export default hot(connect(
   mapStateToProps,
   mapDispatchToProps
-)(QueueApp);
+)(QueueApp));

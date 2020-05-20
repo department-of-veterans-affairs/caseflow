@@ -48,7 +48,9 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    render json: { document_count: EFolderService.document_count(appeal.veteran_file_number, current_user) }
+    doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
+    status = (doc_count == ::ExternalApi::EfolderService::DOCUMENT_COUNT_DEFERRED) ? 202 : 200
+    render json: { document_count: doc_count }, status: status
   rescue Caseflow::Error::EfolderAccessForbidden => error
     render(error.serialize_response)
   rescue StandardError => error
@@ -95,6 +97,7 @@ class AppealsController < ApplicationController
           MetricsService.record("Get appeal information for ID #{id}",
                                 service: :queue,
                                 name: "AppealsController.show") do
+            appeal.appeal_views.find_or_create_by(user: current_user).update!(last_viewed_at: Time.zone.now)
             render json: { appeal: json_appeals(appeal)[:data] }
           end
         else
@@ -102,6 +105,11 @@ class AppealsController < ApplicationController
         end
       end
     end
+  end
+
+  def edit
+    # only AMA appeals may call /edit
+    return not_found if appeal.is_a?(LegacyAppeal)
   end
 
   helper_method :appeal, :url_appeal_uuid
@@ -220,7 +228,7 @@ class AppealsController < ApplicationController
   end
 
   def access_error_message
-    (appeal.veteran&.multiple_phone_numbers?) ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
+    appeal.veteran&.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
   end
 
   def docket_number?(search)

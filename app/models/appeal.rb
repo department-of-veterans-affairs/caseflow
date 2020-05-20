@@ -25,6 +25,7 @@ class Appeal < DecisionReview
   has_one :special_issue_list
   has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
+  has_one :work_mode, as: :appeal
 
   enum stream_type: {
     "original": "original",
@@ -295,7 +296,8 @@ class Appeal < DecisionReview
            :address_line_1,
            :city,
            :zip,
-           :state, to: :appellant, prefix: true, allow_nil: true
+           :state,
+           :email_address, to: :appellant, prefix: true, allow_nil: true
 
   def appellant_is_not_veteran
     !!veteran_is_not_claimant
@@ -346,11 +348,11 @@ class Appeal < DecisionReview
            to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
-    claimants.map(&:power_of_attorney)
+    claimants.map(&:power_of_attorney).compact
   end
 
   def representatives
-    vso_participant_ids = power_of_attorneys.map(&:participant_id) - [nil]
+    vso_participant_ids = power_of_attorneys.map(&:participant_id).compact.uniq
     Representative.where(participant_id: vso_participant_ids)
   end
 

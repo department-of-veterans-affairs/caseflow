@@ -180,7 +180,7 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue"
         find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
           .click_link
-        expect(page).not_to have_content("Hearing preference")
+        expect(page.has_no_content?("Hearing preference")).to eq(true)
       end
     end
   end
@@ -205,7 +205,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).not_to have_content("About the Appellant")
+        expect(page.has_no_content?("About the Appellant")).to eq(true)
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
         expect(page).to have_content(appeal.veteran_address_line_1)
@@ -244,7 +244,7 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).not_to have_content("About the Appellant")
+        expect(page.has_no_content?("About the Appellant")).to eq(true)
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")
@@ -317,7 +317,7 @@ RSpec.feature "Case details", :all_dbs do
 
         # Expect to find content we know to be on the page so that we wait for the page to load.
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        expect(page).not_to have_content("Select an action")
+        expect(page.has_no_content?("Select an action")).to eq(true)
       end
     end
 
@@ -494,6 +494,25 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  context "when an appeal has been cancelled" do
+    let!(:appeal) do
+      create(:appeal, :at_judge_review, associated_judge: judge_user, associated_attorney: attorney_user)
+    end
+
+    it "does not show assigned attorney or judge" do
+      visit "/queue/appeals/#{appeal.uuid}"
+      expect(page).to have_content(judge_user.full_name)
+      expect(page).to have_content(attorney_user.full_name)
+
+      appeal.tasks.open.update_all(status: Constants.TASK_STATUSES.cancelled)
+
+      visit "/queue/appeals/#{appeal.uuid}"
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_NO_ACTIVE_LABEL)
+      expect(page).to have_no_content(judge_user.full_name)
+      expect(page).to have_no_content(attorney_user.full_name)
+    end
+  end
+
   context "loads judge task detail views" do
     let!(:vacols_case) do
       create(
@@ -616,9 +635,9 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{appeal.external_id}"
 
         case_timeline = page.find("table#case-timeline-table")
-        expect(case_timeline).not_to have_content(transcript_task.class.name)
-        expect(case_timeline).not_to have_content(translation_task.class.name)
-        expect(case_timeline).not_to have_content(foia_task.class.name)
+        expect(case_timeline.has_no_content?(transcript_task.class.name)).to eq(true)
+        expect(case_timeline.has_no_content?(translation_task.class.name)).to eq(true)
+        expect(case_timeline.has_no_content?(foia_task.class.name)).to eq(true)
         expect(case_timeline).to have_content(transcript_task.children.first.class.name)
         expect(case_timeline).to have_content(translation_task.children.first.class.name)
         expect(case_timeline).to have_content(foia_task.children.first.class.name)
@@ -683,7 +702,7 @@ RSpec.feature "Case details", :all_dbs do
         assigner_name = on_hold_task.assigned_by_display_name
 
         click_on "On hold (1)"
-        click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+        click_on "#{vet_name} (#{on_hold_task.appeal.veteran_file_number})"
 
         expect(page).to have_content("TASK\n#{on_hold_task.label}")
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
@@ -703,8 +722,7 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
-      scenario "displays task bold in queue",
-               skip: "https://circleci.com/gh/department-of-veterans-affairs/caseflow/65218, bat team investigated" do
+      scenario "displays task bold in queue" do
         visit "/queue"
         vet_name = assigned_task.appeal.veteran_full_name
         fontweight_new = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
@@ -840,7 +858,7 @@ RSpec.feature "Case details", :all_dbs do
       let!(:appeal) { create(:appeal) }
       let!(:appeal2) { create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-      let!(:assign_task) { create(:ama_judge_task, assigned_to: user, parent: root_task) }
+      let!(:assign_task) { create(:ama_judge_assign_task, assigned_to: user, parent: root_task) }
       let!(:judge_task) do
         create(
           :ama_judge_decision_review_task,
@@ -879,7 +897,7 @@ RSpec.feature "Case details", :all_dbs do
 
       it "should NOT display judge & attorney tasks" do
         visit "/queue/appeals/#{appeal2.uuid}"
-        expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+        expect(page.has_no_content?(COPY::CASE_TIMELINE_JUDGE_TASK)).to eq(true)
       end
     end
   end
@@ -1196,7 +1214,7 @@ RSpec.feature "Case details", :all_dbs do
       let(:user) { create(:user) }
 
       before do
-        BvaIntake.singleton.add_user(user)
+        CaseReview.singleton.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -1221,7 +1239,7 @@ RSpec.feature "Case details", :all_dbs do
 
         new_task = new_tasks.first
         expect(new_task.status).to eq Constants.TASK_STATUSES.cancelled
-        expect(appeal_withdrawal_bva_task.assigned_to).to eq(BvaIntake.singleton)
+        expect(appeal_withdrawal_bva_task.assigned_to).to eq(CaseReview.singleton)
         expect(appeal_withdrawal_bva_task.parent.assigned_to).to eq(MailTeam.singleton)
       end
     end

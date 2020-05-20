@@ -38,7 +38,10 @@ class HearingsController < HearingsApplicationController
 
     render json: {
       data: form.hearing.to_hash(current_user.id),
-      alerts: form.alerts
+      alerts: {
+        hearing: form.hearing_alerts,
+        virtual_hearing: form.virtual_hearing_alert
+      }
     }
   end
 
@@ -55,6 +58,18 @@ class HearingsController < HearingsApplicationController
       capture_exception(facility_response.error) if facility_response.error.code == 400
       render facility_response.error.serialize_response
     end
+  end
+
+  def virtual_hearing_job_status
+    render json: {
+      status: hearing.virtual_hearing&.status,
+      job_completed: hearing.virtual_hearing&.job_completed?,
+      alias_with_host: hearing.virtual_hearing&.formatted_alias_or_alias_with_host,
+      guest_link: hearing.virtual_hearing&.guest_link,
+      host_link: hearing.virtual_hearing&.host_link,
+      guest_pin: hearing.virtual_hearing&.guest_pin,
+      host_pin: hearing.virtual_hearing&.host_pin
+    }
   end
 
   private
@@ -89,7 +104,7 @@ class HearingsController < HearingsApplicationController
   ].freeze
 
   VIRTUAL_HEARING_ATTRIBUTES = [
-    :veteran_email, :judge_email, :representative_email, :status
+    :appellant_email, :judge_email, :representative_email, :request_cancelled
   ].freeze
 
   def update_params_legacy
@@ -125,7 +140,7 @@ class HearingsController < HearingsApplicationController
   def advance_on_docket_motion_params
     if params.key?(:advance_on_docket_motion)
       params[:advance_on_docket_motion]
-        .permit(:user_id, :person_id, :reason, :granted)
+        .permit(:person_id, :reason, :granted)
         .tap { |aod_params| aod_params.empty? || aod_params.require([:person_id, :reason]) }
     end
   end

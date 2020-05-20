@@ -10,6 +10,7 @@ class RequestIssue < CaseflowRecord
   include Asyncable
   include HasBusinessLine
   include DecisionSyncable
+  include HasDecisionReviewUpdatedSince
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
@@ -184,6 +185,7 @@ class RequestIssue < CaseflowRecord
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
         untimely_exemption_notes: data[:untimely_exemption_notes],
+        covid_timeliness_exempt: data[:untimely_exemption_covid],
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
         vacols_sequence_id: data[:vacols_sequence_id],
@@ -635,7 +637,7 @@ class RequestIssue < CaseflowRecord
     false
   rescue Rating::NilRatingProfileListError
     false
-  rescue Rating::LockedRatingError, Rating::BackfilledRatingError
+  rescue PromulgatedRating::LockedRatingError, PromulgatedRating::BackfilledRatingError
     true
   end
 
@@ -857,13 +859,19 @@ class RequestIssue < CaseflowRecord
     return unless vacols_id
     return unless decision_review.serialized_legacy_appeals.any?
 
-    unless vacols_issue.eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
+    unless issue_eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
 
+  def issue_eligible_for_opt_in?
+    vacols_issue.eligible_for_opt_in?(covid_flag: covid_timeliness_exempt)
+  end
+
   def legacy_appeal_eligible_for_opt_in?
-    vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(decision_review.receipt_date)
+    vacols_issue.legacy_appeal.eligible_for_opt_in?(
+      receipt_date: decision_review.receipt_date, covid_flag: covid_timeliness_exempt
+    )
   end
 
   def check_for_active_request_issue_by_rating!

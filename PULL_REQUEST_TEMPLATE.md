@@ -10,11 +10,13 @@ Please explain the changes you made here.
 1. Go to ...
 
 ### User Facing Changes
-
  - [ ] Screenshots of UI changes added to PR & Original Issue
- 
-### Documentation Updates
-- [ ] Topline File Descriptions Added or Updated as Needed
+
+ BEFORE|AFTER
+ ---|---
+
+### Code Documentation Updates
+- [ ] Add or update code comments at the top of the class, module, and/or component.
 
 ### Database Changes
 *Only for Schema Changes*

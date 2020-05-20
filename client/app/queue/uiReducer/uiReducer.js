@@ -34,7 +34,8 @@ export const initialState = {
   hearingDay: {
     hearingDate: null,
     regionalOffice: null
-  }
+  },
+  targetUser : {}
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -73,6 +74,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_CAN_EDIT_AOD:
     return update(state, {
       canEditAod: { $set: action.payload.canEditAod }
+    });
+  case ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS:
+    return update(state, {
+      canViewOvertimeStatus: { $set: action.payload.canViewOvertimeStatus }
     });
   case ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS:
     return update(state, {
@@ -159,9 +164,17 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       userCssId: { $set: action.payload.cssId }
     });
-  case ACTIONS.SET_TARGET_USER_CSS_ID:
+  case ACTIONS.SET_TARGET_USER:
     return update(state, {
-      targetUserCssId: { $set: action.payload.targetUserCssId }
+      targetUser: {
+        id: { $set: action.payload.targetUser.id },
+        cssId: { $set: action.payload.targetUser.css_id },
+        fullName: { $set: action.payload.targetUser.full_name },
+        displayName: { $set: action.payload.targetUser.display_name },
+        status: { $set: action.payload.targetUser.status },
+        roles: { $set: action.payload.targetUser.roles },
+        selectedRegionalOffice: { $set: action.payload.targetUser.selected_regional_office }
+      }
     });
   case ACTIONS.SET_USER_IS_VSO_EMPLOYEE:
     return update(state, {

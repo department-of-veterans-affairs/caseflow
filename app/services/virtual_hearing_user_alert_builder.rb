@@ -1,64 +1,41 @@
 # frozen_string_literal: true
 
 class VirtualHearingUserAlertBuilder
-  attr_accessor :changed_to_virtual, :virtual_hearing_attributes, :veteran_full_name, :hearing_time_changed
-
-  def initialize(changed_to_virtual:, virtual_hearing_attributes:, veteran_full_name:, hearing_time_changed: nil)
-    @changed_to_virtual = changed_to_virtual
-    @virtual_hearing_attributes = virtual_hearing_attributes
-    @veteran_full_name = veteran_full_name
-    @hearing_time_changed = hearing_time_changed
+  def initialize(change_type:, alert_type:, appeal:)
+    @change_type = change_type
+    @alert_type = alert_type
+    @appeal = appeal
   end
 
   def call
-    UserAlert.new(title: title, message: message, type: UserAlert::TYPES[:info])
+    UserAlert.new(title: title, message: message, type: UserAlert::TYPES[alert_type])
   end
 
   private
 
+  attr_reader :change_type, :alert_type, :appeal
+
   def title
-    copy["TITLE"] % veteran_full_name
+    copy["TITLE"] % (appeal.veteran.name || "the veteran")
   end
 
   def message
-    return email_message if only_emails_updated?
+    appellant_title = appeal.appellant_is_not_veteran ? "Appellant" : "Veteran"
 
-    copy["MESSAGE"]
+    format(copy["MESSAGE"], appellant_title: appellant_title)
   end
 
   def copy
-    if only_emails_updated?
-      COPY::VIRTUAL_HEARING_USER_ALERTS["EMAILS_UPDATED"]
-    elsif cancelled?
-      COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_FROM_VIRTUAL"]
-    elsif changed_to_virtual
-      COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_CHANGED_TO_VIRTUAL"]
-    elsif hearing_time_changed
-      COPY::VIRTUAL_HEARING_USER_ALERTS["HEARING_TIME_CHANGED"]
+    if alert_type == :info
+      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS[change_type]
+    elsif alert_type == :success
+      COPY::VIRTUAL_HEARING_SUCCESS_ALERTS[change_type]
+    else
+      fail(
+        Caseflow::Error::InvalidParameter,
+        parameter: alert_type,
+        message: "Alert type is invalid"
+      )
     end
-  end
-
-  def email_message
-    if virtual_hearing_attributes.key?(:veteran_email) && virtual_hearing_attributes.key?(:representative_email)
-      copy["MESSAGES"]["TO_VETERAN_AND_POA"]
-    elsif virtual_hearing_attributes.key?(:veteran_email)
-      copy["MESSAGES"]["TO_VETERAN"]
-    elsif virtual_hearing_attributes.key?(:representative_email)
-      copy["MESSAGES"]["TO_POA"]
-    elsif virtual_hearing_attributes.key?(:judge_email)
-      copy["MESSAGES"]["TO_VLJ"]
-    end
-  end
-
-  def cancelled?
-    virtual_hearing_attributes[:status] == "cancelled"
-  end
-
-  def only_emails_updated?
-    email_changed = virtual_hearing_attributes.key?(:veteran_email) ||
-                    virtual_hearing_attributes.key?(:representative_email) ||
-                    virtual_hearing_attributes.key?(:judge_email)
-
-    email_changed && !cancelled? && !changed_to_virtual
   end
 end

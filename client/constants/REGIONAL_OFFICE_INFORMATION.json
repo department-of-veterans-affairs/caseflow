@@ -439,7 +439,7 @@
     "label": "Phoenix regional office",
     "city": "Phoenix",
     "state": "AZ",
-    "timezone": "America/Denver",
+    "timezone": "America/Phoenix",
     "hold_hearings": true,
     "facility_locator_id": "vba_345",
     "alternate_locations": null

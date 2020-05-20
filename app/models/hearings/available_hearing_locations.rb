@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AvailableHearingLocations < CaseflowRecord
+  include HasAppealUpdatedSince
+
   belongs_to :veteran, foreign_key: :file_number, primary_key: :veteran_file_number
   belongs_to :appeal, polymorphic: true
 
@@ -37,7 +39,7 @@ class AvailableHearingLocations < CaseflowRecord
   end
 
   def determine_vba_facility_type
-    (classification&.include?("Regional")) ? "(RO)" : "(VBA)"
+    classification&.include?("Regional") ? "(RO)" : "(VBA)"
   end
 
   def formatted_location

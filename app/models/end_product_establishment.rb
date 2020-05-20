@@ -385,9 +385,11 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def potential_decision_ratings
-    Rating.fetch_in_range(participant_id: veteran.participant_id,
-                          start_date: established_at.to_date,
-                          end_date: Time.zone.today)
+    PromulgatedRating.fetch_in_range(
+      participant_id: veteran.participant_id,
+      start_date: established_at.to_date,
+      end_date: Time.zone.today
+    )
   end
 
   def cancel!
@@ -534,7 +536,11 @@ class EndProductEstablishment < CaseflowRecord
     return unless source.try(:previously_attempted?)
 
     if matching_established_end_product.present?
-      update!(reference_id: matching_established_end_product.claim_id)
+      update!(
+        reference_id: matching_established_end_product.claim_id,
+        established_at: Time.zone.now,
+        modifier: matching_established_end_product.modifier
+      )
     end
   end
 

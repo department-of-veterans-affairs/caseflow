@@ -39,7 +39,7 @@ export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
     const decisionDate = new Date(decisionDateStr)
     const receiptDate = new Date(receiptDateStr);
     const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
-    
+
     return lessThanOneYear;
 };
 
@@ -188,6 +188,7 @@ const formatUnidentifiedIssues = (state) => {
         correction_type: issue.correctionType,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
+        untimely_exemption_covid: issue.untimelyExemptionCovid,
         ineligibleReason: issue.ineligibleReason,
         vacols_id: issue.vacolsId,
         vacols_sequence_id: issue.vacolsSequenceId,
@@ -211,6 +212,7 @@ const formatRatingRequestIssues = (state) => {
         notes: issue.notes,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
+        untimely_exemption_covid: issue.untimelyExemptionCovid,
         ramp_claim_id: issue.rampClaimId,
         vacols_id: issue.vacolsId,
         vacols_sequence_id: issue.vacolsSequenceId,
@@ -237,6 +239,7 @@ const formatNonratingRequestIssues = (state) => {
       decision_date: issue.decisionDate,
       untimely_exemption: issue.untimelyExemption,
       untimely_exemption_notes: issue.untimelyExemptionNotes,
+      untimely_exemption_covid: issue.untimelyExemptionCovid,
       vacols_id: issue.vacolsId,
       vacols_sequence_id: issue.vacolsSequenceId,
       ineligible_due_to_id: issue.ineligibleDueToId,
@@ -316,13 +319,13 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
-  
+
   return issues.map((issue, index) => {
     if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {
       const issueText = issue.isUnidentified ? `Unidentified issue: no issue matched for "${issue.description}"` : issue.description
       return {
         index,
-        referenceId: issue.id,
+        id: issue.id,
         text: issueText,
         notes: issue.notes,
         isUnidentified: issue.isUnidentified,
@@ -335,6 +338,9 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         timely: issue.timely,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        untimelyExemptionCovid: issue.untimelyExemptionCovid,
+        eligibleForSocOptIn: issue.eligibleForSocOptIn,
+        eligibleForSocOptInWithExemption: issue.eligibleForSocOptInWithExemption,
         ineligibleReason: issue.ineligibleReason,
         vacolsId: issue.vacolsId,
         vacolsSequenceId: issue.vacolsSequenceId,
@@ -351,7 +357,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
 
       return {
         index,
-        referenceId: issue.id,
+        id: issue.id,
         text: issue.description,
         date: issue.decisionDate || issue.approxDecisionDate,
         notes: issue.notes,
@@ -362,12 +368,14 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         beforeAma: decisionDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        untimelyExemptionCovid: issue.untimelyExemptionCovid,
         ineligibleReason: issue.ineligibleReason,
         rampClaimId: issue.rampClaimId,
         vacolsId: issue.vacolsId,
         vacolsSequenceId: issue.vacolsSequenceId,
         vacolsIssue: issue.vacolsIssue,
         eligibleForSocOptIn: issue.eligibleForSocOptIn,
+        eligibleForSocOptInWithExemption: issue.eligibleForSocOptInWithExemption,
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
@@ -385,7 +393,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
     // returns nonrating request issue format
     return {
       index,
-      referenceId: issue.id,
+      id: issue.id,
       text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
       benefitType: issue.benefitType,
       date: issue.decisionDate,
@@ -393,11 +401,13 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       beforeAma: decisionDate < amaActivationDate,
       untimelyExemption: issue.untimelyExemption,
       untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      untimelyExemptionCovid: issue.untimelyExemptionCovid,
       ineligibleReason: issue.ineligibleReason,
       vacolsId: issue.vacolsId,
       vacolsSequenceId: issue.vacolsSequenceId,
       vacolsIssue: issue.vacolsIssue,
       eligibleForSocOptIn: issue.eligibleForSocOptIn,
+      eligibleForSocOptInWithExemption: issue.eligibleForSocOptInWithExemption,
       decisionReviewTitle: issue.decisionReviewTitle,
       withdrawalPending: issue.withdrawalPending,
       withdrawalDate: issue.withdrawalDate,

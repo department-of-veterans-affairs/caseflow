@@ -23,7 +23,7 @@ class QueueConfig
       active_tab: assignee.class.default_active_tab,
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
       use_task_pages_api: assignee.use_task_pages_api?,
-      tabs: tabs.map { |tab| attach_tasks_to_tab(tab) }
+      tabs: assignee.queue_tabs.map { |tab| attach_tasks_to_tab(tab) }
     }
   end
 
@@ -31,14 +31,6 @@ class QueueConfig
 
   def assignee_is_org?
     assignee.is_a?(Organization)
-  end
-
-  def tabs
-    queue_tabs = assignee.queue_tabs
-
-    return queue_tabs unless !assignee.use_task_pages_api? && assignee_is_org?
-
-    queue_tabs.reject { |tab| tab.is_a?(::OrganizationOnHoldTasksTab) }
   end
 
   def attach_tasks_to_tab(tab)
@@ -56,7 +48,7 @@ class QueueConfig
       # This allows us to only instantiate TaskPager if we are using the task pages API.
       task_page_count: task_pager.task_page_count,
       total_task_count: tab.tasks.count,
-      task_page_endpoint_base_path: "#{assignee_is_org? ? "#{assignee.path}/" : ''}#{endpoint}"
+      task_page_endpoint_base_path: "#{assignee_is_org? ? "#{assignee.path}/" : "users/#{assignee.id}/"}#{endpoint}"
     )
   end
 

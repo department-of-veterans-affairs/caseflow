@@ -1,12 +1,19 @@
 # frozen_string_literal: true
 
 describe ExternalApi::PexipService do
+  let(:pexip_url) { "fake.url.va.gov" }
+  let(:pexip_mngmt) { "fake.mngmt.va.gov" }
+
+  before do
+    stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
+  end
+
   let(:pexip_service) do
     ExternalApi::PexipService.new(
-      host: "vapnnevnpmn.care.va.gov",
+      host: pexip_mngmt,
       user_name: "pexip",
       password: "1234",
-      client_host: "care.va.gov"
+      client_host: pexip_url
     )
   end
 
@@ -15,21 +22,21 @@ describe ExternalApi::PexipService do
   describe "#create_conference" do
     let(:body) do
       {
-        "aliases": [{ "alias": "1111111" }, { "alias": "BVA1111111" }, { "alias": "BVA1111111.care.va.gov" }],
+        "aliases": [{ "alias": "BVA1111111" }, { "alias": "BVA1111111@#{pexip_url}" }, { "alias": "1111111" }],
         "allow_guests": true,
         "description": "Created by Caseflow",
         "enable_chat": "yes",
         "enable_overlay_text": true,
         "force_presenter_into_main": true,
         "ivr_theme": "/api/admin/configuration/v1/ivr_theme/13/",
-        "guest_pin": "5678",
+        "guest_pin": "5678901234#",
         "name": "BVA1111111",
-        "pin": "1234",
+        "pin": "1234567#",
         "tag": "CASEFLOW"
       }
     end
 
-    subject { pexip_service.create_conference(host_pin: 1234, guest_pin: 5678, name: "1111111") }
+    subject { pexip_service.create_conference(host_pin: "1234567#", guest_pin: "5678901234#", name: "1111111") }
 
     let(:success_create_resp) do
       HTTPI::Response.new(201, { "Location" => "api/admin/configuration/v1/conference/1234" }, {})

@@ -770,6 +770,7 @@ form {
   }
 
   &.usa-button-disabled {
+    background-color: $color-white;
     color: $color-gray-light;
   }
 
@@ -836,10 +837,6 @@ input {
   &[type='number'] {
     display: inline;
   }
-}
-
-[type='checkbox']:disabled + label {
-  color: $color-gray-dark;
 }
 
 .cf-inline-form {

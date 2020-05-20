@@ -22,7 +22,8 @@ class PowerOfAttorney
                         :vacols_representative_code
 
   attr_accessor :vacols_id,
-                :file_number
+                :file_number,
+                :claimant_participant_id
 
   # By using the prefix command of delegate we make the methods bgs_representative_name etc.
   delegate :representative_name,
@@ -31,6 +32,12 @@ class PowerOfAttorney
            :representative_email_address,
            :participant_id,
            to: :bgs_power_of_attorney, prefix: :bgs
+
+  class << self
+    def repository
+      PowerOfAttorneyRepository
+    end
+  end
 
   def update_vacols_rep_info!(appeal:, representative_type:, representative_name:, address:)
     repo = self.class.repository
@@ -58,12 +65,28 @@ class PowerOfAttorney
   private
 
   def bgs_power_of_attorney
-    @bgs_power_of_attorney ||= BgsPowerOfAttorney.new(file_number: file_number)
+    @bgs_power_of_attorney ||= fetch_bgs_power_of_attorney || BgsPowerOfAttorney.new(file_number: file_number)
   end
 
-  class << self
-    def repository
-      PowerOfAttorneyRepository
-    end
+  def fetch_bgs_power_of_attorney
+    fetch_bgs_power_of_attorney_by_file_number || fetch_bgs_power_of_attorney_by_claimant_participant_id
+  rescue BgsPowerOfAttorney::BgsPOANotFound
+    nil
+  end
+
+  def fetch_bgs_power_of_attorney_by_file_number
+    return if file_number.blank?
+
+    BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
+  rescue ActiveRecord::RecordInvalid # not found at BGS
+    nil
+  end
+
+  def fetch_bgs_power_of_attorney_by_claimant_participant_id
+    return if claimant_participant_id.blank?
+
+    BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(claimant_participant_id)
+  rescue ActiveRecord::RecordInvalid # not found at BGS
+    nil
   end
 end

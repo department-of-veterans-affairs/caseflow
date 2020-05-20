@@ -11,13 +11,17 @@ class Contention
   def text
     return unless description
 
-    truncate(remove_newlines(description))
+    truncate(remove_newlines(ascii_description))
   end
 
   private
 
   def remove_newlines(description)
     description.gsub(/\s*[\r\n]+\s*/, " ")
+  end
+
+  def ascii_description
+    AsciiConverter.new(string: description).convert
   end
 
   def truncate(description)

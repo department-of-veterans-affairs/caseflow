@@ -69,6 +69,64 @@ describe AttorneyTask, :all_dbs do
         expect(subject.errors.messages[:parent].first).to eq "has open child tasks"
       end
     end
+
+    context "when the assigner is invalid" do
+      let!(:assigning_judge_staff) { create(:staff, sdomainid: assigning_judge.css_id, sattyid: nil) }
+      it "fails" do
+        expect(subject.valid?).to eq false
+        expect(subject.errors.messages[:assigned_by].first).to eq(
+          "has to be a judge or special case movement team member"
+        )
+      end
+    end
+
+    context "when the assignee is invalid" do
+      let!(:attorney_staff) { create(:staff, sdomainid: attorney.css_id, sattyid: nil) }
+      it "fails" do
+        expect(subject.valid?).to eq false
+        expect(subject.errors.messages[:assigned_to].first).to eq "has to be an attorney"
+      end
+    end
+  end
+
+  context ".update" do
+    let!(:attorney_task) do
+      AttorneyTask.create(
+        assigned_to: attorney,
+        assigned_by: assigning_judge,
+        appeal: appeal,
+        parent: parent
+      )
+    end
+    let(:update_params) { { status: Task.statuses[:on_hold] } }
+
+    subject { attorney_task.update(update_params) }
+
+    context "when not updating the assigner or assignee" do
+      it "does not check the assignee or the assigner roles and the task is valid" do
+        expect(attorney_task).not_to receive(:assigned_to_role_is_valid)
+        expect(attorney_task).not_to receive(:assigned_by_role_is_valid)
+        expect(subject).to be true
+      end
+    end
+
+    context "when updating the assigner" do
+      let(:update_params) { { assigned_by_id: create(:user).id } }
+
+      it "does not check the assignee role and is not valid" do
+        expect(attorney_task).not_to receive(:assigned_to_role_is_valid)
+        expect(subject).to be false
+      end
+    end
+
+    context "when updating the assignee" do
+      let(:update_params) { { assigned_to_id: create(:user).id } }
+
+      it "does not check the assigner role and is not valid" do
+        expect(attorney_task).not_to receive(:assigned_by_role_is_valid)
+        expect(subject).to be false
+      end
+    end
   end
 
   context ".available_actions" do
@@ -93,7 +151,7 @@ describe AttorneyTask, :all_dbs do
       expected_actions = [
         Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+        Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
       ]
 
       expect(subject).to eq(expected_actions)
@@ -105,7 +163,7 @@ describe AttorneyTask, :all_dbs do
       it "includes actions to cancel the task and reassign to another attorney" do
         expected_actions = [
           Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+          Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
         ]
 
         expect(subject).to eq(expected_actions)
@@ -118,7 +176,7 @@ describe AttorneyTask, :all_dbs do
       it "includes actions to cancel the task and reassign to another attorney" do
         expected_actions = [
           Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+          Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
         ]
 
         expect(subject).to eq(expected_actions)
@@ -137,7 +195,7 @@ describe AttorneyTask, :all_dbs do
       expect(parent.reload.status).to eq Constants.TASK_STATUSES.cancelled
       assign_task = appeal.tasks.find_by(type: JudgeAssignTask.name)
       expect(assign_task.status).to eq Constants.TASK_STATUSES.assigned
-      expect(assign_task.assigned_to).to eq assigning_judge
+      expect(assign_task.assigned_to).to eq reviewing_judge
     end
   end
 end

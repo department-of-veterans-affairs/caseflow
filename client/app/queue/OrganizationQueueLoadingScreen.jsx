@@ -7,7 +7,6 @@ import ApiUtil from '../util/ApiUtil';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { extractAppealsAndAmaTasks } from './utils';
 
 import {
   onReceiveQueue,
@@ -29,7 +28,6 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
       then(
         (response) => {
           const {
-            tasks: { data: tasks },
             id,
             organization_name: organizationName,
             is_vso: isVso,
@@ -37,7 +35,6 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
           } = response.body;
 
           this.props.setActiveOrganization(id, organizationName, isVso);
-          this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
           this.props.setQueueConfig(queueConfig);
         }
       ).

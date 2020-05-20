@@ -26,16 +26,16 @@ class TaskSorter
 
     # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
     # application, and conditional logic to only join sometimes adds unnecessary complexity.
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).joins(left_join_from_users_clause).order(order_clause)
+    tasks.with_assignees.with_assigners.with_cached_appeals.order(order_clause)
   end
 
   private
 
   # some columns cannot be cast through SQL UPPER for normalized sorting.
   def sort_requires_case_norm?(col)
-    return false if col =~ /_at$/ # no timestamps
-    return false if col =~ /^is_/ # no booleans
-    return false if col =~ /_count$/ # no integers
+    return false if col.match?(/_at$/) # no timestamps
+    return false if col.match?(/^is_/) # no booleans
+    return false if col.match?(/_count$/) # no integers
 
     true
   end
@@ -67,16 +67,12 @@ class TaskSorter
   # postgres to use as a reference for sorting as a task's label is not stored in the database.
   def task_type_order_clause
     task_types_sorted_by_label = Task.descendants.sort_by(&:label).map(&:name)
-    task_type_sort_position = "type in '#{task_types_sorted_by_label.join(',')}'"
+    task_type_sort_position = "tasks.type in '#{task_types_sorted_by_label.join(',')}'"
     "position(#{task_type_sort_position}) #{sort_order}"
   end
 
   def assigner_order_clause
-    "substring(users.full_name,\'([a-zA-Z]+)$\') #{sort_order}"
-  end
-
-  def left_join_from_users_clause
-    "left join users on users.id = tasks.assigned_by_id"
+    "substring(assigners.display_name,\'([a-zA-Z]+)$\') #{sort_order}"
   end
 
   def column_is_valid

@@ -72,10 +72,56 @@ describe HearingDayRequestTypeQuery do
                        COPY::VIRTUAL_HEARING_REQUEST_TYPE
 
       context "with a previously cancelled virtual hearing" do
-        let!(:cancelled_virtual_hearing) { create(:virtual_hearing, :cancelled, hearing: hearing) }
+        let!(:cancelled_virtual_hearing) { create(:virtual_hearing, status: :cancelled, hearing: hearing) }
 
         include_examples "it returns correct hash with expected key and value",
                          COPY::VIRTUAL_HEARING_REQUEST_TYPE
+      end
+    end
+
+    context "single virtual hearing that has been held" do
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          regional_office: "RO01",
+          request_type: HearingDay::REQUEST_TYPES[:video],
+          scheduled_for: Time.zone.today - 1.week
+        )
+      end
+      let(:hearing) do
+        create(
+          :hearing,
+          :held,
+          hearing_day: hearing_day
+        )
+      end
+      # Virtual hearing has already been cleaned up successfully.
+      let!(:virtual_hearing) do
+        create(
+          :virtual_hearing,
+          :initialized,
+          :all_emails_sent,
+          conference_deleted: true,
+          hearing: hearing,
+          status: :active
+        )
+      end
+
+      context "hearing is an ama hearing" do
+        it "sanity check: hearing is virtual" do
+          expect(hearing.reload.virtual?).to be true
+        end
+
+        include_examples "it returns correct hash with expected key and value",
+                         "Virtual"
+      end
+
+      context "hearing is a legacy hearing" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+        let(:hearing) { create(:legacy_hearing, disposition: disposition, hearing_day: hearing_day) }
+
+        include_examples "it returns correct hash with expected key and value",
+                         "Virtual"
       end
     end
 
@@ -88,7 +134,7 @@ describe HearingDayRequestTypeQuery do
 
       context "with a previously cancelled virtual hearing" do
         let!(:cancelled_virtual_hearing) do
-          create(:virtual_hearing, :cancelled, hearing: legacy_hearing)
+          create(:virtual_hearing, status: :cancelled, hearing: legacy_hearing)
         end
 
         include_examples "it returns correct hash with expected key and value",
@@ -96,7 +142,7 @@ describe HearingDayRequestTypeQuery do
       end
     end
 
-    context "mix of legacy and ama and video and virtaul hearings" do
+    context "mix of legacy and ama and video and virtual hearings" do
       let(:hearings) do
         [
           create(:hearing, hearing_day: hearing_day),

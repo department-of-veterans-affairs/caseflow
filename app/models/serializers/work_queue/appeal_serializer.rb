@@ -21,6 +21,8 @@ class WorkQueue::AppealSerializer
     end
   end
 
+  attribute :status
+
   attribute :decision_issues do |object|
     object.decision_issues.uniq.map do |issue|
       {
@@ -44,6 +46,8 @@ class WorkQueue::AppealSerializer
   attribute :withdrawn, &:withdrawn?
 
   attribute :removed, &:removed?
+
+  attribute :overtime, &:overtime?
 
   attribute :assigned_to_location
 
