@@ -116,25 +116,8 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   private
 
-  def not_found?
-    bgs_record == :not_found
-  end
-
   def person
-    @person ||= Person.find_or_create_by(participant_id: poa_participant_id)
-  end
-
-  def stale_attributes
-    CACHED_BGS_ATTRIBUTES.select { |attr| self[attr].nil? || self[attr].to_s != bgs_record[attr].to_s }
-  end
-
-  def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
-    bgs_attr ||= attr_name
-    self[attr_name] ||= begin
-      return if not_found?
-
-      bgs_record.dig(bgs_attr)
-    end
+    @person ||= Person.find_or_create_by_participant_id(poa_participant_id)
   end
 
   def fetch_bgs_record

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Person < CaseflowRecord
+  include AssociatedBgsRecord
   include BgsService
 
   has_many :advance_on_docket_motions
@@ -42,7 +43,7 @@ class Person < CaseflowRecord
   end
 
   def date_of_birth
-    cached_or_fetched_from_bgs(attr_name: :date_of_birth, bgs_attr: :birth_date)
+    cached_or_fetched_from_bgs(attr_name: :date_of_birth, bgs_attr: :birth_date)&.to_date
   end
 
   def first_name
@@ -71,9 +72,10 @@ class Person < CaseflowRecord
 
   def ssn
     cached_or_fetched_from_bgs(attr_name: :ssn, bgs_attr: :ssn_nbr)
+  end
 
   def stale_attributes?
-    return false unless bgs_person
+    return false unless found?
 
     stale_attributes.any?
   end
@@ -89,27 +91,20 @@ class Person < CaseflowRecord
   end
 
   def found?
-    bgs_person.present? && bgs_person&.dig(:ssn_nbr)
+    return false if not_found?
+
+    bgs_record.keys.any?
   end
 
   private
 
   def stale_attributes
-    bgs_person[:date_of_birth] = bgs_person[:birth_date].to_date
-    CACHED_BGS_ATTRIBUTES.select { |attr| self[attr].nil? || self[attr] != bgs_person[attr] }
+    bgs_record[:date_of_birth] = bgs_record[:birth_date].to_date
+    bgs_record[:ssn] = bgs_record[:ssn_nbr]
+    super
   end
 
-  def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
-    bgs_attr ||= attr_name
-    self[attr_name] || begin
-      return unless bgs_person
-
-      update!(attr_name => bgs_person[bgs_attr]) if persisted?
-      self[attr_name]
-    end
-  end
-
-  def bgs_person
-    @bgs_person ||= bgs.fetch_person_info(participant_id)
+  def fetch_bgs_record
+    bgs.fetch_person_info(participant_id)
   end
 end
