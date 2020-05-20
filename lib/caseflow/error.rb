@@ -130,8 +130,8 @@ module Caseflow::Error
     def initialize(args)
       @code = args[:code] || 500
       @appeal_id = args[:appeal_id] || nil
-      @message = args[:message] || "Appeal #{@appeal_id} must be in Case Storage and not have blocking Mail Tasks for"\
-                                   " Special Case Movement"
+      @message = args[:message] || "Appeal #{@appeal_id} must be in Case Storage and not have blocking Mail Tasks to "\
+                                   "be elligable for Case Movement"
     end
   end
 
