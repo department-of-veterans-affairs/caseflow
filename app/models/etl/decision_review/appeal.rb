@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ETL::VhaAppeal < ETL::VhaDecisionReview
+class ETL::DecisionReview::Appeal < ETL::DecisionReview
   class << self
     def unique_attributes
       [
