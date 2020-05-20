@@ -5,7 +5,7 @@
 module ETLClasses
   extend ActiveSupport::Concern
 
-  ETL_KLASSES = %w[
+  ETL_SYNCER_KLASSES = %w[
     Appeal
     AttorneyCaseReview
     DecisionIssue
@@ -23,7 +23,7 @@ module ETLClasses
 
   class_methods do
     def syncer_klasses
-      ETL_KLASSES.map { |klass| "ETL::#{klass}Syncer".constantize }
+      ETL_SYNCER_KLASSES.map { |klass| "ETL::#{klass}Syncer".constantize }
     end
   end
 
