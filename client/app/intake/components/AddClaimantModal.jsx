@@ -7,6 +7,8 @@ import ReactMarkdown from 'react-markdown';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import ApiUtil from '../../util/ApiUtil';
 
+const relationshipOpts = [{ label: 'Attorney (previously or currently)', value: 'attorney' }];
+
 const fetchAttorneys = async (search = '') => {
   const res = await ApiUtil.get('/intake/attorneys', { query: { query: search } });
 
@@ -51,6 +53,14 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
       <div>
         <ReactMarkdown source={ADD_CLAIMANT_MODAL_DESCRIPTION} />
       </div>
+      <SearchableDropdown
+        name="relationship"
+        label="Claimant's relationship to the veteran"
+        onChange={handleChange}
+        value="attorney"
+        options={relationshipOpts}
+        debounce={250}
+      />
       <SearchableDropdown
         name="search"
         label="Claimant's name"
