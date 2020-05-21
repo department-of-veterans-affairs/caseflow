@@ -27,12 +27,16 @@ class VirtualHearing < CaseflowRecord
   before_create :assign_created_by_user
   before_save :assign_updated_by_user
 
-  validates :veteran_email, presence: true, on: :create
+  validates :appellant_email, presence: true, on: :create
   validates_email_format_of :judge_email, allow_nil: true
-  validates_email_format_of :veteran_email
+  validates_email_format_of :appellant_email
   validates_email_format_of :representative_email, allow_nil: true
   validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
+
+  # T0D0: Finish migration from veteran_email => appellant_email.
+  alias_attribute :appellant_email, :veteran_email
+  alias_attribute :appellant_email_sent, :veteran_email_sent
 
   scope :eligible_for_deletion,
         lambda {
@@ -51,7 +55,7 @@ class VirtualHearing < CaseflowRecord
         -> { where(request_cancelled: true) }
 
   def all_emails_sent?
-    veteran_email_sent &&
+    appellant_email_sent &&
       (judge_email.nil? || judge_email_sent) &&
       (representative_email.nil? || representative_email_sent)
   end
@@ -88,6 +92,10 @@ class VirtualHearing < CaseflowRecord
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \
     "pin=#{host_pin}&role=host"
+  end
+
+  def test_link(title)
+    "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
   end
 
   def job_completed?
@@ -143,7 +151,7 @@ class VirtualHearing < CaseflowRecord
 
   # checks if emails were sent to veteran and reps
   def cancellation_emails_sent?
-    veteran_email_sent && (representative_email.nil? || representative_email_sent)
+    appellant_email_sent && (representative_email.nil? || representative_email_sent)
   end
 
   private
@@ -167,6 +175,16 @@ class VirtualHearing < CaseflowRecord
   def hearing_is_not_virtual
     if hearing.virtual?
       errors.add(:hearing, "hearing is already a virtual hearing")
+    end
+  end
+
+  def email_recipient_name(title)
+    if title == MailRecipient::RECIPIENT_TITLES[:representative]
+      "Representative"
+    elsif hearing&.appeal&.appellant_is_not_veteran
+      "Appellant"
+    else
+      "Veteran"
     end
   end
 end

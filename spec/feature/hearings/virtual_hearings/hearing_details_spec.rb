@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
+RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   def check_row_content(event, index)
     # Format the date the same as moment
     formatted_date = event.sent_at.strftime("%b %d, %Y, %-l:%M %P %Z").gsub(/DT/, "ST")
@@ -129,8 +129,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       visit "hearings/" + hearing.external_id.to_s + "/details"
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
-      expect(page).to have_field("Veteran Email", with: pre_loaded_veteran_email)
-      expect(page).to have_field("POA/Representative Email", with: pre_loaded_rep_email)
+      expect(page).to have_field("appellant-email", with: pre_loaded_veteran_email)
+      expect(page).to have_field("representative-email", with: pre_loaded_rep_email)
     end
 
     scenario "hearing is switched to 'Virtual'" do
@@ -138,7 +138,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       click_dropdown(name: "hearingType", index: 1)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
-      fill_in "vet-email", with: fill_in_veteran_email
+      fill_in "appellant-email", with: fill_in_veteran_email
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
       expect(page).to have_content(expected_alert)
@@ -156,7 +156,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(events.where(sent_by_id: current_user.id).count).to eq 2
       expect(events.where(email_type: "confirmation").count).to eq 2
       expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
-      expect(events.where(recipient_role: "veteran").count).to eq 1
+      expect(events.where(recipient_role: "appellant").count).to eq 1
       expect(events.where(email_address: pre_loaded_rep_email).count).to eq 1
       expect(events.where(recipient_role: "representative").count).to eq 1
 
@@ -172,7 +172,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
       # Fill email address and confirm changes to close the Modal
-      fill_in "vet-email", with: fill_in_veteran_email
+      fill_in "appellant-email", with: fill_in_veteran_email
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
       expect(page).to have_content(expected_alert)
 
@@ -194,7 +194,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
       # Fill email address and confirm changes to close the Modal
-      fill_in "vet-email", with: fill_in_veteran_email
+      fill_in "appellant-email", with: fill_in_veteran_email
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
       expect(page).to have_content(expected_alert)
 
@@ -400,15 +400,15 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details", :all_dbs do
 
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
-      expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
+      expect(page).to have_field("Veteran Email for Notifications", with: fill_in_veteran_email)
+      expect(page).to have_field("POA/Representative Email for Notifications", with: fill_in_rep_email)
 
       events = SentHearingEmailEvent.where(hearing_id: hearing.id)
       expect(events.count).to eq 2
       expect(events.where(sent_by_id: current_user.id).count).to eq 2
       expect(events.where(email_type: "confirmation").count).to eq 2
       expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
-      expect(events.where(recipient_role: "veteran").count).to eq 1
+      expect(events.where(recipient_role: "appellant").count).to eq 1
       expect(events.where(email_address: fill_in_rep_email).count).to eq 1
       expect(events.where(recipient_role: "representative").count).to eq 1
 

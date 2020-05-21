@@ -233,22 +233,20 @@ describe TaskSorter, :all_dbs do
 
       context "when sorting by assigned to column" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name }
-        let(:tasks) { Task.where(id: create_list(:ama_task, 5).pluck(:id)) }
-
-        before do
-          users = []
-          5.times do
-            users.push(create(:user, css_id: Faker::Name.unique.first_name))
-          end
-          tasks.each_with_index do |task, index|
-            user = users[index % 5]
-            task.update!(assigned_to_id: user.id)
-            create(:cached_appeal, appeal_id: task.appeal_id, assignee_label: user.css_id)
-          end
+        let(:orgs) { create_list(:organization, 2) }
+        let(:users) { create_list(:user, 2) }
+        let(:org_1_task) { create(:task, assigned_to: orgs.first) }
+        let(:org_2_task) { create(:task, assigned_to: orgs.second) }
+        let(:user_1_task) { create(:task, assigned_to: users.first) }
+        let(:user_2_task) { create(:task, assigned_to: users.second) }
+        let(:tasks) do
+          Task.where(id: [org_1_task, org_2_task, user_1_task, user_2_task])
         end
 
         it "sorts by assigned to" do
-          expected_order = tasks.sort_by { |task| task.appeal.assigned_to_location }
+          expected_order = tasks.sort_by do |task|
+            task.assigned_to.is_a?(User) ? task.assigned_to.css_id : task.assigned_to.name
+          end
           expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
         end
       end

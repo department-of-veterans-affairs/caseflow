@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_13_140953) do
+ActiveRecord::Schema.define(version: 2020_05_21_202239) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -181,7 +181,9 @@ ActiveRecord::Schema.define(version: 2020_05_13_140953) do
     t.string "representative_type", null: false, comment: "POA type"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["claimant_participant_id", "file_number"], name: "bgs_poa_pid_fn_unique_idx", unique: true
+    t.index ["claimant_participant_id"], name: "index_bgs_power_of_attorneys_on_claimant_participant_id"
     t.index ["created_at"], name: "index_bgs_power_of_attorneys_on_created_at"
+    t.index ["file_number"], name: "index_bgs_power_of_attorneys_on_file_number"
     t.index ["last_synced_at"], name: "index_bgs_power_of_attorneys_on_last_synced_at"
     t.index ["poa_participant_id"], name: "index_bgs_power_of_attorneys_on_poa_participant_id"
     t.index ["representative_name"], name: "index_bgs_power_of_attorneys_on_representative_name"
@@ -215,7 +217,6 @@ ActiveRecord::Schema.define(version: 2020_05_13_140953) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
-    t.string "assignee_label", comment: "Who is currently most responsible for the appeal"
     t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
     t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "closest_regional_office_key", comment: "Closest regional office to the veteran in 4 character key"
@@ -1369,6 +1370,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_140953) do
   create_table "veterans", force: :cascade do |t|
     t.string "closest_regional_office"
     t.datetime "created_at"
+    t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
     t.string "file_number", null: false
     t.string "first_name"
     t.string "last_name"
