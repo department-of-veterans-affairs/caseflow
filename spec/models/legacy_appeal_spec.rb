@@ -135,15 +135,18 @@ describe LegacyAppeal, :all_dbs do
       end
     end
 
-    fscenario "when is active but not eligible" do
-      allow(appeal).to receive(:active?).and_return(true)
-      allow(appeal).to receive(:issues).and_return(issues)
-      binding.pry
-      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
-      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
+    context "when 1 day is added to ssoc/soc dates" do
+      let!(:new_receipt_date) { receipt_date + 1.day }
 
-      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+      scenario "when is active but not eligible" do
+        allow(appeal).to receive(:active?).and_return(true)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
+        allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
+
+        expect(appeal.eligible_for_opt_in?(receipt_date: new_receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+      end
     end
 
     scenario "when is active and soc is not eligible but ssoc is" do
@@ -167,14 +170,17 @@ describe LegacyAppeal, :all_dbs do
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
-    scenario "when is not active or eligible" do
-      allow(appeal).to receive(:active?).and_return(false)
-      allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
-      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
+    context "when 1 day is added to ssoc/soc dates" do
+      let!(:new_receipt_date) { receipt_date + 1.day }
+      scenario "when is not active or eligible" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
+        allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: new_receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
     end
 
     scenario "when is active or eligible but has no issues" do
