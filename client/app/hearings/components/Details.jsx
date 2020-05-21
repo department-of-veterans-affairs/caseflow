@@ -52,7 +52,7 @@ const HearingDetails = (props) => {
   } = props;
 
   const {
-    aod, bvaPoc, judgeId, isVirtual, wasVirtual,
+    aod, appellantIsNotVeteran, bvaPoc, judgeId, isVirtual, wasVirtual,
     externalId, veteranFirstName, veteranLastName,
     veteranFileNumber, room, notes, evidenceWindowWaived,
     scheduledFor, scheduledForIsPast, docketName, docketNumber,
@@ -81,6 +81,7 @@ const HearingDetails = (props) => {
 
     return {
       hearingDetailsForm: {
+        appellantIsNotVeteran,
         bvaPoc,
         judgeId: judgeId ? judgeId.toString() : null,
         evidenceWindowWaived: evidenceWindowWaived || false,
@@ -105,7 +106,7 @@ const HearingDetails = (props) => {
         requestedRemedy: transcription.requestedRemedy
       },
       virtualHearingForm: {
-        veteranEmail: virtualHearing.veteranEmail,
+        appellantEmail: virtualHearing.appellantEmail,
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status,
         requestCancelled: virtualHearing.requestCancelled,
@@ -167,8 +168,8 @@ const HearingDetails = (props) => {
     const changes = deepDiff(hearing.virtualHearing, virtualHearingForm || {});
 
     return {
-      repEmailEdited: !_.isUndefined(changes.representativeEmail),
-      vetEmailEdited: !_.isUndefined(changes.veteranEmail)
+      appellantEmailEdited: !_.isUndefined(changes.appellantEmail),
+      representativeEmailEdited: !_.isUndefined(changes.representativeEmail)
     };
   };
 
@@ -242,15 +243,14 @@ const HearingDetails = (props) => {
     if (
       virtual &&
       (!hearingForms.virtualHearingForm?.representativeEmail ||
-      !hearingForms.virtualHearingForm?.veteranEmail)
+      !hearingForms.virtualHearingForm?.appellantEmail)
     ) {
       setLoading(true);
       setVirtualHearingErrors({
-        vetEmail: !hearingForms.virtualHearingForm.veteranEmail && 'Veteran email is required',
-        repEmail: !hearingForms.virtualHearingForm.representativeEmail && 'Representative email is required'
-
+        appellantEmail: !hearingForms.virtualHearingForm.appellantEmail && 'Appellant email is required',
+        representativeEmail: !hearingForms.virtualHearingForm.representativeEmail && 'Representative email is required'
       });
-    } else if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
+    } else if (editedEmails.representativeEmailEdited || editedEmails.appellantEmailEdited) {
       openVirtualHearingModal({ type: 'change_email' });
     } else {
       submit();
@@ -358,14 +358,14 @@ const HearingDetails = (props) => {
           {...editedEmails} />}
         <DetailsForm
           errors={virtualHearingErrors}
-          updateVirtualHearing={updateVirtualHearing}
-          scheduledForIsPast={scheduledForIsPast}
           isLegacy={isLegacy}
-          openVirtualHearingModal={openVirtualHearingModal}
-          requestType={readableRequestType}
-          readOnly={disabled}
           isVirtual={isVirtual}
-          wasVirtual={wasVirtual} />
+          openVirtualHearingModal={openVirtualHearingModal}
+          readOnly={disabled}
+          requestType={readableRequestType}
+          updateVirtualHearing={updateVirtualHearing}
+          wasVirtual={wasVirtual}
+        />
         <div>
           <a
             className="button-link"

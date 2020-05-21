@@ -8,7 +8,7 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
   end
 
   describe "#index" do
-    let(:veteran) { create(:veteran) }
+    let(:veteran) { create(:veteran).unload_bgs_record }
 
     let!(:api_key) do
       ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string

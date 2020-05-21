@@ -16,6 +16,10 @@ class QueueFlowModal extends React.PureComponent {
     };
   }
 
+  componentDidMount = () => {
+    this.props.highlightInvalidFormItems(false);
+  }
+
   cancelHandler = () => this.props.onCancel ? this.props.onCancel() : this.props.history.goBack();
 
   closeHandler = () => this.props.history.replace(this.props.pathAfterSubmit);

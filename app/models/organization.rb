@@ -141,10 +141,6 @@ class Organization < CaseflowRecord
     ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
-  def ama_task_serializer
-    WorkQueue::TaskSerializer
-  end
-
   private
 
   def clean_url
