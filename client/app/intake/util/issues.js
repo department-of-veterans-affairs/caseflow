@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
-import DATES from '../../../constants/DATES.json';
+import { formatDateStr } from '../../util/DateUtil';
+import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
 const getNonVeteranClaimant = (intakeData) => {
