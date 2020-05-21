@@ -1052,7 +1052,7 @@ veterans,ssn,string,,,,,x,The cached Social Security Number
 veterans,updated_at,datetime,,,,,x,
 virtual_hearings,,,,,,,,
 virtual_hearings,alias,string,,,,,x,Alias for conference in Pexip
-virtual_hearings,alias_with_host,string,,,,,x,Alias for conference in pexip with client_host
+virtual_hearings,alias_with_host,string,,,,,,Alias for conference in pexip with client_host
 virtual_hearings,conference_deleted,boolean ∗,x,,,,,Whether or not the conference was deleted from Pexip
 virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
 virtual_hearings,created_at,datetime ∗,x,,,,,
