@@ -26,7 +26,7 @@ describe ETLBuilderJob, :etl, :all_dbs do
         metric_name: "runtime",
         metric_value: anything
       )
-      ETL::Builder::ETL_KLASSES.each { |klass| expect("ETL::#{klass}".constantize.all.count).to eq(0) }
+      ETL::Builder.syncer_klasses.each { |klass| expect(klass.target_class.all.count).to eq(0) }
     end
 
     subject { described_class.perform_now }

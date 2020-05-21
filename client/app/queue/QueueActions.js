@@ -661,6 +661,10 @@ export const setSpecialIssues = (specialIssues) => ({
   }
 });
 
+export const clearSpecialIssues = () => ({
+  type: ACTIONS.CLEAR_SPECIAL_ISSUE
+});
+
 export const setAppealAod = (externalAppealId, granted) => ({
   type: ACTIONS.SET_APPEAL_AOD,
   payload: {
