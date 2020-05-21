@@ -135,9 +135,10 @@ describe LegacyAppeal, :all_dbs do
       end
     end
 
-    scenario "when is active but not eligible" do
+    fscenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)
       allow(appeal).to receive(:issues).and_return(issues)
+      binding.pry
       allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
       allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 

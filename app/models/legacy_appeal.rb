@@ -772,6 +772,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def eligible_for_opt_in?(receipt_date:, covid_flag: false)
+    binding.pry
     return false unless receipt_date
     return false unless soc_date
 
