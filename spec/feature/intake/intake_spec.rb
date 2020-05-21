@@ -621,6 +621,8 @@ feature "Intake", :all_dbs do
           click_button "Add this claimant"
           expect(page).to_not have_selector('#add_claimant_modal')
           expect(page).to have_content("#{attorney.name}, Attorney")
+          find(".remove-item").click
+          expect(page).to_not have_content("#{attorney.name}, Attorney")
         end
       end
 

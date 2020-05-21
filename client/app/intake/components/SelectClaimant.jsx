@@ -38,7 +38,7 @@ const RemovableRadioLabel = ({ text, onRemove }) => (
   <>
     <span>{text}</span>{' '}
     {onRemove && (
-      <Button linkStyling onClick={onRemove} styling={{ style: { marginTop: '-1rem' } }}>
+      <Button linkStyling onClick={onRemove} classNames={['remove-item']} styling={{ style: { marginTop: '-1rem' } }}>
         <i className="fa fa-trash-o" aria-hidden="true" /> Remove
       </Button>
     )}
