@@ -495,7 +495,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
       create(:case_hearing, case_hearing_disposition, vdkey: hearing_day.id, folder_nr: appeal.vacols_id)
     end
     let(:hearing) do
-      create(:legacy_hearing, appeal: appeal, vacols_id: case_hearing.hearing_pkseq, disposition: hearing_disposition)
+      create(:legacy_hearing, appeal: appeal, case_hearing: case_hearing)
     end
     let(:waiting_button_text) { "Legacy Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.vacols_id}" }
