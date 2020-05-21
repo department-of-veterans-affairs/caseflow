@@ -49,7 +49,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
   ];
 
   return (
-    <Modal title={ADD_CLAIMANT_MODAL_TITLE} buttons={buttons} closeHandler={onCancel}>
+    <Modal title={ADD_CLAIMANT_MODAL_TITLE} buttons={buttons} closeHandler={onCancel} id="add_claimant_modal">
       <div>
         <ReactMarkdown source={ADD_CLAIMANT_MODAL_DESCRIPTION} />
       </div>
@@ -62,7 +62,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
         debounce={250}
       />
       <SearchableDropdown
-        name="search"
+        name="claimant"
         label="Claimant's name"
         onChange={handleChange}
         value={claimant}

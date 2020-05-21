@@ -572,7 +572,10 @@ feature "Intake", :all_dbs do
 
     context "Adding new claimant" do
       let(:hlr) { create(:higher_level_review, veteran_file_number: "12341234") }
-      let(:intake) { HigherLevelReviewIntake.new(veteran_file_number: "12341234", user: current_user) }
+      let(:intake) { AppealIntake.new(veteran_file_number: "12341234", user: current_user) }
+      let(:attorneys) do
+        15.times.collect { create(:bgs_attorney) }
+      end
 
       before do
         intake.start!
@@ -596,6 +599,8 @@ feature "Intake", :all_dbs do
         before { FeatureToggle.enable!(:attorney_fees) }
         after { FeatureToggle.disable!(:attorney_fees) }
 
+        let(:attorney) { attorneys.last }
+
         it "allows adding new claimants" do
           visit "/intake"
 
@@ -608,8 +613,23 @@ feature "Intake", :all_dbs do
           expect(page).to have_content("+ Add Claimant")
 
           click_button("+ Add Claimant")
-          expect(page).to have_content(COPY::ADD_CLAIMANT_MODAL_TITLE)
+          expect(page).to have_selector('#add_claimant_modal')
+          expect(page).to have_button("Add this claimant", disabled: true)
+          claimant_search(attorney.name)
+          select_claimant(0)
+          expect(page).to have_button("Add this claimant", disabled: false)
+          click_button "Add this claimant"
+          expect(page).to_not have_selector('#add_claimant_modal')
+          expect(page).to have_content("#{attorney.name}, Attorney")
         end
+      end
+
+      def claimant_search(search)
+        find(".dropdown-claimant").fill_in 'claimant', with: search
+      end
+
+      def select_claimant(index = 0)
+        click_dropdown({index: index}, find(".dropdown-claimant"))
       end
     end
   end

@@ -74,6 +74,11 @@ export const SelectClaimant = (props) => {
   const radioOpts = useMemo(() => {
     return [...relationships, ...(newClaimant ? [newClaimant] : [])];
   }, [newClaimant, relationships]);
+  const allowAddClaimant = useMemo(() => formType === 'appeal' && attorneyFees && veteranIsNotClaimant, [
+    formType,
+    veteranIsNotClaimant,
+    attorneyFees
+  ]);
   const handleRemove = () => {
     setNewClaimant(null);
     setClaimant(null);
@@ -150,7 +155,7 @@ export const SelectClaimant = (props) => {
       {showClaimants && hasRelationships && claimantOptions()}
       {showClaimants && !hasRelationships && noClaimantsCopy}
 
-      {attorneyFees && veteranIsNotClaimant && (
+      {allowAddClaimant && (
         <>
           <Button
             classNames={['usa-button-secondary', classes.button]}
