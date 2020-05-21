@@ -363,7 +363,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/jest
             pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit"
+            ~/project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=lcov --reporters=jest-junit"
 
       - run:
           name: Karma
