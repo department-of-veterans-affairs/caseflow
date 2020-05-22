@@ -319,6 +319,45 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#exam_requested?" do
+    subject { rating_request_issue.exam_requested? }
+    before { FeatureToggle.enable!(:detect_contention_exam) }
+    after { FeatureToggle.disable!(:detect_contention_exam) }
+
+    context "when there is no contention" do
+      let(:contention_reference_id) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is no end product establishment" do
+      let(:end_product_establishment) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is a contention" do
+      let(:end_product_establishment) { create(:end_product_establishment, :active) }
+      let(:contention_reference_id) { 1234 }
+      let(:orig_source_type_code) { "APP" }
+      let!(:contention) do
+        Generators::BgsContention.build(
+          reference_id: contention_reference_id,
+          claim_id: end_product_establishment.reference_id,
+          orig_source_type_code: orig_source_type_code
+        )
+      end
+
+      it { is_expected.to be_falsey }
+
+      context "when there is an exam scheduled" do
+        let(:orig_source_type_code) { "EXAM" }
+
+        it { is_expected.to be true }
+      end
+    end
+  end
+
   context "#guess_benefit_type" do
     context "issue is unidentified" do
       it "returns 'unidentified'" do
