@@ -145,6 +145,7 @@ AddedIssue.propTypes = {
     editedDescription: PropTypes.string,
     eligibleForSocOptIn: PropTypes.bool,
     eligibleForSocOptInWithExemption: PropTypes.bool,
+    examRequested: PropTypes.bool,
     untimelyExemptionCovid: PropTypes.bool,
     endProductCleared: PropTypes.bool,
     ineligibleReason: PropTypes.string,
@@ -161,8 +162,7 @@ AddedIssue.propTypes = {
     untimelyExemptionNotes: PropTypes.string,
     vacolsId: PropTypes.string,
     withdrawalPending: PropTypes.string,
-    withdrawalDate: PropTypes.string,
-    examRequested: PropTypes.bool
+    withdrawalDate: PropTypes.string
   }).isRequired,
   issueIdx: PropTypes.number.isRequired,
   legacyAppeals: PropTypes.array,

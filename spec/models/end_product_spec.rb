@@ -207,7 +207,7 @@ describe EndProduct do
     subject { end_product.bgs_contentions }
 
     it "returns an empty array" do
-      expect(subject.count).to eq 0
+      expect(subject.count).to be_empty
     end
 
     context "detect_contention_exam FeatureToggle is enabled" do
@@ -217,7 +217,7 @@ describe EndProduct do
       context "when there's no claim ID" do
         let(:claim_id) { nil }
         it "returns an empty array" do
-          expect(subject.count).to eq 0
+          expect(subject.count).to be_empty
         end
       end
 

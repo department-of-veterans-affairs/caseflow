@@ -319,7 +319,7 @@ describe RequestIssue, :all_dbs do
     end
   end
 
-  fcontext "#exam_requested?" do
+  context "#exam_requested?" do
     subject { rating_request_issue.exam_requested? }
     before { FeatureToggle.enable!(:detect_contention_exam) }
     after { FeatureToggle.disable!(:detect_contention_exam) }
