@@ -25,9 +25,11 @@ export default class LegacyOptInApproved extends React.PureComponent {
         strongLabel
         vertical
         options={radioOptions}
-        onChange={onChange}
+        onChange={(newValue) => {
+          onChange(newValue === 'true');
+        }}
         errorMessage={errorMessage}
-        value={value}
+        value={value === null ? null : value.toString()}
       />
     </div>;
   }
@@ -36,5 +38,5 @@ export default class LegacyOptInApproved extends React.PureComponent {
 LegacyOptInApproved.propTypes = {
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
-  value: PropTypes.string
+  value: PropTypes.bool
 };
