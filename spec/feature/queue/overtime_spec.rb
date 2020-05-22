@@ -91,14 +91,14 @@ RSpec.feature "Overtime", :all_dbs do
   end
 
   context "case is not marked for overtime" do
-
     it "judge is able to mark case as overtime" do
       visit "/queue/appeals/#{appeal.external_id}"
       click_on(COPY::TASK_SNAPSHOT_IS_NOT_OVERTIME)
       click_on("Submit")
 
       expect(page).to have_selector(".cf-overtime-badge")
-      expect(page).to have_content(COPY::TASK_SNAPSHOT_MARK_AS_OVERTIME_SUCCESS % "#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_MARK_AS_OVERTIME_SUCCESS %
+      "#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
       expect(page).to have_content(COPY::TASK_SNAPSHOT_IS_OVERTIME)
     end
   end
@@ -111,7 +111,8 @@ RSpec.feature "Overtime", :all_dbs do
       click_on("Submit")
 
       expect(page).not_to have_selector(".cf-overtime-badge")
-      expect(page).to have_content(COPY::TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS % "#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS %
+      "#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
       expect(page).to have_content(COPY::TASK_SNAPSHOT_IS_NOT_OVERTIME)
     end
   end
