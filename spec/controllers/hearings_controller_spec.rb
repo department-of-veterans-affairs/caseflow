@@ -141,7 +141,7 @@ RSpec.describe HearingsController, type: :controller do
         end
       end
 
-      context "with emails with whitespaces", focus: true do
+      context "with emails with whitespaces" do
         let(:virtual_hearing_params) do
           {
             appellant_email: "veteran@email.com     ",
