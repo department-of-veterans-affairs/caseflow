@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Line of Business example", :postgres do
+describe "Line of Business extract example", :postgres do
   include SQLHelpers
 
   let!(:vha_request_issue) { create(:request_issue, benefit_type: "vha") }
