@@ -24,7 +24,8 @@ export const SetOvertimeStatusModal = (props) => {
 
     if (overtime) {
       successMsg = {
-        title: sprintf(COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS, props.appeal.veteranFullName)
+        title: sprintf(COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS, props.appeal.veteranFullName),
+        detail: COPY.TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS_DETAIL
       };
     } else {
       successMsg = {
