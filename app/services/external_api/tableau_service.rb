@@ -4,7 +4,7 @@ class ExternalApi::TableauService
   ERROR_CODE = -1
 
   def self.authenticate(username)
-    uri = URI("http://i.tableau.prod.appeals.va.gov:81/trusted")
+    uri = URI(ENV["TABLEAU_SSO"])
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Post.new(uri.path)
     req.body = "username=#{username}"

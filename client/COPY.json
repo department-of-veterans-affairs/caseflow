@@ -259,10 +259,8 @@
   "ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY": "Assignee",
   "ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY": "Other assignee",
   "ASSIGN_WIDGET_BUTTON_TEXT": "Assign %(numCases)s %(casePlural)s",
-  "ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL": "Assign to:",
   "ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL": "Enter the name of an attorney:",
   "ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS": "Error loading attorneys",
-  "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Caseflow Hearings!",
   "HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER": "Welcome to Your Hearing Schedule",
@@ -306,7 +304,7 @@
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE": "Cancel hearing request",
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL": "Canceling this hearing request will release it to a hearing coordinator for review. A 90 day evidence hold may still apply to this case.",
 
-  "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Special Case Movement",
+  "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Case Movement",
   "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
 
@@ -580,6 +578,7 @@
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
   "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",
+  "INTAKE_CONTENTION_HAS_EXAM_REQUESTED": "A medical exam is requested. Issue cannot be removed.",
   "INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER": "Please enter a valid Veteran ID and try again.",
   "INTAKE_SEARCH_ERROR_NOT_ACCESSIBLE": "It looks like you do not have the necessary level of access to view this information. Please alert your manager so they can assign the form to someone else.",
   "INTAKE_SEARCH_ERROR_NOT_MODIFIABLE": "You do not appear to have permission to establish a claim for this Veteran. Often this is because they are an employee at the same station as you. Please alert your manager so they can assign the form to someone else.",
@@ -588,7 +587,6 @@
   "INTAKE_VETERAN_NAME_SUFFIX_ERROR": "Please check the Veteran's suffix for any punctuations (for example use JR instead of JR.) in VBMS or Share and try again.",
   "INTAKE_VETERAN_DATE_OF_BIRTH_ERROR": "Please check that the Veteran's birthdate follows the format \"mm/dd/yyyy\" (please include zeros) in VBMS or Share and try again.",
   "INTAKE_REQUEST_ISSUE_UNTIMELY": "Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.",
-  "INTAKE_VETERAN_PAY_GRADE_INVALID": "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again.",
   "INTAKE_LEGACY_ISSUE_UNTIMELY": "Please note: The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
 
