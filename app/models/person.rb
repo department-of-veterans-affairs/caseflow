@@ -84,6 +84,7 @@ class Person < CaseflowRecord
     transaction do
       CACHED_BGS_ATTRIBUTES.each { |attr| send(attr) }
     end
+    save!
   end
 
   def advanced_on_docket_based_on_age?
