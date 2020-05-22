@@ -656,6 +656,15 @@
       "zip" : "96740",
       "timezone" : "Pacific/Honolulu"
    },
+   "vc_0701V" : {
+      "address_1" : "2203 McKinley Road",
+      "address_2" : "Suite 254",
+      "address_3" : null,
+      "city" : "Johnson City",
+      "state" : "TN",
+      "zip" : "37604",
+      "timezone" : "America/Kentucky/Louisville"
+   },
    "vc_0719V" : {
       "address_1" : "1407 Union Avenue",
       "address_2" : "Suite 410",
