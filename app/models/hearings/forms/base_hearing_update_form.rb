@@ -58,8 +58,10 @@ class BaseHearingUpdateForm
 
   # remove any leading or trailing white space, usually applies to emails coming from bgs
   def sanitize_emails
-    virtual_hearing_attributes[:appellant_email]&.strip!
-    virtual_hearing_attributes[:representative_email]&.strip!
+    if virtual_hearing_attributes.present?
+      virtual_hearing_attributes[:appellant_email]&.strip!
+      virtual_hearing_attributes[:representative_email]&.strip!
+    end
   end
 
   def datadog_metric_info
