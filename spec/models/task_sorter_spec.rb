@@ -257,7 +257,7 @@ describe TaskSorter, :all_dbs do
         let(:fake_names) do
           # fixed length 8 and fixed ASCII charset to avoid spec-only sort bug with sql-vs-ruby
           names = []
-          100.times { names << (0...8).map { (65 + rand(26)).chr }.join }
+          100.times { names << (0...8).map { rand(65...90).chr }.join }
           names
         end
 
