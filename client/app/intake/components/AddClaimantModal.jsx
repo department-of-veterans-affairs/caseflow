@@ -30,8 +30,10 @@ const getClaimantOpts = async (search = '', asyncFn) => {
 
 export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys }) => {
   const [claimant, setClaimant] = useState(null);
+  const [relationship, setRelationship] = useState(relationshipOpts[0]);
   const isInvalid = useMemo(() => !claimant, [claimant]);
-  const handleChange = (value) => setClaimant(value);
+  const handleChangeRelationship = (value) => setRelationship(value);
+  const handleChangeClaimant = (value) => setClaimant(value);
   const asyncFn = (search) => getClaimantOpts(search, onSearch);
 
   const buttons = [
@@ -56,15 +58,15 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
       <SearchableDropdown
         name="relationship"
         label="Claimant's relationship to the veteran"
-        onChange={handleChange}
-        value="attorney"
+        onChange={handleChangeRelationship}
+        value={relationship}
         options={relationshipOpts}
         debounce={250}
       />
       <SearchableDropdown
         name="claimant"
         label="Claimant's name"
-        onChange={handleChange}
+        onChange={handleChangeClaimant}
         value={claimant}
         async={asyncFn}
         options={[]}
