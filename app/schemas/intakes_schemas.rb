@@ -3,13 +3,13 @@
 class IntakesSchemas
   class << self
     def review
-      Dry::Schema.JSON do
-        required(:receipt_date).filled(:date)
-        required(:docket_type).value(included_in?: %w[direct_review evidence_submission hearing])
-        required(:claimant).maybe(:string)
-        required(:veteran_is_not_claimant).maybe(:bool)
-        required(:payee_code).maybe(:string)
-        required(:legacy_opt_in_approved).maybe(:bool)
+      ControllerSchema.json do
+        date :receipt_date
+        string :docket_type, included_in?: %w[direct_review evidence_submission hearing]
+        string :claimant, nullable: true
+        string :payee_code, nullable: true
+        bool :veteran_is_not_claimant, nullable: true
+        bool :legacy_opt_in_approved, nullable: true
       end
     end
   end

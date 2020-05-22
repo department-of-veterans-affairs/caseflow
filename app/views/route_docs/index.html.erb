@@ -1,0 +1,22 @@
+<div>
+  <% @routes.each do |route| %>
+    <% next if route[:path].start_with?("/rails") || route[:controller].start_with?("rails") %>
+
+    <hr />
+    <h3><%= route[:verb] %> <%= route[:path] %></h3>
+    <div>Controller: <%= route[:controller] %>#<%= route[:action] %></div>
+    <% next if route[:schema].nil? %>
+
+    <% route[:schema].fields.each do |field| %>
+      <div>
+        <b><%= field.name %></b>
+        (<%= field.type %>)
+        <%= (field.optional ? "optional" : "required") %>,
+        <%= (field.nullable ? "nullable" : "non-nullable") %>
+      </div>
+      <% unless field.included_in.nil? %>
+        <div>allowed values: <%= field.included_in.to_s %></div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
