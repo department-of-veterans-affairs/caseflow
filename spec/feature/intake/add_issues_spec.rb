@@ -278,6 +278,25 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Decision date")
     end
 
+    scenario "show correct the issues link on appeal" do
+      start_appeal(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      expect(page).to have_content("Decision date")
+      fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+      fill_in "Decision date", with: decision_date
+      safe_click ".add-issue"
+      expect(page).to have_content("Decision date")
+      click_on "Establish appeal"
+      expect(page).to have_content("correct the issues")
+      click_on "correct the issues"
+      expect(page).to have_content("Decision date")
+    end
+
     scenario "show unidentified untimely exemption issue" do
       start_higher_level_review(veteran_no_ratings)
       visit "/intake"
