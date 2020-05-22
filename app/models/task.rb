@@ -60,9 +60,9 @@ class Task < CaseflowRecord
 
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
-  scope :recently_closed, -> { closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
+  scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
-  scope :incomplete_or_recently_closed, -> { open.or(recently_closed) }
+  scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
 
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
@@ -579,6 +579,18 @@ class Task < CaseflowRecord
 
   def stays_with_reassigned_parent?
     open?
+  end
+
+  def cancelled_by
+    return nil unless cancelled?
+
+    any_status_matcher = Constants::TASK_STATUSES.keys.join("|")
+    task_cancelled_version_matcher = "%status:\\n- (#{any_status_matcher})\\n- #{Constants.TASK_STATUSES.cancelled}%"
+    record = versions.order(:created_at).where("object_changes SIMILAR TO ?", task_cancelled_version_matcher).last
+
+    return nil unless record
+
+    User.find_by_id(record.whodunnit)
   end
 
   private

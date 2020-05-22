@@ -601,6 +601,22 @@ const setSpecialIssue = (state, action) => {
   });
 };
 
+const clearSpecialIssue = (state) => {
+  const { specialIssues } = state;
+
+  Object.keys(specialIssues).forEach((specialIssue) => {
+    if (specialIssues[specialIssue] === true) {
+      specialIssues[specialIssue] = false;
+    }
+  });
+
+  return update(state, {
+    specialIssues: {
+      $merge: specialIssues
+    }
+  });
+};
+
 const setAppealAod = (state, action) => {
   return update(state, {
     appeals: {
@@ -724,6 +740,7 @@ export const workQueueReducer = createReducer({
   [ACTIONS.SET_TASK_ATTRS]: setTaskAttrs,
   [ACTIONS.SET_APPEAL_ATTRS]: setAppealAttrs,
   [ACTIONS.SET_SPECIAL_ISSUE]: setSpecialIssue,
+  [ACTIONS.CLEAR_SPECIAL_ISSUE]: clearSpecialIssue,
   [ACTIONS.SET_APPEAL_AOD]: setAppealAod,
   [ACTIONS.STARTED_LOADING_APPEAL_VALUE]: startedLoadingAppealValue,
   [ACTIONS.RECEIVE_APPEAL_VALUE]: receiveAppealValue,

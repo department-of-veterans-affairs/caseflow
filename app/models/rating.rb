@@ -4,7 +4,6 @@
 
 class Rating
   include ActiveModel::Model
-  include LatestRatingDisabilityEvaluation
 
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
@@ -54,11 +53,18 @@ class Rating
   end
 
   def issues
-    issues_data = Array.wrap(rating_profile[:rating_issues] || rating_profile.dig(:rba_issue_list, :rba_issue))
+    issues = Array.wrap(rating_profile[:rating_issues] || rating_profile.dig(:rba_issue_list, :rba_issue))
 
-    issues_data.map do |issue_data|
-      issue_data[:dgnstc_tc] = diagnostic_codes.dig(issue_data[:dis_sn], :dgnstc_tc)
-      RatingIssue.from_bgs_hash(self, issue_data)
+    issues.map do |issue|
+      most_recent_disability_hash_for_issue = map_of_dis_sn_to_most_recent_disability_hash[issue[:dis_sn]]
+      most_recent_evaluation_for_issue = most_recent_disability_hash_for_issue&.most_recent_evaluation
+
+      if most_recent_evaluation_for_issue
+        issue[:dgnstc_tc] = most_recent_evaluation_for_issue[:dgnstc_tc]
+        issue[:prcnt_no] = most_recent_evaluation_for_issue[:prcnt_no]
+      end
+
+      RatingIssue.from_bgs_hash(self, issue)
     end
   end
 
@@ -97,32 +103,9 @@ class Rating
     Array.wrap(associated_claims)
   end
 
-  def diagnostic_codes
-    @diagnostic_codes ||= generate_diagnostic_codes
-  end
-
-  def generate_diagnostic_codes
-    disability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
-
-    return {} if disability_data.blank?
-
-    Array.wrap(disability_data).reduce({}) do |disability_map, disability|
-      disability_time = disability[:dis_dt]
-
-      if disability_map[disability[:dis_sn]].nil? ||
-         disability_map[disability[:dis_sn]][:date] < disability_time
-
-        disability_map[disability[:dis_sn]] = {
-          dgnstc_tc: get_diagnostic_code(disability),
-          date: disability_time
-        }
-      end
-
-      disability_map
-    end
-  end
-
-  def get_diagnostic_code(disability)
-    self.class.latest_disability_evaluation(disability).dig(:dgnstc_tc)
+  def map_of_dis_sn_to_most_recent_disability_hash
+    @map_of_dis_sn_to_most_recent_disability_hash ||= RatingProfileDisabilities.new(
+      Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
+    ).most_recent
   end
 end
