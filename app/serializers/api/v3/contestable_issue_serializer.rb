@@ -6,7 +6,7 @@ class Api::V3::ContestableIssueSerializer
 
   def initialize(contestable_issue, options = {})
     unless contestable_issue.respond_to? :id
-      contestable_issue.define_singleton_method(:id) { decision_issue&.id }
+      contestable_issue.define_singleton_method(:id) { nil }
     end
     super(contestable_issue, options)
   end

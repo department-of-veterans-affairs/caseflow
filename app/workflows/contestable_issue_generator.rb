@@ -8,10 +8,12 @@ class ContestableIssueGenerator
   delegate :finalized_decision_issues_before_receipt_date, to: :review
   delegate :receipt_date, to: :review
 
-  def contestable_issues
+  def contestable_issues(include_rating_decisions: true)
     return contestable_decision_issues unless review.can_contest_rating_issues?
 
-    contestable_rating_issues + contestable_decision_issues + contestable_rating_decisions
+    contestable_rating_issues +
+      contestable_decision_issues +
+      (include_rating_decisions ? contestable_rating_decisions : [])
   end
 
   private
