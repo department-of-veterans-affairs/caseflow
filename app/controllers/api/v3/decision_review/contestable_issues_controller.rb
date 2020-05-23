@@ -19,7 +19,12 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
     # for the time being, rating decisions are not being included.
     # rating decisions are actively being discussed / worked on,
     # and promulgation dates can be unreliable (and therefore require a Claims Assistant's interpretation)
-    ContestableIssueGenerator.new(standin_claim_review).contestable_issues(include_rating_decisions: false)
+    contestable_issue_generator.contestable_rating_issues +
+      contestable_issue_generator.contestable_decision_issues
+  end
+
+  def contestable_issue_generator
+    @contestable_issue_generator ||= ContestableIssueGenerator.new(standin_claim_review)
   end
 
   def standin_claim_review

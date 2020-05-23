@@ -108,7 +108,7 @@ describe Api::V3::ContestableIssueSerializer, :postgres do
     it "serializes the decision issue" do
       is_expected.to eq(
         data: {
-          id: decision_issue.id.to_s,
+          id: nil,
           type: :contestableIssue,
           attributes: {
             ratingIssueProfileDate: profile_date.strftime("%F"),

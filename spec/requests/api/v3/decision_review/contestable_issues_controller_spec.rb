@@ -187,12 +187,11 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         before { FeatureToggle.enable!(:contestable_rating_decisions) }
         after { FeatureToggle.disable!(:contestable_rating_decisions) }
 
-        it "should have ratingDecisionReferenceId attribute" do
+        it "should not have ratingDecisionReferenceId attribute" do
           issue_with_rating_decision = issues.find do |issue|
             issue["attributes"].key?("ratingDecisionReferenceId") && issue["attributes"]["ratingDecisionReferenceId"]
           end
-          expect(issue_with_rating_decision).to be_present
-          expect(issue_with_rating_decision["attributes"]["ratingDecisionReferenceId"]).to eq disability_dis_sn
+          expect(issue_with_rating_decision).not_to be_present
         end
       end
 
