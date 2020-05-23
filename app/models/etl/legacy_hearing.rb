@@ -2,7 +2,7 @@
 
 # transformed Hearing model, with associations "flattened" for reporting.
 
-class ETL::LegacyHearing < ETL::Hearing
+class ETL::LegacyHearing < ETL::HearingRecord
   class << self
     private
 
