@@ -106,17 +106,27 @@ class Person < CaseflowRecord
 
   def fetch_bgs_record
     if self[:participant_id]
-      bgs_record = bgs.fetch_person_info(participant_id)
-      bgs_record[:date_of_birth] = bgs_record.dig(:birth_date)&.to_date
-      bgs_record
+      fetch_bgs_record_by_participant_id
     elsif self[:ssn]
-      bgs_record = bgs.fetch_person_by_ssn(ssn)
-      bgs_record[:date_of_birth] = bgs_record.dig(:brthdy_dt)&.to_date
-      bgs_record[:ssn] = bgs_record.dig(:ssn_nbr)
-      bgs_record[:participant_id] = bgs_record.dig(:ptcpnt_id)
-      bgs_record
+      fetch_bgs_record_by_ssn
     else
       fail "Must provide participant_id or ssn"
     end
+  end
+
+  def fetch_bgs_record_by_participant_id
+    bgs_record = bgs.fetch_person_info(participant_id)
+    bgs_record[:date_of_birth] = bgs_record.dig(:birth_date)&.to_date
+    bgs_record[:ssn] ||= bgs_record.dig(:ssn_nbr)
+    bgs_record[:participant_id] ||= bgs_record.dig(:ptcpnt_id) || participant_id
+    bgs_record
+  end
+
+  def fetch_bgs_record_by_ssn
+    bgs_record = bgs.fetch_person_by_ssn(ssn)
+    bgs_record[:date_of_birth] = bgs_record.dig(:brthdy_dt)&.to_date
+    bgs_record[:ssn] ||= bgs_record.dig(:ssn_nbr) || ssn
+    bgs_record[:participant_id] ||= bgs_record.dig(:ptcpnt_id)
+    bgs_record
   end
 end
