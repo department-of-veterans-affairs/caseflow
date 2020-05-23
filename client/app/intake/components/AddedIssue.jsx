@@ -129,6 +129,7 @@ class AddedIssue extends React.PureComponent {
         {issue.withdrawalDate && <p>Withdrawn on {formatDateStr(issue.withdrawalDate)}</p>}
         {issue.endProductCleared && <p>Status: Cleared, waiting for decision</p>}
         {issue.correctionType && <p className="correction-pending">{this.getCorrectionType(issue)}</p>}
+        {issue.examRequested && <p className="added-issue-note">{COPY.INTAKE_CONTENTION_HAS_EXAM_REQUESTED}</p>}
       </div>
     );
   }
@@ -144,6 +145,7 @@ AddedIssue.propTypes = {
     editedDescription: PropTypes.string,
     eligibleForSocOptIn: PropTypes.bool,
     eligibleForSocOptInWithExemption: PropTypes.bool,
+    examRequested: PropTypes.bool,
     untimelyExemptionCovid: PropTypes.bool,
     endProductCleared: PropTypes.bool,
     ineligibleReason: PropTypes.string,

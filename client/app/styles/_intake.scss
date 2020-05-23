@@ -220,6 +220,11 @@
           font-weight: bold;
         }
 
+        .added-issue-note {
+          color: $color-gray;
+          font-style: italic;
+        }
+
         .not-eligible {
           color: $color-red;
         }
