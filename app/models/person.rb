@@ -15,7 +15,8 @@ class Person < CaseflowRecord
     :name_suffix,
     :date_of_birth,
     :email_address,
-    :ssn
+    :ssn,
+    :participant_id
   ].freeze
 
   class << self
@@ -70,6 +71,10 @@ class Person < CaseflowRecord
     cached_or_fetched_from_bgs(attr_name: :email_address)
   end
 
+  def participant_id
+    cached_or_fetched_from_bgs(attr_name: :participant_id, bgs_attr: :ptcpnt_id)
+  end
+
   def ssn
     cached_or_fetched_from_bgs(attr_name: :ssn, bgs_attr: :ssn_nbr)
   end
@@ -99,13 +104,19 @@ class Person < CaseflowRecord
 
   private
 
-  def stale_attributes
-    bgs_record[:date_of_birth] = bgs_record[:birth_date].to_date
-    bgs_record[:ssn] = bgs_record[:ssn_nbr]
-    super
-  end
-
   def fetch_bgs_record
-    bgs.fetch_person_info(participant_id)
+    if self[:participant_id]
+      bgs_record = bgs.fetch_person_info(participant_id)
+      bgs_record[:date_of_birth] = bgs_record.dig(:birth_date)&.to_date
+      bgs_record
+    elsif self[:ssn]
+      bgs_record = bgs.fetch_person_by_ssn(ssn)
+      bgs_record[:date_of_birth] = bgs_record.dig(:brthdy_dt)&.to_date
+      bgs_record[:ssn] = bgs_record.dig(:ssn_nbr)
+      bgs_record[:participant_id] = bgs_record.dig(:ptcpnt_id)
+      bgs_record
+    else
+      fail "Must provide participant_id or ssn"
+    end
   end
 end

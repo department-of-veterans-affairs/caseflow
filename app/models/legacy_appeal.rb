@@ -266,7 +266,7 @@ class LegacyAppeal < CaseflowRecord
   def person_for_appellant
     return nil if appellant_ssn.blank?
 
-    Person.find_or_create_by(ssn: appellant_ssn)
+    Person.find_or_create_by_ssn(appellant_ssn)
   end
 
   def veteran_if_exists
