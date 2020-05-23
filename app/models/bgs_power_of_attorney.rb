@@ -19,9 +19,6 @@ class BgsPowerOfAttorney < CaseflowRecord
     :file_number
   ].freeze
 
-  delegate :email_address,
-           to: :person, prefix: :representative
-
   validates :claimant_participant_id,
             :poa_participant_id,
             :representative_name,
@@ -49,6 +46,10 @@ class BgsPowerOfAttorney < CaseflowRecord
     def fetch_bgs_poa_by_participant_id(pid)
       bgs.fetch_poas_by_participant_ids([pid])[pid]
     end
+  end
+
+  def representative_email_address
+    person&.email_address
   end
 
   def representative_name
@@ -117,6 +118,8 @@ class BgsPowerOfAttorney < CaseflowRecord
   private
 
   def person
+    return if poa_participant_id.blank?
+
     @person ||= Person.find_or_create_by_participant_id(poa_participant_id)
   end
 
