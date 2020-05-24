@@ -336,9 +336,10 @@ jobs:
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test
-          - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
-          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
-          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
+          - JEST_DIR: /home/circleci/test-results/jest
+          - JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
+          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/test-results/karma
+          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/test-results/karma/karma.xml
           - COVERAGE_DIR: /home/circleci/coverage
     resource_class: large
     steps:
@@ -358,11 +359,11 @@ jobs:
             - ~/.cache/yarn
 
       - run:
-          name: Mocha
+          name: Jest
           command: |
-            mkdir -p ~/test-results/mocha
+            mkdir -p ~/test-results/jest
             pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --require ./test/node/register.js --require ./test/node/setup.js 'test/node/**/*-test.js'"
+            ~/project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit"
 
       - run:
           name: Karma

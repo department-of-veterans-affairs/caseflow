@@ -120,6 +120,11 @@ export const tasksByAssigneeCssIdSelector = createSelector(
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
+export const legacyJudgeTasksAssignedToUser = createSelector(
+  [tasksByAssigneeCssIdSelector], (tasks) => 
+  _.filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' ||  task.type ===  'JudgeLegacyAssignTask')
+)
+
 export const workTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector], (tasks) => workTasksSelector(tasks)
 );
@@ -129,6 +134,11 @@ export const tasksByAssignerCssIdSelector = createSelector(
   (tasks, cssId) =>
     _.filter(tasks, (task) => task.assignedBy.cssId === cssId)
 );
+
+export const legacyAttorneyTasksAssignedByUser = createSelector(
+  [tasksByAssignerCssIdSelector], (tasks) =>
+  _.filter(tasks, (task) => task.type === 'AttorneyLegacyTask')
+)
 
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],

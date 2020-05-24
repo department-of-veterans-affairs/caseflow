@@ -152,7 +152,7 @@ class EndProductEstablishment < CaseflowRecord
 
   alias end_product result
 
-  delegate :contentions, to: :cached_result
+  delegate :contentions, :bgs_contentions, to: :cached_result
 
   def limited_poa_on_established_claim
     result&.limited_poa
@@ -326,6 +326,10 @@ class EndProductEstablishment < CaseflowRecord
 
   def contention_for_object(for_object)
     contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
+  end
+
+  def bgs_contention_for_object(for_object)
+    bgs_contentions.find { |contention| contention.reference_id.to_i == for_object.contention_reference_id.to_i }
   end
 
   def veteran
