@@ -32,4 +32,13 @@ describe "SQLHelpers" do
       end
     end
   end
+
+  context "#read_sql_as_hash" do
+    let(:query_hash) { read_sql_as_hash("line-of-business") }
+    it "returns correct query" do
+      expect(query_hash["vha_request_issues"]).to match(/@QUERY_NAME: vha_request_issues/)
+      expect(query_hash["vha_request_issues"].upcase)
+        .to include "select * from request_issues where benefit_type = 'vha'".upcase
+    end
+  end
 end
