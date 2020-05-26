@@ -567,6 +567,14 @@ class RequestIssue < CaseflowRecord
     end_product_establishment.contention_for_object(self)
   end
 
+  def bgs_contention
+    end_product_establishment&.bgs_contention_for_object(self)
+  end
+
+  def exam_requested?
+    bgs_contention&.exam_requested?
+  end
+
   def editable?
     !contention_connected_to_rating?
   end

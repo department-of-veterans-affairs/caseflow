@@ -294,6 +294,16 @@ class EndProduct
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
   end
 
+  def bgs_contentions
+    @bgs_contentions ||= begin
+      if claim_id && FeatureToggle.enabled?(:detect_contention_exam, user: RequestStore.store[:current_user])
+        BgsContention.fetch_all(claim_id)
+      else
+        []
+      end
+    end
+  end
+
   def limited_poa
     @limited_poa ||= fetch_limited_poa
   end
