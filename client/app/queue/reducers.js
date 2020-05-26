@@ -145,6 +145,16 @@ const editAppeal = (state, action) => {
   });
 };
 
+const setOvertime = (state, action) => {
+  return update(state, {
+    appeals: {
+      [action.payload.appealId]: {
+        $merge: { overtime: action.payload.overtime }
+      }
+    }
+  });
+};
+
 const receiveNewFilesForAppeal = (state, action) => {
   return update(state, {
     newDocsForAppeal: {
@@ -695,6 +705,7 @@ export const workQueueReducer = createReducer({
   [ACTIONS.DELETE_APPEAL]: deleteAppeal,
   [ACTIONS.DELETE_TASK]: deleteTask,
   [ACTIONS.EDIT_APPEAL]: editAppeal,
+  [ACTIONS.SET_OVERTIME]: setOvertime,
   [ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL]: receiveNewFilesForAppeal,
   [ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL]: errorOnReceiveNewFilesForAppeal,
   [ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_APPEAL]: startedLoadingDocumentsForAppeal,
