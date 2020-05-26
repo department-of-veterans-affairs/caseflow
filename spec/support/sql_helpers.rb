@@ -13,7 +13,7 @@ module SQLHelpers
   def to_sql_query_hash(statements)
     queries_hash = {}
     statements.each do |statement|
-      query_name = statement.scan(/@QUERY_NAME: *(.*)$/)&.last&.first
+      query_name = statement.scan(/@QUERY_NAME: *([\S]+)/)&.last&.first
       queries_hash[query_name] = statement if query_name
     end
     queries_hash
