@@ -14,7 +14,6 @@ class CaseTimeline extends React.PureComponent {
 
     return <React.Fragment>
       <table id="case-timeline-table" summary="layout table">
-        <tr><th className="taskContainerStyling" colSpan="100%">{COPY.CASE_TIMELINE_HEADER}</th></tr>
         <tbody>
           <TaskRows appeal={appeal} taskList={tasks} timeline />
         </tbody>
