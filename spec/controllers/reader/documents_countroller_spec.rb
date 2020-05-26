@@ -39,7 +39,7 @@ RSpec.describe Reader::DocumentsController, :postgres, type: :controller do
         subject
 
         response_body = JSON.parse(response.body)
-        expect(response_body["appealDocuments"].count).to eq (documents.count / 2)
+        expect(response_body["appealDocuments"].count).to eq(documents.count / 2)
         expect(response_body["appealDocuments"].map { |doc| doc["id"] }).to match_array [documents.first].map(&:id)
       end
     end
