@@ -21,8 +21,8 @@ const alertStyling = css({
 
 export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
   const sectionBody = tasks.length ? (
-    <table {...tableStyling}  summary="layout table">
-      <tbody>{<TaskRows appeal={appeal} taskList={tasks} timeline={false} hideDropdown={hideDropdown} />}</tbody>
+    <table {...tableStyling} summary="layout table">
+      <tbody><TaskRows appeal={appeal} taskList={tasks} timeline={false} hideDropdown={hideDropdown} /></tbody>
     </table>
   ) : (
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
@@ -34,7 +34,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
         <a id="our-elemnt" {...anchorJumpLinkStyling}>
           {COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}
         </a>
-        {<AddNewTaskButton appealId={appeal.externalId} />}
+        <AddNewTaskButton appealId={appeal.externalId} />
       </h2>
       {showPulacCerulloAlert && (
         <div {...sectionSegmentStyling} {...alertStyling}>
