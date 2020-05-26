@@ -84,6 +84,8 @@ detectors:
       - LegacyAppeal#cancel_open_caseflow_tasks!
       - MonthlyMetricsReportJob#build_report
       - NightlySyncsJob#sync_vacols_cases
+      - Person#fetch_bgs_record_by_participant_id
+      - Person#fetch_bgs_record_by_ssn
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv

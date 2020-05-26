@@ -45,7 +45,8 @@ gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 3.12.4"
+# We are not yet at version 4.x because we have not tested.
+gem "puma", "~> 3.12.6"
 gem "rack", "~> 2.2.0"
 gem "rails", "5.2.4.3"
 # Used to colorize output for rake tasks

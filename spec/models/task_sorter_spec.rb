@@ -254,10 +254,17 @@ describe TaskSorter, :all_dbs do
       context "when sorting by case details link column" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name }
 
+        let(:fake_names) do
+          # fixed length 8 and fixed ASCII charset to avoid spec-only sort bug with sql-vs-ruby
+          names = []
+          100.times { names << (0...8).map { rand(65...90).chr }.join }
+          names
+        end
+
         before do
           tasks.each do |task|
-            first_name = Faker::Name.first_name
-            last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
+            first_name = fake_names.shuffle
+            last_name = "#{fake_names.shuffle} #{fake_names.shuffle}"
             task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
             create(
               :cached_appeal,
