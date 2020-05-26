@@ -233,6 +233,7 @@ people,last_name,string (50),,,,,,"Person last name, cached from BGS"
 people,middle_name,string (50),,,,,,"Person middle name, cached from BGS"
 people,name_suffix,string (20),,,,,,"Person name suffix, cached from BGS"
 people,participant_id,string (50) ∗,x,,,,x,
+people,ssn,string,,,,,x,"Person Social Security Number, cached from BGS"
 people,updated_at,datetime ∗,x,,,,x,
 remand_reasons,,,,,,,,Copy of remand_reasons
 remand_reasons,code,string (30),,,,,x,remand_reasons.code

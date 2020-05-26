@@ -85,7 +85,8 @@ class ExternalApi::BGSService
       name_suffix: bgs_info[:suffix_nm],
       birth_date: bgs_info[:brthdy_dt],
       email_address: bgs_info[:email_addr],
-      file_number: bgs_info[:file_nbr]
+      file_number: bgs_info[:file_nbr],
+      ssn: bgs_info[:ssn_nbr]
     }
   end
 
