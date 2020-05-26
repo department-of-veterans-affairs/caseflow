@@ -14,6 +14,7 @@ class ContestableIssueGenerator
 
   def contestable_rating_issues
     return [] unless review.can_contest_rating_issues?
+
     from_ratings.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
   end
 
