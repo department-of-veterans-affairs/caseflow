@@ -155,6 +155,17 @@ class BaseHearingUpdateForm
     virtual_hearing_attributes&.dig(:request_cancelled) == true
   end
 
+  # strip leading and trailing spaces
+  def sanitize_updated_emails
+    if virtual_hearing_attributes[:appellant_email].present?
+      virtual_hearing_attributes[:appellant_email] = virtual_hearing_attributes[:appellant_email].strip
+    end
+
+    if virtual_hearing_attributes[:representative_email].present?
+      virtual_hearing_attributes[:representative_email] = virtual_hearing_attributes[:representative_email].strip
+    end
+  end
+
   def virtual_hearing_updates
     # The email sent flag should always be set to false if any changes are made.
     # The judge_email_sent flag should not be set to false if virtual hearing is cancelled.
@@ -164,11 +175,9 @@ class BaseHearingUpdateForm
       representative_email_sent: representative_email_sent_flag
     }.reject { |_k, email_sent| email_sent == true }
 
-    updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
+    sanitize_updated_emails if virtual_hearing_attributes.present?
 
-    # strip leading and trailing spaces
-    updates[:appellant_email]&.strip!
-    updates[:representative_email]&.strip!
+    updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
 
     if judge_id.present?
       updates[:judge_email] = hearing.judge&.email
