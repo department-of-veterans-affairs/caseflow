@@ -19,7 +19,7 @@ module PowerOfAttorneyMapper
     {
       participant_id: bgs_record[:person_org_ptcpnt_id],
       representative_name: bgs_record[:person_org_name],
-      representative_type: bgs_record[:person_organization_name],
+      representative_type: BGS_REP_TYPE_TO_REP_TYPE.dig(bgs_record[:person_organization_name]) || "Other",
       authzn_change_clmant_addrs_ind: bgs_record[:authzn_change_clmant_addrs_ind],
       authzn_poa_access_ind: bgs_record[:authzn_poa_access_ind],
       veteran_participant_id: bgs_record[:veteran_ptcpnt_id]
