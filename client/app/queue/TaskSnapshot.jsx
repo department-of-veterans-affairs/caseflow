@@ -21,7 +21,7 @@ const alertStyling = css({
 
 export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
   const sectionBody = tasks.length ? (
-    <table {...tableStyling}>
+    <table {...tableStyling}  summary="layout table">
       <tbody>{<TaskRows appeal={appeal} taskList={tasks} timeline={false} hideDropdown={hideDropdown} />}</tbody>
     </table>
   ) : (
