@@ -9,6 +9,8 @@
 
 client/.eslintcache
 client/yarn-error.log
+client/coverage
+client/junit.xml
 
 # Ignore the default SQLite database.
 /db/*.sqlite3

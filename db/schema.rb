@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_18_200111) do
+ActiveRecord::Schema.define(version: 2020_05_21_202239) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -181,7 +181,9 @@ ActiveRecord::Schema.define(version: 2020_05_18_200111) do
     t.string "representative_type", null: false, comment: "POA type"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["claimant_participant_id", "file_number"], name: "bgs_poa_pid_fn_unique_idx", unique: true
+    t.index ["claimant_participant_id"], name: "index_bgs_power_of_attorneys_on_claimant_participant_id"
     t.index ["created_at"], name: "index_bgs_power_of_attorneys_on_created_at"
+    t.index ["file_number"], name: "index_bgs_power_of_attorneys_on_file_number"
     t.index ["last_synced_at"], name: "index_bgs_power_of_attorneys_on_last_synced_at"
     t.index ["poa_participant_id"], name: "index_bgs_power_of_attorneys_on_poa_participant_id"
     t.index ["representative_name"], name: "index_bgs_power_of_attorneys_on_representative_name"
@@ -959,8 +961,10 @@ ActiveRecord::Schema.define(version: 2020_05_18_200111) do
     t.string "middle_name", comment: "Person middle name, cached from BGS"
     t.string "name_suffix", comment: "Person name suffix, cached from BGS"
     t.string "participant_id", null: false
+    t.string "ssn", comment: "Person Social Security Number, cached from BGS"
     t.datetime "updated_at", null: false
     t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
+    t.index ["ssn"], name: "index_people_on_ssn"
     t.index ["updated_at"], name: "index_people_on_updated_at"
   end
 

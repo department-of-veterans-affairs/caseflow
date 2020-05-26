@@ -85,7 +85,8 @@ class ExternalApi::BGSService
       name_suffix: bgs_info[:suffix_nm],
       birth_date: bgs_info[:brthdy_dt],
       email_address: bgs_info[:email_addr],
-      file_number: bgs_info[:file_nbr]
+      file_number: bgs_info[:file_nbr],
+      ssn: bgs_info[:ssn_nbr]
     }
   end
 
@@ -354,7 +355,7 @@ class ExternalApi::BGSService
     end
   end
 
-  def find_contention_by_claim_id(claim_id)
+  def find_contentions_by_claim_id(claim_id)
     DBService.release_db_connections
     MetricsService.record("BGS: find contentions for veteran by claim_id #{claim_id}",
                           service: :bgs,
