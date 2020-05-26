@@ -13,7 +13,7 @@ services:
       - "6379:6379"
 
   appeals-postgres:
-    image: postgres:11.1
+    image: postgres:11.7
     container_name: appeals-db
     ports:
       - "5432:5432"
