@@ -171,7 +171,7 @@ class BaseHearingUpdateForm
     updates[:representative_email]&.strip!
 
     if judge_id.present?
-      updates[:judge_email] = hearing.judge&.email&.strip
+      updates[:judge_email] = hearing.judge&.email
     end
 
     updates
@@ -185,7 +185,7 @@ class BaseHearingUpdateForm
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
       new_virtual_hearing.appellant_email = virtual_hearing_attributes[:appellant_email]&.strip
-      new_virtual_hearing.judge_email = hearing.judge&.email&.strip
+      new_virtual_hearing.judge_email = hearing.judge&.email
       new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]&.strip
       @virtual_hearing_created = true
     end
