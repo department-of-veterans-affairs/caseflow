@@ -963,8 +963,10 @@ ActiveRecord::Schema.define(version: 2020_05_26_054515) do
     t.string "middle_name", comment: "Person middle name, cached from BGS"
     t.string "name_suffix", comment: "Person name suffix, cached from BGS"
     t.string "participant_id", null: false
+    t.string "ssn", comment: "Person Social Security Number, cached from BGS"
     t.datetime "updated_at", null: false
     t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
+    t.index ["ssn"], name: "index_people_on_ssn"
     t.index ["updated_at"], name: "index_people_on_updated_at"
   end
 
