@@ -39,7 +39,7 @@ describe "Line of Business extract example", :postgres do
 
   context "with hash of queries loaded" do
     shared_examples "a correct record retrieval" do |query_name|
-      let(:query_hash) { read_sql_as_hash("line-of-business").split(";") }
+      let(:query_hash) { read_sql_as_hash("line-of-business") }
       let(:expected_record_id) { nil }
       let(:expected_record_uuid) { nil }
       let(:expected_record_ssn) { nil }
