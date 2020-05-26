@@ -192,7 +192,7 @@ detectors:
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - PendingIncompleteAndUncancelledTaskTimersQuery#call
-      - PowerOfAttorneyMapper#get_claimant_poa_from_bgs_poa
+      - PowerOfAttorneyMapper
       - Reporter#average
       - Reporter#median
       - Reporter#seconds_to_hms
