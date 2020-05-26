@@ -42,7 +42,7 @@ describe ExternalApi::BGSService do
 
     let(:bgs_poa_org_file_number_response) do
       {
-        file_number: "071-claimant-appeal-file-number",
+        file_number: file_number,
         ptcpnt_id: participant_id,
         power_of_attorney: {
           legacy_poa_cd: "071",
@@ -69,6 +69,7 @@ describe ExternalApi::BGSService do
       it "returns POA" do
         expect(subject[:participant_id]).to eq poa_participant_id
         expect(subject[:representative_type]).to eq "Service Organization"
+        expect(subject[:file_number]).to be_nil
       end
     end
 
@@ -76,6 +77,7 @@ describe ExternalApi::BGSService do
       it "returns POA" do
         expect(subject[:participant_id]).to eq poa_participant_id
         expect(subject[:representative_type]).to eq "Service Organization"
+        expect(subject[:file_number]).to eq file_number
       end
     end
   end
