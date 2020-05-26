@@ -17,7 +17,7 @@ jobs:
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
-      - image: circleci/postgres:9.6
+      - image: circleci/postgres:11
         environment:
           - POSTGRES_USER: root
             POSTGRES_PASSWORD: password
