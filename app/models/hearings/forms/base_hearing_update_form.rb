@@ -56,14 +56,6 @@ class BaseHearingUpdateForm
 
   private
 
-  # remove any leading or trailing white space, usually applies to emails coming from bgs
-  def sanitize_emails
-    if virtual_hearing_attributes.present?
-      virtual_hearing_attributes[:appellant_email]&.strip!
-      virtual_hearing_attributes[:representative_email]&.strip!
-    end
-  end
-
   def datadog_metric_info
     {
       app_name: RequestStore[:application],
@@ -174,6 +166,10 @@ class BaseHearingUpdateForm
 
     updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
 
+    # strip leading and trailing spaces
+    updates[:appellant_email]&.strip!
+    updates[:representative_email]&.strip!
+
     if judge_id.present?
       updates[:judge_email] = hearing.judge&.email&.strip
     end
@@ -186,13 +182,11 @@ class BaseHearingUpdateForm
   end
 
   def create_or_update_virtual_hearing
-    sanitize_emails
-
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
-      new_virtual_hearing.appellant_email = virtual_hearing_attributes[:appellant_email]
+      new_virtual_hearing.appellant_email = virtual_hearing_attributes[:appellant_email]&.strip
       new_virtual_hearing.judge_email = hearing.judge&.email&.strip
-      new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
+      new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]&.strip
       @virtual_hearing_created = true
     end
 
