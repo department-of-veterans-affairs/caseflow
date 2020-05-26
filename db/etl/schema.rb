@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_19_221508) do
+ActiveRecord::Schema.define(version: 2020_05_20_220924) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -361,9 +361,11 @@ ActiveRecord::Schema.define(version: 2020_05_19_221508) do
     t.string "middle_name", limit: 50, comment: "Person middle name, cached from BGS"
     t.string "name_suffix", limit: 20, comment: "Person name suffix, cached from BGS"
     t.string "participant_id", limit: 50, null: false
+    t.string "ssn", comment: "Person Social Security Number, cached from BGS"
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_people_on_created_at"
     t.index ["participant_id"], name: "index_people_on_participant_id"
+    t.index ["ssn"], name: "index_people_on_ssn"
     t.index ["updated_at"], name: "index_people_on_updated_at"
   end
 
