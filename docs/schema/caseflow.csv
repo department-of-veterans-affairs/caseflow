@@ -733,6 +733,7 @@ people,last_name,string,,,,,,"Person last name, cached from BGS"
 people,middle_name,string,,,,,,"Person middle name, cached from BGS"
 people,name_suffix,string,,,,,,"Person name suffix, cached from BGS"
 people,participant_id,string ∗,x,,,,x,
+people,ssn,string,,,,,x,"Person Social Security Number, cached from BGS"
 people,updated_at,datetime ∗,x,,,,x,
 post_decision_motions,,,,,,,,"Stores the disposition and associated task of post-decisional motions handled by the Litigation Support Team: Motion for Reconsideration, Motion to Vacate, and Clear and Unmistakeable Error."
 post_decision_motions,appeal_id,integer (8) FK,,,x,,,
