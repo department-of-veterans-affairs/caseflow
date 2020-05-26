@@ -17,14 +17,23 @@ class ControllerSchema
 
     # convert this Field into a DSL entry on a Dry::Schema
     def register(dry_dsl)
-      key = dry_dsl.send((optional ? "optional" : "required"), name)
-      value_opts = included_in.nil? ? {} : { "included_in?": included_in }
+      key = register_key(dry_dsl)
       if nullable
         key = key.maybe(type)
-        key.value(**value_opts) if value_opts.present?
+        key.value(**value_options) if value_options.present?
       else
-        key.value(type, **value_opts)
+        key.value(type, **value_options)
       end
+    end
+
+    private
+
+    def register_key(dry_dsl)
+      dry_dsl.send((optional ? "optional" : "required"), name)
+    end
+
+    def value_options
+      included_in.nil? ? {} : { "included_in?": included_in }
     end
   end
 

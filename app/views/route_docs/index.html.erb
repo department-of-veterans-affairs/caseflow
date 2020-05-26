@@ -1,13 +1,15 @@
 <div>
   <% @routes.each do |route| %>
-    <% next if route[:path].start_with?("/rails") || route[:controller].start_with?("rails") %>
-
     <hr />
-    <h3><%= route[:verb] %> <%= route[:path] %></h3>
-    <div>Controller: <%= route[:controller] %>#<%= route[:action] %></div>
-    <% next if route[:schema].nil? %>
+    <h3><%= route.verb %> <%= route.path %></h3>
+    <div>
+      <% if route.source_url %><a href="<%= route.source_url %>"><% end %>
+        <%= route.controller_klass.name %>#<%= route.action %>
+      <% if route.source_url %></a><% end %>
+    </div>
+    <% next if route.schema.nil? %>
 
-    <% route[:schema].fields.each do |field| %>
+    <% route.schema.fields.each do |field| %>
       <div>
         <b><%= field.name %></b>
         (<%= field.type %>)
