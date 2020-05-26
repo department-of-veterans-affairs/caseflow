@@ -135,7 +135,7 @@ describe LegacyAppeal, :all_dbs do
       end
     end
 
-    context "when 1 day is added to ssoc/soc dates" do
+    context "checks ssoc/soc dates" do
       let!(:new_receipt_date) { receipt_date + 1.day }
 
       scenario "when is active but not eligible" do
@@ -170,8 +170,8 @@ describe LegacyAppeal, :all_dbs do
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
-    context "when 1 day is added to ssoc/soc dates" do
-      let!(:new_receipt_date) { receipt_date + 1.day }
+    context "check ssoc/soc dates" do
+      let!(:new_receipt_date) { receipt_date + 5.days }
       scenario "when is not active or eligible" do
         allow(appeal).to receive(:active?).and_return(false)
         allow(appeal).to receive(:issues).and_return(issues)
@@ -179,7 +179,7 @@ describe LegacyAppeal, :all_dbs do
         allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
         expect(appeal.eligible_for_opt_in?(receipt_date: new_receipt_date)).to eq(false)
-        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(new_receipt_date)).to eq(false)
       end
     end
 
@@ -204,6 +204,22 @@ describe LegacyAppeal, :all_dbs do
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
+    end
+
+    context "when receipt_date falls on saturday" do
+      let(:new_receipt_date) { receipt_date + 1.day }
+
+      scenario "return false" do
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+      end
+    end
+
+    context "when receipt_date falls on sunday" do
+      let(:new_receipt_date) { receipt_date + 2.days }
+
+      scenario "return false" do
+        expect(appeal.eligible_for_opt_in?(receipt_date: new_receipt_date)).to eq(false)
       end
     end
 
