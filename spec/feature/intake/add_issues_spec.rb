@@ -278,6 +278,26 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Decision date")
     end
 
+    scenario "show correct the issues link on appeal" do
+      start_appeal(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        category: "Dependent Child - Biological",
+        description: "test",
+        date: "04/04/2020"
+      )
+      click_on "Establish appeal"
+      expect(page).to have_content("correct the issues")
+      click_on "correct the issues"
+      appeal = Appeal.find_by(docket_type: "evidence_submission")
+      correct_path = "/appeals/#{appeal.uuid}/edit"
+      expect(page).to have_current_path(correct_path)
+    end
+
     scenario "show unidentified untimely exemption issue" do
       start_higher_level_review(veteran_no_ratings)
       visit "/intake"
