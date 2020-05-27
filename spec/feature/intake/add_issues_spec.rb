@@ -278,7 +278,7 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Decision date")
     end
 
-    fscenario "show correct the issues link on appeal" do
+    scenario "show correct the issues link on appeal" do
       start_appeal(veteran_no_ratings)
       visit "/intake"
       click_intake_continue
