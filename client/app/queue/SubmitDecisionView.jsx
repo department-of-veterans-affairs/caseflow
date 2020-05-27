@@ -56,7 +56,7 @@ class SubmitDecisionView extends React.PureComponent {
     const decisionOptsWithAttorneyCheckoutInfo = _.merge(decision.opts, {
       document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
-      overtime: _.get(attorneyCaseRewriteDetails, 'overtime', appeal.overtime),
+      overtime: appeal.overtime, //_.get(attorneyCaseRewriteDetails, 'overtime', appeal.overtime),
       untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false),
       reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
     });
@@ -220,8 +220,8 @@ class SubmitDecisionView extends React.PureComponent {
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
         />
-        {featureToggles.overtime_revamp && <Checkbox
-          disabled={true}
+        {featureToggles.overtime_revamp || <Checkbox
+          disabled
           name="overtime"
           label="This work product is overtime"
           onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
