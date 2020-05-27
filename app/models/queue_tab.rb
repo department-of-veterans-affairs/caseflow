@@ -64,6 +64,19 @@ class QueueTab
       Constants.QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name
     ]
   end
+
+  def self.judge_review_column_names
+    [
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name,
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name
+    ]
+  end
   # rubocop:enable Metrics/AbcSize
 
   private

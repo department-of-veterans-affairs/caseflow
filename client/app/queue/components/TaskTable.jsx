@@ -17,8 +17,7 @@ import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import { docketNumberColumn, badgesColumn, detailsColumn, taskColumn, regionalOfficeColumn, daysWaitingColumn,
   issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn,
-  taskCompletedDateColumn } from
-  './TaskTableColumns';
+  taskCompletedDateColumn, documentIdColumn } from './TaskTableColumns';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
@@ -74,23 +73,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDocumentIdColumn = () => {
-    return this.props.includeDocumentId ? {
-      header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
-      valueFunction: (task) => {
-        const firstName = task.decisionPreparedBy ? task.decisionPreparedBy.firstName : task.assignedBy.firstName;
-        const lastName = task.decisionPreparedBy ? task.decisionPreparedBy.lastName : task.assignedBy.lastName;
-
-        if (!firstName) {
-          return task.documentId;
-        }
-
-        const nameAbbrev = `${firstName.substring(0, 1)}. ${lastName}`;
-
-        return <React.Fragment>
-          {task.documentId}<br />from {nameAbbrev}
-        </React.Fragment>;
-      }
-    } : null;
+    return this.props.includeDocumentId ? documentIdColumn(this.props.tasks) : null;
   }
 
   caseTypeColumn = () => {

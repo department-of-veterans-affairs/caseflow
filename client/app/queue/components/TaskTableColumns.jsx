@@ -57,6 +57,26 @@ export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   };
 };
 
+export const documentIdColumn = (tasks) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
+    valueFunction: (task) => {
+      const firstName = task.decisionPreparedBy ? task.decisionPreparedBy.firstName : task.assignedBy.firstName;
+      const lastName = task.decisionPreparedBy ? task.decisionPreparedBy.lastName : task.assignedBy.lastName;
+
+      if (!firstName) {
+        return task.documentId;
+      }
+
+      const nameAbbrev = `${firstName.substring(0, 1)}. ${lastName}`;
+
+      return <React.Fragment>
+        {task.documentId}<br />from {nameAbbrev}
+      </React.Fragment>;
+    }
+  };
+}
+
 export const badgesColumn = () => {
   return {
     header: '',
