@@ -61,14 +61,13 @@ export const documentIdColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
     valueFunction: (task) => {
-      const firstName = task.decisionPreparedBy ? task.decisionPreparedBy.firstName : task.assignedBy.firstName;
-      const lastName = task.decisionPreparedBy ? task.decisionPreparedBy.lastName : task.assignedBy.lastName;
+      const preparer = task.decisionPreparedBy || task.assignedBy;
 
-      if (!firstName) {
+      if (!preparer.firstName) {
         return task.documentId;
       }
 
-      const nameAbbrev = `${firstName.substring(0, 1)}. ${lastName}`;
+      const nameAbbrev = `${preparer.firstName.substring(0, 1)}. ${preparer.lastName}`;
 
       return <React.Fragment>
         {task.documentId}<br />from {nameAbbrev}
