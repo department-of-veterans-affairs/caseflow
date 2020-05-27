@@ -116,7 +116,6 @@ class WorkQueue::AppealSerializer
 
   attribute :attorney_case_rewrite_details do |object|
     {
-      overtime: object.latest_attorney_case_review&.overtime,
       note_from_attorney: object.latest_attorney_case_review&.note,
       untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
     }
