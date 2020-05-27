@@ -11,6 +11,8 @@ class SessionsController < ApplicationController
     end
     # :nocov:
 
+    session["return_to"] = request.original_url
+
     return redirect_to(sso_url) unless current_user
 
     # In order to use Caseflow, we need to know what regional office (RO) the user is from.
