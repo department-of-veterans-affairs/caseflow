@@ -1,6 +1,6 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
@@ -38,11 +38,11 @@ export const HearingTime = ({ errorMessage, onChange, readOnly, regionalOffice, 
   const isOther = _.isUndefined(
     _.find(timeOptions, (opt) => opt.value === value)
   );
-  const onRadioChange = (value) => {
-    if (value === 'other') {
+  const onRadioChange = (newValue) => {
+    if (newValue === 'other') {
       onChange(null);
     } else {
-      onChange(value);
+      onChange(newValue);
     }
   };
 
@@ -72,7 +72,7 @@ export const HearingTime = ({ errorMessage, onChange, readOnly, regionalOffice, 
       )}
     </React.Fragment>
   );
-}
+};
 
 HearingTime.propTypes = {
   errorMessage: PropTypes.string,
