@@ -3,6 +3,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import querystring from 'querystring';
 
 import BulkAssignButton from './components/BulkAssignButton';
@@ -15,14 +16,19 @@ import { assignedToColumn, completedToNameColumn, daysOnHoldColumn, daysWaitingC
 import { tasksWithAppealsFromRawTasks } from './utils';
 
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
+import COPY from '../../COPY';
 import { fullWidth } from './constants';
 
+import { showErrorMessage } from './uiReducer/uiActions';
+
 /**
- * A component to create a queue table's tabs and columns from a queue config
+ * A component to create a queue table's tabs and columns from a queue config or the assignee's tasks
+ * The props are:
+ * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  **/
 
 class QueueTableBuilder extends React.PureComponent {
-
   paginationOptions = () => querystring.parse(window.location.search.slice(1));
 
   calculateActiveTabIndex = (config) => {
@@ -43,14 +49,9 @@ class QueueTableBuilder extends React.PureComponent {
     return config;
   }
 
-  tasksForTab = (tabName) => {
-    const mapper = {
-      [QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME]: this.props.assignedTasks,
-      [QUEUE_CONFIG.INDIVIDUALLY_ON_HOLD_TASKS_TAB_NAME]: this.props.onHoldTasks,
-      [QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME]: this.props.completedTasks
-    };
-
-    return mapper[tabName];
+  isLegacyAssignTab = (tabConfig) => {
+    return tabConfig.name === QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME &&
+           this.props.assignedTabIncludesLegacyTasks;
   }
 
   filterValuesForColumn = (column) => column && column.filterable && column.filter_options;
@@ -84,9 +85,22 @@ class QueueTableBuilder extends React.PureComponent {
   taskTableTabFactory = (tabConfig, config) => {
     const paginationOptions = this.paginationOptions();
     const tasks = tasksWithAppealsFromRawTasks(tabConfig.tasks);
+    let totalTaskCount = tabConfig.total_task_count;
+
+    if (this.isLegacyAssignTab(tabConfig)) {
+      tasks.unshift(...this.props.assignedTasks);
+      totalTaskCount = tasks.length;
+    }
+
+    if (this.props.requireDasRecord && _.some(tasks, (task) => !task.taskId)) {
+      this.props.showErrorMessage({
+        title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
+        detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
+      });
+    }
 
     return {
-      label: sprintf(tabConfig.label, tabConfig.total_task_count),
+      label: sprintf(tabConfig.label, totalTaskCount),
       page: <React.Fragment>
         <p className="cf-margin-top-0">{tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
@@ -97,10 +111,10 @@ class QueueTableBuilder extends React.PureComponent {
           getKeyForRow={(_rowNumber, task) => task.uniqueId}
           casesPerPage={config.tasks_per_page}
           numberOfPages={tabConfig.task_page_count}
-          totalTaskCount={tabConfig.total_task_count}
+          totalTaskCount={totalTaskCount}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
           tabPaginationOptions={paginationOptions.tab === tabConfig.name && paginationOptions}
-          useTaskPagesApi={config.use_task_pages_api}
+          useTaskPagesApi={config.use_task_pages_api && !this.isLegacyAssignTab(tabConfig)}
           enablePagination
         />
       </React.Fragment>
@@ -121,19 +135,30 @@ class QueueTableBuilder extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => {
+  const userRole = state.ui.userRole;
   return ({
     config: state.queue.queueConfig,
-    organizations: state.ui.organizations
+    organizations: state.ui.organizations,
+    assignedTabIncludesLegacyTasks: userRole === USER_ROLE_TYPES.attorney || userRole === USER_ROLE_TYPES.judge
   });
 };
 
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    showErrorMessage
+  }, dispatch)
+});
+
 QueueTableBuilder.propTypes = {
   organizations: PropTypes.array,
+  assignedTasks: PropTypes.array,
   config: PropTypes.shape({
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number
   }),
-  requireDasRecord: PropTypes.bool
+  requireDasRecord: PropTypes.bool,
+  assignedTabIncludesLegacyTasks: PropTypes.bool,
+  showErrorMessage: PropTypes.func
 };
 
-export default (connect(mapStateToProps)(QueueTableBuilder));
+export default (connect(mapStateToProps, mapDispatchToProps)(QueueTableBuilder));
