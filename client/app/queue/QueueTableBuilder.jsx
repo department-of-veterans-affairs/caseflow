@@ -18,11 +18,7 @@ import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { fullWidth } from './constants';
 
 /**
- * A component to create a queue table's tabs and columns from a queue config or the assignee's tasks
- * The props are:
- * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
- * - @onHoldTasks {array[object]} array of task objects to appear in the on hold tab
- * - @completedTasks {array[object]} array of task objects to appear in the completed tab
+ * A component to create a queue table's tabs and columns from a queue config
  **/
 
 class QueueTableBuilder extends React.PureComponent {
@@ -87,13 +83,10 @@ class QueueTableBuilder extends React.PureComponent {
 
   taskTableTabFactory = (tabConfig, config) => {
     const paginationOptions = this.paginationOptions();
-    const tasks = config.use_task_pages_api ?
-      tasksWithAppealsFromRawTasks(tabConfig.tasks) :
-      this.tasksForTab(tabConfig.name);
-    const totalTaskCount = config.use_task_pages_api ? tabConfig.total_task_count : tasks.length;
+    const tasks = tasksWithAppealsFromRawTasks(tabConfig.tasks);
 
     return {
-      label: sprintf(tabConfig.label, totalTaskCount),
+      label: sprintf(tabConfig.label, tabConfig.total_task_count),
       page: <React.Fragment>
         <p className="cf-margin-top-0">{tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
@@ -104,7 +97,7 @@ class QueueTableBuilder extends React.PureComponent {
           getKeyForRow={(_rowNumber, task) => task.uniqueId}
           casesPerPage={config.tasks_per_page}
           numberOfPages={tabConfig.task_page_count}
-          totalTaskCount={totalTaskCount}
+          totalTaskCount={tabConfig.total_task_count}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
           tabPaginationOptions={paginationOptions.tab === tabConfig.name && paginationOptions}
           useTaskPagesApi={config.use_task_pages_api}
@@ -136,9 +129,6 @@ const mapStateToProps = (state) => {
 
 QueueTableBuilder.propTypes = {
   organizations: PropTypes.array,
-  assignedTasks: PropTypes.array,
-  onHoldTasks: PropTypes.array,
-  completedTasks: PropTypes.array,
   config: PropTypes.shape({
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number

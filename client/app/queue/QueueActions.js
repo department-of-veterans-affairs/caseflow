@@ -216,7 +216,7 @@ const editAppeal = (appealId, attributes) => ({
 
 export const setOvertime = (appealId, overtime) => ({
   type: ACTIONS.SET_OVERTIME,
-  payload: { 
+  payload: {
     appealId,
     overtime
   }
@@ -645,7 +645,7 @@ export const fetchAllAttorneys = () => (dispatch) =>
 export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => {
-      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
+      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks?.data || [])));
       dispatch(setQueueConfig(resp.body.queue_config));
     }).
     catch((error) => {
