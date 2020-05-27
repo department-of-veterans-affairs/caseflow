@@ -88,9 +88,6 @@ feature "Appeal Intake", :all_dbs do
     expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: future_date.mdY
-    within_fieldset("Which review option did the Veteran request?") do
-      find("label", text: "Direct Review", match: :prefer_exact).click
-    end
     click_intake_continue
 
     expect(page).to have_content("Receipt date cannot be in the future.")

@@ -2,14 +2,28 @@
 
 class IntakesSchemas
   class << self
+    DOCKET_OPTIONS = %w[direct_review evidence_submission hearing].freeze
+
     def review
       ControllerSchema.json do
         date :receipt_date
-        string :docket_type, included_in?: %w[direct_review evidence_submission hearing]
-        string :claimant, nullable: true
-        string :payee_code, nullable: true
-        bool :veteran_is_not_claimant, nullable: true
-        bool :legacy_opt_in_approved, nullable: true
+        string :benefit_type, optional: true, nullable: true, doc: "not applicable to Appeals"
+        string :docket_type,
+          optional: true,
+          nullable: true,
+          included_in?: DOCKET_OPTIONS,
+          doc: "Appeals only"
+        string :claimant, optional: true, nullable: true
+        string :payee_code, optional: true, nullable: true
+        bool :informal_conference, optional: true, nullable: true, doc: "HLRs only"
+        bool :same_office, optional: true, nullable: true, doc: "HLRs only"
+        bool :veteran_is_not_claimant, optional: true, nullable: true
+        bool :legacy_opt_in_approved, optional: true, nullable: true
+        string :option_selected,
+          optional: true,
+          included_in?: %w[supplemental_claim higher_level_review higher_level_review_with_hearing appeal],
+          doc: "RAMP only"
+        string :appeal_docket, optional: true, nullable: true, included_in?: DOCKET_OPTIONS, doc: "RAMP only"
       end
     end
   end

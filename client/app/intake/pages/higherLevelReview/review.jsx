@@ -17,6 +17,7 @@ import {
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES, VBMS_BENEFIT_TYPES } from '../../constants';
+import { convertStringToBoolean } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
@@ -79,7 +80,9 @@ class Review extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={this.props.setInformalConference}
+        onChange={(value) => {
+          this.props.setInformalConference(convertStringToBoolean(value));
+        }}
         errorMessage={informalConferenceError}
         value={informalConference === null ? null : informalConference.toString()}
       />
@@ -90,7 +93,9 @@ class Review extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={this.props.setSameOffice}
+        onChange={(value) => {
+          this.props.setSameOffice(convertStringToBoolean(value));
+        }}
         errorMessage={sameOfficeError}
         value={sameOffice === null ? null : sameOffice.toString()}
       />
@@ -112,7 +117,7 @@ Review.propTypes = {
   receiptDateError: PropTypes.string,
   benefitType: PropTypes.string,
   benefitTypeError: PropTypes.string,
-  informalConference: PropTypes.string,
+  informalConference: PropTypes.bool,
   informalConferenceError: PropTypes.string,
   sameOffice: PropTypes.string,
   sameOfficeError: PropTypes.string,

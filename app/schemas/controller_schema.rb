@@ -33,7 +33,13 @@ class ControllerSchema
     end
 
     def value_options
-      included_in.nil? ? {} : { "included_in?": included_in }
+      return {} if included_in.nil?
+
+      if nullable
+        { "included_in?": included_in + [nil] }
+      else
+        { "included_in?": included_in }
+      end
     end
   end
 
