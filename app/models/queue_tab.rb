@@ -65,7 +65,7 @@ class QueueTab
     ]
   end
 
-  def self.judge_review_column_names
+  def self.judge_column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
       Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,

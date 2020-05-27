@@ -5,10 +5,10 @@ import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
-import TaskTable from './components/TaskTable';
-import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+
+import QueueTableBuilder from './QueueTableBuilder';
 import Alert from '../components/Alert';
 
 import {
@@ -19,7 +19,6 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { judgeDecisionReviewTasksSelector } from './selectors';
 
-import { fullWidth } from './constants';
 import COPY from '../../COPY';
 
 const containerStyles = css({
@@ -39,43 +38,22 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
   };
 
   render = () => {
-    const {
-      messages,
-      organizations,
-      tasks
-    } = this.props;
-    const reviewableCount = tasks.length;
-    let tableContent;
-
-    if (reviewableCount === 0) {
-      tableContent = <p {...css({ textAlign: 'center',
-        marginTop: '3rem' })}>
-        {COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
-      </p>;
-    } else {
-      tableContent = <TaskTable
-        includeBadges
-        includeTask
-        includeDetailsLink
-        includeDocumentId
-        includeType
-        includeDocketNumber
-        includeIssueCount
-        includeDaysWaiting
-        tasks={this.props.tasks}
-      />;
-    }
+    const { tasks, error, success } = this.props;
+    const noCasesMessage = tasks.length === 0 ?
+      <p>
+        {COPY.NO_CASES_IN_QUEUE_MESSAGE}
+        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p> : '';
 
     return <AppSegment filledBackground styling={containerStyles}>
-      <h1 {...fullWidth}>{sprintf(COPY.JUDGE_CASE_REVIEW_TABLE_TITLE, reviewableCount)}</h1>
-      <QueueOrganizationDropdown organizations={organizations} />
-      {messages.error && <Alert type="error" title={messages.error.title}>
-        {messages.error.detail}
+      {error && <Alert type="error" title={error.title}>
+        {error.detail}
       </Alert>}
-      {messages.success && <Alert type="success" title={messages.success.title}>
-        {messages.success.detail || COPY.JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
+      {success && <Alert type="success" title={success.title}>
+        {success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
       </Alert>}
-      {tableContent}
+      {noCasesMessage}
+      <QueueTableBuilder assignedTasks={tasks}/>
     </AppSegment>;
   };
 }
@@ -86,7 +64,6 @@ JudgeDecisionReviewTaskListView.propTypes = {
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,
   clearCaseSelectSearch: PropTypes.func,
-  organizations: PropTypes.array,
   messages: PropTypes.shape({
     error: PropTypes.shape({
       title: PropTypes.string,
@@ -108,7 +85,8 @@ const mapStateToProps = (state) => {
 
   return {
     tasks: judgeDecisionReviewTasksSelector(state),
-    messages
+    success: messages.success,
+    error: messages.error
   };
 };
 
