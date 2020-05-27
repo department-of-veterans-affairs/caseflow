@@ -1,11 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment-timezone';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+import moment from 'moment-timezone';
+
+import HEARING_TIME_OPTIONS from '../../../../constants/HEARING_TIME_OPTIONS';
+import HEARING_TIME_RADIO_OPTIONS from '../../../../constants/HEARING_TIME_RADIO_OPTIONS';
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
-import { TIME_OPTIONS } from '../../constants';
-import _ from 'lodash';
 
 export const getAssignHearingTime = (time, day) => {
   return {
@@ -54,31 +56,10 @@ export default class HearingTime extends React.Component {
   getTimeOptions = (readOnly) => {
     const { regionalOffice } = this.props;
 
-    if (regionalOffice === 'C') {
-      return [
-        { displayText: '9:00 am',
-          value: '09:00',
-          disabled: readOnly },
-        { displayText: '1:00 pm',
-          value: '13:00',
-          disabled: readOnly },
-        { displayText: 'Other',
-          value: 'other',
-          disabled: readOnly }
-      ];
-    }
-
-    return [
-      { displayText: '8:30 am',
-        value: '08:30',
-        disabled: readOnly },
-      { displayText: '12:30 pm',
-        value: '12:30',
-        disabled: readOnly },
-      { displayText: 'Other',
-        value: 'other',
-        disabled: readOnly }
-    ];
+    return _.map(
+      regionalOffice === 'C' ? HEARING_TIME_RADIO_OPTIONS.central : HEARING_TIME_RADIO_OPTIONS.default,
+      (obj) => _.extend(obj, { disabled: readOnly })
+    );
   };
 
   onRadioChange = (value) => {
@@ -112,7 +93,7 @@ export default class HearingTime extends React.Component {
             readOnly={readOnly}
             name={`optionalHearingTime${this.state.index}`}
             placeholder="Select a time"
-            options={TIME_OPTIONS}
+            options={HEARING_TIME_OPTIONS}
             value={value}
             onChange={(option) => this.props.onChange(option ? option.value : null)}
             hideLabel
