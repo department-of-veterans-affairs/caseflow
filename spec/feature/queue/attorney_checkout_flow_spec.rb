@@ -600,7 +600,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(page).to have_content("Submit OMO for Review")
 
         click_label("omo-type_OMO - VHA")
-        click_label("overtime")
         fill_in "document_id", with: "12345"
 
         click_on "Continue"
