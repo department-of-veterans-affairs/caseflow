@@ -20,6 +20,8 @@ import React from 'react';
 // queueSectionOrder:        for Queue display, the order to display
 // isAmaRelevant:            whether issue is relevant to AMA cases
 
+
+//# Note: If any of the names here are changed or added for LegacyAppeals, they must also be changed in app/models/legacy_appeal.rb SPECIAL_ISSUES const
 export const SPECIAL_ISSUES = [
   {
     display: 'Contaminated Water at Camp LeJeune',

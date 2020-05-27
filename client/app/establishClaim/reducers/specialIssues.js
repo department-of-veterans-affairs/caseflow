@@ -6,7 +6,7 @@ export const getSpecialIssuesInitialState = function(props = {}) {
 
   let initialState = {};
 
-  const enabled_special_issues  = enabledSpecialIssues(props.featureToggles?.special_issues_revamp)
+  const enabled_special_issues  = enabledSpecialIssues(props.featureToggles?.specialIssuesRevamp)
 
   enabled_special_issues.forEach((issue) => {
 
