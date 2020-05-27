@@ -190,6 +190,7 @@ class Fakes::BGSService
         first_name: "Bob",
         middle_name: "Billy",
         last_name: "Vance",
+        ssn_nbr: "666001234",
         email_address: "bob.vance@caseflow.gov"
       }
     elsif participant_id == "1129318238"
@@ -199,6 +200,7 @@ class Fakes::BGSService
         middle_name: "",
         last_name: "Smith",
         name_suffix: "Jr.",
+        ssn_nbr: "666002222",
         email_address: "cathy.smith@caseflow.gov"
       }
     elsif participant_id == "600153863"
@@ -207,6 +209,7 @@ class Fakes::BGSService
         fist_name: "Clarence",
         middle_name: "",
         last_name: "Darrow",
+        ssn_nbr: "666003333",
         email_address: "clarence.darrow@caseflow.gov"
       }
     else
@@ -215,6 +218,7 @@ class Fakes::BGSService
         first_name: "Tom",
         middle_name: "Edward",
         last_name: "Brady",
+        ssn_nbr: "666004444",
         email_address: "tom.brady@caseflow.gov"
       }
     end
