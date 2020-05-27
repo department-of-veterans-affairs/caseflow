@@ -316,8 +316,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   return fields.concat(claimantField);
 };
 
-export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
-  let issues = intakeData.addedIssues || [];
+export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => {
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue, index) => {
