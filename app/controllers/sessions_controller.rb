@@ -15,7 +15,6 @@ class SessionsController < ApplicationController
       session["return_to"] = request.original_url
       return redirect_to(sso_url)
     end
-    return redirect_to(sso_url) unless current_user
 
     # In order to use Caseflow, we need to know what regional office (RO) the user is from.
     # CSS will give us the station office ID. Some station office IDs correspond to multiple
