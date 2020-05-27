@@ -293,9 +293,9 @@ feature "Intake Add Issues Page", :all_dbs do
       click_on "Establish appeal"
       expect(page).to have_content("correct the issues")
       click_on "correct the issues"
-      appeal=Appeal.find_by()
-      binding.pry
-      expect(page).to have_current_path("/appeals/")
+      appeal = Appeal.find_by(docket_type: "evidence_submission")
+      correct_path = "/appeals/#{appeal.uuid}/edit"
+      expect(page).to have_current_path(correct_path)
     end
 
     scenario "show unidentified untimely exemption issue" do
