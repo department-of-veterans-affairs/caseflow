@@ -33,8 +33,10 @@ import QueueFlowPage from './components/QueueFlowPage';
 
 class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
+    // if(!this.props.appeal){debugger}
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
+      this.props.appeal,
       this.props.appeal && this.props.appeal.attorneyCaseRewriteDetails
     );
 
@@ -49,11 +51,12 @@ class SubmitDecisionView extends React.PureComponent {
   // and it comes from this.props.appeal.attorneyCaseRewriteDetails instead
   // if you don't do this you will get validation errors and a 400 for a missing document_id
   // this is also needed to keep the onChange values in sync
-  setInitialDecisionOptions = (decision, attorneyCaseRewriteDetails) => {
+  setInitialDecisionOptions = (decision, appeal, attorneyCaseRewriteDetails) => {
+    // debugger
     const decisionOptsWithAttorneyCheckoutInfo = _.merge(decision.opts, {
       document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
-      overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
+      overtime: _.get(attorneyCaseRewriteDetails, 'overtime', appeal.overtime),
       untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false),
       reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
     });
@@ -154,6 +157,7 @@ class SubmitDecisionView extends React.PureComponent {
     const {
       highlightFormItems,
       error,
+      featureToggles,
       checkoutFlow,
       decision: { opts: decisionOpts },
       ...otherProps
@@ -216,13 +220,14 @@ class SubmitDecisionView extends React.PureComponent {
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
         />
-        <Checkbox
+        {featureToggles.overtime_revamp && <Checkbox
+          disabled={true}
           name="overtime"
           label="This work product is overtime"
           onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
           value={decisionOpts.overtime || false}
           styling={css(marginBottom(1), marginTop(1))}
-        />
+        /> }
         {!this.props.appeal.isLegacyAppeal && (
           <div>
             <Checkbox
@@ -256,6 +261,7 @@ const mapStateToProps = (state, ownProps) => {
       }
     },
     ui: {
+      featureToggles,
       highlightFormItems,
       messages: { error }
     }
@@ -267,19 +273,20 @@ const mapStateToProps = (state, ownProps) => {
     task: taskById(state, { taskId: ownProps.taskId }),
     decision,
     error,
+    featureToggles,
     highlightFormItems
   };
 };
 
 SubmitDecisionView.propTypes = {
   taskId: PropTypes.string,
-  appealId: PropTypes.string,
   task: PropTypes.shape({
     taskId: PropTypes.string,
     assignedBy: PropTypes.object,
     isLegacy: PropTypes.bool,
     addedByCssId: PropTypes.string
   }),
+  appealId: PropTypes.string,
   appeal: PropTypes.shape({
     issues: PropTypes.array,
     decisionIssues: PropTypes.array,
@@ -290,14 +297,15 @@ SubmitDecisionView.propTypes = {
   }),
   checkoutFlow: PropTypes.string,
   decision: PropTypes.shape({ opts: PropTypes.object }),
-  judges: PropTypes.array,
-  highlightFormItems: PropTypes.bool,
-  error: PropTypes.object,
-  prevUrl: PropTypes.string,
-  setDecisionOptions: PropTypes.func,
-  requestSave: PropTypes.func,
   deleteAppeal: PropTypes.func,
-  onSuccess: PropTypes.func
+  error: PropTypes.object,
+  featureToggles: PropTypes.object,
+  highlightFormItems: PropTypes.bool,
+  judges: PropTypes.array,
+  onSuccess: PropTypes.func,
+  prevUrl: PropTypes.string,
+  requestSave: PropTypes.func,
+  setDecisionOptions: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
