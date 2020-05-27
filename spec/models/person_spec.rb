@@ -54,6 +54,49 @@ describe Person, :postgres do
     end
   end
 
+  describe ".find_or_create_by_ssn" do
+    before do
+      allow_any_instance_of(BGSService).to receive(:fetch_person_by_ssn) { bgs_person }
+      allow_any_instance_of(BGSService).to receive(:fetch_person_info) { bgs_person }
+    end
+
+    let(:bgs_person) do
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Cathy",
+        middle_name: "",
+        last_name: "Smith",
+        name_suffix: "Jr.",
+        ssn_nbr: ssn,
+        ptcpnt_id: participant_id,
+        email_address: "cathy.smith@caseflow.gov"
+      }
+    end
+    let(:participant_id) { known_fake_participant_id }
+    let(:ssn) { "666001234" }
+
+    subject { described_class.find_or_create_by_ssn(ssn) }
+
+    context "no existing Person record" do
+      it "creates Person record" do
+        expect(subject).to be_a Person
+        expect(subject.participant_id).to eq participant_id
+      end
+    end
+
+    context "existing Person record w/o ssn value" do
+      before do
+        create(:person, ssn: nil, participant_id: participant_id)
+      end
+
+      it "finds existing Person and updates it" do
+        expect(subject).to be_a Person
+        expect(subject.participant_id).to eq participant_id
+        expect(subject.ssn).to eq ssn
+      end
+    end
+  end
+
   describe "#stale_attributes?" do
     let(:participant_id) { known_fake_participant_id }
     let(:first_name) { bgs_person[:first_name] }
