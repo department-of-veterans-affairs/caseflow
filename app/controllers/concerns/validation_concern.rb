@@ -19,6 +19,7 @@ module ValidationConcern
     end
   end
 
+  # :nocov:
   def validate_schema
     schema = self.class.validation_schemas[action_name.to_sym]
     return if schema.nil?
@@ -32,4 +33,5 @@ module ValidationConcern
       end
     end
   end
+  # :nocov:
 end
