@@ -3,6 +3,9 @@
 # These are rules to help us codify our engineering norms for PRs.
 # Please refer to the documentation here: http://danger.systems/ruby/
 
+# Shared consts
+CHANGED_FILES = (git.added_files + git.modified_files).freeze
+
 # Make it more obvious that a PR is a work in progress and shouldn't be merged yet
 warn("PR is classed as Work in Progress") if github.pr_title.include? "WIP"
 
@@ -32,6 +35,11 @@ end
 
 if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/docs\/schema/).none?
   warn("This PR contains one or more db migrations. Did you forget to run 'make docs'?")
+end
+
+# Encourage writing Storybook stories for React components
+if CHANGED_FILES.grep(/\.jsx/).any?
+  warn("This PR modifies React components — consider adding/updating corresponding Storybook file")
 end
 
 # We should not disable Rubocop rules unless there's a very good reason
