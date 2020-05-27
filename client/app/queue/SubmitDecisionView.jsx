@@ -56,7 +56,7 @@ class SubmitDecisionView extends React.PureComponent {
     const decisionOptsWithAttorneyCheckoutInfo = _.merge(decision.opts, {
       document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
-      overtime: appeal.overtime, //_.get(attorneyCaseRewriteDetails, 'overtime', appeal.overtime),
+      overtime: appeal.overtime,
       untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false),
       reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
     });
