@@ -399,7 +399,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
     return {
       index,
       id: issue.id,
-      text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
+      text: issue.description,
       benefitType: issue.benefitType,
       date: issue.decisionDate,
       timely: issue.timely,
