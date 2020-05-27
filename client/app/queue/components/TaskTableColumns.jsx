@@ -57,7 +57,7 @@ export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
   };
 };
 
-export const documentIdColumn = (tasks) => {
+export const documentIdColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
     valueFunction: (task) => {
@@ -75,7 +75,7 @@ export const documentIdColumn = (tasks) => {
       </React.Fragment>;
     }
   };
-}
+};
 
 export const badgesColumn = () => {
   return {

@@ -2,14 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import QueueTableBuilder from './QueueTableBuilder';
 import Alert from '../components/Alert';
+import QueueTableBuilder from './QueueTableBuilder';
 
 import {
   resetErrorMessages,
@@ -38,21 +37,23 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
   };
 
   render = () => {
-    const { tasks, error, success } = this.props;
-    const noCasesMessage = tasks.length === 0 ?
-      <p>
-        {COPY.NO_CASES_IN_QUEUE_MESSAGE}
-        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
-      </p> : '';
+    const {
+      messages,
+      tasks
+    } = this.props;
+    const reviewableCount = tasks.length;
 
     return <AppSegment filledBackground styling={containerStyles}>
-      {error && <Alert type="error" title={error.title}>
-        {error.detail}
+      {messages.error && <Alert type="error" title={messages.error.title}>
+        {messages.error.detail}
       </Alert>}
-      {success && <Alert type="success" title={success.title}>
-        {success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
+      {messages.success && <Alert type="success" title={messages.success.title}>
+        {messages.success.detail || COPY.JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
       </Alert>}
-      {noCasesMessage}
+      {reviewableCount === 0 &&  <p {...css({ textAlign: 'center',
+        marginTop: '3rem' })}>
+        {COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p>}
       <QueueTableBuilder assignedTasks={tasks}/>
     </AppSegment>;
   };
@@ -85,8 +86,7 @@ const mapStateToProps = (state) => {
 
   return {
     tasks: judgeDecisionReviewTasksSelector(state),
-    success: messages.success,
-    error: messages.error
+    messages
   };
 };
 
