@@ -65,7 +65,7 @@ class SubmitDecisionView extends React.PureComponent {
     extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
 
     if (extendedDecision.opts) {
-      const possibleNullKeys = ['overtime', 'untimely_evidence'];
+      const possibleNullKeys = ['untimely_evidence'];
 
       possibleNullKeys.forEach((key) => {
         extendedDecision.opts = nullToFalse(key, extendedDecision.opts);
