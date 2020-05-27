@@ -54,8 +54,8 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
         marginTop: '3rem' })}>
         {COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
       </p>}
-      <QueueTableBuilder assignedTasks={tasks}/>
-    </ AppSegment>;
+      <QueueTableBuilder assignedTasks={tasks} />
+    </AppSegment>;
   };
 }
 
