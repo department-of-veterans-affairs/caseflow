@@ -12,9 +12,8 @@ class AppealsWithClosedRootTaskOpenChildrenQuery
   end
 
   def appeal_ids_for_closed_root_tasks
-    Task.select(:appeal_id)
+    RootTask.closed.select(:appeal_id)
       .where(appeal_type: "Appeal")
-      .where(type: RootTask.name, status: Task.closed_statuses)
   end
 
   def appeal_ids_for_open_tasks
