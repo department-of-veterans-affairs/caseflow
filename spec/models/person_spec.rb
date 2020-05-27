@@ -62,6 +62,7 @@ describe Person, :postgres do
     let(:date_of_birth) { bgs_person[:birth_date] }
     let(:name_suffix) { bgs_person[:name_suffix] }
     let(:email_address) { bgs_person[:email_address] }
+    let(:ssn) { bgs_person[:ssn_nbr] }
 
     let(:person) do
       create(
@@ -72,6 +73,7 @@ describe Person, :postgres do
         name_suffix: name_suffix,
         date_of_birth: date_of_birth,
         participant_id: participant_id,
+        ssn: ssn,
         email_address: email_address
       )
     end
@@ -81,7 +83,9 @@ describe Person, :postgres do
     subject { person.stale_attributes? }
 
     context "no difference" do
-      it { is_expected.to eq(false) }
+      it "is false" do
+        is_expected.to eq(false)
+      end
     end
 
     context "first_name is nil" do

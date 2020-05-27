@@ -214,6 +214,14 @@ const editAppeal = (appealId, attributes) => ({
   }
 });
 
+export const setOvertime = (appealId, overtime) => ({
+  type: ACTIONS.SET_OVERTIME,
+  payload: { 
+    appealId,
+    overtime
+  }
+})
+
 export const deleteTask = (taskId) => ({
   type: ACTIONS.DELETE_TASK,
   payload: {
