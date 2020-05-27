@@ -221,7 +221,6 @@ class SubmitDecisionView extends React.PureComponent {
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
         />
         {featureToggles.overtime_revamp || <Checkbox
-          disabled
           name="overtime"
           label="This work product is overtime"
           onChange={(overtime) => this.props.setDecisionOptions({ overtime })}

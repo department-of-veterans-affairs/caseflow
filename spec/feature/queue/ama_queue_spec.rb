@@ -527,7 +527,7 @@ feature "AmaQueue", :all_dbs do
           "sent to #{judge_user.full_name} for review."
         )
 
-        expect(appeal.latest_attorney_case_review.overtime).to be (overtime)
+        expect(appeal.latest_attorney_case_review.overtime).to be(overtime)
       end
 
       step "judge returns case to attorney for corrections" do
@@ -814,7 +814,6 @@ feature "AmaQueue", :all_dbs do
           expect(page).to have_content("Submit Draft Decision for Review")
           # these now should be preserved the next time the attorney checks out
           fill_in "Document ID:", with: valid_document_id
-
           expect(page).to have_content(judge_user.full_name, wait: 10)
           fill_in "notes", with: "all done"
           click_on "Continue"
