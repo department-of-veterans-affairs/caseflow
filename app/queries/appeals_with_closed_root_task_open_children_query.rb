@@ -17,9 +17,8 @@ class AppealsWithClosedRootTaskOpenChildrenQuery
   end
 
   def appeal_ids_for_open_tasks
-    Task.select(:appeal_id)
+    Task.open.select(:appeal_id)
       .where(appeal_type: "Appeal")
       .where.not(type: RootTask.name)
-      .where(status: Task.open_statuses)
   end
 end
