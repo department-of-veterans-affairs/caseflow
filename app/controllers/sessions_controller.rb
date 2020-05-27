@@ -9,18 +9,19 @@ class SessionsController < ApplicationController
     if Rails.application.config.sso_service_disabled
       return render "errors/500", layout: "application", status: :service_unavailable
     end
+
     # :nocov:
-
-    session["return_to"] = request.original_url
-
-    return redirect_to(sso_url) unless current_user
+    unless current_user
+      session["return_to"] = request.original_url
+      return redirect_to(sso_url)
+    end
 
     # In order to use Caseflow, we need to know what regional office (RO) the user is from.
     # CSS will give us the station office ID. Some station office IDs correspond to multiple
     # RO IDs. In this case, we present a list of ROs to the user and ask which one they are.
     # :nocov:
     unless current_user.ro_is_ambiguous_from_station_office?
-      redirect_to(session["return_to"] || root_path)
+      redirect_to(root_path)
       return
     end
     # :nocov:
