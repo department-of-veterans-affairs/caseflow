@@ -10,7 +10,7 @@ import {
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../../components/DataDropdowns';
-import HearingTime from './HearingTime';
+import { HearingTime } from './HearingTime';
 
 import { onChangeFormData } from '../../../components/common/actions';
 

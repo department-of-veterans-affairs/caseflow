@@ -8,7 +8,7 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
 import Checkbox from '../../../components/Checkbox';
 import TextareaField from '../../../components/TextareaField';
 import { AppealHearingLocationsDropdown } from '../../../components/DataDropdowns';
-import HearingTime from '../modalForms/HearingTime';
+import { HearingTime } from '../modalForms/HearingTime';
 import { pencilSymbol } from '../../../components/RenderFunctions';
 import PropTypes from 'prop-types';
 import VirtualHearingLink from '../VirtualHearingLink';
