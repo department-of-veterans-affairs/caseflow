@@ -33,7 +33,6 @@ import QueueFlowPage from './components/QueueFlowPage';
 
 class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
-    // if(!this.props.appeal){debugger}
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
       this.props.appeal,
@@ -54,7 +53,6 @@ class SubmitDecisionView extends React.PureComponent {
   setInitialDecisionOptions = (decision, appeal, attorneyCaseRewriteDetails) => {
     const overtime = this.props.featureToggles.overtime_revamp ?
       appeal.overtime : _.get(attorneyCaseRewriteDetails, 'overtime', false);
-    // debugger
     const decisionOptsWithAttorneyCheckoutInfo = _.merge(decision.opts, {
       document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
