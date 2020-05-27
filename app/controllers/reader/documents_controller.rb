@@ -64,12 +64,13 @@ class Reader::DocumentsController < Reader::ApplicationController
     appeal_docs = Document.where(file_number: appeal.veteran_file_number).where.not(id: ids)
 
     if appeal_docs.present?
-      error = DocumentCountMismatch.new("Document count mismatch")
       Raven.capture_exception(
-        error,
+        DocumentCountMismatch.new("Document count mismatch"),
         extra: {
           appeal_id: appeal.external_id,
           document_service: appeal.document_fetcher.document_service.name,
+          document_service_doc_count: ids.count,
+          documents_for_vet_doc_count: Document.where(file_number: appeal.veteran_file_number).count,
           missing_doc_ids: appeal_docs.pluck(:id),
           message: "`appeal.document_fetcher.find_or_create_documents!.map(&:id)` vs " \
                    "`Document.where(file_number: appeal.veteran_file_number)` "
