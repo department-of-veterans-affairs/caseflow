@@ -77,7 +77,7 @@ feature "Appeal Edit issues", :all_dbs do
   scenario "allows adding/removing issues" do
     visit "appeals/#{appeal.uuid}/edit/"
 
-    expect(page).to have_content(nonrating_request_issue.description)
+    expect(page).to have_content("2. #{nonrating_request_issue.description}")
 
     # remove an issue
     click_remove_intake_issue_dropdown(nonrating_request_issue.description)
