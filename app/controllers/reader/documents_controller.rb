@@ -68,6 +68,7 @@ class Reader::DocumentsController < Reader::ApplicationController
         DocumentCountMismatch.new("Document count mismatch"),
         extra: {
           appeal_id: appeal.external_id,
+          current_user: current_user.css_id,
           document_service: appeal.document_fetcher.document_service.name,
           document_service_doc_count: ids.count,
           documents_for_vet_doc_count: Document.where(file_number: appeal.veteran_file_number).count,
