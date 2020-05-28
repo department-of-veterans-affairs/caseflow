@@ -15,8 +15,8 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
     expect(page).to have_content("Daily Docket")
-    choose("hearingTime1_other", allow_label_click: true)
-    click_dropdown(name: "optionalHearingTime1", index: 2)
+    choose("hearingTime0_other", allow_label_click: true)
+    click_dropdown(name: "optionalHearingTime0", index: 2)
     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
     expect(page).to have_content(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
     click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
@@ -47,8 +47,8 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
     expect(page).to have_content("Daily Docket")
-    choose("hearingTime1_other", allow_label_click: true)
-    click_dropdown(name: "optionalHearingTime1", index: 3)
+    choose("hearingTime0_other", allow_label_click: true)
+    click_dropdown(name: "optionalHearingTime0", index: 3)
     click_button("Change-Hearing-Time-button-id-close")
   end
 
@@ -58,7 +58,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_css(".is-disabled")
       expect(all(".cf-form-radio-option").first).to have_css(".disabled")
-      expect(find(".dropdown-optionalHearingTime1")).to have_css(".is-disabled")
+      expect(find(".dropdown-optionalHearingTime0")).to have_css(".is-disabled")
     end
 
     scenario "async job is completed" do
@@ -66,7 +66,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_no_css(".is-disabled")
       expect(all(".cf-form-radio-option").first).to have_no_css(".disabled")
-      expect(find(".dropdown-optionalHearingTime1")).to have_no_css(".is-disabled")
+      expect(find(".dropdown-optionalHearingTime0")).to have_no_css(".is-disabled")
     end
   end
 

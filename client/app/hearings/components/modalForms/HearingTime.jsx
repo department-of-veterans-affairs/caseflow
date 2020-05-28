@@ -27,8 +27,6 @@ const formStyling = css({
   marginBottom: 0
 });
 
-let index = 0;
-
 const getTimeOptions = (regionalOffice, readOnly) => (
   _.map(
     regionalOffice === 'C' ? HEARING_TIME_RADIO_OPTIONS.central : HEARING_TIME_RADIO_OPTIONS.default,
@@ -36,9 +34,10 @@ const getTimeOptions = (regionalOffice, readOnly) => (
   )
 );
 
-export const HearingTime = ({ errorMessage, onChange, readOnly, regionalOffice, value }) => {
+export const HearingTime = (
+  { componentIndex, errorMessage, onChange, readOnly, regionalOffice, value }
+) => {
   const timeOptions = getTimeOptions(regionalOffice, readOnly);
-  const componentIndex = (index += 1);
   const isOther = _.isUndefined(
     _.find(timeOptions, (opt) => opt.value === value)
   );
@@ -78,7 +77,12 @@ export const HearingTime = ({ errorMessage, onChange, readOnly, regionalOffice, 
   );
 };
 
+HearingTime.defaultProps = {
+  componentIndex: 0
+};
+
 HearingTime.propTypes = {
+  componentIndex: PropTypes.number,
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
