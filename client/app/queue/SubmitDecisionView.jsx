@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
-import { getDecisionTypeDisplay, buildCaseReviewPayload, validateWorkProductTypeAndId, nullToFalse } from './utils';
+import { getDecisionTypeDisplay, buildCaseReviewPayload, validateWorkProductTypeAndId } from './utils';
 
 import { setDecisionOptions, deleteAppeal } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
