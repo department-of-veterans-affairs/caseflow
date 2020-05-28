@@ -29,11 +29,15 @@ const formStyling = css({
 
 let index = 0;
 
-export const HearingTime = ({ errorMessage, onChange, readOnly, regionalOffice, value }) => {
-  const timeOptions = _.map(
+const getTimeOptions = (regionalOffice, readOnly) => (
+  _.map(
     regionalOffice === 'C' ? HEARING_TIME_RADIO_OPTIONS.central : HEARING_TIME_RADIO_OPTIONS.default,
     (obj) => _.extend(obj, { disabled: readOnly })
-  );
+  )
+);
+
+export const HearingTime = ({ errorMessage, onChange, readOnly, regionalOffice, value }) => {
+  const timeOptions = getTimeOptions(regionalOffice, readOnly);
   const componentIndex = (index += 1);
   const isOther = _.isUndefined(
     _.find(timeOptions, (opt) => opt.value === value)
