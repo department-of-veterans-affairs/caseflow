@@ -120,7 +120,7 @@ FactoryBot.define do
         another_claimant = create(:claimant)
         create(:advance_on_docket_motion, person: claimant.person, granted: true)
         create(:advance_on_docket_motion, person: another_claimant.person, granted: false)
-        [claimant, another_claimant]
+        [another_claimant, claimant]
       end
     end
 
