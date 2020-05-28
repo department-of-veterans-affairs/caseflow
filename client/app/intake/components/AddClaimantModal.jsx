@@ -27,14 +27,25 @@ const getClaimantOpts = async (search = '', asyncFn) => {
 
   return { options };
 };
+// For our purposes, we want to return all items returned from the backend 
+// instead of using default substring matching
+const filterOptions = (options) => options;
 
 export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys }) => {
   const [claimant, setClaimant] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [relationship, setRelationship] = useState(relationshipOpts[0]);
   const isInvalid = useMemo(() => !claimant, [claimant]);
   const handleChangeRelationship = (value) => setRelationship(value);
   const handleChangeClaimant = (value) => setClaimant(value);
-  const asyncFn = (search) => getClaimantOpts(search, onSearch);
+  const asyncFn = async (search) => {
+    setLoading(true);
+    const results = await getClaimantOpts(search, onSearch);
+
+    setLoading(false);
+
+    return results;
+  };
 
   const buttons = [
     {
@@ -68,7 +79,9 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
         label="Claimant's name"
         onChange={handleChangeClaimant}
         value={claimant}
+        filterOptions={filterOptions}
         async={asyncFn}
+        loading={loading}
         options={[]}
         debounce={250}
       />
