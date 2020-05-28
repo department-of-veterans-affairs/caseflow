@@ -53,7 +53,7 @@ class Person < CaseflowRecord
   end
 
   def date_of_birth
-    cached_or_fetched_from_bgs(attr_name: :date_of_birth, bgs_attr: :birth_date)&.to_date
+    cached_or_fetched_from_bgs(attr_name: :date_of_birth)&.to_date
   end
 
   def first_name
@@ -140,6 +140,10 @@ class Person < CaseflowRecord
     bgs_record[:date_of_birth] = bgs_record.dig(:brthdy_dt)&.to_date
     bgs_record[:ssn] ||= bgs_record.dig(:ssn_nbr) || ssn
     bgs_record[:participant_id] ||= bgs_record.dig(:ptcpnt_id)
+    bgs_record[:first_name] ||= bgs_record.dig(:first_nm)
+    bgs_record[:last_name] ||= bgs_record.dig(:last_nm)
+    bgs_record[:middle_name] ||= bgs_record.dig(:middle_nm)
+    bgs_record[:email_address] ||= bgs_record.dig(:email_addr)
     bgs_record
   end
 end
