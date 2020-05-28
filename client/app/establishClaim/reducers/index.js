@@ -61,6 +61,18 @@ export const establishClaim = function(state = getEstablishClaimInitialState(), 
       error: false
     };
   }
+  case Constants.TOGGLE_DISABLE_SPECIAL_ISSUES: {
+    let newState = Object.assign({}, state);
+
+    let noSpecialIssuesChanged = action.payload.value != newState[action.payload.specialIssue];
+
+    return newState if !noSpecialIssuesChanged;
+
+    // If we just checked No Special Issues, disable the others. If we unchecked, reenable
+    newState['disableSpecialIssues'] = action.payload.value;
+
+    return newState;
+  }
   default:
     return state;
   }

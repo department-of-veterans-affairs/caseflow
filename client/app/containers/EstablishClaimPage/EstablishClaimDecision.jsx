@@ -230,13 +230,24 @@ export class EstablishClaimDecision extends React.Component {
               />
             }
             <div className="cf-multiple-columns">
+      //First: can we get the info 'no special issues was just toggled' REF1
+      // grab the enabledSI
+      // pluck out noSpecialIssue, if it exists
+      // render that one with onChange that disables the rest
+      // render that one
               {enabledSpecialIssues(this.props.specialIssuesRevamp).map((issue, index) => {
+                // V the rest, somehow as a group?
                 return (
                   <Checkbox
                     id={issue.specialIssue}
                     label={issue.node || issue.display}
                     name={issue.specialIssue}
-                    onChange={handleSpecialIssueFieldChange(issue.specialIssue)}
+                    //onChange={handleSpecialIssueFieldChange(issue.specialIssue)}
+                    onChange={
+                      issue.specialIssue == 'noSpecialIssues' ?
+                        handleNoSpecialIssuesFieldChange(issue.specialIssue) :
+                        handleSpecialIssueFieldChange(issue.specialIssue)
+                    }
                     key={index}
                     value={specialIssues[issue.specialIssue]}
                   />
@@ -283,12 +294,38 @@ EstablishClaimDecision.propTypes = {
 const mapStateToProps = (state) => ({
   specialIssues: state.specialIssues,
   specialIssuesError: state.establishClaim.error
+  disableSpecialIssues: state.establishClaim.disableSpecialIssues
 });
 
 const mapDispatchToProps = (dispatch) => ({
   handleToggleCancelTaskModal: () => {
     dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
   },
+  handleNoSpecialIssuesFieldChange: (specialIssue) => (value) => {
+    dispatch({ type: Constants.CLEAR_SPECIAL_ISSUE_ERROR });
+    dispatch({
+      type: Constants.TOGGLE_DISABLE_SPECIAL_ISSUES
+      payload: {
+        specialIssue,
+        value
+      }
+    });
+    dispatch({
+      type: Constants.CHANGE_SPECIAL_ISSUE,
+      payload: {
+        specialIssue,
+        value
+      }
+    });
+    dispatch({
+      type: Constants.ClEAR_DISABLED_SPECIAL_ISSUES,
+      payload: {
+        specialIssue,
+        disableSpecialIssues
+      }
+    });
+  },
+
   handleSpecialIssueFieldChange: (specialIssue) => (value) => {
     dispatch({ type: Constants.CLEAR_SPECIAL_ISSUE_ERROR });
     dispatch({
