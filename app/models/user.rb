@@ -356,6 +356,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     HearingsManagement.singleton.user_has_access?(self)
   end
 
+  def can_create_legacy_colocated_tasks?
+    judge_in_vacols? || attorney_in_vacols?
+  end
+
   def show_reader_link_column?
     false
   end

@@ -16,7 +16,24 @@ class OnHoldTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.on_hold.where(assigned_to: assignee)
+    task_ids = ama_task_ids
+
+    if assignee.can_create_legacy_colocated_tasks?
+      task_ids.concat(legacy_colocated_task_ids_assigned_by_assignee)
+    end
+
+    Task.includes(*task_includes).where(id: task_ids)
+  end
+
+  def ama_task_ids
+    Task.visible_in_queue_table_view.on_hold.where(assigned_to: assignee).pluck(:id)
+  end
+
+  def legacy_colocated_task_ids_assigned_by_assignee
+    colocated_tasks = ColocatedTask.open.visible_in_queue_table_view.order(:created_at)
+      .where(assigned_by: assignee, assigned_to_type: Organization.name, appeal_type: LegacyAppeal.name)
+
+    colocated_tasks.group_by(&:appeal_id).map { |_appeal_id, tasks| tasks.first.id }
   end
 
   # rubocop:disable Metrics/AbcSize
