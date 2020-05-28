@@ -4,7 +4,6 @@ import StringUtil from '../../util/StringUtil';
 
 export const getSpecialIssuesInitialState = function(props = {}) {
 
-  // TODO set disable-special-issues based on NSI being true
   let initialState = {};
 
   const enabled_special_issues  = enabledSpecialIssues(props.featureToggles?.specialIssuesRevamp)
@@ -34,13 +33,14 @@ let specialIssues = function(state = getSpecialIssuesInitialState(), action) {
     newState[action.payload.specialIssue] = action.payload.value;
     return newState;
   }
-  case Constants.CLEAR_DISABLED_SPECIAL_ISSUES: {
-    return state if disabledSpecialIssues == false;
-
+  case Constants.CLEAR_SPECIAL_ISSUES: {
     let newState = Object.assign({}, state);
 
-    //loop through all values and set to false
-    //except NSI
+    Object.keys(newState).forEach((specialIssue) => {
+      if (newState[specialIssue] === true) {
+        newState[specialIssue] = false;
+      }
+    });
 
     return newState;
   }
