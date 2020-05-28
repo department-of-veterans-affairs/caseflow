@@ -56,21 +56,13 @@ class SubmitDecisionView extends React.PureComponent {
     const decisionOptsWithAttorneyCheckoutInfo = _.merge(decision.opts, {
       document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
-      overtime,
-      untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false),
+      overtime: overtime || false,
+      untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false) || false,
       reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
     });
     const extendedDecision = { ...decision };
 
     extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
-
-    if (extendedDecision.opts) {
-      const possibleNullKeys = ['untimely_evidence'];
-
-      possibleNullKeys.forEach((key) => {
-        extendedDecision.opts = nullToFalse(key, extendedDecision.opts);
-      });
-    }
 
     return extendedDecision;
   };
