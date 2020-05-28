@@ -433,7 +433,7 @@ module IntakeHelpers
         bfkey: "vacols5",
         bfcorlid: "#{veteran_file_number}S",
         bfdnod: 3.years.ago,
-        bfdsoc: Date.new(2019, 12, 31),
+        bfdsoc: Date.new(2019, 12, 28),
         case_issues: [
           create(:case_issue, :lumbosacral_strain),
           create(:case_issue, :shoulder_or_arm_muscle_injury)

@@ -278,26 +278,6 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Decision date")
     end
 
-    scenario "show correct the issues link on appeal" do
-      start_appeal(veteran_no_ratings)
-      visit "/intake"
-      click_intake_continue
-      expect(page).to have_current_path("/intake/add_issues")
-
-      click_intake_add_issue
-      add_intake_nonrating_issue(
-        category: "Dependent Child - Biological",
-        description: "test",
-        date: "04/04/2020"
-      )
-      click_on "Establish appeal"
-      expect(page).to have_content("correct the issues")
-      click_on "correct the issues"
-      appeal = Appeal.find_by(docket_type: "evidence_submission")
-      correct_path = "/appeals/#{appeal.uuid}/edit"
-      expect(page).to have_current_path(correct_path)
-    end
-
     scenario "show unidentified untimely exemption issue" do
       start_higher_level_review(veteran_no_ratings)
       visit "/intake"
@@ -369,7 +349,7 @@ feature "Intake Add Issues Page", :all_dbs do
     #   generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
     # end
 
-    let(:receipt_date) { Date.new(2020, 4, 10) }
+    let(:receipt_date) { Time.zone.today - 30.days }
     let(:promulgation_date) { receipt_date - 10.days }
     let(:benefit_type) { "compensation" }
     let(:untimely_days) { 372.days }
@@ -393,14 +373,12 @@ feature "Intake Add Issues Page", :all_dbs do
     end
 
     context "on a higher level review" do
-      let(:new_receipt_date) {receipt_date + 3.days}
       scenario "when vacols issue is ineligible, but is eligible with an exemption" do
-        start_higher_level_review(veteran, legacy_opt_in_approved: true, receipt_date: new_receipt_date)
+        start_higher_level_review(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
-
         click_intake_add_issue
         add_intake_rating_issue("PTSD denied")
-        
+
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
         add_intake_rating_issue("osteomyelitis")
@@ -424,14 +402,15 @@ feature "Intake Add Issues Page", :all_dbs do
         safe_click ".add-issue"
 
         expect(page).to have_content("Adding this issue will automatically close VACOLS issue")
+
         click_on "Establish EP"
+        expect(page).to have_content("Intake completed")
       end
 
-      fscenario "when vacols issue ineligible even with an exemption" do
-        start_higher_level_review(veteran, legacy_opt_in_approved: true, receipt_date: new_receipt_date)
+      scenario "when vacols issue ineligible even with an exemption" do
+        start_higher_level_review(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
         click_intake_add_issue
-        binding.pry
         add_intake_rating_issue("PTSD denied")
 
         # Expect legacy opt in issue modal to show
