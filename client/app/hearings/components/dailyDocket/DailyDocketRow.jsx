@@ -306,9 +306,9 @@ class DailyDocketRow extends React.Component {
   };
 
   getRightColumn = (rowIndex) => {
-    const inputs = this.props.user.userHasHearingPrepRole
-      ? this.judgeRightInputs()
-      : this.defaultRightInputs(rowIndex);
+    const inputs = this.props.user.userHasHearingPrepRole ?
+      this.judgeRightInputs() :
+      this.defaultRightInputs(rowIndex);
 
     return (
       <div {...inputSpacing}>
