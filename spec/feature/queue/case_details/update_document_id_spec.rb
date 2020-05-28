@@ -147,6 +147,7 @@ feature "Updating Document ID", :all_dbs do
     click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
     click_dropdown(index: 1)
     click_label("omo-type_OMO - VHA")
+    click_label("overtime")
     fill_in "document_id", with: "V1234567.1234"
     fill_in "notes", with: "test"
     safe_click("#select-judge")
