@@ -316,9 +316,9 @@ describe TaskSorter, :all_dbs do
 
         fit "sorts by AOD status, case type, and docket number" do
           expected_order = CachedAppeal.all.sort_by do |cached_appeal|
-            [cached_appeal.is_aod ? 2 : 1, cached_appeal.case_type, cached_appeal.docket_number]
+            [cached_appeal.is_aod ? 0 : 1, cached_appeal.case_type, cached_appeal.docket_number]
           end
-          # expect(expected_order.first.is_aod).to eq true
+          expect(expected_order.first.is_aod).to eq true
           expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id)), "expected: "\
             "#{expected_order.map { |appeal| [appeal.is_aod, appeal.case_type, appeal.docket_number] }}, got: "\
             "#{subject.map { |task| [CachedAppeal.find_by(appeal_id: task.appeal.id, appeal_type: task.appeal.class.name).is_aod, task.appeal.type, task.appeal.docket_number] }}"
