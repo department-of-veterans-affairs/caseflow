@@ -405,7 +405,7 @@ feature "AmaQueue", :all_dbs do
     end
   end
 
-  context "Judge has a case to assign to an attorney" do
+  shared_examples "Judge has a case to assign to an attorney" do
     let(:veteran_first_name) { "Monica" }
     let(:veteran_last_name) { "Valencia" }
     let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
@@ -414,6 +414,7 @@ feature "AmaQueue", :all_dbs do
     let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Juarez") }
     let!(:judge_staff) { create(:staff, :judge_role, user: judge_user) }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge_user) }
+    let(:overtime) { false }
 
     let(:attorney_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Steven Ahr") }
     let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
@@ -525,6 +526,8 @@ feature "AmaQueue", :all_dbs do
           "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
           "sent to #{judge_user.full_name} for review."
         )
+
+        expect(appeal.latest_attorney_case_review.overtime).to be(overtime)
       end
 
       step "judge returns case to attorney for corrections" do
@@ -845,6 +848,20 @@ feature "AmaQueue", :all_dbs do
           click_on veteran_full_name
         end
       end
+    end
+  end
+
+  it_behaves_like "Judge has a case to assign to an attorney"
+
+  context "overtime_revamp feature enabled with different overtime values" do
+    before { FeatureToggle.enable!(:overtime_revamp) }
+    after { FeatureToggle.disable!(:overtime_revamp) }
+    it_behaves_like "Judge has a case to assign to an attorney" do
+      let(:overtime) { true }
+      before { appeal.overtime = overtime }
+    end
+    it_behaves_like "Judge has a case to assign to an attorney" do
+      let(:overtime) { false }
     end
   end
 
