@@ -144,6 +144,7 @@ RSpec.feature "Login", :all_dbs do
       visit "/help"
 
       click_on "Menu"
+      expect(page).to have_link("Sign In", href: "/search")
       click_on "Sign In"
 
       expect(current_path).to eq("/fake-login-page")
