@@ -153,7 +153,7 @@ class ApplicationController < ApplicationBaseController
     if current_user.present?
       urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
     else
-      urls.append(title: "Sign In", link: url_for("/login"), border: true)
+      urls.append(title: "Sign In", link: url_for("/search"), border: true)
     end
 
     urls
