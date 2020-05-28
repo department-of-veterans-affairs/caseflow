@@ -714,7 +714,7 @@ feature "AmaQueue", :all_dbs do
       it "judge can reassign the assign task to another judge" do
         step "judge reviews case and reassigns to another judge" do
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
@@ -733,7 +733,7 @@ feature "AmaQueue", :all_dbs do
         step "judge2 has the case in their queue" do
           User.authenticate!(user: judge_user2)
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user2.css_id))
@@ -746,7 +746,7 @@ feature "AmaQueue", :all_dbs do
       it "judge can reassign the review judge tasks to another judge" do
         step "judge reviews case and assigns a task to an attorney" do
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
@@ -824,7 +824,7 @@ feature "AmaQueue", :all_dbs do
         step "judge reviews case and reassigns to another judge" do
           User.authenticate!(user: judge_user)
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "1"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           click_on veteran_full_name
 
@@ -840,7 +840,7 @@ feature "AmaQueue", :all_dbs do
         step "judge2 has the case in their queue" do
           User.authenticate!(user: judge_user2)
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "1"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           click_on veteran_full_name
         end

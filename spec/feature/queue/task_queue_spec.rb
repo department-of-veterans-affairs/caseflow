@@ -855,7 +855,7 @@ feature "Task queue", :all_dbs do
 
         # Expect to see a success message, the correct number of remaining tasks and have the task in the database
         expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 0))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
         expect(judge_task.children.length).to eq(1)
         expect(judge_task.children.first).to be_a(ColocatedTask)
       end
@@ -982,7 +982,7 @@ feature "Task queue", :all_dbs do
 
         # Expect to see a success message, the correct number of remaining tasks and have the task in the database
         expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 0))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
         expect(judge_task.children.length).to eq(1)
         expect(judge_task.children.first).to be_a(ColocatedTask)
       end
@@ -1016,7 +1016,7 @@ feature "Task queue", :all_dbs do
 
       it "should display both legacy and caseflow review tasks" do
         visit("/queue")
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
 
       it "should be able to add admin actions from case details" do
@@ -1034,7 +1034,7 @@ feature "Task queue", :all_dbs do
 
         # Expect to see a success message and the correct number of remaining tasks
         expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 1))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
     end
   end
