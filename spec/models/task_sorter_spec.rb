@@ -303,7 +303,7 @@ describe TaskSorter, :all_dbs do
                    case_type: appeal.type)
           end
 
-          appeals = [create(:appeal, :advanced_on_docket_due_to_age), create(:appeal)]
+          appeals = [create(:appeal, :advanced_on_docket_due_to_motion), create(:appeal)]
           appeals.each do |appeal|
             create(:ama_colocated_task, appeal: appeal, assigned_to: org)
             create(:cached_appeal,
@@ -314,13 +314,12 @@ describe TaskSorter, :all_dbs do
           end
         end
 
-        fit "sorts by AOD status, case type, and docket number" do
+        it "sorts by AOD status, case type, and docket number" do
           expected_order = CachedAppeal.all.sort_by do |cached_appeal|
             [cached_appeal.is_aod ? 0 : 1, cached_appeal.case_type, cached_appeal.docket_number]
           end
           expect(expected_order.first.is_aod).to eq true
-          expect(subject.map { |task| [task.appeal_id, task.appeal.aod, task.appeal.type] })
-            .to eq(expected_order.map { |appeal| [appeal.appeal_id, appeal.is_aod, appeal.case_type] })
+          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
         end
       end
     end
