@@ -127,8 +127,8 @@ describe LegacyAppeal, :all_dbs do
       scenario "when the ssoc date is before AMA was launched" do
         allow(appeal).to receive(:active?).and_return(true)
         allow(appeal).to receive(:issues).and_return(issues)
-        allow(appeal).to receive(:soc_date).and_return(ama_start_date - 1.day)
-
+        allow(appeal).to receive(:soc_date).and_return(ama_start_date - 5.days)
+         
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(false)
         expect(appeal.matchable_to_request_issue?(receipt_date: receipt_date)).to eq(true)
