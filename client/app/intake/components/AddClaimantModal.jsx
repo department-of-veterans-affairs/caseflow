@@ -27,8 +27,7 @@ const getClaimantOpts = async (search = '', asyncFn) => {
 
   return { options };
 };
-// For our purposes, we want to return all items returned from the backend 
-// instead of using default substring matching
+// We'll show all items returned from the backend instead of using default substring matching
 const filterOptions = (options) => options;
 
 export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys }) => {
