@@ -314,15 +314,13 @@ describe TaskSorter, :all_dbs do
           end
         end
 
-        ensure_stable do
-          fit "sorts by AOD status, case type, and docket number" do
-            expected_order = CachedAppeal.all.sort_by do |cached_appeal|
-              [cached_appeal.is_aod ? 0 : 1, cached_appeal.case_type, cached_appeal.docket_number]
-            end
-            expect(expected_order.first.is_aod).to eq true
-            expect(subject.map { |task| [task.appeal.aod, task.appeal.type] })
-              .to eq(expected_order.map { |appeal| [appeal.is_aod, appeal.case_type] })
+        fit "sorts by AOD status, case type, and docket number" do
+          expected_order = CachedAppeal.all.sort_by do |cached_appeal|
+            [cached_appeal.is_aod ? 0 : 1, cached_appeal.case_type, cached_appeal.docket_number]
           end
+          expect(expected_order.first.is_aod).to eq true
+          expect(subject.map { |task| [task.appeal_id, task.appeal.aod, task.appeal.type] })
+            .to eq(expected_order.map { |appeal| [appeal.appeal_id, appeal.is_aod, appeal.case_type] })
         end
       end
     end
