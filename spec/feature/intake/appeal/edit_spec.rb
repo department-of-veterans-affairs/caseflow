@@ -431,7 +431,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to_not have_content("This review will be withdrawn.")
       expect(page).to have_button("Save", disabled: false)
 
-      click_withdraw_intake_issue_dropdown("Military Retired Pay - Military Retired Pay - nonrating description")
+      click_withdraw_intake_issue_dropdown("Military Retired Pay - nonrating description")
 
       expect(page).to have_content("This review will be withdrawn.")
       expect(page).to have_button("Withdraw", disabled: false)
