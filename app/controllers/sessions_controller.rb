@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
 
     # :nocov:
     unless current_user
-      session["return_to"] = request.original_url
+      session["return_to"] ||= request.original_url
       return redirect_to(sso_url)
     end
 
