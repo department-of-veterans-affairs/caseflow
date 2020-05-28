@@ -272,6 +272,7 @@ class DailyDocketRow extends React.Component {
               this.openVirtualHearingModal();
             }
           }}
+          value={hearing.scheduledTimeString}
         />
       </React.Fragment>
     );
