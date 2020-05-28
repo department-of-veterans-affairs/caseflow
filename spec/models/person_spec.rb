@@ -95,6 +95,16 @@ describe Person, :postgres do
         expect(subject.ssn).to eq ssn
       end
     end
+
+    context "BGS returns no match" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:fetch_person_by_ssn) { nil }
+      end
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
   end
 
   describe "#stale_attributes?" do
