@@ -595,8 +595,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
         add_active_intake_nonrating_issue(active_nonrating_request_issue.nonrating_issue_category)
-        expect(page).to have_content(" #{active_nonrating_request_issue.description}" \
-                                     " is ineligible because it's already under review as a Higher-Level Review")
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category} -" \
+                                    " #{active_nonrating_request_issue.description}" \
+                                    " is ineligible because it's already under review as a Higher-Level Review")
 
         safe_click("#button-submit-update")
         safe_click ".confirm"

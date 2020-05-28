@@ -106,10 +106,31 @@ const expected = [
 ];
 
 describe('formatAddedIssues', () => {
-  test('returns correctly formatted issues', () => {
-    const res = formatAddedIssues(addedIssues);
+  describe('nonrating issues', () => {
+    describe('adding new', () => {
+      // Here we expect it to prepend the category to the text description
+      const issues = addedIssues.map((issue) => ({
+        ...issue,
+        id: null,
+        description: issue.description.replace(`${issue.category} - `, '')
+      }));
 
-    expect(res).toMatchSnapshot();
-    expect(res[1]).toMatchObject(expected[1]);
+      test('returns correctly formatted issues', () => {
+        const res = formatAddedIssues(issues);
+
+        expect(res).toMatchSnapshot();
+        expect(res[1]).toMatchObject({ ...expected[1], id: null });
+      });
+    });
+
+    describe('editing existing', () => {
+      test('returns correctly formatted issues', () => {
+        // Here the text description already contains category, so we shouldn't be prepending
+        const res = formatAddedIssues(addedIssues);
+
+        expect(res).toMatchSnapshot();
+        expect(res[1]).toMatchObject(expected[1]);
+      });
+    });
   });
 });
