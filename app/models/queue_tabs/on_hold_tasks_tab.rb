@@ -26,11 +26,11 @@ class OnHoldTasksTab < QueueTab
   end
 
   def ama_task_ids
-    Task.visible_in_queue_table_view.on_hold.where(assigned_to: assignee).pluck(:id)
+    Task.includes(:assigned_to).visible_in_queue_table_view.on_hold.where(assigned_to: assignee).pluck(:id)
   end
 
   def legacy_colocated_task_ids_assigned_by_assignee
-    colocated_tasks = ColocatedTask.open.order(:created_at)
+    colocated_tasks = ColocatedTask.includes([:appeal, :assigned_to, :assigned_by]).open.order(:created_at)
       .where(assigned_by: assignee, assigned_to_type: Organization.name, appeal_type: LegacyAppeal.name)
 
     colocated_tasks.group_by(&:appeal_id).map { |_appeal_id, tasks| tasks.first.id }
