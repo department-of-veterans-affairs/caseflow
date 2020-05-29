@@ -330,7 +330,10 @@ feature "Search", :all_dbs do
     context "BGS can_access? is false" do
       before do
         Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
+        User.authenticate!(user: user)
       end
+
+      let(:user) { create(:user) }
 
       def perform_search
         visit "/search"
@@ -339,10 +342,7 @@ feature "Search", :all_dbs do
       end
 
       context "when user is VSO employee" do
-        before do
-          vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
-          User.authenticate!(user: vso_user)
-        end
+        let(:user) { create(:user, :vso_role, css_id: "BVA_VSO") }
 
         it "displays a helpful error message on same page" do
           perform_search
@@ -350,14 +350,12 @@ feature "Search", :all_dbs do
         end
       end
 
-      context "when user is not VSO employee" do
-        before do
-          user = create(:user)
-          User.authenticate!(user: user)
-        end
+      context "when user is BVA (not VSO) employee" do
+        let(:user) { create(:user, :judge) }
 
         it "displays no results found" do
           perform_search
+          binding.pry
           expect(page).to have_content("No cases found")
         end
       end
