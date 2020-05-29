@@ -3,6 +3,8 @@
 require "faker"
 
 describe TaskPager, :all_dbs do
+  before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
+
   describe ".new" do
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
@@ -119,6 +121,15 @@ describe TaskPager, :all_dbs do
         it "returns a single task" do
           expect(subject.count).to eq(1)
         end
+      end
+    end
+
+    context "when pagination is not enabled for the assignee" do
+      let(:page) { 1 }
+      before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
+
+      it "returns all page of tasks" do
+        expect(subject.count).to eq(task_count)
       end
     end
   end

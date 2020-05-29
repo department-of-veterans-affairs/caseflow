@@ -23,7 +23,10 @@ class TaskPager
   end
 
   def paged_tasks
-    @paged_tasks ||= sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
+    @paged_tasks ||= begin
+      tasks = sorted_tasks(filtered_tasks)
+      assignee.use_task_pages_api? ? tasks.page(page).per(TASKS_PER_PAGE) : tasks
+    end
   end
 
   def sorted_tasks(tasks)
@@ -32,7 +35,7 @@ class TaskPager
   end
 
   def task_page_count
-    @task_page_count ||= paged_tasks.total_pages
+    @task_page_count ||= assignee.use_task_pages_api? ? paged_tasks.total_pages : 1
   end
 
   def filtered_tasks
@@ -44,7 +47,7 @@ class TaskPager
   end
 
   def total_task_count
-    @total_task_count ||= paged_tasks.total_count
+    @total_task_count ||= assignee.use_task_pages_api? ? paged_tasks.total_count : paged_tasks.count
   end
 
   private

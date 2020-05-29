@@ -35,19 +35,12 @@ class QueueConfig
 
   def attach_tasks_to_tab(tab)
     task_pager = TaskPager.new(assignee: assignee, tab_name: tab.name)
-
-    # Only return tasks in the configuration if we are using it to populate the first page of results.
-    # Otherwise avoid the overhead of the additional database requests.
-    tasks = assignee.use_task_pages_api? ? serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names) : []
-
     endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 
     tab.to_hash.merge(
-      tasks: tasks,
-      # TODO: Change task_page_count to something like: (tab.tasks.count / TaskPager::TASKS_PER_PAGE.to_f).ceil
-      # This allows us to only instantiate TaskPager if we are using the task pages API.
+      tasks: serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names),
       task_page_count: task_pager.task_page_count,
-      total_task_count: tab.tasks.count,
+      total_task_count: task_pager.total_task_count,
       task_page_endpoint_base_path: "#{assignee_is_org? ? "#{assignee.path}/" : "users/#{assignee.id}/"}#{endpoint}"
     )
   end
