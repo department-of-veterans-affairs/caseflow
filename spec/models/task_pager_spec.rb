@@ -128,7 +128,7 @@ describe TaskPager, :all_dbs do
       let(:page) { 1 }
       before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
 
-      it "returns all page of tasks" do
+      it "returns all tasks" do
         expect(subject.count).to eq(task_count)
       end
     end
@@ -165,6 +165,40 @@ describe TaskPager, :all_dbs do
 
       it "returns the total task count" do
         expect(subject).to eq(task_count)
+      end
+    end
+
+    context "when pagination is not enabled for the assignee" do
+      let(:page) { 1 }
+      before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
+
+      it "returns all page of tasks" do
+        expect(subject).to eq(task_count)
+      end
+    end
+  end
+
+  describe ".total_task_count" do
+    let(:assignee) { create(:organization) }
+    let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
+    let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
+    let(:arguments) { { assignee: assignee, tab_name: tab_name } }
+
+    before { create_list(:ama_task, task_count, assigned_to: assignee) }
+
+    subject { TaskPager.new(arguments).task_page_count }
+
+    context "when pagination is enabled for the assignee" do
+      it "returns the total task count" do
+        expect(subject).to eq(2)
+      end
+    end
+
+    context "when pagination is not enabled for the assignee" do
+      before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
+
+      it "returns all page of tasks" do
+        expect(subject).to eq(1)
       end
     end
   end
