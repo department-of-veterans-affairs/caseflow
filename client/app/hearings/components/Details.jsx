@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect, useContext } from 'react';
 import _ from 'lodash';
 
-import { COLORS } from '../../constants/AppConstants';
 import { DetailsHeader } from './details/DetailsHeader';
 import {
   HearingsFormContext,

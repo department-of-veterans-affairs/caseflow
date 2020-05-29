@@ -22,7 +22,7 @@ const subHeaderContainerStyling = css({
   padding: '0 0 0 2rem'
 });
 
-export const TitleDetailsSubheader = ({ columns, children}) => (
+export const TitleDetailsSubheader = ({ columns, children }) => (
   <div {...subHeaderContainerStyling}>
     <div {...listStyling}>
       {columns && columns.map((col, i) => (

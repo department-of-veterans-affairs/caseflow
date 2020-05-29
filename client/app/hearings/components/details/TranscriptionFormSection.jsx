@@ -4,7 +4,7 @@ import React from 'react';
 import { ContentSection } from '../../../components/ContentSection';
 import {
   UPDATE_HEARING_DETAILS,
-  UPDATE_TRANSCRIPTION,
+  UPDATE_TRANSCRIPTION
 } from '../../contexts/HearingsFormContext';
 import TranscriptionDetailsInputs from './TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
