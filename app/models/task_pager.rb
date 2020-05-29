@@ -24,8 +24,8 @@ class TaskPager
 
   def paged_tasks
     @paged_tasks ||= begin
-      tasks = sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
-      assignee.use_task_pages_api? ? tasks : tasks.except(:limit)
+      tasks = sorted_tasks(filtered_tasks)
+      assignee.use_task_pages_api? ? tasks.page(page).per(TASKS_PER_PAGE) : tasks
     end
   end
 
