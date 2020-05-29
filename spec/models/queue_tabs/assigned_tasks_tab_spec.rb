@@ -5,13 +5,11 @@ describe AssignedTasksTab, :postgres do
   let(:params) do
     {
       assignee: assignee,
-      show_regional_office_column: show_regional_office_column,
-      type: type
+      show_regional_office_column: show_regional_office_column
     }
   end
   let(:assignee) { create(:user) }
   let(:show_regional_office_column) { false }
-  let(:type) { nil }
 
   describe ".tasks" do
     subject { tab.tasks }

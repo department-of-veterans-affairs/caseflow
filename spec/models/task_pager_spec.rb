@@ -3,7 +3,9 @@
 require "faker"
 
 describe TaskPager, :all_dbs do
-  before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) }
+  let(:assignee) { create(:organization) }
+
+  before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) unless assignee.nil? }
 
   describe ".new" do
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
@@ -28,7 +30,6 @@ describe TaskPager, :all_dbs do
     end
 
     context "when object is created with a valid assignee but no tab name" do
-      let(:assignee) { create(:organization) }
       let(:tab_name) { nil }
 
       it "raises an error" do
@@ -37,7 +38,6 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sort order is invalid" do
-      let(:assignee) { create(:organization) }
       let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_order: "invalid" } }
 
       it "raises an error" do
@@ -46,8 +46,6 @@ describe TaskPager, :all_dbs do
     end
 
     context "when object is created with a valid assignee and a tab name" do
-      let(:assignee) { create(:organization) }
-
       it "successfully instantiates the object" do
         expect { subject }.to_not raise_error
       end
@@ -55,7 +53,6 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".tasks_for_tab" do
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
 
@@ -82,7 +79,6 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".paged_tasks" do
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
@@ -135,7 +131,6 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".total_task_count" do
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
@@ -179,7 +174,6 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".task_page_count" do
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
@@ -208,7 +202,6 @@ describe TaskPager, :all_dbs do
     let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_by: sort_by, sort_order: sort_order } }
     let(:sort_by) { nil }
     let(:sort_order) { nil }
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:tasks) { task_pager.tasks_for_tab }
 
@@ -460,7 +453,6 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".filtered_tasks" do
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, filters: filters } }
 
