@@ -154,7 +154,7 @@ class TasksController < ApplicationController
   private
 
   def queue_config
-    QueueConfig.new(assignee: user).to_hash
+    params[:type].eql?("assign") ? {} : QueueConfig.new(assignee: user).to_hash
   end
 
   def verify_view_access

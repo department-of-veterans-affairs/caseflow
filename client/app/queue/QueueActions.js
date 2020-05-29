@@ -651,7 +651,7 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
 
   return ApiUtil.get(url).
     then((resp) => {
-      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks?.data || [])));
+      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
       dispatch(setQueueConfig(resp.body.queue_config));
     }).
     catch((error) => {
