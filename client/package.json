@@ -133,6 +133,7 @@
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db",
     "@testing-library/react": "^10.0.4",
     "@testing-library/user-event": "^10.3.4",
+    "@types/jest": "^25.2.3",
     "babel-eslint": "^10.1.0",
     "chai": "^3.5.0",
     "enzyme": "^3.10.0",
