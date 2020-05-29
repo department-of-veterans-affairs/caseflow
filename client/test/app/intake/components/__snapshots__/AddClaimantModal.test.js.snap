@@ -37,7 +37,9 @@ exports[`AddClaimantModal renders correctly 1`] = `
       <div
         style="display: flex;"
       >
-        <div>
+        <div
+          data-css-1gs0ko2=""
+        >
           <h1
             id="modal_id-title"
           >
