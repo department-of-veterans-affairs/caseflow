@@ -188,7 +188,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
         visit "/queue"
 
-        expect(page).to have_content("Review 1 Cases")
+        expect(page).to have_content("Your cases")
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
         expect(page).to have_content(appeal.veteran_file_number)
         expect(page).to have_content(case_review.document_id)
@@ -211,7 +211,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         click_on COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL
 
         expect(page).to have_current_path("/queue")
-        expect(page).to have_content("Review 1 Cases")
+        expect(page).to have_content("Your cases")
       end
     end
   end
