@@ -41,6 +41,9 @@
     "DOCUMENT_COUNT_READER_LINK": {
       "name": "readerLinkColumn"
     },
+    "DOCUMENT_ID": {
+      "name": "documentIdColumn"
+    },
     "BADGES": {
       "name": "badgesColumn"
     },
