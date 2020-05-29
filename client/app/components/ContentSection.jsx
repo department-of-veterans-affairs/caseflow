@@ -19,16 +19,15 @@ export const sectionSegmentStyling = css({
   padding: '1rem 2rem'
 });
 
-export default class ContentSection extends React.Component {
-  render() {
-    return <div className="cf-app-segment">
-      <h2 {...sectionHeadingStyling}>{this.props.header}</h2>
-      <div {...sectionSegmentStyling}>{this.props.content}</div>
-    </div>;
-  }
-}
+export const ContentSection = ({ header, children, content }) => (
+  <div className="cf-app-segment">
+    <h2 {...sectionHeadingStyling}>{header}</h2>
+    <div {...sectionSegmentStyling}>{content || children}</div>
+  </div>
+);
 
 ContentSection.propTypes = {
   header: PropTypes.object,
+  children: PropTypes.node,
   content: PropTypes.object
 };

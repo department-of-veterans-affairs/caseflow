@@ -15,7 +15,7 @@ import { formatNameShort } from '../../../util/FormatUtil';
 import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import CFRichTextEditor from '../../../components/CFRichTextEditor';
 import Button from '../../../components/Button';
-import ContentSection from '../../../components/ContentSection';
+import { ContentSection } from '../../../components/ContentSection';
 import HearingWorksheetDocs from './HearingWorksheetDocs';
 import ApiUtil from '../../../util/ApiUtil';
 
