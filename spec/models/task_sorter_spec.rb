@@ -315,8 +315,8 @@ describe TaskSorter, :all_dbs do
         end
 
         it "sorts by AOD status, case type, and docket number" do
-          # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up first
-          # so we sort descending on is_aod
+          # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up
+          # first so we sort descending on is_aod
           expected_order = CachedAppeal.order(is_aod: :desc, case_type: :asc, docket_number: :asc)
           expect(expected_order.first.is_aod).to eq true
           expect(subject.map(&:appeal_id)).to eq(expected_order.pluck(:appeal_id))
