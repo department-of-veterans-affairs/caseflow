@@ -10,6 +10,7 @@ const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
 
 class SearchableDropdown extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -42,19 +43,17 @@ class SearchableDropdown extends React.Component {
       this.setState({ value: newValue });
     }
 
-    if (
-      this.state.value &&
-      value &&
-      Array.isArray(value) &&
-      Array.isArray(this.state.value) &&
-      value.length < this.state.value.length
-    ) {
+    if (this.state.value &&
+        value &&
+        Array.isArray(value) &&
+        Array.isArray(this.state.value) &&
+        value.length < this.state.value.length) {
       deletedValue = _.differenceWith(this.state.value, value, _.isEqual);
     }
     if (this.props.onChange) {
       this.props.onChange(newValue, deletedValue);
     }
-  };
+  }
 
   // Override the default keys to create a new tag (allows creating options that contain a comma)
   shouldKeyDownEventCreateNewOption = ({ keyCode }) => {
@@ -82,9 +81,6 @@ class SearchableDropdown extends React.Component {
     const {
       async,
       options,
-      filterOption,
-      filterOptions,
-      loading,
       placeholder,
       errorMessage,
       label,
@@ -118,10 +114,12 @@ class SearchableDropdown extends React.Component {
      * custom tag entered already exits.
      * promptTextCreator: this is a function called to show the text when a tag
      * entered doesn't exist in the current list of options.
-     */
+    */
     if (creatable) {
       addCreatableOptions = {
-        noResultsText: _.get(creatableOptions, 'tagAlreadyExistsMsg', TAG_ALREADY_EXISTS_MSG),
+        noResultsText: _.get(
+          creatableOptions, 'tagAlreadyExistsMsg', TAG_ALREADY_EXISTS_MSG
+        ),
 
         // eslint-disable-next-line no-shadow
         newOptionCreator: ({ label, labelKey, valueKey }) => ({
@@ -146,46 +144,44 @@ class SearchableDropdown extends React.Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    const labelContents = (
+    const labelContents =
       <span>
         {label || name}
         {required && <span className="cf-required">Required</span>}
-      </span>
-    );
+      </span>;
 
-    return (
-      <div className={dropdownClasses} {...dropdownStyling}>
-        <label className={labelClasses} htmlFor={name}>
-          {strongLabel ? <strong>{labelContents}</strong> : labelContents}
-        </label>
-        <div className={errorMessage ? 'usa-input-error' : ''}>
-          {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-          <SelectComponent
-            inputProps={{
-              id: name,
-              autoComplete: 'off'
-            }}
-            options={options}
-            filterOption={filterOption}
-            filterOptions={filterOptions}
-            loadOptions={async}
-            isLoading={loading}
-            onChange={this.onChange}
-            value={this.state.value}
-            placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder}
-            clearable={false}
-            noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
-            searchable={searchable}
-            disabled={readOnly}
-            multi={multi}
-            cache={false}
-            onBlurResetsInput={false}
-            shouldKeyDownEventCreateNewOption={this.shouldKeyDownEventCreateNewOption}
-            {...addCreatableOptions}
-          />
-        </div>
+    return <div className={dropdownClasses} {...dropdownStyling}>
+      <label className={labelClasses} htmlFor={name}>
+        {
+          strongLabel ?
+            <strong>{labelContents}</strong> :
+            labelContents
+        }
+      </label>
+      <div className={errorMessage ? 'usa-input-error' : ''}>
+        {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
+        <SelectComponent
+          inputProps={{
+            id: name,
+            autoComplete: 'off'
+          }}
+          options={options}
+          loadOptions={async}
+          onChange={this.onChange}
+          value={this.state.value}
+          placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder}
+          clearable={false}
+          noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
+          searchable={searchable}
+          disabled={readOnly}
+          multi={multi}
+          cache={false}
+          onBlurResetsInput={false}
+          shouldKeyDownEventCreateNewOption={this.shouldKeyDownEventCreateNewOption}
+          {...addCreatableOptions}
+        />
       </div>
-    );
+    </div>;
   }
 }
 
@@ -198,23 +194,21 @@ SearchableDropdown.propTypes = {
   }),
   dropdownStyling: PropTypes.object,
   errorMessage: PropTypes.string,
-  filterOption: PropTypes.func,
-  filterOptions: PropTypes.func,
   label: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  loading: PropTypes.bool,
   multi: PropTypes.bool,
   name: PropTypes.string.isRequired,
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.any,
-      label: PropTypes.string
-    })
-  ),
-  placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  options: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.any,
+    label: PropTypes.string
+  })),
+  placeholder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
   searchable: PropTypes.bool,
@@ -222,13 +216,5 @@ SearchableDropdown.propTypes = {
   styling: PropTypes.object,
   value: PropTypes.object
 };
-
-/* eslint-disable no-undefined */
-SearchableDropdown.defaultProps = {
-  loading: false,
-  filterOption: undefined,
-  filterOptions: undefined
-};
-/* eslint-enable no-undefined */
 
 export default SearchableDropdown;
