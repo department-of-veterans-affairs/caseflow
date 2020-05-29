@@ -50,7 +50,14 @@ module.exports = function(api) {
       },
       test: {
         presets: [
-          '@babel/preset-env',
+          [
+            '@babel/preset-env',
+            {
+              useBuiltIns: 'usage',
+              corejs: 3,
+              targets: '> 0.25%, not dead'
+            }
+          ],
           ['@babel/preset-react', { development: true }]
         ]
       }
