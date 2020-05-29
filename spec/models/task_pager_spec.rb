@@ -178,7 +178,7 @@ describe TaskPager, :all_dbs do
     end
   end
 
-  describe ".total_task_count" do
+  describe ".task_page_count" do
     let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }

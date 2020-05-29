@@ -253,6 +253,8 @@ describe QueueConfig, :postgres do
 
             # Ensure all tasks have been returned
             expect(tabs.all? { |tab| tab[:tasks].count.eql? task_count }).to be true
+            expect(tabs.all? { |tab| tab[:task_page_count].eql? 1 }).to be true
+            expect(tabs.all? { |tab| tab[:total_task_count].eql? task_count }).to be true
             # Tasks are serialized at this point so we need to convert integer task IDs to strings.
             expect(tabs[0][:tasks].pluck(:id)).to match_array(active_tasks.map(&:id).map(&:to_s))
             expect(tabs[1][:tasks].pluck(:id)).to match_array(on_hold_tasks.map(&:id).map(&:to_s))
@@ -268,6 +270,8 @@ describe QueueConfig, :postgres do
             tabs = subject
 
             expect(tabs.all? { |tab| tab[:tasks].count.eql? TaskPager::TASKS_PER_PAGE }).to be true
+            expect(tabs.all? { |tab| tab[:task_page_count].eql? 2 }).to be true
+            expect(tabs.all? { |tab| tab[:total_task_count].eql? task_count }).to be true
             expect(tabs[0][:tasks].pluck(:id).all? { |id| active_tasks.map(&:id).map(&:to_s).include?(id) }).to be true
             expect(tabs[1][:tasks].pluck(:id).all? { |id| on_hold_tasks.map(&:id).map(&:to_s).include?(id) }).to be true
             expect(tabs[2][:tasks].pluck(:id).all? { |id| closed_tasks.map(&:id).map(&:to_s).include?(id) }).to be true

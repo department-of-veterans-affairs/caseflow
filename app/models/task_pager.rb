@@ -47,7 +47,7 @@ class TaskPager
   end
 
   def total_task_count
-    @total_task_count ||= paged_tasks.total_count
+    @total_task_count ||= assignee.use_task_pages_api? ? paged_tasks.total_count : paged_tasks.count
   end
 
   private
