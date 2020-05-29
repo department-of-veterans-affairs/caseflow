@@ -41,8 +41,10 @@ class TasksController < ApplicationController
   # e.g, GET /tasks?user_id=xxx&role=colocated
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
+  #      GET /tasks?user_id=xxx&role=judge&type=assign
   def index
-    render json: { queue_config: queue_config }
+    tasks = params[:type].eql?("assign") ? QueueForRole.new(user_role).create(user: user).tasks : []
+    render json: { tasks: json_tasks(tasks), queue_config: queue_config }
   end
 
   # To create colocated task

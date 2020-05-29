@@ -16,7 +16,9 @@ class AssignedTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.active.where(assigned_to: assignee)
+    Task.includes(*task_includes).visible_in_queue_table_view.active
+      .where(assigned_to: assignee)
+      .where.not(type: JudgeAssignTask.name)
   end
 
   # rubocop:disable Metrics/AbcSize

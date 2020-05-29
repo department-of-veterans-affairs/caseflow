@@ -28,7 +28,8 @@ class QueueLoadingScreen extends React.PureComponent {
       userRole,
       appeals,
       amaTasks,
-      loadedUserId
+      loadedUserId,
+      type
     } = this.props;
 
     if (!_.isEmpty(amaTasks) && !_.isEmpty(appeals) && loadedUserId === userId && !this.queueConfigIsStale()) {
@@ -37,7 +38,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
     this.props.setUserId(userId);
 
-    return this.props.fetchAmaTasksOfUser(chosenUserId, userRole);
+    return this.props.fetchAmaTasksOfUser(chosenUserId, userRole, type);
   }
 
   // When navigating between team and individual queues the configs we get from the back-end could be stale and return
@@ -173,6 +174,7 @@ QueueLoadingScreen.propTypes = {
   fetchAllAttorneys: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
   // `loadedUserId` is set by `setUserId`
+  label: PropTypes.string,
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
   location: PropTypes.object,
