@@ -174,6 +174,22 @@ feature "Intake Add Issues Page", :all_dbs do
         "Left knee granted is ineligible because the same issue is under review as a Legacy Appeal"
       )
     end
+
+    fscenario "User selects a vacols issue, issue description shows on legacy modal" do
+      start_higher_level_review(veteran, legacy_opt_in_approved: true)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      binding.pry
+      add_intake_nonrating_issue(
+        category: "Apportionment",
+        description: "Description for Apportionment",
+        date: 1.day.ago.to_date.mdY
+        )
+
+      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+      expect(page).to have_content("Description for Apportionment")
+    end
+
   end
 
   context "When the user adds an untimely issue" do
