@@ -179,12 +179,13 @@ feature "Intake Add Issues Page", :all_dbs do
       start_higher_level_review(veteran, legacy_opt_in_approved: true)
       visit "/intake/add_issues"
       click_intake_add_issue
-      binding.pry
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Apportionment",
         description: "Description for Apportionment",
-        date: 1.day.ago.to_date.mdY
-        )
+        date: 1.day.ago.to_date.mdY,
+        legacy_issues: true
+      )
 
       expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
       expect(page).to have_content("Description for Apportionment")
