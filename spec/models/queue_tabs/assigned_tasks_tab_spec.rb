@@ -13,7 +13,7 @@ describe AssignedTasksTab, :postgres do
   let(:show_regional_office_column) { false }
   let(:type) { nil }
 
-  fdescribe ".tasks" do
+  describe ".tasks" do
     subject { tab.tasks }
 
     context "when there are tasks assigned to the assignee" do
