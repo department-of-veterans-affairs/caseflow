@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -34,6 +34,22 @@ const noClaimantsCopy = React.createElement(
   COPY.CLAIMANT_NOT_FOUND_END
 );
 
+const RemovableRadioLabel = ({ text, onRemove }) => (
+  <>
+    <span>{text}</span>{' '}
+    {onRemove && (
+      <Button linkStyling onClick={onRemove} classNames={['remove-item']} styling={{ style: { marginTop: '-1rem' } }}>
+        <i className="fa fa-trash-o" aria-hidden="true" /> Remove
+      </Button>
+    )}
+  </>
+);
+
+RemovableRadioLabel.propTypes = {
+  text: PropTypes.string,
+  onRemove: PropTypes.func
+};
+
 export const SelectClaimant = (props) => {
   const {
     formType,
@@ -53,12 +69,29 @@ export const SelectClaimant = (props) => {
 
   const { attorneyFees } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
+  const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
-  const handleAddClaimant = (newClaimant) => {
-    // eslint-disable-next-line
-    console.log('claimant', newClaimant);
+  const radioOpts = useMemo(() => {
+    return [...relationships, ...(newClaimant ? [newClaimant] : [])];
+  }, [newClaimant, relationships]);
+  const allowAddClaimant = useMemo(() => formType === 'appeal' && attorneyFees && veteranIsNotClaimant, [
+    formType,
+    veteranIsNotClaimant,
+    attorneyFees
+  ]);
+  const handleRemove = () => {
+    setNewClaimant(null);
+    setClaimant(null);
   };
-
+  const handleAddClaimant = ({ name, participantId }) => {
+    setNewClaimant({
+      displayElem: <RemovableRadioLabel text={`${name}, Attorney`} onRemove={handleRemove} />,
+      value: participantId,
+      defaultPayeeCode: ''
+    });
+    setClaimant(participantId);
+    setShowClaimantModal(false);
+  };
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
   const shouldShowPayeeCode = () => {
     return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension');
@@ -75,7 +108,7 @@ export const SelectClaimant = (props) => {
           label={claimantLabel}
           strongLabel
           vertical
-          options={relationships}
+          options={radioOpts}
           onChange={setClaimant}
           value={claimant}
           errorMessage={claimantError}
@@ -122,7 +155,7 @@ export const SelectClaimant = (props) => {
       {showClaimants && hasRelationships && claimantOptions()}
       {showClaimants && !hasRelationships && noClaimantsCopy}
 
-      {attorneyFees && veteranIsNotClaimant && (
+      {allowAddClaimant && (
         <>
           <Button
             classNames={['usa-button-secondary', classes.button]}
