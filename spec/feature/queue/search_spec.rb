@@ -329,7 +329,8 @@ feature "Search", :all_dbs do
 
     context "BGS can_access? is false" do
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
+        Fakes::BGSService.new.bust_can_access_cache(user, appeal.sanitized_vbms_id)
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.sanitized_vbms_id]
         User.authenticate!(user: user)
       end
 
@@ -353,10 +354,12 @@ feature "Search", :all_dbs do
       context "when user is BVA (not VSO) employee" do
         let(:user) { create(:user, :judge) }
 
-        it "displays no results found" do
+        it "displays 1 result but clicking through gives permission denied" do
           perform_search
-          binding.pry
-          expect(page).to have_content("No cases found")
+          expect(page).to have_content("1 case found")
+
+          visit "/queue/appeals/#{appeal.vacols_id}"
+          expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
         end
       end
     end
@@ -478,8 +481,12 @@ feature "Search", :all_dbs do
 
     context "when BGS can_access? is false" do
       before do
+        Fakes::BGSService.new.bust_can_access_cache(user, appeal.veteran_file_number)
         Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
+        User.authenticate!(user: user)
       end
+
+      let(:user) { create(:user) }
 
       def perform_search
         visit "/search"
@@ -488,10 +495,7 @@ feature "Search", :all_dbs do
       end
 
       context "when user is VSO employee" do
-        before do
-          vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
-          User.authenticate!(user: vso_user)
-        end
+        let(:user) { create(:user, :vso_role, css_id: "BVA_VSO") }
 
         it "displays a helpful error message on same page" do
           perform_search
@@ -499,15 +503,15 @@ feature "Search", :all_dbs do
         end
       end
 
-      context "when user is not VSO employee" do
-        before do
-          user = create(:user)
-          User.authenticate!(user: user)
-        end
+      context "when user is BVA (not VSO) employee" do
+        let(:user) { create(:user, :judge) }
 
-        it "displays helpful error message on the same page" do
+        it "displays 1 result but clicking through gives permission denied" do
           perform_search
-          expect(page).to have_content("You do not have access to this claims file number")
+          expect(page).to have_content("1 case found")
+
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
         end
       end
     end
