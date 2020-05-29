@@ -1,24 +1,72 @@
-<div>
+<style>
+  .usa-table-borderless td:first-child {
+    vertical-align: top;
+    width: 6em;
+  }
+  .field {
+    margin-bottom: 0.5em;
+  }
+  .field-name {
+    font-weight: 700;
+  }
+  .details {
+    color: gray;
+    font-size: smaller;
+  }
+  .field .more-info {
+    margin-left: 1em;
+    margin-top: 0.25em;
+  }
+  .field code {
+    background: #eee;
+    border: 1px solid #ddd;
+    font-size: .8em;
+  }
+</style>
+<section class="cf-app-segment cf-app-segment--alt">
   <% @routes.each do |route| %>
-    <hr />
-    <h3><%= route.verb %> <%= route.path %></h3>
-    <div>
-      <% if route.source_url %><a href="<%= route.source_url %>"><% end %>
-        <%= route.controller_klass.name %>#<%= route.action %>
-      <% if route.source_url %></a><% end %>
-    </div>
-    <% next if route.schema.nil? %>
-
-    <% route.schema.fields.each do |field| %>
-      <div>
-        <b><%= field.name %></b>
-        (<%= field.type %>)
-        <%= (field.optional ? "optional" : "required") %>,
-        <%= (field.nullable ? "nullable" : "non-nullable") %>
-      </div>
-      <% unless field.included_in.nil? %>
-        <div>allowed values: <%= field.included_in.to_s %></div>
-      <% end %>
-    <% end %>
+    <h2><%= route.verb %> <%= route.path %></h2>
+    <table class="usa-table-borderless">
+      <tbody>
+        <tr>
+          <td>Controller</td>
+          <td>
+            <% if route.source_url %><a href="<%= route.source_url %>"><% end %>
+              <%= route.controller_klass.name %>#<%= route.action %>
+            <% if route.source_url %></a><% end %>
+          </td>
+        </tr>
+        <tr>
+          <td>Schema</td>
+          <td>
+            <% if route.schema.present? %>
+              <% route.schema.fields.each do |field| %>
+                <div class="field">
+                  <span class="field-name"><%= field.name %></span>
+                  <span class="details">
+                    <%= field.type %>,
+                    <%= (field.optional ? "optional" : "required") %>,
+                    <%= (field.nullable ? "nullable" : "non-nullable") %>
+                  </span>
+                  <% unless field.included_in.nil? %>
+                    <div class="more-info">
+                      Allowed values:
+                      <% field.included_in.each do |value| %>
+                        <code><%= value.inspect %></code>
+                      <% end %>
+                    </div>
+                  <% end %>
+                  <% if field.doc.present? %>
+                    <div class="more-info"><%= field.doc %></div>
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+              No controller schema found.
+            <% end %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   <% end %>
-</div>
+</section>
