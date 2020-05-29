@@ -27,7 +27,7 @@ describe SessionsController, type: :controller do
         session["return_to"] = "foobar"
       end
 
-      it "restores sessionn to admin user" do
+      it "restores session to admin user" do
         get :destroy
 
         expect(response).to redirect_to "/test/users"
