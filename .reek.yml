@@ -144,6 +144,7 @@ detectors:
       - HearingLocation
       - JudgeTeam
       - LegacyAppeal
+      - Person
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment

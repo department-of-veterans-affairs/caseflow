@@ -131,10 +131,10 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         JSON.parse(response.body)["data"]
       end
 
-      it "should have ratingIssueId attribute" do
-        issue_with_rating_issue = issues.find { |i| i["attributes"].key?("ratingIssueId") }
+      it "should have ratingIssueReferenceId attribute" do
+        issue_with_rating_issue = issues.find { |i| i["attributes"].key?("ratingIssueReferenceId") }
         expect(issue_with_rating_issue).to be_present
-        expect(issue_with_rating_issue["attributes"]["ratingIssueId"]).to match(/^\d+$/)
+        expect(issue_with_rating_issue["attributes"]["ratingIssueReferenceId"]).to match(/^\d+$/)
       end
 
       it "should have ratingIssueProfileDate attribute" do
@@ -187,12 +187,11 @@ describe Api::V3::DecisionReview::ContestableIssuesController, :postgres, type: 
         before { FeatureToggle.enable!(:contestable_rating_decisions) }
         after { FeatureToggle.disable!(:contestable_rating_decisions) }
 
-        it "should have ratingDecisionId attribute" do
+        it "should not have ratingDecisionReferenceId attribute" do
           issue_with_rating_decision = issues.find do |issue|
-            issue["attributes"].key?("ratingDecisionId") && issue["attributes"]["ratingDecisionId"]
+            issue["attributes"].key?("ratingDecisionReferenceId") && issue["attributes"]["ratingDecisionReferenceId"]
           end
-          expect(issue_with_rating_decision).to be_present
-          expect(issue_with_rating_decision["attributes"]["ratingDecisionId"]).to eq disability_dis_sn
+          expect(issue_with_rating_decision).not_to be_present
         end
       end
 
