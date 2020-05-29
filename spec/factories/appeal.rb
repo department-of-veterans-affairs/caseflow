@@ -115,12 +115,13 @@ FactoryBot.define do
       established_at { Time.zone.now - 1 }
       claimants do
         # Create an appeal with two claimants, one with a denied AOD motion
-        # and one with a granted motion. The appeal should still be counted as AOD.
+        # and one with a granted motion. The appeal should still be counted as AOD. Appeals only support one claimant,
+        # so set the aod claimant as the last claimant on the appeal
         claimant = create(:claimant)
         another_claimant = create(:claimant)
         create(:advance_on_docket_motion, person: claimant.person, granted: true)
         create(:advance_on_docket_motion, person: another_claimant.person, granted: false)
-        [claimant, another_claimant]
+        [another_claimant, claimant]
       end
     end
 
