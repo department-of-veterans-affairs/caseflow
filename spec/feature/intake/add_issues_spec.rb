@@ -175,11 +175,10 @@ feature "Intake Add Issues Page", :all_dbs do
       )
     end
 
-    fscenario "User selects a vacols issue, issue description shows on legacy modal" do
+    scenario "User selects a vacols issue, issue description shows on legacy modal" do
       start_higher_level_review(veteran, legacy_opt_in_approved: true)
       visit "/intake/add_issues"
       click_intake_add_issue
-      binding.pry
       click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Apportionment",
