@@ -167,7 +167,7 @@ describe TaskPager, :all_dbs do
       let(:page) { 1 }
       before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
 
-      it "returns all page of tasks" do
+      it "returns the total task count" do
         expect(subject).to eq(task_count)
       end
     end
