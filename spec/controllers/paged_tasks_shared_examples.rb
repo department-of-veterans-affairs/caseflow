@@ -6,7 +6,10 @@ shared_examples "paged assignee tasks" do
   let(:tab_name) { assignee.class.default_active_tab }
   let(:task_count) { 4 }
 
-  before { create_list(:ama_task, task_count, assigned_to: assignee) }
+  before do
+    create_list(:ama_task, task_count, assigned_to: assignee)
+    allow(assignee).to receive(:use_task_pages_api?).and_return(true)
+  end
 
   subject do
     get(:index, params: params)
