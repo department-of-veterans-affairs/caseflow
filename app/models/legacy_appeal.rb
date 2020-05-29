@@ -866,12 +866,12 @@ class LegacyAppeal < CaseflowRecord
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
     all_dates = ([soc_date] + ssoc_dates).compact
 
-    latest_eligiable_date = all_dates.max + 1.day
+    latest_eligible_date = all_dates.max + 1.day
 
-    latest_eligiable_date += 2.days if latest_eligiable_date.saturday?
-    latest_eligiable_date += 1.day if latest_eligiable_date.sunday?
+    latest_eligible_date += 2.days if latest_eligible_date.saturday?
+    latest_eligible_date += 1.day if latest_eligible_date.sunday?
 
-    latest_eligiable_date >= earliest_eligible_date
+    latest_eligible_date >= earliest_eligible_date
   end
 
   def nod_eligible_for_opt_in?(receipt_date:, covid_flag: false)
