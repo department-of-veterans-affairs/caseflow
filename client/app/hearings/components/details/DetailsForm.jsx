@@ -60,7 +60,7 @@ const DetailsForm = (props) => {
           />
         </div>
         <div {...rowThirds}>
-          {enableVirtualHearings && (
+          {enableVirtualHearings &&
             <HearingTypeDropdown
               virtualHearing={virtualHearingForm}
               requestType={requestType}
@@ -73,22 +73,24 @@ const DetailsForm = (props) => {
               }
               styling={columnThird}
             />
-          )}
-          {!isLegacy && (
-            <div>
-              <strong>Waive 90 Day Evidence Hold</strong>
-              <Checkbox
-                label="Yes, Waive 90 Day Evidence Hold"
-                name="evidenceWindowWaived"
-                disabled={readOnly}
-                value={hearingDetailsForm?.evidenceWindowWaived || false}
-                onChange={(evidenceWindowWaived) => dispatch(
-                  { type: UPDATE_HEARING_DETAILS, payload: { evidenceWindowWaived } }
-                )}
-              />
-            </div>
-          )}
-          <div></div>
+          }
+          <div>
+            {!isLegacy &&
+              <React.Fragment>
+                <strong>Waive 90 Day Evidence Hold</strong>
+                <Checkbox
+                  label="Yes, Waive 90 Day Evidence Hold"
+                  name="evidenceWindowWaived"
+                  disabled={readOnly}
+                  value={hearingDetailsForm?.evidenceWindowWaived || false}
+                  onChange={(evidenceWindowWaived) => dispatch(
+                    { type: UPDATE_HEARING_DETAILS, payload: { evidenceWindowWaived } }
+                  )}
+                />
+              </React.Fragment>
+            }
+          </div>
+          <div />
         </div>
         <div>
           <TextareaField

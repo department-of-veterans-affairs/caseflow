@@ -2,7 +2,7 @@ import { css } from 'glamor';
 import React from 'react';
 
 import {
-  TitleDetailsSubheader,
+  TitleDetailsSubheader
 } from '../../../components/TitleDetailsSubheader';
 import CopyTextButton from '../../../components/CopyTextButton';
 
@@ -19,8 +19,7 @@ const headerContainerStyling = css({
 });
 
 const headerStyling = css({
-  paddingLeft: 0,
-  paddingRight: '2.5rem'
+  paddingLeft: 0
 });
 
 export const DetailsHeader = (
@@ -29,7 +28,7 @@ export const DetailsHeader = (
   <React.Fragment>
     <div {...headerContainerStyling}>
       <h1 className="cf-margin-bottom-0" {...headerStyling}>
-        {`${veteranFirstName} ${veteranLastName}`}
+        {`${veteranFirstName} ${veteranLastName}'s Hearing Details`}
       </h1>
       <div>
         Veteran ID: <CopyTextButton text={veteranFileNumber} label="Veteran ID" />

@@ -9,14 +9,17 @@ import { UPDATE_VIRTUAL_HEARING } from '../../contexts/HearingsFormContext';
 import {
   VIRTUAL_HEARING_HOST,
   getAppellantTitleForHearing,
-  virtualHearingRoleForUser,
+  virtualHearingRoleForUser
 } from '../../utils';
 import {
+  columnDoubleSpacer,
+  columnThird,
   enablePadding,
   maxWidthFormInput,
-  rowThirdsWithFinalSpacer,
+  rowThirds,
+  rowThirdsWithFinalSpacer
 } from './style';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 import TextField from '../../../components/TextField';
 
 export const VirtualHearingForm = (
@@ -48,33 +51,55 @@ export const VirtualHearingForm = (
         wasVirtual={wasVirtual}
       />
       {showEmailFields && (
-        <div {...rowThirdsWithFinalSpacer}>
-          <TextField
-            errorMessage={errors?.appellantEmail}
-            name={`${appellantTitle} Email for Notifications`}
-            value={virtualHearing.appellantEmail}
-            strongLabel
-            className={[
-              classnames('cf-form-textinput', 'cf-inline-field', {
-                [enablePadding]: errors?.appellantEmail
-              })
-            ]}
-            readOnly={readOnlyEmails}
-            onChange={(appellantEmail) => dispatch({ type: UPDATE_VIRTUAL_HEARING, payload: { appellantEmail } })}
-            inputStyling={maxWidthFormInput}
-          />
-          <TextField
-            errorMessage={errors?.repEmail}
-            name="POA/Representative Email for Notifications"
-            value={virtualHearing.representativeEmail}
-            strongLabel
-            className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-            readOnly={readOnlyEmails}
-            onChange={(representativeEmail) => dispatch({ type: UPDATE_VIRTUAL_HEARING, payload: { representativeEmail } })}
-            inputStyling={maxWidthFormInput}
-          />
-          <div />
-        </div>
+        <React.Fragment>
+          <div className="cf-help-divider" />
+          <h3>{appellantTitle}</h3>
+          <div {...rowThirds}>
+            <TextField
+              errorMessage={errors?.appellantEmail}
+              name={`${appellantTitle} Email for Notifications`}
+              value={virtualHearing.appellantEmail}
+              required
+              strongLabel
+              className={[
+                classnames('cf-form-textinput', 'cf-inline-field', {
+                  [enablePadding]: errors?.appellantEmail
+                })
+              ]}
+              readOnly={readOnlyEmails}
+              onChange={
+                (appellantEmail) => dispatch({
+                  type: UPDATE_VIRTUAL_HEARING,
+                  payload: { appellantEmail }
+                })
+              }
+              inputStyling={maxWidthFormInput}
+            />
+            <div />
+            <div />
+          </div>
+          <div className="cf-help-divider" />
+          <h3>Power of Attorney</h3>
+          <div {...rowThirds}>
+            <TextField
+              errorMessage={errors?.repEmail}
+              name="POA/Representative Email for Notifications"
+              value={virtualHearing.representativeEmail}
+              strongLabel
+              className={[classnames('cf-form-textinput', 'cf-inline-field')]}
+              readOnly={readOnlyEmails}
+              onChange={
+                (representativeEmail) => dispatch({
+                  type: UPDATE_VIRTUAL_HEARING,
+                  payload: { representativeEmail }
+                })
+              }
+              inputStyling={maxWidthFormInput}
+            />
+            <div />
+            <div />
+          </div>
+        </React.Fragment>
       )}
     </ContentSection>
   );
