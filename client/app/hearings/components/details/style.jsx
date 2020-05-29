@@ -82,17 +82,3 @@ export const enablePadding = css({
 export const hearingLinksContainer = css({
   marginBottom: 38
 });
-
-export const copyButtonStyles = {
-  borderColor: COLORS.PRIMARY,
-  borderWidth: '2px',
-  color: COLORS.PRIMARY,
-  ':hover': {
-    backgroundColor: 'transparent',
-    color: COLORS.PRIMARY,
-    borderColor: COLORS.PRIMARY,
-    borderBottomWidth: '2px'
-  },
-  '& > svg path': { fill: COLORS.PRIMARY },
-  '&:hover > svg path': { fill: COLORS.PRIMARY }
-};

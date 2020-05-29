@@ -41,7 +41,7 @@ export const VirtualHearingLinkDetails = ({
       {pin}
     </div>
     {!hearing?.scheduledForIsPast && !wasVirtual && (
-      <CopyTextButton label="" styling={copyButtonStyles} text={`Copy ${role} Link`} textToCopy={link} />
+      <CopyTextButton label="" text={`Copy ${role} Link`} textToCopy={link} />
     )}
   </React.Fragment>
 );
@@ -59,14 +59,16 @@ VirtualHearingLinkDetails.propTypes = {
   virtualHearing: PropTypes.object
 };
 
-export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virtualHearing, role, label }) => (
+export const LinkContainer = (
+  { link, linkText, user, hearing, isVirtual, wasVirtual, virtualHearing, role, label }
+) => (
   <div id={`${role.toLowerCase()}-hearings-link`} {...css({ marginTop: '1.5rem' })}>
     <strong>{label}: </strong>
     {!virtualHearing || virtualHearing?.status === 'pending' ? (
       <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>
     ) : (
       <VirtualHearingLinkDetails
-        label={COPY.OPEN_VIRTUAL_HEARINGS_LINK}
+        label={linkText}
         user={user}
         virtualHearing={virtualHearing}
         isVirtual={isVirtual}
@@ -82,14 +84,15 @@ export const LinkContainer = ({ link, user, hearing, isVirtual, wasVirtual, virt
 );
 
 LinkContainer.propTypes = {
-  link: PropTypes.string,
-  user: PropTypes.object,
   hearing: PropTypes.object,
   isVirtual: PropTypes.bool,
-  wasVirtual: PropTypes.bool,
-  virtualHearing: PropTypes.object,
   label: PropTypes.string,
-  role: PropTypes.string
+  link: PropTypes.string,
+  linkText: PropTypes.string,
+  role: PropTypes.string,
+  user: PropTypes.object,
+  virtualHearing: PropTypes.object,
+  wasVirtual: PropTypes.bool
 };
 
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, label, user }) => {
@@ -97,24 +100,26 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, l
     (isVirtual || wasVirtual) && (
       <div {...rowThirds} {...hearingLinksContainer}>
         <LinkContainer
-          wasVirtual={wasVirtual}
-          role="VLJ"
-          link={virtualHearing?.hostLink}
-          user={user}
           hearing={hearing}
           isVirtual={isVirtual}
-          virtualHearing={virtualHearing}
           label={label}
+          link={virtualHearing?.hostLink}
+          linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
+          role="VLJ"
+          user={user}
+          virtualHearing={virtualHearing}
+          wasVirtual={wasVirtual}
         />
         <LinkContainer
-          wasVirtual={wasVirtual}
-          label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
-          role="Guest"
-          link={virtualHearing?.guestLink}
-          user={user}
           hearing={hearing}
           isVirtual={isVirtual}
+          label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
+          link={virtualHearing?.guestLink}
+          linkText={COPY.GUEST_VIRTUAL_HEARINGS_LINK_TEXT}
+          role="Guest"
+          user={user}
           virtualHearing={virtualHearing}
+          wasVirtual={wasVirtual}
         />
         <div />
       </div>
