@@ -86,6 +86,10 @@ Accordion.propTypes = {
 
     return error;
   },
+  // Override the default header element.
+  // Mutually exclusive with style.
+  header: PropTypes.node,
   id: PropTypes.string,
-  style: PropTypes.string.isRequired
+  // Mutually exclusive with header.
+  style: PropTypes.string
 };

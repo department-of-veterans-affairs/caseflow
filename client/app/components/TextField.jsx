@@ -142,7 +142,7 @@ TextField.propTypes = {
   onKeyPress: PropTypes.func,
   strongLabel: PropTypes.bool,
   maxLength: PropTypes.number,
-  max: PropTypes.number,
+  max: PropTypes.any,
   autoComplete: PropTypes.string,
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,

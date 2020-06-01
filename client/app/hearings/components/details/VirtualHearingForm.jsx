@@ -11,14 +11,7 @@ import {
   getAppellantTitleForHearing,
   virtualHearingRoleForUser
 } from '../../utils';
-import {
-  columnDoubleSpacer,
-  columnThird,
-  enablePadding,
-  maxWidthFormInput,
-  rowThirds,
-  rowThirdsWithFinalSpacer
-} from './style';
+import { enablePadding, maxWidthFormInput, rowThirds } from './style';
 import COPY from '../../../../COPY';
 import TextField from '../../../components/TextField';
 

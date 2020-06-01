@@ -19,8 +19,8 @@ const listItemStyling = css({
   '& > div': { minHeight: '22px' }
 });
 
-export const TitleDetailsSubheaderSection = ({ key, title, children }) => (
-  <div key={key} {...listItemStyling}>
+export const TitleDetailsSubheaderSection = ({ title, children }) => (
+  <div {...listItemStyling}>
     <h4>{title}</h4>
     <div>
       {children}
@@ -29,10 +29,6 @@ export const TitleDetailsSubheaderSection = ({ key, title, children }) => (
 );
 
 TitleDetailsSubheaderSection.propTypes = {
-  children: PropTypes.node.isRequired,
-  key: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string
-  ]),
+  children: PropTypes.node,
   title: PropTypes.string.isRequired
 };

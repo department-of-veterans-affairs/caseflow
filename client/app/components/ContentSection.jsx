@@ -26,7 +26,10 @@ export const ContentSection = ({ header, children, content }) => (
 );
 
 ContentSection.propTypes = {
-  header: PropTypes.object,
+  header: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.string
+  ]),
   children: PropTypes.node,
   content: PropTypes.object
 };

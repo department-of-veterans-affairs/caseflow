@@ -1,11 +1,17 @@
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
-import VirtualHearingLink from '../VirtualHearingLink';
+
 import { COLORS } from '../../../constants/AppConstants';
-import { rowThirds, labelPadding, labelPaddingFirst, hearingLinksContainer, copyButtonStyles } from './style';
+import {
+  rowThirds,
+  labelPadding,
+  labelPaddingFirst,
+  hearingLinksContainer
+} from './style';
 import COPY from '../../../../COPY';
 import CopyTextButton from '../../../components/CopyTextButton';
-import PropTypes from 'prop-types';
+import VirtualHearingLink from '../VirtualHearingLink';
 
 export const VirtualHearingLinkDetails = ({
   aliasWithHost,
@@ -48,7 +54,10 @@ export const VirtualHearingLinkDetails = ({
 
 VirtualHearingLinkDetails.propTypes = {
   aliasWithHost: PropTypes.string,
-  pin: PropTypes.number,
+  pin: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
+  ]),
   role: PropTypes.string,
   link: PropTypes.string,
   hearing: PropTypes.object,

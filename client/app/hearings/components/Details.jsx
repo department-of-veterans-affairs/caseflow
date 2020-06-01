@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
@@ -21,7 +20,6 @@ import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import * as DateUtil from '../../util/DateUtil';
 import DetailsForm from './details/DetailsForm';
-import DocketTypeBadge from '../../components/DocketTypeBadge';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
 
@@ -260,49 +258,6 @@ const HearingDetails = (props) => {
     });
   };
 
-  const columns = [
-    {
-      label: 'Hearing Date',
-      value:
-        readableRequestType === 'Travel' ? (
-          <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
-        ) : (
-          <Link to={`/schedule/docket/${hearingDayId}`}>
-            <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
-          </Link>
-        )
-    },
-    {
-      label: 'Docket Number',
-      value: (
-        <span>
-          <DocketTypeBadge name={docketName} number={docketNumber} />
-          {docketNumber}
-        </span>
-      )
-    },
-    {
-      label: 'Regional office',
-      value: regionalOfficeName
-    },
-    {
-      label: 'Hearing Location',
-      value: readableLocation
-    },
-    {
-      label: 'Disposition',
-      value: disposition
-    },
-    {
-      label: 'Type',
-      value: isVirtual ? 'Virtual' : readableRequestType
-    },
-    {
-      label: 'AOD Status',
-      value: aod || 'None'
-    }
-  ];
-
   const editedEmails = getEditedEmails();
 
   return (
@@ -316,7 +271,16 @@ const HearingDetails = (props) => {
       <AppSegment filledBackground>
         <div {...inputFix}>
           <DetailsHeader
-            columns={columns}
+            aod={aod}
+            disposition={disposition}
+            docketName={docketName}
+            docketNumber={docketNumber}
+            isVirtual={isVirtual}
+            hearingDayId={hearingDayId}
+            readableLocation={readableLocation}
+            readableRequestType={readableRequestType}
+            regionalOfficeName={regionalOfficeName}
+            scheduledFor={scheduledFor}
             veteranFileNumber={veteranFileNumber}
             veteranFirstName={veteranFirstName}
             veteranLastName={veteranLastName}

@@ -1,5 +1,4 @@
 import { css } from 'glamor';
-import { COLORS } from '../../../constants/AppConstants';
 
 export const labelPaddingFirst = css({
   paddingBottom: 5,

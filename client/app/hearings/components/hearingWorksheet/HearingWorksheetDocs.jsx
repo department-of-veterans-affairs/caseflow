@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil';
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+
 import { Accordion } from '../../../components/Accordion';
+import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil';
 import AccordionSection from '../../../components/AccordionSection';
 import Table from '../../../components/Table';
-import { css } from 'glamor';
 
 const columns = [
   { align: 'left',
@@ -93,5 +95,12 @@ class HearingWorksheetDocs extends Component {
     </div>;
   }
 }
+
+HearingWorksheetDocs.propTypes = {
+  worksheet: PropTypes.shape({
+    cached_number_of_documents: PropTypes.number
+  }),
+  worksheetAppeals: PropTypes.object
+};
 
 export default connect()(HearingWorksheetDocs);

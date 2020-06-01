@@ -5,7 +5,6 @@ import React from 'react';
 import moment from 'moment-timezone';
 
 import { Accordion } from '../../../components/Accordion';
-import { COLORS } from '../../../constants/AppConstants';
 import { genericRow } from './style';
 import {
   sectionHeadingStyling,
@@ -43,14 +42,14 @@ const accordionContainer = css({
     {
       backgroundPosition: 'right 2rem center',
       backgroundRepeat: 'no-repeat',
-      backgroundSize: '1.5rem',
+      backgroundSize: '1.5rem'
     },
     sectionHeadingStyling
   ),
   '& .usa-accordion-content > *:first-child': {
     marginTop: 30
   }
-})
+});
 
 export const EmailNotificationHistory = ({ rows }) => (
   <div
@@ -86,10 +85,12 @@ export const EmailNotificationHistory = ({ rows }) => (
 );
 
 EmailNotificationHistory.propTypes = {
-  rows: PropTypes.shape({
-    emailAddress: PropTypes.string,
-    sentAt: PropTypes.string,
-    sentTo: PropTypes.string,
-    sentBy: PropTypes.string
-  })
+  rows: PropTypes.arrayOf(
+    PropTypes.shape({
+      emailAddress: PropTypes.string,
+      sentAt: PropTypes.string,
+      sentTo: PropTypes.string,
+      sentBy: PropTypes.string
+    })
+  )
 };

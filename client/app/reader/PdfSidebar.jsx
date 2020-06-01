@@ -1,37 +1,37 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+import classNames from 'classnames';
 
-import Comment from './Comment';
-import EditComment from './EditComment';
-import WindowSlider from './WindowSlider';
-import Button from '../components/Button';
-import Modal from '../components/Modal';
-import Table from '../components/Table';
 import { Accordion } from '../components/Accordion';
-import AccordionSection from '../components/AccordionSection';
+import { CATEGORIES } from './analytics';
+import { COMMENT_ACCORDION_KEY } from '../reader/PdfViewer/actionTypes';
 import { Keyboard } from '../components/RenderFunctions';
-import SideBarDocumentInformation from './SideBarDocumentInformation';
-import SideBarCategories from './SideBarCategories';
-import SideBarIssueTags from './SideBarIssueTags';
-import SideBarComments from './SideBarComments';
-import { setOpenedAccordionSections, togglePdfSidebar,
-  handleFinishScrollToSidebarComment } from '../reader/PdfViewer/PdfViewerActions';
+import { commentColumns, commentInstructions, documentsColumns,
+  documentsInstructions, searchColumns, searchInstructions } from './PdfKeyboardInfo';
+import { keyOfAnnotation, sortAnnotations }
+  from './utils';
+import { makeGetAnnotationsByDocumentId } from './selectors';
 import {
   selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
   updateAnnotationContent, updateAnnotationRelevantDate
 } from '../reader/AnnotationLayer/AnnotationActions';
-import { keyOfAnnotation, sortAnnotations }
-  from './utils';
-import { commentColumns, commentInstructions, documentsColumns,
-  documentsInstructions, searchColumns, searchInstructions } from './PdfKeyboardInfo';
-import classNames from 'classnames';
-import { makeGetAnnotationsByDocumentId } from './selectors';
-import { CATEGORIES } from './analytics';
-import { COMMENT_ACCORDION_KEY } from '../reader/PdfViewer/actionTypes';
+import { setOpenedAccordionSections, togglePdfSidebar,
+  handleFinishScrollToSidebarComment } from '../reader/PdfViewer/PdfViewerActions';
+import AccordionSection from '../components/AccordionSection';
+import Button from '../components/Button';
+import Comment from './Comment';
+import EditComment from './EditComment';
+import Modal from '../components/Modal';
+import SideBarCategories from './SideBarCategories';
+import SideBarComments from './SideBarComments';
+import SideBarDocumentInformation from './SideBarDocumentInformation';
+import SideBarIssueTags from './SideBarIssueTags';
+import Table from '../components/Table';
+import WindowSlider from './WindowSlider';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -237,14 +237,25 @@ export class PdfSidebar extends React.Component {
 }
 
 PdfSidebar.propTypes = {
+  appeal: PropTypes.object,
   doc: PropTypes.object,
   selectedAnnotationId: PropTypes.number,
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number
   })),
+  featureToggles: PropTypes.array,
+  openedAccordionSections: PropTypes.array,
+  cancelEditAnnotation: PropTypes.func,
+  handleFinishScrollToSidebarComment: PropTypes.func,
   onJumpToComment: PropTypes.func,
+  requestEditAnnotation: PropTypes.func,
+  selectAnnotation: PropTypes.func,
+  setOpenedAccordionSections: PropTypes.func,
+  startEditAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
+  updateAnnotationContent: PropTypes.func,
+  updateAnnotationRelevantDate: PropTypes.func,
   error: PropTypes.shape({
     tag: PropTypes.shape({
       visible: PropTypes.bool,
