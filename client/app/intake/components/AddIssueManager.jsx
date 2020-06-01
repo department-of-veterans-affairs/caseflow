@@ -136,7 +136,7 @@ class AddIssueManager extends React.Component {
             if (isCorrection(currentIssue.isRating, this.props.intakeData)) {
               this.setState({ currentModal: 'CorrectionTypeModal' });
             } else if (this.hasLegacyAppeals()) {
-              this.setState({ currentModal: 'LegacyOptInModal' , addtlProps: { currentIssue } });
+              this.setState({ currentModal: 'LegacyOptInModal', addtlProps: { currentIssue } });
             } else if (currentIssue.timely === false) {
               this.setState({ currentModal: 'UntimelyExemptionModal', addtlProps: { currentIssue } });
             } else {

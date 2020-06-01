@@ -190,7 +190,6 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
       expect(page).to have_content("Description for Apportionment")
     end
-
   end
 
   context "When the user adds an untimely issue" do
