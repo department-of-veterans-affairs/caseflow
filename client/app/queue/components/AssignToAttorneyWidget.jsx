@@ -149,7 +149,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
       }).
       finally(() => {
         if (!this.props.isModal) {
-          this.props.resetSaveState()
+          this.props.resetSaveState();
         }
       });
   }
