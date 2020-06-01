@@ -93,7 +93,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         click_dropdown(text: attorney_two.full_name)
 
         click_on "Assign 1 case"
-        expect(page).to have_content("Assigned 1 task to #{attorney_two.full_name}")
+        expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
       end
 
       step "navigates to the other attorney's case list" do
