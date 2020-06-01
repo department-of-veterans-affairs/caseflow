@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import {
   setSavePending,
+  resetSaveState,
   resetErrorMessages,
   showErrorMessage,
   showSuccessMessage,
@@ -145,6 +146,11 @@ class AssignToAttorneyWidget extends React.PureComponent {
         return this.props.showErrorMessage({
           title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
           detail: errorDetail });
+      }).
+      finally(() => {
+        if (!this.props.isModal) {
+          this.props.resetSaveState()
+        }
       });
   }
 
@@ -244,6 +250,7 @@ AssignToAttorneyWidget.propTypes = {
   userId: PropTypes.number,
   setSavePending: PropTypes.func,
   onTaskAssignment: PropTypes.func,
+  resetSaveState: PropTypes.func,
   showSuccessMessage: PropTypes.func,
   isModal: PropTypes.bool,
   showErrorMessage: PropTypes.func,
@@ -281,6 +288,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSavePending,
+  resetSaveState,
   setSelectedAssignee,
   setSelectedAssigneeSecondary,
   showErrorMessage,
