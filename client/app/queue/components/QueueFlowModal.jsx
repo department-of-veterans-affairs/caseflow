@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from '../../components/Modal';
+import Alert from '../../components/Alert';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -38,12 +39,12 @@ class QueueFlowModal extends React.PureComponent {
 
     this.props.
       submit().
-      then(() => this.closeHandler()).
+      then(() => this.props.saveSuccessful && this.closeHandler()).
       finally(() => this.setState({ loading: false }));
   };
 
   render = () => {
-    const { title, button, children } = this.props;
+    const { title, button, children, error, success } = this.props;
 
     return (
       <Modal
@@ -63,6 +64,8 @@ class QueueFlowModal extends React.PureComponent {
         ]}
         closeHandler={this.cancelHandler}
       >
+        {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
+        {success && <Alert title={success.title} type="success">{success.detail}</Alert>}
         {children}
       </Modal>
     );
@@ -85,8 +88,17 @@ QueueFlowModal.propTypes = {
   pathAfterSubmit: PropTypes.string,
   // submit should return a promise on which .then() can be called
   submit: PropTypes.func,
-  validateForm: PropTypes.func
+  validateForm: PropTypes.func,
+  saveSuccessful: PropTypes.bool,
+  success: PropTypes.object,
+  error: PropTypes.object
 };
+
+const mapStateToProps = (state) => ({
+  saveSuccessful: state.saveSuccessful,
+  success: state.ui.messages.success,
+  error: state.ui.messages.error
+});
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -98,7 +110,7 @@ const mapDispatchToProps = (dispatch) =>
 
 export default withRouter(
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
   )(QueueFlowModal)
 );
