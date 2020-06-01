@@ -231,7 +231,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         end
       end
 
-      scenario "on legacy appeals", focus: true do
+      scenario "on legacy appeals" do
         step "reassign a JudgeLegacyAssignTask" do
           visit "/queue/#{judge_one.user.css_id}/assign"
           click_on(legacy_appeal.veteran_file_number)
