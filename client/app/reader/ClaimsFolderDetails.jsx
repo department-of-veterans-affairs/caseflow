@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 
-import Accordion from '../components/Accordion';
+import { Accordion } from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 import IssueList from '../queue/components/IssueList';
 

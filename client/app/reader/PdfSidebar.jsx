@@ -11,7 +11,7 @@ import WindowSlider from './WindowSlider';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
-import Accordion from '../components/Accordion';
+import { Accordion } from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 import { Keyboard } from '../components/RenderFunctions';
 import SideBarDocumentInformation from './SideBarDocumentInformation';
