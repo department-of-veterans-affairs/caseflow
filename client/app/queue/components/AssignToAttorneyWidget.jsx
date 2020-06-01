@@ -89,7 +89,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
 
   onCancel = () => {
     this.props.resetAssignees();
-    this.props.history.goBack()
+    this.props.history.goBack();
   }
 
   submit = () => {
@@ -271,7 +271,9 @@ AssignToAttorneyWidget.propTypes = {
   setSelectedAssignee: PropTypes.func,
   setSelectedAssigneeSecondary: PropTypes.func,
   selectedTasks: PropTypes.array,
-  highlightFormItems: PropTypes.bool
+  highlightFormItems: PropTypes.bool,
+  history: PropTypes.object,
+  resetAssignees: PropTypes.func,
 };
 
 const mapStateToProps = (state) => {
