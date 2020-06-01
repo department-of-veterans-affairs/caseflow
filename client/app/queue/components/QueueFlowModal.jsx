@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { highlightInvalidFormItems } from '../uiReducer/uiActions';
+import { highlightInvalidFormItems, resetSaveState } from '../uiReducer/uiActions';
 
 class QueueFlowModal extends React.PureComponent {
   constructor(props) {
@@ -39,8 +39,15 @@ class QueueFlowModal extends React.PureComponent {
 
     this.props.
       submit().
-      then(() => this.props.saveSuccessful && this.closeHandler()).
-      finally(() => this.setState({ loading: false }));
+      then(() => {
+        if (this.props.saveSuccessful !== false) {
+          this.closeHandler();
+        }
+      }).
+      finally(() => {
+        this.props.resetSaveState();
+        this.setState({ loading: false });
+      });
   };
 
   render = () => {
@@ -91,11 +98,12 @@ QueueFlowModal.propTypes = {
   validateForm: PropTypes.func,
   saveSuccessful: PropTypes.bool,
   success: PropTypes.object,
-  error: PropTypes.object
+  error: PropTypes.object,
+  resetSaveState: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
-  saveSuccessful: state.saveSuccessful,
+  saveSuccessful: state.ui.saveState.saveSuccessful,
   success: state.ui.messages.success,
   error: state.ui.messages.error
 });
@@ -103,7 +111,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      highlightInvalidFormItems
+      highlightInvalidFormItems,
+      resetSaveState
     },
     dispatch
   );

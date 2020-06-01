@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 
 import {
   setSavePending,
-  resetSaveState,
   resetErrorMessages,
   showErrorMessage,
   showSuccessMessage,
@@ -23,6 +22,7 @@ import pluralize from 'pluralize';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
+import { ACTIONS } from '../uiReducer/uiConstants';
 import { taskActionData } from '../utils';
 
 import QueueFlowModal from './QueueFlowModal';
@@ -120,8 +120,6 @@ class AssignToAttorneyWidget extends React.PureComponent {
         previousAssigneeId,
         instructions }).
       then(() => {
-        this.props.resetSaveState();
-
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
             verb: 'Assigned',
@@ -130,7 +128,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
           })
         });
       }, (error) => {
-        this.props.resetSaveState();
+        this.props.saveFailure();
 
         let errorDetail;
 
@@ -246,7 +244,6 @@ AssignToAttorneyWidget.propTypes = {
   userId: PropTypes.number,
   setSavePending: PropTypes.func,
   onTaskAssignment: PropTypes.func,
-  resetSaveState: PropTypes.func,
   showSuccessMessage: PropTypes.func,
   isModal: PropTypes.bool,
   showErrorMessage: PropTypes.func,
@@ -263,7 +260,8 @@ AssignToAttorneyWidget.propTypes = {
   setSelectedAssignee: PropTypes.func,
   setSelectedAssigneeSecondary: PropTypes.func,
   selectedTasks: PropTypes.array,
-  highlightFormItems: PropTypes.bool
+  highlightFormItems: PropTypes.bool,
+  saveFailure: PropTypes.func
 };
 
 const mapStateToProps = (state) => {
@@ -283,13 +281,13 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSavePending,
-  resetSaveState,
   setSelectedAssignee,
   setSelectedAssigneeSecondary,
   showErrorMessage,
   resetErrorMessages,
   showSuccessMessage,
-  resetSuccessMessages
+  resetSuccessMessages,
+  saveFailure: () => dispatch({ type: ACTIONS.SAVE_FAILURE })
 }, dispatch);
 
 export default (connect(
