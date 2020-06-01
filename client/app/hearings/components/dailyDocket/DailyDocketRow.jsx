@@ -217,6 +217,11 @@ class DailyDocketRow extends React.Component {
     return this.props.
       saveHearing(hearingWithDisp.externalId, hearingChanges).
       then((response) => {
+        // false is returned from DailyDocketContainer in case of error
+        if (!response) {
+          return;
+        }
+
         const alerts = response.body?.alerts;
 
         if (alerts.hearing) {

@@ -130,6 +130,7 @@
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db",
+    "@types/jest": "^25.2.3",
     "babel-eslint": "^10.1.0",
     "chai": "^3.5.0",
     "enzyme": "^3.10.0",

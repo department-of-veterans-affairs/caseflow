@@ -406,10 +406,10 @@ describe TaskPager, :all_dbs do
       end
 
       it "sorts by AOD status, case type, and docket number" do
-        expected_order = CachedAppeal.all.sort_by do |cached_appeal|
-          [cached_appeal.is_aod ? 1 : 0, cached_appeal.case_type, cached_appeal.docket_number]
-        end
-        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+        # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up first
+        # so we sort descending on is_aod
+        expected_order = CachedAppeal.order(is_aod: :desc, case_type: :asc, docket_number: :asc)
+        expect(subject.map(&:appeal_id)).to eq(expected_order.pluck(:appeal_id))
       end
     end
   end
