@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
@@ -12,7 +13,8 @@ import {
   showSuccessMessage,
   resetSuccessMessages,
   setSelectedAssignee,
-  setSelectedAssigneeSecondary
+  setSelectedAssigneeSecondary,
+  resetAssignees
 } from '../uiReducer/uiActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -85,6 +87,11 @@ class AssignToAttorneyWidget extends React.PureComponent {
 
   validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
 
+  onCancel = () => {
+    this.props.resetAssignees();
+    this.props.history.goBack()
+  }
+
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
@@ -121,6 +128,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
         instructions }).
       then(() => {
         this.props.resetSaveState();
+        this.props.resetAssignees();
 
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
@@ -235,7 +243,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
     </React.Fragment>;
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
-      submit={this.submit} validateForm={this.validateForm}>
+      submit={this.submit} validateForm={this.validateForm} onCancel={this.onCancel}>
       {Widget}
     </QueueFlowModal> : Widget;
   }
@@ -289,7 +297,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage,
   resetErrorMessages,
   showSuccessMessage,
-  resetSuccessMessages
+  resetSuccessMessages,
+  resetAssignees
 }, dispatch);
 
 export default (connect(
@@ -297,4 +306,5 @@ export default (connect(
   mapDispatchToProps
 )(AssignToAttorneyWidget));
 
-export const AssignToAttorneyWidgetModal = (connect(mapStateToProps, mapDispatchToProps)(AssignToAttorneyWidget));
+export const AssignToAttorneyWidgetModal =
+  withRouter(connect(mapStateToProps, mapDispatchToProps)(AssignToAttorneyWidget));
