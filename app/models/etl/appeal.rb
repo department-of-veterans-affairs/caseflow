@@ -3,6 +3,10 @@
 # transformed Appeal model, with associations "flattened" for reporting.
 
 class ETL::Appeal < ETL::Record
+  acts_as_tree
+
+  include PrintsTaskTree
+
   scope :active, -> { where(active_appeal: true) }
 
   has_many :tasks, -> { where(appeal_type: "Appeal") }, class_name: "ETL::Task", primary_key: "appeal_id"
@@ -72,5 +76,9 @@ class ETL::Appeal < ETL::Record
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/CyclomaticComplexity
+  end
+
+  def root_task
+    tasks.find { |t| t.task_type == "RootTask" }
   end
 end
