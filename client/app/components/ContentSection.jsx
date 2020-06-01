@@ -15,7 +15,6 @@ export const sectionHeadingStyling = css({
 export const sectionSegmentStyling = css({
   border: `1px solid ${COLORS.GREY_LIGHT}`,
   borderTop: '0px',
-  marginBottom: '3rem',
   padding: '1rem 2rem'
 });
 
