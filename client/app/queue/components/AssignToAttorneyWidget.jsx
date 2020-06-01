@@ -106,10 +106,14 @@ class AssignToAttorneyWidget extends React.PureComponent {
 
   getAssignee = (id) => {
     const { attorneysOfJudge, attorneys, selectedTasks } = this.props;
-    let assignee = (attorneysOfJudge.concat(attorneys.data)).find((attorney) => attorney.id.toString() === id);
+    let assignee = (attorneysOfJudge.concat(attorneys.data)).find((attorney) => attorney?.id?.toString() === id);
 
     if (!assignee) {
-      assignee = taskActionData({ ...this.props, task: selectedTasks[0] })?.options.find((opt) => opt.value === id);
+      // Sometimes attorneys are pulled from task action data. If we can't find the selected attorney in state, check
+      // the tasks.
+      const option = taskActionData({ ...this.props, task: selectedTasks[0] })?.options.find((opt) => opt.value === id);
+
+      assignee = { id: option.value, full_name: option.label };
     }
 
     return assignee;
