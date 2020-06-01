@@ -60,14 +60,14 @@ class ETL::HearingRecord < ETL::Record
     end
 
     def merge_original_attributes_to_target(original, target)
-       merge_original_attributes_to_target_shared(original, target)
+      merge_original_attributes_to_target_shared(original, target)
 
-        target.evidence_window_waived = original.evidence_window_waived
-       target.scheduled_time = original.scheduled_time
-       target.uuid = original.uuid
+      target.evidence_window_waived = original.evidence_window_waived
+      target.scheduled_time = original.scheduled_time
+      target.uuid = original.uuid
 
-        target
-     end
+      target
+    end
 
     private
 
