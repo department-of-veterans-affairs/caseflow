@@ -443,7 +443,8 @@ DailyDocketRow.propTypes = {
     isVirtual: PropTypes.bool,
     externalId: PropTypes.string,
     disposition: PropTypes.string,
-    scheduledForIsPast: PropTypes.bool
+    scheduledForIsPast: PropTypes.bool,
+    scheduledTimeString: PropTypes.string
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,
