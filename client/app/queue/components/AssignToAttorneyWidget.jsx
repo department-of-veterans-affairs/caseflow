@@ -273,7 +273,7 @@ AssignToAttorneyWidget.propTypes = {
   selectedTasks: PropTypes.array,
   highlightFormItems: PropTypes.bool,
   history: PropTypes.object,
-  resetAssignees: PropTypes.func,
+  resetAssignees: PropTypes.func
 };
 
 const mapStateToProps = (state) => {
