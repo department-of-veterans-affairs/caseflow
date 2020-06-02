@@ -42,6 +42,22 @@ FactoryBot.define do
 
     trait :judge do
       roles { ["Hearing Prep"] }
+
+      after(:create) do |user, evaluator|
+        create(:staff, :judge_role, user: user)
+      end
+    end
+
+    trait :attorney do
+      after(:create) do |user, evaluator|
+        create(:staff, :attorney_role, user: user)
+      end
+    end
+
+    trait :acting_judge do
+      after(:create) do |user, evaluator|
+        create(:staff, :attorney_judge_role, user: user)
+      end
     end
 
     after(:create) do |user, evaluator|

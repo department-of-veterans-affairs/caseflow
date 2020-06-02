@@ -51,6 +51,10 @@ class AttorneyTask < Task
     super || completed?
   end
 
+  def reassign_clears_overtime?
+    true
+  end
+
   private
 
   def can_be_moved_by_user?(user)
