@@ -14,12 +14,12 @@ class ETL::UnknownStatusWithOpenRootTaskQuery
   def open_root_tasks
     ETL::Task.select(:appeal_id)
       .where(appeal_type: "Appeal", task_type: "RootTask")
-      .where.not(task_status: ["completed", "cancelled"])
+      .where(task_status: Task.open_statuses)
   end
 
   def open_child_tasks
     ETL::Task.select(:appeal_id)
       .where(appeal_type: "Appeal")
-      .where.not(task_type: "RootTask", task_status: ["completed", "cancelled"])
+      .where.not(task_type: "RootTask", task_status: Task.closed_statuses)
   end
 end

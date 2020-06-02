@@ -14,6 +14,6 @@ class ETL::UnknownStatusWithClosedTasksQuery
   def open_tasks
     ETL::Task.select(:appeal_id)
       .where(appeal_type: "Appeal")
-      .where.not(task_status: ["completed", "cancelled"])
+      .where(task_status: Task.open_statuses)
   end
 end

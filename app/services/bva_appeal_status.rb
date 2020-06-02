@@ -34,7 +34,7 @@ class BVAAppealStatus
     misc: "MISC",
     on_hold: "ON HOLD",
     unknown: "UNKNOWN",
-    post_dispatch: '9. Post dispatch tasks'
+    post_dispatch: "9. Post dispatch tasks"
   }.freeze
 
   MISC_TASK_NAMES = %w[

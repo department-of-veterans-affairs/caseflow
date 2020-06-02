@@ -79,6 +79,6 @@ class ETL::Appeal < ETL::Record
   end
 
   def root_task
-    tasks.find { |t| t.task_type == "RootTask" }
+    tasks.find { |task| task.task_type == "RootTask" }
   end
 end
