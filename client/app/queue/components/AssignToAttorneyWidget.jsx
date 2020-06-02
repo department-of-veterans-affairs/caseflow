@@ -131,7 +131,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
 
     return this.props.onTaskAssignment(
       { tasks: selectedTasks,
-        assigneeId: assignee.id.toString(),
+        assigneeId: assignee.id,
         previousAssigneeId,
         instructions }).
       then(() => {
