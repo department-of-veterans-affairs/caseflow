@@ -34,42 +34,6 @@ describe AttorneyTask, :all_dbs do
       )
     end
 
-    context "there are no sibling tasks" do
-      it "is valid" do
-        expect(subject.valid?).to eq true
-      end
-    end
-
-    context "there is a completed sibling task" do
-      before do
-        create(:ama_attorney_task,
-               :completed,
-               assigned_to: attorney,
-               assigned_by: assigning_judge,
-               parent: parent)
-      end
-
-      it "is valid" do
-        expect(subject.valid?).to eq true
-      end
-    end
-
-    context "there is an uncompleted sibling task" do
-      before do
-        create(
-          :ama_attorney_task,
-          assigned_to: attorney,
-          assigned_by: assigning_judge,
-          parent: parent
-        )
-      end
-
-      it "is not valid" do
-        expect(subject.valid?).to eq false
-        expect(subject.errors.messages[:parent].first).to eq "has open child tasks"
-      end
-    end
-
     context "when the assigner is invalid" do
       let!(:assigning_judge_staff) { create(:staff, sdomainid: assigning_judge.css_id, sattyid: nil) }
       it "fails" do
@@ -184,13 +148,13 @@ describe AttorneyTask, :all_dbs do
     end
   end
 
-  context "when cancelling the task" do
+  context ".send_back_to_judge_assign!" do
     let!(:attorney_task) { create(:ama_attorney_task, assigned_by: assigning_judge, parent: parent) }
 
-    subject { attorney_task.update!(status: Constants.TASK_STATUSES.cancelled) }
+    subject { attorney_task.send_back_to_judge_assign! }
 
     it "cancels the parent decision task and opens a judge assignment task" do
-      expect(subject).to be true
+      expect(subject.count).to eq 3
       expect(attorney_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
       expect(parent.reload.status).to eq Constants.TASK_STATUSES.cancelled
       assign_task = appeal.tasks.find_by(type: JudgeAssignTask.name)

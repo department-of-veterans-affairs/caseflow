@@ -216,7 +216,7 @@ const editAppeal = (appealId, attributes) => ({
 
 export const setOvertime = (appealId, overtime) => ({
   type: ACTIONS.SET_OVERTIME,
-  payload: { 
+  payload: {
     appealId,
     overtime
   }
@@ -495,9 +495,11 @@ export const reassignTasksToUser = ({
     params = {
       data: {
         task: {
-          type: 'AttorneyTask',
-          assigned_to_id: assigneeId,
-          instructions
+          reassign: {
+            assigned_to_id: assigneeId,
+            assigned_to_type: 'User',
+            instructions
+          }
         }
       }
     };

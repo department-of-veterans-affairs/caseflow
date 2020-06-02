@@ -12,9 +12,6 @@ class AttorneyTask < Task
 
   validate :assigned_by_role_is_valid, if: :will_save_change_to_assigned_by_id?
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
-  validate :child_attorney_tasks_are_completed, on: :create
-
-  after_update :send_back_to_judge_assign, if: :attorney_task_just_cancelled?
 
   def available_actions(user)
     if can_be_moved_by_user?(user)
@@ -55,6 +52,16 @@ class AttorneyTask < Task
     true
   end
 
+  def send_back_to_judge_assign!
+    transaction do
+      cancelled!
+      cancel_parent_judge_review
+      judge_assign_task = open_judge_assign_task
+
+      [self, parent, judge_assign_task]
+    end
+  end
+
   private
 
   def can_be_moved_by_user?(user)
@@ -65,12 +72,6 @@ class AttorneyTask < Task
     parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_judges?
   end
 
-  def child_attorney_tasks_are_completed
-    if parent&.children_attorney_tasks&.open&.any?
-      errors.add(:parent, "has open child tasks")
-    end
-  end
-
   def assigned_to_role_is_valid
     errors.add(:assigned_to, "has to be an attorney") if assigned_to && !assigned_to.attorney_in_vacols?
   end
@@ -78,17 +79,6 @@ class AttorneyTask < Task
   def assigned_by_role_is_valid
     if assigned_by && (!assigned_by.judge? && !assigned_by.can_act_on_behalf_of_judges?)
       errors.add(:assigned_by, "has to be a judge or special case movement team member")
-    end
-  end
-
-  def attorney_task_just_cancelled?
-    type.eql?(AttorneyTask.name) && saved_change_to_attribute?("status") && cancelled?
-  end
-
-  def send_back_to_judge_assign
-    transaction do
-      cancel_parent_judge_review
-      open_judge_assign_task
     end
   end
 
