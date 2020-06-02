@@ -289,9 +289,9 @@ feature "Intake Review Page", :postgres do
         context "with attorney_fees feature toggle" do
           before { FeatureToggle.enable!(:attorney_fees) }
           after { FeatureToggle.disable!(:attorney_fees) }
-  
+
           let(:attorney) { attorneys.last }
-  
+
           it "allows adding new claimants" do
             start_appeal(
               veteran,
@@ -299,15 +299,15 @@ feature "Intake Review Page", :postgres do
             )
 
             visit "/intake"
-  
+
             expect(page).to have_current_path("/intake/review_request")
-  
+
             within_fieldset("Is the claimant someone other than the Veteran?") do
               find("label", text: "Yes", match: :prefer_exact).click
             end
-  
+
             expect(page).to have_content("+ Add Claimant")
-  
+
             click_button("+ Add Claimant")
             expect(page).to have_selector("#add_claimant_modal")
             expect(page).to have_button("Add this claimant", disabled: true)
@@ -325,7 +325,7 @@ feature "Intake Review Page", :postgres do
         def claimant_search(search)
           find(".dropdown-claimant").fill_in "claimant", with: search
         end
-  
+
         def select_claimant(index = 0)
           click_dropdown({ index: index }, find(".dropdown-claimant"))
         end
