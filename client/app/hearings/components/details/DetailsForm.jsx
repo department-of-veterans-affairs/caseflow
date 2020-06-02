@@ -206,7 +206,8 @@ const DetailsForm = (props) => {
     updateVirtualHearing
   } = props;
   const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
-  const enableVirtualHearings = userCanScheduleVirtualHearings;
+  const { userCanScheduleVirtualHearingsForCentral } = useContext(HearingsUserContext);
+  const enableVirtualHearings = userCanScheduleVirtualHearings && requestType !== 'Central';
   const { state: { hearingForms }, dispatch } = useContext(HearingsFormContext);
   const { hearingDetailsForm, virtualHearingForm, transcriptionDetailsForm } = hearingForms;
 
@@ -232,7 +233,7 @@ const DetailsForm = (props) => {
           onChange={(room) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { room } })}
         />
       </div>
-      {enableVirtualHearings && (
+      {(enableVirtualHearings || userCanScheduleVirtualHearingsForCentral) && (
         <React.Fragment>
           <div className="cf-help-divider" />
           <div {...flexParent}>
