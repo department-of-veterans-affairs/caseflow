@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
@@ -12,7 +13,8 @@ import {
   showSuccessMessage,
   resetSuccessMessages,
   setSelectedAssignee,
-  setSelectedAssigneeSecondary
+  setSelectedAssigneeSecondary,
+  resetAssignees
 } from '../uiReducer/uiActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -86,6 +88,11 @@ class AssignToAttorneyWidget extends React.PureComponent {
 
   validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
 
+  onCancel = () => {
+    this.props.resetAssignees();
+    this.props.history.goBack();
+  }
+
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
@@ -121,6 +128,8 @@ class AssignToAttorneyWidget extends React.PureComponent {
         previousAssigneeId,
         instructions }).
       then(() => {
+        this.props.resetAssignees();
+
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
             verb: 'Assigned',
@@ -239,7 +248,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
     </React.Fragment>;
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
-      submit={this.submit} validateForm={this.validateForm}>
+      submit={this.submit} validateForm={this.validateForm} onCancel={this.onCancel}>
       {Widget}
     </QueueFlowModal> : Widget;
   }
@@ -268,6 +277,8 @@ AssignToAttorneyWidget.propTypes = {
   setSelectedAssigneeSecondary: PropTypes.func,
   selectedTasks: PropTypes.array,
   highlightFormItems: PropTypes.bool,
+  history: PropTypes.object,
+  resetAssignees: PropTypes.func,
   saveFailure: PropTypes.func
 };
 
@@ -295,6 +306,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   resetErrorMessages,
   showSuccessMessage,
   resetSuccessMessages,
+  resetAssignees,
   saveFailure: () => dispatch({ type: ACTIONS.SAVE_FAILURE })
 }, dispatch);
 
@@ -303,4 +315,5 @@ export default (connect(
   mapDispatchToProps
 )(AssignToAttorneyWidget));
 
-export const AssignToAttorneyWidgetModal = (connect(mapStateToProps, mapDispatchToProps)(AssignToAttorneyWidget));
+export const AssignToAttorneyWidgetModal =
+  withRouter(connect(mapStateToProps, mapDispatchToProps)(AssignToAttorneyWidget));
