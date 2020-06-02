@@ -86,11 +86,11 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     end
   end
 
-  def check_virtual_hearings_links(virtual_hearing, label, disable_link = false)
+  def check_virtual_hearings_links(virtual_hearing, disable_link = false)
     # Test the hearing link details
     within "#vlj-hearings-link" do
       expect(page).to have_content(
-        "VLJ Link: #{label} \n" \
+        "VLJ Link: Start Virtual Hearing \n" \
         "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.host_pin}\n" \
         "Copy VLJ Link "
@@ -100,7 +100,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     end
     within "#guest-hearings-link" do
       expect(page).to have_content(
-        "Guest Link: #{label} \n" \
+        "Guest Link: Join Virtual Hearing \n" \
         "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.guest_pin}\n" \
         "Copy Guest Link "
@@ -288,7 +288,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     scenario "user has the host and guest links" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing")
+      check_virtual_hearings_links(virtual_hearing)
     end
   end
 
@@ -320,7 +320,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
       scenario "displays details when the date is before the hearing date" do
         visit "hearings/" + hearing.external_id.to_s + "/details"
-        check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing")
+        check_virtual_hearings_links(virtual_hearing)
       end
 
       scenario "displays expired when the date is after the hearing date" do
@@ -345,7 +345,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         )
         visit "hearings/" + hearing.external_id.to_s + "/details"
         hearing.reload
-        check_virtual_hearings_links(virtual_hearing, "Open Virtual Hearing", true)
+        check_virtual_hearings_links(virtual_hearing, true)
       end
     end
   end
