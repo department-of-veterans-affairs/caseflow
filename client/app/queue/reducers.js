@@ -436,7 +436,7 @@ const incrementTaskCountForAttorney = (state, action) => {
   } = state;
 
   attorneysOfJudge.forEach((attorney) => {
-    if (action.payload.attorney.id === attorney.id.toString()) {
+    if (action.payload.attorney.id === attorney.id) {
       attorney.active_task_count += 1;
     }
   });
