@@ -52,6 +52,7 @@ class SessionsController < ApplicationController
 
   # :nocov:
   def destroy
+    session.delete("return_to")
     remove_user_from_session
     if session["global_admin"]
       add_user_to_session(session["global_admin"])
