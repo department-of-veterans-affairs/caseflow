@@ -461,6 +461,10 @@ module Seeds
       create_task_at_judge_review(@ama_appeals[8], judge, attorney)
       create_task_at_colocated(@ama_appeals[9], judge, attorney)
 
+      5.times do
+        create_task_at_colocated(create(:appeal), judge, attorney, :schedule_hearing)
+      end
+
       9.times do
         create_appeal_at_judge_assignment(judge: judge, assigned_at: Time.zone.today)
       end
