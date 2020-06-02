@@ -17,7 +17,8 @@ class BVAAppealStatus
     cancelled: 10,
     misc: 11,
     on_hold: 9,
-    unknown: 12
+    unknown: 12,
+    post_dispatch: 13
   }.freeze
 
   DEFINITIONS = {
@@ -32,7 +33,8 @@ class BVAAppealStatus
     cancelled: "CANCELLED",
     misc: "MISC",
     on_hold: "ON HOLD",
-    unknown: "UNKNOWN"
+    unknown: "UNKNOWN",
+    post_dispatch: '9. Post dispatch tasks'
   }.freeze
 
   MISC_TASK_NAMES = %w[
@@ -108,6 +110,8 @@ class BVAAppealStatus
       :signed
     elsif completed_dispatch_task? && open_tasks.empty?
       :dispatched
+    elsif completed_dispatch_task?
+      :post_dispatch
     elsif cancelled_root_task?
       :cancelled
     elsif misc_task?

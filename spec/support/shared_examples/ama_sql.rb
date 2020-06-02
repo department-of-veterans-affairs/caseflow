@@ -84,6 +84,13 @@ shared_context "AMA Tableau SQL", shared_context: :metadata do
       create(:ama_judge_dispatch_return_task, parent: create(:root_task, appeal: appeal))
     end
   end
+  let!(:post_dispatch_effectuation) do
+    create(:appeal).tap do |appeal|
+      root_task = create(:root_task, appeal: appeal)
+      create(:bva_dispatch_task, :completed, parent: root_task)
+      create(:board_grant_effectuation_task, :assigned, appeal: appeal)
+    end
+  end
 
   let(:expected_report) do
     {
@@ -99,7 +106,8 @@ shared_context "AMA Tableau SQL", shared_context: :metadata do
       decision_dispatched.id => ["8. Decision dispatched", "07"],
       cancelled.id => %w[CANCELLED 09],
       on_hold.id => ["ON HOLD", "08"],
-      misc.id => %w[MISC 10]
+      misc.id => %w[MISC 10],
+      post_dispatch_effectuation.id => ["9. Post dispatch tasks", "12"]
     }
   end
 end
