@@ -23,6 +23,7 @@ import pluralize from 'pluralize';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
+import { ACTIONS } from '../uiReducer/uiConstants';
 import { taskActionData } from '../utils';
 
 import QueueFlowModal from './QueueFlowModal';
@@ -120,8 +121,6 @@ class AssignToAttorneyWidget extends React.PureComponent {
         previousAssigneeId,
         instructions }).
       then(() => {
-        this.props.resetSaveState();
-
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
             verb: 'Assigned',
@@ -130,7 +129,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
           })
         });
       }, (error) => {
-        this.props.resetSaveState();
+        this.props.saveFailure();
 
         let errorDetail;
 
@@ -147,6 +146,11 @@ class AssignToAttorneyWidget extends React.PureComponent {
         return this.props.showErrorMessage({
           title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
           detail: errorDetail });
+      }).
+      finally(() => {
+        if (!this.props.isModal) {
+          this.props.resetSaveState();
+        }
       });
   }
 
@@ -263,7 +267,8 @@ AssignToAttorneyWidget.propTypes = {
   setSelectedAssignee: PropTypes.func,
   setSelectedAssigneeSecondary: PropTypes.func,
   selectedTasks: PropTypes.array,
-  highlightFormItems: PropTypes.bool
+  highlightFormItems: PropTypes.bool,
+  saveFailure: PropTypes.func
 };
 
 const mapStateToProps = (state) => {
@@ -289,7 +294,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage,
   resetErrorMessages,
   showSuccessMessage,
-  resetSuccessMessages
+  resetSuccessMessages,
+  saveFailure: () => dispatch({ type: ACTIONS.SAVE_FAILURE })
 }, dispatch);
 
 export default (connect(
