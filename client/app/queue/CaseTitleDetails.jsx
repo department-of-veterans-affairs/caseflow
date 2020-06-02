@@ -81,9 +81,9 @@ const docketBadgeContainerStyle = css({
 });
 
 const CaseDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
-  <ul {...listStyling}>
-    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
-  </ul>
+  <div {...listStyling}>
+    {props.children.map((child, i) => child && <div key={i} {...listItemStyling}>{child}</div>)}
+  </div>
 </div>;
 
 CaseDetailTitleScaffolding.propTypes = { children: PropTypes.node.isRequired };
