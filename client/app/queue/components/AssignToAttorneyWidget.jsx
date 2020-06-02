@@ -106,13 +106,28 @@ class AssignToAttorneyWidget extends React.PureComponent {
     }
 
     if (selectedAssignee === OTHER) {
-      return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+      return this.assignTasks(selectedTasks, this.getAssignee(selectedAssigneeSecondary));
     }
 
-    return this.assignTasks(selectedTasks, selectedAssignee);
+    return this.assignTasks(selectedTasks, this.getAssignee(selectedAssignee));
   }
 
-  assignTasks = (selectedTasks, assigneeId) => {
+  getAssignee = (id) => {
+    const { attorneysOfJudge, attorneys, selectedTasks } = this.props;
+    let assignee = (attorneysOfJudge.concat(attorneys.data)).find((attorney) => attorney?.id?.toString() === id);
+
+    if (!assignee) {
+      // Sometimes attorneys are pulled from task action data. If we can't find the selected attorney in state, check
+      // the tasks.
+      const option = taskActionData({ ...this.props, task: selectedTasks[0] })?.options.find((opt) => opt.value === id);
+
+      assignee = { id: option.value, full_name: option.label };
+    }
+
+    return assignee;
+  };
+
+  assignTasks = (selectedTasks, assignee) => {
     const {
       previousAssigneeId,
       userId
@@ -124,17 +139,21 @@ class AssignToAttorneyWidget extends React.PureComponent {
 
     return this.props.onTaskAssignment(
       { tasks: selectedTasks,
-        assigneeId,
+        assigneeId: assignee.id,
         previousAssigneeId,
         instructions }).
       then(() => {
+        const isReassign = selectedTasks[0].type === 'AttorneyTask';
+
         this.props.resetAssignees();
 
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
-            verb: 'Assigned',
+            verb: isReassign ? 'Reassigned' : 'Assigned',
             numCases: selectedTasks.length,
-            casePlural: pluralize('case', selectedTasks.length)
+            casePlural: pluralize('tasks', selectedTasks.length),
+            // eslint-disable-next-line camelcase
+            assignee: assignee.full_name
           })
         });
       }, (error) => {
