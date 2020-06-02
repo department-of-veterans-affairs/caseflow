@@ -14,7 +14,6 @@ class AttorneyTask < Task
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
   validate :child_attorney_tasks_are_completed, on: :create
 
-
   def available_actions(user)
     if can_be_moved_by_user?(user)
       return [
