@@ -465,7 +465,7 @@ feature "AmaQueue", :all_dbs do
 
       click_on "Submit"
 
-      expect(page).to have_content("Assigned 1 case")
+      expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
     end
 
     it "judge can return report to attorney for corrections" do
@@ -766,7 +766,7 @@ feature "AmaQueue", :all_dbs do
 
           click_on "Submit"
 
-          expect(page).to have_content("Assigned 1 case")
+          expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
         end
 
         step "attorney completes task and returns the case to the judge" do

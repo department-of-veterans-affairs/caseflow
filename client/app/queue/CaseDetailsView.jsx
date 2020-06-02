@@ -73,16 +73,18 @@ export const CaseDetailsView = (props) => {
 
   const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
 
+  const modalIsOpen = window.location.pathname.includes('modal');
+
   return (
     <React.Fragment>
-      {error && (
+      {!modalIsOpen && error && (
         <div {...alertPaddingStyle}>
           <Alert title={error.title} type="error">
             {error.detail}
           </Alert>
         </div>
       )}
-      {success && (
+      {!modalIsOpen && success && (
         <div {...alertPaddingStyle}>
           <Alert type="success" title={success.title} scrollOnAlert={false}>
             {success.detail}
