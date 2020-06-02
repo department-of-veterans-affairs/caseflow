@@ -30,7 +30,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       it "has expected distribution" do
         subject
 
-        expect(ETL::Appeal.count).to eq(13)
+        expect(ETL::Appeal.count).to eq(14)
       end
 
       it "populates person attributes" do
@@ -60,9 +60,9 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       it "skips non-established Appeals" do
         subject
 
-        expect(ETL::Appeal.count).to eq(13)
+        expect(ETL::Appeal.count).to eq(14)
         expect(etl_build_table.rows_rejected).to eq(0) # not part of .filter so we can't know about it.
-        expect(etl_build_table.rows_inserted).to eq(13)
+        expect(etl_build_table.rows_inserted).to eq(14)
       end
     end
 
@@ -80,7 +80,7 @@ describe ETL::AppealSyncer, :etl, :all_dbs do
       it "syncs" do
         expect { subject }.to_not raise_error
 
-        expect(ETL::Appeal.count).to eq(14)
+        expect(ETL::Appeal.count).to eq(15)
       end
     end
   end
