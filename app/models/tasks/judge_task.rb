@@ -41,4 +41,8 @@ class JudgeTask < Task
   def previous_task
     children_attorney_tasks.order(:assigned_at).last
   end
+
+  def reassign_clears_overtime?
+    true
+  end
 end

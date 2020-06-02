@@ -448,5 +448,30 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       end
       it_behaves_like "judge reassigns case"
     end
+
+    context "When the appeal has not been marked for overtime" do
+      before { FeatureToggle.enable!(:overtime_revamp) }
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      it "does not create a new work mode for the appeal" do
+        expect(appeal.work_mode.nil?).to be true
+        patch :assign_to_judge, params: { tasks: params }
+        expect(appeal.work_mode.nil?).to be true
+      end
+    end
+
+    context "when the appeal has been marked for overtime" do
+      before do
+        FeatureToggle.enable!(:overtime_revamp)
+        appeal.overtime = true
+      end
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      it "removes the overtime status of the appeal" do
+        expect(appeal.overtime?).to be true
+        patch :assign_to_judge, params: { tasks: params }
+        expect(appeal.reload.overtime?).to be false
+      end
+    end
   end
 end

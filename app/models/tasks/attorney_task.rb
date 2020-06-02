@@ -48,6 +48,10 @@ class AttorneyTask < Task
     super || completed?
   end
 
+  def reassign_clears_overtime?
+    true
+  end
+
   def send_back_to_judge_assign!
     transaction do
       cancelled!
