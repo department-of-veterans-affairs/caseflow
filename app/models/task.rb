@@ -503,13 +503,15 @@ class Task < CaseflowRecord
   end
 
   def reassign(reassign_params, current_user)
-    sibling = dup.tap do |task|
-      task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
-      task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-      task.instructions = flattened_instructions(reassign_params)
-      task.status = Constants.TASK_STATUSES.assigned
-      task.save!
-    end
+    sibling = Task.create!(
+      attributes.merge(
+        id: nil,
+        assigned_by_id: self.class.child_assigned_by_id(parent, current_user),
+        assigned_to: self.class.child_task_assignee(parent, reassign_params),
+        instructions: flattened_instructions(reassign_params),
+        status: Constants.TASK_STATUSES.assigned
+      )
+    )
 
     # Preserve the open children and status of the old task
     children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: sibling.id) }
