@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
 import Modal from '../../components/Modal';
@@ -14,16 +14,17 @@ const fetchAttorneys = async (search = '') => {
 
   return res?.body;
 };
-const debouncedFetch = (fetchFn) => debounce(fetchFn, 250, { leading: true, trailing: false });
 const getClaimantOpts = async (search = '', asyncFn) => {
   // Enforce minimum search length (we'll simply return empty array rather than throw error)
-  const options =
-    search.length < 3 ?
-      [] :
-      (await debouncedFetch(asyncFn)(search)).map((item) => ({
-        label: item.name,
-        value: item.participant_id
-      }));
+  if (search.length < 3) {
+    return { options: [] };
+  }
+
+  const res = await asyncFn(search);
+  const options = res.map((item) => ({
+    label: item.name,
+    value: item.participant_id
+  }));
 
   return { options };
 };
@@ -32,19 +33,17 @@ const filterOptions = (options) => options;
 
 export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys }) => {
   const [claimant, setClaimant] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [relationship, setRelationship] = useState(relationshipOpts[0]);
   const isInvalid = useMemo(() => !claimant, [claimant]);
   const handleChangeRelationship = (value) => setRelationship(value);
   const handleChangeClaimant = (value) => setClaimant(value);
-  const asyncFn = async (search) => {
-    setLoading(true);
-    const results = await getClaimantOpts(search, onSearch);
 
-    setLoading(false);
-
-    return results;
-  };
+  const asyncFn = useCallback(
+    debounce((search, callback) => {
+      getClaimantOpts(search, onSearch).then((res) => callback(null, res));
+    }, 250),
+    [onSearch]
+  );
 
   const buttons = [
     {
@@ -80,7 +79,6 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
         value={claimant}
         filterOptions={filterOptions}
         async={asyncFn}
-        loading={loading}
         options={[]}
         debounce={250}
       />
