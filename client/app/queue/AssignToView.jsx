@@ -104,12 +104,6 @@ class AssignToView extends React.Component {
       requestSave('/tasks', payload, isPulacCerullo ? pulacCerulloSuccessMessage : assignTaskSuccessMessage).
       then((resp) => {
         this.props.onReceiveAmaTasks(resp.body.tasks.data);
-        if (taskType === 'JudgeAssignTask') {
-          this.props.setOvertime({
-            appealId: appeal.externalId,
-            overtime: false
-          });
-        }
       }).
       catch(() => {
         // handle the error from the frontend
@@ -153,6 +147,9 @@ class AssignToView extends React.Component {
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
+      if (task.type === 'JudgeAssignTask') {
+        this.props.setOvertime(task.externalAppealId, false);
+      }
     });
   };
 

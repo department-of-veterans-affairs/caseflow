@@ -535,11 +535,7 @@ export const reassignTasksToUser = ({
         id: previousAssigneeId
       }));
 
-      debugger;
-      dispatch(setOvertime({
-        appealId: oldTask.externalAppealId,
-        overtime: false
-      }));
+      dispatch(setOvertime(oldTask.externalAppealId, false));
     });
 }));
 
@@ -564,10 +560,7 @@ export const legacyReassignToJudge = ({
 
       dispatch(showSuccessMessage(successMessage));
 
-      dispatch(setOvertime({
-        appealId: oldTask.externalAppealId,
-        overtime: false
-      }));
+      dispatch(setOvertime(oldTask.externalAppealId, false));
     });
 }));
 
