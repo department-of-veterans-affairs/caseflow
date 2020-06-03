@@ -260,13 +260,13 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def appellant_email_address
-    person_for_appellant&.[](:email_addr)
+    person_for_appellant&.email_address
   end
 
   def person_for_appellant
     return nil if appellant_ssn.blank?
 
-    bgs.fetch_person_by_ssn(appellant_ssn)
+    Person.find_or_create_by_ssn(appellant_ssn)
   end
 
   def veteran_if_exists
@@ -864,7 +864,14 @@ class LegacyAppeal < CaseflowRecord
     earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    ([soc_date] + ssoc_dates).any? { |soc_date| soc_date >= earliest_eligible_date }
+    all_dates = ([soc_date] + ssoc_dates).compact
+
+    latest_eligible_date = all_dates.max + 1.day
+
+    latest_eligible_date += 2.days if latest_eligible_date.saturday?
+    latest_eligible_date += 1.day if latest_eligible_date.sunday?
+
+    latest_eligible_date >= earliest_eligible_date
   end
 
   def nod_eligible_for_opt_in?(receipt_date:, covid_flag: false)
@@ -879,7 +886,7 @@ class LegacyAppeal < CaseflowRecord
 
   def bgs_address_service
     participant_id = if appellant_is_not_veteran
-                       person_for_appellant&.[](:ptcpnt_id)
+                       person_for_appellant&.participant_id
                      else
                        veteran&.participant_id
                      end
@@ -934,7 +941,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def claimant_participant_id
-    person_for_appellant&.dig(:ptcpnt_id)
+    person_for_appellant&.participant_id
   end
 
   class << self

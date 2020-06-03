@@ -15,6 +15,7 @@ detectors:
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Veteran
+      - ControllerSchema#respond_to_missing?
   ControlParameter:
     exclude:
       - ExternalApi::VBMSService#self.send_and_log_request
@@ -84,6 +85,8 @@ detectors:
       - LegacyAppeal#cancel_open_caseflow_tasks!
       - MonthlyMetricsReportJob#build_report
       - NightlySyncsJob#sync_vacols_cases
+      - Person#fetch_bgs_record_by_participant_id
+      - Person#fetch_bgs_record_by_ssn
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
@@ -128,6 +131,7 @@ detectors:
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
+      - RouteDocsController::DocumentedRoute#schema
   MissingSafeMethod:
     enabled: false
   NestedIterators:
@@ -142,6 +146,7 @@ detectors:
       - HearingLocation
       - JudgeTeam
       - LegacyAppeal
+      - Person
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
@@ -162,6 +167,7 @@ detectors:
       - Api::V3::DecisionReview::ContestableIssueFinder
       - Api::V3::DecisionReview::ContestableIssueParams
       - Api::V3::DecisionReview::IntakeError
+      - ControllerSchema::Field
   TooManyMethods:
     enabled: false
   TooManyStatements:

@@ -54,6 +54,73 @@ describe Person, :postgres do
     end
   end
 
+  describe ".find_or_create_by_ssn" do
+    before do
+      allow_any_instance_of(BGSService).to receive(:fetch_person_by_ssn) { bgs_person_by_ssn }
+      allow_any_instance_of(BGSService).to receive(:fetch_person_info) { bgs_person }
+    end
+
+    let(:bgs_person) do
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Cathy",
+        middle_name: "",
+        last_name: "Smith",
+        name_suffix: "Jr.",
+        ssn_nbr: ssn,
+        ptcpnt_id: participant_id,
+        email_address: "cathy.smith@caseflow.gov"
+      }
+    end
+    let(:bgs_person_by_ssn) do
+      {
+        brthdy_dt: bgs_person[:birth_date],
+        first_nm: bgs_person[:first_name],
+        middle_nm: bgs_person[:middle_name],
+        last_nm: bgs_person[:last_name],
+        ssn_nbr: ssn,
+        ptcpnt_id: participant_id,
+        email_addr: bgs_person[:email_address]
+      }
+    end
+    let(:participant_id) { known_fake_participant_id }
+    let(:ssn) { "666001234" }
+
+    subject { described_class.find_or_create_by_ssn(ssn) }
+
+    context "no existing Person record" do
+      it "creates Person record" do
+        expect(subject).to be_a Person
+        expect(subject.participant_id).to eq participant_id
+        expect(subject.first_name).to eq "Cathy"
+        expect(subject.email_address).to eq bgs_person[:email_address]
+        expect(subject.date_of_birth.to_s).to eq("1998-09-05")
+      end
+    end
+
+    context "existing Person record w/o ssn value" do
+      before do
+        create(:person, ssn: nil, participant_id: participant_id)
+      end
+
+      it "finds existing Person and updates it" do
+        expect(subject).to be_a Person
+        expect(subject.participant_id).to eq participant_id
+        expect(subject.ssn).to eq ssn
+      end
+    end
+
+    context "BGS returns no match" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:fetch_person_by_ssn) { nil }
+      end
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
   describe "#stale_attributes?" do
     let(:participant_id) { known_fake_participant_id }
     let(:first_name) { bgs_person[:first_name] }
@@ -62,6 +129,7 @@ describe Person, :postgres do
     let(:date_of_birth) { bgs_person[:birth_date] }
     let(:name_suffix) { bgs_person[:name_suffix] }
     let(:email_address) { bgs_person[:email_address] }
+    let(:ssn) { bgs_person[:ssn_nbr] }
 
     let(:person) do
       create(
@@ -72,6 +140,7 @@ describe Person, :postgres do
         name_suffix: name_suffix,
         date_of_birth: date_of_birth,
         participant_id: participant_id,
+        ssn: ssn,
         email_address: email_address
       )
     end
@@ -81,7 +150,9 @@ describe Person, :postgres do
     subject { person.stale_attributes? }
 
     context "no difference" do
-      it { is_expected.to eq(false) }
+      it "is false" do
+        is_expected.to eq(false)
+      end
     end
 
     context "first_name is nil" do

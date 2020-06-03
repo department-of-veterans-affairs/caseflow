@@ -8,22 +8,17 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import moment from 'moment';
-import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
-import { docketNumberColumn, badgesColumn, detailsColumn, taskColumn, regionalOfficeColumn, daysWaitingColumn,
-  issueCountColumn, typeColumn, assignedToColumn, readerLinkColumn, daysOnHoldColumn, completedToNameColumn,
-  taskCompletedDateColumn } from
-  './TaskTableColumns';
+import { docketNumberColumn, badgesColumn, detailsColumn, daysWaitingColumn, issueCountColumn, typeColumn,
+  readerLinkColumn, taskCompletedDateColumn } from './TaskTableColumns';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { hasDASRecord } from '../utils';
 import COPY from '../../../COPY';
-import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -69,36 +64,8 @@ export class TaskTableUnconnected extends React.PureComponent {
       null;
   }
 
-  caseTaskColumn = () => {
-    return this.props.includeTask ? taskColumn(this.props.tasks) : null;
-  }
-
-  caseDocumentIdColumn = () => {
-    return this.props.includeDocumentId ? {
-      header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
-      valueFunction: (task) => {
-        const firstName = task.decisionPreparedBy ? task.decisionPreparedBy.firstName : task.assignedBy.firstName;
-        const lastName = task.decisionPreparedBy ? task.decisionPreparedBy.lastName : task.assignedBy.lastName;
-
-        if (!firstName) {
-          return task.documentId;
-        }
-
-        const nameAbbrev = `${firstName.substring(0, 1)}. ${lastName}`;
-
-        return <React.Fragment>
-          {task.documentId}<br />from {nameAbbrev}
-        </React.Fragment>;
-      }
-    } : null;
-  }
-
   caseTypeColumn = () => {
     return this.props.includeType ? typeColumn(this.props.tasks, this.props.requireDasRecord) : null;
-  }
-
-  caseAssignedToColumn = () => {
-    return this.props.includeAssignedTo ? assignedToColumn(this.props.tasks) : null;
   }
 
   caseDocketNumberColumn = () => {
@@ -109,45 +76,12 @@ export class TaskTableUnconnected extends React.PureComponent {
     return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
   }
 
-  caseDueDateColumn = () => {
-    return this.props.includeDueDate ? {
-      header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
-      name: QUEUE_CONFIG.COLUMNS.TASK_DUE_DATE.name,
-      tooltip: <React.Fragment>Calendar days this case <br /> has been assigned to you</React.Fragment>,
-      align: 'center',
-      valueFunction: (task) => {
-        if (!this.taskHasDASRecord(task)) {
-          return null;
-        }
-
-        const daysWaiting = moment().startOf('day').
-          diff(moment(task.assignedOn), 'days');
-
-        return <React.Fragment>
-          {daysWaiting} {pluralize('day', daysWaiting)}
-        </React.Fragment>;
-      },
-      span: this.collapseColumnIfNoDASRecord,
-      backendCanSort: true,
-      getSortValue: (task) => moment().startOf('day').
-        diff(moment(task.assignedOn), 'days')
-    } : null;
-  }
-
   caseDaysWaitingColumn = () => {
     return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.requireDasRecord) : null;
   }
 
-  caseDaysOnHoldColumn = () => {
-    return this.props.includeDaysOnHold ? daysOnHoldColumn(this.props.requireDasRecord) : null;
-  }
-
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? taskCompletedDateColumn() : null;
-  }
-
-  caseCompletedToNameColumn = () => {
-    return this.props.includeCompletedToName ? completedToNameColumn() : null;
   }
 
   caseReaderLinkColumn = () => {
@@ -156,28 +90,17 @@ export class TaskTableUnconnected extends React.PureComponent {
       null;
   }
 
-  caseRegionalOfficeColumn = () => {
-    return this.props.includeRegionalOffice ? regionalOfficeColumn(this.props.tasks) : null;
-  }
-
   getQueueColumns = () =>
     _.orderBy((this.props.customColumns || []).concat(
       _.compact([
         this.caseBadgesColumn(),
         this.caseSelectColumn(),
         this.caseDetailsColumn(),
-        this.caseTaskColumn(),
-        this.caseRegionalOfficeColumn(),
-        this.caseDocumentIdColumn(),
         this.caseTypeColumn(),
-        this.caseAssignedToColumn(),
         this.caseDocketNumberColumn(),
         this.caseIssueCountColumn(),
-        this.caseDueDateColumn(),
         this.caseDaysWaitingColumn(),
-        this.caseDaysOnHoldColumn(),
         this.completedDateColumn(),
-        this.caseCompletedToNameColumn(),
         this.caseReaderLinkColumn()
       ])), ['order'], ['desc']);
 
@@ -216,21 +139,14 @@ TaskTableUnconnected.propTypes = {
   includeDetailsLink: PropTypes.bool,
   tasks: PropTypes.array,
   userRole: PropTypes.string,
-  includeTask: PropTypes.bool,
-  includeDocumentId: PropTypes.bool,
   includeType: PropTypes.bool,
-  includeAssignedTo: PropTypes.bool,
   includeDocketNumber: PropTypes.bool,
   includeIssueCount: PropTypes.bool,
-  includeDueDate: PropTypes.bool,
   includeDaysWaiting: PropTypes.bool,
-  includeDaysOnHold: PropTypes.bool,
   includeCompletedDate: PropTypes.bool,
-  includeCompletedToName: PropTypes.bool,
   userIsVsoEmployee: PropTypes.bool,
   includeReaderLink: PropTypes.bool,
   includeNewDocsIcon: PropTypes.bool,
-  includeRegionalOffice: PropTypes.bool,
   customColumns: PropTypes.array,
   defaultSortIdx: PropTypes.number,
   getKeyForRow: PropTypes.func

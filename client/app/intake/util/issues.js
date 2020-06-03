@@ -316,8 +316,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   return fields.concat(claimantField);
 };
 
-export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
-  let issues = intakeData.addedIssues || [];
+export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => {
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue, index) => {
@@ -399,7 +398,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
     return {
       index,
       id: issue.id,
-      text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
+      text: issue.id ? issue.description : `${issue.category} - ${issue.description}`,
       benefitType: issue.benefitType,
       date: issue.decisionDate,
       timely: issue.timely,

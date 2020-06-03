@@ -174,6 +174,22 @@ feature "Intake Add Issues Page", :all_dbs do
         "Left knee granted is ineligible because the same issue is under review as a Legacy Appeal"
       )
     end
+
+    scenario "User selects a vacols issue, issue description shows on legacy modal" do
+      start_higher_level_review(veteran, legacy_opt_in_approved: true)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        category: "Apportionment",
+        description: "Description for Apportionment",
+        date: 1.day.ago.to_date.mdY,
+        legacy_issues: true
+      )
+
+      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+      expect(page).to have_content("Description for Apportionment")
+    end
   end
 
   context "When the user adds an untimely issue" do
@@ -276,6 +292,26 @@ feature "Intake Add Issues Page", :all_dbs do
       click_on "Establish EP"
       click_on "correct the issues"
       expect(page).to have_content("Decision date")
+    end
+
+    scenario "show correct the issues link on appeal" do
+      start_appeal(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      expect(page).to have_current_path("/intake/add_issues")
+
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        category: "Dependent Child - Biological",
+        description: "test",
+        date: "04/04/2020"
+      )
+      click_on "Establish appeal"
+      expect(page).to have_content("correct the issues")
+      click_on "correct the issues"
+      appeal = Appeal.find_by(docket_type: "evidence_submission")
+      correct_path = "/appeals/#{appeal.uuid}/edit"
+      expect(page).to have_current_path(correct_path)
     end
 
     scenario "show unidentified untimely exemption issue" do
