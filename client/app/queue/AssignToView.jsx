@@ -9,7 +9,7 @@ import COPY from '../../COPY';
 
 import { taskById, appealWithDetailSelector } from './selectors';
 
-import { onReceiveAmaTasks, legacyReassignToJudge } from './QueueActions';
+import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
@@ -102,7 +102,15 @@ class AssignToView extends React.Component {
 
     return this.props.
       requestSave('/tasks', payload, isPulacCerullo ? pulacCerulloSuccessMessage : assignTaskSuccessMessage).
-      then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
+      then((resp) => {
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
+        if (taskType === 'JudgeAssignTask') {
+          this.props.setOvertime({
+            appealId: appeal.externalId,
+            overtime: false
+          });
+        }
+      }).
       catch(() => {
         // handle the error from the frontend
       });
@@ -241,7 +249,8 @@ class AssignToView extends React.Component {
 
 AssignToView.propTypes = {
   appeal: PropTypes.shape({
-    externalId: PropTypes.string
+    externalId: PropTypes.string,
+    id: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
   highlightFormItems: PropTypes.bool,
@@ -255,7 +264,8 @@ AssignToView.propTypes = {
     instructions: PropTypes.string,
     taskId: PropTypes.string,
     availableActions: PropTypes.arrayOf(PropTypes.object)
-  })
+  }),
+  setOvertime: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -274,7 +284,8 @@ const mapDispatchToProps = (dispatch) =>
       requestPatch,
       requestSave,
       onReceiveAmaTasks,
-      legacyReassignToJudge
+      legacyReassignToJudge,
+      setOvertime
     },
     dispatch
   );
