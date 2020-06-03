@@ -13,10 +13,8 @@ export const standard = () => (
   <AddHyperlinkModal onCancel={action('cancel', 'standard')} onSubmit={action('submit', 'standard')} />
 );
 
-standard.story = {
-  parameters: {
-    docs: {
-      storyDescription: 'This is used to add hyperlink options within `DecisionHyperlinks` component'
-    }
+standard.parameters = {
+  docs: {
+    storyDescription: 'This is used to add hyperlink options within `DecisionHyperlinks` component'
   }
 };

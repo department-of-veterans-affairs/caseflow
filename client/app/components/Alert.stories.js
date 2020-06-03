@@ -94,10 +94,8 @@ export const slim = () => (
   </Alert>
 );
 
-slim.story = {
-  parameters: {
-    docs: {
-      storyDescription: 'The "slim" alert will be used if title prop is empty'
-    }
+slim.parameters = {
+  docs: {
+    storyDescription: 'The "slim" alert will be used if title prop is empty'
   }
 };

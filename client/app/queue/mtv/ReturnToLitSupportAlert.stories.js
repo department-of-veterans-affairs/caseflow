@@ -15,10 +15,8 @@ export const standard = () => (
   <ReturnToLitSupportAlert disposition={select('Disposition', dispositions, 'granted', 'standard')} />
 );
 
-standard.story = {
-  parameters: {
-    docs: {
-      storyDescription: 'This provides a link to allow a judge to return a case to lit support if need be'
-    }
+standard.parameters = {
+  docs: {
+    storyDescription: 'This provides a link to allow a judge to return a case to lit support if need be'
   }
 };

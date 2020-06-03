@@ -10,10 +10,8 @@ export default {
 
 export const standard = () => <PulacCerulloReminderAlert />;
 
-standard.story = {
-  parameters: {
-    docs: {
-      storyDescription: 'This provides a reminder for a user to check CAVC for a conflict of juristiction'
-    }
+standard.parameters = {
+  docs: {
+    storyDescription: 'This provides a reminder for a user to check CAVC for a conflict of juristiction'
   }
 };
