@@ -182,9 +182,14 @@ class DailyDocketRow extends React.Component {
     }
 
     const hearingChanges = deepDiff(this.state.initialState, this.props.hearing);
+    const submitData = {
+      // Always send full location details because a new record is created each update
+      location: hearingChanges?.location ? this.props.hearing?.location : {},
+      ...hearingChanges
+    };
 
     return this.props.
-      saveHearing(this.props.hearing.externalId, hearingChanges).
+      saveHearing(this.props.hearing.externalId, submitData).
       then((response) => {
         // false is returned from DailyDocketContainer in case of error
         if (!response) {
