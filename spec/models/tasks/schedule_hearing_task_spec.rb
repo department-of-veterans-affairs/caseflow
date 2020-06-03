@@ -89,10 +89,7 @@ describe ScheduleHearingTask, :all_dbs do
             description: "Update",
             values: {
               "hearing_day_id": hearing_day.id,
-              "scheduled_time_string": "09:00",
-              "hearing_location": {
-                facility_id: "vba_301"
-              }
+              "scheduled_time_string": "09:00"
             }
           }
         }
