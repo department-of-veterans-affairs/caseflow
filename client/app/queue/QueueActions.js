@@ -216,7 +216,7 @@ const editAppeal = (appealId, attributes) => ({
 
 export const setOvertime = (appealId, overtime) => ({
   type: ACTIONS.SET_OVERTIME,
-  payload: { 
+  payload: {
     appealId,
     overtime
   }
@@ -642,8 +642,14 @@ export const fetchAllAttorneys = () => (dispatch) =>
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
     catch((error) => dispatch(errorAllAttorneys(error)));
 
-export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
-  ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
+export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch) => {
+  let url = `/tasks?user_id=${userId}&role=${userRole}`;
+
+  if (type) {
+    url = url.concat(`&type=${type}`)
+  }
+
+  return ApiUtil.get(url).
     then((resp) => {
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
       dispatch(setQueueConfig(resp.body.queue_config));
@@ -653,6 +659,7 @@ export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
       // rethrow error so that QueueLoadingScreen can catch and display error
       throw error;
     });
+};
 
 export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,

@@ -41,8 +41,9 @@ class TasksController < ApplicationController
   # e.g, GET /tasks?user_id=xxx&role=colocated
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
+  #      GET /tasks?user_id=xxx&role=judge&type=assign
   def index
-    tasks = user.use_task_pages_api? ? [] : QueueForRole.new(user_role).create(user: user).tasks
+    tasks = params[:type].eql?("assign") ? QueueForRole.new(user_role).create(user: user).tasks : []
     render json: { tasks: json_tasks(tasks), queue_config: queue_config }
   end
 
@@ -153,7 +154,7 @@ class TasksController < ApplicationController
   private
 
   def queue_config
-    QueueConfig.new(assignee: user).to_hash
+    params[:type].eql?("assign") ? {} : QueueConfig.new(assignee: user).to_hash
   end
 
   def verify_view_access
