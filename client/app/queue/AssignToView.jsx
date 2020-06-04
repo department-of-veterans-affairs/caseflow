@@ -258,7 +258,9 @@ AssignToView.propTypes = {
   task: PropTypes.shape({
     instructions: PropTypes.string,
     taskId: PropTypes.string,
-    availableActions: PropTypes.arrayOf(PropTypes.object)
+    availableActions: PropTypes.arrayOf(PropTypes.object),
+    externalAppealId: PropTypes.string,
+    type: PropTypes.string
   }),
   setOvertime: PropTypes.func
 };
