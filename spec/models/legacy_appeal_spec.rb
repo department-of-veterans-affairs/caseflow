@@ -230,10 +230,10 @@ describe LegacyAppeal, :all_dbs do
     end
 
     context "when receipt date falls on a holiday" do
-      let(:set_holiday) { Date.new(2020, 3, 25) }
-      let(:receipt_date) { set_holiday + 61.days }
+      let(:federal_holiday) { Date.new(2020, 5, 25) }
+      let(:receipt_date) { federal_holiday }
       scenario "return true" do
-        allow(appeal).to receive(:soc_date).and_return(set_holiday - 61.days)
+        allow(appeal).to receive(:soc_date).and_return(federal_holiday - 61.days)
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
         expect(receipt_date.holiday?(:us)).to eq(true)
       end
