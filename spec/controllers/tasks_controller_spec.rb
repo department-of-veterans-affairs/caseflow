@@ -692,7 +692,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     context "when cancelling a task" do
-      it "updates status to completed" do
+      it "updates status to cancelled" do
         patch :update, params: { task: { status: Constants.TASK_STATUSES.cancelled }, id: admin_action.id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
