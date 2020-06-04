@@ -859,6 +859,7 @@ class LegacyAppeal < CaseflowRecord
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless soc_date
 
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
     all_dates = ([soc_date] + ssoc_dates).compact
 
     latest_soc_date = all_dates.max
@@ -950,6 +951,8 @@ class LegacyAppeal < CaseflowRecord
       appeal
     end
 
+    # This checks for weather the eligiable soc_date falls on a satuday,
+    # sunday, or holiday thus adding one/two business days on the receipt_date.
     def next_available_business_day(date)
       date += 1.day if Holidays.on(date, :federal_reserve, :observed).any?
       date += 2.days if date.saturday?
