@@ -40,21 +40,23 @@ FactoryBot.define do
       roles { ["VSO"] }
     end
 
-    trait :judge do
+    trait :judge,  do
       roles { ["Hearing Prep"] }
+    end
 
+    trait :with_vacols_judge_record
       after(:create) do |user|
         create(:staff, :judge_role, user: user)
       end
     end
 
-    trait :attorney do
+    trait :with_vacols_attorney_record do
       after(:create) do |user|
         create(:staff, :attorney_role, user: user)
       end
     end
 
-    trait :acting_judge do
+    trait :with_vacols_acting_judge_record do
       after(:create) do |user|
         create(:staff, :attorney_judge_role, user: user)
       end

@@ -185,8 +185,8 @@ describe AttorneyTask, :all_dbs do
   end
 
   context ".update_from_params" do
-    let(:judge) { create(:user, :judge) }
-    let(:attorney) { create(:user, :attorney) }
+    let(:judge) { create(:user, :with_vacols_judge_record) }
+    let(:attorney) { create(:user, :with_vacols_attorney_record) }
     let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge) }
     let(:attorney_task) do
       create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge, parent: judge_task)
