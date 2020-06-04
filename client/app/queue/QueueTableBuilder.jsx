@@ -3,7 +3,6 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import querystring from 'querystring';
 
 import BulkAssignButton from './components/BulkAssignButton';
@@ -17,10 +16,7 @@ import { tasksWithAppealsFromRawTasks } from './utils';
 
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
-import COPY from '../../COPY';
 import { fullWidth } from './constants';
-
-import { showErrorMessage } from './uiReducer/uiActions';
 
 /**
  * A component to create a queue table's tabs and columns from a queue config or the assignee's tasks
@@ -93,13 +89,6 @@ class QueueTableBuilder extends React.PureComponent {
       totalTaskCount = tasks.length;
     }
 
-    if (this.props.requireDasRecord && _.some(tasks, (task) => !task.taskId)) {
-      this.props.showErrorMessage({
-        title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
-        detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
-      });
-    }
-
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: <React.Fragment>
@@ -137,18 +126,13 @@ class QueueTableBuilder extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   const userRole = state.ui.userRole;
+
   return ({
     config: state.queue.queueConfig,
     organizations: state.ui.organizations,
     assignedTabIncludesLegacyTasks: userRole === USER_ROLE_TYPES.attorney || userRole === USER_ROLE_TYPES.judge
   });
 };
-
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    showErrorMessage
-  }, dispatch)
-});
 
 QueueTableBuilder.propTypes = {
   organizations: PropTypes.array,
@@ -158,8 +142,7 @@ QueueTableBuilder.propTypes = {
     active_tab_index: PropTypes.number
   }),
   requireDasRecord: PropTypes.bool,
-  assignedTabIncludesLegacyTasks: PropTypes.bool,
-  showErrorMessage: PropTypes.func
+  assignedTabIncludesLegacyTasks: PropTypes.bool
 };
 
-export default (connect(mapStateToProps, mapDispatchToProps)(QueueTableBuilder));
+export default (connect(mapStateToProps)(QueueTableBuilder));

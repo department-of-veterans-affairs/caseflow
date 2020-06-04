@@ -174,7 +174,6 @@ QueueLoadingScreen.propTypes = {
   fetchAllAttorneys: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
   // `loadedUserId` is set by `setUserId`
-  label: PropTypes.string,
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
   location: PropTypes.object,
@@ -186,6 +185,7 @@ QueueLoadingScreen.propTypes = {
   setTargetUser: PropTypes.func,
   tasks: PropTypes.object,
   targetUserId: PropTypes.number,
+  type: PropTypes.string,
   urlToLoad: PropTypes.string,
   // `userId` refers to logged-in user and provided by app/views/queue/index.html.erb via QueueApp.jsx
   userId: PropTypes.number,

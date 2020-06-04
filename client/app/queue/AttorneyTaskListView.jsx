@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import QueueTableBuilder from './QueueTableBuilder';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
 
 import { workableTasksByAssigneeCssIdSelector } from './selectors';
@@ -15,7 +16,8 @@ import { workableTasksByAssigneeCssIdSelector } from './selectors';
 import {
   resetErrorMessages,
   resetSuccessMessages,
-  resetSaveState
+  resetSaveState,
+  showErrorMessage
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
@@ -35,10 +37,23 @@ class AttorneyTaskListView extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
+
+    if (_.some(this.props.workableTasks, (task) => !task.taskId)) {
+      this.props.showErrorMessage({
+        title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
+        detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
+      });
+    }
   };
 
   render = () => {
-    const { error, success } = this.props;
+    const { workableTasks, error, success } = this.props;
+
+    const noCasesMessage = workableTasks.length === 0 ?
+      <p>
+        {COPY.NO_CASES_IN_QUEUE_MESSAGE}
+        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p> : '';
 
     return <AppSegment filledBackground styling={containerStyles}>
       {error && <Alert type="error" title={error.title}>
@@ -47,8 +62,9 @@ class AttorneyTaskListView extends React.PureComponent {
       {success && <Alert type="success" title={success.title}>
         {success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
       </Alert>}
+      {noCasesMessage}
       <QueueTableBuilder
-        assignedTasks={this.props.workableTasks}
+        assignedTasks={workableTasks}
         requireDasRecord
       />
     </AppSegment>;
@@ -81,6 +97,7 @@ const mapDispatchToProps = (dispatch) => ({
     resetErrorMessages,
     resetSuccessMessages,
     resetSaveState,
+    showErrorMessage
   }, dispatch)
 });
 
@@ -93,6 +110,7 @@ AttorneyTaskListView.propTypes = {
   resetSaveState: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,
+  showErrorMessage: PropTypes.func,
   success: PropTypes.shape({
     title: PropTypes.string,
     detail: PropTypes.string
