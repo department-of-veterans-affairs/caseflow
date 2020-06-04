@@ -40,7 +40,7 @@ export const VirtualHearingForm = (
           <div {...rowThirds}>
             <TextField
               errorMessage={errors?.appellantEmail}
-              name={`${appellantTitle} Email for Notifications`}
+              name={`${appellantTitle} Email`}
               value={virtualHearing.appellantEmail}
               required
               strongLabel
@@ -66,7 +66,7 @@ export const VirtualHearingForm = (
           <div {...rowThirds}>
             <TextField
               errorMessage={errors?.repEmail}
-              name="POA/Representative Email for Notifications"
+              name="POA/Representative Email"
               value={virtualHearing.representativeEmail}
               strongLabel
               className={[classnames('cf-form-textinput', 'cf-inline-field')]}
