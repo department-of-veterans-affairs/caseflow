@@ -28,7 +28,6 @@ export const VirtualHearingForm = (
     >
       <HearingLinks
         user={user}
-        label={virtualHearingLabel}
         hearing={hearing}
         virtualHearing={virtualHearing}
         isVirtual={isVirtual}
