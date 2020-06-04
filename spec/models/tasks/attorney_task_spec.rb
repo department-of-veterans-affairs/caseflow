@@ -205,7 +205,7 @@ describe AttorneyTask, :all_dbs do
     end
 
     context "when cancellation params are provided" do
-      fit "calls send_back_to_judge_assign!" do
+      it "calls send_back_to_judge_assign!" do
         tasks = attorney_task.update_from_params({ status: Constants.TASK_STATUSES.cancelled }, attorney)
 
         expect(tasks.first.type).to eq AttorneyTask.name
