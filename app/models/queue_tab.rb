@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Base class for a queue table tab configuration and set of tasks. Attribute and tasks will be pulled from this config
+# on the front end to build a tab for a queue table.
 class QueueTab
   include ActiveModel::Model
 

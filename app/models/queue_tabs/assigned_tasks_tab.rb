@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Queue tab for all tasks that are currently assigned to a user and have a status of "assigned" or "in_progress"
 class AssignedTasksTab < QueueTab
   validate :assignee_is_user
 

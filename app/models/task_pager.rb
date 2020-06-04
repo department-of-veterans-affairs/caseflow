@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Class to sort, filter, and paginate tasks for a given queue tab and assignee
 class TaskPager
   include ActiveModel::Model
 

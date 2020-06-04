@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Queue tab for all tasks that are currently assigned to a user and have a status of on hold. This can include tasks
+# that were put on hold for a specific number of days, or tasks that have child tasks that need to be completed before
+# the on hold task can be worked.
 class OnHoldTasksTab < QueueTab
   validate :assignee_is_user
 
@@ -29,6 +32,10 @@ class OnHoldTasksTab < QueueTab
     Task.visible_in_queue_table_view.on_hold.where(assigned_to: assignee).pluck(:id)
   end
 
+  # Because attorneys and judges can be assigned transient legacy tasks through vacols/das, if "child" colocated tasks
+  # are created, these legacy tasks will no longer be assigned to the attorney or judge and will not appear anywhere in
+  # their queue. To ensure these case can still be tracked by the judge or attorney that the case will return to, we
+  # select all colocated tasks on legacy appeals that the user has created, but only one for each appeal.
   def legacy_colocated_task_ids_assigned_by_assignee
     colocated_tasks = ColocatedTask.open.order(:created_at)
       .where(assigned_by: assignee, assigned_to_type: Organization.name, appeal_type: LegacyAppeal.name)
