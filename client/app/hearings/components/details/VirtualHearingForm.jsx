@@ -6,13 +6,8 @@ import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import { UPDATE_VIRTUAL_HEARING } from '../../contexts/HearingsFormContext';
-import {
-  VIRTUAL_HEARING_HOST,
-  getAppellantTitleForHearing,
-  virtualHearingRoleForUser
-} from '../../utils';
 import { enablePadding, maxWidthFormInput, rowThirds } from './style';
-import COPY from '../../../../COPY';
+import { getAppellantTitleForHearing } from '../../utils';
 import TextField from '../../../components/TextField';
 
 export const VirtualHearingForm = (
@@ -26,10 +21,6 @@ export const VirtualHearingForm = (
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
   const appellantTitle = getAppellantTitleForHearing(hearing);
   const user = useContext(HearingsUserContext);
-  const virtualHearingLabel =
-    virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
-      COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
-      COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
 
   return (
     <ContentSection

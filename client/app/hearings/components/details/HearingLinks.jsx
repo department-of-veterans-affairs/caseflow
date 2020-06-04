@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { COLORS } from '../../../constants/AppConstants';
+import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../../utils';
 import {
   rowThirds,
   labelPadding,
@@ -104,35 +105,42 @@ LinkContainer.propTypes = {
   wasVirtual: PropTypes.bool
 };
 
-export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, label, user }) => {
+export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user }) => {
+  if (!isVirtual && !wasVirtual) {
+    return null;
+  }
+
+  const vljVirtualHearingLabel =
+    virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST ?
+      COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL :
+      COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
+
   return (
-    (isVirtual || wasVirtual) && (
-      <div {...rowThirds} {...hearingLinksContainer}>
-        <LinkContainer
-          hearing={hearing}
-          isVirtual={isVirtual}
-          label={label}
-          link={virtualHearing?.hostLink}
-          linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
-          role="VLJ"
-          user={user}
-          virtualHearing={virtualHearing}
-          wasVirtual={wasVirtual}
-        />
-        <LinkContainer
-          hearing={hearing}
-          isVirtual={isVirtual}
-          label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
-          link={virtualHearing?.guestLink}
-          linkText={COPY.GUEST_VIRTUAL_HEARINGS_LINK_TEXT}
-          role="Guest"
-          user={user}
-          virtualHearing={virtualHearing}
-          wasVirtual={wasVirtual}
-        />
-        <div />
-      </div>
-    )
+    <div {...rowThirds} {...hearingLinksContainer}>
+      <LinkContainer
+        hearing={hearing}
+        isVirtual={isVirtual}
+        label={vljVirtualHearingLabel}
+        link={virtualHearing?.hostLink}
+        linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
+        role="VLJ"
+        user={user}
+        virtualHearing={virtualHearing}
+        wasVirtual={wasVirtual}
+      />
+      <LinkContainer
+        hearing={hearing}
+        isVirtual={isVirtual}
+        label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
+        link={virtualHearing?.guestLink}
+        linkText={COPY.GUEST_VIRTUAL_HEARINGS_LINK_TEXT}
+        role="Guest"
+        user={user}
+        virtualHearing={virtualHearing}
+        wasVirtual={wasVirtual}
+      />
+      <div />
+    </div>
   );
 };
 
@@ -141,6 +149,5 @@ HearingLinks.propTypes = {
   hearing: PropTypes.object,
   isVirtual: PropTypes.bool,
   wasVirtual: PropTypes.bool,
-  virtualHearing: PropTypes.object,
-  label: PropTypes.string
+  virtualHearing: PropTypes.object
 };
