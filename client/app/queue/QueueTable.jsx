@@ -15,6 +15,7 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
+import COPY from '../../COPY';
 
 /**
  * This component can be used to easily build tables.
@@ -71,72 +72,94 @@ const DEFAULT_CASES_PER_PAGE = 15;
 const cellClasses = ({ align, cellClass }) => classnames([helperClasses[align], cellClass]);
 
 const getColumns = (props) => {
-  return _.isFunction(props.columns) ?
-    props.columns(props.rowObject) : props.columns;
+  return _.isFunction(props.columns) ? props.columns(props.rowObject) : props.columns;
 };
 
 const HeaderRow = (props) => {
   const iconHeaderStyle = css({ display: 'table-row' });
-  const iconStyle = css({
-    display: 'table-cell',
-    paddingLeft: '1rem',
-    paddingTop: '0.3rem',
-    verticalAlign: 'middle'
-  }, hover({ cursor: 'pointer' }));
+  const iconStyle = css(
+    {
+      display: 'table-cell',
+      paddingLeft: '1rem',
+      paddingTop: '0.3rem',
+      verticalAlign: 'middle'
+    },
+    hover({ cursor: 'pointer' })
+  );
 
-  return <thead className={props.headerClassName}>
-    <tr>
-      {getColumns(props).map((column, columnNumber) => {
-        let sortIcon;
-        let filterIcon;
+  return (
+    <thead className={props.headerClassName}>
+      <tr role="row">
+        {getColumns(props).map((column, columnNumber) => {
+          let sortIcon;
+          let filterIcon;
 
-        if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
-          const topColor = props.sortColName === column.name && !props.sortAscending ?
-            COLORS.PRIMARY :
-            COLORS.GREY_LIGHT;
-          const botColor = props.sortColName === column.name && props.sortAscending ?
-            COLORS.PRIMARY :
-            COLORS.GREY_LIGHT;
+          if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
+            const topColor =
+              props.sortColName === column.name && !props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
+            const botColor =
+              props.sortColName === column.name && props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
 
-          sortIcon = <span {...iconStyle} aria-label={`Sort by ${column.header}`} role="button" tabIndex="0"
-            onClick={() => props.setSortOrder(column.name)}>
-            <DoubleArrow topColor={topColor} bottomColor={botColor} />
-          </span>;
-        }
-
-        // Keeping the historical prop `getFilterValues` for backwards compatibility,
-        // will remove this once all apps are using this new component.
-        if (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) {
-          filterIcon = <TableFilter
-            {...column}
-            tableData={column.tableData || props.rowObjects}
-            valueTransform={column.filterValueTransform}
-            updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
-            filteredByList={props.filteredByList} />;
-        } else if (props.useTaskPagesApi && column.filterOptions) {
-          filterIcon = <TableFilter
-            {...column}
-            tableData={column.tableData || props.rowObjects}
-            filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
-            updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
-            filteredByList={props.filteredByList} />;
-        }
-        const columnTitleContent = <span>{column.header || ''}</span>;
-        const columnContent = <span {...iconHeaderStyle} aria-label="">
-          {columnTitleContent}
-          {sortIcon}
-          {filterIcon}
-        </span>;
-
-        return <th scope="col" key={columnNumber} className={cellClasses(column)}>
-          { column.tooltip ?
-            <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>{columnContent}</Tooltip> :
-            <React.Fragment>{columnContent}</React.Fragment>
+            sortIcon = (
+              <span
+                {...iconStyle}
+                aria-label={`Sort by ${column.header}`}
+                role="button"
+                tabIndex="0"
+                onClick={() => props.setSortOrder(column.name)}
+              >
+                <DoubleArrow topColor={topColor} bottomColor={botColor} />
+              </span>
+            );
           }
-        </th>;
-      })}
-    </tr>
-  </thead>;
+
+          // Keeping the historical prop `getFilterValues` for backwards compatibility,
+          // will remove this once all apps are using this new component.
+          if (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) {
+            filterIcon = (
+              <TableFilter
+                {...column}
+                tableData={column.tableData || props.rowObjects}
+                valueTransform={column.filterValueTransform}
+                updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+                filteredByList={props.filteredByList}
+              />
+            );
+          } else if (props.useTaskPagesApi && column.filterOptions) {
+            filterIcon = (
+              <TableFilter
+                {...column}
+                tableData={column.tableData || props.rowObjects}
+                filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
+                updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+                filteredByList={props.filteredByList}
+              />
+            );
+          }
+          const columnTitleContent = <span>{column.header || ''}</span>;
+          const columnContent = (
+            <span {...iconHeaderStyle} aria-label="">
+              {columnTitleContent}
+              {sortIcon}
+              {filterIcon}
+            </span>
+          );
+
+          return (
+            <th role="columnheader" scope="col" key={columnNumber} className={cellClasses(column)}>
+              {column.tooltip ? (
+                <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>
+                  {columnContent}
+                </Tooltip>
+              ) : (
+                <React.Fragment>{columnContent}</React.Fragment>
+              )}
+            </th>
+          );
+        })}
+      </tr>
+    </thead>
+  );
 };
 
 const getCellValue = (rowObject, rowId, column) => {
@@ -165,20 +188,22 @@ class Row extends React.PureComponent {
     const rowId = props.footer ? 'footer' : props.rowId;
     const rowClassnameCondition = classnames(!props.footer && props.rowClassNames(props.rowObject));
 
-    return <tr id={`table-row-${rowId}`} className={rowClassnameCondition}>
-      {getColumns(props).
-        filter((column) => getCellSpan(props.rowObject, column) > 0).
-        map((column, columnNumber) =>
-          <td
-            key={columnNumber}
-            className={cellClasses(column)}
-            colSpan={getCellSpan(props.rowObject, column)}>
-            {props.footer ?
-              column.footer :
-              getCellValue(props.rowObject, props.rowId, column)}
-          </td>
-        )}
-    </tr>;
+    return (
+      <tr id={`table-row-${rowId}`} className={rowClassnameCondition} role="row">
+        {getColumns(props).
+          filter((column) => getCellSpan(props.rowObject, column) > 0).
+          map((column, columnNumber) => (
+            <td
+              role="cell"
+              key={columnNumber}
+              className={cellClasses(column)}
+              colSpan={getCellSpan(props.rowObject, column)}
+            >
+              {props.footer ? column.footer : getCellValue(props.rowObject, props.rowId, column)}
+            </td>
+          ))}
+      </tr>
+    );
   }
 }
 
@@ -186,19 +211,16 @@ class BodyRows extends React.PureComponent {
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow, bodyStyling } = this.props;
 
-    return <tbody className={bodyClassName} ref={tbodyRef} id={id} {...bodyStyling}>
-      {rowObjects && rowObjects.map((object, rowNumber) => {
-        const key = getKeyForRow(rowNumber, object);
+    return (
+      <tbody className={bodyClassName} ref={tbodyRef} id={id} {...bodyStyling}>
+        {rowObjects &&
+          rowObjects.map((object, rowNumber) => {
+            const key = getKeyForRow(rowNumber, object);
 
-        return <Row
-          rowObject={object}
-          columns={columns}
-          rowClassNames={rowClassNames}
-          key={key}
-          rowId={key} />;
-      }
-      )}
-    </tbody>;
+            return <Row rowObject={object} columns={columns} rowClassNames={rowClassNames} key={key} rowId={key} />;
+          })}
+      </tbody>
+    );
   }
 }
 
@@ -207,9 +229,7 @@ class FooterRow extends React.PureComponent {
     const props = this.props;
     const hasFooters = _.some(props.columns, 'footer');
 
-    return <tfoot>
-      {hasFooters && <Row columns={props.columns} footer />}
-    </tfoot>;
+    return <tfoot>{hasFooters && <Row columns={props.columns} footer />}</tfoot>;
   }
 }
 
@@ -235,8 +255,9 @@ export default class QueueTable extends React.PureComponent {
     const state = {
       cachedResponses: {},
       tasksFromApi: null,
-      loadingComponent: (useTaskPagesApi && paginationOptions.needsTaskRequest) &&
-        <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />,
+      loadingComponent: useTaskPagesApi && paginationOptions.needsTaskRequest && (
+        <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />
+      ),
       ...paginationOptions
     };
 
@@ -245,16 +266,16 @@ export default class QueueTable extends React.PureComponent {
     }
 
     return state;
-  }
+  };
 
   validatedPaginationOptions = () => {
     const { tabPaginationOptions = {}, numberOfPages, columns } = this.props;
 
-    const sortAscending = tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !==
-      QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
+    const sortAscending =
+      tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !== QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
     const sortColumn = tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null;
     const filteredByList = this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]);
-    const pageNumber = (tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1) || 0;
+    const pageNumber = tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1 || 0;
 
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
     const sortColName = columns.map((column) => column.name).includes(sortColumn) ? sortColumn : null;
@@ -270,7 +291,7 @@ export default class QueueTable extends React.PureComponent {
       currentPage,
       needsTaskRequest
     };
-  }
+  };
 
   componentDidMount = () => {
     const firstResponse = {
@@ -281,10 +302,9 @@ export default class QueueTable extends React.PureComponent {
     };
 
     if (this.props.rowObjects.length) {
-      this.setState({ cachedResponses: { ...this.state.cachedResponses,
-        [this.requestUrl()]: firstResponse } });
+      this.setState({ cachedResponses: { ...this.state.cachedResponses, [this.requestUrl()]: firstResponse } });
     }
-  }
+  };
 
   getFilters = (filterParams) => {
     const filters = {};
@@ -308,9 +328,9 @@ export default class QueueTable extends React.PureComponent {
     }
 
     return filters;
-  }
+  };
 
-  defaultRowClassNames = () => ''
+  defaultRowClassNames = () => '';
 
   sortRowObjects = () => {
     const { rowObjects } = this.props;
@@ -323,11 +343,10 @@ export default class QueueTable extends React.PureComponent {
     const columnToSortBy = getColumns(this.props).find((column) => sortColName === column.name);
 
     return _.orderBy(rowObjects, (row) => columnToSortBy.getSortValue(row), sortAscending ? 'asc' : 'desc');
-  }
+  };
 
   updateFilteredByList = (newList) => {
-    this.setState({ filteredByList: newList,
-      filtered: true }, this.updateAddressBar);
+    this.setState({ filteredByList: newList, filtered: true }, this.updateAddressBar);
 
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
@@ -392,28 +411,25 @@ export default class QueueTable extends React.PureComponent {
     return paginatedData;
   };
 
-  setColumnSortOrder = (colName) => this.setState(
-    { sortColName: colName,
-      sortAscending: !this.state.sortAscending },
-    this.requestTasks
-  );
+  setColumnSortOrder = (colName) =>
+    this.setState({ sortColName: colName, sortAscending: !this.state.sortAscending }, this.requestTasks);
 
   updateCurrentPage = (newPage) => {
     this.setState({ currentPage: newPage }, this.requestTasks);
-  }
+  };
 
   updateAddressBar = () => {
     if (this.props.useTaskPagesApi) {
       history.pushState('', '', this.deepLink());
     }
-  }
+  };
 
   deepLink = () => {
     const base = `${window.location.origin}${window.location.pathname}`;
     const tab = this.props.taskPagesApiEndpoint.split('?')[1];
 
     return `${base}?${tab}${this.requestQueryString()}`;
-  }
+  };
 
   // /organizations/vlj-support-staff/tasks?tab=on_hold
   // &page=2
@@ -444,23 +460,23 @@ export default class QueueTable extends React.PureComponent {
         if (!_.isEmpty(filteredByList[columnName])) {
           const column = this.props.columns.find((col) => col.columnName === columnName);
 
-          filterParams.push(
-            `col=${column.name}&val=${filteredByList[columnName].join('|')}`
-          );
+          filterParams.push(`col=${column.name}&val=${filteredByList[columnName].join('|')}`);
         }
       }
     }
 
-    const queryString = Object.keys(params).map(
-      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
-    ).
-      concat(filterParams.map((filterParam) =>
-        `${encodeURIComponent(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`)}=${encodeURIComponent(filterParam)}`
-      )).
+    const queryString = Object.keys(params).
+      map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`).
+      concat(
+        filterParams.map(
+          (filterParam) =>
+            `${encodeURIComponent(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`)}=${encodeURIComponent(filterParam)}`
+        )
+      ).
       join('&');
 
     return `&${queryString}`;
-  }
+  };
 
   requestTasks = () => {
     if (!this.props.useTaskPagesApi) {
@@ -480,22 +496,24 @@ export default class QueueTable extends React.PureComponent {
 
     this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
-    return ApiUtil.get(endpointUrl).then((response) => {
-      const { tasks: { data: tasks } } = response.body;
+    return ApiUtil.get(endpointUrl).
+      then((response) => {
+        const {
+          tasks: { data: tasks }
+        } = response.body;
 
-      const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
+        const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
 
-      const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
+        const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
 
-      this.setState({
-        cachedResponses: { ...this.state.cachedResponses,
-          [endpointUrl]: preparedResponse },
-        tasksFromApi: preparedTasks,
-        loadingComponent: null
-      });
+        this.setState({
+          cachedResponses: { ...this.state.cachedResponses, [endpointUrl]: preparedResponse },
+          tasksFromApi: preparedTasks,
+          loadingComponent: null
+        });
 
-      this.updateAddressBar();
-    }).
+        this.updateAddressBar();
+      }).
       catch(() => this.setState({ loadingComponent: null }));
   };
 
@@ -565,32 +583,44 @@ export default class QueueTable extends React.PureComponent {
     if (!getKeyForRow) {
       keyGetter = _.identity;
       if (!slowReRendersAreOk) {
-        console.warn('<QueueTable> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
-          'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
+        console.warn(
+          '<QueueTable> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
+            'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys'
+        );
       }
     }
 
     let paginationElements = null;
 
     if (enablePagination && !this.state.loadingComponent) {
-      paginationElements = <Pagination
-        pageSize={casesPerPage || DEFAULT_CASES_PER_PAGE}
-        currentPage={this.state.currentPage + 1}
-        currentCases={rowObjects ? rowObjects.length : 0}
-        totalPages={numberOfPages}
-        totalCases={totalTaskCount}
-        updatePage={(newPage) => this.updateCurrentPage(newPage)} />;
+      paginationElements = (
+        <Pagination
+          pageSize={casesPerPage || DEFAULT_CASES_PER_PAGE}
+          currentPage={this.state.currentPage + 1}
+          currentCases={rowObjects ? rowObjects.length : 0}
+          totalPages={numberOfPages}
+          totalCases={totalTaskCount}
+          updatePage={(newPage) => this.updateCurrentPage(newPage)}
+        />
+      );
     }
 
     // Show a spinner if we are loading tasks from the API.
-    const body = this.state.loadingComponent ?
-      this.state.loadingComponent : <table
+    const body = this.state.loadingComponent ? (
+      this.state.loadingComponent
+    ) : (
+      <table
+        aria-label={COPY.CASE_LIST_TABLE_TITLE}
+        aria-describedby="case-table-description"
+        role="table"
         id={id}
         className={`usa-table-borderless ${this.props.className}`}
         summary={summary}
-        {...styling} >
-
-        { caption && <caption className="usa-sr-only">{ caption }</caption> }
+        {...styling}
+      >
+        <caption id="case-table-description" className="usa-sr-only">
+          {caption || COPY.CASE_LIST_TABLE_CAPTION}
+        </caption>
 
         <HeaderRow
           columns={columns}
@@ -600,7 +630,8 @@ export default class QueueTable extends React.PureComponent {
           updateFilteredByList={this.updateFilteredByList}
           filteredByList={this.state.filteredByList}
           useTaskPagesApi={useTaskPagesApi}
-          {...this.state} />
+          {...this.state}
+        />
         <BodyRows
           id={tbodyId}
           tbodyRef={tbodyRef}
@@ -610,29 +641,35 @@ export default class QueueTable extends React.PureComponent {
           bodyClassName={bodyClassName}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
-          {...this.state} />
+          {...this.state}
+        />
         <FooterRow rowObjects={[]} columns={columns} />
-      </table>;
+      </table>
+    );
 
-    return <div className="cf-table-wrapper" ref={(div) => {
-      this.elementForFocus = div;
-    }}>
-      <FilterSummary
-        filteredByList={this.state.filteredByList}
-        clearFilteredByList={(newList) => this.updateFilteredByList(newList)} />
-      { paginationElements }
-      { body }
-      { paginationElements }
-    </div>;
+    return (
+      <div
+        className="cf-table-wrapper"
+        ref={(div) => {
+          this.elementForFocus = div;
+        }}
+      >
+        <FilterSummary
+          filteredByList={this.state.filteredByList}
+          clearFilteredByList={(newList) => this.updateFilteredByList(newList)}
+        />
+        {paginationElements}
+        {body}
+        {paginationElements}
+      </div>
+    );
   }
 }
 
 HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes = QueueTable.propTypes = {
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
-  columns: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.object),
-    PropTypes.func]).isRequired,
+  columns: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.object), PropTypes.func]).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowClassNames: PropTypes.func,
   keyGetter: PropTypes.func,

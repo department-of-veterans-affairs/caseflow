@@ -58,7 +58,7 @@ class TableFilter extends React.PureComponent {
     const { valueTransform } = this.props;
 
     return valueTransform ? valueTransform(columnValue, row) : columnValue;
-  }
+  };
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
     const { customFilterLabels, enableFilterTextTransform, filterOptionsFromApi } = this.props;
@@ -72,13 +72,13 @@ class TableFilter extends React.PureComponent {
       return _.sortBy(filterOptionsFromApi, 'displayText');
     }
 
-    const countByColumnName = _.countBy(
-      tableDataByRow,
-      (row) => this.transformColumnValue(_.get(row, columnName), row)
+    const countByColumnName = _.countBy(tableDataByRow, (row) =>
+      this.transformColumnValue(_.get(row, columnName), row)
     );
     const uniqueOptions = [];
 
-    for (let key in countByColumnName) { // eslint-disable-line guard-for-in
+    for (let key in countByColumnName) {
+      // eslint-disable-line guard-for-in
       let displayText = `${COPY.NULL_FILTER_LABEL} (${countByColumnName[key]})`;
       let keyValue = 'null';
 
@@ -102,13 +102,13 @@ class TableFilter extends React.PureComponent {
     }
 
     return _.sortBy(uniqueOptions, 'displayText');
-  }
+  };
 
   isFilterOpen = () => {
     const { columnName, filteredByList } = this.props;
 
     return this.state.open || (filteredByList[columnName] || []).length > 0;
-  }
+  };
 
   toggleDropdown = () => this.setState({ open: !this.state.open });
 
@@ -140,7 +140,7 @@ class TableFilter extends React.PureComponent {
     newFilteredByList[columnName] = newFilters;
     this.props.updateFilters(newFilteredByList);
     this.toggleDropdown();
-  }
+  };
 
   clearFilteredByList = () => {
     let { filteredByList, columnName } = this.props;
@@ -150,37 +150,29 @@ class TableFilter extends React.PureComponent {
 
     this.props.updateFilters(filterList);
     this.hideDropdown();
-  }
+  };
 
   filterIconAriaLabel = () => {
-    const {
-      filteredByList,
-      columnName,
-      label
-    } = this.props;
+    const { filteredByList, columnName, label } = this.props;
+
+    console.log('LABEL: ', this.props.label);
 
     const selectedOptions = filteredByList[columnName] || '';
 
     return selectedOptions.length ? sprintf('%s. Filtering by %s', label, selectedOptions) : label;
-  }
+  };
 
   render() {
-    const {
-      tableData,
-      columnName,
-      anyFiltersAreSet,
-      valueName,
-      getFilterValues
-    } = this.props;
+    const { tableData, columnName, anyFiltersAreSet, valueName, getFilterValues } = this.props;
 
-    const filterOptions = tableData && columnName ?
-      this.filterDropdownOptions(tableData, columnName) :
-      // Keeping the historical prop `getFilterValues` for backwards compatibility,
-      // will remove this once all apps are using this new component.
+    const filterOptions =
+      tableData && columnName ?
+        this.filterDropdownOptions(tableData, columnName) // Keeping the historical prop `getFilterValues` for backwards compatibility,
+        : // will remove this once all apps are using this new component.
       //
       // WARNING: If you use getFilterValues, it will cause some of the options to
       // not display correctly when they are checked.
-      getFilterValues;
+        getFilterValues;
 
     return (
       <span {...iconStyle}>
@@ -188,20 +180,23 @@ class TableFilter extends React.PureComponent {
           label={this.filterIconAriaLabel()}
           getRef={this.props.getFilterIconRef}
           selected={this.isFilterOpen()}
-          handleActivate={this.toggleDropdown} />
+          handleActivate={this.toggleDropdown}
+        />
 
-        {this.state.open &&
+        {this.state.open && (
           <QueueDropdownFilter
             clearFilters={this.clearFilteredByList}
             name={valueName || columnName}
             isClearEnabled={anyFiltersAreSet}
             handleClose={this.toggleDropdown}
-            addClearFiltersRow>
+            addClearFiltersRow
+          >
             <FilterOption
               options={filterOptions}
-              setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
+              setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)}
+            />
           </QueueDropdownFilter>
-        }
+        )}
       </span>
     );
   }
