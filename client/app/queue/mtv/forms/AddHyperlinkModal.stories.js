@@ -6,7 +6,13 @@ import { AddHyperlinkModal } from './AddHyperlinkModal';
 export default {
   title: 'Queue/Motions to Vacate/Motions Attorney/AddHyperlinkModal',
   component: AddHyperlinkModal,
-  decorators: []
+  decorators: [],
+  parameters: {
+    docs: {
+      inlineStories: false,
+      iframeHeight: 600
+    }
+  }
 };
 
 export const standard = () => (

@@ -6,7 +6,13 @@ import { AddClaimantModal } from './AddClaimantModal';
 export default {
   title: 'Intake/AddClaimantModal',
   component: AddClaimantModal,
-  decorators: []
+  decorators: [],
+  parameters: {
+    docs: {
+      inlineStories: false,
+      iframeHeight: 600
+    }
+  }
 };
 
 export const standard = () => (
