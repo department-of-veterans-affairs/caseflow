@@ -35,5 +35,28 @@ describe('HearingLinks', () => {
 
     expect(form).toMatchSnapshot();
     expect(form.find(VirtualHearingLink)).toHaveLength(2);
+    expect(
+      form.find(VirtualHearingLink).exists({ label: 'Join Virtual Hearing' })
+    ).toBe(true);
+    expect(
+      form.find(VirtualHearingLink).exists({ label: 'Start Virtual Hearing' })
+    ).toBe(true);
+  });
+
+  test('Matches snapshot when hearing was virtual and occurred', () => {
+    const form = mount(
+      <HearingLinks
+        hearing={hearing}
+        wasVirtual
+        user={user}
+        virtualHearing={inProgressvirtualHearing}
+      />
+    );
+
+    expect(form).toMatchSnapshot();
+    expect(form.find(VirtualHearingLink)).toHaveLength(0);
+    expect(
+      form.find('span').filterWhere((node) => node.text() === 'Expired')
+    ).toHaveLength(2);
   });
 });

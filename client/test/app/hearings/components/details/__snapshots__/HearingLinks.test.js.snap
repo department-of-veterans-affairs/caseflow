@@ -19,7 +19,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
       "clientHost": "localhost",
       "guestPin": "12345678#",
       "hostPin": "1234567890#",
-      "jobCompleted": false,
+      "jobCompleted": true,
       "status": "active",
     }
   }
@@ -49,7 +49,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
           "clientHost": "localhost",
           "guestPin": "12345678#",
           "hostPin": "1234567890#",
-          "jobCompleted": false,
+          "jobCompleted": true,
           "status": "active",
         }
       }
@@ -84,7 +84,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               "clientHost": "localhost",
               "guestPin": "12345678#",
               "hostPin": "1234567890#",
-              "jobCompleted": false,
+              "jobCompleted": true,
               "status": "active",
             }
           }
@@ -110,17 +110,18 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 "clientHost": "localhost",
                 "guestPin": "12345678#",
                 "hostPin": "1234567890#",
-                "jobCompleted": false,
+                "jobCompleted": true,
                 "status": "active",
               }
             }
           >
             <Link
-              disabled={true}
+              disabled={false}
               target="_blank"
             >
-              <span
-                data-css-1uecgrm=""
+              <a
+                target="_blank"
+                type={null}
               >
                 <strong>
                   Start Virtual Hearing
@@ -130,7 +131,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 >
                    
                   <ExternalLink
-                    fill="#757575"
+                    fill="#0071bc"
                   >
                     <svg
                       height="16px"
@@ -146,7 +147,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                         strokeWidth="1"
                       >
                         <g
-                          fill="#757575"
+                          fill="#0071bc"
                           fillRule="nonzero"
                         >
                           <g
@@ -166,7 +167,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                     </svg>
                   </ExternalLink>
                 </span>
-              </span>
+              </a>
             </Link>
           </VirtualHearingLink>
           <div
@@ -281,7 +282,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
           "clientHost": "localhost",
           "guestPin": "12345678#",
           "hostPin": "1234567890#",
-          "jobCompleted": false,
+          "jobCompleted": true,
           "status": "active",
         }
       }
@@ -316,7 +317,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               "clientHost": "localhost",
               "guestPin": "12345678#",
               "hostPin": "1234567890#",
-              "jobCompleted": false,
+              "jobCompleted": true,
               "status": "active",
             }
           }
@@ -342,17 +343,18 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 "clientHost": "localhost",
                 "guestPin": "12345678#",
                 "hostPin": "1234567890#",
-                "jobCompleted": false,
+                "jobCompleted": true,
                 "status": "active",
               }
             }
           >
             <Link
-              disabled={true}
+              disabled={false}
               target="_blank"
             >
-              <span
-                data-css-1uecgrm=""
+              <a
+                target="_blank"
+                type={null}
               >
                 <strong>
                   Join Virtual Hearing
@@ -362,7 +364,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 >
                    
                   <ExternalLink
-                    fill="#757575"
+                    fill="#0071bc"
                   >
                     <svg
                       height="16px"
@@ -378,7 +380,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                         strokeWidth="1"
                       >
                         <g
-                          fill="#757575"
+                          fill="#0071bc"
                           fillRule="nonzero"
                         >
                           <g
@@ -398,7 +400,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                     </svg>
                   </ExternalLink>
                 </span>
-              </span>
+              </a>
             </Link>
           </VirtualHearingLink>
           <div
@@ -489,6 +491,205 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               </span>
             </Tooltip>
           </CopyTextButton>
+        </VirtualHearingLinkDetails>
+      </div>
+    </LinkContainer>
+    <div />
+  </div>
+</HearingLinks>
+`;
+
+exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`] = `
+<HearingLinks
+  hearing={
+    Object {
+      "scheduledForIsPast": false,
+    }
+  }
+  user={
+    Object {
+      "userCanAssignHearingSchedule": true,
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA#00000001@localhost",
+      "clientHost": "localhost",
+      "guestPin": "12345678#",
+      "hostPin": "1234567890#",
+      "jobCompleted": true,
+      "status": "active",
+    }
+  }
+  wasVirtual={true}
+>
+  <div
+    data-css-19plkw7=""
+    data-css-1fmltfu=""
+  >
+    <LinkContainer
+      hearing={
+        Object {
+          "scheduledForIsPast": false,
+        }
+      }
+      label="VLJ Link"
+      linkText="Start Virtual Hearing"
+      role="VLJ"
+      user={
+        Object {
+          "userCanAssignHearingSchedule": true,
+        }
+      }
+      virtualHearing={
+        Object {
+          "aliasWithHost": "BVA#00000001@localhost",
+          "clientHost": "localhost",
+          "guestPin": "12345678#",
+          "hostPin": "1234567890#",
+          "jobCompleted": true,
+          "status": "active",
+        }
+      }
+      wasVirtual={true}
+    >
+      <div
+        data-css-tx10g=""
+        id="vlj-hearings-link"
+      >
+        <strong>
+          VLJ Link
+          : 
+        </strong>
+        <VirtualHearingLinkDetails
+          aliasWithHost="BVA#00000001@localhost"
+          hearing={
+            Object {
+              "scheduledForIsPast": false,
+            }
+          }
+          label="Start Virtual Hearing"
+          pin="1234567890#"
+          role="VLJ"
+          user={
+            Object {
+              "userCanAssignHearingSchedule": true,
+            }
+          }
+          virtualHearing={
+            Object {
+              "aliasWithHost": "BVA#00000001@localhost",
+              "clientHost": "localhost",
+              "guestPin": "12345678#",
+              "hostPin": "1234567890#",
+              "jobCompleted": true,
+              "status": "active",
+            }
+          }
+          wasVirtual={true}
+        >
+          <span>
+            Expired
+          </span>
+          <div
+            data-css-1abghdv=""
+          >
+            <strong>
+              Conference Room: 
+            </strong>
+            BVA#00000001@localhost
+          </div>
+          <div
+            data-css-6aejb2=""
+          >
+            <strong>
+              PIN: 
+            </strong>
+            1234567890#
+          </div>
+        </VirtualHearingLinkDetails>
+      </div>
+    </LinkContainer>
+    <LinkContainer
+      hearing={
+        Object {
+          "scheduledForIsPast": false,
+        }
+      }
+      label="Guest Link"
+      linkText="Join Virtual Hearing"
+      role="Guest"
+      user={
+        Object {
+          "userCanAssignHearingSchedule": true,
+        }
+      }
+      virtualHearing={
+        Object {
+          "aliasWithHost": "BVA#00000001@localhost",
+          "clientHost": "localhost",
+          "guestPin": "12345678#",
+          "hostPin": "1234567890#",
+          "jobCompleted": true,
+          "status": "active",
+        }
+      }
+      wasVirtual={true}
+    >
+      <div
+        data-css-tx10g=""
+        id="guest-hearings-link"
+      >
+        <strong>
+          Guest Link
+          : 
+        </strong>
+        <VirtualHearingLinkDetails
+          aliasWithHost="BVA#00000001@localhost"
+          hearing={
+            Object {
+              "scheduledForIsPast": false,
+            }
+          }
+          label="Join Virtual Hearing"
+          pin="12345678#"
+          role="Guest"
+          user={
+            Object {
+              "userCanAssignHearingSchedule": true,
+            }
+          }
+          virtualHearing={
+            Object {
+              "aliasWithHost": "BVA#00000001@localhost",
+              "clientHost": "localhost",
+              "guestPin": "12345678#",
+              "hostPin": "1234567890#",
+              "jobCompleted": true,
+              "status": "active",
+            }
+          }
+          wasVirtual={true}
+        >
+          <span>
+            Expired
+          </span>
+          <div
+            data-css-1abghdv=""
+          >
+            <strong>
+              Conference Room: 
+            </strong>
+            BVA#00000001@localhost
+          </div>
+          <div
+            data-css-6aejb2=""
+          >
+            <strong>
+              PIN: 
+            </strong>
+            12345678#
+          </div>
         </VirtualHearingLinkDetails>
       </div>
     </LinkContainer>
