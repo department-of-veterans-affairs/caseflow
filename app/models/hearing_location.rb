@@ -23,15 +23,15 @@ class HearingLocation < CaseflowRecord
   end
 
   def street_address
-    facility_address(key)&.[]["address_1"]
+    facility_address(key)["address_1"]
   end
 
   def timezone
-    facility_address(key)&.[]("timezone")
+    facility_address(key)["timezone"]
   end
 
   def full_address
-    full_addr = [street_address, facility_address(key)&.[]["address_2"], facility_address(key)&.[]["address_3"]]
+    full_addr = [street_address, facility_address(key)["address_2"], facility_address(key)["address_3"]]
       .reject(&:blank?).join(" ")
 
     return if full_addr.blank?
@@ -52,6 +52,6 @@ class HearingLocation < CaseflowRecord
   def facility_address(location_key)
     return {} if location_key.blank?
 
-    Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[location_key]
+    Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[location_key] || {}
   end
 end
