@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# Class that stupilates all queue table attributes and tasks. This configuration and sets of
-# tasks is used on the front end to build and display an organization or user's queue
+# Class that stipulates all queue table attributes and tasks. This configuration and sets of
+# tasks are used on the front end to build and display an organization's or user's queue
 class QueueConfig
   include ActiveModel::Model
 
