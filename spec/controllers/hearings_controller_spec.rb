@@ -141,6 +141,22 @@ RSpec.describe HearingsController, type: :controller do
         end
       end
 
+      context "with emails with whitespaces" do
+        let(:virtual_hearing_params) do
+          {
+            appellant_email: "veteran@email.com     ",
+            representative_email: "        representative@email.com  "
+          }
+        end
+
+        it "returns the expected status and updates the virtual hearing", :aggregate_failures do
+          expect(subject.status).to eq(200)
+
+          expect(VirtualHearing.first.veteran_email).to eq("veteran@email.com")
+          expect(VirtualHearing.first.representative_email).to eq("representative@email.com")
+        end
+      end
+
       context "with all email params" do
         let(:virtual_hearing_params) do
           {
