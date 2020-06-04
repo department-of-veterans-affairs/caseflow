@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
  * Optional props:
  * - @name {string} used in each tab ID to differentiate multiple sets of tabs
  * on a page. This is for accessibility purposes.
-*/
+ */
 export default class TabWindow extends React.Component {
   constructor(props) {
     super(props);
@@ -29,15 +29,17 @@ export default class TabWindow extends React.Component {
     if (this.props.onChange) {
       this.props.onChange(tabNumber);
     }
-  }
+  };
 
   getTabHeaderWithSVG = (tab) => {
-    return <span>
-      {tab.icon ? tab.icon : ''}
-      <span>{tab.label}</span>
-      {tab.indicator ? tab.indicator : ''}
-    </span>;
-  }
+    return (
+      <span>
+        {tab.icon ? tab.icon : ''}
+        <span>{tab.label}</span>
+        {tab.indicator ? tab.indicator : ''}
+      </span>
+    );
+  };
 
   getTabHeader = (tab) => {
     return `${tab.label} tab window`;
@@ -49,28 +51,22 @@ export default class TabWindow extends React.Component {
     className += isTabDisabled ? ' disabled' : '';
 
     return className;
-  }
+  };
 
   // For pages with only one set of tabs or a non-specified tab group name
   // the name returns "undefined". This appends the word "main" to the tab group.
   getTabGroupName = (name) => {
     return name ? name : 'main';
-  }
+  };
 
   render() {
-    let {
-      name,
-      tabs,
-      fullPage,
-      bodyStyling
-    } = this.props;
+    let { name, tabs, fullPage, bodyStyling } = this.props;
 
-    return <div>
-      { tabs && tabs.length && tabs.length > 1 &&
-          <div className={
-            `cf-tab-navigation${fullPage ? ' cf-tab-navigation-full-screen' : ''}`
-          }>
-            {tabs.map((tab, i) =>
+    return (
+      <div>
+        {tabs && tabs.length && tabs.length > 1 && (
+          <div role="tablist" className={`cf-tab-navigation${fullPage ? ' cf-tab-navigation-full-screen' : ''}`}>
+            {tabs.map((tab, i) => (
               <button
                 className={this.getTabClassName(i, this.state.currentPage, tab.disable)}
                 key={i}
@@ -79,19 +75,21 @@ export default class TabWindow extends React.Component {
                 aria-label={this.getTabHeader(tab)}
                 disabled={Boolean(tab.disable)}
                 role="tab"
+                aria-selected={this.state.currentPage === i}
+                aria-controls="tab-panel-container"
               >
-                <span>
-                  {this.getTabHeaderWithSVG(tab)}
-                </span>
+                <span>{this.getTabHeaderWithSVG(tab)}</span>
               </button>
-            )}
+            ))}
           </div>
-      }
-      { tabs && tabs.length && <div className="cf-tab-window-body-full-screen" {...bodyStyling}>
-        {tabs[this.state.currentPage].page}
+        )}
+        {tabs && tabs.length && (
+          <div id="tab-panel-container" role="tabpanel" className="cf-tab-window-body-full-screen" {...bodyStyling}>
+            {tabs[this.state.currentPage].page}
+          </div>
+        )}
       </div>
-      }
-    </div>;
+    );
   }
 }
 
@@ -100,12 +98,14 @@ TabWindow.propTypes = {
   fullPage: PropTypes.bool,
   name: PropTypes.string,
   onChange: PropTypes.func,
-  tabs: PropTypes.arrayOf(PropTypes.shape({
-    disable: PropTypes.bool,
-    icon: PropTypes.obj,
-    indicator: PropTypes.obj,
-    label: PropTypes.node.isRequired,
-    page: PropTypes.node.isRequired
-  })),
+  tabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      disable: PropTypes.bool,
+      icon: PropTypes.obj,
+      indicator: PropTypes.obj,
+      label: PropTypes.node.isRequired,
+      page: PropTypes.node.isRequired
+    })
+  ),
   defaultPage: PropTypes.number
 };
