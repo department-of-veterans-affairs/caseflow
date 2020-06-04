@@ -184,6 +184,45 @@ describe AttorneyTask, :all_dbs do
     end
   end
 
+  context ".update_from_params" do
+    let(:judge) { create(:user, :judge) }
+    let(:attorney) { create(:user, :attorney) }
+    let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge) }
+    let(:attorney_task) do
+      create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge, parent: judge_task)
+    end
+
+    context "when cancellation params are not provided" do
+      it "does not send_back_to_judge_assign!" do
+        tasks = attorney_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, attorney)
+
+        expect(tasks.first.type).to eq AttorneyTask.name
+        expect(tasks.first.status).to eq Constants.TASK_STATUSES.completed
+        expect(tasks.first.closed_at).to_not be nil
+
+        expect(tasks.first.parent.status).to eq Constants.TASK_STATUSES.assigned
+      end
+    end
+
+    context "when cancellation params are provided" do
+      fit "calls send_back_to_judge_assign!" do
+        tasks = attorney_task.update_from_params({ status: Constants.TASK_STATUSES.cancelled }, attorney)
+
+        expect(tasks.first.type).to eq AttorneyTask.name
+        expect(tasks.first.status).to eq Constants.TASK_STATUSES.cancelled
+        expect(tasks.first.closed_at).to_not be nil
+
+        expect(tasks.second.type).to eq JudgeDecisionReviewTask.name
+        expect(tasks.second.status).to eq Constants.TASK_STATUSES.cancelled
+        expect(tasks.second.closed_at).to_not be nil
+
+        expect(tasks.third.type).to eq JudgeAssignTask.name
+        expect(tasks.third.status).to eq Constants.TASK_STATUSES.assigned
+        expect(tasks.third.assigned_to).to eq judge
+      end
+    end
+  end
+
   context ".send_back_to_judge_assign!" do
     let!(:attorney_task) { create(:ama_attorney_task, assigned_by: assigning_judge, parent: parent) }
 

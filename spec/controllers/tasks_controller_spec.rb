@@ -691,46 +691,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       expect(versions.length).to eq 1
     end
 
-    context "when cancelling a task" do
-      it "updates status to cancelled" do
-        patch :update, params: { task: { status: Constants.TASK_STATUSES.cancelled }, id: admin_action.id }
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.cancelled
-        expect(response_body.first["attributes"]["closed_at"]).to_not be nil
-      end
-
-      context "when the task is an attorney task" do
-        let(:judge) { create(:user, :judge) }
-        let(:attorney) { create(:user, :attorney) }
-        let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge) }
-        let(:attorney_task) do
-          create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge, parent: judge_task)
-        end
-
-        before { User.stub = judge }
-
-        it "calls send_back_to_judge_assign!" do
-          patch :update, params: { task: { status: Constants.TASK_STATUSES.cancelled }, id: attorney_task.id }
-
-          expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)["tasks"]["data"]
-
-          expect(response_body.first["attributes"]["type"]).to eq JudgeAssignTask.name
-          expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-          expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq judge.id
-
-          expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
-          expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.cancelled
-          expect(response_body.second["attributes"]["closed_at"]).to_not be nil
-
-          expect(response_body.third["attributes"]["type"]).to eq JudgeDecisionReviewTask.name
-          expect(response_body.third["attributes"]["status"]).to eq Constants.TASK_STATUSES.cancelled
-          expect(response_body.third["attributes"]["closed_at"]).to_not be nil
-        end
-      end
-    end
-
     context "when some other user updates another user's task" do
       let(:assigned_by_user) { create(:user) }
       let!(:assigned_by_user_staff) { create(:staff, :attorney_role, sdomainid: assigned_by_user.css_id) }

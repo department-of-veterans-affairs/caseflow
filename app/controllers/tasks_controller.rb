@@ -93,7 +93,7 @@ class TasksController < ApplicationController
   #   assigned_to_id: 23
   # }
   def update
-    tasks = update_task
+    tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
     tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
@@ -107,16 +107,6 @@ class TasksController < ApplicationController
         "detail": error
       ]
     }, status: :bad_request
-  end
-
-  def update_task
-    if task.is_a?(AttorneyTask) && update_params[:status].eql?(Constants.TASK_STATUSES.cancelled)
-      task.verify_user_can_update!(current_user)
-
-      return task.send_back_to_judge_assign!
-    end
-
-    task.update_from_params(update_params, current_user)
   end
 
   def for_appeal
