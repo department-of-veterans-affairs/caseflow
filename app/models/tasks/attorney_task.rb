@@ -60,10 +60,14 @@ class AttorneyTask < Task
   end
 
   def update_from_params(params, user)
-    params[:status].eql?(Constants.TASK_STATUSES.cancelled) ? send_back_to_judge_assign! : super(params, user)
+    update_params_will_cancel_task?(params) ? send_back_to_judge_assign! : super(params, user)
   end
 
   private
+
+  def update_params_will_cancel_task?(params)
+    params[:status].eql?(Constants.TASK_STATUSES.cancelled)
+  end
 
   def can_be_moved_by_user?(user)
     return false unless parent.is_a?(JudgeTask)
