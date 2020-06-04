@@ -859,19 +859,15 @@ class LegacyAppeal < CaseflowRecord
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless soc_date
 
-    soc_eligible = receipt_date - 60.days
-    eligible_date = covid_flag ? [soc_eligible, Constants::DATES["SOC_COVID_ELIGIBLE"].to_date].min : soc_eligible
-    earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
-
-    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
     all_dates = ([soc_date] + ssoc_dates).compact
 
-    latest_eligible_date = all_dates.max + 1.day
+    latest_soc_date = all_dates.max
+    return true if covid_flag && latest_soc_date >= Constants::DATES["SOC_COVID_ELIGIBLE"].to_date
+    return false if latest_soc_date < Constants::DATES["AMA_ACTIVATION"].to_date
 
-    latest_eligible_date += 2.days if latest_eligible_date.saturday?
-    latest_eligible_date += 1.day if latest_eligible_date.sunday?
+    eligible_until = self.class.next_available_business_day(latest_soc_date + 61.days)
 
-    latest_eligible_date >= earliest_eligible_date
+    eligible_until >= receipt_date
   end
 
   def nod_eligible_for_opt_in?(receipt_date:, covid_flag: false)
@@ -952,6 +948,14 @@ class LegacyAppeal < CaseflowRecord
 
       appeal.save
       appeal
+    end
+
+    def next_available_business_day(date)
+      date += 1.day if Holidays.on(date, :federal_reserve, :observed).any?
+      date += 2.days if date.saturday?
+      date += 1.day if date.sunday?
+
+      date
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
