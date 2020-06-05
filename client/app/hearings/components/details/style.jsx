@@ -1,5 +1,4 @@
 import { css } from 'glamor';
-import { COLORS } from '../../../constants/AppConstants';
 
 export const labelPaddingFirst = css({
   paddingBottom: 5,
@@ -13,31 +12,6 @@ export const labelPadding = css({
 export const maxWidthFormInput = css({
   display: 'block',
   maxWidth: '100%'
-});
-
-export const listStyling = css({
-  verticalAlign: 'super',
-  '::after': {
-    content: ' ',
-    clear: 'both',
-    display: 'block'
-  }
-});
-
-export const listItemStyling = css({
-  display: 'block',
-  float: 'left',
-  padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:last-child)': {
-    '& > div': {
-      borderRight: `1px solid ${COLORS.GREY_LIGHT}`
-    },
-    '& > *': {
-      paddingRight: '1.5rem',
-      minHeight: '22px'
-    }
-  },
-  '& > h4': { textTransform: 'uppercase' }
 });
 
 export const flexParent = css({
@@ -107,17 +81,3 @@ export const enablePadding = css({
 export const hearingLinksContainer = css({
   marginBottom: 38
 });
-
-export const copyButtonStyles = {
-  borderColor: COLORS.PRIMARY,
-  borderWidth: '2px',
-  color: COLORS.PRIMARY,
-  ':hover': {
-    backgroundColor: 'transparent',
-    color: COLORS.PRIMARY,
-    borderColor: COLORS.PRIMARY,
-    borderBottomWidth: '2px'
-  },
-  '& > svg path': { fill: COLORS.PRIMARY },
-  '&:hover > svg path': { fill: COLORS.PRIMARY }
-};

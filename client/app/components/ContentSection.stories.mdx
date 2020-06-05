@@ -1,0 +1,45 @@
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+
+import { ContentSection } from './ContentSection';
+
+<Meta
+  title="Commons/Components/Layout/ContentSection"
+  component={ContentSection}
+/>
+
+# Content Section
+
+<Preview>
+  <Story name="normal">
+    {() => (
+      <React.Fragment>
+        <ContentSection header={"Header 1"}>
+          <p>
+            Millions of Americans interact with government services every day.
+            Veterans apply for benefits. Students compare financial aid options.
+            Small business owners seek loans. Too often, outdated tools and complex
+            systems make these interactions cumbersome and frustrating. Enter the
+            United States Digital Service. We partner leading technologists with
+            dedicated public servants to improve the usability and reliability of
+            our government's most important digital services.
+            Visit USDS.gov to learn more.
+          </p>
+        </ContentSection>
+        <ContentSection header={"Header 2"}>
+          <p>
+            Millions of Americans interact with government services every day.
+            Veterans apply for benefits. Students compare financial aid options.
+            Small business owners seek loans. Too often, outdated tools and complex
+            systems make these interactions cumbersome and frustrating. Enter the
+            United States Digital Service. We partner leading technologists with
+            dedicated public servants to improve the usability and reliability of
+            our government's most important digital services.
+            Visit USDS.gov to learn more.
+          </p>
+        </ContentSection>
+      </React.Fragment>
+    )}
+  </Story>
+</Preview>
+
+<Props of={ContentSection} />
