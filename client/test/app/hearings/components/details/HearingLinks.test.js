@@ -1,14 +1,12 @@
 import React from 'react';
 
 import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
+import { anyUser } from 'test/data/user';
 import { inProgressvirtualHearing } from 'test/data/virtualHearings';
 import { mount } from 'enzyme';
 import VirtualHearingLink from
   'app/hearings/components/VirtualHearingLink';
 
-const user = {
-  userCanAssignHearingSchedule: true
-};
 const hearing = {
   scheduledForIsPast: false
 };
@@ -28,7 +26,7 @@ describe('HearingLinks', () => {
       <HearingLinks
         hearing={hearing}
         isVirtual
-        user={user}
+        user={anyUser}
         virtualHearing={inProgressvirtualHearing}
       />
     );
@@ -48,7 +46,7 @@ describe('HearingLinks', () => {
       <HearingLinks
         hearing={hearing}
         wasVirtual
-        user={user}
+        user={anyUser}
         virtualHearing={inProgressvirtualHearing}
       />
     );

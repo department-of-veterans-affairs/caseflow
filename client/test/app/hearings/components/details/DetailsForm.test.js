@@ -9,6 +9,7 @@ import { HearingsUserContext } from 'app/hearings/contexts/HearingsUserContext';
 import { TranscriptionFormSection } from 'app/hearings/components/details/TranscriptionFormSection';
 import { WrappingComponent } from 'test/karma/establishClaim/WrappingComponent';
 import { mount } from 'enzyme';
+import { userWithVirtualHearingsFeatureEnabled } from 'test/data/user';
 import CheckBox from 'app/components/Checkbox';
 import DetailsForm from 'app/hearings/components/details/DetailsForm';
 import HearingTypeDropdown from
@@ -18,7 +19,6 @@ import reducer from 'app/hearings/reducers';
 const hearingsDispatch = jest.fn();
 const openVirtualHearingModalMock = jest.fn();
 const updateVirtualHearingMock = jest.fn();
-const initialUserState = { userCanScheduleVirtualHearings: true };
 const initialHearingFormState = {
   state: { hearingForms: {} },
   dispatch: hearingsDispatch
@@ -40,7 +40,7 @@ const defaultStore = createStore(
 describe('DetailsForm', () => {
   test('Matches snapshot with default props when passed in', () => {
     const form = mount(
-      <HearingsUserContext.Provider value={initialUserState}>
+      <HearingsUserContext.Provider value={userWithVirtualHearingsFeatureEnabled}>
         <HearingsFormContext.Provider value={initialHearingFormState}>
           <DetailsForm />
         </HearingsFormContext.Provider>
@@ -57,7 +57,7 @@ describe('DetailsForm', () => {
 
   test('Matches snapshot with for legacy hearing', () => {
     const form = mount(
-      <HearingsUserContext.Provider value={initialUserState}>
+      <HearingsUserContext.Provider value={userWithVirtualHearingsFeatureEnabled}>
         <HearingsFormContext.Provider value={initialHearingFormState}>
           <DetailsForm isLegacy />
         </HearingsFormContext.Provider>
@@ -75,7 +75,7 @@ describe('DetailsForm', () => {
 
   test('Matches snapshot with for AMA hearing', () => {
     const form = mount(
-      <HearingsUserContext.Provider value={initialUserState}>
+      <HearingsUserContext.Provider value={userWithVirtualHearingsFeatureEnabled}>
         <HearingsFormContext.Provider value={initialHearingFormState}>
           <DetailsForm isLegacy={false} />
         </HearingsFormContext.Provider>
