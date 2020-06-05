@@ -7,7 +7,6 @@ import { bindActionCreators } from 'redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import COPY from '../../COPY';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 import { associateTasksWithAppeals } from './utils';
 
@@ -22,58 +21,29 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import WindowUtil from '../util/WindowUtil';
 
 class QueueLoadingScreen extends React.PureComponent {
-  maybeLoadAmaQueue = (chosenUserId) => {
+  loadAmaQueue = (chosenUserId) => {
     const {
       userId,
       userRole,
-      appeals,
-      amaTasks,
-      loadedUserId,
       type
     } = this.props;
-
-    if (!_.isEmpty(amaTasks) && !_.isEmpty(appeals) && loadedUserId === userId && !this.queueConfigIsStale()) {
-      return Promise.resolve();
-    }
 
     this.props.setUserId(userId);
 
     return this.props.fetchAmaTasksOfUser(chosenUserId, userRole, type);
   }
 
-  // When navigating between team and individual queues the configs we get from the back-end could be stale and return
-  // the team queue config. In such situations we want to refetch the queue config from the back-end.
-  queueConfigIsStale = () => {
-    const config = this.props.queueConfig;
-
-    // If no queue config is in state (may be using attorney or judge queue) then it is not stale.
-    if (config && config.table_title && config.table_title !== COPY.USER_QUEUE_PAGE_TABLE_TITLE) {
-      return true;
-    }
-
-    return false;
-  }
-
-  maybeLoadLegacyQueue = (chosenUserId) => {
+  loadLegacyQueue = (chosenUserId) => {
     const {
       userId,
-      userRole,
-      loadedUserId,
-      tasks,
-      appeals
+      userRole
     } = this.props;
 
     if (userRole !== USER_ROLE_TYPES.attorney && userRole !== USER_ROLE_TYPES.judge) {
       return Promise.resolve();
     }
 
-    const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === chosenUserId;
     const urlToLoad = this.props.urlToLoad || `/queue/${chosenUserId}`;
-
-    if (userQueueLoaded) {
-      return Promise.resolve();
-    }
-
     const requestOptions = {
       timeout: { response: getMinutesToMilliseconds(5) }
     };
@@ -135,8 +105,8 @@ class QueueLoadingScreen extends React.PureComponent {
       const chosenUserId = this.props.targetUserId || this.props.userId;
 
       return Promise.all([
-        this.maybeLoadAmaQueue(chosenUserId),
-        this.maybeLoadLegacyQueue(chosenUserId),
+        this.loadAmaQueue(chosenUserId),
+        this.loadLegacyQueue(chosenUserId),
         this.maybeLoadJudgeData(chosenUserId)
       ]);
     });
