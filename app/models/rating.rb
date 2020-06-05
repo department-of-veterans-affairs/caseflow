@@ -6,7 +6,7 @@ class Rating
   include ActiveModel::Model
 
   ONE_YEAR_PLUS_DAYS = 372.days
-  TWO_LIFETIMES_DAYS = 250.years
+  TWO_LIFETIMES = 250.years
 
   class NilRatingProfileListError < StandardError
     def ignorable?
@@ -16,7 +16,7 @@ class Rating
 
   class << self
     def fetch_all(participant_id)
-      fetch_timely(participant_id: participant_id, from_date: (Time.zone.today - TWO_LIFETIMES_DAYS))
+      fetch_timely(participant_id: participant_id, from_date: (Time.zone.today - TWO_LIFETIMES))
     end
 
     def fetch_timely(participant_id:, from_date:)
