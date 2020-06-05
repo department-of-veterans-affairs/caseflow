@@ -1,0 +1,268 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TabWindow Class methods function getTabHeaderWithSVG(tab) returns Tab Header with icon when present 1`] = `
+<span>
+  TestIcon
+  <span>
+    Tab 1
+  </span>
+</span>
+`;
+
+exports[`TabWindow Class methods function getTabHeaderWithSVG(tab) returns Tab Header with indicator when present 1`] = `
+<span>
+  <span>
+    Tab 1
+  </span>
+  TestIndicator
+</span>
+`;
+
+exports[`TabWindow Class methods function getTabHeaderWithSVG(tab) returns Tab Header with no icon or indicator when not passed 1`] = `
+<span>
+  <span>
+    Tab 1
+  </span>
+</span>
+`;
+
+exports[`TabWindow Does not render tab content when a tab is disabled and clicked 1`] = `
+<TabWindow
+  defaultPage={0}
+  fullPage={true}
+  tabs={
+    Array [
+      Object {
+        "disable": false,
+        "label": "Tab 1",
+        "page": "Content",
+      },
+      Object {
+        "disable": true,
+        "label": "Tab 2",
+        "page": "Some other content",
+      },
+    ]
+  }
+>
+  <div>
+    <div
+      className="cf-tab-navigation cf-tab-navigation-full-screen"
+      role="tablist"
+    >
+      <button
+        aria-controls="tab-panel-container"
+        aria-label="Tab 1 tab window"
+        aria-selected={true}
+        className="cf-tab cf-active"
+        disabled={false}
+        id="main-tab-0"
+        key="0"
+        onClick={[Function]}
+        role="tab"
+      >
+        <span>
+          <span>
+            <span>
+              Tab 1
+            </span>
+          </span>
+        </span>
+      </button>
+      <button
+        aria-controls="tab-panel-container"
+        aria-label="Tab 2 tab window"
+        aria-selected={false}
+        className="cf-tab disabled"
+        disabled={true}
+        id="main-tab-1"
+        key="1"
+        onClick={[Function]}
+        role="tab"
+      >
+        <span>
+          <span>
+            <span>
+              Tab 2
+            </span>
+          </span>
+        </span>
+      </button>
+    </div>
+    <div
+      className="cf-tab-window-body-full-screen"
+      id="tab-panel-container"
+      role="tabpanel"
+    >
+      Content
+    </div>
+  </div>
+</TabWindow>
+`;
+
+exports[`TabWindow Matches snapshot with default props 1`] = `
+<div>
+  <div
+    className="cf-tab-navigation"
+    role="tablist"
+  >
+    <button
+      aria-controls="tab-panel-container"
+      aria-label="Tab 1 tab window"
+      aria-selected={true}
+      className="cf-tab cf-active"
+      disabled={false}
+      id="main-tab-0"
+      key="0"
+      onClick={[Function]}
+      role="tab"
+    >
+      <span>
+        <span>
+          <span>
+            Tab 1
+          </span>
+        </span>
+      </span>
+    </button>
+    <button
+      aria-controls="tab-panel-container"
+      aria-label="Tab 2 tab window"
+      aria-selected={false}
+      className="cf-tab"
+      disabled={false}
+      id="main-tab-1"
+      key="1"
+      onClick={[Function]}
+      role="tab"
+    >
+      <span>
+        <span>
+          <span>
+            Tab 2
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    className="cf-tab-window-body-full-screen"
+    id="tab-panel-container"
+    role="tabpanel"
+  >
+    Content
+  </div>
+</div>
+`;
+
+exports[`TabWindow Renders an empty div when no tabs are passed 1`] = `<div />`;
+
+exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
+<div>
+  <div
+    className="cf-tab-navigation cf-tab-navigation-full-screen"
+    role="tablist"
+  >
+    <button
+      aria-controls="tab-panel-container"
+      aria-label="Tab 1 tab window"
+      aria-selected={true}
+      className="cf-tab cf-active"
+      disabled={false}
+      id="main-tab-0"
+      key="0"
+      onClick={[Function]}
+      role="tab"
+    >
+      <span>
+        <span>
+          <span>
+            Tab 1
+          </span>
+        </span>
+      </span>
+    </button>
+    <button
+      aria-controls="tab-panel-container"
+      aria-label="Tab 2 tab window"
+      aria-selected={false}
+      className="cf-tab"
+      disabled={false}
+      id="main-tab-1"
+      key="1"
+      onClick={[Function]}
+      role="tab"
+    >
+      <span>
+        <span>
+          <span>
+            Tab 2
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    className="cf-tab-window-body-full-screen"
+    id="tab-panel-container"
+    role="tabpanel"
+  >
+    Content
+  </div>
+</div>
+`;
+
+exports[`TabWindow Renders tab content when a tab is selected 1`] = `
+<div>
+  <div
+    className="cf-tab-navigation cf-tab-navigation-full-screen"
+    role="tablist"
+  >
+    <button
+      aria-controls="tab-panel-container"
+      aria-label="Tab 1 tab window"
+      aria-selected={false}
+      className="cf-tab"
+      disabled={false}
+      id="main-tab-0"
+      key="0"
+      onClick={[Function]}
+      role="tab"
+    >
+      <span>
+        <span>
+          <span>
+            Tab 1
+          </span>
+        </span>
+      </span>
+    </button>
+    <button
+      aria-controls="tab-panel-container"
+      aria-label="Tab 2 tab window"
+      aria-selected={true}
+      className="cf-tab cf-active"
+      disabled={false}
+      id="main-tab-1"
+      key="1"
+      onClick={[Function]}
+      role="tab"
+    >
+      <span>
+        <span>
+          <span>
+            Tab 2
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    className="cf-tab-window-body-full-screen"
+    id="tab-panel-container"
+    role="tabpanel"
+  >
+    Some other content
+  </div>
+</div>
+`;
