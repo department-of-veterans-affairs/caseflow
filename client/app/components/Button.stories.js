@@ -1,87 +1,49 @@
 import React from 'react';
 
-import { action } from '@storybook/addon-actions';
-import { withKnobs, text, boolean, select, object, array } from '@storybook/addon-knobs';
-
 import Button from './Button';
-
-const btnTypes = ['button', 'submit', 'reset'];
 
 export default {
   title: 'Commons/Components/Button',
   component: Button,
-  decorators: [withKnobs]
+  parameters: {
+    controls: { expanded: true }
+  },
+  args: {
+    children: 'Click Me',
+    type: 'button',
+    name: 'myButton',
+    loading: false
+  },
+  argTypes: {
+    classNames: { control: { type: 'array' } },
+    type: { control: { type: 'select', options: ['button', 'submit', 'reset'] } },
+    loading: { control: { type: 'boolean' } },
+    onClick: { action: 'clicked' },
+    styling: { control: { type: 'object' } }
+  }
 };
 
-export const allOptions = () => (
-  <Button
-    id={text('ID', undefined, 'allOptions')}
-    type={select('Type', btnTypes, 'button', 'allOptions')}
-    onClick={action('clicked', 'allOptions')}
-    name={text('Name', 'example', 'allOptions')}
-    disabled={boolean('Disabled', false, 'allOptions')}
-    linkStyling={boolean('Link Styling', false, 'allOptions')}
-    loading={boolean('Loading', false, 'allOptions')}
-    loadingText={text('Loading Text', undefined, 'allOptions')}
-    willNeverBeLoading={boolean('Will Never Be Loading', false, 'allOptions')}
-    ariaLabel={text('ARIA Label', undefined, 'allOptions')}
-    classNames={array('Class Names', [], ' ', 'allOptions')}
-    styling={object('Styling', {}, 'allOptions')}
-  >
-    {text('Contents', 'Sign Up', 'allOptions')}
-  </Button>
-);
+export const Default = (args) => <Button {...args} />;
 
-export const primary = () => (
-  <Button
-    onClick={action('clicked', 'primary')}
-    name={text('Name', 'example', 'primary')}
-    disabled={boolean('Disabled', false, 'primary')}
-  >
-    {text('Contents', 'Sign Up', 'primary')}
-  </Button>
-);
+export const primary = (args) => <Button {...args} />;
 
-export const secondary = () => (
-  <Button
-    onClick={action('clicked', 'secondary')}
-    name={text('Name', 'example', 'secondary')}
-    disabled={boolean('Disabled', false, 'secondary')}
-    classNames={array('Class Names', ['usa-button-secondary'], ' ', 'secondary')}
-  >
-    {text('Contents', 'Sign Up', 'secondary')}
-  </Button>
-);
+export const secondary = (args) => <Button {...args} classNames={['usa-button-secondary']} />;
+secondary.args = {
+  classNames: ['usa-button-secondary']
+};
 
-export const link = () => (
-  <Button
-    onClick={action('clicked', 'link')}
-    name={text('Name', 'example', 'link')}
-    disabled={boolean('Disabled', false, 'link')}
-    linkStyling={boolean('Link Styling', true, 'link')}
-  >
-    {text('Contents', 'Sign Up', 'link')}
-  </Button>
-);
+export const link = (args) => <Button {...args} />;
+link.args = {
+  linkStyling: true
+};
 
-export const disabled = () => (
-  <Button
-    onClick={action('clicked', 'disabled')}
-    name={text('Name', 'example', 'disabled')}
-    disabled={boolean('Disabled', true, 'disabled')}
-  >
-    {text('Contents', 'Sign Up', 'disabled')}
-  </Button>
-);
+export const disabled = (args) => <Button {...args} disabled />;
+disabled.args = {
+  disabled: true
+};
 
-export const loading = () => (
-  <Button
-    onClick={action('clicked', 'loading')}
-    name={text('Name', 'example', 'loading')}
-    disabled={boolean('Disabled', false, 'loading')}
-    loading={boolean('Loading', true, 'loading')}
-    loadingText={text('Loading Text', '', 'loading')}
-  >
-    {text('Contents', 'Sign Up', 'loading')}
-  </Button>
-);
+export const loading = (args) => <Button {...args} loading loadingText="Loading..." />;
+loading.args = {
+  name: 'loading',
+  loading: true
+};
