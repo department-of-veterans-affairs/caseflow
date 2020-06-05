@@ -400,8 +400,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      expect(page).to have_field("Veteran Email for Notifications", with: fill_in_veteran_email)
-      expect(page).to have_field("POA/Representative Email for Notifications", with: fill_in_rep_email)
+      expect(page).to have_field("Veteran Email", with: fill_in_veteran_email)
+      expect(page).to have_field("POA/Representative Email", with: fill_in_rep_email)
 
       events = SentHearingEmailEvent.where(hearing_id: hearing.id)
       expect(events.count).to eq 2
