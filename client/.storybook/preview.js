@@ -1,4 +1,4 @@
-import { addParameters, addDecorator } from '@storybook/react';
+import { addParameters } from '@storybook/react';
 import { DocsPage, DocsContainer } from '@storybook/addon-docs/blocks';
 
 import '../app/styles/app.scss';
@@ -13,6 +13,8 @@ addParameters({
   }
 });
 
-addParameters({
-  a11y: {}
-});
+addParameters({ a11y: {} });
+
+// Generate arguments for any props that start with "on" (onClick, onSubmit, etc)
+// This *should* work, but isn't currently on beta.21
+// addParameters({ actions: { argTypesRegex: '^on.*' } });
