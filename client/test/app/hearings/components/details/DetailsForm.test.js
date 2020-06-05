@@ -1,4 +1,3 @@
-import { createStore } from 'redux';
 import React from 'react';
 
 import {
@@ -8,13 +7,13 @@ import { HearingsFormContext } from 'app/hearings/contexts/HearingsFormContext';
 import { HearingsUserContext } from 'app/hearings/contexts/HearingsUserContext';
 import { TranscriptionFormSection } from 'app/hearings/components/details/TranscriptionFormSection';
 import { WrappingComponent } from 'test/karma/establishClaim/WrappingComponent';
+import { detailsStore } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
 import { userWithVirtualHearingsFeatureEnabled } from 'test/data/user';
 import CheckBox from 'app/components/Checkbox';
 import DetailsForm from 'app/hearings/components/details/DetailsForm';
 import HearingTypeDropdown from
   'app/hearings/components/details/HearingTypeDropdown';
-import reducer from 'app/hearings/reducers';
 
 const hearingsDispatch = jest.fn();
 const openVirtualHearingModalMock = jest.fn();
@@ -23,19 +22,6 @@ const initialHearingFormState = {
   state: { hearingForms: {} },
   dispatch: hearingsDispatch
 };
-const defaultStore = createStore(
-  reducer,
-  {
-    components: {
-      dropdowns: {
-        hearingCoordinators: {
-          isFetching: false,
-          options: []
-        }
-      }
-    }
-  }
-);
 
 describe('DetailsForm', () => {
   test('Matches snapshot with default props when passed in', () => {
@@ -47,7 +33,7 @@ describe('DetailsForm', () => {
       </HearingsUserContext.Provider>,
       {
         wrappingComponent: WrappingComponent,
-        wrappingComponentProps: { store: defaultStore }
+        wrappingComponentProps: { store: detailsStore }
       }
     );
 
@@ -64,7 +50,7 @@ describe('DetailsForm', () => {
       </HearingsUserContext.Provider>,
       {
         wrappingComponent: WrappingComponent,
-        wrappingComponentProps: { store: defaultStore }
+        wrappingComponentProps: { store: detailsStore }
       }
     );
 
@@ -82,7 +68,7 @@ describe('DetailsForm', () => {
       </HearingsUserContext.Provider>,
       {
         wrappingComponent: WrappingComponent,
-        wrappingComponentProps: { store: defaultStore }
+        wrappingComponentProps: { store: detailsStore }
       }
     );
 
@@ -105,7 +91,7 @@ describe('DetailsForm', () => {
         </HearingsUserContext.Provider>,
         {
           wrappingComponent: WrappingComponent,
-          wrappingComponentProps: { store: defaultStore }
+          wrappingComponentProps: { store: detailsStore }
         }
       );
 
