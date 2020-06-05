@@ -109,3 +109,8 @@ TabWindow.propTypes = {
   ),
   defaultPage: PropTypes.number
 };
+
+TabWindow.defaultProps = {
+  defaultPage: 0,
+  fullPage: false
+};
