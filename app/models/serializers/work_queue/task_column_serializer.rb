@@ -195,6 +195,14 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :overtime do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:overtime?)
+    end
+  end
+
   # UNUSED
 
   attribute :assignee_name do
