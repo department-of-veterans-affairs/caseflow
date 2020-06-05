@@ -17,6 +17,7 @@ gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/conn
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "ddtrace"
 gem "dogstatsd-ruby"
+gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
 gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
