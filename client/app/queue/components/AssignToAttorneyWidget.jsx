@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
@@ -12,7 +13,8 @@ import {
   showSuccessMessage,
   resetSuccessMessages,
   setSelectedAssignee,
-  setSelectedAssigneeSecondary
+  setSelectedAssigneeSecondary,
+  resetAssignees
 } from '../uiReducer/uiActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -23,6 +25,7 @@ import pluralize from 'pluralize';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
+import { ACTIONS } from '../uiReducer/uiConstants';
 import { taskActionData } from '../utils';
 
 import QueueFlowModal from './QueueFlowModal';
@@ -85,6 +88,11 @@ class AssignToAttorneyWidget extends React.PureComponent {
 
   validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
 
+  onCancel = () => {
+    this.props.resetAssignees();
+    this.props.history.goBack();
+  }
+
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
@@ -98,13 +106,28 @@ class AssignToAttorneyWidget extends React.PureComponent {
     }
 
     if (selectedAssignee === OTHER) {
-      return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+      return this.assignTasks(selectedTasks, this.getAssignee(selectedAssigneeSecondary));
     }
 
-    return this.assignTasks(selectedTasks, selectedAssignee);
+    return this.assignTasks(selectedTasks, this.getAssignee(selectedAssignee));
   }
 
-  assignTasks = (selectedTasks, assigneeId) => {
+  getAssignee = (id) => {
+    const { attorneysOfJudge, attorneys, selectedTasks } = this.props;
+    let assignee = (attorneysOfJudge.concat(attorneys.data)).find((attorney) => attorney?.id?.toString() === id);
+
+    if (!assignee) {
+      // Sometimes attorneys are pulled from task action data. If we can't find the selected attorney in state, check
+      // the tasks.
+      const option = taskActionData({ ...this.props, task: selectedTasks[0] })?.options.find((opt) => opt.value === id);
+
+      assignee = { id: option.value, full_name: option.label };
+    }
+
+    return assignee;
+  };
+
+  assignTasks = (selectedTasks, assignee) => {
     const {
       previousAssigneeId,
       userId
@@ -116,21 +139,25 @@ class AssignToAttorneyWidget extends React.PureComponent {
 
     return this.props.onTaskAssignment(
       { tasks: selectedTasks,
-        assigneeId,
+        assigneeId: assignee.id,
         previousAssigneeId,
         instructions }).
       then(() => {
-        this.props.resetSaveState();
+        const isReassign = selectedTasks[0].type === 'AttorneyTask';
+
+        this.props.resetAssignees();
 
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
-            verb: 'Assigned',
+            verb: isReassign ? 'Reassigned' : 'Assigned',
             numCases: selectedTasks.length,
-            casePlural: pluralize('case', selectedTasks.length)
+            casePlural: pluralize('tasks', selectedTasks.length),
+            // eslint-disable-next-line camelcase
+            assignee: assignee.full_name
           })
         });
       }, (error) => {
-        this.props.resetSaveState();
+        this.props.saveFailure();
 
         let errorDetail;
 
@@ -147,6 +174,11 @@ class AssignToAttorneyWidget extends React.PureComponent {
         return this.props.showErrorMessage({
           title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
           detail: errorDetail });
+      }).
+      finally(() => {
+        if (!this.props.isModal) {
+          this.props.resetSaveState();
+        }
       });
   }
 
@@ -235,7 +267,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
     </React.Fragment>;
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
-      submit={this.submit} validateForm={this.validateForm}>
+      submit={this.submit} validateForm={this.validateForm} onCancel={this.onCancel}>
       {Widget}
     </QueueFlowModal> : Widget;
   }
@@ -263,7 +295,10 @@ AssignToAttorneyWidget.propTypes = {
   setSelectedAssignee: PropTypes.func,
   setSelectedAssigneeSecondary: PropTypes.func,
   selectedTasks: PropTypes.array,
-  highlightFormItems: PropTypes.bool
+  highlightFormItems: PropTypes.bool,
+  history: PropTypes.object,
+  resetAssignees: PropTypes.func,
+  saveFailure: PropTypes.func
 };
 
 const mapStateToProps = (state) => {
@@ -289,7 +324,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage,
   resetErrorMessages,
   showSuccessMessage,
-  resetSuccessMessages
+  resetSuccessMessages,
+  resetAssignees,
+  saveFailure: () => dispatch({ type: ACTIONS.SAVE_FAILURE })
 }, dispatch);
 
 export default (connect(
@@ -297,4 +334,5 @@ export default (connect(
   mapDispatchToProps
 )(AssignToAttorneyWidget));
 
-export const AssignToAttorneyWidgetModal = (connect(mapStateToProps, mapDispatchToProps)(AssignToAttorneyWidget));
+export const AssignToAttorneyWidgetModal =
+  withRouter(connect(mapStateToProps, mapDispatchToProps)(AssignToAttorneyWidget));
