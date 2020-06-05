@@ -39,9 +39,9 @@ namespace :data_migrations do
     has_required_columns = (VirtualHearing.column_names & required_column_names).size == required_column_names.size
 
     has_no_associations = VirtualHearing.reflect_on_association(:veteran_email).blank? &&
-      VirtualHearing.reflect_on_association(:veteran_email_sent).blank? &&
-      VirtualHearing.reflect_on_association(:appellant_email).blank? &&
-      VirtualHearing.reflect_on_association(:appellant_email_sent).blank?
+                          VirtualHearing.reflect_on_association(:veteran_email_sent).blank? &&
+                          VirtualHearing.reflect_on_association(:appellant_email).blank? &&
+                          VirtualHearing.reflect_on_association(:appellant_email_sent).blank?
 
     unless has_required_columns && has_no_associations
       fail VirtualHearingModelNotInCorrectState, "The VirtualHearing model is not in the correct state to run this task"
@@ -59,10 +59,9 @@ namespace :data_migrations do
       veteran_email = virtual_hearing.veteran_email
       veteran_email_sent = virtual_hearing.veteran_email_sent
 
-      virtual_hearing.update!(
-        appellant_email: veteran_email,
-        appellant_email_sent: veteran_email_sent
-      ) if !dry_run
+      if !dry_run
+        virtual_hearing.update!(appellant_email: veteran_email, appellant_email_sent: veteran_email_sent)
+      end
 
       message = "#{changed} (veteran_email: #{veteran_email}) to appellant_email " \
           "and (veteran_email_sent: #{veteran_email_sent}) to appellant_email_sent " \

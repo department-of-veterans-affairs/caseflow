@@ -61,7 +61,6 @@ describe "data migration rake tasks" do
             "for virtual_hearing (#{virtual_hearing.id})"
         end
 
-
         expected_output = <<~OUTPUT
           Migrating veteran_email and veteran_email_sent data for #{count} VirtualHearing objects
           #{description.join("\n")}
