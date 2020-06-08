@@ -239,8 +239,10 @@ claimants,created_at,datetime,,,,,,
 claimants,decision_review_id,integer (8) FK,,,x,,x,The ID of the decision review the claimant is on.
 claimants,decision_review_type,string,,,,,x,The type of decision review the claimant is on.
 claimants,id,integer (8) PK,x,x,,,,
+claimants,notes,text,,,,,,Notes collected for unlisted claimants.
 claimants,participant_id,string ∗ U,x,,,x,x,The participant ID of the claimant.
 claimants,payee_code,string,,,,,,"The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
+claimants,type,string ∗,x,,,,,"Type of claimant, such as veteran, dependent, attorney or other."
 claimants,updated_at,datetime,,,,,x,
 claims_folder_searches,,,,,,,,
 claims_folder_searches,appeal_id,integer FK,,,x,,x,
@@ -280,9 +282,11 @@ decision_issues,disposition,string ∗,x,,,,x,The disposition for a decision i
 decision_issues,end_product_last_action_date,date ∗,x,,,,,"After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
 decision_issues,id,integer (8) PK,x,x,,,,
 decision_issues,participant_id,string ∗,x,,,,x,The Veteran's participant id.
+decision_issues,percent_number,string,,,,,,percent_number from RatingIssue (prcntNo from Rating Profile)
 decision_issues,rating_issue_reference_id,string,,,,,x,Identifies the specific issue on the rating that resulted from the decision issue (a rating can have multiple issues). This is unique per rating issue.
 decision_issues,rating_profile_date,datetime,,,,,,"The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
 decision_issues,rating_promulgation_date,datetime,,,,,,The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review.
+decision_issues,subject_text,text,,,,,,subject_text from RatingIssue (subjctTxt from Rating Profile)
 decision_issues,updated_at,datetime,,,,,x,
 dispatch_tasks,,,,,,,,
 dispatch_tasks,aasm_state,string,,,,,,
@@ -532,7 +536,7 @@ hearing_locations,city,string,,,,,,
 hearing_locations,classification,string,,,,,,
 hearing_locations,created_at,datetime ∗,x,,,,,
 hearing_locations,distance,float,,,,,,
-hearing_locations,facility_id,string,,,,,,
+hearing_locations,facility_id,string ∗,x,,,,,
 hearing_locations,facility_type,string,,,,,,
 hearing_locations,hearing_id,integer FK,,,x,,x,
 hearing_locations,hearing_type,string,,,,,x,
