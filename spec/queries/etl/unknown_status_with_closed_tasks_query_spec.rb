@@ -2,10 +2,10 @@
 
 describe ETL::UnknownStatusWithClosedTasksQuery, :etl, :all_dbs do
   let!(:unknown_appeal) do
-    create(:appeal).tap do |appeal|
-      root_task = create(:root_task, appeal: appeal)
+    create(:appeal, :with_post_intake_tasks).tap do |appeal|
+      root_task = appeal.root_task
+      appeal.tasks.open.each { |task| task.completed! }
       create(:bva_dispatch_task, :completed, parent: root_task)
-      root_task.completed!
     end
   end
 
