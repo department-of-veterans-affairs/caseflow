@@ -15,9 +15,8 @@ import { assignedToColumn, badgesColumn, completedToNameColumn, daysOnHoldColumn
   regionalOfficeColumn, taskColumn, taskCompletedDateColumn, typeColumn } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
-import COPY from '../../COPY'
+import COPY from '../../COPY';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { fullWidth } from './constants';
 
 /**
@@ -49,7 +48,7 @@ class QueueTableBuilder extends React.PureComponent {
 
   isLegacyAssignTab = (tabConfig) => {
     return tabConfig.name === QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME &&
-           this.props.assignedTasks.length > 0;
+           this.props.assignedTasks?.length > 0;
   }
 
   filterValuesForColumn = (column) => column && column.filterable && column.filter_options;
@@ -133,12 +132,9 @@ class QueueTableBuilder extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => {
-  const userRole = state.ui.userRole;
-
   return ({
     config: state.queue.queueConfig,
-    organizations: state.ui.organizations,
-    assignedTabIncludesLegacyTasks: userRole === USER_ROLE_TYPES.attorney || userRole === USER_ROLE_TYPES.judge
+    organizations: state.ui.organizations
   });
 };
 
@@ -149,8 +145,7 @@ QueueTableBuilder.propTypes = {
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number
   }),
-  requireDasRecord: PropTypes.bool,
-  assignedTabIncludesLegacyTasks: PropTypes.bool
+  requireDasRecord: PropTypes.bool
 };
 
 export default (connect(mapStateToProps)(QueueTableBuilder));
