@@ -15,7 +15,7 @@ import { assignedToColumn, badgesColumn, completedToNameColumn, daysOnHoldColumn
   regionalOfficeColumn, taskColumn, taskCompletedDateColumn, typeColumn } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
-import COPY from '../../COPY'
+import COPY from '../../COPY';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { fullWidth } from './constants';
