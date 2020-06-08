@@ -7,7 +7,6 @@ FactoryBot.define do
       sequence(:generated_slogid) { |n| "ID#{n}" }
     end
 
-    sequence(:sattyid)
     sequence(:stafkey)
     slogid { generated_slogid }
     sequence(:sdomainid) do |n|
@@ -22,6 +21,7 @@ FactoryBot.define do
 
     trait :attorney_role do
       sactive { "A" }
+      sequence(:sattyid)
     end
 
     trait :hearing_judge do
@@ -32,6 +32,7 @@ FactoryBot.define do
     trait :judge_role do
       svlj { "J" }
       sactive { "A" }
+      sequence(:sattyid)
     end
 
     trait :hearing_coordinator do
@@ -45,6 +46,7 @@ FactoryBot.define do
     trait :attorney_judge_role do
       svlj { "A" }
       sactive { "A" }
+      sequence(:sattyid)
     end
 
     trait :colocated_role do
