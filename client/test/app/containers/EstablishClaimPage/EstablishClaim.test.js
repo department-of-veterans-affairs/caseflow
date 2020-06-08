@@ -18,9 +18,6 @@ describe('EstablishClaim', () => {
   let wrapper;
 
   beforeEach(() => {
-    // Spy to ignore console warnings
-    jest.spyOn(console, 'warn').mockReturnValue();
-
     wrapper = mount(
       <EstablishClaim
         slowReRendersAreOk
@@ -47,19 +44,21 @@ describe('EstablishClaim', () => {
       expect(wrapper.state().page).toBe('decision');
     });
 
-    test('redirects to decision if no existing EPs', (done) => {
+    test('redirects to decision if no existing EPs', () => {
+      return new Promise((done) => {
       // Add a listener to the history object and look for the "go back" POP event
-      let unlisten = wrapper.instance().history.listen((location, action) => {
-        if (action === 'POP') {
-          expect(wrapper.instance().history.location.pathname).toBe('/decision');
-          unlisten();
-          done();
-        }
-      });
+        let unlisten = wrapper.instance().history.listen((location, action) => {
+          if (action === 'POP') {
+            expect(wrapper.instance().history.location.pathname).toBe('/decision');
+            unlisten();
+            done();
+          }
+        });
 
-      // manually navigate to associate EP page
-      // This simulates a user manually altering the URL
-      wrapper.instance().history.push('associate');
+        // manually navigate to associate EP page
+        // This simulates a user manually altering the URL
+        wrapper.instance().history.push('associate');
+      });
     });
   });
 
