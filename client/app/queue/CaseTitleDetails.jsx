@@ -1,28 +1,29 @@
-import { css } from 'glamor';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import Modal from '../components/Modal';
-import TextField from '../components/TextField';
-import Button from '../components/Button';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { css } from 'glamor';
+import { withRouter } from 'react-router-dom';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import PropTypes from 'prop-types';
+import React from 'react';
 
+import { COLORS } from '../constants/AppConstants';
+import { TitleDetailsSubheader } from '../components/TitleDetailsSubheader';
+import { TitleDetailsSubheaderSection } from '../components/TitleDetailsSubheaderSection';
 import {
   appealWithDetailSelector,
   legacyJudgeTasksAssignedToUser,
   legacyAttorneyTasksAssignedByUser
 } from './selectors';
-import DocketTypeBadge from './../components/DocketTypeBadge';
-import CopyTextButton from '../components/CopyTextButton';
-import ReaderLink from './ReaderLink';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { pencilSymbol, clockIcon } from '../components/RenderFunctions';
-
-import COPY from '../../COPY';
-import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 import { requestPatch } from './uiReducer/uiActions';
+import Button from '../components/Button';
+import COPY from '../../COPY';
+import CopyTextButton from '../components/CopyTextButton';
+import DocketTypeBadge from './../components/DocketTypeBadge';
+import Modal from '../components/Modal';
+import ReaderLink from './ReaderLink';
+import TextField from '../components/TextField';
 
 const editButton = css({
   float: 'right',
@@ -37,40 +38,6 @@ const overtimeLink = css({
   display: 'inline-block'
 });
 
-const containingDivStyling = css({
-  backgroundColor: COLORS.GREY_BACKGROUND,
-  display: 'block',
-  padding: '0 0 0 2rem',
-
-  '& > *': {
-    display: 'inline-block',
-    margin: '0'
-  }
-});
-
-const listStyling = css({
-  listStyleType: 'none',
-  verticalAlign: 'super',
-  display: 'flex',
-  flexWrap: 'wrap',
-  padding: '1rem 0 0 0'
-});
-
-const listItemStyling = css({
-  display: 'inline',
-  float: 'left',
-  padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:last-child)': {
-    '& > div': {
-      borderRight: `1px solid ${COLORS.GREY_LIGHT}`
-    },
-    '& > *': {
-      paddingRight: '1.5rem'
-    }
-  },
-  '& > h4': { textTransform: 'uppercase' }
-});
-
 const docketBadgeContainerStyle = css({
   border: '1px',
   borderStyle: 'solid',
@@ -79,14 +46,6 @@ const docketBadgeContainerStyle = css({
   margin: '-0.75rem 0',
   backgroundColor: COLORS.WHITE
 });
-
-const CaseDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
-  <ul {...listStyling}>
-    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
-  </ul>
-</div>;
-
-CaseDetailTitleScaffolding.propTypes = { children: PropTypes.node.isRequired };
 
 export class CaseTitleDetails extends React.PureComponent {
   constructor(props) {
@@ -175,51 +134,42 @@ export class CaseTitleDetails extends React.PureComponent {
 
     const showOvertimeButton = userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge);
 
-    return <CaseDetailTitleScaffolding>
-      <React.Fragment>
-        <h4>{COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</h4>
-        <div>
-          <span {...docketBadgeContainerStyle}>
-            <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
-          </span>
-        </div>
-      </React.Fragment>
+    return <TitleDetailsSubheader>
+      <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}>
+        <span {...docketBadgeContainerStyle}>
+          <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
+        </span>
+      </TitleDetailsSubheaderSection>
 
       { !userIsVsoEmployee && this.props.userCanAccessReader &&
-        <React.Fragment>
-          <h4>{COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL}</h4>
-          <div>
-            <ReaderLink
-              appealId={appealId}
-              analyticsSource="queue_task"
-              redirectUrl={redirectUrl}
-              appeal={appeal}
-              taskType={taskType}
-              docCountWithinLink
-              newDocsIcon />
-          </div>
-        </React.Fragment> }
+        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL}>
+          <ReaderLink
+            appealId={appealId}
+            analyticsSource="queue_task"
+            redirectUrl={redirectUrl}
+            appeal={appeal}
+            taskType={taskType}
+            docCountWithinLink
+            newDocsIcon />
+        </TitleDetailsSubheaderSection>
+      }
 
-      <React.Fragment>
-        <h4>{COPY.TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</h4>
-        <div>
-          {renderLegacyAppealType({
-            aod: appeal.isAdvancedOnDocket,
-            type: appeal.caseType
-          })}
+      <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}>
+        {renderLegacyAppealType({
+          aod: appeal.isAdvancedOnDocket,
+          type: appeal.caseType
+        })}
 
-          {!appeal.isLegacyAppeal && this.props.canEditAod && <span {...editButton}>
-            <Link
-              to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
-              Edit
-            </Link>
-          </span>}
-        </div>
-      </React.Fragment>
+        {!appeal.isLegacyAppeal && this.props.canEditAod && <span {...editButton}>
+          <Link
+            to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
+            Edit
+          </Link>
+        </span>}
+      </TitleDetailsSubheaderSection>
 
       { !userIsVsoEmployee && appeal && appeal.documentID &&
-        <React.Fragment>
-          <h4>{COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
+        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>
           <div id="document-id">
             <CopyTextButton
               text={this.state.value || appeal.documentID}
@@ -259,22 +209,22 @@ export class CaseTitleDetails extends React.PureComponent {
               required />
 
           </Modal>}
-        </React.Fragment> }
+        </TitleDetailsSubheaderSection>
+      }
 
       { !userIsVsoEmployee && appeal.assignedJudge && !appeal.removed && appeal.status !== 'cancelled' &&
-        <React.Fragment>
-          <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</h4>
-          <div>{appeal.assignedJudge.full_name}</div>
-        </React.Fragment> }
+        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}>
+          {appeal.assignedJudge.full_name}
+        </TitleDetailsSubheaderSection>
+      }
 
       { !userIsVsoEmployee && appeal.assignedAttorney && !appeal.removed && appeal.status !== 'cancelled' &&
-        <React.Fragment>
-          <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
-          <div>{appeal.assignedAttorney.full_name}</div>
-        </React.Fragment> }
+        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}>
+          {appeal.assignedAttorney.full_name}
+        </TitleDetailsSubheaderSection>
+      }
       { featureToggles.overtime_revamp && showOvertimeButton &&
-        <React.Fragment>
-          <h4>{COPY.TASK_SNAPSHOT_OVERTIME_LABEL}</h4>
+        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_OVERTIME_LABEL}>
           <Button
             linkStyling
             styling={overtimeButton}
@@ -284,8 +234,9 @@ export class CaseTitleDetails extends React.PureComponent {
               COPY.TASK_SNAPSHOT_IS_OVERTIME : COPY.TASK_SNAPSHOT_IS_NOT_OVERTIME }
             </span>
           </Button>
-        </React.Fragment> }
-    </CaseDetailTitleScaffolding>;
+        </TitleDetailsSubheaderSection>
+      }
+    </TitleDetailsSubheader>;
   };
 }
 

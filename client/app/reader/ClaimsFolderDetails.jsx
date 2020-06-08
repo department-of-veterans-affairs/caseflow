@@ -1,12 +1,12 @@
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
-import Accordion from '../components/Accordion';
+import { Accordion } from '../components/Accordion';
+import { getClaimTypeDetailInfo } from '../reader/utils';
 import AccordionSection from '../components/AccordionSection';
 import IssueList from '../queue/components/IssueList';
-
-import { getClaimTypeDetailInfo } from '../reader/utils';
-import { css } from 'glamor';
 
 const rowDisplay = css({
   display: 'flex',
@@ -76,5 +76,10 @@ class ClaimsFolderDetails extends React.PureComponent {
     </div>;
   }
 }
+
+ClaimsFolderDetails.propTypes = {
+  appeal: PropTypes.object,
+  documents: PropTypes.array
+};
 
 export default ClaimsFolderDetails;
