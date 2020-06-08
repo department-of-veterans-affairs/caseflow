@@ -13,10 +13,10 @@ shared_context "ETL Query", shared_context: :metadata do
   before do
     ETL::Builder.new.full
   end
+end
 
+shared_examples "an ETL Unknown status query" do
   describe "#call" do
-    subject { described_class.new.call }
-
     it "returns array of matching appeals" do
       etl_appeal = ETL::Appeal.find_by(appeal_id: unknown_appeal.id)
       expect(subject).to eq([etl_appeal])
