@@ -9,7 +9,7 @@ import QueueTableBuilder from './QueueTableBuilder';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 
-import { workableTasksByAssigneeCssIdSelector } from './selectors';
+import { attorneyLegacyAssignedTasksSelector } from './selectors';
 
 import {
   resetErrorMessages,
@@ -68,7 +68,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    workableTasks: workableTasksByAssigneeCssIdSelector(state),
+    workableTasks: attorneyLegacyAssignedTasksSelector(state),
     success: messages.success,
     error: messages.error,
     taskDecision
