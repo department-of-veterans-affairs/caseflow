@@ -1,7 +1,8 @@
 module.exports = {
   moduleNameMapper: {
     '^app/(.*)$': '<rootDir>/app/$1',
-    '^test/(.*)$': '<rootDir>/test/$1'
+    '^test/(.*)$': '<rootDir>/test/$1',
+    '\\.(css|less|scss|sss|styl)$': '<rootDir>/node_modules/jest-css-modules'
   },
   setupFilesAfterEnv: ['./test/app/jestSetup.js'],
   transformIgnorePatterns: ['node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'],
