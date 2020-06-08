@@ -5,6 +5,8 @@ import faker from 'faker';
 
 import { AddClaimantModal } from 'app/intake/components/AddClaimantModal';
 
+const DEBOUNCE = 250;
+
 // Set up sample data & async fn for performing fuzzy search
 // Actual implementation performs fuzzy search via backend ruby gem
 const totalRecords = 500;
@@ -21,6 +23,8 @@ const performQuery = async (search = '') => {
 describe('AddClaimantModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
+
+  jest.useFakeTimers('modern');
 
   it('renders correctly', () => {
     const { container } = render(<AddClaimantModal onSearch={performQuery} onCancel={onCancel} onSubmit={onSubmit} />);
@@ -46,6 +50,7 @@ describe('AddClaimantModal', () => {
 
     // Enter sufficient search, and wait for select options to show
     await userEvent.type(input, data[0].name.substr(0, 4));
+    jest.advanceTimersByTime(DEBOUNCE);
     await waitFor(() => screen.getByText(data[0].name));
 
     // Select claimant
@@ -54,5 +59,55 @@ describe('AddClaimantModal', () => {
     // Click submit
     userEvent.click(submit);
     expect(onSubmit).toHaveBeenCalled();
+  });
+
+  describe('claimant search', () => {
+    jest.useFakeTimers('modern');
+
+    let func;
+
+    beforeEach(() => {
+      func = jest.fn(performQuery);
+    });
+
+    test('enforces minimum characters', async () => {
+      render(<AddClaimantModal onSearch={func} onCancel={onCancel} onSubmit={onSubmit} />);
+      const input = screen.getByLabelText(/claimant's name/i);
+
+      // enter insufficient characters
+      await userEvent.type(input, data[0].name.substr(0, 2));
+      jest.advanceTimersByTime(DEBOUNCE);
+      expect(func).not.toHaveBeenCalled();
+
+      await userEvent.type(input, data[0].name.substr(0, 1));
+      jest.advanceTimersByTime(DEBOUNCE);
+      expect(func).toHaveBeenCalled();
+    });
+
+    test('just once', async () => {
+      render(<AddClaimantModal onSearch={func} onCancel={onCancel} onSubmit={onSubmit} />);
+      const input = screen.getByLabelText(/claimant's name/i);
+
+      // enter insufficient characters
+      await userEvent.type(input, 'A');
+      jest.advanceTimersByTime(DEBOUNCE);
+      expect(func).not.toHaveBeenCalled();
+
+      await userEvent.type(input, 'BC');
+      expect(func).not.toHaveBeenCalled();
+      jest.advanceTimersByTime(DEBOUNCE);
+      expect(func).toHaveBeenCalled();
+      expect(func).toBeCalledTimes(1);
+      await userEvent.type(input, 'DEF');
+      expect(func).toBeCalledTimes(1);
+      await userEvent.type(input, 'GHI');
+      expect(func).toBeCalledTimes(1);
+      jest.advanceTimersByTime(DEBOUNCE);
+      expect(func).toBeCalledTimes(2);
+
+      // Ensure that we don't call if no additional input
+      jest.advanceTimersByTime(DEBOUNCE);
+      expect(func).toBeCalledTimes(2);
+    });
   });
 });
