@@ -18,6 +18,7 @@
     "build": "webpack --config webpack.config.js",
     "build:test": "NODE_ENV=test yarn run build",
     "build:production": "NODE_ENV=production yarn run build",
+    "build:demo": "NODE_ENV=production yarn run build && yarn run build:storybook",
     "dev:clear-build": "rm ../app/assets/javascripts/*webpack* || true",
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
     "dev:hot": "yarn run dev:clear-build && NODE_ENV=development node webpack-hot-server.js",
