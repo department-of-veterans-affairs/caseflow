@@ -120,10 +120,12 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
+  app: PropTypes.string,
   ariaLabel: PropTypes.string,
   children: PropTypes.node,
   classNames: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,
+  dangerStyling: PropTypes.bool,
   id: PropTypes.string,
 
   /**
@@ -149,13 +151,16 @@ Button.propTypes = {
       return new Error("'loading' and 'willNeverBeLoading' can't both be set to 'true'.");
     }
   },
+  loadingText: PropTypes.string,
   willNeverBeLoading: PropTypes.bool,
   name: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   onClick: PropTypes.func,
-  type: PropTypes.oneOf(['button', 'submit', 'reset']),
+  redStyling: PropTypes.bool,
 
   /**
    * Accepts an object that is spread out as props on `button` element
    */
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  title: PropTypes.string,
+  type: PropTypes.oneOf(['button', 'submit', 'reset'])
 };
