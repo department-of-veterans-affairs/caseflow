@@ -38,7 +38,7 @@ class AttorneyTaskListView extends React.PureComponent {
   };
 
   render = () => {
-    const { workableTasks, error, success } = this.props;
+    const { error, success } = this.props;
 
     return <AppSegment filledBackground styling={containerStyles}>
       {error && <Alert type="error" title={error.title}>
@@ -48,7 +48,7 @@ class AttorneyTaskListView extends React.PureComponent {
         {success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
       </Alert>}
       <QueueTableBuilder
-        assignedTasks={workableTasks}
+        assignedTasks={this.props.workableTasks}
         requireDasRecord
       />
     </AppSegment>;

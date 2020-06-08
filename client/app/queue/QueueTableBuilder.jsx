@@ -49,7 +49,7 @@ class QueueTableBuilder extends React.PureComponent {
 
   isLegacyAssignTab = (tabConfig) => {
     return tabConfig.name === QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME &&
-           this.props.assignedTabIncludesLegacyTasks;
+           this.props.assignedTasks.length > 0;
   }
 
   filterValuesForColumn = (column) => column && column.filterable && column.filter_options;
