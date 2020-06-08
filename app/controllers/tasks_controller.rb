@@ -95,7 +95,7 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    render json: { tasks: json_tasks( tasks.uniq) }
+    render json: { tasks: json_tasks(tasks.uniq) }
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error
     Raven.capture_exception(error)
     render json: {
