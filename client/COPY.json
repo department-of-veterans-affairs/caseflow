@@ -798,7 +798,8 @@
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
   "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
-  "OPEN_VIRTUAL_HEARINGS_LINK": "Open Virtual Hearing",
+  "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
+  "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }
