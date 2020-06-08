@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import Alert from '../components/Alert';
 import QueueTableBuilder from './QueueTableBuilder';
@@ -41,7 +40,6 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
       messages,
       tasks
     } = this.props;
-    const reviewableCount = tasks.length;
 
     return <AppSegment filledBackground styling={containerStyles}>
       {messages.error && <Alert type="error" title={messages.error.title}>
@@ -50,10 +48,6 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
       {messages.success && <Alert type="success" title={messages.success.title}>
         {messages.success.detail || COPY.JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
       </Alert>}
-      {reviewableCount === 0 && <p {...css({ textAlign: 'center',
-        marginTop: '3rem' })}>
-        {COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
-      </p>}
       <QueueTableBuilder assignedTasks={tasks} />
     </AppSegment>;
   };

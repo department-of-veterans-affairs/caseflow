@@ -206,6 +206,14 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :document_id do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]
+
+    if serialize_attribute?(params, columns)
+      object.latest_attorney_case_review&.document_id
+    end
+  end
+
   # UNUSED
 
   attribute :assignee_name do
@@ -272,10 +280,6 @@ class WorkQueue::TaskColumnSerializer
     {
       assigned_at: nil
     }
-  end
-
-  attribute :document_id do
-    nil
   end
 
   attribute :decision_prepared_by do
