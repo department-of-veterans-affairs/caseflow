@@ -94,6 +94,7 @@ describe('AddClaimantModal', () => {
       expect(func).not.toHaveBeenCalled();
 
       await userEvent.type(input, 'BC');
+      expect(func).not.toHaveBeenCalled();
       jest.advanceTimersByTime(DEBOUNCE);
       expect(func).toHaveBeenCalled();
       expect(func).toBeCalledTimes(1);
@@ -101,6 +102,10 @@ describe('AddClaimantModal', () => {
       expect(func).toBeCalledTimes(1);
       await userEvent.type(input, 'GHI');
       expect(func).toBeCalledTimes(1);
+      jest.advanceTimersByTime(DEBOUNCE);
+      expect(func).toBeCalledTimes(2);
+
+      // Ensure that we don't call if no additional input
       jest.advanceTimersByTime(DEBOUNCE);
       expect(func).toBeCalledTimes(2);
     });
