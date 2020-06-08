@@ -8,12 +8,14 @@ import querystring from 'querystring';
 import BulkAssignButton from './components/BulkAssignButton';
 import QueueTable from './QueueTable';
 import TabWindow from '../components/TabWindow';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import { assignedToColumn, badgesColumn, completedToNameColumn, daysOnHoldColumn, daysWaitingColumn, detailsColumn,
   docketNumberColumn, documentIdColumn, issueCountColumn, readerLinkColumn, readerLinkColumnWithNewDocsIcon,
   regionalOfficeColumn, taskColumn, taskCompletedDateColumn, typeColumn } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
+import COPY from '../../COPY'
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { fullWidth } from './constants';
@@ -83,16 +85,22 @@ class QueueTableBuilder extends React.PureComponent {
     const paginationOptions = this.paginationOptions();
     const tasks = tasksWithAppealsFromRawTasks(tabConfig.tasks);
     let totalTaskCount = tabConfig.total_task_count;
+    let noCasesMessage;
 
     if (this.isLegacyAssignTab(tabConfig)) {
       tasks.unshift(...this.props.assignedTasks);
       totalTaskCount = tasks.length;
+
+      noCasesMessage = totalTaskCount === 0 && <p>
+        {COPY.NO_CASES_IN_QUEUE_MESSAGE}
+        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p>;
     }
 
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: <React.Fragment>
-        <p className="cf-margin-top-0">{tabConfig.description}</p>
+        <p className="cf-margin-top-0">{noCasesMessage || tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
         <QueueTable
           key={tabConfig.name}
