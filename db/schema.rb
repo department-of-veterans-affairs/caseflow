@@ -334,7 +334,7 @@ ActiveRecord::Schema.define(version: 2020_06_08_165840) do
     t.text "notes", comment: "Notes collected for unlisted claimants."
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
-    t.string "type", comment: "Type of claimant, such as veteran, dependent, attorney or other."
+    t.string "type", null: false, comment: "Type of claimant, such as veteran, dependent, attorney or other."
     t.datetime "updated_at"
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
     t.index ["participant_id"], name: "index_claimants_on_participant_id"

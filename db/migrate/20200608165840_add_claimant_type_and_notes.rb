@@ -5,5 +5,6 @@ class AddClaimantTypeAndNotes < ActiveRecord::Migration[5.2]
     reversible do |direction|
       direction.up { Claimant.update_all(type: 'Claimant') }
     end
+    change_column_null :claimants, :type, false
   end
 end
