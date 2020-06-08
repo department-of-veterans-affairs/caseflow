@@ -275,13 +275,13 @@ feature "Intake Review Page", :postgres do
             )
 
             visit "/intake"
-  
+
             expect(page).to have_current_path("/intake/review_request")
-  
+
             within_fieldset("Is the claimant someone other than the Veteran?") do
               find("label", text: "Yes", match: :prefer_exact).click
             end
-  
+
             expect(page).to_not have_content("+ Add Claimant")
           end
         end
