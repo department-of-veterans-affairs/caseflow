@@ -1,37 +1,37 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import connect from 'react-redux/es/connect/connect';
-import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
+import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Button from '../../components/Button';
-import Modal from '../../components/Modal';
-import { fullWidth } from '../../queue/constants';
+import { debounce } from 'lodash';
+import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import React from 'react';
+import connect from 'react-redux/es/connect/connect';
+
 import {
   RegionalOfficeDropdown,
   HearingCoordinatorDropdown,
   JudgeDropdown
 } from '../../components/DataDropdowns';
-import DateSelector from '../../components/DateSelector';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import TextareaField from '../../components/TextareaField';
-import { bindActionCreators } from 'redux';
-import {
-  selectVlj,
-  selectHearingCoordinator,
-  setNotes
-} from '../actions/dailyDocketActions';
+import { fullWidth } from '../../queue/constants';
+import { onRegionalOfficeChange } from '../../components/common/actions';
 import {
   onSelectedHearingDayChange,
   selectRequestType,
   onAssignHearingRoom,
   onReceiveHearingSchedule
 } from '../actions/hearingScheduleActions';
-import { onRegionalOfficeChange } from '../../components/common/actions';
-import Checkbox from '../../components/Checkbox';
+import {
+  selectVlj,
+  selectHearingCoordinator,
+  setNotes
+} from '../actions/dailyDocketActions';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
+import Button from '../../components/Button';
+import Checkbox from '../../components/Checkbox';
+import DateSelector from '../../components/DateSelector';
+import Modal from '../../components/Modal';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import TextareaField from '../../components/TextareaField';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -352,19 +352,16 @@ class HearingDayAddModal extends React.Component {
   };
 
   render() {
-
-    return <AppSegment filledBackground>
-      <div className="cf-modal-scroll">
-        <Modal
-          title="Add Hearing Day"
-          closeHandler={this.onCancelModal}
-          confirmButton={this.modalConfirmButton()}
-          cancelButton={this.modalCancelButton()}
-        >
-          {this.modalMessage()}
-        </Modal>
-      </div>
-    </AppSegment>;
+    return (
+      <Modal
+        title="Add Hearing Day"
+        closeHandler={this.onCancelModal}
+        confirmButton={this.modalConfirmButton()}
+        cancelButton={this.modalCancelButton()}
+      >
+        {this.modalMessage()}
+      </Modal>
+    );
   }
 }
 
