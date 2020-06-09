@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-shared_context "ETL Query", shared_context: :metadata do
+shared_context "ETL Unknown Status Query", shared_context: :metadata do
   let!(:unknown_appeal) do
     create(:appeal, :with_post_intake_tasks).tap do |appeal|
       root_task = appeal.root_task

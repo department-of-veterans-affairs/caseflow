@@ -2,24 +2,24 @@
 
 class ETL::UnknownStatusWithCompletedRootTaskQuery
   def call
-    appeals
+    unknown_appeals_with_open_child_tasks_and_completed_root_task
   end
 
   private
 
-  def appeals
+  def unknown_appeals_with_open_child_tasks_and_completed_root_task
     ETL::Appeal.where(status: "UNKNOWN")
-      .where(appeal_id: completed_root_tasks)
-      .where(appeal_id: open_child_tasks)
+      .where(appeal_id: appeal_ids_for_completed_root_tasks)
+      .where(appeal_id: appeal_ids_for_open_child_tasks)
   end
 
-  def completed_root_tasks
+  def appeal_ids_for_completed_root_tasks
     ETL::Task.select(:appeal_id)
       .where(appeal_type: "Appeal", task_type: "RootTask", task_status: Task.closed_statuses)
   end
 
-  def open_child_tasks
-    ETL::Task.select(:appeal_id)
+  def appeal_ids_for_open_child_tasks
+    ETL::Task.select(:appeal_id).distinct
       .where(appeal_type: "Appeal")
       .where.not(task_type: "RootTask", task_status: Task.closed_statuses)
   end

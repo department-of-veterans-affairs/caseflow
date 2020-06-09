@@ -2,18 +2,16 @@
 
 class ETL::UnknownStatusWithClosedTasksQuery
   def call
-    appeals
+    unknown_appeals_with_all_closed_child_tasks
   end
 
   private
 
-  def appeals
-    ETL::Appeal.where(status: "UNKNOWN").where.not(appeal_id: open_tasks)
+  def unknown_appeals_with_all_closed_child_tasks
+    ETL::Appeal.where(status: "UNKNOWN").where.not(appeal_id: appeal_ids_for_open_tasks)
   end
 
-  def open_tasks
-    ETL::Task.select(:appeal_id)
-      .where(appeal_type: "Appeal")
-      .where(task_status: Task.open_statuses)
+  def appeal_ids_for_open_tasks
+    ETL::Task.select(:appeal_id).where(appeal_type: "Appeal", task_status: Task.open_statuses).distinct
   end
 end
