@@ -420,8 +420,10 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def fetch_associated_rating
-    potential_decision_ratings.find do |rating|
-      rating.associated_end_products.any? { |end_product| end_product.claim_id == reference_id }
+    Rails.cache.fetch("epe_associated_rating/#{end_product.claim_id}", expires_in: 3.hours) do
+      potential_decision_ratings.find do |rating|
+        rating.associated_end_products.any? { |end_product| end_product.claim_id == reference_id }
+      end
     end
   end
 
