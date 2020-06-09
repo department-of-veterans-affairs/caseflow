@@ -220,7 +220,7 @@ export const setOvertime = (appealId, overtime) => ({
     appealId,
     overtime
   }
-})
+});
 
 export const deleteTask = (taskId) => ({
   type: ACTIONS.DELETE_TASK,
@@ -534,6 +534,8 @@ export const reassignTasksToUser = ({
       dispatch(decrementTaskCountForAttorney({
         id: previousAssigneeId
       }));
+
+      dispatch(setOvertime(oldTask.externalAppealId, false));
     });
 }));
 
@@ -557,6 +559,8 @@ export const legacyReassignToJudge = ({
       dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
 
       dispatch(showSuccessMessage(successMessage));
+
+      dispatch(setOvertime(oldTask.externalAppealId, false));
     });
 }));
 
