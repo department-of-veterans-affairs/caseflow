@@ -254,7 +254,8 @@ class ExternalApi::BGSService
       client.rating.find_by_participant_id_and_date_range(
         participant_id,
         start_date.to_datetime.iso8601,
-        end_date.to_datetime.iso8601)
+        end_date.to_datetime.iso8601
+      )
     end
   end
 
