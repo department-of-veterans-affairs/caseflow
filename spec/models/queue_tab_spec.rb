@@ -28,7 +28,9 @@ describe QueueTab do
     subject { tab.to_hash }
 
     it "returns a hash with the correct keys" do
-      expect(subject.keys).to match_array([:label, :name, :description, :columns, :allow_bulk_assign])
+      expect(subject.keys).to match_array(
+        [:label, :name, :description, :columns, :allow_bulk_assign, :contains_legacy_tasks]
+      )
     end
 
     it "interpolates assignee name in description element of hash" do

@@ -52,11 +52,11 @@ class TaskPager
   end
 
   def queue_tab
-    @queue_tab ||= QueueTab.from_name(tab_name).new(assignee: assignee)
+    @queue_tab ||= QueueTab.from_name(tab_name)&.new(assignee: assignee)
   end
 
   def pagination_enabled
-    @pagination_enabled ||= assignee.use_task_pages_api? && !queue_tab.contains_legacy_tasks?
+    @pagination_enabled ||= assignee.use_task_pages_api? && !queue_tab&.contains_legacy_tasks?
   end
 
   private
