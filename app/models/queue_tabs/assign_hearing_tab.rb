@@ -5,14 +5,18 @@
 # Acts as a general tab for the two tabs for the table: amaAssignHearingTab,
 # and legacyAssignHearingTab which are paginated.
 
-class AssignHearingTab
+class AssignHearingTab < QueueTab
   include ActiveModel::Model
 
   attr_accessor :regional_office_key, :appeal_type
 
-  def initialize(appeal_type:, regional_office_key:)
+  def initialize(appeal_type: nil, regional_office_key: nil, assignee: nil)
     @appeal_type = appeal_type
     @regional_office_key = regional_office_key
+  end
+
+  def self.tab_name
+    Constants.QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME
   end
 
   # return schedule hearing tasks joined with CachedAppeal selected

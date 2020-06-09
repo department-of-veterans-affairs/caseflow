@@ -58,6 +58,14 @@ describe TaskPager, :all_dbs do
 
     subject { TaskPager.new(arguments).tasks_for_tab }
 
+    context "when the tab name is not recognized" do
+      let(:tab_name) { "some unknown tab name" }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidTaskTableTab)
+      end
+    end
+
     context "when there are some tasks for the given tab name" do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:task_count) { TaskPager::TASKS_PER_PAGE + 3 }

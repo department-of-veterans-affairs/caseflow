@@ -78,6 +78,14 @@ describe QueueTab do
   describe "#from_name" do
     subject { QueueTab.from_name(tab_name) }
 
+    context "when not tab class exists with the given name" do
+      let(:tab_name) { "non-existent tab name" }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidTaskTableTab)
+      end
+    end
+
     context "when a tab class with that name exists" do
       let(:tab_name) { Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME }
 

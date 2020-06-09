@@ -15,7 +15,10 @@ class QueueTab
   end
 
   def self.from_name(tab_name)
-    descendants.find { |subclass| subclass.tab_name == tab_name }
+    tab = descendants.find { |subclass| subclass.tab_name == tab_name }
+    fail(Caseflow::Error::InvalidTaskTableTab, tab_name: tab_name) unless tab
+
+    tab
   end
 
   def to_hash
