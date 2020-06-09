@@ -46,13 +46,13 @@ class VirtualHearing < CaseflowRecord
     (veteran_email_sent == true) ? veteran_email_sent : value
   end
 
-  #temporary setter
+  # temporary setter
   def appellant_email_sent=(value)
     self.veteran_email_sent = value
     super(value)
   end
 
-  #temporary setter
+  # temporary setter
   def appellant_email=(value)
     self.veteran_email = value
     super(value)
