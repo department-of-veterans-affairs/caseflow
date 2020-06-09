@@ -23,6 +23,10 @@ class AssignedTasksTab < QueueTab
       .where.not(type: JudgeAssignTask.name)
   end
 
+  def contains_legacy_tasks?
+    assignee.can_be_assigned_legacy_tasks?
+  end
+
   # rubocop:disable Metrics/AbcSize
   def column_names
     return QueueTab.attorney_column_names if assignee.attorney_in_vacols?
