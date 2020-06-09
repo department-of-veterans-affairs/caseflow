@@ -47,11 +47,6 @@ class QueueTableBuilder extends React.PureComponent {
     return config;
   }
 
-  isLegacyAssignTab = (tabConfig) => {
-    return tabConfig.name === QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME &&
-           this.props.assignedTabIncludesLegacyTasks;
-  }
-
   filterValuesForColumn = (column) => column && column.filterable && column.filter_options;
 
   createColumnObject = (column, config, tasks) => {
@@ -87,7 +82,7 @@ class QueueTableBuilder extends React.PureComponent {
     let totalTaskCount = tabConfig.total_task_count;
     let noCasesMessage;
 
-    if (this.isLegacyAssignTab(tabConfig)) {
+    if (tabConfig.contains_legacy_tasks) {
       tasks.unshift(...this.props.assignedTasks);
       totalTaskCount = tasks.length;
 
@@ -112,7 +107,7 @@ class QueueTableBuilder extends React.PureComponent {
           totalTaskCount={totalTaskCount}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
           tabPaginationOptions={paginationOptions.tab === tabConfig.name && paginationOptions}
-          useTaskPagesApi={config.use_task_pages_api && !this.isLegacyAssignTab(tabConfig)}
+          useTaskPagesApi={config.use_task_pages_api && !tabConfig.contains_legacy_tasks}
           enablePagination
         />
       </React.Fragment>
@@ -133,12 +128,9 @@ class QueueTableBuilder extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => {
-  const userRole = state.ui.userRole;
-
   return ({
     config: state.queue.queueConfig,
-    organizations: state.ui.organizations,
-    assignedTabIncludesLegacyTasks: userRole === USER_ROLE_TYPES.attorney || userRole === USER_ROLE_TYPES.judge
+    organizations: state.ui.organizations
   });
 };
 
@@ -149,8 +141,7 @@ QueueTableBuilder.propTypes = {
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number
   }),
-  requireDasRecord: PropTypes.bool,
-  assignedTabIncludesLegacyTasks: PropTypes.bool
+  requireDasRecord: PropTypes.bool
 };
 
 export default (connect(mapStateToProps)(QueueTableBuilder));
