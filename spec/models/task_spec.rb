@@ -945,7 +945,7 @@ describe Task, :all_dbs do
       end
 
       context "when the task is an attorney task" do
-        let(:judge) { create(:user, :judge) }
+        let(:judge) { create(:user, :with_vacols_judge_record) }
         let(:attorney) { create(:user, :with_vacols_attorney_record) }
         let(:new_assignee) { create(:user, :with_vacols_attorney_record) }
         let(:task) { create(:ama_attorney_rewrite_task, assigned_to: attorney, assigned_by: judge, appeal: appeal) }
