@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "appeal_shared_examples"
-require "holidays/core_extensions/date"
-
-class Date
-  include Holidays::CoreExtensions::Date
-end
 
 describe LegacyAppeal, :all_dbs do
   before do
@@ -231,20 +226,12 @@ describe LegacyAppeal, :all_dbs do
 
     context "when receipt date falls on a holiday" do
       let(:federal_holiday) { Date.new(2020, 5, 25) }
-      let(:receipt_date) { federal_holiday }
+      let(:receipt_date) { federal_holiday + 1.day }
       scenario "return true" do
-        allow(appeal).to receive(:soc_date).and_return(federal_holiday - 61.days)
+        allow(appeal).to receive(:soc_date).and_return(federal_holiday - 60.days)
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
-        expect(receipt_date.holiday?(:us)).to eq(true)
-      end
-    end
-
-    context "when receipt date falls on a holiday" do
-      let(:holiday) { Date.new(2020, 5, 25) }
-      let(:receipt_date) { holiday + 1.day }
-      scenario "return true" do
-        allow(appeal).to receive(:soc_date).and_return(holiday - 61.days)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day, covid_flag: false)).to eq(false)
+        expect(check_for_federal_holiday(federal_holiday)).to eq(true)
       end
     end
 
