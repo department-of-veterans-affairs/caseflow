@@ -9,13 +9,13 @@ import COPY from '../../COPY';
 
 import { taskById, appealWithDetailSelector } from './selectors';
 
-import { onReceiveAmaTasks, legacyReassignToJudge } from './QueueActions';
+import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
-import { requestPatch, requestSave } from './uiReducer/uiActions';
+import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
 
 import { taskActionData } from './utils';
 
@@ -58,6 +58,8 @@ class AssignToView extends React.Component {
       instructions: existingInstructions
     };
   }
+
+  componentDidMount = () => this.props.resetSuccessMessages();
 
   validateForm = () => {
     return this.state.selectedValue !== null && this.state.instructions !== '';
@@ -145,6 +147,9 @@ class AssignToView extends React.Component {
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
+      if (task.type === 'JudgeAssignTask') {
+        this.props.setOvertime(task.externalAppealId, false);
+      }
     });
   };
 
@@ -241,7 +246,8 @@ class AssignToView extends React.Component {
 
 AssignToView.propTypes = {
   appeal: PropTypes.shape({
-    externalId: PropTypes.string
+    externalId: PropTypes.string,
+    id: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
   highlightFormItems: PropTypes.bool,
@@ -254,8 +260,12 @@ AssignToView.propTypes = {
   task: PropTypes.shape({
     instructions: PropTypes.string,
     taskId: PropTypes.string,
-    availableActions: PropTypes.arrayOf(PropTypes.object)
-  })
+    availableActions: PropTypes.arrayOf(PropTypes.object),
+    externalAppealId: PropTypes.string,
+    type: PropTypes.string
+  }),
+  setOvertime: PropTypes.func,
+  resetSuccessMessages: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -274,7 +284,9 @@ const mapDispatchToProps = (dispatch) =>
       requestPatch,
       requestSave,
       onReceiveAmaTasks,
-      legacyReassignToJudge
+      legacyReassignToJudge,
+      setOvertime,
+      resetSuccessMessages
     },
     dispatch
   );

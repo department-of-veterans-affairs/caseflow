@@ -47,6 +47,8 @@ class AssignToAttorneyWidget extends React.PureComponent {
     };
   }
 
+  componentDidMount = () => this.props.resetSuccessMessages();
+
   validAssignee = () => {
     const { selectedAssignee } = this.props;
 
