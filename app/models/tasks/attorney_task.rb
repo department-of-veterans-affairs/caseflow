@@ -12,7 +12,6 @@ class AttorneyTask < Task
 
   validate :assigned_by_role_is_valid, if: :will_save_change_to_assigned_by_id?
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
-  validate :child_attorney_tasks_are_completed, on: :create
 
   def available_actions(user)
     if can_be_moved_by_user?(user)
@@ -49,6 +48,10 @@ class AttorneyTask < Task
     super || completed?
   end
 
+  def reassign_clears_overtime?
+    true
+  end
+
   def send_back_to_judge_assign!
     transaction do
       cancelled!
@@ -75,12 +78,6 @@ class AttorneyTask < Task
     # The judge who is assigned the parent review task, the assigning judge, and SpecialCaseMovementTeam members can
     # cancel or reassign this task
     parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_judges?
-  end
-
-  def child_attorney_tasks_are_completed
-    if parent&.children_attorney_tasks&.open&.any?
-      errors.add(:parent, "has open child tasks")
-    end
   end
 
   def assigned_to_role_is_valid
