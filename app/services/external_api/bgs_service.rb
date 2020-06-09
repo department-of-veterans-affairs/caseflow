@@ -251,7 +251,10 @@ class ExternalApi::BGSService
                            end_date = #{end_date}",
                           service: :bgs,
                           name: "rating.find_by_participant_id_and_date_range") do
-      client.rating.find_by_participant_id_and_date_range(participant_id, start_date, end_date)
+      client.rating.find_by_participant_id_and_date_range(
+        participant_id,
+        start_date.to_datetime.iso8601,
+        end_date.to_datetime.iso8601)
     end
   end
 
