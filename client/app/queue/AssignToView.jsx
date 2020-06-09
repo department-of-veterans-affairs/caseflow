@@ -15,7 +15,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
-import { requestPatch, requestSave } from './uiReducer/uiActions';
+import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
 
 import { taskActionData } from './utils';
 
@@ -58,6 +58,8 @@ class AssignToView extends React.Component {
       instructions: existingInstructions
     };
   }
+
+  componentDidMount = () => this.props.resetSuccessMessages();
 
   validateForm = () => {
     return this.state.selectedValue !== null && this.state.instructions !== '';
@@ -262,7 +264,8 @@ AssignToView.propTypes = {
     externalAppealId: PropTypes.string,
     type: PropTypes.string
   }),
-  setOvertime: PropTypes.func
+  setOvertime: PropTypes.func,
+  resetSuccessMessages: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -282,7 +285,8 @@ const mapDispatchToProps = (dispatch) =>
       requestSave,
       onReceiveAmaTasks,
       legacyReassignToJudge,
-      setOvertime
+      setOvertime,
+      resetSuccessMessages
     },
     dispatch
   );
