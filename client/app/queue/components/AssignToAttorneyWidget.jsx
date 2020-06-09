@@ -43,7 +43,7 @@ class AssignToAttorneyWidget extends React.PureComponent {
     super(props);
 
     this.state = {
-      instructions: this.props.isModal ? this.props.selectedTasks[0].instructions : ''
+      instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || ''
     };
   }
 
