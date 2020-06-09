@@ -34,9 +34,29 @@ class VirtualHearing < CaseflowRecord
   validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
 
-  # T0D0: Finish migration from veteran_email => appellant_email.
-  alias_attribute :appellant_email, :veteran_email
-  alias_attribute :appellant_email_sent, :veteran_email_sent
+  # temporary getter
+  def appellant_email
+    value = super
+    value.nil? ? veteran_email : value
+  end
+
+  # temporary getter
+  def appellant_email_sent
+    value = super
+    (veteran_email_sent == true) ? veteran_email_sent : value
+  end
+
+  #temporary setter
+  def appellant_email_sent=(value)
+    self.veteran_email_sent = value
+    super(value)
+  end
+
+  #temporary setter
+  def appellant_email=(value)
+    self.veteran_email = value
+    super(value)
+  end
 
   scope :eligible_for_deletion,
         lambda {
