@@ -780,6 +780,8 @@ class RequestIssue < CaseflowRecord
       rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
+      subject_text: rating_issue.subject_text,
+      percent_number: rating_issue.percent_number,
       end_product_last_action_date: end_product_establishment.last_action_date
     )
   end
