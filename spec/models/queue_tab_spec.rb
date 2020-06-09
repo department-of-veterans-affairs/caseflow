@@ -28,7 +28,9 @@ describe QueueTab do
     subject { tab.to_hash }
 
     it "returns a hash with the correct keys" do
-      expect(subject.keys).to match_array([:label, :name, :description, :columns, :allow_bulk_assign])
+      expect(subject.keys).to match_array(
+        [:label, :name, :description, :columns, :allow_bulk_assign, :contains_legacy_tasks]
+      )
     end
 
     it "interpolates assignee name in description element of hash" do
@@ -75,14 +77,6 @@ describe QueueTab do
 
   describe "#from_name" do
     subject { QueueTab.from_name(tab_name) }
-
-    context "when not tab class exists with the given name" do
-      let(:tab_name) { "non-existent tab name" }
-
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidTaskTableTab)
-      end
-    end
 
     context "when a tab class with that name exists" do
       let(:tab_name) { Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME }

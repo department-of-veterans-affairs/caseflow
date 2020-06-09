@@ -58,14 +58,6 @@ describe TaskPager, :all_dbs do
 
     subject { TaskPager.new(arguments).tasks_for_tab }
 
-    context "when the tab name is not recognized" do
-      let(:tab_name) { "some unknown tab name" }
-
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidTaskTableTab)
-      end
-    end
-
     context "when there are some tasks for the given tab name" do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:task_count) { TaskPager::TASKS_PER_PAGE + 3 }
@@ -128,6 +120,15 @@ describe TaskPager, :all_dbs do
         expect(subject.count).to eq(task_count)
       end
     end
+
+    context "when the tab cannot be paginated" do
+      let(:page) { 1 }
+      before { allow_any_instance_of(QueueTab).to receive(:contains_legacy_tasks?).and_return(true) }
+
+      it "returns all tasks" do
+        expect(subject.count).to eq(task_count)
+      end
+    end
   end
 
   describe ".total_task_count" do
@@ -171,6 +172,15 @@ describe TaskPager, :all_dbs do
         expect(subject).to eq(task_count)
       end
     end
+
+    context "when the tab cannot be paginated" do
+      let(:page) { 1 }
+      before { allow_any_instance_of(QueueTab).to receive(:contains_legacy_tasks?).and_return(true) }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
   end
 
   describe ".task_page_count" do
@@ -191,7 +201,16 @@ describe TaskPager, :all_dbs do
     context "when pagination is not enabled for the assignee" do
       before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
 
-      it "returns all page of tasks" do
+      it "returns one page of tasks" do
+        expect(subject).to eq(1)
+      end
+    end
+
+    context "when the tab cannot be paginated" do
+      let(:page) { 1 }
+      before { allow_any_instance_of(QueueTab).to receive(:contains_legacy_tasks?).and_return(true) }
+
+      it "returns one page of tasks" do
         expect(subject).to eq(1)
       end
     end
