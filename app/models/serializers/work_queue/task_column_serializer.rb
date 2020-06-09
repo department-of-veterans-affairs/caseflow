@@ -119,7 +119,10 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :status do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]
+    columns = [
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name
+    ]
 
     if serialize_attribute?(params, columns)
       object.status
@@ -195,6 +198,30 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :overtime do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:overtime?)
+    end
+  end
+
+  attribute :document_id do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]
+
+    if serialize_attribute?(params, columns)
+      object.latest_attorney_case_review&.document_id
+    end
+  end
+
+  attribute :decision_prepared_by do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]
+
+    if serialize_attribute?(params, columns)
+      object.prepared_by_display_name || { first_name: nil, last_name: nil }
+    end
+  end
+
   # UNUSED
 
   attribute :assignee_name do
@@ -260,17 +287,6 @@ class WorkQueue::TaskColumnSerializer
   attribute :previous_task do
     {
       assigned_at: nil
-    }
-  end
-
-  attribute :document_id do
-    nil
-  end
-
-  attribute :decision_prepared_by do
-    {
-      first_name: nil,
-      last_name: nil
     }
   end
 
