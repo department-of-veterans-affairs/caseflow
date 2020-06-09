@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "rake"
 
-describe "data migration rake tasks" do
-  before :all do
-    Rake.application = Rake::Application.new
-    Rake.application.rake_require "tasks/data_migrations"
-    Rake::Task.define_task :environment
-  end
+describe "data migrations" do
+  include_context "rake"
 
   describe "data_migrations:migrate_virtual_hearings_veteran_email_and_veteran_email_sent" do
     let(:args) { [] }
