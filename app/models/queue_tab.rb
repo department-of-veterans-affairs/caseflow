@@ -120,7 +120,6 @@ class QueueTab
 
   def task_includes
     [
-      { appeal: [:available_hearing_locations, :claimants] },
       { appeal: [:available_hearing_locations, :claimants, :work_mode] },
       :assigned_by,
       :assigned_to,
