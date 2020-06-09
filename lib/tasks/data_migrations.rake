@@ -8,7 +8,7 @@ namespace :data_migrations do
   #   This task is built for a one-time migration of veteran_email and veteran_email_sent data to
   #   appellant_email and appellant_email_sent respectively of VirtualHearing objects. It expects
   #   VirtualHearing objects to have appellant_email and appellant_email_sent which will be populated by
-  #   veteran_email and veteran_email_sent column data. Both veteran_email_sent and veteran_email_sent
+  #   veteran_email and veteran_email_sent column data. Both veteran_email_sent and appellant_email_sent
   #   are fields which are validated not be nil so we don't do any validation during migration.
   #
   # usage:
