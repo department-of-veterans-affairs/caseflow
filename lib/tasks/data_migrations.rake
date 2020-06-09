@@ -16,8 +16,7 @@ namespace :data_migrations do
   #     $ bundle exec rake data_migrations:migrate_virtual_hearings_veteran_email_and_veteran_email_sent
   #   Migrate veteran_email and veteran_email_sent (execute)
   #     $ bundle exec rake data_migrations:migrate_hearing_day_created_and_updated_by[false]"
-  desc "migrate the veteran_email and veteran_email_sent data into appellant_email and
-    appellant_email_sent"
+  desc "migrate the veteran_email and veteran_email_sent data into appellant_email and appellant_email_sent"
   task :migrate_virtual_hearings_veteran_email_and_veteran_email_sent, [:dry_run] => :environment do |_, args|
     Rails.logger.tagged("rake data_migrations:migrate_virtual_hearings_veteran_email_and_veteran_email_sent") do
       Rails.logger.info("Invoked with: #{args.to_a.join(', ')}")
