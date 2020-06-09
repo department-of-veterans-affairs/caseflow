@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "data migrations" do
+describe "data_migrations" do
   include_context "rake"
 
   describe "data_migrations:migrate_virtual_hearings_veteran_email_and_veteran_email_sent" do
@@ -10,12 +10,20 @@ describe "data migrations" do
 
     let(:count) { 20 }
     let!(:virtual_hearings) do
-      count.times { create(:virtual_hearing, hearing: create(:hearing, regional_office: "RO06")) }
+      count.times do
+        create(:virtual_hearing, hearing: create(:hearing, regional_office: "RO06"))
+      end
     end
 
     subject do
       Rake::Task["data_migrations:migrate_virtual_hearings_veteran_email_and_veteran_email_sent"].reenable
       Rake::Task["data_migrations:migrate_virtual_hearings_veteran_email_and_veteran_email_sent"].invoke(*args)
+    end
+
+    before do
+      VirtualHearing.all.each do |vh|
+        vh.update!(veteran_email: "fake@email.com", veteran_email_sent: true)
+      end
     end
 
     context "dry run" do
@@ -65,6 +73,12 @@ describe "data migrations" do
         expect(Rails.logger).to receive(:info).with("Starting migration")
         description.each { |line| expect(Rails.logger).to receive(:info).with(line) }
         expect { subject }.to output(expected_output).to_stdout
+
+        # check that fields were migrated correctly
+        VirtualHearing.all.each do |vh|
+          expect(vh.appellant_email).to eq("fake@email.com")
+          expect(vh.appellant_email_sent).to eq(true)
+        end
       end
     end
   end
