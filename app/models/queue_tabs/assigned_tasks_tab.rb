@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # Queue tab for all tasks that are currently assigned to a user and have a status of "assigned" or "in_progress"
+# Until judge assign queues are built from queue config, this tab will omit judge assign tasks
 class AssignedTasksTab < QueueTab
   validate :assignee_is_user
 
