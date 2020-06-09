@@ -105,7 +105,6 @@ describe TimezoneService do
             expected_timezone = TZInfo::Timezone.get(expected_timezone_name)
             resolved_timezone = subject
 
-            expect(resolved_timezone.identifier).not_to eq(expected_timezone_name)
             expect(resolved_timezone.current_period.offset).to eq(expected_timezone.current_period.offset)
           end
 
@@ -199,16 +198,16 @@ describe TimezoneService do
   end
 
   describe "#iso3166_alpha2_code_to_timezone" do
-    shared_examples "country code resolves to timezone" do |country_code, expected_timezone_id|
-      it "#{country_code.inspect} resolves to TZ (#{expected_timezone_id})" do
+    shared_examples "country code resolves to timezone" do |country_code, *expected_timezone_ids|
+      it "#{country_code.inspect} resolves to one of TZ (#{expected_timezone_ids})" do
         timezone = described_class.iso3166_alpha2_code_to_timezone(country_code)
-        expect(timezone.identifier).to eq(expected_timezone_id)
+        expect(timezone.identifier).to be_in(expected_timezone_ids)
       end
     end
 
     include_examples "country code resolves to timezone", "CI", "Africa/Abidjan"
     include_examples "country code resolves to timezone", "CH", "Europe/Zurich"
-    include_examples "country code resolves to timezone", "DM", "America/Port_of_Spain"
+    include_examples "country code resolves to timezone", "DM", "America/Port_of_Spain", "America/Dominica"
     include_examples "country code resolves to timezone", "JP", "Asia/Tokyo"
 
     shared_examples "it throws error if country code resolves to ambiguous timezone" do |country_code|
