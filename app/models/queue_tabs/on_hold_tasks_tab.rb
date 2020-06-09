@@ -21,7 +21,7 @@ class OnHoldTasksTab < QueueTab
   def tasks
     task_ids = ama_task_ids
 
-    if assignee.can_create_legacy_colocated_tasks?
+    if assignee.can_be_assigned_legacy_tasks?
       task_ids.concat(legacy_colocated_task_ids_assigned_by_assignee)
     end
 
