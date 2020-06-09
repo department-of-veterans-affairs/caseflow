@@ -957,8 +957,13 @@ class LegacyAppeal < CaseflowRecord
       date += 1.day if Holidays.on(date, :federal_reserve, :observed).any?
       date += 2.days if date.saturday?
       date += 1.day if date.sunday?
+      date += 1.day if inauguration_date(date).sunday?
 
       date
+    end
+
+    def inauguration_date(_date)
+      Date.new(2017, 1, 20).next_year(4)
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
