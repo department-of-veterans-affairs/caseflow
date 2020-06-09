@@ -26,7 +26,7 @@ describe OnHoldTasksTab, :postgres do
       end
 
       context "when the user is a judge or attoney" do
-        before { allow(assignee).to receive(:can_create_legacy_colocated_tasks?).and_return(true) }
+        before { allow(assignee).to receive(:can_be_assigned_legacy_tasks?).and_return(true) }
 
         it "returns colocated tasks assigned by the user" do
           expect(subject).to match_array([assignee_on_hold_tasks, legacy_colocated_tasks].flatten)
