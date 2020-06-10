@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 
 import QueueTableBuilder from './QueueTableBuilder';
@@ -35,6 +36,13 @@ class AttorneyTaskListView extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
+
+    if (_.some(this.props.workableTasks, (task) => !task.taskId)) {
+      this.props.showErrorMessage({
+        title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
+        detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
+      });
+    }
   };
 
   render = () => {
