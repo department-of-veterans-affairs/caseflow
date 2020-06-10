@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "data_migrations" do
+describe "data_migrations", :postgres do
   include_context "rake"
 
   describe "data_migrations:migrate_virtual_hearings_veteran_email_and_veteran_email_sent" do
