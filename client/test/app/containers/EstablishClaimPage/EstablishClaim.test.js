@@ -34,10 +34,6 @@ describe('EstablishClaim', () => {
     );
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   describe('navigation', () => {
     test('initially loads to decision page', () => {
       expect(wrapper.instance().history.location.pathname).toBe('/decision');
@@ -46,7 +42,7 @@ describe('EstablishClaim', () => {
 
     test('redirects to decision if no existing EPs', () => {
       return new Promise((done) => {
-      // Add a listener to the history object and look for the "go back" POP event
+        // Add a listener to the history object and look for the "go back" POP event
         let unlisten = wrapper.instance().history.listen((location, action) => {
           if (action === 'POP') {
             expect(wrapper.instance().history.location.pathname).toBe('/decision');
