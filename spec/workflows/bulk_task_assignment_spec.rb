@@ -130,19 +130,6 @@ describe BulkTaskAssignment, :postgres do
       end
     end
 
-    context "when organization cannot bulk assign" do
-      let(:organization_url) { create(:organization).url }
-
-      it "does not bulk assigns tasks" do
-        organization.users << assigned_by
-        organization.users << assigned_to
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq false
-        error = ["with url #{organization_url} cannot bulk assign tasks"]
-        expect(bulk_assignment.errors[:organization]).to eq error
-      end
-    end
-
     context "when assigned by user does not belong to organization" do
       it "does not bulk assigns tasks" do
         organization.users << assigned_to

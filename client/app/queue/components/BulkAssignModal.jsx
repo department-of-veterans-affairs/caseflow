@@ -10,7 +10,7 @@ import QueueFlowModal from './QueueFlowModal';
 import Dropdown from '../../components/Dropdown';
 import { cityForRegionalOfficeCode } from '../utils';
 import { bulkAssignTasks } from '../QueueActions';
-import { setActiveOrganization } from '../uiReducer/uiActions';
+import { setActiveOrganization, requestSave } from '../uiReducer/uiActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
@@ -80,7 +80,12 @@ class BulkAssignModal extends React.PureComponent {
       }
     };
 
-    return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
+    const successMessage = {
+      title: `You have bulk assigned ${numberOfTasks} ${taskType.replace(/([a-z])([A-Z])/g, '$1 $2')} tasks`,
+      detail: 'Please go to your individual queue to see your self assigned tasks'
+    };
+
+    return this.props.requestSave('/bulk_task_assignments', { data }, successMessage).then(() => {
       this.props.history.push(`/organizations/${this.organizationUrl()}`);
       WindowUtil.reloadWithPOST();
     }).
@@ -227,7 +232,8 @@ BulkAssignModal.propTypes = {
   highlightFormItems: PropTypes.bool,
   history: PropTypes.object,
   location: PropTypes.object,
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+  requestSave: PropTypes.func
 };
 
 const mapStateToProps = (state) => {
@@ -241,8 +247,10 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ bulkAssignTasks,
-    setActiveOrganization }, dispatch)
-);
+  bindActionCreators({
+    bulkAssignTasks,
+    setActiveOrganization,
+    requestSave
+  }, dispatch));
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BulkAssignModal));
