@@ -1078,6 +1078,53 @@ describe EndProductEstablishment, :postgres do
         it { is_expected.to eq(nil) }
       end
     end
+
+    context "when many potential ratings" do
+      let(:reference_id) { "reference-id" }
+      let(:other_epe) do 
+        create(:end_product_establishment,
+          veteran_file_number: veteran_file_number,
+          established_at: end_product_establishment.established_at + 2.day,
+          code: "040SCR"
+        ) 
+      end
+
+      let(:associated_claims) do
+        [
+          { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code },
+          { clm_id: "09321", bnft_clm_tc: other_epe.code },
+          { clm_id: other_epe.reference_id, bnft_clm_tc: other_epe.code }
+        ]
+      end
+
+      let(:ratings) do
+        [
+          rating,
+          Generators::PromulgatedRating.build(
+            participant_id: veteran.participant_id,
+            promulgation_date: promulgation_date + 2.days,
+            associated_claims: associated_claims
+          )
+        ]
+      end
+
+      let(:cache_key) { "#{end_product_establishment.cache_key}/associated_rating" }
+
+      before do
+        end_product_establishment.save!
+      end
+
+      it "caches the associated end product" do
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+        # If caching works, this should only get called once
+        expect(PromulgatedRating).to receive(:fetch_in_range).once.and_call_original
+        subject
+        expect(Rails.cache.exist?(cache_key)).to eq(true)
+        # when called a second time, should get from cache
+        subject
+      end
+    end
   end
 
   context "#sync_decision_issues!" do
