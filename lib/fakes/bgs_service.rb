@@ -317,6 +317,16 @@ class Fakes::BGSService
     result.empty? ? nil : result
   end
 
+  def fetch_poas_list
+    [
+      { ptcpnt_id: "12345678", nm: "NANCY BAUMBACH", org_type_nm: "POA Attorney" },
+      { ptcpnt_id: "55114884", nm: "RICH TREUTING SR.", org_type_nm: "POA Agent" },
+      { ptcpnt_id: "56242925", nm: "MADELINE JENKINS", org_type_nm: "POA Attorney" },
+      { ptcpnt_id: "21543986", nm: "ACADIA VETERAN SERVICES", org_type_nm: "POA State Organization" },
+      { ptcpnt_id: "56154689", nm: "RANDALL KOHLER III", org_type_nm: "POA Attorney" }
+    ]
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]

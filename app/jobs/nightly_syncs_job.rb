@@ -12,6 +12,7 @@ class NightlySyncsJob < CaseflowJob
     sync_vacols_users
     sync_vacols_cases
     sync_decision_review_tasks
+    sync_bgs_attorneys
 
     datadog_report_runtime(metric_group_name: "nightly_syncs_job")
   end
@@ -46,6 +47,10 @@ class NightlySyncsJob < CaseflowJob
     checker = DecisionReviewTasksForInactiveAppealsChecker.new
     checker.call
     checker.buffer.map { |task_id| Task.find(task_id).cancelled! }
+  end
+
+  def sync_bgs_attorneys
+    BgsAttorney.sync_bgs_attorneys
   end
 
   def dangling_legacy_appeals
