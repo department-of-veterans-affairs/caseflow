@@ -65,13 +65,13 @@ export class CaseTitleDetails extends React.PureComponent {
       highlightModal: false,
       documentIdError: ''
     });
-  }
+  };
 
   changeButtonState = (value) => {
     this.setState({
       value
     });
-  }
+  };
 
   submitForm = (reviewId, legacy) => () => {
     const payload = {
@@ -82,7 +82,8 @@ export class CaseTitleDetails extends React.PureComponent {
       }
     };
 
-    this.props.requestPatch(`/case_reviews/${reviewId}`, payload, { title: 'Document Id Saved!' }).
+    this.props.
+      requestPatch(`/case_reviews/${reviewId}`, payload, { title: 'Document Id Saved!' }).
       then(() => {
         this.handleModalClose();
       }).
@@ -97,13 +98,10 @@ export class CaseTitleDetails extends React.PureComponent {
           value: ''
         });
       });
-  }
+  };
 
   changeRoute = () => {
-    const {
-      history,
-      appealId
-    } = this.props;
+    const { history, appealId } = this.props;
 
     history.push(`/queue/appeals/${appealId}/modal/set_overtime_status`);
   };
@@ -122,10 +120,7 @@ export class CaseTitleDetails extends React.PureComponent {
       userRole
     } = this.props;
 
-    const {
-      highlightModal,
-      documentIdError
-    } = this.state;
+    const { highlightModal, documentIdError } = this.state;
 
     // eslint-disable-next-line camelcase
     const userIsAssignedAmaJudge = appeal?.assignedJudge?.css_id === userCssId;
@@ -134,109 +129,107 @@ export class CaseTitleDetails extends React.PureComponent {
 
     const showOvertimeButton = userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge);
 
-    return <TitleDetailsSubheader>
-      <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}>
-        <span {...docketBadgeContainerStyle}>
-          <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
-        </span>
-      </TitleDetailsSubheaderSection>
-
-      { !userIsVsoEmployee && this.props.userCanAccessReader &&
-        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL}>
-          <ReaderLink
-            appealId={appealId}
-            analyticsSource="queue_task"
-            redirectUrl={redirectUrl}
-            appeal={appeal}
-            taskType={taskType}
-            docCountWithinLink
-            newDocsIcon />
+    return (
+      <TitleDetailsSubheader>
+        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}>
+          <span {...docketBadgeContainerStyle}>
+            <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
+            {appeal.docketNumber}
+          </span>
         </TitleDetailsSubheaderSection>
-      }
 
-      <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}>
-        {renderLegacyAppealType({
-          aod: appeal.isAdvancedOnDocket,
-          type: appeal.caseType
-        })}
-
-        {!appeal.isLegacyAppeal && this.props.canEditAod && <span {...editButton}>
-          <Link
-            to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
-            Edit
-          </Link>
-        </span>}
-      </TitleDetailsSubheaderSection>
-
-      { !userIsVsoEmployee && appeal && appeal.documentID &&
-        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>
-          <div id="document-id">
-            <CopyTextButton
-              text={this.state.value || appeal.documentID}
-              label={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
+        {!userIsVsoEmployee && this.props.userCanAccessReader && (
+          <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL}>
+            <ReaderLink
+              appealId={appealId}
+              analyticsSource="queue_task"
+              redirectUrl={redirectUrl}
+              appeal={appeal}
+              taskType={taskType}
+              docCountWithinLink
+              newDocsIcon
             />
-            { appeal.canEditDocumentId &&
-              <Button
-                linkStyling
-                onClick={this.handleModalClose} >
-                <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
-                <span {...css({ marginRight: '5px',
-                  marginLeft: '20px' })}>Edit</span>
-              </Button>
-            }
-          </div>
-          { this.state.showModal && <Modal
-            buttons = {[
-              { classNames: ['cf-modal-link', 'cf-btn-link'],
-                name: 'Cancel',
-                onClick: this.handleModalClose
-              },
-              { classNames: ['usa-button'],
-                name: 'Save',
-                disabled: !this.state.value,
-                onClick: this.submitForm(appeal.caseReviewId, appeal.isLegacyAppeal)
-              }
-            ]}
-            closeHandler={this.handleModalClose}
-            title = {COPY.TASK_SNAPSHOT_EDIT_DOCUMENT_ID_MODAL_TITLE}>
-            <TextField
-              errorMessage={highlightModal ? documentIdError : null}
-              name={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
-              placeholder={appeal.documentID}
-              value={this.state.value}
-              onChange={this.changeButtonState}
-              autoComplete="off"
-              required />
+          </TitleDetailsSubheaderSection>
+        )}
 
-          </Modal>}
-        </TitleDetailsSubheaderSection>
-      }
+        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}>
+          {renderLegacyAppealType({
+            aod: appeal.isAdvancedOnDocket,
+            type: appeal.caseType
+          })}
 
-      { !userIsVsoEmployee && appeal.assignedJudge && !appeal.removed && appeal.status !== 'cancelled' &&
-        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}>
-          {appeal.assignedJudge.full_name}
-        </TitleDetailsSubheaderSection>
-      }
-
-      { !userIsVsoEmployee && appeal.assignedAttorney && !appeal.removed && appeal.status !== 'cancelled' &&
-        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}>
-          {appeal.assignedAttorney.full_name}
-        </TitleDetailsSubheaderSection>
-      }
-      { featureToggles.overtime_revamp && showOvertimeButton &&
-        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_OVERTIME_LABEL}>
-          <Button
-            linkStyling
-            styling={overtimeButton}
-            onClick={this.changeRoute} >
-            <span>{clockIcon()}</span>
-            <span {...overtimeLink}>&nbsp;{appeal.overtime ?
-              COPY.TASK_SNAPSHOT_IS_OVERTIME : COPY.TASK_SNAPSHOT_IS_NOT_OVERTIME }
+          {!appeal.isLegacyAppeal && this.props.canEditAod && (
+            <span {...editButton}>
+              <Link to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>Edit</Link>
             </span>
-          </Button>
+          )}
         </TitleDetailsSubheaderSection>
-      }
-    </TitleDetailsSubheader>;
+
+        {!userIsVsoEmployee && appeal && appeal.documentID && (
+          <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>
+            <div id="document-id">
+              <CopyTextButton
+                text={this.state.value || appeal.documentID}
+                label={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
+              />
+              {appeal.canEditDocumentId && (
+                <Button linkStyling onClick={this.handleModalClose}>
+                  <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+                  <span {...css({ marginRight: '5px', marginLeft: '20px' })}>Edit</span>
+                </Button>
+              )}
+            </div>
+            {this.state.showModal && (
+              <Modal
+                buttons={[
+                  { classNames: ['cf-modal-link', 'cf-btn-link'], name: 'Cancel', onClick: this.handleModalClose },
+                  {
+                    classNames: ['usa-button'],
+                    name: 'Save',
+                    disabled: !this.state.value,
+                    onClick: this.submitForm(appeal.caseReviewId, appeal.isLegacyAppeal)
+                  }
+                ]}
+                closeHandler={this.handleModalClose}
+                title={COPY.TASK_SNAPSHOT_EDIT_DOCUMENT_ID_MODAL_TITLE}
+              >
+                <TextField
+                  errorMessage={highlightModal ? documentIdError : null}
+                  name={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
+                  placeholder={appeal.documentID}
+                  value={this.state.value}
+                  onChange={this.changeButtonState}
+                  autoComplete="off"
+                  required
+                />
+              </Modal>
+            )}
+          </TitleDetailsSubheaderSection>
+        )}
+
+        {!userIsVsoEmployee && appeal.assignedJudge && !appeal.removed && appeal.status !== 'cancelled' && (
+          <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}>
+            {appeal.assignedJudge.full_name}
+          </TitleDetailsSubheaderSection>
+        )}
+
+        {!userIsVsoEmployee && appeal.assignedAttorney && !appeal.removed && appeal.status !== 'cancelled' && (
+          <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}>
+            {appeal.assignedAttorney.full_name}
+          </TitleDetailsSubheaderSection>
+        )}
+        {featureToggles.overtime_revamp && showOvertimeButton && (
+          <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_OVERTIME_LABEL}>
+            <Button linkStyling styling={overtimeButton} onClick={this.changeRoute}>
+              <span>{clockIcon()}</span>
+              <span {...overtimeLink}>
+                &nbsp;{appeal.overtime ? COPY.TASK_SNAPSHOT_IS_OVERTIME : COPY.TASK_SNAPSHOT_IS_NOT_OVERTIME}
+              </span>
+            </Button>
+          </TitleDetailsSubheaderSection>
+        )}
+      </TitleDetailsSubheader>
+    );
   };
 }
 
@@ -275,10 +268,17 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      requestPatch
+    },
+    dispatch
+  );
 
-export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(CaseTitleDetails)
-));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(CaseTitleDetails)
+);
