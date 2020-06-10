@@ -6,6 +6,8 @@ module.exports = {
   },
   setupFilesAfterEnv: ['./test/app/jestSetup.js'],
   transformIgnorePatterns: ['node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'],
+  // eslint-disable-next-line no-process-env
+  // eslint-disable-next-line no-undefined
   collectCoverage: process.env.TEST_REPORTER !== undefined,
   // eslint-disable-next-line no-process-env
   reporters: process.env.TEST_REPORTER ? [process.env.TEST_REPORTER] : ['default', 'jest-junit'],
