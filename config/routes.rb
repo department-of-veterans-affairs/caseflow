@@ -180,6 +180,7 @@ Rails.application.routes.draw do
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'
+    get "/attorneys", to: 'intakes#attorneys'
     get "/manager", to: 'intake_manager#index'
     get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
     get "/manager/users/:user_css_id", to: 'intake_manager#user_stats'
@@ -218,10 +219,11 @@ Rails.application.routes.draw do
     patch "/messages/:id", to: "inbox#update"
   end
 
-  resources :users, only: [:index, :update]
-  resources :users, only: [:index] do
+  resources :users, only: [:index, :update] do
+    resources :task_pages, only: [:index], controller: 'users/task_pages'
     get 'represented_organizations', on: :member
   end
+
   get 'user', to: 'users#search'
   get 'user_info/represented_organizations'
 
@@ -283,7 +285,6 @@ Rails.application.routes.draw do
 
   get 'whats-new' => 'whats_new#show'
 
-  get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
   get 'stats', to: 'stats#show'
 
@@ -323,4 +324,6 @@ Rails.application.routes.draw do
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
   # :nocov:
+
+  get "/route_docs", to: "route_docs#index"
 end

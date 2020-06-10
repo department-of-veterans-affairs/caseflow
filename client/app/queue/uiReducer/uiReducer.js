@@ -196,6 +196,14 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
         $set: action.payload.assigneeId
       }
     });
+  case ACTIONS.RESET_ASSIGNEES:
+    return update(state, {
+      selectedAssigneeSecondary: {
+        $set: null
+      }, selectedAssignee: {
+        $set: null
+      }
+    });
   case ACTIONS.SET_ORGANIZATIONS:
     return update(state, {
       organizations: {

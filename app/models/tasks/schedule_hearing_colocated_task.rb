@@ -23,10 +23,6 @@ class ScheduleHearingColocatedTask < ColocatedTask
     []
   end
 
-  def hide_from_case_timeline
-    true
-  end
-
   private
 
   def vacols_location

@@ -48,7 +48,7 @@ class QueueConfig
       # This allows us to only instantiate TaskPager if we are using the task pages API.
       task_page_count: task_pager.task_page_count,
       total_task_count: tab.tasks.count,
-      task_page_endpoint_base_path: "#{assignee_is_org? ? "#{assignee.path}/" : ''}#{endpoint}"
+      task_page_endpoint_base_path: "#{assignee_is_org? ? "#{assignee.path}/" : "users/#{assignee.id}/"}#{endpoint}"
     )
   end
 

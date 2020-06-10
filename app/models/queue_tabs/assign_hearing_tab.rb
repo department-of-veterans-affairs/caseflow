@@ -22,8 +22,8 @@ class AssignHearingTab
       ScheduleHearingTask
         .includes(*task_includes)
         .active
+        .with_cached_appeals
         .where(appeal_type: appeal_type)
-        .joins(CachedAppeal.left_join_from_tasks_clause)
 
     @tasks ||=
       if appeal_type == "LegacyAppeal"
@@ -85,16 +85,14 @@ class AssignHearingTab
   end
 
   def power_of_attorney_name_options
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
-      .group(:power_of_attorney_name).count.each_pair.map do |option, count|
+    tasks.with_cached_appeals.group(:power_of_attorney_name).count.each_pair.map do |option, count|
       label = QueueColumn.format_option_label(option, count)
       QueueColumn.filter_option_hash(option, label)
     end
   end
 
   def suggested_location_options
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause)
-      .group(:suggested_hearing_location).count.each_pair.map do |option, count|
+    tasks.with_cached_appeals.group(:suggested_hearing_location).count.each_pair.map do |option, count|
       label = QueueColumn.format_option_label(option, count)
       QueueColumn.filter_option_hash(option, label)
     end

@@ -1,5 +1,1 @@
-<% if @recipient.title == MailRecipient::RECIPIENT_TITLES[:representative] %>
-  <%= render "representative_location_changed" %>
-<% elsif @recipient.title == MailRecipient::RECIPIENT_TITLES[:veteran] %>
-  <%= render "veteran_location_changed" %>
-<% end %>
+<%= render "#{@recipient.title.downcase}_location_changed" %>

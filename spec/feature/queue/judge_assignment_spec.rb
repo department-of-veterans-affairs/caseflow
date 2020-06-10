@@ -74,7 +74,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         click_dropdown(text: attorney_one.full_name)
 
         click_on "Assign 2 cases"
-        expect(page).to have_content("Assigned 2 cases")
+        expect(page).to have_content("Assigned 2 tasks to #{attorney_one.full_name}")
       end
 
       step "navigates to the attorney's case list" do
@@ -93,7 +93,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         click_dropdown(text: attorney_two.full_name)
 
         click_on "Assign 1 case"
-        expect(page).to have_content("Assigned 1 case")
+        expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
       end
 
       step "navigates to the other attorney's case list" do
@@ -188,7 +188,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
         visit "/queue"
 
-        expect(page).to have_content("Review 1 Cases")
+        expect(page).to have_content("Your cases")
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
         expect(page).to have_content(appeal.veteran_file_number)
         expect(page).to have_content(case_review.document_id)
@@ -211,7 +211,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         click_on COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL
 
         expect(page).to have_current_path("/queue")
-        expect(page).to have_content("Review 1 Cases")
+        expect(page).to have_content("Your cases")
       end
     end
   end
@@ -293,9 +293,10 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
       click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
       click_on("Submit")
 
-      expect(page).to have_content("Assigned 1 case")
+      expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
     end
   end
 
@@ -341,9 +342,10 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(prompt: "Select a user", text: "Other")
       safe_click ".dropdown-Other"
       click_dropdown({ text: judge_two.user.full_name }, page.find(".dropdown-Other"))
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
       click_on("Submit")
-      expect(page).to have_content("Assigned 1 case")
+      expect(page).to have_content("Assigned 1 task to #{judge_two.user.full_name}")
     end
   end
 

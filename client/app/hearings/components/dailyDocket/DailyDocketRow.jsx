@@ -182,13 +182,24 @@ class DailyDocketRow extends React.Component {
     }
 
     const hearingChanges = deepDiff(this.state.initialState, this.props.hearing);
+    const locationWasUpdated = !_.isEmpty(_.omitBy(hearingChanges?.location, _.isUndefined));
+    const submitData = {
+      ...hearingChanges,
+      // Always send full location details because a new record is created each update
+      location: locationWasUpdated ? this.props.hearing?.location : {}
+    };
 
     return this.props.
-      saveHearing(this.props.hearing.externalId, hearingChanges).
+      saveHearing(this.props.hearing.externalId, submitData).
       then((response) => {
+        // false is returned from DailyDocketContainer in case of error
+        if (!response) {
+          return;
+        }
+
         const alerts = response.body?.alerts;
 
-        if (alerts.hearing) {
+        if (alerts?.hearing) {
           this.props.onReceiveAlerts(alerts.hearing);
         }
 
@@ -215,9 +226,14 @@ class DailyDocketRow extends React.Component {
     return this.props.
       saveHearing(hearingWithDisp.externalId, hearingChanges).
       then((response) => {
+        // false is returned from DailyDocketContainer in case of error
+        if (!response) {
+          return;
+        }
+
         const alerts = response.body?.alerts;
 
-        if (alerts.hearing) {
+        if (alerts?.hearing) {
           this.props.onReceiveAlerts(alerts.hearing);
         }
 
@@ -358,16 +374,16 @@ class DailyDocketRow extends React.Component {
 
   renderVirtualHearingModal = (user, hearing) => (
     <VirtualHearingModal
+      closeModal={this.closeVirtualHearingModal}
       hearing={hearing}
       timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
       virtualHearing={hearing.virtualHearing || {}}
       reset={() => {
         this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });
-        this.closeVirtualHearingModal();
       }}
       user={user}
       update={this.updateVirtualHearing}
-      submit={() => this.saveHearing().then(this.closeVirtualHearingModal)}
+      submit={this.saveHearing}
       type="change_hearing_time"
     />
   );

@@ -16,7 +16,8 @@ class DecisionReviewIntake < Intake
       activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:serialize),
       contestableIssuesByDate: detail.contestable_issues.map(&:serialize),
       veteranValid: veteran&.valid?(:bgs),
-      veteranInvalidFields: veteran_invalid_fields
+      veteranInvalidFields: veteran_invalid_fields,
+      detail_edit_url: detail&.reload&.caseflow_only_edit_issues_url
     )
   rescue Rating::NilRatingProfileListError, PromulgatedRating::LockedRatingError
     cancel!(reason: "system_error")

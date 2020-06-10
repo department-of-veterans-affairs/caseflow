@@ -40,6 +40,18 @@ export default class StyleGuideLinkButton extends React.PureComponent {
         </div>
       </div>
       <br />
+      <h3 id="disabled">Disabled Link button</h3>
+      <div className="usa-grid">
+        <div className="usa-width-one-third">
+          <Button
+            name="signup-disabled"
+            disabled
+            classNames={['cf-btn-link']}>
+          Sign up
+          </Button>
+        </div>
+      </div>
+      <br />
     </div>;
   }
 }

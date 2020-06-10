@@ -46,8 +46,7 @@ class RedistributedCase
   end
 
   def rename_existing_distributed_case!
-    ymd = Time.zone.today.strftime("%F")
-    existing_distributed_case.update!(case_id: "#{case_id}-redistributed-#{ymd}")
+    existing_distributed_case.redistribute!
   end
 
   def alert_case_not_found

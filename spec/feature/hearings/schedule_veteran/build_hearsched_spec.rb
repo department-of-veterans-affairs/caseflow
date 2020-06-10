@@ -652,6 +652,16 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       create(:schedule_hearing_task, appeal: appeal_three)
     end
 
+    def create_cached_poas
+      Appeal.all.each_with_index do |appeal, i|
+        create(
+          :bgs_power_of_attorney,
+          claimant_participant_id: appeal.claimant.participant_id,
+          representative_name: "Attorney #{i}"
+        )
+      end
+    end
+
     def navigate_to_ama_tab
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
@@ -722,19 +732,8 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
 
     context "Filter by PowerOfAttorneyName column" do
       before do
-        %w[1 2 3].each do |participant_id|
-          allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
-            .with([participant_id]).and_return(
-              participant_id => {
-                file_number: participant_id * 8,
-                representative_type: "Attorney",
-                representative_name: "Attorney #{participant_id}",
-                participant_id: participant_id
-              }
-            )
-        end
-
         create_ama_appeals
+        create_cached_poas
         cache_appeals
         navigate_to_ama_tab
       end

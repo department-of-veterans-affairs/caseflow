@@ -42,7 +42,7 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
   def index
-    tasks = QueueForRole.new(user_role).create(user: user).tasks
+    tasks = user.use_task_pages_api? ? [] : QueueForRole.new(user_role).create(user: user).tasks
     render json: { tasks: json_tasks(tasks), queue_config: queue_config }
   end
 
@@ -99,6 +99,14 @@ class TasksController < ApplicationController
     tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
+  rescue AssignHearingDispositionTask::HearingAssociationMissing => error
+    Raven.capture_exception(error)
+    render json: {
+      "errors": [
+        "title": "Missing Associated Hearing",
+        "detail": error
+      ]
+    }, status: :bad_request
   end
 
   def for_appeal

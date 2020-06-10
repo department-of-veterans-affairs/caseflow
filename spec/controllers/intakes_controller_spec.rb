@@ -40,7 +40,7 @@ RSpec.describe IntakesController, :postgres do
         expect(vet).to_not be_nil
         expect(vet.first_name).to eq "Ed"
         expect(vet.last_name).to eq "Merica"
-        expect(bgs).to have_received(:fetch_veteran_info).exactly(2).times
+        expect(bgs).to have_received(:fetch_veteran_info).exactly(3).times
       end
     end
 
@@ -191,6 +191,19 @@ RSpec.describe IntakesController, :postgres do
         expect(resp[:serverIntake]).to eq(redirect_to: "/decision_reviews/education")
         expect(flash[:success]).to be_present
       end
+    end
+  end
+
+  describe "#attorneys" do
+    it "returns the names and participant IDs of matching attorneys" do
+      create(:bgs_attorney, name: "JOHN SMITH", participant_id: "123")
+      create(:bgs_attorney, name: "KEANU REEVES", participant_id: "456")
+
+      get :attorneys, params: { query: "JON SMITH" }
+      resp = JSON.parse(response.body, symbolize_names: true)
+      expect(resp).to eq [
+        { "name": "JOHN SMITH", "participant_id": "123" }
+      ]
     end
   end
 end

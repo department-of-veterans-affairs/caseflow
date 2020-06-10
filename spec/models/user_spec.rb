@@ -483,36 +483,6 @@ describe User, :all_dbs do
     end
   end
 
-  context "#current_case_assignments_with_views" do
-    subject { user.current_case_assignments_with_views[0] }
-
-    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)) }
-
-    it "returns nil when no cases have been viewed" do
-      is_expected.to include(
-        "vbms_id" => appeal.vbms_id,
-        "vacols_id" => appeal.vacols_id,
-        "veteran_full_name" => appeal.veteran_full_name,
-        "viewed" => nil
-      )
-    end
-
-    context "has hash with view" do
-      before do
-        AppealView.create(user_id: user.id, appeal: appeal)
-      end
-
-      it do
-        is_expected.to include(
-          "vbms_id" => appeal.vbms_id,
-          "vacols_id" => appeal.vacols_id,
-          "veteran_full_name" => appeal.veteran_full_name,
-          "viewed" => true
-        )
-      end
-    end
-  end
-
   context ".from_session" do
     subject { User.from_session(session) }
     context "gets a user object from a session" do

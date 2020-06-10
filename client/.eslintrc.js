@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     mocha: true
   },
-  extends: ['@department-of-veterans-affairs/eslint-config-appeals'],
+  extends: ['@department-of-veterans-affairs/eslint-config-appeals', 'plugin:jest/recommended'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true
@@ -23,10 +23,7 @@ module.exports = {
     ],
     // Adding next two rules to avoid bug in babel-eslint:
     // https://github.com/babel/babel-eslint/issues/799
-    indent: [
-      'warn', 2,
-      { ignoredNodes: ['TemplateLiteral'] }
-    ],
+    indent: ['warn', 2, { ignoredNodes: ['TemplateLiteral'] }],
     'template-curly-spacing': 'off'
   },
   settings: {

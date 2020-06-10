@@ -19,7 +19,7 @@ class AttorneyQueue
       end
     end
 
-    caseflow_tasks = user.tasks.includes(*task_includes).incomplete_or_recently_closed
+    caseflow_tasks = user.tasks.includes(*task_includes).incomplete_or_recently_completed
     (colocated_tasks_for_attorney_tasks + caseflow_tasks).flatten
   end
 

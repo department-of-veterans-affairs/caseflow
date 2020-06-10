@@ -184,7 +184,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_320",
-    "alternate_locations": ["vc_0701V", "vc_0720V", "vc_0719V", "vha_626GF"]
+    "alternate_locations": ["vc_0720V", "vc_0719V", "vha_626GF"]
   },
   "RO21": {
     "label": "New Orleans regional office",
@@ -250,7 +250,6 @@
       "vha_596GA",
       "vha_657GL",
       "vha_626GJ",
-      "vc_0701V",
       "vha_626GC",
       "vha_538GB",
       "vha_603GF",
@@ -258,8 +257,7 @@
       "vha_657GP",
       "vha_657GO",
       "vha_626GH",
-      "vc_0719V",
-      "vc_0701V"
+      "vc_0719V"
     ]
   },
   "RO28": {

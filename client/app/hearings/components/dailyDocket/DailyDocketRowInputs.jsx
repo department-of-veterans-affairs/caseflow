@@ -367,7 +367,7 @@ export const StaticVirtualHearing = ({ hearing, user }) => (
       virtualHearing={hearing.virtualHearing}
       link={hearing?.virtualHearing?.hostLink}
     />
-    {!hearing.virtualHearing.jobCompleted && (
+    {hearing?.virtualHearing?.status === 'pending' && (
       <div {...staticSpacing}>
         <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>
       </div>

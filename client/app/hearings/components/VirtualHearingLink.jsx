@@ -46,7 +46,7 @@ class VirtualHearingLink extends React.PureComponent {
 
 VirtualHearingLink.propTypes = {
   hearing: PropTypes.shape({
-    judgeId: PropTypes.number
+    judgeId: PropTypes.string
   }),
   user: PropTypes.shape({
     userId: PropTypes.number,
@@ -56,9 +56,16 @@ VirtualHearingLink.propTypes = {
   link: PropTypes.string,
   newWindow: PropTypes.bool,
   virtualHearing: PropTypes.shape({
+    status: PropTypes.string,
     clientHost: PropTypes.string,
-    guestPin: PropTypes.number,
-    hostPin: PropTypes.number,
+    guestPin: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ]),
+    hostPin: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ]),
     aliasWithHost: PropTypes.string,
     jobCompleted: PropTypes.bool
   }).isRequired,

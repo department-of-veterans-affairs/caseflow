@@ -50,8 +50,9 @@ describe ETL::LegacyHearingSyncer, :etl, :all_dbs do
         subject
 
         expect(LegacyHearing.count).to eq(3)
-        expect(ETL::LegacyHearing.count).to eq(3)
+        expect(ETL::LegacyHearing.count).to eq(2)
         expect(Rails.logger).to have_received(:error).once
+        expect(etl_build.reload.build_for("hearings").rows_rejected).to eq(1)
       end
     end
 

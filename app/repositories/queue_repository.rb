@@ -168,6 +168,10 @@ class QueueRepository
       end
     end
 
+    def any_task_assigned_by_user?(appeal, user)
+      VACOLS::Decass.where(defolder: appeal.vacols_id, demdusr: user.vacols_uniq_id).exists?
+    end
+
     def filter_duplicate_tasks(records, css_id = nil)
       # Keep the latest updated assignment if there are duplicate records
       records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|

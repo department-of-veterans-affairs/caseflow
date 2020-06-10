@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 class VirtualHearingUserAlertBuilder
-  attr_accessor :change_type, :alert_type, :veteran_full_name
-
-  def initialize(change_type:, alert_type:, veteran_full_name:)
+  def initialize(change_type:, alert_type:, appeal:)
     @change_type = change_type
     @alert_type = alert_type
-    @veteran_full_name = veteran_full_name
+    @appeal = appeal
   end
 
   def call
@@ -15,12 +13,16 @@ class VirtualHearingUserAlertBuilder
 
   private
 
+  attr_reader :change_type, :alert_type, :appeal
+
   def title
-    copy["TITLE"] % veteran_full_name
+    copy["TITLE"] % (appeal.veteran.name || "the veteran")
   end
 
   def message
-    copy["MESSAGE"]
+    appellant_title = appeal.appellant_is_not_veteran ? "Appellant" : "Veteran"
+
+    format(copy["MESSAGE"], appellant_title: appellant_title)
   end
 
   def copy

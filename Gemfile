@@ -8,16 +8,19 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "40561cdf7fc0b939d811f4bc489c598f42f5d51c"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "b6d05017344a861b4b858c037f8b277e25ea84f2"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "f374da6041b52d73af60d79d60d4013a13d4a72e"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
+gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
+gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
+gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
@@ -44,11 +47,10 @@ gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 3.12.4"
-# rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
-# Explicitly define rack version here to avoid that.
-gem "rack", "~> 2.0.6"
-gem "rails", "5.2.4.2"
+# We are not yet at version 4.x because we have not tested.
+gem "puma", "~> 3.12.6"
+gem "rack", "~> 2.2.0"
+gem "rails", "5.2.4.3"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -69,9 +71,11 @@ gem "strong_migrations"
 gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
+gem "tzinfo"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB

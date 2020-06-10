@@ -4,7 +4,7 @@ require_relative "./vha_shared_examples"
 
 describe ETL::VhaSupplementalClaimSyncer, :etl, :all_dbs do
   let(:origin_class) { SupplementalClaim }
-  let(:target_class) { ETL::VhaSupplementalClaim }
+  let(:target_class) { ETL::DecisionReview::SupplementalClaim }
   before do
     create(:supplemental_claim)
     create(:supplemental_claim, :processed)

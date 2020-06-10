@@ -19,7 +19,7 @@ class Claimant < CaseflowRecord
       participant_id: participant_id,
       payee_code: payee_code
     )
-    Person.find_or_create_by(participant_id: participant_id).tap(&:update_cached_attributes!)
+    Person.find_or_create_by_participant_id(participant_id)
   end
 
   def power_of_attorney
@@ -38,7 +38,7 @@ class Claimant < CaseflowRecord
   end
 
   def person
-    @person ||= Person.find_or_create_by(participant_id: participant_id)
+    @person ||= Person.find_or_create_by_participant_id(participant_id)
   end
 
   delegate :date_of_birth,

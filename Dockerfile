@@ -46,7 +46,7 @@ RUN DD_INSTALL_ONLY=true DD_AGENT_MAJOR_VERSION=7 DD_API_KEY=$(cat config/datado
 RUN bundle install && \
     cd client && \
     yarn install && \
-    yarn run build:production && \
+    yarn run build:demo && \
     chmod +x /caseflow/docker-bin/startup.sh && \
     rm -rf docker-bin
 
