@@ -1,6 +1,7 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
 import { INTAKE_LEGACY_OPT_IN_MESSAGE } from '../../../COPY';
+import { convertStringToBoolean } from '../util';
 import PropTypes from 'prop-types';
 
 const radioOptions = [
@@ -25,9 +26,11 @@ export default class LegacyOptInApproved extends React.PureComponent {
         strongLabel
         vertical
         options={radioOptions}
-        onChange={onChange}
+        onChange={(newValue) => {
+          onChange(convertStringToBoolean(newValue));
+        }}
         errorMessage={errorMessage}
-        value={value}
+        value={value === null ? null : value.toString()}
       />
     </div>;
   }
@@ -36,5 +39,5 @@ export default class LegacyOptInApproved extends React.PureComponent {
 LegacyOptInApproved.propTypes = {
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
-  value: PropTypes.string
+  value: PropTypes.bool
 };

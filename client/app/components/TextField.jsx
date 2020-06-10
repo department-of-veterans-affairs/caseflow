@@ -59,7 +59,7 @@ export default class TextField extends React.Component {
     const labelContents =
       <span>
         {label || name}
-        {required && <span className="cf-required">Required</span>}
+        {required && !readOnly && <span className="cf-required">Required</span>}
         {optional && <span className="cf-optional">Optional</span>}
       </span>;
 
@@ -142,7 +142,7 @@ TextField.propTypes = {
   onKeyPress: PropTypes.func,
   strongLabel: PropTypes.bool,
   maxLength: PropTypes.number,
-  max: PropTypes.number,
+  max: PropTypes.any,
   autoComplete: PropTypes.string,
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,

@@ -198,6 +198,10 @@ export const setSelectedAssigneeSecondary = ({ assigneeId }) => ({
   }
 });
 
+export const resetAssignees = () => ({
+  type: ACTIONS.RESET_ASSIGNEES
+});
+
 export const toggleVeteranCaseList = () => ({
   type: ACTIONS.TOGGLE_VETERAN_CASE_LIST
 });
