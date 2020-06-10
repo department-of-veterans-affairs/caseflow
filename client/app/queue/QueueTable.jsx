@@ -61,21 +61,21 @@ import COPY from '../../COPY';
  * see StyleGuideTables.jsx for usage example.
  */
 
-const helperClasses = {
+export const helperClasses = {
   center: 'cf-txt-c',
   left: 'cf-txt-l',
   right: 'cf-txt-r'
 };
 
-const DEFAULT_CASES_PER_PAGE = 15;
+export const DEFAULT_CASES_PER_PAGE = 15;
 
-const cellClasses = ({ align, cellClass }) => classnames([helperClasses[align], cellClass]);
+export const cellClasses = ({ align, cellClass }) => classnames([helperClasses[align], cellClass]);
 
-const getColumns = (props) => {
+export const getColumns = (props) => {
   return _.isFunction(props.columns) ? props.columns(props.rowObject) : props.columns;
 };
 
-const HeaderRow = (props) => {
+export const HeaderRow = (props) => {
   const iconHeaderStyle = css({ display: 'table-row' });
   const iconStyle = css(
     {
@@ -162,7 +162,7 @@ const HeaderRow = (props) => {
   );
 };
 
-const getCellValue = (rowObject, rowId, column) => {
+export const getCellValue = (rowObject, rowId, column) => {
   if (column.valueFunction) {
     return column.valueFunction(rowObject, rowId);
   }
@@ -173,7 +173,7 @@ const getCellValue = (rowObject, rowId, column) => {
   return '';
 };
 
-const getCellSpan = (rowObject, column) => {
+export const getCellSpan = (rowObject, column) => {
   if (column.span) {
     return column.span(rowObject);
   }
@@ -182,7 +182,7 @@ const getCellSpan = (rowObject, column) => {
 };
 
 // todo: make these functional components?
-class Row extends React.PureComponent {
+export class Row extends React.PureComponent {
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowId;
@@ -207,7 +207,7 @@ class Row extends React.PureComponent {
   }
 }
 
-class BodyRows extends React.PureComponent {
+export class BodyRows extends React.PureComponent {
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow, bodyStyling } = this.props;
 
@@ -224,7 +224,7 @@ class BodyRows extends React.PureComponent {
   }
 }
 
-class FooterRow extends React.PureComponent {
+export class FooterRow extends React.PureComponent {
   render() {
     const props = this.props;
     const hasFooters = _.some(props.columns, 'footer');
@@ -615,12 +615,13 @@ export default class QueueTable extends React.PureComponent {
         role="table"
         id={id}
         className={`usa-table-borderless ${this.props.className}`}
-        summary={summary}
         {...styling}
       >
-        <caption id="case-table-description" className="usa-sr-only">
-          {caption || COPY.CASE_LIST_TABLE_CAPTION}
-        </caption>
+        {summary && (
+          <caption id="case-table-description" className="usa-sr-only">
+            {summary}
+          </caption>
+        )}
 
         <HeaderRow
           columns={columns}

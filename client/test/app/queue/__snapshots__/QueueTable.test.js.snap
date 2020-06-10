@@ -1,0 +1,338 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`QueueTable HeaderRow Matches snapshot with default props 1`] = `
+<thead>
+  <tr
+    role="row"
+  >
+    <th
+      className="testClasses"
+      key="0"
+      role="columnheader"
+      scope="col"
+    >
+      <span
+        aria-label=""
+        styleName="header"
+      >
+        <span>
+          First
+        </span>
+      </span>
+    </th>
+    <th
+      className="testClasses"
+      key="1"
+      role="columnheader"
+      scope="col"
+    >
+      <span
+        aria-label=""
+        styleName="header"
+      >
+        <span>
+          Second
+        </span>
+      </span>
+    </th>
+    <th
+      className="testClasses"
+      key="2"
+      role="columnheader"
+      scope="col"
+    >
+      <span
+        aria-label=""
+        styleName="header"
+      >
+        <span>
+          Second
+        </span>
+      </span>
+    </th>
+  </tr>
+</thead>
+`;
+
+exports[`QueueTable render() Matches snapshot with default props 1`] = `
+<div
+  className="cf-table-wrapper"
+>
+  <FilterSummary
+    clearFilteredByList={[Function]}
+    filteredByList={Object {}}
+  />
+  <table
+    aria-describedby="case-table-description"
+    aria-label="Appeals"
+    className="usa-table-borderless undefined"
+    role="table"
+  >
+    <caption
+      className="usa-sr-only"
+      id="case-table-description"
+    >
+      Example table summary
+    </caption>
+    <HeaderRow
+      cachedResponses={
+        Object {
+          "undefined&page=1": Object {
+            "task_page_count": undefined,
+            "tasks": Array [
+              Object {
+                "appeal": Object {
+                  "id": 2,
+                  "vacols_id": "123-0",
+                  "vbms_id": "456-0",
+                },
+                "type": "EstablishClaim",
+                "user": Object {
+                  "css_id": "123-0",
+                  "id": 1,
+                  "station_id": "456",
+                },
+              },
+              Object {
+                "appeal": Object {
+                  "id": 2,
+                  "vacols_id": "123-0",
+                  "vbms_id": "456-0",
+                },
+                "type": "EstablishClaim",
+                "user": Object {
+                  "css_id": "123-0",
+                  "id": 1,
+                  "station_id": "456",
+                },
+              },
+              Object {
+                "appeal": Object {
+                  "id": 2,
+                  "vacols_id": "123-0",
+                  "vbms_id": "456-0",
+                },
+                "type": "EstablishClaim",
+                "user": Object {
+                  "css_id": "123-0",
+                  "id": 1,
+                  "station_id": "456",
+                },
+              },
+            ],
+            "tasks_per_page": undefined,
+            "total_task_count": 3,
+          },
+        }
+      }
+      columns={
+        Array [
+          Object {
+            "header": "First",
+            "valueFunction": [Function],
+          },
+          Object {
+            "header": "Second",
+            "valueFunction": [Function],
+          },
+          Object {
+            "header": "Second",
+            "valueName": "type",
+          },
+        ]
+      }
+      currentPage={0}
+      filteredByList={Object {}}
+      headerClassName=""
+      needsTaskRequest={true}
+      rowObjects={
+        Array [
+          Object {
+            "appeal": Object {
+              "id": 2,
+              "vacols_id": "123-0",
+              "vbms_id": "456-0",
+            },
+            "type": "EstablishClaim",
+            "user": Object {
+              "css_id": "123-0",
+              "id": 1,
+              "station_id": "456",
+            },
+          },
+          Object {
+            "appeal": Object {
+              "id": 2,
+              "vacols_id": "123-0",
+              "vbms_id": "456-0",
+            },
+            "type": "EstablishClaim",
+            "user": Object {
+              "css_id": "123-0",
+              "id": 1,
+              "station_id": "456",
+            },
+          },
+          Object {
+            "appeal": Object {
+              "id": 2,
+              "vacols_id": "123-0",
+              "vbms_id": "456-0",
+            },
+            "type": "EstablishClaim",
+            "user": Object {
+              "css_id": "123-0",
+              "id": 1,
+              "station_id": "456",
+            },
+          },
+        ]
+      }
+      setSortOrder={[Function]}
+      sortAscending={true}
+      sortColName={null}
+      tasksFromApi={null}
+      updateFilteredByList={[Function]}
+    />
+    <BodyRows
+      bodyClassName=""
+      cachedResponses={
+        Object {
+          "undefined&page=1": Object {
+            "task_page_count": undefined,
+            "tasks": Array [
+              Object {
+                "appeal": Object {
+                  "id": 2,
+                  "vacols_id": "123-0",
+                  "vbms_id": "456-0",
+                },
+                "type": "EstablishClaim",
+                "user": Object {
+                  "css_id": "123-0",
+                  "id": 1,
+                  "station_id": "456",
+                },
+              },
+              Object {
+                "appeal": Object {
+                  "id": 2,
+                  "vacols_id": "123-0",
+                  "vbms_id": "456-0",
+                },
+                "type": "EstablishClaim",
+                "user": Object {
+                  "css_id": "123-0",
+                  "id": 1,
+                  "station_id": "456",
+                },
+              },
+              Object {
+                "appeal": Object {
+                  "id": 2,
+                  "vacols_id": "123-0",
+                  "vbms_id": "456-0",
+                },
+                "type": "EstablishClaim",
+                "user": Object {
+                  "css_id": "123-0",
+                  "id": 1,
+                  "station_id": "456",
+                },
+              },
+            ],
+            "tasks_per_page": undefined,
+            "total_task_count": 3,
+          },
+        }
+      }
+      columns={
+        Array [
+          Object {
+            "header": "First",
+            "valueFunction": [Function],
+          },
+          Object {
+            "header": "Second",
+            "valueFunction": [Function],
+          },
+          Object {
+            "header": "Second",
+            "valueName": "type",
+          },
+        ]
+      }
+      currentPage={0}
+      filteredByList={Object {}}
+      getKeyForRow={[Function]}
+      needsTaskRequest={true}
+      rowClassNames={[Function]}
+      rowObjects={
+        Array [
+          Object {
+            "appeal": Object {
+              "id": 2,
+              "vacols_id": "123-0",
+              "vbms_id": "456-0",
+            },
+            "type": "EstablishClaim",
+            "user": Object {
+              "css_id": "123-0",
+              "id": 1,
+              "station_id": "456",
+            },
+          },
+          Object {
+            "appeal": Object {
+              "id": 2,
+              "vacols_id": "123-0",
+              "vbms_id": "456-0",
+            },
+            "type": "EstablishClaim",
+            "user": Object {
+              "css_id": "123-0",
+              "id": 1,
+              "station_id": "456",
+            },
+          },
+          Object {
+            "appeal": Object {
+              "id": 2,
+              "vacols_id": "123-0",
+              "vbms_id": "456-0",
+            },
+            "type": "EstablishClaim",
+            "user": Object {
+              "css_id": "123-0",
+              "id": 1,
+              "station_id": "456",
+            },
+          },
+        ]
+      }
+      sortAscending={true}
+      sortColName={null}
+      tasksFromApi={null}
+    />
+    <FooterRow
+      columns={
+        Array [
+          Object {
+            "header": "First",
+            "valueFunction": [Function],
+          },
+          Object {
+            "header": "Second",
+            "valueFunction": [Function],
+          },
+          Object {
+            "header": "Second",
+            "valueName": "type",
+          },
+        ]
+      }
+      rowObjects={Array []}
+    />
+  </table>
+</div>
+`;

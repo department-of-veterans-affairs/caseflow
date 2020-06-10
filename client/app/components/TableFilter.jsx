@@ -155,8 +155,6 @@ class TableFilter extends React.PureComponent {
   filterIconAriaLabel = () => {
     const { filteredByList, columnName, label } = this.props;
 
-    console.log('LABEL: ', this.props.label);
-
     const selectedOptions = filteredByList[columnName] || '';
 
     return selectedOptions.length ? sprintf('%s. Filtering by %s', label, selectedOptions) : label;
