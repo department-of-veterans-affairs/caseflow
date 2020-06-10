@@ -11,7 +11,7 @@ class ETL::LegacyHearing < ETL::HearingRecord
     private
 
     def merge_original_attributes_to_target(original, target)
-      super(original, target)
+      super
     rescue Caseflow::Error::VacolsRecordNotFound => error
       Rails.logger.error(error)
       nil # skip this target
