@@ -387,7 +387,7 @@ describe AssignHearingDispositionTask, :all_dbs do
         let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        let(:disposition) { :C }
 
         context "there's no associated VSO" do
           it "updates the case location to case storage (81)" do
@@ -557,10 +557,10 @@ describe AssignHearingDispositionTask, :all_dbs do
         let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        let(:disposition) { :C }
 
         context "the task's hearing's disposition is held" do
-          let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+          let(:disposition) { :H }
 
           it "completes the AssignHearingDispositionTask, closes the HearingTask, and updates the appeal location" do
             expect(disposition_task.in_progress?).to be_truthy
