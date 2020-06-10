@@ -49,7 +49,7 @@ describe BulkTaskAssignment, :postgres do
 
     context "when assigned to user does not belong to organization" do
       it "does not bulk assigns tasks" do
-        organization.users << assigned_by
+        OrganizationsUser.make_user_admin(assigned_by, organization)
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
         error = ["does not belong to organization with url #{organization.url}"]
@@ -62,7 +62,7 @@ describe BulkTaskAssignment, :postgres do
 
       it "does not bulk assigns tasks" do
         organization.users << assigned_to
-        organization.users << assigned_by
+        OrganizationsUser.make_user_admin(assigned_by, organization)
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
         error = ["could not find regional office: #{regional_office}"]
@@ -70,7 +70,7 @@ describe BulkTaskAssignment, :postgres do
       end
     end
 
-    context "when there are legacy apeals and regional office is passed" do
+    context "when there are legacy appeals and regional office is passed" do
       let(:regional_office) { "RO17" }
       let(:legacy_appeal) { create(:legacy_appeal, closest_regional_office: regional_office) }
       let!(:no_show_hearing_task_with_legacy_appeal) do
@@ -84,7 +84,7 @@ describe BulkTaskAssignment, :postgres do
         no_show_hearing_task2.appeal.update(closest_regional_office: regional_office)
         no_show_hearing_task3.appeal.update(closest_regional_office: "RO19")
         organization.users << assigned_to
-        organization.users << assigned_by
+        OrganizationsUser.make_user_admin(assigned_by, organization)
         count_before = Task.count
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq true
@@ -108,7 +108,7 @@ describe BulkTaskAssignment, :postgres do
       let(:task_type) { "UnknownTaskType" }
 
       it "does not bulk assigns tasks" do
-        organization.users << assigned_by
+        OrganizationsUser.make_user_admin(assigned_by, organization)
         organization.users << assigned_to
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
@@ -121,7 +121,7 @@ describe BulkTaskAssignment, :postgres do
       let(:organization_url) { 1234 }
 
       it "does not bulk assigns tasks" do
-        organization.users << assigned_by
+        OrganizationsUser.make_user_admin(assigned_by, organization)
         organization.users << assigned_to
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
@@ -134,7 +134,7 @@ describe BulkTaskAssignment, :postgres do
       let(:organization_url) { create(:organization).url }
 
       it "does not bulk assigns tasks" do
-        organization.users << assigned_by
+        OrganizationsUser.make_user_admin(assigned_by, organization)
         organization.users << assigned_to
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
@@ -143,12 +143,12 @@ describe BulkTaskAssignment, :postgres do
       end
     end
 
-    context "when assigned by user does not belong to organization" do
+    context "when assigned by user is not admin of organization" do
       it "does not bulk assigns tasks" do
         organization.users << assigned_to
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
-        error = ["does not belong to organization with url #{organization.url}"]
+        error = ["is not admin of organization with url #{organization.url}"]
         expect(bulk_assignment.errors[:assigned_by]).to eq error
       end
     end
@@ -156,7 +156,7 @@ describe BulkTaskAssignment, :postgres do
     context "when all attributes are present" do
       it "bulk assigns tasks" do
         organization.users << assigned_to
-        organization.users << assigned_by
+        OrganizationsUser.make_user_admin(assigned_by, organization)
         count_before = Task.count
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq true
