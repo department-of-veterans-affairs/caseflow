@@ -11,19 +11,18 @@ describe "data_migrations", :postgres do
     let(:count) { 20 }
     let!(:virtual_hearings) do
       count.times do
-        create(:virtual_hearing, hearing: create(:hearing, regional_office: "RO06"))
+        create(
+          :virtual_hearing,
+          hearing: create(:hearing, regional_office: "RO06"),
+          veteran_email: "fake@email.com",
+          veteran_email_sent: true
+        )
       end
     end
 
     subject do
       Rake::Task["data_migrations:migrate_virtual_hearings_veteran_email_and_veteran_email_sent"].reenable
       Rake::Task["data_migrations:migrate_virtual_hearings_veteran_email_and_veteran_email_sent"].invoke(*args)
-    end
-
-    before do
-      VirtualHearing.all.each do |vh|
-        vh.update!(veteran_email: "fake@email.com", veteran_email_sent: true)
-      end
     end
 
     context "dry run" do
