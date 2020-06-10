@@ -15,14 +15,17 @@ class ETL::HearingRecord < ETL::Record
     def mirrored_hearing_attributes
       [
         :disposition,
+        :evidence_window_waived,
         :judge_id,
         :military_service,
         :notes,
         :prepped,
         :representative_name,
+        :scheduled_time,
         :summary,
         :transcript_requested,
         :transcript_sent_date,
+        :uuid,
         :witness
       ]
     end
@@ -59,21 +62,11 @@ class ETL::HearingRecord < ETL::Record
       ]
     end
 
-    def merge_original_attributes_to_target(original, target)
-      merge_original_attributes_to_target_shared(original, target)
-
-      target.evidence_window_waived = original.evidence_window_waived
-      target.scheduled_time = original.scheduled_time
-      target.uuid = original.uuid
-
-      target
-    end
-
     private
 
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
-    def merge_original_attributes_to_target_shared(original, target)
+    def merge_original_attributes_to_target(original, target)
       # memoize
       hearing_day = original.hearing_day
       hearing_location = original.hearing_location
