@@ -1081,12 +1081,13 @@ describe EndProductEstablishment, :postgres do
 
     context "when many potential ratings" do
       let(:reference_id) { "reference-id" }
-      let(:other_epe) do 
-        create(:end_product_establishment,
+      let(:other_epe) do
+        create(
+          :end_product_establishment,
           veteran_file_number: veteran_file_number,
-          established_at: end_product_establishment.established_at + 2.day,
+          established_at: end_product_establishment.established_at + 2.days,
           code: "040SCR"
-        ) 
+        )
       end
 
       let(:associated_claims) do
