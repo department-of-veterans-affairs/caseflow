@@ -79,7 +79,7 @@ class BulkAssignModal extends React.PureComponent {
 
     const successMessage = {
       title: `You have bulk assigned ${numberOfTasks} ${taskType.replace(/([a-z])([A-Z])/g, '$1 $2')} tasks`,
-      detail: 'Please go to your individual queue to see your self assigned tasks'
+      detail: 'Please go to your individual queue to see any self assigned tasks'
     };
 
     return this.props.requestSave('/bulk_task_assignments', { data }, successMessage).then(() => {
