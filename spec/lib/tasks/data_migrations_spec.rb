@@ -76,8 +76,8 @@ describe "data_migrations", :postgres do
 
         # check that fields were migrated correctly
         VirtualHearing.all.each do |vh|
-          expect(vh.appellant_email).to eq("fake@email.com")
-          expect(vh.appellant_email_sent).to eq(true)
+          expect(vh[:appellant_email]).to eq("fake@email.com")
+          expect(vh[:appellant_email_sent]).to eq(true)
         end
       end
     end
