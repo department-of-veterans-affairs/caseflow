@@ -239,10 +239,9 @@ claimants,created_at,datetime,,,,,,
 claimants,decision_review_id,integer (8) FK,,,x,,x,The ID of the decision review the claimant is on.
 claimants,decision_review_type,string,,,,,x,The type of decision review the claimant is on.
 claimants,id,integer (8) PK,x,x,,,,
-claimants,notes,text,,,,,,Notes collected for unlisted claimants.
 claimants,participant_id,string ∗ U,x,,,x,x,The participant ID of the claimant.
 claimants,payee_code,string,,,,,,"The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
-claimants,type,string ∗,x,,,,,"Type of claimant, such as veteran, dependent, attorney or other."
+claimants,type,string,,,,,,"The class name for the single table inheritance type of Claimant, for example Veteran, Dependent, Attorney, or Other."
 claimants,updated_at,datetime,,,,,x,
 claims_folder_searches,,,,,,,,
 claims_folder_searches,appeal_id,integer FK,,,x,,x,

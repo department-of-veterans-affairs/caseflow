@@ -1,10 +1,10 @@
 class AddClaimantTypeAndNotes < ActiveRecord::Migration[5.2]
-  def change
-    add_column :claimants, :type, :string, comment: "Type of claimant, such as veteran, dependent, attorney or other."
-    add_column :claimants, :notes, :text, comment: "Notes collected for unlisted claimants."
-    reversible do |direction|
-      direction.up { Claimant.update_all(type: 'Claimant') }
-    end
-    change_column_null :claimants, :type, false
+  def up
+    add_column :claimants, :type, :string, comment: "The class name for the single table inheritance type of Claimant, for example Veteran, Dependent, Attorney, or Other."
+    change_column_default :claimants, :type, "Claimant"
+  end
+
+  def down
+    remove_column :claimants, :type
   end
 end
