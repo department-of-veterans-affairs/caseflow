@@ -14,7 +14,6 @@ module Seeds
 
     private
 
-    # rubocop:disable Metrics/MethodLength
     def create_ama_hearing(day)
       veteran = create(
         :veteran,
@@ -71,7 +70,6 @@ module Seeds
         hearing_task: parent_hearing_task
       )
     end
-    # rubocop:enable Metrics/MethodLength
 
     def create_case_hearing(day, ro_key)
       folder_map = {
