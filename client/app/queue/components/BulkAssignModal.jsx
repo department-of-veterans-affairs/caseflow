@@ -9,7 +9,6 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueFlowModal from './QueueFlowModal';
 import Dropdown from '../../components/Dropdown';
 import { cityForRegionalOfficeCode } from '../utils';
-import { bulkAssignTasks } from '../QueueActions';
 import { setActiveOrganization, requestSave } from '../uiReducer/uiActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
@@ -61,8 +60,6 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   bulkAssignTasks = () => {
-    this.props.bulkAssignTasks(this.state.modal);
-
     const {
       taskType,
       numberOfTasks,
@@ -228,7 +225,6 @@ class BulkAssignModal extends React.PureComponent {
 }
 
 BulkAssignModal.propTypes = {
-  bulkAssignTasks: PropTypes.func,
   highlightFormItems: PropTypes.bool,
   history: PropTypes.object,
   location: PropTypes.object,
@@ -248,7 +244,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    bulkAssignTasks,
     setActiveOrganization,
     requestSave
   }, dispatch));
