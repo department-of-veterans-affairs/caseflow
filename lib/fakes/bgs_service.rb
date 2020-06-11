@@ -317,7 +317,7 @@ class Fakes::BGSService
     result.empty? ? nil : result
   end
 
-  def fetch_poas_list
+  def poas_list
     [
       { ptcpnt_id: "12345678", nm: "NANCY BAUMBACH", org_type_nm: "POA Attorney" },
       { ptcpnt_id: "55114884", nm: "RICH TREUTING SR.", org_type_nm: "POA Agent" },

@@ -11,7 +11,7 @@ class BgsAttorney < CaseflowRecord
   class << self
     def sync_bgs_attorneys
       now = Time.zone.now
-      bgs.fetch_poas_list.each do |hash|
+      bgs.poas_list.each do |hash|
         atty = find_or_initialize_by(participant_id: hash[:ptcpnt_id])
         atty.update!(name: hash[:nm], record_type: hash[:org_type_nm], last_synced_at: now)
       end
