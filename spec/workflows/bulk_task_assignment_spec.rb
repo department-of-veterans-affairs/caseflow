@@ -70,7 +70,6 @@ describe BulkTaskAssignment, :postgres do
       it_behaves_like "invalid bulk assign"
     end
 
-
     context "when assigned by user is not admin of organization" do
       let(:assigned_by_param) { create(:user) }
       let(:error) { "is not admin of organization with url #{organization.url}" }
