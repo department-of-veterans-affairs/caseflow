@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_26_054515) do
+ActiveRecord::Schema.define(version: 2020_06_10_141519) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1405,6 +1405,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_054515) do
   create_table "virtual_hearings", force: :cascade do |t|
     t.string "alias", comment: "Alias for conference in Pexip"
     t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
+    t.string "appellant_tz", limit: 32, comment: "Stores appellant timezone"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false
@@ -1419,6 +1420,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_054515) do
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
+    t.string "representative_tz", limit: 32, comment: "Stores representative timezone"
     t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the virtual hearing"
