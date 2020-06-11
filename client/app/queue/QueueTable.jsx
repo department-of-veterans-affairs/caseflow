@@ -75,6 +75,25 @@ export const getColumns = (props) => {
   return _.isFunction(props.columns) ? props.columns(props.rowObject) : props.columns;
 };
 
+export const getCellValue = (rowObject, rowId, column) => {
+  if (column.valueFunction) {
+    return column.valueFunction(rowObject, rowId);
+  }
+  if (column.valueName) {
+    return rowObject[column.valueName];
+  }
+
+  return '';
+};
+
+export const getCellSpan = (rowObject, column) => {
+  if (column.span) {
+    return column.span(rowObject);
+  }
+
+  return 1;
+};
+
 export const HeaderRow = (props) => {
   const iconHeaderStyle = css({ display: 'table-row' });
   const iconStyle = css(
@@ -160,25 +179,6 @@ export const HeaderRow = (props) => {
       </tr>
     </thead>
   );
-};
-
-export const getCellValue = (rowObject, rowId, column) => {
-  if (column.valueFunction) {
-    return column.valueFunction(rowObject, rowId);
-  }
-  if (column.valueName) {
-    return rowObject[column.valueName];
-  }
-
-  return '';
-};
-
-export const getCellSpan = (rowObject, column) => {
-  if (column.span) {
-    return column.span(rowObject);
-  }
-
-  return 1;
 };
 
 // todo: make these functional components?
