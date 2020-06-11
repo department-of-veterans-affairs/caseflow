@@ -530,7 +530,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         text: "Holdrege, NE (VHA) 0 miles away",
         name: "appealHearingLocation"
       )
-      click_dropdown(text: "10:00 am", name: "optionalHearingTime1")
+      click_dropdown(text: "10:00 am", name: "optionalHearingTime0")
       click_button("Schedule", exact: true)
 
       expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
