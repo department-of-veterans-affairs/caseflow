@@ -8,6 +8,7 @@ RSpec.describe HearingsController, type: :controller do
   let(:cheyenne_ro_mountain) { "RO42" }
   let(:oakland_ro_pacific) { "RO43" }
   let(:baltimore_ro_eastern) { "RO13" }
+  let(:timezone) { "America/New_York" }
 
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
@@ -232,6 +233,34 @@ RSpec.describe HearingsController, type: :controller do
           expect(subject.status).to eq(200)
           virtual_hearing.reload
           expect(virtual_hearing.cancelled?).to eq(true)
+        end
+      end
+
+      context "with valid appellant_tz" do
+        let(:virtual_hearing_params) do
+          {
+            appellant_email: "new_veteran_email@caseflow.gov",
+            appellant_tz: timezone,
+          }
+        end
+
+        it "returns expected status and has expected side effects", :aggregate_failures do
+          expect(subject.status).to eq(200)
+          expect(hearing.reload.virtual_hearing.appellant_tz).to eq(timezone)
+        end
+      end
+
+      context "with valid representative_tz" do
+        let(:virtual_hearing_params) do
+          {
+            appellant_email: "new_veteran_email@caseflow.gov",
+            representative_tz: timezone,
+          }
+        end
+
+        it "returns expected status and has expected side effects", :aggregate_failures do
+          expect(subject.status).to eq(200)
+          expect(hearing.reload.virtual_hearing.representative_tz).to eq(timezone)
         end
       end
     end
