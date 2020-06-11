@@ -50,7 +50,9 @@ class NightlySyncsJob < CaseflowJob
   end
 
   def sync_bgs_attorneys
+    start_time = Time.zone.now
     BgsAttorney.sync_bgs_attorneys
+    datadog_report_time_segment(segment: "sync_bgs_attorneys", start_time: start_time)
   end
 
   def dangling_legacy_appeals

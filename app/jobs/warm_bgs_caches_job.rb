@@ -156,6 +156,8 @@ class WarmBgsCachesJob < CaseflowJob
   end
 
   def warm_attorney_address_caches
+    start_time = Time.zone.now
     BgsAttorney.all.each(&:warm_address_cache)
+    datadog_report_time_segment(segment: "warm_attorney_address_caches", start_time: start_time)
   end
 end
