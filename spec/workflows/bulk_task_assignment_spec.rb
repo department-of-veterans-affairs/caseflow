@@ -34,8 +34,8 @@ describe BulkTaskAssignment, :postgres do
 
     let(:params) do
       {
-        assigned_to_id: assigned_to.id,
-        assigned_by: assigned_by,
+        assigned_to_id: assigned_to_param.id,
+        assigned_by: assigned_by_param,
         organization_url: organization_url,
         task_type: task_type,
         task_count: task_count,
@@ -46,26 +46,35 @@ describe BulkTaskAssignment, :postgres do
     let(:organization_url) { organization.url }
     let(:task_count) { 2 }
     let(:regional_office) { nil }
+    let(:assigned_by_param) { assigned_by }
+    let(:assigned_to_param) { assigned_to }
 
-    let(:assigner) { assigned_by }
-    let(:assignee) { assigned_to }
+    before do
+      OrganizationsUser.make_user_admin(assigned_by, organization)
+      organization.users << assigned_to
+    end
 
     shared_examples "invalid bulk assign" do
-      context "when assigned by user is not admin of organization" do
-        it "does not bulk assigns tasks" do
-          OrganizationsUser.make_user_admin(assigner, organization)
-          organization.users << assignee
-          bulk_assignment = BulkTaskAssignment.new(params)
-          expect(bulk_assignment.valid?).to eq false
-          expect(bulk_assignment.errors[error_sym]).to eq [error]
-        end
+      it "does not bulk assigns tasks" do
+        bulk_assignment = BulkTaskAssignment.new(params)
+        expect(bulk_assignment.valid?).to eq false
+        expect(bulk_assignment.errors[error_sym]).to eq [error]
       end
     end
 
     context "when assigned to user does not belong to organization" do
-      let(:assignee) { create(:user) }
+      let(:assigned_to_param) { create(:user) }
       let(:error) { "does not belong to organization with url #{organization.url}" }
       let(:error_sym) { :assigned_to }
+
+      it_behaves_like "invalid bulk assign"
+    end
+
+
+    context "when assigned by user is not admin of organization" do
+      let(:assigned_by_param) { create(:user) }
+      let(:error) { "is not admin of organization with url #{organization.url}" }
+      let(:error_sym) { :assigned_by }
 
       it_behaves_like "invalid bulk assign"
     end
@@ -102,18 +111,8 @@ describe BulkTaskAssignment, :postgres do
       it_behaves_like "invalid bulk assign"
     end
 
-    context "when assigned by user is not admin of organization" do
-      let(:assigner) { create(:user) }
-      let(:error) { "is not admin of organization with url #{organization.url}" }
-      let(:error_sym) { :assigned_by }
-
-      it_behaves_like "invalid bulk assign"
-    end
-
     context "when all attributes are present" do
       it "bulk assigns tasks" do
-        organization.users << assigned_to
-        OrganizationsUser.make_user_admin(assigned_by, organization)
         count_before = Task.count
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq true
@@ -140,8 +139,6 @@ describe BulkTaskAssignment, :postgres do
         it "filters by regional office" do
           no_show_hearing_task2.appeal.update(closest_regional_office: regional_office)
           no_show_hearing_task3.appeal.update(closest_regional_office: "RO19")
-          organization.users << assigned_to
-          OrganizationsUser.make_user_admin(assigned_by, organization)
           count_before = Task.count
           bulk_assignment = BulkTaskAssignment.new(params)
           expect(bulk_assignment.valid?).to eq true
