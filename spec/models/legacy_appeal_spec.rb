@@ -238,11 +238,13 @@ describe LegacyAppeal, :all_dbs do
 
     context "when receipt date falls on inauguration day " do
       let(:inauguration_date) { Date.new(2021, 1, 20) }
+      let(:receipt_date) { inauguration_date + 1.day }
 
       scenario "return true" do
         allow(appeal).to receive(:soc_date).and_return(inauguration_date - 61.days)
-        expect(appeal.eligible_for_opt_in?(receipt_date: inauguration_date, covid_flag: false)).to eq(true)
-        expect(inauguration_date.sunday?).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day, covid_flag: false)).to eq(false)
+        expect(receipt_date.sunday?).to eq(false)
       end
     end
 

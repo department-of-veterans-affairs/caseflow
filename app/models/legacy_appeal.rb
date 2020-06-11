@@ -957,13 +957,17 @@ class LegacyAppeal < CaseflowRecord
       date += 1.day if Holidays.on(date, :federal_reserve, :observed).any?
       date += 2.days if date.saturday?
       date += 1.day if date.sunday?
-      date += 1.day if inauguration_date(date).sunday?
+      date += 1.day if inauguration_day?(date)
 
       date
     end
 
-    def inauguration_date(_date)
-      Date.new(2017, 1, 20).next_year(4)
+    def inauguration_day?(date)
+      return unless date.is_a?(Date)
+
+      # 2001 is a past year with an inauguration date
+      # This returns true for both the inauguration date, or the observed date if it falls on a Sunday
+      ((date.year - 2001) % 4 == 0) && date.month == 1 && (date.day == 20 || (date.monday? && date.day == 21))
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)
