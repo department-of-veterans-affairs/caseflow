@@ -195,7 +195,7 @@ describe BgsPowerOfAttorney do
         allow(bgs).to receive(:fetch_poa_by_file_number)
           .with(poa_1_fn).and_return(poa_1_bgs_response)
         allow(bgs).to receive(:fetch_poas_by_participant_ids)
-          .with([claimant_participant_id]).and_return({ claimant_participant_id => poa_2_bgs_response })
+          .with([claimant_participant_id]).and_return(claimant_participant_id => poa_2_bgs_response)
         allow(BGSService).to receive(:new) { bgs }
       end
 
