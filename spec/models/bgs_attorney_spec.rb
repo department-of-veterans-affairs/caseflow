@@ -10,7 +10,14 @@ describe BgsAttorney, :all_dbs do
 
       it "upserts all fetched attorneys" do
         subject
-        expect(BgsAttorney.all.map(&:name).sort).to eq ["ACADIA VETERAN SERVICES", "JANE DOE", "MADELINE JENKINS", "NANCY BAUMBACH", "RANDALL KOHLER III", "RICH TREUTING SR."]
+        expect(BgsAttorney.all.map(&:name).sort).to eq [
+          "ACADIA VETERAN SERVICES",
+          "JANE DOE",
+          "MADELINE JENKINS",
+          "NANCY BAUMBACH",
+          "RANDALL KOHLER III",
+          "RICH TREUTING SR."
+        ]
       end
     end
   end
