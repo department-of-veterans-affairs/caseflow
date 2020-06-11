@@ -19,6 +19,6 @@ class BgsAttorney < CaseflowRecord
   end
 
   def warm_address_cache
-    BgsAddressService.new(participant_id: participant_id).fetch_bgs_record(force: true)
+    BgsAddressService.new(participant_id: participant_id).refresh_cached_bgs_record
   end
 end

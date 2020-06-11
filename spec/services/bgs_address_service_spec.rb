@@ -22,23 +22,22 @@ describe BgsAddressService do
     end
   end
 
-  describe "#fetch_bgs_record" do
+  describe "#refresh_cached_bgs_record" do
     let(:address_service) { BgsAddressService.new(participant_id: "1234") }
     let(:bgs) { double("BGSService") }
 
-    context "when forcing a fetch" do
-      before do
-        allow(address_service).to receive(:bgs).and_return(bgs)
-        allow(bgs).to receive(:find_address_by_participant_id).and_return({ "some": "address" })
-      end
+    before do
+      allow(address_service).to receive(:bgs).and_return(bgs)
+      allow(bgs).to receive(:find_address_by_participant_id).and_return(some: "address")
+    end
 
-      it "ignores any existing cache key" do
-        2.times do
-          address_service.fetch_bgs_record(force: false)
-          address_service.fetch_bgs_record(force: true)
-        end
-        expect(bgs).to have_received(:find_address_by_participant_id).thrice
+    it "deletes and re-caches any existing key" do
+      2.times do
+        address_service.fetch_bgs_record
+        address_service.refresh_cached_bgs_record
+        address_service.fetch_bgs_record
       end
+      expect(bgs).to have_received(:find_address_by_participant_id).thrice
     end
   end
 end

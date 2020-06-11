@@ -30,7 +30,7 @@ describe BgsAttorney, :all_dbs do
 
     before do
       allow(BgsAddressService).to receive(:new).and_return(bgs_address_service)
-      allow(bgs_address_service).to receive(:fetch_bgs_record).and_call_original
+      allow(bgs_address_service).to receive(:refresh_cached_bgs_record).and_call_original
     end
 
     subject { atty.warm_address_cache }
@@ -38,7 +38,7 @@ describe BgsAttorney, :all_dbs do
     it "fetches the attorney's address from BGS" do
       subject
       expect(BgsAddressService).to have_received(:new).with(participant_id: pid)
-      expect(bgs_address_service).to have_received(:fetch_bgs_record).once
+      expect(bgs_address_service).to have_received(:refresh_cached_bgs_record).once
       expect(Rails.cache.fetch(cache_key)).not_to be_nil
     end
   end
