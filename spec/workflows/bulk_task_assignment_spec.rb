@@ -62,7 +62,7 @@ describe BulkTaskAssignment, :postgres do
       end
     end
 
-    fcontext "when assigned to user does not belong to organization" do
+    context "when assigned to user does not belong to organization" do
       let(:assignee) { create(:user) }
       let(:error) { "does not belong to organization with url #{organization.url}" }
       let(:error_sym) { :assigned_to }
@@ -88,15 +88,10 @@ describe BulkTaskAssignment, :postgres do
 
     context "when organization is not valid" do
       let(:organization_url) { 1234 }
+      let(:error) { "could not find an organization with url #{organization_url}" }
+      let(:error_sym) { :organization_url }
 
-      it "does not bulk assigns tasks" do
-        OrganizationsUser.make_user_admin(assigned_by, organization)
-        organization.users << assigned_to
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq false
-        error = ["could not find an organization with url #{organization_url}"]
-        expect(bulk_assignment.errors[:organization_url]).to eq error
-      end
+      it_behaves_like "invalid bulk assign"
     end
 
     context "when organization cannot bulk assign" do
