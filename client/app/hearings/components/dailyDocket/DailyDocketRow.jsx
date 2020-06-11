@@ -199,7 +199,7 @@ class DailyDocketRow extends React.Component {
 
         const alerts = response.body?.alerts;
 
-        if (alerts.hearing) {
+        if (alerts?.hearing) {
           this.props.onReceiveAlerts(alerts.hearing);
         }
 
@@ -233,7 +233,7 @@ class DailyDocketRow extends React.Component {
 
         const alerts = response.body?.alerts;
 
-        if (alerts.hearing) {
+        if (alerts?.hearing) {
           this.props.onReceiveAlerts(alerts.hearing);
         }
 
