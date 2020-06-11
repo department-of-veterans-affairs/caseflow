@@ -63,6 +63,9 @@ run-backend: up ready  ## Start rails server without the frontend
 run-frontend: ## Start just the frontend server
 	cd client && yarn run dev:hot
 
+storybook: ## run Storybook
+	cd client && yarn storybook
+
 test: clean  ## Run test suite
 	bundle exec rake
 

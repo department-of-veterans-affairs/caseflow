@@ -36,7 +36,7 @@ RSpec.describe BulkTaskAssignmentsController, :postgres, type: :controller do
 
       it "should return tasks" do
         organization.users << assigned_to
-        organization.users << assigned_by
+        OrganizationsUser.make_user_admin(assigned_by, organization)
         get :create, params: { bulk_task_assignment: params }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
