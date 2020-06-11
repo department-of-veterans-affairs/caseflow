@@ -23,8 +23,10 @@ describe BgsAttorney, :all_dbs do
   end
 
   describe "#warm_address_cache" do
-    let(:bgs_address_service) { BgsAddressService.new }
-    let(:atty) { create(:bgs_attorney, participant_id: "12345678", name: "JOHN SMITH") }
+    let(:pid) { "12345678" }
+    let(:bgs_address_service) { BgsAddressService.new(participant_id: pid) }
+    let(:atty) { create(:bgs_attorney, participant_id: pid, name: "JOHN SMITH") }
+    let(:cache_key) { BgsAddressService.cache_key_for_participant_id(pid) }
 
     before do
       allow(BgsAddressService).to receive(:new).and_return(bgs_address_service)
@@ -35,8 +37,9 @@ describe BgsAttorney, :all_dbs do
 
     it "fetches the attorney's address from BGS" do
       subject
-      expect(BgsAddressService).to have_received(:new).with(participant_id: "12345678")
+      expect(BgsAddressService).to have_received(:new).with(participant_id: pid)
       expect(bgs_address_service).to have_received(:fetch_bgs_record).once
+      expect(Rails.cache.fetch(cache_key)).not_to be_nil
     end
   end
 end

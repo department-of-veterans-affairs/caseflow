@@ -40,9 +40,9 @@ class BgsAddressService
     }
   end
 
-  def fetch_bgs_record
+  def fetch_bgs_record(force: false)
     cache_key = self.class.cache_key_for_participant_id(participant_id)
-    Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+    Rails.cache.fetch(cache_key, expires_in: 24.hours, force: force) do
       bgs.find_address_by_participant_id(participant_id)
     rescue Savon::Error
       # If there is no address for this participant id then we get an error.
