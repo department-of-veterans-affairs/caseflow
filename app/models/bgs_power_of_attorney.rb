@@ -44,7 +44,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     end
 
     def fetch_bgs_poa_by_participant_id(pid)
-      bgs.fetch_poas_by_participant_ids([pid.to_s])[pid]
+      bgs.fetch_poas_by_participant_ids([pid])[pid.to_s]
     end
   end
 
