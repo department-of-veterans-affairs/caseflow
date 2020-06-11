@@ -1,0 +1,12 @@
+.tab-content {
+}
+
+:global {
+  :local(.tab-pane) {
+    display: none;
+
+    &.show {
+      display: block;
+    }
+  }
+}
