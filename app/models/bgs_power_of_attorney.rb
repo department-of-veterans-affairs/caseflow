@@ -44,7 +44,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     end
 
     def fetch_bgs_poa_by_participant_id(pid)
-      bgs.fetch_poas_by_participant_ids([pid])[pid]
+      bgs.fetch_poas_by_participant_ids([pid.to_s])[pid]
     end
   end
 
@@ -124,7 +124,10 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def fetch_bgs_record
-    if self[:claimant_participant_id]
+    # prefer FN if both defined since one PID can have multiple FNs
+    if self[:claimant_participant_id] && self[:file_number]
+      fetch_bgs_record_by_file_number
+    elsif self[:claimant_participant_id]
       fetch_bgs_record_by_claimant_participant_id
     elsif self[:file_number]
       fetch_bgs_record_by_file_number

@@ -82,9 +82,7 @@ describe BgsPowerOfAttorney do
       it "fetches db record" do
         expect(subject).to be_persisted
         expect(subject).to eq(poa)
-        # fetched from bgs by fetch_poas_by_participant_ids with default fake
-        # because claimant_participant_id is populated by factory create() above.
-        expect(subject.representative_name).to eq "Attorney McAttorneyFace"
+        expect(subject.representative_name).to eq FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME
       end
     end
   end
@@ -186,6 +184,47 @@ describe BgsPowerOfAttorney do
       poa.save_with_updated_bgs_record!
 
       expect(poa.poa_participant_id).to_not eq before_poa_pid
+    end
+
+    context "2 records exist with same PID but different FNs" do
+      let(:poa_1_fn) { 1234 }
+      let(:poa_2_fn) { 5678 }
+      let!(:poa_1) do
+        create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id, file_number: poa_1_fn)
+      end
+      let!(:poa_2) do
+        create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id, file_number: poa_2_fn)
+      end
+
+      let(:poa_bgs_response) do
+        {
+          representative_type: "Attorney",
+          representative_name: "Clarence Darrow",
+          participant_id: 9999,
+          authzn_change_clmant_addrs_ind: nil,
+          authzn_poa_access_ind: nil,
+          legacy_poa_cd: "3QQ",
+          claimant_participant_id: claimant_participant_id
+        }
+      end
+
+      let(:poa_1_bgs_response) { poa_bgs_response.merge(file_number: poa_1_fn) }
+      let(:poa_2_bgs_response) { poa_bgs_response.merge(file_number: poa_2_fn) }
+
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number)
+          .with(poa_2_fn).and_return(poa_2_bgs_response)
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number)
+          .with(poa_1_fn).and_return(poa_1_bgs_response)
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+          .with([claimant_participant_id]).and_return({ claimant_participant_id => poa_2_bgs_response })
+      end
+
+      it "prefers fetch by filenumber over fetch by PID" do
+        poa_1.save_with_updated_bgs_record!
+
+        expect { poa_1.save_with_updated_bgs_record! }.to_not raise_error
+      end
     end
   end
 end
