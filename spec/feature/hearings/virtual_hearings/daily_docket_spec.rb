@@ -52,7 +52,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     click_button("Change-Hearing-Time-button-id-close")
   end
 
-  context "Dropdowns and radio buttons are disabled while async job is running", focus: true do
+  context "Dropdowns and radio buttons are disabled while async job is running" do
     scenario "async job is not completed" do
       virtual_hearing.update(appellant_email_sent: false)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
