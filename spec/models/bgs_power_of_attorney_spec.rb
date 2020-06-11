@@ -168,27 +168,40 @@ describe BgsPowerOfAttorney do
   end
 
   describe "#save_with_updated_bgs_record!" do
-    let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
+    context "single POA record for PID" do
+      let!(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id) }
 
-    let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
+      let(:claimant_participant_id) { "CLAIMANT_WITH_PVA_AS_VSO" }
 
-    before do
-      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
-        .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
-    end
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+          .with([claimant_participant_id]).and_return(Fakes::BGSServicePOA.default_vsos_mapped.last)
+      end
 
-    it "forces update from BGS" do
-      before_poa_pid = poa.poa_participant_id
-      expect(before_poa_pid).to_not be_nil
+      it "forces update from BGS" do
+        before_poa_pid = poa.poa_participant_id
+        expect(before_poa_pid).to_not be_nil
 
-      poa.save_with_updated_bgs_record!
+        poa.save_with_updated_bgs_record!
 
-      expect(poa.poa_participant_id).to_not eq before_poa_pid
+        expect(poa.poa_participant_id).to_not eq before_poa_pid
+      end
     end
 
     context "2 records exist with same PID but different FNs" do
-      let(:poa_1_fn) { 1234 }
-      let(:poa_2_fn) { 5678 }
+      before do
+        allow(bgs).to receive(:fetch_poa_by_file_number)
+          .with(poa_2_fn).and_return(poa_2_bgs_response)
+        allow(bgs).to receive(:fetch_poa_by_file_number)
+          .with(poa_1_fn).and_return(poa_1_bgs_response)
+        allow(bgs).to receive(:fetch_poas_by_participant_ids)
+          .with([claimant_participant_id]).and_return({ claimant_participant_id => poa_2_bgs_response })
+        allow(BGSService).to receive(:new) { bgs }
+      end
+
+      let(:claimant_participant_id) { "0000" }
+      let(:poa_1_fn) { "1234" }
+      let(:poa_2_fn) { "5678" }
       let!(:poa_1) do
         create(:bgs_power_of_attorney, claimant_participant_id: claimant_participant_id, file_number: poa_1_fn)
       end
@@ -211,19 +224,13 @@ describe BgsPowerOfAttorney do
       let(:poa_1_bgs_response) { poa_bgs_response.merge(file_number: poa_1_fn) }
       let(:poa_2_bgs_response) { poa_bgs_response.merge(file_number: poa_2_fn) }
 
-      before do
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number)
-          .with(poa_2_fn).and_return(poa_2_bgs_response)
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number)
-          .with(poa_1_fn).and_return(poa_1_bgs_response)
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
-          .with([claimant_participant_id]).and_return({ claimant_participant_id => poa_2_bgs_response })
-      end
+      let(:bgs) { double("bgs") }
 
       it "prefers fetch by filenumber over fetch by PID" do
-        poa_1.save_with_updated_bgs_record!
-
-        expect { poa_1.save_with_updated_bgs_record! }.to_not raise_error
+        expect { described_class.find(poa_1.id).save_with_updated_bgs_record! }.to_not raise_error
+        expect(bgs).to have_received(:fetch_poa_by_file_number).with(poa_1_fn).twice
+        expect(bgs).to have_received(:fetch_poa_by_file_number).with(poa_2_fn).once
+        expect(bgs).to_not have_received(:fetch_poas_by_participant_ids)
       end
     end
   end

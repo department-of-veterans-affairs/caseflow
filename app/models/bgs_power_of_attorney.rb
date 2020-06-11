@@ -97,11 +97,13 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_cached_attributes!
-    stale_attributes.each { |attr| send(attr) }
+    stale_attributes.each { |attr| send(attr) } if found?
     self.last_synced_at = Time.zone.now
   end
 
   def save_with_updated_bgs_record!
+    return save! unless found?
+
     stale_attributes.each do |attr|
       self[attr] = nil # local object attr empty, should trigger re-fetch of bgs record
       send(attr)
