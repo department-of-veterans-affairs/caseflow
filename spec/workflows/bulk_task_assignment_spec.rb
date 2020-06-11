@@ -47,74 +47,43 @@ describe BulkTaskAssignment, :postgres do
     let(:task_count) { 2 }
     let(:regional_office) { nil }
 
-    context "when assigned to user does not belong to organization" do
-      it "does not bulk assigns tasks" do
-        OrganizationsUser.make_user_admin(assigned_by, organization)
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq false
-        error = ["does not belong to organization with url #{organization.url}"]
-        expect(bulk_assignment.errors[:assigned_to]).to eq error
+    let(:assigner) { assigned_by }
+    let(:assignee) { assigned_to }
+
+    shared_examples "invalid bulk assign" do
+      context "when assigned by user is not admin of organization" do
+        it "does not bulk assigns tasks" do
+          OrganizationsUser.make_user_admin(assigner, organization)
+          organization.users << assignee
+          bulk_assignment = BulkTaskAssignment.new(params)
+          expect(bulk_assignment.valid?).to eq false
+          expect(bulk_assignment.errors[error_sym]).to eq [error]
+        end
       end
+    end
+
+    fcontext "when assigned to user does not belong to organization" do
+      let(:assignee) { create(:user) }
+      let(:error) { "does not belong to organization with url #{organization.url}" }
+      let(:error_sym) { :assigned_to }
+
+      it_behaves_like "invalid bulk assign"
     end
 
     context "when regional office is not valid" do
       let(:regional_office) { "Not Valid" }
+      let(:error) { "could not find regional office: #{regional_office}" }
+      let(:error_sym) { :regional_office }
 
-      it "does not bulk assigns tasks" do
-        organization.users << assigned_to
-        OrganizationsUser.make_user_admin(assigned_by, organization)
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq false
-        error = ["could not find regional office: #{regional_office}"]
-        expect(bulk_assignment.errors[:regional_office]).to eq error
-      end
-    end
-
-    context "when there are legacy appeals and regional office is passed" do
-      let(:regional_office) { "RO17" }
-      let(:legacy_appeal) { create(:legacy_appeal, closest_regional_office: regional_office) }
-      let!(:no_show_hearing_task_with_legacy_appeal) do
-        create(:no_show_hearing_task,
-               appeal: legacy_appeal,
-               assigned_to: organization,
-               created_at: 2.days.ago)
-      end
-
-      it "filters by regional office" do
-        no_show_hearing_task2.appeal.update(closest_regional_office: regional_office)
-        no_show_hearing_task3.appeal.update(closest_regional_office: "RO19")
-        organization.users << assigned_to
-        OrganizationsUser.make_user_admin(assigned_by, organization)
-        count_before = Task.count
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq true
-        result = bulk_assignment.process
-        expect(Task.count).to eq count_before + 2
-        expect(result.count).to eq 2
-        task_with_ama_appeal = result.find { |task| task.appeal == no_show_hearing_task2.appeal }
-        expect(task_with_ama_appeal.assigned_to).to eq assigned_to
-        expect(task_with_ama_appeal.type).to eq "NoShowHearingTask"
-        expect(task_with_ama_appeal.assigned_by).to eq assigned_by
-        expect(task_with_ama_appeal.parent_id).to eq no_show_hearing_task2.id
-
-        task_with_legacy_appeal = result.find { |task| task.appeal == legacy_appeal }
-        expect(task_with_legacy_appeal.assigned_to).to eq assigned_to
-        expect(task_with_legacy_appeal.type).to eq "NoShowHearingTask"
-        expect(task_with_legacy_appeal.assigned_by).to eq assigned_by
-      end
+      it_behaves_like "invalid bulk assign"
     end
 
     context "when task type is not valid" do
       let(:task_type) { "UnknownTaskType" }
+      let(:error) { "#{task_type} is not a valid task type" }
+      let(:error_sym) { :task_type }
 
-      it "does not bulk assigns tasks" do
-        OrganizationsUser.make_user_admin(assigned_by, organization)
-        organization.users << assigned_to
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq false
-        error = ["#{task_type} is not a valid task type"]
-        expect(bulk_assignment.errors[:task_type]).to eq error
-      end
+      it_behaves_like "invalid bulk assign"
     end
 
     context "when organization is not valid" do
@@ -132,25 +101,18 @@ describe BulkTaskAssignment, :postgres do
 
     context "when organization cannot bulk assign" do
       let(:organization_url) { create(:organization).url }
+      let(:error) { "with url #{organization_url} cannot bulk assign tasks" }
+      let(:error_sym) { :organization }
 
-      it "does not bulk assigns tasks" do
-        OrganizationsUser.make_user_admin(assigned_by, organization)
-        organization.users << assigned_to
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq false
-        error = ["with url #{organization_url} cannot bulk assign tasks"]
-        expect(bulk_assignment.errors[:organization]).to eq error
-      end
+      it_behaves_like "invalid bulk assign"
     end
 
     context "when assigned by user is not admin of organization" do
-      it "does not bulk assigns tasks" do
-        organization.users << assigned_to
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq false
-        error = ["is not admin of organization with url #{organization.url}"]
-        expect(bulk_assignment.errors[:assigned_by]).to eq error
-      end
+      let(:assigner) { create(:user) }
+      let(:error) { "is not admin of organization with url #{organization.url}" }
+      let(:error_sym) { :assigned_by }
+
+      it_behaves_like "invalid bulk assign"
     end
 
     context "when all attributes are present" do
@@ -168,6 +130,40 @@ describe BulkTaskAssignment, :postgres do
         expect(result.first.assigned_by).to eq assigned_by
         expect(result.first.appeal).to eq no_show_hearing_task1.appeal
         expect(result.first.parent_id).to eq no_show_hearing_task1.id
+      end
+
+      context "when there are legacy appeals and regional office is passed" do
+        let(:regional_office) { "RO17" }
+        let(:legacy_appeal) { create(:legacy_appeal, closest_regional_office: regional_office) }
+        let!(:no_show_hearing_task_with_legacy_appeal) do
+          create(:no_show_hearing_task,
+                 appeal: legacy_appeal,
+                 assigned_to: organization,
+                 created_at: 2.days.ago)
+        end
+
+        it "filters by regional office" do
+          no_show_hearing_task2.appeal.update(closest_regional_office: regional_office)
+          no_show_hearing_task3.appeal.update(closest_regional_office: "RO19")
+          organization.users << assigned_to
+          OrganizationsUser.make_user_admin(assigned_by, organization)
+          count_before = Task.count
+          bulk_assignment = BulkTaskAssignment.new(params)
+          expect(bulk_assignment.valid?).to eq true
+          result = bulk_assignment.process
+          expect(Task.count).to eq count_before + 2
+          expect(result.count).to eq 2
+          task_with_ama_appeal = result.find { |task| task.appeal == no_show_hearing_task2.appeal }
+          expect(task_with_ama_appeal.assigned_to).to eq assigned_to
+          expect(task_with_ama_appeal.type).to eq "NoShowHearingTask"
+          expect(task_with_ama_appeal.assigned_by).to eq assigned_by
+          expect(task_with_ama_appeal.parent_id).to eq no_show_hearing_task2.id
+
+          task_with_legacy_appeal = result.find { |task| task.appeal == legacy_appeal }
+          expect(task_with_legacy_appeal.assigned_to).to eq assigned_to
+          expect(task_with_legacy_appeal.type).to eq "NoShowHearingTask"
+          expect(task_with_legacy_appeal.assigned_by).to eq assigned_by
+        end
       end
     end
   end
