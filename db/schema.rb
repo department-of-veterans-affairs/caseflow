@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_21_202239) do
+ActiveRecord::Schema.define(version: 2020_06_04_191432) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -384,9 +384,11 @@ ActiveRecord::Schema.define(version: 2020_05_21_202239) do
     t.string "disposition", comment: "The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values."
     t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
     t.string "participant_id", null: false, comment: "The Veteran's participant id."
+    t.string "percent_number", comment: "percent_number from RatingIssue (prcntNo from Rating Profile)"
     t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating can have multiple issues). This is unique per rating issue."
     t.datetime "rating_profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
     t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
+    t.text "subject_text", comment: "subject_text from RatingIssue (subjctTxt from Rating Profile)"
     t.datetime "updated_at"
     t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
     t.index ["deleted_at"], name: "index_decision_issues_on_deleted_at"
@@ -1403,6 +1405,8 @@ ActiveRecord::Schema.define(version: 2020_05_21_202239) do
   create_table "virtual_hearings", force: :cascade do |t|
     t.string "alias", comment: "Alias for conference in Pexip"
     t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
+    t.string "appellant_email", comment: "Appellant's email address"
+    t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false

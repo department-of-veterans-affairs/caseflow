@@ -141,6 +141,22 @@ RSpec.describe HearingsController, type: :controller do
         end
       end
 
+      context "with emails with whitespaces" do
+        let(:virtual_hearing_params) do
+          {
+            appellant_email: "veteran@email.com     ",
+            representative_email: "        representative@email.com  "
+          }
+        end
+
+        it "returns the expected status and updates the virtual hearing", :aggregate_failures do
+          expect(subject.status).to eq(200)
+
+          expect(VirtualHearing.first.veteran_email).to eq("veteran@email.com")
+          expect(VirtualHearing.first.representative_email).to eq("representative@email.com")
+        end
+      end
+
       context "with all email params" do
         let(:virtual_hearing_params) do
           {
@@ -298,6 +314,24 @@ RSpec.describe HearingsController, type: :controller do
         expect(ama_hearing.advance_on_docket_motion.person.id).to eq ama_hearing.appeal.appellant.id
         expect(ama_hearing.advance_on_docket_motion.reason).to eq Constants.AOD_REASONS.age
         expect(ama_hearing.advance_on_docket_motion.granted).to eq true
+      end
+    end
+
+    context "when updating hearing location" do
+      it "should return error if facility_id is not provided" do
+        params = {
+          id: ama_hearing.external_id,
+          hearing: {
+            notes: "Test",
+            hearing_location_attributes: {
+              distance: 50,
+              address: "fake address",
+              city: "fake city"
+            }
+          }
+        }
+        patch :update, as: :json, params: params
+        expect(response.status).to eq 400
       end
     end
 

@@ -39,5 +39,13 @@ describe HearingLocation do
 
       expect(hearing_location.full_address).to eq("251 N. Main Street Federal Building, Winston-Salem NC 27155")
     end
+
+    it "formats correctly if facility_id is nil" do
+      hearing_location = described_class.new(
+        facility_id: nil, city: "Winston-Salem", state: "NC", zip_code: "27155"
+      )
+
+      expect(hearing_location.full_address).to eq(nil)
+    end
   end
 end

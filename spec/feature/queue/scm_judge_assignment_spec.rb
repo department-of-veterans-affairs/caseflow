@@ -171,7 +171,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions)
           click_on("Submit")
 
-          expect(page).to have_content("Assigned 1 case")
+          expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
 
           visit "/queue/appeals/#{appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
@@ -189,7 +189,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: attorney_two.full_name)
           click_on("Submit")
 
-          expect(page).to have_content("Assigned 1 case")
+          expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
 
           visit "/queue/appeals/#{appeal.external_id}"
           expect(page).not_to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
@@ -259,7 +259,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions)
           click_on("Submit")
 
-          expect(page).to have_content("Assigned 1 case")
+          expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
 
           visit "/queue/appeals/#{legacy_appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{attorney_one.vacols_uniq_id}")
