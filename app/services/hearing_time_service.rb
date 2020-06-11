@@ -90,4 +90,30 @@ class HearingTimeService
   def central_office_time
     local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
+
+  # fall back on local time if timezone is invalid
+  def normalized_time(timezone)
+    return local_time if timezone.nil?
+
+    begin
+      local_time.in_time_zone(timezone)
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      local_time
+    end
+  end
+
+  # hearing time in poa timezone
+  def poa_time
+    representative_tz = @hearing&.virtual_hearing.representative_tz
+    # binding.pry
+    normalized_time(representative_tz)
+  end
+
+  # hearing time in appellant timezone
+  def appellant_time
+    appellant_tz = @hearing&.virtual_hearing.appellant_tz
+
+    normalized_time(appellant_tz)
+  end
 end
