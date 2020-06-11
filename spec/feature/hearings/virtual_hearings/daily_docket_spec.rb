@@ -52,9 +52,9 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     click_button("Change-Hearing-Time-button-id-close")
   end
 
-  context "Dropdowns and radio buttons are disabled while async job is running" do
+  context "Dropdowns and radio buttons are disabled while async job is running", focus: true do
     scenario "async job is not completed" do
-      virtual_hearing.update(veteran_email_sent: false)
+      virtual_hearing.update(appellant_email_sent: false)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_css(".is-disabled")
       expect(all(".cf-form-radio-option").first).to have_css(".disabled")
@@ -62,7 +62,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     end
 
     scenario "async job is completed" do
-      virtual_hearing.update(veteran_email_sent: true)
+      virtual_hearing.update(appellant_email_sent: true)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_no_css(".is-disabled")
       expect(all(".cf-form-radio-option").first).to have_no_css(".disabled")
