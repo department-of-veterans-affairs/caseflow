@@ -727,7 +727,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
 </HearingTime>
 `;
 
-exports[`HearingTime Matches snapshot when readonly 1`] = `
+exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
 <HearingTime
   componentIndex={0}
 >
