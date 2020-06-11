@@ -47,7 +47,7 @@ class DataDogService
     end
     [
       "app:#{app_name}",
-      "env:#{Rails.env}"
+      "env:#{Rails.current_env}"
     ] + extra_tags
   end
 end
