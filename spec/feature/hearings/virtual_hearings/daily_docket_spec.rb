@@ -35,7 +35,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     expect(events.count).to eq 3
     expect(events.where(sent_by_id: current_user.id).count).to eq 3
     expect(events.where(email_type: "updated_time_confirmation").count).to eq 3
-    expect(events.where(email_address: hearing.virtual_hearing.veteran_email).count).to eq 1
+    expect(events.where(email_address: hearing.virtual_hearing.appellant_email).count).to eq 1
     expect(events.where(recipient_role: "appellant").count).to eq 1
     expect(events.where(email_address: hearing.virtual_hearing.representative_email).count).to eq 1
     expect(events.where(recipient_role: "representative").count).to eq 1
