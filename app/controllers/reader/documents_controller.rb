@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Reader::DocumentsController < Reader::ApplicationController
+  class DocumentCountMismatch < StandardError; end
+
   def index
     respond_to do |format|
       format.html { return render "reader/appeal/index" }
@@ -42,6 +44,8 @@ class Reader::DocumentsController < Reader::ApplicationController
   def documents
     document_ids = appeal.document_fetcher.find_or_create_documents!.map(&:id)
 
+    capture_document_mismatch(document_ids)
+
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)
       .each_with_object({}) do |document_view, object|
@@ -53,6 +57,26 @@ class Reader::DocumentsController < Reader::ApplicationController
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = document.tags
       end
+    end
+  end
+
+  def capture_document_mismatch(ids)
+    appeal_docs = Document.where(file_number: appeal.veteran_file_number).where.not(id: ids)
+
+    if appeal_docs.present?
+      Raven.capture_exception(
+        DocumentCountMismatch.new("Document count mismatch"),
+        extra: {
+          appeal_id: appeal.external_id,
+          current_user: current_user.css_id,
+          document_service: appeal.document_fetcher.document_service.name,
+          document_service_doc_count: ids.count,
+          documents_for_vet_doc_count: Document.where(file_number: appeal.veteran_file_number).count,
+          missing_doc_ids: appeal_docs.pluck(:id),
+          message: "`appeal.document_fetcher.find_or_create_documents!.map(&:id)` vs " \
+                   "`Document.where(file_number: appeal.veteran_file_number)` "
+        }
+      )
     end
   end
 

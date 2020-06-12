@@ -337,6 +337,7 @@ jobs:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test
           - JEST_DIR: /home/circleci/test-results/jest
+          - TEST_REPORTER: jest-junit
           - JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
           - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/test-results/karma
           - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/test-results/karma/karma.xml

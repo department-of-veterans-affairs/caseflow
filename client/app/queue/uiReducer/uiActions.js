@@ -155,12 +155,13 @@ export const setOrganizations = (organizations) => ({
   payload: { organizations }
 });
 
-export const setActiveOrganization = (id, name, isVso) => ({
+export const setActiveOrganization = (id, name, isVso, userCanBulkAssign) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
   payload: {
     id,
     name,
-    isVso
+    isVso,
+    userCanBulkAssign
   }
 });
 
@@ -196,6 +197,10 @@ export const setSelectedAssigneeSecondary = ({ assigneeId }) => ({
   payload: {
     assigneeId
   }
+});
+
+export const resetAssignees = () => ({
+  type: ACTIONS.RESET_ASSIGNEES
 });
 
 export const toggleVeteranCaseList = () => ({

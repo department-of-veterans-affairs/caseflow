@@ -15,6 +15,7 @@ detectors:
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Veteran
+      - ControllerSchema#respond_to_missing?
   ControlParameter:
     exclude:
       - ExternalApi::VBMSService#self.send_and_log_request
@@ -130,6 +131,8 @@ detectors:
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
+      - ETL::Hearing#merge_original_attributes_to_target
+      - RouteDocsController::DocumentedRoute#schema
   MissingSafeMethod:
     enabled: false
   NestedIterators:
@@ -144,6 +147,7 @@ detectors:
       - HearingLocation
       - JudgeTeam
       - LegacyAppeal
+      - Person
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
@@ -164,6 +168,7 @@ detectors:
       - Api::V3::DecisionReview::ContestableIssueFinder
       - Api::V3::DecisionReview::ContestableIssueParams
       - Api::V3::DecisionReview::IntakeError
+      - ControllerSchema::Field
   TooManyMethods:
     enabled: false
   TooManyStatements:

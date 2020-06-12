@@ -9,8 +9,8 @@ import BulkAssignButton from './components/BulkAssignButton';
 import QueueTable from './QueueTable';
 import TabWindow from '../components/TabWindow';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
-import { assignedToColumn, completedToNameColumn, daysOnHoldColumn, daysWaitingColumn, detailsColumn,
-  docketNumberColumn, badgesColumn, issueCountColumn, readerLinkColumn, readerLinkColumnWithNewDocsIcon,
+import { assignedToColumn, badgesColumn, completedToNameColumn, daysOnHoldColumn, daysWaitingColumn, detailsColumn,
+  docketNumberColumn, documentIdColumn, issueCountColumn, readerLinkColumn, readerLinkColumnWithNewDocsIcon,
   regionalOfficeColumn, taskColumn, taskCompletedDateColumn, typeColumn } from './components/TaskTableColumns';
 import { tasksWithAppealsFromRawTasks } from './utils';
 
@@ -70,6 +70,7 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(tasks, filterOptions, requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name]: readerLinkColumn(requireDasRecord, true),
+      [QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]: documentIdColumn(),
       [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name]: readerLinkColumnWithNewDocsIcon(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name]: regionalOfficeColumn(tasks, filterOptions),
@@ -96,7 +97,7 @@ class QueueTableBuilder extends React.PureComponent {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: <React.Fragment>
         <p className="cf-margin-top-0">{tabConfig.description}</p>
-        { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
+        { this.props.userCanBulkAssign && tabConfig.allow_bulk_assign && <BulkAssignButton /> }
         <QueueTable
           key={tabConfig.name}
           columns={this.columnsFromConfig(config, tabConfig, tasks)}
@@ -130,7 +131,8 @@ class QueueTableBuilder extends React.PureComponent {
 const mapStateToProps = (state) => {
   return ({
     config: state.queue.queueConfig,
-    organizations: state.ui.organizations
+    organizations: state.ui.organizations,
+    userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign
   });
 };
 
@@ -143,7 +145,8 @@ QueueTableBuilder.propTypes = {
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number
   }),
-  requireDasRecord: PropTypes.bool
+  requireDasRecord: PropTypes.bool,
+  userCanBulkAssign: PropTypes.bool
 };
 
 export default (connect(mapStateToProps)(QueueTableBuilder));

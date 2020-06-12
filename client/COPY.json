@@ -260,7 +260,7 @@
   "ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL": "Please select someone to assign the tasks to.",
   "ASSIGN_WIDGET_NO_TASK_TITLE": "No tasks selected",
   "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
-  "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s",
+  "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s to %(assignee)s",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned. Reassign tasks to a judge on the case details screen",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK": "Please assign tasks to an attorney from your assign page.",
@@ -797,7 +797,8 @@
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
   "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
-  "OPEN_VIRTUAL_HEARINGS_LINK": "Open Virtual Hearing",
+  "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
+  "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }

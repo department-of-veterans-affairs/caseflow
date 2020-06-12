@@ -776,6 +776,25 @@ feature "Task queue", :all_dbs do
   end
 
   describe "JudgeTask" do
+    shared_examples "create an admin action" do
+      it "should be able to be sent to VLJ support staff" do
+        # On case details page select the "Add admin action" option
+        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
+
+        # On case details page fill in the admin action
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
+        click_dropdown(text: action)
+        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
+
+        # Expect to see a success message, the correct number of remaining tasks and have the task in the database
+        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
+        expect(judge_task.children.length).to eq(1)
+        expect(judge_task.children.first).to be_a(ColocatedTask)
+      end
+    end
+
     let!(:judge_user) { create(:user) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
@@ -843,22 +862,7 @@ feature "Task queue", :all_dbs do
         expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
       end
 
-      it "should be able to be sent to VLJ support staff" do
-        # On case details page select the "Add admin action" option
-        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
-
-        # On case details page fill in the admin action
-        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
-        click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
-        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
-
-        # Expect to see a success message, the correct number of remaining tasks and have the task in the database
-        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 0))
-        expect(judge_task.children.length).to eq(1)
-        expect(judge_task.children.first).to be_a(ColocatedTask)
-      end
+      it_behaves_like "create an admin action"
     end
 
     context "when it was created from a BvaDispatchTask" do
@@ -970,22 +974,7 @@ feature "Task queue", :all_dbs do
         expect(judge_task.children.first.status).to eq(Constants.TASK_STATUSES.assigned)
       end
 
-      it "should be able to be sent to VLJ support staff" do
-        # On case details page select the "Add admin action" option
-        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
-
-        # On case details page fill in the admin action
-        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
-        click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
-        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
-
-        # Expect to see a success message, the correct number of remaining tasks and have the task in the database
-        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 0))
-        expect(judge_task.children.length).to eq(1)
-        expect(judge_task.children.first).to be_a(ColocatedTask)
-      end
+      it_behaves_like "create an admin action"
     end
 
     context "when it was created through case distribution" do
@@ -1016,7 +1005,7 @@ feature "Task queue", :all_dbs do
 
       it "should display both legacy and caseflow review tasks" do
         visit("/queue")
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
 
       it "should be able to add admin actions from case details" do
@@ -1034,7 +1023,7 @@ feature "Task queue", :all_dbs do
 
         # Expect to see a success message and the correct number of remaining tasks
         expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 1))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
     end
   end

@@ -34,6 +34,15 @@ class Person < CaseflowRecord
       return person if person
 
       person = new(ssn: ssn)
+
+      return unless person.found?
+
+      # in order to correctly backfill ssn for existing Person records,
+      # we do a 2nd search by participant_id
+      if person.participant_id.present?
+        person_with_pid = find_by(participant_id: person.participant_id)
+        person = person_with_pid if person_with_pid
+      end
       person.update_cached_attributes! if person.found?
       person
     end
@@ -44,7 +53,7 @@ class Person < CaseflowRecord
   end
 
   def date_of_birth
-    cached_or_fetched_from_bgs(attr_name: :date_of_birth, bgs_attr: :birth_date)&.to_date
+    cached_or_fetched_from_bgs(attr_name: :date_of_birth)&.to_date
   end
 
   def first_name
@@ -76,7 +85,7 @@ class Person < CaseflowRecord
   end
 
   def ssn
-    cached_or_fetched_from_bgs(attr_name: :ssn, bgs_attr: :ssn_nbr)
+    cached_or_fetched_from_bgs(attr_name: :ssn)
   end
 
   def stale_attributes?
@@ -88,8 +97,8 @@ class Person < CaseflowRecord
   def update_cached_attributes!
     transaction do
       CACHED_BGS_ATTRIBUTES.each { |attr| send(attr) }
+      save!
     end
-    save!
   end
 
   def advanced_on_docket_based_on_age?
@@ -116,6 +125,8 @@ class Person < CaseflowRecord
 
   def fetch_bgs_record_by_participant_id
     bgs_record = bgs.fetch_person_info(participant_id)
+    return :not_found unless bgs_record.keys.any?
+
     bgs_record[:date_of_birth] = bgs_record.dig(:birth_date)&.to_date
     bgs_record[:ssn] ||= bgs_record.dig(:ssn_nbr)
     bgs_record[:participant_id] ||= bgs_record.dig(:ptcpnt_id) || participant_id
@@ -124,9 +135,15 @@ class Person < CaseflowRecord
 
   def fetch_bgs_record_by_ssn
     bgs_record = bgs.fetch_person_by_ssn(ssn)
+    return :not_found unless bgs_record
+
     bgs_record[:date_of_birth] = bgs_record.dig(:brthdy_dt)&.to_date
     bgs_record[:ssn] ||= bgs_record.dig(:ssn_nbr) || ssn
     bgs_record[:participant_id] ||= bgs_record.dig(:ptcpnt_id)
+    bgs_record[:first_name] ||= bgs_record.dig(:first_nm)
+    bgs_record[:last_name] ||= bgs_record.dig(:last_nm)
+    bgs_record[:middle_name] ||= bgs_record.dig(:middle_nm)
+    bgs_record[:email_address] ||= bgs_record.dig(:email_addr)
     bgs_record
   end
 end

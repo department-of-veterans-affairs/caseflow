@@ -127,7 +127,7 @@ describe LegacyAppeal, :all_dbs do
       scenario "when the ssoc date is before AMA was launched" do
         allow(appeal).to receive(:active?).and_return(true)
         allow(appeal).to receive(:issues).and_return(issues)
-        allow(appeal).to receive(:soc_date).and_return(ama_start_date - 1.day)
+        allow(appeal).to receive(:soc_date).and_return(ama_start_date - 5.days)
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(false)
@@ -135,14 +135,16 @@ describe LegacyAppeal, :all_dbs do
       end
     end
 
-    scenario "when is active but not eligible" do
-      allow(appeal).to receive(:active?).and_return(true)
-      allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
-      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
+    context "checks ssoc/soc dates" do
+      scenario "when is active but not eligible" do
+        allow(appeal).to receive(:active?).and_return(true)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date - 3.days)
+        allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+      end
     end
 
     scenario "when is active and soc is not eligible but ssoc is" do
@@ -166,14 +168,16 @@ describe LegacyAppeal, :all_dbs do
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
-    scenario "when is not active or eligible" do
-      allow(appeal).to receive(:active?).and_return(false)
-      allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
-      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
+    context "check ssoc/soc dates" do
+      scenario "when is not active or eligible" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date - 3.days)
+        allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
     end
 
     scenario "when is active or eligible but has no issues" do
@@ -197,6 +201,50 @@ describe LegacyAppeal, :all_dbs do
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
+    end
+
+    context "when receipt_date falls on saturday" do
+      let(:new_receipt_date) { eligible_soc_date + 60.days }
+
+      scenario "return true" do
+        allow(appeal).to receive(:soc_date).and_return(eligible_soc_date)
+        expect(appeal.eligible_for_opt_in?(receipt_date: new_receipt_date)).to eq(true)
+        expect(new_receipt_date.saturday?).to eq(true)
+      end
+    end
+
+    context "when receipt_date falls on sunday" do
+      let(:new_receipt_date) { eligible_soc_date + 61.days }
+
+      scenario "return true" do
+        allow(appeal).to receive(:soc_date).and_return(eligible_soc_date)
+        expect(appeal.eligible_for_opt_in?(receipt_date: new_receipt_date)).to eq(true)
+        expect(new_receipt_date.sunday?).to eq(true)
+      end
+    end
+
+    context "when receipt date falls on a holiday" do
+      let(:federal_holiday) { Date.new(2020, 5, 25) }
+      let(:receipt_date) { federal_holiday + 1.day }
+
+      scenario "return true" do
+        allow(appeal).to receive(:soc_date).and_return(federal_holiday - 61.days)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day, covid_flag: false)).to eq(false)
+        expect(check_for_federal_holiday(federal_holiday)).to eq(true)
+      end
+    end
+
+    context "when receipt date falls on inauguration day " do
+      let(:inauguration_date) { Date.new(2021, 1, 20) }
+      let(:receipt_date) { inauguration_date + 1.day }
+
+      scenario "return true" do
+        allow(appeal).to receive(:soc_date).and_return(inauguration_date - 61.days)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day, covid_flag: false)).to eq(false)
+        expect(receipt_date.sunday?).to eq(false)
       end
     end
 

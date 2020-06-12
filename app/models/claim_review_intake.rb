@@ -5,7 +5,6 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def ui_hash
     super.merge(
-      detail_edit_url: detail&.reload&.caseflow_only_edit_issues_url, # reload for uuid
       async_job_url: detail&.async_job_url,
       benefit_type: detail.benefit_type,
       processed_in_caseflow: detail.processed_in_caseflow?
