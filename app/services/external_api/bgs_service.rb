@@ -187,6 +187,19 @@ class ExternalApi::BGSService
     get_limited_poas_hash_from_bgs(bgs_limited_poas)
   end
 
+  def poas_list
+    @poas_list ||= fetch_poas_list
+  end
+
+  def fetch_poas_list
+    DBService.release_db_connections
+    MetricsService.record("BGS: fetch list of poas",
+                          service: :bgs,
+                          name: "data.find_power_of_attorneys") do
+      client.data.find_power_of_attorneys
+    end
+  end
+
   def find_address_by_participant_id(participant_id)
     finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: client)
     @addresses[participant_id] ||= finder.mailing_address || finder.addresses.last

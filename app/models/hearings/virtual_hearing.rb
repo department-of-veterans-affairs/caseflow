@@ -34,10 +34,6 @@ class VirtualHearing < CaseflowRecord
   validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
 
-  # T0D0: Finish migration from veteran_email => appellant_email.
-  alias_attribute :appellant_email, :veteran_email
-  alias_attribute :appellant_email_sent, :veteran_email_sent
-
   scope :eligible_for_deletion,
         lambda {
           joins(:establishment)
@@ -149,7 +145,7 @@ class VirtualHearing < CaseflowRecord
     update(request_cancelled: true)
   end
 
-  # checks if emails were sent to veteran and reps
+  # checks if emails were sent to appellant and reps
   def cancellation_emails_sent?
     appellant_email_sent && (representative_email.nil? || representative_email_sent)
   end
