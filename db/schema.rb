@@ -333,6 +333,7 @@ ActiveRecord::Schema.define(version: 2020_06_11_205900) do
     t.string "decision_review_type", comment: "The type of decision review the claimant is on."
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
+    t.string "type", default: "Claimant", comment: "The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, or OtherClaimant."
     t.datetime "updated_at"
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
     t.index ["participant_id"], name: "index_claimants_on_participant_id"

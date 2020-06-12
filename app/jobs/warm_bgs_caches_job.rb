@@ -12,6 +12,7 @@ class WarmBgsCachesJob < CaseflowJob
     warm_participant_caches
     warm_veteran_attribute_caches
     warm_people_caches
+    warm_attorney_address_caches
 
     datadog_report_runtime(metric_group_name: "warm_bgs_caches_job")
   end
@@ -152,5 +153,11 @@ class WarmBgsCachesJob < CaseflowJob
       end
     end
     veterans_updated
+  end
+
+  def warm_attorney_address_caches
+    start_time = Time.zone.now
+    BgsAttorney.all.each(&:warm_address_cache)
+    datadog_report_time_segment(segment: "warm_attorney_address_caches", start_time: start_time)
   end
 end
