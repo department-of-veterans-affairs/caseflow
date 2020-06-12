@@ -152,7 +152,7 @@ RSpec.describe HearingsController, type: :controller do
         it "returns the expected status and updates the virtual hearing", :aggregate_failures do
           expect(subject.status).to eq(200)
 
-          expect(VirtualHearing.first.veteran_email).to eq("veteran@email.com")
+          expect(VirtualHearing.first.appellant_email).to eq("veteran@email.com")
           expect(VirtualHearing.first.representative_email).to eq("representative@email.com")
         end
       end

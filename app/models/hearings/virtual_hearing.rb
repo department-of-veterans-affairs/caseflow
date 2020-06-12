@@ -34,30 +34,6 @@ class VirtualHearing < CaseflowRecord
   validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
 
-  # temporary getter
-  def appellant_email
-    value = super
-    value.nil? ? veteran_email : value
-  end
-
-  # temporary getter
-  def appellant_email_sent
-    value = super
-    (veteran_email_sent == true) ? veteran_email_sent : value
-  end
-
-  # temporary setter
-  def appellant_email_sent=(value)
-    self.veteran_email_sent = value
-    super(value)
-  end
-
-  # temporary setter
-  def appellant_email=(value)
-    self.veteran_email = value
-    super(value)
-  end
-
   scope :eligible_for_deletion,
         lambda {
           joins(:establishment)
@@ -169,7 +145,7 @@ class VirtualHearing < CaseflowRecord
     update(request_cancelled: true)
   end
 
-  # checks if emails were sent to veteran and reps
+  # checks if emails were sent to appellant and reps
   def cancellation_emails_sent?
     appellant_email_sent && (representative_email.nil? || representative_email_sent)
   end

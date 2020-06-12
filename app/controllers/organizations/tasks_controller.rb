@@ -9,7 +9,8 @@ class Organizations::TasksController < OrganizationsController
       organization_name: organization.name,
       id: organization.id,
       is_vso: organization.is_a?(::Representative),
-      queue_config: QueueConfig.new(assignee: organization).to_hash
+      queue_config: QueueConfig.new(assignee: organization).to_hash,
+      user_can_bulk_assign: organization.admins.include?(current_user)
     }
   end
 
