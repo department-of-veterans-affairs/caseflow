@@ -240,7 +240,7 @@ RSpec.describe HearingsController, type: :controller do
         let(:virtual_hearing_params) do
           {
             appellant_email: "new_veteran_email@caseflow.gov",
-            appellant_tz: timezone,
+            appellant_tz: timezone
           }
         end
 
@@ -254,7 +254,7 @@ RSpec.describe HearingsController, type: :controller do
         let(:virtual_hearing_params) do
           {
             appellant_email: "new_veteran_email@caseflow.gov",
-            representative_tz: timezone,
+            representative_tz: timezone
           }
         end
 

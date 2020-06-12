@@ -79,49 +79,7 @@ describe HearingTimeService, :all_dbs do
       end
     end
 
-    def normalized_timezons(hearing, expected_time, expected_local, timezone, invalid)
-      context "timezone is present" do
-        before do
-          hearing.virtual_hearing.update!(appellant_tz: timezone, representative_tz: timezone)
-        end
-
-        it "changes to Appellant timezone (CT)" do
-          expect(hearing.time.appellant_time).to eq(expected_time)
-        end
-
-        it "changes to Representative timezone (CT)" do
-          expect(hearing.time.poa_time).to eq(expected_time)
-        end
-      end
-
-      context "timezone is not present" do
-        it "changes to local time (PT) for Appellant" do
-          expect(hearing.time.appellant_time).to eq(expected_local)
-        end
-
-        it "changes to local time (PT) for Representative" do
-          expect(hearing.time.poa_time).to eq(expected_local)
-        end
-      end
-
-      context "timezone is invalid" do
-        before do
-          hearing.virtual_hearing.update!(appellant_tz: invalid_tz, representative_tz: invalid_tz)
-        end
-
-        it "captures exception and changes to local time (PT) for Appellant" do
-          expect(Raven).to receive(:capture_exception).with (StandardError)
-          expect(hearing.time.appellant_time).to eq(expected_local)
-        end
-
-        it "captures exception and changes to local time (PT) for Representative" do
-          expect(Raven).to receive(:capture_exception).with (StandardError)
-          expect(hearing.time.poa_time).to eq(expected_local)
-        end
-      end
-    end
-
-    context "hearing is virtual", focus: true do
+    context "hearing is virtual" do
       shared_examples_for "returns normalized timezone" do
         context "timezone is present" do
           before do
@@ -153,12 +111,12 @@ describe HearingTimeService, :all_dbs do
           end
 
           it "captures exception and changes to local time (PT) for Appellant" do
-            expect(Raven).to receive(:capture_exception).with (StandardError)
+            expect(Raven).to receive(:capture_exception).with StandardError
             expect(hearing.time.appellant_time).to eq(expected_local)
           end
 
           it "captures exception and changes to local time (PT) for Representative" do
-            expect(Raven).to receive(:capture_exception).with (StandardError)
+            expect(Raven).to receive(:capture_exception).with StandardError
             expect(hearing.time.poa_time).to eq(expected_local)
           end
         end
@@ -167,7 +125,7 @@ describe HearingTimeService, :all_dbs do
       let(:timezone) { "America/Chicago" }
       let(:invalid_tz) { "123" }
       let(:expected_local) { Time.use_zone("America/Los_Angeles") { Time.zone.now.change(hour: 12, min: 0) } }
-      let(:expected_time) { Time.use_zone(timezone) { Time.zone.now.change(hour: 14, min: 0) }}
+      let(:expected_time) { Time.use_zone(timezone) { Time.zone.now.change(hour: 14, min: 0) } }
 
       describe "hearing" do
         let!(:virtual_hearing) do
