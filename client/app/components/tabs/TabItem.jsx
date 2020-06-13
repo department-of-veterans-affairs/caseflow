@@ -35,6 +35,7 @@ export const TabItem = ({
       className={classNames}
       disabled={disabled}
       onClick={handleClick}
+      data-value={value}
     >
       <span>
         <span>
