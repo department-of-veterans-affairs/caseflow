@@ -8,10 +8,12 @@ import { TabPanel } from './TabPanel';
 import { TabItem } from './TabItem';
 import TabContextProvider from './TabContext';
 
-const propTypes = {};
+const propTypes = {
+  title: PropTypes.node.isRequired,
+};
 
-export const Tab = ({ children }) => {
-  return <React.Fragment />;
+export const Tab = () => {
+  return null;
 };
 Tab.propTypes = propTypes;
 
