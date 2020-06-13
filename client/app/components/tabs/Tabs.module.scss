@@ -1,0 +1,15 @@
+.tab-panel {
+}
+
+.tab-content {
+}
+
+:global {
+  :local(.tab-panel) {
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
+}
