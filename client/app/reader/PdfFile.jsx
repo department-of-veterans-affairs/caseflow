@@ -469,6 +469,7 @@ export class PdfFile extends React.PureComponent {
             columnWidth={this.getColumnWidth}
             columnCount={this.columnCount}
             scale={this.props.scale}
+            tabIndex={-1}
           />;
         }
       }
