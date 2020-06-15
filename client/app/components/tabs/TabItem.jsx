@@ -9,7 +9,7 @@ const propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
   disabled: PropTypes.bool,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
 export const TabItem = ({
@@ -20,17 +20,17 @@ export const TabItem = ({
   value,
 }) => {
   const ctx = useContext(TabContext);
-  const active = ctx.value === value;
+  const active = ctx.value === value.toString();
   const classNames = cx('cf-tab', className, { 'cf-active': active });
 
   const handleClick = () => ctx.onSelect(value);
 
   return (
     <Component
-      id={`${ctx.idPrefix}-tab`}
+      id={`${ctx.idPrefix}-tab-${value}`}
       role="tab"
       aria-selected={active}
-      aria-controls={`${ctx.idPrefix}-tabpanel`}
+      aria-controls={`${ctx.idPrefix}-tabpanel-${value}`}
       tabIndex={active ? 0 : -1}
       className={classNames}
       disabled={disabled}

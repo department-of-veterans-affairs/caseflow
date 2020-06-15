@@ -22,6 +22,7 @@ export const TabList = ({
 
   const handleKeyDown = (event) => {
     const { target } = event;
+
     // Keyboard navigation assumes that [role="tab"] are siblings
     // though we might warn in the future about nested, interactive elements
     // as a a11y violation
@@ -36,14 +37,13 @@ export const TabList = ({
 
     let newFocusTarget = null;
 
+    // Look for the appropriate next element, but stay put if at first or last
     switch (event.key) {
       case PREV_KEY:
-        newFocusTarget =
-          target.previousElementSibling || tabListRef.current.lastChild;
+        newFocusTarget = target.previousElementSibling || target;
         break;
       case NEXT_KEY:
-        newFocusTarget =
-          target.nextElementSibling || tabListRef.current.firstChild;
+        newFocusTarget = target.nextElementSibling || target;
         break;
       default:
         break;

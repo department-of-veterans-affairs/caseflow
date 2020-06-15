@@ -10,7 +10,7 @@ const propTypes = {
   as: PropTypes.elementType,
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
 export const TabPanel = ({
@@ -20,14 +20,14 @@ export const TabPanel = ({
   value,
 }) => {
   const ctx = useContext(TabContext);
-  const active = ctx.value === value;
+  const active = ctx.value === value.toString();
 
   const classNames = cx(classes.tabPanel, className, { active });
 
   return (
     <Component
       role="tabpanel"
-      id={`${ctx.idPrefix}-tabpanel`}
+      id={`${ctx.idPrefix}-tabpanel-${value}`}
       aria-hidden={!active}
       className={classNames}
       tabIndex={active ? 0 : -1}

@@ -15,12 +15,17 @@ export const useUniquePrefix = () => {
 
 const propTypes = {
   children: PropTypes.arrayOf(PropTypes.element).isRequired,
+  idPrefix: PropTypes.string,
   onSelect: PropTypes.func,
   value: PropTypes.string.isRequired,
 };
 
-export const TabContextProvider = ({ children, value, onSelect }) => {
-  const idPrefix = useUniquePrefix();
+export const TabContextProvider = ({
+  children,
+  idPrefix = useUniquePrefix(),
+  value,
+  onSelect,
+}) => {
   const context = useMemo(() => ({ idPrefix, onSelect, value }), [
     idPrefix,
     onSelect,
