@@ -39,7 +39,7 @@ module AppealConcern
 
   # JOHN S SMITH => John S Smith
   def appellant_fullname_readable
-    appellant_name.titleize
+    appellant_name&.titleize
   end
 
   def appellant_last_first_mi
