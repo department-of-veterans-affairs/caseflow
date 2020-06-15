@@ -37,6 +37,11 @@ module AppealConcern
     end
   end
 
+  # JOHN S SMITH => John S Smith
+  def appellant_fullname_readable
+    appellant_name.titleize
+  end
+
   def appellant_last_first_mi
     # returns appellant name in format <last>, <first> <middle_initial>.
     if appellant_first_name

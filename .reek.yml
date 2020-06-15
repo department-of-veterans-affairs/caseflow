@@ -206,7 +206,7 @@ detectors:
       - VBMSCaseflowLogger#log
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link
-      - VirtualHearings::VeteranNameHelper#formatted_veteran_name
+      - VirtualHearings::AppellantNameHelper#formatted_appellant_name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
