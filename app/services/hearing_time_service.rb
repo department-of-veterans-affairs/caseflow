@@ -106,7 +106,7 @@ class HearingTimeService
   # hearing time in poa timezone
   def poa_time
     representative_tz = @hearing.virtual_hearing&.representative_tz
-    # binding.pry
+
     normalized_time(representative_tz)
   end
 
