@@ -129,7 +129,6 @@ bgs_power_of_attorneys,legacy_poa_cd,string,,,,,,Legacy POA code
 bgs_power_of_attorneys,poa_participant_id,string ∗,x,,,,x,POA participant ID -- use as FK to people
 bgs_power_of_attorneys,representative_name,string ∗,x,,,,x,POA name
 bgs_power_of_attorneys,representative_type,string ∗,x,,,,x,POA type
-bgs_power_of_attorneys,timezone,string,,,,,,POA timezone stored and updated from caseflow
 bgs_power_of_attorneys,updated_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 board_grant_effectuations,,,,,,,,Represents the work item of updating records in response to a granted issue on a Board appeal. Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.
 board_grant_effectuations,appeal_id,integer (8) ∗ FK,x,,x,,x,The ID of the appeal containing the granted issue being effectuated.
@@ -242,7 +241,6 @@ claimants,decision_review_type,string,,,,,x,The type of decision review the clai
 claimants,id,integer (8) PK,x,x,,,,
 claimants,participant_id,string ∗ U,x,,,x,x,The participant ID of the claimant.
 claimants,payee_code,string,,,,,,"The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
-claimants,timezone,string,,,,,,Claimant timezone stored and updated from caseflow
 claimants,updated_at,datetime,,,,,x,
 claims_folder_searches,,,,,,,,
 claims_folder_searches,appeal_id,integer FK,,,x,,x,
@@ -1058,7 +1056,9 @@ veterans,updated_at,datetime,,,,,x,
 virtual_hearings,,,,,,,,
 virtual_hearings,alias,string,,,,,x,Alias for conference in Pexip
 virtual_hearings,alias_with_host,string,,,,,,Alias for conference in pexip with client_host
-virtual_hearings,appellant_tz,string,,,,,,Stores appellant timezone
+virtual_hearings,appellant_email,string ∗,x,,,,,Appellant's email address
+virtual_hearings,appellant_email_sent,boolean ∗,x,,,,,Determines whether or not a notification email was sent to the appellant
+virtual_hearings,appellant_tz,string (32),,,,,,Stores appellant timezone
 virtual_hearings,conference_deleted,boolean ∗,x,,,,,Whether or not the conference was deleted from Pexip
 virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
 virtual_hearings,created_at,datetime ∗,x,,,,,
@@ -1074,12 +1074,10 @@ virtual_hearings,judge_email,string,,,,,,Judge's email address
 virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge
 virtual_hearings,representative_email,string,,,,,,Veteran's representative's email address
 virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran's representative
-virtual_hearings,representative_tz,string,,,,,,Stores representative timezone
+virtual_hearings,representative_tz,string (32),,,,,,Stores representative timezone
 virtual_hearings,request_cancelled,boolean,,,,,,Determines whether the user has cancelled the virtual hearing request
 virtual_hearings,updated_at,datetime ∗,x,,,,x,
 virtual_hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recently updated the virtual hearing
-virtual_hearings,veteran_email,string,,,,,,Veteran's email address
-virtual_hearings,veteran_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran
 virtual_hearing_establishments,,,,,,,,
 virtual_hearing_establishments,attempted_at,datetime,,,,,,Async timestamp for most recent attempt to run.
 virtual_hearing_establishments,canceled_at,datetime,,,,,,Timestamp when job was abandoned.
