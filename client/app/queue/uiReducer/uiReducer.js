@@ -215,7 +215,8 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
       activeOrganization: {
         id: { $set: action.payload.id },
         name: { $set: action.payload.name },
-        isVso: { $set: action.payload.isVso }
+        isVso: { $set: action.payload.isVso },
+        userCanBulkAssign: { $set: action.payload.userCanBulkAssign }
       }
     });
   case ACTIONS.SET_HEARING_DAY:

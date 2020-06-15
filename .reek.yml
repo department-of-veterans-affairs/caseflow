@@ -131,6 +131,7 @@ detectors:
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
       - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
+      - ETL::Hearing#merge_original_attributes_to_target
       - RouteDocsController::DocumentedRoute#schema
   MissingSafeMethod:
     enabled: false
@@ -196,7 +197,7 @@ detectors:
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - PendingIncompleteAndUncancelledTaskTimersQuery#call
-      - PowerOfAttorneyMapper#get_claimant_poa_from_bgs_poa
+      - PowerOfAttorneyMapper
       - Reporter#average
       - Reporter#median
       - Reporter#seconds_to_hms
