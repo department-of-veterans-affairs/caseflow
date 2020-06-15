@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent, screen, wait } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { axe } from 'jest-axe';
 
 import { Tabs } from 'app/components/tabs/Tabs';
 import { Tab } from 'app/components/tabs/Tab';
@@ -53,6 +54,22 @@ describe('Tabs', () => {
     );
 
     expect(container).toMatchSnapshot();
+  });
+
+  it('passes a11y testing', async () => {
+    const { container } = await render(
+      <Tabs idPrefix={idPrefix}>
+        {tabData.map(({ disabled, title, contents }, idx) => (
+          <Tab key={idx + 1} title={title} value={idx + 1} disabled={disabled}>
+            <p>{contents}</p>
+          </Tab>
+        ))}
+      </Tabs>
+    );
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
   });
 
   it('shows only active tab', async () => {
