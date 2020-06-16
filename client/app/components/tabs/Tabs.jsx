@@ -8,6 +8,7 @@ const propTypes = {
   idPrefix: PropTypes.string,
   children: PropTypes.arrayOf(PropTypes.element).isRequired,
   fullWidth: PropTypes.bool,
+  onChange: PropTypes.func,
 };
 
 export const Tabs = ({
@@ -15,6 +16,7 @@ export const Tabs = ({
   idPrefix,
   children,
   fullWidth = false,
+  onChange,
 }) => {
   const renderTabs = (child) => {
     const { title, value, disabled = false } = child.props;
@@ -37,7 +39,7 @@ export const Tabs = ({
   };
 
   return (
-    <Tab.Container idPrefix={idPrefix} active={active}>
+    <Tab.Container idPrefix={idPrefix} active={active} onChange={onChange}>
       <Tab.List fullWidth={fullWidth}>{children.map(renderTabs)}</Tab.List>
       <Tab.Content>{children.map(renderPanels)}</Tab.Content>
     </Tab.Container>
