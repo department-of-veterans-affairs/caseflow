@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import cx from 'classnames';
 import { TabContext } from './TabContext';
+import { first } from 'glamor';
 
 const propTypes = {
   as: PropTypes.elementType,
@@ -41,6 +42,12 @@ export const TabList = ({
 
     const PREV_KEY = 'ArrowLeft';
     const NEXT_KEY = 'ArrowRight';
+    const HOME_KEY = 'Home';
+    const END_KEY = 'End';
+
+    const children = [...tabListRef.current.childNodes];
+    const firstAllowed = children.find((item) => !item.disabled);
+    const lastAllowed = children.reverse().find((item) => !item.disabled);
 
     let newFocusTarget = null;
 
@@ -51,6 +58,12 @@ export const TabList = ({
       break;
     case NEXT_KEY:
       newFocusTarget = target.nextElementSibling || target;
+      break;
+    case HOME_KEY:
+      newFocusTarget = firstAllowed;
+      break;
+    case END_KEY:
+      newFocusTarget = lastAllowed;
       break;
     default:
       break;

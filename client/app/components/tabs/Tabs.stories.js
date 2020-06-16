@@ -31,6 +31,9 @@ export const disabled = () => (
     <Tab title="Tab 3" value="3" disabled>
       Inaccessible content
     </Tab>
+    <Tab title="Tab 4" value="4">
+      Tab 4 Content
+    </Tab>
   </Tabs>
 );
 
