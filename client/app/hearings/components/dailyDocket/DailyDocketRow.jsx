@@ -180,31 +180,29 @@ class DailyDocketRow extends React.Component {
 
     const hearingChanges = deepDiff(this.state.initialState, this.props.hearing);
 
-    return this.props.
-      saveHearing(this.props.hearing.externalId, hearingChanges).
-      then((response) => {
-        // false is returned from DailyDocketContainer in case of error
-        if (!response) {
-          return;
-        }
+    return this.props.saveHearing(this.props.hearing.externalId, hearingChanges).then((response) => {
+      // false is returned from DailyDocketContainer in case of error
+      if (!response) {
+        return;
+      }
 
-        const alerts = response.body?.alerts;
+      const alerts = response.body?.alerts;
 
-        if (alerts.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
-        }
+      if (alerts.hearing) {
+        this.props.onReceiveAlerts(alerts.hearing);
+      }
 
-        if (!_.isEmpty(alerts.virtual_hearing)) {
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
-          this.setState({ startPolling: true });
-        }
+      if (!_.isEmpty(alerts.virtual_hearing)) {
+        this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
+        this.setState({ startPolling: true });
+      }
 
-        this.setState({
-          initialState: { ...this.props.hearing },
-          editedFields: [],
-          edited: false
-        });
+      this.setState({
+        initialState: { ...this.props.hearing },
+        editedFields: [],
+        edited: false
       });
+    });
   };
 
   saveThenUpdateDisposition = (toDisposition) => {
@@ -214,30 +212,28 @@ class DailyDocketRow extends React.Component {
     };
     const hearingChanges = deepDiff(this.state.initialState, hearingWithDisp);
 
-    return this.props.
-      saveHearing(hearingWithDisp.externalId, hearingChanges).
-      then((response) => {
-        // false is returned from DailyDocketContainer in case of error
-        if (!response) {
-          return;
-        }
+    return this.props.saveHearing(hearingWithDisp.externalId, hearingChanges).then((response) => {
+      // false is returned from DailyDocketContainer in case of error
+      if (!response) {
+        return;
+      }
 
-        const alerts = response.body?.alerts;
+      const alerts = response.body?.alerts;
 
-        if (alerts.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
-        }
+      if (alerts.hearing) {
+        this.props.onReceiveAlerts(alerts.hearing);
+      }
 
-        this.update(hearingWithDisp);
+      this.update(hearingWithDisp);
 
-        if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
-          this.setState({
-            initialState: hearingWithDisp,
-            editedFields: [],
-            edited: false
-          });
-        }
-      });
+      if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
+        this.setState({
+          initialState: hearingWithDisp,
+          editedFields: [],
+          edited: false
+        });
+      }
+    });
   };
 
   isAmaHearing = () => this.props.hearing.docketName === 'hearing';
@@ -272,6 +268,7 @@ class DailyDocketRow extends React.Component {
           }
           onChange={(scheduledTimeString) => {
             this.update({ scheduledTimeString });
+            console.log('TIME: ', scheduledTimeString);
 
             if (scheduledTimeString !== null) {
               this.openVirtualHearingModal();
@@ -312,9 +309,7 @@ class DailyDocketRow extends React.Component {
   };
 
   getRightColumn = (rowIndex) => {
-    const inputs = this.props.user.userHasHearingPrepRole ?
-      this.judgeRightInputs() :
-      this.defaultRightInputs(rowIndex);
+    const inputs = this.props.user.userHasHearingPrepRole ? this.judgeRightInputs() : this.defaultRightInputs(rowIndex);
 
     return (
       <div {...inputSpacing}>
@@ -390,6 +385,8 @@ class DailyDocketRow extends React.Component {
     const hide = isPreviouslyScheduledHearing(hearing) && hidePreviouslyScheduled ? 'hide ' : '';
     const judgeView = user.userHasHearingPrepRole ? 'judge-view' : '';
     const className = `${hide}${judgeView}`;
+
+    console.log('ROW INDEX:', index);
 
     return (
       <div {...docketRowStyle} key={hearing.externalId} className={className}>
