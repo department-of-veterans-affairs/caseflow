@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import cx from 'classnames';
-import classes from './TabWindow.module.scss';
+import { Tabs } from './tabs/Tabs';
+import { Tab } from './tabs/Tab';
 
 /*
  * This component can be used to easily build tabs.
@@ -15,116 +15,152 @@ import classes from './TabWindow.module.scss';
  * - @name {string} used in each tab ID to differentiate multiple sets of tabs
  * on a page. This is for accessibility purposes.
  */
-export default class TabWindow extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentPage: this.props.defaultPage || 0,
-      disabled: false,
-    };
-  }
+const TabWindow = ({
+  fullPage = false,
+  defaultPage = 0,
+  name = 'main',
+  onChange,
+  tabs = [],
+}) => {
+  const tabContent = (tab) => (
+    <span>
+      {tab.icon ?? ''}
+      <span>{tab.label}</span>
+      {tab.indicator ?? ''}
+    </span>
+  );
 
-  onTabClick = (tabNumber) => () => {
-    this.setState({
-      currentPage: tabNumber,
-    });
+  return (
+    <Tabs
+      fullWidth={fullPage}
+      idPrefix={name}
+      active={defaultPage.toString()}
+      onChange={onChange}
+    >
+      {tabs.map((item, idx) => (
+        <Tab
+          title={tabContent(item)}
+          key={idx}
+          value={idx}
+          disabled={Boolean(item.disable)}
+        >
+          {item.page}
+        </Tab>
+      ))}
+    </Tabs>
+  );
+};
 
-    if (this.props.onChange) {
-      this.props.onChange(tabNumber);
-    }
-  };
+// export default class TabWindow extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       currentPage: this.props.defaultPage || 0,
+//       disabled: false,
+//     };
+//   }
 
-  getTabHeaderWithSVG = (tab) => {
-    return (
-      <span>
-        {tab.icon ? tab.icon : ''}
-        <span>{tab.label}</span>
-        {tab.indicator ? tab.indicator : ''}
-      </span>
-    );
-  };
+//   onTabClick = (tabNumber) => () => {
+//     this.setState({
+//       currentPage: tabNumber,
+//     });
 
-  getTabHeader = (tab) => {
-    return `${tab.label} tab window`;
-  };
+//     if (this.props.onChange) {
+//       this.props.onChange(tabNumber);
+//     }
+//   };
 
-  getTabClassName = (index, currentPage, isTabDisabled) => {
-    let className = `cf-tab${index === currentPage ? ' cf-active' : ''}`;
+//   getTabHeaderWithSVG = (tab) => {
+//     return (
+//       <span>
+//         {tab.icon ? tab.icon : ''}
+//         <span>{tab.label}</span>
+//         {tab.indicator ? tab.indicator : ''}
+//       </span>
+//     );
+//   };
 
-    className += isTabDisabled ? ' disabled' : '';
+//   getTabHeader = (tab) => {
+//     return `${tab.label} tab window`;
+//   };
 
-    return className;
-  };
+//   getTabClassName = (index, currentPage, isTabDisabled) => {
+//     let className = `cf-tab${index === currentPage ? ' cf-active' : ''}`;
 
-  // For pages with only one set of tabs or a non-specified tab group name
-  // the name returns "undefined". This appends the word "main" to the tab group.
-  getTabGroupName = (name) => {
-    return name ? name : 'main';
-  };
+//     className += isTabDisabled ? ' disabled' : '';
 
-  render() {
-    const { name, tabs, fullPage, bodyStyling } = this.props;
+//     return className;
+//   };
 
-    return (
-      <div>
-        {tabs?.length > 1 && (
-          <div
-            role="tablist"
-            className={`cf-tab-navigation${
-              fullPage ? ' cf-tab-navigation-full-screen' : ''
-            }`}
-          >
-            {tabs.map((tab, i) => (
-              <button
-                className={this.getTabClassName(
-                  i,
-                  this.state.currentPage,
-                  tab.disable
-                )}
-                key={i}
-                id={`${this.getTabGroupName(name)}-tab-${i}`}
-                onClick={this.onTabClick(i)}
-                aria-label={this.getTabHeader(tab)}
-                disabled={Boolean(tab.disable)}
-                role="tab"
-                aria-selected={this.state.currentPage === i}
-                aria-controls={`tab-panel-${i}`}
-                tabIndex={this.state.currentPage !== i ? -1 : undefined}
-              >
-                <span>{this.getTabHeaderWithSVG(tab)}</span>
-              </button>
-            ))}
-          </div>
-        )}
-        {tabs?.length && (
-          <div
-            id="tab-panel-container"
-            className={cx([
-              'cf-tab-window-body-full-screen',
-              classes.tabContent,
-            ])}
-            {...bodyStyling}
-          >
-            {tabs.map((tab, i) => (
-              <div
-                id={`tab-panel-${i}`}
-                role="tabpanel"
-                aria-labelledby={`${this.getTabGroupName(name)}-tab-${i}`}
-                aria-hidden={this.state.currentPage !== i}
-                className={cx(classes.tabPane, {
-                  show: this.state.currentPage === i,
-                })}
-                key={i}
-              >
-                {tab.page}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
-}
+//   // For pages with only one set of tabs or a non-specified tab group name
+//   // the name returns "undefined". This appends the word "main" to the tab group.
+//   getTabGroupName = (name) => {
+//     return name ? name : 'main';
+//   };
+
+//   render() {
+//     const { name, tabs, fullPage, bodyStyling } = this.props;
+
+//     return (
+//       <div>
+//         {tabs?.length > 1 && (
+//           <div
+//             role="tablist"
+//             className={`cf-tab-navigation${
+//               fullPage ? ' cf-tab-navigation-full-screen' : ''
+//             }`}
+//           >
+//             {tabs.map((tab, i) => (
+//               <button
+//                 className={this.getTabClassName(
+//                   i,
+//                   this.state.currentPage,
+//                   tab.disable
+//                 )}
+//                 key={i}
+//                 id={`${this.getTabGroupName(name)}-tab-${i}`}
+//                 onClick={this.onTabClick(i)}
+//                 aria-label={this.getTabHeader(tab)}
+//                 disabled={Boolean(tab.disable)}
+//                 role="tab"
+//                 aria-selected={this.state.currentPage === i}
+//                 aria-controls={`tab-panel-${i}`}
+//                 tabIndex={this.state.currentPage !== i ? -1 : undefined}
+//               >
+//                 <span>{this.getTabHeaderWithSVG(tab)}</span>
+//               </button>
+//             ))}
+//           </div>
+//         )}
+//         {tabs?.length && (
+//           <div
+//             id="tab-panel-container"
+//             className={cx([
+//               'cf-tab-window-body-full-screen',
+//               classes.tabContent,
+//             ])}
+//             {...bodyStyling}
+//           >
+//             {tabs.map((tab, i) => (
+//               <div
+//                 id={`tab-panel-${i}`}
+//                 role="tabpanel"
+//                 aria-labelledby={`${this.getTabGroupName(name)}-tab-${i}`}
+//                 aria-hidden={this.state.currentPage !== i}
+//                 className={cx(classes.tabPane, {
+//                   show: this.state.currentPage === i,
+//                 })}
+//                 key={i}
+//               >
+//                 {tab.page}
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//       </div>
+//     );
+//   }
+// }
 
 TabWindow.propTypes = {
   bodyStyling: PropTypes.object,
@@ -147,3 +183,5 @@ TabWindow.defaultProps = {
   defaultPage: 0,
   fullPage: false,
 };
+
+export default TabWindow;
