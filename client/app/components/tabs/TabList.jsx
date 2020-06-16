@@ -9,18 +9,25 @@ const propTypes = {
   className: PropTypes.string,
   children: PropTypes.arrayOf(PropTypes.element).isRequired,
   fullWidth: PropTypes.bool,
+  keyNav: PropTypes.bool,
 };
 
 export const TabList = ({
   as: Component = 'div',
   className = '',
   fullWidth = false,
+  keyNav = true,
   ...props
 }) => {
   const ctx = useContext(TabContext);
   const tabListRef = useRef(null);
 
   const handleKeyDown = (event) => {
+    // Keyboard navigation is technically optional, but is important for accessibility
+    if (!keyNav) {
+      return;
+    }
+
     const { target } = event;
 
     // Keyboard navigation assumes that [role="tab"] are siblings
@@ -39,14 +46,14 @@ export const TabList = ({
 
     // Look for the appropriate next element, but stay put if at first or last
     switch (event.key) {
-      case PREV_KEY:
-        newFocusTarget = target.previousElementSibling || target;
-        break;
-      case NEXT_KEY:
-        newFocusTarget = target.nextElementSibling || target;
-        break;
-      default:
-        break;
+    case PREV_KEY:
+      newFocusTarget = target.previousElementSibling || target;
+      break;
+    case NEXT_KEY:
+      newFocusTarget = target.nextElementSibling || target;
+      break;
+    default:
+      break;
     }
 
     if (newFocusTarget !== null && !newFocusTarget.disabled) {

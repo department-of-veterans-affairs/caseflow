@@ -24,6 +24,11 @@ const propTypes = {
    * Applies additional styling to better fit full-width layouts
    */
   fullWidth: PropTypes.bool,
+
+  /**
+   * Allow for keyboard navigation via arrow keys (important for accessibility)
+   */
+  keyNav: PropTypes.bool,
   onChange: PropTypes.func,
 };
 
@@ -32,6 +37,7 @@ export const Tabs = ({
   idPrefix,
   children,
   fullWidth = false,
+  keyNav = true,
   onChange,
 }) => {
   const renderTabs = (child) => {
@@ -56,7 +62,9 @@ export const Tabs = ({
 
   return (
     <Tab.Container idPrefix={idPrefix} active={active} onChange={onChange}>
-      <Tab.List fullWidth={fullWidth}>{children.map(renderTabs)}</Tab.List>
+      <Tab.List fullWidth={fullWidth} keyNav={keyNav}>
+        {children.map(renderTabs)}
+      </Tab.List>
       <Tab.Content>{children.map(renderPanels)}</Tab.Content>
     </Tab.Container>
   );

@@ -25,7 +25,6 @@ export const TabItem = ({
 
   const handleClick = () => ctx.onSelect(value);
 
-
   return (
     <Component
       id={`${ctx.idPrefix}-tab-${value}`}

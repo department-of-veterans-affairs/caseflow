@@ -159,6 +159,41 @@ describe('Tabs', () => {
     });
   });
 
+  it('should disallow switching of tabs via keyboard if keyNav is false', async () => {
+    await render(
+      <Tabs idPrefix={idPrefix} keyNav={false}>
+        {tabData.map(({ disabled, title, contents }, idx) => (
+          <Tab key={idx + 1} title={title} value={idx + 1} disabled={disabled}>
+            <p>{contents}</p>
+          </Tab>
+        ))}
+      </Tabs>
+    );
+
+    const headers = screen.getAllByRole('tab');
+
+    // Start on the second tab
+    userEvent.click(headers[1]);
+
+    expect(headers[1]).toBe(document.activeElement);
+
+    // Try going left
+    fireEvent.keyDown(headers[1], { key: 'ArrowLeft' });
+
+    // Focus should not have moved
+    await wait(() => {
+      expect(headers[1]).toBe(document.activeElement);
+    });
+
+    // Try right
+    fireEvent.keyDown(headers[0], { key: 'ArrowRight' });
+
+    // Focus should not have moved
+    await wait(() => {
+      expect(headers[1]).toBe(document.activeElement);
+    });
+  });
+
   it('should tab into the tabpanel', async () => {
     await render(
       <Tabs idPrefix={idPrefix}>
