@@ -12,10 +12,10 @@ export default {
 export const tabs = () => (
   <Tabs>
     <Tab title="Tab 1" value="1">
-      tab 1 content
+      Tab 1 Content
     </Tab>
     <Tab title="Tab 2" value="2">
-      tab 2 content
+      Tab 2 Content
     </Tab>
   </Tabs>
 );
@@ -23,10 +23,10 @@ export const tabs = () => (
 export const disabled = () => (
   <Tabs>
     <Tab title="Tab 1" value="1">
-      tab 1 content
+      Tab 1 Content
     </Tab>
     <Tab title="Tab 2" value="2">
-      tab 2 content
+      Tab 2 Content
     </Tab>
     <Tab title="Tab 3" value="3" disabled>
       Inaccessible content
@@ -37,15 +37,48 @@ export const disabled = () => (
 export const defaultTab = () => (
   <Tabs active="2">
     <Tab title="Tab 1" value="1">
-      tab 1 content
+      Tab 1 Content
     </Tab>
     <Tab title="Tab 2" value="2">
-      tab 2 content
+      Tab 2 Content
     </Tab>
     <Tab title="Tab 3" value="3">
-      tab 3 content
+      Tab 3 Content
     </Tab>
   </Tabs>
+);
+
+export const fullWidth = () => (
+  <div
+    style={{
+      maxWidth: '800px',
+      padding: '20px',
+    }}
+  >
+    <Tabs fullWidth>
+      <Tab title="Tab 1" value="1">
+        <h4>Tab 1 Content</h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+      </Tab>
+      <Tab title="Tab 2" value="2">
+        <h4>Tab 2 Content</h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+      </Tab>
+      <Tab title="Tab 3" value="3">
+        <h4>Tab 3 Content</h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+      </Tab>
+    </Tabs>
+  </div>
 );
 
 export const manual = () => (
