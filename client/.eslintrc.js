@@ -12,6 +12,7 @@ module.exports = {
     sourceType: 'module'
   },
   rules: {
+    'comma-dangle': ['warn', 'only-multiline'],
     'prefer-const': 'off',
     'max-statements': 'off',
     'react/prop-types': [
