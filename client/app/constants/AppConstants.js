@@ -53,3 +53,5 @@ export const LOGO_COLORS = {
     OVERLAP: COMMON_COLORS.GREY_LIGHT
   }
 };
+
+export const COMMON_TIMEZONES = ['America/New_York', 'America/Chicago', 'America/Los_Angeles', 'America/Denver'];

@@ -14,6 +14,14 @@ module.exports = {
     rules: [
       // add your custom rules.
       {
+        test: /\.erb$/,
+        enforce: 'pre',
+        loader: 'rails-erb-loader',
+        options: {
+          runner: 'bundle exec rails runner'
+        }
+      },
+      {
         test: /\.jsx?$/,
         exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'),
         use: [

@@ -1,0 +1,86 @@
+import { useState } from "react";
+import { Meta, Story, Preview, Props } from "@storybook/addon-docs/blocks";
+import { action } from "@storybook/addon-actions";
+import { select } from "@storybook/addon-knobs";
+
+import { HearingTime } from "./HearingTime";
+import { hearingTimeOptsWithZone } from "../../../utils";
+
+export const defaultProps = {};
+
+<Meta
+  title="Hearings/Components/Hearing Details/Virtual Hearings/HearingTime"
+  component={HearingTime}
+/>
+
+# Hearing Time
+
+### Default
+
+<Preview>
+  <Story name="Default">
+    {() => {
+      const [value, setValue] = useState("");
+      return (
+        <div style={{ width: 300 }}>
+          <HearingTime value={value} onChange={setValue} />
+        </div>
+      );
+    }}
+  </Story>
+</Preview>
+
+### Disabled
+
+<Preview>
+  <Story name="Disabled">
+    {() => {
+      const [value, setValue] = useState("");
+      return (
+        <div style={{ width: 300 }}>
+          <HearingTime
+            readOnly
+            value={select("Time", hearingTimeOptsWithZone(), "08:30")}
+            onChange={setValue}
+          />
+        </div>
+      );
+    }}
+  </Story>
+</Preview>
+
+### With Errors
+
+<Preview>
+  <Story name="With Errors">
+    {() => {
+      const [value, setValue] = useState("");
+      return (
+        <div style={{ width: 300 }}>
+          <HearingTime
+            errorMessage="Invalid time selected"
+            value={value}
+            onChange={setValue}
+          />
+        </div>
+      );
+    }}
+  </Story>
+</Preview>
+
+### With Pre-Selected Option
+
+<Preview>
+  <Story name="With Pre-Selected Option">
+    {() => {
+      const [value, setValue] = useState("08:30");
+      return (
+        <div style={{ width: 300 }}>
+          <HearingTime value={value} onChange={setValue} />
+        </div>
+      );
+    }}
+  </Story>
+</Preview>
+
+<Props of={HearingTime} />

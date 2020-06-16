@@ -1,10 +1,13 @@
 import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
+import HEARING_TIME_OPTIONS from '../../constants/HEARING_TIME_OPTIONS';
 import moment from 'moment-timezone';
 import _ from 'lodash';
-import querystring from 'querystring';
 
 import ExponentialPolling from '../components/ExponentialPolling';
+import { zones } from './timezones.js.erb';
+import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
+import { COMMON_TIMEZONES } from '../constants/AppConstants';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -94,9 +97,8 @@ export const APPELLANT_TITLE = 'Appellant';
  * Gets the title to use for the appellant of a hearing.
  * @param {object} hearing -- A hearing
  */
-export const getAppellantTitleForHearing = (hearing) => (
-  hearing?.appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE
-);
+export const getAppellantTitleForHearing = (hearing) =>
+  hearing?.appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE;
 
 export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
@@ -216,9 +218,48 @@ export const getChanges = (first, second) => {
  * @param {Object} noneOption -- The "None" option
  * @param {function} transformer -- Transforms the values of the object into options
  */
-export const getOptionsFromObject = (object, noneOption, transformer) => (
-  _.concat(
-    _.map(_.values(object), transformer),
-    [noneOption]
-  )
-);
+export const getOptionsFromObject = (object, noneOption, transformer) =>
+  _.concat(_.map(_.values(object), transformer), [noneOption]);
+
+export const hearingTimeOptsWithZone = () =>
+  HEARING_TIME_OPTIONS.map((time) => ({
+    ...time,
+    label: `${time.label} Eastern Time - US`
+  }));
+
+/**
+ * Returns the available timezones divided by common and the rest
+ * @returns {Object} -- { options: [], commons: [] }
+ */
+export const timezones = () => {
+  // Get the list of Unique Regional Office Timezones
+  const ros = _.uniq(
+    _.flatten(Object.keys(REGIONAL_OFFICE_INFORMATION).map((ro) => [REGIONAL_OFFICE_INFORMATION[ro].timezone]))
+  );
+
+  // Reduce the available timezones to an object divided by commons and the rest
+  const { options, commons } = Object.keys(zones).
+    map((zone) => ({
+      value: zones[zone],
+      label: zone
+    })).
+    reduce(
+      (result, zone) => ({
+        options: ros.includes(zone.value) ? result.options : [...result.options, zone],
+        commons: ros.includes(zone.value) ? [...result.commons, zone] : result.commons
+      }),
+      { options: [], commons: [] }
+    );
+
+  // Sort the common options by the common timezones
+  const sortedCommons = commons.sort((zone) => {
+    if (COMMON_TIMEZONES.includes(zone.value)) {
+      return -1;
+    }
+
+    return 1;
+  });
+
+  // Return the timezones divided by common and the rest
+  return { options, commons: sortedCommons };
+};
