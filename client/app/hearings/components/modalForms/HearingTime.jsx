@@ -27,14 +27,20 @@ const formStyling = css({
   marginBottom: 0
 });
 
-const getTimeOptions = (regionalOffice, readOnly) =>
-  _.map(regionalOffice === 'C' ? HEARING_TIME_RADIO_OPTIONS.central : HEARING_TIME_RADIO_OPTIONS.default, (obj) =>
-    _.extend(obj, { disabled: readOnly })
-  );
+const getTimeOptions = (regionalOffice, readOnly) => (
+  _.map(
+    regionalOffice === 'C' ? HEARING_TIME_RADIO_OPTIONS.central : HEARING_TIME_RADIO_OPTIONS.default,
+    (obj) => _.extend(obj, { disabled: readOnly })
+  )
+);
 
-export const HearingTime = ({ componentIndex, errorMessage, onChange, readOnly, regionalOffice, value }) => {
+export const HearingTime = (
+  { componentIndex, errorMessage, onChange, readOnly, regionalOffice, value }
+) => {
   const timeOptions = getTimeOptions(regionalOffice, readOnly);
-  const isOther = _.isUndefined(_.find(timeOptions, (opt) => opt.value === value));
+  const isOther = _.isUndefined(
+    _.find(timeOptions, (opt) => opt.value === value)
+  );
   const onRadioChange = (newValue) => {
     if (newValue === 'other') {
       onChange(null);
