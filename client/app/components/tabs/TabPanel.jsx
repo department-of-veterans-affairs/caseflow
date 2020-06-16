@@ -11,6 +11,7 @@ const propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  fullWidth: PropTypes.bool,
 };
 
 export const TabPanel = ({

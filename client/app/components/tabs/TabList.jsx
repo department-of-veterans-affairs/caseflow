@@ -8,13 +8,13 @@ const propTypes = {
   as: PropTypes.elementType,
   className: PropTypes.string,
   children: PropTypes.arrayOf(PropTypes.element).isRequired,
-  fullscreen: PropTypes.bool,
+  fullWidth: PropTypes.bool,
 };
 
 export const TabList = ({
   as: Component = 'div',
   className = '',
-  fullscreen = false,
+  fullWidth = false,
   ...props
 }) => {
   const ctx = useContext(TabContext);
@@ -63,9 +63,7 @@ export const TabList = ({
       role="tablist"
       className={cx(
         'cf-tab-navigation',
-        {
-          'cf-tab-navigation-fullscreen': fullscreen,
-        },
+        { 'cf-tab-navigation-full-screen': fullWidth },
         className
       )}
       onKeyDown={handleKeyDown}
