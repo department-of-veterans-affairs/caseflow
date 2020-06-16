@@ -35,6 +35,7 @@ const TabWindow = ({
       fullWidth={fullPage}
       idPrefix={name}
       active={defaultPage.toString()}
+      hideTabs={tabs.length < 2}
       onChange={onChange}
     >
       {tabs.map((item, idx) => (

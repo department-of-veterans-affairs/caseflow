@@ -26,6 +26,11 @@ const propTypes = {
   fullWidth: PropTypes.bool,
 
   /**
+   * Allows the hiding of tabs (for instance, if only one exists); this may affect accessibility
+   */
+  hideTabs: PropTypes.bool,
+
+  /**
    * Allow for keyboard navigation via arrow keys (important for accessibility)
    */
   keyNav: PropTypes.bool,
@@ -37,6 +42,7 @@ export const Tabs = ({
   idPrefix,
   children,
   fullWidth = false,
+  hideTabs = false,
   keyNav = true,
   onChange,
 }) => {
@@ -62,9 +68,11 @@ export const Tabs = ({
 
   return (
     <Tab.Container idPrefix={idPrefix} active={active} onChange={onChange}>
-      <Tab.List fullWidth={fullWidth} keyNav={keyNav}>
-        {children.map(renderTabs)}
-      </Tab.List>
+      {!hideTabs && (
+        <Tab.List fullWidth={fullWidth} keyNav={keyNav}>
+          {children.map(renderTabs)}
+        </Tab.List>
+      )}
       <Tab.Content>{children.map(renderPanels)}</Tab.Content>
     </Tab.Container>
   );
