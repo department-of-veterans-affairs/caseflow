@@ -43,8 +43,6 @@ export const HearingTime = ({ componentIndex, errorMessage, onChange, readOnly, 
     }
   };
 
-  console.log('INDEX: ', componentIndex);
-
   return (
     <React.Fragment>
       <span {...formStyling}>

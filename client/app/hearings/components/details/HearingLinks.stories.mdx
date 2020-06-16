@@ -1,0 +1,68 @@
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+
+import { HearingLinks } from './HearingLinks';
+import COPY from '../../../../COPY.json';
+
+export const defaultProps = {};
+
+<Meta
+  title="Hearings/Components/Hearing Details/HearingLinks"
+  component={HearingLinks}
+/>
+
+# Hearing Links
+
+### Active
+
+<Preview>
+  <Story name="active">
+    {() => (
+      <HearingLinks
+        user={{
+          userId: 1,
+          userCanAssignHearingSchedule: true
+        }}
+        hearing={{
+          judgeId: 1
+        }}
+        isVirtual
+        virtualHearing={{
+          status: "active",
+          clientHost: "localhost",
+          guestPin: "1234567812#",
+          hostPin: "56781234#",
+          aliasWithHost: "BVA0000002@care.evn.va.gov",
+          jobCompleted: true
+        }}
+        label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}
+      />
+    )}
+  </Story>
+</Preview>
+
+### Pending
+
+<Preview>
+  <Story name="pending">
+    {() => (
+      <HearingLinks
+        user={{
+          userId: 1,
+          userCanAssignHearingSchedule: true
+        }}
+        hearing={{
+          judgeId: 1
+        }}
+        isVirtual
+        virtualHearing={{
+          status: "pending",
+          clientHost: "localhost",
+          jobCompleted: false
+        }}
+        label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}
+      />
+    )}
+  </Story>
+</Preview>
+
+<Props of={HearingLinks} />

@@ -1,10 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Alert from './Alert';
-import { uniq } from 'lodash';
+import { connect } from 'react-redux';
+import _, { uniq } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import { removeAlertsWithTimestamps } from './common/actions';
+import Alert from './Alert';
 
 const ALERT_EXPIRATION = 30000;
 
@@ -33,6 +34,10 @@ class UserAlerts extends React.Component {
 
   render () {
     const { alerts } = this.props;
+
+    if (_.isUndefined(alerts) || _.isNull(alerts) || _.isEmpty(alerts)) {
+      return null;
+    }
 
     return (
       <div className="cf-alerts-container cf-margin-bottom-2rem">
