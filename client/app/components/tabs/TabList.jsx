@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import cx from 'classnames';
 import { TabContext } from './TabContext';
-import { first } from 'glamor';
 
 const propTypes = {
   as: PropTypes.elementType,
