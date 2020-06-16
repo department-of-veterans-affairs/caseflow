@@ -20,6 +20,34 @@ export const tabs = () => (
   </Tabs>
 );
 
+export const disabled = () => (
+  <Tabs>
+    <Tab title="Tab 1" value="1">
+      tab 1 content
+    </Tab>
+    <Tab title="Tab 2" value="2">
+      tab 2 content
+    </Tab>
+    <Tab title="Tab 3" value="3" disabled>
+      Inaccessible content
+    </Tab>
+  </Tabs>
+);
+
+export const defaultTab = () => (
+  <Tabs active="2">
+    <Tab title="Tab 1" value="1">
+      tab 1 content
+    </Tab>
+    <Tab title="Tab 2" value="2">
+      tab 2 content
+    </Tab>
+    <Tab title="Tab 3" value="3">
+      tab 3 content
+    </Tab>
+  </Tabs>
+);
+
 export const manual = () => (
   <Tab.Container active="2">
     <Tab.List>

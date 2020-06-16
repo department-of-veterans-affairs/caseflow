@@ -4,9 +4,25 @@ import PropTypes from 'prop-types';
 import { Tab } from './Tab';
 
 const propTypes = {
+
+  /**
+   * Specify value of a given tab to default to selected
+   */
   active: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
+  /**
+   * String to ensure unique IDs if page contains multiple sets of tabs. Defaults to random string
+   */
   idPrefix: PropTypes.string,
-  children: PropTypes.arrayOf(PropTypes.element).isRequired,
+
+  /**
+   * One or more `Tab` elements
+   */
+  children: PropTypes.node.isRequired,
+
+  /**
+   * Applies additional styling to better fit full-width layouts
+   */
   fullWidth: PropTypes.bool,
   onChange: PropTypes.func,
 };
