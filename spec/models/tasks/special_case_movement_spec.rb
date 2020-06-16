@@ -2,18 +2,18 @@
 
 describe SpecialCaseMovementTask, :postgres do
   describe ".create" do
-    context "with Special Case Movement Team user" do
-      let(:scm_user) { create(:user) }
+    context "with Case Movement Team user" do
+      let(:cm_user) { create(:user) }
 
       subject do
         SpecialCaseMovementTask.create!(appeal: appeal,
-                                        assigned_to: scm_user,
-                                        assigned_by: scm_user,
+                                        assigned_to: cm_user,
+                                        assigned_by: cm_user,
                                         parent: dist_task)
       end
 
       before do
-        SpecialCaseMovementTeam.singleton.add_user(scm_user)
+        SpecialCaseMovementTeam.singleton.add_user(cm_user)
       end
 
       context "appeal ready for distribution" do
@@ -81,8 +81,8 @@ describe SpecialCaseMovementTask, :postgres do
 
           subject do
             SpecialCaseMovementTask.create!(appeal: appeal,
-                                            assigned_to: scm_user,
-                                            assigned_by: scm_user,
+                                            assigned_to: cm_user,
+                                            assigned_by: cm_user,
                                             parent: evidence_window_task)
           end
 
