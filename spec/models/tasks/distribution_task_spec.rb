@@ -58,7 +58,7 @@ describe DistributionTask, :postgres do
       expect(distribution_task.available_actions(user).count).to eq(0)
     end
 
-    it "with Special Case Movement Team user has the Special Case Movement action" do
+    it "with Case Movement Team user has the Special Case Movement action" do
       expect(distribution_task.available_actions(scm_user).count).to eq(1)
     end
 
