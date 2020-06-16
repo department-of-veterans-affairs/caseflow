@@ -1,12 +1,22 @@
 /* eslint-disable max-lines */
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { css } from 'glamor';
-import PropTypes from 'prop-types';
 import React from 'react';
+import { css } from 'glamor';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
+import { docketRowStyle, inputSpacing } from './style';
+
+import Button from '../../../components/Button';
+
+import ApiUtil from '../../../util/ApiUtil';
+
+import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import { AodModal } from './DailyDocketModals';
+import HearingText from './DailyDocketRowDisplayText';
+import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit } from '../../utils';
+import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../../components/common/actions';
 import {
   DispositionDropdown,
   TranscriptRequestedCheckbox,
@@ -20,17 +30,10 @@ import {
   HearingLocationDropdown,
   StaticHearingDay,
   StaticVirtualHearing,
+  TimeRadioButtons,
   Waive90DayHoldCheckbox,
   HoldOpenDropdown
 } from './DailyDocketRowInputs';
-import { HearingTime } from '../modalForms/HearingTime';
-import { deepDiff, isPreviouslyScheduledHearing, pollVirtualHearingData, handleEdit } from '../../utils';
-import { docketRowStyle, inputSpacing } from './style';
-import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../../components/common/actions';
-import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
-import ApiUtil from '../../../util/ApiUtil';
-import Button from '../../../components/Button';
-import HearingText from './DailyDocketRowDisplayText';
 import VirtualHearingModal from '../VirtualHearingModal';
 
 const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
@@ -260,7 +263,7 @@ class DailyDocketRow extends React.Component {
     };
   };
 
-  defaultRightInputs = (rowIndex) => {
+  defaultRightInputs = () => {
     const { hearing, regionalOffice, readOnly } = this.props;
     const inputProps = this.getInputProps();
 
@@ -269,21 +272,18 @@ class DailyDocketRow extends React.Component {
         <StaticRegionalOffice hearing={hearing} />
         <HearingLocationDropdown {...inputProps} regionalOffice={regionalOffice} />
         <StaticHearingDay hearing={hearing} />
-        <HearingTime
+        <TimeRadioButtons
           {...inputProps}
-          componentIndex={rowIndex}
           regionalOffice={regionalOffice}
           readOnly={
             hearing.scheduledForIsPast || readOnly || (hearing.isVirtual && !hearing.virtualHearing.jobCompleted)
           }
-          onChange={(scheduledTimeString) => {
-            this.update({ scheduledTimeString });
-
-            if (scheduledTimeString !== null) {
+          update={(values) => {
+            this.update(values);
+            if (values.scheduledTimeString !== null) {
               this.openVirtualHearingModal();
             }
           }}
-          value={hearing.scheduledTimeString}
         />
       </React.Fragment>
     );
@@ -317,10 +317,8 @@ class DailyDocketRow extends React.Component {
     );
   };
 
-  getRightColumn = (rowIndex) => {
-    const inputs = this.props.user.userHasHearingPrepRole ?
-      this.judgeRightInputs() :
-      this.defaultRightInputs(rowIndex);
+  getRightColumn = () => {
+    const inputs = this.props.user.userHasHearingPrepRole ? this.judgeRightInputs() : this.defaultRightInputs();
 
     return (
       <div {...inputSpacing}>
@@ -411,7 +409,7 @@ class DailyDocketRow extends React.Component {
         </div>
         <div>
           {this.getLeftColumn()}
-          {this.getRightColumn(index)}
+          {this.getRightColumn()}
         </div>
         {user.userCanScheduleVirtualHearings &&
           this.state.virtualHearingModalActive &&
@@ -454,8 +452,7 @@ DailyDocketRow.propTypes = {
     isVirtual: PropTypes.bool,
     externalId: PropTypes.string,
     disposition: PropTypes.string,
-    scheduledForIsPast: PropTypes.bool,
-    scheduledTimeString: PropTypes.string
+    scheduledForIsPast: PropTypes.bool
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,
