@@ -1,0 +1,69 @@
+import { useState } from 'react';
+
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { action } from '@storybook/addon-actions';
+import { text, boolean } from '@storybook/addon-knobs';
+
+import { HearingTime } from './HearingTime';
+
+<Meta
+  title="Hearings/Components/Modal Forms/HearingTime"
+  component={HearingTime}
+/>
+
+# Hearing Time
+
+<Preview>
+  <Story name="normal">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <HearingTime
+          errorMessage={text('Error Message', '', 'knobs')}
+          readOnly={boolean('Read-Only', false, 'knobs')}
+          onChange={setValue}
+          regionalOffice={text('Regional Office Key', 'RO01', 'knobs')}
+          value={value}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Read-Only
+
+<Preview>
+  <Story name="readOnly">
+    {() => {
+      return (
+        <HearingTime
+          readOnly
+          regionalOffice={"RO01"}
+          value={"09:30"}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Error
+
+<Preview>
+  <Story name="errorMessage">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <HearingTime
+          errorMessage={"Please select a hearing time"}
+          onChange={setValue}
+          regionalOffice={"RO01"}
+          value={value}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Props
+
+<Props of={HearingTime} />
