@@ -35,6 +35,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
       >
         <TabList
           fullWidth={true}
+          keyNav={true}
         >
           <div
             className="cf-tab-navigation cf-tab-navigation-full-screen"
@@ -178,6 +179,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
       >
         <TabList
           fullWidth={false}
+          keyNav={true}
         >
           <div
             className="cf-tab-navigation"
@@ -329,6 +331,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
       >
         <TabList
           fullWidth={true}
+          keyNav={true}
         >
           <div
             className="cf-tab-navigation cf-tab-navigation-full-screen"
@@ -472,6 +475,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
       >
         <TabList
           fullWidth={true}
+          keyNav={true}
         >
           <div
             className="cf-tab-navigation cf-tab-navigation-full-screen"
