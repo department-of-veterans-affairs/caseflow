@@ -81,8 +81,8 @@ describe SpecialCaseMovementTask, :postgres do
 
           subject do
             SpecialCaseMovementTask.create!(appeal: appeal,
-                                            assigned_to: scm_user,
-                                            assigned_by: scm_user,
+                                            assigned_to: cm_user,
+                                            assigned_by: cm_user,
                                             parent: evidence_window_task)
           end
 
