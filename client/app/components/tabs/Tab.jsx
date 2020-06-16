@@ -8,6 +8,10 @@ import { TabItem } from './TabItem';
 import TabContextProvider from './TabContext';
 
 const propTypes = {
+
+  /**
+   * The text, component, or element that will be used for the tab header content
+   */
   title: PropTypes.node.isRequired,
 };
 
