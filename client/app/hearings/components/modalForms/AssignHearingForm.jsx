@@ -1,17 +1,19 @@
+import React from 'react';
+import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import React from 'react';
-import _ from 'lodash';
 
-import { HearingTime } from './HearingTime';
+import ApiUtil from '../../../util/ApiUtil';
+
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../../components/DataDropdowns';
+import HearingTime from './HearingTime';
+
 import { onChangeFormData } from '../../../components/common/actions';
-import ApiUtil from '../../../util/ApiUtil';
 
 class AssignHearingForm extends React.Component {
   getErrorMessages = (newValues) => {
@@ -21,20 +23,16 @@ class AssignHearingForm extends React.Component {
     };
 
     const errorMessages = {
-      hearingDay: (values.hearingDay && values.hearingDay.hearingId) ?
-        null :
-        'Please select a hearing date',
-      hearingLocation: values.hearingLocation ? null : 'Please select a hearing location',
-      scheduledTimeString: values.scheduledTimeString ? null : 'Please select a hearing time'
+      hearingDay: values.hearingDay && values.hearingDay.hearingId ?
+        false : 'Please select a hearing date',
+      hearingLocation: values.hearingLocation ? false : 'Please select a hearing location',
+      scheduledTimeString: values.scheduledTimeString ? false : 'Please select a hearing time'
     };
 
     return {
       ...errorMessages,
-      hasErrorMessages: !(
-        _.isNull(errorMessages.hearingDay) &&
-        _.isNull(errorMessages.hearingLocation) &&
-        _.isNull(errorMessages.scheduledTimeString)
-      )
+      hasErrorMessages: (errorMessages.hearingDay || errorMessages.hearingLocation ||
+        errorMessages.scheduledTimeString) !== false
     };
   }
 
