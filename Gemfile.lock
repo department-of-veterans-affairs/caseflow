@@ -419,7 +419,7 @@ GEM
       pry (~> 0.10)
     public_suffix (3.1.1)
     puma (3.12.6)
-    rack (2.2.2)
+    rack (2.2.3)
     rack-contrib (2.1.0)
       rack (~> 2.0)
     rack-test (1.1.0)
@@ -693,7 +693,7 @@ DEPENDENCIES
   pry
   pry-byebug
   puma (~> 3.12.6)
-  rack (~> 2.2.0)
+  rack (~> 2.2.3)
   rails (= 5.2.4.3)
   rails-erd
   rainbow
