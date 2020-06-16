@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_10_001554) do
+ActiveRecord::Schema.define(version: 2020_06_15_153543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -870,7 +870,7 @@ ActiveRecord::Schema.define(version: 2020_06_10_001554) do
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Legacy Hearing"
     t.integer "user_id"
-    t.string "vacols_id", null: false
+    t.string "vacols_id", null: false, comment: "Corresponds to VACOLS’ hearsched.hearing_pkseq"
     t.string "witness"
     t.index ["created_by_id"], name: "index_legacy_hearings_on_created_by_id"
     t.index ["hearing_day_id"], name: "index_legacy_hearings_on_hearing_day_id"
@@ -1425,8 +1425,6 @@ ActiveRecord::Schema.define(version: 2020_06_10_001554) do
     t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the virtual hearing"
-    t.string "veteran_email", comment: "Veteran's email address"
-    t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"
     t.index ["alias"], name: "index_virtual_hearings_on_alias"
     t.index ["conference_id"], name: "index_virtual_hearings_on_conference_id"
     t.index ["created_by_id"], name: "index_virtual_hearings_on_created_by_id"

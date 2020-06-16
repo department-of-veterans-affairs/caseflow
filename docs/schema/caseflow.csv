@@ -669,7 +669,7 @@ legacy_hearings,summary,text,,,,,,
 legacy_hearings,updated_at,datetime,,,,,x,Timestamp when record was last updated.
 legacy_hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recently updated the Legacy Hearing
 legacy_hearings,user_id,integer FK,,,x,,x,
-legacy_hearings,vacols_id,string ∗,x,,,,x,
+legacy_hearings,vacols_id,string ∗,x,,,,x,Corresponds to VACOLS’ hearsched.hearing_pkseq
 legacy_hearings,witness,string,,,,,,
 legacy_issues,,,,,,,,"On an AMA decision review, when a veteran requests to review an issue that is already being contested on a legacy appeal, the legacy issue is connected to the request issue. If the veteran also chooses to opt their legacy issues into AMA and the issue is eligible to be transferred to AMA, the issues are closed in VACOLS through a legacy issue opt-in. This table stores the legacy issues connected to each request issue, and the record for opting them into AMA (if applicable)."
 legacy_issues,created_at,datetime ∗,x,,,,,Default created_at/updated_at
@@ -1077,8 +1077,6 @@ virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a 
 virtual_hearings,request_cancelled,boolean,,,,,,Determines whether the user has cancelled the virtual hearing request
 virtual_hearings,updated_at,datetime ∗,x,,,,x,
 virtual_hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recently updated the virtual hearing
-virtual_hearings,veteran_email,string,,,,,,Veteran's email address
-virtual_hearings,veteran_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran
 virtual_hearing_establishments,,,,,,,,
 virtual_hearing_establishments,attempted_at,datetime,,,,,,Async timestamp for most recent attempt to run.
 virtual_hearing_establishments,canceled_at,datetime,,,,,,Timestamp when job was abandoned.

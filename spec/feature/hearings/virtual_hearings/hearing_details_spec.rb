@@ -146,7 +146,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       hearing.reload
       expect(VirtualHearing.count).to eq(1)
       expect(hearing.virtual?).to eq(true)
-      expect(hearing.virtual_hearing.veteran_email).to eq("email@testingEmail.com")
+      expect(hearing.virtual_hearing.appellant_email).to eq("email@testingEmail.com")
       expect(hearing.virtual_hearing.representative_email).to eq(pre_loaded_rep_email)
       expect(hearing.virtual_hearing.judge_email).to eq(nil)
 
@@ -212,7 +212,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
         :virtual_hearing,
         :all_emails_sent,
         status: :active,
-        veteran_email: fill_in_veteran_email,
+        appellant_email: fill_in_veteran_email,
         hearing: hearing
       )
     end
@@ -339,7 +339,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
       scenario "displays disabled virtual hearing link when changing emails" do
         virtual_hearing.update(
-          veteran_email_sent: false,
+          appellant_email_sent: false,
           representative_email_sent: false,
           judge_email_sent: false
         )
