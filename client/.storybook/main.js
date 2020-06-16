@@ -17,11 +17,15 @@ module.exports = {
     },
   ],
   webpackFinal: (config) => {
+    const customRules = custom.module.rules.filter((rule) => {
+      return !rule.test.toString().includes('woff') && !rule.test.toString().includes('svg');
+    });
+
     return {
       ...config,
       module: {
         ...config.module,
-        rules: [...config.module.rules, ...custom.module.rules],
+        rules: [...config.module.rules, ...customRules],
       },
     };
   },
