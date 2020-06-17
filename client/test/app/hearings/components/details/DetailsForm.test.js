@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {
-  EmailNotificationHistory,
-} from 'app/hearings/components/details/EmailNotificationHistory';
+import { EmailNotificationHistory } from 'app/hearings/components/details/EmailNotificationHistory';
 import { HearingsFormContext } from 'app/hearings/contexts/HearingsFormContext';
 import { HearingsUserContext } from 'app/hearings/contexts/HearingsUserContext';
 import { TranscriptionFormSection } from 'app/hearings/components/details/TranscriptionFormSection';
@@ -12,8 +10,7 @@ import { mount } from 'enzyme';
 import { userWithVirtualHearingsFeatureEnabled } from 'test/data/user';
 import CheckBox from 'app/components/Checkbox';
 import DetailsForm from 'app/hearings/components/details/DetailsForm';
-import HearingTypeDropdown from
-  'app/hearings/components/details/HearingTypeDropdown';
+import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 
 const hearingsDispatch = jest.fn();
 const openVirtualHearingModalMock = jest.fn();
@@ -80,23 +77,20 @@ describe('DetailsForm', () => {
     ).toHaveLength(1);
   });
 
-  test(
-    'Matches snapshot if user does not have the enable virtual hearings feature flag enabled',
-    () => {
-      const form = mount(
-        <HearingsUserContext.Provider value={{ userCanScheduleVirtualHearings: false }}>
-          <HearingsFormContext.Provider value={initialHearingFormState}>
-            <DetailsForm />
-          </HearingsFormContext.Provider>
-        </HearingsUserContext.Provider>,
-        {
-          wrappingComponent: WrappingComponent,
-          wrappingComponentProps: { store: detailsStore }
-        }
-      );
+  test('Matches snapshot if user does not have the enable virtual hearings feature flag enabled', () => {
+    const form = mount(
+      <HearingsUserContext.Provider value={{ userCanScheduleVirtualHearings: false }}>
+        <HearingsFormContext.Provider value={initialHearingFormState}>
+          <DetailsForm />
+        </HearingsFormContext.Provider>
+      </HearingsUserContext.Provider>,
+      {
+        wrappingComponent: WrappingComponent,
+        wrappingComponentProps: { store: detailsStore }
+      }
+    );
 
-      expect(form).toMatchSnapshot();
-      expect(form.find(HearingTypeDropdown)).toHaveLength(0);
-    }
-  );
+    expect(form).toMatchSnapshot();
+    expect(form.find(HearingTypeDropdown)).toHaveLength(0);
+  });
 });

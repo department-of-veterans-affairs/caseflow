@@ -25,8 +25,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: f374da6041b52d73af60d79d60d4013a13d4a72e
-  ref: f374da6041b52d73af60d79d60d4013a13d4a72e
+  revision: 049b3c5068fa6c6d1cae0b58654529316b84be57
+  ref: 049b3c5068fa6c6d1cae0b58654529316b84be57
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)
@@ -419,7 +419,7 @@ GEM
       pry (~> 0.10)
     public_suffix (3.1.1)
     puma (3.12.6)
-    rack (2.2.2)
+    rack (2.2.3)
     rack-contrib (2.1.0)
       rack (~> 2.0)
     rack-test (1.1.0)
@@ -693,7 +693,7 @@ DEPENDENCIES
   pry
   pry-byebug
   puma (~> 3.12.6)
-  rack (~> 2.2.0)
+  rack (~> 2.2.3)
   rails (= 5.2.4.3)
   rails-erd
   rainbow
