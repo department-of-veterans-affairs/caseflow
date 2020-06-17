@@ -6,6 +6,8 @@ import { ADD_CLAIMANT_MODAL_TITLE, ADD_CLAIMANT_MODAL_DESCRIPTION } from '../../
 import ReactMarkdown from 'react-markdown';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import ApiUtil from '../../util/ApiUtil';
+import Checkbox from '../../components/Checkbox';
+import TextareaField from '../../components/TextareaField';
 
 const relationshipOpts = [{ label: 'Attorney (previously or currently)', value: 'attorney' }];
 
@@ -34,9 +36,16 @@ const filterOptions = (options) => options;
 export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys }) => {
   const [claimant, setClaimant] = useState(null);
   const [relationship, setRelationship] = useState(relationshipOpts[0]);
-  const isInvalid = useMemo(() => !claimant, [claimant]);
+  const [notClaimant, setNotClaimant] = useState(false);
+  const [claimantNotes, setClaimantNotes] = useState('');
+  const isInvalid = useMemo(() => {
+    return (!notClaimant && !claimant) || (notClaimant && !claimantNotes);
+  }, [claimant, notClaimant, claimantNotes]);
+
   const handleChangeRelationship = (value) => setRelationship(value);
   const handleChangeClaimant = (value) => setClaimant(value);
+  const handleNotClaimant = (value) => setNotClaimant(value);
+  const handleClaimantNotes = (value) => setClaimantNotes(value);
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
@@ -54,7 +63,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Add this claimant',
-      onClick: () => onSubmit({ name: claimant.label, participantId: claimant.value }),
+      onClick: () => onSubmit({ name: claimant.label, payeeCode: claimant.value }),
       disabled: isInvalid
     }
   ];
@@ -79,9 +88,26 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
         value={claimant}
         filterOptions={filterOptions}
         async={asyncFn}
+        readOnly={notClaimant}
         options={[]}
         debounce={250}
       />
+
+      <Checkbox
+        label="Claimant not listed"
+        name="noClaimant"
+        onChange={handleNotClaimant}
+        value={notClaimant}
+        required
+      />
+      {notClaimant && (
+        <TextareaField
+          label= {<span><strong>Notes</strong> e.g. claimant's name, address, law firm</span>}
+          name="notes"
+          value={claimantNotes}
+          onChange={handleClaimantNotes} />
+      )}
+
     </Modal>
   );
 };
@@ -89,5 +115,6 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
 AddClaimantModal.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
-  onSearch: PropTypes.func
+  onSearch: PropTypes.func,
+  readOnly: PropTypes.bool
 };
