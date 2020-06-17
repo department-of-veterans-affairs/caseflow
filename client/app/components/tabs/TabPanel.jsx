@@ -34,7 +34,7 @@ export const TabPanel = ({
     if (ctx.unmountOnExit && !active) {
       setContents(null);
     }
-  }, [active, ctx.mountOnEnter, ctx.unmountOnExit]);
+  }, [active, ctx.mountOnEnter, ctx.unmountOnExit, children]);
 
   return (
     <Component
