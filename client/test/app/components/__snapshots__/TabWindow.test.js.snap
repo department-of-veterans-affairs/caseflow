@@ -22,15 +22,22 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
   <Tabs
     active="0"
     fullWidth={true}
+    hideTabs={false}
     idPrefix="main"
+    mountOnEnter={true}
+    unmountOnExit={true}
   >
     <TabContainer
       active="0"
       idPrefix="main"
+      mountOnEnter={true}
+      unmountOnExit={true}
     >
       <TabContextProvider
         idPrefix="main"
+        mountOnEnter={true}
         onSelect={[Function]}
+        unmountOnExit={true}
         value="0"
       >
         <TabList
@@ -132,9 +139,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
                 id="main-tabpanel-1"
                 role="tabpanel"
                 tabIndex={-1}
-              >
-                Some other content
-              </div>
+              />
             </TabPanel>
           </div>
         </TabContent>
@@ -166,15 +171,22 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
   <Tabs
     active="0"
     fullWidth={false}
+    hideTabs={false}
     idPrefix="main"
+    mountOnEnter={true}
+    unmountOnExit={true}
   >
     <TabContainer
       active="0"
       idPrefix="main"
+      mountOnEnter={true}
+      unmountOnExit={true}
     >
       <TabContextProvider
         idPrefix="main"
+        mountOnEnter={true}
         onSelect={[Function]}
+        unmountOnExit={true}
         value="0"
       >
         <TabList
@@ -276,9 +288,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
                 id="main-tabpanel-1"
                 role="tabpanel"
                 tabIndex={-1}
-              >
-                Some other content
-              </div>
+              />
             </TabPanel>
           </div>
         </TabContent>
@@ -292,7 +302,10 @@ exports[`TabWindow Renders an empty div when no tabs are passed 1`] = `
 <Tabs
   active="0"
   fullWidth={false}
+  hideTabs={true}
   idPrefix="main"
+  mountOnEnter={true}
+  unmountOnExit={true}
 />
 `;
 
@@ -318,15 +331,22 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
   <Tabs
     active="0"
     fullWidth={true}
+    hideTabs={false}
     idPrefix="main"
+    mountOnEnter={true}
+    unmountOnExit={true}
   >
     <TabContainer
       active="0"
       idPrefix="main"
+      mountOnEnter={true}
+      unmountOnExit={true}
     >
       <TabContextProvider
         idPrefix="main"
+        mountOnEnter={true}
         onSelect={[Function]}
+        unmountOnExit={true}
         value="0"
       >
         <TabList
@@ -428,9 +448,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
                 id="main-tabpanel-1"
                 role="tabpanel"
                 tabIndex={-1}
-              >
-                Some other content
-              </div>
+              />
             </TabPanel>
           </div>
         </TabContent>
@@ -462,15 +480,22 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
   <Tabs
     active="0"
     fullWidth={true}
+    hideTabs={false}
     idPrefix="main"
+    mountOnEnter={true}
+    unmountOnExit={true}
   >
     <TabContainer
       active="0"
       idPrefix="main"
+      mountOnEnter={true}
+      unmountOnExit={true}
     >
       <TabContextProvider
         idPrefix="main"
+        mountOnEnter={true}
         onSelect={[Function]}
+        unmountOnExit={true}
         value="1"
       >
         <TabList
@@ -557,9 +582,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
                 id="main-tabpanel-0"
                 role="tabpanel"
                 tabIndex={-1}
-              >
-                Content
-              </div>
+              />
             </TabPanel>
             <TabPanel
               fullWidth={true}
