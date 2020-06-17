@@ -8,7 +8,13 @@ import { Tabs } from './Tabs';
 export default {
   title: 'Commons/Components/Tabs',
   component: Tabs,
-  decorators: [],
+  decorators: [
+    (storyFn) => (
+      <div style={{ minHeight: '250px', maxWidth: '800px', padding: '20px' }}>
+        {storyFn()}
+      </div>
+    ),
+  ],
 };
 
 export const tabs = () => (
@@ -54,36 +60,29 @@ export const defaultTab = () => (
 );
 
 export const fullWidth = () => (
-  <div
-    style={{
-      maxWidth: '800px',
-      padding: '20px',
-    }}
-  >
-    <Tabs fullWidth>
-      <Tab title="Tab 1" value="1">
-        <h4>Tab 1 Content</h4>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
-      </Tab>
-      <Tab title="Tab 2" value="2">
-        <h4>Tab 2 Content</h4>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
-      </Tab>
-      <Tab title="Tab 3" value="3">
-        <h4>Tab 3 Content</h4>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
-      </Tab>
-    </Tabs>
-  </div>
+  <Tabs fullWidth>
+    <Tab title="Tab 1" value="1">
+      <h4>Tab 1 Content</h4>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.
+      </p>
+    </Tab>
+    <Tab title="Tab 2" value="2">
+      <h4>Tab 2 Content</h4>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.
+      </p>
+    </Tab>
+    <Tab title="Tab 3" value="3">
+      <h4>Tab 3 Content</h4>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.
+      </p>
+    </Tab>
+  </Tabs>
 );
 
 export const mountOnEnter = () => (

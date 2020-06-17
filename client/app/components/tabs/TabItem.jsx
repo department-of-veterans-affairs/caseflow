@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import cx from 'classnames';
+import classes from './Tabs.module.scss';
 import { TabContext } from './TabContext';
 
 const propTypes = {
@@ -21,7 +22,9 @@ export const TabItem = ({
 }) => {
   const ctx = useContext(TabContext);
   const active = ctx.value === value.toString();
-  const classNames = cx('cf-tab', className, { 'cf-active': active });
+  const classNames = cx('cf-tab', className, classes.tab, {
+    'cf-active': active,
+  });
 
   const handleClick = () => ctx.onSelect(value);
 
@@ -37,11 +40,7 @@ export const TabItem = ({
       onClick={handleClick}
       data-value={value}
     >
-      <span>
-        <span>
-          <span>{children}</span>
-        </span>
-      </span>
+      <div>{children}</div>
     </Component>
   );
 };

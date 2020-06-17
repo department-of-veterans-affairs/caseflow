@@ -1,15 +1,10 @@
-.tab-panel {
-}
-
-.tab-content {
-}
-
 :global {
   :local(.tab-panel) {
-    display: none;
+    opacity: 0;
+    transition: opacity 0.15s linear;
 
     &.active {
-      display: block;
+      opacity: 1;
     }
 
     &.full-width {
