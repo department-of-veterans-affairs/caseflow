@@ -45,18 +45,21 @@ export const TabList = ({
     const END_KEY = 'End';
 
     const children = [...tabListRef.current.childNodes];
-    const firstAllowed = children.find((item) => !item.disabled);
-    const lastAllowed = children.reverse().find((item) => !item.disabled);
+    const enabled = children.filter((item) => !item.disabled);
+    const firstAllowed = enabled[0] || target;
+    const lastAllowed = enabled[enabled.length - 1];
+    const nextAllowed = enabled[enabled.indexOf(target) + 1] || target;
+    const prevAllowed = enabled[enabled.indexOf(target) - 1] || target;
 
     let newFocusTarget = null;
 
     // Look for the appropriate next element, but stay put if at first or last
     switch (event.key) {
     case PREV_KEY:
-      newFocusTarget = target.previousElementSibling || target;
+      newFocusTarget = prevAllowed;
       break;
     case NEXT_KEY:
-      newFocusTarget = target.nextElementSibling || target;
+      newFocusTarget = nextAllowed;
       break;
     case HOME_KEY:
       newFocusTarget = firstAllowed;
