@@ -37,6 +37,8 @@ const TabWindow = ({
       active={defaultPage.toString()}
       hideTabs={tabs.length < 2}
       onChange={onChange}
+      mountOnEnter
+      unmountOnExit
     >
       {tabs.map((item, idx) => (
         <Tab
