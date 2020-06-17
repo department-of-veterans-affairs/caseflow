@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_15_153543) do
+ActiveRecord::Schema.define(version: 2020_06_17_160206) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -331,6 +331,7 @@ ActiveRecord::Schema.define(version: 2020_06_15_153543) do
     t.datetime "created_at"
     t.bigint "decision_review_id", comment: "The ID of the decision review the claimant is on."
     t.string "decision_review_type", comment: "The type of decision review the claimant is on."
+    t.text "notes", comment: "Notes why a claimant is not listed."
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
     t.string "type", default: "Claimant", comment: "The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, or OtherClaimant."
