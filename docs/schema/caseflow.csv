@@ -242,6 +242,7 @@ claimants,id,integer (8) PK,x,x,,,,
 claimants,participant_id,string ∗ U,x,,,x,x,The participant ID of the claimant.
 claimants,payee_code,string,,,,,,"The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
 claimants,type,string,,,,,,"The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, or OtherClaimant."
+claimants,notes,text,,,,,,"Notes why a claimant is not listed."
 claimants,updated_at,datetime,,,,,x,
 claims_folder_searches,,,,,,,,
 claims_folder_searches,appeal_id,integer FK,,,x,,x,
