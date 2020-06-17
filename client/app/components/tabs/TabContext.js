@@ -16,6 +16,8 @@ export const useUniquePrefix = () => {
 const propTypes = {
   children: PropTypes.arrayOf(PropTypes.element).isRequired,
   idPrefix: PropTypes.string,
+  mountOnEnter: PropTypes.bool,
+  unmountOnExit: PropTypes.bool,
   onSelect: PropTypes.func,
   value: PropTypes.string.isRequired,
 };
@@ -23,14 +25,15 @@ const propTypes = {
 export const TabContextProvider = ({
   children,
   idPrefix = useUniquePrefix(),
-  value,
+  mountOnEnter = false,
+  unmountOnExit = false,
   onSelect,
+  value,
 }) => {
-  const context = useMemo(() => ({ idPrefix, onSelect, value }), [
-    idPrefix,
-    onSelect,
-    value,
-  ]);
+  const context = useMemo(
+    () => ({ idPrefix, mountOnEnter, unmountOnExit, onSelect, value }),
+    [idPrefix, mountOnEnter, unmountOnExit, onSelect, value]
+  );
 
   return <TabContext.Provider value={context}>{children}</TabContext.Provider>;
 };

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { action } from '@storybook/addon-actions';
+
 import { Tab } from './Tab';
 import { Tabs } from './Tabs';
 
@@ -84,8 +86,36 @@ export const fullWidth = () => (
   </div>
 );
 
+export const mountOnEnter = () => (
+  <Tabs mountOnEnter>
+    <Tab title="Tab 1" value="1">
+      Tab 1 content (rendered when tab is first activated)
+    </Tab>
+    <Tab title="Tab 2" value="2">
+      Tab 2 content (rendered when tab is first activated)
+    </Tab>
+    <Tab title="Tab 3" value="3">
+      Tab 3 content (rendered when tab is first activated)
+    </Tab>
+  </Tabs>
+);
+
+export const unmountOnExit = () => (
+  <Tabs mountOnEnter unmountOnExit>
+    <Tab title="Tab 1" value="1">
+      Tab 1 content (only rendered when tab is currently active)
+    </Tab>
+    <Tab title="Tab 2" value="2">
+      Tab 2 content (only rendered when tab is currently active)
+    </Tab>
+    <Tab title="Tab 3" value="3">
+      Tab 3 content (only rendered when tab is currently active)
+    </Tab>
+  </Tabs>
+);
+
 export const manual = () => (
-  <Tab.Container active="2">
+  <Tab.Container active="2" onChange={action('onChange', 'manual')}>
     <Tab.List>
       <Tab.Item value="1">Tab 1</Tab.Item>
       <Tab.Item value="2">Tab 2</Tab.Item>

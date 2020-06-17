@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import cx from 'classnames';
 
 import classes from './Tabs.module.scss';
 import { TabContext } from './TabContext';
+import { mountOnEnter } from './Tabs.stories';
 
 const propTypes = {
   as: PropTypes.elementType,
@@ -22,8 +23,23 @@ export const TabPanel = ({
 }) => {
   const ctx = useContext(TabContext);
   const active = ctx.value === value.toString();
+  const [contents, setContents] = useState(null);
 
   const classNames = cx(classes.tabPanel, className, { active });
+
+  // if (!active && ctx.unmountOnExit) {
+  //   return null;
+  // }
+
+  useEffect(() => {
+    if (!ctx.mountOnEnter || (ctx.mountOnEnter && active)) {
+      setContents(children);
+    }
+
+    if (ctx.unmountOnExit && !active) {
+      setContents(null);
+    }
+  }, [active, ctx.mountOnEnter, ctx.unmountOnExit]);
 
   return (
     <Component
@@ -33,7 +49,7 @@ export const TabPanel = ({
       className={classNames}
       tabIndex={active ? 0 : -1}
     >
-      {children}
+      {contents}
     </Component>
   );
 };

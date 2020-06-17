@@ -34,6 +34,17 @@ const propTypes = {
    * Allow for keyboard navigation via arrow keys (important for accessibility)
    */
   keyNav: PropTypes.bool,
+
+  /**
+   * Mount tab panel content only when tab is selected
+   */
+  mountOnEnter: PropTypes.bool,
+
+  /**
+   * Unmount tab panel content when tab is exited
+   */
+  unmountOnExit: PropTypes.bool,
+
   onChange: PropTypes.func,
 };
 
@@ -43,6 +54,8 @@ export const Tabs = ({
   children,
   fullWidth = false,
   hideTabs = false,
+  mountOnEnter = false,
+  unmountOnExit = false,
   keyNav = true,
   onChange,
 }) => {
@@ -67,7 +80,13 @@ export const Tabs = ({
   };
 
   return (
-    <Tab.Container idPrefix={idPrefix} active={active} onChange={onChange}>
+    <Tab.Container
+      idPrefix={idPrefix}
+      active={active}
+      onChange={onChange}
+      mountOnEnter={mountOnEnter}
+      unmountOnExit={unmountOnExit}
+    >
       {!hideTabs && (
         <Tab.List fullWidth={fullWidth} keyNav={keyNav}>
           {children.map(renderTabs)}

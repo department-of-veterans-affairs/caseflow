@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, fireEvent, screen, wait } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  screen,
+  wait,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
@@ -233,5 +239,59 @@ describe('Tabs', () => {
 
     // Focus should now be on the first link in the active tabpanel
     expect(screen.getByText('Link 1')).toBe(document.activeElement);
+  });
+
+  it('should correctly honor mountOnEnter', async () => {
+    await render(
+      <Tabs idPrefix={idPrefix} mountOnEnter>
+        <Tab title="Tab 1" value="1">
+          <p>Tab contents 1</p>
+        </Tab>
+        <Tab title="Tab 2" value="2">
+          <p>Tab contents 2</p>
+        </Tab>
+      </Tabs>
+    );
+
+    const headers = screen.getAllByRole('tab');
+
+    expect(screen.queryByText('Tab contents 1')).toBeTruthy();
+    expect(screen.queryByText('Tab contents 2')).not.toBeTruthy();
+
+    // Switch to tab 2
+    userEvent.click(headers[1]);
+
+    // Now both should be present
+    await waitFor(() => {
+      expect(screen.queryByText('Tab contents 1')).toBeTruthy();
+      expect(screen.queryByText('Tab contents 2')).toBeTruthy();
+    });
+  });
+
+  it('should correctly honor unmountOnExit', async () => {
+    await render(
+      <Tabs idPrefix={idPrefix} mountOnEnter unmountOnExit>
+        <Tab title="Tab 1" value="1">
+          <p>Tab contents 1</p>
+        </Tab>
+        <Tab title="Tab 2" value="2">
+          <p>Tab contents 2</p>
+        </Tab>
+      </Tabs>
+    );
+
+    const headers = screen.getAllByRole('tab');
+
+    expect(screen.queryByText('Tab contents 1')).toBeTruthy();
+    expect(screen.queryByText('Tab contents 2')).not.toBeTruthy();
+
+    // Switch to tab 2
+    userEvent.click(headers[1]);
+
+    await waitFor(() => {
+      // Now only the newly active tab should be rendered
+      expect(screen.queryByText('Tab contents 1')).not.toBeTruthy();
+      expect(screen.queryByText('Tab contents 2')).toBeTruthy();
+    });
   });
 });
