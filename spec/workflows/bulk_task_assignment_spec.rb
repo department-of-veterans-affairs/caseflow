@@ -103,7 +103,7 @@ describe BulkTaskAssignment, :postgres do
     end
 
     context "when all attributes are present" do
-      context "when there are legacy appeals and regional office is passed"
+      context "when there are legacy appeals and regional office is passed" do
         let(:regional_office) { "RO17" }
         let(:legacy_appeal) { create(:legacy_appeal, closest_regional_office: regional_office) }
         let!(:no_show_hearing_task_with_legacy_appeal) do
