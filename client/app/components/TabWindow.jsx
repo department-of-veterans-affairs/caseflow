@@ -30,12 +30,17 @@ const TabWindow = ({
     </span>
   );
 
+  // If there's only one tab, avoid rendering out tabs and just display the content.
+  // This avoids any weird accessibility issues of having a tabpanel w/o corresponding tab
+  if (tabs.length === 1) {
+    return tabs[0].page;
+  }
+
   return (
     <Tabs
       fullWidth={fullPage}
       idPrefix={name}
       active={defaultPage.toString()}
-      hideTabs={tabs.length < 2}
       onChange={onChange}
       mountOnEnter
       unmountOnExit
