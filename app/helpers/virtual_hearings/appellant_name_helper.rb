@@ -10,4 +10,10 @@ module VirtualHearings::AppellantNameHelper
 
     appeal&.veteran&.name&.formatted(:readable_fi_last_formatted) || "the veteran"
   end
+
+  def appellant_or_veteran(appeal)
+    return "Appellant" if appeal.appellant_is_not_veteran
+
+    "Veteran"
+  end
 end
