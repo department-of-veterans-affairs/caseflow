@@ -7,12 +7,15 @@ import {
   waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderHook } from '@testing-library/react-hooks';
+
 import { axe } from 'jest-axe';
 
 import { Tabs } from 'app/components/tabs/Tabs';
 import { Tab } from 'app/components/tabs/Tab';
 
 import { tabList } from '../../../data';
+import { useUniquePrefix } from '../../../../app/components/tabs/TabContext';
 const tabData = tabList.map(({ disabled, label, page }) => ({
   disabled,
   title: label,
@@ -293,5 +296,13 @@ describe('Tabs', () => {
       expect(screen.queryByText('Tab contents 1')).not.toBeTruthy();
       expect(screen.queryByText('Tab contents 2')).toBeTruthy();
     });
+  });
+});
+
+describe('useUniquePrefix hook', () => {
+  it('returns unique value with proper prefix', () => {
+    const { result } = renderHook(() => useUniquePrefix());
+
+    expect(result.current).toMatch(/cf-tabs-\d+/);
   });
 });

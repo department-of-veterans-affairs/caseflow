@@ -9,36 +9,28 @@ exports[`Tabs renders correctly 1`] = `
     <button
       aria-controls="abc123-tabpanel-1"
       aria-selected="true"
-      class="cf-tab cf-active"
+      class="cf-tab tab cf-active"
       data-value="1"
       id="abc123-tab-1"
       role="tab"
       tabindex="0"
     >
-      <span>
-        <span>
-          <span>
-            Tab 1
-          </span>
-        </span>
-      </span>
+      <div>
+        Tab 1
+      </div>
     </button>
     <button
       aria-controls="abc123-tabpanel-2"
       aria-selected="false"
-      class="cf-tab"
+      class="cf-tab tab"
       data-value="2"
       id="abc123-tab-2"
       role="tab"
       tabindex="-1"
     >
-      <span>
-        <span>
-          <span>
-            Tab 2
-          </span>
-        </span>
-      </span>
+      <div>
+        Tab 2
+      </div>
     </button>
   </div>
   <div
