@@ -103,34 +103,36 @@ describe BulkTaskAssignment, :postgres do
     end
 
     context "when all attributes are present" do
-      let(:regional_office) { "RO17" }
-      let(:legacy_appeal) { create(:legacy_appeal, closest_regional_office: regional_office) }
-      let!(:no_show_hearing_task_with_legacy_appeal) do
-        create(:no_show_hearing_task,
-                appeal: legacy_appeal,
-                assigned_to: organization,
-                created_at: 2.days.ago)
-      end
+      context "when there are legacy appeals and regional office is passed"
+        let(:regional_office) { "RO17" }
+        let(:legacy_appeal) { create(:legacy_appeal, closest_regional_office: regional_office) }
+        let!(:no_show_hearing_task_with_legacy_appeal) do
+          create(:no_show_hearing_task,
+                  appeal: legacy_appeal,
+                  assigned_to: organization,
+                  created_at: 2.days.ago)
+        end
 
-      it "filters by regional office" do
-        no_show_hearing_task2.appeal.update(closest_regional_office: regional_office)
-        no_show_hearing_task3.appeal.update(closest_regional_office: "RO19")
-        count_before = Task.count
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq true
-        result = bulk_assignment.process
-        expect(Task.count).to eq count_before + 2
-        expect(result.count).to eq 2
-        task_with_ama_appeal = result.find { |task| task.appeal == no_show_hearing_task2.appeal }
-        expect(task_with_ama_appeal.assigned_to).to eq assigned_to
-        expect(task_with_ama_appeal.type).to eq "NoShowHearingTask"
-        expect(task_with_ama_appeal.assigned_by).to eq assigned_by
-        expect(task_with_ama_appeal.parent_id).to eq no_show_hearing_task2.id
+        it "filters by regional office" do
+          no_show_hearing_task2.appeal.update(closest_regional_office: regional_office)
+          no_show_hearing_task3.appeal.update(closest_regional_office: "RO19")
+          count_before = Task.count
+          bulk_assignment = BulkTaskAssignment.new(params)
+          expect(bulk_assignment.valid?).to eq true
+          result = bulk_assignment.process
+          expect(Task.count).to eq count_before + 2
+          expect(result.count).to eq 2
+          task_with_ama_appeal = result.find { |task| task.appeal == no_show_hearing_task2.appeal }
+          expect(task_with_ama_appeal.assigned_to).to eq assigned_to
+          expect(task_with_ama_appeal.type).to eq "NoShowHearingTask"
+          expect(task_with_ama_appeal.assigned_by).to eq assigned_by
+          expect(task_with_ama_appeal.parent_id).to eq no_show_hearing_task2.id
 
-        task_with_legacy_appeal = result.find { |task| task.appeal == legacy_appeal }
-        expect(task_with_legacy_appeal.assigned_to).to eq assigned_to
-        expect(task_with_legacy_appeal.type).to eq "NoShowHearingTask"
-        expect(task_with_legacy_appeal.assigned_by).to eq assigned_by
+          task_with_legacy_appeal = result.find { |task| task.appeal == legacy_appeal }
+          expect(task_with_legacy_appeal.assigned_to).to eq assigned_to
+          expect(task_with_legacy_appeal.type).to eq "NoShowHearingTask"
+          expect(task_with_legacy_appeal.assigned_by).to eq assigned_by
+        end
       end
     end
   end
