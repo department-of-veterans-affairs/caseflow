@@ -39,7 +39,8 @@
   line-height: normal;
   font-weight: 500;
 
-  > span, > div {
+  > span, 
+  > div {
     display: inline-block;
     padding: 15px 1.5em;
   }
@@ -57,7 +58,8 @@
     path { fill: $color-gray; }
   }
 
-  span + span svg, & svg {
+  span + span svg,
+  svg {
     margin-right: 0.25em;
     margin-left: 0.4em;
     path { fill: $color-white; }
@@ -103,12 +105,14 @@
   border-bottom: 0;
   font-weight: 700;
 
-  > span, > div {
+  > span,
+  > div {
     top: 1px;
     background: $color-white;
     box-shadow: 0 2px 0 0 $color-primary inset;
 
-    > span, > div {
+    > span,
+    > div {
       top: -1px;
     }
   }
