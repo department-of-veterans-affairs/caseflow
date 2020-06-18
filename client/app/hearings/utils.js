@@ -5,8 +5,8 @@ import moment from 'moment-timezone';
 import _ from 'lodash';
 
 import ExponentialPolling from '../components/ExponentialPolling';
-import { zones } from './timezones.js.erb';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
+import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES } from '../constants/AppConstants';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
@@ -221,45 +221,68 @@ export const getChanges = (first, second) => {
 export const getOptionsFromObject = (object, noneOption, transformer) =>
   _.concat(_.map(_.values(object), transformer), [noneOption]);
 
+/**
+ * Method to get the Timezone label of a Timezone value
+ * @param {string} tz -- Key of the Timezone to get the label
+ * @returns {string} -- The label of the timezone
+ */
+export const zoneName = (name) => {
+  // Filter the zone name
+  const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === name);
+
+  // Return the friendly zone name
+  return zone;
+};
+
+/**
+ * Method to add timezone to the label of the time
+ * @returns {Array} -- List of hearing times with the zone appended to the label
+ */
 export const hearingTimeOptsWithZone = () =>
   HEARING_TIME_OPTIONS.map((time) => ({
     ...time,
-    label: `${time.label} Eastern Time - US`
+    label: `${moment(time.label, 'h:mm A').format('h:mm A')} ${zoneName(COMMON_TIMEZONES[0])}`
   }));
 
 /**
- * Returns the available timezones divided by common and the rest
+ * Returns the available timeTIMEZONES divided by common and the rest
+ * @param {string} time -- String representation of the time to convert
  * @returns {Object} -- { options: [], commons: [] }
  */
-export const timezones = () => {
-  // Get the list of Unique Regional Office Timezones
-  const ros = _.uniq(
-    _.flatten(Object.keys(REGIONAL_OFFICE_INFORMATION).map((ro) => [REGIONAL_OFFICE_INFORMATION[ro].timezone]))
-  );
+export const timezones = (time) => {
+  // Get the list of Unique Regional Office TimeTIMEZONES
+  const ros = _.uniq(Object.keys(REGIONAL_OFFICE_INFORMATION).map((ro) => REGIONAL_OFFICE_INFORMATION[ro].timezone));
 
-  // Reduce the available timezones to an object divided by commons and the rest
-  const { options, commons } = Object.keys(zones).
-    map((zone) => ({
-      value: zones[zone],
-      label: zone
-    })).
-    reduce(
-      (result, zone) => ({
-        options: ros.includes(zone.value) ? result.options : [...result.options, zone],
-        commons: ros.includes(zone.value) ? [...result.commons, zone] : result.commons
-      }),
-      { options: [], commons: [] }
-    );
+  // Convert the time into a date object
+  const dateTime = moment(time, 'HH:mm').tz(COMMON_TIMEZONES[0]);
 
-  // Sort the common options by the common timezones
-  const sortedCommons = commons.sort((zone) => {
-    if (COMMON_TIMEZONES.includes(zone.value)) {
-      return -1;
-    }
+  // Map the available timeTIMEZONES to a select options object
+  const options = Object.keys(TIMEZONES).map((zone) => ({
+    value: TIMEZONES[zone],
+    label: `${zone} (${moment(dateTime, 'HH:mm').
+      tz(TIMEZONES[zone]).
+      format('h:mm A')})`
+  }));
 
-    return 1;
-  });
+  // Sort the common options by the common timeTIMEZONES
+  const sortedOptions = options.
+    // Sort the Regional Office timeTIMEZONES to the top
+    sort((zone) => {
+      if (ros.includes(zone.value)) {
+        return -1;
+      }
 
-  // Return the timezones divided by common and the rest
-  return { options, commons: sortedCommons };
+      return 1;
+    }).
+    // Sort the most common timeTIMEZONES to the very top
+    sort((zone) => {
+      if (COMMON_TIMEZONES.includes(zone.value)) {
+        return -1;
+      }
+
+      return 1;
+    });
+
+  // Return the values and the count of commons
+  return { options: sortedOptions, commonsCount: ros.length };
 };

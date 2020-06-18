@@ -162,7 +162,6 @@
     "mocha-junit-reporter": "^1.17.0",
     "prettier": "1.17.1",
     "prettier-eslint": "^9.0.1",
-    "rails-erb-loader": "^5.5.2",
     "sinon": "^2.1.0",
     "webpack-dev-server": "^3.9.0"
   },
