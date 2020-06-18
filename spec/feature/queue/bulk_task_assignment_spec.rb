@@ -5,7 +5,7 @@ RSpec.feature "Bulk task assignment", :postgres do
   let(:user) { create(:user) }
 
   before do
-    org.add_user(user)
+    OrganizationsUser.make_user_admin(user, org)
     User.authenticate!(user: user)
   end
 
@@ -166,6 +166,21 @@ RSpec.feature "Bulk task assignment", :postgres do
       # Sort the regional offices we expect to see by city name.
       sorted_regional_offices = regional_offices.map { |ro| RegionalOffice::CITIES[ro][:city] }.sort
       expect(regional_office_options).to eq(sorted_regional_offices)
+    end
+  end
+
+  context "when the user is not an admin" do
+    before do
+      user = create(:user)
+      org.add_user(user)
+      User.authenticate!(user: user)
+    end
+
+    it "does not show the bulk assign button" do
+      visit(org.path)
+
+      expect(page).to have_content(org.name)
+      expect(page).to have_no_content(COPY::BULK_ASSIGN_BUTTON_TEXT)
     end
   end
 end
