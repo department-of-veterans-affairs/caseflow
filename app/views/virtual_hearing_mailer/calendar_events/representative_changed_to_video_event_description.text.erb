@@ -1,4 +1,4 @@
-Your Veteran is scheduled for a hearing with a Veterans Law Judge of the Board of Veterans' Appeals. You will arrive at <%= hearing.hearing_location_or_regional_office&.name %> and the Judge will meet with you via video conference.
+Your <%= appellant_or_veteran(@virtual_hearing.hearing.appeal) %> is scheduled for a hearing with a Veterans Law Judge of the Board of Veterans' Appeals. You will arrive at <%= hearing.hearing_location_or_regional_office&.name %> and the Judge will meet with you via video conference.
 
 <%= formatted_appellant_name(hearing.appeal) %>
 View the case details: https://appeals.cf.ds.va.gov/queue/appeals/<%= hearing.appeal.external_id %>
