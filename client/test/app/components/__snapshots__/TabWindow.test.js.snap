@@ -57,7 +57,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
               <button
                 aria-controls="main-tabpanel-0"
                 aria-selected={true}
-                className="cf-tab cf-active"
+                className="cf-tab tab cf-active"
                 data-value={0}
                 disabled={false}
                 id="main-tab-0"
@@ -65,17 +65,13 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
                 role="tab"
                 tabIndex={0}
               >
-                <span>
+                <div>
                   <span>
                     <span>
-                      <span>
-                        <span>
-                          Tab 1
-                        </span>
-                      </span>
+                      Tab 1
                     </span>
                   </span>
-                </span>
+                </div>
               </button>
             </TabItem>
             <TabItem
@@ -86,7 +82,7 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
               <button
                 aria-controls="main-tabpanel-1"
                 aria-selected={false}
-                className="cf-tab"
+                className="cf-tab tab"
                 data-value={1}
                 disabled={true}
                 id="main-tab-1"
@@ -94,17 +90,13 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
                 role="tab"
                 tabIndex={-1}
               >
-                <span>
+                <div>
                   <span>
                     <span>
-                      <span>
-                        <span>
-                          Tab 2
-                        </span>
-                      </span>
+                      Tab 2
                     </span>
                   </span>
-                </span>
+                </div>
               </button>
             </TabItem>
           </div>
@@ -206,7 +198,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
               <button
                 aria-controls="main-tabpanel-0"
                 aria-selected={true}
-                className="cf-tab cf-active"
+                className="cf-tab tab cf-active"
                 data-value={0}
                 disabled={false}
                 id="main-tab-0"
@@ -214,17 +206,13 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
                 role="tab"
                 tabIndex={0}
               >
-                <span>
+                <div>
                   <span>
                     <span>
-                      <span>
-                        <span>
-                          Tab 1
-                        </span>
-                      </span>
+                      Tab 1
                     </span>
                   </span>
-                </span>
+                </div>
               </button>
             </TabItem>
             <TabItem
@@ -235,7 +223,7 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
               <button
                 aria-controls="main-tabpanel-1"
                 aria-selected={false}
-                className="cf-tab"
+                className="cf-tab tab"
                 data-value={1}
                 disabled={false}
                 id="main-tab-1"
@@ -243,17 +231,13 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
                 role="tab"
                 tabIndex={-1}
               >
-                <span>
+                <div>
                   <span>
                     <span>
-                      <span>
-                        <span>
-                          Tab 2
-                        </span>
-                      </span>
+                      Tab 2
                     </span>
                   </span>
-                </span>
+                </div>
               </button>
             </TabItem>
           </div>
@@ -366,7 +350,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
               <button
                 aria-controls="main-tabpanel-0"
                 aria-selected={true}
-                className="cf-tab cf-active"
+                className="cf-tab tab cf-active"
                 data-value={0}
                 disabled={false}
                 id="main-tab-0"
@@ -374,17 +358,13 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
                 role="tab"
                 tabIndex={0}
               >
-                <span>
+                <div>
                   <span>
                     <span>
-                      <span>
-                        <span>
-                          Tab 1
-                        </span>
-                      </span>
+                      Tab 1
                     </span>
                   </span>
-                </span>
+                </div>
               </button>
             </TabItem>
             <TabItem
@@ -395,7 +375,7 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
               <button
                 aria-controls="main-tabpanel-1"
                 aria-selected={false}
-                className="cf-tab"
+                className="cf-tab tab"
                 data-value={1}
                 disabled={false}
                 id="main-tab-1"
@@ -403,17 +383,13 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
                 role="tab"
                 tabIndex={-1}
               >
-                <span>
+                <div>
                   <span>
                     <span>
-                      <span>
-                        <span>
-                          Tab 2
-                        </span>
-                      </span>
+                      Tab 2
                     </span>
                   </span>
-                </span>
+                </div>
               </button>
             </TabItem>
           </div>
@@ -515,7 +491,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
               <button
                 aria-controls="main-tabpanel-0"
                 aria-selected={false}
-                className="cf-tab"
+                className="cf-tab tab"
                 data-value={0}
                 disabled={false}
                 id="main-tab-0"
@@ -523,17 +499,13 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
                 role="tab"
                 tabIndex={-1}
               >
-                <span>
+                <div>
                   <span>
                     <span>
-                      <span>
-                        <span>
-                          Tab 1
-                        </span>
-                      </span>
+                      Tab 1
                     </span>
                   </span>
-                </span>
+                </div>
               </button>
             </TabItem>
             <TabItem
@@ -544,7 +516,7 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
               <button
                 aria-controls="main-tabpanel-1"
                 aria-selected={true}
-                className="cf-tab cf-active"
+                className="cf-tab tab cf-active"
                 data-value={1}
                 disabled={false}
                 id="main-tab-1"
@@ -552,17 +524,13 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
                 role="tab"
                 tabIndex={0}
               >
-                <span>
+                <div>
                   <span>
                     <span>
-                      <span>
-                        <span>
-                          Tab 2
-                        </span>
-                      </span>
+                      Tab 2
                     </span>
                   </span>
-                </span>
+                </div>
               </button>
             </TabItem>
           </div>
