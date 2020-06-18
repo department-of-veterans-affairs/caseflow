@@ -108,9 +108,9 @@ describe BulkTaskAssignment, :postgres do
         let(:legacy_appeal) { create(:legacy_appeal, closest_regional_office: regional_office) }
         let!(:no_show_hearing_task_with_legacy_appeal) do
           create(:no_show_hearing_task,
-                  appeal: legacy_appeal,
-                  assigned_to: organization,
-                  created_at: 2.days.ago)
+                 appeal: legacy_appeal,
+                 assigned_to: organization,
+                 created_at: 2.days.ago)
         end
 
         it "filters by regional office" do
