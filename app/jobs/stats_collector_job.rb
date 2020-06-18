@@ -105,7 +105,7 @@ class StatsCollectorJob < CaseflowJob
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
-    Raven.capture_exception(err, [:stats_collector_name] => collector_name)
+    Raven.capture_exception(err, extra: { stats_collector_name: collector_name })
 
     slack_service.send_notification("[ERROR] #{msg}")
   end
