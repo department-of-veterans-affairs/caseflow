@@ -34,7 +34,7 @@ const noClaimantsCopy = React.createElement(
   COPY.CLAIMANT_NOT_FOUND_END
 );
 
-const RemovableRadioLabel = ({ text, onRemove }) => (
+const RemovableRadioLabel = ({ text, onRemove, notes }) => (
   <>
     <span>{text}</span>{' '}
     {onRemove && (
@@ -42,12 +42,15 @@ const RemovableRadioLabel = ({ text, onRemove }) => (
         <i className="fa fa-trash-o" aria-hidden="true" /> Remove
       </Button>
     )}
+    <br />
+    <span><i>{notes}</i></span>
   </>
 );
 
 RemovableRadioLabel.propTypes = {
   text: PropTypes.string,
-  onRemove: PropTypes.func
+  onRemove: PropTypes.func,
+  notes: PropTypes.string
 };
 
 export const SelectClaimant = (props) => {
@@ -83,13 +86,17 @@ export const SelectClaimant = (props) => {
     setNewClaimant(null);
     setClaimant(null);
   };
-  const handleAddClaimant = ({ name, participantId }) => {
+  const handleAddClaimant = ({ name, participantId, claimantNotes }) => {
     setNewClaimant({
-      displayElem: <RemovableRadioLabel text={`${name}, Attorney`} onRemove={handleRemove} />,
+      displayElem: <RemovableRadioLabel 
+      text={`${name || 'Claimant not listed'}, Attorney`} 
+      onRemove={handleRemove} 
+      notes={claimantNotes} />,
       value: participantId,
-      defaultPayeeCode: ''
+      defaultPayeeCode: '',
+      claimantNotes
     });
-    setClaimant(participantId);
+    setClaimant(participantId, claimantNotes);
     setShowClaimantModal(false);
   };
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);

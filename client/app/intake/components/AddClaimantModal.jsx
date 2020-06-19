@@ -63,7 +63,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Add this claimant',
-      onClick: () => onSubmit({ name: claimant.label, payeeCode: claimant.value }),
+      onClick: () => onSubmit({ name: claimant?.label, participantId: claimant?.value, claimantNotes }),
       disabled: isInvalid
     }
   ];
@@ -75,7 +75,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
       </div>
       <SearchableDropdown
         name="relationship"
-        label="Claimant's relationship to the veteran"
+        label={<b>Claimant's relationship to the veteran</b>}
         onChange={handleChangeRelationship}
         value={relationship}
         options={relationshipOpts}
@@ -83,7 +83,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
       />
       <SearchableDropdown
         name="claimant"
-        label="Claimant's name"
+        label={<b>Claimant's name</b>}
         onChange={handleChangeClaimant}
         value={claimant}
         filterOptions={filterOptions}
@@ -102,7 +102,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
       />
       {notClaimant && (
         <TextareaField
-          label= {<span><strong>Notes</strong> e.g. claimant's name, address, law firm</span>}
+          label= {<span><b>Notes</b> e.g. claimant's name, address, law firm</span>}
           name="notes"
           value={claimantNotes}
           onChange={handleClaimantNotes} />

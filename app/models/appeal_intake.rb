@@ -21,6 +21,7 @@ class AppealIntake < DecisionReviewIntake
       ).tap do |claimant|
         claimant.participant_id = claimant_participant_id
         claimant.payee_code = nil
+        claimant.notes = claimant_notes
         claimant.save!
       end
       update_person!
@@ -50,12 +51,15 @@ class AppealIntake < DecisionReviewIntake
     (request_params[:veteran_is_not_claimant] == true) ? request_params[:claimant] : veteran.participant_id
   end
 
+  def claimant_notes
+    (request_params[:veteran_is_not_claimant] == true) ? request_params[:claimant_notes] : nil
+  end
+
   def review_params
     request_params.permit(
       :receipt_date,
       :docket_type,
       :veteran_is_not_claimant,
-      :legacy_opt_in_approved
-    )
+      :legacy_opt_in_approved)
   end
 end
