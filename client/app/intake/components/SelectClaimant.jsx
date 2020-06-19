@@ -88,10 +88,8 @@ export const SelectClaimant = (props) => {
   };
   const handleAddClaimant = ({ name, participantId, claimantNotes }) => {
     setNewClaimant({
-      displayElem: <RemovableRadioLabel 
-      text={`${name || 'Claimant not listed'}, Attorney`} 
-      onRemove={handleRemove} 
-      notes={claimantNotes} />,
+      displayElem: <RemovableRadioLabel
+        text={`${name || 'Claimant not listed'}, Attorney`} onRemove={handleRemove} notes={claimantNotes} />,
       value: participantId,
       defaultPayeeCode: '',
       claimantNotes

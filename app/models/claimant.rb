@@ -14,11 +14,10 @@ class Claimant < CaseflowRecord
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
 
-  def self.create_without_intake!(participant_id:, payee_code:, notes:)
+  def self.create_without_intake!(participant_id:, payee_code:)
     create!(
       participant_id: participant_id,
-      payee_code: payee_code,
-      notes: notes
+      payee_code: payee_code
     )
     Person.find_or_create_by_participant_id(participant_id)
   end
