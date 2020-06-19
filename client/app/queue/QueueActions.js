@@ -396,17 +396,6 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
-export const bulkAssignTasks =
-  ({ assignedUser, regionalOffice, taskType, numberOfTasks }) => ({
-    type: ACTIONS.BULK_ASSIGN_TASKS,
-    payload: {
-      assignedUser,
-      regionalOffice,
-      taskType,
-      numberOfTasks
-    }
-  });
-
 // isInitial is only used for das deprecation
 const dispatchOldTasks = (dispatch, oldTasks, resp) => {
   // Ama request is batched
