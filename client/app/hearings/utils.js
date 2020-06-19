@@ -245,42 +245,57 @@ export const hearingTimeOptsWithZone = () =>
   }));
 
 /**
+ * Method to return a list of Regional Office Timezones sorted with common timezones at the top
+ * @returns {Array} -- List of Regional Office Timezones
+ */
+export const roTimezones = () =>
+  _.uniq(Object.keys(REGIONAL_OFFICE_INFORMATION).map((ro) => REGIONAL_OFFICE_INFORMATION[ro].timezone)).sort(
+    (_, zone) => (COMMON_TIMEZONES.includes(zone) ? 1 : -1)
+  );
+
+/**
  * Returns the available timeTIMEZONES divided by common and the rest
  * @param {string} time -- String representation of the time to convert
- * @returns {Object} -- { options: [], commons: [] }
+ * @returns {Object} -- { options: Array, commonsCount: number }
  */
 export const timezones = (time) => {
-  // Get the list of Unique Regional Office TimeTIMEZONES
-  const ros = _.uniq(Object.keys(REGIONAL_OFFICE_INFORMATION).map((ro) => REGIONAL_OFFICE_INFORMATION[ro].timezone));
+  // Get the list of Regional Office Timezones
+  const ros = roTimezones();
 
   // Convert the time into a date object
   const dateTime = moment(time, 'HH:mm').tz(COMMON_TIMEZONES[0]);
 
   // Map the available timeTIMEZONES to a select options object
-  const options = Object.keys(TIMEZONES).map((zone) => ({
-    value: TIMEZONES[zone],
-    label: `${zone} (${moment(dateTime, 'HH:mm').
-      tz(TIMEZONES[zone]).
-      format('h:mm A')})`
-  }));
+  const options = Object.keys(TIMEZONES).map((zone, i) => {
+    // Initially set the index to the current index value
+    let index = ros.length + i;
 
-  // Sort the common options by the common timeTIMEZONES
+    // Sort the most common timezones to the top followed by Regional Office timezones
+    if (COMMON_TIMEZONES.includes(TIMEZONES[zone])) {
+      index = -1;
+    } else if (ros.includes(TIMEZONES[zone])) {
+      index = ros.indexOf(TIMEZONES[zone]);
+    }
+
+    // Return the formatted options
+    return {
+      index,
+      value: TIMEZONES[zone],
+      label: `${zone} (${moment(dateTime, 'HH:mm').
+        tz(TIMEZONES[zone]).
+        format('h:mm A')})`
+    };
+  });
+
+  // Sort the options by the common timezone
   const sortedOptions = options.
-    // Sort the Regional Office timeTIMEZONES to the top
-    sort((zone) => {
-      if (ros.includes(zone.value)) {
+    // Sort the Common timezones to the top
+    sort((zoneA, zoneB) => {
+      if (COMMON_TIMEZONES.includes(zoneA.value)) {
         return -1;
       }
 
-      return 1;
-    }).
-    // Sort the most common timeTIMEZONES to the very top
-    sort((zone) => {
-      if (COMMON_TIMEZONES.includes(zone.value)) {
-        return -1;
-      }
-
-      return 1;
+      return zoneA.index - zoneB.index;
     });
 
   // Return the values and the count of commons

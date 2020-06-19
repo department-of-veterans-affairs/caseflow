@@ -54,4 +54,4 @@ export const LOGO_COLORS = {
   }
 };
 
-export const COMMON_TIMEZONES = ['America/New_York', 'America/Chicago', 'America/Los_Angeles', 'America/Denver'];
+export const COMMON_TIMEZONES = ['America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles'];

@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SearchableDropdown from '../../../../components/SearchableDropdown';
-import { timezones } from '../../../utils';
-import { timezoneDropdownStyles, timezoneStyles } from '../style';
+import SearchableDropdown from '../../../components/SearchableDropdown';
+import { timezones } from '../../utils';
+import { timezoneDropdownStyles, timezoneStyles } from '../details/style';
 
-export const Timezone = ({ readOnly, value, errorMessage, onChange, time }) => {
+export const Timezone = ({ name, readOnly, value, errorMessage, onChange, time }) => {
   const { options, commonsCount } = timezones(time);
 
   return (
     <SearchableDropdown
       styling={timezoneStyles(commonsCount)}
       dropdownStyling={timezoneDropdownStyles(commonsCount)}
-      name="Timezone"
+      name={name}
       readOnly={readOnly}
       placeholder="Select a timezone"
       options={options}
@@ -25,6 +25,7 @@ export const Timezone = ({ readOnly, value, errorMessage, onChange, time }) => {
 };
 
 Timezone.defaultProps = {
+  name: 'Timezone',
   value: null,
   readOnly: false
 };
@@ -34,5 +35,6 @@ Timezone.propTypes = {
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
   value: PropTypes.string,
+  name: PropTypes.string,
   time: PropTypes.string
 };

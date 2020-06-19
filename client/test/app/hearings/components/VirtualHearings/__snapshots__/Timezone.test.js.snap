@@ -1,0 +1,2551 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Timezone Can set timezone 1`] = `
+<Timezone
+  name="Timezone"
+  onChange={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "America/Chicago",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  readOnly={false}
+  time="08:15"
+  value={null}
+>
+  <SearchableDropdown
+    dropdownStyling={
+      Object {
+        "height": "384px !important",
+        "maxHeight": "none",
+      }
+    }
+    loading={false}
+    name="Timezone"
+    onChange={[Function]}
+    options={
+      Array [
+        Object {
+          "index": -1,
+          "label": "Eastern Time (US & Canada) (8:15 AM)",
+          "value": "America/New_York",
+        },
+        Object {
+          "index": -1,
+          "label": "Central Time (US & Canada) (7:15 AM)",
+          "value": "America/Chicago",
+        },
+        Object {
+          "index": -1,
+          "label": "Mountain Time (US & Canada) (6:15 AM)",
+          "value": "America/Denver",
+        },
+        Object {
+          "index": -1,
+          "label": "Pacific Time (US & Canada) (5:15 AM)",
+          "value": "America/Los_Angeles",
+        },
+        Object {
+          "index": 5,
+          "label": "Hawaii (2:15 AM)",
+          "value": "Pacific/Honolulu",
+        },
+        Object {
+          "index": 7,
+          "label": "Puerto Rico (8:15 AM)",
+          "value": "America/Puerto_Rico",
+        },
+        Object {
+          "index": 9,
+          "label": "Arizona (5:15 AM)",
+          "value": "America/Phoenix",
+        },
+        Object {
+          "index": 11,
+          "label": "Indiana (East) (8:15 AM)",
+          "value": "America/Indiana/Indianapolis",
+        },
+        Object {
+          "index": 12,
+          "label": "International Date Line West (12:15 AM)",
+          "value": "Etc/GMT+12",
+        },
+        Object {
+          "index": 13,
+          "label": "Midway Island (1:15 AM)",
+          "value": "Pacific/Midway",
+        },
+        Object {
+          "index": 14,
+          "label": "American Samoa (1:15 AM)",
+          "value": "Pacific/Pago_Pago",
+        },
+        Object {
+          "index": 16,
+          "label": "Alaska (4:15 AM)",
+          "value": "America/Juneau",
+        },
+        Object {
+          "index": 18,
+          "label": "Tijuana (5:15 AM)",
+          "value": "America/Tijuana",
+        },
+        Object {
+          "index": 21,
+          "label": "Chihuahua (6:15 AM)",
+          "value": "America/Chihuahua",
+        },
+        Object {
+          "index": 22,
+          "label": "Mazatlan (6:15 AM)",
+          "value": "America/Mazatlan",
+        },
+        Object {
+          "index": 24,
+          "label": "Saskatchewan (6:15 AM)",
+          "value": "America/Regina",
+        },
+        Object {
+          "index": 25,
+          "label": "Guadalajara (7:15 AM)",
+          "value": "America/Mexico_City",
+        },
+        Object {
+          "index": 26,
+          "label": "Mexico City (7:15 AM)",
+          "value": "America/Mexico_City",
+        },
+        Object {
+          "index": 27,
+          "label": "Monterrey (7:15 AM)",
+          "value": "America/Monterrey",
+        },
+        Object {
+          "index": 28,
+          "label": "Central America (6:15 AM)",
+          "value": "America/Guatemala",
+        },
+        Object {
+          "index": 31,
+          "label": "Bogota (7:15 AM)",
+          "value": "America/Bogota",
+        },
+        Object {
+          "index": 32,
+          "label": "Lima (7:15 AM)",
+          "value": "America/Lima",
+        },
+        Object {
+          "index": 33,
+          "label": "Quito (7:15 AM)",
+          "value": "America/Lima",
+        },
+        Object {
+          "index": 34,
+          "label": "Atlantic Time (Canada) (9:15 AM)",
+          "value": "America/Halifax",
+        },
+        Object {
+          "index": 35,
+          "label": "Caracas (8:15 AM)",
+          "value": "America/Caracas",
+        },
+        Object {
+          "index": 36,
+          "label": "La Paz (8:15 AM)",
+          "value": "America/La_Paz",
+        },
+        Object {
+          "index": 37,
+          "label": "Santiago (8:15 AM)",
+          "value": "America/Santiago",
+        },
+        Object {
+          "index": 38,
+          "label": "Newfoundland (9:45 AM)",
+          "value": "America/St_Johns",
+        },
+        Object {
+          "index": 39,
+          "label": "Brasilia (9:15 AM)",
+          "value": "America/Sao_Paulo",
+        },
+        Object {
+          "index": 40,
+          "label": "Buenos Aires (9:15 AM)",
+          "value": "America/Argentina/Buenos_Aires",
+        },
+        Object {
+          "index": 41,
+          "label": "Montevideo (9:15 AM)",
+          "value": "America/Montevideo",
+        },
+        Object {
+          "index": 42,
+          "label": "Georgetown (8:15 AM)",
+          "value": "America/Guyana",
+        },
+        Object {
+          "index": 44,
+          "label": "Greenland (10:15 AM)",
+          "value": "America/Godthab",
+        },
+        Object {
+          "index": 45,
+          "label": "Mid-Atlantic (10:15 AM)",
+          "value": "Atlantic/South_Georgia",
+        },
+        Object {
+          "index": 46,
+          "label": "Azores (12:15 PM)",
+          "value": "Atlantic/Azores",
+        },
+        Object {
+          "index": 47,
+          "label": "Cape Verde Is. (11:15 AM)",
+          "value": "Atlantic/Cape_Verde",
+        },
+        Object {
+          "index": 48,
+          "label": "Dublin (1:15 PM)",
+          "value": "Europe/Dublin",
+        },
+        Object {
+          "index": 49,
+          "label": "Edinburgh (1:15 PM)",
+          "value": "Europe/London",
+        },
+        Object {
+          "index": 50,
+          "label": "Lisbon (1:15 PM)",
+          "value": "Europe/Lisbon",
+        },
+        Object {
+          "index": 51,
+          "label": "London (1:15 PM)",
+          "value": "Europe/London",
+        },
+        Object {
+          "index": 52,
+          "label": "Casablanca (1:15 PM)",
+          "value": "Africa/Casablanca",
+        },
+        Object {
+          "index": 53,
+          "label": "Monrovia (12:15 PM)",
+          "value": "Africa/Monrovia",
+        },
+        Object {
+          "index": 54,
+          "label": "UTC (12:15 PM)",
+          "value": "Etc/UTC",
+        },
+        Object {
+          "index": 55,
+          "label": "Belgrade (2:15 PM)",
+          "value": "Europe/Belgrade",
+        },
+        Object {
+          "index": 56,
+          "label": "Bratislava (2:15 PM)",
+          "value": "Europe/Bratislava",
+        },
+        Object {
+          "index": 57,
+          "label": "Budapest (2:15 PM)",
+          "value": "Europe/Budapest",
+        },
+        Object {
+          "index": 58,
+          "label": "Ljubljana (2:15 PM)",
+          "value": "Europe/Ljubljana",
+        },
+        Object {
+          "index": 59,
+          "label": "Prague (2:15 PM)",
+          "value": "Europe/Prague",
+        },
+        Object {
+          "index": 60,
+          "label": "Sarajevo (2:15 PM)",
+          "value": "Europe/Sarajevo",
+        },
+        Object {
+          "index": 61,
+          "label": "Skopje (2:15 PM)",
+          "value": "Europe/Skopje",
+        },
+        Object {
+          "index": 62,
+          "label": "Warsaw (2:15 PM)",
+          "value": "Europe/Warsaw",
+        },
+        Object {
+          "index": 63,
+          "label": "Zagreb (2:15 PM)",
+          "value": "Europe/Zagreb",
+        },
+        Object {
+          "index": 64,
+          "label": "Brussels (2:15 PM)",
+          "value": "Europe/Brussels",
+        },
+        Object {
+          "index": 65,
+          "label": "Copenhagen (2:15 PM)",
+          "value": "Europe/Copenhagen",
+        },
+        Object {
+          "index": 66,
+          "label": "Madrid (2:15 PM)",
+          "value": "Europe/Madrid",
+        },
+        Object {
+          "index": 67,
+          "label": "Paris (2:15 PM)",
+          "value": "Europe/Paris",
+        },
+        Object {
+          "index": 68,
+          "label": "Amsterdam (2:15 PM)",
+          "value": "Europe/Amsterdam",
+        },
+        Object {
+          "index": 69,
+          "label": "Berlin (2:15 PM)",
+          "value": "Europe/Berlin",
+        },
+        Object {
+          "index": 70,
+          "label": "Bern (2:15 PM)",
+          "value": "Europe/Zurich",
+        },
+        Object {
+          "index": 71,
+          "label": "Zurich (2:15 PM)",
+          "value": "Europe/Zurich",
+        },
+        Object {
+          "index": 72,
+          "label": "Rome (2:15 PM)",
+          "value": "Europe/Rome",
+        },
+        Object {
+          "index": 73,
+          "label": "Stockholm (2:15 PM)",
+          "value": "Europe/Stockholm",
+        },
+        Object {
+          "index": 74,
+          "label": "Vienna (2:15 PM)",
+          "value": "Europe/Vienna",
+        },
+        Object {
+          "index": 75,
+          "label": "West Central Africa (1:15 PM)",
+          "value": "Africa/Algiers",
+        },
+        Object {
+          "index": 76,
+          "label": "Bucharest (3:15 PM)",
+          "value": "Europe/Bucharest",
+        },
+        Object {
+          "index": 77,
+          "label": "Cairo (2:15 PM)",
+          "value": "Africa/Cairo",
+        },
+        Object {
+          "index": 78,
+          "label": "Helsinki (3:15 PM)",
+          "value": "Europe/Helsinki",
+        },
+        Object {
+          "index": 79,
+          "label": "Kyiv (3:15 PM)",
+          "value": "Europe/Kiev",
+        },
+        Object {
+          "index": 80,
+          "label": "Riga (3:15 PM)",
+          "value": "Europe/Riga",
+        },
+        Object {
+          "index": 81,
+          "label": "Sofia (3:15 PM)",
+          "value": "Europe/Sofia",
+        },
+        Object {
+          "index": 82,
+          "label": "Tallinn (3:15 PM)",
+          "value": "Europe/Tallinn",
+        },
+        Object {
+          "index": 83,
+          "label": "Vilnius (3:15 PM)",
+          "value": "Europe/Vilnius",
+        },
+        Object {
+          "index": 84,
+          "label": "Athens (3:15 PM)",
+          "value": "Europe/Athens",
+        },
+        Object {
+          "index": 85,
+          "label": "Istanbul (3:15 PM)",
+          "value": "Europe/Istanbul",
+        },
+        Object {
+          "index": 86,
+          "label": "Minsk (3:15 PM)",
+          "value": "Europe/Minsk",
+        },
+        Object {
+          "index": 87,
+          "label": "Jerusalem (3:15 PM)",
+          "value": "Asia/Jerusalem",
+        },
+        Object {
+          "index": 88,
+          "label": "Harare (2:15 PM)",
+          "value": "Africa/Harare",
+        },
+        Object {
+          "index": 89,
+          "label": "Pretoria (2:15 PM)",
+          "value": "Africa/Johannesburg",
+        },
+        Object {
+          "index": 90,
+          "label": "Kaliningrad (2:15 PM)",
+          "value": "Europe/Kaliningrad",
+        },
+        Object {
+          "index": 91,
+          "label": "Moscow (3:15 PM)",
+          "value": "Europe/Moscow",
+        },
+        Object {
+          "index": 92,
+          "label": "St. Petersburg (3:15 PM)",
+          "value": "Europe/Moscow",
+        },
+        Object {
+          "index": 93,
+          "label": "Volgograd (4:15 PM)",
+          "value": "Europe/Volgograd",
+        },
+        Object {
+          "index": 94,
+          "label": "Samara (4:15 PM)",
+          "value": "Europe/Samara",
+        },
+        Object {
+          "index": 95,
+          "label": "Kuwait (3:15 PM)",
+          "value": "Asia/Kuwait",
+        },
+        Object {
+          "index": 96,
+          "label": "Riyadh (3:15 PM)",
+          "value": "Asia/Riyadh",
+        },
+        Object {
+          "index": 97,
+          "label": "Nairobi (3:15 PM)",
+          "value": "Africa/Nairobi",
+        },
+        Object {
+          "index": 98,
+          "label": "Baghdad (3:15 PM)",
+          "value": "Asia/Baghdad",
+        },
+        Object {
+          "index": 99,
+          "label": "Tehran (4:45 PM)",
+          "value": "Asia/Tehran",
+        },
+        Object {
+          "index": 100,
+          "label": "Abu Dhabi (4:15 PM)",
+          "value": "Asia/Muscat",
+        },
+        Object {
+          "index": 101,
+          "label": "Muscat (4:15 PM)",
+          "value": "Asia/Muscat",
+        },
+        Object {
+          "index": 102,
+          "label": "Baku (4:15 PM)",
+          "value": "Asia/Baku",
+        },
+        Object {
+          "index": 103,
+          "label": "Tbilisi (4:15 PM)",
+          "value": "Asia/Tbilisi",
+        },
+        Object {
+          "index": 104,
+          "label": "Yerevan (4:15 PM)",
+          "value": "Asia/Yerevan",
+        },
+        Object {
+          "index": 105,
+          "label": "Kabul (4:45 PM)",
+          "value": "Asia/Kabul",
+        },
+        Object {
+          "index": 106,
+          "label": "Ekaterinburg (5:15 PM)",
+          "value": "Asia/Yekaterinburg",
+        },
+        Object {
+          "index": 107,
+          "label": "Islamabad (5:15 PM)",
+          "value": "Asia/Karachi",
+        },
+        Object {
+          "index": 108,
+          "label": "Karachi (5:15 PM)",
+          "value": "Asia/Karachi",
+        },
+        Object {
+          "index": 109,
+          "label": "Tashkent (5:15 PM)",
+          "value": "Asia/Tashkent",
+        },
+        Object {
+          "index": 110,
+          "label": "Chennai (5:45 PM)",
+          "value": "Asia/Kolkata",
+        },
+        Object {
+          "index": 111,
+          "label": "Kolkata (5:45 PM)",
+          "value": "Asia/Kolkata",
+        },
+        Object {
+          "index": 112,
+          "label": "Mumbai (5:45 PM)",
+          "value": "Asia/Kolkata",
+        },
+        Object {
+          "index": 113,
+          "label": "New Delhi (5:45 PM)",
+          "value": "Asia/Kolkata",
+        },
+        Object {
+          "index": 114,
+          "label": "Kathmandu (6:00 PM)",
+          "value": "Asia/Kathmandu",
+        },
+        Object {
+          "index": 115,
+          "label": "Astana (6:15 PM)",
+          "value": "Asia/Dhaka",
+        },
+        Object {
+          "index": 116,
+          "label": "Dhaka (6:15 PM)",
+          "value": "Asia/Dhaka",
+        },
+        Object {
+          "index": 117,
+          "label": "Sri Jayawardenepura (5:45 PM)",
+          "value": "Asia/Colombo",
+        },
+        Object {
+          "index": 118,
+          "label": "Almaty (6:15 PM)",
+          "value": "Asia/Almaty",
+        },
+        Object {
+          "index": 119,
+          "label": "Novosibirsk (7:15 PM)",
+          "value": "Asia/Novosibirsk",
+        },
+        Object {
+          "index": 120,
+          "label": "Rangoon (6:45 PM)",
+          "value": "Asia/Rangoon",
+        },
+        Object {
+          "index": 121,
+          "label": "Bangkok (7:15 PM)",
+          "value": "Asia/Bangkok",
+        },
+        Object {
+          "index": 122,
+          "label": "Hanoi (7:15 PM)",
+          "value": "Asia/Bangkok",
+        },
+        Object {
+          "index": 123,
+          "label": "Jakarta (7:15 PM)",
+          "value": "Asia/Jakarta",
+        },
+        Object {
+          "index": 124,
+          "label": "Krasnoyarsk (7:15 PM)",
+          "value": "Asia/Krasnoyarsk",
+        },
+        Object {
+          "index": 125,
+          "label": "Beijing (8:15 PM)",
+          "value": "Asia/Shanghai",
+        },
+        Object {
+          "index": 126,
+          "label": "Chongqing (8:15 PM)",
+          "value": "Asia/Chongqing",
+        },
+        Object {
+          "index": 127,
+          "label": "Hong Kong (8:15 PM)",
+          "value": "Asia/Hong_Kong",
+        },
+        Object {
+          "index": 128,
+          "label": "Urumqi (6:15 PM)",
+          "value": "Asia/Urumqi",
+        },
+        Object {
+          "index": 129,
+          "label": "Kuala Lumpur (8:15 PM)",
+          "value": "Asia/Kuala_Lumpur",
+        },
+        Object {
+          "index": 130,
+          "label": "Singapore (8:15 PM)",
+          "value": "Asia/Singapore",
+        },
+        Object {
+          "index": 131,
+          "label": "Taipei (8:15 PM)",
+          "value": "Asia/Taipei",
+        },
+        Object {
+          "index": 132,
+          "label": "Perth (8:15 PM)",
+          "value": "Australia/Perth",
+        },
+        Object {
+          "index": 133,
+          "label": "Irkutsk (8:15 PM)",
+          "value": "Asia/Irkutsk",
+        },
+        Object {
+          "index": 134,
+          "label": "Ulaanbaatar (8:15 PM)",
+          "value": "Asia/Ulaanbaatar",
+        },
+        Object {
+          "index": 135,
+          "label": "Seoul (9:15 PM)",
+          "value": "Asia/Seoul",
+        },
+        Object {
+          "index": 136,
+          "label": "Osaka (9:15 PM)",
+          "value": "Asia/Tokyo",
+        },
+        Object {
+          "index": 137,
+          "label": "Sapporo (9:15 PM)",
+          "value": "Asia/Tokyo",
+        },
+        Object {
+          "index": 138,
+          "label": "Tokyo (9:15 PM)",
+          "value": "Asia/Tokyo",
+        },
+        Object {
+          "index": 139,
+          "label": "Yakutsk (9:15 PM)",
+          "value": "Asia/Yakutsk",
+        },
+        Object {
+          "index": 140,
+          "label": "Darwin (9:45 PM)",
+          "value": "Australia/Darwin",
+        },
+        Object {
+          "index": 141,
+          "label": "Adelaide (9:45 PM)",
+          "value": "Australia/Adelaide",
+        },
+        Object {
+          "index": 142,
+          "label": "Canberra (10:15 PM)",
+          "value": "Australia/Melbourne",
+        },
+        Object {
+          "index": 143,
+          "label": "Melbourne (10:15 PM)",
+          "value": "Australia/Melbourne",
+        },
+        Object {
+          "index": 144,
+          "label": "Sydney (10:15 PM)",
+          "value": "Australia/Sydney",
+        },
+        Object {
+          "index": 145,
+          "label": "Brisbane (10:15 PM)",
+          "value": "Australia/Brisbane",
+        },
+        Object {
+          "index": 146,
+          "label": "Hobart (10:15 PM)",
+          "value": "Australia/Hobart",
+        },
+        Object {
+          "index": 147,
+          "label": "Vladivostok (10:15 PM)",
+          "value": "Asia/Vladivostok",
+        },
+        Object {
+          "index": 148,
+          "label": "Guam (10:15 PM)",
+          "value": "Pacific/Guam",
+        },
+        Object {
+          "index": 149,
+          "label": "Port Moresby (10:15 PM)",
+          "value": "Pacific/Port_Moresby",
+        },
+        Object {
+          "index": 150,
+          "label": "Magadan (11:15 PM)",
+          "value": "Asia/Magadan",
+        },
+        Object {
+          "index": 151,
+          "label": "Srednekolymsk (11:15 PM)",
+          "value": "Asia/Srednekolymsk",
+        },
+        Object {
+          "index": 152,
+          "label": "Solomon Is. (11:15 PM)",
+          "value": "Pacific/Guadalcanal",
+        },
+        Object {
+          "index": 153,
+          "label": "New Caledonia (11:15 PM)",
+          "value": "Pacific/Noumea",
+        },
+        Object {
+          "index": 154,
+          "label": "Fiji (12:15 AM)",
+          "value": "Pacific/Fiji",
+        },
+        Object {
+          "index": 155,
+          "label": "Kamchatka (12:15 AM)",
+          "value": "Asia/Kamchatka",
+        },
+        Object {
+          "index": 156,
+          "label": "Marshall Is. (12:15 AM)",
+          "value": "Pacific/Majuro",
+        },
+        Object {
+          "index": 157,
+          "label": "Auckland (12:15 AM)",
+          "value": "Pacific/Auckland",
+        },
+        Object {
+          "index": 158,
+          "label": "Wellington (12:15 AM)",
+          "value": "Pacific/Auckland",
+        },
+        Object {
+          "index": 159,
+          "label": "Nuku'alofa (1:15 AM)",
+          "value": "Pacific/Tongatapu",
+        },
+        Object {
+          "index": 160,
+          "label": "Tokelau Is. (1:15 AM)",
+          "value": "Pacific/Fakaofo",
+        },
+        Object {
+          "index": 161,
+          "label": "Chatham Is. (1:00 AM)",
+          "value": "Pacific/Chatham",
+        },
+        Object {
+          "index": 162,
+          "label": "Samoa (1:15 AM)",
+          "value": "Pacific/Apia",
+        },
+      ]
+    }
+    placeholder="Select a timezone"
+    readOnly={false}
+    strongLabel={true}
+    styling={
+      Object {
+        "& .Select-menu": Object {
+          "& > :nth-child(12)": Object {
+            "borderBottom": "1px solid grey",
+          },
+          "maxHeight": "none",
+        },
+      }
+    }
+    value={null}
+  >
+    <div
+      className="cf-form-dropdown dropdown-Timezone"
+      data-css-1pmrr6a=""
+    >
+      <label
+        className="question-label"
+        htmlFor="Timezone"
+      >
+        <strong>
+          <span>
+            Timezone
+          </span>
+        </strong>
+      </label>
+      <div
+        className=""
+      >
+        <Select
+          addLabelText="Add \\"{label}\\"?"
+          arrowRenderer={[Function]}
+          autosize={true}
+          backspaceRemoves={true}
+          backspaceToRemoveMessage="Press backspace to remove {label}"
+          cache={false}
+          clearAllText="Clear all"
+          clearRenderer={[Function]}
+          clearValueText="Clear value"
+          clearable={false}
+          deleteRemoves={true}
+          delimiter=","
+          disabled={false}
+          escapeClearsValue={true}
+          filterOptions={[Function]}
+          ignoreAccents={true}
+          ignoreCase={true}
+          inputProps={
+            Object {
+              "autoComplete": "off",
+              "id": "Timezone",
+            }
+          }
+          isLoading={false}
+          joinValues={false}
+          labelKey="label"
+          matchPos="any"
+          matchProp="any"
+          menuBuffer={0}
+          menuRenderer={[Function]}
+          multi={false}
+          noResultsText="Not an option"
+          onBlurResetsInput={false}
+          onChange={[Function]}
+          onCloseResetsInput={true}
+          optionComponent={[Function]}
+          options={
+            Array [
+              Object {
+                "index": -1,
+                "label": "Eastern Time (US & Canada) (8:15 AM)",
+                "value": "America/New_York",
+              },
+              Object {
+                "index": -1,
+                "label": "Central Time (US & Canada) (7:15 AM)",
+                "value": "America/Chicago",
+              },
+              Object {
+                "index": -1,
+                "label": "Mountain Time (US & Canada) (6:15 AM)",
+                "value": "America/Denver",
+              },
+              Object {
+                "index": -1,
+                "label": "Pacific Time (US & Canada) (5:15 AM)",
+                "value": "America/Los_Angeles",
+              },
+              Object {
+                "index": 5,
+                "label": "Hawaii (2:15 AM)",
+                "value": "Pacific/Honolulu",
+              },
+              Object {
+                "index": 7,
+                "label": "Puerto Rico (8:15 AM)",
+                "value": "America/Puerto_Rico",
+              },
+              Object {
+                "index": 9,
+                "label": "Arizona (5:15 AM)",
+                "value": "America/Phoenix",
+              },
+              Object {
+                "index": 11,
+                "label": "Indiana (East) (8:15 AM)",
+                "value": "America/Indiana/Indianapolis",
+              },
+              Object {
+                "index": 12,
+                "label": "International Date Line West (12:15 AM)",
+                "value": "Etc/GMT+12",
+              },
+              Object {
+                "index": 13,
+                "label": "Midway Island (1:15 AM)",
+                "value": "Pacific/Midway",
+              },
+              Object {
+                "index": 14,
+                "label": "American Samoa (1:15 AM)",
+                "value": "Pacific/Pago_Pago",
+              },
+              Object {
+                "index": 16,
+                "label": "Alaska (4:15 AM)",
+                "value": "America/Juneau",
+              },
+              Object {
+                "index": 18,
+                "label": "Tijuana (5:15 AM)",
+                "value": "America/Tijuana",
+              },
+              Object {
+                "index": 21,
+                "label": "Chihuahua (6:15 AM)",
+                "value": "America/Chihuahua",
+              },
+              Object {
+                "index": 22,
+                "label": "Mazatlan (6:15 AM)",
+                "value": "America/Mazatlan",
+              },
+              Object {
+                "index": 24,
+                "label": "Saskatchewan (6:15 AM)",
+                "value": "America/Regina",
+              },
+              Object {
+                "index": 25,
+                "label": "Guadalajara (7:15 AM)",
+                "value": "America/Mexico_City",
+              },
+              Object {
+                "index": 26,
+                "label": "Mexico City (7:15 AM)",
+                "value": "America/Mexico_City",
+              },
+              Object {
+                "index": 27,
+                "label": "Monterrey (7:15 AM)",
+                "value": "America/Monterrey",
+              },
+              Object {
+                "index": 28,
+                "label": "Central America (6:15 AM)",
+                "value": "America/Guatemala",
+              },
+              Object {
+                "index": 31,
+                "label": "Bogota (7:15 AM)",
+                "value": "America/Bogota",
+              },
+              Object {
+                "index": 32,
+                "label": "Lima (7:15 AM)",
+                "value": "America/Lima",
+              },
+              Object {
+                "index": 33,
+                "label": "Quito (7:15 AM)",
+                "value": "America/Lima",
+              },
+              Object {
+                "index": 34,
+                "label": "Atlantic Time (Canada) (9:15 AM)",
+                "value": "America/Halifax",
+              },
+              Object {
+                "index": 35,
+                "label": "Caracas (8:15 AM)",
+                "value": "America/Caracas",
+              },
+              Object {
+                "index": 36,
+                "label": "La Paz (8:15 AM)",
+                "value": "America/La_Paz",
+              },
+              Object {
+                "index": 37,
+                "label": "Santiago (8:15 AM)",
+                "value": "America/Santiago",
+              },
+              Object {
+                "index": 38,
+                "label": "Newfoundland (9:45 AM)",
+                "value": "America/St_Johns",
+              },
+              Object {
+                "index": 39,
+                "label": "Brasilia (9:15 AM)",
+                "value": "America/Sao_Paulo",
+              },
+              Object {
+                "index": 40,
+                "label": "Buenos Aires (9:15 AM)",
+                "value": "America/Argentina/Buenos_Aires",
+              },
+              Object {
+                "index": 41,
+                "label": "Montevideo (9:15 AM)",
+                "value": "America/Montevideo",
+              },
+              Object {
+                "index": 42,
+                "label": "Georgetown (8:15 AM)",
+                "value": "America/Guyana",
+              },
+              Object {
+                "index": 44,
+                "label": "Greenland (10:15 AM)",
+                "value": "America/Godthab",
+              },
+              Object {
+                "index": 45,
+                "label": "Mid-Atlantic (10:15 AM)",
+                "value": "Atlantic/South_Georgia",
+              },
+              Object {
+                "index": 46,
+                "label": "Azores (12:15 PM)",
+                "value": "Atlantic/Azores",
+              },
+              Object {
+                "index": 47,
+                "label": "Cape Verde Is. (11:15 AM)",
+                "value": "Atlantic/Cape_Verde",
+              },
+              Object {
+                "index": 48,
+                "label": "Dublin (1:15 PM)",
+                "value": "Europe/Dublin",
+              },
+              Object {
+                "index": 49,
+                "label": "Edinburgh (1:15 PM)",
+                "value": "Europe/London",
+              },
+              Object {
+                "index": 50,
+                "label": "Lisbon (1:15 PM)",
+                "value": "Europe/Lisbon",
+              },
+              Object {
+                "index": 51,
+                "label": "London (1:15 PM)",
+                "value": "Europe/London",
+              },
+              Object {
+                "index": 52,
+                "label": "Casablanca (1:15 PM)",
+                "value": "Africa/Casablanca",
+              },
+              Object {
+                "index": 53,
+                "label": "Monrovia (12:15 PM)",
+                "value": "Africa/Monrovia",
+              },
+              Object {
+                "index": 54,
+                "label": "UTC (12:15 PM)",
+                "value": "Etc/UTC",
+              },
+              Object {
+                "index": 55,
+                "label": "Belgrade (2:15 PM)",
+                "value": "Europe/Belgrade",
+              },
+              Object {
+                "index": 56,
+                "label": "Bratislava (2:15 PM)",
+                "value": "Europe/Bratislava",
+              },
+              Object {
+                "index": 57,
+                "label": "Budapest (2:15 PM)",
+                "value": "Europe/Budapest",
+              },
+              Object {
+                "index": 58,
+                "label": "Ljubljana (2:15 PM)",
+                "value": "Europe/Ljubljana",
+              },
+              Object {
+                "index": 59,
+                "label": "Prague (2:15 PM)",
+                "value": "Europe/Prague",
+              },
+              Object {
+                "index": 60,
+                "label": "Sarajevo (2:15 PM)",
+                "value": "Europe/Sarajevo",
+              },
+              Object {
+                "index": 61,
+                "label": "Skopje (2:15 PM)",
+                "value": "Europe/Skopje",
+              },
+              Object {
+                "index": 62,
+                "label": "Warsaw (2:15 PM)",
+                "value": "Europe/Warsaw",
+              },
+              Object {
+                "index": 63,
+                "label": "Zagreb (2:15 PM)",
+                "value": "Europe/Zagreb",
+              },
+              Object {
+                "index": 64,
+                "label": "Brussels (2:15 PM)",
+                "value": "Europe/Brussels",
+              },
+              Object {
+                "index": 65,
+                "label": "Copenhagen (2:15 PM)",
+                "value": "Europe/Copenhagen",
+              },
+              Object {
+                "index": 66,
+                "label": "Madrid (2:15 PM)",
+                "value": "Europe/Madrid",
+              },
+              Object {
+                "index": 67,
+                "label": "Paris (2:15 PM)",
+                "value": "Europe/Paris",
+              },
+              Object {
+                "index": 68,
+                "label": "Amsterdam (2:15 PM)",
+                "value": "Europe/Amsterdam",
+              },
+              Object {
+                "index": 69,
+                "label": "Berlin (2:15 PM)",
+                "value": "Europe/Berlin",
+              },
+              Object {
+                "index": 70,
+                "label": "Bern (2:15 PM)",
+                "value": "Europe/Zurich",
+              },
+              Object {
+                "index": 71,
+                "label": "Zurich (2:15 PM)",
+                "value": "Europe/Zurich",
+              },
+              Object {
+                "index": 72,
+                "label": "Rome (2:15 PM)",
+                "value": "Europe/Rome",
+              },
+              Object {
+                "index": 73,
+                "label": "Stockholm (2:15 PM)",
+                "value": "Europe/Stockholm",
+              },
+              Object {
+                "index": 74,
+                "label": "Vienna (2:15 PM)",
+                "value": "Europe/Vienna",
+              },
+              Object {
+                "index": 75,
+                "label": "West Central Africa (1:15 PM)",
+                "value": "Africa/Algiers",
+              },
+              Object {
+                "index": 76,
+                "label": "Bucharest (3:15 PM)",
+                "value": "Europe/Bucharest",
+              },
+              Object {
+                "index": 77,
+                "label": "Cairo (2:15 PM)",
+                "value": "Africa/Cairo",
+              },
+              Object {
+                "index": 78,
+                "label": "Helsinki (3:15 PM)",
+                "value": "Europe/Helsinki",
+              },
+              Object {
+                "index": 79,
+                "label": "Kyiv (3:15 PM)",
+                "value": "Europe/Kiev",
+              },
+              Object {
+                "index": 80,
+                "label": "Riga (3:15 PM)",
+                "value": "Europe/Riga",
+              },
+              Object {
+                "index": 81,
+                "label": "Sofia (3:15 PM)",
+                "value": "Europe/Sofia",
+              },
+              Object {
+                "index": 82,
+                "label": "Tallinn (3:15 PM)",
+                "value": "Europe/Tallinn",
+              },
+              Object {
+                "index": 83,
+                "label": "Vilnius (3:15 PM)",
+                "value": "Europe/Vilnius",
+              },
+              Object {
+                "index": 84,
+                "label": "Athens (3:15 PM)",
+                "value": "Europe/Athens",
+              },
+              Object {
+                "index": 85,
+                "label": "Istanbul (3:15 PM)",
+                "value": "Europe/Istanbul",
+              },
+              Object {
+                "index": 86,
+                "label": "Minsk (3:15 PM)",
+                "value": "Europe/Minsk",
+              },
+              Object {
+                "index": 87,
+                "label": "Jerusalem (3:15 PM)",
+                "value": "Asia/Jerusalem",
+              },
+              Object {
+                "index": 88,
+                "label": "Harare (2:15 PM)",
+                "value": "Africa/Harare",
+              },
+              Object {
+                "index": 89,
+                "label": "Pretoria (2:15 PM)",
+                "value": "Africa/Johannesburg",
+              },
+              Object {
+                "index": 90,
+                "label": "Kaliningrad (2:15 PM)",
+                "value": "Europe/Kaliningrad",
+              },
+              Object {
+                "index": 91,
+                "label": "Moscow (3:15 PM)",
+                "value": "Europe/Moscow",
+              },
+              Object {
+                "index": 92,
+                "label": "St. Petersburg (3:15 PM)",
+                "value": "Europe/Moscow",
+              },
+              Object {
+                "index": 93,
+                "label": "Volgograd (4:15 PM)",
+                "value": "Europe/Volgograd",
+              },
+              Object {
+                "index": 94,
+                "label": "Samara (4:15 PM)",
+                "value": "Europe/Samara",
+              },
+              Object {
+                "index": 95,
+                "label": "Kuwait (3:15 PM)",
+                "value": "Asia/Kuwait",
+              },
+              Object {
+                "index": 96,
+                "label": "Riyadh (3:15 PM)",
+                "value": "Asia/Riyadh",
+              },
+              Object {
+                "index": 97,
+                "label": "Nairobi (3:15 PM)",
+                "value": "Africa/Nairobi",
+              },
+              Object {
+                "index": 98,
+                "label": "Baghdad (3:15 PM)",
+                "value": "Asia/Baghdad",
+              },
+              Object {
+                "index": 99,
+                "label": "Tehran (4:45 PM)",
+                "value": "Asia/Tehran",
+              },
+              Object {
+                "index": 100,
+                "label": "Abu Dhabi (4:15 PM)",
+                "value": "Asia/Muscat",
+              },
+              Object {
+                "index": 101,
+                "label": "Muscat (4:15 PM)",
+                "value": "Asia/Muscat",
+              },
+              Object {
+                "index": 102,
+                "label": "Baku (4:15 PM)",
+                "value": "Asia/Baku",
+              },
+              Object {
+                "index": 103,
+                "label": "Tbilisi (4:15 PM)",
+                "value": "Asia/Tbilisi",
+              },
+              Object {
+                "index": 104,
+                "label": "Yerevan (4:15 PM)",
+                "value": "Asia/Yerevan",
+              },
+              Object {
+                "index": 105,
+                "label": "Kabul (4:45 PM)",
+                "value": "Asia/Kabul",
+              },
+              Object {
+                "index": 106,
+                "label": "Ekaterinburg (5:15 PM)",
+                "value": "Asia/Yekaterinburg",
+              },
+              Object {
+                "index": 107,
+                "label": "Islamabad (5:15 PM)",
+                "value": "Asia/Karachi",
+              },
+              Object {
+                "index": 108,
+                "label": "Karachi (5:15 PM)",
+                "value": "Asia/Karachi",
+              },
+              Object {
+                "index": 109,
+                "label": "Tashkent (5:15 PM)",
+                "value": "Asia/Tashkent",
+              },
+              Object {
+                "index": 110,
+                "label": "Chennai (5:45 PM)",
+                "value": "Asia/Kolkata",
+              },
+              Object {
+                "index": 111,
+                "label": "Kolkata (5:45 PM)",
+                "value": "Asia/Kolkata",
+              },
+              Object {
+                "index": 112,
+                "label": "Mumbai (5:45 PM)",
+                "value": "Asia/Kolkata",
+              },
+              Object {
+                "index": 113,
+                "label": "New Delhi (5:45 PM)",
+                "value": "Asia/Kolkata",
+              },
+              Object {
+                "index": 114,
+                "label": "Kathmandu (6:00 PM)",
+                "value": "Asia/Kathmandu",
+              },
+              Object {
+                "index": 115,
+                "label": "Astana (6:15 PM)",
+                "value": "Asia/Dhaka",
+              },
+              Object {
+                "index": 116,
+                "label": "Dhaka (6:15 PM)",
+                "value": "Asia/Dhaka",
+              },
+              Object {
+                "index": 117,
+                "label": "Sri Jayawardenepura (5:45 PM)",
+                "value": "Asia/Colombo",
+              },
+              Object {
+                "index": 118,
+                "label": "Almaty (6:15 PM)",
+                "value": "Asia/Almaty",
+              },
+              Object {
+                "index": 119,
+                "label": "Novosibirsk (7:15 PM)",
+                "value": "Asia/Novosibirsk",
+              },
+              Object {
+                "index": 120,
+                "label": "Rangoon (6:45 PM)",
+                "value": "Asia/Rangoon",
+              },
+              Object {
+                "index": 121,
+                "label": "Bangkok (7:15 PM)",
+                "value": "Asia/Bangkok",
+              },
+              Object {
+                "index": 122,
+                "label": "Hanoi (7:15 PM)",
+                "value": "Asia/Bangkok",
+              },
+              Object {
+                "index": 123,
+                "label": "Jakarta (7:15 PM)",
+                "value": "Asia/Jakarta",
+              },
+              Object {
+                "index": 124,
+                "label": "Krasnoyarsk (7:15 PM)",
+                "value": "Asia/Krasnoyarsk",
+              },
+              Object {
+                "index": 125,
+                "label": "Beijing (8:15 PM)",
+                "value": "Asia/Shanghai",
+              },
+              Object {
+                "index": 126,
+                "label": "Chongqing (8:15 PM)",
+                "value": "Asia/Chongqing",
+              },
+              Object {
+                "index": 127,
+                "label": "Hong Kong (8:15 PM)",
+                "value": "Asia/Hong_Kong",
+              },
+              Object {
+                "index": 128,
+                "label": "Urumqi (6:15 PM)",
+                "value": "Asia/Urumqi",
+              },
+              Object {
+                "index": 129,
+                "label": "Kuala Lumpur (8:15 PM)",
+                "value": "Asia/Kuala_Lumpur",
+              },
+              Object {
+                "index": 130,
+                "label": "Singapore (8:15 PM)",
+                "value": "Asia/Singapore",
+              },
+              Object {
+                "index": 131,
+                "label": "Taipei (8:15 PM)",
+                "value": "Asia/Taipei",
+              },
+              Object {
+                "index": 132,
+                "label": "Perth (8:15 PM)",
+                "value": "Australia/Perth",
+              },
+              Object {
+                "index": 133,
+                "label": "Irkutsk (8:15 PM)",
+                "value": "Asia/Irkutsk",
+              },
+              Object {
+                "index": 134,
+                "label": "Ulaanbaatar (8:15 PM)",
+                "value": "Asia/Ulaanbaatar",
+              },
+              Object {
+                "index": 135,
+                "label": "Seoul (9:15 PM)",
+                "value": "Asia/Seoul",
+              },
+              Object {
+                "index": 136,
+                "label": "Osaka (9:15 PM)",
+                "value": "Asia/Tokyo",
+              },
+              Object {
+                "index": 137,
+                "label": "Sapporo (9:15 PM)",
+                "value": "Asia/Tokyo",
+              },
+              Object {
+                "index": 138,
+                "label": "Tokyo (9:15 PM)",
+                "value": "Asia/Tokyo",
+              },
+              Object {
+                "index": 139,
+                "label": "Yakutsk (9:15 PM)",
+                "value": "Asia/Yakutsk",
+              },
+              Object {
+                "index": 140,
+                "label": "Darwin (9:45 PM)",
+                "value": "Australia/Darwin",
+              },
+              Object {
+                "index": 141,
+                "label": "Adelaide (9:45 PM)",
+                "value": "Australia/Adelaide",
+              },
+              Object {
+                "index": 142,
+                "label": "Canberra (10:15 PM)",
+                "value": "Australia/Melbourne",
+              },
+              Object {
+                "index": 143,
+                "label": "Melbourne (10:15 PM)",
+                "value": "Australia/Melbourne",
+              },
+              Object {
+                "index": 144,
+                "label": "Sydney (10:15 PM)",
+                "value": "Australia/Sydney",
+              },
+              Object {
+                "index": 145,
+                "label": "Brisbane (10:15 PM)",
+                "value": "Australia/Brisbane",
+              },
+              Object {
+                "index": 146,
+                "label": "Hobart (10:15 PM)",
+                "value": "Australia/Hobart",
+              },
+              Object {
+                "index": 147,
+                "label": "Vladivostok (10:15 PM)",
+                "value": "Asia/Vladivostok",
+              },
+              Object {
+                "index": 148,
+                "label": "Guam (10:15 PM)",
+                "value": "Pacific/Guam",
+              },
+              Object {
+                "index": 149,
+                "label": "Port Moresby (10:15 PM)",
+                "value": "Pacific/Port_Moresby",
+              },
+              Object {
+                "index": 150,
+                "label": "Magadan (11:15 PM)",
+                "value": "Asia/Magadan",
+              },
+              Object {
+                "index": 151,
+                "label": "Srednekolymsk (11:15 PM)",
+                "value": "Asia/Srednekolymsk",
+              },
+              Object {
+                "index": 152,
+                "label": "Solomon Is. (11:15 PM)",
+                "value": "Pacific/Guadalcanal",
+              },
+              Object {
+                "index": 153,
+                "label": "New Caledonia (11:15 PM)",
+                "value": "Pacific/Noumea",
+              },
+              Object {
+                "index": 154,
+                "label": "Fiji (12:15 AM)",
+                "value": "Pacific/Fiji",
+              },
+              Object {
+                "index": 155,
+                "label": "Kamchatka (12:15 AM)",
+                "value": "Asia/Kamchatka",
+              },
+              Object {
+                "index": 156,
+                "label": "Marshall Is. (12:15 AM)",
+                "value": "Pacific/Majuro",
+              },
+              Object {
+                "index": 157,
+                "label": "Auckland (12:15 AM)",
+                "value": "Pacific/Auckland",
+              },
+              Object {
+                "index": 158,
+                "label": "Wellington (12:15 AM)",
+                "value": "Pacific/Auckland",
+              },
+              Object {
+                "index": 159,
+                "label": "Nuku'alofa (1:15 AM)",
+                "value": "Pacific/Tongatapu",
+              },
+              Object {
+                "index": 160,
+                "label": "Tokelau Is. (1:15 AM)",
+                "value": "Pacific/Fakaofo",
+              },
+              Object {
+                "index": 161,
+                "label": "Chatham Is. (1:00 AM)",
+                "value": "Pacific/Chatham",
+              },
+              Object {
+                "index": 162,
+                "label": "Samoa (1:15 AM)",
+                "value": "Pacific/Apia",
+              },
+            ]
+          }
+          pageSize={5}
+          placeholder="Select a timezone"
+          required={false}
+          scrollMenuIntoView={true}
+          searchable={true}
+          shouldKeyDownEventCreateNewOption={[Function]}
+          simpleValue={false}
+          tabSelectsValue={true}
+          value={
+            Object {
+              "index": -1,
+              "label": "Central Time (US & Canada) (7:15 AM)",
+              "value": "America/Chicago",
+            }
+          }
+          valueComponent={[Function]}
+          valueKey="value"
+        >
+          <div
+            className="Select Select--single is-searchable has-value"
+          >
+            <div
+              className="Select-control"
+              onKeyDown={[Function]}
+              onMouseDown={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+            >
+              <span
+                className="Select-multi-value-wrapper"
+                id="react-select-2--value"
+              >
+                <Value
+                  disabled={false}
+                  id="react-select-2--value-item"
+                  instancePrefix="react-select-2-"
+                  onClick={null}
+                  value={
+                    Object {
+                      "index": -1,
+                      "label": "Central Time (US & Canada) (7:15 AM)",
+                      "value": "America/Chicago",
+                    }
+                  }
+                >
+                  <div
+                    className="Select-value"
+                  >
+                    <span
+                      aria-selected="true"
+                      className="Select-value-label"
+                      id="react-select-2--value-item"
+                      role="option"
+                    >
+                      Central Time (US & Canada) (7:15 AM)
+                    </span>
+                  </div>
+                </Value>
+                <Component
+                  aria-activedescendant="react-select-2--value"
+                  aria-expanded="false"
+                  aria-haspopup="false"
+                  aria-owns=""
+                  autoComplete="off"
+                  className="Select-input"
+                  id="Timezone"
+                  minWidth="5"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  required={false}
+                  role="combobox"
+                  value=""
+                >
+                  <div
+                    className="Select-input"
+                    style={
+                      Object {
+                        "display": "inline-block",
+                      }
+                    }
+                  >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "input#undefined::-ms-clear {display: none;}",
+                        }
+                      }
+                    />
+                    <input
+                      aria-activedescendant="react-select-2--value"
+                      aria-expanded="false"
+                      aria-haspopup="false"
+                      aria-owns=""
+                      autoComplete="off"
+                      id="Timezone"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={false}
+                      role="combobox"
+                      style={
+                        Object {
+                          "boxSizing": "content-box",
+                          "width": "5px",
+                        }
+                      }
+                      value=""
+                    />
+                    <div
+                      style={
+                        Object {
+                          "height": 0,
+                          "left": 0,
+                          "overflow": "scroll",
+                          "position": "absolute",
+                          "top": 0,
+                          "visibility": "hidden",
+                          "whiteSpace": "pre",
+                        }
+                      }
+                    />
+                  </div>
+                </Component>
+              </span>
+              <span
+                className="Select-arrow-zone"
+                onMouseDown={[Function]}
+              >
+                <span
+                  className="Select-arrow"
+                  onMouseDown={[Function]}
+                />
+              </span>
+            </div>
+          </div>
+        </Select>
+      </div>
+    </div>
+  </SearchableDropdown>
+</Timezone>
+`;
+
+exports[`Timezone Matches snapshot with default props 1`] = `
+<SearchableDropdown
+  dropdownStyling={
+    Object {
+      "height": "384px !important",
+      "maxHeight": "none",
+    }
+  }
+  loading={false}
+  name="Timezone"
+  onChange={[Function]}
+  options={
+    Array [
+      Object {
+        "index": -1,
+        "label": "Eastern Time (US & Canada) (8:15 AM)",
+        "value": "America/New_York",
+      },
+      Object {
+        "index": -1,
+        "label": "Central Time (US & Canada) (7:15 AM)",
+        "value": "America/Chicago",
+      },
+      Object {
+        "index": -1,
+        "label": "Mountain Time (US & Canada) (6:15 AM)",
+        "value": "America/Denver",
+      },
+      Object {
+        "index": -1,
+        "label": "Pacific Time (US & Canada) (5:15 AM)",
+        "value": "America/Los_Angeles",
+      },
+      Object {
+        "index": 5,
+        "label": "Hawaii (2:15 AM)",
+        "value": "Pacific/Honolulu",
+      },
+      Object {
+        "index": 7,
+        "label": "Puerto Rico (8:15 AM)",
+        "value": "America/Puerto_Rico",
+      },
+      Object {
+        "index": 9,
+        "label": "Arizona (5:15 AM)",
+        "value": "America/Phoenix",
+      },
+      Object {
+        "index": 11,
+        "label": "Indiana (East) (8:15 AM)",
+        "value": "America/Indiana/Indianapolis",
+      },
+      Object {
+        "index": 12,
+        "label": "International Date Line West (12:15 AM)",
+        "value": "Etc/GMT+12",
+      },
+      Object {
+        "index": 13,
+        "label": "Midway Island (1:15 AM)",
+        "value": "Pacific/Midway",
+      },
+      Object {
+        "index": 14,
+        "label": "American Samoa (1:15 AM)",
+        "value": "Pacific/Pago_Pago",
+      },
+      Object {
+        "index": 16,
+        "label": "Alaska (4:15 AM)",
+        "value": "America/Juneau",
+      },
+      Object {
+        "index": 18,
+        "label": "Tijuana (5:15 AM)",
+        "value": "America/Tijuana",
+      },
+      Object {
+        "index": 21,
+        "label": "Chihuahua (6:15 AM)",
+        "value": "America/Chihuahua",
+      },
+      Object {
+        "index": 22,
+        "label": "Mazatlan (6:15 AM)",
+        "value": "America/Mazatlan",
+      },
+      Object {
+        "index": 24,
+        "label": "Saskatchewan (6:15 AM)",
+        "value": "America/Regina",
+      },
+      Object {
+        "index": 25,
+        "label": "Guadalajara (7:15 AM)",
+        "value": "America/Mexico_City",
+      },
+      Object {
+        "index": 26,
+        "label": "Mexico City (7:15 AM)",
+        "value": "America/Mexico_City",
+      },
+      Object {
+        "index": 27,
+        "label": "Monterrey (7:15 AM)",
+        "value": "America/Monterrey",
+      },
+      Object {
+        "index": 28,
+        "label": "Central America (6:15 AM)",
+        "value": "America/Guatemala",
+      },
+      Object {
+        "index": 31,
+        "label": "Bogota (7:15 AM)",
+        "value": "America/Bogota",
+      },
+      Object {
+        "index": 32,
+        "label": "Lima (7:15 AM)",
+        "value": "America/Lima",
+      },
+      Object {
+        "index": 33,
+        "label": "Quito (7:15 AM)",
+        "value": "America/Lima",
+      },
+      Object {
+        "index": 34,
+        "label": "Atlantic Time (Canada) (9:15 AM)",
+        "value": "America/Halifax",
+      },
+      Object {
+        "index": 35,
+        "label": "Caracas (8:15 AM)",
+        "value": "America/Caracas",
+      },
+      Object {
+        "index": 36,
+        "label": "La Paz (8:15 AM)",
+        "value": "America/La_Paz",
+      },
+      Object {
+        "index": 37,
+        "label": "Santiago (8:15 AM)",
+        "value": "America/Santiago",
+      },
+      Object {
+        "index": 38,
+        "label": "Newfoundland (9:45 AM)",
+        "value": "America/St_Johns",
+      },
+      Object {
+        "index": 39,
+        "label": "Brasilia (9:15 AM)",
+        "value": "America/Sao_Paulo",
+      },
+      Object {
+        "index": 40,
+        "label": "Buenos Aires (9:15 AM)",
+        "value": "America/Argentina/Buenos_Aires",
+      },
+      Object {
+        "index": 41,
+        "label": "Montevideo (9:15 AM)",
+        "value": "America/Montevideo",
+      },
+      Object {
+        "index": 42,
+        "label": "Georgetown (8:15 AM)",
+        "value": "America/Guyana",
+      },
+      Object {
+        "index": 44,
+        "label": "Greenland (10:15 AM)",
+        "value": "America/Godthab",
+      },
+      Object {
+        "index": 45,
+        "label": "Mid-Atlantic (10:15 AM)",
+        "value": "Atlantic/South_Georgia",
+      },
+      Object {
+        "index": 46,
+        "label": "Azores (12:15 PM)",
+        "value": "Atlantic/Azores",
+      },
+      Object {
+        "index": 47,
+        "label": "Cape Verde Is. (11:15 AM)",
+        "value": "Atlantic/Cape_Verde",
+      },
+      Object {
+        "index": 48,
+        "label": "Dublin (1:15 PM)",
+        "value": "Europe/Dublin",
+      },
+      Object {
+        "index": 49,
+        "label": "Edinburgh (1:15 PM)",
+        "value": "Europe/London",
+      },
+      Object {
+        "index": 50,
+        "label": "Lisbon (1:15 PM)",
+        "value": "Europe/Lisbon",
+      },
+      Object {
+        "index": 51,
+        "label": "London (1:15 PM)",
+        "value": "Europe/London",
+      },
+      Object {
+        "index": 52,
+        "label": "Casablanca (1:15 PM)",
+        "value": "Africa/Casablanca",
+      },
+      Object {
+        "index": 53,
+        "label": "Monrovia (12:15 PM)",
+        "value": "Africa/Monrovia",
+      },
+      Object {
+        "index": 54,
+        "label": "UTC (12:15 PM)",
+        "value": "Etc/UTC",
+      },
+      Object {
+        "index": 55,
+        "label": "Belgrade (2:15 PM)",
+        "value": "Europe/Belgrade",
+      },
+      Object {
+        "index": 56,
+        "label": "Bratislava (2:15 PM)",
+        "value": "Europe/Bratislava",
+      },
+      Object {
+        "index": 57,
+        "label": "Budapest (2:15 PM)",
+        "value": "Europe/Budapest",
+      },
+      Object {
+        "index": 58,
+        "label": "Ljubljana (2:15 PM)",
+        "value": "Europe/Ljubljana",
+      },
+      Object {
+        "index": 59,
+        "label": "Prague (2:15 PM)",
+        "value": "Europe/Prague",
+      },
+      Object {
+        "index": 60,
+        "label": "Sarajevo (2:15 PM)",
+        "value": "Europe/Sarajevo",
+      },
+      Object {
+        "index": 61,
+        "label": "Skopje (2:15 PM)",
+        "value": "Europe/Skopje",
+      },
+      Object {
+        "index": 62,
+        "label": "Warsaw (2:15 PM)",
+        "value": "Europe/Warsaw",
+      },
+      Object {
+        "index": 63,
+        "label": "Zagreb (2:15 PM)",
+        "value": "Europe/Zagreb",
+      },
+      Object {
+        "index": 64,
+        "label": "Brussels (2:15 PM)",
+        "value": "Europe/Brussels",
+      },
+      Object {
+        "index": 65,
+        "label": "Copenhagen (2:15 PM)",
+        "value": "Europe/Copenhagen",
+      },
+      Object {
+        "index": 66,
+        "label": "Madrid (2:15 PM)",
+        "value": "Europe/Madrid",
+      },
+      Object {
+        "index": 67,
+        "label": "Paris (2:15 PM)",
+        "value": "Europe/Paris",
+      },
+      Object {
+        "index": 68,
+        "label": "Amsterdam (2:15 PM)",
+        "value": "Europe/Amsterdam",
+      },
+      Object {
+        "index": 69,
+        "label": "Berlin (2:15 PM)",
+        "value": "Europe/Berlin",
+      },
+      Object {
+        "index": 70,
+        "label": "Bern (2:15 PM)",
+        "value": "Europe/Zurich",
+      },
+      Object {
+        "index": 71,
+        "label": "Zurich (2:15 PM)",
+        "value": "Europe/Zurich",
+      },
+      Object {
+        "index": 72,
+        "label": "Rome (2:15 PM)",
+        "value": "Europe/Rome",
+      },
+      Object {
+        "index": 73,
+        "label": "Stockholm (2:15 PM)",
+        "value": "Europe/Stockholm",
+      },
+      Object {
+        "index": 74,
+        "label": "Vienna (2:15 PM)",
+        "value": "Europe/Vienna",
+      },
+      Object {
+        "index": 75,
+        "label": "West Central Africa (1:15 PM)",
+        "value": "Africa/Algiers",
+      },
+      Object {
+        "index": 76,
+        "label": "Bucharest (3:15 PM)",
+        "value": "Europe/Bucharest",
+      },
+      Object {
+        "index": 77,
+        "label": "Cairo (2:15 PM)",
+        "value": "Africa/Cairo",
+      },
+      Object {
+        "index": 78,
+        "label": "Helsinki (3:15 PM)",
+        "value": "Europe/Helsinki",
+      },
+      Object {
+        "index": 79,
+        "label": "Kyiv (3:15 PM)",
+        "value": "Europe/Kiev",
+      },
+      Object {
+        "index": 80,
+        "label": "Riga (3:15 PM)",
+        "value": "Europe/Riga",
+      },
+      Object {
+        "index": 81,
+        "label": "Sofia (3:15 PM)",
+        "value": "Europe/Sofia",
+      },
+      Object {
+        "index": 82,
+        "label": "Tallinn (3:15 PM)",
+        "value": "Europe/Tallinn",
+      },
+      Object {
+        "index": 83,
+        "label": "Vilnius (3:15 PM)",
+        "value": "Europe/Vilnius",
+      },
+      Object {
+        "index": 84,
+        "label": "Athens (3:15 PM)",
+        "value": "Europe/Athens",
+      },
+      Object {
+        "index": 85,
+        "label": "Istanbul (3:15 PM)",
+        "value": "Europe/Istanbul",
+      },
+      Object {
+        "index": 86,
+        "label": "Minsk (3:15 PM)",
+        "value": "Europe/Minsk",
+      },
+      Object {
+        "index": 87,
+        "label": "Jerusalem (3:15 PM)",
+        "value": "Asia/Jerusalem",
+      },
+      Object {
+        "index": 88,
+        "label": "Harare (2:15 PM)",
+        "value": "Africa/Harare",
+      },
+      Object {
+        "index": 89,
+        "label": "Pretoria (2:15 PM)",
+        "value": "Africa/Johannesburg",
+      },
+      Object {
+        "index": 90,
+        "label": "Kaliningrad (2:15 PM)",
+        "value": "Europe/Kaliningrad",
+      },
+      Object {
+        "index": 91,
+        "label": "Moscow (3:15 PM)",
+        "value": "Europe/Moscow",
+      },
+      Object {
+        "index": 92,
+        "label": "St. Petersburg (3:15 PM)",
+        "value": "Europe/Moscow",
+      },
+      Object {
+        "index": 93,
+        "label": "Volgograd (4:15 PM)",
+        "value": "Europe/Volgograd",
+      },
+      Object {
+        "index": 94,
+        "label": "Samara (4:15 PM)",
+        "value": "Europe/Samara",
+      },
+      Object {
+        "index": 95,
+        "label": "Kuwait (3:15 PM)",
+        "value": "Asia/Kuwait",
+      },
+      Object {
+        "index": 96,
+        "label": "Riyadh (3:15 PM)",
+        "value": "Asia/Riyadh",
+      },
+      Object {
+        "index": 97,
+        "label": "Nairobi (3:15 PM)",
+        "value": "Africa/Nairobi",
+      },
+      Object {
+        "index": 98,
+        "label": "Baghdad (3:15 PM)",
+        "value": "Asia/Baghdad",
+      },
+      Object {
+        "index": 99,
+        "label": "Tehran (4:45 PM)",
+        "value": "Asia/Tehran",
+      },
+      Object {
+        "index": 100,
+        "label": "Abu Dhabi (4:15 PM)",
+        "value": "Asia/Muscat",
+      },
+      Object {
+        "index": 101,
+        "label": "Muscat (4:15 PM)",
+        "value": "Asia/Muscat",
+      },
+      Object {
+        "index": 102,
+        "label": "Baku (4:15 PM)",
+        "value": "Asia/Baku",
+      },
+      Object {
+        "index": 103,
+        "label": "Tbilisi (4:15 PM)",
+        "value": "Asia/Tbilisi",
+      },
+      Object {
+        "index": 104,
+        "label": "Yerevan (4:15 PM)",
+        "value": "Asia/Yerevan",
+      },
+      Object {
+        "index": 105,
+        "label": "Kabul (4:45 PM)",
+        "value": "Asia/Kabul",
+      },
+      Object {
+        "index": 106,
+        "label": "Ekaterinburg (5:15 PM)",
+        "value": "Asia/Yekaterinburg",
+      },
+      Object {
+        "index": 107,
+        "label": "Islamabad (5:15 PM)",
+        "value": "Asia/Karachi",
+      },
+      Object {
+        "index": 108,
+        "label": "Karachi (5:15 PM)",
+        "value": "Asia/Karachi",
+      },
+      Object {
+        "index": 109,
+        "label": "Tashkent (5:15 PM)",
+        "value": "Asia/Tashkent",
+      },
+      Object {
+        "index": 110,
+        "label": "Chennai (5:45 PM)",
+        "value": "Asia/Kolkata",
+      },
+      Object {
+        "index": 111,
+        "label": "Kolkata (5:45 PM)",
+        "value": "Asia/Kolkata",
+      },
+      Object {
+        "index": 112,
+        "label": "Mumbai (5:45 PM)",
+        "value": "Asia/Kolkata",
+      },
+      Object {
+        "index": 113,
+        "label": "New Delhi (5:45 PM)",
+        "value": "Asia/Kolkata",
+      },
+      Object {
+        "index": 114,
+        "label": "Kathmandu (6:00 PM)",
+        "value": "Asia/Kathmandu",
+      },
+      Object {
+        "index": 115,
+        "label": "Astana (6:15 PM)",
+        "value": "Asia/Dhaka",
+      },
+      Object {
+        "index": 116,
+        "label": "Dhaka (6:15 PM)",
+        "value": "Asia/Dhaka",
+      },
+      Object {
+        "index": 117,
+        "label": "Sri Jayawardenepura (5:45 PM)",
+        "value": "Asia/Colombo",
+      },
+      Object {
+        "index": 118,
+        "label": "Almaty (6:15 PM)",
+        "value": "Asia/Almaty",
+      },
+      Object {
+        "index": 119,
+        "label": "Novosibirsk (7:15 PM)",
+        "value": "Asia/Novosibirsk",
+      },
+      Object {
+        "index": 120,
+        "label": "Rangoon (6:45 PM)",
+        "value": "Asia/Rangoon",
+      },
+      Object {
+        "index": 121,
+        "label": "Bangkok (7:15 PM)",
+        "value": "Asia/Bangkok",
+      },
+      Object {
+        "index": 122,
+        "label": "Hanoi (7:15 PM)",
+        "value": "Asia/Bangkok",
+      },
+      Object {
+        "index": 123,
+        "label": "Jakarta (7:15 PM)",
+        "value": "Asia/Jakarta",
+      },
+      Object {
+        "index": 124,
+        "label": "Krasnoyarsk (7:15 PM)",
+        "value": "Asia/Krasnoyarsk",
+      },
+      Object {
+        "index": 125,
+        "label": "Beijing (8:15 PM)",
+        "value": "Asia/Shanghai",
+      },
+      Object {
+        "index": 126,
+        "label": "Chongqing (8:15 PM)",
+        "value": "Asia/Chongqing",
+      },
+      Object {
+        "index": 127,
+        "label": "Hong Kong (8:15 PM)",
+        "value": "Asia/Hong_Kong",
+      },
+      Object {
+        "index": 128,
+        "label": "Urumqi (6:15 PM)",
+        "value": "Asia/Urumqi",
+      },
+      Object {
+        "index": 129,
+        "label": "Kuala Lumpur (8:15 PM)",
+        "value": "Asia/Kuala_Lumpur",
+      },
+      Object {
+        "index": 130,
+        "label": "Singapore (8:15 PM)",
+        "value": "Asia/Singapore",
+      },
+      Object {
+        "index": 131,
+        "label": "Taipei (8:15 PM)",
+        "value": "Asia/Taipei",
+      },
+      Object {
+        "index": 132,
+        "label": "Perth (8:15 PM)",
+        "value": "Australia/Perth",
+      },
+      Object {
+        "index": 133,
+        "label": "Irkutsk (8:15 PM)",
+        "value": "Asia/Irkutsk",
+      },
+      Object {
+        "index": 134,
+        "label": "Ulaanbaatar (8:15 PM)",
+        "value": "Asia/Ulaanbaatar",
+      },
+      Object {
+        "index": 135,
+        "label": "Seoul (9:15 PM)",
+        "value": "Asia/Seoul",
+      },
+      Object {
+        "index": 136,
+        "label": "Osaka (9:15 PM)",
+        "value": "Asia/Tokyo",
+      },
+      Object {
+        "index": 137,
+        "label": "Sapporo (9:15 PM)",
+        "value": "Asia/Tokyo",
+      },
+      Object {
+        "index": 138,
+        "label": "Tokyo (9:15 PM)",
+        "value": "Asia/Tokyo",
+      },
+      Object {
+        "index": 139,
+        "label": "Yakutsk (9:15 PM)",
+        "value": "Asia/Yakutsk",
+      },
+      Object {
+        "index": 140,
+        "label": "Darwin (9:45 PM)",
+        "value": "Australia/Darwin",
+      },
+      Object {
+        "index": 141,
+        "label": "Adelaide (9:45 PM)",
+        "value": "Australia/Adelaide",
+      },
+      Object {
+        "index": 142,
+        "label": "Canberra (10:15 PM)",
+        "value": "Australia/Melbourne",
+      },
+      Object {
+        "index": 143,
+        "label": "Melbourne (10:15 PM)",
+        "value": "Australia/Melbourne",
+      },
+      Object {
+        "index": 144,
+        "label": "Sydney (10:15 PM)",
+        "value": "Australia/Sydney",
+      },
+      Object {
+        "index": 145,
+        "label": "Brisbane (10:15 PM)",
+        "value": "Australia/Brisbane",
+      },
+      Object {
+        "index": 146,
+        "label": "Hobart (10:15 PM)",
+        "value": "Australia/Hobart",
+      },
+      Object {
+        "index": 147,
+        "label": "Vladivostok (10:15 PM)",
+        "value": "Asia/Vladivostok",
+      },
+      Object {
+        "index": 148,
+        "label": "Guam (10:15 PM)",
+        "value": "Pacific/Guam",
+      },
+      Object {
+        "index": 149,
+        "label": "Port Moresby (10:15 PM)",
+        "value": "Pacific/Port_Moresby",
+      },
+      Object {
+        "index": 150,
+        "label": "Magadan (11:15 PM)",
+        "value": "Asia/Magadan",
+      },
+      Object {
+        "index": 151,
+        "label": "Srednekolymsk (11:15 PM)",
+        "value": "Asia/Srednekolymsk",
+      },
+      Object {
+        "index": 152,
+        "label": "Solomon Is. (11:15 PM)",
+        "value": "Pacific/Guadalcanal",
+      },
+      Object {
+        "index": 153,
+        "label": "New Caledonia (11:15 PM)",
+        "value": "Pacific/Noumea",
+      },
+      Object {
+        "index": 154,
+        "label": "Fiji (12:15 AM)",
+        "value": "Pacific/Fiji",
+      },
+      Object {
+        "index": 155,
+        "label": "Kamchatka (12:15 AM)",
+        "value": "Asia/Kamchatka",
+      },
+      Object {
+        "index": 156,
+        "label": "Marshall Is. (12:15 AM)",
+        "value": "Pacific/Majuro",
+      },
+      Object {
+        "index": 157,
+        "label": "Auckland (12:15 AM)",
+        "value": "Pacific/Auckland",
+      },
+      Object {
+        "index": 158,
+        "label": "Wellington (12:15 AM)",
+        "value": "Pacific/Auckland",
+      },
+      Object {
+        "index": 159,
+        "label": "Nuku'alofa (1:15 AM)",
+        "value": "Pacific/Tongatapu",
+      },
+      Object {
+        "index": 160,
+        "label": "Tokelau Is. (1:15 AM)",
+        "value": "Pacific/Fakaofo",
+      },
+      Object {
+        "index": 161,
+        "label": "Chatham Is. (1:00 AM)",
+        "value": "Pacific/Chatham",
+      },
+      Object {
+        "index": 162,
+        "label": "Samoa (1:15 AM)",
+        "value": "Pacific/Apia",
+      },
+    ]
+  }
+  placeholder="Select a timezone"
+  readOnly={false}
+  strongLabel={true}
+  styling={
+    Object {
+      "& .Select-menu": Object {
+        "& > :nth-child(12)": Object {
+          "borderBottom": "1px solid grey",
+        },
+        "maxHeight": "none",
+      },
+    }
+  }
+  value={null}
+/>
+`;

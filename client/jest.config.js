@@ -2,6 +2,7 @@
 module.exports = {
   moduleNameMapper: {
     '^app/(.*)$': '<rootDir>/app/$1',
+    '^constants/(.*)$': '<rootDir>/constants/$1',
     '^test/(.*)$': '<rootDir>/test/$1',
     '\\.(css|less|scss|sss|styl)$': '<rootDir>/node_modules/jest-css-modules'
   },

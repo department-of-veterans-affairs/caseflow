@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 
-import { hearingTimeOptsWithZone } from '../../../utils';
-import SearchableDropdown from '../../../../components/SearchableDropdown';
+import { hearingTimeOptsWithZone } from '../../utils';
+import SearchableDropdown from '../../../components/SearchableDropdown';
 
 export const HearingTime = ({ readOnly, value, errorMessage, onChange }) => {
   return (
     <SearchableDropdown
-      readOnly={readOnly}
+      readOnly={readOnly !== false}
       name="Hearing Time"
       placeholder="Select a time"
       options={hearingTimeOptsWithZone()}
@@ -22,12 +21,12 @@ export const HearingTime = ({ readOnly, value, errorMessage, onChange }) => {
 
 HearingTime.defaultProps = {
   value: null,
-  readOnly: false
+  readOnly: true
 };
 
 HearingTime.propTypes = {
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
-  value: PropTypes.string
+  value: PropTypes.string.isRequired
 };
