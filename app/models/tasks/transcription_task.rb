@@ -13,7 +13,7 @@ class TranscriptionTask < Task
     unless VALID_PARENT_TYPES.any? { |type| parent.is_a?(type) }
       fail(
         Caseflow::Error::InvalidParentTask,
-        message: "TranscriptionTask parents must be #{VALID_PARENT_TYPES.map(&:name).join(" or ")}"
+        message: "TranscriptionTask parents must be #{VALID_PARENT_TYPES.map(&:name).join(' or ')}"
       )
     end
   end
