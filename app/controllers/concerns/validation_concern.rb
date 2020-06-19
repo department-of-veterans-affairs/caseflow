@@ -24,7 +24,8 @@ module ValidationConcern
     schema = self.class.validation_schemas[action_name.to_sym]
     return if schema.nil?
 
-    result = schema.dry_schema.call(params.to_unsafe_h)
+    schema.sanitize(params)
+    result = schema.validate(params)
     if result.failure?
       errors = result.errors.map { |msg| msg.path.join(".") + " #{msg.text}" }
       respond_to do |format|
