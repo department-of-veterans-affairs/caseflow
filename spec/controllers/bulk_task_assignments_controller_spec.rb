@@ -33,7 +33,7 @@ RSpec.describe BulkTaskAssignmentsController, :postgres, type: :controller do
     before { User.authenticate!(user: assigned_by) }
     after { User.unauthenticate! }
 
-    context "when user has access" do
+    context "when user has access to the org" do
       shared_examples "valid bulk assign" do
         it "should return tasks" do
           get :create, params: { bulk_task_assignment: params }
@@ -53,13 +53,13 @@ RSpec.describe BulkTaskAssignmentsController, :postgres, type: :controller do
       context "when the user is a vso" do
         before { assigned_by.update!(roles: ["VSO"]) }
 
-        it "should not return tasks because the task type is invalid" do
+        it "should not return tasks because the task type is invalid for VSOs" do
           get :create, params: { bulk_task_assignment: params }
           expect(response.status).to eq 403
           expect(JSON.parse(response.body)["errors"].first["title"]).to eq "VSOs cannot create that task."
         end
 
-        context "when the task type is valid" do
+        context "when the task type is valid for VSOs" do
           let(:task_type) { InformalHearingPresentationTask }
 
           it_behaves_like "valid bulk assign"
@@ -67,7 +67,7 @@ RSpec.describe BulkTaskAssignmentsController, :postgres, type: :controller do
       end
     end
 
-    context "when user does not have access" do
+    context "when user does not have access to the org" do
       it "should not return tasks" do
         get :create, params: { bulk_task_assignment: params }
         expect(response.status).to eq 400
