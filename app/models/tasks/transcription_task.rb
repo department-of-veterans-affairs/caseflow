@@ -3,11 +3,17 @@
 class TranscriptionTask < Task
   before_create :check_parent_type
 
+  VALID_PARENT_TYPES = [
+    AssignHearingDispositionTask,
+    MissingHearingTranscriptsColocatedTask,
+    TranscriptionTask
+  ].freeze
+
   def check_parent_type
-    unless parent.is_a?(AssignHearingDispositionTask) || parent.is_a?(MissingHearingTranscriptsColocatedTask)
+    unless VALID_PARENT_TYPES.any? { |type| parent.is_a?(type) }
       fail(
         Caseflow::Error::InvalidParentTask,
-        message: "TranscriptionTask parents must be AssignHearingDispositionTask/MissingHearingTranscriptsColocatedTask"
+        message: "TranscriptionTask parents must be #{VALID_PARENT_TYPES.map(&:name).join(" or ")}"
       )
     end
   end
