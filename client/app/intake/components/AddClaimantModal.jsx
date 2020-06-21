@@ -75,15 +75,16 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
       </div>
       <SearchableDropdown
         name="relationship"
-        label={<b>Claimant's relationship to the veteran</b>}
+        label="Claimant's relationship to the veteran"
         onChange={handleChangeRelationship}
         value={relationship}
         options={relationshipOpts}
         debounce={250}
+        strongLabel
       />
       <SearchableDropdown
         name="claimant"
-        label={<b>Claimant's name</b>}
+        label="Claimant's name"
         onChange={handleChangeClaimant}
         value={claimant}
         filterOptions={filterOptions}
@@ -91,6 +92,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
         readOnly={notClaimant}
         options={[]}
         debounce={250}
+        strongLabel
       />
 
       <Checkbox
@@ -98,7 +100,6 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
         name="noClaimant"
         onChange={handleNotClaimant}
         value={notClaimant}
-        required
       />
       {notClaimant && (
         <TextareaField

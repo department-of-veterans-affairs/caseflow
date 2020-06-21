@@ -60,6 +60,7 @@ class AppealIntake < DecisionReviewIntake
       :receipt_date,
       :docket_type,
       :veteran_is_not_claimant,
-      :legacy_opt_in_approved)
+      :legacy_opt_in_approved
+      )
   end
 end
