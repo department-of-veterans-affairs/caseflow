@@ -52,7 +52,7 @@ describe NightlySyncsJob, :all_dbs do
         end
       end
 
-      fcontext "with open hearing tasks" do
+      context "with open hearing tasks" do
         let!(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks) }
 
         it "cancels all open tasks and leaves the legacy appeal intact without throwing an error" do
