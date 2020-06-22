@@ -4,7 +4,20 @@ describe ScheduleHearingColocatedTask, :all_dbs do
   describe ".completed!" do
     let(:appeal) { create(:appeal, :at_attorney_drafting) }
     let(:parent) { AttorneyTask.find_by(appeal: appeal) }
-    let!(:schedule_hearing_colocated_task) { create(:colocated_task, :schedule_hearing, appeal: appeal, parent: parent) }
+    let!(:schedule_hearing_colocated_task) do
+      create(:colocated_task, :schedule_hearing, appeal: appeal, parent: parent)
+    end
+
+    let(:distributed_case) do
+      DistributedCase.create!(
+        distribution: create(:distribution, judge: JudgeTask.find_by(appeal: appeal).assigned_to),
+        ready_at: Time.zone.now,
+        docket: appeal.docket_type,
+        priority: false,
+        case_id: appeal.uuid,
+        task: DistributionTask.find_by(appeal: appeal)
+      )
+    end
 
     subject { schedule_hearing_colocated_task.completed! }
 
@@ -16,7 +29,6 @@ describe ScheduleHearingColocatedTask, :all_dbs do
       expect(JudgeDecisionReviewTask.find_by(appeal: appeal).status).to eq Task.statuses[:on_hold]
       expect(AttorneyTask.find_by(appeal: appeal).status).to eq Task.statuses[:on_hold]
       expect(ScheduleHearingColocatedTask.find_by(appeal: appeal).status).to eq Task.statuses[:assigned]
-      distributed_case = DistributedCase.find_by(case_id: appeal.uuid)
       expect(distributed_case.case_id).to eq appeal.uuid
 
       subject

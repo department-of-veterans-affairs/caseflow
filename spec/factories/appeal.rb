@@ -179,14 +179,6 @@ FactoryBot.define do
     trait :assigned_to_judge do
       ready_for_distribution
       after(:create) do |appeal, evaluator|
-        DistributedCase.create!(
-          distribution: create(:distribution, judge: evaluator.associated_judge),
-          ready_at: Time.zone.now,
-          docket: appeal.docket_type,
-          priority: false,
-          case_id: appeal.uuid,
-          task: appeal.tasks.where(type: DistributionTask.name).first
-        )
         JudgeAssignTask.create!(appeal: appeal,
                                 parent: appeal.root_task,
                                 assigned_at: evaluator.active_task_assigned_at,
