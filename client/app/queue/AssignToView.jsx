@@ -239,7 +239,8 @@ class AssignToView extends React.Component {
 AssignToView.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
-    id: PropTypes.string
+    id: PropTypes.string,
+    veteranFullName: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
   highlightFormItems: PropTypes.bool,
@@ -257,8 +258,7 @@ AssignToView.propTypes = {
     type: PropTypes.string
   }),
   setOvertime: PropTypes.func,
-  resetSuccessMessages: PropTypes.func,
-  veteranFullName: PropTypes.string
+  resetSuccessMessages: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
