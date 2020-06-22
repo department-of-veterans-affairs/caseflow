@@ -86,8 +86,10 @@ module IssueUpdater
 
   def fail_if_count_mismatch!
     if (issues || []).count != appeal.undecided_issues.count
-      msg = "Number of issues in the request does not match the number in the database"
-      fail Caseflow::Error::AttorneyJudgeCheckoutError, message: msg
+      title = "Issues have fallen out of sync"
+      msg = "The number of issues with decisions does not match the number of issues in the database. Please refresh " \
+            "the page and submit your decision again."
+      fail Caseflow::Error::AttorneyJudgeCheckoutError, message: msg, title: title
     end
   end
 
