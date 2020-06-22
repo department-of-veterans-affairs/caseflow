@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe ScheduleHearingColocatedTask, :all_dbs do
-  fdescribe ".completed!" do
+  describe ".completed!" do
     let(:appeal) { create(:appeal, :at_attorney_drafting) }
     let(:parent) { AttorneyTask.find_by(appeal: appeal) }
     let!(:schedule_hearing_colocated_task) { create(:colocated_task, :schedule_hearing, appeal: appeal, parent: parent) }
