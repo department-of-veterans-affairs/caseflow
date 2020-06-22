@@ -26,7 +26,13 @@ class SlackService
   private
 
   def http_service
-    HTTPClient.new
+    @http_service ||= begin
+      # we do not want the self-signed cert normally part of the HTTPClient CA chain.
+      client = HTTPClient.new
+      client.ssl_config.clear_cert_store
+      client.ssl_config.add_trust_ca(ENV["SSL_CERT_FILE"])
+      client
+    end
   end
 
   def pick_color(title, msg)
