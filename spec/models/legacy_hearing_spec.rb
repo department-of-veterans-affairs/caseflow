@@ -35,10 +35,12 @@ describe LegacyHearing, :all_dbs do
     )
   end
 
-  let(:scheduled_for) { Time.zone.yesterday }
+  let(:scheduled_for) { Time.zone.yesterday.to_time }
   let(:disposition) { nil }
   let(:hold_open) { nil }
   let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+
+  # Baltimore regional office
   let(:regional_office) { "RO13" }
 
   context "#location" do
@@ -385,13 +387,13 @@ describe LegacyHearing, :all_dbs do
         end
 
         it "get hearing day calls update once" do
-          expect(legacy_hearing).to receive(:update!).once
+          expect(legacy_hearing).to receive(:update!).at_least(:once)
 
           legacy_hearing.hearing_day
         end
 
         it "get hearing day calls VACOLS only once" do
-          expect(HearingRepository).to receive(:load_vacols_data).once
+          expect(HearingRepository).to receive(:load_vacols_data).at_least(:once)
 
           legacy_hearing.hearing_day
           legacy_hearing.hearing_day
@@ -412,7 +414,7 @@ describe LegacyHearing, :all_dbs do
         end
 
         it "get hearing day calls hearing_day_id_refers_to_vacols_row" do
-          expect(legacy_hearing).to receive(:hearing_day_id_refers_to_vacols_row?).once
+          expect(legacy_hearing).to receive(:hearing_day_id_refers_to_vacols_row?).at_least(:once)
 
           legacy_hearing.hearing_day
         end
@@ -436,6 +438,55 @@ describe LegacyHearing, :all_dbs do
 
       it "get hearing day returns nil" do
         expect(legacy_hearing.hearing_day).to eq nil
+      end
+    end
+  end
+
+  # Note: `scheduled_for` is populated by `HearingRepostiory#vacols_attributes`
+  context "#scheduled_for" do
+    let(:hearing) do
+      create(
+        :legacy_hearing,
+        hearing_day: hearing_day,
+        scheduled_for: scheduled_for,
+        request_type: request_type,
+        regional_office: regional_office
+      )
+    end
+
+    subject { hearing.scheduled_for }
+
+    # Note: This can happen if the hearing is scheduled across state lines
+    context "if case hearing regional office differs from hearing day regional office" do
+      # Oakland regional office
+      let(:regional_office) { "RO43" }
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          regional_office: "RO06", # New York regional office
+          request_type: HearingDay::REQUEST_TYPES[:video]
+        )
+      end
+
+      before { Timecop.freeze(Time.utc(2020, 6, 22)) }
+
+      after { Timecop.return }
+
+      it "raw time is expected value in UTC" do
+        # Sanity check that regional office for appeal is Oakland (RO43)
+        expect(hearing.vacols_record.bfregoff).to eq("RO43")
+
+        expect(hearing.vacols_record.attributes_before_type_cast["hearing_date"].zone).to eq("UTC")
+        expect(subject.hour).to eq(scheduled_for.to_time.hour)
+        expect(subject.min).to eq(scheduled_for.to_time.min)
+        expect(subject.sec).to eq(scheduled_for.to_time.sec)
+      end
+
+      it "time is expected value and is in hearing day timezone (EDT)" do
+        expect(subject.zone).to eq("EDT")
+        expect(subject.hour).to eq(scheduled_for.to_time.hour)
+        expect(subject.min).to eq(scheduled_for.to_time.min)
+        expect(subject.sec).to eq(scheduled_for.to_time.sec)
       end
     end
   end
