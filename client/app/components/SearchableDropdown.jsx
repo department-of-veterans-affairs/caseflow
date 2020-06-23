@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
-import _ from 'lodash';
+import _, { isPlainObject } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 
@@ -120,6 +120,12 @@ class SearchableDropdown extends React.Component {
       'usa-sr-only': hideLabel
     });
 
+    // `react-select` used to accept plain string values, but now requires passing the object
+    // This allows `SearchableDropdown` to still accept the legacy syntax
+    const valueObj = isPlainObject(this.state.value) ?
+      this.state.value :
+      options.find(({ value }) => value === this.state.value);
+
     /* If the creatable option is passed in, these additional props are added to
      * the select component.
      * noResultsText: This message is used to as a message to show when a
@@ -181,7 +187,7 @@ class SearchableDropdown extends React.Component {
               loadOptions={async}
               isLoading={loading}
               onChange={this.onChange}
-              value={this.state.value}
+              value={valueObj}
               placeholder={
                 placeholder === null ? DEFAULT_PLACEHOLDER : placeholder
               }

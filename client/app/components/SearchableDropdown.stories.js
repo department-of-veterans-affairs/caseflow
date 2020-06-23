@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import faker from 'faker';
 
@@ -55,6 +55,21 @@ export const readOnly = () => {
       label="Custom Label Text"
       options={options}
       readOnly
+    />
+  );
+};
+
+export const controlled = () => {
+  const [value, setValue] = useState(options[1]);
+  const handleChange = (val) => setValue(val);
+
+  return (
+    <SearchableDropdown
+      name="controlled"
+      label="Value Controlled Externally"
+      options={options}
+      value={value}
+      onChange={handleChange}
     />
   );
 };
