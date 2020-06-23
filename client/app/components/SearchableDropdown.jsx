@@ -122,31 +122,28 @@ class SearchableDropdown extends React.Component {
 
     /* If the creatable option is passed in, these additional props are added to
      * the select component.
-     * tagAlreadyExistsMsg: This message is used to as a message to show when a
+     * noResultsText: This message is used to as a message to show when a
      * custom tag entered already exits.
-     * promptTextCreator: this is a function called to show the text when a tag
+     * formatCreateLabel: this is a function called to show the text when a tag
      * entered doesn't exist in the current list of options.
      */
     if (creatable) {
       addCreatableOptions = {
-        noResultsText: _.get(
-          creatableOptions,
-          'tagAlreadyExistsMsg',
-          TAG_ALREADY_EXISTS_MSG
-        ),
+        noResultsText: TAG_ALREADY_EXISTS_MSG,
 
         // eslint-disable-next-line no-shadow
-        newOptionCreator: ({ label, labelKey, valueKey }) => ({
-          [labelKey]: _.trim(label),
-          [valueKey]: _.trim(label),
-          className: 'Select-create-option-placeholder'
-        }),
+        // newOptionCreator: ({ label, labelKey, valueKey }) => ({
+        //   [labelKey]: _.trim(label),
+        //   [valueKey]: _.trim(label),
+        //   className: 'Select-create-option-placeholder',
+        // }),
 
         // eslint-disable-next-line no-shadow
-        isValidNewOption: ({ label }) => label && (/\S/).test(label),
+        isValidNewOption: (inputValue) => inputValue && (/\S/).test(inputValue),
 
-        promptTextCreator: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
-        ..._.pick(creatableOptions, 'promptTextCreator')
+        formatCreateLabel: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
+
+        ...creatableOptions
       };
     }
 
@@ -192,7 +189,7 @@ class SearchableDropdown extends React.Component {
               noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
               searchable={searchable}
               disabled={readOnly}
-              multi={multi}
+              isMulti={multi}
               cache={false}
               onBlurResetsInput={false}
               shouldKeyDownEventCreateNewOption={
@@ -219,8 +216,9 @@ SearchableDropdown.propTypes = {
   async: PropTypes.func,
   creatable: PropTypes.bool,
   creatableOptions: PropTypes.shape({
-    tagAlreadyExistsMsg: PropTypes.string,
-    promptTextCreator: PropTypes.func
+    noResultsText: PropTypes.string,
+    isValidNewOption: PropTypes.func,
+    formatCreateLabel: PropTypes.func
   }),
   defaultOptions: PropTypes.oneOfType([SelectOpts, PropTypes.bool]),
   dropdownStyling: PropTypes.object,
