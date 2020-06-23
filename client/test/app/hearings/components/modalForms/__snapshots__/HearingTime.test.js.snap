@@ -413,7 +413,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-label="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
             clearable={false}
@@ -576,10 +575,14 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                 "input": [Function],
               }
             }
-            value="13:45"
+            value={
+              Object {
+                "label": "1:45 pm",
+                "value": "13:45",
+              }
+            }
           >
             <Select
-              aria-label="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -775,14 +778,19 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
               }
               tabIndex="0"
               tabSelectsValue={true}
-              value="13:45"
+              value={
+                Object {
+                  "label": "1:45 pm",
+                  "value": "13:45",
+                }
+              }
             >
               <SelectContainer
                 clearValue={[Function]}
                 cx={[Function]}
                 getStyles={[Function]}
                 getValue={[Function]}
-                hasValue={false}
+                hasValue={true}
                 innerProps={
                   Object {
                     "id": undefined,
@@ -940,7 +948,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-label": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -975,7 +982,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                     "menuShouldBlockScroll": false,
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
-                    "multi": undefined,
                     "noOptionsMessage": [Function],
                     "noResultsText": "Not an option",
                     "onBlurResetsInput": false,
@@ -1137,7 +1143,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                     },
                     "tabIndex": "0",
                     "tabSelectsValue": true,
-                    "value": "13:45",
+                    "value": Object {
+                      "label": "1:45 pm",
+                      "value": "13:45",
+                    },
                   }
                 }
                 setValue={[Function]}
@@ -1195,7 +1204,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                       cx={[Function]}
                       getStyles={[Function]}
                       getValue={[Function]}
-                      hasValue={false}
+                      hasValue={true}
                       innerProps={
                         Object {
                           "onMouseDown": [Function],
@@ -1355,7 +1364,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-label": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -1390,7 +1398,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                           "menuShouldBlockScroll": false,
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
-                          "multi": undefined,
                           "noOptionsMessage": [Function],
                           "noResultsText": "Not an option",
                           "onBlurResetsInput": false,
@@ -1552,7 +1559,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                           },
                           "tabIndex": "0",
                           "tabSelectsValue": true,
-                          "value": "13:45",
+                          "value": Object {
+                            "label": "1:45 pm",
+                            "value": "13:45",
+                          },
                         }
                       }
                       setValue={[Function]}
@@ -1627,7 +1637,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                             cx={[Function]}
                             getStyles={[Function]}
                             getValue={[Function]}
-                            hasValue={false}
+                            hasValue={true}
                             isDisabled={false}
                             isMulti={false}
                             isRtl={false}
@@ -1778,7 +1788,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-label": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -1813,7 +1822,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
-                                "multi": undefined,
                                 "noOptionsMessage": [Function],
                                 "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
@@ -1975,7 +1983,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 },
                                 "tabIndex": "0",
                                 "tabSelectsValue": true,
-                                "value": "13:45",
+                                "value": Object {
+                                  "label": "1:45 pm",
+                                  "value": "13:45",
+                                },
                               }
                             }
                             setValue={[Function]}
@@ -2012,7 +2023,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                             <EmotionCssPropInternal
                               __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                               __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                              className="cf-select__value-container"
+                              className="cf-select__value-container cf-select__value-container--has-value"
                               css={
                                 Object {
                                   "WebkitOverflowScrolling": "touch",
@@ -2028,19 +2039,23 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                               }
                             >
                               <div
-                                className="cf-select__value-container css-g1d714-ValueContainer"
+                                className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                               >
-                                <Placeholder
+                                <SingleValue
                                   clearValue={[Function]}
                                   cx={[Function]}
+                                  data={
+                                    Object {
+                                      "label": "1:45 pm",
+                                      "value": "13:45",
+                                    }
+                                  }
                                   getStyles={[Function]}
                                   getValue={[Function]}
-                                  hasValue={false}
+                                  hasValue={true}
                                   isDisabled={false}
-                                  isFocused={false}
                                   isMulti={false}
                                   isRtl={false}
-                                  key="placeholder"
                                   options={
                                     Array [
                                       Object {
@@ -2188,7 +2203,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -2223,7 +2237,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -2385,7 +2398,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       },
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
-                                      "value": "13:45",
+                                      "value": Object {
+                                        "label": "1:45 pm",
+                                        "value": "13:45",
+                                      },
                                     }
                                   }
                                   setValue={[Function]}
@@ -2420,32 +2436,35 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   }
                                 >
                                   <EmotionCssPropInternal
-                                    __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
+                                    __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
                                     __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                    className="cf-select__placeholder"
+                                    className="cf-select__single-value"
                                     css={
                                       Object {
                                         "boxSizing": "border-box",
-                                        "color": "hsl(0, 0%, 50%)",
-                                        "label": "placeholder",
+                                        "color": "hsl(0, 0%, 20%)",
+                                        "label": "singleValue",
                                         "marginLeft": 2,
                                         "marginRight": 2,
+                                        "maxWidth": "calc(100% - 8px)",
+                                        "overflow": "hidden",
                                         "position": "absolute",
+                                        "textOverflow": "ellipsis",
                                         "top": "50%",
                                         "transform": "translateY(-50%)",
+                                        "whiteSpace": "nowrap",
                                       }
                                     }
                                   >
                                     <div
-                                      className="cf-select__placeholder css-1wa3eu0-placeholder"
+                                      className="cf-select__single-value css-1uccc91-singleValue"
                                     >
-                                      Select a time
+                                      1:45 pm
                                     </div>
                                   </EmotionCssPropInternal>
-                                </Placeholder>
+                                </SingleValue>
                                 <Input
                                   aria-autocomplete="list"
-                                  aria-label="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -2460,7 +2479,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -2495,7 +2513,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -2657,7 +2674,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       },
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
-                                      "value": "13:45",
+                                      "value": Object {
+                                        "label": "1:45 pm",
+                                        "value": "13:45",
+                                      },
                                     }
                                   }
                                   spellCheck="false"
@@ -2699,16 +2719,15 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                     __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
                                     css={
                                       Object {
-                                        "height": "100%",
+                                        "height": "44px",
                                       }
                                     }
                                   >
                                     <div
-                                      className="css-1tng6d6-Input"
+                                      className="css-81nyic-Input"
                                     >
                                       <AutosizeInput
                                         aria-autocomplete="list"
-                                        aria-label="optionalHearingTime0"
                                         autoCapitalize="none"
                                         autoComplete="off"
                                         autoCorrect="off"
@@ -2748,7 +2767,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                         >
                                           <input
                                             aria-autocomplete="list"
-                                            aria-label="optionalHearingTime0"
                                             autoCapitalize="none"
                                             autoComplete="off"
                                             autoCorrect="off"
@@ -2802,7 +2820,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                             cx={[Function]}
                             getStyles={[Function]}
                             getValue={[Function]}
-                            hasValue={false}
+                            hasValue={true}
                             isDisabled={false}
                             isMulti={false}
                             isRtl={false}
@@ -2953,7 +2971,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-label": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -2988,7 +3005,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
-                                "multi": undefined,
                                 "noOptionsMessage": [Function],
                                 "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
@@ -3150,7 +3166,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 },
                                 "tabIndex": "0",
                                 "tabSelectsValue": true,
-                                "value": "13:45",
+                                "value": Object {
+                                  "label": "1:45 pm",
+                                  "value": "13:45",
+                                },
                               }
                             }
                             setValue={[Function]}
@@ -3206,7 +3225,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   cx={[Function]}
                                   getStyles={[Function]}
                                   getValue={[Function]}
-                                  hasValue={false}
+                                  hasValue={true}
                                   isDisabled={false}
                                   isFocused={false}
                                   isMulti={false}
@@ -3358,7 +3377,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -3393,7 +3411,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -3555,7 +3572,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       },
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
-                                      "value": "13:45",
+                                      "value": Object {
+                                        "label": "1:45 pm",
+                                        "value": "13:45",
+                                      },
                                     }
                                   }
                                   setValue={[Function]}
@@ -3615,7 +3635,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   cx={[Function]}
                                   getStyles={[Function]}
                                   getValue={[Function]}
-                                  hasValue={false}
+                                  hasValue={true}
                                   innerProps={
                                     Object {
                                       "aria-hidden": "true",
@@ -3774,7 +3794,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -3809,7 +3828,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -3971,7 +3989,10 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       },
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
-                                      "value": "13:45",
+                                      "value": Object {
+                                        "label": "1:45 pm",
+                                        "value": "13:45",
+                                      },
                                     }
                                   }
                                   setValue={[Function]}
@@ -4376,7 +4397,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-label="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
             clearable={false}
@@ -4541,7 +4561,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
             }
           >
             <Select
-              aria-label="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -4902,7 +4921,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-label": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -4937,7 +4955,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                     "menuShouldBlockScroll": false,
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
-                    "multi": undefined,
                     "noOptionsMessage": [Function],
                     "noResultsText": "Not an option",
                     "onBlurResetsInput": false,
@@ -5317,7 +5334,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-label": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -5352,7 +5368,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                           "menuShouldBlockScroll": false,
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
-                          "multi": undefined,
                           "noOptionsMessage": [Function],
                           "noResultsText": "Not an option",
                           "onBlurResetsInput": false,
@@ -5740,7 +5755,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-label": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -5775,7 +5789,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
-                                "multi": undefined,
                                 "noOptionsMessage": [Function],
                                 "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
@@ -6150,7 +6163,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -6185,7 +6197,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -6407,7 +6418,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 </Placeholder>
                                 <Input
                                   aria-autocomplete="list"
-                                  aria-label="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -6422,7 +6432,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -6457,7 +6466,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -6661,16 +6669,15 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                     __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
                                     css={
                                       Object {
-                                        "height": "100%",
+                                        "height": "44px",
                                       }
                                     }
                                   >
                                     <div
-                                      className="css-1tng6d6-Input"
+                                      className="css-81nyic-Input"
                                     >
                                       <AutosizeInput
                                         aria-autocomplete="list"
-                                        aria-label="optionalHearingTime0"
                                         autoCapitalize="none"
                                         autoComplete="off"
                                         autoCorrect="off"
@@ -6710,7 +6717,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                         >
                                           <input
                                             aria-autocomplete="list"
-                                            aria-label="optionalHearingTime0"
                                             autoCapitalize="none"
                                             autoComplete="off"
                                             autoCorrect="off"
@@ -6915,7 +6921,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-label": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -6950,7 +6955,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
-                                "multi": undefined,
                                 "noOptionsMessage": [Function],
                                 "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
@@ -7320,7 +7324,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -7355,7 +7358,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -7736,7 +7738,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -7771,7 +7772,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -8338,7 +8338,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
           className="cf-select"
         >
           <StateManager
-            aria-label="optionalHearingTime0"
             cache={false}
             classNamePrefix="cf-select"
             clearable={false}
@@ -8503,7 +8502,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
             }
           >
             <Select
-              aria-label="optionalHearingTime0"
               backspaceRemovesValue={true}
               blurInputOnSelect={true}
               cache={false}
@@ -8864,7 +8862,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                 selectOption={[Function]}
                 selectProps={
                   Object {
-                    "aria-label": "optionalHearingTime0",
                     "backspaceRemovesValue": true,
                     "blurInputOnSelect": true,
                     "cache": false,
@@ -8899,7 +8896,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                     "menuShouldBlockScroll": false,
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
-                    "multi": undefined,
                     "noOptionsMessage": [Function],
                     "noResultsText": "Not an option",
                     "onBlurResetsInput": false,
@@ -9279,7 +9275,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                       selectOption={[Function]}
                       selectProps={
                         Object {
-                          "aria-label": "optionalHearingTime0",
                           "backspaceRemovesValue": true,
                           "blurInputOnSelect": true,
                           "cache": false,
@@ -9314,7 +9309,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                           "menuShouldBlockScroll": false,
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
-                          "multi": undefined,
                           "noOptionsMessage": [Function],
                           "noResultsText": "Not an option",
                           "onBlurResetsInput": false,
@@ -9702,7 +9696,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-label": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -9737,7 +9730,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
-                                "multi": undefined,
                                 "noOptionsMessage": [Function],
                                 "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
@@ -10112,7 +10104,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -10147,7 +10138,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -10369,7 +10359,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 </Placeholder>
                                 <Input
                                   aria-autocomplete="list"
-                                  aria-label="optionalHearingTime0"
                                   autoCapitalize="none"
                                   autoComplete="off"
                                   autoCorrect="off"
@@ -10384,7 +10373,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   onFocus={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -10419,7 +10407,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -10623,16 +10610,15 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                     __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
                                     css={
                                       Object {
-                                        "height": "100%",
+                                        "height": "44px",
                                       }
                                     }
                                   >
                                     <div
-                                      className="css-1tng6d6-Input"
+                                      className="css-81nyic-Input"
                                     >
                                       <AutosizeInput
                                         aria-autocomplete="list"
-                                        aria-label="optionalHearingTime0"
                                         autoCapitalize="none"
                                         autoComplete="off"
                                         autoCorrect="off"
@@ -10672,7 +10658,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                         >
                                           <input
                                             aria-autocomplete="list"
-                                            aria-label="optionalHearingTime0"
                                             autoCapitalize="none"
                                             autoComplete="off"
                                             autoCorrect="off"
@@ -10877,7 +10862,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                             selectOption={[Function]}
                             selectProps={
                               Object {
-                                "aria-label": "optionalHearingTime0",
                                 "backspaceRemovesValue": true,
                                 "blurInputOnSelect": true,
                                 "cache": false,
@@ -10912,7 +10896,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldBlockScroll": false,
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
-                                "multi": undefined,
                                 "noOptionsMessage": [Function],
                                 "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
@@ -11282,7 +11265,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -11317,7 +11299,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
@@ -11698,7 +11679,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                   selectOption={[Function]}
                                   selectProps={
                                     Object {
-                                      "aria-label": "optionalHearingTime0",
                                       "backspaceRemovesValue": true,
                                       "blurInputOnSelect": true,
                                       "cache": false,
@@ -11733,7 +11713,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldBlockScroll": false,
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
-                                      "multi": undefined,
                                       "noOptionsMessage": [Function],
                                       "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
