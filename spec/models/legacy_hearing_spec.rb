@@ -35,7 +35,12 @@ describe LegacyHearing, :all_dbs do
     )
   end
 
-  let(:scheduled_for) { Time.zone.yesterday.to_time }
+  let(:scheduled_for) do
+    now = Time.zone.now
+    yesterday = Time.zone.yesterday
+
+    Time.zone.local(yesterday.year, yesterday.month, yesterday.day, now.hour, now.min, now.sec)
+  end
   let(:disposition) { nil }
   let(:hold_open) { nil }
   let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
@@ -477,16 +482,16 @@ describe LegacyHearing, :all_dbs do
         expect(hearing.vacols_record.bfregoff).to eq("RO43")
 
         expect(hearing.vacols_record.attributes_before_type_cast["hearing_date"].zone).to eq("UTC")
-        expect(subject.hour).to eq(scheduled_for.to_time.hour)
-        expect(subject.min).to eq(scheduled_for.to_time.min)
-        expect(subject.sec).to eq(scheduled_for.to_time.sec)
+        expect(subject.hour).to eq(scheduled_for.hour)
+        expect(subject.min).to eq(scheduled_for.min)
+        expect(subject.sec).to eq(scheduled_for.sec)
       end
 
       it "time is expected value and is in hearing day timezone (EDT)" do
         expect(subject.zone).to eq("EDT")
-        expect(subject.hour).to eq(scheduled_for.to_time.hour)
-        expect(subject.min).to eq(scheduled_for.to_time.min)
-        expect(subject.sec).to eq(scheduled_for.to_time.sec)
+        expect(subject.hour).to eq(scheduled_for.hour)
+        expect(subject.min).to eq(scheduled_for.min)
+        expect(subject.sec).to eq(scheduled_for.sec)
       end
     end
   end
