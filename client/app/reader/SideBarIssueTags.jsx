@@ -47,7 +47,8 @@ class SideBarIssueTags extends PureComponent {
         placeholder=""
         value={generateOptionsFromTags(doc.tags)}
         onChange={onChange}
-        selfManageValueState
+        // TODO - determine if this is actually needed; it seems to cause problems
+        // selfManageValueState
       />
     </div>;
   }
