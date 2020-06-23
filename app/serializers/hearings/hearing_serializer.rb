@@ -57,9 +57,9 @@ class HearingSerializer
   attribute :regional_office_key
   attribute :regional_office_name
   attribute :regional_office_timezone
-  #attribute :representative
-  #attribute :representative_name
-  #attribute :representative_email_address
+  attribute :representative, if: for_full
+  attribute :representative_name, if: for_full
+  attribute :representative_email_address, if: for_full
   attribute :room
   attribute :scheduled_for
   attribute :scheduled_for_is_past, &:scheduled_for_past?
