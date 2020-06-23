@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ScheduleHearingColocatedTask < ColocatedTask
-  after_update :send_to_hearings_branch, if: :just_completed?
+  after_update :send_to_hearings_branch, if: :just_completed_ama_organization_task?
 
   def self.label
     Constants.CO_LOCATED_ADMIN_ACTIONS.schedule_hearing
@@ -36,11 +36,10 @@ class ScheduleHearingColocatedTask < ColocatedTask
     LegacyAppeal::LOCATION_CODES[:schedule_hearing]
   end
 
-  def just_completed?
+  def just_completed_ama_organization_task?
     appeal_type.eql?(Appeal.name) &&
       saved_change_to_status? &&
       completed? &&
-      all_tasks_closed_for_appeal? &&
       assigned_to.is_a?(Organization)
   end
 
