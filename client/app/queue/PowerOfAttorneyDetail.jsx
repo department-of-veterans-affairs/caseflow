@@ -1,78 +1,102 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import COPY from '../../COPY';
-import { getAppealValue } from './QueueActions';
+import { connect, shallowEqual, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+
 import { appealWithDetailSelector } from './selectors';
+import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
+import COPY from '../../COPY';
 
-export class PowerOfAttorneyDetail extends React.PureComponent {
-  componentDidMount = () => {
-    if (!this.props.powerOfAttorney) {
-      this.props.getAppealValue(
-        this.props.appealId,
-        'power_of_attorney',
-        'powerOfAttorney'
-      );
-    }
-  }
+/**
+ * Returns a selector to fetch the power of attorney details from the Redux state.
+ * @param {Object} appealId -- The appeal's external id
+ * @returns {function} -- A function that selects the power of attorney from the Redux state.
+ */
+const powerOfAttorneyFromAppealSelector = (appealId) => (
+  (state) => {
+    const loadingPowerOfAttorney = _.get(state.queue.loadingAppealDetail[appealId], 'powerOfAttorney');
 
-  hasPowerOfAttorneyDetails() {
-    const { powerOfAttorney } = this.props;
-
-    return powerOfAttorney.representative_type && powerOfAttorney.representative_name;
-  }
-
-  renderLoadingOrError() {
-    const { loading, error } = this.props;
-
-    if (loading) {
-      return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
+    if (loadingPowerOfAttorney?.loading) {
+      return { loading: true };
     }
 
-    if (error) {
-      return <React.Fragment>{COPY.CASE_DETAILS_UNABLE_TO_LOAD}</React.Fragment>;
+    const appeal = appealWithDetailSelector(state, { appealId: appealId });
+
+    return {
+      powerOfAttorney: appeal?.powerOfAttorney,
+      loading: false,
+      error: loadingPowerOfAttorney?.error
     }
-
-    return null;
   }
+);
 
-  render = () => {
-    const { powerOfAttorney } = this.props;
+/**
+ * Wraps a component with logic to fetch the power of attorney data from the API.
+ * @param {Object} WrappedComponent -- The component being wrapped / The display component.
+ * @returns {Component} -- The wrapped component.
+ */
+const PowerOfAttorneyDetailWrapper = (WrappedComponent) => (
+  ({ appealId, getAppealValue }) => {
+    const { error, loading, powerOfAttorney } = useSelector(
+      powerOfAttorneyFromAppealSelector(appealId),
+      shallowEqual
+    );
 
     if (!powerOfAttorney) {
-      return this.renderLoadingOrError();
+      if (loading) {
+        return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
+      }
+
+      if (error) {
+        return <React.Fragment>{COPY.CASE_DETAILS_UNABLE_TO_LOAD}</React.Fragment>;
+      }
+
+      getAppealValue(appealId, 'power_of_attorney', 'powerOfAttorney');
+
+      return null;
     }
 
-    if (!this.hasPowerOfAttorneyDetails()) {
+    const hasPowerOfAttorneyDetails = powerOfAttorney.representative_type && powerOfAttorney.representative_name;
+
+    if (!hasPowerOfAttorneyDetails) {
       return <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
     }
 
-    return (
-      <React.Fragment>
-        <span>
-          <p>
-            <strong>{powerOfAttorney.representative_type}:</strong> {powerOfAttorney.representative_name}
-          </p>
-          {powerOfAttorney.representative_address &&
-              <p><strong>Address:</strong> <Address address={powerOfAttorney.representative_address} /></p>}
-          {powerOfAttorney.representative_email_address &&
-              <p><strong>Email Address:</strong> {powerOfAttorney.representative_email_address}</p>}
-          <p><em>{COPY.CASE_DETAILS_INCORRECT_POA}</em></p>
-        </span>
-      </React.Fragment>
-    );
-
+    return <WrappedComponent powerOfAttorney={powerOfAttorney} />;
   }
-}
+);
 
-PowerOfAttorneyDetail.propTypes = {
+PowerOfAttorneyDetailWrapper.propTypes = {
   appealId: PropTypes.string,
-  error: PropTypes.object,
   getAppealValue: PropTypes.func,
-  loading: PropTypes.bool,
+};
+
+const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
+  <React.Fragment>{powerOfAttorney.representative_name}</React.Fragment>
+);
+
+const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => (
+  <span>
+    <p>
+      <strong>{powerOfAttorney.representative_type}:</strong> {powerOfAttorney.representative_name}
+    </p>
+    {powerOfAttorney.representative_address &&
+      <p>
+        <strong>Address:</strong> <Address address={powerOfAttorney.representative_address} />
+      </p>
+    }
+    {powerOfAttorney.representative_email_address &&
+      <p>
+        <strong>Email Address:</strong> {powerOfAttorney.representative_email_address}
+      </p>
+    }
+    <p><em>{COPY.CASE_DETAILS_INCORRECT_POA}</em></p>
+  </span>
+);
+
+PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.propTypes = {
   powerOfAttorney: PropTypes.shape({
     representative_type: PropTypes.string,
     representative_name: PropTypes.string,
@@ -81,24 +105,19 @@ PowerOfAttorneyDetail.propTypes = {
   })
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const loadingPowerOfAttorney = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'powerOfAttorney');
+const mapDispatchToProps = (dispatch) => bindActionCreators(
+  {
+    getAppealValue
+  },
+  dispatch
+);
 
-  if (loadingPowerOfAttorney?.loading) {
-    return { loading: true };
-  }
+export const PowerOfAttorneyName = _.flow(
+  PowerOfAttorneyDetailWrapper,
+  connect(null, mapDispatchToProps)
+)(PowerOfAttorneyNameUnconnected);
 
-  const appeal = appealWithDetailSelector(state, { appealId: ownProps.appealId });
-
-  return {
-    powerOfAttorney: appeal?.powerOfAttorney,
-    loading: !appeal,
-    error: loadingPowerOfAttorney?.error
-  };
-};
-
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  getAppealValue
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(PowerOfAttorneyDetail);
+export default _.flow(
+  PowerOfAttorneyDetailWrapper,
+  connect(null, mapDispatchToProps)
+)(PowerOfAttorneyDetailUnconnected);
