@@ -124,7 +124,7 @@ class SearchableDropdown extends React.Component {
     // This allows `SearchableDropdown` to still accept the legacy syntax
     const valueObj = isPlainObject(this.state.value) ?
       this.state.value :
-      options.find(({ value }) => value === this.state.value);
+      (options || []).find(({ value }) => value === this.state.value);
 
     /* If the creatable option is passed in, these additional props are added to
      * the select component.
