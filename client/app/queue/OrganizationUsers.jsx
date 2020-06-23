@@ -210,7 +210,7 @@ export default class OrganizationUsers extends React.PureComponent {
         remainingUsers: users
       });
 
-      return { options: this.dropdownOptions() };
+      return this.dropdownOptions();
     });
   }
 
