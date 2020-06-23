@@ -13,7 +13,7 @@ const DEFAULT_PLACEHOLDER = 'Select option';
 
 const customStyles = {
   input: () => ({
-    height: '100%'
+    height: '44px'
   })
 };
 
