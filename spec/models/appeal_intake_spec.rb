@@ -79,6 +79,7 @@ describe AppealIntake, :all_dbs do
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
     let(:veteran_is_not_claimant) { "false" }
+
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
     let(:request_params) do
@@ -154,6 +155,28 @@ describe AppealIntake, :all_dbs do
             participant_id: "1234",
             payee_code: nil,
             decision_review: intake.detail
+          )
+        end
+      end
+
+      fcontext "Claimant has notes saved" do
+        let!(:claimant) do
+          Claimant.create!(
+            decision_review: detail,
+            participant_id: "1234",
+            notes: "This is a claimant note"
+          )
+        end
+
+        it "adds note claimants" do
+          subject
+
+          expect(intake.detail.claimants.count).to eq 1
+          expect(intake.detail.claimant).to have_attributes(
+            participant_id: "1234",
+            payee_code: nil,
+            decision_review: intake.detail,
+            notes: "This is a claimant note"
           )
         end
       end

@@ -342,6 +342,7 @@ feature "Intake Review Page", :postgres do
             expect(page).to have_button("Add this claimant", disabled: true)
             find("label[for=noClaimant]").click
             expect(page).to have_content("Notes e.g.")
+            expect(page).to have_button("Add this claimant", disabled: true)
 
             fill_in "Notes e.g.", with: "The claimant's name not listed is Sandra smith!"
             expect(page).to have_button("Add this claimant", disabled: false)

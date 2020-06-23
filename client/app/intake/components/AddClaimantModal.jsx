@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
 import Modal from '../../components/Modal';
@@ -36,11 +36,11 @@ const filterOptions = (options) => options;
 export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys }) => {
   const [claimant, setClaimant] = useState(null);
   const [relationship, setRelationship] = useState(relationshipOpts[0]);
-  const [notClaimant, setNotClaimant] = useState(false);
+  const [unlistedClaimant, setNotClaimant] = useState(false);
   const [claimantNotes, setClaimantNotes] = useState('');
   const isInvalid = useMemo(() => {
-    return (!notClaimant && !claimant) || (notClaimant && !claimantNotes);
-  }, [claimant, notClaimant, claimantNotes]);
+    return (!unlistedClaimant && !claimant) || (unlistedClaimant && !claimantNotes);
+  }, [claimant, unlistedClaimant, claimantNotes]);
 
   const handleChangeRelationship = (value) => setRelationship(value);
   const handleChangeClaimant = (value) => setClaimant(value);
@@ -68,6 +68,12 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
     }
   ];
 
+  useEffect(() => {
+    if (!unlistedClaimant) {
+      return handleClaimantNotes('');
+    }
+  }, [unlistedClaimant]);
+
   return (
     <Modal title={ADD_CLAIMANT_MODAL_TITLE} buttons={buttons} closeHandler={onCancel} id="add_claimant_modal">
       <div>
@@ -89,7 +95,7 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
         value={claimant}
         filterOptions={filterOptions}
         async={asyncFn}
-        readOnly={notClaimant}
+        readOnly={unlistedClaimant}
         options={[]}
         debounce={250}
         strongLabel
@@ -99,9 +105,9 @@ export const AddClaimantModal = ({ onCancel, onSubmit, onSearch = fetchAttorneys
         label="Claimant not listed"
         name="noClaimant"
         onChange={handleNotClaimant}
-        value={notClaimant}
+        value={unlistedClaimant}
       />
-      {notClaimant && (
+      {unlistedClaimant && (
         <TextareaField
           label= {<span><b>Notes</b> e.g. claimant's name, address, law firm</span>}
           name="notes"

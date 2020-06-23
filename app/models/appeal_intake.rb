@@ -21,7 +21,7 @@ class AppealIntake < DecisionReviewIntake
       ).tap do |claimant|
         claimant.participant_id = claimant_participant_id
         claimant.payee_code = nil
-        claimant.notes = claimant_notes
+        claimant.notes = request_params[:claimant_notes]
         claimant.save!
       end
       update_person!
@@ -49,10 +49,6 @@ class AppealIntake < DecisionReviewIntake
 
   def claimant_participant_id
     (request_params[:veteran_is_not_claimant] == true) ? request_params[:claimant] : veteran.participant_id
-  end
-
-  def claimant_notes
-    (request_params[:veteran_is_not_claimant] == true) ? request_params[:claimant_notes] : nil
   end
 
   def review_params
