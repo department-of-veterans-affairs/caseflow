@@ -52,7 +52,7 @@ class VirtualHearingMailer < ActionMailer::Base
   end
 
   def cancellation_calendar_invite
-    VirtualHearings::CalendarService.update_to_video_calendar_invite(virtual_hearing.hearing, recipient)
+    VirtualHearings::CalendarService.update_to_video_calendar_invite(virtual_hearing, recipient)
   end
 
   def calendar_invite_name
