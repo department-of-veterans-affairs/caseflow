@@ -38,7 +38,7 @@ RSpec.feature "Privacy team tasks and queue", :all_dbs do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".cf-select__control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
 
         # Assignee dropdown selector should be hidden.
         expect(find_all(".cf-modal-body .cf-select__control").count).to eq(0)
@@ -65,7 +65,7 @@ RSpec.feature "Privacy team tasks and queue", :all_dbs do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".cf-select__control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
 
         # Assignee dropdown selector should be hidden.
         expect(find_all(".cf-modal-body .cf-select__control").count).to eq(0)

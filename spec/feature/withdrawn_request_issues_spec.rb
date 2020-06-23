@@ -53,7 +53,7 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
 
   def select_allowed_disposition
     find(".cf-select__control", text: "Select disposition").click
-    find("div", class: "Select-option", text: "Allowed").click
+    find("div", class: "cf-select__option", text: "Allowed").click
   end
 
   def fill_in_document_id

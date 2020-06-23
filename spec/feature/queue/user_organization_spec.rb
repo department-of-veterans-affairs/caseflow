@@ -54,7 +54,7 @@ RSpec.feature "User organization", :postgres do
       expect(page).to have_content(user_with_role.full_name)
       expect(page).to_not have_content(user_without_role.full_name)
 
-      find("div", class: "Select-option", text: user_with_role.full_name).click
+      find("div", class: "cf-select__option", text: user_with_role.full_name).click
 
       expect(page).to have_content(user_with_role.full_name)
       expect(user_with_role.organizations.first).to eq(organization)

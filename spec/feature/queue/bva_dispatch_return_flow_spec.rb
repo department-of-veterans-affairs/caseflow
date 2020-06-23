@@ -94,7 +94,7 @@ def attorney_checkout
   fill_in "Text Box", with: "test"
 
   find(".cf-select__control", text: "Select disposition").click
-  find("div", class: "Select-option", text: "Allowed").click
+  find("div", class: "cf-select__option", text: "Allowed").click
   click_on "Save"
   click_on "Continue"
   fill_in "Document ID:", with: "12345-12345678"

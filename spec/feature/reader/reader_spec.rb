@@ -1045,7 +1045,7 @@ RSpec.feature "Reader", :all_dbs do
 
         DOC2_TAG1 = "Appeal Document"
 
-        SELECT_VALUE_LABEL_CLASS = ".Select-value-label"
+        SELECT_VALUE_LABEL_CLASS = ".cf-select__multi-value__label"
 
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         click_on documents[0].type
@@ -1053,7 +1053,7 @@ RSpec.feature "Reader", :all_dbs do
         fill_in "tags", with: TAG1
 
         # making sure there is a dropdown showing up when text is entered
-        expect(page).to have_css(".Select-menu-outer", wait: 5)
+        expect(page).to have_css(".cf-select__menu", wait: 5)
 
         # submit entering the tag
         fill_in "tags", with: (TAG1 + "\n")
@@ -1073,7 +1073,7 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
 
         # getting remove buttons of all tags
-        cancel_icons = page.all(".Select-value-icon", count: 1)
+        cancel_icons = page.all(".cf-select__multi-value__remove", count: 1)
 
         # delete all tags
         cancel_icons[0].click
@@ -1095,17 +1095,17 @@ RSpec.feature "Reader", :all_dbs do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           click_on documents[0].type
           find("#tags").click
-          expect(page).not_to have_css(".Select-menu-outer")
+          expect(page).not_to have_css(".cf-select__menu")
         end
 
         # :nocov:
         scenario "Should show correct auto suggestions", skip: true do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           click_on documents[1].type
-          find(".Select-control").click
-          expect(page).to have_css(".Select-menu-outer")
+          find(".cf-select__control").click
+          expect(page).to have_css(".cf-select__menu")
 
-          tag_options = find_all(".Select-option")
+          tag_options = find_all(".cf-select__option")
           expect(tag_options.count).to eq(2)
 
           documents[0].tags.each_with_index do |tag, index|
@@ -1117,25 +1117,25 @@ RSpec.feature "Reader", :all_dbs do
 
           # going to the document[0] page
           visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-          find(".Select-control").click
-          expect(page).to have_css(".Select-menu-outer")
+          find(".cf-select__control").click
+          expect(page).to have_css(".cf-select__menu")
 
           # making sure correct tag options exist
-          tag_options = find_all(".Select-option")
+          tag_options = find_all(".cf-select__option")
           expect(tag_options.count).to eq(1)
           expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
 
           # removing an existing tag
-          select_control = find(".cf-issue-tag-sidebar").find(".Select-control")
-          removed_value_text = select_control.find_all(".Select-value")[0].text
-          select_control.find_all(".Select-value-icon")[0].click
-          expect(page).not_to have_css(".Select-value-label", text: removed_value_text)
+          select_control = find(".cf-issue-tag-sidebar").find(".cf-select__control")
+          removed_value_text = select_control.find_all(".cf-select__multi-value")[0].text
+          select_control.find_all(".cf-select__multi-value__remove")[0].click
+          expect(page).not_to have_css(".cf-select__multi-value__label", text: removed_value_text)
 
-          find(".Select-control").click
+          find(".cf-select__control").click
 
           # again making sure the correct tag options exist
-          expect(page).to have_css(".Select-menu-outer")
-          tag_options = find_all(".Select-option")
+          expect(page).to have_css(".cf-select__menu")
+          tag_options = find_all(".cf-select__option")
           expect(tag_options.count).to eq(1)
           expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
         end

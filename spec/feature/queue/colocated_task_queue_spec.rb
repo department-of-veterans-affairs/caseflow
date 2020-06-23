@@ -29,12 +29,12 @@ RSpec.feature "ColocatedTask", :all_dbs do
       visit("/queue/appeals/#{appeal.uuid}")
 
       find(".cf-select__control", text: "Select an action…").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label]).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label]).click
 
       # Redirected to assign colocated action page
       action = Constants.CO_LOCATED_ADMIN_ACTIONS.poa_clarification
       find(".cf-select__control", text: "Select an action").click
-      find("div", class: "Select-option", text: action).click
+      find("div", class: "cf-select__option", text: action).click
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
       find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
@@ -47,7 +47,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
 
       # Return case to attorney.
       find(".cf-select__control", text: "Select an action…").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
       fill_in("instructions", with: return_instructions)
       find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -106,7 +106,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
 
         # Attempt to place the task on hold without including notes.
         find(".cf-select__control", text: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: "#{hold_duration_days} days").click
+        find("div", class: "cf-select__option", text: "#{hold_duration_days} days").click
         click_on(COPY::MODAL_SUBMIT_BUTTON)
 
         # Instructions field is required
@@ -151,7 +151,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
 
       # Navigate to the change task type modal
       find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
 
       expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
 
@@ -162,7 +162,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       end
 
       # Attempt to change task type without including instuctions.
-      find("div", class: "Select-option", text: new_task_type.label).click
+      find("div", class: "cf-select__option", text: new_task_type.label).click
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required

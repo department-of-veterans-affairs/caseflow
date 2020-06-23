@@ -149,13 +149,13 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       fill_in "Text Box", with: decision_issue_text
 
       find(".cf-select__control", text: "Select disposition").click
-      find("div", class: "Select-option", text: decision_issue_disposition).click
+      find("div", class: "cf-select__option", text: decision_issue_disposition).click
 
       find(".cf-select__control", text: old_benefit_type).click
-      find("div", class: "Select-option", text: benefit_type).click
+      find("div", class: "cf-select__option", text: benefit_type).click
 
       find(".cf-select__control", text: diagnostic_code).click
-      find("div", class: "Select-option", text: new_diagnostic_code).click
+      find("div", class: "cf-select__option", text: new_diagnostic_code).click
 
       click_on "Save"
 
@@ -166,10 +166,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       fill_in "Text Box", with: other_issue_text
 
       find(".cf-select__control", text: "Select disposition").click
-      find("div", class: "Select-option", text: decision_issue_disposition).click
+      find("div", class: "cf-select__option", text: decision_issue_disposition).click
 
       find(".cf-select__control", text: old_benefit_type).click
-      find("div", class: "Select-option", text: benefit_type).click
+      find("div", class: "cf-select__option", text: benefit_type).click
 
       click_on "Save"
 
@@ -180,13 +180,13 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       fill_in "Text Box", with: allowed_issue_text
 
       find(".cf-select__control", text: "Select disposition").click
-      find("div", class: "Select-option", text: "Allowed").click
+      find("div", class: "cf-select__option", text: "Allowed").click
 
       find(".cf-select__control", text: old_benefit_type).click
-      find("div", class: "Select-option", text: benefit_type).click
+      find("div", class: "cf-select__option", text: benefit_type).click
 
       find(".cf-select__control", text: "Select issues").click
-      find("div", class: "Select-option", text: "Tinnitus").click
+      find("div", class: "cf-select__option", text: "Tinnitus").click
 
       click_on "Save"
 
@@ -208,13 +208,13 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       fill_in "Text Box", with: allowed_issue_text
 
       find(".cf-select__control", text: "Select disposition").click
-      find("div", class: "Select-option", text: "Allowed").click
+      find("div", class: "cf-select__option", text: "Allowed").click
 
       find(".cf-select__control", text: old_benefit_type).click
-      find("div", class: "Select-option", text: benefit_type).click
+      find("div", class: "cf-select__option", text: benefit_type).click
 
       find(".cf-select__control", text: "Select issues").click
-      find("div", class: "Select-option", text: "Tinnitus").click
+      find("div", class: "cf-select__option", text: "Tinnitus").click
 
       click_on "Save"
 
@@ -233,7 +233,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       all("button", text: "Edit", count: 3)[2].click
 
       find(".cf-select__control", text: "Select issues").click
-      find("div", class: "Select-option", text: "Tinnitus").click
+      find("div", class: "cf-select__option", text: "Tinnitus").click
 
       click_on "Save"
 
@@ -515,16 +515,16 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         issue_dispositions = page.find_all(".cf-select__control", text: "Select disposition", count: appeal.issues.length)
 
         issue_dispositions[0].click
-        page.find("div", class: "Select-option", text: "Remanded").click
+        page.find("div", class: "cf-select__option", text: "Remanded").click
 
         issue_dispositions[1].click
-        page.find("div", class: "Select-option", text: "Remanded").click
+        page.find("div", class: "cf-select__option", text: "Remanded").click
 
         issue_dispositions[2].click
-        page.find("div", class: "Select-option", text: "Allowed").click
+        page.find("div", class: "cf-select__option", text: "Allowed").click
 
         issue_dispositions[3].click
-        page.find("div", class: "Select-option", text: "Stay").click
+        page.find("div", class: "cf-select__option", text: "Stay").click
 
         click_on "Continue"
 
@@ -759,13 +759,13 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         level = "Rule 608 motion to withdraw"
 
         find(".cf-select__control", text: "Select program").click
-        find("div", class: "Select-option", text: program).click
+        find("div", class: "cf-select__option", text: program).click
 
         find(".cf-select__control", text: "Select issue").click
-        find("div", class: "Select-option", text: issue).click
+        find("div", class: "cf-select__option", text: issue).click
 
         find(".cf-select__control", text: "Select level 1").click
-        find("div", class: "Select-option", text: level).click
+        find("div", class: "cf-select__option", text: level).click
 
         fill_in "Notes:", with: "added issue"
 

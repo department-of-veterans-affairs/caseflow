@@ -93,7 +93,7 @@ RSpec.feature "MailTasks", :postgres do
 
       # Navigate to the change task type modal
       find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
 
       expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
 
@@ -105,7 +105,7 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       # Attempt to change task type without including instuctions.
-      find("div", class: "Select-option", text: new_task_type.label).click
+      find("div", class: "cf-select__option", text: new_task_type.label).click
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required

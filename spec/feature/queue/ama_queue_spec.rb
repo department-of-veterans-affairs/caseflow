@@ -189,10 +189,10 @@ feature "AmaQueue", :all_dbs do
         click_on "Edit"
 
         find(".cf-select__control", text: "Select grant or deny").click
-        find("div", class: "Select-option", text: "Grant").click
+        find("div", class: "cf-select__option", text: "Grant").click
 
         find(".cf-select__control", text: "Select a type").click
-        find("div", class: "Select-option", text: "Serious illness").click
+        find("div", class: "cf-select__option", text: "Serious illness").click
 
         click_on "Submit"
 
@@ -252,10 +252,10 @@ feature "AmaQueue", :all_dbs do
         click_on "Pal Smith"
 
         find(".cf-select__control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
         find(".cf-select__control", text: user.full_name).click
-        find("div", class: "Select-option", text: other_user.full_name).click
+        find("div", class: "cf-select__option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
         click_on "Submit"
@@ -268,7 +268,7 @@ feature "AmaQueue", :all_dbs do
         click_on "Pal Smith"
 
         find(".cf-select__control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
 
         fill_in "taskInstructions", with: instructions
         click_on "Submit"
@@ -290,10 +290,10 @@ feature "AmaQueue", :all_dbs do
         end
 
         find(".cf-select__control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
 
         find(".cf-select__control", text: "Select a team").click
-        find("div", class: "Select-option", text: other_organization.name).click
+        find("div", class: "cf-select__option", text: other_organization.name).click
         fill_in "taskInstructions", with: instructions
 
         click_on "Submit"
@@ -492,7 +492,7 @@ feature "AmaQueue", :all_dbs do
         fill_in "Text Box", with: "test"
 
         find(".cf-select__control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Allowed").click
+        find("div", class: "cf-select__option", text: "Allowed").click
 
         click_on "Save"
 
@@ -504,7 +504,7 @@ feature "AmaQueue", :all_dbs do
         fill_in "Text Box", with: "test"
 
         find(".cf-select__control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Remanded").click
+        find("div", class: "cf-select__option", text: "Remanded").click
 
         click_on "Save"
         expect(page.has_no_content?("This field is required")).to eq(true)
@@ -613,7 +613,7 @@ feature "AmaQueue", :all_dbs do
         fill_in "Text Box", with: "test"
 
         find(".cf-select__control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Allowed").click
+        find("div", class: "cf-select__option", text: "Allowed").click
 
         click_on "Save"
 
@@ -624,7 +624,7 @@ feature "AmaQueue", :all_dbs do
         fill_in "Text Box", with: "test"
 
         find(".cf-select__control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Remanded").click
+        find("div", class: "cf-select__option", text: "Remanded").click
 
         click_on "Save"
         click_on "Continue"
@@ -788,7 +788,7 @@ feature "AmaQueue", :all_dbs do
           fill_in "Text Box", with: "test"
 
           find(".cf-select__control", text: "Select disposition").click
-          find("div", class: "Select-option", text: "Allowed").click
+          find("div", class: "cf-select__option", text: "Allowed").click
 
           click_on "Save"
 
@@ -800,7 +800,7 @@ feature "AmaQueue", :all_dbs do
           fill_in "Text Box", with: "test"
 
           find(".cf-select__control", text: "Select disposition").click
-          find("div", class: "Select-option", text: "Remanded").click
+          find("div", class: "cf-select__option", text: "Remanded").click
 
           click_on "Save"
           expect(page.has_no_content?("This field is required")).to eq(true)

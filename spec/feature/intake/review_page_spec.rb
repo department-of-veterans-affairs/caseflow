@@ -390,7 +390,7 @@ def check_pension_and_compensation_payee_code
 
   find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
-  expect(find(".Select-multi-value-wrapper")).to have_content("11 - C&P First Child")
+  expect(find(".cf-select__value-container")).to have_content("11 - C&P First Child")
 
   fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
   find("#cf-payee-code").send_keys :enter
