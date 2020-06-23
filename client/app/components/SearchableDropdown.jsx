@@ -88,6 +88,7 @@ class SearchableDropdown extends React.Component {
 
   render() {
     const {
+      ariaLabel,
       async,
       options,
       defaultOptions,
@@ -176,6 +177,7 @@ class SearchableDropdown extends React.Component {
           )}
           <div className="cf-select">
             <SelectComponent
+              aria-label={ariaLabel ?? name}
               classNamePrefix="cf-select"
               inputProps={{
                 id: name,
@@ -219,6 +221,8 @@ const SelectOpts = PropTypes.arrayOf(
 );
 
 SearchableDropdown.propTypes = {
+  ariaLabel: PropTypes.string,
+  ariaLabelledBy: PropTypes.string,
   async: PropTypes.func,
   creatable: PropTypes.bool,
   creatableOptions: PropTypes.shape({
