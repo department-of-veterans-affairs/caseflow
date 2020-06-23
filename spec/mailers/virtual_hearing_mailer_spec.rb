@@ -292,7 +292,7 @@ describe VirtualHearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "11:30am EST" }
     # legacy hearing is scheduled at 11:30am in the central office's time zone (eastern)
-    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am EST" }
+    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "2:30pm EST" }
     it_behaves_like(
       "email body has the right times with ama and legacy hearings",
       expected_ama_times,
@@ -314,7 +314,7 @@ describe VirtualHearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "8:30am PST" }
     # legacy hearing is scheduled at 11:30am in the central office's time zone (eastern)
-    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "8:30am PST" }
+    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am PST" }
     it_behaves_like(
       "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
     )
@@ -334,7 +334,7 @@ describe VirtualHearingMailer do
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "8:30am PST" }
     # legacy hearing is scheduled at 11:30am in the central office's time zone (eastern)
-    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "8:30am PST" }
+    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am PST" }
     it_behaves_like(
       "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
     )
