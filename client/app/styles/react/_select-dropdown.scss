@@ -72,7 +72,8 @@
 
 .is-searchable.is-open > .Select-control {
   cursor: text;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6)  ;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset,
+    0 0 8px rgba(102, 175, 233, 0.6);
   outline: 0 none;
 }
 
@@ -94,7 +95,8 @@
 }
 
 .is-focused:not(.is-open) > .Select-control {
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 0 3px rgba(0, 126, 255, 0.1);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 0 3px rgba(0, 126, 255, 0.1);
 }
 
 .is-focused .Select-placeholder {
@@ -118,20 +120,38 @@
 }
 
 .has-value.Select--single > .Select-control .Select-value .Select-value-label,
-.has-value.is-pseudo-focused.Select--single > .Select-control .Select-value .Select-value-label {
+.has-value.is-pseudo-focused.Select--single
+  > .Select-control
+  .Select-value
+  .Select-value-label {
   color: #333;
 }
 
 .has-value.Select--single > .Select-control .Select-value a.Select-value-label,
-.has-value.is-pseudo-focused.Select--single > .Select-control .Select-value a.Select-value-label {
+.has-value.is-pseudo-focused.Select--single
+  > .Select-control
+  .Select-value
+  a.Select-value-label {
   cursor: pointer;
   text-decoration: none;
 }
 
-.has-value.Select--single > .Select-control .Select-value a.Select-value-label:hover,
-.has-value.is-pseudo-focused.Select--single > .Select-control .Select-value a.Select-value-label:hover,
-.has-value.Select--single > .Select-control .Select-value a.Select-value-label:focus,
-.has-value.is-pseudo-focused.Select--single > .Select-control .Select-value a.Select-value-label:focus {
+.has-value.Select--single
+  > .Select-control
+  .Select-value
+  a.Select-value-label:hover,
+.has-value.is-pseudo-focused.Select--single
+  > .Select-control
+  .Select-value
+  a.Select-value-label:hover,
+.has-value.Select--single
+  > .Select-control
+  .Select-value
+  a.Select-value-label:focus,
+.has-value.is-pseudo-focused.Select--single
+  > .Select-control
+  .Select-value
+  a.Select-value-label:focus {
   color: #007eff;
   outline: none;
   text-decoration: underline;
@@ -276,7 +296,7 @@
 .Select-menu-outer {
   background-color: $color-white;
   border: 1px solid $color-gray-lighter;
-  border-top-color:  $color-white;
+  border-top-color: $color-white;
   border-bottom-color: $color-gray-lighter;
   box-sizing: border-box;
   max-height: 200px;
@@ -415,3 +435,66 @@
   }
 }
 // scss-lint:enable all
+
+$cf-select-bg-color: #fff;
+$cf-select-border-color: #5b616b;
+$cf-select-text-color: #323a45;
+
+.cf-select {
+  .cf-select__control {
+    background-color: $cf-select-bg-color;
+    border: 1px solid $cf-select-border-color;
+    border-collapse: separate;
+    border-radius: 0;
+    border-spacing: 0;
+    color: $cf-select-text-color;
+    cursor: default;
+
+    .cf-select__value-container {
+      padding-bottom: 0;
+      padding-top: 0;
+      height: 44px;
+
+      .cf-select__placeholder {
+        color: $cf-select-text-color;
+      }
+
+      // Ensure that the "selected" value is aligned correctly
+      .cf-select__placeholder,
+      .cf-select__single-value {
+        position: unset;
+        top: unset;
+        transform: unset;
+      }
+    }
+
+    .cf-select__indicators {
+      .cf-select__indicator-separator {
+        background-color: $cf-select-border-color;
+        margin-bottom: 0;
+        margin-top: 0;
+      }
+      .cf-select__indicator {
+        svg {
+          fill: $cf-select-text-color;
+        }
+      }
+    }
+  }
+
+  .cf-select__menu {
+    border-radius: 0;
+
+    .cf-select__menu-list {
+      .cf-select__option {
+        background-color: $color-white;
+        color: $color-gray;
+
+        &.cf-select__option--is-focused {
+          background-color: $color-gray;
+          color: $color-white;
+        }
+      }
+    }
+  }
+}
