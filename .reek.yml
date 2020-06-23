@@ -204,6 +204,7 @@ detectors:
       - Reporter#percent
       - ScheduleHearingTaskPager#sorted_tasks
       - VBMSCaseflowLogger#log
+      - VirtualHearings::AppellantNameHelper#articlerize
       - VirtualHearings::AppellantNameHelper#appellant_or_veteran
       - VirtualHearings::AppellantNameHelper#formatted_appellant_name
       - VirtualHearings::ExternalLinkHelper#external_link
