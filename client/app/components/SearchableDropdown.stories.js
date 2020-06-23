@@ -86,9 +86,7 @@ export const async = () => {
     // Mock a delay for fetch
     await wait(750);
 
-    const results = await fetchFn(search);
-
-    return { options: results };
+    return await fetchFn(search);
   };
 
   return (
