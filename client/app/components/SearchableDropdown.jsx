@@ -1,6 +1,8 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
+import CreatableSelect from 'react-select/creatable';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
@@ -8,6 +10,12 @@ import { css } from 'glamor';
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
+
+const customStyles = {
+  input: () => ({
+    height: '100%'
+  })
+};
 
 class SearchableDropdown extends React.Component {
   constructor(props) {
@@ -70,9 +78,9 @@ class SearchableDropdown extends React.Component {
 
   getSelectComponent = () => {
     if (this.props.creatable) {
-      return Select.Creatable;
+      return CreatableSelect;
     } else if (this.props.async) {
-      return Select.Async;
+      return AsyncSelect;
     }
 
     return Select;
@@ -82,8 +90,8 @@ class SearchableDropdown extends React.Component {
     const {
       async,
       options,
+      defaultOptions,
       filterOption,
-      filterOptions,
       loading,
       placeholder,
       errorMessage,
@@ -121,7 +129,11 @@ class SearchableDropdown extends React.Component {
      */
     if (creatable) {
       addCreatableOptions = {
-        noResultsText: _.get(creatableOptions, 'tagAlreadyExistsMsg', TAG_ALREADY_EXISTS_MSG),
+        noResultsText: _.get(
+          creatableOptions,
+          'tagAlreadyExistsMsg',
+          TAG_ALREADY_EXISTS_MSG
+        ),
 
         // eslint-disable-next-line no-shadow
         newOptionCreator: ({ label, labelKey, valueKey }) => ({
@@ -159,35 +171,52 @@ class SearchableDropdown extends React.Component {
           {strongLabel ? <strong>{labelContents}</strong> : labelContents}
         </label>
         <div className={errorMessage ? 'usa-input-error' : ''}>
-          {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-          <SelectComponent
-            inputProps={{
-              id: name,
-              autoComplete: 'off'
-            }}
-            options={options}
-            filterOption={filterOption}
-            filterOptions={filterOptions}
-            loadOptions={async}
-            isLoading={loading}
-            onChange={this.onChange}
-            value={this.state.value}
-            placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder}
-            clearable={false}
-            noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
-            searchable={searchable}
-            disabled={readOnly}
-            multi={multi}
-            cache={false}
-            onBlurResetsInput={false}
-            shouldKeyDownEventCreateNewOption={this.shouldKeyDownEventCreateNewOption}
-            {...addCreatableOptions}
-          />
+          {errorMessage && (
+            <span className="usa-input-error-message">{errorMessage}</span>
+          )}
+          <div className="cf-select">
+            <SelectComponent
+              classNamePrefix="cf-select"
+              inputProps={{
+                id: name,
+                autoComplete: 'off'
+              }}
+              options={options}
+              defaultOptions={defaultOptions}
+              filterOption={filterOption}
+              loadOptions={async}
+              isLoading={loading}
+              onChange={this.onChange}
+              value={this.state.value}
+              placeholder={
+                placeholder === null ? DEFAULT_PLACEHOLDER : placeholder
+              }
+              clearable={false}
+              noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
+              searchable={searchable}
+              disabled={readOnly}
+              multi={multi}
+              cache={false}
+              onBlurResetsInput={false}
+              shouldKeyDownEventCreateNewOption={
+                this.shouldKeyDownEventCreateNewOption
+              }
+              styles={customStyles}
+              {...addCreatableOptions}
+            />
+          </div>
         </div>
       </div>
     );
   }
 }
+
+const SelectOpts = PropTypes.arrayOf(
+  PropTypes.shape({
+    value: PropTypes.any,
+    label: PropTypes.string
+  })
+);
 
 SearchableDropdown.propTypes = {
   async: PropTypes.func,
@@ -196,10 +225,10 @@ SearchableDropdown.propTypes = {
     tagAlreadyExistsMsg: PropTypes.string,
     promptTextCreator: PropTypes.func
   }),
+  defaultOptions: PropTypes.oneOf(SelectOpts, PropTypes.bool),
   dropdownStyling: PropTypes.object,
   errorMessage: PropTypes.string,
   filterOption: PropTypes.func,
-  filterOptions: PropTypes.func,
   label: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
@@ -208,12 +237,7 @@ SearchableDropdown.propTypes = {
   name: PropTypes.string.isRequired,
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.any,
-      label: PropTypes.string
-    })
-  ),
+  options: SelectOpts,
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
