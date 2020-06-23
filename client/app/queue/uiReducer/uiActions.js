@@ -76,11 +76,9 @@ const saveFailure = (err) => (dispatch) => {
   } catch (ex) {
     // the default case if there is no `text` node in the response (ie the backend did not return sufficient info)
     uiErrorMessage = {
-      errors: [{
-        title: 'Error',
-        detail: 'There was an error processing your request. ' +
-        'Please retry your action and contact support if errors persist.'
-      }]
+      title: 'Error',
+      detail: 'There was an error processing your request. ' +
+      'Please retry your action and contact support if errors persist.'
     };
   }
 

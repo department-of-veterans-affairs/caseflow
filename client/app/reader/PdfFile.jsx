@@ -106,6 +106,7 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
+  // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.isVisible !== this.props.isVisible) {
       this.currentPage = 0;
@@ -469,6 +470,7 @@ export class PdfFile extends React.PureComponent {
             columnWidth={this.getColumnWidth}
             columnCount={this.columnCount}
             scale={this.props.scale}
+            tabIndex={this.props.isVisible ? 0 : -1}
           />;
         }
       }
@@ -480,11 +482,41 @@ export class PdfFile extends React.PureComponent {
 }
 
 PdfFile.propTypes = {
+  clearDocumentLoadError: PropTypes.object,
+  clearPdfDocument: PropTypes.object,
+  currentMatchIndex: PropTypes.object,
+  documentId: PropTypes.number.isRequired,
+  documentType: PropTypes.string,
+  file: PropTypes.string.isRequired,
+  isVisible: PropTypes.bool,
+  jumpToPageNumber: PropTypes.number,
+  loadError: PropTypes.bool,
+  matchesPerPage: PropTypes.array,
+  onPageChange: PropTypes.func,
+  onScrollToComment: PropTypes.func,
+  pageDimensions: PropTypes.func,
   pdfDocument: PropTypes.object,
-  setDocScrollPosition: PropTypes.func,
+  pdfWorker: PropTypes.string,
+  resetJumpToPage: PropTypes.func,
+  rotation: PropTypes.number,
+  scale: PropTypes.number,
   scrollToComment: PropTypes.shape({
-    id: PropTypes.number
-  })
+    id: PropTypes.number,
+    page: PropTypes.number
+  }),
+  scrollTop: PropTypes.number,
+  searchText: PropTypes.string,
+  setDocumentLoadError: PropTypes.func,
+  setDocScrollPosition: PropTypes.func,
+  setPageDimensions: PropTypes.func,
+  setPdfDocument: PropTypes.func,
+  showPlaceAnnotationIcon: PropTypes.func,
+  sidebarHidden: PropTypes.bool,
+  startPlacingAnnotation: PropTypes.func,
+  togglePdfSidebar: PropTypes.func,
+  updateSearchIndexPage: PropTypes.func,
+  updateSearchRelativeIndex: PropTypes.func,
+  windowingOverscan: PropTypes.number
 };
 
 const mapDispatchToProps = (dispatch) => ({
