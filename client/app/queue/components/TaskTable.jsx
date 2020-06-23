@@ -156,7 +156,6 @@ const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole,
-  tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
   organizationId: state.ui.activeOrganization.id
 });
 

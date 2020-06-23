@@ -171,6 +171,7 @@ module Caseflow::Error
     def initialize(args)
       @code = args[:code] || 400
       @message = args[:message]
+      @title = args[:title]
     end
   end
 
