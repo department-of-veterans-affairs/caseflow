@@ -3,7 +3,6 @@ import React from 'react';
 import faker from 'faker';
 
 import { action } from '@storybook/addon-actions';
-import { withKnobs, text, boolean, select } from '@storybook/addon-knobs';
 
 import SearchableDropdown from './SearchableDropdown';
 
@@ -17,52 +16,80 @@ const options = [
 export default {
   title: 'Commons/Components/SearchableDropdown',
   component: SearchableDropdown,
-  decorators: [withKnobs]
+  decorators: [
+    (storyFn) => (
+      <div style={{ minWidth: '300px', maxWidth: '400px' }}>{storyFn()}</div>
+    )
+  ]
 };
 
 export const basic = () => {
-  return (
-    <div style={{ minWidth: '300px' }}>
-      <SearchableDropdown name="basic" options={options} />
-    </div>
-  );
+  return <SearchableDropdown name="basic" options={options} />;
 };
 
 export const label = () => {
   return (
-    <div style={{ minWidth: '300px' }}>
-      <SearchableDropdown
-        name="label"
-        label="Custom Label Text"
-        options={options}
-      />
-    </div>
+    <SearchableDropdown
+      name="label"
+      label="Custom Label Text"
+      options={options}
+    />
   );
 };
 
 export const defaultValue = () => {
   return (
-    <div style={{ minWidth: '300px' }}>
-      <SearchableDropdown
-        name="defaultValue"
-        label="Select an Option"
-        options={options}
-        value={options[2]}
-      />
-    </div>
+    <SearchableDropdown
+      name="defaultValue"
+      label="Select an Option"
+      options={options}
+      value={options[2]}
+    />
   );
 };
 
 export const readOnly = () => {
   return (
-    <div style={{ minWidth: '300px' }}>
-      <SearchableDropdown
-        name="label"
-        label="Custom Label Text"
-        options={options}
-        readOnly
-      />
-    </div>
+    <SearchableDropdown
+      name="label"
+      label="Custom Label Text"
+      options={options}
+      readOnly
+    />
+  );
+};
+
+export const multiple = () => {
+  return (
+    <SearchableDropdown
+      name="multiple"
+      label="Select Multiple"
+      options={options}
+      multi
+    />
+  );
+};
+
+export const creatable = () => {
+  return (
+    <SearchableDropdown
+      name="creatable"
+      label="Supports Adding Custom Option"
+      options={options}
+      creatable
+    />
+  );
+};
+
+export const creatableMultiple = () => {
+  return (
+    <SearchableDropdown
+      name="creatableMultiple"
+      label="Supports Adding Custom Options"
+      options={options}
+      creatable
+      multi
+    />
   );
 };
 
@@ -90,12 +117,6 @@ export const async = () => {
   };
 
   return (
-    <div style={{ minWidth: '300px' }}>
-      <SearchableDropdown
-        name="async"
-        label="Select an Option"
-        async={asyncFn}
-      />
-    </div>
+    <SearchableDropdown name="async" label="Select an Option" async={asyncFn} />
   );
 };
