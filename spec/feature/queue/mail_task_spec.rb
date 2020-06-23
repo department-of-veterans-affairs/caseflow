@@ -92,15 +92,15 @@ RSpec.feature "MailTasks", :postgres do
       expect(find_all("#currently-active-tasks tr").length).to eq 1
 
       # Navigate to the change task type modal
-      find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
 
       expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
 
       # Ensure all admin actions are available
       mail_tasks = MailTask.subclass_routing_options
-      find(".Select-control", text: "Select an action type").click do
-        visible_options = page.find_all(".Select-option")
+      find(".cf-select__control", text: "Select an action type").click do
+        visible_options = page.find_all(".cf-select__option")
         expect(visible_options.length).to eq mail_tasks.length
       end
 

@@ -27,12 +27,12 @@ RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
 
     scenario "Hearing worksheet switch veterans" do
       visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
-      find(".Select-control").click
+      find(".cf-select__control").click
       find("#react-select-2--option-0").click
       expect(page).to have_current_path("/hearings/" + legacy_hearing.external_id.to_s + "/worksheet")
       expect(page).to have_content(legacy_hearing.veteran_first_name)
 
-      find(".Select-control").click
+      find(".cf-select__control").click
       find("#react-select-2--option-1").click
       expect(page).to have_current_path("/hearings/" + legacy_hearing_two.external_id.to_s + "/worksheet")
       expect(page).to have_content(legacy_hearing_two.veteran_first_name)

@@ -148,13 +148,13 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content "This field is required"
       fill_in "Text Box", with: decision_issue_text
 
-      find(".Select-control", text: "Select disposition").click
+      find(".cf-select__control", text: "Select disposition").click
       find("div", class: "Select-option", text: decision_issue_disposition).click
 
-      find(".Select-control", text: old_benefit_type).click
+      find(".cf-select__control", text: old_benefit_type).click
       find("div", class: "Select-option", text: benefit_type).click
 
-      find(".Select-control", text: diagnostic_code).click
+      find(".cf-select__control", text: diagnostic_code).click
       find("div", class: "Select-option", text: new_diagnostic_code).click
 
       click_on "Save"
@@ -165,10 +165,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       fill_in "Text Box", with: other_issue_text
 
-      find(".Select-control", text: "Select disposition").click
+      find(".cf-select__control", text: "Select disposition").click
       find("div", class: "Select-option", text: decision_issue_disposition).click
 
-      find(".Select-control", text: old_benefit_type).click
+      find(".cf-select__control", text: old_benefit_type).click
       find("div", class: "Select-option", text: benefit_type).click
 
       click_on "Save"
@@ -179,13 +179,13 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       fill_in "Text Box", with: allowed_issue_text
 
-      find(".Select-control", text: "Select disposition").click
+      find(".cf-select__control", text: "Select disposition").click
       find("div", class: "Select-option", text: "Allowed").click
 
-      find(".Select-control", text: old_benefit_type).click
+      find(".cf-select__control", text: old_benefit_type).click
       find("div", class: "Select-option", text: benefit_type).click
 
-      find(".Select-control", text: "Select issues").click
+      find(".cf-select__control", text: "Select issues").click
       find("div", class: "Select-option", text: "Tinnitus").click
 
       click_on "Save"
@@ -207,13 +207,13 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       fill_in "Text Box", with: allowed_issue_text
 
-      find(".Select-control", text: "Select disposition").click
+      find(".cf-select__control", text: "Select disposition").click
       find("div", class: "Select-option", text: "Allowed").click
 
-      find(".Select-control", text: old_benefit_type).click
+      find(".cf-select__control", text: old_benefit_type).click
       find("div", class: "Select-option", text: benefit_type).click
 
-      find(".Select-control", text: "Select issues").click
+      find(".cf-select__control", text: "Select issues").click
       find("div", class: "Select-option", text: "Tinnitus").click
 
       click_on "Save"
@@ -232,7 +232,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       # Re-add linked issue
       all("button", text: "Edit", count: 3)[2].click
 
-      find(".Select-control", text: "Select issues").click
+      find(".cf-select__control", text: "Select issues").click
       find("div", class: "Select-option", text: "Tinnitus").click
 
       click_on "Save"
@@ -512,7 +512,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         click_on "Continue"
 
-        issue_dispositions = page.find_all(".Select-control", text: "Select disposition", count: appeal.issues.length)
+        issue_dispositions = page.find_all(".cf-select__control", text: "Select disposition", count: appeal.issues.length)
 
         issue_dispositions[0].click
         page.find("div", class: "Select-option", text: "Remanded").click
@@ -670,16 +670,16 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
           next unless row
 
-          row.find(".Select-control").click
+          row.find(".cf-select__control").click
 
           if opts[row_idx].eql? "*"
             # there're about 800 diagnostic code options, but getting the count
-            # of '.Select-option's from the DOM takes a while
+            # of '.cf-select__option's from the DOM takes a while
             row.find("div[id$='--option-#{rand(800)}']").click
           elsif opts[row_idx].is_a? String
             row.find("div[id$='--option-#{opts[row_idx]}']").click
           end
-          row.find(".Select-value-label").text
+          row.find(".cf-select__multi-value__label").text
         end
       end
 
@@ -702,7 +702,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           next if row.matches_css? ".is-disabled"
 
           click_dropdown({ index: 1 }, row)
-          row.find(".Select-value-label").text
+          row.find(".cf-select__multi-value__label").text
         end
         fill_in "Notes:", with: "this is the note"
 
@@ -758,13 +758,13 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         issue = "Motions"
         level = "Rule 608 motion to withdraw"
 
-        find(".Select-control", text: "Select program").click
+        find(".cf-select__control", text: "Select program").click
         find("div", class: "Select-option", text: program).click
 
-        find(".Select-control", text: "Select issue").click
+        find(".cf-select__control", text: "Select issue").click
         find("div", class: "Select-option", text: issue).click
 
-        find(".Select-control", text: "Select level 1").click
+        find(".cf-select__control", text: "Select level 1").click
         find("div", class: "Select-option", text: level).click
 
         fill_in "Notes:", with: "added issue"

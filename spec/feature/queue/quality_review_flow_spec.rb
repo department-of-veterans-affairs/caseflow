@@ -79,7 +79,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         visit quality_review_organization.path
         click_on "#{veteran_full_name} (#{veteran.file_number})"
 
-        find(".Select-control", text: "Select an action").click
+        find(".cf-select__control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
         fill_in "taskInstructions", with: "Review the quality"
@@ -95,7 +95,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         click_on "#{veteran_full_name} (#{veteran.file_number})"
 
-        find(".Select-control", text: "Select an action").click
+        find(".cf-select__control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.to_h[:label]).click
 
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq judge_user.full_name
@@ -118,7 +118,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         expect(page).to have_content(qr_instructions)
 
-        find(".Select-control", text: "Select an action", match: :first).click
+        find(".cf-select__control", text: "Select an action", match: :first).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h[:label]).click
 
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
@@ -134,7 +134,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         click_on "#{veteran_full_name} (#{veteran.file_number})"
 
-        find(".Select-control", text: "Select an action").click
+        find(".cf-select__control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
 
         expect(page.has_no_content?("Select special issues")).to eq(true)
@@ -144,7 +144,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
         fill_in "Text Box", with: "test"
-        find(".Select-control", text: "Select disposition").click
+        find(".cf-select__control", text: "Select disposition").click
         find("div", class: "Select-option", text: "Allowed").click
 
         click_on "Save"
@@ -177,7 +177,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
         expect(page).to have_content(qr_instructions)
 
-        find(".Select-control", text: "Select an action", match: :first).click
+        find(".cf-select__control", text: "Select an action", match: :first).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
         expect(page).to have_content("Mark as complete")
@@ -195,7 +195,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
-        find(".Select-control", text: "Select an action").click
+        find(".cf-select__control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
         expect(page).to have_content("Mark as complete")

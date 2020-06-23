@@ -202,7 +202,7 @@ feature "Task queue", :all_dbs do
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
-      find(".Select-control", text: "Select an action…").click
+      find(".cf-select__control", text: "Select an action…").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       find("button", text: "Mark complete").click
@@ -303,7 +303,7 @@ feature "Task queue", :all_dbs do
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-      find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+      find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
       find("div", class: "Select-option", text: label).click
 
       fill_in("taskInstructions", with: instructions)
@@ -347,7 +347,7 @@ feature "Task queue", :all_dbs do
 
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
         find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
@@ -406,7 +406,7 @@ feature "Task queue", :all_dbs do
 
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
         find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
@@ -695,8 +695,8 @@ feature "Task queue", :all_dbs do
       it "should be actionable" do
         visit("/queue/appeals/#{appeal.external_id}")
 
-        find(".Select-control", text: "Select an action…").click
-        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
+        find(".cf-select__control", text: "Select an action…").click
+        find("div .cf-select__option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
         expect(page).to have_content("Instructions:")
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -738,7 +738,7 @@ feature "Task queue", :all_dbs do
 
       it "the location is updated to caseflow when a user assigns a colocated task back to the hearing team" do
         visit("/queue/appeals/#{appeal.external_id}")
-        find(".Select-control", text: "Select an action…").click
+        find(".cf-select__control", text: "Select an action…").click
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
         find("button", text: "Send case").click
@@ -748,7 +748,7 @@ feature "Task queue", :all_dbs do
 
       it "the case should be returned in the attorneys queue when canceled" do
         visit("/queue/appeals/#{appeal.external_id}")
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.label)
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label)
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
@@ -764,7 +764,7 @@ feature "Task queue", :all_dbs do
 
         it "creates a schedule hearing task when a user assigns a colocated task back to the hearing team" do
           visit("/queue/appeals/#{appeal.external_id}")
-          find(".Select-control", text: "Select an action…").click
+          find(".cf-select__control", text: "Select an action…").click
           expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
           find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
           find("button", text: "Send case").click
@@ -853,7 +853,7 @@ feature "Task queue", :all_dbs do
       it "should display an option to mark task complete" do
         expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
-        find(".Select-control", text: "Select an action…").click
+        find(".cf-select__control", text: "Select an action…").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -937,7 +937,7 @@ feature "Task queue", :all_dbs do
       it "should display an option of Ready for Dispatch" do
         expect(bva_dispatch_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label).click
 
         expect(page).to have_content(COPY::DECISION_ISSUE_PAGE_TITLE)
@@ -984,7 +984,7 @@ feature "Task queue", :all_dbs do
       end
 
       it "should not display an option to mark task complete" do
-        find(".Select-control", text: "Select an action…").click
+        find(".cf-select__control", text: "Select an action…").click
         expect(page).to_not have_content(Constants.TASK_ACTIONS.MARK_COMPLETE.label)
       end
     end

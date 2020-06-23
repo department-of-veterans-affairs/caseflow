@@ -74,7 +74,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         User.authenticate!(user: mail_user)
         visit "/queue/appeals/#{appeal.uuid}"
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
-        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
         expect(page).to have_content(COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL)
         expect(page).to_not have_content(COPY::VACATE_MOTION_MAIL_TASK_LABEL)
       end
@@ -85,7 +85,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       User.authenticate!(user: mail_user)
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
-      find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+      find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
       find("div", class: "Select-option", text: COPY::VACATE_MOTION_MAIL_TASK_LABEL).click
       fill_in("taskInstructions", with: "Instructions for motion to vacate mail task")
       find("button", text: "Submit").click
@@ -95,7 +95,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Lit support user can assign task to a motions attorney
       User.authenticate!(user: lit_support_user)
       visit "/queue/appeals/#{appeal.uuid}"
-      find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "Select-option", text: "Assign to person").click
       find(".Select-value").click
       find("div", class: "Select-option", text: "Motions attorney").click
@@ -107,7 +107,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Motions attorney can send to judge
       User.authenticate!(user: motions_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
-      find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "Select-option", text: "Send to judge").click
       expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{motions_attorney_task.id}/send_to_judge")
     end
@@ -192,7 +192,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         User.authenticate!(user: motions_attorney)
         visit "/queue/appeals/#{appeal.uuid}"
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_TITLE)
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
@@ -630,7 +630,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         check_cavc_alert
         verify_cavc_conflict_action
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
         expect(page.current_path).to eq(review_decisions_path)
@@ -676,7 +676,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(PostDecisionMotion.all.size).to eq(1)
         expect(JudgeAddressMotionToVacateTask.all.size).to eq(1)
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
         expect(page.current_path).to eq(review_decisions_path)
@@ -715,7 +715,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         check_cavc_alert
         verify_cavc_conflict_action
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
         expect(page.current_path).to eq(review_decisions_path)
@@ -746,7 +746,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         fill_in "Text Box", with: "test"
 
-        find(".Select-control", text: "Select disposition").click
+        find(".cf-select__control", text: "Select disposition").click
         find("div", class: "Select-option", text: "Allowed").click
 
         click_on "Add Issue"
@@ -799,7 +799,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         check_cavc_alert
         verify_cavc_conflict_action
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
         expect(page.current_path).to eq(review_decisions_path)
@@ -833,7 +833,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         instructions = generate_words(5)
 
         click_dropdown(text: selected_opt_0) do
-          visible_options = page.find_all(".Select-option")
+          visible_options = page.find_all(".cf-select__option")
           expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
         end
 
@@ -971,7 +971,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     check_cavc_alert
     verify_cavc_conflict_action
 
-    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Send to judge").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{motions_attorney_task.id}/send_to_judge")
   end
@@ -983,7 +983,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     check_cavc_alert
     verify_cavc_conflict_action
 
-    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
   end
@@ -995,7 +995,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     check_cavc_alert
     verify_cavc_conflict_action
 
-    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: "Ready for Dispatch").click
   end
 
@@ -1003,7 +1003,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
 
-    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
 
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{task.id}/modal/mark_task_complete")
@@ -1035,7 +1035,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   def verify_cavc_conflict_action
     # Open dropdown
-    action_dropdown = find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    action_dropdown = find(".cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     expect(page).to have_content(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
     # Close dropdown
     action_dropdown.click

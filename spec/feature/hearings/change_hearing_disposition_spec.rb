@@ -198,7 +198,7 @@ RSpec.shared_examples "Change hearing disposition" do
           schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
           expect(schedule_row).to have_content(instructions_text)
           expect(schedule_row).to have_css(
-            ".Select-control .Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+            ".cf-select__control .cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
           )
         end
       end
@@ -438,7 +438,7 @@ RSpec.shared_examples "Change hearing disposition" do
       scenario "cannot create a change hearing disposition task" do
         visit(appeal_path)
         expect(page).to have_content(ScheduleHearingTask.last.label)
-        expect(page).to_not have_css(".Select-control")
+        expect(page).to_not have_css(".cf-select__control")
       end
 
       context "hearing admin task" do
@@ -449,7 +449,7 @@ RSpec.shared_examples "Change hearing disposition" do
         scenario "cannot create a change hearing disposition task" do
           visit(appeal_path)
           expect(page).to have_content(HearingAdminActionIncarceratedVeteranTask.last.label)
-          expect(page).to_not have_css(".Select-control")
+          expect(page).to_not have_css(".cf-select__control")
         end
       end
     end

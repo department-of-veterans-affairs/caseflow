@@ -188,10 +188,10 @@ feature "AmaQueue", :all_dbs do
 
         click_on "Edit"
 
-        find(".Select-control", text: "Select grant or deny").click
+        find(".cf-select__control", text: "Select grant or deny").click
         find("div", class: "Select-option", text: "Grant").click
 
-        find(".Select-control", text: "Select a type").click
+        find(".cf-select__control", text: "Select a type").click
         find("div", class: "Select-option", text: "Serious illness").click
 
         click_on "Submit"
@@ -251,10 +251,10 @@ feature "AmaQueue", :all_dbs do
 
         click_on "Pal Smith"
 
-        find(".Select-control", text: "Select an action").click
+        find(".cf-select__control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
-        find(".Select-control", text: user.full_name).click
+        find(".cf-select__control", text: user.full_name).click
         find("div", class: "Select-option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
@@ -267,7 +267,7 @@ feature "AmaQueue", :all_dbs do
         click_on "Assigned"
         click_on "Pal Smith"
 
-        find(".Select-control", text: "Select an action").click
+        find(".cf-select__control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
 
         fill_in "taskInstructions", with: instructions
@@ -289,10 +289,10 @@ feature "AmaQueue", :all_dbs do
           expect(page).to have_content(existing_instruction)
         end
 
-        find(".Select-control", text: "Select an action").click
+        find(".cf-select__control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
 
-        find(".Select-control", text: "Select a team").click
+        find(".cf-select__control", text: "Select a team").click
         find("div", class: "Select-option", text: other_organization.name).click
         fill_in "taskInstructions", with: instructions
 
@@ -491,7 +491,7 @@ feature "AmaQueue", :all_dbs do
 
         fill_in "Text Box", with: "test"
 
-        find(".Select-control", text: "Select disposition").click
+        find(".cf-select__control", text: "Select disposition").click
         find("div", class: "Select-option", text: "Allowed").click
 
         click_on "Save"
@@ -503,7 +503,7 @@ feature "AmaQueue", :all_dbs do
 
         fill_in "Text Box", with: "test"
 
-        find(".Select-control", text: "Select disposition").click
+        find(".cf-select__control", text: "Select disposition").click
         find("div", class: "Select-option", text: "Remanded").click
 
         click_on "Save"
@@ -612,7 +612,7 @@ feature "AmaQueue", :all_dbs do
 
         fill_in "Text Box", with: "test"
 
-        find(".Select-control", text: "Select disposition").click
+        find(".cf-select__control", text: "Select disposition").click
         find("div", class: "Select-option", text: "Allowed").click
 
         click_on "Save"
@@ -623,7 +623,7 @@ feature "AmaQueue", :all_dbs do
 
         fill_in "Text Box", with: "test"
 
-        find(".Select-control", text: "Select disposition").click
+        find(".cf-select__control", text: "Select disposition").click
         find("div", class: "Select-option", text: "Remanded").click
 
         click_on "Save"
@@ -787,7 +787,7 @@ feature "AmaQueue", :all_dbs do
 
           fill_in "Text Box", with: "test"
 
-          find(".Select-control", text: "Select disposition").click
+          find(".cf-select__control", text: "Select disposition").click
           find("div", class: "Select-option", text: "Allowed").click
 
           click_on "Save"
@@ -799,7 +799,7 @@ feature "AmaQueue", :all_dbs do
 
           fill_in "Text Box", with: "test"
 
-          find(".Select-control", text: "Select disposition").click
+          find(".cf-select__control", text: "Select disposition").click
           find("div", class: "Select-option", text: "Remanded").click
 
           click_on "Save"

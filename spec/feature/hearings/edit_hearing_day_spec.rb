@@ -52,14 +52,14 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
     expect(page).to have_content("Edit Hearing Day")
-    dropdowns = page.all(".Select-control")
+    dropdowns = page.all(".cf-select__control")
     dropdowns[0].click
     expect do
-      dropdowns[0].sibling(".Select-menu-outer").find("div .Select-option", text: "1 (1W200A)").click
+      dropdowns[0].sibling(".cf-select__menu").find("div .cf-select__option", text: "1 (1W200A)").click
     end.to raise_error(Capybara::ElementNotFound)
     find("label[for=roomEdit]").click
     dropdowns[0].click
-    dropdowns[0].sibling(".Select-menu-outer").find("div .Select-option", text: "1 (1W200A)").click
+    dropdowns[0].sibling(".cf-select__menu").find("div .cf-select__option", text: "1 (1W200A)").click
     find("button", text: "Confirm").click
     expect(page).to have_content("You have successfully completed this action")
   end
@@ -71,14 +71,14 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
     expect(page).to have_content("Edit Hearing Day")
-    dropdowns = page.all(".Select-control")
+    dropdowns = page.all(".cf-select__control")
     dropdowns[1].click
     expect do
-      dropdowns[1].sibling(".Select-menu-outer").find("div .Select-option", text: "Judge Abshire").click
+      dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Judge Abshire").click
     end.to raise_error(Capybara::ElementNotFound)
     find("label[for=vljEdit]").click
     dropdowns[1].click
-    dropdowns[1].sibling(".Select-menu-outer").find("div .Select-option", text: "Judge Abshire").click
+    dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Judge Abshire").click
     find("button", text: "Confirm").click
     expect(page).to have_content("You have successfully completed this action")
   end
@@ -90,15 +90,15 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
     expect(page).to have_content("Edit Hearing Day")
-    dropdowns = page.all(".Select-control")
+    dropdowns = page.all(".cf-select__control")
     dropdowns[2].click
     expect do
-      dropdowns[2].sibling(".Select-menu-outer").find("div .Select-option",
+      dropdowns[2].sibling(".cf-select__menu").find("div .cf-select__option",
                                                       text: "#{coordinator.snamef} #{coordinator.snamel}").click
     end.to raise_error(Capybara::ElementNotFound)
     find("label[for=coordinatorEdit]").click
     dropdowns[2].click
-    dropdowns[2].sibling(".Select-menu-outer").find("div .Select-option",
+    dropdowns[2].sibling(".cf-select__menu").find("div .cf-select__option",
                                                     text: "#{coordinator.snamef} #{coordinator.snamel}").click
     find("button", text: "Confirm").click
     expect(page).to have_content("You have successfully completed this action")
