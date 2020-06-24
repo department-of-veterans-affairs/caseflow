@@ -37,8 +37,8 @@ const powerOfAttorneyFromAppealSelector = (appealId) =>
  * @param {Object} WrappedComponent -- The component being wrapped / The display component.
  * @returns {Component} -- The wrapped component.
  */
-const PowerOfAttorneyDetailWrapper = (WrappedComponent) =>
-  ({ appealId, getAppealValue: getAppealValueRedux }) => {
+const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
+  const wrappedComponent = ({ appealId, getAppealValue: getAppealValueRedux }) => {
     const { error, loading, powerOfAttorney } = useSelector(
       powerOfAttorneyFromAppealSelector(appealId),
       shallowEqual
@@ -63,19 +63,27 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) =>
     return hasPowerOfAttorneyDetails ?
       <WrappedComponent powerOfAttorney={powerOfAttorney} /> :
       <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
-  }
-;
+  };
 
-PowerOfAttorneyDetailWrapper.propTypes = {
-  appealId: PropTypes.string,
-  getAppealValue: PropTypes.func
+  wrappedComponent.propTypes = {
+    appealId: PropTypes.string,
+    getAppealValue: PropTypes.func
+  };
+
+  return wrappedComponent;
 };
 
-const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
+/**
+ * Component that displays just the power of attorney's name.
+ */
+export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
   <React.Fragment>{powerOfAttorney.representative_name}</React.Fragment>
 );
 
-const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => (
+/**
+ * Component that displays details about the power of attorney.
+ */
+export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => (
   <span>
     <p>
       <strong>{powerOfAttorney.representative_type}:</strong> {powerOfAttorney.representative_name}
