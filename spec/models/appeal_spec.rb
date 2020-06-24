@@ -534,6 +534,25 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "#appellant_middle_initial" do
+    subject { appeal.appellant_middle_initial }
+
+    context "when appeal has claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+
+      it "returns non-nil string of size 1" do
+        expect(subject).to_not eq nil
+        expect(subject.size).to eq 1
+      end
+    end
+
+    context "when appeal doesn't have claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 0) }
+
+      it { is_expected.to eq nil }
+    end
+  end
+
   context "when claimants have different poas" do
     let(:participant_id_with_pva) { "1234" }
     let(:participant_id_with_aml) { "5678" }
