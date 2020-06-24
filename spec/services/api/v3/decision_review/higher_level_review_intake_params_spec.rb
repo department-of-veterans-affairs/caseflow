@@ -718,7 +718,6 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
       end
     end
 
-
     context "invalid type for claimant" do
       let(:claimant) { true }
       it do
