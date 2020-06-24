@@ -42,7 +42,8 @@ describe AppealIntake, :all_dbs do
       Claimant.create!(
         decision_review: detail,
         participant_id: "1234",
-        payee_code: "10"
+        payee_code: "10",
+        notes: "This is a claimant"
       )
     end
 
@@ -79,6 +80,7 @@ describe AppealIntake, :all_dbs do
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
     let(:veteran_is_not_claimant) { "false" }
+    let(:notes) { nil }
 
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
@@ -127,6 +129,30 @@ describe AppealIntake, :all_dbs do
       it { is_expected.to be_falsey }
     end
 
+    context "Claimant has notes saved" do
+      let(:claimant_notes) { "This is a claimant note" }
+      let(:request_params) do
+        ActionController::Parameters.new(
+          receipt_date: receipt_date,
+          docket_type: docket_type,
+          claimant: claimant,
+          payee_code: payee_code,
+          legacy_opt_in_approved: legacy_opt_in_approved,
+          veteran_is_not_claimant: veteran_is_not_claimant,
+          claimant_notes: claimant_notes
+        )
+      end
+
+      it "adds note to unlisted claimants" do
+        subject
+        expect(intake.detail.claimant).to have_attributes(
+          payee_code: nil,
+          decision_review: intake.detail,
+          notes: "This is a claimant note"
+        )
+      end
+    end
+
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
@@ -155,28 +181,6 @@ describe AppealIntake, :all_dbs do
             participant_id: "1234",
             payee_code: nil,
             decision_review: intake.detail
-          )
-        end
-      end
-
-      fcontext "Claimant has notes saved" do
-        let!(:claimant) do
-          Claimant.create!(
-            decision_review: detail,
-            participant_id: "1234",
-            notes: "This is a claimant note"
-          )
-        end
-
-        it "adds note claimants" do
-          subject
-
-          expect(intake.detail.claimants.count).to eq 1
-          expect(intake.detail.claimant).to have_attributes(
-            participant_id: "1234",
-            payee_code: nil,
-            decision_review: intake.detail,
-            notes: "This is a claimant note"
           )
         end
       end
