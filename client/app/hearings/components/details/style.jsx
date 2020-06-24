@@ -1,4 +1,5 @@
 import { css } from 'glamor';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const labelPaddingFirst = css({
   paddingBottom: 5,
@@ -81,3 +82,32 @@ export const enablePadding = css({
 export const hearingLinksContainer = css({
   marginBottom: 38
 });
+
+export const fullWidth = css({ display: 'flex', flex: 1 });
+
+export const leftAlign = css({
+  marginTop: 30,
+  display: 'flex',
+  '& > *': {
+    paddingLeft: 15,
+    paddingRight: 15,
+    flex: 1,
+    margin: 0
+  },
+  '& > :first-child': {
+    paddingLeft: 0
+  },
+  '& > :last-child': {
+    paddingRight: 0
+  },
+  '& label': {
+    maxWidth: 'none !important'
+  }
+});
+
+export const marginTop = (margin) =>
+  css({
+    marginTop: margin
+  });
+
+export const helperLabel = css({ marginTop: 15, color: COLORS.GREY_DARK });

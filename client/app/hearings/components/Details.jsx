@@ -9,12 +9,12 @@ import _ from 'lodash';
 import { DetailsHeader } from './details/DetailsHeader';
 import {
   HearingsFormContext,
-  UPDATE_VIRTUAL_HEARING, SET_ALL_HEARING_FORMS, SET_UPDATED
+  UPDATE_VIRTUAL_HEARING,
+  SET_ALL_HEARING_FORMS,
+  SET_UPDATED
 } from '../contexts/HearingsFormContext';
 import { deepDiff, pollVirtualHearingData, getChanges } from '../utils';
-import {
-  onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
-} from '../../components/common/actions';
+import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../components/common/actions';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
@@ -22,6 +22,7 @@ import * as DateUtil from '../../util/DateUtil';
 import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
+import { ConvertToVirtual } from './ConvertToVirtual';
 
 const inputFix = css({
   '& .question-label': {
@@ -30,22 +31,37 @@ const inputFix = css({
 });
 
 const HearingDetails = (props) => {
-  const {
-    hearing, saveHearing, setHearing, goBack, disabled
-  } = props;
+  const { hearing, saveHearing, setHearing, goBack, disabled } = props;
 
   const {
-    aod, appellantIsNotVeteran, bvaPoc, judgeId, isVirtual, wasVirtual,
-    externalId, veteranFirstName, veteranLastName,
-    veteranFileNumber, room, notes, evidenceWindowWaived,
-    scheduledFor, scheduledForIsPast, docketName, docketNumber,
-    transcriptSentDate, readableRequestType, hearingDayId,
-    regionalOfficeName, readableLocation,
+    aod,
+    appellantIsNotVeteran,
+    bvaPoc,
+    judgeId,
+    isVirtual,
+    wasVirtual,
+    externalId,
+    veteranFirstName,
+    veteranLastName,
+    veteranFileNumber,
+    room,
+    notes,
+    evidenceWindowWaived,
+    scheduledFor,
+    scheduledForIsPast,
+    docketName,
+    docketNumber,
+    transcriptSentDate,
+    readableRequestType,
+    hearingDayId,
+    regionalOfficeName,
+    readableLocation,
     disposition
   } = hearing;
 
   const isLegacy = docketName !== 'hearing';
 
+  const [converting, convertHearing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [virtualHearingErrors, setVirtualHearingErrors] = useState({});
@@ -182,32 +198,30 @@ const HearingDetails = (props) => {
 
     setLoading(true);
 
-    return saveHearing(submitData).then((response) => {
-      const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
-      const alerts = response.body?.alerts;
+    return saveHearing(submitData).
+      then((response) => {
+        const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
+        const alerts = response.body?.alerts;
 
-      setLoading(false);
-      setError(false);
+        setLoading(false);
+        setError(false);
 
-      // set hearing on DetailsContainer
-      setHearing(hearingResp, () => {
-        if (alerts) {
-          const {
-            hearing: hearingAlerts,
-            virtual_hearing: virtualHearingAlerts
-          } = alerts;
+        // set hearing on DetailsContainer
+        setHearing(hearingResp, () => {
+          if (alerts) {
+            const { hearing: hearingAlerts, virtual_hearing: virtualHearingAlerts } = alerts;
 
-          if (hearingAlerts) {
-            props.onReceiveAlerts(hearingAlerts);
+            if (hearingAlerts) {
+              props.onReceiveAlerts(hearingAlerts);
+            }
+
+            if (!_.isEmpty(virtualHearingAlerts)) {
+              props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
+              setShouldStartPolling(true);
+            }
           }
-
-          if (!_.isEmpty(virtualHearingAlerts)) {
-            props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
-            setShouldStartPolling(true);
-          }
-        }
-      });
-    }).
+        });
+      }).
       catch((respError) => {
         const code = _.get(respError, 'response.body.errors[0].code') || '';
 
@@ -225,8 +239,7 @@ const HearingDetails = (props) => {
 
     if (
       virtual &&
-      (!hearingForms.virtualHearingForm?.representativeEmail ||
-      !hearingForms.virtualHearingForm?.appellantEmail)
+      (!hearingForms.virtualHearingForm?.representativeEmail || !hearingForms.virtualHearingForm?.appellantEmail)
     ) {
       setLoading(true);
       setVirtualHearingErrors({
@@ -260,61 +273,70 @@ const HearingDetails = (props) => {
 
   const editedEmails = getEditedEmails();
 
+  const cancelConvert = () => {
+    convertHearing(false);
+  };
+
   return (
     <React.Fragment>
       <UserAlerts />
-      {error &&
+      {error && (
         <div>
           <Alert type="error" title="There was an error updating the hearing" />
         </div>
-      }
-      <AppSegment filledBackground>
-        <div {...inputFix}>
-          <DetailsHeader
-            aod={aod}
-            disposition={disposition}
-            docketName={docketName}
-            docketNumber={docketNumber}
-            isVirtual={isVirtual}
-            hearingDayId={hearingDayId}
-            readableLocation={readableLocation}
-            readableRequestType={readableRequestType}
-            regionalOfficeName={regionalOfficeName}
-            scheduledFor={scheduledFor}
-            veteranFileNumber={veteranFileNumber}
-            veteranFirstName={veteranFirstName}
-            veteranLastName={veteranLastName}
-          />
-          <DetailsForm
-            errors={virtualHearingErrors}
-            isLegacy={isLegacy}
-            isVirtual={isVirtual}
-            openVirtualHearingModal={openVirtualHearingModal}
-            readOnly={disabled}
-            requestType={readableRequestType}
-            updateVirtualHearing={updateVirtualHearing}
-            wasVirtual={wasVirtual}
-          />
-        </div>
-        {shouldStartPolling && startPolling()}
-        {virtualHearingModalOpen && (
-          <VirtualHearingModal
-            hearing={hearing}
-            virtualHearing={hearingForms?.virtualHearingForm}
-            update={updateVirtualHearing}
-            submit={submit}
-            closeModal={closeVirtualHearingModal}
-            reset={resetVirtualHearing}
-            type={virtualHearingModalType}
-            {...editedEmails}
-          />
-        )}
-      </AppSegment>
+      )}
+      {converting ? (
+        <ConvertToVirtual hearing={hearing} scheduledFor={scheduledFor} />
+      ) : (
+        <AppSegment filledBackground>
+          <div {...inputFix}>
+            <DetailsHeader
+              aod={aod}
+              disposition={disposition}
+              docketName={docketName}
+              docketNumber={docketNumber}
+              isVirtual={isVirtual}
+              hearingDayId={hearingDayId}
+              readableLocation={readableLocation}
+              readableRequestType={readableRequestType}
+              regionalOfficeName={regionalOfficeName}
+              scheduledFor={scheduledFor}
+              veteranFileNumber={veteranFileNumber}
+              veteranFirstName={veteranFirstName}
+              veteranLastName={veteranLastName}
+            />
+            <DetailsForm
+              convertHearing={convertHearing}
+              errors={virtualHearingErrors}
+              isLegacy={isLegacy}
+              isVirtual={isVirtual}
+              openVirtualHearingModal={openVirtualHearingModal}
+              readOnly={disabled}
+              requestType={readableRequestType}
+              updateVirtualHearing={updateVirtualHearing}
+              wasVirtual={wasVirtual}
+            />
+          </div>
+          {shouldStartPolling && startPolling()}
+          {virtualHearingModalOpen && (
+            <VirtualHearingModal
+              hearing={hearing}
+              virtualHearing={hearingForms?.virtualHearingForm}
+              update={updateVirtualHearing}
+              submit={submit}
+              closeModal={closeVirtualHearingModal}
+              reset={resetVirtualHearing}
+              type={virtualHearingModalType}
+              {...editedEmails}
+            />
+          )}
+        </AppSegment>
+      )}
       <div {...css({ overflow: 'hidden' })}>
         <Button
           name="Cancel"
           linkStyling
-          onClick={goBack}
+          onClick={converting ? cancelConvert : goBack}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
@@ -322,12 +344,12 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={!formsUpdated || disabled}
+            disabled={!converting && (!formsUpdated || disabled)}
             loading={loading}
             className="usa-button"
             onClick={() => handleSave(editedEmails)}
           >
-            Save
+            {converting ? 'Convert to Virtual Hearing' : 'Save'}
           </Button>
         </span>
       </div>
@@ -346,10 +368,17 @@ HearingDetails.propTypes = {
   transitionAlert: PropTypes.func
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveAlerts,
-  onReceiveTransitioningAlert,
-  transitionAlert
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      onReceiveAlerts,
+      onReceiveTransitioningAlert,
+      transitionAlert
+    },
+    dispatch
+  );
 
-export default connect(null, mapDispatchToProps)(HearingDetails);
+export default connect(
+  null,
+  mapDispatchToProps
+)(HearingDetails);

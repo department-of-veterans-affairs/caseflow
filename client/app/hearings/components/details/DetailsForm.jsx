@@ -3,10 +3,7 @@ import React, { useContext } from 'react';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { EmailNotificationHistory } from './EmailNotificationHistory';
-import {
-  HearingsFormContext,
-  UPDATE_HEARING_DETAILS
-} from '../../contexts/HearingsFormContext';
+import { HearingsFormContext, UPDATE_HEARING_DETAILS } from '../../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import {
   JudgeDropdown,
@@ -29,11 +26,15 @@ const DetailsForm = (props) => {
     requestType,
     wasVirtual,
     errors,
-    updateVirtualHearing
+    updateVirtualHearing,
+    convertHearing
   } = props;
   const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
-  const enableVirtualHearings = userCanScheduleVirtualHearings && requestType !== 'Central';
-  const { state: { hearingForms }, dispatch } = useContext(HearingsFormContext);
+  const enableVirtualHearings = userCanScheduleVirtualHearings;
+  const {
+    state: { hearingForms },
+    dispatch
+  } = useContext(HearingsFormContext);
   const { hearingDetailsForm, virtualHearingForm, transcriptionDetailsForm } = hearingForms;
 
   return (
@@ -60,22 +61,22 @@ const DetailsForm = (props) => {
           />
         </div>
         <div {...rowThirds}>
-          {enableVirtualHearings &&
+          {enableVirtualHearings && (
             <HearingTypeDropdown
+              convertHearing={convertHearing}
               virtualHearing={virtualHearingForm}
               requestType={requestType}
               updateVirtualHearing={updateVirtualHearing}
               openModal={openVirtualHearingModal}
               readOnly={
                 hearingDetailsForm?.scheduledForIsPast ||
-                ((isVirtual || wasVirtual) &&
-                !virtualHearingForm?.jobCompleted)
+                ((isVirtual || wasVirtual) && !virtualHearingForm?.jobCompleted)
               }
               styling={columnThird}
             />
-          }
+          )}
           <div>
-            {!isLegacy &&
+            {!isLegacy && (
               <React.Fragment>
                 <strong>Waive 90 Day Evidence Hold</strong>
                 <Checkbox
@@ -83,12 +84,12 @@ const DetailsForm = (props) => {
                   name="evidenceWindowWaived"
                   disabled={readOnly}
                   value={hearingDetailsForm?.evidenceWindowWaived || false}
-                  onChange={(evidenceWindowWaived) => dispatch(
-                    { type: UPDATE_HEARING_DETAILS, payload: { evidenceWindowWaived } }
-                  )}
+                  onChange={(evidenceWindowWaived) =>
+                    dispatch({ type: UPDATE_HEARING_DETAILS, payload: { evidenceWindowWaived } })
+                  }
                 />
               </React.Fragment>
-            }
+            )}
           </div>
           <div />
         </div>
@@ -114,18 +115,18 @@ const DetailsForm = (props) => {
         dispatch={dispatch}
       />
 
-      {hearingDetailsForm?.emailEvents.length > 0 &&
+      {hearingDetailsForm?.emailEvents.length > 0 && (
         <EmailNotificationHistory rows={hearingDetailsForm?.emailEvents} />
-      }
+      )}
 
-      {!isLegacy &&
+      {!isLegacy && (
         <TranscriptionFormSection
           hearing={hearingDetailsForm}
           readOnly={readOnly}
           transcription={transcriptionDetailsForm}
           dispatch={dispatch}
         />
-      }
+      )}
     </React.Fragment>
   );
 };
