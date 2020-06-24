@@ -125,7 +125,7 @@ class LegacyHearing < CaseflowRecord
       return (venue_key || appeal&.regional_office_key)
     end
 
-    hearing_day&.regional_office || HearingDay::REQUEST_TYPES.value?(request_type) && request_type
+    hearing_day&.regional_office || HearingDay::REQUEST_TYPES[:central]
   end
 
   def regional_office
