@@ -119,7 +119,11 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         expect(page).to have_content(qr_instructions)
 
         find(".cf-select__control", text: "Select an action", match: :first).click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h[:label]).click
+        find(
+          "div",
+          class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h[:label]
+        ).click
 
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         click_on "Submit"

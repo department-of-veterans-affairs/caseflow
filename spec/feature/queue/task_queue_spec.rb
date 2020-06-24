@@ -766,7 +766,11 @@ feature "Task queue", :all_dbs do
           visit("/queue/appeals/#{appeal.external_id}")
           find(".cf-select__control", text: "Select an action…").click
           expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
-          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label
+          ).click
           find("button", text: "Send case").click
           expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
           expect(appeal.tasks.pluck(:type)).to include(ScheduleHearingTask.name, HearingTask.name)

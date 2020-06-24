@@ -47,7 +47,11 @@ RSpec.feature "ColocatedTask", :all_dbs do
 
       # Return case to attorney.
       find(".cf-select__control", text: "Select an action…").click
-      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
+      find(
+        "div", 
+        class: "cf-select__option", 
+        text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]
+      ).click
       fill_in("instructions", with: return_instructions)
       find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 

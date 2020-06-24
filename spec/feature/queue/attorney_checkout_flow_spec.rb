@@ -512,8 +512,9 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         click_on "Continue"
 
-        issue_dispositions = page.find_all(".cf-select__control", 
-          text: "Select disposition", 
+        issue_dispositions = page.find_all(
+          ".cf-select__control",
+          text: "Select disposition",
           count: appeal.issues.length
         )
 
@@ -704,8 +705,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           # changing options at the top of the form affects what options are enabled further down
           next if row.matches_css? ".cf-select__control--is-disabled"
 
-          click_dropdown({ index: 1 }, row.ancestor('.cf-select'))
-          row.ancestor('.cf-select').find(".cf-select__single-value").text
+          click_dropdown({ index: 1 }, row.ancestor(".cf-select"))
+          row.ancestor(".cf-select").find(".cf-select__single-value").text
         end
         fill_in "Notes:", with: "this is the note"
 
