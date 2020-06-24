@@ -69,13 +69,13 @@ describe VideoHearingDayRequestTypeQuery do
       let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: hearing) }
 
       include_examples "it returns correct hash with expected key and value",
-                       COPY::VIRTUAL_HEARING_REQUEST_TYPE
+                       Hearing::HEARING_TYPES[:R]
 
       context "with a previously cancelled virtual hearing" do
         let!(:cancelled_virtual_hearing) { create(:virtual_hearing, status: :cancelled, hearing: hearing) }
 
         include_examples "it returns correct hash with expected key and value",
-                         COPY::VIRTUAL_HEARING_REQUEST_TYPE
+                         Hearing::HEARING_TYPES[:R]
       end
     end
 
@@ -130,7 +130,7 @@ describe VideoHearingDayRequestTypeQuery do
       let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: legacy_hearing) }
 
       include_examples "it returns correct hash with expected key and value",
-                       COPY::VIRTUAL_HEARING_REQUEST_TYPE
+                       Hearing::HEARING_TYPES[:R]
 
       context "with a previously cancelled virtual hearing" do
         let!(:cancelled_virtual_hearing) do
@@ -138,7 +138,7 @@ describe VideoHearingDayRequestTypeQuery do
         end
 
         include_examples "it returns correct hash with expected key and value",
-                         COPY::VIRTUAL_HEARING_REQUEST_TYPE
+                         Hearing::HEARING_TYPES[:R]
       end
     end
 

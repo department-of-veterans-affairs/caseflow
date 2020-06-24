@@ -23,9 +23,9 @@ class VideoHearingDayRequestTypeQuery
         if virtual_hearings_count == 0
           Hearing::HEARING_TYPES[:V]
         elsif virtual_hearings_count == hearings_count
-          COPY::VIRTUAL_HEARING_REQUEST_TYPE
+          Hearing::HEARING_TYPES[:R]
         else
-          "#{Hearing::HEARING_TYPES[:V]}, #{COPY::VIRTUAL_HEARING_REQUEST_TYPE}"
+          "#{Hearing::HEARING_TYPES[:V]}, #{Hearing::HEARING_TYPES[:R]}"
         end
       end
   end

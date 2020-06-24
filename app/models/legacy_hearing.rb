@@ -96,7 +96,10 @@ class LegacyHearing < CaseflowRecord
 
   def hearing_day_id_refers_to_vacols_row?
     (request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||
-      (request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))
+      (
+        (request_type == HearingDay::REQUEST_TYPES[:video] || request_type == HearingDay::REQUEST_TYPES[:virtual]) &&
+         scheduled_for.to_date < Date.new(2019, 4, 1)
+      )
   end
 
   def hearing_day_id
@@ -122,7 +125,7 @@ class LegacyHearing < CaseflowRecord
       return (venue_key || appeal&.regional_office_key)
     end
 
-    hearing_day&.regional_office || "C"
+    hearing_day&.regional_office || HearingDay::REQUEST_TYPES.value?(request_type) && request_type
   end
 
   def regional_office

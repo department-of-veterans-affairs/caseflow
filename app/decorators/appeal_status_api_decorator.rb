@@ -139,6 +139,7 @@ class AppealStatusApiDecorator < ApplicationDecorator
     return unless scheduled_hearing
 
     hearing_types_for_status_details = {
+      R: "virtual",
       V: "video",
       C: "central_office"
     }.freeze

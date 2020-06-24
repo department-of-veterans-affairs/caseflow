@@ -179,7 +179,7 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   def no_available_rooms
-    key = (params[:request_type] == HearingDay::REQUEST_TYPES[:central]) ? "CO" : "VIDEO"
+    key = (params[:request_type] == HearingDay::REQUEST_TYPES[:central]) ? "CO" : "REMOTE"
 
     render json: {
       "errors": [

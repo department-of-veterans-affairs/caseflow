@@ -19,7 +19,7 @@ class HearingDayRoomAssignment
                         elsif request_type == HearingDay::REQUEST_TYPES[:central]
                           first_available_central_room
                         else
-                          first_available_video_room
+                          first_available_remote_room
                         end
   end
 
@@ -32,7 +32,7 @@ class HearingDayRoomAssignment
     "2" if room_count == 0
   end
 
-  def first_available_video_room
+  def first_available_remote_room
     (1..HearingRooms::ROOMS.size).detect do |room_number|
       room_count = hearing_count_by_room[room_number.to_s] || 0
       room_number != 2 && room_count == 0
