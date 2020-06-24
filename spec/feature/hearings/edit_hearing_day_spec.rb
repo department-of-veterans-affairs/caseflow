@@ -94,12 +94,12 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     dropdowns[2].click
     expect do
       dropdowns[2].sibling(".cf-select__menu").find("div .cf-select__option",
-                                                      text: "#{coordinator.snamef} #{coordinator.snamel}").click
+                                                    text: "#{coordinator.snamef} #{coordinator.snamel}").click
     end.to raise_error(Capybara::ElementNotFound)
     find("label[for=coordinatorEdit]").click
     dropdowns[2].click
     dropdowns[2].sibling(".cf-select__menu").find("div .cf-select__option",
-                                                    text: "#{coordinator.snamef} #{coordinator.snamel}").click
+                                                  text: "#{coordinator.snamef} #{coordinator.snamel}").click
     find("button", text: "Confirm").click
     expect(page).to have_content("You have successfully completed this action")
   end

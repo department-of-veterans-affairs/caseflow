@@ -512,7 +512,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         click_on "Continue"
 
-        issue_dispositions = page.find_all(".cf-select__control", text: "Select disposition", count: appeal.issues.length)
+        issue_dispositions = page.find_all(".cf-select__control", 
+          text: "Select disposition", 
+          count: appeal.issues.length
+        )
 
         issue_dispositions[0].click
         page.find("div", class: "cf-select__option", text: "Remanded").click
@@ -695,14 +698,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         first("a", text: "Edit Issue").click
         expect(page).to have_content("Edit Issue")
 
-        enabled_fields = page.find_all(".Select--single:not(.is-disabled)")
+        enabled_fields = page.find_all(".cf-select__control:not(.cf_select__control--is-disabled)")
 
         field_values = enabled_fields.map do |row|
           # changing options at the top of the form affects what options are enabled further down
-          next if row.matches_css? ".is-disabled"
+          next if row.matches_css? ".cf-select__control--is-disabled"
 
-          click_dropdown({ index: 1 }, row)
-          row.find(".cf-select__multi-value__label").text
+          click_dropdown({ index: 1 }, row.ancestor('.cf-select'))
+          row.ancestor('.cf-select').find(".cf-select__single-value").text
         end
         fill_in "Notes:", with: "this is the note"
 
