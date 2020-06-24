@@ -59,8 +59,4 @@ module AppealConcern
   def veteran_name_object
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
   end
-
-  def appellant_name_object
-    FullName.new(appellant_first_name, appellant_middle_initial, appellant_last_name)
-  end
 end
