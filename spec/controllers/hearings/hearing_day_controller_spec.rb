@@ -130,7 +130,7 @@ describe Hearings::HearingDayController, :all_dbs do
       end
     end
 
-    context "when no room is provided as a parameter and assign_room is false" do
+    context "when no room is provided as a parameter and assign_room is true" do
       context "video hearing day" do
         let(:params) do
           {
