@@ -196,6 +196,7 @@ class SearchableDropdown extends React.Component {
               searchable={searchable}
               isDisabled={readOnly}
               isMulti={multi}
+              isSearchable={!readOnly}
               cache={false}
               onBlurResetsInput={false}
               shouldKeyDownEventCreateNewOption={
