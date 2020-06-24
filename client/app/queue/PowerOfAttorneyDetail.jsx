@@ -14,7 +14,7 @@ import COPY from '../../COPY';
  * @param {Object} appealId -- The appeal's external id
  * @returns {function} -- A function that selects the power of attorney from the Redux state.
  */
-const powerOfAttorneyFromAppealSelector = (appealId) => (
+const powerOfAttorneyFromAppealSelector = (appealId) =>
   (state) => {
     const loadingPowerOfAttorney = _.get(state.queue.loadingAppealDetail[appealId], 'powerOfAttorney');
 
@@ -22,23 +22,23 @@ const powerOfAttorneyFromAppealSelector = (appealId) => (
       return { loading: true };
     }
 
-    const appeal = appealWithDetailSelector(state, { appealId: appealId });
+    const appeal = appealWithDetailSelector(state, { appealId });
 
     return {
       powerOfAttorney: appeal?.powerOfAttorney,
       loading: false,
       error: loadingPowerOfAttorney?.error
-    }
+    };
   }
-);
+;
 
 /**
  * Wraps a component with logic to fetch the power of attorney data from the API.
  * @param {Object} WrappedComponent -- The component being wrapped / The display component.
  * @returns {Component} -- The wrapped component.
  */
-const PowerOfAttorneyDetailWrapper = (WrappedComponent) => (
-  ({ appealId, getAppealValue }) => {
+const PowerOfAttorneyDetailWrapper = (WrappedComponent) =>
+  ({ appealId, getAppealValue: getAppealValueRedux }) => {
     const { error, loading, powerOfAttorney } = useSelector(
       powerOfAttorneyFromAppealSelector(appealId),
       shallowEqual
@@ -53,24 +53,22 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => (
         return <React.Fragment>{COPY.CASE_DETAILS_UNABLE_TO_LOAD}</React.Fragment>;
       }
 
-      getAppealValue(appealId, 'power_of_attorney', 'powerOfAttorney');
+      getAppealValueRedux(appealId, 'power_of_attorney', 'powerOfAttorney');
 
       return null;
     }
 
     const hasPowerOfAttorneyDetails = powerOfAttorney.representative_type && powerOfAttorney.representative_name;
 
-    if (!hasPowerOfAttorneyDetails) {
-      return <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
-    }
-
-    return <WrappedComponent powerOfAttorney={powerOfAttorney} />;
+    return hasPowerOfAttorneyDetails ?
+      <WrappedComponent powerOfAttorney={powerOfAttorney} /> :
+      <p><em>{COPY.CASE_DETAILS_NO_POA}</em></p>;
   }
-);
+;
 
 PowerOfAttorneyDetailWrapper.propTypes = {
   appealId: PropTypes.string,
-  getAppealValue: PropTypes.func,
+  getAppealValue: PropTypes.func
 };
 
 const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
