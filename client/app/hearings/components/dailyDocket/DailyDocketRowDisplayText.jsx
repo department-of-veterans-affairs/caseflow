@@ -50,7 +50,7 @@ const AppellantInformation = ({ hearing }) => {
     {hearing.appellantCity ?
       `${hearing.appellantCity} ${hearing.appellantState} ${hearing.appellantZip}` :
       <div>Loading address...</div>}
-    <br />
+    <br /><br />
     <PowerOfAttorneyName appealId={hearing.appealExternalId} />
   </div>;
 };
