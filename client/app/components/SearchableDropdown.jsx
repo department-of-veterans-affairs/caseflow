@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
-import _, { isPlainObject } from 'lodash';
+import _, { isPlainObject, isEmpty } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 
@@ -154,13 +154,11 @@ class SearchableDropdown extends React.Component {
       };
     }
 
-    // TODO We will get the "tag already exists" message even when the input is invalid,
+    // We will get the "tag already exists" message even when the input is invalid,
     // because if the selector filters the options to be [], it will show the "no results found"
     // message. We can get around this by unsetting `noResultsText`.
-
-    if (_.isEmpty(options)) {
-      addCreatableOptions.noResultsText = '';
-    }
+    const handleNoOptions = () =>
+      noResultsText ?? creatable ? null : NO_RESULTS_TEXT;
 
     const labelContents = (
       <span>
@@ -193,7 +191,7 @@ class SearchableDropdown extends React.Component {
                 placeholder === null ? DEFAULT_PLACEHOLDER : placeholder
               }
               clearable={false}
-              noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
+              noOptionsMessage={handleNoOptions}
               searchable={searchable}
               isDisabled={readOnly}
               isMulti={multi}
