@@ -42,8 +42,7 @@ describe AppealIntake, :all_dbs do
       Claimant.create!(
         decision_review: detail,
         participant_id: "1234",
-        payee_code: "10",
-        notes: "This is a claimant"
+        payee_code: "10"
       )
     end
 
@@ -80,7 +79,6 @@ describe AppealIntake, :all_dbs do
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
     let(:veteran_is_not_claimant) { "false" }
-    let(:notes) { nil }
 
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
