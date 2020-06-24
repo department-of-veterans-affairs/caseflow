@@ -6,6 +6,8 @@ module AppealConcern
   delegate :station_key, to: :regional_office
 
   def regional_office
+    return nil if regional_office_key.nil?
+
     @regional_office ||= begin
                             RegionalOffice.find!(regional_office_key)
                          rescue RegionalOffice::NotFoundError
