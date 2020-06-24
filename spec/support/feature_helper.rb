@@ -43,7 +43,7 @@ module FeatureHelper
   end
 
   def dropdown_selected_value(container = page)
-    container&.find(".cf-select .Select-value")&.text
+    container&.find(".cf-select .cf-select__single-value")&.text
   rescue Capybara::ElementNotFound
     ""
   end
@@ -102,17 +102,17 @@ module FeatureHelper
 
   def dropdown_click(dropdown)
     dropdown.click
-    dropdown.find(".cf-select__menu")&.text&.split("\n") || []
+    dropdown.sibling(".cf-select__menu")&.text&.split("\n") || []
   end
 
   def find_dropdown(options, container)
-    selector = ".cf-select"
+    selector = ".cf-select__control"
     keyword_args = {}
 
     if options[:prompt].present?
       keyword_args[:text] = options[:prompt]
     elsif options[:name].present?
-      selector = ".dropdown-#{options[:name]} .cf-select"
+      selector = ".dropdown-#{options[:name]} .cf-select__control"
     end
 
     keyword_args[:wait] = options[:wait] if options[:wait].present? && options[:wait] > 0
@@ -132,7 +132,7 @@ module FeatureHelper
   end
 
   def dropdown_menu_visible?(dropdown)
-    dropdown.find(".cf-select__menu")
+    dropdown.sibling(".cf-select__menu")
   rescue Capybara::ElementNotFound
     false
   else
@@ -140,7 +140,7 @@ module FeatureHelper
   end
 
   def click_dropdown_menu_item(dropdown, selector, keyword_args)
-    dropdown.find(".cf-select__menu").find(selector, **keyword_args).click
+    dropdown.sibling(".cf-select__menu").find(selector, **keyword_args).click
   end
 
   def generate_text(length)
