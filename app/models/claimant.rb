@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+##
+# The Claimant model associates a claimant to a decision review.
+
 class Claimant < CaseflowRecord
   include AssociatedBgsRecord
   include HasDecisionReviewUpdatedSince
