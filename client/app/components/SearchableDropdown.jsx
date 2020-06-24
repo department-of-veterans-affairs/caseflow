@@ -122,9 +122,10 @@ class SearchableDropdown extends React.Component {
 
     // `react-select` used to accept plain string values, but now requires passing the object
     // This allows `SearchableDropdown` to still accept the legacy syntax
-    const valueObj = isPlainObject(this.state.value) ?
-      this.state.value :
-      (options || []).find(({ value }) => value === this.state.value);
+    const value =
+      Array.isArray(this.state.value) || isPlainObject(this.state.value) ?
+        this.state.value :
+        (options || []).find(({ value: val }) => val === this.state.value);
 
     /* If the creatable option is passed in, these additional props are added to
      * the select component.
@@ -187,7 +188,7 @@ class SearchableDropdown extends React.Component {
               loadOptions={async}
               isLoading={loading}
               onChange={this.onChange}
-              value={valueObj}
+              value={value}
               placeholder={
                 placeholder === null ? DEFAULT_PLACEHOLDER : placeholder
               }
