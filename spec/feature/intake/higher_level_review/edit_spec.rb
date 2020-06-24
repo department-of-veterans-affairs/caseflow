@@ -118,6 +118,38 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
   end
 
+  context "when a contention has an exam scheduled" do
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: higher_level_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:detect_contention_exam)
+      higher_level_review.create_issues!([request_issue])
+      higher_level_review.establish!
+      higher_level_review.reload
+      request_issue.reload
+      request_issue.contention.orig_source_type_code = "EXAM"
+      Fakes::BGSService.end_product_store.update_contention(request_issue.contention)
+    end
+    after { FeatureToggle.disable!(:detect_contention_exam) }
+
+    it "prevents removal of request issue" do
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      expect(page).to_not have_content("Remove issue")
+      expect(page).to_not have_content("Withdraw issue")
+      expect(page).to have_content(COPY::INTAKE_CONTENTION_HAS_EXAM_REQUESTED)
+    end
+  end
+
   context "when there are ineligible issues" do
     ineligible = Constants.INELIGIBLE_REQUEST_ISSUES
 
@@ -564,8 +596,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
                                      "#{active_nonrating_request_issue.description}")
         add_active_intake_nonrating_issue(active_nonrating_request_issue.nonrating_issue_category)
         expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category} -" \
-                                     " #{active_nonrating_request_issue.description}" \
-                                     " is ineligible because it's already under review as a Higher-Level Review")
+                                    " #{active_nonrating_request_issue.description}" \
+                                    " is ineligible because it's already under review as a Higher-Level Review")
 
         safe_click("#button-submit-update")
         safe_click ".confirm"

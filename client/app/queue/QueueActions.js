@@ -214,6 +214,14 @@ const editAppeal = (appealId, attributes) => ({
   }
 });
 
+export const setOvertime = (appealId, overtime) => ({
+  type: ACTIONS.SET_OVERTIME,
+  payload: {
+    appealId,
+    overtime
+  }
+});
+
 export const deleteTask = (taskId) => ({
   type: ACTIONS.DELETE_TASK,
   payload: {
@@ -388,17 +396,6 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
-export const bulkAssignTasks =
-  ({ assignedUser, regionalOffice, taskType, numberOfTasks }) => ({
-    type: ACTIONS.BULK_ASSIGN_TASKS,
-    payload: {
-      assignedUser,
-      regionalOffice,
-      taskType,
-      numberOfTasks
-    }
-  });
-
 // isInitial is only used for das deprecation
 const dispatchOldTasks = (dispatch, oldTasks, resp) => {
   // Ama request is batched
@@ -417,7 +414,7 @@ const dispatchOldTasks = (dispatch, oldTasks, resp) => {
 };
 
 export const initialAssignTasksToUser = ({
-  tasks, assigneeId, previousAssigneeId
+  tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => {
   const amaTasks = tasks.filter((oldTask) => oldTask.appealType === 'Appeal');
   const legacyTasks = tasks.filter((oldTask) => oldTask.appealType === 'LegacyAppeal');
@@ -430,7 +427,8 @@ export const initialAssignTasksToUser = ({
         tasks: amaTasks.map((oldTask) => ({
           external_id: oldTask.externalAppealId,
           parent_id: oldTask.taskId,
-          assigned_to_id: assigneeId
+          assigned_to_id: assigneeId,
+          instructions
         }))
       }
     }
@@ -477,7 +475,7 @@ export const initialAssignTasksToUser = ({
 };
 
 export const reassignTasksToUser = ({
-  tasks, assigneeId, previousAssigneeId
+  tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
@@ -486,8 +484,11 @@ export const reassignTasksToUser = ({
     params = {
       data: {
         task: {
-          type: 'AttorneyTask',
-          assigned_to_id: assigneeId
+          reassign: {
+            assigned_to_id: assigneeId,
+            assigned_to_type: 'User',
+            instructions
+          }
         }
       }
     };
@@ -522,6 +523,8 @@ export const reassignTasksToUser = ({
       dispatch(decrementTaskCountForAttorney({
         id: previousAssigneeId
       }));
+
+      dispatch(setOvertime(oldTask.externalAppealId, false));
     });
 }));
 
@@ -545,6 +548,8 @@ export const legacyReassignToJudge = ({
       dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
 
       dispatch(showSuccessMessage(successMessage));
+
+      dispatch(setOvertime(oldTask.externalAppealId, false));
     });
 }));
 
@@ -657,6 +662,10 @@ export const setSpecialIssues = (specialIssues) => ({
   payload: {
     specialIssues
   }
+});
+
+export const clearSpecialIssues = () => ({
+  type: ACTIONS.CLEAR_SPECIAL_ISSUE
 });
 
 export const setAppealAod = (externalAppealId, granted) => ({

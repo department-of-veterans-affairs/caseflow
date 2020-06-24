@@ -143,8 +143,8 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
 
       click_dropdown(name: "hearingType", index: 1)
-      fill_in "vet-email", with: "email@testingEmail.com"
-      fill_in "rep-email", with: "email@testingEmail.com"
+      fill_in "appellant-email", with: "email@testingEmail.com"
+      fill_in "representative-email", with: "email@testingEmail.com"
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
       expect(page).to have_no_content(expected_alert)

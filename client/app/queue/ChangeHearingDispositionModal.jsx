@@ -10,10 +10,7 @@ import COPY from '../../COPY';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
-import {
-  taskById,
-  appealWithDetailSelector
-} from './selectors';
+import { taskById, appealWithDetailSelector } from './selectors';
 
 import { onReceiveAmaTasks } from './QueueActions';
 
@@ -21,16 +18,15 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
-import {
-  requestPatch
-} from './uiReducer/uiActions';
+import { requestPatch } from './uiReducer/uiActions';
+import Alert from '../components/Alert';
 
 class ChangeHearingDispositionModal extends React.Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
+      error: null,
       selectedValue: null,
       instructions: ''
     };
@@ -73,64 +69,84 @@ class ChangeHearingDispositionModal extends React.Component {
       title: `Successfully changed hearing disposition to ${_.startCase(this.state.selectedValue)}`
     };
 
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+    return this.props.
+      requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         this.props.onReceiveAmaTasks(resp.body.tasks.data);
       }).
-      catch(() => {
-        // handle the error from the frontend
+      catch((err) => {
+        // Process the error from the response
+        const message = err?.message ? JSON.parse(err?.message) : {};
+        const error = _.isArray(message.errors) ? message.errors[0] : err;
+
+        // Set the state with the error to show the message
+        this.setState({
+          error
+        });
+
+        // Throw the error to prevent the Modal from closing
+        throw error;
       });
-  }
+  };
 
   validateForm = () => {
     return this.state.selectedValue !== null && this.state.instructions !== '';
-  }
+  };
 
   render = () => {
-    const {
-      appeal,
-      highlightFormItems,
-      task
-    } = this.props;
+    const { error } = this.state;
+    const { appeal, highlightFormItems, task } = this.props;
 
     const hearing = _.find(appeal.hearings, { externalId: task.externalHearingId });
-    const currentDisposition = hearing.disposition ? _.startCase(hearing.disposition) : 'None';
-    const dispositionOptions = Object.keys(HEARING_DISPOSITION_TYPES).map((key) =>
-      ({
-        value: key,
-        label: _.startCase(key)
-      })
+    const currentDisposition = hearing?.disposition ? _.startCase(hearing?.disposition) : 'None';
+    const dispositionOptions = Object.keys(HEARING_DISPOSITION_TYPES).map((key) => ({
+      value: key,
+      label: _.startCase(key)
+    }));
+
+    return (
+      <QueueFlowModal
+        title="Change hearing disposition"
+        pathAfterSubmit="/queue"
+        submit={this.submit}
+        validateForm={this.validateForm}
+      >
+        {error && (
+          <Alert title={error.title} type="error">
+            {error.detail}
+          </Alert>
+        )}
+        <p>
+          Changing the hearing disposition for this case will close all the open tasks and will remove the case from the
+          current workflow.
+        </p>
+
+        <p>
+          <strong>Hearing Date:</strong> {moment(hearing?.date).format('MM/DD/YYYY')}
+        </p>
+        <p>
+          <strong>Current Disposition:</strong> {currentDisposition}
+        </p>
+
+        <SearchableDropdown
+          name="New Disposition"
+          errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
+          placeholder="Select"
+          value={this.state.selectedValue}
+          onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
+          options={dispositionOptions}
+        />
+        <br />
+        <TextareaField
+          name="Notes"
+          errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          id="taskInstructions"
+          onChange={(value) => this.setState({ instructions: value })}
+          value={this.state.instructions}
+        />
+      </QueueFlowModal>
     );
-
-    return <QueueFlowModal
-      title="Change hearing disposition"
-      pathAfterSubmit = "/queue"
-      submit={this.submit}
-      validateForm={this.validateForm}
-    >
-      <p>Changing the hearing disposition for this case will close all the
-        open tasks and will remove the case from the current workflow.</p>
-
-      <p><strong>Hearing Date:</strong> {moment(hearing.date).format('MM/DD/YYYY')}</p>
-      <p><strong>Current Disposition:</strong> {currentDisposition}</p>
-
-      <SearchableDropdown
-        name="New Disposition"
-        errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
-        placeholder="Select"
-        value={this.state.selectedValue}
-        onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-        options={dispositionOptions} />
-      <br />
-      <TextareaField
-        name="Notes"
-        errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-        id="taskInstructions"
-        onChange={(value) => this.setState({ instructions: value })}
-        value={this.state.instructions} />
-
-    </QueueFlowModal>;
-  }
+  };
 }
 
 ChangeHearingDispositionModal.propTypes = {
@@ -145,9 +161,7 @@ ChangeHearingDispositionModal.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const {
-    highlightFormItems
-  } = state.ui;
+  const { highlightFormItems } = state.ui;
 
   return {
     highlightFormItems,
@@ -156,9 +170,18 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch,
-  onReceiveAmaTasks
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      requestPatch,
+      onReceiveAmaTasks
+    },
+    dispatch
+  );
 
-export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(ChangeHearingDispositionModal)));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(ChangeHearingDispositionModal)
+);

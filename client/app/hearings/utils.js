@@ -87,6 +87,17 @@ export const filterPriorIssues = (issues) =>
     /* eslint-enable no-underscore-dangle */
   );
 
+export const VETERAN_TITLE = 'Veteran';
+export const APPELLANT_TITLE = 'Appellant';
+
+/**
+ * Gets the title to use for the appellant of a hearing.
+ * @param {object} hearing -- A hearing
+ */
+export const getAppellantTitleForHearing = (hearing) => (
+  hearing?.appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE
+);
+
 export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
 
@@ -139,7 +150,7 @@ export const handleEdit = (init, current, fields) => {
 };
 
 export const virtualHearingRoleForUser = (user, hearing) =>
-  user.userCanAssignHearingSchedule || user.userId === hearing.judgeId ? VIRTUAL_HEARING_HOST : VIRTUAL_HEARING_GUEST;
+  user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ? VIRTUAL_HEARING_HOST : VIRTUAL_HEARING_GUEST;
 
 export const pollVirtualHearingData = (hearingId, onSuccess) => (
   // Did not specify retryCount so if api call fails, it'll stop polling.

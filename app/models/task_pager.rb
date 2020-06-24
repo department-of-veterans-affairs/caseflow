@@ -23,7 +23,7 @@ class TaskPager
   end
 
   def paged_tasks
-    sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
+    @paged_tasks ||= sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
   end
 
   def sorted_tasks(tasks)

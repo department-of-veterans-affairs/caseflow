@@ -172,7 +172,7 @@ class RequestIssuesUpdate < CaseflowRecord
   def withdrawal
     @withdrawal ||= RequestIssueWithdrawal.new(
       user: user,
-      review: review,
+      request_issues_update: self,
       request_issues_data: @request_issues_data
     )
   end

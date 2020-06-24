@@ -97,7 +97,7 @@ class VirtualHearings::CalendarService
       template = ActionView::Base.new(ActionMailer::Base.view_paths, {})
       template.class_eval do
         include VirtualHearings::CalendarTemplateHelper
-        include VirtualHearings::VeteranNameHelper
+        include VirtualHearings::AppellantNameHelper
       end
 
       # Some *~ magic ~* here. The recipient title is used to determine which template to load:

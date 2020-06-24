@@ -567,6 +567,14 @@ class RequestIssue < CaseflowRecord
     end_product_establishment.contention_for_object(self)
   end
 
+  def bgs_contention
+    end_product_establishment&.bgs_contention_for_object(self)
+  end
+
+  def exam_requested?
+    bgs_contention&.exam_requested?
+  end
+
   def editable?
     !contention_connected_to_rating?
   end
@@ -772,6 +780,8 @@ class RequestIssue < CaseflowRecord
       rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
+      subject_text: rating_issue.subject_text,
+      percent_number: rating_issue.percent_number,
       end_product_last_action_date: end_product_establishment.last_action_date
     )
   end

@@ -34,13 +34,21 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assigned_to do |object|
+    assignee = object.assigned_to
+
     {
-      css_id: object.assigned_to.try(:css_id),
-      is_organization: object.assigned_to.is_a?(Organization),
-      name: object.appeal.assigned_to_location,
-      full_name: object.assigned_to.try(:full_name),
-      type: object.assigned_to.class.name,
-      id: object.assigned_to.id
+      css_id: assignee.try(:css_id),
+      full_name: assignee.try(:full_name),
+      is_organization: assignee.is_a?(Organization),
+      name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+      type: assignee.class.name,
+      id: assignee.id
+    }
+  end
+
+  attribute :cancelled_by do |object|
+    {
+      css_id: object.cancelled_by.try(:css_id)
     }
   end
 

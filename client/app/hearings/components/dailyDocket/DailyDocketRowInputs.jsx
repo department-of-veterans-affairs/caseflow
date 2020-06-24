@@ -8,7 +8,6 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
 import Checkbox from '../../../components/Checkbox';
 import TextareaField from '../../../components/TextareaField';
 import { AppealHearingLocationsDropdown } from '../../../components/DataDropdowns';
-import HearingTime from '../modalForms/HearingTime';
 import { pencilSymbol } from '../../../components/RenderFunctions';
 import PropTypes from 'prop-types';
 import VirtualHearingLink from '../VirtualHearingLink';
@@ -321,23 +320,6 @@ export const StaticHearingDay = ({ hearing }) => (
 StaticHearingDay.propTypes = {
   hearing: PropTypes.object
 };
-export const TimeRadioButtons = ({ hearing, regionalOffice, update, readOnly }) => {
-  return (
-    <HearingTime
-      regionalOffice={regionalOffice}
-      value={hearing.scheduledTimeString}
-      readOnly={readOnly}
-      onChange={(scheduledTimeString) => update({ scheduledTimeString })}
-    />
-  );
-};
-
-TimeRadioButtons.propTypes = {
-  hearing: PropTypes.object,
-  readOnly: PropTypes.bool,
-  update: PropTypes.func,
-  regionalOffice: PropTypes.string
-};
 
 export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
   <div>
@@ -367,7 +349,7 @@ export const StaticVirtualHearing = ({ hearing, user }) => (
       virtualHearing={hearing.virtualHearing}
       link={hearing?.virtualHearing?.hostLink}
     />
-    {!hearing.virtualHearing.jobCompleted && (
+    {hearing?.virtualHearing?.status === 'pending' && (
       <div {...staticSpacing}>
         <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>
       </div>

@@ -44,6 +44,8 @@ class ETL::Syncer
         saved = 0
         originals.reject { |original| filter?(original) }.each do |original|
           target = target_class.sync_with_original(original)
+          next unless target
+
           if target.persisted?
             updated += 1
           else

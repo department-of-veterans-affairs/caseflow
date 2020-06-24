@@ -111,6 +111,15 @@ describe TaskPager, :all_dbs do
       it "returns a single task" do
         expect(subject.count).to eq(1)
       end
+
+      context "when the assignee is a user" do
+        let(:assignee) { create(:user) }
+        let(:tab_name) { Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME }
+
+        it "returns a single task" do
+          expect(subject.count).to eq(1)
+        end
+      end
     end
   end
 
@@ -181,9 +190,19 @@ describe TaskPager, :all_dbs do
       context "with desc sort_order" do
         let(:sort_order) { Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC }
 
-        it "sorts tasks in reserve by closed_at value" do
+        it "sorts tasks in reverse by closed_at value" do
           expected_order = created_tasks.sort_by(&:closed_at).reverse
           expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+        end
+
+        context "when the assignee is a user" do
+          let(:assignee) { create(:user) }
+          let(:tab_name) { Constants.QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME }
+
+          it "sorts tasks in reverse by closed_at value" do
+            expected_order = created_tasks.sort_by(&:closed_at).reverse
+            expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+          end
         end
       end
     end
@@ -387,10 +406,10 @@ describe TaskPager, :all_dbs do
       end
 
       it "sorts by AOD status, case type, and docket number" do
-        expected_order = CachedAppeal.all.sort_by do |cached_appeal|
-          [cached_appeal.is_aod ? 1 : 0, cached_appeal.case_type, cached_appeal.docket_number]
-        end
-        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+        # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up first
+        # so we sort descending on is_aod
+        expected_order = CachedAppeal.order(is_aod: :desc, case_type: :asc, docket_number: :asc)
+        expect(subject.map(&:appeal_id)).to eq(expected_order.pluck(:appeal_id))
       end
     end
   end

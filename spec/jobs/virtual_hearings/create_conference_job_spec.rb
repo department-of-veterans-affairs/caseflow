@@ -27,15 +27,15 @@ describe VirtualHearings::CreateConferenceJob do
       expect(virtual_hearing.status).to eq(:active)
       expect(virtual_hearing.alias).to eq("0000001")
       expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
-      expect(virtual_hearing.host_pin.nil?).to eq(false)
-      expect(virtual_hearing.guest_pin.nil?).to eq(false)
+      expect(virtual_hearing.host_pin.to_s.length).to eq(8)
+      expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
     end
 
     it "sends confirmation emails if success and is processed", :aggregate_failures do
       subject.perform_now
 
       virtual_hearing.reload
-      expect(virtual_hearing.veteran_email_sent).to eq(true)
+      expect(virtual_hearing.appellant_email_sent).to eq(true)
       expect(virtual_hearing.judge_email_sent).to eq(true)
       expect(virtual_hearing.representative_email_sent).to eq(true)
       expect(virtual_hearing.establishment.processed?).to eq(true)
@@ -47,7 +47,7 @@ describe VirtualHearings::CreateConferenceJob do
       virtual_hearing.reload
       expect(virtual_hearing.hearing.email_events.count).to eq(3)
       expect(virtual_hearing.hearing.email_events.is_confirmation.count).to eq(3)
-      expect(virtual_hearing.hearing.email_events.sent_to_veteran.count).to eq(1)
+      expect(virtual_hearing.hearing.email_events.sent_to_appellant.count).to eq(1)
       expect(virtual_hearing.hearing.email_events.sent_to_representative.count).to eq(1)
       expect(virtual_hearing.hearing.email_events.sent_to_judge.count).to eq(1)
     end
@@ -64,10 +64,10 @@ describe VirtualHearings::CreateConferenceJob do
       subject.perform_now
     end
 
-    context "veteran email fails to send" do
+    context "appellant email fails to send" do
       before do
         expected_mailer_args = {
-          mail_recipient: having_attributes(title: MailRecipient::RECIPIENT_TITLES[:veteran]),
+          mail_recipient: having_attributes(title: MailRecipient::RECIPIENT_TITLES[:appellant]),
           virtual_hearing: instance_of(VirtualHearing)
         }
 
@@ -83,7 +83,7 @@ describe VirtualHearings::CreateConferenceJob do
         subject.perform_now
 
         virtual_hearing.reload
-        expect(virtual_hearing.veteran_email_sent).to eq(false)
+        expect(virtual_hearing.appellant_email_sent).to eq(false)
         expect(virtual_hearing.judge_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
         expect(virtual_hearing.establishment.processed?).to eq(false)

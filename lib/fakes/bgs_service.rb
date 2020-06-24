@@ -125,6 +125,35 @@ class Fakes::BGSService
     records.values
   end
 
+  def find_contentions_by_claim_id(claim_id)
+    contentions = self.class.end_product_store.inflated_bgs_contentions_for(claim_id)
+
+    if contentions.blank?
+      fail BGS::ShareError, "No benefit claims found with claim id: #{claim_id.to_i}"
+    end
+
+    format_contentions(contentions)
+  end
+
+  def format_contentions(contentions)
+    { contentions: contentions.map { |contention| format_contention(contention) } }
+  end
+
+  def format_contention(contention)
+    {
+      cntntn_id: contention[:reference_id],
+      clmnt_txt: contention[:text],
+      cntntn_type_cd: contention[:type_code],
+      clsfcn_id: contention[:classification_id],
+      clsfcn_txt: contention[:classification_text],
+      med_ind: contention[:medical_indicator],
+      orig_source_type_cd: contention[:orig_source_type_code],
+      begin_dt: contention[:begin_date],
+      clm_id: contention[:claim_id],
+      special_issues: contention[:special_issues]
+    }
+  end
+
   def get_veteran_record(file_number)
     self.class.get_veteran_record(file_number)
   end
@@ -161,6 +190,7 @@ class Fakes::BGSService
         first_name: "Bob",
         middle_name: "Billy",
         last_name: "Vance",
+        ssn_nbr: "666001234",
         email_address: "bob.vance@caseflow.gov"
       }
     elsif participant_id == "1129318238"
@@ -170,6 +200,7 @@ class Fakes::BGSService
         middle_name: "",
         last_name: "Smith",
         name_suffix: "Jr.",
+        ssn_nbr: "666002222",
         email_address: "cathy.smith@caseflow.gov"
       }
     elsif participant_id == "600153863"
@@ -178,6 +209,7 @@ class Fakes::BGSService
         fist_name: "Clarence",
         middle_name: "",
         last_name: "Darrow",
+        ssn_nbr: "666003333",
         email_address: "clarence.darrow@caseflow.gov"
       }
     else
@@ -186,6 +218,7 @@ class Fakes::BGSService
         first_name: "Tom",
         middle_name: "Edward",
         last_name: "Brady",
+        ssn_nbr: "666004444",
         email_address: "tom.brady@caseflow.gov"
       }
     end
@@ -282,6 +315,16 @@ class Fakes::BGSService
     end
 
     result.empty? ? nil : result
+  end
+
+  def poas_list
+    [
+      { ptcpnt_id: "12345678", nm: "NANCY BAUMBACH", org_type_nm: "POA Attorney" },
+      { ptcpnt_id: "55114884", nm: "RICH TREUTING SR.", org_type_nm: "POA Agent" },
+      { ptcpnt_id: "56242925", nm: "MADELINE JENKINS", org_type_nm: "POA Attorney" },
+      { ptcpnt_id: "21543986", nm: "ACADIA VETERAN SERVICES", org_type_nm: "POA State Organization" },
+      { ptcpnt_id: "56154689", nm: "RANDALL KOHLER III", org_type_nm: "POA Attorney" }
+    ]
   end
 
   # TODO: add more test cases

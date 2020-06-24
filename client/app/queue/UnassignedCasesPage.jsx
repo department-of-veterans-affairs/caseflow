@@ -7,7 +7,7 @@ import TaskTable from './components/TaskTable';
 import {
   initialAssignTasksToUser
 } from './QueueActions';
-import AssignWidget from './components/AssignWidget';
+import AssignToAttorneyWidget from './components/AssignToAttorneyWidget';
 import RequestDistributionButton from './components/RequestDistributionButton';
 import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY';
 import {
@@ -46,7 +46,7 @@ class UnassignedCasesPage extends React.PureComponent {
       <div {...assignSectionStyling}>
         <React.Fragment>
           <div {...assignAndRequestStyling}>
-            <AssignWidget
+            <AssignToAttorneyWidget
               userId={userId}
               previousAssigneeId={userId}
               onTaskAssignment={this.props.initialAssignTasksToUser}

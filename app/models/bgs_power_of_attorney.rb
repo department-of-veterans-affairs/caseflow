@@ -19,9 +19,6 @@ class BgsPowerOfAttorney < CaseflowRecord
     :file_number
   ].freeze
 
-  delegate :email_address,
-           to: :person, prefix: :representative
-
   validates :claimant_participant_id,
             :poa_participant_id,
             :representative_name,
@@ -47,8 +44,12 @@ class BgsPowerOfAttorney < CaseflowRecord
     end
 
     def fetch_bgs_poa_by_participant_id(pid)
-      bgs.fetch_poas_by_participant_ids([pid])[pid]
+      bgs.fetch_poas_by_participant_ids([pid])[pid.to_s]
     end
+  end
+
+  def representative_email_address
+    person&.email_address
   end
 
   def representative_name
@@ -96,11 +97,13 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_cached_attributes!
-    stale_attributes.each { |attr| send(attr) }
+    stale_attributes.each { |attr| send(attr) } if found?
     self.last_synced_at = Time.zone.now
   end
 
   def save_with_updated_bgs_record!
+    return save! unless found?
+
     stale_attributes.each do |attr|
       self[attr] = nil # local object attr empty, should trigger re-fetch of bgs record
       send(attr)
@@ -116,29 +119,17 @@ class BgsPowerOfAttorney < CaseflowRecord
 
   private
 
-  def not_found?
-    bgs_record == :not_found
-  end
-
   def person
-    @person ||= Person.find_or_create_by(participant_id: poa_participant_id)
-  end
+    return if poa_participant_id.blank?
 
-  def stale_attributes
-    CACHED_BGS_ATTRIBUTES.select { |attr| self[attr].nil? || self[attr].to_s != bgs_record[attr].to_s }
-  end
-
-  def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
-    bgs_attr ||= attr_name
-    self[attr_name] ||= begin
-      return if not_found?
-
-      bgs_record.dig(bgs_attr)
-    end
+    @person ||= Person.find_or_create_by_participant_id(poa_participant_id)
   end
 
   def fetch_bgs_record
-    if self[:claimant_participant_id]
+    # prefer FN if both defined since one PID can have multiple FNs
+    if self[:claimant_participant_id] && self[:file_number]
+      fetch_bgs_record_by_file_number
+    elsif self[:claimant_participant_id]
       fetch_bgs_record_by_claimant_participant_id
     elsif self[:file_number]
       fetch_bgs_record_by_file_number

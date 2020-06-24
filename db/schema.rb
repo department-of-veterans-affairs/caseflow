@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_184512) do
+ActiveRecord::Schema.define(version: 2020_06_17_160206) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -154,6 +154,20 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
+  create_table "bgs_attorneys", comment: "Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.datetime "last_synced_at", comment: "The last time BGS was checked"
+    t.string "name", null: false, comment: "Name"
+    t.string "participant_id", null: false, comment: "Participant ID"
+    t.string "record_type", null: false, comment: "Known types: POA State Organization, POA National Organization, POA Attorney, POA Agent, POA Local/Regional Organization"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["created_at"], name: "index_bgs_attorneys_on_created_at"
+    t.index ["last_synced_at"], name: "index_bgs_attorneys_on_last_synced_at"
+    t.index ["name"], name: "index_bgs_attorneys_on_name"
+    t.index ["participant_id"], name: "index_bgs_attorneys_on_participant_id", unique: true
+    t.index ["updated_at"], name: "index_bgs_attorneys_on_updated_at"
+  end
+
   create_table "bgs_power_of_attorneys", comment: "Power of Attorney (POA) cached from BGS", force: :cascade do |t|
     t.string "authzn_change_clmant_addrs_ind", comment: "Authorization for POA to change claimant address"
     t.string "authzn_poa_access_ind", comment: "Authorization for POA access"
@@ -167,7 +181,9 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.string "representative_type", null: false, comment: "POA type"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.index ["claimant_participant_id", "file_number"], name: "bgs_poa_pid_fn_unique_idx", unique: true
+    t.index ["claimant_participant_id"], name: "index_bgs_power_of_attorneys_on_claimant_participant_id"
     t.index ["created_at"], name: "index_bgs_power_of_attorneys_on_created_at"
+    t.index ["file_number"], name: "index_bgs_power_of_attorneys_on_file_number"
     t.index ["last_synced_at"], name: "index_bgs_power_of_attorneys_on_last_synced_at"
     t.index ["poa_participant_id"], name: "index_bgs_power_of_attorneys_on_poa_participant_id"
     t.index ["representative_name"], name: "index_bgs_power_of_attorneys_on_representative_name"
@@ -201,7 +217,6 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
   create_table "cached_appeal_attributes", id: false, force: :cascade do |t|
     t.integer "appeal_id"
     t.string "appeal_type"
-    t.string "assignee_label", comment: "Who is currently most responsible for the appeal"
     t.string "case_type", comment: "The case type, i.e. original, post remand, CAVC remand, etc"
     t.string "closest_regional_office_city", comment: "Closest regional office to the veteran"
     t.string "closest_regional_office_key", comment: "Closest regional office to the veteran in 4 character key"
@@ -316,8 +331,10 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.datetime "created_at"
     t.bigint "decision_review_id", comment: "The ID of the decision review the claimant is on."
     t.string "decision_review_type", comment: "The type of decision review the claimant is on."
+    t.text "notes", comment: "This is a notes field for adding claimant not listed and any supplementary information outside of unlisted claimant."
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
+    t.string "type", default: "Claimant", comment: "The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, or OtherClaimant."
     t.datetime "updated_at"
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
     t.index ["participant_id"], name: "index_claimants_on_participant_id"
@@ -369,9 +386,11 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.string "disposition", comment: "The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values."
     t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
     t.string "participant_id", null: false, comment: "The Veteran's participant id."
+    t.string "percent_number", comment: "percent_number from RatingIssue (prcntNo from Rating Profile)"
     t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating can have multiple issues). This is unique per rating issue."
     t.datetime "rating_profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
     t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
+    t.text "subject_text", comment: "subject_text from RatingIssue (subjctTxt from Rating Profile)"
     t.datetime "updated_at"
     t.index ["decision_review_id", "decision_review_type"], name: "index_decision_issues_decision_review"
     t.index ["deleted_at"], name: "index_decision_issues_on_deleted_at"
@@ -852,7 +871,7 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Legacy Hearing"
     t.integer "user_id"
-    t.string "vacols_id", null: false
+    t.string "vacols_id", null: false, comment: "Corresponds to VACOLS’ hearsched.hearing_pkseq"
     t.string "witness"
     t.index ["created_by_id"], name: "index_legacy_hearings_on_created_by_id"
     t.index ["hearing_day_id"], name: "index_legacy_hearings_on_hearing_day_id"
@@ -946,8 +965,10 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.string "middle_name", comment: "Person middle name, cached from BGS"
     t.string "name_suffix", comment: "Person name suffix, cached from BGS"
     t.string "participant_id", null: false
+    t.string "ssn", comment: "Person Social Security Number, cached from BGS"
     t.datetime "updated_at", null: false
     t.index ["participant_id"], name: "index_people_on_participant_id", unique: true
+    t.index ["ssn"], name: "index_people_on_ssn"
     t.index ["updated_at"], name: "index_people_on_updated_at"
   end
 
@@ -1355,6 +1376,7 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
   create_table "veterans", force: :cascade do |t|
     t.string "closest_regional_office"
     t.datetime "created_at"
+    t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
     t.string "file_number", null: false
     t.string "first_name"
     t.string "last_name"
@@ -1385,14 +1407,18 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
   create_table "virtual_hearings", force: :cascade do |t|
     t.string "alias", comment: "Alias for conference in Pexip"
     t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
+    t.string "appellant_email", comment: "Appellant's email address"
+    t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
+    t.string "guest_pin_long", limit: 11, comment: "Change the guest pin to store a longer pin with the # sign trailing"
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"
+    t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
@@ -1400,8 +1426,6 @@ ActiveRecord::Schema.define(version: 2020_04_29_184512) do
     t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the virtual hearing"
-    t.string "veteran_email", comment: "Veteran's email address"
-    t.boolean "veteran_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran"
     t.index ["alias"], name: "index_virtual_hearings_on_alias"
     t.index ["conference_id"], name: "index_virtual_hearings_on_conference_id"
     t.index ["created_by_id"], name: "index_virtual_hearings_on_created_by_id"

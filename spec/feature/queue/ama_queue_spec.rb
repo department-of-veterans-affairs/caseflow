@@ -405,7 +405,7 @@ feature "AmaQueue", :all_dbs do
     end
   end
 
-  context "Judge has a case to assign to an attorney" do
+  shared_examples "Judge has a case to assign to an attorney" do
     let(:veteran_first_name) { "Monica" }
     let(:veteran_last_name) { "Valencia" }
     let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
@@ -414,6 +414,7 @@ feature "AmaQueue", :all_dbs do
     let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Juarez") }
     let!(:judge_staff) { create(:staff, :judge_role, user: judge_user) }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge_user) }
+    let(:overtime) { false }
 
     let(:attorney_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Steven Ahr") }
     let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
@@ -454,21 +455,17 @@ feature "AmaQueue", :all_dbs do
     end
 
     def judge_assign_to_attorney
-      visit "/queue"
-      expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
-
-      find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-      expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
-      click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id)
+      visit "/queue/#{judge_user.css_id}/assign"
 
       click_on veteran_full_name
 
       click_dropdown(prompt: "Select an action", text: "Assign to attorney")
       click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
       click_on "Submit"
 
-      expect(page).to have_content("Assigned 1 case")
+      expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
     end
 
     it "judge can return report to attorney for corrections" do
@@ -529,6 +526,8 @@ feature "AmaQueue", :all_dbs do
           "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
           "sent to #{judge_user.full_name} for review."
         )
+
+        expect(appeal.latest_attorney_case_review.overtime).to be(overtime)
       end
 
       step "judge returns case to attorney for corrections" do
@@ -718,7 +717,7 @@ feature "AmaQueue", :all_dbs do
       it "judge can reassign the assign task to another judge" do
         step "judge reviews case and reassigns to another judge" do
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
@@ -737,7 +736,7 @@ feature "AmaQueue", :all_dbs do
         step "judge2 has the case in their queue" do
           User.authenticate!(user: judge_user2)
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user2.css_id))
@@ -750,7 +749,7 @@ feature "AmaQueue", :all_dbs do
       it "judge can reassign the review judge tasks to another judge" do
         step "judge reviews case and assigns a task to an attorney" do
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
@@ -763,10 +762,11 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+          fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
           click_on "Submit"
 
-          expect(page).to have_content("Assigned 1 case")
+          expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
         end
 
         step "attorney completes task and returns the case to the judge" do
@@ -827,7 +827,7 @@ feature "AmaQueue", :all_dbs do
         step "judge reviews case and reassigns to another judge" do
           User.authenticate!(user: judge_user)
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "1"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           click_on veteran_full_name
 
@@ -843,11 +843,25 @@ feature "AmaQueue", :all_dbs do
         step "judge2 has the case in their queue" do
           User.authenticate!(user: judge_user2)
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "1"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           click_on veteran_full_name
         end
       end
+    end
+  end
+
+  it_behaves_like "Judge has a case to assign to an attorney"
+
+  context "overtime_revamp feature enabled with different overtime values" do
+    before { FeatureToggle.enable!(:overtime_revamp) }
+    after { FeatureToggle.disable!(:overtime_revamp) }
+    it_behaves_like "Judge has a case to assign to an attorney" do
+      let(:overtime) { true }
+      before { appeal.overtime = overtime }
+    end
+    it_behaves_like "Judge has a case to assign to an attorney" do
+      let(:overtime) { false }
     end
   end
 

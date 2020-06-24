@@ -1,44 +1,27 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { css } from 'glamor';
-
-import CopyTextButton from '../../components/CopyTextButton';
-import Alert from '../../components/Alert';
-import Button from '../../components/Button';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import * as DateUtil from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, pollVirtualHearingData, getChanges } from '../utils';
+import PropTypes from 'prop-types';
+import React, { useState, useEffect, useContext } from 'react';
 import _ from 'lodash';
 
-import DetailsForm from './details/DetailsForm';
-import {
-  onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
-} from '../../components/common/actions';
+import { DetailsHeader } from './details/DetailsHeader';
 import {
   HearingsFormContext,
   UPDATE_VIRTUAL_HEARING, SET_ALL_HEARING_FORMS, SET_UPDATED
 } from '../contexts/HearingsFormContext';
+import { deepDiff, pollVirtualHearingData, getChanges } from '../utils';
+import {
+  onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
+} from '../../components/common/actions';
+import Alert from '../../components/Alert';
+import ApiUtil from '../../util/ApiUtil';
+import Button from '../../components/Button';
+import * as DateUtil from '../../util/DateUtil';
+import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
-import { listStyling, listItemStyling } from './details/style';
-import { Link } from 'react-router-dom';
-import DocketTypeBadge from '../../components/DocketTypeBadge';
-
-const row = css({
-  marginLeft: '-15px',
-  marginRight: '-15px',
-  '& > *': {
-    display: 'inline-block',
-    paddingRight: '15px',
-    paddingLeft: '15px',
-    verticalAlign: 'middle',
-    margin: 0
-  }
-});
 
 const inputFix = css({
   '& .question-label': {
@@ -52,7 +35,7 @@ const HearingDetails = (props) => {
   } = props;
 
   const {
-    aod, bvaPoc, judgeId, isVirtual, wasVirtual,
+    aod, appellantIsNotVeteran, bvaPoc, judgeId, isVirtual, wasVirtual,
     externalId, veteranFirstName, veteranLastName,
     veteranFileNumber, room, notes, evidenceWindowWaived,
     scheduledFor, scheduledForIsPast, docketName, docketNumber,
@@ -81,6 +64,7 @@ const HearingDetails = (props) => {
 
     return {
       hearingDetailsForm: {
+        appellantIsNotVeteran,
         bvaPoc,
         judgeId: judgeId ? judgeId.toString() : null,
         evidenceWindowWaived: evidenceWindowWaived || false,
@@ -105,7 +89,7 @@ const HearingDetails = (props) => {
         requestedRemedy: transcription.requestedRemedy
       },
       virtualHearingForm: {
-        veteranEmail: virtualHearing.veteranEmail,
+        appellantEmail: virtualHearing.appellantEmail,
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status,
         requestCancelled: virtualHearing.requestCancelled,
@@ -160,8 +144,6 @@ const HearingDetails = (props) => {
     } else {
       hearingsFormDispatch({ type: UPDATE_VIRTUAL_HEARING, payload: null });
     }
-
-    closeVirtualHearingModal();
   };
 
   const getEditedEmails = () => {
@@ -169,8 +151,8 @@ const HearingDetails = (props) => {
     const changes = deepDiff(hearing.virtualHearing, virtualHearingForm || {});
 
     return {
-      repEmailEdited: !_.isUndefined(changes.representativeEmail),
-      vetEmailEdited: !_.isUndefined(changes.veteranEmail)
+      appellantEmailEdited: !_.isUndefined(changes.appellantEmail),
+      representativeEmailEdited: !_.isUndefined(changes.representativeEmail)
     };
   };
 
@@ -244,15 +226,14 @@ const HearingDetails = (props) => {
     if (
       virtual &&
       (!hearingForms.virtualHearingForm?.representativeEmail ||
-      !hearingForms.virtualHearingForm?.veteranEmail)
+      !hearingForms.virtualHearingForm?.appellantEmail)
     ) {
       setLoading(true);
       setVirtualHearingErrors({
-        vetEmail: !hearingForms.virtualHearingForm.veteranEmail && 'Veteran email is required',
-        repEmail: !hearingForms.virtualHearingForm.representativeEmail && 'Representative email is required'
-
+        appellantEmail: !hearingForms.virtualHearingForm.appellantEmail && 'Appellant email is required',
+        representativeEmail: !hearingForms.virtualHearingForm.representativeEmail && 'Representative email is required'
       });
-    } else if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
+    } else if (editedEmails.representativeEmailEdited || editedEmails.appellantEmailEdited) {
       openVirtualHearingModal({ type: 'change_email' });
     } else {
       submit();
@@ -277,117 +258,80 @@ const HearingDetails = (props) => {
     });
   };
 
-  const columns = [
-    {
-      label: 'Hearing Date',
-      value:
-        readableRequestType === 'Travel' ? (
-          <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
-        ) : (
-          <Link to={`/schedule/docket/${hearingDayId}`}>
-            <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
-          </Link>
-        )
-    },
-    {
-      label: 'Docket Number',
-      value: (
-        <span>
-          <DocketTypeBadge name={docketName} number={docketNumber} />
-          {docketNumber}
-        </span>
-      )
-    },
-    {
-      label: 'Regional office',
-      value: regionalOfficeName
-    },
-    {
-      label: 'Hearing Location',
-      value: readableLocation
-    },
-    {
-      label: 'Disposition',
-      value: disposition
-    },
-    {
-      label: 'Type',
-      value: isVirtual ? 'Virtual' : readableRequestType
-    },
-    {
-      label: 'AOD Status',
-      value: aod || 'None'
-    }
-  ];
-
   const editedEmails = getEditedEmails();
 
   return (
-    <AppSegment filledBackground>
+    <React.Fragment>
       <UserAlerts />
       {error &&
-        <div {...css({ marginBottom: '4rem' })}>
+        <div>
           <Alert type="error" title="There was an error updating the hearing" />
         </div>
       }
-      <div {...inputFix}>
-        <div {...row}>
-          <h1 className="cf-margin-bottom-0">{`${veteranFirstName} ${veteranLastName}`}</h1>
-          <div>Veteran ID: <CopyTextButton text={veteranFileNumber} label="Veteran ID" /></div>
+      <AppSegment filledBackground>
+        <div {...inputFix}>
+          <DetailsHeader
+            aod={aod}
+            disposition={disposition}
+            docketName={docketName}
+            docketNumber={docketNumber}
+            isVirtual={isVirtual}
+            hearingDayId={hearingDayId}
+            readableLocation={readableLocation}
+            readableRequestType={readableRequestType}
+            regionalOfficeName={regionalOfficeName}
+            scheduledFor={scheduledFor}
+            veteranFileNumber={veteranFileNumber}
+            veteranFirstName={veteranFirstName}
+            veteranLastName={veteranLastName}
+          />
+          <DetailsForm
+            errors={virtualHearingErrors}
+            isLegacy={isLegacy}
+            isVirtual={isVirtual}
+            openVirtualHearingModal={openVirtualHearingModal}
+            readOnly={disabled}
+            requestType={readableRequestType}
+            updateVirtualHearing={updateVirtualHearing}
+            wasVirtual={wasVirtual}
+          />
         </div>
-
-        <div className="cf-help-divider" />
-        <h2>Hearing Details</h2>
-        <div {...listStyling}>
-          {columns.map((col, i) => (
-            <div key={i} {...listItemStyling}>
-              <h4>{col.label}</h4>
-              <div>
-                {col.value}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="cf-help-divider" />
-        {virtualHearingModalOpen && <VirtualHearingModal
-          hearing={hearing}
-          virtualHearing={hearingForms?.virtualHearingForm}
-          update={updateVirtualHearing}
-          submit={() => submit().then(closeVirtualHearingModal)}
-          closeModal={closeVirtualHearingModal}
-          reset={resetVirtualHearing}
-          type={virtualHearingModalType}
-          {...editedEmails} />}
-        <DetailsForm
-          errors={virtualHearingErrors}
-          updateVirtualHearing={updateVirtualHearing}
-          scheduledForIsPast={scheduledForIsPast}
-          isLegacy={isLegacy}
-          openVirtualHearingModal={openVirtualHearingModal}
-          requestType={readableRequestType}
-          readOnly={disabled}
-          isVirtual={isVirtual}
-          wasVirtual={wasVirtual} />
-        <div>
-          <a
-            className="button-link"
-            onClick={goBack}
-            style={{ float: 'left' }}
-          >Cancel</a>
-          <span {...css({ float: 'right' })}>
-            <Button
-              name="Save"
-              disabled={!formsUpdated || disabled}
-              loading={loading}
-              className="usa-button"
-              onClick={() => handleSave(editedEmails)}
-              styling={css({ float: 'right' })}
-            >Save</Button>
-          </span>
-        </div>
+        {shouldStartPolling && startPolling()}
+        {virtualHearingModalOpen && (
+          <VirtualHearingModal
+            hearing={hearing}
+            virtualHearing={hearingForms?.virtualHearingForm}
+            update={updateVirtualHearing}
+            submit={submit}
+            closeModal={closeVirtualHearingModal}
+            reset={resetVirtualHearing}
+            type={virtualHearingModalType}
+            {...editedEmails}
+          />
+        )}
+      </AppSegment>
+      <div {...css({ overflow: 'hidden' })}>
+        <Button
+          name="Cancel"
+          linkStyling
+          onClick={goBack}
+          styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
+        >
+          Cancel
+        </Button>
+        <span {...css({ float: 'right' })}>
+          <Button
+            name="Save"
+            disabled={!formsUpdated || disabled}
+            loading={loading}
+            className="usa-button"
+            onClick={() => handleSave(editedEmails)}
+          >
+            Save
+          </Button>
+        </span>
       </div>
-      {shouldStartPolling && startPolling()}
-    </AppSegment>
+    </React.Fragment>
   );
 };
 

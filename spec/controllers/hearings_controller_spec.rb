@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe HearingsController, :all_dbs, type: :controller do
+RSpec.describe HearingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:legacy_hearing) { create(:legacy_hearing) }
@@ -104,19 +104,22 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           let!(:virtual_hearing) do
             create(
               :virtual_hearing,
+              :initialized,
+              status: :active,
               hearing: hearing,
-              veteran_email: "existing_veteran_email@caseflow.gov",
-              veteran_email_sent: true,
+              appellant_email: "existing_veteran_email@caseflow.gov",
+              appellant_email_sent: true,
               judge_email: "existing_judge_email@caseflow.gov",
-              judge_email_sent: true
+              judge_email_sent: true,
+              representative_email: nil
             )
           end
 
           it "returns expected status and has the expected side effects", :aggregate_failures do
             expect(subject.status).to eq(200)
             virtual_hearing.reload
-            expect(virtual_hearing.veteran_email).to eq("existing_veteran_email@caseflow.gov")
-            expect(virtual_hearing.veteran_email_sent).to eq(true)
+            expect(virtual_hearing.appellant_email).to eq("existing_veteran_email@caseflow.gov")
+            expect(virtual_hearing.appellant_email_sent).to eq(true)
             expect(virtual_hearing.judge_email).to eq("existing_judge_email@caseflow.gov")
             expect(virtual_hearing.judge_email_sent).to eq(true)
             expect(virtual_hearing.representative_email).to eq("new_representative_email@caseflow.gov")
@@ -127,7 +130,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       context "with invalid emails" do
         let(:virtual_hearing_params) do
           {
-            veteran_email: "veteran",
+            appellant_email: "veteran",
             judge_email: "!@#$%",
             representative_email: "representative_email"
           }
@@ -138,10 +141,26 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
       end
 
+      context "with emails with whitespaces" do
+        let(:virtual_hearing_params) do
+          {
+            appellant_email: "veteran@email.com     ",
+            representative_email: "        representative@email.com  "
+          }
+        end
+
+        it "returns the expected status and updates the virtual hearing", :aggregate_failures do
+          expect(subject.status).to eq(200)
+
+          expect(VirtualHearing.first.appellant_email).to eq("veteran@email.com")
+          expect(VirtualHearing.first.representative_email).to eq("representative@email.com")
+        end
+      end
+
       context "with all email params" do
         let(:virtual_hearing_params) do
           {
-            veteran_email: "new_veteran_email@caseflow.gov",
+            appellant_email: "new_veteran_email@caseflow.gov",
             representative_email: "new_representative_email@caseflow.gov"
           }
         end
@@ -150,7 +169,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(subject.status).to eq(200)
           expect(VirtualHearing.first).to_not eq(nil)
           expect(VirtualHearing.first.hearing_id).to eq(hearing.id)
-          expect(VirtualHearing.first.veteran_email).to eq("new_veteran_email@caseflow.gov")
+          expect(VirtualHearing.first.appellant_email).to eq("new_veteran_email@caseflow.gov")
           expect(VirtualHearing.first.judge_email).to eq("new_judge_email@caseflow.gov")
           expect(VirtualHearing.first.representative_email).to eq("new_representative_email@caseflow.gov")
         end
@@ -160,7 +179,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(VirtualHearing.first.establishment.submitted?).to eq(true)
           expect(VirtualHearing.first.status).to eq(:active)
           expect(VirtualHearing.first.conference_id).to_not eq(nil)
-          expect(VirtualHearing.first.veteran_email_sent).to eq(true)
+          expect(VirtualHearing.first.appellant_email_sent).to eq(true)
           expect(VirtualHearing.first.judge_email_sent).to eq(true)
           expect(VirtualHearing.first.representative_email_sent).to eq(true)
         end
@@ -171,16 +190,21 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           let!(:virtual_hearing) do
             create(
               :virtual_hearing,
+              :initialized,
+              status: :active,
               hearing: hearing,
-              veteran_email: "existing_veteran_email@caseflow.gov",
-              representative_email: "existing_rep_email@casfelow.gov"
+              appellant_email: "existing_veteran_email@caseflow.gov",
+              appellant_email_sent: true,
+              judge_email: nil,
+              representative_email: "existing_rep_email@casfelow.gov",
+              representative_email_sent: true
             )
           end
 
           it "returns expected status and updates the existing hearing", :aggregate_failures do
             expect(subject.status).to eq(200)
             virtual_hearing.reload
-            expect(virtual_hearing.veteran_email).to eq("new_veteran_email@caseflow.gov")
+            expect(virtual_hearing.appellant_email).to eq("new_veteran_email@caseflow.gov")
             expect(virtual_hearing.representative_email).to eq("new_representative_email@caseflow.gov")
           end
         end
@@ -193,6 +217,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           create(
             :virtual_hearing,
             :all_emails_sent,
+            status: :active,
             hearing: hearing,
             conference_id: "000000"
           )
@@ -217,9 +242,11 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       let!(:virtual_hearing) do
         create(
           :virtual_hearing,
+          :initialized,
+          status: :active,
           hearing: hearing,
-          veteran_email: "existing_veteran_email@caseflow.gov",
-          veteran_email_sent: true,
+          appellant_email: "existing_veteran_email@caseflow.gov",
+          appellant_email_sent: true,
           judge_email: "existing_judge_email@caseflow.gov",
           judge_email_sent: true,
           representative_email: "existing_representative_email@caseflow.gov",
@@ -254,7 +281,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         expect(virtual_hearing.judge_email).to eq(new_judge.email)
 
         expect(virtual_hearing.judge_email_sent).to eq(false)
-        expect(virtual_hearing.veteran_email_sent).to eq(true)
+        expect(virtual_hearing.appellant_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
       end
     end
@@ -287,6 +314,24 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         expect(ama_hearing.advance_on_docket_motion.person.id).to eq ama_hearing.appeal.appellant.id
         expect(ama_hearing.advance_on_docket_motion.reason).to eq Constants.AOD_REASONS.age
         expect(ama_hearing.advance_on_docket_motion.granted).to eq true
+      end
+    end
+
+    context "when updating hearing location" do
+      it "should return error if facility_id is not provided" do
+        params = {
+          id: ama_hearing.external_id,
+          hearing: {
+            notes: "Test",
+            hearing_location_attributes: {
+              distance: 50,
+              address: "fake address",
+              city: "fake city"
+            }
+          }
+        }
+        patch :update, as: :json, params: params
+        expect(response.status).to eq 400
       end
     end
 

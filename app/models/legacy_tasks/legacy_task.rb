@@ -5,7 +5,7 @@ class LegacyTask
   include ActiveModel::Serialization
 
   ATTRS = [:id, :appeal_id, :assigned_to, :assigned_at, :docket_name, :previous_task,
-           :docket_date, :added_by, :task_id, :action, :document_id, :assigned_by, :work_product].freeze
+           :docket_date, :added_by, :task_id, :action, :document_id, :assigned_by, :work_product, :started_at].freeze
 
   attr_accessor(*ATTRS)
   attr_writer :appeal
@@ -86,7 +86,8 @@ class LegacyTask
       task_id: record.created_at ? record.vacols_id + "-" + record.created_at.strftime("%Y-%m-%d") : nil,
       document_id: record.document_id,
       assigned_by: record.assigned_by,
-      appeal: appeal
+      appeal: appeal,
+      started_at: appeal.appeal_views.find_by(user: user)&.created_at
     )
   end
 

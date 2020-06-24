@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class IntakesController < ApplicationController
+  include ValidationConcern
+
   before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
 
   def index
@@ -11,6 +13,7 @@ class IntakesController < ApplicationController
     end
   end
 
+  validates :create, using: IntakesSchemas.create
   def create
     return render json: intake_in_progress.ui_hash if intake_in_progress
 
@@ -33,6 +36,7 @@ class IntakesController < ApplicationController
     render json: {}
   end
 
+  validates :review, using: IntakesSchemas.review
   def review
     if intake.review!(params)
       render json: intake.ui_hash
@@ -60,6 +64,13 @@ class IntakesController < ApplicationController
       error_code: error.error_code,
       error_data: detail.end_product_base_modifier
     }, status: :bad_request
+  end
+
+  def attorneys
+    results = AttorneySearch.new(params[:query]).fetch_attorneys.map do |attorney|
+      attorney.as_json.extract!("name", "participant_id")
+    end
+    render json: results
   end
 
   def error

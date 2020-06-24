@@ -10,7 +10,8 @@ class ContestableIssue
                 :ramp_claim_id, :contesting_decision_review, :is_rating,
                 :decision_issue, :rating_issue_profile_date, :source_request_issues,
                 :rating_issue_diagnostic_code, :source_decision_review,
-                :rating_decision_reference_id
+                :rating_decision_reference_id, :rating_issue_subject_text,
+                :rating_issue_percent_number
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -23,6 +24,8 @@ class ContestableIssue
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_issue.diagnostic_code,
         is_rating: true,
+        rating_issue_subject_text: rating_issue.subject_text,
+        rating_issue_percent_number: rating_issue.percent_number,
 
         # TODO: These should never be set unless there is a decision issue. We should refactor this to
         # account for that.

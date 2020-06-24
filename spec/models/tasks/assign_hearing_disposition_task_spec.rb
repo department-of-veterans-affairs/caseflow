@@ -225,6 +225,39 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
   end
 
+  context "missing hearing association" do
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
+
+    let(:hearing) do
+      create(
+        :hearing,
+        appeal: appeal,
+        evidence_window_waived: evidence_window_waived
+      )
+    end
+    let!(:disposition_task) do
+      create(
+        :assign_hearing_disposition_task,
+        :in_progress,
+        parent: hearing_task
+      )
+    end
+
+    subject do
+      disposition_task.send(
+        :update_hearing_disposition,
+        disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+      )
+    end
+
+    it "fails with missing hearing association error" do
+      expect { subject }.to raise_error(AssignHearingDispositionTask::HearingAssociationMissing)
+    end
+  end
+
   context "disposition updates" do
     let(:disposition) { nil }
     let(:appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing) }
@@ -354,7 +387,7 @@ describe AssignHearingDispositionTask, :all_dbs do
         let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        let(:disposition) { :C }
 
         context "there's no associated VSO" do
           it "updates the case location to case storage (81)" do
@@ -524,10 +557,10 @@ describe AssignHearingDispositionTask, :all_dbs do
         let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        let(:disposition) { :C }
 
         context "the task's hearing's disposition is held" do
-          let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+          let(:disposition) { :H }
 
           it "completes the AssignHearingDispositionTask, closes the HearingTask, and updates the appeal location" do
             expect(disposition_task.in_progress?).to be_truthy

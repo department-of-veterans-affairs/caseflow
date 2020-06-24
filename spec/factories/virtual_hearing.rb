@@ -10,13 +10,14 @@ FactoryBot.define do
     host_pin { nil }
     judge_email { "caseflow-judge@test.com" }
     judge_email_sent { false }
-    veteran_email { "caseflow-veteran@test.com" }
-    veteran_email_sent { false }
+    appellant_email { "caseflow-veteran@test.com" }
+    appellant_email_sent { false }
     representative_email { "caseflow-representative@test.com" }
     representative_email_sent { false }
     association :created_by, factory: :user
     association :updated_by, factory: :user
     establishment { nil }
+    guest_pin_long { nil }
 
     transient do
       status { nil }
@@ -25,12 +26,11 @@ FactoryBot.define do
     trait :initialized do
       alias_name { rand(1..9).to_s[0..6] }
       conference_id { rand(1..9) }
-      guest_pin { rand(1..9).to_s[0..3].to_i }
-      host_pin { rand(1..9).to_s[0..3].to_i }
+      before(:create, &:generate_conference_pins)
     end
 
     trait :all_emails_sent do
-      veteran_email_sent { true }
+      appellant_email_sent { true }
       representative_email_sent { true }
       judge_email_sent { true }
     end

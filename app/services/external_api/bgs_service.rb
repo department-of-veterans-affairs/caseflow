@@ -85,10 +85,31 @@ class ExternalApi::BGSService
       name_suffix: bgs_info[:suffix_nm],
       birth_date: bgs_info[:brthdy_dt],
       email_address: bgs_info[:email_addr],
-      file_number: bgs_info[:file_nbr]
+      file_number: bgs_info[:file_nbr],
+      ssn: bgs_info[:ssn_nbr]
     }
   end
 
+  # Returns hash with keys
+  #   :brthdy_dt                    :last_nm
+  #   :cmptny_decn_type_cd          :last_nm_key
+  #   :cmptny_decn_type_nm          :middle_nm
+  #   :death_hist_ind               :middle_nm_key
+  #   :dep_nbr                      :mlty_person_ind
+  #   :email_addr                   :person_type_nm
+  #   :fid_decn_categy_type_cd      :ptcpnt_dto
+  #   :fid_decn_categy_type_nm      :ptcpnt_id
+  #   :file_nbr                     :sbstnc_amt
+  #   :first_nm                     :serous_emplmt_hndcap_ind
+  #   :first_nm_key                 :spina_bifida_ind
+  #   :gender_cd,                   :ssn_nbr
+  #   :ins_file_nbr                 :ssn_vrfctn_status_type_cd
+  #   :jrn_dt                       :station_of_jurisdiction
+  #   :jrn_lctn_id                  :svc_nbr
+  #   :jrn_obj_id                   :termnl_digit_nbr
+  #   :jrn_person_id                :vet_ind
+  #   :jrn_status_type_cd
+  #   :jrn_user_id
   def fetch_person_by_ssn(ssn)
     DBService.release_db_connections
 
@@ -106,8 +127,32 @@ class ExternalApi::BGSService
     person[:file_nbr] if person
   end
 
-  # For Claimant POA
   def fetch_poa_by_file_number(file_number)
+    if FeatureToggle.enabled?(:use_poa_claimants, user: current_user)
+      fetch_poa_by_file_number_by_claimants(file_number)
+    else
+      fetch_poa_by_file_number_by_org(file_number)
+    end
+  end
+
+  # For Claimant POA via BGS claimants. endpoint
+  def fetch_poa_by_file_number_by_claimants(file_number)
+    DBService.release_db_connections
+
+    unless @poas[file_number]
+      bgs_poa = MetricsService.record("BGS: fetch poa for file number: #{file_number}",
+                                      service: :bgs,
+                                      name: "claimants.find_poa_by_file_number") do
+        client.claimants.find_poa_by_file_number(file_number)
+      end
+      @poas[file_number] = get_claimant_poa_from_bgs_claimants_poa(bgs_poa)
+    end
+
+    @poas[file_number]
+  end
+
+  # For Claimant POA via BGS org. endpoint
+  def fetch_poa_by_file_number_by_org(file_number)
     DBService.release_db_connections
 
     unless @poas[file_number]
@@ -164,6 +209,19 @@ class ExternalApi::BGSService
     end
 
     get_limited_poas_hash_from_bgs(bgs_limited_poas)
+  end
+
+  def poas_list
+    @poas_list ||= fetch_poas_list
+  end
+
+  def fetch_poas_list
+    DBService.release_db_connections
+    MetricsService.record("BGS: fetch list of poas",
+                          service: :bgs,
+                          name: "data.find_power_of_attorneys") do
+      client.data.find_power_of_attorneys
+    end
   end
 
   def find_address_by_participant_id(participant_id)
@@ -230,7 +288,11 @@ class ExternalApi::BGSService
                            end_date = #{end_date}",
                           service: :bgs,
                           name: "rating.find_by_participant_id_and_date_range") do
-      client.rating.find_by_participant_id_and_date_range(participant_id, start_date, end_date)
+      client.rating.find_by_participant_id_and_date_range(
+        participant_id,
+        start_date.to_datetime.iso8601,
+        end_date.to_datetime.iso8601
+      )
     end
   end
 
@@ -334,7 +396,7 @@ class ExternalApi::BGSService
     end
   end
 
-  def find_contention_by_claim_id(claim_id)
+  def find_contentions_by_claim_id(claim_id)
     DBService.release_db_connections
     MetricsService.record("BGS: find contentions for veteran by claim_id #{claim_id}",
                           service: :bgs,

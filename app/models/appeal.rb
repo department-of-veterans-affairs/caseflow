@@ -296,7 +296,8 @@ class Appeal < DecisionReview
            :address_line_1,
            :city,
            :zip,
-           :state, to: :appellant, prefix: true, allow_nil: true
+           :state,
+           :email_address, to: :appellant, prefix: true, allow_nil: true
 
   def appellant_is_not_veteran
     !!veteran_is_not_claimant
@@ -422,11 +423,13 @@ class Appeal < DecisionReview
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 
-    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
+    @finalized_decision_issues_before_receipt_date ||= begin
+      DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
+        .select(&:finalized?)
+        .select do |issue|
+          issue.approx_decision_date && issue.approx_decision_date < receipt_date
+        end
+    end
   end
 
   def create_business_line_tasks!

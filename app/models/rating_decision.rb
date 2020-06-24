@@ -6,7 +6,6 @@
 
 class RatingDecision
   include ActiveModel::Model
-  include LatestRatingDisabilityEvaluation
 
   # the flexible window for calculating the contestable decision date.
   # this is the number of days +/- the effective date.
@@ -32,7 +31,7 @@ class RatingDecision
 
   class << self
     def from_bgs_disability(rating, disability)
-      latest_evaluation = latest_disability_evaluation(disability)
+      latest_evaluation = RatingProfileDisability.new(disability).most_recent_evaluation || {}
       new(
         type_name: disability[:decn_tn],
         rating_sequence_number: latest_evaluation[:rating_sn],

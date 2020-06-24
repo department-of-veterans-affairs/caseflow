@@ -18,7 +18,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
     User.authenticate!(user: scm_user)
   end
-  describe "Special Case Movement Team Member" do
+  describe "Case Movement Team Member" do
     context "With the Appeal in the right state" do
       it "successfully assigns the task to judge" do
         visit("queue/appeals/#{appeal.external_id}")

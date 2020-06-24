@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class RequestIssueWithdrawal
-  def initialize(user:, review:, request_issues_data:)
+  def initialize(user:, request_issues_update:, request_issues_data:)
     @user = user
-    @review = review
+    @request_issues_update = request_issues_update
     @request_issues_data = request_issues_data
   end
 
@@ -15,12 +15,17 @@ class RequestIssueWithdrawal
   end
 
   def withdrawn_issues
-    @withdrawn_issues ||= calculate_withdrawn_issues
+    @withdrawn_issues ||= withdrawn_request_issue_ids ? fetch_withdrawn_issues : calculate_withdrawn_issues
   end
 
   private
 
-  attr_reader :user, :review, :request_issues_data
+  attr_reader :user, :request_issues_update, :request_issues_data
+  delegate :review, :withdrawn_request_issue_ids, to: :request_issues_update
+
+  def fetch_withdrawn_issues
+    RequestIssue.where(id: withdrawn_request_issue_ids)
+  end
 
   def calculate_withdrawn_issues
     withdrawn_issue_data.map do |issue_data|
