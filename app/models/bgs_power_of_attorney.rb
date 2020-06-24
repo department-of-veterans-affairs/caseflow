@@ -44,7 +44,7 @@ class BgsPowerOfAttorney < CaseflowRecord
     end
 
     def fetch_bgs_poa_by_participant_id(pid)
-      bgs.fetch_poas_by_participant_ids([pid])[pid]
+      bgs.fetch_poas_by_participant_ids([pid])[pid.to_s]
     end
   end
 
@@ -97,11 +97,13 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def update_cached_attributes!
-    stale_attributes.each { |attr| send(attr) }
+    stale_attributes.each { |attr| send(attr) } if found?
     self.last_synced_at = Time.zone.now
   end
 
   def save_with_updated_bgs_record!
+    return save! unless found?
+
     stale_attributes.each do |attr|
       self[attr] = nil # local object attr empty, should trigger re-fetch of bgs record
       send(attr)
@@ -124,7 +126,10 @@ class BgsPowerOfAttorney < CaseflowRecord
   end
 
   def fetch_bgs_record
-    if self[:claimant_participant_id]
+    # prefer FN if both defined since one PID can have multiple FNs
+    if self[:claimant_participant_id] && self[:file_number]
+      fetch_bgs_record_by_file_number
+    elsif self[:claimant_participant_id]
       fetch_bgs_record_by_claimant_participant_id
     elsif self[:file_number]
       fetch_bgs_record_by_file_number
