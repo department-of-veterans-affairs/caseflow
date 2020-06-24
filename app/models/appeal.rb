@@ -230,15 +230,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  def veteran_name
-    # For consistency with LegacyAppeal.veteran_name
-    veteran&.name&.formatted(:form)
-  end
-
-  def veteran_middle_initial
-    veteran&.name&.middle_initial
-  end
-
   def veteran_is_deceased
     veteran_death_date.present?
   end

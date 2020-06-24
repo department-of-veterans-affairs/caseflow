@@ -27,7 +27,7 @@ describe AppealConcern do
 
     context "when key is nil" do
       let(:regional_office_key) { nil }
-  
+
       it "returns nil" do
         expect(subject).to eq nil
       end
