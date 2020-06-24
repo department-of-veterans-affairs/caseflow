@@ -437,6 +437,7 @@
 // // scss-lint:enable all
 
 $cf-select-bg-color: #fff;
+$cf-select-disabled-bg-color: #f1f1f1;
 $cf-select-border-color: #5b616b;
 $cf-select-text-color: #323a45;
 
@@ -449,6 +450,14 @@ $cf-select-text-color: #323a45;
     border-spacing: 0;
     color: $cf-select-text-color;
     cursor: default;
+
+    &--is-disabled {
+      background-color: $cf-select-disabled-bg-color;
+
+      .cf-select__indicators {
+        opacity: 0.35;
+      }
+    }
 
     .cf-select__value-container {
       padding-bottom: 0;
