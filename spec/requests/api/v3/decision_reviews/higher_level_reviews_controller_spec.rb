@@ -95,7 +95,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
 
     def post_create(parameters = params)
       post(
-        "/api/v3/decision_review/higher_level_reviews",
+        "/api/v3/decision_reviews/higher_level_reviews",
         params: parameters,
         as: :json,
         headers: authorization_header
@@ -150,7 +150,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
       allow(User).to receive(:api_user).and_return(mock_api_user)
 
       post(
-        "/api/v3/decision_review/higher_level_reviews",
+        "/api/v3/decision_reviews/higher_level_reviews",
         params: params,
         as: :json,
         headers: authorization_header
@@ -158,7 +158,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
       uuid = JSON.parse(response.body)["data"]["id"]
 
       get(
-        "/api/v3/decision_review/higher_level_reviews/#{uuid}",
+        "/api/v3/decision_reviews/higher_level_reviews/#{uuid}",
         headers: authorization_header
       )
 
@@ -181,7 +181,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
 
     def get_higher_level_review # rubocop:disable Naming/AccessorMethodName
       get(
-        "/api/v3/decision_review/higher_level_reviews/#{higher_level_review.uuid}",
+        "/api/v3/decision_reviews/higher_level_reviews/#{higher_level_review.uuid}",
         headers: authorization_header
       )
     end

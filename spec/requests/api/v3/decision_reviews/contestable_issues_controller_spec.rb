@@ -22,7 +22,7 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
           receipt_date.strftime("%Y-%m-%d")
         end
       get(
-        "/api/v3/decision_review/contestable_issues",
+        "/api/v3/decision_reviews/contestable_issues",
         headers: {
           "Authorization" => "Token #{api_key}",
           "X-VA-SSN" => ssn,

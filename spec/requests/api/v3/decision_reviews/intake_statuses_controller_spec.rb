@@ -36,7 +36,7 @@ describe Api::V3::DecisionReviews::IntakeStatusesController, :postgres, type: :r
     FeatureToggle.enable!(:api_v3)
 
     get(
-      "/api/v3/decision_review/intake_statuses/#{uuid}",
+      "/api/v3/decision_reviews/intake_statuses/#{uuid}",
       headers: { "Authorization" => "Token #{api_key}" }
     )
   end
@@ -106,7 +106,7 @@ describe Api::V3::DecisionReviews::IntakeStatusesController, :postgres, type: :r
 
       it "returns the location of the decision_review" do
         expect(response.headers["Location"]).to eq(
-          "http://www.example.com/api/v3/decision_review/" \
+          "http://www.example.com/api/v3/decision_reviews/" \
           "#{decision_review.class.name.underscore.pluralize}/#{uuid}"
         )
       end
