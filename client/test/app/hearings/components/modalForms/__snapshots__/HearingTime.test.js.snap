@@ -421,7 +421,8 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
             defaultValue={null}
             inputId="optionalHearingTime0"
             isLoading={false}
-            noResultsText="Not an option"
+            isSearchable={true}
+            noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
             options={
@@ -615,7 +616,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
               menuShouldScrollIntoView={true}
               minMenuHeight={140}
               noOptionsMessage={[Function]}
-              noResultsText="Not an option"
               onBlurResetsInput={false}
               onChange={[Function]}
               onInputChange={[Function]}
@@ -982,7 +982,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
                     "noOptionsMessage": [Function],
-                    "noResultsText": "Not an option",
                     "onBlurResetsInput": false,
                     "onChange": [Function],
                     "onInputChange": [Function],
@@ -1397,7 +1396,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
                           "noOptionsMessage": [Function],
-                          "noResultsText": "Not an option",
                           "onBlurResetsInput": false,
                           "onChange": [Function],
                           "onInputChange": [Function],
@@ -1820,7 +1818,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -2234,7 +2231,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -2509,7 +2505,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -3000,7 +2995,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -3405,7 +3399,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -3821,7 +3814,6 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -4397,7 +4389,8 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
             defaultValue={null}
             inputId="optionalHearingTime0"
             isLoading={false}
-            noResultsText="Not an option"
+            isSearchable={true}
+            noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
             options={
@@ -4585,7 +4578,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
               menuShouldScrollIntoView={true}
               minMenuHeight={140}
               noOptionsMessage={[Function]}
-              noResultsText="Not an option"
               onBlurResetsInput={false}
               onChange={[Function]}
               onInputChange={[Function]}
@@ -4947,7 +4939,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
                     "noOptionsMessage": [Function],
-                    "noResultsText": "Not an option",
                     "onBlurResetsInput": false,
                     "onChange": [Function],
                     "onInputChange": [Function],
@@ -5359,7 +5350,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
                           "noOptionsMessage": [Function],
-                          "noResultsText": "Not an option",
                           "onBlurResetsInput": false,
                           "onChange": [Function],
                           "onInputChange": [Function],
@@ -5779,7 +5769,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -6186,7 +6175,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -6454,7 +6442,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -6942,7 +6929,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -7344,7 +7330,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -7757,7 +7742,6 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -8330,7 +8314,8 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
             defaultValue={null}
             inputId="optionalHearingTime0"
             isLoading={false}
-            noResultsText="Not an option"
+            isSearchable={true}
+            noOptionsMessage={[Function]}
             onBlurResetsInput={false}
             onChange={[Function]}
             options={
@@ -8518,7 +8503,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
               menuShouldScrollIntoView={true}
               minMenuHeight={140}
               noOptionsMessage={[Function]}
-              noResultsText="Not an option"
               onBlurResetsInput={false}
               onChange={[Function]}
               onInputChange={[Function]}
@@ -8880,7 +8864,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                     "menuShouldScrollIntoView": true,
                     "minMenuHeight": 140,
                     "noOptionsMessage": [Function],
-                    "noResultsText": "Not an option",
                     "onBlurResetsInput": false,
                     "onChange": [Function],
                     "onInputChange": [Function],
@@ -9292,7 +9275,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                           "menuShouldScrollIntoView": true,
                           "minMenuHeight": 140,
                           "noOptionsMessage": [Function],
-                          "noResultsText": "Not an option",
                           "onBlurResetsInput": false,
                           "onChange": [Function],
                           "onInputChange": [Function],
@@ -9712,7 +9694,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -10119,7 +10100,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -10387,7 +10367,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -10875,7 +10854,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -11277,7 +11255,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -11690,7 +11667,6 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],

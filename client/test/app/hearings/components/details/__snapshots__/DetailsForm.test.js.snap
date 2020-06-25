@@ -72,7 +72,8 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                         defaultValue={null}
                         inputId="judgeDropdown"
                         isLoading={false}
-                        noResultsText=""
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         shouldKeyDownEventCreateNewOption={[Function]}
@@ -121,7 +122,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText=""
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -202,7 +202,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -333,7 +332,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -472,7 +470,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -602,7 +599,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -734,7 +730,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -941,7 +936,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -1062,7 +1056,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -1194,7 +1187,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -1391,7 +1383,8 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                         defaultValue={null}
                         inputId="hearingCoordinatorDropdown"
                         isLoading={false}
-                        noResultsText=""
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={Array []}
@@ -1441,7 +1434,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText=""
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -1522,7 +1514,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -1653,7 +1644,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -1792,7 +1782,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -1922,7 +1911,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -2054,7 +2042,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -2261,7 +2248,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -2382,7 +2368,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -2514,7 +2499,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -2758,7 +2742,8 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       defaultValue={null}
                       inputId="hearingRoomDropdown"
                       isLoading={false}
-                      noResultsText="Not an option"
+                      isSearchable={true}
+                      noOptionsMessage={[Function]}
                       onBlurResetsInput={false}
                       onChange={[Function]}
                       options={
@@ -2867,7 +2852,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                         menuShouldScrollIntoView={true}
                         minMenuHeight={140}
                         noOptionsMessage={[Function]}
-                        noResultsText="Not an option"
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         onInputChange={[Function]}
@@ -3066,7 +3050,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                               "menuShouldScrollIntoView": true,
                               "minMenuHeight": 140,
                               "noOptionsMessage": [Function],
-                              "noResultsText": "Not an option",
                               "onBlurResetsInput": false,
                               "onChange": [Function],
                               "onInputChange": [Function],
@@ -3313,7 +3296,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                     "menuShouldScrollIntoView": true,
                                     "minMenuHeight": 140,
                                     "noOptionsMessage": [Function],
-                                    "noResultsText": "Not an option",
                                     "onBlurResetsInput": false,
                                     "onChange": [Function],
                                     "onInputChange": [Function],
@@ -3568,7 +3550,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -3814,7 +3795,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -4003,7 +3983,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -4326,7 +4305,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -4563,7 +4541,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -4811,7 +4788,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -5215,7 +5191,8 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                         defaultValue={null}
                         inputId="transcriber"
                         isLoading={false}
-                        noResultsText="Not an option"
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={
@@ -5278,7 +5255,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText="Not an option"
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -5392,7 +5368,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -5556,7 +5531,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -5728,7 +5702,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -5887,7 +5860,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -6031,7 +6003,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -6271,7 +6242,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -6425,7 +6395,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -6590,7 +6559,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -6977,7 +6945,8 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                         defaultValue={null}
                         inputId="problemType"
                         isLoading={false}
-                        noResultsText="Not an option"
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={
@@ -7044,7 +7013,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText="Not an option"
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -7166,7 +7134,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -7338,7 +7305,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -7518,7 +7484,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -7685,7 +7650,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -7833,7 +7797,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -8081,7 +8044,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -8243,7 +8205,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -8416,7 +8377,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -8950,7 +8910,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                         defaultValue={null}
                         inputId="judgeDropdown"
                         isLoading={false}
-                        noResultsText=""
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         shouldKeyDownEventCreateNewOption={[Function]}
@@ -8999,7 +8960,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText=""
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -9080,7 +9040,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -9211,7 +9170,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -9350,7 +9308,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -9480,7 +9437,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -9612,7 +9568,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -9819,7 +9774,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -9940,7 +9894,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -10072,7 +10025,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -10269,7 +10221,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                         defaultValue={null}
                         inputId="hearingCoordinatorDropdown"
                         isLoading={false}
-                        noResultsText=""
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={Array []}
@@ -10319,7 +10272,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText=""
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -10400,7 +10352,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -10531,7 +10482,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -10670,7 +10620,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -10800,7 +10749,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -10932,7 +10880,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -11139,7 +11086,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -11260,7 +11206,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -11392,7 +11337,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -11636,7 +11580,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       defaultValue={null}
                       inputId="hearingRoomDropdown"
                       isLoading={false}
-                      noResultsText="Not an option"
+                      isSearchable={true}
+                      noOptionsMessage={[Function]}
                       onBlurResetsInput={false}
                       onChange={[Function]}
                       options={
@@ -11745,7 +11690,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                         menuShouldScrollIntoView={true}
                         minMenuHeight={140}
                         noOptionsMessage={[Function]}
-                        noResultsText="Not an option"
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         onInputChange={[Function]}
@@ -11944,7 +11888,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                               "menuShouldScrollIntoView": true,
                               "minMenuHeight": 140,
                               "noOptionsMessage": [Function],
-                              "noResultsText": "Not an option",
                               "onBlurResetsInput": false,
                               "onChange": [Function],
                               "onInputChange": [Function],
@@ -12191,7 +12134,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                     "menuShouldScrollIntoView": true,
                                     "minMenuHeight": 140,
                                     "noOptionsMessage": [Function],
-                                    "noResultsText": "Not an option",
                                     "onBlurResetsInput": false,
                                     "onChange": [Function],
                                     "onInputChange": [Function],
@@ -12446,7 +12388,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -12692,7 +12633,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -12881,7 +12821,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -13204,7 +13143,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -13441,7 +13379,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -13689,7 +13626,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -13953,7 +13889,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       defaultValue={null}
                       inputId="hearingType"
                       isLoading={false}
-                      noResultsText="Not an option"
+                      isSearchable={true}
+                      noOptionsMessage={[Function]}
                       onBlurResetsInput={false}
                       onChange={[Function]}
                       options={
@@ -14014,7 +13951,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                         menuShouldScrollIntoView={true}
                         minMenuHeight={140}
                         noOptionsMessage={[Function]}
-                        noResultsText="Not an option"
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         onInputChange={[Function]}
@@ -14117,7 +14053,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                               "menuShouldScrollIntoView": true,
                               "minMenuHeight": 140,
                               "noOptionsMessage": [Function],
-                              "noResultsText": "Not an option",
                               "onBlurResetsInput": false,
                               "onChange": [Function],
                               "onInputChange": [Function],
@@ -14268,7 +14203,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                     "menuShouldScrollIntoView": true,
                                     "minMenuHeight": 140,
                                     "noOptionsMessage": [Function],
-                                    "noResultsText": "Not an option",
                                     "onBlurResetsInput": false,
                                     "onChange": [Function],
                                     "onInputChange": [Function],
@@ -14427,7 +14361,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -14577,7 +14510,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -14718,7 +14650,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -14945,7 +14876,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -15086,7 +15016,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -15238,7 +15167,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -15590,7 +15518,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                         defaultValue={null}
                         inputId="transcriber"
                         isLoading={false}
-                        noResultsText="Not an option"
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={
@@ -15653,7 +15582,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText="Not an option"
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -15767,7 +15695,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -15931,7 +15858,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -16103,7 +16029,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -16262,7 +16187,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -16406,7 +16330,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -16646,7 +16569,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -16800,7 +16722,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -16965,7 +16886,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -17352,7 +17272,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                         defaultValue={null}
                         inputId="problemType"
                         isLoading={false}
-                        noResultsText="Not an option"
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={
@@ -17419,7 +17340,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText="Not an option"
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -17541,7 +17461,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -17713,7 +17632,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -17893,7 +17811,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -18060,7 +17977,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -18208,7 +18124,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -18456,7 +18371,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -18618,7 +18532,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -18791,7 +18704,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -19327,7 +19239,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                         defaultValue={null}
                         inputId="judgeDropdown"
                         isLoading={false}
-                        noResultsText=""
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         shouldKeyDownEventCreateNewOption={[Function]}
@@ -19376,7 +19289,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText=""
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -19457,7 +19369,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -19588,7 +19499,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -19727,7 +19637,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -19857,7 +19766,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -19989,7 +19897,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -20196,7 +20103,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -20317,7 +20223,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -20449,7 +20354,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -20646,7 +20550,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                         defaultValue={null}
                         inputId="hearingCoordinatorDropdown"
                         isLoading={false}
-                        noResultsText=""
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={Array []}
@@ -20696,7 +20601,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText=""
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -20777,7 +20681,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -20908,7 +20811,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -21047,7 +20949,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -21177,7 +21078,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -21309,7 +21209,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -21516,7 +21415,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -21637,7 +21535,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -21769,7 +21666,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -22013,7 +21909,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       defaultValue={null}
                       inputId="hearingRoomDropdown"
                       isLoading={false}
-                      noResultsText="Not an option"
+                      isSearchable={true}
+                      noOptionsMessage={[Function]}
                       onBlurResetsInput={false}
                       onChange={[Function]}
                       options={
@@ -22122,7 +22019,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                         menuShouldScrollIntoView={true}
                         minMenuHeight={140}
                         noOptionsMessage={[Function]}
-                        noResultsText="Not an option"
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         onInputChange={[Function]}
@@ -22321,7 +22217,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                               "menuShouldScrollIntoView": true,
                               "minMenuHeight": 140,
                               "noOptionsMessage": [Function],
-                              "noResultsText": "Not an option",
                               "onBlurResetsInput": false,
                               "onChange": [Function],
                               "onInputChange": [Function],
@@ -22568,7 +22463,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                     "menuShouldScrollIntoView": true,
                                     "minMenuHeight": 140,
                                     "noOptionsMessage": [Function],
-                                    "noResultsText": "Not an option",
                                     "onBlurResetsInput": false,
                                     "onChange": [Function],
                                     "onInputChange": [Function],
@@ -22823,7 +22717,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -23069,7 +22962,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -23258,7 +23150,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -23581,7 +23472,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -23818,7 +23708,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -24066,7 +23955,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -24330,7 +24218,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       defaultValue={null}
                       inputId="hearingType"
                       isLoading={false}
-                      noResultsText="Not an option"
+                      isSearchable={true}
+                      noOptionsMessage={[Function]}
                       onBlurResetsInput={false}
                       onChange={[Function]}
                       options={
@@ -24391,7 +24280,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                         menuShouldScrollIntoView={true}
                         minMenuHeight={140}
                         noOptionsMessage={[Function]}
-                        noResultsText="Not an option"
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         onInputChange={[Function]}
@@ -24494,7 +24382,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                               "menuShouldScrollIntoView": true,
                               "minMenuHeight": 140,
                               "noOptionsMessage": [Function],
-                              "noResultsText": "Not an option",
                               "onBlurResetsInput": false,
                               "onChange": [Function],
                               "onInputChange": [Function],
@@ -24645,7 +24532,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                     "menuShouldScrollIntoView": true,
                                     "minMenuHeight": 140,
                                     "noOptionsMessage": [Function],
-                                    "noResultsText": "Not an option",
                                     "onBlurResetsInput": false,
                                     "onChange": [Function],
                                     "onInputChange": [Function],
@@ -24804,7 +24690,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -24954,7 +24839,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -25095,7 +24979,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -25322,7 +25205,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -25463,7 +25345,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -25615,7 +25496,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -25967,7 +25847,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                         defaultValue={null}
                         inputId="transcriber"
                         isLoading={false}
-                        noResultsText="Not an option"
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={
@@ -26030,7 +25911,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText="Not an option"
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -26144,7 +26024,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -26308,7 +26187,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -26480,7 +26358,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -26639,7 +26516,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -26783,7 +26659,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -27023,7 +26898,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -27177,7 +27051,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -27342,7 +27215,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -27729,7 +27601,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                         defaultValue={null}
                         inputId="problemType"
                         isLoading={false}
-                        noResultsText="Not an option"
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={
@@ -27796,7 +27669,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText="Not an option"
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -27918,7 +27790,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "Not an option",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -28090,7 +27961,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "Not an option",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -28270,7 +28140,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -28437,7 +28306,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -28585,7 +28453,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -28833,7 +28700,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "Not an option",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -28995,7 +28861,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -29168,7 +29033,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "Not an option",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -29704,7 +29568,8 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                         defaultValue={null}
                         inputId="judgeDropdown"
                         isLoading={false}
-                        noResultsText=""
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         shouldKeyDownEventCreateNewOption={[Function]}
@@ -29753,7 +29618,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText=""
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -29834,7 +29698,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -29965,7 +29828,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -30104,7 +29966,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -30234,7 +30095,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -30366,7 +30226,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -30573,7 +30432,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -30694,7 +30552,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -30826,7 +30683,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -31023,7 +30879,8 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                         defaultValue={null}
                         inputId="hearingCoordinatorDropdown"
                         isLoading={false}
-                        noResultsText=""
+                        isSearchable={true}
+                        noOptionsMessage={[Function]}
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         options={Array []}
@@ -31073,7 +30930,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                           menuShouldScrollIntoView={true}
                           minMenuHeight={140}
                           noOptionsMessage={[Function]}
-                          noResultsText=""
                           onBlurResetsInput={false}
                           onChange={[Function]}
                           onInputChange={[Function]}
@@ -31154,7 +31010,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                 "menuShouldScrollIntoView": true,
                                 "minMenuHeight": 140,
                                 "noOptionsMessage": [Function],
-                                "noResultsText": "",
                                 "onBlurResetsInput": false,
                                 "onChange": [Function],
                                 "onInputChange": [Function],
@@ -31285,7 +31140,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                       "menuShouldScrollIntoView": true,
                                       "minMenuHeight": 140,
                                       "noOptionsMessage": [Function],
-                                      "noResultsText": "",
                                       "onBlurResetsInput": false,
                                       "onChange": [Function],
                                       "onInputChange": [Function],
@@ -31424,7 +31278,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -31554,7 +31407,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -31686,7 +31538,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -31893,7 +31744,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "menuShouldScrollIntoView": true,
                                             "minMenuHeight": 140,
                                             "noOptionsMessage": [Function],
-                                            "noResultsText": "",
                                             "onBlurResetsInput": false,
                                             "onChange": [Function],
                                             "onInputChange": [Function],
@@ -32014,7 +31864,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -32146,7 +31995,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "menuShouldScrollIntoView": true,
                                                   "minMenuHeight": 140,
                                                   "noOptionsMessage": [Function],
-                                                  "noResultsText": "",
                                                   "onBlurResetsInput": false,
                                                   "onChange": [Function],
                                                   "onInputChange": [Function],
@@ -32390,7 +32238,8 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                       defaultValue={null}
                       inputId="hearingRoomDropdown"
                       isLoading={false}
-                      noResultsText="Not an option"
+                      isSearchable={true}
+                      noOptionsMessage={[Function]}
                       onBlurResetsInput={false}
                       onChange={[Function]}
                       options={
@@ -32499,7 +32348,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                         menuShouldScrollIntoView={true}
                         minMenuHeight={140}
                         noOptionsMessage={[Function]}
-                        noResultsText="Not an option"
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         onInputChange={[Function]}
@@ -32698,7 +32546,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                               "menuShouldScrollIntoView": true,
                               "minMenuHeight": 140,
                               "noOptionsMessage": [Function],
-                              "noResultsText": "Not an option",
                               "onBlurResetsInput": false,
                               "onChange": [Function],
                               "onInputChange": [Function],
@@ -32945,7 +32792,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                     "menuShouldScrollIntoView": true,
                                     "minMenuHeight": 140,
                                     "noOptionsMessage": [Function],
-                                    "noResultsText": "Not an option",
                                     "onBlurResetsInput": false,
                                     "onChange": [Function],
                                     "onInputChange": [Function],
@@ -33200,7 +33046,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -33446,7 +33291,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -33635,7 +33479,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -33958,7 +33801,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -34195,7 +34037,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -34443,7 +34284,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -34707,7 +34547,8 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                       defaultValue={null}
                       inputId="hearingType"
                       isLoading={false}
-                      noResultsText="Not an option"
+                      isSearchable={true}
+                      noOptionsMessage={[Function]}
                       onBlurResetsInput={false}
                       onChange={[Function]}
                       options={
@@ -34768,7 +34609,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                         menuShouldScrollIntoView={true}
                         minMenuHeight={140}
                         noOptionsMessage={[Function]}
-                        noResultsText="Not an option"
                         onBlurResetsInput={false}
                         onChange={[Function]}
                         onInputChange={[Function]}
@@ -34871,7 +34711,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                               "menuShouldScrollIntoView": true,
                               "minMenuHeight": 140,
                               "noOptionsMessage": [Function],
-                              "noResultsText": "Not an option",
                               "onBlurResetsInput": false,
                               "onChange": [Function],
                               "onInputChange": [Function],
@@ -35022,7 +34861,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                     "menuShouldScrollIntoView": true,
                                     "minMenuHeight": 140,
                                     "noOptionsMessage": [Function],
-                                    "noResultsText": "Not an option",
                                     "onBlurResetsInput": false,
                                     "onChange": [Function],
                                     "onInputChange": [Function],
@@ -35181,7 +35019,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -35331,7 +35168,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -35472,7 +35308,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -35699,7 +35534,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                           "menuShouldScrollIntoView": true,
                                           "minMenuHeight": 140,
                                           "noOptionsMessage": [Function],
-                                          "noResultsText": "Not an option",
                                           "onBlurResetsInput": false,
                                           "onChange": [Function],
                                           "onInputChange": [Function],
@@ -35840,7 +35674,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
@@ -35992,7 +35825,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "menuShouldScrollIntoView": true,
                                                 "minMenuHeight": 140,
                                                 "noOptionsMessage": [Function],
-                                                "noResultsText": "Not an option",
                                                 "onBlurResetsInput": false,
                                                 "onChange": [Function],
                                                 "onInputChange": [Function],
