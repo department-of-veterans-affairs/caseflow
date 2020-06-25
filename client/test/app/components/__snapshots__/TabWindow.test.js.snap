@@ -22,7 +22,6 @@ exports[`TabWindow Does not render tab content when a tab is disabled and clicke
   <Tabs
     active="0"
     fullWidth={true}
-    hideTabs={false}
     idPrefix="main"
     mountOnEnter={true}
     unmountOnExit={true}
@@ -163,7 +162,6 @@ exports[`TabWindow Matches snapshot with default props 1`] = `
   <Tabs
     active="0"
     fullWidth={false}
-    hideTabs={false}
     idPrefix="main"
     mountOnEnter={true}
     unmountOnExit={true}
@@ -286,7 +284,6 @@ exports[`TabWindow Renders an empty div when no tabs are passed 1`] = `
 <Tabs
   active="0"
   fullWidth={false}
-  hideTabs={true}
   idPrefix="main"
   mountOnEnter={true}
   unmountOnExit={true}
@@ -315,7 +312,6 @@ exports[`TabWindow Renders full page when the \`fullPage\` prop is true 1`] = `
   <Tabs
     active="0"
     fullWidth={true}
-    hideTabs={false}
     idPrefix="main"
     mountOnEnter={true}
     unmountOnExit={true}
@@ -456,7 +452,6 @@ exports[`TabWindow Renders tab content when a tab is selected 1`] = `
   <Tabs
     active="0"
     fullWidth={true}
-    hideTabs={false}
     idPrefix="main"
     mountOnEnter={true}
     unmountOnExit={true}
