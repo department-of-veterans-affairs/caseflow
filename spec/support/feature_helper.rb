@@ -25,7 +25,7 @@ module FeatureHelper
     selector = ""
     keyword_args = {}
 
-    dropdown_choices = dropdown_click dropdown
+    dropdown_choices = dropdown_options dropdown
     yield if block_given?
 
     keyword_args[:wait] = options[:wait] if options[:wait].present? && options[:wait] > 0
@@ -100,8 +100,8 @@ module FeatureHelper
 
   private
 
-  def dropdown_click(dropdown)
-    dropdown.click
+  def dropdown_options(dropdown)
+    dropdown.click unless dropdown_menu_visible?(dropdown)
     dropdown.sibling(".cf-select__menu")&.text&.split("\n") || []
   end
 
