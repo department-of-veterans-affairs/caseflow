@@ -21,6 +21,7 @@ class AppealIntake < DecisionReviewIntake
       ).tap do |claimant|
         claimant.participant_id = claimant_participant_id
         claimant.payee_code = nil
+        claimant.notes = request_params[:claimant_notes]
         claimant.save!
       end
       update_person!

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
 import Modal from '../../components/Modal';
@@ -9,6 +9,8 @@ import {
 import ReactMarkdown from 'react-markdown';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import ApiUtil from '../../util/ApiUtil';
+import Checkbox from '../../components/Checkbox';
+import TextareaField from '../../components/TextareaField';
 
 const relationshipOpts = [
   { label: 'Attorney (previously or currently)', value: 'attorney' }
@@ -45,9 +47,16 @@ export const AddClaimantModal = ({
 }) => {
   const [claimant, setClaimant] = useState(null);
   const [relationship, setRelationship] = useState(relationshipOpts[0]);
-  const isInvalid = useMemo(() => !claimant, [claimant]);
+  const [unlistedClaimant, setNotClaimant] = useState(false);
+  const [claimantNotes, setClaimantNotes] = useState('');
+  const isInvalid = useMemo(() => {
+    return (!unlistedClaimant && !claimant) || (unlistedClaimant && !claimantNotes);
+  }, [claimant, unlistedClaimant, claimantNotes]);
+
   const handleChangeRelationship = (value) => setRelationship(value);
   const handleChangeClaimant = (value) => setClaimant(value);
+  const handleNotClaimant = (value) => setNotClaimant(value);
+  const handleClaimantNotes = (value) => setClaimantNotes(value);
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
@@ -65,11 +74,16 @@ export const AddClaimantModal = ({
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Add this claimant',
-      onClick: () =>
-        onSubmit({ name: claimant.label, participantId: claimant.value }),
+      onClick: () => onSubmit({ name: claimant?.label, participantId: claimant?.value, claimantNotes }),
       disabled: isInvalid
     }
   ];
+
+  useEffect(() => {
+    if (!unlistedClaimant) {
+      return handleClaimantNotes('');
+    }
+  }, [unlistedClaimant]);
 
   return (
     <Modal
@@ -88,6 +102,7 @@ export const AddClaimantModal = ({
         value={relationship}
         options={relationshipOpts}
         debounce={250}
+        strongLabel
       />
       <SearchableDropdown
         name="claimant"
@@ -97,8 +112,25 @@ export const AddClaimantModal = ({
         filterOption={filterOption}
         async={asyncFn}
         defaultOptions
+        readOnly={unlistedClaimant}
         debounce={250}
+        strongLabel
       />
+
+      <Checkbox
+        label="Claimant not listed"
+        name="noClaimant"
+        onChange={handleNotClaimant}
+        value={unlistedClaimant}
+      />
+      {unlistedClaimant && (
+        <TextareaField
+          label= {<span><b>Notes</b> e.g. claimant's name, address, law firm</span>}
+          name="notes"
+          value={claimantNotes}
+          onChange={handleClaimantNotes} />
+      )}
+
     </Modal>
   );
 };
@@ -106,5 +138,6 @@ export const AddClaimantModal = ({
 AddClaimantModal.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
-  onSearch: PropTypes.func
+  onSearch: PropTypes.func,
+  readOnly: PropTypes.bool
 };

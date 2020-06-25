@@ -50,13 +50,14 @@ exports[`AddClaimantModal renders correctly 1`] = `
           >
             <div>
               <p>
-                To add a claimant, please select whether or not the claimant is an attorney and search for their name. Please note: at this time, you are only able to add attorneys as claimants. If you need to add another claimant and you have access, please add them to the Corporate Database. If you do not have access, please 
-                <a
-                  href="mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"
-                >
-                  email
-                </a>
-                 for assistance.
+                To add a claimant, select their relationship to the veteran and type to search for their name. 
+                <strong>
+                  Please note:
+                </strong>
+                 at this time, you are only able to add attorneys as claimants.
+              </p>
+              <p>
+                 If you are unable to find attorney in the list of names below, select "Claimant not listed" and add their name, address, and law firm (if applicable) in the notes section.
               </p>
             </div>
             <div
@@ -66,9 +67,11 @@ exports[`AddClaimantModal renders correctly 1`] = `
                 class="question-label"
                 for="relationship"
               >
-                <span>
-                  Claimant's relationship to the veteran
-                </span>
+                <strong>
+                  <span>
+                    Claimant's relationship to the veteran
+                  </span>
+                </strong>
               </label>
               <div
                 class=""
@@ -151,9 +154,11 @@ exports[`AddClaimantModal renders correctly 1`] = `
                 class="question-label"
                 for="claimant"
               >
-                <span>
-                  Claimant's name
-                </span>
+                <strong>
+                  <span>
+                    Claimant's name
+                  </span>
+                </strong>
               </label>
               <div
                 class=""
@@ -241,6 +246,30 @@ exports[`AddClaimantModal renders correctly 1`] = `
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+            <div
+              class="checkbox-wrapper-noClaimant cf-form-checkboxes"
+            >
+              <div
+                class="cf-form-checkbox"
+              >
+                <input
+                  aria-label="noClaimant"
+                  id="noClaimant"
+                  name="noClaimant"
+                  type="checkbox"
+                />
+                <label
+                  for="noClaimant"
+                >
+                  <span
+                    class=""
+                  >
+                    Claimant not listed
+                  </span>
+                   
+                </label>
               </div>
             </div>
           </div>
