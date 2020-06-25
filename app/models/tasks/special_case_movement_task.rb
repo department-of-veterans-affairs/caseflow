@@ -10,6 +10,10 @@ class SpecialCaseMovementTask < Task
                 :verify_appeal_distributable
   after_create :close_and_create_judge_task
 
+  def self.label
+    COPY::CASE_MOVEMENT_TASK_LABEL
+  end
+
   private
 
   def close_and_create_judge_task

@@ -1110,7 +1110,7 @@ describe EndProductEstablishment, :postgres do
         ]
       end
 
-      let(:cache_key) { "#{end_product_establishment.cache_key}/associated_rating" }
+      let(:cache_key) { end_product_establishment.associated_rating_cache_key }
 
       before do
         end_product_establishment.save!

@@ -182,16 +182,6 @@ class Api::V3::DecisionReview::HigherLevelReviewIntakeParams
       [[String],       %w[data attributes benefitType]],
       [OBJECT,         %w[data attributes veteran]],
       [[String],       %w[data attributes veteran ssn]],
-      [[String, nil],  %w[data attributes veteran addressLine1]],
-      [[String, nil],  %w[data attributes veteran addressLine2]],
-      [[String, nil],  %w[data attributes veteran city]],
-      [[String, nil],  %w[data attributes veteran stateProvinceCode]],
-      [[String, nil],  %w[data attributes veteran countryCode]],
-      [[String, nil],  %w[data attributes veteran zipPostalCode]],
-      [[String, nil],  %w[data attributes veteran phoneNumber]],
-      [[String, nil],  %w[data attributes veteran phoneNumberCountryCode]],
-      [[String, nil],  %w[data attributes veteran phoneNumberExt]],
-      [[String, nil],  %w[data attributes veteran emailAddress]],
       [[*OBJECT, nil], %w[data attributes claimant]],
       *(
         if claimant_object_present? # ... participantId and payeeCode must be present

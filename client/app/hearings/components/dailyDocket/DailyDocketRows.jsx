@@ -12,20 +12,31 @@ const rowsMargin = css({
 });
 
 const Header = ({ user }) => (
-  <div {...docketRowStyle}
+  <div
+    {...docketRowStyle}
     {...css({
       '& *': {
         background: 'none !important'
       },
       '& > div > div': { verticalAlign: 'bottom' }
-    })} className={user.userHasHearingPrepRole ? 'judge-view' : ''}>
+    })}
+    className={user.userHasHearingPrepRole ? 'judge-view' : ''}
+  >
     <div>
       <div>{user.userHasHearingPrepRole && <strong>Prep</strong>}</div>
-      <div></div>
-      <div><strong>Appellant/Veteran ID/Representative</strong></div>
-      <div><strong>Type/Time/RO</strong></div>
+      <div />
+      <div>
+        <strong>Appellant/Veteran ID/Representative</strong>
+      </div>
+      <div>
+        <strong>Type/Time/RO</strong>
+      </div>
     </div>
-    <div><div><strong>Actions</strong></div></div>
+    <div>
+      <div>
+        <strong>Actions</strong>
+      </div>
+    </div>
   </div>
 );
 
@@ -36,25 +47,43 @@ Header.propTypes = {
 };
 
 export default class DailyDocketHearingRows extends React.Component {
-  render () {
-    const { hearings, readOnly, regionalOffice,
-      openDispositionModal, user, saveHearing, hidePreviouslyScheduled } = this.props;
+  constructor(props) {
+    super(props);
 
-    const sortedHearings = sortHearings(hearings);
+    this.state = {
+      hearings: []
+    };
+  }
 
-    return <div {...rowsMargin}>
-      <Header user={user} />
-      <div>{sortedHearings.map((hearing, index) => (
-        <DailyDocketRow hearingId={hearing.externalId}
-          index={index}
-          readOnly={readOnly}
-          hidePreviouslyScheduled={hidePreviouslyScheduled}
-          user={user}
-          saveHearing={saveHearing}
-          regionalOffice={regionalOffice}
-          openDispositionModal={openDispositionModal} />
-      ))}</div>
-    </div>;
+  componentDidMount() {
+    const sortedHearings = sortHearings(this.props.hearings);
+
+    this.setState({ hearings: sortedHearings });
+  }
+
+  render() {
+    const { readOnly, regionalOffice, openDispositionModal, user, saveHearing, hidePreviouslyScheduled } = this.props;
+
+    return (
+      <div {...rowsMargin}>
+        <Header user={user} />
+        <div>
+          {this.state.hearings.length > 0 &&
+            this.state.hearings.map((hearing, index) => (
+              <DailyDocketRow
+                hearingId={hearing.externalId}
+                index={index}
+                readOnly={readOnly}
+                hidePreviouslyScheduled={hidePreviouslyScheduled}
+                user={user}
+                saveHearing={saveHearing}
+                regionalOffice={regionalOffice}
+                openDispositionModal={openDispositionModal}
+              />
+            ))}
+        </div>
+      </div>
+    );
   }
 }
 

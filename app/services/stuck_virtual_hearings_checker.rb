@@ -15,7 +15,7 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
   private
 
   def stuck_virtual_hearings
-    VirtualHearingRepository.hearings_with_pending_conference_or_emails.select do |virtual_hearing|
+    VirtualHearingRepository.hearings_with_pending_conference_or_pending_emails.select do |virtual_hearing|
       virtual_hearing.updated_at < Time.zone.now - 2.hours
     end
   end
@@ -27,7 +27,8 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
     add_to_report "Found #{stuck_count} stuck #{'virtual hearing'.pluralize(stuck_count)}: "
     stuck_virtual_hearings.each do |stuck_vh|
-      add_to_report "`VirtualHearing.find(#{stuck_vh.id})` last attempted at #{stuck_vh.establishment.attempted_at}"
+      add_to_report "`VirtualHearing.find(#{stuck_vh.id})` last attempted at #{stuck_vh.establishment.attempted_at}, " \
+        "scheduled for #{stuck_vh.hearing.scheduled_for}"
     end
 
     add_to_report "If a virtual hearing is in this state, Caseflow may not be displaying the information that " \
