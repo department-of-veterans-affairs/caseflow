@@ -13,6 +13,7 @@ class IntakesController < ApplicationController
     end
   end
 
+  validates :create, using: IntakesSchemas.create
   def create
     return render json: intake_in_progress.ui_hash if intake_in_progress
 

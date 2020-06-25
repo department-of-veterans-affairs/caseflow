@@ -61,19 +61,7 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
   let(:rep_phone_number_ext) { nil }
 
   let(:veteran_hash) do
-    {
-      ssn: ssn,
-      addressLine1: vet_address_line_1,
-      addressLine2: vet_address_line_2,
-      city: vet_city,
-      stateProvinceCode: vet_state_province_code,
-      countryCode: vet_country_code,
-      zipPostalCode: vet_zip_postal_code,
-      phoneNumber: vet_phone_number,
-      phoneNumberCountryCode: vet_phone_number_country_code,
-      phoneNumberExt: vet_phone_number_ext,
-      emailAddress: vet_email_address
-    }
+    { ssn: ssn }
   end
   let(:veteran) do
     create(:veteran,
@@ -84,16 +72,6 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
   let(:ssn) { "642055050" }
   let(:first_name) { "Jane" }
   let(:last_name) { "Doe" }
-  let(:vet_address_line_1) { nil }
-  let(:vet_address_line_2) { nil }
-  let(:vet_city) { nil }
-  let(:vet_state_province_code) { nil }
-  let(:vet_country_code) { nil }
-  let(:vet_zip_postal_code) { nil }
-  let(:vet_phone_number) { nil }
-  let(:vet_phone_number_country_code) { nil }
-  let(:vet_phone_number_ext) { nil }
-  let(:vet_email_address) { nil }
 
   let(:claimant) do
     {
@@ -740,106 +718,6 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
       end
     end
 
-    context "invalid vet address (line 1)" do
-      let(:vet_address_line_1) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"addressLine1\"]" \
-            " should be one of [String, nil]. Got: #{vet_address_line_1.inspect}."
-        )
-      end
-    end
-
-    context "invalid vet address (line 2)" do
-      let(:vet_address_line_2) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"addressLine2\"]" \
-            " should be one of [String, nil]. Got: #{vet_address_line_2.inspect}."
-        )
-      end
-    end
-
-    context "invalid type for vet city " do
-      let(:vet_city) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"city\"]" \
-            " should be one of [String, nil]. Got: #{vet_city.inspect}."
-        )
-      end
-    end
-
-    context "invalid vet state / province code" do
-      let(:vet_state_province_code) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"stateProvinceCode\"]" \
-            " should be one of [String, nil]. Got: #{vet_state_province_code.inspect}."
-        )
-      end
-    end
-
-    context "invalid vet country code" do
-      let(:vet_country_code) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"countryCode\"]" \
-            " should be one of [String, nil]. Got: #{vet_country_code.inspect}."
-        )
-      end
-    end
-
-    context "invalid vet zip / postal code" do
-      let(:vet_zip_postal_code) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"zipPostalCode\"]" \
-            " should be one of [String, nil]. Got: #{vet_zip_postal_code.inspect}."
-        )
-      end
-    end
-
-    context "invalid vet phone number" do
-      let(:vet_phone_number) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"phoneNumber\"]" \
-            " should be one of [String, nil]. Got: #{vet_phone_number.inspect}."
-        )
-      end
-    end
-
-    context "invalid vet phone number country code" do
-      let(:vet_phone_number_country_code) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"phoneNumberCountryCode\"]" \
-            " should be one of [String, nil]. Got: #{vet_phone_number_country_code.inspect}."
-        )
-      end
-    end
-
-    context "invalid vet phone number extension" do
-      let(:vet_phone_number_ext) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"phoneNumberExt\"]" \
-            " should be one of [String, nil]. Got: #{vet_phone_number_ext.inspect}."
-        )
-      end
-    end
-
-    context "invalid type for vet email address" do
-      let(:vet_email_address) { true }
-      it do
-        is_expected.to eq(
-          "[\"data\"][\"attributes\"][\"veteran\"][\"emailAddress\"]" \
-            " should be one of [String, nil]. Got: #{vet_email_address.inspect}."
-        )
-      end
-    end
-
     context "invalid type for claimant" do
       let(:claimant) { true }
       it do
@@ -1093,16 +971,6 @@ context Api::V3::DecisionReview::HigherLevelReviewIntakeParams, :all_dbs do
         [[String],       %w[data attributes benefitType]],
         [object,         %w[data attributes veteran]],
         [[String],       %w[data attributes veteran ssn]],
-        [[String, nil],  %w[data attributes veteran addressLine1]],
-        [[String, nil],  %w[data attributes veteran addressLine2]],
-        [[String, nil],  %w[data attributes veteran city]],
-        [[String, nil],  %w[data attributes veteran stateProvinceCode]],
-        [[String, nil],  %w[data attributes veteran countryCode]],
-        [[String, nil],  %w[data attributes veteran zipPostalCode]],
-        [[String, nil],  %w[data attributes veteran phoneNumber]],
-        [[String, nil],  %w[data attributes veteran phoneNumberCountryCode]],
-        [[String, nil],  %w[data attributes veteran phoneNumberExt]],
-        [[String, nil],  %w[data attributes veteran emailAddress]],
         [[*object, nil], %w[data attributes claimant]],
         [[String],       %w[data attributes claimant participantId]],
         [[String],       %w[data attributes claimant payeeCode]],
