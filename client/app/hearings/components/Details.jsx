@@ -78,6 +78,8 @@ const HearingDetails = (props) => {
     const transcription = hearing.transcription || {};
     const virtualHearing = hearing.virtualHearing || {};
 
+    console.log('HEARING: ', hearing);
+
     return {
       hearingDetailsForm: {
         appellantIsNotVeteran,
@@ -196,6 +198,8 @@ const HearingDetails = (props) => {
       }
     };
 
+    console.log('DATA SUBMISSION: ', submitData);
+
     setLoading(true);
 
     return saveHearing(submitData).
@@ -275,7 +279,12 @@ const HearingDetails = (props) => {
 
   const cancelConvert = () => {
     convertHearing(false);
+
+    // Focus the top of the page
+    window.scrollTo(0, 0);
   };
+
+  console.log('FORMS: ', hearingForms);
 
   return (
     <React.Fragment>
@@ -288,50 +297,50 @@ const HearingDetails = (props) => {
       {converting ? (
         <ConvertToVirtual hearing={hearing} scheduledFor={scheduledFor} />
       ) : (
-        <AppSegment filledBackground>
-          <div {...inputFix}>
-            <DetailsHeader
-              aod={aod}
-              disposition={disposition}
-              docketName={docketName}
-              docketNumber={docketNumber}
-              isVirtual={isVirtual}
-              hearingDayId={hearingDayId}
-              readableLocation={readableLocation}
-              readableRequestType={readableRequestType}
-              regionalOfficeName={regionalOfficeName}
-              scheduledFor={scheduledFor}
-              veteranFileNumber={veteranFileNumber}
-              veteranFirstName={veteranFirstName}
-              veteranLastName={veteranLastName}
-            />
-            <DetailsForm
-              convertHearing={convertHearing}
-              errors={virtualHearingErrors}
-              isLegacy={isLegacy}
-              isVirtual={isVirtual}
-              openVirtualHearingModal={openVirtualHearingModal}
-              readOnly={disabled}
-              requestType={readableRequestType}
-              updateVirtualHearing={updateVirtualHearing}
-              wasVirtual={wasVirtual}
-            />
-          </div>
-          {shouldStartPolling && startPolling()}
-          {virtualHearingModalOpen && (
-            <VirtualHearingModal
-              hearing={hearing}
-              virtualHearing={hearingForms?.virtualHearingForm}
-              update={updateVirtualHearing}
-              submit={submit}
-              closeModal={closeVirtualHearingModal}
-              reset={resetVirtualHearing}
-              type={virtualHearingModalType}
-              {...editedEmails}
-            />
-          )}
-        </AppSegment>
-      )}
+          <AppSegment filledBackground>
+            <div {...inputFix}>
+              <DetailsHeader
+                aod={aod}
+                disposition={disposition}
+                docketName={docketName}
+                docketNumber={docketNumber}
+                isVirtual={isVirtual}
+                hearingDayId={hearingDayId}
+                readableLocation={readableLocation}
+                readableRequestType={readableRequestType}
+                regionalOfficeName={regionalOfficeName}
+                scheduledFor={scheduledFor}
+                veteranFileNumber={veteranFileNumber}
+                veteranFirstName={veteranFirstName}
+                veteranLastName={veteranLastName}
+              />
+              <DetailsForm
+                convertHearing={convertHearing}
+                errors={virtualHearingErrors}
+                isLegacy={isLegacy}
+                isVirtual={isVirtual}
+                openVirtualHearingModal={openVirtualHearingModal}
+                readOnly={disabled}
+                requestType={readableRequestType}
+                updateVirtualHearing={updateVirtualHearing}
+                wasVirtual={wasVirtual}
+              />
+            </div>
+            {shouldStartPolling && startPolling()}
+            {virtualHearingModalOpen && (
+              <VirtualHearingModal
+                hearing={hearing}
+                virtualHearing={hearingForms?.virtualHearingForm}
+                update={updateVirtualHearing}
+                submit={submit}
+                closeModal={closeVirtualHearingModal}
+                reset={resetVirtualHearing}
+                type={virtualHearingModalType}
+                {...editedEmails}
+              />
+            )}
+          </AppSegment>
+        )}
       <div {...css({ overflow: 'hidden' })}>
         <Button
           name="Cancel"
