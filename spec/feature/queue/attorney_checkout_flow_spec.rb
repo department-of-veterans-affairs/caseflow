@@ -669,7 +669,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           # Issue level 2 and diagnostic code dropdowns render based on earlier
           # values, so we have to re-get elements per loop. There are at most 5
           # dropdowns rendered: Program, Type, Levels 1, 2, Diagnostic Code
-          field_options = page.find_all ".Select--single"
+          field_options = page.find_all ".cf-select"
           row = field_options[row_idx]
 
           next unless row
@@ -679,11 +679,11 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           if opts[row_idx].eql? "*"
             # there're about 800 diagnostic code options, but getting the count
             # of '.cf-select__option's from the DOM takes a while
-            row.find("div[id$='--option-#{rand(800)}']").click
+            row.find("div[id$='-option-#{rand(800)}']").click
           elsif opts[row_idx].is_a? String
-            row.find("div[id$='--option-#{opts[row_idx]}']").click
+            row.find("div[id$='-option-#{opts[row_idx]}']").click
           end
-          row.find(".cf-select__multi-value__label").text
+          row.find(".cf-select__single-value").text
         end
       end
 

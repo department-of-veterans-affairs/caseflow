@@ -91,7 +91,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         expect(page.find(".usa-sidenav-list")).to have_content attorney_one.full_name
         expect(page.find(".usa-sidenav-list")).to have_content attorney_two.full_name
 
-        safe_click ".Select"
+        safe_click ".cf-select"
         expect(page.find(".dropdown-Assignee")).to have_content attorney_one.full_name
         expect(page.find(".dropdown-Assignee")).to have_content attorney_two.full_name
 

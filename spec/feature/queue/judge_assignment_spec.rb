@@ -36,7 +36,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       expect(page).to have_content("Moe Syzlak")
       expect(page).to have_content("Alice Macgyvertwo")
 
-      safe_click ".Select"
+      safe_click ".cf-select"
       click_dropdown(text: "Other")
       safe_click ".dropdown-Other"
       # expect attorneys and acting judges but not judges
@@ -70,7 +70,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         check judge_task_one.id.to_s, allow_label_click: true
         check judge_task_two.id.to_s, allow_label_click: true
 
-        safe_click ".Select"
+        safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
 
         click_on "Assign 2 cases"
@@ -89,7 +89,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         scroll_to(".usa-table-borderless")
         check attorney_one.tasks.first.id.to_s, allow_label_click: true
 
-        safe_click ".Select"
+        safe_click ".cf-select"
         click_dropdown(text: attorney_two.full_name)
 
         click_on "Assign 1 case"
@@ -235,7 +235,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         check judge_task_one.id.to_s, allow_label_click: true
         check judge_task_two.id.to_s, allow_label_click: true
 
-        safe_click ".Select"
+        safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
 
         click_on "Assign 2 cases"
