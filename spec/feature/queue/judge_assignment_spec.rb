@@ -36,7 +36,6 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       expect(page).to have_content("Moe Syzlak")
       expect(page).to have_content("Alice Macgyvertwo")
 
-      safe_click ".cf-select"
       click_dropdown(text: "Other")
       safe_click ".dropdown-Other"
       # expect attorneys and acting judges but not judges

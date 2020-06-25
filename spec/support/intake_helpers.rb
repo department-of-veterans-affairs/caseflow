@@ -168,7 +168,7 @@ module IntakeHelpers
   end
 
   def click_intake_nonrating_category_dropdown
-    safe_click ".dropdown-issue-category .Select-placeholder"
+    safe_click ".dropdown-issue-category .cf-select__placeholder"
   end
 
   def click_intake_add_issue
