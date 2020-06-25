@@ -79,6 +79,7 @@ describe AppealIntake, :all_dbs do
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
     let(:veteran_is_not_claimant) { "false" }
+
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
     let(:request_params) do
@@ -124,6 +125,30 @@ describe AppealIntake, :all_dbs do
       let(:docket_type) { nil }
 
       it { is_expected.to be_falsey }
+    end
+
+    context "Claimant has notes saved" do
+      let(:claimant_notes) { "This is a claimant note" }
+      let(:request_params) do
+        ActionController::Parameters.new(
+          receipt_date: receipt_date,
+          docket_type: docket_type,
+          claimant: claimant,
+          payee_code: payee_code,
+          legacy_opt_in_approved: legacy_opt_in_approved,
+          veteran_is_not_claimant: veteran_is_not_claimant,
+          claimant_notes: claimant_notes
+        )
+      end
+
+      it "adds note to unlisted claimants" do
+        subject
+        expect(intake.detail.claimant).to have_attributes(
+          payee_code: nil,
+          decision_review: intake.detail,
+          notes: "This is a claimant note"
+        )
+      end
     end
 
     context "Claimant is different than Veteran" do
