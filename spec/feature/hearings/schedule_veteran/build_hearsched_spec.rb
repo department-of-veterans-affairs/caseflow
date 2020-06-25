@@ -233,7 +233,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       )
       expect(contested_row).to have_content contested_claimant_task_instructions
 
-      within all("div", class: "Select", count: 2).first do
+      within all("div", class: "cf-select", count: 2).first do
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
       end
 

@@ -6,7 +6,7 @@ module IntakeHelpers
 
   def select_form(form_name)
     if FeatureToggle.enabled?(:ramp_intake)
-      safe_click ".Select"
+      safe_click ".cf-select"
       fill_in "Which form are you processing?", with: form_name
       find("#form-select").send_keys :enter
     else
