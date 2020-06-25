@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
-import _, { isPlainObject, isEmpty } from 'lodash';
+import _, { isPlainObject } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 
