@@ -272,7 +272,7 @@ class QueueApp extends React.PureComponent {
 
   routedBulkAssignTaskModal = (props) => {
     const { match } = props;
-    const pageRoute = match.path.replace('modal/bulk_assign_tasks', '');
+    const pageRoute = match.url.replace('modal/bulk_assign_tasks', '');
 
     return <BulkAssignModal {...props} onCancel={() => props.history.push(pageRoute)} />;
   };

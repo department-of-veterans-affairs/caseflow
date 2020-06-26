@@ -20,13 +20,15 @@ FactoryBot.define do
     scheduled_for { hearing_day&.scheduled_for }
 
     transient do
+      disposition { nil }
       case_hearing do
         create(
           :case_hearing,
           user: user,
           hearing_type: hearing_day.request_type,
           hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
-          vdkey: hearing_day.id
+          vdkey: hearing_day.id,
+          hearing_disp: disposition
         )
       end
     end

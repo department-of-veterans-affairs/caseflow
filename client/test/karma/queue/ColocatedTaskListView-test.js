@@ -13,7 +13,7 @@ import { errorFetchingDocumentCount, setAppealDocCount, setQueueConfig }
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
 
-describe('ColocatedTaskListView', () => {
+describe.only('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
 
   const getWrapperColocatedTaskListView = (store) => {
