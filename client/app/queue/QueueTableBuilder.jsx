@@ -96,7 +96,7 @@ class QueueTableBuilder extends React.PureComponent {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: <React.Fragment>
         <p className="cf-margin-top-0">{noCasesMessage || tabConfig.description}</p>
-        { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
+        { this.props.userCanBulkAssign && tabConfig.allow_bulk_assign && <BulkAssignButton /> }
         <QueueTable
           key={tabConfig.name}
           columns={this.columnsFromConfig(config, tabConfig, tasks)}
@@ -130,7 +130,8 @@ class QueueTableBuilder extends React.PureComponent {
 const mapStateToProps = (state) => {
   return ({
     config: state.queue.queueConfig,
-    organizations: state.ui.organizations
+    organizations: state.ui.organizations,
+    userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign
   });
 };
 
@@ -141,7 +142,8 @@ QueueTableBuilder.propTypes = {
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number
   }),
-  requireDasRecord: PropTypes.bool
+  requireDasRecord: PropTypes.bool,
+  userCanBulkAssign: PropTypes.bool
 };
 
 export default (connect(mapStateToProps)(QueueTableBuilder));

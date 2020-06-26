@@ -67,6 +67,10 @@ body {
     margin-bottom: $cf-30px;
   }
 
+  .cf-app-segment:last-child {
+    margin-bottom: 0;
+  }
+
   .cf-app-segment--alt {
     border: 1px solid $color-gray-lighter;
   }

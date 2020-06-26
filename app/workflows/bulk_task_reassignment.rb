@@ -246,9 +246,11 @@ class BulkTaskReassignment
   end
 
   def reassign_attorney_task(task)
-    update_task_status_with_instructions(task, Constants.TASK_STATUSES.cancelled)
-    task.parent.update_with_instructions(instructions: reassignment_instructions(Constants.TASK_STATUSES.cancelled))
-    task.appeal.tasks.open.find_by(type: JudgeAssignTask.name).update_with_instructions(
+    attorney_task, judge_decision_task, judge_assign_task = task.send_back_to_judge_assign!
+    cancellation_instuctions = reassignment_instructions(Constants.TASK_STATUSES.cancelled)
+    attorney_task.update_with_instructions(instructions: cancellation_instuctions)
+    judge_decision_task.update_with_instructions(instructions: cancellation_instuctions)
+    judge_assign_task.update_with_instructions(
       instructions: reassignment_instructions(Constants.TASK_STATUSES.assigned)
     )
   end

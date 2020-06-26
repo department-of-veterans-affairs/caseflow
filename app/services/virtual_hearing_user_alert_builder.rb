@@ -16,7 +16,7 @@ class VirtualHearingUserAlertBuilder
   attr_reader :change_type, :alert_type, :appeal
 
   def title
-    copy["TITLE"] % (appeal.veteran.name || "the veteran")
+    copy["TITLE"] % (appeal.veteran&.name || "the veteran")
   end
 
   def message
