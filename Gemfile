@@ -128,6 +128,7 @@ group :development do
   gem "foreman"
   gem "meta_request"
   gem "rails-erd"
+  gem "ruby-prof", "~> 1.4"
 end
 
 group :test do

@@ -63,6 +63,16 @@ module CaseflowCertification
     # it's a safe assumption we're running on us-gov-west-1
     ENV["AWS_REGION"] ||= "us-gov-west-1"
 
+    if Rails.env.development? && ENV["PERFORMANCE_PROFILE"].present?
+      config.middleware.use(
+        Rack::RubyProf,
+        path: './tmp/profile',
+        printers: {
+          ::RubyProf::CallTreePrinter => 'test-callgrind'
+        }
+      )
+    end
+
     # :nocov:
     if %w[development ssh_forwarding staging].include?(Rails.env)
       # configure pry
