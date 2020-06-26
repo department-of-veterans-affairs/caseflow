@@ -11,7 +11,9 @@ class ControllerSchema
       @type = type
       @optional = options.fetch(:optional, false)
       @nullable = options.fetch(:nullable, false)
-      @included_in = options.fetch(:included_in?, nil)
+      @included_in = options.fetch(:included_in?, nil)&.map do |value|
+        value.is_a?(Symbol) ? value.to_s : value
+      end
       @doc = options.fetch(:doc, nil)
     end
 

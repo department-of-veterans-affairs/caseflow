@@ -44,58 +44,22 @@ const config = {
         }
       },
       {
-        test: /\.module\.s(a|c)ss$/,
+        test: /\.((c|sa|sc)ss)$/i,
         use: [
-          {
-            loader: 'style-loader'
-          },
+          'style-loader',
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      },
-      {
-        test: /\.scss?$/,
-        exclude: /\.module.(s(a|c)ss)$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      },
-      {
-        test: /\.css?$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
+              importLoaders: 1,
+              modules: { auto: true },
               sourceMap: true,
-              url: false
+              localsConvention: 'camelCase'
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
             }
           }
         ]

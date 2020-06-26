@@ -98,7 +98,8 @@ export const prepareReviewData = (intakeData, intakeType) => {
       claimant: intakeData.claimant,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
-      legacy_opt_in_approved: intakeData.legacyOptInApproved
+      legacy_opt_in_approved: intakeData.legacyOptInApproved,
+      claimant_notes: intakeData.claimantNotes
     };
   case 'supplementalClaim':
     return {
