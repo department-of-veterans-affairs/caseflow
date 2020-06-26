@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
-import _, { isPlainObject } from 'lodash';
+import _, { isPlainObject, isNull } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 
@@ -47,7 +47,7 @@ class SearchableDropdown extends React.Component {
     }
     // don't set value in state if creatable is true
     if (!this.props.selfManageValueState) {
-      this.setState({ value: newValue });
+      this.setState({ value: this.props.clearOnSelect ? null : newValue });
     }
 
     if (
@@ -123,7 +123,7 @@ class SearchableDropdown extends React.Component {
     // `react-select` used to accept plain string values, but now requires passing the object
     // This allows `SearchableDropdown` to still accept the legacy syntax
     const value =
-      Array.isArray(this.state.value) || isPlainObject(this.state.value) ?
+      Array.isArray(this.state.value) || isPlainObject(this.state.value) || isNull(this.state.value) ?
         this.state.value :
         (options || []).find(({ value: val }) => val === this.state.value);
 
@@ -220,6 +220,7 @@ const SelectOpts = PropTypes.arrayOf(
 
 SearchableDropdown.propTypes = {
   async: PropTypes.func,
+  clearOnSelect: PropTypes.bool,
   creatable: PropTypes.bool,
   creatableOptions: PropTypes.shape({
     noResultsText: PropTypes.string,
@@ -250,6 +251,7 @@ SearchableDropdown.propTypes = {
 
 /* eslint-disable no-undefined */
 SearchableDropdown.defaultProps = {
+  clearOnSelect: false,
   loading: false,
   filterOption: undefined,
   filterOptions: undefined

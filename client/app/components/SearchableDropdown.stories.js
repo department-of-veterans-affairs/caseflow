@@ -74,6 +74,25 @@ export const controlled = () => {
   );
 };
 
+export const clearOnSelect = () => {
+  const [value, setValue] = useState(options[1]);
+  const handleChange = (val) => {
+    action('onChange')(val);
+    // setValue(null);
+  };
+
+  return (
+    <SearchableDropdown
+      name="controlled"
+      label="Clears Control upon Selection"
+      options={options}
+      value={value}
+      onChange={handleChange}
+      clearOnSelect
+    />
+  );
+};
+
 export const multiple = () => {
   return (
     <SearchableDropdown
