@@ -32,6 +32,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
               onReceiveDropdownData={[Function]}
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="VLJ"
                 loading={false}
                 name="judgeDropdown"
@@ -1342,6 +1343,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
               onReceiveDropdownData={[Function]}
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Hearing Coordinator"
                 loading={false}
                 name="hearingCoordinatorDropdown"
@@ -2642,6 +2644,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
             onChange={[Function]}
           >
             <SearchableDropdown
+              clearOnSelect={false}
               label="Hearing Room"
               loading={false}
               name="hearingRoomDropdown"
@@ -5137,6 +5140,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 </div>
               </TextField>
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Transcriber"
                 loading={false}
                 name="transcriber"
@@ -6887,6 +6891,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
               data-css-1fmltfu=""
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Transcription Problem Type"
                 loading={false}
                 name="problemType"
@@ -8870,6 +8875,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               onReceiveDropdownData={[Function]}
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="VLJ"
                 loading={false}
                 name="judgeDropdown"
@@ -10180,6 +10186,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               onReceiveDropdownData={[Function]}
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Hearing Coordinator"
                 loading={false}
                 name="hearingCoordinatorDropdown"
@@ -11480,6 +11487,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
             onChange={[Function]}
           >
             <SearchableDropdown
+              clearOnSelect={false}
               label="Hearing Room"
               loading={false}
               name="hearingRoomDropdown"
@@ -13831,6 +13839,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
             }
           >
             <SearchableDropdown
+              clearOnSelect={false}
               label="Hearing Type"
               loading={false}
               name="hearingType"
@@ -15464,6 +15473,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 </div>
               </TextField>
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Transcriber"
                 loading={false}
                 name="transcriber"
@@ -17214,6 +17224,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               data-css-1fmltfu=""
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Transcription Problem Type"
                 loading={false}
                 name="problemType"
@@ -19199,6 +19210,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               onReceiveDropdownData={[Function]}
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="VLJ"
                 loading={false}
                 name="judgeDropdown"
@@ -20509,6 +20521,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               onReceiveDropdownData={[Function]}
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Hearing Coordinator"
                 loading={false}
                 name="hearingCoordinatorDropdown"
@@ -21809,6 +21822,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
             onChange={[Function]}
           >
             <SearchableDropdown
+              clearOnSelect={false}
               label="Hearing Room"
               loading={false}
               name="hearingRoomDropdown"
@@ -24160,6 +24174,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
             }
           >
             <SearchableDropdown
+              clearOnSelect={false}
               label="Hearing Type"
               loading={false}
               name="hearingType"
@@ -25793,6 +25808,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 </div>
               </TextField>
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Transcriber"
                 loading={false}
                 name="transcriber"
@@ -27543,6 +27559,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               data-css-1fmltfu=""
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Transcription Problem Type"
                 loading={false}
                 name="problemType"
@@ -29528,6 +29545,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               onReceiveDropdownData={[Function]}
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="VLJ"
                 loading={false}
                 name="judgeDropdown"
@@ -30838,6 +30856,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               onReceiveDropdownData={[Function]}
             >
               <SearchableDropdown
+                clearOnSelect={false}
                 label="Hearing Coordinator"
                 loading={false}
                 name="hearingCoordinatorDropdown"
@@ -32138,6 +32157,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
             onChange={[Function]}
           >
             <SearchableDropdown
+              clearOnSelect={false}
               label="Hearing Room"
               loading={false}
               name="hearingRoomDropdown"
@@ -34489,6 +34509,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
             }
           >
             <SearchableDropdown
+              clearOnSelect={false}
               label="Hearing Type"
               loading={false}
               name="hearingType"
