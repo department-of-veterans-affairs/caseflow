@@ -533,6 +533,7 @@ GEM
     ruby-graphviz (1.2.4)
     ruby-oci8 (2.2.7)
     ruby-plsql (0.7.1)
+    ruby-prof (1.4.1)
     ruby-progressbar (1.10.1)
     ruby_dep (1.5.0)
     ruby_parser (3.13.1)
@@ -711,6 +712,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   ruby-oci8 (~> 2.2)
+  ruby-prof (~> 1.4)
   sass-rails (~> 5.0)
   scss_lint
   sentry-raven
