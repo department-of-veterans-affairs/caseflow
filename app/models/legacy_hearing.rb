@@ -125,14 +125,6 @@ class LegacyHearing < CaseflowRecord
     hearing_day&.regional_office || "C"
   end
 
-  def regional_office
-    @regional_office ||= begin
-                            RegionalOffice.find!(regional_office_key)
-                         rescue RegionalOffice::NotFoundError
-                           nil
-                          end
-  end
-
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"

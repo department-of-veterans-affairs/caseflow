@@ -4,7 +4,7 @@ class VirtualHearingMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "virtual_hearing_mailer"
   helper VirtualHearings::ExternalLinkHelper
-  helper VirtualHearings::VeteranNameHelper
+  helper VirtualHearings::AppellantNameHelper
   helper VirtualHearings::CalendarTemplateHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)

@@ -25,14 +25,6 @@ const selectedAction = (props) => {
   return actionData.selected ? actionData.options.find((option) => option.value === actionData.selected.id) : null;
 };
 
-const vetNameFromAppeal = (appeal) => {
-  const {
-    veteranInfo: { veteran }
-  } = appeal;
-
-  return veteran.full_name;
-};
-
 const getAction = (props) => {
   return props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
 };
@@ -95,7 +87,7 @@ class AssignToView extends React.Component {
 
     const pulacCerulloSuccessMessage = {
       title: COPY.PULAC_CERULLO_SUCCESS_TITLE,
-      detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, vetNameFromAppeal(appeal))
+      detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, appeal.veteranFullName)
     };
 
     if (isReassignAction) {
@@ -247,7 +239,8 @@ class AssignToView extends React.Component {
 AssignToView.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
-    id: PropTypes.string
+    id: PropTypes.string,
+    veteranFullName: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
   highlightFormItems: PropTypes.bool,
