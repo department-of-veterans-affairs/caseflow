@@ -93,6 +93,7 @@ detectors:
       - Seeds::Hearings
       - Seeds::Tasks#create_colocated_legacy_tasks
       - Seeds::Users#create_aod_user_and_tasks
+      - SlackService#http_service
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob
@@ -206,7 +207,7 @@ detectors:
       - VBMSCaseflowLogger#log
       - VirtualHearings::ExternalLinkHelper#external_link
       - VirtualHearings::ExternalLinkHelper#phone_link
-      - VirtualHearings::VeteranNameHelper#formatted_veteran_name
+      - VirtualHearings::AppellantNameHelper#formatted_appellant_name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

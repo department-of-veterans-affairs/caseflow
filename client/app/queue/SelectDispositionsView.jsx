@@ -158,11 +158,12 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
+  validBenefitType = (benefitType) => Object.keys(BENEFIT_TYPES).includes(benefitType);
+
   validate = () => {
     const { decisionIssue } = this.state;
 
-    return decisionIssue.benefit_type && decisionIssue.disposition &&
-      decisionIssue.description;
+    return this.validBenefitType(decisionIssue.benefit_type) && decisionIssue.disposition && decisionIssue.description;
   }
 
   saveDecision = () => {
@@ -374,6 +375,8 @@ class SelectDispositionsView extends React.PureComponent {
           name="Benefit type"
           placeholder={COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}
           hideLabel
+          errorMessage={highlightModal && !this.validBenefitType(decisionIssue.benefit_type) ?
+            'This field is required' : null}
           value={decisionIssue.benefit_type}
           options={_.map(BENEFIT_TYPES, (value, key) => ({ label: value,
             value: key }))}

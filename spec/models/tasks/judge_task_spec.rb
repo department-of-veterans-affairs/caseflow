@@ -28,7 +28,7 @@ describe JudgeTask, :all_dbs do
       end
     end
 
-    context "user is a Special Case Movement team member" do
+    context "user is a Case Movement team member" do
       let(:user) do
         create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
       end
