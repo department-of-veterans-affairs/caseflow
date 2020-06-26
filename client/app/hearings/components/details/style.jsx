@@ -83,7 +83,7 @@ export const hearingLinksContainer = css({
 });
 
 export const timezoneDropdownStyles = (count) => ({
-  height: `${count * 32}px !important`,
+  height: `${count * 39}px !important`,
   maxHeight: 'none'
 });
 

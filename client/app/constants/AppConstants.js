@@ -54,4 +54,16 @@ export const LOGO_COLORS = {
   }
 };
 
-export const COMMON_TIMEZONES = ['America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles'];
+export const COMMON_TIMEZONES = [
+  'America/Los_Angeles',
+  'America/Denver',
+  'America/Chicago',
+  'America/New_York'
+];
+
+// NOTE: This information was determined by googling `what timezone is XXX` for each of the keys
+export const REGIONAL_OFFICE_ZONE_ALIASES = {
+  'America/Anchorage': 'America/Juneau',
+  'America/Boise': 'America/Denver',
+  'America/Kentucky/Louisville': 'America/New_York'
+};

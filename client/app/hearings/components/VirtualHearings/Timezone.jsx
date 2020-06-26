@@ -5,7 +5,14 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
 import { timezones } from '../../utils';
 import { timezoneDropdownStyles, timezoneStyles } from '../details/style';
 
-export const Timezone = ({ name, readOnly, value, errorMessage, onChange, time }) => {
+export const Timezone = ({
+  name,
+  readOnly,
+  value,
+  errorMessage,
+  onChange,
+  time
+}) => {
   const { options, commonsCount } = timezones(time);
 
   return (

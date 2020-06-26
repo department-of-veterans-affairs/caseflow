@@ -15,7 +15,12 @@ import { timezoneDropdownStyles, timezoneStyles } from 'app/hearings/components/
 const defaultTime = '08:15';
 const defaults = timezones(defaultTime);
 const REGIONAL_OFFICE_TIMEZONES = roTimezones();
-const commonsCount = REGIONAL_OFFICE_TIMEZONES.length;
+
+// Remove missing Regional Office zones from the count
+const commonsCount = REGIONAL_OFFICE_TIMEZONES.filter((zone) => Object.values(TIMEZONES).includes(zone)).length;
+
+// Reverse the commons array but don't mutate to move EST to the top for comparison
+const commons = COMMON_TIMEZONES.slice().reverse();
 
 describe('Timezone', () => {
   test('Matches snapshot with default props', () => {
@@ -77,10 +82,21 @@ describe('Timezone', () => {
     dropdown.prop('options').map((opt, index) => {
       // Ensure the common zones are the first 4
       if (index <= 3) {
-        expect(opt.value).toEqual(COMMON_TIMEZONES[index]);
+        expect(opt.value).toEqual(commons[index]);
       }
 
-      expect(Object.values(TIMEZONES)).toContain(opt.value);
+      // Ensure Regional Office timezones move to the top
+      if (index > 3 && index < commonsCount) {
+        expect(REGIONAL_OFFICE_TIMEZONES).toContain(opt.value);
+      }
+
+      // For all other cases ensure the timezone is one of the available and not a duplicate
+      if (index > commonsCount) {
+        expect(Object.values(TIMEZONES)).toContain(opt.value);
+        expect(REGIONAL_OFFICE_TIMEZONES).not.toContain(opt.value);
+        expect(COMMON_TIMEZONES).not.toContain(opt.value);
+      }
     });
+    expect(tz).toMatchSnapshot();
   });
 });

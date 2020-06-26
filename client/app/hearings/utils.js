@@ -7,7 +7,7 @@ import _ from 'lodash';
 import ExponentialPolling from '../components/ExponentialPolling';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
 import TIMEZONES from '../../constants/TIMEZONES';
-import { COMMON_TIMEZONES } from '../constants/AppConstants';
+import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -30,7 +30,9 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
     worksheetIssues = _.keyBy(worksheet.worksheet_issues, 'id');
   }
 
-  const worksheetWithoutAppeals = _.omit(worksheet, ['appeals_ready_for_hearing']);
+  const worksheetWithoutAppeals = _.omit(worksheet, [
+    'appeals_ready_for_hearing'
+  ]);
 
   return {
     worksheet: worksheetWithoutAppeals,
@@ -40,7 +42,11 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
 };
 
 export const sortHearings = (hearings) =>
-  _.orderBy(Object.values(hearings || {}), (hearing) => hearing.scheduledFor, 'asc');
+  _.orderBy(
+    Object.values(hearings || {}),
+    (hearing) => hearing.scheduledFor,
+    'asc'
+  );
 
 export const filterIssuesOnAppeal = (issues, appealId) =>
   _(issues).
@@ -77,7 +83,10 @@ export const filterCurrentIssues = (issues) =>
     (issue) =>
       // Omit if destroyed, or HAS NON-REMAND DISPOSITION FROM VACOLS
       /* eslint-disable no-underscore-dangle */
-      issue._destroy || (issue.disposition && !issue.disposition.includes('Remand') && issue.from_vacols)
+      issue._destroy ||
+      (issue.disposition &&
+        !issue.disposition.includes('Remand') &&
+        issue.from_vacols)
     /* eslint-enable no-underscore-dangle */
   );
 
@@ -86,7 +95,10 @@ export const filterPriorIssues = (issues) =>
     issues,
     (issue) =>
       /* eslint-disable no-underscore-dangle */
-      !issue._destroy && issue.disposition && !issue.disposition.includes('Remand') && issue.from_vacols
+      !issue._destroy &&
+      issue.disposition &&
+      !issue.disposition.includes('Remand') &&
+      issue.from_vacols
     /* eslint-enable no-underscore-dangle */
   );
 
@@ -146,13 +158,17 @@ export const handleEdit = (init, current, fields) => {
       edited: value.edited || edited,
 
       // Set the changed fields
-      editedFields: edited ? [...fields, key] : fields.filter((field) => field !== key)
+      editedFields: edited ?
+        [...fields, key] :
+        fields.filter((field) => field !== key)
     };
   }, {});
 };
 
 export const virtualHearingRoleForUser = (user, hearing) =>
-  user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ? VIRTUAL_HEARING_HOST : VIRTUAL_HEARING_GUEST;
+  user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ?
+    VIRTUAL_HEARING_HOST :
+    VIRTUAL_HEARING_GUEST;
 
 export const pollVirtualHearingData = (hearingId, onSuccess) => (
   // Did not specify retryCount so if api call fails, it'll stop polling.
@@ -171,7 +187,8 @@ export const pollVirtualHearingData = (hearingId, onSuccess) => (
  * @param {Object} obj -- The object which is being reset
  * @returns {Object} -- New object with the same keys and empty values
  */
-export const reset = (obj) => Object.keys(obj).reduce((result, item) => ({ ...result, [item]: '' }), {});
+export const reset = (obj) =>
+  Object.keys(obj).reduce((result, item) => ({ ...result, [item]: '' }), {});
 
 /**
  * Method to change the cancelled status if both objects are set to cancelled
@@ -207,7 +224,11 @@ export const toggleCancelled = (first, second, form) =>
  */
 export const getChanges = (first, second) => {
   // Handle cancelled status
-  const { init, current } = toggleCancelled(first, second, 'virtualHearingForm');
+  const { init, current } = toggleCancelled(
+    first,
+    second,
+    'virtualHearingForm'
+  );
 
   return deepDiff(init, current);
 };
@@ -241,24 +262,40 @@ export const zoneName = (name) => {
 export const hearingTimeOptsWithZone = () =>
   HEARING_TIME_OPTIONS.map((time) => ({
     ...time,
-    label: `${moment(time.label, 'h:mm A').format('h:mm A')} ${zoneName(COMMON_TIMEZONES[0])}`
+    label: `${moment(time.label, 'h:mm A').format('h:mm A')} ${zoneName(
+      COMMON_TIMEZONES[0]
+    )}`
   }));
+
+/**
+ * Method to normalize the Regional Office Timezone names
+ * @param {string} name -- Name of the Regional Office timezone
+ */
+export const getFriendlyZoneName = (name) => {
+  // There is not a friendly name for some of the Regional Office zones, choose the city name instead for those
+  return Object.keys(REGIONAL_OFFICE_ZONE_ALIASES).includes(name) ? REGIONAL_OFFICE_ZONE_ALIASES[name] : name;
+};
 
 /**
  * Method to return a list of Regional Office Timezones sorted with common timezones at the top
  * @returns {Array} -- List of Regional Office Timezones
  */
 export const roTimezones = () =>
-  _.uniq(Object.keys(REGIONAL_OFFICE_INFORMATION).map((ro) => REGIONAL_OFFICE_INFORMATION[ro].timezone)).sort(
-    (_, zone) => (COMMON_TIMEZONES.includes(zone) ? 1 : -1)
+  _.uniq(
+    Object.keys(REGIONAL_OFFICE_INFORMATION).map(
+      (ro) => getFriendlyZoneName(REGIONAL_OFFICE_INFORMATION[ro].timezone)
+    )
   );
 
 /**
- * Returns the available timeTIMEZONES divided by common and the rest
+ * Returns the available timezones options and the count of the available Regional Office timezones
  * @param {string} time -- String representation of the time to convert
  * @returns {Object} -- { options: Array, commonsCount: number }
  */
 export const timezones = (time) => {
+  // Initialize count of common timezones
+  let commonsCount = 0;
+
   // Get the list of Regional Office Timezones
   const ros = roTimezones();
 
@@ -266,15 +303,23 @@ export const timezones = (time) => {
   const dateTime = moment(time, 'HH:mm').tz(COMMON_TIMEZONES[0]);
 
   // Map the available timeTIMEZONES to a select options object
-  const options = Object.keys(TIMEZONES).map((zone, i) => {
-    // Initially set the index to the current index value
-    let index = ros.length + i;
+  const options = Object.keys(TIMEZONES).map((zone) => {
+    // Default the index to be based on the timezone offset, add 100 to move below the Regional Office zones
+    let index = Math.abs(moment.tz(TIMEZONES[zone]).utcOffset()) + 100;
 
     // Sort the most common timezones to the top followed by Regional Office timezones
     if (COMMON_TIMEZONES.includes(TIMEZONES[zone])) {
-      index = -1;
+      // Increase the count of common timezones
+      commonsCount += 1;
+
+      // Inverse the index of the common zones to move EST to the top and move west
+      index = -Math.abs(COMMON_TIMEZONES.indexOf(TIMEZONES[zone]));
     } else if (ros.includes(TIMEZONES[zone])) {
-      index = ros.indexOf(TIMEZONES[zone]);
+      // Divide the offset by 100 to move RO zones above the remaining zones
+      index = Math.abs(moment.tz(TIMEZONES[zone]).utcOffset()) / 100;
+
+      // Increase the count of common timezones
+      commonsCount += 1;
     }
 
     // Return the formatted options
@@ -287,17 +332,8 @@ export const timezones = (time) => {
     };
   });
 
-  // Sort the options by the common timezone
-  const sortedOptions = options.
-    // Sort the Common timezones to the top
-    sort((zoneA, zoneB) => {
-      if (COMMON_TIMEZONES.includes(zoneA.value)) {
-        return -1;
-      }
-
-      return zoneA.index - zoneB.index;
-    });
+  // console.log(_.orderBy(options, ['index'], ['asc']));
 
   // Return the values and the count of commons
-  return { options: sortedOptions, commonsCount: ros.length };
+  return { options: _.orderBy(options, ['index']), commonsCount };
 };
