@@ -11,6 +11,8 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
   let(:open_appeals) { appeals + legacy_appeals }
   let(:closed_legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case3) }
 
+  let(:perform_job) { UpdateCachedAppealsAttributesJob.perform_now }
+
   context "when the job runs successfully" do
     before do
       open_appeals.each do |appeal|
@@ -22,7 +24,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     it "creates the correct number of cached appeals" do
       expect(CachedAppeal.all.count).to eq(0)
 
-      UpdateCachedAppealsAttributesJob.perform_now
+      perform_job
 
       expect(CachedAppeal.all.count).to eq(open_appeals.length)
     end
@@ -33,7 +35,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
                              status: Constants.TASK_STATUSES.assigned)
       task_to_close.update(status: Constants.TASK_STATUSES.completed)
 
-      UpdateCachedAppealsAttributesJob.perform_now
+      perform_job
 
       expect(CachedAppeal.all.count).to eq(open_appeals.length)
     end
@@ -55,7 +57,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
           emitted_gauges.push(args)
         end
 
-        UpdateCachedAppealsAttributesJob.perform_now
+        perform_job
 
         expect(job_gauges.first).to include(
           app_name: "caseflow_job",
@@ -70,7 +72,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
           emitted_gauges.push(args)
         end
 
-        UpdateCachedAppealsAttributesJob.perform_now
+        perform_job
 
         expect(cached_appeals_count_gauges.count).to eq(open_appeals.length)
         expect(cached_vacols_legacy_cases_gauges.count).to eq(legacy_appeals.length)
@@ -89,11 +91,29 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       slack_msg = ""
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
 
-      UpdateCachedAppealsAttributesJob.perform_now
+      perform_job
 
       expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. See Sentry event .*"
 
       expect(slack_msg).to match(/#{expected_msg}/)
+    end
+  end
+
+  context "when ActiveRecord::RecordNotUnique error is thrown" do
+    let(:file_number_with_raised_error) { legacy_appeal1.veteran_file_number }
+
+    before do
+      allow(BgsPowerOfAttorney).to receive(:find_or_create_by_file_number)
+        .with(file_number_with_raised_error).and_raise(ActiveRecord::RecordNotUnique.new)
+
+      # create open tasks for 1 legacy appeal
+      create_list(:bva_dispatch_task, 3, appeal: legacy_appeal1)
+    end
+
+    it "rescues error and continues without failing" do
+      perform_job
+
+      expect(CachedAppeal.all.count).to eq(1)
     end
   end
 end
