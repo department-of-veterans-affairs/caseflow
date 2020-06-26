@@ -4,6 +4,13 @@ class IntakesSchemas
   class << self
     DOCKET_OPTIONS = %w[direct_review evidence_submission hearing].freeze
 
+    def create
+      ControllerSchema.json do
+        string :file_number
+        string :form_type, included_in?: Intake::FORM_TYPES.keys
+      end
+    end
+
     # rubocop:disable Metrics/MethodLength
     def review
       ControllerSchema.json do
