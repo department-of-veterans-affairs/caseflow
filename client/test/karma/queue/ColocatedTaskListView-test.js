@@ -372,7 +372,7 @@ describe.only('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="On hold (2) tab window"]').simulate('click');
+      wrapper.find('span[children="On hold (2)"]').simulate('click');
 
       const cells = wrapper.find('td');
 
