@@ -111,8 +111,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     it "rescues error and continues without failing" do
-      perform_job
-
+      expect { perform_job }.not_to raise_error
       expect(CachedAppeal.all.count).to eq(1)
     end
   end
