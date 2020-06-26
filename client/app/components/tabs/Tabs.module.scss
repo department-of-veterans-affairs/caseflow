@@ -1,0 +1,16 @@
+:global {
+  :local(.tab-panel) {
+    opacity: 0;
+    transition: opacity 0.15s linear;
+
+    &.active {
+      opacity: 1;
+    }
+
+    &.full-width {
+      margin-left: -30px;
+      margin-right: -30px;
+      width: auto;
+    }
+  }
+}
