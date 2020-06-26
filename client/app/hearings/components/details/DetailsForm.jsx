@@ -3,7 +3,6 @@ import React, { useContext } from 'react';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { EmailNotificationHistory } from './EmailNotificationHistory';
-import { HearingsFormContext, UPDATE_HEARING_DETAILS } from '../../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import {
   JudgeDropdown,
@@ -19,6 +18,8 @@ import TextareaField from '../../../components/TextareaField';
 
 const DetailsForm = (props) => {
   const {
+    hearing,
+    updateHearing,
     isLegacy,
     isVirtual,
     openVirtualHearingModal,
@@ -31,11 +32,8 @@ const DetailsForm = (props) => {
   } = props;
   const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
   const enableVirtualHearings = userCanScheduleVirtualHearings;
-  const {
-    state: { hearingForms },
-    dispatch
-  } = useContext(HearingsFormContext);
-  const { hearingDetailsForm, virtualHearingForm, transcriptionDetailsForm } = hearingForms;
+
+  console.log('JUDGE: ', hearing.judgeId);
 
   return (
     <React.Fragment>
@@ -43,34 +41,34 @@ const DetailsForm = (props) => {
         <div {...rowThirds}>
           <JudgeDropdown
             name="judgeDropdown"
-            value={hearingDetailsForm?.judgeId}
+            value={hearing?.judgeId}
             readOnly={readOnly}
-            onChange={(judgeId) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { judgeId } })}
+            onChange={(judgeId) => updateHearing({ judgeId })}
           />
           <HearingCoordinatorDropdown
             name="hearingCoordinatorDropdown"
-            value={hearingDetailsForm?.bvaPoc}
+            value={hearing?.bvaPoc}
             readOnly={readOnly}
-            onChange={(bvaPoc) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { bvaPoc } })}
+            onChange={(bvaPoc) => updateHearing({ bvaPoc })}
           />
           <HearingRoomDropdown
             name="hearingRoomDropdown"
-            value={hearingDetailsForm?.room}
+            value={hearing?.room}
             readOnly={readOnly}
-            onChange={(room) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { room } })}
+            onChange={(room) => updateHearing({ room })}
           />
         </div>
         <div {...rowThirds}>
           {enableVirtualHearings && (
             <HearingTypeDropdown
               convertHearing={convertHearing}
-              virtualHearing={virtualHearingForm}
+              virtualHearing={hearing.virtualHearing}
               requestType={requestType}
               updateVirtualHearing={updateVirtualHearing}
               openModal={openVirtualHearingModal}
               readOnly={
-                hearingDetailsForm?.scheduledForIsPast ||
-                ((isVirtual || wasVirtual) && !virtualHearingForm?.jobCompleted)
+                hearing?.scheduledForIsPast ||
+                ((isVirtual || wasVirtual) && !hearing.virtualHearing?.jobCompleted)
               }
               styling={columnThird}
             />
@@ -83,9 +81,9 @@ const DetailsForm = (props) => {
                   label="Yes, Waive 90 Day Evidence Hold"
                   name="evidenceWindowWaived"
                   disabled={readOnly}
-                  value={hearingDetailsForm?.evidenceWindowWaived || false}
+                  value={hearing?.evidenceWindowWaived || false}
                   onChange={(evidenceWindowWaived) =>
-                    dispatch({ type: UPDATE_HEARING_DETAILS, payload: { evidenceWindowWaived } })
+                    updateHearing({ evidenceWindowWaived })
                   }
                 />
               </React.Fragment>
@@ -99,32 +97,32 @@ const DetailsForm = (props) => {
             strongLabel
             styling={maxWidthFormInput}
             disabled={readOnly}
-            value={hearingDetailsForm?.notes || ''}
-            onChange={(notes) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { notes } })}
+            value={hearing?.notes || ''}
+            onChange={(notes) => updateHearing({ notes })}
           />
         </div>
       </ContentSection>
 
       <VirtualHearingForm
         errors={errors}
-        hearing={hearingDetailsForm}
+        hearing={hearing}
         isVirtual={isVirtual}
         readOnly={readOnly}
-        virtualHearing={virtualHearingForm}
+        virtualHearing={hearing.virtualHearing}
         wasVirtual={wasVirtual}
-        dispatch={dispatch}
+        updateHearing={updateHearing}
       />
 
-      {hearingDetailsForm?.emailEvents.length > 0 && (
-        <EmailNotificationHistory rows={hearingDetailsForm?.emailEvents} />
+      {hearing?.emailEvents.length > 0 && (
+        <EmailNotificationHistory rows={hearing?.emailEvents} />
       )}
 
       {!isLegacy && (
         <TranscriptionFormSection
-          hearing={hearingDetailsForm}
+          hearing={hearing}
           readOnly={readOnly}
-          transcription={transcriptionDetailsForm}
-          dispatch={dispatch}
+          transcription={hearing.transcription}
+          updateHearing={updateHearing}
         />
       )}
     </React.Fragment>

@@ -205,7 +205,7 @@ export const toggleCancelled = (first, second, form) =>
  */
 export const getChanges = (first, second) => {
   // Handle cancelled status
-  const { init, current } = toggleCancelled(first, second, 'virtualHearingForm');
+  const { init, current } = toggleCancelled(first, second, 'virtualHearing');
 
   return deepDiff(init, current);
 };

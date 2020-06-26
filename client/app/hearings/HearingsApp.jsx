@@ -8,7 +8,6 @@ import _ from 'lodash';
 import querystring from 'querystring';
 
 import { HearingsUserContext } from './contexts/HearingsUserContext';
-import { HearingsFormContextProvider } from './contexts/HearingsFormContext';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import AppFrame from '../components/AppFrame';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
@@ -75,9 +74,7 @@ export default class HearingsApp extends React.PureComponent {
 
   routeForHearingDetails = ({ match: { params }, history }) => (
     <HearingsUserContext.Provider value={this.userPermissionProps()}>
-      <HearingsFormContextProvider>
-        <HearingDetailsContainer hearingId={params.hearingId} history={history} />
-      </HearingsFormContextProvider>
+      <HearingDetailsContainer hearingId={params.hearingId} history={history} />
     </HearingsUserContext.Provider>
   );
 

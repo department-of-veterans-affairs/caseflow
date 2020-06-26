@@ -39,6 +39,9 @@ class JudgeDropdown extends React.Component {
   getSelectedOption = () => {
     const { value, judges: { options } } = this.props;
 
+    console.log('VALUE: ', value);
+    console.log('options: ', options);
+
     return _.find(options, (opt) => opt.value === value) ||
       {
         value: null,

@@ -50,7 +50,7 @@ export const ConvertToVirtual = ({ hearing, scheduledFor, errors, readOnlyEmails
     state: { hearingForms },
     dispatch
   } = useContext(HearingsFormContext);
-  const { hearingDetailsForm, virtualHearingForm } = hearingForms;
+  const { hearingDetailsForm, virtualHearing } = hearingForms;
 
   return (
     <AppSegment filledBackground>
@@ -73,7 +73,7 @@ export const ConvertToVirtual = ({ hearing, scheduledFor, errors, readOnlyEmails
           <TextField
             errorMessage={errors?.appellantEmail}
             name="Veteran Email"
-            value={virtualHearingForm?.appellantEmail}
+            value={virtualHearing?.appellantEmail}
             required
             strongLabel
             className={[
@@ -107,7 +107,7 @@ export const ConvertToVirtual = ({ hearing, scheduledFor, errors, readOnlyEmails
           <TextField
             errorMessage={errors?.repEmail}
             name="POA/Representative Email"
-            value={virtualHearingForm?.representativeEmail}
+            value={virtualHearing?.representativeEmail}
             strongLabel
             className={[classnames('cf-form-textinput', 'cf-inline-field')]}
             readOnly={readOnlyEmails}

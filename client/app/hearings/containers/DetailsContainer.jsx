@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
+import { HearingsFormContextProvider } from '../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
@@ -65,13 +66,15 @@ class HearingDetailsContainer extends React.Component {
           title: 'Unable to load the details.'
         }}
       >
-        <HearingDetails
-          disabled={!userInHearingOrTranscriptionOrganization}
-          hearing={this.state.hearing}
-          setHearing={this.setHearing}
-          saveHearing={this.saveHearing}
-          goBack={this.goBack}
-        />
+        <HearingsFormContextProvider hearing={this.state.hearing}>
+          <HearingDetails
+            disabled={!userInHearingOrTranscriptionOrganization}
+            hearing={this.state.hearing}
+            setHearing={this.setHearing}
+            saveHearing={this.saveHearing}
+            goBack={this.goBack}
+          />
+        </HearingsFormContextProvider>
       </LoadingDataDisplay>
     );
   }
