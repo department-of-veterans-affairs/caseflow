@@ -19,10 +19,15 @@ class Api::V3::BaseController < Api::ApplicationController
            status: :not_implemented
   end
 
-  def render_error(status:, code:, title:)
-    render(
-      json: { errors: [{ status: status, code: code, title: title }] },
-      status: status
-    )
+  def render_errors(errors)
+    errors = Array.wrap(errors)
+    status = status_from_errors errors
+    render status: status, json: { errors: errors }
+  end
+
+  def status_from_errors(errors)
+    errors.map { |error| error[:status] || error["status"] }.max
+  rescue StandardError
+    500
   end
 end

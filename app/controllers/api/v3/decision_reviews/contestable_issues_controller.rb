@@ -39,7 +39,7 @@ class Api::V3::DecisionReviews::ContestableIssuesController < Api::V3::BaseContr
   end
 
   def render_bad_receipt_date
-    render_error(
+    render_errors(
       status: 422,
       code: :bad_receipt_date,
       title: "Bad receipt date"
@@ -49,7 +49,7 @@ class Api::V3::DecisionReviews::ContestableIssuesController < Api::V3::BaseContr
   def set_veteran_from_header
     @veteran = VeteranFinder.find_best_match(request.headers["X-VA-SSN"])
     unless @veteran
-      render_error(
+      render_errors(
         status: 404,
         code: :veteran_not_found,
         title: "Veteran not found"

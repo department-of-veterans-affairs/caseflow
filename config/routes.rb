@@ -37,6 +37,9 @@ Rails.application.routes.draw do
         resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
         resources :contestable_issues, only: [:index]
+        namespace :higher_level_reviews do
+          get "contestable_issues/:benefit_type", to: "contestable_issues#index"
+        end
       end
     end
     namespace :docs do
