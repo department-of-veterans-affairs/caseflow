@@ -78,10 +78,11 @@ export const setVeteranIsNotClaimant = (veteranIsNotClaimant) => ({
   }
 });
 
-export const setClaimant = (claimant) => ({
+export const setClaimant = (claimant, claimantNotes) => ({
   type: ACTIONS.SET_CLAIMANT,
   payload: {
-    claimant
+    claimant,
+    claimantNotes
   }
 });
 
