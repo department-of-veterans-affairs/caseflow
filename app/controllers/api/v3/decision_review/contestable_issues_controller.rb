@@ -4,11 +4,28 @@ class Api::V3::DecisionReview::ContestableIssuesController < Api::V3::BaseContro
   before_action :set_veteran_from_header, :set_receipt_date_from_header
 
   def index
-    issues = ContestableIssueGenerator.new(standin_claim_review).contestable_issues
-    render json: Api::V3::ContestableIssueSerializer.new(issues)
+    render json: { data: serialized_contestable_issues }
   end
 
   private
+
+  def serialized_contestable_issues
+    contestable_issues.map do |issue|
+      Api::V3::ContestableIssueSerializer.new(issue).serializable_hash[:data]
+    end
+  end
+
+  def contestable_issues
+    # for the time being, rating decisions are not being included.
+    # rating decisions are actively being discussed / worked on,
+    # and promulgation dates can be unreliable (and therefore require a Claims Assistant's interpretation)
+    contestable_issue_generator.contestable_rating_issues +
+      contestable_issue_generator.contestable_decision_issues
+  end
+
+  def contestable_issue_generator
+    @contestable_issue_generator ||= ContestableIssueGenerator.new(standin_claim_review)
+  end
 
   def standin_claim_review
     # this will be refactored to support different decision review types and benefit types

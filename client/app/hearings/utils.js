@@ -150,7 +150,7 @@ export const handleEdit = (init, current, fields) => {
 };
 
 export const virtualHearingRoleForUser = (user, hearing) =>
-  user.userCanAssignHearingSchedule || user.userId === hearing.judgeId ? VIRTUAL_HEARING_HOST : VIRTUAL_HEARING_GUEST;
+  user.userCanAssignHearingSchedule || user.userId === hearing?.judgeId ? VIRTUAL_HEARING_HOST : VIRTUAL_HEARING_GUEST;
 
 export const pollVirtualHearingData = (hearingId, onSuccess) => (
   // Did not specify retryCount so if api call fails, it'll stop polling.

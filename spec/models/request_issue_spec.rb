@@ -1460,7 +1460,7 @@ describe RequestIssue, :all_dbs do
 
           context "NOD and SOC dates are still ineligible" do
             let(:nod_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date - 1.day }
-            let(:soc_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date - 1.day }
+            let(:soc_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date - 3.days }
 
             it "is not eligible" do
               rating_request_issue.validate_eligibility!

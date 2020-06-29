@@ -324,4 +324,6 @@ Rails.application.routes.draw do
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
   # :nocov:
+
+  get "/route_docs", to: "route_docs#index"
 end

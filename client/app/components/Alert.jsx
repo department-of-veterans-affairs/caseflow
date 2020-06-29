@@ -10,16 +10,6 @@ export default class Alert extends React.Component {
     }
   }
 
-  getRole() {
-    let attrs = {};
-
-    if (this.props.type === 'error') {
-      attrs.role = 'alert';
-    }
-
-    return attrs;
-  }
-
   messageDiv() {
     let message = this.props.children || this.props.message;
 
@@ -43,7 +33,7 @@ export default class Alert extends React.Component {
       'cf-margin-bottom-2rem': lowerMargin
     });
 
-    return <div className={className} {...this.getRole()} {...styling}>
+    return <div role="alert" className={className} {...styling}>
       <div className="usa-alert-body">
         <h2 className="usa-alert-heading">{title}</h2>
         { this.messageDiv() }

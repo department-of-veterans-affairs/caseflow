@@ -159,7 +159,7 @@ class AddIssuesPage extends React.Component {
         (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
       );
 
-    const issues = formatAddedIssues(intakeData, useAmaActivationDate);
+    const issues = formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
     const requestedIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);

@@ -517,6 +517,8 @@ class Task < CaseflowRecord
 
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
+    appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
+
     [sibling, self, sibling.children].flatten
   end
 
@@ -591,6 +593,10 @@ class Task < CaseflowRecord
     return nil unless record
 
     User.find_by_id(record.whodunnit)
+  end
+
+  def reassign_clears_overtime?
+    false
   end
 
   private

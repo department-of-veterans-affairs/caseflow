@@ -131,6 +131,12 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
   rescue ActiveRecord::RecordInvalid # not found at BGS
     BgsPowerOfAttorney.new(file_number: file_number)
+  rescue ActiveRecord::RecordNotUnique
+    # We've noticed that this error is thrown because of a race-condition-y error
+    # with multiple processes trying to create the same object.
+    # see: https://dsva.slack.com/archives/CN3FQR4A1/p1593032872085600
+    # So a solution to this is to resuce the error and query it so the job can continue
+    BgsPowerOfAttorney.find_by(file_number: file_number)
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -205,13 +211,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def log_error(start_time, err)
     duration = time_ago_in_words(start_time)
     msg = "UpdateCachedAppealsAttributesJob failed after running for #{duration}. Fatal error: #{err.message}"
-    slack_msg = "[ERROR] UpdateCachedAppealsAttributesJob failed after running for #{duration}. See Sentry for error"
 
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
     Raven.capture_exception(err)
 
+    slack_msg = "[ERROR] UpdateCachedAppealsAttributesJob failed after running for #{duration}. "\
+                "See Sentry event #{Raven.last_event_id}"
     slack_service.send_notification(slack_msg) # do not leak PII
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)

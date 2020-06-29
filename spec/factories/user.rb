@@ -44,6 +44,24 @@ FactoryBot.define do
       roles { ["Hearing Prep"] }
     end
 
+    trait :with_vacols_judge_record do
+      after(:create) do |user|
+        create(:staff, :judge_role, user: user)
+      end
+    end
+
+    trait :with_vacols_attorney_record do
+      after(:create) do |user|
+        create(:staff, :attorney_role, user: user)
+      end
+    end
+
+    trait :with_vacols_acting_judge_record do
+      after(:create) do |user|
+        create(:staff, :attorney_judge_role, user: user)
+      end
+    end
+
     after(:create) do |user, evaluator|
       if evaluator.vacols_uniq_id
         create(:staff, slogid: evaluator.vacols_uniq_id, user: user)

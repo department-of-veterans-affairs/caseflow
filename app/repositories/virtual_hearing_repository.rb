@@ -24,28 +24,36 @@ class VirtualHearingRepository
       virtual_hearings_for_ama_hearings + virtual_hearings_for_legacy_hearings
     end
 
+    def pending_appellant_or_rep_emails_sql
+      <<-SQL
+        NOT virtual_hearings.appellant_email_sent
+        OR (
+          virtual_hearings.representative_email IS NOT null
+          AND NOT virtual_hearings.representative_email_sent
+        )
+      SQL
+    end
+
     def cancelled_hearings_with_pending_emails
       VirtualHearing
         .cancelled
+        .where(pending_appellant_or_rep_emails_sql)
+    end
+
+    def hearings_with_pending_conference_or_pending_emails
+      VirtualHearing
         .where(<<-SQL)
           (
-            NOT virtual_hearings.veteran_email_sent
+            virtual_hearings.conference_id IS null
             OR (
-              NOT virtual_hearings.judge_email_sent = null
-              AND NOT virtual_hearings.judge_email_sent
-            )
-            OR (
-              NOT virtual_hearings.representative_email = null
-              AND NOT virtual_hearings.representative_email_sent
+              #{pending_appellant_or_rep_emails_sql}
+              OR (
+                virtual_hearings.judge_email IS NOT null
+                AND NOT virtual_hearings.judge_email_sent
+              )
             )
           )
         SQL
-    end
-
-    def hearings_with_pending_conference_or_emails
-      VirtualHearing.select do |virtual_hearing|
-        virtual_hearing.pending? || !virtual_hearing.all_emails_sent?
-      end
     end
   end
 end

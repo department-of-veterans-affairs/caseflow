@@ -41,10 +41,12 @@ module Seeds
       special_case_movement_user = User.create(css_id: "BVARDUNKLE",
                                                station_id: 101,
                                                full_name: "Rosalie SpecialCaseMovement Dunkle")
+      FactoryBot.create(:staff, user: special_case_movement_user)
       SpecialCaseMovementTeam.singleton.add_user(special_case_movement_user)
       special_case_movement_admin = User.create(css_id: "BVAGBEEKMAN",
                                                 station_id: 101,
                                                 full_name: "Bryan SpecialCaseMovementAdmin Beekman")
+      FactoryBot.create(:staff, user: special_case_movement_admin)
       OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
       bva_intake_admin = User.create(css_id: "BVADWISE", station_id: 101, full_name: "Deborah BvaIntakeAdmin Wise")
       OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
