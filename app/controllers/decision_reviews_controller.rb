@@ -4,11 +4,36 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
+  # def index
+  #   if business_line
+  #     binding.pry
+  #     render "index"
+  #   else
+  #     # TODO: make index show error message
+  #     render json: { error: "#{business_line_slug} not found" }, status: :not_found
+  #   end
+  #   respond_to do |format|
+  #     format.html
+  #     format.csv do
+  #       jobs_as_csv = BusinessLineReporter.new(tasks: update).as_csv
+  #       filename = Time.zone.now.strftime("async-jobs-%Y%m%d.csv")
+  #       send_data jobs_as_csv, filename: filename
+  #     end
+  #   end
+  # end
+
   def index
     if business_line
-      render "index"
-    else
-      # TODO: make index show error message
+      respond_to do |format|
+        format.html { render "index" }
+        binding.pry
+        format.csv do
+          jobs_as_csv = BusinessLineReporter.new(task: business_line_tasks).as_csv
+          filename = Time.zone.now.strftime("business_line-%Y%m%d.csv")
+          send_data jobs_as_csv, filename: filename
+        end
+      end
+    else 
       render json: { error: "#{business_line_slug} not found" }, status: :not_found
     end
   end
@@ -60,6 +85,15 @@ class DecisionReviewsController < ApplicationController
     apply_task_serializer(
       business_line.tasks.recently_completed.includes([:assigned_to, :appeal]).order(closed_at: :desc)
     )
+  end
+
+  def business_line_tasks
+    binding.pry
+    if business_line.tasks.open.includes([:assigned_to, :appeal])
+      in_progress_tasks
+    else
+      completed_tasks
+    end
   end
 
   def business_line

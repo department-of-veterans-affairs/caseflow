@@ -7,10 +7,20 @@ import { SuccessAlert } from '../components/Alerts';
 import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 
 class NonCompReviewsPage extends React.PureComponent {
+  businessLineReport = () => {
+  if(this.props.businessLine) {
+     return <div>
+      <div style={{ marginTop: '.5em' }}>
+        <a style={{ float: 'left' }} href={`/decision_reviews/${this.props.businessLineUrl}.csv`} className="cf-link-btn">Download as CSV</a>
+      </div>
+    </div>;
+  }
+}
+
   render = () => {
     let successAlert = null;
 
-    if (this.props.decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.SUCCEED) {
+    if (this.props.decisionIssuesStatus?.update === DECISION_ISSUE_UPDATE_STATUS.SUCCEED) {
       successAlert = <SuccessAlert successCode="decisionIssueUpdateSucceeded"
         claimantName={this.props.decisionIssuesStatus.claimantName}
       />;
@@ -35,6 +45,7 @@ class NonCompReviewsPage extends React.PureComponent {
         </div>
       </div>
       <NonCompTabs />
+      {this.businessLineReport()}
     </div>;
   }
 }
@@ -42,8 +53,9 @@ class NonCompReviewsPage extends React.PureComponent {
 const ReviewPage = connect(
   (state) => ({
     businessLine: state.businessLine,
-    decisionIssuesStatus: state.decisionIssuesStatus
+    decisionIssuesStatus: state.decisionIssuesStatus,
+    businessLineUrl: state.businessLineUrl
   })
-)(NonCompReviewsPage);
+  )(NonCompReviewsPage);
 
 export default ReviewPage;
