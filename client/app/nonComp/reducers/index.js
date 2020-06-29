@@ -2,10 +2,14 @@ import { formatTasks } from '../util';
 import { ACTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { update } from '../../util/ReducerUtil';
 
-export const mapDataToInitialState = function(props = {}) {
-  const { serverNonComp } = props;
 
-  let state = serverNonComp;
+export const mapDataToInitialState = function(props = {}, data = { featureToggles: {} }) {
+  const { serverNonComp, featureToggles} = props;
+
+  const state = {
+...serverNonComp,
+featureToggles
+};
 
   state.inProgressTasks = formatTasks(serverNonComp.inProgressTasks);
   state.completedTasks = formatTasks(serverNonComp.completedTasks);
@@ -15,7 +19,8 @@ export const mapDataToInitialState = function(props = {}) {
   return state;
 };
 
-export const nonCompReducer = (state = mapDataToInitialState(), action) => {
+
+export const nonCompReducer = (state = mapDataToInitialState(), action, reducer) => {
   switch (action.type) {
   case ACTIONS.TASK_UPDATE_DECISION_ISSUES_START:
     return update(state, {
@@ -53,3 +58,4 @@ export const nonCompReducer = (state = mapDataToInitialState(), action) => {
     return state;
   }
 };
+
