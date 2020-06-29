@@ -301,7 +301,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     # When requesting cases tied to a judge, allow there to be a 30 case backlog
     if FeatureToggle.enabled?(:priority_acd) && genpop == "not_genpop"
       number_of_hearings_over_limit = number_of_non_priority_hearing_cases_for_judge(judge) - HEARING_BACKLOG_LIMIT
-      limit = (number_of_hearings_over_limit > 0) ? number_of_hearings_over_limit : 0
+      limit = (number_of_hearings_over_limit > limit) ? number_of_hearings_over_limit : limit
     end
 
     fmtd_query = sanitize_sql_array([

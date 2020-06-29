@@ -284,6 +284,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
     context "when a case is tied to a judge by a hearing on a prior appeal" do
       let(:hearing_judge) { judge.vacols_attorney_id }
+      let(:other_judge) { another_judge.vacols_attorney_id }
       let!(:hearing) do
         create(:case_hearing,
                :disposition_held,
@@ -297,7 +298,7 @@ describe VACOLS::CaseDocket, :all_dbs do
                :disposition_held,
                folder_nr: another_nonpriority_ready_case.bfkey,
                hearing_date: 5.days.ago.to_date,
-               board_member: another_judge.vacols_attorney_id)
+               board_member: other_judge)
       end
 
       context "when genpop is no" do
@@ -309,31 +310,34 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
 
         context "with priority_acd on" do
-          let(:limit) { 5 }
+          let(:other_judge) { judge.vacols_attorney_id }
+          let(:limit) { 1 }
 
           before { FeatureToggle.enable!(:priority_acd) }
           after { FeatureToggle.disable!(:priority_acd) }
 
-          context "when the judge does not have 30 cases in their backlog" do
-            it "does not distribute the case" do
-              expect(subject.count).to eq(0)
-              expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+          context "when the limit is greater than the number of backlog excess cases" do
+            it "distributes the case" do
+              expect(VACOLS::CaseDocket).to receive(:number_of_non_priority_hearing_cases_for_judge).with(judge)
+                .and_return(2)
+              expect(subject.count).to eq(limit)
+              expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
               expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
             end
           end
 
-          context "when the judge's backlog is full" do
-            let(:number_of_cases_over_backlog) { 1 }
+          context "when the limit is less than the number of backlog excess cases" do
+            let(:number_of_cases_over_backlog) { 2 }
 
             before do
               allow(VACOLS::CaseDocket).to receive(:number_of_non_priority_hearing_cases_for_judge).with(judge)
                 .and_return(VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT + number_of_cases_over_backlog)
             end
 
-            it "distributes the case" do
+            it "distributes both excess backlog cases" do
               expect(subject.count).to eq(number_of_cases_over_backlog)
               expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-              expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+              expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
             end
           end
         end
