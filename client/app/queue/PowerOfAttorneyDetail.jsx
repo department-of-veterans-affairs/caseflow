@@ -93,16 +93,16 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
     }
   ];
 
-  if (powerOfAttorney.representative_address) { 
+  if (powerOfAttorney.representative_address) {
     details.push({
-      label: "Address",
+      label: 'Address',
       value: <Address address={powerOfAttorney.representative_address} />
     });
   }
 
   if (powerOfAttorney.representative_email_address) {
     details.push({
-      label: "Email Address",
+      label: 'Email Address',
       value: powerOfAttorney.representative_email_address
     });
   }
