@@ -1,10 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useEffect } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 import * as DateUtil from '../../util/DateUtil';
-import { HearingsFormContext, UPDATE_HEARING_DETAILS, UPDATE_VIRTUAL_HEARING } from '../contexts/HearingsFormContext';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
 import { fullWidth, marginTop, enablePadding, maxWidthFormInput, leftAlign, helperLabel } from './details/style';
 import TextField from '../../components/TextField';
@@ -45,12 +44,20 @@ export const VirtualHearingSection = ({ label, children }) => (
   </React.Fragment>
 );
 
-export const ConvertToVirtual = ({ hearing, scheduledFor, errors, readOnlyEmails }) => {
-  const {
-    state: { hearingForms },
-    dispatch
-  } = useContext(HearingsFormContext);
-  const { hearingDetailsForm, virtualHearing } = hearingForms;
+export const HearingConversion = ({ hearing, scheduledFor, errors, readOnlyEmails, update }) => {
+  const { virtualHearing } = hearing;
+
+  // Prefill appellant/veteran email address and representative email on mount.
+  useEffect(() => {
+    // Determine which email to use
+    const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
+
+    // Set the emails if not already set
+    update('virtualHearing', {
+      [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
+      [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress
+    });
+  }, []);
 
   return (
     <AppSegment filledBackground>
@@ -83,10 +90,7 @@ export const ConvertToVirtual = ({ hearing, scheduledFor, errors, readOnlyEmails
             ]}
             readOnly={readOnlyEmails}
             onChange={(appellantEmail) =>
-              dispatch({
-                type: UPDATE_VIRTUAL_HEARING,
-                payload: { appellantEmail }
-              })
+              update('virtualHearing', { appellantEmail })
             }
             inputStyling={maxWidthFormInput}
           />
@@ -112,10 +116,7 @@ export const ConvertToVirtual = ({ hearing, scheduledFor, errors, readOnlyEmails
             className={[classnames('cf-form-textinput', 'cf-inline-field')]}
             readOnly={readOnlyEmails}
             onChange={(representativeEmail) =>
-              dispatch({
-                type: UPDATE_VIRTUAL_HEARING,
-                payload: { representativeEmail }
-              })
+              update('virtualHearing', { representativeEmail })
             }
             inputStyling={maxWidthFormInput}
           />
@@ -126,19 +127,19 @@ export const ConvertToVirtual = ({ hearing, scheduledFor, errors, readOnlyEmails
         <LeftAlign>
           <JudgeDropdown
             name="judgeDropdown"
-            value={hearingDetailsForm?.judgeId}
-            onChange={(judgeId) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { judgeId } })}
+            value={hearing?.judgeId}
+            onChange={(judgeId) => update('virtualHearing', { judgeId })}
           />
         </LeftAlign>
         <DisplayValue label="VLJ Email">
-          <span {...fullWidth}>{hearing.judge.email || 'N/A'}</span>
+          <span {...fullWidth}>{hearing.judge?.email || 'N/A'}</span>
         </DisplayValue>
       </VirtualHearingSection>
     </AppSegment>
   );
 };
 
-ConvertToVirtual.propTypes = {
+HearingConversion.propTypes = {
   scheduledFor: PropTypes.string,
   hearing: PropTypes.object
 };

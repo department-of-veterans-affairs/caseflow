@@ -30,27 +30,28 @@ class HearingTypeDropdown extends React.Component {
     return this.HEARING_TYPE_OPTIONS[1];
   };
 
-  onChange = (option) => {
-    const { updateVirtualHearing, openModal, virtualHearing } = this.props;
-    const currentValue = this.getValue();
+  onChange = ({ value, label }) => {
+    const { convertHearing, update, openModal } = this.props;
+    const { value: currentValue, label: currentLabel } = this.getValue();
 
-    console.log('CURRENT: ', currentValue);
-    console.log('VIRTUAL: ', virtualHearing);
-    console.log('SHOULD-UPDATE: ', updateVirtualHearing);
-    console.log('OPTION: ', option);
+    // Don't change if the value is the same
+    if (label === currentLabel) {
+      return;
+    }
 
     // if current value is true (a virtual hearing), then we will be sending cancellation emails,
     // if new value is true, then we will be sending confirmation emails
-    // if ((currentValue.value || option.value) && currentValue.value !== option.value) {
-    //   const type = option.value ? 'change_to_virtual' : 'change_from_virtual';
+    const type = value && currentValue !== value ? 'change_to_virtual' : 'change_from_virtual';
 
-    //   openModal({ type });
-    // }
-    this.props.convertHearing(true);
+    // Use the modal if the label is video
+    if ((label === 'Video' || currentLabel === 'Video')) {
+      openModal({ type });
 
-    // if ((currentValue.value && !option.value) || virtualHearing.requestCancelled) {
-    //   updateVirtualHearing({ requestCancelled: !virtualHearing.requestCancelled });
-    // }
+      // If the current value is not virtual, we are cancelling the virtual hearing
+      update('virtualHearing', { requestCancelled: currentLabel === 'Virtual', jobCompleted: false });
+    } else {
+      convertHearing(type);
+    }
   };
 
   render() {
@@ -71,8 +72,9 @@ class HearingTypeDropdown extends React.Component {
 
 HearingTypeDropdown.propTypes = {
   virtualHearing: PropTypes.object,
-  updateVirtualHearing: PropTypes.func,
+  update: PropTypes.func,
   openModal: PropTypes.func,
+  convertHearing: PropTypes.func,
   requestType: PropTypes.string,
   readOnly: PropTypes.bool,
   styling: PropTypes.object

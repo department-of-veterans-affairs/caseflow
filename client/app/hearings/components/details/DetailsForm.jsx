@@ -19,21 +19,16 @@ import TextareaField from '../../../components/TextareaField';
 const DetailsForm = (props) => {
   const {
     hearing,
-    updateHearing,
+    update,
     isLegacy,
-    isVirtual,
     openVirtualHearingModal,
     readOnly,
     requestType,
-    wasVirtual,
     errors,
-    updateVirtualHearing,
     convertHearing
   } = props;
   const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
   const enableVirtualHearings = userCanScheduleVirtualHearings;
-
-  console.log('JUDGE: ', hearing.judgeId);
 
   return (
     <React.Fragment>
@@ -43,32 +38,32 @@ const DetailsForm = (props) => {
             name="judgeDropdown"
             value={hearing?.judgeId}
             readOnly={readOnly}
-            onChange={(judgeId) => updateHearing({ judgeId })}
+            onChange={(judgeId) => update('hearing', { judgeId })}
           />
           <HearingCoordinatorDropdown
             name="hearingCoordinatorDropdown"
             value={hearing?.bvaPoc}
             readOnly={readOnly}
-            onChange={(bvaPoc) => updateHearing({ bvaPoc })}
+            onChange={(bvaPoc) => update('hearing', { bvaPoc })}
           />
           <HearingRoomDropdown
             name="hearingRoomDropdown"
             value={hearing?.room}
             readOnly={readOnly}
-            onChange={(room) => updateHearing({ room })}
+            onChange={(room) => update('hearing', { room })}
           />
         </div>
         <div {...rowThirds}>
           {enableVirtualHearings && (
             <HearingTypeDropdown
               convertHearing={convertHearing}
-              virtualHearing={hearing.virtualHearing}
+              virtualHearing={hearing?.virtualHearing}
               requestType={requestType}
-              updateVirtualHearing={updateVirtualHearing}
+              update={update}
               openModal={openVirtualHearingModal}
               readOnly={
                 hearing?.scheduledForIsPast ||
-                ((isVirtual || wasVirtual) && !hearing.virtualHearing?.jobCompleted)
+                ((hearing?.isVirtual || hearing?.wasVirtual) && !hearing?.virtualHearing?.jobCompleted)
               }
               styling={columnThird}
             />
@@ -83,7 +78,7 @@ const DetailsForm = (props) => {
                   disabled={readOnly}
                   value={hearing?.evidenceWindowWaived || false}
                   onChange={(evidenceWindowWaived) =>
-                    updateHearing({ evidenceWindowWaived })
+                    update('hearing', { evidenceWindowWaived })
                   }
                 />
               </React.Fragment>
@@ -98,7 +93,7 @@ const DetailsForm = (props) => {
             styling={maxWidthFormInput}
             disabled={readOnly}
             value={hearing?.notes || ''}
-            onChange={(notes) => updateHearing({ notes })}
+            onChange={(notes) => update('hearing', { notes })}
           />
         </div>
       </ContentSection>
@@ -106,11 +101,9 @@ const DetailsForm = (props) => {
       <VirtualHearingForm
         errors={errors}
         hearing={hearing}
-        isVirtual={isVirtual}
         readOnly={readOnly}
         virtualHearing={hearing.virtualHearing}
-        wasVirtual={wasVirtual}
-        updateHearing={updateHearing}
+        update={update}
       />
 
       {hearing?.emailEvents.length > 0 && (
@@ -122,7 +115,7 @@ const DetailsForm = (props) => {
           hearing={hearing}
           readOnly={readOnly}
           transcription={hearing.transcription}
-          updateHearing={updateHearing}
+          update={update}
         />
       )}
     </React.Fragment>
@@ -134,13 +127,18 @@ DetailsForm.propTypes = {
     appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string
   }),
+  hearing: PropTypes.shape({
+    virtualHearing: PropTypes.object,
+    transcription: PropTypes.object,
+    wasVirtual: PropTypes.bool,
+    isVirtual: PropTypes.bool
+  }),
   isLegacy: PropTypes.bool,
-  isVirtual: PropTypes.bool,
   openVirtualHearingModal: PropTypes.func,
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,
-  updateVirtualHearing: PropTypes.func,
-  wasVirtual: PropTypes.bool
+  update: PropTypes.func,
+  convertHearing: PropTypes.func
 };
 
 export default DetailsForm;

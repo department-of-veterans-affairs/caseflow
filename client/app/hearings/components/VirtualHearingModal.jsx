@@ -137,19 +137,14 @@ const ChangeToVirtual = (props) => {
 
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
-    if (_.isUndefined(virtualHearing.appellantEmail)) {
-      update(
-        {
-          appellantEmail: hearing.appellantIsNotVeteran ?
-            hearing.appellantEmailAddress :
-            hearing.veteranEmailAddress
-        }
-      );
-    }
+    // Determine which email to use
+    const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
 
-    if (_.isUndefined(virtualHearing.representativeEmail)) {
-      update({ representativeEmail: hearing.representativeEmailAddress });
-    }
+    // Set the emails if not already set
+    update('virtualHearing', {
+      [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
+      [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress
+    });
   }, []);
 
   return (
@@ -162,7 +157,7 @@ const ChangeToVirtual = (props) => {
         label={`${appellantTitle} Email`}
         errorMessage={appellantEmailError}
         readOnly={readOnly}
-        onChange={(appellantEmail) => update({ appellantEmail })}
+        onChange={(appellantEmail) => update('virtualHearing', { appellantEmail })}
       />
       <TextField
         strongLabel
@@ -171,7 +166,7 @@ const ChangeToVirtual = (props) => {
         label="POA/Representative Email"
         errorMessage={representativeEmailError}
         readOnly={readOnly}
-        onChange={(representativeEmail) => update({ representativeEmail })}
+        onChange={(representativeEmail) => update('virtualHearing', { representativeEmail })}
       />
       <p
         dangerouslySetInnerHTML={
@@ -225,7 +220,7 @@ const TYPES = {
 };
 
 const VirtualHearingModal = (props) => {
-  const { closeModal, hearing, virtualHearing, reset, submit, type } = props;
+  const { closeModal, hearing, virtualHearing, reset, submit, type, open } = props;
   const [appellantEmailError, setAppellantEmailError] = useState(null);
   const [representativeEmailError, setRepresentativeEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -270,7 +265,7 @@ const VirtualHearingModal = (props) => {
     closeModal();
   };
 
-  return (
+  return open && (
     <div>
       <Modal
         title={sprintf(typeSettings.title, { appellantTitle })}
@@ -341,6 +336,7 @@ VirtualHearingModal.propTypes = {
   timeWasEdited: PropTypes.bool,
   representativeEmailEdited: PropTypes.bool,
   appellantEmailEdited: PropTypes.bool,
+  open: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,

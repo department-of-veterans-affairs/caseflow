@@ -5,37 +5,36 @@ import classnames from 'classnames';
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
-import { UPDATE_VIRTUAL_HEARING } from '../../contexts/HearingsFormContext';
 import { enablePadding, maxWidthFormInput, rowThirds } from './style';
 import { getAppellantTitleForHearing } from '../../utils';
 import TextField from '../../../components/TextField';
 
 export const VirtualHearingForm = (
-  { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, dispatch, errors }
+  { hearing, virtualHearing, readOnly, update, errors }
 ) => {
-  if (!isVirtual && !wasVirtual) {
+  if (!hearing?.isVirtual && !hearing?.wasVirtual) {
     return null;
   }
 
-  const showEmailFields = (isVirtual || wasVirtual) && virtualHearing;
-  const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
+  const showEmailFields = (hearing?.isVirtual || hearing?.wasVirtual) && virtualHearing;
+  const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || hearing?.wasVirtual || hearing.scheduledForIsPast;
   const appellantTitle = getAppellantTitleForHearing(hearing);
   const user = useContext(HearingsUserContext);
 
   return (
     <ContentSection
-      header={`${wasVirtual ? 'Previous ' : ''}Virtual Hearing Details`}
+      header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Details`}
     >
       <HearingLinks
         user={user}
         hearing={hearing}
         virtualHearing={virtualHearing}
-        isVirtual={isVirtual}
-        wasVirtual={wasVirtual}
+        isVirtual={hearing?.isVirtual}
+        wasVirtual={hearing?.wasVirtual}
       />
       {showEmailFields && (
         <React.Fragment>
-          <div className="cf-help-divider" />
+          <div id="email-section" className="cf-help-divider" />
           <h3>{appellantTitle}</h3>
           <div {...rowThirds}>
             <TextField
@@ -50,12 +49,7 @@ export const VirtualHearingForm = (
                 })
               ]}
               readOnly={readOnlyEmails}
-              onChange={
-                (appellantEmail) => dispatch({
-                  type: UPDATE_VIRTUAL_HEARING,
-                  payload: { appellantEmail }
-                })
-              }
+              onChange={(appellantEmail) => update('virtualHearing', { appellantEmail })}
               inputStyling={maxWidthFormInput}
             />
             <div />
@@ -65,18 +59,17 @@ export const VirtualHearingForm = (
           <h3>Power of Attorney</h3>
           <div {...rowThirds}>
             <TextField
-              errorMessage={errors?.repEmail}
+              errorMessage={errors?.representativeEmail}
               name="POA/Representative Email"
               value={virtualHearing.representativeEmail}
               strongLabel
-              className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-              readOnly={readOnlyEmails}
-              onChange={
-                (representativeEmail) => dispatch({
-                  type: UPDATE_VIRTUAL_HEARING,
-                  payload: { representativeEmail }
+              className={[
+                classnames('cf-form-textinput', 'cf-inline-field', {
+                  [enablePadding]: errors?.representativeEmail
                 })
-              }
+              ]}
+              readOnly={readOnlyEmails}
+              onChange={(representativeEmail) => update('virtualHearing', { representativeEmail })}
               inputStyling={maxWidthFormInput}
             />
             <div />
@@ -89,12 +82,13 @@ export const VirtualHearingForm = (
 };
 
 VirtualHearingForm.propTypes = {
-  dispatch: PropTypes.func,
+  update: PropTypes.func,
   hearing: PropTypes.shape({
     appellantIsNotVeteran: PropTypes.bool,
-    scheduledForIsPast: PropTypes.bool
+    scheduledForIsPast: PropTypes.bool,
+    wasVirtual: PropTypes.bool,
+    isVirtual: PropTypes.bool
   }),
-  isVirtual: PropTypes.bool,
   readOnly: PropTypes.bool,
   virtualHearing: PropTypes.shape({
     appellantEmail: PropTypes.string,
@@ -104,6 +98,5 @@ VirtualHearingForm.propTypes = {
   errors: PropTypes.shape({
     appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string
-  }),
-  wasVirtual: PropTypes.bool
+  })
 };
