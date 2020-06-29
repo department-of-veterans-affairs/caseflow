@@ -6,6 +6,7 @@ import _ from 'lodash';
 
 import ExponentialPolling from '../components/ExponentialPolling';
 import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
+// To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
 
@@ -331,8 +332,6 @@ export const timezones = (time) => {
         format('h:mm A')})`
     };
   });
-
-  // console.log(_.orderBy(options, ['index'], ['asc']));
 
   // Return the values and the count of commons
   return { options: _.orderBy(options, ['index']), commonsCount };
