@@ -187,11 +187,11 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-  context ".number_of_non_priority_hearing_cases_for_judge" do
-    subject { VACOLS::CaseDocket.number_of_non_priority_hearing_cases_for_judge(judge) }
+  context ".nonpriority_hearing_cases_for_judge" do
+    subject { VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge(judge) }
 
     let(:hearing_judge) { judge.vacols_attorney_id }
-    let(:first_case) { original }
+    let(:first_case) { nonpriority_ready_case }
     let(:second_case) { another_nonpriority_ready_case }
 
     before do
@@ -217,7 +217,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       let(:second_case) { aod_ready_case }
 
       it "returns no cases" do
-        expect(subject).to eq 0
+        expect(subject.count).to eq 0
       end
     end
 
@@ -225,13 +225,14 @@ describe VACOLS::CaseDocket, :all_dbs do
       let(:hearing_judge) { another_judge.vacols_attorney_id }
 
       it "returns no cases" do
-        expect(subject).to eq 0
+        expect(subject.count).to eq 0
       end
     end
 
     context "when there are ready non priority hearings linked to the judge" do
       it "returns the number of ready non priority hearings" do
-        expect(subject).to eq 2
+        expect(subject.count).to eq 2
+        expect(subject.to_hash.map { |appeal| appeal["bfkey"] }).to match_array [first_case.bfkey, second_case.bfkey]
       end
     end
   end

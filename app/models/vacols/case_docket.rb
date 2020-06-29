@@ -271,7 +271,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       .count
   end
 
-  def self.number_of_non_priority_hearing_cases_for_judge(judge)
+  def self.nonpriority_hearing_cases_for_judge(judge)
     query = <<-SQL
       select BFKEY
       from (
@@ -286,7 +286,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     SQL
 
     fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id])
-    connection.exec_query(fmtd_query).count
+    connection.exec_query(fmtd_query)
   end
 
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, dry_run = false)

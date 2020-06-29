@@ -28,8 +28,7 @@ module AmaCaseDistribution
     distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
 
     # Distribute nonpriority appeals that are tied to judges.
-    # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
-    distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", range: legacy_docket_range)
+    distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop")
     distribute_appeals(:hearing, @rem, priority: false, genpop: "not_genpop")
 
     # If we haven't yet met the priority target, distribute additional priority appeals.
@@ -57,6 +56,7 @@ module AmaCaseDistribution
       total_batch_size: total_batch_size,
       priority_count: priority_count,
       direct_review_due_count: direct_review_due_count,
+      legacy_hearing_backlog_count: VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge(judge).count,
       legacy_proportion: docket_proportions[:legacy],
       direct_review_proportion: docket_proportions[:direct_review],
       evidence_submission_proportion: docket_proportions[:evidence_submission],
