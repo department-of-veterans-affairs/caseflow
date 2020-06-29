@@ -5,8 +5,10 @@ import React from 'react';
 import _ from 'lodash';
 
 import { appealWithDetailSelector } from './selectors';
+import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
+import BareList from '../components/BareList';
 import COPY from '../../COPY';
 
 /**
@@ -83,24 +85,35 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
 /**
  * Component that displays details about the power of attorney.
  */
-export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => (
-  <span>
-    <p>
-      <strong>{powerOfAttorney.representative_type}:</strong> {powerOfAttorney.representative_name}
-    </p>
-    {powerOfAttorney.representative_address &&
-      <p>
-        <strong>Address:</strong> <Address address={powerOfAttorney.representative_address} />
-      </p>
+export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney }) => {
+  const details = [
+    {
+      label: powerOfAttorney.representative_type,
+      value: powerOfAttorney.representative_name
     }
-    {powerOfAttorney.representative_email_address &&
-      <p>
-        <strong>Email Address:</strong> {powerOfAttorney.representative_email_address}
-      </p>
-    }
-    <p><em>{COPY.CASE_DETAILS_INCORRECT_POA}</em></p>
-  </span>
-);
+  ];
+
+  if (powerOfAttorney.representative_address) { 
+    details.push({
+      label: "Address",
+      value: <Address address={powerOfAttorney.representative_address} />
+    });
+  }
+
+  if (powerOfAttorney.representative_email_address) {
+    details.push({
+      label: "Email Address",
+      value: powerOfAttorney.representative_email_address
+    });
+  }
+
+  return (
+    <ul {...detailListStyling}>
+      <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+      <p><em>{COPY.CASE_DETAILS_INCORRECT_POA}</em></p>
+    </ul>
+  );
+};
 
 PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.propTypes = {
   powerOfAttorney: PropTypes.shape({
