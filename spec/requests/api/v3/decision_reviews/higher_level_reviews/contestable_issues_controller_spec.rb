@@ -90,7 +90,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesControll
       let(:dgnstc_tc) { "123456" }
       let(:issues) do
         date = Time.zone.today
-        rating = Generators::PromulgatedRating.build(
+        Generators::PromulgatedRating.build(
           participant_id: veteran.ptcpnt_id,
           associated_claims: [
             { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
@@ -110,9 +110,9 @@ describe Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesControll
           issues: [
             {
               reference_id: rating_issue_reference_id,
-              decision_text: "Service connection for Broken right index finger is granted with an evaluation of 20 percent.",
+              decision_text: "Service connection for Broken index finger is granted with an evaluation of 20 percent.",
               dis_sn: disability_dis_sn,
-              subject_text: "Broken right index finger"
+              subject_text: "Broken index finger"
             }
           ],
           disabilities: [
@@ -123,7 +123,6 @@ describe Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesControll
                 dis_dt: date - 2.days,
                 dgnstc_tc: dgnstc_tc,
                 prcnt_no: "20"
-                
               }
             }
           ],
