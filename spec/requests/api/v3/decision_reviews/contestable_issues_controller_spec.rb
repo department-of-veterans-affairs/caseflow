@@ -109,9 +109,10 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
           ],
           issues: [
             {
-              reference_id: "99999",
-              decision_text: "Decision1",
-              dis_sn: disability_id
+              reference_id: rating_issue_reference_id,
+              decision_text:"Service connection for Broken right index finger is granted with an evaluation of 20 percent."
+              dis_sn: disability_dis_sn,
+              subject_text: "Broken right index finger"
             }
           ],
           disabilities: [
@@ -120,7 +121,8 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
               dis_sn: disability_dis_sn,
               disability_evaluations: {
                 dis_dt: date - 2.days,
-                dgnstc_tc: "123456"
+                dgnstc_tc: "123456",
+                prcnt_no: "20"
               }
             }
           ],

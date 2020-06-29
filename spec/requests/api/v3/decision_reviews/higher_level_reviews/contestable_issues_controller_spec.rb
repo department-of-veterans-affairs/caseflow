@@ -99,7 +99,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesControll
             {
               rating_issue_reference_id: rating_issue_reference_id,
               original_denial_date: date - 7.days,
-              diagnostic_text: "Broken Harm",
+              diagnostic_text: "Broken arm",
               diagnostic_type: "Bone",
               diagnostic_code: diagnostic_code,
               disability_id: disability_id,
@@ -109,9 +109,10 @@ describe Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesControll
           ],
           issues: [
             {
-              reference_id: "99999",
-              decision_text: "Decision1",
-              dis_sn: disability_dis_sn
+              reference_id: rating_issue_reference_id,
+              decision_text: "Service connection for Broken right index finger is granted with an evaluation of 20 percent.",
+              dis_sn: disability_dis_sn,
+              subject_text: "Broken right index finger"
             }
           ],
           disabilities: [
@@ -121,7 +122,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesControll
               disability_evaluations: {
                 dis_dt: date - 2.days,
                 dgnstc_tc: dgnstc_tc,
-                prcnt_no: "66"
+                prcnt_no: "20"
                 
               }
             }
@@ -137,6 +138,12 @@ describe Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesControll
         issue_with_rating_issue = issues.find { |i| i["attributes"].key?("ratingIssueReferenceId") }
         expect(issue_with_rating_issue).to be_present
         expect(issue_with_rating_issue["attributes"]["ratingIssueReferenceId"]).to match(/^\d+$/)
+      end
+
+      it "should have ratingIssueReferenceId attribute" do
+        issue_with_subject_text = issues.find { |i| i["attributes"].key?("ratingIssueSubjectText") }
+        expect(issue_with_subject_text).to be_present
+        expect(issue_with_subject_text["attributes"]["ratingIssueSubjectText"]).to be_a String
       end
 
       it "should have ratingIssueProfileDate attribute" do
