@@ -6,6 +6,7 @@
 # which went into effect Feb 19, 2019.
 
 class Appeal < DecisionReview
+  include AppealConcern
   include BgsService
   include Taskable
   include PrintsTaskTree
@@ -229,15 +230,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  def veteran_name
-    # For consistency with LegacyAppeal.veteran_name
-    veteran&.name&.formatted(:form)
-  end
-
-  def veteran_middle_initial
-    veteran&.name&.middle_initial
-  end
-
   def veteran_is_deceased
     veteran_death_date.present?
   end
@@ -271,7 +263,7 @@ class Appeal < DecisionReview
     veteran_if_exists&.available_hearing_locations
   end
 
-  def regional_office
+  def regional_office_key
     nil
   end
 
@@ -284,14 +276,15 @@ class Appeal < DecisionReview
   alias aod advanced_on_docket?
 
   delegate :first_name,
+           :middle_name,
            :last_name,
            :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
   alias appellant claimant
 
   delegate :first_name,
-           :last_name,
            :middle_name,
+           :last_name,
            :name_suffix,
            :address_line_1,
            :city,
@@ -299,8 +292,16 @@ class Appeal < DecisionReview
            :state,
            :email_address, to: :appellant, prefix: true, allow_nil: true
 
+  def appellant_middle_initial
+    appellant_middle_name&.first
+  end
+
   def appellant_is_not_veteran
     !!veteran_is_not_claimant
+  end
+
+  def veteran_middle_initial
+    veteran_middle_name&.first
   end
 
   def cavc
