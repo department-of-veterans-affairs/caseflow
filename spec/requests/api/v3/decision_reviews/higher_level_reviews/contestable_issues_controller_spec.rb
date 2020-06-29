@@ -139,10 +139,16 @@ describe Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesControll
         expect(issue_with_rating_issue["attributes"]["ratingIssueReferenceId"]).to match(/^\d+$/)
       end
 
-      it "should have ratingIssueReferenceId attribute" do
+      it "should have ratingIssueSubjectText attribute" do
         issue_with_subject_text = issues.find { |i| i["attributes"].key?("ratingIssueSubjectText") }
         expect(issue_with_subject_text).to be_present
         expect(issue_with_subject_text["attributes"]["ratingIssueSubjectText"]).to be_a String
+      end
+
+      it "should have ratingIssuePercentNumber attribute" do
+        issue_with_percent_number = issues.find { |i| i["attributes"].key?("ratingIssuePercentNumber") }
+        expect(issue_with_percent_number).to be_present
+        expect(issue_with_percent_number["attributes"]["ratingIssuePercentNumber"]).to match(/^\d+$/)
       end
 
       it "should have ratingIssueProfileDate attribute" do
