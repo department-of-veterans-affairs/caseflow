@@ -2,9 +2,11 @@
   :local(.tab-panel) {
     opacity: 0;
     transition: opacity 0.15s linear;
+    display: none;
 
     &.active {
       opacity: 1;
+      display: block;
     }
 
     &.full-width {
