@@ -6,7 +6,8 @@ export default {
   title: 'Commons/Components/Button',
   component: Button,
   parameters: {
-    controls: { expanded: true }
+    controls: { expanded: true },
+    layout: 'centered'
   },
   args: {
     children: 'Click Me',
