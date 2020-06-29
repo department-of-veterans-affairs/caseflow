@@ -8,13 +8,6 @@ export const onReceiveDailyDocket = (hearingDay, hearings) => ({
   }
 });
 
-export const onReceiveHearing = (hearing) => ({
-  type: ACTIONS.RECEIVE_HEARING,
-  payload: {
-    hearing
-  }
-});
-
 export const onDisplayLockModal = () => ({
   type: ACTIONS.DISPLAY_LOCK_MODAL
 });
