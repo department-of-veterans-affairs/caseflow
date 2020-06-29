@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_20_220924) do
+ActiveRecord::Schema.define(version: 2020_05_26_054515) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,9 +134,11 @@ ActiveRecord::Schema.define(version: 2020_05_20_220924) do
     t.datetime "issue_deleted_at", comment: "decision_issues.deleted_at"
     t.datetime "issue_updated_at", comment: "decision_issues.updated_at"
     t.bigint "participant_id", null: false, comment: "decision_issues.participant_id"
+    t.string "percent_number", comment: "percent_number from RatingIssue (prcntNo from Rating Profile)"
     t.bigint "rating_issue_reference_id", comment: "decision_issues.rating_issue_reference_id"
     t.datetime "rating_profile_date", comment: "decision_issues.rating_profile_date"
     t.datetime "rating_promulgation_date", comment: "decision_issues.rating_promulgation_date"
+    t.text "subject_text", comment: "subject_text from RatingIssue (subjctTxt from Rating Profile)"
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at for the ETL record"
     t.index ["benefit_type"], name: "index_decision_issues_on_benefit_type"
     t.index ["created_at"], name: "index_decision_issues_on_created_at"

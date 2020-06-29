@@ -1232,10 +1232,10 @@ RSpec.feature "Reader", :all_dbs do
 
     scenario "Show and Hide Document Searchbar with Keyboard" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-      search_bar = find(".cf-search-bar")
 
       find("body").send_keys [:meta, "f"]
 
+      search_bar = find(".cf-search-bar")
       expect(search_bar).not_to match_css(".hidden")
 
       find("body").send_keys [:escape]

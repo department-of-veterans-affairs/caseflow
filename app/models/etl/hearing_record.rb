@@ -92,7 +92,7 @@ class ETL::HearingRecord < ETL::Record
       target.judge_sattyid = judge&.vacols_user&.sattyid
 
       mirrored_hearing_attributes.each do |attr|
-        target[attr] = original[attr]
+        target[attr] = original.send(attr)
       end
 
       # hearing day

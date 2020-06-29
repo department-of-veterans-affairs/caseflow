@@ -115,11 +115,18 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :attorney_case_rewrite_details do |object|
-    {
-      overtime: object.latest_attorney_case_review&.overtime,
-      note_from_attorney: object.latest_attorney_case_review&.note,
-      untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
-    }
+    if FeatureToggle.enabled?(:overtime_revamp)
+      {
+        note_from_attorney: object.latest_attorney_case_review&.note,
+        untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
+      }
+    else
+      {
+        overtime: object.latest_attorney_case_review&.overtime,
+        note_from_attorney: object.latest_attorney_case_review&.note,
+        untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
+      }
+    end
   end
 
   attribute :can_edit_document_id do |object, params|
