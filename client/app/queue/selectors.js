@@ -67,9 +67,7 @@ export const taskById = createSelector(
 
 const appealsWithDetailsSelector = createSelector(
   [getAppeals, getAppealDetails],
-  (appeals, appealDetails) => {
-    return _.merge(appeals, appealDetails);
-  }
+  (appeals, appealDetails) => ({ ..._.merge(appeals, appealDetails) })
 );
 
 const claimReviewsSelector = createSelector(

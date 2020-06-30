@@ -15,7 +15,7 @@ describe AssignedTasksTab, :postgres do
     subject { tab.tasks }
 
     context "when there are tasks assigned to the assignee" do
-      let!(:assignee_active_tasks) { create_list(:ama_task, 4, :assigned, assigned_to: assignee) }
+      let(:assignee_active_tasks) { create_list(:ama_task, 4, :assigned, assigned_to: assignee) }
       let!(:assignee_judge_assign_tasks) { create_list(:ama_judge_assign_task, 3, :assigned, assigned_to: assignee) }
       let!(:assignee_on_hold_tasks) { create_list(:ama_task, 3, :on_hold, assigned_to: assignee) }
 
