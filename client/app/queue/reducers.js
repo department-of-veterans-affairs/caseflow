@@ -46,7 +46,6 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
-  tasksAssignedByBulk: {},
   pendingDistribution: null,
   attorneys: {},
   organizationId: null,
@@ -529,19 +528,6 @@ const setSelectionOfTaskOfUser = (state, action) => {
   });
 };
 
-const bulkAssignTasks = (state, action) => {
-  return update(state, {
-    tasksAssignedByBulk: {
-      $set: {
-        assignedUser: action.payload.assignedUser,
-        regionalOffice: action.payload.regionalOffice,
-        taskType: action.payload.taskType,
-        numberOfTasks: action.payload.numberOfTasks
-      }
-    }
-  });
-};
-
 const setPendingDistribution = (state, action) => {
   return update(state, {
     pendingDistribution: {
@@ -733,7 +719,6 @@ export const workQueueReducer = createReducer({
   [ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY]: setTasksAndAppealsOfAttorney,
   [ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY]: errorTasksAndAppealsOfAttorney,
   [ACTIONS.SET_SELECTION_OF_TASK_OF_USER]: setSelectionOfTaskOfUser,
-  [ACTIONS.BULK_ASSIGN_TASKS]: bulkAssignTasks,
   [ACTIONS.SET_PENDING_DISTRIBUTION]: setPendingDistribution,
   [ACTIONS.RECEIVE_ALL_ATTORNEYS]: receiveAllAttorneys,
   [ACTIONS.ERROR_LOADING_ATTORNEYS]: errorLoadingAttorneys,
