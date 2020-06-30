@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe DocketCoordinator, :all_dbs do
+describe DocketCoordinator do
   before do
     FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2020, 4, 1, 12, 0, 0))
@@ -23,6 +23,7 @@ describe DocketCoordinator, :all_dbs do
 
   after do
     FeatureToggle.disable!(:test_facols)
+    Timecop.return
   end
 
   let(:nonpriority_receipts_per_year) { 100 }
@@ -31,7 +32,6 @@ describe DocketCoordinator, :all_dbs do
   let(:docket_coordinator) { DocketCoordinator.new }
 
   let(:priority_case_count) { 10 }
-
   let!(:priority_cases) do
     (0...priority_case_count).map do |i|
       create(
@@ -52,7 +52,6 @@ describe DocketCoordinator, :all_dbs do
   end
 
   let(:nonpriority_legacy_count) { 10 }
-
   let!(:nonpriority_legacy_cases) do
     (0...nonpriority_legacy_count).map do |i|
       create(
@@ -72,14 +71,15 @@ describe DocketCoordinator, :all_dbs do
   end
 
   let(:due_direct_review_count) { 10 }
-
   let!(:due_direct_review_cases) do
     (0...due_direct_review_count).map do
-      create(:appeal,
-             :with_post_intake_tasks,
-             docket_type: Constants.AMA_DOCKETS.direct_review,
-             receipt_date: 11.months.ago,
-             target_decision_date: 1.month.from_now)
+      create(
+        :appeal,
+         :with_post_intake_tasks,
+         docket_type: Constants.AMA_DOCKETS.direct_review,
+         receipt_date: 11.months.ago,
+         target_decision_date: 1.month.from_now
+      )
     end
   end
 
@@ -88,11 +88,13 @@ describe DocketCoordinator, :all_dbs do
 
   let!(:other_direct_review_cases) do
     (0...10).map do
-      create(:appeal,
-             :with_post_intake_tasks,
-             docket_type: Constants.AMA_DOCKETS.direct_review,
-             receipt_date: (days_before_goal_due + 1).days.ago,
-             target_decision_date: (days_to_decision_goal - days_before_goal_due - 1).days.from_now)
+      create(
+        :appeal,
+        :with_post_intake_tasks,
+        docket_type: Constants.AMA_DOCKETS.direct_review,
+        receipt_date: (days_before_goal_due + 1).days.ago,
+        target_decision_date: (days_to_decision_goal - days_before_goal_due - 1).days.from_now
+      )
     end
   end
 
@@ -100,17 +102,21 @@ describe DocketCoordinator, :all_dbs do
 
   let!(:evidence_submission_cases) do
     (0...other_docket_count).map do
-      create(:appeal,
-             :with_post_intake_tasks,
-             docket_type: Constants.AMA_DOCKETS.evidence_submission)
+      create(
+        :appeal,
+        :with_post_intake_tasks,
+        docket_type: Constants.AMA_DOCKETS.evidence_submission
+      )
     end
   end
 
   let!(:hearing_cases) do
     (0...other_docket_count).map do
-      create(:appeal,
-             :with_post_intake_tasks,
-             docket_type: Constants.AMA_DOCKETS.hearing)
+      create(
+        :appeal,
+        :with_post_intake_tasks,
+        docket_type: Constants.AMA_DOCKETS.hearing
+      )
     end
   end
 
@@ -130,14 +136,22 @@ describe DocketCoordinator, :all_dbs do
     context "with appeals that have already been marked in range" do
       let(:appeals_count) { docket_coordinator.dockets[:hearing].appeals.count }
       let(:number_of_appeals_in_range) { 2 }
+
       before do
-        docket_coordinator.dockets[:hearing].appeals.limit(number_of_appeals_in_range)
+        docket_coordinator.dockets[:hearing]
+          .appeals
+          .limit(number_of_appeals_in_range)
           .update(docket_range_date: Time.utc(2019, 1, 1))
       end
 
       it "returns appeals that have not been marked in range" do
-        expect(docket_coordinator.upcoming_appeals_in_range(2.years).pluck(:id).count)
-          .to eq(other_docket_count - number_of_appeals_in_range)
+        expect(
+          docket_coordinator
+            .upcoming_appeals_in_range(2.years, Time.utc(2019, 1, 1))
+            .pluck(:id)
+            .count
+        )
+          .to eq(other_docket_count)
       end
     end
 
