@@ -100,6 +100,9 @@ export const leftAlign = css({
   '& > :last-child': {
     paddingRight: 0
   },
+});
+
+export const noMaxWidth = css({
   '& label': {
     maxWidth: 'none !important'
   }

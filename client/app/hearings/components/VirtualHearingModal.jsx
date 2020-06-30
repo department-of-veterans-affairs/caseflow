@@ -220,7 +220,7 @@ const TYPES = {
 };
 
 const VirtualHearingModal = (props) => {
-  const { closeModal, hearing, virtualHearing, reset, submit, type, open } = props;
+  const { closeModal, hearing, virtualHearing, reset, submit, type } = props;
   const [appellantEmailError, setAppellantEmailError] = useState(null);
   const [representativeEmailError, setRepresentativeEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -265,7 +265,7 @@ const VirtualHearingModal = (props) => {
     closeModal();
   };
 
-  return open && (
+  return (
     <div>
       <Modal
         title={sprintf(typeSettings.title, { appellantTitle })}

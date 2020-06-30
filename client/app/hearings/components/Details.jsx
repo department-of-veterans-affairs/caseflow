@@ -71,10 +71,13 @@ const HearingDetails = (props) => {
   const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
-  const cancelConvert = () => {
+  const reset = (hearing) => {
     // Reset the state
+    setVirtualHearingErrors({});
     convertHearing('');
-    resetHearing(initialHearing);
+    setLoading(false);
+    setError(false);
+    resetHearing(hearing);
 
     // Focus the top of the page
     window.scrollTo(0, 0);
@@ -107,12 +110,14 @@ const HearingDetails = (props) => {
   const submit = async (editedEmails) => {
     try {
       const virtual = hearing.isVirtual || hearing.wasVirtual;
+      const noEmail =
+        !hearing.virtualHearing?.representativeEmail ||
+        !hearing.virtualHearing?.appellantEmail;
+      const emailUpdated =
+        editedEmails?.representativeEmailEdited ||
+        editedEmails?.appellantEmailEdited;
 
-      if (
-        virtual &&
-        (!hearing.virtualHearing?.representativeEmail ||
-          !hearing.virtualHearing?.appellantEmail)
-      ) {
+      if (virtual && noEmail) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
           [!hearing.virtualHearing.appellantEmail &&
@@ -123,10 +128,7 @@ const HearingDetails = (props) => {
 
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
-      } else if (
-        editedEmails?.representativeEmailEdited ||
-        editedEmails?.appellantEmailEdited
-      ) {
+      } else if (emailUpdated && !converting) {
         return openVirtualHearingModal({ type: 'change_email' });
       }
 
@@ -189,11 +191,7 @@ const HearingDetails = (props) => {
         }
 
         // Reset the state
-        setVirtualHearingErrors({});
-        cancelConvert();
-        setLoading(false);
-        setError(false);
-        resetHearing(hearingResp);
+        reset(hearingResp);
       });
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
@@ -262,6 +260,7 @@ const HearingDetails = (props) => {
           update={updateHearing}
           hearing={hearing}
           scheduledFor={scheduledFor}
+          errors={virtualHearingErrors}
         />
       ) : (
         <AppSegment filledBackground>
@@ -299,7 +298,7 @@ const HearingDetails = (props) => {
         <Button
           name="Cancel"
           linkStyling
-          onClick={converting ? cancelConvert : goBack}
+          onClick={converting ? () => reset(initialHearing) : goBack}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
@@ -316,17 +315,18 @@ const HearingDetails = (props) => {
           </Button>
         </span>
       </div>
-      <VirtualHearingModal
-        open={virtualHearingModalOpen}
-        hearing={hearing}
-        virtualHearing={hearing?.virtualHearing}
-        update={updateHearing}
-        submit={submit}
-        closeModal={closeVirtualHearingModal}
-        reset={() => resetHearing(initialHearing)}
-        type={virtualHearingModalType}
-        {...editedEmails}
-      />
+      {virtualHearingModalOpen && (
+        <VirtualHearingModal
+          hearing={hearing}
+          virtualHearing={hearing?.virtualHearing}
+          update={updateHearing}
+          submit={submit}
+          closeModal={closeVirtualHearingModal}
+          reset={() => resetHearing(initialHearing)}
+          type={virtualHearingModalType}
+          {...editedEmails}
+        />
+      )}
     </React.Fragment>
   );
 };

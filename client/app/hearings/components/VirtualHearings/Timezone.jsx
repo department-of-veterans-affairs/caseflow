@@ -11,12 +11,14 @@ export const Timezone = ({
   value,
   errorMessage,
   onChange,
-  time
+  time,
+  required,
 }) => {
   const { options, commonsCount } = timezones(time);
 
   return (
     <SearchableDropdown
+      required={required}
       styling={timezoneStyles(commonsCount)}
       dropdownStyling={timezoneDropdownStyles(commonsCount)}
       name={name}
@@ -41,6 +43,8 @@ Timezone.propTypes = {
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
+  required: PropTypes.bool,
+  disabled: PropTypes.bool,
   value: PropTypes.string,
   name: PropTypes.string,
   time: PropTypes.string

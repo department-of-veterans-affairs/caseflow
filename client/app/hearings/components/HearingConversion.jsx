@@ -1,20 +1,24 @@
 import React, { useEffect } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
-import { fullWidth } from './details/style';
+import { fullWidth, marginTop, noMaxWidth } from './details/style';
 import COPY from '../../../COPY';
 import {
   AddressLine,
-  VirtualHearingEmail,
   VirtualHearingSection,
   DisplayValue,
   LeftAlign,
   VerticalAlign,
 } from './conversion';
+import { HelperText } from './VirtualHearings/HelperText';
+import { VirtualHearingEmail } from './VirtualHearings/Emails';
 import { HearingTime } from './modalForms/HearingTime';
+import { Timezone } from './VirtualHearings/Timezone';
+import { getAppellantTitleForHearing } from '../utils';
 
 export const HearingConversion = ({
   title,
@@ -25,11 +29,11 @@ export const HearingConversion = ({
   update,
 }) => {
   const { virtualHearing } = hearing;
+  const appellantTitle = getAppellantTitleForHearing(hearing);
   const virtual = type === 'change_to_virtual';
-  const helperLabel =
-    type === 'change_to_virtual' ?
-      COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL :
-      COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
+  const helperLabel = virtual ?
+    COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL :
+    COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
 
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
@@ -53,18 +57,22 @@ export const HearingConversion = ({
       <DisplayValue label="Hearing Date">
         <span {...fullWidth}>{DateUtil.formatDateStr(scheduledFor)}</span>
       </DisplayValue>
-      <LeftAlign>
-        <VerticalAlign>
-          <HearingTime
-            label="Hearing Time"
-            disableRadioOptions={type === 'change_to_virtual'}
-            enableZone
-            onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
-            value={hearing.scheduledTimeString}
-          />
-        </VerticalAlign>
-      </LeftAlign>
-      <VirtualHearingSection label="Veteran">
+      <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+        <div className="usa-width-one-half">
+          <VerticalAlign>
+            <HearingTime
+              label="Hearing Time"
+              disableRadioOptions={virtual}
+              enableZone
+              onChange={(scheduledTimeString) =>
+                update('hearing', { scheduledTimeString })
+              }
+              value={hearing.scheduledTimeString}
+            />
+          </VerticalAlign>
+        </div>
+      </div>
+      <VirtualHearingSection label={appellantTitle}>
         <DisplayValue label="">
           <AddressLine
             name={`${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
@@ -74,14 +82,32 @@ export const HearingConversion = ({
             addressZip={hearing?.appellantZip}
           />
         </DisplayValue>
-        <VirtualHearingEmail
-          required
-          label="Veteran Email"
-          email={virtualHearing?.appellantEmail}
-          error={errors?.appellantEmail}
-          type={type}
-          update={update}
-        />
+        {virtual && (
+          <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+            <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+              <Timezone
+                required
+                time={hearing.scheduledTimeString}
+                name={`${appellantTitle} Timezone`}
+              />
+              <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
+            </div>
+          </div>
+        )}
+        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+            <VirtualHearingEmail
+              required
+              readOnly={!virtual}
+              label="Veteran Email"
+              emailType="appellantEmail"
+              email={virtualHearing?.appellantEmail}
+              error={errors?.appellantEmail}
+              type={type}
+              update={update}
+            />
+          </div>
+        </div>
       </VirtualHearingSection>
       <VirtualHearingSection label="Power of Attorney">
         <DisplayValue label="Attorney">
@@ -93,18 +119,32 @@ export const HearingConversion = ({
             addressZip={hearing?.appellantZip}
           />
         </DisplayValue>
-        <VirtualHearingEmail
-          label="POA/Representative Email"
-          email={virtualHearing?.representativeEmail}
-          error={errors?.representativeEmail}
-          type={type}
-          update={update}
-        />
+        {virtual && (
+          <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+            <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+              <Timezone
+                time={hearing.scheduledTimeString}
+                name="POA/Representative Timezone"
+              />
+              <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
+            </div>
+          </div>
+        )}
+        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+            <VirtualHearingEmail
+              readOnly={!virtual}
+              emailType="representativeEmail"
+              label="POA/Representative Email"
+              email={virtualHearing?.representativeEmail}
+              error={errors?.representativeEmail}
+              type={type}
+              update={update}
+            />
+          </div>
+        </div>
       </VirtualHearingSection>
-      <VirtualHearingSection
-        hide={type === 'change_from_virtual'}
-        label="Veterans Law Judge (VLJ)"
-      >
+      <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
         <LeftAlign>
           <JudgeDropdown
             name="judgeDropdown"
@@ -121,6 +161,7 @@ export const HearingConversion = ({
 };
 
 HearingConversion.propTypes = {
+  title: PropTypes.string,
   type: PropTypes.string,
   scheduledFor: PropTypes.string,
   errors: PropTypes.object,
