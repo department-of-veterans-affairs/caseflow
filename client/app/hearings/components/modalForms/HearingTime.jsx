@@ -8,6 +8,7 @@ import HEARING_TIME_OPTIONS from '../../../../constants/HEARING_TIME_OPTIONS';
 import HEARING_TIME_RADIO_OPTIONS from '../../../../constants/HEARING_TIME_RADIO_OPTIONS';
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
+import { hearingTimeOptsWithZone } from '../../utils';
 
 export const getAssignHearingTime = (time, day) => {
   return {
@@ -35,7 +36,7 @@ const getTimeOptions = (regionalOffice, readOnly) => (
 );
 
 export const HearingTime = (
-  { componentIndex, errorMessage, onChange, readOnly, regionalOffice, value }
+  { componentIndex, errorMessage, onChange, readOnly, regionalOffice, value, enableZone, disableRadioOptions, label }
 ) => {
   const timeOptions = getTimeOptions(regionalOffice, readOnly);
   const isOther = _.isUndefined(
@@ -51,26 +52,28 @@ export const HearingTime = (
 
   return (
     <React.Fragment>
-      <span {...formStyling}>
+      {!disableRadioOptions && <span {...formStyling}>
         <RadioField
           errorMessage={errorMessage}
           name={`hearingTime${componentIndex}`}
-          label="Time"
+          label={label || 'Time'}
           strongLabel
-          options={timeOptions}
+          options={enableZone ? hearingTimeOptsWithZone(timeOptions) : timeOptions}
           onChange={onRadioChange}
           value={isOther ? 'other' : value}
         />
-      </span>
-      {isOther && (
+      </span>}
+      {(isOther || disableRadioOptions) && (
         <SearchableDropdown
           readOnly={readOnly}
           name={`optionalHearingTime${componentIndex}`}
+          label="Hearing Time"
+          strongLabel
           placeholder="Select a time"
-          options={HEARING_TIME_OPTIONS}
+          options={enableZone ? hearingTimeOptsWithZone(HEARING_TIME_OPTIONS) : HEARING_TIME_OPTIONS}
           value={value}
           onChange={(option) => onChange(option ? option.value : null)}
-          hideLabel
+          hideLabel={!disableRadioOptions}
         />
       )}
     </React.Fragment>
@@ -78,14 +81,18 @@ export const HearingTime = (
 };
 
 HearingTime.defaultProps = {
-  componentIndex: 0
+  componentIndex: 0,
+  enableZone: false
 };
 
 HearingTime.propTypes = {
+  disableRadioOptions: PropTypes.bool,
+  enableZone: PropTypes.bool,
   componentIndex: PropTypes.number,
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
   regionalOffice: PropTypes.string,
-  value: PropTypes.string
+  value: PropTypes.string,
+  label: PropTypes.string
 };

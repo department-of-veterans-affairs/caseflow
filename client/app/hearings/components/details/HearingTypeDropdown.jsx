@@ -47,11 +47,12 @@ class HearingTypeDropdown extends React.Component {
     if ((label === 'Video' || currentLabel === 'Video')) {
       openModal({ type });
 
-      // If the current value is not virtual, we are cancelling the virtual hearing
-      update('virtualHearing', { requestCancelled: currentLabel === 'Virtual', jobCompleted: false });
     } else {
       convertHearing(type);
     }
+
+    // If the current value is not virtual, we are cancelling the virtual hearing
+    update('virtualHearing', { requestCancelled: currentLabel === 'Virtual', jobCompleted: false });
   };
 
   render() {

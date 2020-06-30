@@ -124,3 +124,19 @@ export const timezoneStyles = (count) => ({
     }
   }
 });
+
+export const vertical = css({
+  flexDirection: 'column',
+  display: 'flex',
+  '& > :first-child': {
+    flex: 1,
+    '& .cf-form-radio-options': {
+      flexDirection: 'column',
+      display: 'flex',
+    },
+  },
+  '& > :last-child': {
+    flex: 1,
+    paddingLeft: 0
+  },
+});

@@ -109,7 +109,7 @@ class DailyDocketRow extends React.Component {
     });
   };
 
-  updateVirtualHearing = (values) => {
+  updateVirtualHearing = (_, values) => {
     this.update({
       virtualHearing: {
         ...(this.props.hearing.virtualHearing || {}),
@@ -376,6 +376,7 @@ class DailyDocketRow extends React.Component {
 
   renderVirtualHearingModal = (user, hearing) => (
     <VirtualHearingModal
+      open
       closeModal={this.closeVirtualHearingModal}
       hearing={hearing}
       timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}

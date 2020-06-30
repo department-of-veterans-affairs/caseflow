@@ -38,8 +38,6 @@ export default class HearingsApp extends React.PureComponent {
       userCssId
     } = this.props;
 
-    console.log(this.props);
-
     return Object.freeze({
       userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,

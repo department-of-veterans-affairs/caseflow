@@ -34,7 +34,10 @@ const inputFix = css({
 
 const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
-  const { state: { initialHearing, hearing }, dispatch } = useContext(HearingsFormContext);
+  const {
+    state: { initialHearing, hearing },
+    dispatch,
+  } = useContext(HearingsFormContext);
 
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
 
@@ -69,7 +72,9 @@ const HearingDetails = (props) => {
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
   const cancelConvert = () => {
+    // Reset the state
     convertHearing('');
+    resetHearing(initialHearing);
 
     // Focus the top of the page
     window.scrollTo(0, 0);
@@ -133,6 +138,18 @@ const HearingDetails = (props) => {
 
       // Put the UI into a loading state
       setLoading(true);
+      console.log('DATA: ', {
+        hearing: {
+          ...(hearingChanges || {}),
+          transcription_attributes: {
+            // Always send full transcription details because a new record is created each update
+            ...(transcription ? hearing.transcription : {}),
+          },
+          virtual_hearing_attributes: {
+            ...(virtualHearing || {}),
+          },
+        },
+      });
 
       // Save the hearing
       const response = await saveHearing({
@@ -225,8 +242,7 @@ const HearingDetails = (props) => {
   };
 
   const editedEmails = getEditedEmails();
-
-  console.log(hearing);
+  const convertLabel = converting === 'change_to_virtual' ? 'Convert to Virtual Hearing' : 'Convert to Central Office Hearing';
 
   return (
     <React.Fragment>
@@ -235,14 +251,13 @@ const HearingDetails = (props) => {
         <div>
           <Alert
             type="error"
-            title={
-              error === '' ? 'There was an error updating the hearing' : error
-            }
+            title={error === '' ? 'There was an error updating the hearing' : error}
           />
         </div>
       )}
       {converting ? (
         <HearingConversion
+          title={convertLabel}
           type={converting}
           update={updateHearing}
           hearing={hearing}
@@ -297,7 +312,7 @@ const HearingDetails = (props) => {
             className="usa-button"
             onClick={async () => await submit(editedEmails)}
           >
-            {converting ? 'Convert to Virtual Hearing' : 'Save'}
+            {converting ? convertLabel : 'Save'}
           </Button>
         </span>
       </div>
