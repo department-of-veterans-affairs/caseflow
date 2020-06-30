@@ -8,6 +8,11 @@ describe TaskPager, :all_dbs do
   before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) unless assignee.nil? }
 
   describe ".new" do
+    shared_example "missing required property" do
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
+      end
+    end
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
 
@@ -16,33 +21,25 @@ describe TaskPager, :all_dbs do
     context "when object is created with no arguments" do
       let(:arguments) { {} }
 
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
-      end
+      it_behaves_like "missing required property"
     end
 
     context "when object is created with a nil assignee" do
       let(:assignee) { nil }
 
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
-      end
+      it_behaves_like "missing required property"
     end
 
     context "when object is created with a valid assignee but no tab name" do
       let(:tab_name) { nil }
 
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
-      end
+      it_behaves_like "missing required property"
     end
 
     context "when sort order is invalid" do
       let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_order: "invalid" } }
 
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
-      end
+      it_behaves_like "missing required property"
     end
 
     context "when object is created with a valid assignee and a tab name" do
@@ -131,6 +128,11 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".total_task_count" do
+    shared_example "total task count" do
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
@@ -142,34 +144,26 @@ describe TaskPager, :all_dbs do
     context "when the first page of tasks is requested" do
       let(:page) { 1 }
 
-      it "returns the total task count" do
-        expect(subject).to eq(task_count)
-      end
+      it_behaves_like "total task count"
     end
 
     context "when the page argument is nil" do
       let(:page) { nil }
 
-      it "returns the total task count" do
-        expect(subject).to eq(task_count)
-      end
+      it_behaves_like "total task count"
     end
 
     context "when the second page of tasks is requested" do
       let(:page) { 2 }
 
-      it "returns the total task count" do
-        expect(subject).to eq(task_count)
-      end
+      it_behaves_like "total task count"
     end
 
     context "when pagination is not enabled for the assignee" do
       let(:page) { 1 }
       before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
 
-      it "returns the total task count" do
-        expect(subject).to eq(task_count)
-      end
+      it_behaves_like "total task count"
     end
   end
 
