@@ -31,7 +31,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     within(".dropdown-disposition-issue-#{num}") do
       expect(find(".cf-select__single-value", text: disposition)).to_not be_nil
     end
-    expect(page).to have_css("[id='disposition-issue-#{num}'][readonly]", {visible: false})
+    expect(page).to have_css("[id='disposition-issue-#{num}'][readonly]", visible: false)
   end
 
   context "with an existing organization" do
