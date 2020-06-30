@@ -56,7 +56,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     scenario "async job is not completed" do
       virtual_hearing.update(appellant_email_sent: false)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      binding.pry
       expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_css(".cf-select__control--is-disabled")
       expect(all(".cf-form-radio-option").first).to have_css(".disabled")
       expect(find(".dropdown-optionalHearingTime0")).to have_css(".cf-select__control--is-disabled")

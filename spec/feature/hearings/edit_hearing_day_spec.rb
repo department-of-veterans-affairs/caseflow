@@ -53,7 +53,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     find("button", text: "Edit Hearing Day").click
     expect(page).to have_content("Edit Hearing Day")
     dropdowns = page.all(".cf-select__control")
-    dropdowns[0].ancestor('.cf-select').click
+    dropdowns[0].ancestor(".cf-select").click
     expect do
       dropdowns[0].sibling(".cf-select__menu").find("div .cf-select__option", text: "1 (1W200A)").click
     end.to raise_error(Capybara::ElementNotFound)

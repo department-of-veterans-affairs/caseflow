@@ -97,7 +97,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
       visit "/queue/appeals/#{appeal.uuid}"
       find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "cf-select__option", text: "Assign to person").click
-      binding.pry
       find(".cf-modal .cf-select__control").click
       find("div", class: "cf-select__option", text: "Motions attorney").click
       click_button(text: "Submit")
