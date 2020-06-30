@@ -91,16 +91,11 @@ class HearingTimeService
     local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
 
-  # fall back on local time if timezone is invalid
   def normalized_time(timezone)
     return local_time if timezone.nil?
 
-    begin
-      local_time.in_time_zone(timezone)
-    rescue StandardError => error
-      Raven.capture_exception(error)
-      local_time
-    end
+    # throws an error here if timezone is invalid
+    local_time.in_time_zone(timezone)
   end
 
   # hearing time in poa timezone
