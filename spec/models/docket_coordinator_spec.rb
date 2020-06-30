@@ -75,10 +75,10 @@ describe DocketCoordinator do
     (0...due_direct_review_count).map do
       create(
         :appeal,
-         :with_post_intake_tasks,
-         docket_type: Constants.AMA_DOCKETS.direct_review,
-         receipt_date: 11.months.ago,
-         target_decision_date: 1.month.from_now
+        :with_post_intake_tasks,
+        docket_type: Constants.AMA_DOCKETS.direct_review,
+        receipt_date: 11.months.ago,
+        target_decision_date: 1.month.from_now
       )
     end
   end

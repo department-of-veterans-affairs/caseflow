@@ -92,7 +92,7 @@ class DocketCoordinator
     dockets[:hearing]
       .appeals(priority: false)
       .where(docket_range_date: [nil, end_of_time_period])
-      .order('docket_range_date DESC NULLS LAST')
+      .order("docket_range_date DESC NULLS LAST")
       .limit(target)
   end
 
