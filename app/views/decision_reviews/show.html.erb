@@ -9,6 +9,9 @@
       businessLineUrl: business_line.url,
       task: task.ui_hash,
       appeal: task.appeal_ui_hash
+    },
+    featureToggles: {
+      showIntakeFormCreator: FeatureToggle.enabled?(:show_intakeform_creator, user: current_user),
     }
   }) %>
 <% end %>

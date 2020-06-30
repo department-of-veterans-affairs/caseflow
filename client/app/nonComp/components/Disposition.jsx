@@ -222,7 +222,7 @@ class NonCompDispositions extends React.PureComponent {
         </div>
       </div>
       { completeDiv }
-      {this.props.featureToggle.showIntakeFormCreator && this.establishmentCredits()}
+      {this.props?.featureToggles?.showIntakeFormCreator && this.establishmentCredits()}
     </div>;
   }
 }
@@ -241,13 +241,15 @@ NonCompDispositions.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object,
   decisionIssuesStatus: PropTypes.object,
-  handleSave: PropTypes.func
+  handleSave: PropTypes.func,
+  featureToggles: PropTypes.object
 };
 
 export default connect(
   (state) => ({
     appeal: state.appeal,
     task: state.task,
-    decisionIssuesStatus: state.decisionIssuesStatus
+    decisionIssuesStatus: state.decisionIssuesStatus,
+    featureToggles: state.featureToggles
   })
 )(NonCompDispositions);
