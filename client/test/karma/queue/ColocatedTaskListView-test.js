@@ -13,7 +13,7 @@ import { onReceiveQueue, receiveNewDocumentsForTask, errorFetchingDocumentCount,
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
 
-describe('ColocatedTaskListView', () => {
+describe.only('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
 
   const getWrapperColocatedTaskListView = (store) => {
@@ -119,206 +119,206 @@ describe('ColocatedTaskListView', () => {
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
   const queueConfig = {
-    "active_tab": "assigned",
-    "table_title": "Your cases",
-    "tabs": [
-        {
-            "allow_bulk_assign": false,
-            "columns": [
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "badgesColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "detailsColumn"
-                },
-                {
-                    "filter_options": [
-                        {
-                            "displayText": "Stayed appeal (3)",
-                            "value": "StayedAppealColocatedTask"
-                        },
-                        {
-                            "displayText": "Hearing clarification (3)",
-                            "value": "HearingClarificationColocatedTask"
-                        },
-                        {
-                            "displayText": "New rep arguments (2)",
-                            "value": "NewRepArgumentsColocatedTask"
-                        },
-                        {
-                            "displayText": "Extension (2)",
-                            "value": "ExtensionColocatedTask"
-                        },
-                        {
-                            "displayText": "IHP (2)",
-                            "value": "IhpColocatedTask"
-                        },
-                        {
-                            "displayText": "Retired VLJ (2)",
-                            "value": "RetiredVljColocatedTask"
-                        },
-                        {
-                            "displayText": "Address verification (2)",
-                            "value": "AddressVerificationColocatedTask"
-                        }
-                    ],
-                    "filterable": true,
-                    "name": "taskColumn"
-                },
-                {
-                    "filter_options": [
-                        {
-                            "displayText": "Original (16)",
-                            "value": "Original"
-                        }
-                    ],
-                    "filterable": true,
-                    "name": "typeColumn"
-                },
-                {
-                    "filter_options": [
-                        {
-                            "displayText": "Evidence (14)",
-                            "value": "evidence_submission"
-                        },
-                        {
-                            "displayText": "Direct Review (1)",
-                            "value": "direct_review"
-                        },
-                        {
-                            "displayText": "Legacy (1)",
-                            "value": "legacy"
-                        }
-                    ],
-                    "filterable": true,
-                    "name": "docketNumberColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "daysWaitingColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "readerLinkColumn"
-                }
+    active_tab: 'assigned',
+    table_title: 'Your cases',
+    tabs: [
+      {
+        allow_bulk_assign: false,
+        columns: [
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'badgesColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'detailsColumn'
+          },
+          {
+            filter_options: [
+              {
+                displayText: 'Stayed appeal (3)',
+                value: 'StayedAppealColocatedTask'
+              },
+              {
+                displayText: 'Hearing clarification (3)',
+                value: 'HearingClarificationColocatedTask'
+              },
+              {
+                displayText: 'New rep arguments (2)',
+                value: 'NewRepArgumentsColocatedTask'
+              },
+              {
+                displayText: 'Extension (2)',
+                value: 'ExtensionColocatedTask'
+              },
+              {
+                displayText: 'IHP (2)',
+                value: 'IhpColocatedTask'
+              },
+              {
+                displayText: 'Retired VLJ (2)',
+                value: 'RetiredVljColocatedTask'
+              },
+              {
+                displayText: 'Address verification (2)',
+                value: 'AddressVerificationColocatedTask'
+              }
             ],
-            "description": "Cases assigned to you:",
-            "label": "Assigned (%d)",
-            "name": "assigned_person",
-            "task_page_count": 2,
-            "task_page_endpoint_base_path": "task_pages?tab=assigned_person",
-            "tasks": [],
-            "total_task_count": 16
-        },
-        {
-            "allow_bulk_assign": false,
-            "columns": [
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "badgesColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "detailsColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": true,
-                    "name": "taskColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": true,
-                    "name": "typeColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": true,
-                    "name": "docketNumberColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "daysOnHoldColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "readerLinkWithNewDocIconColumn"
-                }
+            filterable: true,
+            name: 'taskColumn'
+          },
+          {
+            filter_options: [
+              {
+                displayText: 'Original (16)',
+                value: 'Original'
+              }
             ],
-            "description": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
-            "label": "On hold (%d)",
-            "name": "on_hold_person",
-            "task_page_count": 0,
-            "task_page_endpoint_base_path": "task_pages?tab=on_hold_person",
-            "tasks": [],
-            "total_task_count": 0
-        },
-        {
-            "allow_bulk_assign": false,
-            "columns": [
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "badgesColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "detailsColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": true,
-                    "name": "taskColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": true,
-                    "name": "typeColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": true,
-                    "name": "docketNumberColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "completedDateColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "completedToNameColumn"
-                },
-                {
-                    "filter_options": [],
-                    "filterable": false,
-                    "name": "readerLinkColumn"
-                }
+            filterable: true,
+            name: 'typeColumn'
+          },
+          {
+            filter_options: [
+              {
+                displayText: 'Evidence (14)',
+                value: 'evidence_submission'
+              },
+              {
+                displayText: 'Direct Review (1)',
+                value: 'direct_review'
+              },
+              {
+                displayText: 'Legacy (1)',
+                value: 'legacy'
+              }
             ],
-            "description": "Cases completed (last two weeks):",
-            "label": "Completed",
-            "name": "completed_person",
-            "task_page_count": 0,
-            "task_page_endpoint_base_path": "task_pages?tab=completed_person",
-            "tasks": [],
-            "total_task_count": 0
-        }
+            filterable: true,
+            name: 'docketNumberColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'daysWaitingColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'readerLinkColumn'
+          }
+        ],
+        description: 'Cases assigned to you:',
+        label: 'Assigned (%d)',
+        name: 'assigned_person',
+        task_page_count: 2,
+        task_page_endpoint_base_path: 'task_pages?tab=assigned_person',
+        tasks: [],
+        total_task_count: 16
+      },
+      {
+        allow_bulk_assign: false,
+        columns: [
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'badgesColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'detailsColumn'
+          },
+          {
+            filter_options: [],
+            filterable: true,
+            name: 'taskColumn'
+          },
+          {
+            filter_options: [],
+            filterable: true,
+            name: 'typeColumn'
+          },
+          {
+            filter_options: [],
+            filterable: true,
+            name: 'docketNumberColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'daysOnHoldColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'readerLinkWithNewDocIconColumn'
+          }
+        ],
+        description: 'Cases on hold (will return to "Assigned" tab when hold is completed):',
+        label: 'On hold (%d)',
+        name: 'on_hold_person',
+        task_page_count: 0,
+        task_page_endpoint_base_path: 'task_pages?tab=on_hold_person',
+        tasks: [],
+        total_task_count: 0
+      },
+      {
+        allow_bulk_assign: false,
+        columns: [
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'badgesColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'detailsColumn'
+          },
+          {
+            filter_options: [],
+            filterable: true,
+            name: 'taskColumn'
+          },
+          {
+            filter_options: [],
+            filterable: true,
+            name: 'typeColumn'
+          },
+          {
+            filter_options: [],
+            filterable: true,
+            name: 'docketNumberColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'completedDateColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'completedToNameColumn'
+          },
+          {
+            filter_options: [],
+            filterable: false,
+            name: 'readerLinkColumn'
+          }
+        ],
+        description: 'Cases completed (last two weeks):',
+        label: 'Completed',
+        name: 'completed_person',
+        task_page_count: 0,
+        task_page_endpoint_base_path: 'task_pages?tab=completed_person',
+        tasks: [],
+        total_task_count: 0
+      }
     ],
-    "tasks_per_page": 15,
-    "use_task_pages_api": false
-};
+    tasks_per_page: 15,
+    use_task_pages_api: false
+  };
 
   /* eslint-disable no-unused-expressions */
   describe('Assigned tab', () => {
@@ -460,9 +460,9 @@ describe('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="On hold (3) tab window"]').simulate('click');
+      wrapper.find('span[children="On hold (3)"]').simulate('click');
 
-      expect(wrapper.find('[aria-label="On hold (3) tab window"] #NEW').length).to.eq(0);
+      expect(wrapper.find('span[children="On hold (3)"] #NEW').length).to.eq(0);
 
       const cells = wrapper.find('td');
 

@@ -6,6 +6,7 @@ import { HearingTime } from '../HearingTime';
 import { PreppedCheckbox } from './DailyDocketRowInputs';
 import COPY from '../../../../COPY';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
+import { PowerOfAttorneyName } from '../../../queue/PowerOfAttorneyDetail';
 
 const hearingPropTypes = PropTypes.shape({
   appealExternalId: PropTypes.string,
@@ -49,9 +50,8 @@ const AppellantInformation = ({ hearing }) => {
     {hearing.appellantCity ?
       `${hearing.appellantCity} ${hearing.appellantState} ${hearing.appellantZip}` :
       <div>Loading address...</div>}
-    {hearing.representative ?
-      <div>{hearing.representative} <br /> {hearing.representativeName}</div> :
-      <div>Loading rep...</div>}
+    <br /><br />
+    <PowerOfAttorneyName appealId={hearing.appealExternalId} />
   </div>;
 };
 

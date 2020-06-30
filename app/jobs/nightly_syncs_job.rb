@@ -36,7 +36,7 @@ class NightlySyncsJob < CaseflowJob
       else
         # if we have tasks and no case_record, then we need to cancel all the tasks,
         # but we do not delete the dangling LegacyAppeal record.
-        legacy_appeal.tasks.open.each(&:cancelled!)
+        legacy_appeal.tasks.open.where(parent_id: nil).each(&:cancel_task_and_child_subtasks)
       end
     end
     datadog_report_time_segment(segment: "sync_cases_from_vacols", start_time: start_time)

@@ -242,6 +242,7 @@ claimants,id,integer (8) PK,x,x,,,,
 claimants,participant_id,string ∗ U,x,,,x,x,The participant ID of the claimant.
 claimants,payee_code,string,,,,,,"The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
 claimants,type,string,,,,,,"The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, or OtherClaimant."
+claimants,notes,text,,,,,,"This is a notes field for adding claimant not listed and any supplementary information outside of unlisted claimant."
 claimants,updated_at,datetime,,,,,x,
 claims_folder_searches,,,,,,,,
 claims_folder_searches,appeal_id,integer FK,,,x,,x,
@@ -669,7 +670,7 @@ legacy_hearings,summary,text,,,,,,
 legacy_hearings,updated_at,datetime,,,,,x,Timestamp when record was last updated.
 legacy_hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recently updated the Legacy Hearing
 legacy_hearings,user_id,integer FK,,,x,,x,
-legacy_hearings,vacols_id,string ∗,x,,,,x,
+legacy_hearings,vacols_id,string ∗,x,,,,x,Corresponds to VACOLS’ hearsched.hearing_pkseq
 legacy_hearings,witness,string,,,,,,
 legacy_issues,,,,,,,,"On an AMA decision review, when a veteran requests to review an issue that is already being contested on a legacy appeal, the legacy issue is connected to the request issue. If the veteran also chooses to opt their legacy issues into AMA and the issue is eligible to be transferred to AMA, the issues are closed in VACOLS through a legacy issue opt-in. This table stores the legacy issues connected to each request issue, and the record for opting them into AMA (if applicable)."
 legacy_issues,created_at,datetime ∗,x,,,,,Default created_at/updated_at

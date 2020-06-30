@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class VirtualHearingMailer < ActionMailer::Base
-  default from: "BoardofVeteransAppealsHearings@public.govdelivery.com"
+  default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "virtual_hearing_mailer"
   helper VirtualHearings::ExternalLinkHelper
-  helper VirtualHearings::VeteranNameHelper
+  helper VirtualHearings::AppellantNameHelper
   helper VirtualHearings::CalendarTemplateHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)
@@ -52,7 +52,7 @@ class VirtualHearingMailer < ActionMailer::Base
   end
 
   def cancellation_calendar_invite
-    VirtualHearings::CalendarService.update_to_video_calendar_invite(virtual_hearing.hearing, recipient)
+    VirtualHearings::CalendarService.update_to_video_calendar_invite(virtual_hearing, recipient)
   end
 
   def calendar_invite_name

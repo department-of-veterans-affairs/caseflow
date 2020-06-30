@@ -105,7 +105,7 @@ class Hearing < CaseflowRecord
   def claimant_id
     return nil if appeal.appellant.nil?
 
-    Person.find_by(participant_id: appeal.appellant.participant_id).id
+    appeal.appellant.person.id
   end
 
   def aod?
