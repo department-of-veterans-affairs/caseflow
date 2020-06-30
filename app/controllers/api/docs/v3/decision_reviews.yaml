@@ -26,14 +26,14 @@ info:
     Example _curl_ (assuming you're running Caseflow locally, and the `api_v3` feature toggle has been enabled):
 
     ```
-     curl -v POST http://localhost:3000/api/v3/decision_review/higher_level_reviews /
+     curl -v POST http://localhost:3000/api/v3/decision_reviews/higher_level_reviews /
      -d {{json}} -i -H "Content-Type: application/json" /
      -H "Authorization: Token token={{yourApiKeyHere}}"
     ```
 
   version: 3.0.0
 servers:
-  - url: '{{CaseflowInstance}}/api/v3/decision_review'
+  - url: '{{CaseflowInstance}}/api/v3/decision_reviews'
 paths:
   /higher_level_reviews:
     post:
