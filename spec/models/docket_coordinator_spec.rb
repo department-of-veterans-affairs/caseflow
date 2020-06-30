@@ -93,7 +93,7 @@ describe DocketCoordinator do
         :with_post_intake_tasks,
         docket_type: Constants.AMA_DOCKETS.direct_review,
         receipt_date: (days_before_goal_due + 1).days.ago,
-        target_decision_date: (days_to_decision_goal - days_before_goal_due - 1).days.from_now
+        target_decision_date: (days_to_decision_goal - days_before_goal_due + 35).days.from_now
       )
     end
   end
@@ -198,7 +198,7 @@ describe DocketCoordinator do
     let(:nonpriority_decisions_per_year) { 1340 }
     let(:nonpriority_legacy_count) { 80 }
 
-    it "uses the pacesetting direct review proportion", skip: "change to 90 day window invalidates these numbers" do
+    it "uses the pacesetting direct review proportion" do
       expect(docket_coordinator.docket_proportions).to include(
         legacy: 0.8,
         evidence_submission: 0.05,
