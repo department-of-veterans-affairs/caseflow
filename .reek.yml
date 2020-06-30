@@ -44,7 +44,7 @@ detectors:
   UncommunicativeParameterName:
     exclude:
       - Address
-      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
+      - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
   DataClump:
     exclude:
       - HearingSerializerBase
@@ -107,7 +107,7 @@ detectors:
       - Appeal
       - Task
       - CaseflowJob
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeProcessor
       - ETL::Syncer
       - User
   IrresponsibleModule:
@@ -117,7 +117,7 @@ detectors:
       - Address#initialize
       - ExternalApi::VBMSService#self.create_contentions!
       - LegacyDocket#new_distributed_case
-      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
+      - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
       - QueueRepository#assign_case_to_attorney!
       - Seeds::MTV#judge_addresses_mtv
       - Seeds::MTV#send_mtv_to_judge
@@ -125,13 +125,13 @@ detectors:
       - VirtualHearings::CreateConferenceJob#perform
   ManualDispatch:
     exclude:
-      - Api::V3::DecisionReview::IntakeError#potential_error_code
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#attributes?
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#params?
-      - Api::V3::DecisionReview::IntakeError#error_code
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
+      - Api::V3::DecisionReviews::IntakeError#potential_error_code
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#attributes?
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#params?
+      - Api::V3::DecisionReviews::IntakeError#error_code
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#claimant_object
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#claimant_object_present?
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#describe_shape_error
       - ETL::Hearing#merge_original_attributes_to_target
       - RouteDocsController::DocumentedRoute#schema
   MissingSafeMethod:
@@ -166,9 +166,9 @@ detectors:
       - Address
       - ExternalApi::PexipService
       - InvalidAssigneeStatusOnTaskCreate
-      - Api::V3::DecisionReview::ContestableIssueFinder
-      - Api::V3::DecisionReview::ContestableIssueParams
-      - Api::V3::DecisionReview::IntakeError
+      - Api::V3::DecisionReviews::ContestableIssueFinder
+      - Api::V3::DecisionReviews::ContestableIssueParams
+      - Api::V3::DecisionReviews::IntakeError
       - ControllerSchema::Field
   TooManyMethods:
     enabled: false

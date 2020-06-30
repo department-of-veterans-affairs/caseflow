@@ -21,10 +21,6 @@ class DocumentFetcher
     @find_or_create_documents ||= save!
   end
 
-  def document_service
-    @document_service ||= use_efolder ? EFolderService : VBMSService
-  end
-
   private
 
   # Expect appeal.manifest_(vva|vbms)_fetched_at to be either nil or a Time objects
@@ -75,6 +71,10 @@ class DocumentFetcher
     end
 
     document
+  end
+
+  def document_service
+    @document_service ||= use_efolder ? EFolderService : VBMSService
   end
 
   def fetch_documents_from_service!
