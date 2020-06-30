@@ -8,7 +8,7 @@ describe TaskPager, :all_dbs do
   before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) unless assignee.nil? }
 
   describe ".new" do
-    shared_example "missing required property" do
+    shared_examples "missing required property" do
       it "raises an error" do
         expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
       end
@@ -128,7 +128,7 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".total_task_count" do
-    shared_example "total task count" do
+    shared_examples "total task count" do
       it "returns the total task count" do
         expect(subject).to eq(task_count)
       end
@@ -177,7 +177,7 @@ describe TaskPager, :all_dbs do
     subject { TaskPager.new(arguments).task_page_count }
 
     context "when pagination is enabled for the assignee" do
-      it "returns the total task count" do
+      it "returns the total page count" do
         expect(subject).to eq(2)
       end
     end
@@ -185,7 +185,7 @@ describe TaskPager, :all_dbs do
     context "when pagination is not enabled for the assignee" do
       before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
 
-      it "returns all page of tasks" do
+      it "returns one page with all tasks" do
         expect(subject).to eq(1)
       end
     end

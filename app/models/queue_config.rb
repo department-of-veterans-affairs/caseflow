@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-# A DTO (data transfer object) class that stipulates all queue table attributes and tasks. This configuration and sets of
-# tasks are used on the frontend to build and display an organization's or user's queue.
+# A DTO (data transfer object) class that stipulates all queue table attributes and tasks. 
+# This configuration and sets of tasks are used on the frontend to build and display an 
+# organization's or user's queue.
 class QueueConfig
   include ActiveModel::Model
 
