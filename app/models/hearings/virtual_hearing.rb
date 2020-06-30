@@ -33,8 +33,6 @@ class VirtualHearing < CaseflowRecord
   validates_email_format_of :representative_email, allow_nil: true
   validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
-  # REMINDER: Add validation for appellant_tz
-  # validates :appellant_tz, allow_nil: false
 
   scope :eligible_for_deletion,
         lambda {
