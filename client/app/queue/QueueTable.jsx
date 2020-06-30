@@ -91,14 +91,20 @@ const HeaderRow = (props) => {
         let filterIcon;
 
         if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
-          const topColor = props.sortColName === column.name && !props.sortAscending ?
+          const sortingThisColumn = props.sortColName === column.name;
+          const topColor = sortingThisColumn && !props.sortAscending ?
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
-          const botColor = props.sortColName === column.name && props.sortAscending ?
+          const botColor = sortingThisColumn && props.sortAscending ?
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
+          let ariaLabel = `Sort by ${column.header}. `
 
-          sortIcon = <span {...iconStyle} aria-label={`Sort by ${column.header}`} role="button" tabIndex="0"
+          if (sortingThisColumn) {
+            ariaLabel = ariaLabel.concat(`Sorted ${props.sortAscending ? 'ascending' : 'descending'}`)
+          }
+
+          sortIcon = <span {...iconStyle} aria-label={ariaLabel} role="button" tabIndex="0"
             onClick={() => props.setSortOrder(column.name)}>
             <DoubleArrow topColor={topColor} bottomColor={botColor} />
           </span>;
