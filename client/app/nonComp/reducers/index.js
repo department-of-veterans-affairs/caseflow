@@ -20,7 +20,7 @@ featureToggles
 };
 
 
-export const nonCompReducer = (state = mapDataToInitialState(), action, reducer) => {
+export const nonCompReducer = (state = mapDataToInitialState(), action) => {
   switch (action.type) {
   case ACTIONS.TASK_UPDATE_DECISION_ISSUES_START:
     return update(state, {
@@ -58,4 +58,3 @@ export const nonCompReducer = (state = mapDataToInitialState(), action, reducer)
     return state;
   }
 };
-
