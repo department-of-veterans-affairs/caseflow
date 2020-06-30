@@ -31,7 +31,7 @@ Rails.application.routes.draw do
       resources :hearings, only: :show, param: :hearing_day
     end
     namespace :v3 do
-      namespace :decision_review do
+      namespace :decision_reviews do
         resources :higher_level_reviews, only: [:create, :show]
         resources :supplemental_claims, only: [:create, :show]
         resources :appeals, only: [:create, :show]

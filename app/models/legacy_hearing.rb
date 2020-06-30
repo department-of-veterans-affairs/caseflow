@@ -216,6 +216,13 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  def quick_to_hash(current_user_id)
+    ::LegacyHearingSerializer.quick(
+      self,
+      params: { current_user_id: current_user_id }
+    ).serializable_hash[:data][:attributes]
+  end
+
   def to_hash(current_user_id)
     ::LegacyHearingSerializer.default(
       self,
@@ -223,7 +230,12 @@ class LegacyHearing < CaseflowRecord
     ).serializable_hash[:data][:attributes]
   end
 
-  alias quick_to_hash to_hash
+  def to_hash_for_worksheet(current_user_id)
+    ::LegacyHearingSerializer.worksheet(
+      self,
+      params: { current_user_id: current_user_id }
+    ).serializable_hash[:data][:attributes]
+  end
 
   def fetch_veteran_age
     veteran_age
@@ -235,13 +247,6 @@ class LegacyHearing < CaseflowRecord
     veteran_gender
   rescue Module::DelegationError
     nil
-  end
-
-  def to_hash_for_worksheet(current_user_id)
-    ::LegacyHearingSerializer.worksheet(
-      self,
-      params: { current_user_id: current_user_id }
-    ).serializable_hash[:data][:attributes]
   end
 
   def appeals_ready_for_hearing
