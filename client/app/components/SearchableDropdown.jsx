@@ -17,7 +17,7 @@ const customStyles = {
   })
 };
 
-class SearchableDropdown extends React.Component {
+export class SearchableDropdown extends React.Component {
   constructor(props) {
     super(props);
 
