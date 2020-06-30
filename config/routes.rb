@@ -36,7 +36,6 @@ Rails.application.routes.draw do
         resources :supplemental_claims, only: [:create, :show]
         resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
-        resources :contestable_issues, only: [:index]
         namespace :higher_level_reviews do
           get "contestable_issues/:benefit_type", to: "contestable_issues#index"
         end

@@ -32,8 +32,6 @@ class Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesController 
   end
 
   def standin_claim_review
-    # this will be refactored to support different decision review types and benefit types
-    # currently only supporting HLR for "compensation"; going to have to do this for each type
     @standin_claim_review ||= HigherLevelReview.new(
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
