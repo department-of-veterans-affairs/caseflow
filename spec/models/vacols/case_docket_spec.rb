@@ -285,7 +285,6 @@ describe VACOLS::CaseDocket, :all_dbs do
 
     context "when a case is tied to a judge by a hearing on a prior appeal" do
       let(:hearing_judge) { judge.vacols_attorney_id }
-      let(:other_judge) { another_judge.vacols_attorney_id }
       let!(:hearing) do
         create(:case_hearing,
                :disposition_held,
@@ -299,7 +298,7 @@ describe VACOLS::CaseDocket, :all_dbs do
                :disposition_held,
                folder_nr: another_nonpriority_ready_case.bfkey,
                hearing_date: 5.days.ago.to_date,
-               board_member: other_judge)
+               board_member: another_judge.vacols_attorney_id)
       end
 
       context "when genpop is no" do
