@@ -1,7 +1,5 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
-import moment from 'moment-timezone';
-import Select from 'react-select';
 
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
@@ -28,7 +26,7 @@ describe('Timezone', () => {
     const tz = shallow(<Timezone time={HEARING_TIME_OPTIONS[0].value} />);
 
     expect(tz).toMatchSnapshot();
-    expect(tz.find('.Select-menu')).toHaveLength(0);
+    expect(tz.find('.cf-select__menu')).toHaveLength(0);
 
     // Test the dropdown component
     const dropdown = tz.find(SearchableDropdown);
@@ -45,29 +43,27 @@ describe('Timezone', () => {
     const changeSpy = jest.fn();
 
     // Run the test
-    const tz = mount(<Timezone onChange={changeSpy} time={HEARING_TIME_OPTIONS[0].value} />);
+    const tz = mount(<Timezone name="tz" onChange={changeSpy} time={HEARING_TIME_OPTIONS[0].value} />);
     const dropdown = tz.find(SearchableDropdown);
 
     // Initial state
-    expect(tz.find('.Select-menu')).toHaveLength(0);
+    expect(tz.find('MenuList')).toHaveLength(0);
     expect(dropdown).toHaveLength(1);
     expect(dropdown.prop('value')).toEqual(null);
 
     // Open the menu
-    dropdown.find('.Select-control').simulate('keyDown', { keyCode: 40 });
-    expect(tz.find('.Select-menu')).toHaveLength(1);
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    expect(tz.find('MenuList')).toHaveLength(1);
 
     // Change the value
-    tz.find('input').simulate('change', { target: { value: defaults.options[1].value } });
-    dropdown.find('.Select-control').simulate('keyDown', { keyCode: 13 });
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // // New State
-    expect(tz.find('.Select-menu')).toHaveLength(0);
+    expect(tz.find('MenuList')).toHaveLength(0);
     expect(changeSpy).toHaveBeenCalledWith(defaults.options[1].value);
     expect(
-      tz.
-        find('#react-select-2--value-item').
-        first().
+      tz.find('.cf-select__single-value').first().
         text()
     ).toEqual(defaults.options[1].label);
     expect(tz).toMatchSnapshot();
