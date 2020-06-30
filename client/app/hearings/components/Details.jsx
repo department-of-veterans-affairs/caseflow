@@ -6,42 +6,37 @@ import PropTypes from 'prop-types';
 import React, { useState, useContext } from 'react';
 import { isEmpty, isUndefined, get } from 'lodash';
 
-import { DetailsHeader } from './details/DetailsHeader';
-import { HearingsFormContext, SET_UPDATED, RESET_HEARING } from '../contexts/HearingsFormContext';
-import { deepDiff, pollVirtualHearingData, getChanges } from '../utils';
-import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../components/common/actions';
+import {
+  HearingsFormContext,
+  updateHearingDispatcher,
+  RESET_HEARING,
+} from '../contexts/HearingsFormContext';
+import {
+  onReceiveAlerts,
+  onReceiveTransitioningAlert,
+  transitionAlert,
+} from '../../components/common/actions';
 import Alert from '../../components/Alert';
-import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
-import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
+import ApiUtil from '../../util/ApiUtil';
+import { deepDiff, pollVirtualHearingData, getChanges } from '../utils';
+import DetailsForm from './details/DetailsForm';
+import { DetailsHeader } from './details/DetailsHeader';
 import VirtualHearingModal from './VirtualHearingModal';
 import { HearingConversion } from './HearingConversion';
 
 const inputFix = css({
   '& .question-label': {
-    marginBottom: '2rem !important'
-  }
+    marginBottom: '2rem !important',
+  },
 });
 
 const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
   const { state: { initialHearing, hearing }, dispatch } = useContext(HearingsFormContext);
 
-  const updateHearing = (type, changes) => {
-    const payload = type === 'hearing' ? {
-      ...hearing,
-      ...changes
-    } : {
-      ...hearing,
-      [type]: {
-        ...hearing[type],
-        ...changes
-      }
-    };
-
-    return dispatch({ type: SET_UPDATED, payload });
-  };
+  const updateHearing = updateHearingDispatcher(hearing, dispatch);
 
   const resetHearing = (payload) => dispatch({ type: RESET_HEARING, payload });
 
@@ -60,21 +55,30 @@ const HearingDetails = (props) => {
     hearingDayId,
     regionalOfficeName,
     readableLocation,
-    disposition
+    disposition,
   } = hearing;
 
   const isLegacy = docketName !== 'hearing';
 
   const [converting, convertHearing] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [virtualHearingErrors, setVirtualHearingErrors] = useState({});
   const [virtualHearingModalOpen, setVirtualHearingModalOpen] = useState(false);
   const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
+  const cancelConvert = () => {
+    convertHearing('');
+
+    // Focus the top of the page
+    window.scrollTo(0, 0);
+  };
+
   // Get the hearing details state
-  const { state: { formsUpdated } } = useContext(HearingsFormContext);
+  const {
+    state: { formsUpdated },
+  } = useContext(HearingsFormContext);
 
   const openVirtualHearingModal = ({ type }) => {
     setVirtualHearingModalOpen(true);
@@ -84,11 +88,14 @@ const HearingDetails = (props) => {
   const closeVirtualHearingModal = () => setVirtualHearingModalOpen(false);
 
   const getEditedEmails = () => {
-    const changes = deepDiff(initialHearing.virtualHearing, hearing.virtualHearing || {});
+    const changes = deepDiff(
+      initialHearing.virtualHearing,
+      hearing.virtualHearing || {}
+    );
 
     return {
       appellantEmailEdited: !isUndefined(changes.appellantEmail),
-      representativeEmailEdited: !isUndefined(changes.representativeEmail)
+      representativeEmailEdited: !isUndefined(changes.representativeEmail),
     };
   };
 
@@ -98,17 +105,23 @@ const HearingDetails = (props) => {
 
       if (
         virtual &&
-      (!hearing.virtualHearing?.representativeEmail || !hearing.virtualHearing?.appellantEmail)
+        (!hearing.virtualHearing?.representativeEmail ||
+          !hearing.virtualHearing?.appellantEmail)
       ) {
-      // Set the Virtual Hearing errors
+        // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [!hearing.virtualHearing.appellantEmail && 'appellantEmail']: 'Appellant email is required',
-          [!hearing.virtualHearing.representativeEmail && 'representativeEmail']: 'Representative email is required'
+          [!hearing.virtualHearing.appellantEmail &&
+          'appellantEmail']: 'Appellant email is required',
+          [!hearing.virtualHearing.representativeEmail &&
+          'representativeEmail']: 'Representative email is required',
         });
 
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
-      } else if (editedEmails?.representativeEmailEdited || editedEmails?.appellantEmailEdited) {
+      } else if (
+        editedEmails?.representativeEmailEdited ||
+        editedEmails?.appellantEmailEdited
+      ) {
         return openVirtualHearingModal({ type: 'change_email' });
       }
 
@@ -126,13 +139,13 @@ const HearingDetails = (props) => {
         hearing: {
           ...(hearingChanges || {}),
           transcription_attributes: {
-          // Always send full transcription details because a new record is created each update
-            ...(transcription ? hearing.transcription : {})
+            // Always send full transcription details because a new record is created each update
+            ...(transcription ? hearing.transcription : {}),
           },
           virtual_hearing_attributes: {
-            ...(virtualHearing || {})
-          }
-        }
+            ...(virtualHearing || {}),
+          },
+        },
       });
       const hearingResp = ApiUtil.convertToCamelCase(response.body?.data);
       const alerts = response.body?.alerts;
@@ -140,35 +153,49 @@ const HearingDetails = (props) => {
       // set hearing on DetailsContainer
       setHearing(hearingResp, () => {
         if (alerts) {
-          const { hearing: hearingAlerts, virtual_hearing: virtualHearingAlerts } = alerts;
+          const {
+            hearing: hearingAlerts,
+            virtual_hearing: virtualHearingAlerts,
+          } = alerts;
 
           if (hearingAlerts) {
             props.onReceiveAlerts(hearingAlerts);
           }
 
           if (!isEmpty(virtualHearingAlerts)) {
-            props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
+            props.onReceiveTransitioningAlert(
+              virtualHearingAlerts,
+              'virtualHearing'
+            );
             setShouldStartPolling(true);
           }
         }
 
         // Reset the state
         setVirtualHearingErrors({});
+        cancelConvert();
         setLoading(false);
         setError(false);
         resetHearing(hearingResp);
       });
-
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
 
+      // Retrieve the error message from the body
+      const msg =
+        respError?.response?.body?.errors.length > 0 &&
+        respError?.response?.body?.errors[0]?.message;
+
       if (code === 1002) {
+        if (converting) {
+          setError(msg);
+        }
+
         // 1002 is returned with an invalid email. rethrow respError, then re-catch it in VirtualHearingModal
         throw respError;
       }
       setLoading(false);
-      setError(respError.message);
-
+      setError(msg);
     }
   };
 
@@ -186,8 +213,8 @@ const HearingDetails = (props) => {
           ...hearing,
           virtualHearing: {
             ...hearing.virtualHearing,
-            ...resp
-          }
+            ...resp,
+          },
         });
         props.transitionAlert('virtualHearing');
       }
@@ -197,29 +224,30 @@ const HearingDetails = (props) => {
     });
   };
 
-  const cancelConvert = () => {
-    convertHearing('');
-
-    // Focus the top of the page
-    window.scrollTo(0, 0);
-  };
-
   const editedEmails = getEditedEmails();
 
-  if (shouldStartPolling) {
-    startPolling();
-  }
+  console.log(hearing);
 
   return (
     <React.Fragment>
       <UserAlerts />
       {error && (
         <div>
-          <Alert type="error" title="There was an error updating the hearing" />
+          <Alert
+            type="error"
+            title={
+              error === '' ? 'There was an error updating the hearing' : error
+            }
+          />
         </div>
       )}
       {converting ? (
-        <HearingConversion type={converting} update={updateHearing} hearing={hearing} scheduledFor={scheduledFor} />
+        <HearingConversion
+          type={converting}
+          update={updateHearing}
+          hearing={hearing}
+          scheduledFor={scheduledFor}
+        />
       ) : (
         <AppSegment filledBackground>
           <div {...inputFix}>
@@ -248,6 +276,7 @@ const HearingDetails = (props) => {
               readOnly={disabled}
               requestType={readableRequestType}
             />
+            {shouldStartPolling && startPolling()}
           </div>
         </AppSegment>
       )}
@@ -263,7 +292,7 @@ const HearingDetails = (props) => {
         <span {...css({ float: 'right' })}>
           <Button
             name="Save"
-            disabled={(!formsUpdated || disabled)}
+            disabled={!formsUpdated || disabled}
             loading={loading}
             className="usa-button"
             onClick={async () => await submit(editedEmails)}
@@ -295,7 +324,7 @@ HearingDetails.propTypes = {
   disabled: PropTypes.bool,
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
-  transitionAlert: PropTypes.func
+  transitionAlert: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch) =>
@@ -303,7 +332,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       onReceiveAlerts,
       onReceiveTransitioningAlert,
-      transitionAlert
+      transitionAlert,
     },
     dispatch
   );

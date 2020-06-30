@@ -31,7 +31,6 @@ class VirtualHearing < CaseflowRecord
   validates_email_format_of :judge_email, allow_nil: true
   validates_email_format_of :appellant_email
   validates_email_format_of :representative_email, allow_nil: true
-  validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
 
   scope :eligible_for_deletion,
@@ -160,12 +159,6 @@ class VirtualHearing < CaseflowRecord
     return if RequestStore.store[:current_user] == User.system_user && updated_by.present?
 
     self.updated_by = RequestStore.store[:current_user] if RequestStore.store[:current_user].present?
-  end
-
-  def associated_hearing_is_video
-    if hearing.request_type != HearingDay::REQUEST_TYPES[:video]
-      errors.add(:hearing, "must be a video hearing")
-    end
   end
 
   def hearing_is_not_virtual

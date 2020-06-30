@@ -78,6 +78,24 @@ const initialState = (hearing) => {
   };
 };
 
+export const updateHearingDispatcher = (hearing, dispatch) => (type, changes) => {
+  const payload =
+    type === 'hearing' ?
+      {
+        ...hearing,
+        ...changes,
+      } :
+      {
+        ...hearing,
+        [type]: {
+          ...hearing[type],
+          ...changes,
+        },
+      };
+
+  return dispatch({ type: SET_UPDATED, payload });
+};
+
 const HearingsFormContextProvider = ({ children, hearing }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState(hearing));
 
