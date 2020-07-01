@@ -7,7 +7,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   skip_before_action :verify_authenticity_token, only: [:outcode]
 
   rescue_from BGS::AccountLocked do |_e|
-    render(json: { message: "Your account is locked.  Please contact your Security Officer" }, status: :forbidden)
+    render(json: { message: "Your account is locked. Please contact the VA Enterprise Service Desk to resolve this issue." }, status: :forbidden)
   end
 
   def list
