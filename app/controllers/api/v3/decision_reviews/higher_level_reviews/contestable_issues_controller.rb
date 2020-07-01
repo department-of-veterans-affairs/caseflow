@@ -72,7 +72,7 @@ class Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesController 
       status: 404,
       code: :veteran_not_found,
       title: "Veteran Not Found",
-      detail: "Veteran with SSN: #{veteran_ssn}, not found."
+      detail: "Veteran with SSN: #{veteran_ssn} not found."
     )
   end
 
