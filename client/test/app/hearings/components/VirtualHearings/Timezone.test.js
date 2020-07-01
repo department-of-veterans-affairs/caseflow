@@ -34,7 +34,6 @@ describe('Timezone', () => {
     expect(dropdown).toHaveLength(1);
     expect(dropdown.prop('value')).toEqual(null);
     expect(dropdown.prop('styling')).toEqual(timezoneStyles(commonsCount));
-    expect(dropdown.prop('dropdownStyling')).toEqual(timezoneDropdownStyles(commonsCount));
     expect(dropdown.prop('options')).toHaveLength(Object.keys(TIMEZONES).length);
   });
 

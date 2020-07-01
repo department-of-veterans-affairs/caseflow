@@ -52,7 +52,6 @@ describe('HearingTime', () => {
 
     // Expect dropdown to be populated with correct time
     expect(form.exists('SearchableDropdown')).toBe(true);
-    console.log(form.debug());
     expect(form.find('Select').exists({ value: option })).toBe(true);
   });
 

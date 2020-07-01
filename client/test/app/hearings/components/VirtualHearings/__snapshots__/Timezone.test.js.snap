@@ -24,12 +24,6 @@ exports[`Timezone Can set timezone 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    dropdownStyling={
-      Object {
-        "height": "390px !important",
-        "maxHeight": "none",
-      }
-    }
     loading={false}
     name="tz"
     onChange={[Function]}
@@ -802,11 +796,13 @@ exports[`Timezone Can set timezone 1`] = `
     strongLabel={true}
     styling={
       Object {
-        "& .Select-menu": Object {
+        "& .cf-select__menu-list": Object {
           "& > :nth-child(10)": Object {
             "borderBottom": "1px solid grey",
           },
+          "height": "390px !important",
           "maxHeight": "none",
+          "overflowY": "auto",
         },
       }
     }
@@ -814,7 +810,7 @@ exports[`Timezone Can set timezone 1`] = `
   >
     <div
       className="cf-form-dropdown dropdown-tz"
-      data-css-1ffjbp4=""
+      data-css-1gh7024=""
     >
       <label
         className="question-label"
@@ -15074,12 +15070,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    dropdownStyling={
-      Object {
-        "height": "390px !important",
-        "maxHeight": "none",
-      }
-    }
     loading={false}
     name="Timezone"
     onChange={[Function]}
@@ -15852,11 +15842,13 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
     strongLabel={true}
     styling={
       Object {
-        "& .Select-menu": Object {
+        "& .cf-select__menu-list": Object {
           "& > :nth-child(10)": Object {
             "borderBottom": "1px solid grey",
           },
+          "height": "390px !important",
           "maxHeight": "none",
+          "overflowY": "auto",
         },
       }
     }
@@ -15864,7 +15856,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
   >
     <div
       className="cf-form-dropdown dropdown-Timezone"
-      data-css-1ffjbp4=""
+      data-css-1gh7024=""
     >
       <label
         className="question-label"
@@ -30065,12 +30057,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
 exports[`Timezone Matches snapshot with default props 1`] = `
 <SearchableDropdown
   clearOnSelect={false}
-  dropdownStyling={
-    Object {
-      "height": "390px !important",
-      "maxHeight": "none",
-    }
-  }
   loading={false}
   name="Timezone"
   onChange={[Function]}
@@ -30843,11 +30829,13 @@ exports[`Timezone Matches snapshot with default props 1`] = `
   strongLabel={true}
   styling={
     Object {
-      "& .Select-menu": Object {
+      "& .cf-select__menu-list": Object {
         "& > :nth-child(10)": Object {
           "borderBottom": "1px solid grey",
         },
+        "height": "390px !important",
         "maxHeight": "none",
+        "overflowY": "auto",
       },
     }
   }
