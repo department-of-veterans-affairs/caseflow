@@ -409,6 +409,20 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq !!appeal.appellant_first_name
           end
 
+          context "and BGS::AccountLocked error is raised" do
+            let(:account_locked_error) { BGS::AccountLocked.new("Your account is locked.", 500) }
+            before do
+              allow(controller).to receive(:json_appeal_details).and_raise(account_locked_error)
+            end
+
+            it "responds with 403 Forbidden error" do
+              get :details, params: params
+              expect(response.status).to eq 403
+              expect(JSON.parse(response.body)["message"])
+                .to eq "Your account is locked.  Please contact your Security Officer"
+            end
+          end
+
           # Unfortunately we need to make the contested claimant tests separate from the above since
           # instantiating multiple representative records is hard because there is a unique index
           # on the timestamp repaddtime. This timestamp is determined by the Oracle DB and so isn't
