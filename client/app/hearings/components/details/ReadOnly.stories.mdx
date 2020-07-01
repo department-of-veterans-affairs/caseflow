@@ -1,0 +1,26 @@
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { date, text, boolean } from '@storybook/addon-knobs';
+import { addDecorator } from '@storybook/react';
+
+import { ReadOnly } from './ReadOnly';
+
+export const defaultProps = {};
+
+<Meta
+  title="Hearings/Components/Hearing Details/Read Only"
+  component={ReadOnly}
+/>
+
+# Read Only
+
+<Preview>
+  <Story name="Normal">
+    {() => (
+        <ReadOnly label={text('Label', 'Example', 'knobs')}>
+          {text('Children', 'Some children', 'knobs')}
+        </ReadOnly>
+    )}
+  </Story>
+</Preview>
+
+<Props of={ReadOnly} />

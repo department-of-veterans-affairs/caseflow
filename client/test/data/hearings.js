@@ -64,10 +64,12 @@ export const amaHearing = {
     aliasWithHost: 'BVA0000009@care.evn.va.gov',
     hostPin: '8600030#',
     guestPin: '2684353125#',
-    hostLink: 'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host',
-    guestLink: 'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest',
+    hostLink:
+      'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host',
+    guestLink:
+      'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest',
     jobCompleted: true,
-    false: 'tom.brady@caseflow.gov'
+    false: 'tom.brady@caseflow.gov',
   },
   emailEvents: [
     {
@@ -75,22 +77,22 @@ export const amaHearing = {
       emailType: 'confirmation',
       emailAddress: 'tom.brady@caseflow.gov',
       sentAt: '2020-06-29T14:55:12.620-04:00',
-      sentBy: 'BVASYELLOW'
+      sentBy: 'BVASYELLOW',
     },
     {
       sentTo: 'Appellant Email',
       emailType: 'confirmation',
       emailAddress: 'Bob.Smith@test.com',
       sentAt: '2020-06-29T14:55:12.501-04:00',
-      sentBy: 'BVASYELLOW'
-    }
+      sentBy: 'BVASYELLOW',
+    },
   ],
   wasVirtual: false,
   witness: null,
-  worksheetIssues: {}
+  worksheetIssues: {},
 };
 
-export const videoHearing = {
+export const defaultHearing = {
   aod: false,
   advanceOnDocketMotion: null,
   appealExternalId: '0bf0263c-d863-4405-9b2e-f55cff77c6c3',
@@ -131,7 +133,7 @@ export const videoHearing = {
     status: 'active',
     statusUpdatedAt: null,
     updatedAt: '2020-06-25T11:00:43.257-04:00',
-    displayName: 'BVAAABSHIRE (VACO)'
+    displayName: 'BVAAABSHIRE (VACO)',
   },
   judgeId: '3',
   location: null,
@@ -167,8 +169,122 @@ export const videoHearing = {
   emailEvents: [],
   wasVirtual: false,
   witness: null,
-  worksheetIssues: {}
+  worksheetIssues: {},
 };
 
-export const virtualHearing = {}
-;
+export const centralHearing = {
+  aod: false,
+  advanceOnDocketMotion: null,
+  appealExternalId: 'c781353c-a911-45f4-aafa-88e1f6536eb1',
+  appealId: 607,
+  appellantAddressLine1: '9999 MISSION ST',
+  appellantCity: 'SAN FRANCISCO',
+  appellantEmailAddress: 'tom.brady@caseflow.gov',
+  appellantFirstName: 'Tom',
+  appellantIsNotVeteran: false,
+  appellantLastName: 'Brady',
+  appellantState: 'CA',
+  appellantZip: '94103',
+  availableHearingLocations: {},
+  bvaPoc: 'Stacy BuildAndEditHearingSchedule Yellow',
+  centralOfficeTimeString: '08:30',
+  claimantId: 604,
+  closestRegionalOffice: null,
+  currentIssueCount: 0,
+  disposition: null,
+  dispositionEditable: true,
+  docketName: 'hearing',
+  docketNumber: '200629-607',
+  evidenceWindowWaived: false,
+  externalId: '45331d90-6498-4f49-8248-772906f4161f',
+  hearingDayId: 6,
+  id: 7,
+  judge: {
+    id: 5,
+    createdAt: '2020-06-30T14:57:05.457-04:00',
+    cssId: 'BVAEBECKER',
+    efolderDocumentsFetchedAt: null,
+    email: null,
+    fullName: 'Elizabeth Judge_CaseToAssign Becker',
+    lastLoginAt: null,
+    roles: {},
+    selectedRegionalOffice: null,
+    stationId: '101',
+    status: 'active',
+    statusUpdatedAt: null,
+    updatedAt: '2020-06-30T14:57:05.457-04:00',
+    displayName: 'BVAEBECKER (VACO)',
+  },
+  judgeId: '5',
+  location: null,
+  militaryService: '',
+  notes: null,
+  paperCase: false,
+  prepped: null,
+  readableLocation: 'Washington, DC',
+  readableRequestType: 'Central',
+  regionalOfficeKey: 'C',
+  regionalOfficeName: 'Central',
+  regionalOfficeTimezone: 'America/New_York',
+  representative: 'PARALYZED VETERANS OF AMERICA, INC.',
+  representativeName: null,
+  representativeEmailAddress: 'tom.brady@caseflow.gov',
+  room: '1',
+  scheduledFor: '2020-07-11T08:30:00.000-04:00',
+  scheduledForIsPast: false,
+  scheduledTime: '2000-01-01T08:30:00.000-05:00',
+  scheduledTimeString: '08:30',
+  summary: null,
+  transcriptRequested: null,
+  transcription: {},
+  uuid: '45331d90-6498-4f49-8248-772906f4161f',
+  veteranAge: 85,
+  veteranFileNumber: '100000002',
+  veteranFirstName: 'Kathlene',
+  veteranGender: 'M',
+  veteranLastName: 'Morissette',
+  veteranEmailAddress: 'Kathlene.Morissette@test.com',
+  isVirtual: false,
+  appellantTz: 'America/New_York',
+  wasVirtual: false,
+  witness: null,
+  worksheetIssues: {},
+};
+
+export const virtualHearing = {
+  virtualHearing: {
+    appellantEmail: 'Bob.Smith@test.com',
+    representativeEmail: 'tom.brady@caseflow.gov',
+    status: 'active',
+    requestCancelled: false,
+    clientHost: 'care.evn.va.gov',
+    aliasWithHost: 'BVA0000009@care.evn.va.gov',
+    hostPin: '8600030#',
+    guestPin: '2684353125#',
+    hostLink:
+      'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host',
+    guestLink:
+      'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest',
+    jobCompleted: true,
+    false: 'tom.brady@caseflow.gov',
+  },
+};
+
+export const virtualHearingEmails = {
+  emailEvents: [
+    {
+      sentTo: 'POA/Representative Email',
+      emailType: 'confirmation',
+      emailAddress: 'tom.brady@caseflow.gov',
+      sentAt: '2020-06-29T14:55:12.620-04:00',
+      sentBy: 'BVASYELLOW',
+    },
+    {
+      sentTo: 'Appellant Email',
+      emailType: 'confirmation',
+      emailAddress: 'Bob.Smith@test.com',
+      sentAt: '2020-06-29T14:55:12.501-04:00',
+      sentBy: 'BVASYELLOW',
+    },
+  ],
+};

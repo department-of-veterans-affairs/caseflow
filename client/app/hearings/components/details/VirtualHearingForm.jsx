@@ -70,7 +70,7 @@ export const VirtualHearingForm = (
               <Timezone
                 value={virtualHearing?.representativeTz}
                 onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
-                readOnly={readOnlyEmails}
+                readOnly={readOnlyEmails || !virtualHearing?.representativeEmail}
                 time={hearing.scheduledTimeString}
                 name="POA/Representative Timezone"
               />

@@ -118,3 +118,11 @@ export const LIST_SCHEDULE_VIEWS = {
   DEFAULT_VIEW: 'DEFAULT_VIEW',
   SHOW_ALL: 'SHOW_ALL'
 };
+
+export const HEARING_CONVERSION_TYPES = [
+  'change_to_virtual',
+  'change_from_virtual',
+  'change_email',
+  'change_hearing_time'
+]
+;

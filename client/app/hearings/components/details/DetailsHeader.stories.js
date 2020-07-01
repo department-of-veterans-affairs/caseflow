@@ -1,21 +1,26 @@
-import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
-import { date, text, boolean } from '@storybook/addon-knobs';
+import React, { useState, useContext } from 'react';
+import { date, text, boolean, select } from '@storybook/addon-knobs';
 import { addDecorator } from '@storybook/react';
 
 import { DetailsHeader } from './DetailsHeader';
+import { BrowserRouter } from 'react-router-dom';
 
-export const defaultProps = {};
+export default {
+  title: 'Hearings/Components/Hearing Details/DetailsHeader',
+  component: DetailsHeader,
+};
 
-<Meta
-  title="Hearings/Components/Hearing Details/DetailsHeader"
-  component={DetailsHeader}
-/>
+const Wrapper = ({ children }) => {
+  return (
+    <BrowserRouter>
+      {children}
+    </BrowserRouter>
+  );
+};
 
-# Email Notification History
-
-<Preview>
-  <Story name="Normal">
-    {() => (
+export const Normal = () => {
+  return (
+    <Wrapper>
       <DetailsHeader
         aod={boolean('Is Aod?', false, 'knobs')}
         disposition={text('Disposition', 'held', 'knobs')}
@@ -24,15 +29,13 @@ export const defaultProps = {};
         isVirtual={boolean('Is Virtual?', false, 'knobs')}
         hearingDayId={1}
         readableLocation={text('Location', 'Regional Office', 'knobs')}
-        readableRequestType={text('Request Type', 'Video', 'knobs')}
+        readableRequestType={select('Request Type', ['Central', 'Virtual', 'Video'], 'Video', 'knobs')}
         regionalOfficeName={text('Regional Office Name', 'Regional Office', 'knobs')}
-        scheduledFor={text('Scheduled For', '2020-06-01T21:23:17+0000', 'knobs')}
+        scheduledFor={date('Scheduled For', new Date(), 'knobs')}
         veteranFirstName={text('Veteran Last Name', 'Last', 'knobs')}
         veteranLastName={text('Veteran First Name', 'First', 'knobs')}
         veteranFileNumber={text('Veteran File Number', '12345678', 'knobs')}
       />
-    )}
-  </Story>
-</Preview>
-
-<Props of={DetailsHeader} />
+    </Wrapper>
+  );
+};

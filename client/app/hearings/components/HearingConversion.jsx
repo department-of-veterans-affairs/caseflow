@@ -15,6 +15,7 @@ import { VirtualHearingEmail } from './VirtualHearings/Emails';
 import { HearingTime } from './modalForms/HearingTime';
 import { Timezone } from './VirtualHearings/Timezone';
 import { getAppellantTitleForHearing } from '../utils';
+import { HEARING_CONVERSION_TYPES } from '../constants';
 
 export const HearingConversion = ({
   title,
@@ -164,11 +165,10 @@ export const HearingConversion = ({
 };
 
 HearingConversion.propTypes = {
-  title: PropTypes.string,
-  type: PropTypes.string,
-  scheduledFor:
-   PropTypes.string,
+  title: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(HEARING_CONVERSION_TYPES.slice(0, 2)).isRequired,
+  scheduledFor: PropTypes.string.isRequired,
   errors: PropTypes.object,
   update: PropTypes.func,
-  hearing: PropTypes.object,
+  hearing: PropTypes.object.isRequired,
 };

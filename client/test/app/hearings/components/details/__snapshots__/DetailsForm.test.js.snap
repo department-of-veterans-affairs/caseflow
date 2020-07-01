@@ -1,7 +1,89 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DetailsForm Matches snapshot if user does not have the enable virtual hearings feature flag enabled 1`] = `
-<DetailsForm>
+<DetailsForm
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": true,
+      "appellantLastName": "Brady",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-613",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+      "scheduledTimeString": "04:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "Brian",
+      "veteranGender": "M",
+      "veteranLastName": "Hodkiewicz",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+>
   <ContentSection
     header="Hearing Details"
   >
@@ -22,6 +104,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
           <Connect(JudgeDropdown)
             name="judgeDropdown"
             onChange={[Function]}
+            value="3"
           >
             <JudgeDropdown
               judges={Object {}}
@@ -30,6 +113,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
               onChange={[Function]}
               onFetchDropdownData={[Function]}
               onReceiveDropdownData={[Function]}
+              value="3"
             >
               <SearchableDropdown
                 label="VLJ"
@@ -239,6 +323,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
           <Connect(HearingCoordinatorDropdown)
             name="hearingCoordinatorDropdown"
             onChange={[Function]}
+            value={null}
           >
             <HearingCoordinatorDropdown
               hearingCoordinators={
@@ -252,6 +337,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
               onChange={[Function]}
               onFetchDropdownData={[Function]}
               onReceiveDropdownData={[Function]}
+              value={null}
             >
               <SearchableDropdown
                 label="Hearing Coordinator"
@@ -464,6 +550,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
             label="Hearing Room"
             name="hearingRoomDropdown"
             onChange={[Function]}
+            value="1"
           >
             <SearchableDropdown
               label="Hearing Room"
@@ -533,8 +620,8 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
               strongLabel={true}
               value={
                 Object {
-                  "label": null,
-                  "value": null,
+                  "label": "1 (1W200A)",
+                  "value": "1",
                 }
               }
             >
@@ -661,8 +748,8 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     tabSelectsValue={true}
                     value={
                       Object {
-                        "label": null,
-                        "value": null,
+                        "label": "1 (1W200A)",
+                        "value": "1",
                       }
                     }
                     valueComponent={[Function]}
@@ -690,8 +777,8 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                             onClick={null}
                             value={
                               Object {
-                                "label": null,
-                                "value": null,
+                                "label": "1 (1W200A)",
+                                "value": "1",
                               }
                             }
                           >
@@ -703,7 +790,9 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                 className="Select-value-label"
                                 id="react-select-20--value-item"
                                 role="option"
-                              />
+                              >
+                                1 (1W200A)
+                              </span>
                             </div>
                           </Value>
                           <Component
@@ -877,10 +966,172 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
     </div>
   </ContentSection>
   <VirtualHearingForm
-    dispatch={[MockFunction]}
+    hearing={
+      Object {
+        "advanceOnDocketMotion": null,
+        "aod": false,
+        "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+        "appealId": 613,
+        "appellantAddressLine1": "9999 MISSION ST",
+        "appellantCity": "SAN FRANCISCO",
+        "appellantEmailAddress": "tom.brady@caseflow.gov",
+        "appellantFirstName": "Tom",
+        "appellantIsNotVeteran": true,
+        "appellantLastName": "Brady",
+        "appellantState": "CA",
+        "appellantZip": "94103",
+        "availableHearingLocations": Object {},
+        "bvaPoc": null,
+        "centralOfficeTimeString": "04:00",
+        "claimantId": 604,
+        "closestRegionalOffice": null,
+        "currentIssueCount": 0,
+        "disposition": null,
+        "dispositionEditable": true,
+        "docketName": "hearing",
+        "docketNumber": "200624-613",
+        "emailEvents": Array [],
+        "evidenceWindowWaived": false,
+        "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "hearingDayId": 11,
+        "id": 10,
+        "isVirtual": false,
+        "judge": Object {
+          "createdAt": "2020-06-25T11:00:43.257-04:00",
+          "cssId": "BVAAABSHIRE",
+          "displayName": "BVAAABSHIRE (VACO)",
+          "efolderDocumentsFetchedAt": null,
+          "email": null,
+          "fullName": "Aaron Judge_HearingsAndCases Abshire",
+          "id": 3,
+          "lastLoginAt": null,
+          "roles": Object {},
+          "selectedRegionalOffice": null,
+          "stationId": "101",
+          "status": "active",
+          "statusUpdatedAt": null,
+          "updatedAt": "2020-06-25T11:00:43.257-04:00",
+        },
+        "judgeId": "3",
+        "location": null,
+        "militaryService": "",
+        "notes": null,
+        "paperCase": false,
+        "prepped": null,
+        "readableLocation": null,
+        "readableRequestType": "Video",
+        "regionalOfficeKey": "RO17",
+        "regionalOfficeName": "St. Petersburg regional office",
+        "regionalOfficeTimezone": "America/New_York",
+        "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeEmailAddress": "tom.brady@caseflow.gov",
+        "representativeName": null,
+        "room": "1",
+        "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+        "scheduledForIsPast": false,
+        "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+        "scheduledTimeString": "04:00",
+        "summary": null,
+        "transcriptRequested": null,
+        "transcription": Object {},
+        "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "veteranAge": 85,
+        "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+        "veteranFileNumber": "100000005",
+        "veteranFirstName": "Brian",
+        "veteranGender": "M",
+        "veteranLastName": "Hodkiewicz",
+        "virtualHearing": null,
+        "wasVirtual": false,
+        "witness": null,
+        "worksheetIssues": Object {},
+      }
+    }
+    virtualHearing={null}
   />
   <TranscriptionFormSection
-    dispatch={[MockFunction]}
+    hearing={
+      Object {
+        "advanceOnDocketMotion": null,
+        "aod": false,
+        "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+        "appealId": 613,
+        "appellantAddressLine1": "9999 MISSION ST",
+        "appellantCity": "SAN FRANCISCO",
+        "appellantEmailAddress": "tom.brady@caseflow.gov",
+        "appellantFirstName": "Tom",
+        "appellantIsNotVeteran": true,
+        "appellantLastName": "Brady",
+        "appellantState": "CA",
+        "appellantZip": "94103",
+        "availableHearingLocations": Object {},
+        "bvaPoc": null,
+        "centralOfficeTimeString": "04:00",
+        "claimantId": 604,
+        "closestRegionalOffice": null,
+        "currentIssueCount": 0,
+        "disposition": null,
+        "dispositionEditable": true,
+        "docketName": "hearing",
+        "docketNumber": "200624-613",
+        "emailEvents": Array [],
+        "evidenceWindowWaived": false,
+        "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "hearingDayId": 11,
+        "id": 10,
+        "isVirtual": false,
+        "judge": Object {
+          "createdAt": "2020-06-25T11:00:43.257-04:00",
+          "cssId": "BVAAABSHIRE",
+          "displayName": "BVAAABSHIRE (VACO)",
+          "efolderDocumentsFetchedAt": null,
+          "email": null,
+          "fullName": "Aaron Judge_HearingsAndCases Abshire",
+          "id": 3,
+          "lastLoginAt": null,
+          "roles": Object {},
+          "selectedRegionalOffice": null,
+          "stationId": "101",
+          "status": "active",
+          "statusUpdatedAt": null,
+          "updatedAt": "2020-06-25T11:00:43.257-04:00",
+        },
+        "judgeId": "3",
+        "location": null,
+        "militaryService": "",
+        "notes": null,
+        "paperCase": false,
+        "prepped": null,
+        "readableLocation": null,
+        "readableRequestType": "Video",
+        "regionalOfficeKey": "RO17",
+        "regionalOfficeName": "St. Petersburg regional office",
+        "regionalOfficeTimezone": "America/New_York",
+        "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeEmailAddress": "tom.brady@caseflow.gov",
+        "representativeName": null,
+        "room": "1",
+        "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+        "scheduledForIsPast": false,
+        "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+        "scheduledTimeString": "04:00",
+        "summary": null,
+        "transcriptRequested": null,
+        "transcription": Object {},
+        "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "veteranAge": 85,
+        "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+        "veteranFileNumber": "100000005",
+        "veteranFirstName": "Brian",
+        "veteranGender": "M",
+        "veteranLastName": "Hodkiewicz",
+        "virtualHearing": null,
+        "wasVirtual": false,
+        "witness": null,
+        "worksheetIssues": Object {},
+      }
+    }
+    transcription={Object {}}
   >
     <ContentSection
       header="Transcription Details"
@@ -898,6 +1149,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         >
           <TranscriptionDetailsInputs
             title="Transcription Details"
+            transcription={Object {}}
             update={[Function]}
           >
             <div
@@ -1330,6 +1582,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
             Transcription Problem
           </h3>
           <TranscriptionProblemInputs
+            transcription={Object {}}
             update={[Function]}
           >
             <div
@@ -1757,6 +2010,87 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
             Transcription Request
           </h3>
           <TranscriptionRequestInputs
+            hearing={
+              Object {
+                "advanceOnDocketMotion": null,
+                "aod": false,
+                "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+                "appealId": 613,
+                "appellantAddressLine1": "9999 MISSION ST",
+                "appellantCity": "SAN FRANCISCO",
+                "appellantEmailAddress": "tom.brady@caseflow.gov",
+                "appellantFirstName": "Tom",
+                "appellantIsNotVeteran": true,
+                "appellantLastName": "Brady",
+                "appellantState": "CA",
+                "appellantZip": "94103",
+                "availableHearingLocations": Object {},
+                "bvaPoc": null,
+                "centralOfficeTimeString": "04:00",
+                "claimantId": 604,
+                "closestRegionalOffice": null,
+                "currentIssueCount": 0,
+                "disposition": null,
+                "dispositionEditable": true,
+                "docketName": "hearing",
+                "docketNumber": "200624-613",
+                "emailEvents": Array [],
+                "evidenceWindowWaived": false,
+                "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                "hearingDayId": 11,
+                "id": 10,
+                "isVirtual": false,
+                "judge": Object {
+                  "createdAt": "2020-06-25T11:00:43.257-04:00",
+                  "cssId": "BVAAABSHIRE",
+                  "displayName": "BVAAABSHIRE (VACO)",
+                  "efolderDocumentsFetchedAt": null,
+                  "email": null,
+                  "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                  "id": 3,
+                  "lastLoginAt": null,
+                  "roles": Object {},
+                  "selectedRegionalOffice": null,
+                  "stationId": "101",
+                  "status": "active",
+                  "statusUpdatedAt": null,
+                  "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                },
+                "judgeId": "3",
+                "location": null,
+                "militaryService": "",
+                "notes": null,
+                "paperCase": false,
+                "prepped": null,
+                "readableLocation": null,
+                "readableRequestType": "Video",
+                "regionalOfficeKey": "RO17",
+                "regionalOfficeName": "St. Petersburg regional office",
+                "regionalOfficeTimezone": "America/New_York",
+                "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                "representativeEmailAddress": "tom.brady@caseflow.gov",
+                "representativeName": null,
+                "room": "1",
+                "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+                "scheduledForIsPast": false,
+                "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+                "scheduledTimeString": "04:00",
+                "summary": null,
+                "transcriptRequested": null,
+                "transcription": Object {},
+                "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                "veteranAge": 85,
+                "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+                "veteranFileNumber": "100000005",
+                "veteranFirstName": "Brian",
+                "veteranGender": "M",
+                "veteranLastName": "Hodkiewicz",
+                "virtualHearing": null,
+                "wasVirtual": false,
+                "witness": null,
+                "worksheetIssues": Object {},
+              }
+            }
             update={[Function]}
           >
             <div
@@ -1865,7 +2199,89 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
 `;
 
 exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
-<DetailsForm>
+<DetailsForm
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": true,
+      "appellantLastName": "Brady",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-613",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+      "scheduledTimeString": "04:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "Brian",
+      "veteranGender": "M",
+      "veteranLastName": "Hodkiewicz",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+>
   <ContentSection
     header="Hearing Details"
   >
@@ -1886,6 +2302,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
           <Connect(JudgeDropdown)
             name="judgeDropdown"
             onChange={[Function]}
+            value="3"
           >
             <JudgeDropdown
               judges={Object {}}
@@ -1894,6 +2311,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               onChange={[Function]}
               onFetchDropdownData={[Function]}
               onReceiveDropdownData={[Function]}
+              value="3"
             >
               <SearchableDropdown
                 label="VLJ"
@@ -2103,6 +2521,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
           <Connect(HearingCoordinatorDropdown)
             name="hearingCoordinatorDropdown"
             onChange={[Function]}
+            value={null}
           >
             <HearingCoordinatorDropdown
               hearingCoordinators={
@@ -2116,6 +2535,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               onChange={[Function]}
               onFetchDropdownData={[Function]}
               onReceiveDropdownData={[Function]}
+              value={null}
             >
               <SearchableDropdown
                 label="Hearing Coordinator"
@@ -2328,6 +2748,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
             label="Hearing Room"
             name="hearingRoomDropdown"
             onChange={[Function]}
+            value="1"
           >
             <SearchableDropdown
               label="Hearing Room"
@@ -2397,8 +2818,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               strongLabel={true}
               value={
                 Object {
-                  "label": null,
-                  "value": null,
+                  "label": "1 (1W200A)",
+                  "value": "1",
                 }
               }
             >
@@ -2525,8 +2946,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     tabSelectsValue={true}
                     value={
                       Object {
-                        "label": null,
-                        "value": null,
+                        "label": "1 (1W200A)",
+                        "value": "1",
                       }
                     }
                     valueComponent={[Function]}
@@ -2554,8 +2975,8 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                             onClick={null}
                             value={
                               Object {
-                                "label": null,
-                                "value": null,
+                                "label": "1 (1W200A)",
+                                "value": "1",
                               }
                             }
                           >
@@ -2567,7 +2988,9 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                 className="Select-value-label"
                                 id="react-select-4--value-item"
                                 role="option"
-                              />
+                              >
+                                1 (1W200A)
+                              </span>
                             </div>
                           </Value>
                           <Component
@@ -2658,11 +3081,13 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
           data-css-1fmltfu=""
         >
           <HearingTypeDropdown
+            readOnly={false}
             styling={
               Object {
                 "data-css-vzv9iy": "",
               }
             }
+            virtualHearing={null}
           >
             <SearchableDropdown
               label="Hearing Type"
@@ -2681,6 +3106,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                   },
                 ]
               }
+              readOnly={false}
               strongLabel={true}
               styling={
                 Object {
@@ -2982,10 +3408,172 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
     </div>
   </ContentSection>
   <VirtualHearingForm
-    dispatch={[MockFunction]}
+    hearing={
+      Object {
+        "advanceOnDocketMotion": null,
+        "aod": false,
+        "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+        "appealId": 613,
+        "appellantAddressLine1": "9999 MISSION ST",
+        "appellantCity": "SAN FRANCISCO",
+        "appellantEmailAddress": "tom.brady@caseflow.gov",
+        "appellantFirstName": "Tom",
+        "appellantIsNotVeteran": true,
+        "appellantLastName": "Brady",
+        "appellantState": "CA",
+        "appellantZip": "94103",
+        "availableHearingLocations": Object {},
+        "bvaPoc": null,
+        "centralOfficeTimeString": "04:00",
+        "claimantId": 604,
+        "closestRegionalOffice": null,
+        "currentIssueCount": 0,
+        "disposition": null,
+        "dispositionEditable": true,
+        "docketName": "hearing",
+        "docketNumber": "200624-613",
+        "emailEvents": Array [],
+        "evidenceWindowWaived": false,
+        "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "hearingDayId": 11,
+        "id": 10,
+        "isVirtual": false,
+        "judge": Object {
+          "createdAt": "2020-06-25T11:00:43.257-04:00",
+          "cssId": "BVAAABSHIRE",
+          "displayName": "BVAAABSHIRE (VACO)",
+          "efolderDocumentsFetchedAt": null,
+          "email": null,
+          "fullName": "Aaron Judge_HearingsAndCases Abshire",
+          "id": 3,
+          "lastLoginAt": null,
+          "roles": Object {},
+          "selectedRegionalOffice": null,
+          "stationId": "101",
+          "status": "active",
+          "statusUpdatedAt": null,
+          "updatedAt": "2020-06-25T11:00:43.257-04:00",
+        },
+        "judgeId": "3",
+        "location": null,
+        "militaryService": "",
+        "notes": null,
+        "paperCase": false,
+        "prepped": null,
+        "readableLocation": null,
+        "readableRequestType": "Video",
+        "regionalOfficeKey": "RO17",
+        "regionalOfficeName": "St. Petersburg regional office",
+        "regionalOfficeTimezone": "America/New_York",
+        "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeEmailAddress": "tom.brady@caseflow.gov",
+        "representativeName": null,
+        "room": "1",
+        "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+        "scheduledForIsPast": false,
+        "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+        "scheduledTimeString": "04:00",
+        "summary": null,
+        "transcriptRequested": null,
+        "transcription": Object {},
+        "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "veteranAge": 85,
+        "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+        "veteranFileNumber": "100000005",
+        "veteranFirstName": "Brian",
+        "veteranGender": "M",
+        "veteranLastName": "Hodkiewicz",
+        "virtualHearing": null,
+        "wasVirtual": false,
+        "witness": null,
+        "worksheetIssues": Object {},
+      }
+    }
+    virtualHearing={null}
   />
   <TranscriptionFormSection
-    dispatch={[MockFunction]}
+    hearing={
+      Object {
+        "advanceOnDocketMotion": null,
+        "aod": false,
+        "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+        "appealId": 613,
+        "appellantAddressLine1": "9999 MISSION ST",
+        "appellantCity": "SAN FRANCISCO",
+        "appellantEmailAddress": "tom.brady@caseflow.gov",
+        "appellantFirstName": "Tom",
+        "appellantIsNotVeteran": true,
+        "appellantLastName": "Brady",
+        "appellantState": "CA",
+        "appellantZip": "94103",
+        "availableHearingLocations": Object {},
+        "bvaPoc": null,
+        "centralOfficeTimeString": "04:00",
+        "claimantId": 604,
+        "closestRegionalOffice": null,
+        "currentIssueCount": 0,
+        "disposition": null,
+        "dispositionEditable": true,
+        "docketName": "hearing",
+        "docketNumber": "200624-613",
+        "emailEvents": Array [],
+        "evidenceWindowWaived": false,
+        "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "hearingDayId": 11,
+        "id": 10,
+        "isVirtual": false,
+        "judge": Object {
+          "createdAt": "2020-06-25T11:00:43.257-04:00",
+          "cssId": "BVAAABSHIRE",
+          "displayName": "BVAAABSHIRE (VACO)",
+          "efolderDocumentsFetchedAt": null,
+          "email": null,
+          "fullName": "Aaron Judge_HearingsAndCases Abshire",
+          "id": 3,
+          "lastLoginAt": null,
+          "roles": Object {},
+          "selectedRegionalOffice": null,
+          "stationId": "101",
+          "status": "active",
+          "statusUpdatedAt": null,
+          "updatedAt": "2020-06-25T11:00:43.257-04:00",
+        },
+        "judgeId": "3",
+        "location": null,
+        "militaryService": "",
+        "notes": null,
+        "paperCase": false,
+        "prepped": null,
+        "readableLocation": null,
+        "readableRequestType": "Video",
+        "regionalOfficeKey": "RO17",
+        "regionalOfficeName": "St. Petersburg regional office",
+        "regionalOfficeTimezone": "America/New_York",
+        "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeEmailAddress": "tom.brady@caseflow.gov",
+        "representativeName": null,
+        "room": "1",
+        "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+        "scheduledForIsPast": false,
+        "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+        "scheduledTimeString": "04:00",
+        "summary": null,
+        "transcriptRequested": null,
+        "transcription": Object {},
+        "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "veteranAge": 85,
+        "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+        "veteranFileNumber": "100000005",
+        "veteranFirstName": "Brian",
+        "veteranGender": "M",
+        "veteranLastName": "Hodkiewicz",
+        "virtualHearing": null,
+        "wasVirtual": false,
+        "witness": null,
+        "worksheetIssues": Object {},
+      }
+    }
+    transcription={Object {}}
   >
     <ContentSection
       header="Transcription Details"
@@ -3003,6 +3591,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         >
           <TranscriptionDetailsInputs
             title="Transcription Details"
+            transcription={Object {}}
             update={[Function]}
           >
             <div
@@ -3435,6 +4024,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
             Transcription Problem
           </h3>
           <TranscriptionProblemInputs
+            transcription={Object {}}
             update={[Function]}
           >
             <div
@@ -3862,6 +4452,87 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
             Transcription Request
           </h3>
           <TranscriptionRequestInputs
+            hearing={
+              Object {
+                "advanceOnDocketMotion": null,
+                "aod": false,
+                "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+                "appealId": 613,
+                "appellantAddressLine1": "9999 MISSION ST",
+                "appellantCity": "SAN FRANCISCO",
+                "appellantEmailAddress": "tom.brady@caseflow.gov",
+                "appellantFirstName": "Tom",
+                "appellantIsNotVeteran": true,
+                "appellantLastName": "Brady",
+                "appellantState": "CA",
+                "appellantZip": "94103",
+                "availableHearingLocations": Object {},
+                "bvaPoc": null,
+                "centralOfficeTimeString": "04:00",
+                "claimantId": 604,
+                "closestRegionalOffice": null,
+                "currentIssueCount": 0,
+                "disposition": null,
+                "dispositionEditable": true,
+                "docketName": "hearing",
+                "docketNumber": "200624-613",
+                "emailEvents": Array [],
+                "evidenceWindowWaived": false,
+                "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                "hearingDayId": 11,
+                "id": 10,
+                "isVirtual": false,
+                "judge": Object {
+                  "createdAt": "2020-06-25T11:00:43.257-04:00",
+                  "cssId": "BVAAABSHIRE",
+                  "displayName": "BVAAABSHIRE (VACO)",
+                  "efolderDocumentsFetchedAt": null,
+                  "email": null,
+                  "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                  "id": 3,
+                  "lastLoginAt": null,
+                  "roles": Object {},
+                  "selectedRegionalOffice": null,
+                  "stationId": "101",
+                  "status": "active",
+                  "statusUpdatedAt": null,
+                  "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                },
+                "judgeId": "3",
+                "location": null,
+                "militaryService": "",
+                "notes": null,
+                "paperCase": false,
+                "prepped": null,
+                "readableLocation": null,
+                "readableRequestType": "Video",
+                "regionalOfficeKey": "RO17",
+                "regionalOfficeName": "St. Petersburg regional office",
+                "regionalOfficeTimezone": "America/New_York",
+                "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                "representativeEmailAddress": "tom.brady@caseflow.gov",
+                "representativeName": null,
+                "room": "1",
+                "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+                "scheduledForIsPast": false,
+                "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+                "scheduledTimeString": "04:00",
+                "summary": null,
+                "transcriptRequested": null,
+                "transcription": Object {},
+                "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                "veteranAge": 85,
+                "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+                "veteranFileNumber": "100000005",
+                "veteranFirstName": "Brian",
+                "veteranGender": "M",
+                "veteranLastName": "Hodkiewicz",
+                "virtualHearing": null,
+                "wasVirtual": false,
+                "witness": null,
+                "worksheetIssues": Object {},
+              }
+            }
             update={[Function]}
           >
             <div
@@ -3971,6 +4642,87 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
 
 exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
 <DetailsForm
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": true,
+      "appellantLastName": "Brady",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-613",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+      "scheduledTimeString": "04:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "Brian",
+      "veteranGender": "M",
+      "veteranLastName": "Hodkiewicz",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
   isLegacy={false}
 >
   <ContentSection
@@ -3993,6 +4745,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
           <Connect(JudgeDropdown)
             name="judgeDropdown"
             onChange={[Function]}
+            value="3"
           >
             <JudgeDropdown
               judges={Object {}}
@@ -4001,6 +4754,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               onChange={[Function]}
               onFetchDropdownData={[Function]}
               onReceiveDropdownData={[Function]}
+              value="3"
             >
               <SearchableDropdown
                 label="VLJ"
@@ -4210,6 +4964,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
           <Connect(HearingCoordinatorDropdown)
             name="hearingCoordinatorDropdown"
             onChange={[Function]}
+            value={null}
           >
             <HearingCoordinatorDropdown
               hearingCoordinators={
@@ -4223,6 +4978,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               onChange={[Function]}
               onFetchDropdownData={[Function]}
               onReceiveDropdownData={[Function]}
+              value={null}
             >
               <SearchableDropdown
                 label="Hearing Coordinator"
@@ -4435,6 +5191,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
             label="Hearing Room"
             name="hearingRoomDropdown"
             onChange={[Function]}
+            value="1"
           >
             <SearchableDropdown
               label="Hearing Room"
@@ -4504,8 +5261,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               strongLabel={true}
               value={
                 Object {
-                  "label": null,
-                  "value": null,
+                  "label": "1 (1W200A)",
+                  "value": "1",
                 }
               }
             >
@@ -4632,8 +5389,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     tabSelectsValue={true}
                     value={
                       Object {
-                        "label": null,
-                        "value": null,
+                        "label": "1 (1W200A)",
+                        "value": "1",
                       }
                     }
                     valueComponent={[Function]}
@@ -4661,8 +5418,8 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                             onClick={null}
                             value={
                               Object {
-                                "label": null,
-                                "value": null,
+                                "label": "1 (1W200A)",
+                                "value": "1",
                               }
                             }
                           >
@@ -4674,7 +5431,9 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                 className="Select-value-label"
                                 id="react-select-14--value-item"
                                 role="option"
-                              />
+                              >
+                                1 (1W200A)
+                              </span>
                             </div>
                           </Value>
                           <Component
@@ -4765,11 +5524,13 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
           data-css-1fmltfu=""
         >
           <HearingTypeDropdown
+            readOnly={false}
             styling={
               Object {
                 "data-css-vzv9iy": "",
               }
             }
+            virtualHearing={null}
           >
             <SearchableDropdown
               label="Hearing Type"
@@ -4788,6 +5549,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                   },
                 ]
               }
+              readOnly={false}
               strongLabel={true}
               styling={
                 Object {
@@ -5089,10 +5851,172 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
     </div>
   </ContentSection>
   <VirtualHearingForm
-    dispatch={[MockFunction]}
+    hearing={
+      Object {
+        "advanceOnDocketMotion": null,
+        "aod": false,
+        "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+        "appealId": 613,
+        "appellantAddressLine1": "9999 MISSION ST",
+        "appellantCity": "SAN FRANCISCO",
+        "appellantEmailAddress": "tom.brady@caseflow.gov",
+        "appellantFirstName": "Tom",
+        "appellantIsNotVeteran": true,
+        "appellantLastName": "Brady",
+        "appellantState": "CA",
+        "appellantZip": "94103",
+        "availableHearingLocations": Object {},
+        "bvaPoc": null,
+        "centralOfficeTimeString": "04:00",
+        "claimantId": 604,
+        "closestRegionalOffice": null,
+        "currentIssueCount": 0,
+        "disposition": null,
+        "dispositionEditable": true,
+        "docketName": "hearing",
+        "docketNumber": "200624-613",
+        "emailEvents": Array [],
+        "evidenceWindowWaived": false,
+        "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "hearingDayId": 11,
+        "id": 10,
+        "isVirtual": false,
+        "judge": Object {
+          "createdAt": "2020-06-25T11:00:43.257-04:00",
+          "cssId": "BVAAABSHIRE",
+          "displayName": "BVAAABSHIRE (VACO)",
+          "efolderDocumentsFetchedAt": null,
+          "email": null,
+          "fullName": "Aaron Judge_HearingsAndCases Abshire",
+          "id": 3,
+          "lastLoginAt": null,
+          "roles": Object {},
+          "selectedRegionalOffice": null,
+          "stationId": "101",
+          "status": "active",
+          "statusUpdatedAt": null,
+          "updatedAt": "2020-06-25T11:00:43.257-04:00",
+        },
+        "judgeId": "3",
+        "location": null,
+        "militaryService": "",
+        "notes": null,
+        "paperCase": false,
+        "prepped": null,
+        "readableLocation": null,
+        "readableRequestType": "Video",
+        "regionalOfficeKey": "RO17",
+        "regionalOfficeName": "St. Petersburg regional office",
+        "regionalOfficeTimezone": "America/New_York",
+        "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeEmailAddress": "tom.brady@caseflow.gov",
+        "representativeName": null,
+        "room": "1",
+        "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+        "scheduledForIsPast": false,
+        "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+        "scheduledTimeString": "04:00",
+        "summary": null,
+        "transcriptRequested": null,
+        "transcription": Object {},
+        "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "veteranAge": 85,
+        "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+        "veteranFileNumber": "100000005",
+        "veteranFirstName": "Brian",
+        "veteranGender": "M",
+        "veteranLastName": "Hodkiewicz",
+        "virtualHearing": null,
+        "wasVirtual": false,
+        "witness": null,
+        "worksheetIssues": Object {},
+      }
+    }
+    virtualHearing={null}
   />
   <TranscriptionFormSection
-    dispatch={[MockFunction]}
+    hearing={
+      Object {
+        "advanceOnDocketMotion": null,
+        "aod": false,
+        "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+        "appealId": 613,
+        "appellantAddressLine1": "9999 MISSION ST",
+        "appellantCity": "SAN FRANCISCO",
+        "appellantEmailAddress": "tom.brady@caseflow.gov",
+        "appellantFirstName": "Tom",
+        "appellantIsNotVeteran": true,
+        "appellantLastName": "Brady",
+        "appellantState": "CA",
+        "appellantZip": "94103",
+        "availableHearingLocations": Object {},
+        "bvaPoc": null,
+        "centralOfficeTimeString": "04:00",
+        "claimantId": 604,
+        "closestRegionalOffice": null,
+        "currentIssueCount": 0,
+        "disposition": null,
+        "dispositionEditable": true,
+        "docketName": "hearing",
+        "docketNumber": "200624-613",
+        "emailEvents": Array [],
+        "evidenceWindowWaived": false,
+        "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "hearingDayId": 11,
+        "id": 10,
+        "isVirtual": false,
+        "judge": Object {
+          "createdAt": "2020-06-25T11:00:43.257-04:00",
+          "cssId": "BVAAABSHIRE",
+          "displayName": "BVAAABSHIRE (VACO)",
+          "efolderDocumentsFetchedAt": null,
+          "email": null,
+          "fullName": "Aaron Judge_HearingsAndCases Abshire",
+          "id": 3,
+          "lastLoginAt": null,
+          "roles": Object {},
+          "selectedRegionalOffice": null,
+          "stationId": "101",
+          "status": "active",
+          "statusUpdatedAt": null,
+          "updatedAt": "2020-06-25T11:00:43.257-04:00",
+        },
+        "judgeId": "3",
+        "location": null,
+        "militaryService": "",
+        "notes": null,
+        "paperCase": false,
+        "prepped": null,
+        "readableLocation": null,
+        "readableRequestType": "Video",
+        "regionalOfficeKey": "RO17",
+        "regionalOfficeName": "St. Petersburg regional office",
+        "regionalOfficeTimezone": "America/New_York",
+        "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeEmailAddress": "tom.brady@caseflow.gov",
+        "representativeName": null,
+        "room": "1",
+        "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+        "scheduledForIsPast": false,
+        "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+        "scheduledTimeString": "04:00",
+        "summary": null,
+        "transcriptRequested": null,
+        "transcription": Object {},
+        "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "veteranAge": 85,
+        "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+        "veteranFileNumber": "100000005",
+        "veteranFirstName": "Brian",
+        "veteranGender": "M",
+        "veteranLastName": "Hodkiewicz",
+        "virtualHearing": null,
+        "wasVirtual": false,
+        "witness": null,
+        "worksheetIssues": Object {},
+      }
+    }
+    transcription={Object {}}
   >
     <ContentSection
       header="Transcription Details"
@@ -5110,6 +6034,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         >
           <TranscriptionDetailsInputs
             title="Transcription Details"
+            transcription={Object {}}
             update={[Function]}
           >
             <div
@@ -5542,6 +6467,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
             Transcription Problem
           </h3>
           <TranscriptionProblemInputs
+            transcription={Object {}}
             update={[Function]}
           >
             <div
@@ -5969,6 +6895,87 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
             Transcription Request
           </h3>
           <TranscriptionRequestInputs
+            hearing={
+              Object {
+                "advanceOnDocketMotion": null,
+                "aod": false,
+                "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+                "appealId": 613,
+                "appellantAddressLine1": "9999 MISSION ST",
+                "appellantCity": "SAN FRANCISCO",
+                "appellantEmailAddress": "tom.brady@caseflow.gov",
+                "appellantFirstName": "Tom",
+                "appellantIsNotVeteran": true,
+                "appellantLastName": "Brady",
+                "appellantState": "CA",
+                "appellantZip": "94103",
+                "availableHearingLocations": Object {},
+                "bvaPoc": null,
+                "centralOfficeTimeString": "04:00",
+                "claimantId": 604,
+                "closestRegionalOffice": null,
+                "currentIssueCount": 0,
+                "disposition": null,
+                "dispositionEditable": true,
+                "docketName": "hearing",
+                "docketNumber": "200624-613",
+                "emailEvents": Array [],
+                "evidenceWindowWaived": false,
+                "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                "hearingDayId": 11,
+                "id": 10,
+                "isVirtual": false,
+                "judge": Object {
+                  "createdAt": "2020-06-25T11:00:43.257-04:00",
+                  "cssId": "BVAAABSHIRE",
+                  "displayName": "BVAAABSHIRE (VACO)",
+                  "efolderDocumentsFetchedAt": null,
+                  "email": null,
+                  "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                  "id": 3,
+                  "lastLoginAt": null,
+                  "roles": Object {},
+                  "selectedRegionalOffice": null,
+                  "stationId": "101",
+                  "status": "active",
+                  "statusUpdatedAt": null,
+                  "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                },
+                "judgeId": "3",
+                "location": null,
+                "militaryService": "",
+                "notes": null,
+                "paperCase": false,
+                "prepped": null,
+                "readableLocation": null,
+                "readableRequestType": "Video",
+                "regionalOfficeKey": "RO17",
+                "regionalOfficeName": "St. Petersburg regional office",
+                "regionalOfficeTimezone": "America/New_York",
+                "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                "representativeEmailAddress": "tom.brady@caseflow.gov",
+                "representativeName": null,
+                "room": "1",
+                "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+                "scheduledForIsPast": false,
+                "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+                "scheduledTimeString": "04:00",
+                "summary": null,
+                "transcriptRequested": null,
+                "transcription": Object {},
+                "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                "veteranAge": 85,
+                "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+                "veteranFileNumber": "100000005",
+                "veteranFirstName": "Brian",
+                "veteranGender": "M",
+                "veteranLastName": "Hodkiewicz",
+                "virtualHearing": null,
+                "wasVirtual": false,
+                "witness": null,
+                "worksheetIssues": Object {},
+              }
+            }
             update={[Function]}
           >
             <div
@@ -6078,6 +7085,87 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
 
 exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
 <DetailsForm
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": true,
+      "appellantLastName": "Brady",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-613",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+      "scheduledTimeString": "04:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "Brian",
+      "veteranGender": "M",
+      "veteranLastName": "Hodkiewicz",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
   isLegacy={true}
 >
   <ContentSection
@@ -6100,6 +7188,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
           <Connect(JudgeDropdown)
             name="judgeDropdown"
             onChange={[Function]}
+            value="3"
           >
             <JudgeDropdown
               judges={Object {}}
@@ -6108,6 +7197,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               onChange={[Function]}
               onFetchDropdownData={[Function]}
               onReceiveDropdownData={[Function]}
+              value="3"
             >
               <SearchableDropdown
                 label="VLJ"
@@ -6317,6 +7407,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
           <Connect(HearingCoordinatorDropdown)
             name="hearingCoordinatorDropdown"
             onChange={[Function]}
+            value={null}
           >
             <HearingCoordinatorDropdown
               hearingCoordinators={
@@ -6330,6 +7421,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               onChange={[Function]}
               onFetchDropdownData={[Function]}
               onReceiveDropdownData={[Function]}
+              value={null}
             >
               <SearchableDropdown
                 label="Hearing Coordinator"
@@ -6542,6 +7634,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
             label="Hearing Room"
             name="hearingRoomDropdown"
             onChange={[Function]}
+            value="1"
           >
             <SearchableDropdown
               label="Hearing Room"
@@ -6611,8 +7704,8 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               strongLabel={true}
               value={
                 Object {
-                  "label": null,
-                  "value": null,
+                  "label": "1 (1W200A)",
+                  "value": "1",
                 }
               }
             >
@@ -6739,8 +7832,8 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                     tabSelectsValue={true}
                     value={
                       Object {
-                        "label": null,
-                        "value": null,
+                        "label": "1 (1W200A)",
+                        "value": "1",
                       }
                     }
                     valueComponent={[Function]}
@@ -6768,8 +7861,8 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                             onClick={null}
                             value={
                               Object {
-                                "label": null,
-                                "value": null,
+                                "label": "1 (1W200A)",
+                                "value": "1",
                               }
                             }
                           >
@@ -6781,7 +7874,9 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                 className="Select-value-label"
                                 id="react-select-10--value-item"
                                 role="option"
-                              />
+                              >
+                                1 (1W200A)
+                              </span>
                             </div>
                           </Value>
                           <Component
@@ -6872,11 +7967,13 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
           data-css-1fmltfu=""
         >
           <HearingTypeDropdown
+            readOnly={false}
             styling={
               Object {
                 "data-css-vzv9iy": "",
               }
             }
+            virtualHearing={null}
           >
             <SearchableDropdown
               label="Hearing Type"
@@ -6895,6 +7992,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                   },
                 ]
               }
+              readOnly={false}
               strongLabel={true}
               styling={
                 Object {
@@ -7158,7 +8256,88 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
     </div>
   </ContentSection>
   <VirtualHearingForm
-    dispatch={[MockFunction]}
+    hearing={
+      Object {
+        "advanceOnDocketMotion": null,
+        "aod": false,
+        "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+        "appealId": 613,
+        "appellantAddressLine1": "9999 MISSION ST",
+        "appellantCity": "SAN FRANCISCO",
+        "appellantEmailAddress": "tom.brady@caseflow.gov",
+        "appellantFirstName": "Tom",
+        "appellantIsNotVeteran": true,
+        "appellantLastName": "Brady",
+        "appellantState": "CA",
+        "appellantZip": "94103",
+        "availableHearingLocations": Object {},
+        "bvaPoc": null,
+        "centralOfficeTimeString": "04:00",
+        "claimantId": 604,
+        "closestRegionalOffice": null,
+        "currentIssueCount": 0,
+        "disposition": null,
+        "dispositionEditable": true,
+        "docketName": "hearing",
+        "docketNumber": "200624-613",
+        "emailEvents": Array [],
+        "evidenceWindowWaived": false,
+        "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "hearingDayId": 11,
+        "id": 10,
+        "isVirtual": false,
+        "judge": Object {
+          "createdAt": "2020-06-25T11:00:43.257-04:00",
+          "cssId": "BVAAABSHIRE",
+          "displayName": "BVAAABSHIRE (VACO)",
+          "efolderDocumentsFetchedAt": null,
+          "email": null,
+          "fullName": "Aaron Judge_HearingsAndCases Abshire",
+          "id": 3,
+          "lastLoginAt": null,
+          "roles": Object {},
+          "selectedRegionalOffice": null,
+          "stationId": "101",
+          "status": "active",
+          "statusUpdatedAt": null,
+          "updatedAt": "2020-06-25T11:00:43.257-04:00",
+        },
+        "judgeId": "3",
+        "location": null,
+        "militaryService": "",
+        "notes": null,
+        "paperCase": false,
+        "prepped": null,
+        "readableLocation": null,
+        "readableRequestType": "Video",
+        "regionalOfficeKey": "RO17",
+        "regionalOfficeName": "St. Petersburg regional office",
+        "regionalOfficeTimezone": "America/New_York",
+        "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeEmailAddress": "tom.brady@caseflow.gov",
+        "representativeName": null,
+        "room": "1",
+        "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+        "scheduledForIsPast": false,
+        "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+        "scheduledTimeString": "04:00",
+        "summary": null,
+        "transcriptRequested": null,
+        "transcription": Object {},
+        "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+        "veteranAge": 85,
+        "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+        "veteranFileNumber": "100000005",
+        "veteranFirstName": "Brian",
+        "veteranGender": "M",
+        "veteranLastName": "Hodkiewicz",
+        "virtualHearing": null,
+        "wasVirtual": false,
+        "witness": null,
+        "worksheetIssues": Object {},
+      }
+    }
+    virtualHearing={null}
   />
 </DetailsForm>
 `;
