@@ -1039,6 +1039,8 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     context "Tags" do
+      let(:new_tag_text) { "Foo" }
+
       scenario "adding and deleting tags" do
         TAG1 = "Medical"
         TAG2 = "Law document"
@@ -1088,6 +1090,16 @@ RSpec.feature "Reader", :all_dbs do
 
         # verify that the tags on the previous document still exist
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
+      end
+
+      scenario "create new tag" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        click_on documents[1].type
+        find(".cf-select__control").click
+
+        expect_any_instance_of(TagController).to receive(:create).and_call_original
+        fill_in "tags", with: (new_tag_text + "\n")
+        expect(Tag.last.text).to eq("Foo")
       end
 
       context "Share tags among all documents in a case" do
