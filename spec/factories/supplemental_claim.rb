@@ -21,7 +21,8 @@ FactoryBot.define do
           :claimant,
           evaluator.number_of_claimants,
           payee_code: "00",
-          decision_review: sc
+          decision_review: sc,
+          type: "VeteranClaimant"
         )
       end
     end
