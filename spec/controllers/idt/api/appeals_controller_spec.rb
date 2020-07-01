@@ -419,7 +419,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               get :details, params: params
               expect(response.status).to eq 403
               expect(JSON.parse(response.body)["message"])
-                .to eq "Your account is locked.  Please contact the VA Enterprise Service Desk to resolve this issue."
+                .to eq "Your account is locked. Please contact the VA Enterprise Service Desk to resolve this issue."
             end
           end
 
