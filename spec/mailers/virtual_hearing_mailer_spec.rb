@@ -423,7 +423,6 @@ describe VirtualHearingMailer do
     expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "5:30am PST" }
     # legacy hearing is scheduled at 11:30am in the central office's time zone (eastern)
     expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am PST" }
-    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "8:30am PST" }
 
     it_behaves_like(
       "email body has the right times with ama and legacy hearings",
