@@ -111,7 +111,8 @@ describe AppealIntake, :all_dbs do
       expect(intake.detail.claimant).to have_attributes(
         participant_id: intake.veteran.participant_id,
         payee_code: nil,
-        decision_review: intake.detail
+        decision_review: intake.detail,
+        type: "VeteranClaimant"
       )
     end
 
@@ -163,7 +164,8 @@ describe AppealIntake, :all_dbs do
         expect(intake.detail.claimant).to have_attributes(
           participant_id: "1234",
           payee_code: nil,
-          decision_review: intake.detail
+          decision_review: intake.detail,
+          type: "DependentClaimant"
         )
       end
 
