@@ -39,7 +39,7 @@ describe AppealIntake, :all_dbs do
     let(:detail) { create(:appeal, veteran_file_number: veteran_file_number, receipt_date: 3.days.ago) }
 
     let!(:claimant) do
-      Claimant.create!(
+      DependentClaimant.create!(
         decision_review: detail,
         participant_id: "1234",
         payee_code: "10"

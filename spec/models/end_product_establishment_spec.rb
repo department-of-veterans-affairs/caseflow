@@ -1217,7 +1217,7 @@ describe EndProductEstablishment, :postgres do
     context "when decision issues are all synced" do
       context "when source is a higher level review" do
         let!(:claimant) do
-          Claimant.create!(
+          VeteranClaimant.create!(
             decision_review: source,
             participant_id: veteran.participant_id,
             payee_code: "10"

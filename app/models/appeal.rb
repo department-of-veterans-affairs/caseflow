@@ -99,7 +99,11 @@ class Appeal < DecisionReview
         stream_docket_number: docket_number,
         established_at: Time.zone.now
       )).tap do |stream|
-        stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
+        stream.create_claimant!(
+          participant_id: claimant.participant_id,
+          payee_code: claimant.payee_code,
+          type: claimant.type
+        )
       end
     end
   end
