@@ -17,7 +17,7 @@ FactoryBot.define do
 
     after(:create) do |sc, evaluator|
       if evaluator.number_of_claimants
-        sc.claimants = create_list(
+        create_list(
           :claimant,
           evaluator.number_of_claimants,
           payee_code: "00",

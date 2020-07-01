@@ -37,20 +37,20 @@ FactoryBot.define do
         end
       elsif evaluator.number_of_claimants
         claimant_type = appeal.veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
-        appeal.claimants = create_list(
+        create_list(
           :claimant,
           evaluator.number_of_claimants,
           decision_review: appeal,
           type: claimant_type
         )
       else
-        appeal.claimants = [create(
+        create(
           :claimant,
           participant_id: appeal.veteran.participant_id,
           decision_review: appeal,
           payee_code: "00",
           type: "VeteranClaimant"
-        )]
+        )
       end
     end
 
