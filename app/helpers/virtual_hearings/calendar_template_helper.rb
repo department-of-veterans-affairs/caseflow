@@ -9,12 +9,20 @@ module VirtualHearings::CalendarTemplateHelper
     # "Monday, 9 March 2020 at 5:10pm UTC"
     HEARING_TIME_DISPLAY_FORMAT = "%A, %-d %B %Y at %-l:%M%P %Z"
 
-    def central_office_display_time_for_virtual_hearing(virtual_hearing)
-      virtual_hearing.hearing.time.central_office_time.strftime(HEARING_TIME_DISPLAY_FORMAT)
+    def format_hearing_time(time)
+      time.strftime(HEARING_TIME_DISPLAY_FORMAT)
     end
 
-    def local_display_time_for_virtual_hearing(virtual_hearing)
-      virtual_hearing.hearing.time.local_time.strftime(HEARING_TIME_DISPLAY_FORMAT)
+    def central_office_display_time_for_virtual_hearing(virtual_hearing)
+      format_hearing_time(virtual_hearing.hearing.time.central_office_time)
+    end
+
+    def representative_display_time_for_virtual_hearing(virtual_hearing)
+      format_hearing_time(virtual_hearing.hearing.time.poa_time)
+    end
+
+    def appellant_display_time_for_virtual_hearing(virtual_hearing)
+      format_hearing_time(virtual_hearing.hearing.time.appellant_time)
     end
 
     # time_zone is a TZInfo::DataTimezone object; date_time_utc is a Time object

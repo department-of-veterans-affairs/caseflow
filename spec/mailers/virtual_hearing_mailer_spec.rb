@@ -11,7 +11,13 @@ describe VirtualHearingMailer do
       regional_office: regional_office
     )
   end
-  let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+  let(:virtual_hearing) do
+    create(
+      :virtual_hearing,
+      hearing: hearing
+    )
+  end
+
   let(:recipient_title) { nil }
   let(:recipient) { MailRecipient.new(name: "LastName", email: "email@test.com", title: recipient_title) }
   let(:pexip_url) { "fake.va.gov" }
@@ -117,7 +123,8 @@ describe VirtualHearingMailer do
     it_behaves_like "sends an updated time confirmation email"
   end
 
-  shared_examples_for "email body has the right times" do |expected_eastern, expected_pacific|
+  shared_examples_for "email body has the right times based on regional_office" do
+    |expected_eastern, expected_pacific, recipient_title|
     context "regional office is in eastern timezone" do
       let(:regional_office) { nyc_ro_eastern }
 
@@ -130,17 +137,72 @@ describe VirtualHearingMailer do
       let(:regional_office) { oakland_ro_pacific }
 
       it "has the correct time in the email" do
-        expect(subject.html_part.body).to include(expected_pacific)
+        if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
+          # judge time in the email will always be in central office time (ET)
+          expect(subject.html_part.body).to include(expected_pacific)
+        else
+          # always show regional office time regardless of recipient
+          expect(subject.html_part.body).to include("8:30am PST")
+        end
       end
     end
   end
 
-  shared_examples_for "email body has the right times for types" do |expected_eastern, expected_pacific, types|
+  shared_examples_for "email body has right time for recipient" do |expected_eastern, expected_pacific, recipient_title|
+    if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
+      it "displays central office time (ET)" do
+        expect(subject.html_part.body).to include(expected_eastern)
+      end
+    elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
+      describe "appellant_tz is present" do
+        before do
+          virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
+          hearing.reload
+        end
+
+        it "displays pacific standard time (PT)" do
+          expect(subject.html_part.body).to include(expected_pacific)
+        end
+      end
+
+      describe "appellant_tz is not present" do
+        it "displays eastern standard time (ET)" do
+          expect(subject.html_part.body).to include(expected_eastern)
+        end
+      end
+    elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
+      describe "representative_tz is present" do
+        before do
+          virtual_hearing.update!(representative_tz: "America/Los_Angeles")
+          hearing.reload
+        end
+
+        it "displays pacific standard time (PT)" do
+          expect(subject.html_part.body).to include(expected_pacific)
+        end
+      end
+
+      describe "representative_tz is not present" do
+        it "displays eastern standard time (ET)" do
+          expect(subject.html_part.body).to include(expected_eastern)
+        end
+      end
+    end
+  end
+
+  shared_examples_for "email body has the right times for types" do
+    |expected_eastern, expected_pacific, types, recipient_title|
     if types.include? :cancellation
       describe "#cancellation" do
         include_context "cancellation email"
 
-        it_behaves_like "email body has the right times", expected_eastern, expected_pacific
+        it_behaves_like(
+          "email body has the right times based on regional_office",
+          expected_eastern,
+          expected_pacific,
+          recipient_title
+        )
+        it_behaves_like "email body has right time for recipient", expected_eastern, expected_pacific, recipient_title
       end
     end
 
@@ -148,7 +210,13 @@ describe VirtualHearingMailer do
       describe "#confirmation" do
         include_context "confirmation email"
 
-        it_behaves_like "email body has the right times", expected_eastern, expected_pacific
+        it_behaves_like(
+          "email body has the right times based on regional_office",
+          expected_eastern,
+          expected_pacific,
+          recipient_title
+        )
+        it_behaves_like "email body has right time for recipient", expected_eastern, expected_pacific, recipient_title
       end
     end
 
@@ -156,7 +224,13 @@ describe VirtualHearingMailer do
       describe "#updated_time_confirmation" do
         include_context "updated time confirmation email"
 
-        it_behaves_like "email body has the right times", expected_eastern, expected_pacific
+        it_behaves_like(
+          "email body has the right times based on regional_office",
+          expected_eastern,
+          expected_pacific,
+          recipient_title
+        )
+        it_behaves_like "email body has right time for recipient", expected_eastern, expected_pacific, recipient_title
       end
     end
   end
@@ -164,7 +238,8 @@ describe VirtualHearingMailer do
   # ama_times & legacy_times are in the format { expected_eastern: "10:30 EST", expected_pacific: "7:30 PST" }
   # expected_eastern is the time displayed in the email body when the regional office is in the eastern time zone
   # expected_pacific is the time displayed in the email body when the regional office is in the pacific time zone
-  shared_examples_for "email body has the right times with ama and legacy hearings" do |ama_times, legacy_times, types|
+  shared_examples_for "email body has the right times with ama and legacy hearings" do
+    |ama_times, legacy_times, types, recipient_title|
     types = [:cancellation, :confirmation, :updated_time_confirmation] if types.nil?
 
     context "with ama hearing" do
@@ -174,7 +249,8 @@ describe VirtualHearingMailer do
         "email body has the right times for types",
         ama_times[:expected_eastern],
         ama_times[:expected_pacific],
-        types
+        types,
+        recipient_title
       )
     end
 
@@ -185,7 +261,8 @@ describe VirtualHearingMailer do
         "email body has the right times for types",
         legacy_times[:expected_eastern],
         legacy_times[:expected_pacific],
-        types
+        types,
+        recipient_title
       )
     end
   end
@@ -281,7 +358,7 @@ describe VirtualHearingMailer do
   context "for judge" do
     include_context "ama hearing"
 
-    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:judge] }
+    let!(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:judge] }
 
     it_behaves_like "doesn't send a cancellation email"
     it_behaves_like "sends a confirmation email"
@@ -290,14 +367,18 @@ describe VirtualHearingMailer do
     # we expect the judge to always see the hearing time in central office (eastern) time zone
 
     # ama hearing is scheduled at 8:30am in the regional office's time zone
-    expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "11:30am EST" }
+    expected_ama_times = {
+      expected_eastern: "8:30am EST",
+      expected_pacific: "11:30am EST"
+    }
     # legacy hearing is scheduled at 11:30am in the central office's time zone (eastern)
     expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "2:30pm EST" }
     it_behaves_like(
       "email body has the right times with ama and legacy hearings",
       expected_ama_times,
       expected_legacy_times,
-      [:confirmation, :updated_time_confirmation]
+      [:confirmation, :updated_time_confirmation],
+      MailRecipient::RECIPIENT_TITLES[:judge]
     )
     it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:judge])
   end
@@ -305,19 +386,25 @@ describe VirtualHearingMailer do
   context "for appellant" do
     include_context "ama hearing"
 
-    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:appellant] }
+    let!(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:appellant] }
 
     it_behaves_like "sends all email types"
 
     # we expect the appellant to always see the hearing time in the regional office time zone
+    # unless appellant_tz in VirtualHearing is set
 
     # ama hearing is scheduled at 8:30am in the regional office's time zone
-    expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "8:30am PST" }
+    expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "5:30am PST" }
     # legacy hearing is scheduled at 11:30am in the central office's time zone (eastern)
     expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am PST" }
     it_behaves_like(
-      "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
+      "email body has the right times with ama and legacy hearings",
+      expected_ama_times,
+      expected_legacy_times,
+      nil,
+      MailRecipient::RECIPIENT_TITLES[:appellant]
     )
+
     it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:appellant])
     it_behaves_like("cancellation email body has the correct hearing location")
   end
@@ -325,18 +412,25 @@ describe VirtualHearingMailer do
   context "for representative" do
     include_context "ama hearing"
 
-    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:representative] }
+    let!(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:representative] }
 
     it_behaves_like "sends all email types"
 
     # we expect the representative to always see the hearing time in the regional office time zone
+    # unless representative_tz in VirtualHearing is set
 
     # ama hearing is scheduled at 8:30am in the regional office's time zone
-    expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "8:30am PST" }
+    expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "5:30am PST" }
     # legacy hearing is scheduled at 11:30am in the central office's time zone (eastern)
     expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am PST" }
+    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "8:30am PST" }
+
     it_behaves_like(
-      "email body has the right times with ama and legacy hearings", expected_ama_times, expected_legacy_times
+      "email body has the right times with ama and legacy hearings",
+      expected_ama_times,
+      expected_legacy_times,
+      nil,
+      MailRecipient::RECIPIENT_TITLES[:representative]
     )
     it_behaves_like("email body has the correct link for types", MailRecipient::RECIPIENT_TITLES[:representative])
     it_behaves_like("cancellation email body has the correct hearing location")

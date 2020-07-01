@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ScheduleHearingColocatedTask < ColocatedTask
-  after_update :create_schedule_hearing_task_on_completion
+  after_update :send_to_hearings_branch, if: :just_completed_ama_organization_task?
 
   def self.label
     Constants.CO_LOCATED_ADMIN_ACTIONS.schedule_hearing
@@ -36,13 +36,17 @@ class ScheduleHearingColocatedTask < ColocatedTask
     LegacyAppeal::LOCATION_CODES[:schedule_hearing]
   end
 
-  def create_schedule_hearing_task_on_completion
-    if appeal_type.eql?(Appeal.name) &&
-       saved_change_to_status? &&
-       completed? &&
-       all_tasks_closed_for_appeal? &&
-       assigned_to.is_a?(Organization)
-      ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
-    end
+  def just_completed_ama_organization_task?
+    appeal_type.eql?(Appeal.name) &&
+      saved_change_to_status? &&
+      completed? &&
+      assigned_to.is_a?(Organization)
+  end
+
+  def send_to_hearings_branch
+    parent = DistributionTask.create!(appeal: appeal, parent: appeal.root_task)
+    ScheduleHearingTask.create!(appeal: appeal, parent: parent)
+    JudgeTask.open.where(appeal: appeal).find_each(&:cancel_task_and_child_subtasks)
+    DistributedCase.find_by(case_id: appeal.uuid)&.update!(case_id: "#{appeal.uuid}-attempt1")
   end
 end

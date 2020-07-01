@@ -14,6 +14,8 @@ FactoryBot.define do
     appellant_email_sent { false }
     representative_email { "caseflow-representative@test.com" }
     representative_email_sent { false }
+    appellant_tz { nil }
+    representative_tz { nil }
     association :created_by, factory: :user
     association :updated_by, factory: :user
     establishment { nil }
