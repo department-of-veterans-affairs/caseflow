@@ -6,6 +6,8 @@ module AppealConcern
   delegate :station_key, to: :regional_office
 
   def regional_office
+    return nil if regional_office_key.nil?
+
     @regional_office ||= begin
                             RegionalOffice.find!(regional_office_key)
                          rescue RegionalOffice::NotFoundError
@@ -56,9 +58,5 @@ module AppealConcern
   # the naming of the helper methods.
   def veteran_name_object
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
-  end
-
-  def appellant_name_object
-    FullName.new(appellant_first_name, appellant_middle_initial, appellant_last_name)
   end
 end

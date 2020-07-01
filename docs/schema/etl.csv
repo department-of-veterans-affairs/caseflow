@@ -265,7 +265,7 @@ tasks,closed_at,datetime,,,,,,tasks.closed_at
 tasks,created_at,datetime ∗,x,,,,x,Default created_at/updated_at for the ETL record
 tasks,id,integer (8) PK,x,x,,,,
 tasks,instructions,text,,,,,,tasks.instructions
-tasks,parent_id,integer (8),,,,,x,tasks.parent_id
+tasks,parent_id,integer (8) FK,,,x,,x,tasks.parent_id
 tasks,placed_on_hold_at,datetime,,,,,,tasks.placed_on_hold_at
 tasks,started_at,datetime,,,,,,tasks.started_at
 tasks,task_created_at,datetime,,,,,,tasks.created_at
