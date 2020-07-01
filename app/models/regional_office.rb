@@ -153,6 +153,14 @@ class RegionalOffice
       ids.uniq
     end
 
+    def ro_facility_ids
+      CITIES
+        .values
+        .select { |ro| ro[:facility_locator_id].present? }
+        .pluck(:facility_locator_id)
+        .uniq
+    end
+
     def ro_facility_ids_for_state(state_code)
       CITIES
         .values
