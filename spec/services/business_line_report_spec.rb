@@ -37,8 +37,8 @@ describe BusinessLineReporter, :postgres do
       csv = subject.as_csv
       binding.pry
       expect(csv)
-        .to match(/SupplementalClaim,\d+,#{6.days.ago},#{6.days.ago},#{7.days.ago},bad,#{veteran.participant_id}/)
-      expect(CSV.parse(csv).count).to eq(7) # jobs + header
+        .to match(/#{type},\d+,#{appeal_type},#{id},#{appeal_id},#{claimant_name}/)
+      expect(CSV.parse(csv).count).to eq(1)
     end
   end
 end
