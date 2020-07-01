@@ -42,6 +42,9 @@ export const VirtualHearingForm = (
           <div id="email-section" className="usa-grid">
             <div className="usa-width-one-third">
               <Timezone
+                required
+                value={virtualHearing?.appellantTz}
+                onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
                 readOnly={readOnlyEmails}
                 time={hearing.scheduledTimeString}
                 name={`${appellantTitle} Timezone`}
@@ -50,6 +53,7 @@ export const VirtualHearingForm = (
             </div>
             <div className="usa-width-one-third">
               <VirtualHearingEmail
+                required
                 disabled={readOnlyEmails}
                 label={`${appellantTitle} Email`}
                 emailType="appellantEmail"
@@ -64,6 +68,8 @@ export const VirtualHearingForm = (
           <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
             <div className="usa-width-one-third">
               <Timezone
+                value={virtualHearing?.representativeTz}
+                onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
                 readOnly={readOnlyEmails}
                 time={hearing.scheduledTimeString}
                 name="POA/Representative Timezone"

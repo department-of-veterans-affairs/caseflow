@@ -77,6 +77,9 @@ class HearingSerializer
   attribute :veteran_last_name
   attribute :veteran_email_address, if: for_full
   attribute :is_virtual, &:virtual?
+  attribute :appellant_tz do |hearing|
+    TimezoneService.address_to_timezone(hearing.appeal.veteran&.address).identifier
+  end
   attribute :virtual_hearing do |object|
     if object.virtual? || object.was_virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]

@@ -41,9 +41,11 @@ export const HearingConversion = ({
     const appellantEmail = hearing.appellantIsNotVeteran ?
       hearing.appellantEmailAddress :
       hearing.veteranEmailAddress;
+    const appellantTz = virtualHearing?.appellantTz ? virtualHearing?.appellantTz : hearing?.appellantTz;
 
     // Set the emails if not already set
     update('virtualHearing', {
+      [!virtualHearing?.appellantTz && 'appellantTz']: appellantTz,
       [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
       [!virtualHearing?.representativeEmail &&
       'representativeEmail']: hearing.representativeEmailAddress,
@@ -87,6 +89,8 @@ export const HearingConversion = ({
             <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
               <Timezone
                 required
+                value={virtualHearing?.appellantTz}
+                onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
                 time={hearing.scheduledTimeString}
                 name={`${appellantTitle} Timezone`}
               />
@@ -123,6 +127,8 @@ export const HearingConversion = ({
           <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
             <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
               <Timezone
+                value={virtualHearing?.representativeTz}
+                onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
                 time={hearing.scheduledTimeString}
                 name="POA/Representative Timezone"
               />
