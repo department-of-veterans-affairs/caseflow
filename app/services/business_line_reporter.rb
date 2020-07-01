@@ -3,26 +3,33 @@
 require "csv"
 
 class BusinessLineReporter
-  attr_reader :task
+  attr_reader :business_line
 
-  def initialize(task:, verbose: false)
-    @task = task
-    @verbose = verbose
+  def initialize(business_line)
+    @business_line = business_line
+  end
+
+  def tasks
+    business_line.tasks.completed
   end
 
   def as_csv
     CSV.generate do |csv|
-      csv << %w[type id claimant_name created tasks_url veteran_participant_id business_line, issue_count]
-      task.each do |tasks|
+      csv << %w[type id appeal_id claimant_name created_at closed_at tasks_url business_line request_issue_count decision_issues_count veteran_file_number user_id]
+      tasks.each do |task|
         csv << [
-          tasks[:type],
-          tasks[:id],
-          tasks.dig(:claimant, :name),
-          tasks[:created_at].strftime("%Y-%m-%d"),
-          tasks[:tasks_url],
-          tasks[:veteran_participant_id],
-          tasks[:business_line],
-          tasks.dig(:appeal, :issueCount)
+          task.type,
+          task.id,
+          task.appeal_id,
+          task.appeal.claimant.name,
+          task.created_at.strftime("%Y-%m-%d"),
+          task.closed_at.strftime("%Y-%m-%d"),
+          business_line.tasks_url,
+          business_line.name,
+          task.appeal.request_issues.count,
+          task.appeal.decision_issues.count,
+          task.appeal.veteran_file_number,
+          task.appeal.intake.user.css_id
         ].flatten
       end
     end
