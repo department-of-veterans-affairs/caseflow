@@ -2,14 +2,10 @@ import { formatTasks } from '../util';
 import { ACTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { update } from '../../util/ReducerUtil';
 
+export const mapDataToInitialState = function(props = {}) {
+  const { serverNonComp } = props;
 
-export const mapDataToInitialState = function(props = {}, data = { featureToggles: {} }) {
-  const { serverNonComp, featureToggles} = props;
-
-  const state = {
-...serverNonComp,
-featureToggles
-};
+  let state = serverNonComp;
 
   state.inProgressTasks = formatTasks(serverNonComp.inProgressTasks);
   state.completedTasks = formatTasks(serverNonComp.completedTasks);
@@ -18,7 +14,6 @@ featureToggles
 
   return state;
 };
-
 
 export const nonCompReducer = (state = mapDataToInitialState(), action) => {
   switch (action.type) {
