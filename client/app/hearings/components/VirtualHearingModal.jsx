@@ -336,7 +336,6 @@ VirtualHearingModal.propTypes = {
   timeWasEdited: PropTypes.bool,
   representativeEmailEdited: PropTypes.bool,
   appellantEmailEdited: PropTypes.bool,
-  open: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,

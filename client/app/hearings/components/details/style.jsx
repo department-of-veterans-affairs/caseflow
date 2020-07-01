@@ -128,7 +128,7 @@ export const timezoneStyles = (count) => ({
   }
 });
 
-export const vertical = css({
+export const verticalAlign = css({
   flexDirection: 'column',
   display: 'flex',
   '& > :first-child': {
@@ -141,5 +141,11 @@ export const vertical = css({
   '& > :last-child': {
     flex: 1,
     paddingLeft: 0
+  },
+});
+
+export const inputFix = css({
+  '& .question-label': {
+    marginBottom: '2rem !important',
   },
 });

@@ -7,13 +7,9 @@ import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
 import { fullWidth, marginTop, noMaxWidth } from './details/style';
 import COPY from '../../../COPY';
-import {
-  AddressLine,
-  VirtualHearingSection,
-  DisplayValue,
-  LeftAlign,
-  VerticalAlign,
-} from './conversion';
+import { AddressLine } from './details/Address';
+import { VirtualHearingSection } from './VirtualHearings/Section';
+import { ReadOnly } from './details/ReadOnly';
 import { HelperText } from './VirtualHearings/HelperText';
 import { VirtualHearingEmail } from './VirtualHearings/Emails';
 import { HearingTime } from './modalForms/HearingTime';
@@ -56,26 +52,25 @@ export const HearingConversion = ({
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
       <span>{helperLabel}</span>
-      <DisplayValue label="Hearing Date">
+      <ReadOnly label="Hearing Date">
         <span {...fullWidth}>{DateUtil.formatDateStr(scheduledFor)}</span>
-      </DisplayValue>
+      </ReadOnly>
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className="usa-width-one-half">
-          <VerticalAlign>
-            <HearingTime
-              label="Hearing Time"
-              disableRadioOptions={virtual}
-              enableZone
-              onChange={(scheduledTimeString) =>
-                update('hearing', { scheduledTimeString })
-              }
-              value={hearing.scheduledTimeString}
-            />
-          </VerticalAlign>
+          <HearingTime
+            vertical
+            label="Hearing Time"
+            disableRadioOptions={virtual}
+            enableZone
+            onChange={(scheduledTimeString) =>
+              update('hearing', { scheduledTimeString })
+            }
+            value={hearing.scheduledTimeString}
+          />
         </div>
       </div>
       <VirtualHearingSection label={appellantTitle}>
-        <DisplayValue label="">
+        <ReadOnly label="">
           <AddressLine
             name={`${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
             addressLine1={hearing?.appellantAddressLine1}
@@ -83,7 +78,7 @@ export const HearingConversion = ({
             addressCity={hearing?.appellantCity}
             addressZip={hearing?.appellantZip}
           />
-        </DisplayValue>
+        </ReadOnly>
         {virtual && (
           <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
             <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
@@ -114,7 +109,7 @@ export const HearingConversion = ({
         </div>
       </VirtualHearingSection>
       <VirtualHearingSection label="Power of Attorney">
-        <DisplayValue label="Attorney">
+        <ReadOnly label="Attorney">
           <AddressLine
             name={hearing?.representativeName}
             addressLine1={hearing?.appellantAddressLine1}
@@ -122,7 +117,7 @@ export const HearingConversion = ({
             addressCity={hearing?.appellantCity}
             addressZip={hearing?.appellantZip}
           />
-        </DisplayValue>
+        </ReadOnly>
         {virtual && (
           <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
             <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
@@ -151,16 +146,18 @@ export const HearingConversion = ({
         </div>
       </VirtualHearingSection>
       <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
-        <LeftAlign>
-          <JudgeDropdown
-            name="judgeDropdown"
-            value={hearing?.judgeId}
-            onChange={(judgeId) => update('hearing', { judgeId })}
-          />
-        </LeftAlign>
-        <DisplayValue label="VLJ Email">
+        <div className="usa-grid">
+          <div className="usa-width-one-half">
+            <JudgeDropdown
+              name="judgeDropdown"
+              value={hearing?.judgeId}
+              onChange={(judgeId) => update('hearing', { judgeId })}
+            />
+          </div>
+        </div>
+        <ReadOnly label="VLJ Email">
           <span {...fullWidth}>{hearing.judge?.email || 'N/A'}</span>
-        </DisplayValue>
+        </ReadOnly>
       </VirtualHearingSection>
     </AppSegment>
   );
@@ -169,7 +166,8 @@ export const HearingConversion = ({
 HearingConversion.propTypes = {
   title: PropTypes.string,
   type: PropTypes.string,
-  scheduledFor: PropTypes.string,
+  scheduledFor:
+   PropTypes.string,
   errors: PropTypes.object,
   update: PropTypes.func,
   hearing: PropTypes.object,

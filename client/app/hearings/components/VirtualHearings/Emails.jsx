@@ -8,15 +8,15 @@ import {
   maxWidthFormInput,
 } from '../details/style';
 import TextField from '../../../components/TextField';
-import { DisplayValue, LeftAlign } from '../conversion';
-import { HelperText } from '../VirtualHearings/HelperText';
+import { ReadOnly } from '../details/ReadOnly';
+import { HelperText } from './HelperText';
 import COPY from '../../../../COPY';
 
 export const VirtualHearingEmail = ({ email, emailType, label, readOnly, error, update, required, disabled }) =>
   readOnly ? (
-    <DisplayValue label={label}>
+    <ReadOnly label={label}>
       <span {...fullWidth}>{email}</span>
-    </DisplayValue>
+    </ReadOnly>
   ) : (
     <React.Fragment>
       <TextField

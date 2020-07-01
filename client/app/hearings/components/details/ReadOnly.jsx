@@ -1,7 +1,7 @@
 import React from 'react';
-import { marginTop } from '../details/style';
+import { marginTop } from './style';
 
-export const DisplayValue = ({ label, children }) => (
+export const ReadOnly = ({ label, children }) => (
   <div {...marginTop(25)}>
     <strong>{label}</strong>
     {children}

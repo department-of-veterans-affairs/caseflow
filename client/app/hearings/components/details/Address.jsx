@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-import { fullWidth } from '../details/style';
+import { fullWidth } from './style';
 
 export const AddressLine = ({
   name,
