@@ -25,6 +25,7 @@ class BackfillVeteranAndDependentClaimantTypes < ActiveRecord::Migration[5.2]
           FROM appeals
           WHERE
             claimants.decision_review_id = appeals.id AND claimants.decision_review_type = 'Appeal'
+            AND claimants.type = 'Claimant'
             AND (appeals.veteran_is_not_claimant IS NULL OR appeals.veteran_is_not_claimant = FALSE);
       SQL
 
@@ -34,6 +35,7 @@ class BackfillVeteranAndDependentClaimantTypes < ActiveRecord::Migration[5.2]
           FROM higher_level_reviews
           WHERE
             claimants.decision_review_id = higher_level_reviews.id AND claimants.decision_review_type = 'HigherLevelReview'
+            AND claimants.type = 'Claimant'
             AND (higher_level_reviews.veteran_is_not_claimant IS NULL OR higher_level_reviews.veteran_is_not_claimant = FALSE);
       SQL
 
@@ -43,6 +45,7 @@ class BackfillVeteranAndDependentClaimantTypes < ActiveRecord::Migration[5.2]
           FROM supplemental_claims
           WHERE
             claimants.decision_review_id = supplemental_claims.id AND claimants.decision_review_type = 'SupplementalClaim'
+            AND claimants.type = 'Claimant'
             AND (supplemental_claims.veteran_is_not_claimant IS NULL OR supplemental_claims.veteran_is_not_claimant = FALSE);
       SQL
 
@@ -52,6 +55,7 @@ class BackfillVeteranAndDependentClaimantTypes < ActiveRecord::Migration[5.2]
           FROM appeals
           WHERE
             claimants.decision_review_id = appeals.id AND claimants.decision_review_type = 'Appeal'
+            AND claimants.type = 'Claimant'
             AND appeals.veteran_is_not_claimant = TRUE;
       SQL
 
@@ -62,6 +66,7 @@ class BackfillVeteranAndDependentClaimantTypes < ActiveRecord::Migration[5.2]
           FROM higher_level_reviews
           WHERE
             claimants.decision_review_id = higher_level_reviews.id AND claimants.decision_review_type = 'HigherLevelReview'
+            AND claimants.type = 'Claimant'
             AND higher_level_reviews.veteran_is_not_claimant = TRUE;
       SQL
 
@@ -71,6 +76,7 @@ class BackfillVeteranAndDependentClaimantTypes < ActiveRecord::Migration[5.2]
           FROM supplemental_claims
           WHERE
             claimants.decision_review_id = supplemental_claims.id AND claimants.decision_review_type = 'SupplementalClaim'
+            AND claimants.type = 'Claimant'
             AND supplemental_claims.veteran_is_not_claimant = TRUE;
       SQL
     end
