@@ -13,8 +13,8 @@ const DEFAULT_PLACEHOLDER = 'Select option';
 
 const customStyles = {
   input: () => ({
-    height: '44px'
-  })
+    height: '44px',
+  }),
 };
 
 export class SearchableDropdown extends React.Component {
@@ -22,7 +22,7 @@ export class SearchableDropdown extends React.Component {
     super(props);
 
     this.state = {
-      value: props.value
+      value: props.value,
     };
   }
 
@@ -106,24 +106,26 @@ export class SearchableDropdown extends React.Component {
       creatable,
       creatableOptions,
       searchable,
-      styling
+      styling,
     } = this.props;
 
     const dropdownStyling = css(styling, {
-      '& .Select-menu-outer': this.props.dropdownStyling
+      '& .cf-select__menu': this.props.dropdownStyling,
     });
 
     const SelectComponent = this.getSelectComponent();
     let addCreatableOptions = {};
     const dropdownClasses = classNames('cf-form-dropdown', `dropdown-${name}`);
     const labelClasses = classNames('question-label', {
-      'usa-sr-only': hideLabel
+      'usa-sr-only': hideLabel,
     });
 
     // `react-select` used to accept plain string values, but now requires passing the object
     // This allows `SearchableDropdown` to still accept the legacy syntax
     const value =
-      Array.isArray(this.state.value) || isPlainObject(this.state.value) || isNull(this.state.value) ?
+      Array.isArray(this.state.value) ||
+      isPlainObject(this.state.value) ||
+      isNull(this.state.value) ?
         this.state.value :
         (options || []).find(({ value: val }) => val === this.state.value);
 
@@ -139,18 +141,11 @@ export class SearchableDropdown extends React.Component {
         noResultsText: TAG_ALREADY_EXISTS_MSG,
 
         // eslint-disable-next-line no-shadow
-        // newOptionCreator: ({ label, labelKey, valueKey }) => ({
-        //   [labelKey]: _.trim(label),
-        //   [valueKey]: _.trim(label),
-        //   className: 'Select-create-option-placeholder',
-        // }),
-
-        // eslint-disable-next-line no-shadow
         isValidNewOption: (inputValue) => inputValue && (/\S/).test(inputValue),
 
         formatCreateLabel: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
 
-        ...creatableOptions
+        ...creatableOptions,
       };
     }
 
@@ -214,7 +209,7 @@ export class SearchableDropdown extends React.Component {
 const SelectOpts = PropTypes.arrayOf(
   PropTypes.shape({
     value: PropTypes.any,
-    label: PropTypes.string
+    label: PropTypes.string,
   })
 );
 
@@ -225,7 +220,7 @@ SearchableDropdown.propTypes = {
   creatableOptions: PropTypes.shape({
     noResultsText: PropTypes.string,
     isValidNewOption: PropTypes.func,
-    formatCreateLabel: PropTypes.func
+    formatCreateLabel: PropTypes.func,
   }),
   defaultOptions: PropTypes.oneOfType([SelectOpts, PropTypes.bool]),
   dropdownStyling: PropTypes.object,
@@ -246,7 +241,7 @@ SearchableDropdown.propTypes = {
   searchable: PropTypes.bool,
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,
-  value: PropTypes.object
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 };
 
 /* eslint-disable no-undefined */
@@ -254,7 +249,7 @@ SearchableDropdown.defaultProps = {
   clearOnSelect: false,
   loading: false,
   filterOption: undefined,
-  filterOptions: undefined
+  filterOptions: undefined,
 };
 /* eslint-enable no-undefined */
 
