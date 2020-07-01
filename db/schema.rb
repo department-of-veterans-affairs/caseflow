@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_17_160206) do
+ActiveRecord::Schema.define(version: 2020_06_30_154526) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -823,6 +823,9 @@ ActiveRecord::Schema.define(version: 2020_06_17_160206) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
+    t.boolean "blue_water", default: false, comment: "Blue Water"
+    t.boolean "burn_pit", default: false, comment: "Burn Pit"
+    t.boolean "cavc", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -838,8 +841,10 @@ ActiveRecord::Schema.define(version: 2020_06_17_160206) do
     t.boolean "insurance", default: false
     t.boolean "issues_pulled"
     t.boolean "manlincon_compliance", default: false
+    t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
+    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
@@ -1409,6 +1414,7 @@ ActiveRecord::Schema.define(version: 2020_06_17_160206) do
     t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
     t.string "appellant_email", comment: "Appellant's email address"
     t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
+    t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false
@@ -1423,6 +1429,7 @@ ActiveRecord::Schema.define(version: 2020_06_17_160206) do
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
+    t.string "representative_tz", limit: 50, comment: "Stores representative timezone"
     t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the virtual hearing"
