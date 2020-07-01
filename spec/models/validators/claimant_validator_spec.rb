@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-fdescribe ClaimantValidator, :postgres do
+describe ClaimantValidator, :postgres do
   let(:veteran) { create(:veteran) }
   let(:claimant) do
     Claimant.new(
