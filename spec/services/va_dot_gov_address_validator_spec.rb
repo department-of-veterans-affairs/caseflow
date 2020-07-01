@@ -3,7 +3,7 @@
 describe VaDotGovAddressValidator do
   include HearingHelpers
 
-  describe "#update_closest_ro_and_ahls", :all_dbs do
+  describe "#update_closest_ro_and_ahls" do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let!(:valid_address_country_code) { "US" }
@@ -138,7 +138,7 @@ describe VaDotGovAddressValidator do
     end
   end
 
-  describe "#facility_ids_to_geomatch", :all_dbs do
+  describe "#facility_ids_to_geomatch" do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let!(:valid_address_state_code) { "VA" }
@@ -163,6 +163,25 @@ describe VaDotGovAddressValidator do
         .and_return(valid_address_response)
     end
 
+    %w[GQ PH VI].each do |foreign_country_code|
+      context "when veteran lives in country with code #{foreign_country_code}" do
+        let!(:valid_address_country_code) { foreign_country_code }
+        let!(:expected_state_code) do
+          {
+            GQ: "HI",
+            PH: "PI",
+            VI: "PR"
+          }[foreign_country_code.to_sym]
+        end
+
+        subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
+
+        it "returns facility ids for appropriate state" do
+          expect(subject).to eq(RegionalOffice.ro_facility_ids_for_state(expected_state_code))
+        end
+      end
+    end
+
     context "when veteran with legacy appeal requests central office and does not live in DC, MD, or VA" do
       let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfhr: "1")) }
       subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
@@ -171,9 +190,20 @@ describe VaDotGovAddressValidator do
         expect(subject).to match_array ["vba_372"]
       end
     end
+
+    context "when veteran with legacy appeal lives in MD" do
+      let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:valid_address_state_code) { "MD" }
+
+      subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
+
+      it "adds DC regional office" do
+        expect(subject).to match_array %w[vba_313 vba_372]
+      end
+    end
   end
 
-  describe "#valid_address when there is an address validation error", :postgres do
+  describe "#valid_address when there is an address validation error" do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 

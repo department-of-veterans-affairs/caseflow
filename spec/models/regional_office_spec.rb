@@ -89,6 +89,22 @@ describe RegionalOffice do
     end
   end
 
+  context ".facility_ids" do
+    subject { RegionalOffice.facility_ids }
+
+    it "returns all RO facility ids" do
+      expect(subject.count).to eq 57
+    end
+  end 
+
+  context ".ro_facility_ids_for_state for TX" do
+    subject { RegionalOffice.ro_facility_ids_for_state("TX") }
+
+    it "returns ro facility ids for Texas" do   
+      expect(subject).to match_array(%w[vba_349 vba_362])
+    end
+  end
+
   context ".street_address" do
     RegionalOffice.all.each do |ro|
       it "regional office (#{ro.key}) does not throw when street_address is called" do

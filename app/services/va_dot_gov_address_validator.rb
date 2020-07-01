@@ -85,7 +85,15 @@ class VaDotGovAddressValidator
     # only match to Central office if veteran requested central office
     return ["vba_372"] if appeal_is_legacy_and_veteran_requested_central_office?
 
-    RegionalOffice.facility_ids
+    facility_ids = RegionalOffice.ro_facility_ids
+    # veterans whose closest AHL is San Antonio should have Houston as the RO
+    # even though Waco may be closer. This is a RO/AHL policy quirk.
+    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
+    facility_ids << "vha_671BY" if veteran_lives_in_texas? # include San Antonio facility id
+
+    facility_ids << "vba_372" if appeal_is_legacy_and_veteran_lives_in_va_or_md?
+
+    facility_ids
   end
 
   private
