@@ -89,8 +89,8 @@ describe RegionalOffice do
     end
   end
 
-  context ".facility_ids" do
-    subject { RegionalOffice.facility_ids }
+  context ".ro_facility_ids" do
+    subject { RegionalOffice.ro_facility_ids }
 
     it "returns all RO facility ids" do
       expect(subject.count).to eq 57
