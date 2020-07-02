@@ -696,6 +696,9 @@ legacy_issue_optins,request_issue_id,integer (8) ∗ FK,x,,x,,x,The request is
 legacy_issue_optins,rollback_created_at,datetime,,,,,,"Timestamp for when the connected request issue is removed from a Decision Review during edit, indicating that the opt-in needs to be rolled back."
 legacy_issue_optins,rollback_processed_at,datetime,,,,,,Timestamp for when a rolled back opt-in has successfully finished being rolled back.
 legacy_issue_optins,updated_at,datetime ∗,x,,,,x,Automatically populated when the record is updated.
+legacy_issue_optins,original_legacy_appeal_decision_date,datetime,,,,,,The original disposition date of a legacy appeal being opted in.
+legacy_issue_optins,original_legacy_appeal_disposition_code,string,,,,,,The original disposition code of legacy appeal being opted in.
+legacy_issue_optins,folder_date_time_of_decision,datetime,,,,,,Date/Time of decision.
 messages,,,,,,,,
 messages,created_at,datetime ∗,x,,,,,
 messages,detail_id,integer FK,,,x,,x,ID of the related object
