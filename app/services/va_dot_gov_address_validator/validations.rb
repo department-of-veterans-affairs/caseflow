@@ -59,6 +59,12 @@ module VaDotGovAddressValidator::Validations
                       end
   end
 
+  def closest_regional_office_with_exceptions
+    # Delaware's RO is not actually an RO
+    # So we assign all appeals with appellants that live in Delaware to Philadelphia
+    (closest_regional_office == "RO60") ? "RO10" : closest_regional_office
+  end
+
   def appeal_is_legacy_and_veteran_requested_central_office?
     appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
   end
