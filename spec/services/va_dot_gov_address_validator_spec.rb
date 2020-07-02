@@ -155,6 +155,8 @@ describe VaDotGovAddressValidator do
       }
     end
 
+    subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
+
     before(:each) do
       valid_address_response = ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response)
       allow(valid_address_response).to receive(:data).and_return(valid_address)
@@ -174,8 +176,6 @@ describe VaDotGovAddressValidator do
           }[foreign_country_code.to_sym]
         end
 
-        subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
-
         it "returns facility ids for appropriate state" do
           expect(subject).to eq(RegionalOffice.ro_facility_ids_for_state(expected_state_code))
         end
@@ -184,18 +184,24 @@ describe VaDotGovAddressValidator do
 
     context "when veteran with legacy appeal requests central office and does not live in DC, MD, or VA" do
       let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfhr: "1")) }
-      subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
 
       it "returns DC" do
         expect(subject).to match_array ["vba_372"]
       end
     end
 
+    context "when veteran with legacy appeal lives in TX" do
+      let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:valid_address_state_code) { "TX" }
+
+      it "adds San Antonio Satellite Office" do
+        expect(subject).to match_array %w[vba_349 vba_362 vha_671BY]
+      end
+    end
+
     context "when veteran with legacy appeal lives in MD" do
       let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let!(:valid_address_state_code) { "MD" }
-
-      subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
 
       it "adds DC regional office" do
         expect(subject).to match_array %w[vba_313 vba_372]
