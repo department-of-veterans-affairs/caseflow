@@ -851,7 +851,7 @@ ActiveRecord::Schema.define(version: 2020_06_30_154526) do
     t.boolean "rice_compliance", default: false
     t.boolean "spina_bifida", default: false
     t.datetime "updated_at"
-    t.boolean "usCourtOfAppealsForVeteransClaims", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
+    t.boolean "us_court_of_appeals_for_veterans_claims", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_philippines", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false

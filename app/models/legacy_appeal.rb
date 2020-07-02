@@ -111,7 +111,7 @@ class LegacyAppeal < CaseflowRecord
   SPECIAL_ISSUES = {
     blue_water: "Blue Water",
     burn_pit: "Burn Pit",
-    usCourtOfAppealsForVeteransClaims: "US Court of Appeals for Veterans Claims (CAVC)",
+    us_court_of_appeals_for_veterans_claims: "US Court of Appeals for Veterans Claims (CAVC)",
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
     education_gi_bill_dependents_educational_assistance_scholars: "Education - GI Bill, dependents educational assistance, scholarship, transfer of entitlement",
