@@ -255,7 +255,7 @@ export class EstablishClaimDecision extends React.Component {
                     onChange={this.specialIssuesChange}
                     key={index}
                     value={specialIssues[issue.specialIssue]}
-                    disabled={issue.specialIssue !== 'noSpecialIssues' && allIssuesDisabled ? true : false}
+                    disabled={Boolean(issue.specialIssue !== 'noSpecialIssues' && allIssuesDisabled)}
                   />
                 );
               })}
