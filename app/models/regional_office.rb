@@ -76,6 +76,10 @@ class RegionalOffice
     "Station #{station_key} - #{city}"
   end
 
+  def has_facility_id?
+    facility_id.present?
+  end
+
   def valid?
     !!location_hash[:city]
   end
@@ -101,25 +105,45 @@ class RegionalOffice
   end
 
   def compute_station_key
-    result = STATIONS.find { |_station, ros| [*ros].include? key }
-    result&.first
+    STATIONS.detect { |_station, ros| ros.include?(key) }&.first
   end
 
   class << self
-    # Returns a regional office with the specified key,
-    # throws an error if not found
-    def find!(key)
-      result = RegionalOffice.new(key)
+    # Gets a regional office with the specified key,
+    #
+    # @param ro_key  [String] The RO key
+    #
+    # @return            [RegionalOffice]
+    #   The RO if it is found.
+    #
+    # @raise      [RegionalOffice::NotFoundError]
+    #   If an RO with the specified key was not found
+    def find!(ro_key)
+      result = RegionalOffice.new(ro_key)
 
       fail NotFoundError unless result.valid?
 
       result
     end
 
+    # Get all regional offices (including satellite offices).
+    #
+    # @return            [Enumerator<RegionalOffice>]
+    #   An enumerator over all ROs (including satellite offices).
     def all
       Enumerator.new do |iter|
         CITIES.each_key { |ro_key| iter << RegionalOffice.new(ro_key) }
         SATELLITE_OFFICES.each_key { |ro_key| iter << RegionalOffice.new(ro_key) }
+      end
+    end
+
+    # Get regional offices (excluding satellite offices).
+    #
+    # @return            [Enumerator<RegionalOffice>]
+    #   An enumerator over ROs (excluding satellite offices).
+    def cities
+      Enumerator.new do |iter|
+        CITIES.each_key { |ro_key| iter << RegionalOffice.new(ro_key) }
       end
     end
 
@@ -137,9 +161,7 @@ class RegionalOffice
 
     # Returns RegionalOffice objects for each RO that has the passed station code
     def for_station(station_key)
-      [STATIONS[station_key]].flatten.map do |regional_office_key|
-        find!(regional_office_key)
-      end
+      STATIONS[station_key].map(&RegionalOffice.method(:find!))
     end
 
     def facility_ids
@@ -153,24 +175,37 @@ class RegionalOffice
       ids.uniq
     end
 
+    # Get facility IDs for ROs (excludes satellite offices).
+    #
+    # @return            [Array<String>]
+    #   An array of facility ids.
     def ro_facility_ids
-      CITIES
-        .values
-        .select { |ro| ro[:facility_locator_id].present? }
-        .pluck(:facility_locator_id)
+      cities
+        .select(&:has_facility_id?)
+        .map(&:facility_id)
         .uniq
     end
 
+    # Get all RO facility IDs for a given state (excludes satellite offices).
+    #
+    # @param state_code  [String] A 2-letter state code
+    #
+    # @return            [Array<String>]
+    #   An array of facility ids that correspond to the matched ROs.
     def ro_facility_ids_for_state(state_code)
-      CITIES
-        .values
-        .select do |ro|
-          ro[:facility_locator_id].present? && state_code == ro[:state]
-        end
-        .pluck(:facility_locator_id)
+      cities
+        .select { |ro| ro.has_facility_id? && state_code == ro.state }
+        .map(&:facility_id)
         .uniq
     end
 
+    # Get all facility IDs (including alternate locations) that correspond with an RO
+    # (excludes satellite offices).
+    #
+    # @param regional_office_key  [String] The RO key
+    #
+    # @return                     [Array<String>]
+    #   An array of facility ids that correspond to the matched RO.
     def facility_ids_for_ro(regional_office_key)
       (
         (CITIES[regional_office_key][:alternate_locations] || []) << CITIES[regional_office_key][:facility_locator_id]
