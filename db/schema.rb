@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_30_154526) do
+ActiveRecord::Schema.define(version: 2020_07_02_015739) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -331,7 +331,7 @@ ActiveRecord::Schema.define(version: 2020_06_30_154526) do
     t.datetime "created_at"
     t.bigint "decision_review_id", comment: "The ID of the decision review the claimant is on."
     t.string "decision_review_type", comment: "The type of decision review the claimant is on."
-    t.text "notes", comment: "This is a notes field for adding claimant not listed and any supplementary information outside of unlisted claimant."
+    t.text "notes", comment: "Notes why a claimant is not listed."
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
     t.string "type", default: "Claimant", comment: "The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, or OtherClaimant."
@@ -884,10 +884,13 @@ ActiveRecord::Schema.define(version: 2020_06_30_154526) do
   create_table "legacy_issue_optins", comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review.", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "When a Request Issue is connected to a VACOLS issue on a legacy appeal, and the Veteran has agreed to withdraw their legacy appeals, a legacy_issue_optin is created at the time the Decision Review is successfully intaken. This is used to indicate that the legacy issue should subsequently be opted into AMA in VACOLS. "
     t.string "error"
+    t.datetime "folder_date_time_of_decision", comment: "Date/Time of decision"
     t.bigint "legacy_issue_id", comment: "The legacy issue being opted in, which connects to the request issue"
     t.datetime "optin_processed_at", comment: "The timestamp for when the opt-in was successfully processed, meaning it was updated in VACOLS as opted into AMA."
     t.string "original_disposition_code", comment: "The original disposition code of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
     t.date "original_disposition_date", comment: "The original disposition date of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
+    t.date "original_legacy_appeal_decision_date", comment: "The original disposition date of a legacy appeal being opted in"
+    t.string "original_legacy_appeal_disposition_code", comment: "The original disposition code of legacy appeal being opted in"
     t.bigint "request_issue_id", null: false, comment: "The request issue connected to the legacy VACOLS issue that has been opted in."
     t.datetime "rollback_created_at", comment: "Timestamp for when the connected request issue is removed from a Decision Review during edit, indicating that the opt-in needs to be rolled back."
     t.datetime "rollback_processed_at", comment: "Timestamp for when a rolled back opt-in has successfully finished being rolled back."
