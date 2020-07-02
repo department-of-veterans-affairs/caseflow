@@ -44,7 +44,7 @@ export class EstablishClaimDecision extends React.Component {
     }
 
     // dispatch the update for the box checked
-    this.props.handleSpecialIssueFieldChange(specialIssueId, checked)
+    this.props.handleSpecialIssueFieldChange(specialIssueId, checked);
   }
 
   onTabSelected = (tabNumber) => {
@@ -79,7 +79,6 @@ export class EstablishClaimDecision extends React.Component {
       loading,
       decisionType,
       handleToggleCancelTaskModal,
-      handleSpecialIssueFieldChange,
       pdfLink,
       pdfjsLink,
       specialIssues,
@@ -87,6 +86,7 @@ export class EstablishClaimDecision extends React.Component {
       specialIssuesError
     } = this.props;
 
+    const { allIssuesDisabled } = this.state;
     let issueColumns = [
       {
         header: 'Program',
@@ -255,6 +255,7 @@ export class EstablishClaimDecision extends React.Component {
                     onChange={this.specialIssuesChange}
                     key={index}
                     value={specialIssues[issue.specialIssue]}
+                    disabled={issue.specialIssue !== 'noSpecialIssues' && allIssuesDisabled ? true : false}
                   />
                 );
               })}
@@ -282,6 +283,7 @@ export class EstablishClaimDecision extends React.Component {
 }
 
 EstablishClaimDecision.propTypes = {
+  clearSpecialIssues: PropTypes.func,
   decisionType: PropTypes.string.isRequired,
   handleSpecialIssueFieldChange: PropTypes.func,
   handleSubmit: PropTypes.func.isRequired,
