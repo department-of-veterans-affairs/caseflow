@@ -63,9 +63,10 @@ class ControllerSchema
     instance_eval(&block) if block
   end
 
-  # mutates params by removing any fields not declared in the schema
-  def sanitize(params)
-    params.slice!(*field_names)
+  # mutates params (other than path params) by removing fields not declared in the schema
+  def sanitize(params, path_params = {})
+    allowed = field_names + path_params.keys
+    params.slice!(*allowed)
   end
 
   def validate(params)
