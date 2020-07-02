@@ -65,15 +65,13 @@ class ControllerSchema
 
   # mutates params (other than path params) by removing fields not declared in the schema
   def sanitize(params, path_params = {})
-    allowed = field_names + path_params.keys
+    allowed = fields.map(&:name) + path_params.keys
     params.slice!(*allowed)
   end
 
   def validate(params)
     dry_schema.call(params.to_unsafe_h)
   end
-
-  private
 
   def dry_schema
     @dry_schema ||= begin
@@ -83,9 +81,7 @@ class ControllerSchema
     end
   end
 
-  def field_names
-    fields.map(&:name)
-  end
+  private
 
   def method_missing(method_name, field_name, **options)
     if SUPPORTED_TYPES.include?(method_name.to_s)

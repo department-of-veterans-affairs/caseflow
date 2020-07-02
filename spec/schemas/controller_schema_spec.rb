@@ -11,13 +11,14 @@ describe ControllerSchema do
   end
 
   describe "#sanitize" do
-    subject { schema.sanitize(params) }
+    subject { schema.sanitize(params, known: "foo") }
 
     context "when unknown params are included" do
-      let(:params_hash) { { id: 123, name: "foo", unknown: "bar" } }
+      let(:params_hash) { { id: 123, name: "value", known: "foo", unknown: "bar" } }
 
       it "removes unknown params" do
         subject
+        expect(params).to include(:id, :name, :known)
         expect(params).not_to include(:unknown)
       end
     end
