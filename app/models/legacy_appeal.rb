@@ -106,12 +106,12 @@ class LegacyAppeal < CaseflowRecord
     (self.class.repository.remand_return_date(vacols_id) || false) unless active?
   end
 
-  # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
+  # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
   # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
     blue_water: "Blue Water",
     burn_pit: "Burn Pit",
-    cavc: "US Court of Appeals for Veterans Claims (CAVC)",
+    usCourtOfAppealsForVeteransClaims: "US Court of Appeals for Veterans Claims (CAVC)",
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
     education_gi_bill_dependents_educational_assistance_scholars: "Education - GI Bill, dependents educational assistance, scholarship, transfer of entitlement",

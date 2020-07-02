@@ -825,7 +825,6 @@ ActiveRecord::Schema.define(version: 2020_06_30_154526) do
     t.bigint "appeal_series_id"
     t.boolean "blue_water", default: false, comment: "Blue Water"
     t.boolean "burn_pit", default: false, comment: "Burn Pit"
-    t.boolean "cavc", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -852,6 +851,7 @@ ActiveRecord::Schema.define(version: 2020_06_30_154526) do
     t.boolean "rice_compliance", default: false
     t.boolean "spina_bifida", default: false
     t.datetime "updated_at"
+    t.boolean "usCourtOfAppealsForVeteransClaims", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_philippines", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
