@@ -10,8 +10,8 @@ describe ControllerSchema do
     end
   end
 
-  describe "#sanitize" do
-    subject { schema.sanitize(params, known: "foo") }
+  describe "#remove_unknown_keys" do
+    subject { schema.remove_unknown_keys(params, known: "foo") }
 
     context "when unknown params are included" do
       let(:params_hash) { { id: 123, name: "value", known: "foo", unknown: "bar" } }
