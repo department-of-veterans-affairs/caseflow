@@ -80,9 +80,20 @@ class DocketCoordinator
 
   # Determines which non-priority appeals to schedule for a hearing for a given
   # time period in DAYS.
-  def upcoming_appeals_in_range(time_period)
+  #
+  # @param time_period [Numeric] The number of days in the time period
+  # @param end_of_time_period [Date] The date of last day in the time period
+  #
+  # @return [ActiveRecord::Relation]
+  #   The appeals that should be scheduled in the given time period
+  def upcoming_appeals_in_range(time_period, end_of_time_period)
     target = target_number_of_ama_hearings(time_period)
-    dockets[:hearing].appeals(priority: false).where(docket_range_date: nil).limit(target)
+
+    dockets[:hearing]
+      .appeals(priority: false)
+      .where(docket_range_date: [nil, end_of_time_period])
+      .order("docket_range_date DESC NULLS LAST")
+      .limit(target)
   end
 
   def priority_count
