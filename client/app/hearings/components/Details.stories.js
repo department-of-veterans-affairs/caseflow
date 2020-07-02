@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { object, select, date, boolean, button } from '@storybook/addon-knobs';
+import { select, boolean, button } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
-import { BrowserRouter, Switch } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import Details from './Details';
 import { HearingsFormContextProvider } from '../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import ReduxBase from '../../components/ReduxBase';
-import reducers from '../reducers/index';
+import reducer from '../reducers';
 import {
   virtualHearingEmails,
   amaHearing,
@@ -16,7 +16,7 @@ import {
   virtualHearing,
 } from '../../../test/data/hearings';
 import { userWithVirtualHearingsFeatureEnabled } from '../../../test/data/user';
-import { detailsStore } from '../../../test/data/stores/hearingsStore';
+import { detailsStore, initialState } from '../../../test/data/stores/hearingsStore';
 
 export default {
   title: 'Hearings/Components/Details',
@@ -26,7 +26,7 @@ export default {
 const Wrapper = (props) => {
   return (
     <BrowserRouter basename="/hearings">
-      <ReduxBase store={detailsStore} reducer={reducers}>
+      <ReduxBase initialState={initialState} store={detailsStore} reducer={reducer}>
         <HearingsUserContext.Provider
           value={userWithVirtualHearingsFeatureEnabled}
         >
@@ -57,8 +57,7 @@ export const Normal = () => {
   const selectedHearing = select(
     'hearing',
     { Video: defaultHearing, Central: centralHearing, Virtual: amaHearing },
-    defaultHearing,
-    'knobs'
+    defaultHearing
   );
 
   // Create a state to force reading of knob props
@@ -69,23 +68,23 @@ export const Normal = () => {
   };
 
   // Set the virtual control
-  const virtual = boolean('Was Virtual?', false, 'knobs');
+  const virtual = boolean('Was Virtual?', false);
 
   // Set the emails control
-  const emails = boolean('Sent Emails?', false, 'knobs');
+  const emails = boolean('Sent Emails?', false);
 
   // Add controls to the hearing
   const controlledHearing = {
     ...selectedHearing,
     ...(emails ? virtualHearingEmails : {}),
     ...(virtual ? virtualHearing : {}),
-    scheduledForIsPast: boolean('Past Schedule?', false, 'knobs'),
+    scheduledForIsPast: boolean('Past Schedule?', false),
     wasVirtual: virtual,
-    docketName: boolean('Legacy', false, 'knobs') ? 'rand' : 'hearing',
+    docketName: boolean('Legacy', false) ? 'rand' : 'hearing',
   };
 
   // Create a button to reload the hearing details
-  button('Change Hearing', reload, 'knobs');
+  button('Change Hearing', reload);
 
   return loaded && <Wrapper hearing={controlledHearing} />;
 };

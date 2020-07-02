@@ -31,17 +31,17 @@ class HearingDetailsContainer extends React.Component {
   }
 
   getHearing = () => {
-    const { hearingId } = this.props;
-    const { hearings } = this.state;
+    const { hearingId, hearings } = this.props;
     const hearing = _.find(hearings, (_hearing) => _hearing.externalId === hearingId);
 
     if (hearing) {
-      this.setHearing(hearing);
-    } else {
-      return ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
-        this.setHearing(ApiUtil.convertToCamelCase(resp.body.data));
-      });
+      return new Promise((resolve) => resolve(this.setHearing(hearing)));
     }
+
+    return ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
+      this.setHearing(ApiUtil.convertToCamelCase(resp.body.data));
+    });
+
   };
 
   saveHearing = (data) => {
@@ -83,12 +83,13 @@ class HearingDetailsContainer extends React.Component {
 HearingDetailsContainer.contextType = HearingsUserContext;
 
 HearingDetailsContainer.propTypes = {
+  hearings: PropTypes.array.isRequired,
   hearingId: PropTypes.string.isRequired,
   history: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
-  hearings: state.hearingSchedule.hearings
+  hearings: state.dailyDocket.hearings
 });
 
 export default connect(
