@@ -125,6 +125,15 @@ describe TaskPager, :all_dbs do
         expect(subject.count).to eq(task_count)
       end
     end
+
+    context "when the tab cannot be paginated" do
+      let(:page) { 1 }
+      before { allow_any_instance_of(QueueTab).to receive(:contains_legacy_tasks?).and_return(true) }
+
+      it "returns all tasks" do
+        expect(subject.count).to eq(task_count)
+      end
+    end
   end
 
   describe ".total_task_count" do
@@ -165,6 +174,15 @@ describe TaskPager, :all_dbs do
 
       it_behaves_like "total task count"
     end
+
+    context "when the tab cannot be paginated" do
+      let(:page) { 1 }
+      before { allow_any_instance_of(QueueTab).to receive(:contains_legacy_tasks?).and_return(true) }
+
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
   end
 
   describe ".task_page_count" do
@@ -184,6 +202,15 @@ describe TaskPager, :all_dbs do
 
     context "when pagination is not enabled for the assignee" do
       before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
+
+      it "returns one page with all tasks" do
+        expect(subject).to eq(1)
+      end
+    end
+
+    context "when the tab cannot be paginated" do
+      let(:page) { 1 }
+      before { allow_any_instance_of(QueueTab).to receive(:contains_legacy_tasks?).and_return(true) }
 
       it "returns one page with all tasks" do
         expect(subject).to eq(1)

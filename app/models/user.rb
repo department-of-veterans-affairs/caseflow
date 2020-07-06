@@ -317,7 +317,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def use_task_pages_api?
-    FeatureToggle.enabled?(:user_queue_pagination, user: self) && !attorney? && !judge?
+    FeatureToggle.enabled?(:user_queue_pagination, user: self)
   end
 
   def queue_tabs
