@@ -104,4 +104,12 @@ class DecisionReviewIntake < Intake
       epe.sync!
     end
   end
+
+  def claimant_type
+    if request_params[:veteran_is_not_claimant] == true
+      "DependentClaimant"
+    else
+      "VeteranClaimant"
+    end
+  end
 end

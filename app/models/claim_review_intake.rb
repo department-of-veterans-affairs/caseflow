@@ -57,6 +57,7 @@ class ClaimReviewIntake < DecisionReviewIntake
       claimant.type = claimant_type
       claimant.participant_id = participant_id
       claimant.payee_code = payee_code
+      claimant.type = claimant_type
       claimant.save!
     end
     update_person!
