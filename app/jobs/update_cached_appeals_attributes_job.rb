@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 VACOLS_BATCH_SIZE = 1000
-POSTGRES_BATCH_SIZE = 10000
+POSTGRES_BATCH_SIZE = 10_000
 
 class UpdateCachedAppealsAttributesJob < CaseflowJob
   # For time_ago_in_words()
