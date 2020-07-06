@@ -131,7 +131,7 @@ class DocumentsTable extends React.Component {
       _.get(this.props.pdfList, ['dropdowns', 'tag']);
 
     const sortDirectionAriaLabel =
-      `Sorted ${this.props.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending'}`
+      `Sorted ${this.props.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending'}`;
 
     return [
       {

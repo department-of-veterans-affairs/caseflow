@@ -98,10 +98,10 @@ const HeaderRow = (props) => {
           const botColor = sortingThisColumn && props.sortAscending ?
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
-          let ariaLabel = `Sort by ${column.header}. `
+          let ariaLabel = `Sort by ${column.header}. `;
 
           if (sortingThisColumn) {
-            ariaLabel = ariaLabel.concat(`Sorted ${props.sortAscending ? 'ascending' : 'descending'}`)
+            ariaLabel = ariaLabel.concat(`Sorted ${props.sortAscending ? 'ascending' : 'descending'}`);
           }
 
           sortIcon = <span {...iconStyle} aria-label={ariaLabel} role="button" tabIndex="0"
