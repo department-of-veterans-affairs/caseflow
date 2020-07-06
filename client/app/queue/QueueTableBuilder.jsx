@@ -54,7 +54,7 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME]: this.props.completedTasks
     };
 
-    return mapper[tabName];
+    return mapper[tabName] || [];
   }
 
   filterValuesForColumn = (column) => column && column.filterable && column.filter_options;
