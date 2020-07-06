@@ -165,46 +165,42 @@ describe Distribution, :all_dbs do
       end
     end
 
-    shared_examples "valid distribution" do
-      it "correctly distributes cases" do
-        evidence_submission_cases[0...2].each do |appeal|
-          appeal.tasks
-            .find_by(type: EvidenceSubmissionWindowTask.name)
-            .update!(status: :completed)
-        end
-        subject.distribute!
-        expect(subject.valid?).to eq(true)
-        expect(subject.status).to eq("completed")
-        expect(subject.started_at).to eq(Time.zone.now) # time is frozen so appears zero time elapsed
-        expect(subject.errored_at).to be_nil
-        expect(subject.completed_at).to eq(Time.zone.now)
-        expect(subject.statistics["batch_size"]).to eq(15)
-        expect(subject.statistics["total_batch_size"]).to eq(45)
-        expect(subject.statistics["priority_count"]).to eq(legacy_priority_count + 1)
-        expect(subject.statistics["legacy_proportion"]).to eq(0.4)
-        expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(0)
-        expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
-        expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
-        expect(subject.statistics["hearing_proportion"]).to eq(0.2)
-        expect(subject.statistics["pacesetting_direct_review_proportion"]).to eq(0.1)
-        expect(subject.statistics["interpolated_minimum_direct_review_proportion"]).to eq(0.067)
-        expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
-        expect(subject.distributed_cases.count).to eq(15)
-        expect(subject.distributed_cases.first.docket).to eq("legacy")
-        expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
-        expect(subject.distributed_cases.where(priority: true).count).to eq(5)
-        expect(subject.distributed_cases.where(genpop: true).count).to eq(2)
-        expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
-        expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(5)
-        expect(subject.distributed_cases.where(priority: true,
-                                               docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
-        expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
-        expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 3
-        expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
+    it "correctly distributes cases" do
+      evidence_submission_cases[0...2].each do |appeal|
+        appeal.tasks
+          .find_by(type: EvidenceSubmissionWindowTask.name)
+          .update!(status: :completed)
       end
+      subject.distribute!
+      expect(subject.valid?).to eq(true)
+      expect(subject.status).to eq("completed")
+      expect(subject.started_at).to eq(Time.zone.now) # time is frozen so appears zero time elapsed
+      expect(subject.errored_at).to be_nil
+      expect(subject.completed_at).to eq(Time.zone.now)
+      expect(subject.statistics["batch_size"]).to eq(15)
+      expect(subject.statistics["total_batch_size"]).to eq(45)
+      expect(subject.statistics["priority_count"]).to eq(legacy_priority_count + 1)
+      expect(subject.statistics["legacy_proportion"]).to eq(0.4)
+      expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(0)
+      expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
+      expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
+      expect(subject.statistics["hearing_proportion"]).to eq(0.2)
+      expect(subject.statistics["pacesetting_direct_review_proportion"]).to eq(0.1)
+      expect(subject.statistics["interpolated_minimum_direct_review_proportion"]).to eq(0.067)
+      expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
+      expect(subject.distributed_cases.count).to eq(15)
+      expect(subject.distributed_cases.first.docket).to eq("legacy")
+      expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
+      expect(subject.distributed_cases.where(priority: true).count).to eq(5)
+      expect(subject.distributed_cases.where(genpop: true).count).to eq(2)
+      expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
+      expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(5)
+      expect(subject.distributed_cases.where(priority: true,
+                                              docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
+      expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
+      expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 3
+      expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
     end
-
-    it_behaves_like "valid distribution"
 
     context "with priority_acd on" do
       let(:limit) { 5 }
@@ -219,6 +215,27 @@ describe Distribution, :all_dbs do
         expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(2)
         expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
         expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
+      end
+
+      context "when the judge's backlog is full" do
+        let!(:more_same_judge_nonpriority_hearings) do
+          legacy_nonpriority_cases[33..63].map do |appeal|
+            create(:case_hearing,
+                   :disposition_held,
+                   folder_nr: appeal.bfkey,
+                   hearing_date: 1.month.ago,
+                   board_member: judge.vacols_attorney_id)
+          end
+        end
+
+        it "distributes legacy hearing non priority cases down to 30" do
+          expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)).to eq 35
+          subject.distribute!
+          expect(subject.valid?).to eq(true)
+          expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(30)
+          expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(5)
+          expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
+        end
       end
     end
 
