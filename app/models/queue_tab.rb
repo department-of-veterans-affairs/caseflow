@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Base DTO class for a queue table tab and set of tasks.
+# This DTO is used within the QueueConfig DTO's `tabs` array.
+# Attributes and tasks will be pulled from this config
+# on the frontend to build a tab for a queue table.
 class QueueTab
   include ActiveModel::Model
 
@@ -25,7 +29,8 @@ class QueueTab
       name: name,
       description: description,
       columns: columns.map { |column| column.to_hash(tasks) },
-      allow_bulk_assign: allow_bulk_assign?
+      allow_bulk_assign: allow_bulk_assign?,
+      contains_legacy_tasks: contains_legacy_tasks?
     }
   end
 
@@ -48,6 +53,10 @@ class QueueTab
   end
 
   def allow_bulk_assign?
+    false
+  end
+
+  def contains_legacy_tasks?
     false
   end
 
@@ -113,11 +122,12 @@ class QueueTab
 
   def task_includes
     [
-      { appeal: [:available_hearing_locations, :claimants] },
+      { appeal: [:available_hearing_locations, :claimants, :work_mode] },
       :assigned_by,
       :assigned_to,
       :children,
-      :parent
+      :parent,
+      :attorney_case_reviews
     ]
   end
 
