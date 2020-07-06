@@ -76,6 +76,7 @@ describe AppealIntake, :all_dbs do
     let(:receipt_date) { "2018-05-25" }
     let(:docket_type) { Constants.AMA_DOCKETS.hearing }
     let(:claimant) { nil }
+    let(:claimant_type) { nil }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
     let(:veteran_is_not_claimant) { "false" }
@@ -87,6 +88,7 @@ describe AppealIntake, :all_dbs do
         receipt_date: receipt_date,
         docket_type: docket_type,
         claimant: claimant,
+        claimant_type: claimant_type,
         payee_code: payee_code,
         legacy_opt_in_approved: legacy_opt_in_approved,
         veteran_is_not_claimant: veteran_is_not_claimant
@@ -202,6 +204,24 @@ describe AppealIntake, :all_dbs do
       it "is invalid" do
         expect(subject).to be_falsey
         expect(detail.errors[:receipt_date]).to include("in_future")
+      end
+    end
+
+    context "claimant is attorney" do
+      let(:claimant_type) { "attorney" }
+
+      it "sets correct claimant type" do
+        expect(subject).to be_truthy
+        expect(intake.detail.claimant).to have_attributes(type: "AttorneyClaimant")
+      end
+    end
+
+    context "claimant is other" do
+      let(:claimant_type) { "other" }
+
+      it "sets correct claimant type" do
+        expect(subject).to be_truthy
+        expect(intake.detail.claimant).to have_attributes(type: "OtherClaimant")
       end
     end
   end

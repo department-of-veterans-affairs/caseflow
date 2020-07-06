@@ -59,6 +59,16 @@ class AppealIntake < DecisionReviewIntake
     update_person!
   end
 
+  def claimant_type
+    if request_params[:claimant_type]
+      "#{request_params[:claimant_type].capitalize}Claimant"
+    elsif request_params[:veteran_is_not_claimant] == true
+      "DependentClaimant"
+    else
+      "VeteranClaimant"
+    end
+  end
+
   def review_params
     request_params.permit(
       :receipt_date,
