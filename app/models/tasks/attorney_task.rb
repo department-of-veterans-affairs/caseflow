@@ -52,9 +52,9 @@ class AttorneyTask < Task
     true
   end
 
-  def send_back_to_judge_assign!
+  def send_back_to_judge_assign!(params)
     transaction do
-      cancelled!
+      update_with_instructions(params)
       cancel_parent_judge_review
       judge_assign_task = open_judge_assign_task
 
@@ -63,7 +63,7 @@ class AttorneyTask < Task
   end
 
   def update_from_params(params, user)
-    update_params_will_cancel_task?(params) ? send_back_to_judge_assign! : super(params, user)
+    update_params_will_cancel_task?(params) ? send_back_to_judge_assign!(params) : super(params, user)
   end
 
   private
