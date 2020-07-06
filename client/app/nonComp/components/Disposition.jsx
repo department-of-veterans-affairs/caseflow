@@ -137,7 +137,7 @@ class NonCompDispositions extends React.PureComponent {
 
   establishmentCreditsTimestamp() {
     const tstamp = moment(this.props.appeal.processedAt).format('ddd MMM DD YYYY [at] HH:mm');
-    
+
     if (this.props.appeal.processedAt) {
       return tstamp;
     }
