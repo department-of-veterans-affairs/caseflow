@@ -51,10 +51,7 @@ class VaDotGovAddressValidator
   end
 
   def available_hearing_locations
-    @available_hearing_locations ||= begin
-      ids = RegionalOffice.facility_ids_for_ro(closest_regional_office)
-      closest_facility_response.data.select { |facility| ids.include?(facility[:facility_id]) }
-    end
+    @available_hearing_locations ||= available_hearing_locations_response.data
   end
 
   def assign_ro_and_update_ahls(new_ro)
@@ -81,6 +78,10 @@ class VaDotGovAddressValidator
                                  ids: facility_ids)
   end
 
+  # Gets a list of RO facility ids to geomatch with.
+  #
+  # @return            [Array<String>]
+  #   An array of RO facility ids that are in the same state as the veteran/appellant.
   def facility_ids_to_geomatch
     # only match to Central office if veteran requested central office
     return ["vba_372"] if appeal_is_legacy_and_veteran_requested_central_office?
@@ -132,6 +133,14 @@ class VaDotGovAddressValidator
   def valid_address_response
     @valid_address_response ||= VADotGovService.validate_address(address)
   end
+
+  def available_hearing_locations_response    
+    @available_hearing_locations_response ||= VADotGovService.get_distance(
+      ids: RegionalOffice.facility_ids_for_ro(closest_regional_office_with_exceptions),
+      lat: valid_address[:lat],
+      long: valid_address[:long]
+    )
+  end    
 
   def closest_facility_response
     @closest_facility_response ||= VADotGovService.get_distance(

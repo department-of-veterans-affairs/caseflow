@@ -22,7 +22,7 @@ module VaDotGovAddressValidator::Validations
   # :nocov:
 
   def valid_states
-    @valid_states ||= RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:state)
+    @valid_states ||= RegionalOffice::cities.select(&:has_facility_id?).map(&:state)
   end
 
   def error_handler
@@ -56,6 +56,8 @@ module VaDotGovAddressValidator::Validations
                         error_handler.handle(state_code_error)
                       elsif !closest_facility_response.success?
                         error_handler.handle(closest_facility_response.error)
+                      elsif !available_hearing_locations_response.success?
+                         error_handler.handle(available_hearing_locations_response.error)
                       end
   end
 
