@@ -84,9 +84,9 @@ export const SelectClaimant = (props) => {
   ]);
   const handleRemove = () => {
     setNewClaimant(null);
-    setClaimant(null);
+    setClaimant({ claimant: null, claimantType: null, claimantNotes: null });
   };
-  const handleAddClaimant = ({ name, participantId, claimantNotes }) => {
+  const handleAddClaimant = ({ name, participantId, claimantType, claimantNotes }) => {
     setNewClaimant({
       displayElem: <RemovableRadioLabel
         text={`${name || 'Claimant not listed'}, Attorney`} onRemove={handleRemove} notes={claimantNotes} />,
@@ -94,7 +94,7 @@ export const SelectClaimant = (props) => {
       defaultPayeeCode: '',
       claimantNotes
     });
-    setClaimant(participantId, claimantNotes);
+    setClaimant({ claimant: participantId, claimantType, claimantNotes });
     setShowClaimantModal(false);
   };
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
