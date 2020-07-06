@@ -76,7 +76,7 @@ class RegionalOffice
     "Station #{station_key} - #{city}"
   end
 
-  def has_facility_id?
+  def facility_id?
     facility_id.present?
   end
 
@@ -160,8 +160,16 @@ class RegionalOffice
     end
 
     # Returns RegionalOffice objects for each RO that has the passed station code
+    #
+    # @param station_key  [String] A CSS station code
+    #
+    # @return            [Array<RegionalOffice>]
+    #   An array of regional offices associated with the station.
     def for_station(station_key)
-      STATIONS[station_key].map(&RegionalOffice.method(:find!))
+      # STATIONS[station_key] can return either an array of RO keys or a single RO key
+      [STATIONS[station_key]]
+        .flatten
+        .map(&RegionalOffice.method(:find!))
     end
 
     def facility_ids
@@ -181,7 +189,7 @@ class RegionalOffice
     #   An array of facility ids.
     def ro_facility_ids
       cities
-        .select(&:has_facility_id?)
+        .select(&:facility_id?)
         .map(&:facility_id)
         .uniq
     end
@@ -194,7 +202,7 @@ class RegionalOffice
     #   An array of facility ids that correspond to the matched ROs.
     def ro_facility_ids_for_state(state_code)
       cities
-        .select { |ro| ro.has_facility_id? && state_code == ro.state }
+        .select { |ro| ro.facility_id? && state_code == ro.state }
         .map(&:facility_id)
         .uniq
     end

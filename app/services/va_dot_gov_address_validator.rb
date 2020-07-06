@@ -134,13 +134,13 @@ class VaDotGovAddressValidator
     @valid_address_response ||= VADotGovService.validate_address(address)
   end
 
-  def available_hearing_locations_response    
+  def available_hearing_locations_response
     @available_hearing_locations_response ||= VADotGovService.get_distance(
       ids: RegionalOffice.facility_ids_for_ro(closest_regional_office_with_exceptions),
       lat: valid_address[:lat],
       long: valid_address[:long]
     )
-  end    
+  end
 
   def closest_facility_response
     @closest_facility_response ||= VADotGovService.get_distance(
