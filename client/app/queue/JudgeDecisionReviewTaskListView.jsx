@@ -15,7 +15,7 @@ import {
   resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
-import { judgeDecisionReviewTasksSelector } from './selectors';
+import { judgeLegacyDecisionReviewTasksSelector } from './selectors';
 
 import COPY from '../../COPY';
 
@@ -79,7 +79,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    tasks: judgeDecisionReviewTasksSelector(state),
+    tasks: judgeLegacyDecisionReviewTasksSelector(state),
     messages
   };
 };
