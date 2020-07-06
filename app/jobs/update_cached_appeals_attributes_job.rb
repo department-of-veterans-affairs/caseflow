@@ -92,8 +92,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     cache_vacols_data_start = Time.zone.now
     cache_legacy_appeal_vacols_data(all_vacols_ids)
     datadog_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
-
-    increment_appeal_count(legacy_appeals.length, LegacyAppeal.name)
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -125,6 +123,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                                                                         :power_of_attorney_name,
                                                                         :suggested_hearing_location
                                                                       ] }
+      increment_appeal_count(batch_legacy_appeals.length, LegacyAppeal.name)
     end
   end
   # rubocop:enable Metrics/MethodLength
