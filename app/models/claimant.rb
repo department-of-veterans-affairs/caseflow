@@ -82,3 +82,11 @@ class Claimant < CaseflowRecord
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
   end
 end
+
+class VeteranClaimant < Claimant; end
+
+class DependentClaimant < Claimant; end
+
+class AttorneyClaimant < Claimant; end
+
+class OtherClaimant < Claimant; end
