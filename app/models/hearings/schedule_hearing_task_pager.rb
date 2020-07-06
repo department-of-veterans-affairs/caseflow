@@ -30,6 +30,10 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
     (page_index < 0) ? no_docket_line_value : page_index
   end
 
+  def paged_tasks
+    @paged_tasks ||= sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
+  end
+
   # Sorting by docket number within each category of appeal: AOD and normal.
   def sorted_tasks(tasks)
     tasks.order(Arel.sql(<<-SQL))
@@ -40,6 +44,14 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
       cached_appeal_attributes.is_aod DESC,
       cached_appeal_attributes.docket_number ASC
     SQL
+  end
+
+  def task_page_count
+    @task_page_count ||= paged_tasks.total_pages
+  end
+
+  def total_task_count
+    @total_task_count ||= paged_tasks.total_count
   end
 
   def appeal_type

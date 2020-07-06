@@ -553,9 +553,15 @@ export const legacyReassignToJudge = ({
     });
 }));
 
-const refreshTasks = (dispatch, userId, userRole) => {
+const refreshTasks = (dispatch, userId, userRole, type = null) => {
+  let url = `/tasks?user_id=${userId}&role=${userRole}`;
+
+  if (type) {
+    url = url.concat(`&type=${type}`)
+  }
+
   return Promise.all([
-    ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`),
+    ApiUtil.get(url),
     ApiUtil.get(`/queue/${userId}`, { timeout: { response: getMinutesToMilliseconds(5) } })
   ]).then((responses) => {
     dispatch(onReceiveQueue(extractAppealsAndAmaTasks(responses[0].body.tasks.data)));
@@ -599,7 +605,7 @@ const receiveDistribution = (dispatch, userId, response) => {
       detail: `${caseN} new ${pluralize('case', caseN)} have been distributed from the docket.`
     }));
 
-    refreshTasks(dispatch, userId, 'judge').then(() => dispatch(setPendingDistribution(null)));
+    refreshTasks(dispatch, userId, 'judge', 'assign').then(() => dispatch(setPendingDistribution(null)));
   } else {
     setTimeout(() => {
       // Poll until the distribution completes or errors out.
@@ -637,8 +643,14 @@ export const fetchAllAttorneys = () => (dispatch) =>
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
     catch((error) => dispatch(errorAllAttorneys(error)));
 
-export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
-  ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
+export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch) => {
+  let url = `/tasks?user_id=${userId}&role=${userRole}`;
+
+  if (type) {
+    url = url.concat(`&type=${type}`)
+  }
+
+  return ApiUtil.get(url).
     then((resp) => {
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
       dispatch(setQueueConfig(resp.body.queue_config));
@@ -648,6 +660,7 @@ export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
       // rethrow error so that QueueLoadingScreen can catch and display error
       throw error;
     });
+};
 
 export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,
