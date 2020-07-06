@@ -187,8 +187,8 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-  context ".nonpriority_hearing_cases_for_judge" do
-    subject { VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge(judge) }
+  context ".nonpriority_hearing_cases_for_judge_count" do
+    subject { VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge) }
 
     let(:hearing_judge) { judge.vacols_attorney_id }
     let(:first_case) { nonpriority_ready_case }
@@ -307,6 +307,36 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+        end
+
+        context "with priority_acd on" do
+          let(:limit) { 5 }
+
+          before { FeatureToggle.enable!(:priority_acd) }
+          after { FeatureToggle.disable!(:priority_acd) }
+
+          context "when the judge does not have 30 cases in their backlog" do
+            it "does not distribute the case" do
+              expect(subject.count).to eq(0)
+              expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+              expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+            end
+          end
+
+          context "when the judge's backlog is full" do
+            let(:number_of_cases_over_backlog) { 1 }
+
+            before do
+              allow(VACOLS::CaseDocket).to receive(:nonpriority_hearing_cases_for_judge_count).with(judge)
+                .and_return(VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT + number_of_cases_over_backlog)
+            end
+
+            it "only distributes the case" do
+              expect(subject.count).to eq(number_of_cases_over_backlog)
+              expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+              expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+            end
+          end
         end
       end
 
