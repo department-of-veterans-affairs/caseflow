@@ -91,7 +91,8 @@ CancelTaskModal.propTypes = {
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string
-  })
+  }),
+  highlightFormItems: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
