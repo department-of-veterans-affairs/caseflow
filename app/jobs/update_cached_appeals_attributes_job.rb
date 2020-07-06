@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-BATCH_SIZE = 1000
+VACOLS_BATCH_SIZE = 1000
+POSTGRES_BATCH_SIZE = 10000
 
 class UpdateCachedAppealsAttributesJob < CaseflowJob
   # For time_ago_in_words()
@@ -97,31 +98,34 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   # rubocop:disable Metrics/MethodLength
   def cache_legacy_appeal_postgres_data(legacy_appeals)
-    values_to_cache = legacy_appeals.map do |appeal|
-      regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
-      # bypass PowerOfAttorney model completely and always prefer BGS cache
-      bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
-      {
-        vacols_id: appeal.vacols_id,
-        appeal_id: appeal.id,
-        appeal_type: LegacyAppeal.name,
-        closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
-        closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
-        docket_type: appeal.docket_name, # "legacy"
-        power_of_attorney_name: (bgs_poa&.representative_name || appeal.representative_name),
-        suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
-      }
-    end
+    # this transaction times out so let's try to do this in batches
+    legacy_appeals.in_groups_of(POSTGRES_BATCH_SIZE, false) do |batch_legacy_appeals|
+      values_to_cache = batch_legacy_appeals.map do |appeal|
+        regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
+        # bypass PowerOfAttorney model completely and always prefer BGS cache
+        bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
+        {
+          vacols_id: appeal.vacols_id,
+          appeal_id: appeal.id,
+          appeal_type: LegacyAppeal.name,
+          closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
+          closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
+          docket_type: appeal.docket_name, # "legacy"
+          power_of_attorney_name: (bgs_poa&.representative_name || appeal.representative_name),
+          suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
+        }
+      end
 
-    CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
-                                                                    columns: [
-                                                                      :closest_regional_office_city,
-                                                                      :closest_regional_office_key,
-                                                                      :vacols_id,
-                                                                      :docket_type,
-                                                                      :power_of_attorney_name,
-                                                                      :suggested_hearing_location
-                                                                    ] }
+      CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
+                                                                      columns: [
+                                                                        :closest_regional_office_city,
+                                                                        :closest_regional_office_key,
+                                                                        :vacols_id,
+                                                                        :docket_type,
+                                                                        :power_of_attorney_name,
+                                                                        :suggested_hearing_location
+                                                                      ] }
+    end
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -142,7 +146,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(all_vacols_ids)
-    all_vacols_ids.in_groups_of(BATCH_SIZE, false).each do |batch_vacols_ids|
+    all_vacols_ids.in_groups_of(VACOLS_BATCH_SIZE, false).each do |batch_vacols_ids|
       vacols_folders = VACOLS::Folder
         .where(ticknum: batch_vacols_ids)
         .pluck(:ticknum, :tinum, :ticorkey)
