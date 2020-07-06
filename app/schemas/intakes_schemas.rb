@@ -22,6 +22,8 @@ class IntakesSchemas
                included_in?: DOCKET_OPTIONS,
                doc: "Appeals only"
         string :claimant, optional: true, nullable: true
+        string :claimant_type, optional: true, nullable: true
+        string :claimant_notes, optional: true, nullable: true, doc: "Appeals only"
         string :payee_code, optional: true, nullable: true
         bool :informal_conference, optional: true, nullable: true, doc: "HLRs only"
         bool :same_office, optional: true, nullable: true, doc: "HLRs only"
