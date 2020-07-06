@@ -106,7 +106,7 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content("In progress tasks")
         expect(page).to have_content("Completed tasks")
 
-      # default is the in progress page
+        # default is the in progress page
         expect(page).to have_content("Days Waiting")
         expect(page).to have_content("Higher-Level Review", count: 2)
         expect(page).to have_content("Board Grant")
