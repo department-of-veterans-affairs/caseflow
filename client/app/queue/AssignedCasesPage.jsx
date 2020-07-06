@@ -63,7 +63,7 @@ class AssignedCasesPage extends React.Component {
         if attorneyAppealsLoadingState is 'FAILURE'.
        */
       this.props.fetchTasksAndAppealsOfAttorney(attorneyId, { role: 'judge' });
-      this.props.fetchAmaTasksOfUser(attorneyId, 'attorney');
+      this.props.fetchAmaTasksOfUser(attorneyId, 'attorney', 'assign');
     }
   }
 
