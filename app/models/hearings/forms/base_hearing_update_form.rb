@@ -190,12 +190,15 @@ class BaseHearingUpdateForm
     @virtual_hearing_created ||= false
   end
 
+  # rubocop:disable Metrics/AbcSize
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
       new_virtual_hearing.appellant_email = virtual_hearing_attributes[:appellant_email]&.strip
       new_virtual_hearing.judge_email = hearing.judge&.email
       new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]&.strip
+      new_virtual_hearing.appellant_tz = virtual_hearing_attributes[:appellant_tz]
+      new_virtual_hearing.representative_tz = virtual_hearing_attributes[:representative_tz]
       @virtual_hearing_created = true
     end
 
@@ -217,6 +220,7 @@ class BaseHearingUpdateForm
       DataDogService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def only_emails_updated?
     email_changed = virtual_hearing_attributes&.key?(:appellant_email) ||
