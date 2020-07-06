@@ -47,6 +47,10 @@ class RegionalOffice
     location_hash[:label]
   end
 
+  def alternate_locations
+    location_hash[:alternate_locations]
+  end
+
   def facility_id
     location_hash[:facility_locator_id]
   end
@@ -105,7 +109,7 @@ class RegionalOffice
   end
 
   def compute_station_key
-    STATIONS.detect { |_station, ros| ros.include?(key) }&.first
+    STATIONS.detect { |_station, ros| ros.include?(key) }.first
   end
 
   class << self

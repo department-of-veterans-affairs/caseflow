@@ -21,10 +21,16 @@ describe VaDotGovAddressValidator do
       }
     end
     let!(:ro43_facility_id) { "vba_343" }
-    let!(:closest_facilities) do
-      RegionalOffice.facility_ids.shuffle.map do |id|
-        mock_facility_data(id: id)
-      end
+    let!(:closest_ro_facilities) do
+      [
+        mock_facility_data(id: ro43_facility_id)
+      ]
+    end
+    let!(:available_hearing_locations_facilities) do
+      [
+        mock_facility_data(id: ro43_facility_id),
+        mock_facility_data(id: "vba_343f")
+      ]
     end
 
     before(:each) do
@@ -34,11 +40,18 @@ describe VaDotGovAddressValidator do
       allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
         .and_return(valid_address_response)
 
-      closest_facility_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
-      allow(closest_facility_response).to receive(:data).and_return(closest_facilities)
-      allow(closest_facility_response).to receive(:error).and_return(nil)
-      allow_any_instance_of(VaDotGovAddressValidator).to receive(:closest_facility_response)
-        .and_return(closest_facility_response)
+      closest_ro_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
+      allow(closest_ro_response).to receive(:data).and_return(closest_ro_facilities)
+      allow(closest_ro_response).to receive(:error).and_return(nil)
+      allow_any_instance_of(VaDotGovAddressValidator).to receive(:closest_ro_response)
+        .and_return(closest_ro_response)
+
+      available_hearing_locations_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
+      allow(available_hearing_locations_response).to receive(:data)
+        .and_return(available_hearing_locations_facilities)
+      allow(available_hearing_locations_response).to receive(:error).and_return(nil)
+      allow_any_instance_of(VaDotGovAddressValidator).to receive(:available_hearing_locations_response)
+        .and_return(available_hearing_locations_response)
     end
 
     it "assigns a closest_regional_office and creates an available hearing location" do
@@ -138,7 +151,7 @@ describe VaDotGovAddressValidator do
     end
   end
 
-  describe "#facility_ids_to_geomatch" do
+  describe "#ro_facility_ids_to_geomatch" do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let!(:valid_address_state_code) { "VA" }
@@ -155,7 +168,7 @@ describe VaDotGovAddressValidator do
       }
     end
 
-    subject { appeal.va_dot_gov_address_validator.facility_ids_to_geomatch }
+    subject { appeal.va_dot_gov_address_validator.ro_facility_ids_to_geomatch }
 
     before(:each) do
       valid_address_response = ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response)

@@ -65,12 +65,14 @@ class VaDotGovAddressValidator
 
   def closest_regional_office
     @closest_regional_office ||= begin
-      return unless closest_facility_response.success?
+      return unless closest_ro_response.success?
 
-      VaDotGovAddressValidator::ClosestRegionalOfficeFinder.new(
-        facilities: closest_facility_response.data,
-        closest_facility_id: closest_facility_id
-      ).call
+      RegionalOffice
+        .cities
+        .detect do |ro|
+          ro.facility_id == closest_ro_facility_id
+        end
+        .key
     end
   end
 
@@ -106,7 +108,7 @@ class VaDotGovAddressValidator
   #
   # @return            [Array<String>]
   #   An array of RO facility ids that are in the same state as the veteran/appellant.
-  def facility_ids_to_geomatch
+  def ro_facility_ids_to_geomatch
     # only match to Central office if veteran requested central office
     return ["vba_372"] if appeal_is_legacy_and_veteran_requested_central_office?
 
@@ -166,16 +168,16 @@ class VaDotGovAddressValidator
     )
   end
 
-  def closest_facility_response
-    @closest_facility_response ||= VADotGovService.get_distance(
-      ids: facility_ids_to_geomatch,
+  def closest_ro_response
+    @closest_ro_response ||= VADotGovService.get_distance(
+      ids: ro_facility_ids_to_geomatch,
       lat: valid_address[:lat],
       long: valid_address[:long]
     )
   end
 
-  def closest_facility_id
-    closest_facility_response.data.first&.dig(:facility_id)
+  def closest_ro_facility_id
+    closest_ro_response.data.first&.dig(:facility_id)
   end
 
   def validate_zip_code
