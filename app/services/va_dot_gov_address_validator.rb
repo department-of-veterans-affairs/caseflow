@@ -1,15 +1,34 @@
 # frozen_string_literal: true
 
+## Validates an appellant's address, and finds the closest regional office (RO) and
+# available hearing locations (AHLs) based on their address.
+#
+# Note: distance to closest RO and AHLs is driving distance.
+#
+# See `ExternalApi::VADotGovService` for documentation of the external APIs that
+# support this class.
+
 class VaDotGovAddressValidator
   include VaDotGovAddressValidator::Validations
 
   attr_reader :appeal
   delegate :address, to: :appeal
 
+  # The logic for these statuses is determined in `VaDotGovAddressValidator::ErrorHandler`.
+  #
+  # The mixin `VaDotGovAddressValidator::Validations` glues the `VaDotGovAddressValidator`
+  # and `VaDotGovAddressValidator::ErrorHandler`.
   STATUSES = {
+    # Successfully
     matched_available_hearing_locations: :matched_available_hearing_locations,
+
+    # Address was in the Philippines, and assigned to RO58.
     philippines_exception: :defaulted_to_philippines_RO58,
+
+    # Foreign addresses need to be handled by an admin.
     created_foreign_veteran_admin_action: :created_foreign_veteran_admin_action,
+
+    # An admin needs to manually handle addresses that can't be verified.
     created_verify_address_admin_action: :created_verify_address_admin_action
   }.freeze
 
@@ -17,6 +36,11 @@ class VaDotGovAddressValidator
     @appeal = appeal
   end
 
+  # Geomatches an appeal to a regional office and discovers nearby locations where
+  # the hearing can be held.
+  #
+  # @return            [Hash]
+  #   A hash with the geocoding status (see `VaDotGovAddressValidator#STATUSES`)
   def update_closest_ro_and_ahls
     return { status: error_status } if error_status.present?
 
