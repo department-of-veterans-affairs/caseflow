@@ -70,7 +70,7 @@ describe VirtualHearingMailer do
   context "for judge" do
     include_context "ama_hearing"
 
-    let!(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:judge] }
+    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:judge] }
 
     describe "#cancellation" do
       include_context "cancellation_email"
@@ -103,219 +103,59 @@ describe VirtualHearingMailer do
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
     expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "2:30pm EST" }
 
-    ama_times = expected_ama_times
-    legacy_times = expected_legacy_times
-    types = [:confirmation, :updated_time_confirmation]
-    recipient_title = MailRecipient::RECIPIENT_TITLES[:judge]
-
-    types = [:cancellation, :confirmation, :updated_time_confirmation] if types.nil?
-
     context "with ama hearing" do
       include_context "ama_hearing"
 
-      expected_eastern = ama_times[:expected_eastern]
-      expected_pacific = ama_times[:expected_pacific]
+      expected_eastern = expected_ama_times[:expected_eastern]
+      expected_pacific = expected_ama_times[:expected_pacific]
 
-      if types.include? :cancellation
-        describe "#cancellation" do
-          include_context "cancellation_email"
+      describe "#confirmation" do
+        include_context "confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
+        end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
 
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "has the correct time in the email" do
+            # judge time in the email will always be in central office time (ET)
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          end
+        it "displays central office time (ET)" do
+          expect(subject.html_part.body).to include(expected_eastern)
         end
       end
 
-      if types.include? :confirmation
-        describe "#confirmation" do
-          include_context "confirmation_email"
+      describe "#updated_time_confirmation" do
+        include_context "updated_time_confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          end
-
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
-          end
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
-      end
 
-      if types.include? :updated_time_confirmation
-        describe "#updated_time_confirmation" do
-          include_context "updated_time_confirmation_email"
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
-
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            # judge time in the email will always be in central office time (ET)
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
-          end
-
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          end
+        it "displays central office time (ET)" do
+          expect(subject.html_part.body).to include(expected_eastern)
         end
       end
     end
@@ -323,252 +163,74 @@ describe VirtualHearingMailer do
     context "with legacy hearing" do
       include_context "legacy_hearing"
 
-      expected_eastern = legacy_times[:expected_eastern]
-      expected_pacific = legacy_times[:expected_pacific]
+      expected_eastern = expected_legacy_times[:expected_eastern]
+      expected_pacific = expected_legacy_times[:expected_pacific]
 
-      if types.include? :cancellation
-        describe "#cancellation" do
-          include_context "cancellation_email"
+      describe "#confirmation" do
+        include_context "confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
+        end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
 
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "has the correct time in the email" do
+            # judge time in the email will always be in central office time (ET)
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          end
+        it "displays central office time (ET)" do
+          expect(subject.html_part.body).to include(expected_eastern)
         end
       end
 
-      if types.include? :confirmation
-        describe "#confirmation" do
-          include_context "confirmation_email"
+      describe "#updated_time_confirmation" do
+        include_context "updated_time_confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          end
-
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
-          end
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
-      end
 
-      if types.include? :updated_time_confirmation
-        describe "#updated_time_confirmation" do
-          include_context "updated_time_confirmation_email"
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
-
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            # judge time in the email will always be in central office time (ET)
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
-          end
-
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          end
+        it "displays central office time (ET)" do
+          expect(subject.html_part.body).to include(expected_eastern)
         end
       end
     end
 
-    recipient = MailRecipient::RECIPIENT_TITLES[:judge]
-
     describe "#confirmation" do
       include_context "confirmation_email"
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:judge]
-        describe "#link" do
-          it "is host link" do
-            expect(subject.html_part.body).to include(virtual_hearing.host_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.host_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.host_pin}&role=host"
-            )
-          end
-        end
-      end
-
-      if recipient == MailRecipient::RECIPIENT_TITLES[:appellant] ||
-         recipient == MailRecipient::RECIPIENT_TITLES[:representative]
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient))
+      describe "#link" do
+        it "is host link" do
+          expect(subject.html_part.body).to include(virtual_hearing.host_link)
         end
 
-        describe "#link" do
-          it "is guest link" do
-            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.guest_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.guest_pin}&role=guest"
-            )
-          end
+        it "is in correct format" do
+          expect(virtual_hearing.host_link).to eq(
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+            "pin=#{virtual_hearing.host_pin}&role=host"
+          )
         end
       end
     end
@@ -576,40 +238,17 @@ describe VirtualHearingMailer do
     describe "#updated_time_confirmation" do
       include_context "updated_time_confirmation_email"
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:judge]
-        describe "#link" do
-          it "is host link" do
-            expect(subject.html_part.body).to include(virtual_hearing.host_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.host_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.host_pin}&role=host"
-            )
-          end
-        end
-      end
-
-      if recipient == MailRecipient::RECIPIENT_TITLES[:appellant] ||
-         recipient == MailRecipient::RECIPIENT_TITLES[:representative]
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient))
+      describe "#link" do
+        it "is host link" do
+          expect(subject.html_part.body).to include(virtual_hearing.host_link)
         end
 
-        describe "#link" do
-          it "is guest link" do
-            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.guest_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.guest_pin}&role=guest"
-            )
-          end
+        it "is in correct format" do
+          expect(virtual_hearing.host_link).to eq(
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+            "pin=#{virtual_hearing.host_pin}&role=host"
+          )
         end
       end
     end
@@ -618,7 +257,7 @@ describe VirtualHearingMailer do
   context "for appellant" do
     include_context "ama_hearing"
 
-    let!(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:appellant] }
+    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:appellant] }
 
     describe "#cancellation" do
       include_context "cancellation_email"
@@ -652,216 +291,122 @@ describe VirtualHearingMailer do
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
     expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am PST" }
 
-    ama_times = expected_ama_times
-    legacy_times = expected_legacy_times
-    types = [:cancellation, :confirmation, :updated_time_confirmation]
-    recipient_title = MailRecipient::RECIPIENT_TITLES[:appellant]
-
     context "with ama hearing" do
       include_context "ama_hearing"
 
-      expected_eastern = ama_times[:expected_eastern]
-      expected_pacific = ama_times[:expected_pacific]
+      expected_eastern = expected_ama_times[:expected_eastern]
+      expected_pacific = expected_ama_times[:expected_pacific]
 
-      if types.include? :cancellation
-        describe "#cancellation" do
-          include_context "cancellation_email"
+      describe "#cancellation" do
+        include_context "cancellation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "appellant_tz is present" do
+          before do
+            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "appellant_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
 
-      if types.include? :confirmation
-        describe "#confirmation" do
-          include_context "confirmation_email"
+      describe "#confirmation" do
+        include_context "confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "appellant_tz is present" do
+          before do
+            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
+        end
 
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "appellant_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
 
-      if types.include? :updated_time_confirmation
-        describe "#updated_time_confirmation" do
-          include_context "updated_time_confirmation_email"
+      describe "#updated_time_confirmation" do
+        include_context "updated_time_confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "appellant_tz is present" do
+          before do
+            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "appellant_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
@@ -870,253 +415,142 @@ describe VirtualHearingMailer do
     context "with legacy hearing" do
       include_context "legacy_hearing"
 
-      expected_eastern = legacy_times[:expected_eastern]
-      expected_pacific = legacy_times[:expected_pacific]
+      expected_eastern = expected_legacy_times[:expected_eastern]
+      expected_pacific = expected_legacy_times[:expected_pacific]
 
-      if types.include? :cancellation
-        describe "#cancellation" do
-          include_context "cancellation_email"
+      describe "#cancellation" do
+        include_context "cancellation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "appellant_tz is present" do
+          before do
+            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "appellant_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
 
-      if types.include? :confirmation
-        describe "#confirmation" do
-          include_context "confirmation_email"
+      describe "#confirmation" do
+        include_context "confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "appellant_tz is present" do
+          before do
+            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
+        end
 
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "appellant_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
 
-      if types.include? :updated_time_confirmation
-        describe "#updated_time_confirmation" do
-          include_context "updated_time_confirmation_email"
+      describe "#updated_time_confirmation" do
+        include_context "updated_time_confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "appellant_tz is present" do
+          before do
+            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "appellant_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
     end
 
-
-    recipient = MailRecipient::RECIPIENT_TITLES[:appellant]
-
     describe "#confirmation" do
       include_context "confirmation_email"
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:judge]
-        describe "#link" do
-          it "is host link" do
-            expect(subject.html_part.body).to include(virtual_hearing.host_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.host_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.host_pin}&role=host"
-            )
-          end
-        end
+      it "has the test link" do
+        expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
       end
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:appellant] ||
-         recipient == MailRecipient::RECIPIENT_TITLES[:representative]
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient))
+      describe "#link" do
+        it "is guest link" do
+          expect(subject.html_part.body).to include(virtual_hearing.guest_link)
         end
 
-        describe "#link" do
-          it "is guest link" do
-            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.guest_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.guest_pin}&role=guest"
-            )
-          end
+        it "is in correct format" do
+          expect(virtual_hearing.guest_link).to eq(
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+            "pin=#{virtual_hearing.guest_pin}&role=guest"
+          )
         end
       end
     end
@@ -1124,40 +558,21 @@ describe VirtualHearingMailer do
     describe "#updated_time_confirmation" do
       include_context "updated_time_confirmation_email"
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:judge]
-        describe "#link" do
-          it "is host link" do
-            expect(subject.html_part.body).to include(virtual_hearing.host_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.host_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.host_pin}&role=host"
-            )
-          end
-        end
+      it "has the test link" do
+        expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
       end
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:appellant] ||
-         recipient == MailRecipient::RECIPIENT_TITLES[:representative]
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient))
+      describe "#link" do
+        it "is guest link" do
+          expect(subject.html_part.body).to include(virtual_hearing.guest_link)
         end
 
-        describe "#link" do
-          it "is guest link" do
-            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.guest_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.guest_pin}&role=guest"
-            )
-          end
+        it "is in correct format" do
+          expect(virtual_hearing.guest_link).to eq(
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+            "pin=#{virtual_hearing.guest_pin}&role=guest"
+          )
         end
       end
     end
@@ -1208,7 +623,7 @@ describe VirtualHearingMailer do
   context "for representative" do
     include_context "ama_hearing"
 
-    let!(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:representative] }
+    let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:representative] }
 
     describe "#cancellation" do
       include_context "cancellation_email"
@@ -1242,216 +657,122 @@ describe VirtualHearingMailer do
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
     expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am PST" }
 
-    ama_times = expected_ama_times
-    legacy_times = expected_legacy_times
-    types = [:cancellation, :confirmation, :updated_time_confirmation]
-    recipient_title = MailRecipient::RECIPIENT_TITLES[:representative]
-
     context "with ama hearing" do
       include_context "ama_hearing"
 
-      expected_eastern = ama_times[:expected_eastern]
-      expected_pacific = ama_times[:expected_pacific]
+      expected_eastern = expected_ama_times[:expected_eastern]
+      expected_pacific = expected_ama_times[:expected_pacific]
 
-      if types.include? :cancellation
-        describe "#cancellation" do
-          include_context "cancellation_email"
+      describe "#cancellation" do
+        include_context "cancellation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "representative_tz is present" do
+          before do
+            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "representative_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
 
-      if types.include? :confirmation
-        describe "#confirmation" do
-          include_context "confirmation_email"
+      describe "#confirmation" do
+        include_context "confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "representative_tz is present" do
+          before do
+            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
+        end
 
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "representative_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
 
-      if types.include? :updated_time_confirmation
-        describe "#updated_time_confirmation" do
-          include_context "updated_time_confirmation_email"
+      describe "#updated_time_confirmation" do
+        include_context "updated_time_confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "representative_tz is present" do
+          before do
+            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "representative_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
@@ -1460,253 +781,142 @@ describe VirtualHearingMailer do
     context "with legacy hearing" do
       include_context "legacy_hearing"
 
-      expected_eastern = legacy_times[:expected_eastern]
-      expected_pacific = legacy_times[:expected_pacific]
+      expected_eastern = expected_legacy_times[:expected_eastern]
+      expected_pacific = expected_legacy_times[:expected_pacific]
 
-      if types.include? :cancellation
-        describe "#cancellation" do
-          include_context "cancellation_email"
+      describe "#cancellation" do
+        include_context "cancellation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "representative_tz is present" do
+          before do
+            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "representative_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
 
-      if types.include? :confirmation
-        describe "#confirmation" do
-          include_context "confirmation_email"
+      describe "#confirmation" do
+        include_context "confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "representative_tz is present" do
+          before do
+            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
+        end
 
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "representative_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
 
-      if types.include? :updated_time_confirmation
-        describe "#updated_time_confirmation" do
-          include_context "updated_time_confirmation_email"
+      describe "#updated_time_confirmation" do
+        include_context "updated_time_confirmation_email"
 
-          context "regional office is in eastern timezone" do
-            let(:regional_office) { nyc_ro_eastern }
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
 
-            it "has the correct time in the email" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
+          it "has the correct time in the email" do
+            expect(subject.html_part.body).to include(expected_eastern)
+          end
+        end
+
+        context "regional office is in pacific timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct time in the email" do
+            # always show regional office time regardless of recipient
+            expect(subject.html_part.body).to include("8:30am PST")
+          end
+        end
+
+        describe "representative_tz is present" do
+          before do
+            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
+            hearing.reload
           end
 
-          context "regional office is in pacific timezone" do
-            let(:regional_office) { oakland_ro_pacific }
-
-            it "has the correct time in the email" do
-              if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-                # judge time in the email will always be in central office time (ET)
-                expect(subject.html_part.body).to include(expected_pacific)
-              else
-                # always show regional office time regardless of recipient
-                expect(subject.html_part.body).to include("8:30am PST")
-              end
-            end
+          it "displays pacific standard time (PT)" do
+            expect(subject.html_part.body).to include(expected_pacific)
           end
+        end
 
-          if recipient_title == MailRecipient::RECIPIENT_TITLES[:judge]
-            it "displays central office time (ET)" do
-              expect(subject.html_part.body).to include(expected_eastern)
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:appellant]
-            describe "appellant_tz is present" do
-              before do
-                virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "appellant_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
-          elsif recipient_title == MailRecipient::RECIPIENT_TITLES[:representative]
-            describe "representative_tz is present" do
-              before do
-                virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-                hearing.reload
-              end
-
-              it "displays pacific standard time (PT)" do
-                expect(subject.html_part.body).to include(expected_pacific)
-              end
-            end
-
-            describe "representative_tz is not present" do
-              it "displays eastern standard time (ET)" do
-                expect(subject.html_part.body).to include(expected_eastern)
-              end
-            end
+        describe "representative_tz is not present" do
+          it "displays eastern standard time (ET)" do
+            expect(subject.html_part.body).to include(expected_eastern)
           end
         end
       end
     end
 
-
-    recipient = MailRecipient::RECIPIENT_TITLES[:representative]
-
     describe "#confirmation" do
       include_context "confirmation_email"
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:judge]
-        describe "#link" do
-          it "is host link" do
-            expect(subject.html_part.body).to include(virtual_hearing.host_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.host_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.host_pin}&role=host"
-            )
-          end
-        end
+      it "has the test link" do
+        expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
       end
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:appellant] ||
-         recipient == MailRecipient::RECIPIENT_TITLES[:representative]
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient))
+      describe "#link" do
+        it "is guest link" do
+          expect(subject.html_part.body).to include(virtual_hearing.guest_link)
         end
 
-        describe "#link" do
-          it "is guest link" do
-            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.guest_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.guest_pin}&role=guest"
-            )
-          end
+        it "is in correct format" do
+          expect(virtual_hearing.guest_link).to eq(
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+            "pin=#{virtual_hearing.guest_pin}&role=guest"
+          )
         end
       end
     end
@@ -1714,40 +924,21 @@ describe VirtualHearingMailer do
     describe "#updated_time_confirmation" do
       include_context "updated_time_confirmation_email"
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:judge]
-        describe "#link" do
-          it "is host link" do
-            expect(subject.html_part.body).to include(virtual_hearing.host_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.host_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.host_pin}&role=host"
-            )
-          end
-        end
+      it "has the test link" do
+        expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
       end
 
-      if recipient == MailRecipient::RECIPIENT_TITLES[:appellant] ||
-         recipient == MailRecipient::RECIPIENT_TITLES[:representative]
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient))
+      describe "#link" do
+        it "is guest link" do
+          expect(subject.html_part.body).to include(virtual_hearing.guest_link)
         end
 
-        describe "#link" do
-          it "is guest link" do
-            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-          end
-
-          it "is in correct format" do
-            expect(virtual_hearing.guest_link).to eq(
-              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-              "pin=#{virtual_hearing.guest_pin}&role=guest"
-            )
-          end
+        it "is in correct format" do
+          expect(virtual_hearing.guest_link).to eq(
+            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+            "pin=#{virtual_hearing.guest_pin}&role=guest"
+          )
         end
       end
     end
