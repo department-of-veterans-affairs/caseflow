@@ -109,7 +109,7 @@ class RegionalOffice
   end
 
   def compute_station_key
-    STATIONS.detect { |_station, ros| ros.include?(key) }.first
+    STATIONS.detect { |_station, ros| ros.include?(key) }&.first
   end
 
   class << self
