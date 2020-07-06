@@ -17,8 +17,8 @@ class LegacyHearing < CaseflowRecord
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
 
   # scheduled_for is the correct hearing date and time in Eastern Time for travel
-  # board and video hearings, or in the user's time zone for central hearings; the
-  # transformation happens in HearingMapper.datetime_based_on_type
+  # board and video hearings, or in the user's (Hearing Coordinator) time zone for
+  # central hearings; the transformation happens in HearingMapper.datetime_based_on_type
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
@@ -100,7 +100,7 @@ class LegacyHearing < CaseflowRecord
   end
 
   def hearing_day_id
-    if self[:hearing_day_id].nil? && !hearing_day_id_refers_to_vacols_row?
+    if self[:hearing_day_id].nil? && hearing_day_vacols_id.present? && !hearing_day_id_refers_to_vacols_row?
       begin
         update!(hearing_day_id: hearing_day_vacols_id)
       rescue ActiveRecord::InvalidForeignKey
@@ -216,6 +216,13 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  def quick_to_hash(current_user_id)
+    ::LegacyHearingSerializer.quick(
+      self,
+      params: { current_user_id: current_user_id }
+    ).serializable_hash[:data][:attributes]
+  end
+
   def to_hash(current_user_id)
     ::LegacyHearingSerializer.default(
       self,
@@ -223,7 +230,12 @@ class LegacyHearing < CaseflowRecord
     ).serializable_hash[:data][:attributes]
   end
 
-  alias quick_to_hash to_hash
+  def to_hash_for_worksheet(current_user_id)
+    ::LegacyHearingSerializer.worksheet(
+      self,
+      params: { current_user_id: current_user_id }
+    ).serializable_hash[:data][:attributes]
+  end
 
   def fetch_veteran_age
     veteran_age
@@ -235,13 +247,6 @@ class LegacyHearing < CaseflowRecord
     veteran_gender
   rescue Module::DelegationError
     nil
-  end
-
-  def to_hash_for_worksheet(current_user_id)
-    ::LegacyHearingSerializer.worksheet(
-      self,
-      params: { current_user_id: current_user_id }
-    ).serializable_hash[:data][:attributes]
   end
 
   def appeals_ready_for_hearing

@@ -239,10 +239,10 @@ claimants,created_at,datetime,,,,,,
 claimants,decision_review_id,integer (8) FK,,,x,,x,The ID of the decision review the claimant is on.
 claimants,decision_review_type,string,,,,,x,The type of decision review the claimant is on.
 claimants,id,integer (8) PK,x,x,,,,
+claimants,notes,text,,,,,,This is a notes field for adding claimant not listed and any supplementary information outside of unlisted claimant.
 claimants,participant_id,string ∗ U,x,,,x,x,The participant ID of the claimant.
 claimants,payee_code,string,,,,,,"The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
 claimants,type,string,,,,,,"The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, or OtherClaimant."
-claimants,notes,text,,,,,,"This is a notes field for adding claimant not listed and any supplementary information outside of unlisted claimant."
 claimants,updated_at,datetime,,,,,x,
 claims_folder_searches,,,,,,,,
 claims_folder_searches,appeal_id,integer FK,,,x,,x,
@@ -691,6 +691,9 @@ legacy_issue_optins,request_issue_id,integer (8) ∗ FK,x,,x,,x,The request is
 legacy_issue_optins,rollback_created_at,datetime,,,,,,"Timestamp for when the connected request issue is removed from a Decision Review during edit, indicating that the opt-in needs to be rolled back."
 legacy_issue_optins,rollback_processed_at,datetime,,,,,,Timestamp for when a rolled back opt-in has successfully finished being rolled back.
 legacy_issue_optins,updated_at,datetime ∗,x,,,,x,Automatically populated when the record is updated.
+legacy_issue_optins,original_legacy_appeal_decision_date,datetime,,,,,,The original disposition date of a legacy appeal being opted in.
+legacy_issue_optins,original_legacy_appeal_disposition_code,string,,,,,,The original disposition code of legacy appeal being opted in.
+legacy_issue_optins,folder_date_time_of_decision,datetime,,,,,,Date/Time of decision.
 messages,,,,,,,,
 messages,created_at,datetime ∗,x,,,,,
 messages,detail_id,integer FK,,,x,,x,ID of the related object
@@ -1060,6 +1063,7 @@ virtual_hearings,alias,string,,,,,x,Alias for conference in Pexip
 virtual_hearings,alias_with_host,string,,,,,,Alias for conference in pexip with client_host
 virtual_hearings,appellant_email,string ∗,x,,,,,Appellant's email address
 virtual_hearings,appellant_email_sent,boolean ∗,x,,,,,Determines whether or not a notification email was sent to the appellant
+virtual_hearings,appellant_tz,string (50),,,,,,Stores appellant timezone
 virtual_hearings,conference_deleted,boolean ∗,x,,,,,Whether or not the conference was deleted from Pexip
 virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
 virtual_hearings,created_at,datetime ∗,x,,,,,
@@ -1075,6 +1079,7 @@ virtual_hearings,judge_email,string,,,,,,Judge's email address
 virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge
 virtual_hearings,representative_email,string,,,,,,Veteran's representative's email address
 virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran's representative
+virtual_hearings,representative_tz,string (50),,,,,,Stores representative timezone
 virtual_hearings,request_cancelled,boolean,,,,,,Determines whether the user has cancelled the virtual hearing request
 virtual_hearings,updated_at,datetime ∗,x,,,,x,
 virtual_hearings,updated_by_id,integer (8) FK,,,x,,x,The ID of the user who most recently updated the virtual hearing

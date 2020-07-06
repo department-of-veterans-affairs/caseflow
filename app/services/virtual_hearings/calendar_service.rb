@@ -32,14 +32,14 @@ class VirtualHearings::CalendarService
     end
 
     # Sent when a virtual hearing is switched back to a video hearing.
-    def update_to_video_calendar_invite(hearing, recipient)
-      create_calendar_event(hearing) do |event, time_zone, start_time|
+    def update_to_video_calendar_invite(virtual_hearing, recipient)
+      create_calendar_event(virtual_hearing.hearing) do |event, time_zone, start_time|
         if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
           # For judges, just cancel the original invitation.
           event.status = "CANCELLED"
         else
           template_context = {
-            hearing: hearing,
+            virtual_hearing: virtual_hearing,
             time_zone: time_zone,
             start_time_utc: start_time
           }
