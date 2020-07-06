@@ -71,16 +71,20 @@ describe VirtualHearingMailer do
     let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:judge] }
 
     # we expect the judge to always see the hearing time in central office (eastern) time zone
+
     # ama hearing is scheduled at 8:30am in the regional office's time zone
-    expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "11:30am EST" }
+    expected_ama_times = {
+      ro_and_recipient_both_eastern: "8:30am EST",
+      ro_pacific_recipient_eastern: "11:30am EST"
+    }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
-    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "2:30pm EST" }
+    expected_legacy_times = {
+      ro_and_recipient_both_eastern: "11:30am EST",
+      ro_pacific_recipient_eastern: "2:30pm EST"
+    }
 
     context "with ama hearing" do
       include_context "ama_hearing"
-
-      expected_eastern = expected_ama_times[:expected_eastern]
-      expected_pacific = expected_ama_times[:expected_pacific]
 
       describe "#cancellation" do
         include_context "cancellation_email"
@@ -115,7 +119,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -124,12 +128,8 @@ describe VirtualHearingMailer do
 
           it "has the correct time in the email" do
             # judge time in the email will always be in central office time (ET)
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_pacific_recipient_eastern])
           end
-        end
-
-        it "displays central office time (ET)" do
-          expect(subject.html_part.body).to include(expected_eastern)
         end
       end
 
@@ -158,7 +158,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -167,21 +167,14 @@ describe VirtualHearingMailer do
 
           it "has the correct time in the email" do
             # judge time in the email will always be in central office time (ET)
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_pacific_recipient_eastern])
           end
-        end
-
-        it "displays central office time (ET)" do
-          expect(subject.html_part.body).to include(expected_eastern)
         end
       end
     end
 
     context "with legacy hearing" do
       include_context "legacy_hearing"
-
-      expected_eastern = expected_legacy_times[:expected_eastern]
-      expected_pacific = expected_legacy_times[:expected_pacific]
 
       describe "#confirmation" do
         include_context "confirmation_email"
@@ -190,7 +183,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -199,12 +192,8 @@ describe VirtualHearingMailer do
 
           it "has the correct time in the email" do
             # judge time in the email will always be in central office time (ET)
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_pacific_recipient_eastern])
           end
-        end
-
-        it "displays central office time (ET)" do
-          expect(subject.html_part.body).to include(expected_eastern)
         end
       end
 
@@ -215,7 +204,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -224,12 +213,8 @@ describe VirtualHearingMailer do
 
           it "has the correct time in the email" do
             # judge time in the email will always be in central office time (ET)
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_pacific_recipient_eastern])
           end
-        end
-
-        it "displays central office time (ET)" do
-          expect(subject.html_part.body).to include(expected_eastern)
         end
       end
     end
@@ -242,15 +227,20 @@ describe VirtualHearingMailer do
     # unless appellant_tz in VirtualHearing is set
 
     # ama hearing is scheduled at 8:30am in the regional office's time zone
-    expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "5:30am PST" }
+    expected_ama_times = {
+      ro_and_recipient_both_eastern: "8:30am EST",
+      ro_and_recipient_both_pacific: "8:30am PST",
+      ro_eastern_recipient_pacific: "5:30am PST"
+    }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
-    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am PST" }
+    expected_legacy_times = {
+      ro_and_recipient_both_eastern: "11:30am EST",
+      ro_and_recipient_both_pacific: "11:30am PST",
+      ro_eastern_recipient_pacific: "8:30am PST"
+    }
 
     context "with ama hearing" do
       include_context "ama_hearing"
-
-      expected_eastern = expected_ama_times[:expected_eastern]
-      expected_pacific = expected_ama_times[:expected_pacific]
 
       describe "#cancellation" do
         include_context "cancellation_email"
@@ -278,7 +268,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -286,8 +276,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -298,13 +287,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -316,11 +305,11 @@ describe VirtualHearingMailer do
           expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
         end
 
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
-        end
-
         describe "#link" do
+          it "has the test link" do
+            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+          end
+
           it "is guest link" do
             expect(subject.html_part.body).to include(virtual_hearing.guest_link)
           end
@@ -338,7 +327,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -346,8 +335,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -358,13 +346,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -376,11 +364,11 @@ describe VirtualHearingMailer do
           expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
         end
 
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
-        end
-
         describe "#link" do
+          it "has the test link" do
+            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+          end
+
           it "is guest link" do
             expect(subject.html_part.body).to include(virtual_hearing.guest_link)
           end
@@ -398,7 +386,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -406,8 +394,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -418,13 +405,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -433,9 +420,6 @@ describe VirtualHearingMailer do
     context "with legacy hearing" do
       include_context "legacy_hearing"
 
-      expected_eastern = expected_legacy_times[:expected_eastern]
-      expected_pacific = expected_legacy_times[:expected_pacific]
-
       describe "#cancellation" do
         include_context "cancellation_email"
 
@@ -458,7 +442,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -466,8 +450,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -478,13 +461,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -496,7 +479,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -504,8 +487,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -516,13 +498,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -534,7 +516,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -542,8 +524,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -554,13 +535,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -574,15 +555,20 @@ describe VirtualHearingMailer do
     # unless representative_tz in VirtualHearing is set
 
     # ama hearing is scheduled at 8:30am in the regional office's time zone
-    expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "5:30am PST" }
+    expected_ama_times = {
+      ro_and_recipient_both_eastern: "8:30am EST",
+      ro_and_recipient_both_pacific: "8:30am PST",
+      ro_eastern_recipient_pacific: "5:30am PST"
+    }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
-    expected_legacy_times = { expected_eastern: "11:30am EST", expected_pacific: "11:30am PST" }
+    expected_legacy_times = {
+      ro_and_recipient_both_eastern: "11:30am EST",
+      ro_and_recipient_both_pacific: "11:30am PST",
+      ro_eastern_recipient_pacific: "8:30am PST"
+    }
 
     context "with ama hearing" do
       include_context "ama_hearing"
-
-      expected_eastern = expected_ama_times[:expected_eastern]
-      expected_pacific = expected_ama_times[:expected_pacific]
 
       describe "#cancellation" do
         include_context "cancellation_email"
@@ -610,7 +596,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -618,8 +604,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -630,13 +615,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -648,11 +633,11 @@ describe VirtualHearingMailer do
           expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
         end
 
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
-        end
-
         describe "#link" do
+          it "has the test link" do
+            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+          end
+
           it "is guest link" do
             expect(subject.html_part.body).to include(virtual_hearing.guest_link)
           end
@@ -670,7 +655,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -678,8 +663,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -690,13 +674,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -708,11 +692,11 @@ describe VirtualHearingMailer do
           expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
         end
 
-        it "has the test link" do
-          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
-        end
-
         describe "#link" do
+          it "has the test link" do
+            expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+          end
+
           it "is guest link" do
             expect(subject.html_part.body).to include(virtual_hearing.guest_link)
           end
@@ -730,7 +714,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -738,8 +722,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -750,13 +733,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -765,9 +748,6 @@ describe VirtualHearingMailer do
     context "with legacy hearing" do
       include_context "legacy_hearing"
 
-      expected_eastern = expected_legacy_times[:expected_eastern]
-      expected_pacific = expected_legacy_times[:expected_pacific]
-
       describe "#cancellation" do
         include_context "cancellation_email"
 
@@ -790,7 +770,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -798,8 +778,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -810,13 +789,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -828,7 +807,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -836,8 +815,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -848,13 +826,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
       end
@@ -866,7 +844,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { nyc_ro_eastern }
 
           it "has the correct time in the email" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
 
@@ -874,8 +852,7 @@ describe VirtualHearingMailer do
           let(:regional_office) { oakland_ro_pacific }
 
           it "has the correct time in the email" do
-            # always show regional office time regardless of recipient
-            expect(subject.html_part.body).to include("8:30am PST")
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_pacific])
           end
         end
 
@@ -886,13 +863,13 @@ describe VirtualHearingMailer do
           end
 
           it "displays pacific standard time (PT)" do
-            expect(subject.html_part.body).to include(expected_pacific)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
           end
         end
 
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
-            expect(subject.html_part.body).to include(expected_eastern)
+            expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
       end
