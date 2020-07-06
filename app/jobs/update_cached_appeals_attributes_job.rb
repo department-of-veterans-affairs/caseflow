@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-VACOLS_BATCH_SIZE = 1000
+VACOLS_BATCH_SIZE = 1_000
 POSTGRES_BATCH_SIZE = 10_000
 
 class UpdateCachedAppealsAttributesJob < CaseflowJob
