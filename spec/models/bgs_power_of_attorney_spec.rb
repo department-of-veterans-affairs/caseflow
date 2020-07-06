@@ -78,7 +78,7 @@ describe BgsPowerOfAttorney do
       end
 
       before do
-        allow_any_instance_of(BGSService).to receive(:fetch_poa_by_file_number) do |fn|
+        allow_any_instance_of(BGSService).to receive(:fetch_poa_by_file_number) do
           sleep 1
           bgs_record
         end
