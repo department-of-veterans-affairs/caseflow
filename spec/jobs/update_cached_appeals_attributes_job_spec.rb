@@ -98,21 +98,4 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       expect(slack_msg).to match(/#{expected_msg}/)
     end
   end
-
-  context "when ActiveRecord::RecordNotUnique error is thrown" do
-    let(:file_number_with_raised_error) { legacy_appeal1.veteran_file_number }
-
-    before do
-      allow(BgsPowerOfAttorney).to receive(:find_or_create_by_file_number)
-        .with(file_number_with_raised_error).and_raise(ActiveRecord::RecordNotUnique.new)
-
-      # create open tasks for 1 legacy appeal
-      create_list(:bva_dispatch_task, 3, appeal: legacy_appeal1)
-    end
-
-    it "rescues error and continues without failing" do
-      expect { subject }.not_to raise_error
-      expect(CachedAppeal.all.count).to eq(1)
-    end
-  end
 end
