@@ -56,7 +56,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
 
       # St. Petersburg RO facility id, and 2 alternate facilities
       expect(ahls.count).to eq 3
-      expect(ahls).to match_array(["vba_317", "vba_317a", "vc_0742V"])
+      expect(ahls).to match_array(%w[vba_317 vba_317a vc_0742V])
     end
 
     it "throws an access error trying to update from params with random user" do

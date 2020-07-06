@@ -95,12 +95,12 @@ describe RegionalOffice do
     it "returns all RO facility ids" do
       expect(subject.count).to eq 57
     end
-  end 
+  end
 
   context ".ro_facility_ids_for_state for TX" do
     subject { RegionalOffice.ro_facility_ids_for_state("TX") }
 
-    it "returns ro facility ids for Texas" do   
+    it "returns ro facility ids for Texas" do
       expect(subject).to match_array(%w[vba_349 vba_362])
     end
   end
