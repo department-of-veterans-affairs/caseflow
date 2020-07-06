@@ -68,36 +68,9 @@ describe VirtualHearingMailer do
   end
 
   context "for judge" do
-    include_context "ama_hearing"
-
     let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:judge] }
 
-    describe "#cancellation" do
-      include_context "cancellation_email"
-
-      it "doesn't send an email" do
-        expect { subject.deliver_now! }.to_not(change { ActionMailer::Base.deliveries.count })
-      end
-    end
-
-    describe "#confirmation" do
-      include_context "confirmation_email"
-
-      it "sends an email" do
-        expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
-      end
-    end
-
-    describe "#updated_time_confirmation" do
-      include_context "updated_time_confirmation_email"
-
-      it "sends an email" do
-        expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
-      end
-    end
-
     # we expect the judge to always see the hearing time in central office (eastern) time zone
-
     # ama hearing is scheduled at 8:30am in the regional office's time zone
     expected_ama_times = { expected_eastern: "8:30am EST", expected_pacific: "11:30am EST" }
     # legacy hearing is scheduled at 11:30am in the regional office's time zone
@@ -109,8 +82,34 @@ describe VirtualHearingMailer do
       expected_eastern = expected_ama_times[:expected_eastern]
       expected_pacific = expected_ama_times[:expected_pacific]
 
+      describe "#cancellation" do
+        include_context "cancellation_email"
+
+        it "doesn't send an email" do
+          expect { subject.deliver_now! }.to_not(change { ActionMailer::Base.deliveries.count })
+        end
+      end
+
       describe "#confirmation" do
         include_context "confirmation_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        describe "#link" do
+          it "is host link" do
+            expect(subject.html_part.body).to include(virtual_hearing.host_link)
+          end
+
+          it "is in correct format" do
+            expect(virtual_hearing.host_link).to eq(
+              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+              "pin=#{virtual_hearing.host_pin}&role=host"
+            )
+          end
+        end
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
@@ -136,6 +135,24 @@ describe VirtualHearingMailer do
 
       describe "#updated_time_confirmation" do
         include_context "updated_time_confirmation_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        describe "#link" do
+          it "is host link" do
+            expect(subject.html_part.body).to include(virtual_hearing.host_link)
+          end
+
+          it "is in correct format" do
+            expect(virtual_hearing.host_link).to eq(
+              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+              "pin=#{virtual_hearing.host_pin}&role=host"
+            )
+          end
+        end
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
@@ -216,72 +233,10 @@ describe VirtualHearingMailer do
         end
       end
     end
-
-    describe "#confirmation" do
-      include_context "confirmation_email"
-
-      describe "#link" do
-        it "is host link" do
-          expect(subject.html_part.body).to include(virtual_hearing.host_link)
-        end
-
-        it "is in correct format" do
-          expect(virtual_hearing.host_link).to eq(
-            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-            "pin=#{virtual_hearing.host_pin}&role=host"
-          )
-        end
-      end
-    end
-
-    describe "#updated_time_confirmation" do
-      include_context "updated_time_confirmation_email"
-
-      describe "#link" do
-        it "is host link" do
-          expect(subject.html_part.body).to include(virtual_hearing.host_link)
-        end
-
-        it "is in correct format" do
-          expect(virtual_hearing.host_link).to eq(
-            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-            "pin=#{virtual_hearing.host_pin}&role=host"
-          )
-        end
-      end
-    end
   end
 
   context "for appellant" do
-    include_context "ama_hearing"
-
     let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:appellant] }
-
-    describe "#cancellation" do
-      include_context "cancellation_email"
-
-      it "sends an email" do
-        expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
-      end
-    end
-
-    describe "#confirmation" do
-      include_context "confirmation_email"
-
-      it "sends an email" do
-        expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
-      end
-    end
-
-    describe "#updated_time_confirmation" do
-      include_context "updated_time_confirmation_email"
-
-      it "sends an email" do
-        expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
-      end
-    end
 
     # we expect the appellant to always see the hearing time in the regional office time zone
     # unless appellant_tz in VirtualHearing is set
@@ -300,6 +255,25 @@ describe VirtualHearingMailer do
       describe "#cancellation" do
         include_context "cancellation_email"
 
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        describe "hearing_location is not nil" do
+          it "shows correct hearing location" do
+            expect(subject.html_part.body).to include(hearing.location.full_address)
+            expect(subject.html_part.body).to include(hearing.hearing_location.name)
+          end
+        end
+
+        describe "hearing_location is nil" do
+          it "shows correct hearing location" do
+            hearing.update!(hearing_location: nil)
+            expect(subject.html_part.body).to include(hearing.regional_office.full_address)
+            expect(subject.html_part.body).to include(hearing.regional_office.name)
+          end
+        end
+
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
 
@@ -338,6 +312,28 @@ describe VirtualHearingMailer do
       describe "#confirmation" do
         include_context "confirmation_email"
 
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        it "has the test link" do
+          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+        end
+
+        describe "#link" do
+          it "is guest link" do
+            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
+          end
+
+          it "is in correct format" do
+            expect(virtual_hearing.guest_link).to eq(
+              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+              "pin=#{virtual_hearing.guest_pin}&role=guest"
+            )
+          end
+        end
+
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
 
@@ -375,6 +371,28 @@ describe VirtualHearingMailer do
 
       describe "#updated_time_confirmation" do
         include_context "updated_time_confirmation_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        it "has the test link" do
+          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+        end
+
+        describe "#link" do
+          it "is guest link" do
+            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
+          end
+
+          it "is in correct format" do
+            expect(virtual_hearing.guest_link).to eq(
+              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+              "pin=#{virtual_hearing.guest_pin}&role=guest"
+            )
+          end
+        end
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
@@ -421,6 +439,21 @@ describe VirtualHearingMailer do
       describe "#cancellation" do
         include_context "cancellation_email"
 
+        describe "hearing_location is not nil" do
+          it "shows correct hearing location" do
+            expect(subject.html_part.body).to include(hearing.location.full_address)
+            expect(subject.html_part.body).to include(hearing.hearing_location.name)
+          end
+        end
+
+        describe "hearing_location is nil" do
+          it "shows correct hearing location" do
+            hearing.update!(hearing_location: nil)
+            expect(subject.html_part.body).to include(hearing.regional_office.full_address)
+            expect(subject.html_part.body).to include(hearing.regional_office.name)
+          end
+        end
+
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
 
@@ -532,122 +565,10 @@ describe VirtualHearingMailer do
         end
       end
     end
-
-    describe "#confirmation" do
-      include_context "confirmation_email"
-
-      it "has the test link" do
-        expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
-      end
-
-      describe "#link" do
-        it "is guest link" do
-          expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-        end
-
-        it "is in correct format" do
-          expect(virtual_hearing.guest_link).to eq(
-            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-            "pin=#{virtual_hearing.guest_pin}&role=guest"
-          )
-        end
-      end
-    end
-
-    describe "#updated_time_confirmation" do
-      include_context "updated_time_confirmation_email"
-
-      it "has the test link" do
-        expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
-      end
-
-      describe "#link" do
-        it "is guest link" do
-          expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-        end
-
-        it "is in correct format" do
-          expect(virtual_hearing.guest_link).to eq(
-            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-            "pin=#{virtual_hearing.guest_pin}&role=guest"
-          )
-        end
-      end
-    end
-
-    describe "#cancellation" do
-      include_context "cancellation_email"
-
-      context "with legacy hearing" do
-        include_context "legacy_hearing"
-
-        describe "hearing_location is not nil" do
-          it "shows correct hearing location" do
-            expect(subject.html_part.body).to include(hearing.location.full_address)
-            expect(subject.html_part.body).to include(hearing.hearing_location.name)
-          end
-        end
-
-        describe "hearing_location is nil" do
-          it "shows correct hearing location" do
-            hearing.update!(hearing_location: nil)
-            expect(subject.html_part.body).to include(hearing.regional_office.full_address)
-            expect(subject.html_part.body).to include(hearing.regional_office.name)
-          end
-        end
-      end
-
-      context "with ama hearing" do
-        include_context "ama_hearing"
-
-        describe "hearing_location is not nil" do
-          it "shows correct hearing location" do
-            expect(subject.html_part.body).to include(hearing.location.full_address)
-            expect(subject.html_part.body).to include(hearing.hearing_location.name)
-          end
-        end
-
-        describe "hearing_location is nil" do
-          it "shows correct hearing location" do
-            hearing.update!(hearing_location: nil)
-            expect(subject.html_part.body).to include(hearing.regional_office.full_address)
-            expect(subject.html_part.body).to include(hearing.regional_office.name)
-          end
-        end
-      end
-    end
   end
 
   context "for representative" do
-    include_context "ama_hearing"
-
     let(:recipient_title) { MailRecipient::RECIPIENT_TITLES[:representative] }
-
-    describe "#cancellation" do
-      include_context "cancellation_email"
-
-      it "sends an email" do
-        expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
-      end
-    end
-
-    describe "#confirmation" do
-      include_context "confirmation_email"
-
-      it "sends an email" do
-        expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
-      end
-    end
-
-    describe "#updated_time_confirmation" do
-      include_context "updated_time_confirmation_email"
-
-      it "sends an email" do
-        expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
-      end
-    end
 
     # we expect the representative to always see the hearing time in the regional office time zone
     # unless representative_tz in VirtualHearing is set
@@ -666,6 +587,25 @@ describe VirtualHearingMailer do
       describe "#cancellation" do
         include_context "cancellation_email"
 
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        describe "hearing_location is not nil" do
+          it "shows correct hearing location" do
+            expect(subject.html_part.body).to include(hearing.location.full_address)
+            expect(subject.html_part.body).to include(hearing.hearing_location.name)
+          end
+        end
+
+        describe "hearing_location is nil" do
+          it "shows correct hearing location" do
+            hearing.update!(hearing_location: nil)
+            expect(subject.html_part.body).to include(hearing.regional_office.full_address)
+            expect(subject.html_part.body).to include(hearing.regional_office.name)
+          end
+        end
+
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
 
@@ -704,6 +644,28 @@ describe VirtualHearingMailer do
       describe "#confirmation" do
         include_context "confirmation_email"
 
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        it "has the test link" do
+          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+        end
+
+        describe "#link" do
+          it "is guest link" do
+            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
+          end
+
+          it "is in correct format" do
+            expect(virtual_hearing.guest_link).to eq(
+              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+              "pin=#{virtual_hearing.guest_pin}&role=guest"
+            )
+          end
+        end
+
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
 
@@ -741,6 +703,28 @@ describe VirtualHearingMailer do
 
       describe "#updated_time_confirmation" do
         include_context "updated_time_confirmation_email"
+
+        it "sends an email" do
+          expect { subject.deliver_now! }.to change { ActionMailer::Base.deliveries.count }.by 1
+        end
+
+        it "has the test link" do
+          expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
+        end
+
+        describe "#link" do
+          it "is guest link" do
+            expect(subject.html_part.body).to include(virtual_hearing.guest_link)
+          end
+
+          it "is in correct format" do
+            expect(virtual_hearing.guest_link).to eq(
+              "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
+              "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
+              "pin=#{virtual_hearing.guest_pin}&role=guest"
+            )
+          end
+        end
 
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
@@ -787,6 +771,21 @@ describe VirtualHearingMailer do
       describe "#cancellation" do
         include_context "cancellation_email"
 
+        describe "hearing_location is not nil" do
+          it "shows correct hearing location" do
+            expect(subject.html_part.body).to include(hearing.location.full_address)
+            expect(subject.html_part.body).to include(hearing.hearing_location.name)
+          end
+        end
+
+        describe "hearing_location is nil" do
+          it "shows correct hearing location" do
+            hearing.update!(hearing_location: nil)
+            expect(subject.html_part.body).to include(hearing.regional_office.full_address)
+            expect(subject.html_part.body).to include(hearing.regional_office.name)
+          end
+        end
+
         context "regional office is in eastern timezone" do
           let(:regional_office) { nyc_ro_eastern }
 
@@ -894,92 +893,6 @@ describe VirtualHearingMailer do
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
             expect(subject.html_part.body).to include(expected_eastern)
-          end
-        end
-      end
-    end
-
-    describe "#confirmation" do
-      include_context "confirmation_email"
-
-      it "has the test link" do
-        expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
-      end
-
-      describe "#link" do
-        it "is guest link" do
-          expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-        end
-
-        it "is in correct format" do
-          expect(virtual_hearing.guest_link).to eq(
-            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-            "pin=#{virtual_hearing.guest_pin}&role=guest"
-          )
-        end
-      end
-    end
-
-    describe "#updated_time_confirmation" do
-      include_context "updated_time_confirmation_email"
-
-      it "has the test link" do
-        expect(subject.html_part.body).to include(virtual_hearing.test_link(recipient_title))
-      end
-
-      describe "#link" do
-        it "is guest link" do
-          expect(subject.html_part.body).to include(virtual_hearing.guest_link)
-        end
-
-        it "is in correct format" do
-          expect(virtual_hearing.guest_link).to eq(
-            "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
-            "conference=#{virtual_hearing.formatted_alias_or_alias_with_host}&" \
-            "pin=#{virtual_hearing.guest_pin}&role=guest"
-          )
-        end
-      end
-    end
-
-    describe "#cancellation" do
-      include_context "cancellation_email"
-
-      context "with legacy hearing" do
-        include_context "legacy_hearing"
-
-        describe "hearing_location is not nil" do
-          it "shows correct hearing location" do
-            expect(subject.html_part.body).to include(hearing.location.full_address)
-            expect(subject.html_part.body).to include(hearing.hearing_location.name)
-          end
-        end
-
-        describe "hearing_location is nil" do
-          it "shows correct hearing location" do
-            hearing.update!(hearing_location: nil)
-            expect(subject.html_part.body).to include(hearing.regional_office.full_address)
-            expect(subject.html_part.body).to include(hearing.regional_office.name)
-          end
-        end
-      end
-
-      context "with ama hearing" do
-        include_context "ama_hearing"
-
-        describe "hearing_location is not nil" do
-          it "shows correct hearing location" do
-            expect(subject.html_part.body).to include(hearing.location.full_address)
-            expect(subject.html_part.body).to include(hearing.hearing_location.name)
-          end
-        end
-
-        describe "hearing_location is nil" do
-          it "shows correct hearing location" do
-            hearing.update!(hearing_location: nil)
-            expect(subject.html_part.body).to include(hearing.regional_office.full_address)
-            expect(subject.html_part.body).to include(hearing.regional_office.name)
           end
         end
       end
