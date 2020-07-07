@@ -6,7 +6,7 @@ export const getSpecialIssuesInitialState = function(props = {}) {
 
   let initialState = {};
 
-  const enabled_special_issues  = enabledSpecialIssues(props.featureToggles?.special_issues_revamp)
+  const enabled_special_issues  = enabledSpecialIssues(props.featureToggles?.specialIssuesRevamp)
 
   enabled_special_issues.forEach((issue) => {
 
@@ -31,6 +31,16 @@ let specialIssues = function(state = getSpecialIssuesInitialState(), action) {
     let newState = Object.assign({}, state);
 
     newState[action.payload.specialIssue] = action.payload.value;
+    return newState;
+  }
+  case Constants.CLEAR_SPECIAL_ISSUES: {
+    let newState = Object.assign({}, state);
+
+    Object.keys(newState).forEach((specialIssue) => {
+      if (newState[specialIssue] === true) {
+        newState[specialIssue] = false;
+      }
+    });
 
     return newState;
   }
