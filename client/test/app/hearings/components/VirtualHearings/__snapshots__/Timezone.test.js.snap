@@ -24,6 +24,7 @@ exports[`Timezone Can set timezone 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
+    clearable={false}
     loading={false}
     name="tz"
     onChange={[Function]}
@@ -15070,6 +15071,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
+    clearable={false}
     loading={false}
     name="Timezone"
     onChange={[Function]}
@@ -30057,6 +30059,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
 exports[`Timezone Matches snapshot with default props 1`] = `
 <SearchableDropdown
   clearOnSelect={false}
+  clearable={false}
   loading={false}
   name="Timezone"
   onChange={[Function]}

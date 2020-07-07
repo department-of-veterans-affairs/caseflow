@@ -245,6 +245,7 @@ exports[`HearingTime Matches snapshot when other time is selected 1`] = `
   </span>
   <SearchableDropdown
     clearOnSelect={false}
+    clearable={false}
     hideLabel={true}
     loading={false}
     name="optionalHearingTime0"
@@ -4215,6 +4216,7 @@ exports[`HearingTime Matches snapshot when readonly prop is set 1`] = `
   </span>
   <SearchableDropdown
     clearOnSelect={false}
+    clearable={false}
     hideLabel={true}
     loading={false}
     name="optionalHearingTime0"
@@ -8141,6 +8143,7 @@ exports[`HearingTime Matches snapshot with default props when passed in 1`] = `
   </span>
   <SearchableDropdown
     clearOnSelect={false}
+    clearable={false}
     hideLabel={true}
     loading={false}
     name="optionalHearingTime0"
