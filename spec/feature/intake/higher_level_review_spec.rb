@@ -513,7 +513,8 @@ feature "Higher-Level Review", :all_dbs do
     Claimant.create!(
       decision_review: higher_level_review,
       participant_id: claim_participant_id || test_veteran.participant_id,
-      payee_code: claim_participant_id ? "02" : "00"
+      payee_code: claim_participant_id ? "02" : "00",
+      type: claim_participant_id ? "DependentClaimant" : "VeteranClaimant"
     )
 
     higher_level_review.start_review!
