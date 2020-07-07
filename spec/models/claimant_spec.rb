@@ -160,6 +160,21 @@ describe Claimant, :postgres do
         expect(bgs_service).to have_received(:fetch_poas_by_participant_ids).once
       end
     end
+
+    context "when RecordNotUniqueError is thrown but BgsPowerOfAttorney object exists" do
+      let(:file_number_with_raised_error) { claimant.decision_review.veteran_file_number }
+      let!(:power_of_attorney) { BgsPowerOfAttorney.create(file_number: claimant.decision_review.veteran_file_number) }
+
+      before do
+        allow(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id).and_return(nil)
+        allow(BgsPowerOfAttorney).to receive(:find_or_create_by_file_number)
+          .with(file_number_with_raised_error).and_raise(ActiveRecord::RecordNotUnique.new)
+      end
+
+      it "returns BgsPowerOfAttorney" do
+        expect(subject).to eq power_of_attorney
+      end
+    end
   end
 
   context "#valid?" do
