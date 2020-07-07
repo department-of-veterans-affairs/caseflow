@@ -84,7 +84,8 @@ module IntakeHelpers
     if claim_participant_id
       Claimant.create!(
         decision_review: supplemental_claim,
-        participant_id: claim_participant_id
+        participant_id: claim_participant_id,
+        type: veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
       )
     end
 
@@ -113,7 +114,7 @@ module IntakeHelpers
       detail: appeal
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: appeal,
       participant_id: test_veteran.participant_id
     )

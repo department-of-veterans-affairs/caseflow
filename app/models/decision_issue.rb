@@ -261,7 +261,8 @@ class DecisionIssue < CaseflowRecord
 
     sc.create_claimant!(
       participant_id: decision_review.claimant_participant_id,
-      payee_code: dta_payee_code
+      payee_code: dta_payee_code,
+      type: decision_review.claimant.type
     )
 
     sc

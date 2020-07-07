@@ -18,8 +18,11 @@ FactoryBot.define do
       claimant.person&.date_of_birth
 
       if claimant.decision_review&.veteran&.participant_id == claimant.participant_id
+        claimant.type = "VeteranClaimant"
         veteran = claimant.decision_review.veteran
         claimant.person.update!(first_name: veteran.first_name, last_name: veteran.last_name)
+      else
+        claimant.type = "DependentClaimant"
       end
     end
   end
