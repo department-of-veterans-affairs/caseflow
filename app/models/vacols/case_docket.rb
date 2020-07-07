@@ -302,6 +302,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     if FeatureToggle.enabled?(:priority_acd) && genpop == "not_genpop"
       number_of_hearings_over_limit = nonpriority_hearing_cases_for_judge_count(judge) - HEARING_BACKLOG_LIMIT
       limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
+      range = nil
     end
 
     fmtd_query = sanitize_sql_array([

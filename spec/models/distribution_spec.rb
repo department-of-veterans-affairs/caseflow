@@ -181,7 +181,7 @@ describe Distribution, :all_dbs do
       expect(subject.statistics["total_batch_size"]).to eq(45)
       expect(subject.statistics["priority_count"]).to eq(legacy_priority_count + 1)
       expect(subject.statistics["legacy_proportion"]).to eq(0.4)
-      expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(0)
+      expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(3)
       expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
       expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
       expect(subject.statistics["hearing_proportion"]).to eq(0.2)
@@ -192,9 +192,10 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.first.docket).to eq("legacy")
       expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
       expect(subject.distributed_cases.where(priority: true).count).to eq(5)
-      expect(subject.distributed_cases.where(genpop: true).count).to eq(2)
+      expect(subject.distributed_cases.where(genpop: true).count).to eq(5)
       expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
-      expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(5)
+      expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
+      expect(subject.distributed_cases.where(priority: false, genpop_query: "any").map(&:docket_index).max).to eq(30)
       expect(subject.distributed_cases.where(priority: true,
                                              docket: Constants.AMA_DOCKETS.direct_review).count).to eq(1)
       expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
@@ -212,7 +213,7 @@ describe Distribution, :all_dbs do
         expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)).to eq 5
         subject.distribute!
         expect(subject.valid?).to eq(true)
-        expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(2)
+        expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(1)
         expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
         expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
       end

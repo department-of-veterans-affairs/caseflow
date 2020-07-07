@@ -28,7 +28,8 @@ module AmaCaseDistribution
     distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
 
     # Distribute nonpriority appeals that are tied to judges.
-    distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop")
+    # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
+    distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", range: legacy_docket_range)
     distribute_appeals(:hearing, @rem, priority: false, genpop: "not_genpop")
 
     # If we haven't yet met the priority target, distribute additional priority appeals.
