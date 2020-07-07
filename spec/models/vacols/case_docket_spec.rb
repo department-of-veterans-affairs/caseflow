@@ -284,6 +284,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
     context "when a case is tied to a judge by a hearing on a prior appeal" do
       let(:hearing_judge) { judge.vacols_attorney_id }
+      let(:another_hearing_judge) { another_judge.vacols_attorney_id }
       let!(:hearing) do
         create(:case_hearing,
                :disposition_held,
@@ -297,7 +298,7 @@ describe VACOLS::CaseDocket, :all_dbs do
                :disposition_held,
                folder_nr: another_nonpriority_ready_case.bfkey,
                hearing_date: 5.days.ago.to_date,
-               board_member: another_judge.vacols_attorney_id)
+               board_member: another_hearing_judge)
       end
 
       context "when genpop is no" do
@@ -309,16 +310,17 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
 
         context "with priority_acd on" do
-          let(:limit) { 5 }
+          let(:limit) { 2 }
+          let(:another_hearing_judge) { judge.vacols_attorney_id }
 
           before { FeatureToggle.enable!(:priority_acd) }
           after { FeatureToggle.disable!(:priority_acd) }
 
           context "when the judge does not have 30 cases in their backlog" do
-            it "does not distribute the case" do
-              expect(subject.count).to eq(0)
-              expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
-              expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+            it "distributes cases as it normally would based on the provided limit" do
+              expect(subject.count).to eq(2)
+              expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+              expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
             end
           end
 
