@@ -16,15 +16,7 @@ class AppealIntake < DecisionReviewIntake
 
     transaction do
       detail.assign_attributes(review_params)
-      Claimant.find_or_initialize_by(
-        decision_review: detail
-      ).tap do |claimant|
-        claimant.participant_id = claimant_participant_id
-        claimant.payee_code = nil
-        claimant.notes = request_params[:claimant_notes]
-        claimant.save!
-      end
-      update_person!
+      create_claimant!
       detail.save(context: :intake_review)
     end
   rescue ActiveRecord::RecordInvalid
@@ -47,8 +39,24 @@ class AppealIntake < DecisionReviewIntake
 
   private
 
-  def claimant_participant_id
-    (request_params[:veteran_is_not_claimant] == true) ? request_params[:claimant] : veteran.participant_id
+  def create_claimant!
+    if request_params[:veteran_is_not_claimant] == true
+      claimant_type = "DependentClaimant"
+      participant_id = request_params[:claimant]
+    else
+      claimant_type = "VeteranClaimant"
+      participant_id = veteran.participant_id
+    end
+
+    Claimant.find_or_initialize_by(
+      decision_review: detail
+    ).tap do |claimant|
+      claimant.type = claimant_type
+      claimant.participant_id = participant_id
+      claimant.notes = request_params[:claimant_notes]
+      claimant.save!
+    end
+    update_person!
   end
 
   def review_params
