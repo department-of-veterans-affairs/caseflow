@@ -507,6 +507,16 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
         expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_DETAIL)
 
+        # Selecting No Special Issues clears & disables other checkboxes
+        click_label("blueWater")
+        expect(page.find("#blueWater", visible: false).checked?).to eq true
+        click_label("noSpecialIssues")
+        expect(page.find("#blueWater", visible: false).checked?).to eq false
+        expect(page.find("#blueWater", visible: false).disabled?).to eq true
+        click_label("noSpecialIssues")
+        expect(page.find("#blueWater", visible: false).checked?).to eq false
+        expect(page.find("#blueWater", visible: false).disabled?).to eq false
+
         # Select no special issues and move forward
         click_label("noSpecialIssues")
         expect(page).to have_no_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)

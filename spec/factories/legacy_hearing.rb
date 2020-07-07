@@ -34,9 +34,17 @@ FactoryBot.define do
     end
 
     appeal do
-      create(:legacy_appeal, :with_veteran, closest_regional_office: regional_office, vacols_case:
-        create(:case_with_form_9, case_issues:
-        [create(:case_issue), create(:case_issue)], bfregoff: regional_office, case_hearings: [case_hearing]))
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        closest_regional_office: regional_office,
+        vacols_case: create(
+          :case_with_form_9,
+          case_issues: [create(:case_issue), create(:case_issue)],
+          bfregoff: regional_office,
+          case_hearings: [case_hearing]
+        )
+      )
     end
 
     hearing_day_id { case_hearing.vdkey }

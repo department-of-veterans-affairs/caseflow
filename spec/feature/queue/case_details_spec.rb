@@ -1230,6 +1230,7 @@ RSpec.feature "Case details", :all_dbs do
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
         text = Constants.TASK_ACTIONS.CANCEL_TASK.label
         click_dropdown(prompt: prompt, text: text)
+        fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
 
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
