@@ -142,14 +142,33 @@ class HearingRepository
       end
     end
 
+    # Maps attributes on a VACOLS case hearing to attributes on a Caseflow legacy hearing.
+    #
+    # @note Avoid triggering an indirect additional VACOLS load by avoiding calls to the 
+    #   `hearing` parameter.
+    #
+    # @param hearing       [LegacyHearing] an uninitialized Caseflow legacy hearing
+    # @param vacols_record [VACOLS::CaseHearing] a VACOLS case hearing
+    #
+    # @return [Hash]
+    #   A hash of setter names on a `LegacyHearing` to values
+    #
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def vacols_attributes(hearing, vacols_record)
-      # use venue location on the hearing if it exists
-      ro = if vacols_record.hearing_venue.present?
-             RegionalOffice.find!(vacols_record.hearing_venue)
-           else
-             hearing.regional_office || hearing.appeal&.regional_office
-           end
+      # This mirrors `LegacyHearing#regional_office_key`, but is designed to avoid
+      # calls to any VACOLS accessors because those would trigger an additional
+      # query to VACOLS.
+      #
+      # The only call here that has the potential to trigger a VACOLS query is
+      # the call to `LegacyHearing#hearing_day`, which can make a call to VACOLS
+      # if the value is not cached in Caseflow.
+      ro_key = if vacols_record.hearing_type == HearingDay::REQUEST_TYPES[:travel] || hearing.hearing_day.nil?
+                 vacols_record.hearing_venue || vacols_record.bfregoff
+               else
+                 hearing.hearing_day&.regional_office || "C"
+               end
+      ro = RegionalOffice.find!(ro_key) if ro_key.present?
+
       date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
                                                   regional_office: ro,
                                                   type: vacols_record.hearing_type)
