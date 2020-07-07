@@ -136,12 +136,12 @@ class NonCompDispositions extends React.PureComponent {
   }
 
   establishmentCreditsTimestamp() {
-      const tstamp = moment(this.props.task.created_at).format('ddd MMM DD YYYY [at] HH:mm');
+    const tstamp = moment(this.props.task.created_at).format('ddd MMM DD YYYY [at] HH:mm');
 
-      if (this.props.task.tasks_url) {
-        return tstamp;
-      }
+    if (this.props.task.tasks_url) {
+      return tstamp;
     }
+  }
 
   establishmentCredits() {
     return <div className="cf-push-left">
