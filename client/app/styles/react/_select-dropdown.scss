@@ -506,4 +506,10 @@ $cf-select-text-color: #323a45;
       }
     }
   }
+
+  .usa-input-error & {
+    .cf-select--is-disabled {
+      input { width: 1px; }
+    }
+  }
 }

@@ -10,7 +10,7 @@ const options = [
   { label: 'Option 1', value: 'value1' },
   { label: 'Option 2', value: 'value2' },
   { label: 'Option 3', value: 'value3' },
-  { label: 'Option 4', value: 'value4' }
+  { label: 'Option 4', value: 'value4' },
 ];
 
 export default {
@@ -19,8 +19,8 @@ export default {
   decorators: [
     (storyFn) => (
       <div style={{ minWidth: '300px', maxWidth: '400px' }}>{storyFn()}</div>
-    )
-  ]
+    ),
+  ],
 };
 
 export const basic = () => {
@@ -54,7 +54,19 @@ export const readOnly = () => {
       name="label"
       label="Custom Label Text"
       options={options}
+      value={options[1]}
       readOnly
+    />
+  );
+};
+
+export const error = () => {
+  return (
+    <SearchableDropdown
+      name="label"
+      label="Custom Label Text"
+      options={options}
+      errorMessage="Something is wrong"
     />
   );
 };
@@ -75,18 +87,14 @@ export const controlled = () => {
 };
 
 export const clearOnSelect = () => {
-  const [value, setValue] = useState(options[1]);
-  const handleChange = (val) => {
-    action('onChange')(val);
-    // setValue(null);
-  };
+  const handleChange = (val) => action('onChange')(val);
 
   return (
     <SearchableDropdown
       name="controlled"
       label="Clears Control upon Selection"
       options={options}
-      value={value}
+      value={options[1]}
       onChange={handleChange}
       clearOnSelect
     />
@@ -133,7 +141,7 @@ export const async = () => {
 
   const data = Array.from({ length: 250 }, () => ({
     label: faker.name.findName(),
-    value: faker.random.number()
+    value: faker.random.number(),
   }));
 
   // Simple string search for mocking
