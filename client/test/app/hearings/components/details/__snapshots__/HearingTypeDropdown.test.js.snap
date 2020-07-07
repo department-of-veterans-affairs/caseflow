@@ -1,0 +1,1283 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
+<HearingTypeDropdown
+  convertHearing={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "change_to_virtual",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  requestType="Central"
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": false,
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+>
+  <SearchableDropdown
+    label="Hearing Type"
+    loading={false}
+    name="hearingType"
+    onChange={[Function]}
+    options={
+      Array [
+        Object {
+          "label": "Central",
+          "value": false,
+        },
+        Object {
+          "label": "Virtual",
+          "value": true,
+        },
+      ]
+    }
+    strongLabel={true}
+    value={
+      Object {
+        "label": "Central",
+        "value": false,
+      }
+    }
+  >
+    <div
+      className="cf-form-dropdown dropdown-hearingType"
+    >
+      <label
+        className="question-label"
+        htmlFor="hearingType"
+      >
+        <strong>
+          <span>
+            Hearing Type
+          </span>
+        </strong>
+      </label>
+      <div
+        className=""
+      >
+        <Select
+          addLabelText="Add \\"{label}\\"?"
+          arrowRenderer={[Function]}
+          autosize={true}
+          backspaceRemoves={true}
+          backspaceToRemoveMessage="Press backspace to remove {label}"
+          cache={false}
+          clearAllText="Clear all"
+          clearRenderer={[Function]}
+          clearValueText="Clear value"
+          clearable={false}
+          deleteRemoves={true}
+          delimiter=","
+          disabled={false}
+          escapeClearsValue={true}
+          filterOptions={[Function]}
+          ignoreAccents={true}
+          ignoreCase={true}
+          inputProps={
+            Object {
+              "autoComplete": "off",
+              "id": "hearingType",
+            }
+          }
+          isLoading={false}
+          joinValues={false}
+          labelKey="label"
+          matchPos="any"
+          matchProp="any"
+          menuBuffer={0}
+          menuRenderer={[Function]}
+          multi={false}
+          noResultsText="Not an option"
+          onBlurResetsInput={false}
+          onChange={[Function]}
+          onCloseResetsInput={true}
+          optionComponent={[Function]}
+          options={
+            Array [
+              Object {
+                "label": "Central",
+                "value": false,
+              },
+              Object {
+                "label": "Virtual",
+                "value": true,
+              },
+            ]
+          }
+          pageSize={5}
+          placeholder="Select..."
+          required={false}
+          scrollMenuIntoView={true}
+          searchable={true}
+          shouldKeyDownEventCreateNewOption={[Function]}
+          simpleValue={false}
+          tabSelectsValue={true}
+          value={
+            Object {
+              "label": "Virtual",
+              "value": true,
+            }
+          }
+          valueComponent={[Function]}
+          valueKey="value"
+        >
+          <div
+            className="Select Select--single is-searchable has-value"
+          >
+            <div
+              className="Select-control"
+              onKeyDown={[Function]}
+              onMouseDown={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+            >
+              <span
+                className="Select-multi-value-wrapper"
+                id="react-select-2--value"
+              >
+                <Value
+                  disabled={false}
+                  id="react-select-2--value-item"
+                  instancePrefix="react-select-2-"
+                  onClick={null}
+                  value={
+                    Object {
+                      "label": "Virtual",
+                      "value": true,
+                    }
+                  }
+                >
+                  <div
+                    className="Select-value"
+                  >
+                    <span
+                      aria-selected="true"
+                      className="Select-value-label"
+                      id="react-select-2--value-item"
+                      role="option"
+                    >
+                      Virtual
+                    </span>
+                  </div>
+                </Value>
+                <Component
+                  aria-activedescendant="react-select-2--value"
+                  aria-expanded="false"
+                  aria-haspopup="false"
+                  aria-owns=""
+                  autoComplete="off"
+                  className="Select-input"
+                  id="hearingType"
+                  minWidth="5"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  required={false}
+                  role="combobox"
+                  value=""
+                >
+                  <div
+                    className="Select-input"
+                    style={
+                      Object {
+                        "display": "inline-block",
+                      }
+                    }
+                  >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "input#undefined::-ms-clear {display: none;}",
+                        }
+                      }
+                    />
+                    <input
+                      aria-activedescendant="react-select-2--value"
+                      aria-expanded="false"
+                      aria-haspopup="false"
+                      aria-owns=""
+                      autoComplete="off"
+                      id="hearingType"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={false}
+                      role="combobox"
+                      style={
+                        Object {
+                          "boxSizing": "content-box",
+                          "width": "5px",
+                        }
+                      }
+                      value=""
+                    />
+                    <div
+                      style={
+                        Object {
+                          "height": 0,
+                          "left": 0,
+                          "overflow": "scroll",
+                          "position": "absolute",
+                          "top": 0,
+                          "visibility": "hidden",
+                          "whiteSpace": "pre",
+                        }
+                      }
+                    />
+                  </div>
+                </Component>
+              </span>
+              <span
+                className="Select-arrow-zone"
+                onMouseDown={[Function]}
+              >
+                <span
+                  className="Select-arrow"
+                  onMouseDown={[Function]}
+                />
+              </span>
+            </div>
+          </div>
+        </Select>
+      </div>
+    </div>
+  </SearchableDropdown>
+</HearingTypeDropdown>
+`;
+
+exports[`HearingTypeDropdown Can change from video hearing 1`] = `
+<HearingTypeDropdown
+  openModal={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          Object {
+            "type": "change_to_virtual",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  requestType="Video"
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": false,
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": false,
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+>
+  <SearchableDropdown
+    label="Hearing Type"
+    loading={false}
+    name="hearingType"
+    onChange={[Function]}
+    options={
+      Array [
+        Object {
+          "label": "Video",
+          "value": false,
+        },
+        Object {
+          "label": "Virtual",
+          "value": true,
+        },
+      ]
+    }
+    strongLabel={true}
+    value={
+      Object {
+        "label": "Video",
+        "value": false,
+      }
+    }
+  >
+    <div
+      className="cf-form-dropdown dropdown-hearingType"
+    >
+      <label
+        className="question-label"
+        htmlFor="hearingType"
+      >
+        <strong>
+          <span>
+            Hearing Type
+          </span>
+        </strong>
+      </label>
+      <div
+        className=""
+      >
+        <Select
+          addLabelText="Add \\"{label}\\"?"
+          arrowRenderer={[Function]}
+          autosize={true}
+          backspaceRemoves={true}
+          backspaceToRemoveMessage="Press backspace to remove {label}"
+          cache={false}
+          clearAllText="Clear all"
+          clearRenderer={[Function]}
+          clearValueText="Clear value"
+          clearable={false}
+          deleteRemoves={true}
+          delimiter=","
+          disabled={false}
+          escapeClearsValue={true}
+          filterOptions={[Function]}
+          ignoreAccents={true}
+          ignoreCase={true}
+          inputProps={
+            Object {
+              "autoComplete": "off",
+              "id": "hearingType",
+            }
+          }
+          isLoading={false}
+          joinValues={false}
+          labelKey="label"
+          matchPos="any"
+          matchProp="any"
+          menuBuffer={0}
+          menuRenderer={[Function]}
+          multi={false}
+          noResultsText="Not an option"
+          onBlurResetsInput={false}
+          onChange={[Function]}
+          onCloseResetsInput={true}
+          optionComponent={[Function]}
+          options={
+            Array [
+              Object {
+                "label": "Video",
+                "value": false,
+              },
+              Object {
+                "label": "Virtual",
+                "value": true,
+              },
+            ]
+          }
+          pageSize={5}
+          placeholder="Select..."
+          required={false}
+          scrollMenuIntoView={true}
+          searchable={true}
+          shouldKeyDownEventCreateNewOption={[Function]}
+          simpleValue={false}
+          tabSelectsValue={true}
+          value={
+            Object {
+              "label": "Virtual",
+              "value": true,
+            }
+          }
+          valueComponent={[Function]}
+          valueKey="value"
+        >
+          <div
+            className="Select Select--single is-searchable has-value"
+          >
+            <div
+              className="Select-control"
+              onKeyDown={[Function]}
+              onMouseDown={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+            >
+              <span
+                className="Select-multi-value-wrapper"
+                id="react-select-3--value"
+              >
+                <Value
+                  disabled={false}
+                  id="react-select-3--value-item"
+                  instancePrefix="react-select-3-"
+                  onClick={null}
+                  value={
+                    Object {
+                      "label": "Virtual",
+                      "value": true,
+                    }
+                  }
+                >
+                  <div
+                    className="Select-value"
+                  >
+                    <span
+                      aria-selected="true"
+                      className="Select-value-label"
+                      id="react-select-3--value-item"
+                      role="option"
+                    >
+                      Virtual
+                    </span>
+                  </div>
+                </Value>
+                <Component
+                  aria-activedescendant="react-select-3--value"
+                  aria-expanded="false"
+                  aria-haspopup="false"
+                  aria-owns=""
+                  autoComplete="off"
+                  className="Select-input"
+                  id="hearingType"
+                  minWidth="5"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  required={false}
+                  role="combobox"
+                  value=""
+                >
+                  <div
+                    className="Select-input"
+                    style={
+                      Object {
+                        "display": "inline-block",
+                      }
+                    }
+                  >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "input#undefined::-ms-clear {display: none;}",
+                        }
+                      }
+                    />
+                    <input
+                      aria-activedescendant="react-select-3--value"
+                      aria-expanded="false"
+                      aria-haspopup="false"
+                      aria-owns=""
+                      autoComplete="off"
+                      id="hearingType"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={false}
+                      role="combobox"
+                      style={
+                        Object {
+                          "boxSizing": "content-box",
+                          "width": "5px",
+                        }
+                      }
+                      value=""
+                    />
+                    <div
+                      style={
+                        Object {
+                          "height": 0,
+                          "left": 0,
+                          "overflow": "scroll",
+                          "position": "absolute",
+                          "top": 0,
+                          "visibility": "hidden",
+                          "whiteSpace": "pre",
+                        }
+                      }
+                    />
+                  </div>
+                </Component>
+              </span>
+              <span
+                className="Select-arrow-zone"
+                onMouseDown={[Function]}
+              >
+                <span
+                  className="Select-arrow"
+                  onMouseDown={[Function]}
+                />
+              </span>
+            </div>
+          </div>
+        </Select>
+      </div>
+    </div>
+  </SearchableDropdown>
+</HearingTypeDropdown>
+`;
+
+exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
+<HearingTypeDropdown
+  convertHearing={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "change_to_virtual",
+        ],
+        Array [
+          "change_from_virtual",
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  requestType="Central"
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": false,
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": false,
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": true,
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "clientHost": "care.evn.va.gov",
+      "false": "tom.brady@caseflow.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <SearchableDropdown
+    label="Hearing Type"
+    loading={false}
+    name="hearingType"
+    onChange={[Function]}
+    options={
+      Array [
+        Object {
+          "label": "Central",
+          "value": false,
+        },
+        Object {
+          "label": "Virtual",
+          "value": true,
+        },
+      ]
+    }
+    strongLabel={true}
+    value={
+      Object {
+        "label": "Virtual",
+        "value": true,
+      }
+    }
+  >
+    <div
+      className="cf-form-dropdown dropdown-hearingType"
+    >
+      <label
+        className="question-label"
+        htmlFor="hearingType"
+      >
+        <strong>
+          <span>
+            Hearing Type
+          </span>
+        </strong>
+      </label>
+      <div
+        className=""
+      >
+        <Select
+          addLabelText="Add \\"{label}\\"?"
+          arrowRenderer={[Function]}
+          autosize={true}
+          backspaceRemoves={true}
+          backspaceToRemoveMessage="Press backspace to remove {label}"
+          cache={false}
+          clearAllText="Clear all"
+          clearRenderer={[Function]}
+          clearValueText="Clear value"
+          clearable={false}
+          deleteRemoves={true}
+          delimiter=","
+          disabled={false}
+          escapeClearsValue={true}
+          filterOptions={[Function]}
+          ignoreAccents={true}
+          ignoreCase={true}
+          inputProps={
+            Object {
+              "autoComplete": "off",
+              "id": "hearingType",
+            }
+          }
+          isLoading={false}
+          joinValues={false}
+          labelKey="label"
+          matchPos="any"
+          matchProp="any"
+          menuBuffer={0}
+          menuRenderer={[Function]}
+          multi={false}
+          noResultsText="Not an option"
+          onBlurResetsInput={false}
+          onChange={[Function]}
+          onCloseResetsInput={true}
+          optionComponent={[Function]}
+          options={
+            Array [
+              Object {
+                "label": "Central",
+                "value": false,
+              },
+              Object {
+                "label": "Virtual",
+                "value": true,
+              },
+            ]
+          }
+          pageSize={5}
+          placeholder="Select..."
+          required={false}
+          scrollMenuIntoView={true}
+          searchable={true}
+          shouldKeyDownEventCreateNewOption={[Function]}
+          simpleValue={false}
+          tabSelectsValue={true}
+          value={
+            Object {
+              "label": "Central",
+              "value": false,
+            }
+          }
+          valueComponent={[Function]}
+          valueKey="value"
+        >
+          <div
+            className="Select Select--single is-searchable has-value"
+          >
+            <div
+              className="Select-control"
+              onKeyDown={[Function]}
+              onMouseDown={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+            >
+              <span
+                className="Select-multi-value-wrapper"
+                id="react-select-4--value"
+              >
+                <Value
+                  disabled={false}
+                  id="react-select-4--value-item"
+                  instancePrefix="react-select-4-"
+                  onClick={null}
+                  value={
+                    Object {
+                      "label": "Central",
+                      "value": false,
+                    }
+                  }
+                >
+                  <div
+                    className="Select-value"
+                  >
+                    <span
+                      aria-selected="true"
+                      className="Select-value-label"
+                      id="react-select-4--value-item"
+                      role="option"
+                    >
+                      Central
+                    </span>
+                  </div>
+                </Value>
+                <Component
+                  aria-activedescendant="react-select-4--value"
+                  aria-expanded="false"
+                  aria-haspopup="false"
+                  aria-owns=""
+                  autoComplete="off"
+                  className="Select-input"
+                  id="hearingType"
+                  minWidth="5"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  required={false}
+                  role="combobox"
+                  value=""
+                >
+                  <div
+                    className="Select-input"
+                    style={
+                      Object {
+                        "display": "inline-block",
+                      }
+                    }
+                  >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "input#undefined::-ms-clear {display: none;}",
+                        }
+                      }
+                    />
+                    <input
+                      aria-activedescendant="react-select-4--value"
+                      aria-expanded="false"
+                      aria-haspopup="false"
+                      aria-owns=""
+                      autoComplete="off"
+                      id="hearingType"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={false}
+                      role="combobox"
+                      style={
+                        Object {
+                          "boxSizing": "content-box",
+                          "width": "5px",
+                        }
+                      }
+                      value=""
+                    />
+                    <div
+                      style={
+                        Object {
+                          "height": 0,
+                          "left": 0,
+                          "overflow": "scroll",
+                          "position": "absolute",
+                          "top": 0,
+                          "visibility": "hidden",
+                          "whiteSpace": "pre",
+                        }
+                      }
+                    />
+                  </div>
+                </Component>
+              </span>
+              <span
+                className="Select-arrow-zone"
+                onMouseDown={[Function]}
+              >
+                <span
+                  className="Select-arrow"
+                  onMouseDown={[Function]}
+                />
+              </span>
+            </div>
+          </div>
+        </Select>
+      </div>
+    </div>
+  </SearchableDropdown>
+</HearingTypeDropdown>
+`;
+
+exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
+<HearingTypeDropdown
+  openModal={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          Object {
+            "type": "change_to_virtual",
+          },
+        ],
+        Array [
+          Object {
+            "type": "change_from_virtual",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  requestType="Video"
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": false,
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": false,
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": true,
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "jobCompleted": false,
+            "requestCancelled": true,
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "clientHost": "care.evn.va.gov",
+      "false": "tom.brady@caseflow.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <SearchableDropdown
+    label="Hearing Type"
+    loading={false}
+    name="hearingType"
+    onChange={[Function]}
+    options={
+      Array [
+        Object {
+          "label": "Video",
+          "value": false,
+        },
+        Object {
+          "label": "Virtual",
+          "value": true,
+        },
+      ]
+    }
+    strongLabel={true}
+    value={
+      Object {
+        "label": "Virtual",
+        "value": true,
+      }
+    }
+  >
+    <div
+      className="cf-form-dropdown dropdown-hearingType"
+    >
+      <label
+        className="question-label"
+        htmlFor="hearingType"
+      >
+        <strong>
+          <span>
+            Hearing Type
+          </span>
+        </strong>
+      </label>
+      <div
+        className=""
+      >
+        <Select
+          addLabelText="Add \\"{label}\\"?"
+          arrowRenderer={[Function]}
+          autosize={true}
+          backspaceRemoves={true}
+          backspaceToRemoveMessage="Press backspace to remove {label}"
+          cache={false}
+          clearAllText="Clear all"
+          clearRenderer={[Function]}
+          clearValueText="Clear value"
+          clearable={false}
+          deleteRemoves={true}
+          delimiter=","
+          disabled={false}
+          escapeClearsValue={true}
+          filterOptions={[Function]}
+          ignoreAccents={true}
+          ignoreCase={true}
+          inputProps={
+            Object {
+              "autoComplete": "off",
+              "id": "hearingType",
+            }
+          }
+          isLoading={false}
+          joinValues={false}
+          labelKey="label"
+          matchPos="any"
+          matchProp="any"
+          menuBuffer={0}
+          menuRenderer={[Function]}
+          multi={false}
+          noResultsText="Not an option"
+          onBlurResetsInput={false}
+          onChange={[Function]}
+          onCloseResetsInput={true}
+          optionComponent={[Function]}
+          options={
+            Array [
+              Object {
+                "label": "Video",
+                "value": false,
+              },
+              Object {
+                "label": "Virtual",
+                "value": true,
+              },
+            ]
+          }
+          pageSize={5}
+          placeholder="Select..."
+          required={false}
+          scrollMenuIntoView={true}
+          searchable={true}
+          shouldKeyDownEventCreateNewOption={[Function]}
+          simpleValue={false}
+          tabSelectsValue={true}
+          value={
+            Object {
+              "label": "Video",
+              "value": false,
+            }
+          }
+          valueComponent={[Function]}
+          valueKey="value"
+        >
+          <div
+            className="Select Select--single is-searchable has-value"
+          >
+            <div
+              className="Select-control"
+              onKeyDown={[Function]}
+              onMouseDown={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+            >
+              <span
+                className="Select-multi-value-wrapper"
+                id="react-select-5--value"
+              >
+                <Value
+                  disabled={false}
+                  id="react-select-5--value-item"
+                  instancePrefix="react-select-5-"
+                  onClick={null}
+                  value={
+                    Object {
+                      "label": "Video",
+                      "value": false,
+                    }
+                  }
+                >
+                  <div
+                    className="Select-value"
+                  >
+                    <span
+                      aria-selected="true"
+                      className="Select-value-label"
+                      id="react-select-5--value-item"
+                      role="option"
+                    >
+                      Video
+                    </span>
+                  </div>
+                </Value>
+                <Component
+                  aria-activedescendant="react-select-5--value"
+                  aria-expanded="false"
+                  aria-haspopup="false"
+                  aria-owns=""
+                  autoComplete="off"
+                  className="Select-input"
+                  id="hearingType"
+                  minWidth="5"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  required={false}
+                  role="combobox"
+                  value=""
+                >
+                  <div
+                    className="Select-input"
+                    style={
+                      Object {
+                        "display": "inline-block",
+                      }
+                    }
+                  >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "input#undefined::-ms-clear {display: none;}",
+                        }
+                      }
+                    />
+                    <input
+                      aria-activedescendant="react-select-5--value"
+                      aria-expanded="false"
+                      aria-haspopup="false"
+                      aria-owns=""
+                      autoComplete="off"
+                      id="hearingType"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={false}
+                      role="combobox"
+                      style={
+                        Object {
+                          "boxSizing": "content-box",
+                          "width": "5px",
+                        }
+                      }
+                      value=""
+                    />
+                    <div
+                      style={
+                        Object {
+                          "height": 0,
+                          "left": 0,
+                          "overflow": "scroll",
+                          "position": "absolute",
+                          "top": 0,
+                          "visibility": "hidden",
+                          "whiteSpace": "pre",
+                        }
+                      }
+                    />
+                  </div>
+                </Component>
+              </span>
+              <span
+                className="Select-arrow-zone"
+                onMouseDown={[Function]}
+              >
+                <span
+                  className="Select-arrow"
+                  onMouseDown={[Function]}
+                />
+              </span>
+            </div>
+          </div>
+        </Select>
+      </div>
+    </div>
+  </SearchableDropdown>
+</HearingTypeDropdown>
+`;
+
+exports[`HearingTypeDropdown Matches snapshot with default props for central office hearings 1`] = `
+<SearchableDropdown
+  label="Hearing Type"
+  loading={false}
+  name="hearingType"
+  onChange={[Function]}
+  options={
+    Array [
+      Object {
+        "label": "Central",
+        "value": false,
+      },
+      Object {
+        "label": "Virtual",
+        "value": true,
+      },
+    ]
+  }
+  strongLabel={true}
+  value={
+    Object {
+      "label": "Central",
+      "value": false,
+    }
+  }
+/>
+`;
+
+exports[`HearingTypeDropdown Matches snapshot with default props for video hearings 1`] = `
+<SearchableDropdown
+  label="Hearing Type"
+  loading={false}
+  name="hearingType"
+  onChange={[Function]}
+  options={
+    Array [
+      Object {
+        "label": "Video",
+        "value": false,
+      },
+      Object {
+        "label": "Virtual",
+        "value": true,
+      },
+    ]
+  }
+  strongLabel={true}
+  value={
+    Object {
+      "label": "Video",
+      "value": false,
+    }
+  }
+/>
+`;
+
+exports[`HearingTypeDropdown Matches snapshot with default props for virtual hearings 1`] = `
+<SearchableDropdown
+  label="Hearing Type"
+  loading={false}
+  name="hearingType"
+  onChange={[Function]}
+  options={
+    Array [
+      Object {
+        "label": "Central",
+        "value": false,
+      },
+      Object {
+        "label": "Virtual",
+        "value": true,
+      },
+    ]
+  }
+  strongLabel={true}
+  value={
+    Object {
+      "label": "Virtual",
+      "value": true,
+    }
+  }
+/>
+`;

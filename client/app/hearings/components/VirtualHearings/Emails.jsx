@@ -2,11 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import {
-  fullWidth,
-  enablePadding,
-  maxWidthFormInput,
-} from '../details/style';
+import { enablePadding, maxWidthFormInput } from '../details/style';
 import TextField from '../../../components/TextField';
 import { ReadOnly } from '../details/ReadOnly';
 import { HelperText } from './HelperText';
@@ -14,9 +10,7 @@ import COPY from '../../../../COPY';
 
 export const VirtualHearingEmail = ({ email, emailType, label, readOnly, error, update, required, disabled }) =>
   readOnly ? (
-    <ReadOnly label={label}>
-      <span {...fullWidth}>{email}</span>
-    </ReadOnly>
+    <ReadOnly label={label} text={email} />
   ) : (
     <React.Fragment>
       <TextField

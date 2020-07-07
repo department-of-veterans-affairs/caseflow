@@ -30,23 +30,21 @@ class HearingTypeDropdown extends React.Component {
     return this.HEARING_TYPE_OPTIONS[1];
   };
 
-  onChange = ({ value, label }) => {
+  onChange = ({ label }) => {
     const { convertHearing, update, openModal } = this.props;
-    const { value: currentValue, label: currentLabel } = this.getValue();
+    const { label: currentLabel } = this.getValue();
 
     // Don't change if the value is the same
     if (label === currentLabel) {
       return;
     }
 
-    // if current value is true (a virtual hearing), then we will be sending cancellation emails,
-    // if new value is true, then we will be sending confirmation emails
-    const type = value && currentValue !== value ? 'change_to_virtual' : 'change_from_virtual';
+    // Change from virtual if the current label is virtual
+    const type = currentLabel === 'Virtual' ? 'change_from_virtual' : 'change_to_virtual';
 
     // Use the modal if the label is video
     if ((label === 'Video' || currentLabel === 'Video')) {
       openModal({ type });
-
     } else {
       convertHearing(type);
     }

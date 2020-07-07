@@ -16,9 +16,7 @@ export const defaultProps = {};
 <Preview>
   <Story name="Normal">
     {() => (
-        <ReadOnly label={text('Label', 'Example', 'knobs')}>
-          {text('Children', 'Some children', 'knobs')}
-        </ReadOnly>
+      <ReadOnly text={text('Children', 'Some children', 'knobs')} label={text('Label', 'Example', 'knobs')}/>
     )}
   </Story>
 </Preview>

@@ -71,6 +71,10 @@ class LegacyHearing < CaseflowRecord
     appeal&.representative_email_address
   end
 
+  def representative_address
+    appeal&.representative_address
+  end
+
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
       task.type == TrackVeteranTask.name &&

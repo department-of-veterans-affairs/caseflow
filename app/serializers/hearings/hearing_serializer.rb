@@ -59,6 +59,7 @@ class HearingSerializer
   attribute :regional_office_timezone
   attribute :representative, if: for_full
   attribute :representative_name, if: for_full
+  attribute :representative_address, if: for_full
   attribute :representative_email_address, if: for_full
   attribute :room
   attribute :scheduled_for
@@ -79,6 +80,9 @@ class HearingSerializer
   attribute :is_virtual, &:virtual?
   attribute :appellant_tz do |hearing|
     TimezoneService.address_to_timezone(hearing.appeal.veteran&.address).identifier
+  end
+  attribute :representative_tz do |hearing|
+    TimezoneService.address_to_timezone(hearing.representative_address).identifier
   end
   attribute :virtual_hearing do |object|
     if object.virtual? || object.was_virtual?

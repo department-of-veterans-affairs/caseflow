@@ -102,6 +102,10 @@ class Hearing < CaseflowRecord
     appeal&.representative_email_address
   end
 
+  def representative_address
+    appeal&.representative_address
+  end
+
   def claimant_id
     return nil if appeal.appellant.nil?
 

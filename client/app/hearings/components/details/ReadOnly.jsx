@@ -7,14 +7,14 @@ import PropTypes from 'prop-types';
  * @param {Object} props -- Label and child nodes
  * @component
  */
-export const ReadOnly = ({ label, children }) => (
+export const ReadOnly = ({ label, text }) => (
   <div {...marginTop(25)}>
-    <strong>{label}</strong>
-    {children}
+    {label && <strong>{label}</strong>}
+    {text && <pre>{text}</pre>}
   </div>
 );
 
 ReadOnly.propTypes = {
-  label: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
+  text: PropTypes.node,
+  label: PropTypes.string,
 };

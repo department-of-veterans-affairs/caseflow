@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
-import { fullWidth, marginTop, noMaxWidth } from './details/style';
+import { marginTop, noMaxWidth } from './details/style';
 import COPY from '../../../COPY';
 import { AddressLine } from './details/Address';
 import { VirtualHearingSection } from './VirtualHearings/Section';
@@ -18,34 +18,30 @@ import { getAppellantTitleForHearing } from '../utils';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 
 export const HearingConversion = ({
+  hearing: { virtualHearing, ...hearing },
   title,
-  hearing,
   type,
   scheduledFor,
   errors,
   update,
 }) => {
-  const { virtualHearing } = hearing;
   const appellantTitle = getAppellantTitleForHearing(hearing);
   const virtual = type === 'change_to_virtual';
-  const helperLabel = virtual ?
-    COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL :
-    COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
+  const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
 
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
     // Determine which email to use
-    const appellantEmail = hearing.appellantIsNotVeteran ?
-      hearing.appellantEmailAddress :
-      hearing.veteranEmailAddress;
+    const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
     const appellantTz = virtualHearing?.appellantTz ? virtualHearing?.appellantTz : hearing?.appellantTz;
+    const representativeTz = virtualHearing?.representativeTz ? virtualHearing?.representativeTz : hearing?.representativeTz;
 
-    // Set the emails if not already set
+    // Set the emails and timezone if not already set
     update('virtualHearing', {
+      [!virtualHearing?.representativeTz && 'representativeTz']: representativeTz,
       [!virtualHearing?.appellantTz && 'appellantTz']: appellantTz,
       [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
-      [!virtualHearing?.representativeEmail &&
-      'representativeEmail']: hearing.representativeEmailAddress,
+      [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
     });
   }, []);
 
@@ -53,9 +49,7 @@ export const HearingConversion = ({
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
       <span>{helperLabel}</span>
-      <ReadOnly label="Hearing Date">
-        <span {...fullWidth}>{DateUtil.formatDateStr(scheduledFor)}</span>
-      </ReadOnly>
+      <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className="usa-width-one-half">
           <HearingTime
@@ -63,26 +57,22 @@ export const HearingConversion = ({
             label="Hearing Time"
             disableRadioOptions={virtual}
             enableZone
-            onChange={(scheduledTimeString) =>
-              update('hearing', { scheduledTimeString })
-            }
+            onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
             value={hearing.scheduledTimeString}
           />
         </div>
       </div>
       <VirtualHearingSection label={appellantTitle}>
-        <ReadOnly label="">
-          <AddressLine
-            name={`${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
-            addressLine1={hearing?.appellantAddressLine1}
-            addressState={hearing?.appellantState}
-            addressCity={hearing?.appellantCity}
-            addressZip={hearing?.appellantZip}
-          />
-        </ReadOnly>
+        <AddressLine
+          name={`${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
+          addressLine1={hearing?.appellantAddressLine1}
+          addressState={hearing?.appellantState}
+          addressCity={hearing?.appellantCity}
+          addressZip={hearing?.appellantZip}
+        />
         {virtual && (
           <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-            <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+            <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
               <Timezone
                 required
                 value={virtualHearing?.appellantTz}
@@ -95,7 +85,7 @@ export const HearingConversion = ({
           </div>
         )}
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
             <VirtualHearingEmail
               required
               readOnly={!virtual}
@@ -110,18 +100,17 @@ export const HearingConversion = ({
         </div>
       </VirtualHearingSection>
       <VirtualHearingSection label="Power of Attorney">
-        <ReadOnly label="Attorney">
-          <AddressLine
-            name={hearing?.representativeName}
-            addressLine1={hearing?.appellantAddressLine1}
-            addressState={hearing?.appellantState}
-            addressCity={hearing?.appellantCity}
-            addressZip={hearing?.appellantZip}
-          />
-        </ReadOnly>
+        <AddressLine
+          label="Attorney"
+          name={hearing?.representativeName}
+          addressLine1={hearing?.representativeAddress?.addressLine1}
+          addressState={hearing?.representativeAddress?.state}
+          addressCity={hearing?.representativeAddress?.city}
+          addressZip={hearing?.representativeAddress?.zip}
+        />
         {virtual && (
           <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-            <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+            <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
               <Timezone
                 value={virtualHearing?.representativeTz}
                 onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
@@ -133,7 +122,7 @@ export const HearingConversion = ({
           </div>
         )}
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
             <VirtualHearingEmail
               readOnly={!virtual}
               emailType="representativeEmail"
@@ -156,9 +145,7 @@ export const HearingConversion = ({
             />
           </div>
         </div>
-        <ReadOnly label="VLJ Email">
-          <span {...fullWidth}>{hearing.judge?.email || 'N/A'}</span>
-        </ReadOnly>
+        <ReadOnly label="VLJ Email" text={hearing.judge?.email || 'N/A'} />
       </VirtualHearingSection>
     </AppSegment>
   );

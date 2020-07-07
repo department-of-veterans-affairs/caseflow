@@ -8,7 +8,15 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
     }
   }
   isVirtual={true}
-  user={Object {}}
+  user={
+    Object {
+      "addressCity": "Washington",
+      "addressLine1": "123 Fake St.",
+      "addressState": "DC",
+      "addressZip": "20001",
+      "name": "John Smith",
+    }
+  }
   virtualHearing={
     Object {
       "aliasWithHost": "BVA#00000001@localhost",
@@ -34,7 +42,15 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
       label="VLJ Link"
       linkText="Start Virtual Hearing"
       role="VLJ"
-      user={Object {}}
+      user={
+        Object {
+          "addressCity": "Washington",
+          "addressLine1": "123 Fake St.",
+          "addressState": "DC",
+          "addressZip": "20001",
+          "name": "John Smith",
+        }
+      }
       virtualHearing={
         Object {
           "aliasWithHost": "BVA#00000001@localhost",
@@ -65,7 +81,15 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
           label="Start Virtual Hearing"
           pin="1234567890#"
           role="VLJ"
-          user={Object {}}
+          user={
+            Object {
+              "addressCity": "Washington",
+              "addressLine1": "123 Fake St.",
+              "addressState": "DC",
+              "addressZip": "20001",
+              "name": "John Smith",
+            }
+          }
           virtualHearing={
             Object {
               "aliasWithHost": "BVA#00000001@localhost",
@@ -87,7 +111,15 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             label="Start Virtual Hearing"
             newWindow={true}
             showFullLink={false}
-            user={Object {}}
+            user={
+              Object {
+                "addressCity": "Washington",
+                "addressLine1": "123 Fake St.",
+                "addressState": "DC",
+                "addressZip": "20001",
+                "name": "John Smith",
+              }
+            }
             virtualHearing={
               Object {
                 "aliasWithHost": "BVA#00000001@localhost",
@@ -255,7 +287,15 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
       label="Guest Link"
       linkText="Join Virtual Hearing"
       role="Guest"
-      user={Object {}}
+      user={
+        Object {
+          "addressCity": "Washington",
+          "addressLine1": "123 Fake St.",
+          "addressState": "DC",
+          "addressZip": "20001",
+          "name": "John Smith",
+        }
+      }
       virtualHearing={
         Object {
           "aliasWithHost": "BVA#00000001@localhost",
@@ -286,7 +326,15 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
           label="Join Virtual Hearing"
           pin="12345678#"
           role="Guest"
-          user={Object {}}
+          user={
+            Object {
+              "addressCity": "Washington",
+              "addressLine1": "123 Fake St.",
+              "addressState": "DC",
+              "addressZip": "20001",
+              "name": "John Smith",
+            }
+          }
           virtualHearing={
             Object {
               "aliasWithHost": "BVA#00000001@localhost",
@@ -308,7 +356,15 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             label="Join Virtual Hearing"
             newWindow={true}
             showFullLink={false}
-            user={Object {}}
+            user={
+              Object {
+                "addressCity": "Washington",
+                "addressLine1": "123 Fake St.",
+                "addressState": "DC",
+                "addressZip": "20001",
+                "name": "John Smith",
+              }
+            }
             virtualHearing={
               Object {
                 "aliasWithHost": "BVA#00000001@localhost",
@@ -478,7 +534,15 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       "scheduledForIsPast": false,
     }
   }
-  user={Object {}}
+  user={
+    Object {
+      "addressCity": "Washington",
+      "addressLine1": "123 Fake St.",
+      "addressState": "DC",
+      "addressZip": "20001",
+      "name": "John Smith",
+    }
+  }
   virtualHearing={
     Object {
       "aliasWithHost": "BVA#00000001@localhost",
@@ -504,7 +568,15 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       label="VLJ Link"
       linkText="Start Virtual Hearing"
       role="VLJ"
-      user={Object {}}
+      user={
+        Object {
+          "addressCity": "Washington",
+          "addressLine1": "123 Fake St.",
+          "addressState": "DC",
+          "addressZip": "20001",
+          "name": "John Smith",
+        }
+      }
       virtualHearing={
         Object {
           "aliasWithHost": "BVA#00000001@localhost",
@@ -535,7 +607,15 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           label="Start Virtual Hearing"
           pin="1234567890#"
           role="VLJ"
-          user={Object {}}
+          user={
+            Object {
+              "addressCity": "Washington",
+              "addressLine1": "123 Fake St.",
+              "addressState": "DC",
+              "addressZip": "20001",
+              "name": "John Smith",
+            }
+          }
           virtualHearing={
             Object {
               "aliasWithHost": "BVA#00000001@localhost",
@@ -579,7 +659,15 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
       label="Guest Link"
       linkText="Join Virtual Hearing"
       role="Guest"
-      user={Object {}}
+      user={
+        Object {
+          "addressCity": "Washington",
+          "addressLine1": "123 Fake St.",
+          "addressState": "DC",
+          "addressZip": "20001",
+          "name": "John Smith",
+        }
+      }
       virtualHearing={
         Object {
           "aliasWithHost": "BVA#00000001@localhost",
@@ -610,7 +698,15 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           label="Join Virtual Hearing"
           pin="12345678#"
           role="Guest"
-          user={Object {}}
+          user={
+            Object {
+              "addressCity": "Washington",
+              "addressLine1": "123 Fake St.",
+              "addressState": "DC",
+              "addressZip": "20001",
+              "name": "John Smith",
+            }
+          }
           virtualHearing={
             Object {
               "aliasWithHost": "BVA#00000001@localhost",
