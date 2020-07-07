@@ -261,7 +261,7 @@ describe Distribution, :all_dbs do
 
     context "when an illegit nonpriority legacy case re-distribtution is attempted" do
       let(:case_id) { legacy_case.bfkey }
-      let(:legacy_case) { legacy_nonpriority_cases.first }
+      let(:legacy_case) { legacy_nonpriority_cases[29] }
 
       before do
         @raven_called = false
@@ -284,7 +284,7 @@ describe Distribution, :all_dbs do
 
     context "when a legit nonpriority legacy case re-distribtution is attempted" do
       let(:case_id) { legacy_case.bfkey }
-      let(:legacy_case) { legacy_nonpriority_cases.first }
+      let(:legacy_case) { legacy_nonpriority_cases[29] }
       let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case) }
 
       before do
