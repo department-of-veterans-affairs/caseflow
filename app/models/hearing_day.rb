@@ -125,7 +125,7 @@ class HearingDay < CaseflowRecord
       return SLOTS_BY_REQUEST_TYPE[request_type]
     end
 
-    SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
+    SLOTS_BY_TIMEZONE[RegionalOffice.find!(regional_office).timezone]
   end
 
   def judge_first_name
