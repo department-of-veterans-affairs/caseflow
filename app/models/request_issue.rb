@@ -624,11 +624,15 @@ class RequestIssue < CaseflowRecord
   def create_legacy_issue_optin!
     return unless legacy_issue_opted_in?
 
+    binding.pry
     LegacyIssueOptin.create!(
       request_issue: self,
       original_disposition_code: vacols_issue.disposition_id,
       original_disposition_date: vacols_issue.disposition_date,
-      legacy_issue: legacy_issues.first
+      legacy_issue: legacy_issues.first,
+      original_legacy_appeal_decision_date: vacols_issue.legacy_appeal.decision_date,
+      original_legacy_appeal_disposition_code: vacols_issue.legacy_appeal.case_record.bfdc,
+      folder_date_time_of_decision: vacols_issue.legacy_appeal.case_record.folder.tidcls
     )
   end
 
