@@ -203,40 +203,27 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
     end
 
-    context "with priority_acd on" do
-      let(:limit) { 5 }
-
+    context "with priority_acd on and the judge's backlog is full" do
       before { FeatureToggle.enable!(:priority_acd) }
       after { FeatureToggle.disable!(:priority_acd) }
 
-      it "does not distribute legacy hearing non priority cases if the backlog is not full" do
-        expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)).to eq 5
-        subject.distribute!
-        expect(subject.valid?).to eq(true)
-        expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(1)
-        expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
-        expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
+      let!(:more_same_judge_nonpriority_hearings) do
+        legacy_nonpriority_cases[33..63].map do |appeal|
+          create(:case_hearing,
+                 :disposition_held,
+                 folder_nr: appeal.bfkey,
+                 hearing_date: 1.month.ago,
+                 board_member: judge.vacols_attorney_id)
+        end
       end
 
-      context "when the judge's backlog is full" do
-        let!(:more_same_judge_nonpriority_hearings) do
-          legacy_nonpriority_cases[33..63].map do |appeal|
-            create(:case_hearing,
-                   :disposition_held,
-                   folder_nr: appeal.bfkey,
-                   hearing_date: 1.month.ago,
-                   board_member: judge.vacols_attorney_id)
-          end
-        end
-
-        it "distributes legacy hearing non priority cases down to 30" do
-          expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)).to eq 35
-          subject.distribute!
-          expect(subject.valid?).to eq(true)
-          expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(30)
-          expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(5)
-          expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
-        end
+      it "distributes legacy hearing non priority cases down to 30" do
+        expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)).to eq 35
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(30)
+        expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(5)
+        expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
       end
     end
 

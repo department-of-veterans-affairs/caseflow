@@ -298,11 +298,14 @@ class VACOLS::CaseDocket < VACOLS::Record
     # An updated docket number format will need to be in place for legacy appeals by 2030 in order
     # to ensure that docket numbers are sorted correctly.
 
-    # When requesting cases tied to a judge, allow there to be a 30 case backlog
+    # When requesting cases tied to a judge, remove the restricting legacy_docket_range if the judge has a > 30 case
+    # backlog
     if FeatureToggle.enabled?(:priority_acd) && genpop == "not_genpop"
       number_of_hearings_over_limit = nonpriority_hearing_cases_for_judge_count(judge) - HEARING_BACKLOG_LIMIT
-      limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
-      range = nil
+      if number_of_hearings_over_limit > 0
+        limit = [number_of_hearings_over_limit, limit].min
+        range = nil
+      end
     end
 
     fmtd_query = sanitize_sql_array([
