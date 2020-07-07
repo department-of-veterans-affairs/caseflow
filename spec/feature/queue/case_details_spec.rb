@@ -801,8 +801,8 @@ RSpec.feature "Case details", :all_dbs do
       it "marking task as complete works" do
         visit "/queue/appeals/#{task.appeal.uuid}"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
 
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
