@@ -752,6 +752,7 @@ feature "Task queue", :all_dbs do
         expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.label)
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label)
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
+        fill_in "taskInstructions", with: "Cancelling task"
         find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
         expect(page).to have_content("Task for Bob Smith's case has been cancelled")
         User.authenticate!(user: attorney)
@@ -1042,6 +1043,7 @@ feature "Task queue", :all_dbs do
       it "allows the user to cancel the task" do
         visit("queue/appeals/#{task.appeal.external_id}")
         click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CANCEL_TASK_MODAL_TITLE)
+        fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
         expect(page.current_path).to eq("/queue")
