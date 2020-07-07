@@ -19,7 +19,7 @@ class VaDotGovAddressValidator
   # The mixin `VaDotGovAddressValidator::Validations` glues the `VaDotGovAddressValidator`
   # and `VaDotGovAddressValidator::ErrorHandler`.
   STATUSES = {
-    # Successfully
+    # Successfully geomatched.
     matched_available_hearing_locations: :matched_available_hearing_locations,
 
     # Address was in the Philippines, and assigned to RO58.
