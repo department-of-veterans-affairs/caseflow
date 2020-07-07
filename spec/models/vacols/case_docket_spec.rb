@@ -332,7 +332,7 @@ describe VACOLS::CaseDocket, :all_dbs do
                 .and_return(VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT + number_of_cases_over_backlog)
             end
 
-            it "only distributes the case" do
+            it "only distributes the one case to get back down to 30" do
               expect(subject.count).to eq(number_of_cases_over_backlog)
               expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
               expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
