@@ -190,7 +190,7 @@ describe AttorneyTask, :all_dbs do
   context ".send_back_to_judge_assign!" do
     let!(:attorney_task) { create(:ama_attorney_task, assigned_by: assigning_judge, parent: parent) }
 
-    subject { attorney_task.send_back_to_judge_assign! }
+    subject { attorney_task.send_back_to_judge_assign!(status: Constants.TASK_STATUSES.cancelled) }
 
     it "cancels the parent decision task and opens a judge assignment task" do
       expect(subject.count).to eq 3

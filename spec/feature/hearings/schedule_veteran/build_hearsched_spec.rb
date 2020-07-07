@@ -347,6 +347,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_on "Bob Smith"
 
       click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
+      fill_in "taskInstructions", with: "Withdrawing hearing"
 
       click_on "Submit"
 

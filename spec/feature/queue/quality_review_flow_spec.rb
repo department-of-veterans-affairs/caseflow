@@ -67,7 +67,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
       BvaDispatch.singleton.add_user(create(:user))
 
-      create(:staff, user: qr_user)
+      create(:staff, user: qr_user, sattyid: nil)
       quality_review_organization.add_user(qr_user)
       User.authenticate!(user: qr_user)
     end
