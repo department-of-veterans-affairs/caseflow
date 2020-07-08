@@ -63,6 +63,18 @@ class ControllerSchema
     instance_eval(&block) if block
   end
 
+  # mutates params by removing fields not declared in the schema, other than path params
+  def remove_unknown_keys(params, path_params = {})
+    allowed = fields.map(&:name) + path_params.keys.map(&:to_s)
+    removed = params.keys - allowed
+    params.slice!(*allowed)
+    Rails.logger.info("Removed unknown keys from controller params: #{removed}") if removed.present?
+  end
+
+  def validate(params)
+    dry_schema.call(params.to_unsafe_h)
+  end
+
   def dry_schema
     @dry_schema ||= begin
       dsl = Dry::Schema::DSL.new(processor_type: dry_processor)

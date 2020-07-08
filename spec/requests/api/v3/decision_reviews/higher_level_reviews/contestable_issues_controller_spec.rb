@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type: :request do
+describe Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesController, :postgres, type: :request do
   before { FeatureToggle.enable!(:api_v3) }
   after do
     User.instance_variable_set(:@api_user, nil)
@@ -14,19 +14,18 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
       ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string
     end
 
-    def get_issues(ssn: veteran.ssn, receipt_date: Time.zone.today)
-      date =
-        if receipt_date.is_a? String
-          receipt_date
-        else
-          receipt_date.strftime("%Y-%m-%d")
-        end
+    let(:response_data) do
+      JSON.parse(response.body)["data"]
+    end
+
+    def get_issues(ssn: veteran.ssn, receipt_date: Time.zone.today, benefit_type: "compensation")
+      benefit_type_url_string = benefit_type ? "/#{benefit_type}" : ""
       get(
-        "/api/v3/decision_reviews/contestable_issues",
+        "/api/v3/decision_reviews/higher_level_reviews/contestable_issues#{benefit_type_url_string}",
         headers: {
           "Authorization" => "Token #{api_key}",
           "X-VA-SSN" => ssn,
-          "X-VA-Receipt-Date" => date || receipt_date
+          "X-VA-Receipt-Date" => receipt_date.try(:strftime, "%F") || receipt_date
         }
       )
     end
@@ -36,40 +35,42 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
       expect(response).to have_http_status(:ok)
     end
 
-    it "should return a list of issues in JSONAPI format" do
+    it "should return a list of issues in JSON:API format" do
       Generators::PromulgatedRating.build(
         participant_id: veteran.ptcpnt_id,
         profile_date: Time.zone.today - 10.days # must be before receipt_date
-      ) # this is a contestable_rating_issues
+      )
       get_issues
-      issues = JSON.parse(response.body)["data"]
-      expect(issues).to be_an Array
-      expect(issues.count).to be > 0
+      expect(response_data).to be_an Array
+      expect(response_data).not_to be_empty
     end
 
     context "returned issues" do
       let(:source) { create(:higher_level_review, veteran_file_number: veteran.file_number, same_office: false) }
       let(:claim_id) { "12345" }
       let(:rating_issue_reference_id) { "99999" }
+
       let(:end_product_establishment) do
-        create(:end_product_establishment,
-               source: source,
-               veteran_file_number: veteran.file_number,
-               code: "682HLRRRAMP", # "030HLRR",
-               payee_code: "00",
-               claim_date: 14.days.ago,
-               station: "397",
-               reference_id: claim_id,
-               claimant_participant_id: veteran.ptcpnt_id,
-               synced_status: nil,
-               committed_at: nil,
-               benefit_type_code: "2",
-               doc_reference_id: nil,
-               development_item_reference_id: nil,
-               established_at: 30.days.ago,
-               user: User.api_user,
-               limited_poa_code: "ABC",
-               limited_poa_access: true)
+        create(
+          :end_product_establishment,
+          source: source,
+          veteran_file_number: veteran.file_number,
+          code: "682HLRRRAMP", # "030HLRR",
+          payee_code: "00",
+          claim_date: 14.days.ago,
+          station: "397",
+          reference_id: claim_id,
+          claimant_participant_id: veteran.ptcpnt_id,
+          synced_status: nil,
+          committed_at: nil,
+          benefit_type_code: "2",
+          doc_reference_id: nil,
+          development_item_reference_id: nil,
+          established_at: 30.days.ago,
+          user: User.api_user,
+          limited_poa_code: "ABC",
+          limited_poa_access: true
+        )
       end
 
       let(:another_decision_issue) do
@@ -88,6 +89,8 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
       let(:disability_dis_sn) { "98765" }
       let(:diagnostic_code) { "777" }
       let(:disability_id) { "123" }
+      let(:dgnstc_tc) { "123456" }
+
       let(:issues) do
         date = Time.zone.today
         Generators::PromulgatedRating.build(
@@ -109,9 +112,10 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
           ],
           issues: [
             {
-              reference_id: "99999",
-              decision_text: "Decision1",
-              dis_sn: disability_id
+              reference_id: rating_issue_reference_id,
+              decision_text: "Service connection for Broken index finger is granted with an evaluation of 20 percent.",
+              dis_sn: disability_dis_sn,
+              subject_text: "Broken index finger"
             }
           ],
           disabilities: [
@@ -120,7 +124,8 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
               dis_sn: disability_dis_sn,
               disability_evaluations: {
                 dis_dt: date - 2.days,
-                dgnstc_tc: "123456"
+                dgnstc_tc: dgnstc_tc,
+                prcnt_no: "20"
               }
             }
           ],
@@ -128,13 +133,25 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
         ) # this is a contestable_rating_issues
         another_decision_issue # instantiate this
         get_issues
-        JSON.parse(response.body)["data"]
+        response_data
       end
 
       it "should have ratingIssueReferenceId attribute" do
         issue_with_rating_issue = issues.find { |i| i["attributes"].key?("ratingIssueReferenceId") }
         expect(issue_with_rating_issue).to be_present
         expect(issue_with_rating_issue["attributes"]["ratingIssueReferenceId"]).to match(/^\d+$/)
+      end
+
+      it "should have ratingIssueSubjectText attribute" do
+        issue_with_subject_text = issues.find { |i| i["attributes"].key?("ratingIssueSubjectText") }
+        expect(issue_with_subject_text).to be_present
+        expect(issue_with_subject_text["attributes"]["ratingIssueSubjectText"]).to be_a String
+      end
+
+      it "should have ratingIssuePercentNumber attribute" do
+        issue_with_percent_number = issues.find { |i| i["attributes"].key?("ratingIssuePercentNumber") }
+        expect(issue_with_percent_number).to be_present
+        expect(issue_with_percent_number["attributes"]["ratingIssuePercentNumber"]).to match(/^\d+$/)
       end
 
       it "should have ratingIssueProfileDate attribute" do
@@ -147,7 +164,7 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
       it "should have ratingIssueDiagnosticCode attribute" do
         issue_with_rating_issue = issues.find { |i| i["attributes"].key?("ratingIssueDiagnosticCode") }
         expect(issue_with_rating_issue).to be_present
-        expect(issue_with_rating_issue["attributes"]["ratingIssueDiagnosticCode"]).to eq diagnostic_code
+        expect(issue_with_rating_issue["attributes"]["ratingIssueDiagnosticCode"]).to eq dgnstc_tc
       end
 
       it "should have description attribute" do
@@ -236,9 +253,19 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
       end
     end
 
+    it "should return a 422 when the veteran SSN is not formatted correctly" do
+      get_issues(ssn: "Hi!")
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
     it "should return a 404 when the veteran is not found" do
-      get_issues(ssn: "abcdefg")
+      get_issues(ssn: "000000000")
       expect(response).to have_http_status(:not_found)
+    end
+
+    it "should return a 422 when the receipt date isn't a date" do
+      get_issues(receipt_date: "Hello!")
+      expect(response).to have_http_status(:unprocessable_entity)
     end
 
     it "should return a 422 when the receipt is before AMA" do
@@ -246,13 +273,28 @@ describe Api::V3::DecisionReviews::ContestableIssuesController, :postgres, type:
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
-    it "should return a 422 when the receipt date after today" do
+    it "should return a 422 when the receipt date is in the future" do
       get_issues(receipt_date: Time.zone.tomorrow)
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
     it "should return a 422 when the receipt date is not ISO 8601 date format" do
       get_issues(receipt_date: "January 8")
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "should return a 422 when the benefit type is unknown" do
+      get_issues(benefit_type: "Greetings!")
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "should return a 422 when the benefit type is missing" do
+      get_issues(benefit_type: nil)
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "should return a 422 when the benefit type is blank" do
+      get_issues(benefit_type: "")
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end

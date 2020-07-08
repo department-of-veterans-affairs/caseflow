@@ -6,7 +6,7 @@ module IntakeHelpers
 
   def select_form(form_name)
     if FeatureToggle.enabled?(:ramp_intake)
-      safe_click ".Select"
+      safe_click ".cf-select"
       fill_in "Which form are you processing?", with: form_name
       find("#form-select").send_keys :enter
     else
@@ -84,7 +84,8 @@ module IntakeHelpers
     if claim_participant_id
       Claimant.create!(
         decision_review: supplemental_claim,
-        participant_id: claim_participant_id
+        participant_id: claim_participant_id,
+        type: veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
       )
     end
 
@@ -113,7 +114,7 @@ module IntakeHelpers
       detail: appeal
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
@@ -168,7 +169,7 @@ module IntakeHelpers
   end
 
   def click_intake_nonrating_category_dropdown
-    safe_click ".dropdown-issue-category .Select-placeholder"
+    safe_click ".dropdown-issue-category .cf-select__placeholder"
   end
 
   def click_intake_add_issue

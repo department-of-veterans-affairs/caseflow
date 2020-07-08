@@ -73,20 +73,6 @@ describe PowerOfAttorney, :all_dbs do
     end
   end
 
-  context "when RecordNotUniqueError is thrown but BgsPowerOfAttorney object exists" do
-    let(:file_number_with_raised_error) { power_of_attorney.file_number }
-
-    before do
-      allow(BgsPowerOfAttorney).to receive(:find_or_create_by_file_number)
-        .with(file_number_with_raised_error).and_raise(ActiveRecord::RecordNotUnique.new)
-    end
-
-    it "returns BgsPowerOfAttorney object" do
-      expect(power_of_attorney.bgs_representative_name).to eq "Clarence Darrow"
-      expect(power_of_attorney.bgs_representative_address[:city]).to eq "SAN FRANCISCO"
-    end
-  end
-
   describe "error handling" do
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_raise(Savon::Error)
