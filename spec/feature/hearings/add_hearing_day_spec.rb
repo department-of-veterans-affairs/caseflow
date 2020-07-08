@@ -100,9 +100,9 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       fill_in "hearingDate", with: "04152019"
       click_dropdown(index: "V", text: "Video")
       expect(page).to have_content("Select Regional Office (RO)", wait: 30)
-      dropdowns = page.all(".Select-control")
+      dropdowns = page.all(".cf-select__control")
       dropdowns[1].click
-      dropdowns[1].sibling(".Select-menu-outer").find("div .Select-option", text: "Atlanta, GA").click
+      dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Atlanta, GA").click
       fill_in "vlj", with: "Sallie L Anderson"
       fill_in "coordinator", with: "Casimir R Funk"
       fill_in "Notes (Optional)", with: "Test notes."

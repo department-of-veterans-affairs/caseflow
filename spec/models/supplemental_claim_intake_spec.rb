@@ -35,7 +35,7 @@ describe SupplementalClaimIntake, :all_dbs do
     end
 
     let!(:claimant) do
-      Claimant.create!(
+      DependentClaimant.create!(
         decision_review: detail,
         participant_id: "1234",
         payee_code: "10"

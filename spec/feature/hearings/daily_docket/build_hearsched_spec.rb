@@ -106,7 +106,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     scenario "User cannot update disposition" do
       hearing_task_association.hearing_task.update(status: :in_progress)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".is-disabled")
+      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".cf-select__control--is-disabled")
     end
   end
 end

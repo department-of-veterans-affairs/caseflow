@@ -36,8 +36,8 @@ RSpec.feature "Login", :all_dbs do
   end
 
   def select_ro_from_dropdown
-    find(".Select-control").click
-    find("#react-select-2--option-0").click
+    find(".cf-select__control").click
+    find("#react-select-2-option-0").click
   end
 
   context "VSO user has multple RO values" do
