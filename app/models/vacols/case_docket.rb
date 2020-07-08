@@ -289,7 +289,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).count
   end
 
-  def self.distribute_nonpriority_appeals(judge, genpop, range, limit, dry_run = false)
+  def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
     # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
@@ -298,14 +298,11 @@ class VACOLS::CaseDocket < VACOLS::Record
     # An updated docket number format will need to be in place for legacy appeals by 2030 in order
     # to ensure that docket numbers are sorted correctly.
 
-    # When requesting cases tied to a judge, remove the restricting legacy_docket_range if the judge has a > 30 case
-    # backlog
-    if FeatureToggle.enabled?(:priority_acd) && genpop == "not_genpop"
+    # When requesting to bust the backlog of cases tied to a judge, distribute enough cases to get down to 30 while
+    # still respecting the enforced limit on how many cases can be distributed
+    if bust_backlog
       number_of_hearings_over_limit = nonpriority_hearing_cases_for_judge_count(judge) - HEARING_BACKLOG_LIMIT
-      if number_of_hearings_over_limit > 0
-        limit = [number_of_hearings_over_limit, limit].min
-        range = nil
-      end
+      limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
     end
 
     fmtd_query = sanitize_sql_array([

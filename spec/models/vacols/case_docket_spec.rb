@@ -240,8 +240,9 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:genpop) { "any" }
     let(:range) { nil }
     let(:limit) { 10 }
+    let(:bust_backlog) { false }
 
-    subject { VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit) }
+    subject { VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog) }
 
     it "distributes ready genpop cases" do
       expect(subject.count).to eq(2)
@@ -308,37 +309,6 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         end
-
-        context "with priority_acd on" do
-          let(:limit) { 2 }
-          let(:another_hearing_judge) { judge.vacols_attorney_id }
-
-          before { FeatureToggle.enable!(:priority_acd) }
-          after { FeatureToggle.disable!(:priority_acd) }
-
-          context "when the judge does not have 30 cases in their backlog" do
-            it "distributes cases as it normally would based on the provided limit" do
-              expect(subject.count).to eq(2)
-              expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-              expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-            end
-          end
-
-          context "when the judge's backlog is full" do
-            let(:number_of_cases_over_backlog) { 1 }
-
-            before do
-              allow(VACOLS::CaseDocket).to receive(:nonpriority_hearing_cases_for_judge_count).with(judge)
-                .and_return(VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT + number_of_cases_over_backlog)
-            end
-
-            it "only distributes the one case to get back down to 30" do
-              expect(subject.count).to eq(number_of_cases_over_backlog)
-              expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
-              expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
-            end
-          end
-        end
       end
 
       context "when genpop is any" do
@@ -370,6 +340,35 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+        end
+      end
+
+      context "when bust backlog is specified" do
+        let(:limit) { 2 }
+        let(:bust_backlog) { true }
+        let(:another_hearing_judge) { judge.vacols_attorney_id }
+
+        context "when the judge does not have 30 cases in their backlog" do
+          it "does not distribute any appeals" do
+            expect(subject.count).to eq(0)
+            expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+            expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+          end
+        end
+
+        context "when the judge's backlog is full" do
+          let(:number_of_cases_over_backlog) { 1 }
+
+          before do
+            allow(VACOLS::CaseDocket).to receive(:nonpriority_hearing_cases_for_judge_count).with(judge)
+              .and_return(VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT + number_of_cases_over_backlog)
+          end
+
+          it "only distributes the one case to get back down to 30" do
+            expect(subject.count).to eq(number_of_cases_over_backlog)
+            expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+            expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+          end
         end
       end
     end
@@ -615,7 +614,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
 
     it "sets the case location to 'CASEFLOW'" do
-      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, "any", nil, 2)
+      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, "any", nil, 2, false)
       expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end

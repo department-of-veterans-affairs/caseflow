@@ -27,6 +27,12 @@ module AmaCaseDistribution
     distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop")
     distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
 
+    # Distribute legacy cases tied to a judge down to the board provided limit of 30, regardless of the legacy docket
+    # range
+    if FeatureToggle.enabled?(:priority_acd)
+      distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", bust_backlog: true)
+    end
+
     # Distribute nonpriority appeals that are tied to judges.
     # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
     distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", range: legacy_docket_range)
@@ -68,17 +74,17 @@ module AmaCaseDistribution
     }
   end
 
-  def distribute_appeals(docket, num, priority: false, genpop: "any", range: nil)
+  def distribute_appeals(docket, num, priority: false, genpop: "any", range: nil, bust_backlog: false)
     return [] unless num > 0
 
-    if range.nil?
+    if range.nil? && !bust_backlog
       appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: num)
     elsif docket == :legacy && priority == false
-      return [] unless range > 0
-
-      appeals = dockets[:legacy].distribute_nonpriority_appeals(self, genpop: genpop, range: range, limit: num)
+      appeals = dockets[docket].distribute_nonpriority_appeals(
+        self, genpop: genpop, range: range, limit: num, bust_backlog: bust_backlog
+      )
     else
-      fail "'range' is only a valid argument when distributing nonpriority, legacy appeals"
+      fail "'range' and 'bust_backlog' are only valid arguments when distributing nonpriority, legacy appeals"
     end
 
     @appeals += appeals
