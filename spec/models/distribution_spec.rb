@@ -181,7 +181,7 @@ describe Distribution, :all_dbs do
       expect(subject.statistics["total_batch_size"]).to eq(45)
       expect(subject.statistics["priority_count"]).to eq(legacy_priority_count + 1)
       expect(subject.statistics["legacy_proportion"]).to eq(0.4)
-      expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(3)
+      expect(subject.statistics["legacy_hearing_backlog_count"]).to be <= 3
       expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
       expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
       expect(subject.statistics["hearing_proportion"]).to eq(0.2)
