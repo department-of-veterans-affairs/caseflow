@@ -19,7 +19,7 @@ describe('HearingTime', () => {
     // Assertions
     expect(
       hearingTime.
-        find('#react-select-2--value-item').
+        find('.cf-select__single-value').
         first().
         text()
     ).toContain(timezoneLabel);

@@ -27,7 +27,10 @@ describe Appeal, :all_dbs do
         stream_type: stream_type,
         established_at: Time.zone.now
       )
-      expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
+      expect(subject.reload.claimant).to have_attributes(
+        participant_id: appeal.claimant.participant_id,
+        type: appeal.claimant.type
+      )
     end
 
     context "for de_novo appeal stream" do
