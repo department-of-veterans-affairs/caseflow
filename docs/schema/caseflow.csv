@@ -625,6 +625,8 @@ judge_team_roles,type,string,,,,,,
 judge_team_roles,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
+legacy_appeals,blue_water,boolean,,,,,,Blue Water
+legacy_appeals,burn_pit,boolean,,,,,,Burn Pit
 legacy_appeals,closest_regional_office,string,,,,,,
 legacy_appeals,contaminated_water_at_camp_lejeune,boolean,,,,,,
 legacy_appeals,created_at,datetime,,,,,,
@@ -641,8 +643,10 @@ legacy_appeals,incarcerated_veterans,boolean,,,,,,
 legacy_appeals,insurance,boolean,,,,,,
 legacy_appeals,issues_pulled,boolean,,,,,,
 legacy_appeals,manlincon_compliance,boolean,,,,,,
+legacy_appeals,military_sexual_trauma,boolean,,,,,,Military Sexual Trauma (MST)
 legacy_appeals,mustard_gas,boolean,,,,,,
 legacy_appeals,national_cemetery_administration,boolean,,,,,,
+legacy_appeals,no_special_issues,boolean,,,,,,"Affirmative no special issues, added belatedly"
 legacy_appeals,nonrating_issue,boolean,,,,,,
 legacy_appeals,pension_united_states,boolean,,,,,,
 legacy_appeals,private_attorney_or_agent,boolean,,,,,,
@@ -650,6 +654,7 @@ legacy_appeals,radiation,boolean,,,,,,
 legacy_appeals,rice_compliance,boolean,,,,,,
 legacy_appeals,spina_bifida,boolean,,,,,,
 legacy_appeals,updated_at,datetime,,,,,x,
+legacy_appeals,us_court_of_appeals_for_veterans_claims,boolean,,,,,,US Court of Appeals for Veterans Claims (CAVC)
 legacy_appeals,us_territory_claim_american_samoa_guam_northern_mariana_isla,boolean,,,,,,
 legacy_appeals,us_territory_claim_philippines,boolean,,,,,,
 legacy_appeals,us_territory_claim_puerto_rico_and_virgin_islands,boolean,,,,,,
@@ -691,6 +696,9 @@ legacy_issue_optins,request_issue_id,integer (8) ∗ FK,x,,x,,x,The request is
 legacy_issue_optins,rollback_created_at,datetime,,,,,,"Timestamp for when the connected request issue is removed from a Decision Review during edit, indicating that the opt-in needs to be rolled back."
 legacy_issue_optins,rollback_processed_at,datetime,,,,,,Timestamp for when a rolled back opt-in has successfully finished being rolled back.
 legacy_issue_optins,updated_at,datetime ∗,x,,,,x,Automatically populated when the record is updated.
+legacy_issue_optins,original_legacy_appeal_decision_date,datetime,,,,,,The original disposition date of a legacy appeal being opted in.
+legacy_issue_optins,original_legacy_appeal_disposition_code,string,,,,,,The original disposition code of legacy appeal being opted in.
+legacy_issue_optins,folder_date_time_of_decision,datetime,,,,,,Date/Time of decision.
 messages,,,,,,,,
 messages,created_at,datetime ∗,x,,,,,
 messages,detail_id,integer FK,,,x,,x,ID of the related object

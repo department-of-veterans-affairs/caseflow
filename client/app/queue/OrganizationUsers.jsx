@@ -210,7 +210,7 @@ export default class OrganizationUsers extends React.PureComponent {
         remainingUsers: users
       });
 
-      return { options: this.dropdownOptions() };
+      return this.dropdownOptions();
     });
   }
 
@@ -263,6 +263,7 @@ export default class OrganizationUsers extends React.PureComponent {
         name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
         hideLabel
         searchable
+        clearOnSelect
         readOnly={Boolean(this.state.addingUser)}
         placeholder={
           this.state.addingUser ?

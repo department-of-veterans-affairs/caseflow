@@ -225,7 +225,7 @@ feature "Appeal Intake", :all_dbs do
       detail: appeal
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: appeal,
       participant_id: test_veteran.participant_id
     )

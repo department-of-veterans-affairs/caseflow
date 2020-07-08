@@ -58,9 +58,11 @@ describe HearingMapper do
   context ".datetime_based_on_type" do
     before { Time.zone = "America/Chicago" }
     subject do
-      HearingMapper.datetime_based_on_type(datetime: datetime,
-                                           regional_office_key: regional_office_key,
-                                           type: type)
+      HearingMapper.datetime_based_on_type(
+        datetime: datetime,
+        regional_office: RegionalOffice.find!(regional_office_key),
+        type: type
+      )
     end
     let(:manila_ro_asia_manila) { "RO58" }
     let(:regional_office_key) { manila_ro_asia_manila }
