@@ -202,8 +202,8 @@ feature "Task queue", :all_dbs do
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
-      find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
+      find(".cf-select__control", text: "Select an action…").click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       find("button", text: "Mark complete").click
 
@@ -303,8 +303,8 @@ feature "Task queue", :all_dbs do
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-      find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-      find("div", class: "Select-option", text: label).click
+      find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+      find("div", class: "cf-select__option", text: label).click
 
       fill_in("taskInstructions", with: instructions)
       find("button", text: "Submit").click
@@ -347,8 +347,8 @@ feature "Task queue", :all_dbs do
 
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
+        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find("div", class: "cf-select__option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
         find("button", text: "Submit").click
@@ -406,8 +406,8 @@ feature "Task queue", :all_dbs do
 
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
+        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find("div", class: "cf-select__option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
         find("button", text: "Submit").click
@@ -695,8 +695,8 @@ feature "Task queue", :all_dbs do
       it "should be actionable" do
         visit("/queue/appeals/#{appeal.external_id}")
 
-        find(".Select-control", text: "Select an action…").click
-        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
+        find(".cf-select__control", text: "Select an action…").click
+        find("div .cf-select__option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
         expect(page).to have_content("Instructions:")
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -738,9 +738,9 @@ feature "Task queue", :all_dbs do
 
       it "the location is updated to caseflow when a user assigns a colocated task back to the hearing team" do
         visit("/queue/appeals/#{appeal.external_id}")
-        find(".Select-control", text: "Select an action…").click
+        find(".cf-select__control", text: "Select an action…").click
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
         find("button", text: "Send case").click
         expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
         expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
@@ -748,10 +748,11 @@ feature "Task queue", :all_dbs do
 
       it "the case should be returned in the attorneys queue when canceled" do
         visit("/queue/appeals/#{appeal.external_id}")
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.label)
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label)
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
+        fill_in "taskInstructions", with: "Cancelling task"
         find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
         expect(page).to have_content("Task for Bob Smith's case has been cancelled")
         User.authenticate!(user: attorney)
@@ -764,9 +765,13 @@ feature "Task queue", :all_dbs do
 
         it "creates a schedule hearing task when a user assigns a colocated task back to the hearing team" do
           visit("/queue/appeals/#{appeal.external_id}")
-          find(".Select-control", text: "Select an action…").click
+          find(".cf-select__control", text: "Select an action…").click
           expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
-          find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label
+          ).click
           find("button", text: "Send case").click
           expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
           expect(appeal.tasks.pluck(:type)).to include(
@@ -855,8 +860,8 @@ feature "Task queue", :all_dbs do
       it "should display an option to mark task complete" do
         expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
-        find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        find(".cf-select__control", text: "Select an action…").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
@@ -939,8 +944,8 @@ feature "Task queue", :all_dbs do
       it "should display an option of Ready for Dispatch" do
         expect(bva_dispatch_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label).click
 
         expect(page).to have_content(COPY::DECISION_ISSUE_PAGE_TITLE)
         click_on "Continue"
@@ -986,7 +991,7 @@ feature "Task queue", :all_dbs do
       end
 
       it "should not display an option to mark task complete" do
-        find(".Select-control", text: "Select an action…").click
+        find(".cf-select__control", text: "Select an action…").click
         expect(page).to_not have_content(Constants.TASK_ACTIONS.MARK_COMPLETE.label)
       end
     end
@@ -1042,6 +1047,7 @@ feature "Task queue", :all_dbs do
       it "allows the user to cancel the task" do
         visit("queue/appeals/#{task.appeal.external_id}")
         click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CANCEL_TASK_MODAL_TITLE)
+        fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
         expect(page.current_path).to eq("/queue")

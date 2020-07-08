@@ -82,14 +82,11 @@ export const hearingLinksContainer = css({
   marginBottom: 38
 });
 
-export const timezoneDropdownStyles = (count) => ({
-  height: `${count * 39}px !important`,
-  maxHeight: 'none'
-});
-
 export const timezoneStyles = (count) => ({
-  '& .Select-menu': {
+  '& .cf-select__menu-list': {
+    height: `${count * 39}px !important`,
     maxHeight: 'none',
+    overflowY: 'auto',
     [`& > :nth-child(${count})`]: {
       borderBottom: '1px solid grey'
     }

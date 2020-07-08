@@ -823,6 +823,8 @@ ActiveRecord::Schema.define(version: 2020_07_02_015739) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
+    t.boolean "blue_water", default: false, comment: "Blue Water"
+    t.boolean "burn_pit", default: false, comment: "Burn Pit"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -838,8 +840,10 @@ ActiveRecord::Schema.define(version: 2020_07_02_015739) do
     t.boolean "insurance", default: false
     t.boolean "issues_pulled"
     t.boolean "manlincon_compliance", default: false
+    t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
+    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
@@ -847,6 +851,7 @@ ActiveRecord::Schema.define(version: 2020_07_02_015739) do
     t.boolean "rice_compliance", default: false
     t.boolean "spina_bifida", default: false
     t.datetime "updated_at"
+    t.boolean "us_court_of_appeals_for_veterans_claims", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_philippines", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
