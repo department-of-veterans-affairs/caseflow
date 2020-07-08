@@ -138,14 +138,15 @@ RSpec.feature "Bulk task assignment", :postgres do
     end
   end
 
-  context "when there are more tasks than will fit on a single page" do
+  context "when there are more tasks than will fit on a single page for any org" do
+    let(:org) { create(:organization) }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 2 }
     let(:regional_offices) { RegionalOffice::CITIES.keys.last(task_count) }
 
     before do
       regional_offices.each do |ro|
         appeal = create(:appeal, :hearing_docket, closest_regional_office: ro)
-        create(:no_show_hearing_task, appeal: appeal)
+        create(:no_show_hearing_task, appeal: appeal, assigned_to: org)
       end
     end
 

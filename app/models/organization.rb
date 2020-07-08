@@ -48,10 +48,6 @@ class Organization < CaseflowRecord
     false
   end
 
-  def can_bulk_assign_tasks?
-    false
-  end
-
   def show_regional_office_in_queue?
     false
   end
@@ -124,8 +120,7 @@ class Organization < CaseflowRecord
     ::OrganizationUnassignedTasksTab.new(
       assignee: self,
       show_regional_office_column: show_regional_office_in_queue?,
-      show_reader_link_column: show_reader_link_column?,
-      allow_bulk_assign: can_bulk_assign_tasks?
+      show_reader_link_column: show_reader_link_column?
     )
   end
 
