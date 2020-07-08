@@ -63,14 +63,17 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
 
     context "shows csv" do
-      let(:task) { create(:higher_level_review_task, :completed, assigned_to: non_comp_org) }
-      it "displays csv file" do
-        get :index, params: { business_line_slug: non_comp_org.url, task_id: task.id }, format: :csv
+      before :each do
+        get :index, params: { business_line_slug: non_comp_org.url }, format: :csv
+      end
 
+      let(:task) { create(:higher_level_review_task, :completed, assigned_to: non_comp_org) }
+      let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
+
+      it "displays csv file" do
         expect(response.status).to eq 200
         expect(response.headers["Content-Type"]).to include "text/csv"
-        expect(response.body).to start_with("
-          type,id,claimant_name,created,closed,tasks_url,business_line,issue_count,veteran_file_number,user_id\n")
+        expect(response.body).to start_with("type")
       end
     end
   end
