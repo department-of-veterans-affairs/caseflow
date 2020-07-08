@@ -63,7 +63,7 @@ class Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesController 
       status: 422,
       code: :invalid_veteran_ssn,
       title: "Invalid Veteran SSN",
-      detail: "#{veteran_ssn.inspect} is an invalid SSN (regex: #{SSN_REGEX.inspect})."
+      detail: "SSN regex: #{SSN_REGEX.inspect})."
     )
   end
 
@@ -71,8 +71,7 @@ class Api::V3::DecisionReviews::HigherLevelReviews::ContestableIssuesController 
     render_errors(
       status: 404,
       code: :veteran_not_found,
-      title: "Veteran Not Found",
-      detail: "Veteran with SSN: #{veteran_ssn} not found."
+      title: "Veteran Not Found"
     )
   end
 
