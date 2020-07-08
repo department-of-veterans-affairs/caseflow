@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
+import moment from 'moment';
 
 import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
@@ -134,6 +135,20 @@ class NonCompDispositions extends React.PureComponent {
     this.setState({ requestIssues: newRequestIssues });
   }
 
+  establishmentCreditsTimestamp() {
+    const tstamp = moment(this.props.task.created_at).format('ddd MMM DD YYYY [at] HH:mm');
+
+    if (this.props.task.tasks_url) {
+      return tstamp;
+    }
+  }
+
+  establishmentCredits() {
+    return <div className="cf-push-left">
+      <span> Form created by: {this.props.appeal.intakeUser} on {this.establishmentCreditsTimestamp()} </span>
+    </div>;
+  }
+
   render = () => {
     const {
       appeal,
@@ -207,6 +222,7 @@ class NonCompDispositions extends React.PureComponent {
         </div>
       </div>
       { completeDiv }
+      {this.establishmentCredits()}
     </div>;
   }
 }
