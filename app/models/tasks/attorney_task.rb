@@ -52,10 +52,10 @@ class AttorneyTask < Task
     true
   end
 
-  def send_back_to_judge_assign!
+  def send_back_to_judge_assign!(params)
     transaction do
-      cancelled!
-      cancel_parent_judge_review
+      update_with_instructions(params)
+      parent.update_with_instructions(params)
       judge_assign_task = open_judge_assign_task
 
       [self, parent, judge_assign_task]
@@ -63,7 +63,7 @@ class AttorneyTask < Task
   end
 
   def update_from_params(params, user)
-    update_params_will_cancel_task?(params) ? send_back_to_judge_assign! : super(params, user)
+    update_params_will_cancel_task?(params) ? send_back_to_judge_assign!(params) : super(params, user)
   end
 
   private
@@ -88,10 +88,6 @@ class AttorneyTask < Task
     if assigned_by && (!assigned_by.judge? && !assigned_by.can_act_on_behalf_of_judges?)
       errors.add(:assigned_by, "has to be a judge or special case movement team member")
     end
-  end
-
-  def cancel_parent_judge_review
-    parent.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def open_judge_assign_task

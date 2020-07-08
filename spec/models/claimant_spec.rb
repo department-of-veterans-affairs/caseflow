@@ -90,7 +90,11 @@ describe Claimant, :postgres do
     end
 
     it "saves date of birth" do
-      claimant = appeal.claimants.create_without_intake!(participant_id: participant_id, payee_code: "1")
+      claimant = appeal.claimants.create_without_intake!(
+        participant_id: participant_id,
+        payee_code: "1",
+        type: "VeteranClaimant"
+      )
       expect(claimant.date_of_birth).to eq(date_of_birth.to_date)
       person = Person.find_by(participant_id: participant_id)
       expect(person).to_not eq nil
