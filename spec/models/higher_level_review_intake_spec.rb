@@ -69,7 +69,7 @@ describe HigherLevelReviewIntake, :all_dbs do
     end
 
     let!(:claimant) do
-      Claimant.create!(
+      DependentClaimant.create!(
         decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
@@ -133,7 +133,7 @@ describe HigherLevelReviewIntake, :all_dbs do
     end
 
     let!(:claimant) do
-      Claimant.create!(
+      VeteranClaimant.create!(
         decision_review: detail,
         participant_id: veteran.participant_id,
         payee_code: "00"

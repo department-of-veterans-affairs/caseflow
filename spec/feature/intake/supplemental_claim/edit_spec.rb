@@ -66,7 +66,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   let(:contested_decision_issue) { nil }
 
   before do
-    supplemental_claim.create_claimant!(participant_id: "5382910292", payee_code: "10")
+    supplemental_claim.create_claimant!(participant_id: "5382910292", payee_code: "10", type: "DependentClaimant")
 
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
 

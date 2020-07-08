@@ -117,6 +117,10 @@ class LegacyHearing < CaseflowRecord
     @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
   end
 
+  # The logic for this method is mirrored in `HearingRepository#regional_office_for_scheduled_timezone`.
+  #
+  # There is a constraint within the `HearingRepository` context that means that calling
+  # `LegacyHearing#regional_office_Key` triggers an unnecessary call to VACOLS.
   def regional_office_key
     if request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
       return (venue_key || appeal&.regional_office_key)
