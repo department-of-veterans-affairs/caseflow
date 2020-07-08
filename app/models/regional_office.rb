@@ -125,7 +125,7 @@ class RegionalOffice
     def find!(ro_key)
       result = RegionalOffice.new(ro_key)
 
-      fail NotFoundError unless result.valid?
+      fail NotFoundError, "Could not find Regional Office with key (#{key})" unless result.valid?
 
       result
     end

@@ -9,7 +9,9 @@ describe Users::TaskPagesController, :postgres, type: :controller do
 
   before do
     User.authenticate!(user: assignee)
+    FeatureToggle.enable!(:user_queue_pagination, users: [assignee.css_id])
   end
+  after { FeatureToggle.disable!(:user_queue_pagination, users: [assignee.css_id]) }
 
   describe "GET user/:user_id/task_pages" do
     it_behaves_like "paged assignee tasks"

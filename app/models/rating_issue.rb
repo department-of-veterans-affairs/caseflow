@@ -18,7 +18,22 @@ class RatingIssue
     :rba_contentions_data,
     :reference_id,
     :subject_text
+    # adding another field? *
   )
+
+  # * RatingIssues get cached (DecisionReview#cached_serialized_ratings),
+  # and are serialized and then deserialized during that process.
+  # If you are adding another field to RatingIssue, you'll most likely
+  # want to update the serializer as well:
+  #   app/serializers/intake/rating_issue_serializer.rb
+  # --If a field isn't in the serializer, it will be nil when using a
+  # cached RatingIssue.
+  #
+  # Places you'll (probably) want to update when adding a new field:
+  #  attr_accessor in RatingIssue (above)
+  #  RatingIssue.from_bgs_hash
+  #  RatingIssue.deserialize
+  #  app/serializers/intake/rating_issue_serializer.rb (used in RatingIssue#serialize)
 
   class << self
     def from_bgs_hash(rating, bgs_data)

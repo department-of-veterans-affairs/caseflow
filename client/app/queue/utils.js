@@ -62,7 +62,7 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
 };
 
 const taskAttributesFromRawTask = (task) => {
-  const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ?
+  const decisionPreparedBy = task.attributes.decision_prepared_by?.first_name ?
     {
       firstName: task.attributes.decision_prepared_by.first_name,
       lastName: task.attributes.decision_prepared_by.last_name
