@@ -40,24 +40,21 @@ class AppealIntake < DecisionReviewIntake
   private
 
   def create_claimant!
-    if request_params[:veteran_is_not_claimant] == true
-      claimant_type = "DependentClaimant"
-      participant_id = request_params[:claimant]
-    else
-      claimant_type = "VeteranClaimant"
-      participant_id = veteran.participant_id
-    end
-
     Claimant.find_or_initialize_by(
       decision_review: detail,
       type: claimant_type
     ).tap do |claimant|
-      claimant.type = claimant_type
       claimant.participant_id = participant_id
       claimant.notes = request_params[:claimant_notes]
       claimant.save!
     end
     update_person!
+  end
+
+  # If user has specified a different claimant, use that
+  # Otherwise we use the veteran's participant_id, even for OtherClaimant
+  def participant_id
+    request_params[:claimant] ? request_params[:claimant] : veteran.participant_id
   end
 
   def claimant_type
@@ -72,6 +69,11 @@ class AppealIntake < DecisionReviewIntake
 
   def review_params
     request_params.permit(
+      :claimant,
+      :claimant_type,
+      :claimant_notes,
+      :id,
+      :payee_code,
       :receipt_date,
       :docket_type,
       :veteran_is_not_claimant,
