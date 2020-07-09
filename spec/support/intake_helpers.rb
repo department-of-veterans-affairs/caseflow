@@ -97,7 +97,8 @@ module IntakeHelpers
     test_veteran,
     receipt_date: 1.day.ago,
     veteran_is_not_claimant: false,
-    legacy_opt_in_approved: false
+    legacy_opt_in_approved: false,
+    no_claimant: false
   )
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
@@ -117,7 +118,7 @@ module IntakeHelpers
     VeteranClaimant.create!(
       decision_review: appeal,
       participant_id: test_veteran.participant_id
-    )
+    ) unless no_claimant
 
     appeal.start_review!
 
