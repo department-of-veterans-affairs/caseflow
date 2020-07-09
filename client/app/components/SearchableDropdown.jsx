@@ -44,16 +44,15 @@ export class SearchableDropdown extends React.Component {
      */
     if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
+    } else if (this.props.multi && value === null) {
+      // Fix for https://github.com/JedWatson/react-select/issues/3632
+      newValue = [];
     }
     // don't set value in state if creatable is true
     if (!this.props.selfManageValueState) {
       this.setState({ value: this.props.clearOnSelect ? null : newValue });
     }
 
-    // Fix for https://github.com/JedWatson/react-select/issues/3632
-    if (this.props.multi && value === null) {
-      newValue = [];
-    }
     if (
       this.state.value &&
       newValue &&
