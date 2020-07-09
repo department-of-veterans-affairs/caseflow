@@ -73,7 +73,14 @@ describe DecisionReviewsController, :postgres, type: :controller do
       it "displays csv file" do
         expect(response.status).to eq 200
         expect(response.headers["Content-Type"]).to include "text/csv"
+
         expect(response.body).to start_with("type")
+        response_body = CSV.parse(response.body)
+        expect(response_body).to match_array(
+          %w[type appeal_type id appeal_id claimant_name
+             created_at closed_at tasks_url business_line request_issue_count
+             decision_issues_count veteran_file_number user_id].freeze
+        )
       end
     end
   end

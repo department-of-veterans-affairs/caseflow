@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "csv"
-
 class BusinessLineReporter
   attr_reader :business_line
 
