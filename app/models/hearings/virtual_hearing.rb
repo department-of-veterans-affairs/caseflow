@@ -21,7 +21,7 @@ class VirtualHearing < CaseflowRecord
 
   belongs_to :hearing, polymorphic: true
   belongs_to :created_by, class_name: "User"
-  
+
   # Tracks the progress of the job that creates the virtual hearing in Pexip.
   has_one :establishment, class_name: "VirtualHearingEstablishment"
 
