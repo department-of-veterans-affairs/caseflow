@@ -25,42 +25,24 @@ export default {
   },
 };
 
-export const allOptions = ({
-  fixed,
-  lowerMargin,
-  message,
-  title,
-  type,
-  styling,
-  scrollOnAlert,
-}) => (
-  <Alert
-    fixed={fixed}
-    lowerMargin={lowerMargin}
-    message={message}
-    title={title}
-    type={type}
-    styling={styling}
-    scrollOnAlert={scrollOnAlert}
-  />
-);
+const Template = (args) => <Alert {...args} />;
 
-export const success = ({ type, ...args }) => <Alert {...args} type={type} />;
-success.args = { type: 'success' };
+export const Success = Template.bind({});
+Success.args = { type: 'success' };
 
-export const error = ({ type, ...args }) => <Alert {...args} type={type} />;
-error.args = { type: 'error' };
+export const Error = Template.bind({});
+Error.args = { type: 'error' };
 
-export const warning = ({ type, ...args }) => <Alert {...args} type={type} />;
-warning.args = { type: 'warning' };
+export const Warning = Template.bind({});
+Warning.args = { type: 'warning' };
 
-export const info = ({ type, ...args }) => <Alert {...args} type={type} />;
-info.args = { type: 'info' };
+export const Info = Template.bind({});
+Info.args = { type: 'info' };
 
-export const slim = ({ title, ...args }) => <Alert {...args} title={title} />;
-slim.args = { title: '' };
+export const Slim = Template.bind({});
+Slim.args = { title: '' };
 
-slim.parameters = {
+Slim.parameters = {
   docs: {
     storyDescription: 'The "slim" alert will be used if title prop is empty',
   },
