@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VirtualHearing < CaseflowRecord
+  include UpdatedByUserConcern
+
   class << self
     def client_host_or_default
       ENV["PEXIP_CLIENT_HOST"] || "care.evn.va.gov"
@@ -19,13 +21,11 @@ class VirtualHearing < CaseflowRecord
 
   belongs_to :hearing, polymorphic: true
   belongs_to :created_by, class_name: "User"
-  belongs_to :updated_by, class_name: "User", optional: true
-
+  
   # Tracks the progress of the job that creates the virtual hearing in Pexip.
   has_one :establishment, class_name: "VirtualHearingEstablishment"
 
   before_create :assign_created_by_user
-  before_save :assign_updated_by_user
 
   validates :appellant_email, presence: true, on: :create
   validates_email_format_of :judge_email, allow_nil: true
@@ -154,12 +154,6 @@ class VirtualHearing < CaseflowRecord
 
   def assign_created_by_user
     self.created_by ||= RequestStore.store[:current_user]
-  end
-
-  def assign_updated_by_user
-    return if RequestStore.store[:current_user] == User.system_user && updated_by.present?
-
-    self.updated_by = RequestStore.store[:current_user] if RequestStore.store[:current_user].present?
   end
 
   def associated_hearing_is_video
