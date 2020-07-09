@@ -9,7 +9,7 @@ class Claimant < CaseflowRecord
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
 
-  validate { |claimant| ClaimantValidator.new(claimant).validate }
+  validate { |claimant| ClaimantValidator.new(claimant).validate unless proc { |c| c.is_a? OtherClaimant } }
   validates :participant_id,
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
@@ -82,11 +82,3 @@ class Claimant < CaseflowRecord
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
   end
 end
-
-class VeteranClaimant < Claimant; end
-
-class DependentClaimant < Claimant; end
-
-class AttorneyClaimant < Claimant; end
-
-class OtherClaimant < Claimant; end
