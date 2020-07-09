@@ -54,7 +54,7 @@ class AppealIntake < DecisionReviewIntake
   # If user has specified a different claimant, use that
   # Otherwise we use the veteran's participant_id, even for OtherClaimant
   def participant_id
-    request_params[:claimant] ? request_params[:claimant] : veteran.participant_id
+    request_params[:claimant] || veteran.participant_id
   end
 
   def claimant_type
@@ -88,6 +88,6 @@ class AppealIntake < DecisionReviewIntake
       :veteran_is_not_claimant,
       :legacy_opt_in_approved
     ]
-    review_params.select { |k,_| keys_to_extract.include? k }
+    review_params.select { |key, _| keys_to_extract.include? key }
   end
 end

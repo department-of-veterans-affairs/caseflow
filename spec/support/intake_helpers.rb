@@ -115,10 +115,12 @@ module IntakeHelpers
       detail: appeal
     )
 
-    VeteranClaimant.create!(
-      decision_review: appeal,
-      participant_id: test_veteran.participant_id
-    ) unless no_claimant
+    unless no_claimant
+      VeteranClaimant.create!(
+        decision_review: appeal,
+        participant_id: test_veteran.participant_id
+      )
+    end
 
     appeal.start_review!
 

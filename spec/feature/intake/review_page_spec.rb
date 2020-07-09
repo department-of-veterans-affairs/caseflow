@@ -293,7 +293,7 @@ feature "Intake Review Page", :postgres do
           let(:attorney) { attorneys.last }
 
           it "allows adding new claimants" do
-            appeal, intake = start_appeal(
+            appeal, _intake = start_appeal(
               veteran,
               veteran_is_not_claimant: veteran_is_not_claimant,
               no_claimant: true
@@ -332,7 +332,7 @@ feature "Intake Review Page", :postgres do
           end
 
           scenario "when claimant is not listed" do
-            appeal, intake = start_appeal(
+            appeal, _intake = start_appeal(
               veteran,
               veteran_is_not_claimant: veteran_is_not_claimant,
               no_claimant: true
@@ -376,30 +376,30 @@ feature "Intake Review Page", :postgres do
 
         def add_existing_attorney(attorney)
           click_button("+ Add Claimant")
-            expect(page).to have_selector("#add_claimant_modal")
-            expect(page).to have_button("Add this claimant", disabled: true)
-            claimant_search(attorney.name)
-            select_claimant(0)
-            expect(page).to have_button("Add this claimant", disabled: false)
-            click_button "Add this claimant"
-            expect(page).to_not have_selector("#add_claimant_modal")
-            expect(page).to have_content("#{attorney.name}, Attorney")
+          expect(page).to have_selector("#add_claimant_modal")
+          expect(page).to have_button("Add this claimant", disabled: true)
+          claimant_search(attorney.name)
+          select_claimant(0)
+          expect(page).to have_button("Add this claimant", disabled: false)
+          click_button "Add this claimant"
+          expect(page).to_not have_selector("#add_claimant_modal")
+          expect(page).to have_content("#{attorney.name}, Attorney")
         end
 
         def add_unlisted_claimant(notes)
           click_button("+ Add Claimant")
-            expect(page).to have_content("Claimant not listed")
-            expect(page).to have_button("Add this claimant", disabled: true)
-            find("label[for=notListed]").click
-            expect(page).to have_content("Notes e.g.")
-            expect(page).to have_button("Add this claimant", disabled: true)
+          expect(page).to have_content("Claimant not listed")
+          expect(page).to have_button("Add this claimant", disabled: true)
+          find("label[for=notListed]").click
+          expect(page).to have_content("Notes e.g.")
+          expect(page).to have_button("Add this claimant", disabled: true)
 
-            fill_in "Notes e.g.", with: notes
-            expect(page).to have_button("Add this claimant", disabled: false)
-            click_button "Add this claimant"
-            expect(page).to_not have_selector("#add_claimant_modal")
-            expect(page).to have_content("Claimant not listed, Attorney")
-            expect(page).to have_content(notes)
+          fill_in "Notes e.g.", with: notes
+          expect(page).to have_button("Add this claimant", disabled: false)
+          click_button "Add this claimant"
+          expect(page).to_not have_selector("#add_claimant_modal")
+          expect(page).to have_content("Claimant not listed, Attorney")
+          expect(page).to have_content(notes)
         end
 
         def claimant_search(search)
