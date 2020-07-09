@@ -295,14 +295,13 @@ feature "Intake Review Page", :postgres do
           it "allows adding new claimants" do
             appeal, intake = start_appeal(
               veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
+              veteran_is_not_claimant: veteran_is_not_claimant,
+              no_claimant: true
             )
 
             visit "/intake"
 
             expect(page).to have_current_path("/intake/review_request")
-
-            expect(Claimant.count).to eq(1)
 
             within_fieldset("Is the claimant someone other than the Veteran?") do
               find("label", text: "Yes", match: :prefer_exact).click
@@ -321,18 +320,22 @@ feature "Intake Review Page", :postgres do
 
             click_button "Continue to next step"
 
-            # `create_claimant!` actually just updates existing claimant
+            expect(page).to have_current_path("/intake/add_issues")
+
             expect(Claimant.count).to eq(1)
             expect(appeal.claimant).to have_attributes(
               type: "AttorneyClaimant",
               participant_id: attorney.participant_id
             )
+
+            expect(page).to have_content("#{attorney.name}, Attorney")
           end
 
           scenario "when claimant is not listed" do
             appeal, intake = start_appeal(
               veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
+              veteran_is_not_claimant: veteran_is_not_claimant,
+              no_claimant: true
             )
 
             visit "/intake"
@@ -358,14 +361,16 @@ feature "Intake Review Page", :postgres do
 
             click_button "Continue to next step"
 
-            # `create_claimant!` actually just updates existing claimant
+            expect(page).to have_current_path("/intake/add_issues")
+
             expect(Claimant.count).to eq(1)
-            binding.pry
             expect(appeal.claimant).to have_attributes(
               type: "OtherClaimant",
-              participant_id: nil,
+              participant_id: veteran.participant_id,
               notes: notes
             )
+
+            expect(page).to have_content(notes)
           end
         end
 
