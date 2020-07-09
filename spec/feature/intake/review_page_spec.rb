@@ -293,7 +293,44 @@ feature "Intake Review Page", :postgres do
           let(:attorney) { attorneys.last }
 
           it "allows adding new claimants" do
-            start_appeal(
+            appeal, intake = start_appeal(
+              veteran,
+              veteran_is_not_claimant: veteran_is_not_claimant
+            )
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            expect(Claimant.count).to eq(1)
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to have_content("+ Add Claimant")
+
+            add_existing_attorney(attorney)
+
+            # Verify that this can be removed
+            find(".remove-item").click
+            expect(page).to_not have_content("#{attorney.name}, Attorney")
+
+            # Add again
+            add_existing_attorney(attorney)
+
+            click_button "Continue to next step"
+
+            # `create_claimant!` actually just updates existing claimant
+            expect(Claimant.count).to eq(1)
+            expect(appeal.claimant).to have_attributes(
+              type: "AttorneyClaimant",
+              participant_id: attorney.participant_id
+            )
+          end
+
+          scenario "when claimant is not listed" do
+            appeal, intake = start_appeal(
               veteran,
               veteran_is_not_claimant: veteran_is_not_claimant
             )
@@ -308,7 +345,32 @@ feature "Intake Review Page", :postgres do
 
             expect(page).to have_content("+ Add Claimant")
 
-            click_button("+ Add Claimant")
+            notes = "Unlisted claimant: Sandra Smith"
+
+            add_unlisted_claimant(notes)
+
+            # Verify removal
+            find(".remove-item").click
+            expect(page).to_not have_content(notes)
+
+            # Add again
+            add_unlisted_claimant(notes)
+
+            click_button "Continue to next step"
+
+            # `create_claimant!` actually just updates existing claimant
+            expect(Claimant.count).to eq(1)
+            binding.pry
+            expect(appeal.claimant).to have_attributes(
+              type: "OtherClaimant",
+              participant_id: nil,
+              notes: notes
+            )
+          end
+        end
+
+        def add_existing_attorney(attorney)
+          click_button("+ Add Claimant")
             expect(page).to have_selector("#add_claimant_modal")
             expect(page).to have_button("Add this claimant", disabled: true)
             claimant_search(attorney.name)
@@ -317,42 +379,22 @@ feature "Intake Review Page", :postgres do
             click_button "Add this claimant"
             expect(page).to_not have_selector("#add_claimant_modal")
             expect(page).to have_content("#{attorney.name}, Attorney")
-            find(".remove-item").click
-            expect(page).to_not have_content("#{attorney.name}, Attorney")
-          end
+        end
 
-          scenario "when claimant is not listed" do
-            start_appeal(
-              veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
-            )
-
-            visit "/intake"
-
-            expect(page).to have_current_path("/intake/review_request")
-
-            within_fieldset("Is the claimant someone other than the Veteran?") do
-              find("label", text: "Yes", match: :prefer_exact).click
-            end
-
-            expect(page).to have_content("+ Add Claimant")
-
-            click_button("+ Add Claimant")
+        def add_unlisted_claimant(notes)
+          click_button("+ Add Claimant")
             expect(page).to have_content("Claimant not listed")
             expect(page).to have_button("Add this claimant", disabled: true)
-            find("label[for=noClaimant]").click
+            find("label[for=notListed]").click
             expect(page).to have_content("Notes e.g.")
             expect(page).to have_button("Add this claimant", disabled: true)
 
-            fill_in "Notes e.g.", with: "The claimant's name not listed is Sandra smith!"
+            fill_in "Notes e.g.", with: notes
             expect(page).to have_button("Add this claimant", disabled: false)
             click_button "Add this claimant"
             expect(page).to_not have_selector("#add_claimant_modal")
             expect(page).to have_content("Claimant not listed, Attorney")
-            expect(page).to have_content("The claimant's name not listed is Sandra smith!")
-            find(".remove-item").click
-            expect(page).to_not have_content("The claimant's name not listed is Sandra smith!")
-          end
+            expect(page).to have_content(notes)
         end
 
         def claimant_search(search)
