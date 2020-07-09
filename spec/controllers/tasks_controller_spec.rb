@@ -750,14 +750,10 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       before do
         scm_user = create(:user)
         SpecialCaseMovementTeam.singleton.add_user(scm_user)
-        FeatureToggle.enable!(:scm_view_judge_assign_queue)
         User.authenticate!(user: judge_user)
         DatabaseRequestCounter.enable
       end
-      after do
-        FeatureToggle.disable!(:scm_view_judge_assign_queue)
-        DatabaseRequestCounter.disable
-      end
+      after { DatabaseRequestCounter.disable }
 
       it_behaves_like "judge view legacy tasks"
     end
