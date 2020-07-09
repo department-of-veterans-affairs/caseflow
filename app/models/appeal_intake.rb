@@ -51,8 +51,7 @@ class AppealIntake < DecisionReviewIntake
 
     # If there was a claimant of a different type for this appeal, remove it
     # This largely only happens in testing
-    old_claimant = Claimant.where(decision_review: detail).where.not(type: claimant_type).take
-    old_claimant.destroy! if old_claimant
+    Claimant.where(decision_review: detail).where.not(type: claimant_type).take&.destroy!
 
     update_person!
   end

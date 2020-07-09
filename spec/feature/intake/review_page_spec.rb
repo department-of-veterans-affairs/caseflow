@@ -293,7 +293,7 @@ feature "Intake Review Page", :postgres do
           let(:attorney) { attorneys.last }
 
           it "allows adding new claimants" do
-            appeal, intake = start_appeal(
+            appeal, _intake = start_appeal(
               veteran,
               veteran_is_not_claimant: veteran_is_not_claimant,
               no_claimant: true
@@ -332,7 +332,7 @@ feature "Intake Review Page", :postgres do
           end
 
           scenario "when claimant is not listed" do
-            appeal, intake = start_appeal(
+            appeal, _intake = start_appeal(
               veteran,
               veteran_is_not_claimant: veteran_is_not_claimant,
               no_claimant: true
