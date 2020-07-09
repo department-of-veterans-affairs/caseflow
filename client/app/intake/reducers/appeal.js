@@ -17,6 +17,7 @@ const updateFromServerIntake = (state, serverIntake) => {
   }
 
   const commonState = commonStateFromServerIntake(serverIntake);
+
   return update(state, {
     ...commonState,
     docketType: {
@@ -41,6 +42,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     claimantError: null,
     payeeCode: null,
     claimantNotes: null,
+    claimantType: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
     legacyAppeals: [],
@@ -115,6 +117,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       claimantNotes: {
         $set: action.payload.claimantNotes
+      },
+      claimantType: {
+        $set: action.payload.claimantType
       }
     });
   case ACTIONS.SET_PAYEE_CODE:

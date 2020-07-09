@@ -96,10 +96,11 @@ export const prepareReviewData = (intakeData, intakeType) => {
       docket_type: intakeData.docketType,
       receipt_date: intakeData.receiptDate,
       claimant: intakeData.claimant,
+      claimant_notes: intakeData.claimantNotes,
+      claimant_type: intakeData.claimantType,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved,
-      claimant_notes: intakeData.claimantNotes
     };
   case 'supplementalClaim':
     return {
