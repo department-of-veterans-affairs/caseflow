@@ -10,7 +10,7 @@ export default {
   component: Tabs,
   decorators: [
     (storyFn) => (
-      <div style={{ minHeight: '250px', maxWidth: '800px', padding: '20px' }}>
+      <div style={{ minHeight: '250px', maxWidth: '800px', padding: '20px 30px' }}>
         {storyFn()}
       </div>
     ),
@@ -130,10 +130,8 @@ export const manual = () => (
   </Tab.Container>
 );
 
-manual.story = {
-  parameters: {
-    docs: {
-      storyDescription: '',
-    },
+manual.parameters = {
+  docs: {
+    storyDescription: '',
   },
 };
