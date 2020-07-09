@@ -17,8 +17,8 @@ class LegacyHearing < CaseflowRecord
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
 
   # scheduled_for is the correct hearing date and time in Eastern Time for travel
-  # board and video hearings, or in the user's time zone for central hearings; the
-  # transformation happens in HearingMapper.datetime_based_on_type
+  # board and video hearings, or in the user's (Hearing Coordinator) time zone for
+  # central hearings; the transformation happens in HearingMapper.datetime_based_on_type
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
@@ -35,7 +35,7 @@ class LegacyHearing < CaseflowRecord
   has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :hearing_id
 
   alias_attribute :location, :hearing_location
-  accepts_nested_attributes_for :hearing_location
+  accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.
@@ -100,7 +100,7 @@ class LegacyHearing < CaseflowRecord
   end
 
   def hearing_day_id
-    if self[:hearing_day_id].nil? && !hearing_day_id_refers_to_vacols_row?
+    if self[:hearing_day_id].nil? && hearing_day_vacols_id.present? && !hearing_day_id_refers_to_vacols_row?
       begin
         update!(hearing_day_id: hearing_day_vacols_id)
       rescue ActiveRecord::InvalidForeignKey
@@ -117,20 +117,16 @@ class LegacyHearing < CaseflowRecord
     @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
   end
 
+  # The logic for this method is mirrored in `HearingRepository#regional_office_for_scheduled_timezone`.
+  #
+  # There is a constraint within the `HearingRepository` context that means that calling
+  # `LegacyHearing#regional_office_Key` triggers an unnecessary call to VACOLS.
   def regional_office_key
     if request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
       return (venue_key || appeal&.regional_office_key)
     end
 
     hearing_day&.regional_office || "C"
-  end
-
-  def regional_office
-    @regional_office ||= begin
-                            RegionalOffice.find!(regional_office_key)
-                         rescue RegionalOffice::NotFoundError
-                           nil
-                          end
   end
 
   def request_type_location
@@ -224,6 +220,13 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  def quick_to_hash(current_user_id)
+    ::LegacyHearingSerializer.quick(
+      self,
+      params: { current_user_id: current_user_id }
+    ).serializable_hash[:data][:attributes]
+  end
+
   def to_hash(current_user_id)
     ::LegacyHearingSerializer.default(
       self,
@@ -231,7 +234,12 @@ class LegacyHearing < CaseflowRecord
     ).serializable_hash[:data][:attributes]
   end
 
-  alias quick_to_hash to_hash
+  def to_hash_for_worksheet(current_user_id)
+    ::LegacyHearingSerializer.worksheet(
+      self,
+      params: { current_user_id: current_user_id }
+    ).serializable_hash[:data][:attributes]
+  end
 
   def fetch_veteran_age
     veteran_age
@@ -243,13 +251,6 @@ class LegacyHearing < CaseflowRecord
     veteran_gender
   rescue Module::DelegationError
     nil
-  end
-
-  def to_hash_for_worksheet(current_user_id)
-    ::LegacyHearingSerializer.worksheet(
-      self,
-      params: { current_user_id: current_user_id }
-    ).serializable_hash[:data][:attributes]
   end
 
   def appeals_ready_for_hearing

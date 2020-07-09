@@ -198,7 +198,7 @@ RSpec.shared_examples "Change hearing disposition" do
           schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
           expect(schedule_row).to have_content(instructions_text)
           expect(schedule_row).to have_css(
-            ".Select-control .Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+            ".cf-select__control .cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
           )
         end
       end
@@ -438,7 +438,7 @@ RSpec.shared_examples "Change hearing disposition" do
       scenario "cannot create a change hearing disposition task" do
         visit(appeal_path)
         expect(page).to have_content(ScheduleHearingTask.last.label)
-        expect(page).to_not have_css(".Select-control")
+        expect(page).to_not have_css(".cf-select__control")
       end
 
       context "hearing admin task" do
@@ -449,7 +449,7 @@ RSpec.shared_examples "Change hearing disposition" do
         scenario "cannot create a change hearing disposition task" do
           visit(appeal_path)
           expect(page).to have_content(HearingAdminActionIncarceratedVeteranTask.last.label)
-          expect(page).to_not have_css(".Select-control")
+          expect(page).to_not have_css(".cf-select__control")
         end
       end
     end
@@ -495,7 +495,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
       create(:case_hearing, case_hearing_disposition, vdkey: hearing_day.id, folder_nr: appeal.vacols_id)
     end
     let(:hearing) do
-      create(:legacy_hearing, appeal: appeal, vacols_id: case_hearing.hearing_pkseq, disposition: hearing_disposition)
+      create(:legacy_hearing, appeal: appeal, case_hearing: case_hearing)
     end
     let(:waiting_button_text) { "Legacy Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.vacols_id}" }

@@ -11,7 +11,9 @@ class ControllerSchema
       @type = type
       @optional = options.fetch(:optional, false)
       @nullable = options.fetch(:nullable, false)
-      @included_in = options.fetch(:included_in?, nil)
+      @included_in = options.fetch(:included_in?, nil)&.map do |value|
+        value.is_a?(Symbol) ? value.to_s : value
+      end
       @doc = options.fetch(:doc, nil)
     end
 
@@ -59,6 +61,18 @@ class ControllerSchema
     @format = format
     @fields = []
     instance_eval(&block) if block
+  end
+
+  # mutates params by removing fields not declared in the schema, other than path params
+  def remove_unknown_keys(params, path_params = {})
+    allowed = fields.map(&:name) + path_params.keys.map(&:to_s)
+    removed = params.keys - allowed
+    params.slice!(*allowed)
+    Rails.logger.info("Removed unknown keys from controller params: #{removed}") if removed.present?
+  end
+
+  def validate(params)
+    dry_schema.call(params.to_unsafe_h)
   end
 
   def dry_schema

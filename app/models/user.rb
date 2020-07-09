@@ -317,7 +317,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def use_task_pages_api?
-    FeatureToggle.enabled?(:user_queue_pagination, user: self) && !attorney? && !judge?
+    FeatureToggle.enabled?(:user_queue_pagination, user: self)
   end
 
   def queue_tabs
@@ -346,16 +346,16 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
-  def can_bulk_assign_tasks?
-    false
-  end
-
   def can_act_on_behalf_of_judges?
     member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
   end
 
   def show_regional_office_in_queue?
     HearingsManagement.singleton.user_has_access?(self)
+  end
+
+  def can_be_assigned_legacy_tasks?
+    judge_in_vacols? || attorney_in_vacols?
   end
 
   def show_reader_link_column?

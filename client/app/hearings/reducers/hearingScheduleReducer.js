@@ -236,6 +236,12 @@ export const hearingScheduleReducer = (state = {}, action = {}) => {
     return update(state, {
       $unset: ['successfulHearingDayDelete']
     });
+  case ACTIONS.SET_NOTES:
+    return update(state, {
+      notes: {
+        $set: action.payload.notes
+      }
+    });
   default:
     return state;
   }

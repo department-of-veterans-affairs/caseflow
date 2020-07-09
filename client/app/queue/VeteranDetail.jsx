@@ -1,23 +1,16 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
 import { DateString } from '../util/DateUtil';
 import { appealWithDetailSelector } from './selectors';
-import { boldText } from './constants';
+import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
 import Address from './components/Address';
 import BareList from '../components/BareList';
 import COPY from '../../COPY';
-
-const detailListStyling = css({
-  paddingLeft: 0,
-  listStyle: 'none',
-  marginBottom: '3rem'
-});
 
 const VeteranState = ({ veteran }) => {
   const state = veteran?.address?.state;
@@ -84,10 +77,6 @@ class VeteranDetail extends React.PureComponent {
         value: email
       });
     }
-
-    const getDetailField = ({ label, value }) => () => (
-      <><span {...boldText}>{label}:</span>{' '}{value}</>
-    );
 
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };

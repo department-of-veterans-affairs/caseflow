@@ -367,7 +367,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       detail: supplemental_claim
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )

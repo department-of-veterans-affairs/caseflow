@@ -75,7 +75,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
         step "ensure page has existing transcription details" do
           expect(
-            page.find(".dropdown-problemType .Select-value")
+            page.find(".dropdown-problemType .cf-select__value-container")
           ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.POOR_AUDIO)
           expect(
             find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
@@ -91,7 +91,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
           visit "hearings/#{hearing.external_id}/details"
 
           expect(
-            page.find(".dropdown-problemType .Select-value")
+            page.find(".dropdown-problemType .cf-select__value-container")
           ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
           expect(
             find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
@@ -109,7 +109,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
           expect(page).to have_content("Test Notes Test Notes")
           expect(
-            page.find(".dropdown-problemType .Select-value")
+            page.find(".dropdown-problemType .cf-select__value-container")
           ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
           expect(
             find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)

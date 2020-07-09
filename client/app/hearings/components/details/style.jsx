@@ -81,3 +81,14 @@ export const enablePadding = css({
 export const hearingLinksContainer = css({
   marginBottom: 38
 });
+
+export const timezoneStyles = (count) => ({
+  '& .cf-select__menu-list': {
+    height: `${count * 39}px !important`,
+    maxHeight: 'none',
+    overflowY: 'auto',
+    [`& > :nth-child(${count})`]: {
+      borderBottom: '1px solid grey'
+    }
+  }
+});

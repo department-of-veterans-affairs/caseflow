@@ -6,14 +6,24 @@ module.exports = {
     {
       name: '@storybook/addon-docs',
       options: {
-        configureJSX: true
-      }
+        configureJSX: true,
+      },
     },
     '@storybook/addon-controls',
     '@storybook/addon-actions',
     '@storybook/addon-a11y'
   ],
   webpackFinal: (config) => {
-    return { ...config, module: { ...config.module, rules: [...config.module.rules, ...custom.module.rules] } };
-  }
+    const customRules = custom.module.rules.filter((rule) => {
+      return !rule.test.toString().includes('woff') && !rule.test.toString().includes('svg');
+    });
+
+    return {
+      ...config,
+      module: {
+        ...config.module,
+        rules: [...config.module.rules, ...customRules],
+      },
+    };
+  },
 };

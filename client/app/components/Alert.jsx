@@ -10,16 +10,6 @@ export default class Alert extends React.Component {
     }
   }
 
-  getRole() {
-    const attrs = {};
-
-    if (this.props.type === 'error') {
-      attrs.role = 'alert';
-    }
-
-    return attrs;
-  }
-
   messageDiv() {
     const message = this.props.children || this.props.message;
 
@@ -34,11 +24,11 @@ export default class Alert extends React.Component {
     const className = classnames('usa-alert', typeClass, {
       'usa-alert-slim': !title,
       fixed,
-      'cf-margin-bottom-2rem': lowerMargin
+      'cf-margin-bottom-2rem': lowerMargin,
     });
 
     return (
-      <div className={className} {...this.getRole()} {...styling}>
+      <div role="alert" className={className} {...styling}>
         <div className="usa-alert-body">
           <h2 className="usa-alert-heading">{title}</h2>
           {this.messageDiv()}
@@ -50,7 +40,7 @@ export default class Alert extends React.Component {
 
 Alert.defaultProps = {
   fixed: false,
-  scrollOnAlert: true
+  scrollOnAlert: true,
 };
 
 Alert.propTypes = {
@@ -73,5 +63,5 @@ Alert.propTypes = {
   title: PropTypes.string,
   type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,
   styling: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  scrollOnAlert: PropTypes.bool
+  scrollOnAlert: PropTypes.bool,
 };

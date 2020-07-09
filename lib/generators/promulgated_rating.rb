@@ -35,7 +35,8 @@ class Generators::PromulgatedRating < Generators::Rating
             prfil_dt: issue[:profile_date],
             cntntn_id: issue[:contention_reference_id]
           },
-          dis_sn: issue[:dis_sn]
+          dis_sn: issue[:dis_sn],
+          subjct_txt: issue[:subject_text]
         }
       end
 

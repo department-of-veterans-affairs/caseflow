@@ -40,8 +40,11 @@ class BgsAddressService
     }
   end
 
+  def cache_key
+    self.class.cache_key_for_participant_id(participant_id)
+  end
+
   def fetch_bgs_record
-    cache_key = self.class.cache_key_for_participant_id(participant_id)
     Rails.cache.fetch(cache_key, expires_in: 24.hours) do
       bgs.find_address_by_participant_id(participant_id)
     rescue Savon::Error
@@ -49,6 +52,11 @@ class BgsAddressService
       # catch it and return an empty array
       nil
     end
+  end
+
+  def refresh_cached_bgs_record
+    Rails.cache.delete(cache_key)
+    fetch_bgs_record
   end
 
   def bgs
