@@ -48,6 +48,12 @@ class AppealIntake < DecisionReviewIntake
       claimant.notes = request_params[:claimant_notes]
       claimant.save!
     end
+
+    # If there was a claimant of a different type for this appeal, remove it
+    # This largely only happens in testing
+    old_claimant = Claimant.where(decision_review: detail).where.not(type: claimant_type).take
+    old_claimant.destroy! if old_claimant
+
     update_person!
   end
 
@@ -88,6 +94,6 @@ class AppealIntake < DecisionReviewIntake
       :veteran_is_not_claimant,
       :legacy_opt_in_approved
     ]
-    review_params.select { |key, _| keys_to_extract.include? key }
+    review_params.select { |key, _| keys_to_extract.include? key.to_sym }
   end
 end
