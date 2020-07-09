@@ -66,6 +66,7 @@ class VaDotGovAddressValidator
   def closest_regional_office
     @closest_regional_office ||= begin
       return unless closest_ro_response.success?
+      return "RO62" if closest_regional_office_facility_id_is_san_antonio?
 
       RegionalOffice
         .cities
