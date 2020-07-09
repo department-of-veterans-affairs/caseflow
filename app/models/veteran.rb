@@ -324,8 +324,8 @@ class Veteran < CaseflowRecord
 
     def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name) ||
-          find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
+        find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
+          find_by_file_number_and_sync(file_number_or_ssn, sync_name: sync_name) ||
           find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       else
         find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
@@ -348,7 +348,12 @@ class Veteran < CaseflowRecord
     end
 
     def find_by_file_number_and_sync(file_number, sync_name: false)
-      veteran = find_by(file_number: file_number)
+      begin
+        veteran = find_by(file_number: file_number) || find_by(file_number: bgs.fetch_veteran_info(file_number)[:ssn])
+      rescue BGS::ShareError
+        false
+      end
+
       return nil unless veteran
 
       # Check to see if veteran is accessible to make sure bgs_record is
