@@ -150,7 +150,14 @@ describe('AddClaimantModal', () => {
 
       // Click submit
       userEvent.click(submit);
-      expect(onSubmit).toHaveBeenCalled();
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: data[0].name,
+          participantId: data[0].participant_id,
+          claimantType: 'attorney',
+          claimantNotes: '',
+        })
+      );
     });
 
     test('with unlisted claimant', async () => {
@@ -178,7 +185,12 @@ describe('AddClaimantModal', () => {
 
       // Click submit
       userEvent.click(submit);
-      expect(onSubmit).toHaveBeenCalled();
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          claimantType: 'other',
+          claimantNotes: 'foo',
+        })
+      );
     });
   });
 
