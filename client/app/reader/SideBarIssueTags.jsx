@@ -42,6 +42,7 @@ class SideBarIssueTags extends PureComponent {
         name="tags"
         label="Select or tag issues"
         multi
+        dropdownStyling={{ position: 'relative' }}
         creatable
         options={generateOptionsFromTags(this.props.tagOptions)}
         placeholder=""
