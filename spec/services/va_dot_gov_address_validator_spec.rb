@@ -3,6 +3,43 @@
 describe VaDotGovAddressValidator do
   include HearingHelpers
 
+  describe "#closest_regional_office" do
+    let(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
+    let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+    let(:closest_ro_facilities) do
+      [
+        mock_facility_data(id: ro_facility_id)
+      ]
+    end
+    let(:mock_address_validator) { VaDotGovAddressValidator.new(appeal: appeal) }
+
+    before do
+      closest_ro_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
+      allow(closest_ro_response).to receive(:data).and_return(closest_ro_facilities)
+      allow(closest_ro_response).to receive(:error).and_return(nil)
+
+      allow(mock_address_validator).to receive(:closest_ro_response).and_return(closest_ro_response)
+    end
+
+    subject { mock_address_validator.closest_regional_office }
+
+    context "when the closest RO is Boston" do
+      let(:ro_facility_id) { "vba_301" } # Boston RO
+
+      it "returns RO01" do
+        expect(subject).to eq("RO01")
+      end
+    end
+
+    context "when the closest RO is San Antonio" do
+      let(:ro_facility_id) { "vha_671BY" } # San Antonio
+
+      it "returns RO62 (Houston)" do
+        expect(subject).to eq("RO62")
+      end
+    end
+  end
+
   describe "#update_closest_ro_and_ahls" do
     let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
