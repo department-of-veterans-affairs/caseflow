@@ -39,7 +39,7 @@ RSpec.describe BulkTaskAssignmentsController, :postgres, type: :controller do
           get :create, params: { bulk_task_assignment: params }
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)
-          expect(response_body["data"].size).to eq 2
+          expect(response_body["queue_config"]["tabs"][1]["tasks"].count).to eq 2
         end
       end
 
