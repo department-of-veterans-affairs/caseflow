@@ -41,6 +41,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     claimant: null,
     claimantError: null,
     payeeCode: null,
+    claimantName: null,
     claimantNotes: null,
     claimantType: null,
     legacyOptInApproved: null,
@@ -114,6 +115,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       claimant: {
         $set: action.payload.claimant
+      },
+      claimantName: {
+        $set: action.payload.claimantName
       },
       claimantNotes: {
         $set: action.payload.claimantNotes

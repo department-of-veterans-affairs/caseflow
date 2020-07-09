@@ -94,7 +94,7 @@ export const SelectClaimant = (props) => {
       defaultPayeeCode: '',
       claimantNotes
     });
-    setClaimant({ claimant: participantId ?? null, claimantType, claimantNotes });
+    setClaimant({ claimant: participantId ?? null, claimantType, claimantNotes, claimantName: name });
     setShowClaimantModal(false);
   };
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
