@@ -15,7 +15,7 @@ class AppealIntake < DecisionReviewIntake
     @request_params = request_params
 
     transaction do
-      detail.assign_attributes(review_params)
+      detail.assign_attributes(appeal_params)
       create_claimant!
       detail.save(context: :intake_review)
     end
@@ -49,7 +49,8 @@ class AppealIntake < DecisionReviewIntake
     end
 
     Claimant.find_or_initialize_by(
-      decision_review: detail
+      decision_review: detail,
+      type: claimant_type
     ).tap do |claimant|
       claimant.type = claimant_type
       claimant.participant_id = participant_id
@@ -76,5 +77,15 @@ class AppealIntake < DecisionReviewIntake
       :veteran_is_not_claimant,
       :legacy_opt_in_approved
     )
+  end
+
+  def appeal_params
+    keys_to_extract = [
+      :receipt_date,
+      :docket_type,
+      :veteran_is_not_claimant,
+      :legacy_opt_in_approved
+    ]
+    review_params.select { |k,_| keys_to_extract.include? k }
   end
 end
