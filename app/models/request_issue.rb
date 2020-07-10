@@ -631,7 +631,7 @@ class RequestIssue < CaseflowRecord
       legacy_issue: legacy_issues.first,
       original_legacy_appeal_decision_date: vacols_issue&.legacy_appeal&.decision_date,
       original_legacy_appeal_disposition_code: vacols_issue&.legacy_appeal&.case_record&.bfdc,
-      folder_date_time_of_decision: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
+      folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
     )
   end
 

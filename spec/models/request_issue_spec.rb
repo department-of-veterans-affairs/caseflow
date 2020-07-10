@@ -275,7 +275,7 @@ describe RequestIssue, :all_dbs do
     end
   end
 
-  context "legacy_optin" do
+  fcontext "legacy_optin" do
     let!(:legacy_appeal) do
       create(:legacy_appeal, vacols_case:
         create(
@@ -301,7 +301,7 @@ describe RequestIssue, :all_dbs do
       subject
       expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_disposition_code).to eq "G"
       expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_decision_date).to eq(decision_date)
-      expect(rating_request_issue.legacy_issue_optin.folder_date_time_of_decision).to eq(folder_date)
+      expect(rating_request_issue.legacy_issue_optin.folder_decision_date).to eq(folder_date)
     end
   end
 
