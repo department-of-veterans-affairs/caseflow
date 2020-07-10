@@ -125,6 +125,13 @@ FactoryBot.define do
       end
     end
 
+    trait :cancelled do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        root_task.cancel_task_and_child_subtasks
+      end
+    end
+
     trait :denied_advance_on_docket do
       established_at { Time.zone.yesterday }
       claimants do
