@@ -10,7 +10,7 @@ class DecisionReviewsController < ApplicationController
         format.html { render "index" }
         format.csv do
           jobs_as_csv = BusinessLineReporter.new(business_line).as_csv
-          filename = Time.zone.now.strftime("business_line-%Y%m%d.csv")
+          filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
           send_data jobs_as_csv, filename: filename
         end
       end
