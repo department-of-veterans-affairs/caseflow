@@ -10,7 +10,6 @@ class BulkTaskAssignment
   validate :regional_office_is_valid
   validate :assigned_to_part_of_organization
   validate :assigned_by_admin_of_organization
-  validate :organization_can_bulk_assign
 
   attr_accessor :assigned_to_id, :assigned_by, :organization_url, :task_type, :regional_office, :task_count
 
@@ -96,11 +95,5 @@ class BulkTaskAssignment
     return if organization&.admins&.include?(assigned_by)
 
     errors.add(:assigned_by, "is not admin of organization with url #{organization_url}")
-  end
-
-  def organization_can_bulk_assign
-    return if organization&.can_bulk_assign_tasks?
-
-    errors.add(:organization, "with url #{organization_url} cannot bulk assign tasks")
   end
 end
