@@ -46,7 +46,7 @@ describe PowerOfAttorney, :all_dbs do
 
     context "by claimant_participant_id" do
       let(:power_of_attorney) do
-        PowerOfAttorney.new(vacols_id: vacols_case.bfkey, claimant_participant_id: "123")
+        PowerOfAttorney.new(vacols_id: vacols_case.bfkey, claimant_participant_id: "8345701")
       end
 
       it "returns BGS values" do

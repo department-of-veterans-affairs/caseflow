@@ -44,7 +44,7 @@ RSpec.feature "Case Assignment flows", :all_dbs do
       instructions = generate_words(5)
 
       click_dropdown(text: selected_opt_0) do
-        visible_options = page.find_all(".Select-option")
+        visible_options = page.find_all(".cf-select__option")
         expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
       end
 

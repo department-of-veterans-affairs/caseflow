@@ -33,9 +33,6 @@ describe JudgeTask, :all_dbs do
         create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
       end
 
-      before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
-      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
-
       context "in the assign phase" do
         it "should return the Case Management assignment actions along with attorneys" do
           expect(subject).to eq(

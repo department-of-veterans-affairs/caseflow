@@ -102,6 +102,7 @@ detectors:
       - VeteranAttributeCacher
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
+      - ControllerSchema#remove_unknown_keys
   InstanceVariableAssumption:
     exclude:
       - Appeal

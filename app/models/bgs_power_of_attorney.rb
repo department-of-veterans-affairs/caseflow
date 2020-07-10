@@ -33,6 +33,12 @@ class BgsPowerOfAttorney < CaseflowRecord
     # data integrity to them.
     def find_or_create_by_file_number(file_number)
       find_or_create_by!(file_number: file_number)
+    rescue ActiveRecord::RecordNotUnique
+      # We've noticed that this error is thrown because of a race-condition
+      # where multiple processes are trying to create the same object.
+      # see: https://dsva.slack.com/archives/C3EAF3Q15/p1593726968095600 for investigation
+      # So a solution to this is to rescue the error and query it
+      find_by(file_number: file_number)
     end
 
     def find_or_create_by_claimant_participant_id(claimant_participant_id)

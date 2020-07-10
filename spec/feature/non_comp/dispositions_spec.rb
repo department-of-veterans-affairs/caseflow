@@ -26,12 +26,12 @@ feature "NonComp Dispositions Task Page", :postgres do
     num = find_dropdown_num_by_disposition(disposition)
     expect(page).to have_field(type: "textarea", with: description, disabled: true)
 
-    scroll_to(".dropdown-disposition-issue-#{num}")
+    scroll_to(find(".dropdown-disposition-issue-#{num}"))
 
     within(".dropdown-disposition-issue-#{num}") do
-      expect(find("span[class='Select-value-label']", text: disposition)).to_not be_nil
+      expect(find(".cf-select__single-value", text: disposition)).to_not be_nil
     end
-    expect(page).to have_css("[id='disposition-issue-#{num}'][aria-readonly='true']")
+    expect(page).to have_css("[id='disposition-issue-#{num}'][readonly]", visible: false)
   end
 
   context "with an existing organization" do

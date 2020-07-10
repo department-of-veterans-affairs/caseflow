@@ -37,11 +37,11 @@ RSpec.feature "Privacy team tasks and queue", :all_dbs do
         User.authenticate!(user: vlj_support_staff)
         visit("/queue/appeals/#{appeal.external_id}")
 
-        find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
+        find(".cf-select__control", text: "Select an action…").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
 
         # Assignee dropdown selector should be hidden.
-        expect(find_all(".cf-modal-body .Select-control").count).to eq(0)
+        expect(find_all(".cf-modal-body .cf-select__control").count).to eq(0)
         fill_in("taskInstructions", with: instructions_text)
         find("button", text: "Submit").click
 
@@ -64,11 +64,11 @@ RSpec.feature "Privacy team tasks and queue", :all_dbs do
         User.authenticate!(user: vlj_support_staff)
         visit("/queue/appeals/#{appeal.external_id}")
 
-        find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
+        find(".cf-select__control", text: "Select an action…").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
 
         # Assignee dropdown selector should be hidden.
-        expect(find_all(".cf-modal-body .Select-control").count).to eq(0)
+        expect(find_all(".cf-modal-body .cf-select__control").count).to eq(0)
         fill_in("taskInstructions", with: instructions_text)
         find("button", text: "Submit").click
 

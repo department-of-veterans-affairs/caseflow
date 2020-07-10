@@ -27,8 +27,24 @@ export class EstablishClaimDecision extends React.Component {
       endProductButtonText = 'Route claim';
     }
     this.state = {
-      endProductButtonText
+      endProductButtonText,
+      allIssuesDisabled: props.specialIssues.noSpecialIssues
     };
+  }
+
+  specialIssuesChange = (checked, event) => {
+    const specialIssueId = event.target.id;
+
+    if (specialIssueId === 'noSpecialIssues') {
+      this.setState({ allIssuesDisabled: checked });
+      if (checked) {
+        // dispatch a clearing of all Special Issues
+        this.props.clearSpecialIssues();
+      }
+    }
+
+    // dispatch the update for the box checked
+    this.props.handleSpecialIssueFieldChange(specialIssueId, checked);
   }
 
   onTabSelected = (tabNumber) => {
@@ -63,7 +79,6 @@ export class EstablishClaimDecision extends React.Component {
       loading,
       decisionType,
       handleToggleCancelTaskModal,
-      handleSpecialIssueFieldChange,
       pdfLink,
       pdfjsLink,
       specialIssues,
@@ -71,6 +86,7 @@ export class EstablishClaimDecision extends React.Component {
       specialIssuesError
     } = this.props;
 
+    const { allIssuesDisabled } = this.state;
     let issueColumns = [
       {
         header: 'Program',
@@ -236,9 +252,10 @@ export class EstablishClaimDecision extends React.Component {
                     id={issue.specialIssue}
                     label={issue.node || issue.display}
                     name={issue.specialIssue}
-                    onChange={handleSpecialIssueFieldChange(issue.specialIssue)}
+                    onChange={this.specialIssuesChange}
                     key={index}
                     value={specialIssues[issue.specialIssue]}
+                    disabled={Boolean(issue.specialIssue !== 'noSpecialIssues' && allIssuesDisabled)}
                   />
                 );
               })}
@@ -266,6 +283,7 @@ export class EstablishClaimDecision extends React.Component {
 }
 
 EstablishClaimDecision.propTypes = {
+  clearSpecialIssues: PropTypes.func,
   decisionType: PropTypes.string.isRequired,
   handleSpecialIssueFieldChange: PropTypes.func,
   handleSubmit: PropTypes.func.isRequired,
@@ -275,6 +293,7 @@ EstablishClaimDecision.propTypes = {
   pdfjsLink: PropTypes.string.isRequired,
   showSpecialIssueError: PropTypes.func,
   specialIssues: PropTypes.object.isRequired,
+  specialIssuesChange: PropTypes.func,
   specialIssuesError: PropTypes.bool,
   specialIssuesRevamp: PropTypes.bool,
   task: PropTypes.object.isRequired
@@ -286,10 +305,11 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  clearSpecialIssues: () => dispatch({ type: Constants.CLEAR_SPECIAL_ISSUES }),
   handleToggleCancelTaskModal: () => {
     dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
   },
-  handleSpecialIssueFieldChange: (specialIssue) => (value) => {
+  handleSpecialIssueFieldChange: (specialIssue, value) => {
     dispatch({ type: Constants.CLEAR_SPECIAL_ISSUE_ERROR });
     dispatch({
       type: Constants.CHANGE_SPECIAL_ISSUE,

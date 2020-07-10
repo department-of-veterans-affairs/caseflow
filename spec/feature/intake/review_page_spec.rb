@@ -383,7 +383,7 @@ def check_deceased_veteran_cant_be_payee
   end
 
   # click on payee code dropdown
-  find(".Select-control").click
+  find(".cf-select__control").click
 
   # verify that veteran cannot be selected
   expect(page.has_no_content?("00 - Veteran")).to eq(true)
@@ -419,11 +419,11 @@ def check_pension_and_compensation_payee_code
 
   expect(page).to have_content("Please select an option.")
 
-  expect(find(".Select-placeholder")).to have_content("Select")
+  expect(find(".cf-select__placeholder")).to have_content("Select")
 
   find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
-  expect(find(".Select-multi-value-wrapper")).to have_content("11 - C&P First Child")
+  expect(find(".cf-select__value-container")).to have_content("11 - C&P First Child")
 
   fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
   find("#cf-payee-code").send_keys :enter
