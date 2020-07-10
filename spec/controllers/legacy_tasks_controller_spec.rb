@@ -135,10 +135,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       before do
         current_user = create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
         User.stub = current_user
-        FeatureToggle.enable!(:scm_view_judge_assign_queue)
         @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
       end
-      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       it "should be successful" do
         params = {
