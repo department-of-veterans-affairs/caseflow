@@ -9,8 +9,8 @@ class Claimant < CaseflowRecord
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
 
-  validate  do |claimant|
-    if(claimant.is_a? OtherClaimant)
+  validate do |claimant|
+    if claimant.is_a? OtherClaimant
       true
     else
       ClaimantValidator.new(claimant).validate
