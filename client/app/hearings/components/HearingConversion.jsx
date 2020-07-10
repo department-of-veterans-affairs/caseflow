@@ -34,11 +34,9 @@ export const HearingConversion = ({
     // Determine which email to use
     const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
     const appellantTz = virtualHearing?.appellantTz ? virtualHearing?.appellantTz : hearing?.appellantTz;
-    const representativeTz = virtualHearing?.representativeTz ? virtualHearing?.representativeTz : hearing?.representativeTz;
 
     // Set the emails and timezone if not already set
     update('virtualHearing', {
-      [!virtualHearing?.representativeTz && 'representativeTz']: representativeTz,
       [!virtualHearing?.appellantTz && 'appellantTz']: appellantTz,
       [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
       [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
