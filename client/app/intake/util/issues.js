@@ -20,7 +20,9 @@ const getClaimantField = (veteran, intakeData) => {
     attorney: () => `${intakeData.claimantName}, Attorney`,
     other: () => intakeData.claimantNotes
   };
-  const claimant = claimantMap[intakeData.claimantType ?? 'veteran']();
+
+  const claimantType = intakeData.claimantType?.replace(/(.*)(Claimant)/, '$1').toLowerCase();
+  const claimant = claimantMap[claimantType ?? 'veteran']?.();
 
   return [{
     field: 'Claimant',
