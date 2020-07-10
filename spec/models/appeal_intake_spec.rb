@@ -199,16 +199,16 @@ describe AppealIntake, :all_dbs do
 
       context "claimant is attorney" do
         let(:claimant_type) { "attorney" }
-  
+
         it "sets correct claimant type" do
           expect(subject).to be_truthy
           expect(intake.detail.claimant).to have_attributes(type: "AttorneyClaimant")
         end
       end
-  
+
       context "claimant is other" do
         let(:claimant_type) { "other" }
-  
+
         it "sets correct claimant type" do
           expect(subject).to be_truthy
           expect(intake.detail.claimant).to have_attributes(type: "OtherClaimant")
