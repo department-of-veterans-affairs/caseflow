@@ -196,6 +196,24 @@ describe AppealIntake, :all_dbs do
           expect(detail.claimants).to be_empty
         end
       end
+
+      context "claimant is attorney" do
+        let(:claimant_type) { "attorney" }
+  
+        it "sets correct claimant type" do
+          expect(subject).to be_truthy
+          expect(intake.detail.claimant).to have_attributes(type: "AttorneyClaimant")
+        end
+      end
+  
+      context "claimant is other" do
+        let(:claimant_type) { "other" }
+  
+        it "sets correct claimant type" do
+          expect(subject).to be_truthy
+          expect(intake.detail.claimant).to have_attributes(type: "OtherClaimant")
+        end
+      end
     end
 
     context "receipt date is in the future" do
@@ -204,24 +222,6 @@ describe AppealIntake, :all_dbs do
       it "is invalid" do
         expect(subject).to be_falsey
         expect(detail.errors[:receipt_date]).to include("in_future")
-      end
-    end
-
-    context "claimant is attorney" do
-      let(:claimant_type) { "attorney" }
-
-      it "sets correct claimant type" do
-        expect(subject).to be_truthy
-        expect(intake.detail.claimant).to have_attributes(type: "AttorneyClaimant")
-      end
-    end
-
-    context "claimant is other" do
-      let(:claimant_type) { "other" }
-
-      it "sets correct claimant type" do
-        expect(subject).to be_truthy
-        expect(intake.detail.claimant).to have_attributes(type: "OtherClaimant")
       end
     end
   end
