@@ -355,7 +355,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
     scenario "async job is not completed" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
-      expect(find(".dropdown-hearingType")).to have_css(".is-disabled")
+      expect(find(".dropdown-hearingType")).to have_css(".cf-select__control--is-disabled")
       expect(page).to have_field("Veteran Email", readonly: true)
       expect(page).to have_field("POA/Representative Email", readonly: true)
     end
@@ -370,7 +370,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       virtual_hearing.established!
       visit "hearings/" + hearing.external_id.to_s + "/details"
       hearing.reload
-      expect(find(".dropdown-hearingType")).to have_no_css(".is-disabled")
+      expect(find(".dropdown-hearingType")).to have_no_css(".cf-select__control--is-disabled")
       expect(page).to have_field("Veteran Email", readonly: false)
       expect(page).to have_field("POA/Representative Email", readonly: false)
     end

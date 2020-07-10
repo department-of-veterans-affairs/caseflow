@@ -801,8 +801,8 @@ RSpec.feature "Case details", :all_dbs do
       it "marking task as complete works" do
         visit "/queue/appeals/#{task.appeal.uuid}"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
 
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -1230,6 +1230,7 @@ RSpec.feature "Case details", :all_dbs do
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
         text = Constants.TASK_ACTIONS.CANCEL_TASK.label
         click_dropdown(prompt: prompt, text: text)
+        fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
 
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))

@@ -20,6 +20,8 @@ import React from 'react';
 // queueSectionOrder:        for Queue display, the order to display
 // isAmaRelevant:            whether issue is relevant to AMA cases
 
+
+//# Note: If the `snakeCase` field here is changed or added for LegacyAppeals, they must also be changed in app/models/legacy_appeal.rb SPECIAL_ISSUES const
 export const SPECIAL_ISSUES = [
   {
     display: 'Contaminated Water at Camp LeJeune',
@@ -371,7 +373,7 @@ export const NEW_SPECIAL_ISSUES = [
     display: 'US Court of Appeals for Veterans Claims (CAVC)',
     queueDisplay: 'US Court of Appeals for Veterans Claims (CAVC)',
     specialIssue: 'usCourtOfAppealsForVeteransClaims',
-    snakeCase: 'cavc',
+    snakeCase: 'us_court_of_appeals_for_veterans_claims',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
     queueSectionOrder: 11,
