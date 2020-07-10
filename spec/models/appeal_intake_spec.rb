@@ -77,6 +77,7 @@ describe AppealIntake, :all_dbs do
     let(:docket_type) { Constants.AMA_DOCKETS.hearing }
     let(:claimant) { nil }
     let(:claimant_type) { nil }
+    let(:claimant_notes) { nil }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
     let(:veteran_is_not_claimant) { "false" }
@@ -89,6 +90,7 @@ describe AppealIntake, :all_dbs do
         docket_type: docket_type,
         claimant: claimant,
         claimant_type: claimant_type,
+        claimant_notes: claimant_notes,
         payee_code: payee_code,
         legacy_opt_in_approved: legacy_opt_in_approved,
         veteran_is_not_claimant: veteran_is_not_claimant
@@ -208,10 +210,24 @@ describe AppealIntake, :all_dbs do
 
       context "claimant is other" do
         let(:claimant_type) { "other" }
+        let(:claimant) { nil }
 
-        it "sets correct claimant type" do
-          expect(subject).to be_truthy
-          expect(intake.detail.claimant).to have_attributes(type: "OtherClaimant")
+        context "when notes are empty" do
+          it "is invalid" do
+            expect(subject).to_not be_truthy
+          end          
+        end
+
+        context "when notes are set" do
+          let(:claimant_notes) { "foo" }
+
+          it "sets correct claimant type" do
+            expect(subject).to be_truthy
+            expect(intake.detail.claimant).to have_attributes(
+              type: "OtherClaimant",
+              notes: claimant_notes
+            )
+          end
         end
       end
     end
