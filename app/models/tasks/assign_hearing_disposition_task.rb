@@ -14,6 +14,13 @@ class AssignHearingDispositionTask < Task
   class HearingDispositionNotPostponed < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
   class HearingDispositionNotHeld < StandardError; end
+  class HearingAssociationMissing < StandardError
+    def initialize(hearing_task_id)
+      super("Hearing task (#{hearing_task_id}) is missing an associated hearing. " \
+        "This means that either the hearing was deleted in VACOLS or " \
+        "the hearing association has been deleted.")
+    end
+  end
 
   class << self
     def create_assign_hearing_disposition_task!(appeal, parent, hearing)
@@ -76,7 +83,7 @@ class AssignHearingDispositionTask < Task
       )
     end
 
-    update!(status: Constants.TASK_STATUSES.cancelled)
+    update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
   end
 
   def postpone!
@@ -110,7 +117,9 @@ class AssignHearingDispositionTask < Task
   private
 
   def update_children_status_after_closed
-    children.open.update_all(status: status)
+    update_args = { status: status }
+    update_args[:closed_at] = Time.zone.now if self.class.closed_statuses.include?(status)
+    children.open.update_all(update_args)
   end
 
   def cascade_closure_from_child_task?(_child_task)
@@ -136,6 +145,9 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_hearing_disposition(disposition:)
+    # Ensure the hearing exists
+    fail HearingAssociationMissing, id if hearing.nil?
+
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: disposition)
     else

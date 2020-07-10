@@ -170,7 +170,7 @@ class AppealHistory
     merged = appeal_tree_nodes.select { |node| node[:appeal].merged? }
 
     merge_strs = merged.map do |node|
-      date = node[:appeal].decision_date.strftime("%m/%d/%y")
+      date = node[:appeal].decision_date&.strftime("%m/%d/%y")
       folder = node[:appeal].vacols_id
       "From appeal merged on #{date} (#{folder})"
     end

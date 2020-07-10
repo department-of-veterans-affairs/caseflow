@@ -1,3 +1,1 @@
-Hi <%= @recipient.full_name %>,
-
-Your virtual hearing on <%= "virtual_hearing_date" %> is confirmed.
+<%= render "#{@recipient.title.downcase}_confirmation" %>

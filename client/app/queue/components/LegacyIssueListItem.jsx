@@ -9,8 +9,8 @@ import {
   getIssueDiagnosticCodeLabel
 } from '../utils';
 import { boldText } from '../constants';
-import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
-import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import ISSUE_INFO from '../../../constants/ISSUE_INFO';
+import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const noteMarginTop = css({ marginTop: '1.5rem' });

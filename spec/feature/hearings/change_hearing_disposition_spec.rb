@@ -5,9 +5,9 @@ RSpec.shared_examples "Change hearing disposition" do
   let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101) }
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let(:root_task) { create(:root_task, appeal: appeal) }
-  let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+  let(:hearing_task) { create(:hearing_task, parent: root_task) }
   let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-  let!(:change_task) { create(:change_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+  let!(:change_task) { create(:change_hearing_disposition_task, parent: hearing_task) }
   let(:instructions_text) { "This is why I'm changing this hearing's disposition." }
 
   before do
@@ -87,24 +87,55 @@ RSpec.shared_examples "Change hearing disposition" do
     end
   end
 
-  scenario "change hearing disposition to cancelled" do
-    step "visit the hearing admin organization queue and click on the veteran's name" do
-      visit "/organizations/#{HearingAdmin.singleton.url}"
-      expect(page).to have_content("Unassigned (1)")
-      click_on veteran_link_text
+  context "change hearing disposition to cancelled" do
+    scenario "with hearing task association" do
+      step "visit the hearing admin organization queue and click on the veteran's name" do
+        visit "/organizations/#{HearingAdmin.singleton.url}"
+        expect(page).to have_content("Unassigned (1)")
+        click_on veteran_link_text
+      end
+
+      step "change the hearing disposition to cancelled" do
+        click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+        click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
+        fill_in "Notes", with: instructions_text
+        click_button("Submit")
+        expect(page).to have_content("Successfully changed hearing disposition to Cancelled")
+      end
+
+      step "return to the hearing admin organization queue and verify that the task is no longer there" do
+        click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
+        expect(page).to have_content("Unassigned (0)")
+      end
+    end
+  end
+
+  context "hearing task is missing association to hearing" do
+    before do
+      association.destroy
+      hearing_task.reload
     end
 
-    step "change the hearing disposition to cancelled" do
-      click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-      click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
-      fill_in "Notes", with: instructions_text
-      click_button("Submit")
-      expect(page).to have_content("Successfully changed hearing disposition to Cancelled")
-    end
+    scenario "when changing hearing disposition" do
+      step "visit the hearing admin organization queue and click on the veteran's name" do
+        visit "/organizations/#{HearingAdmin.singleton.url}"
+        expect(page).to have_content("Unassigned (1)")
+        click_on veteran_link_text
+      end
 
-    step "return to the hearing admin organization queue and verify that the task is no longer there" do
-      click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
-      expect(page).to have_content("Unassigned (0)")
+      step "change the hearing disposition to cancelled" do
+        expect(Raven).to receive(:capture_exception)
+          .with(AssignHearingDispositionTask::HearingAssociationMissing) { @raven_called = true }
+
+        click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+        click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
+        fill_in "Notes", with: instructions_text
+        click_button("Submit")
+
+        expect(page).to have_content("Hearing task (#{change_task.id}) is missing an associated hearing. " \
+        "This means that either the hearing was deleted in VACOLS or " \
+        "the hearing association has been deleted.")
+      end
     end
   end
 
@@ -128,6 +159,10 @@ RSpec.shared_examples "Change hearing disposition" do
     end
 
     context "changing hearing disposition" do
+      before do
+        cache_appeals
+      end
+
       scenario "change hearing disposition to postponed" do
         step "visit the hearing admin organization queue and click on the veteran's name" do
           visit "/organizations/#{HearingAdmin.singleton.url}"
@@ -153,7 +188,7 @@ RSpec.shared_examples "Change hearing disposition" do
           visit "hearings/schedule/assign"
           expect(page).to have_content("Regional Office")
           click_dropdown(text: "Denver")
-          click_button(waiting_button_text)
+          click_button(waiting_button_text, exact: true)
           click_on veteran_hearing_link_text
           expect(page).to have_content(ScheduleHearingTask.last.label)
         end
@@ -163,7 +198,7 @@ RSpec.shared_examples "Change hearing disposition" do
           schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
           expect(schedule_row).to have_content(instructions_text)
           expect(schedule_row).to have_css(
-            ".Select-control .Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+            ".cf-select__control .cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
           )
         end
       end
@@ -188,15 +223,14 @@ RSpec.shared_examples "Change hearing disposition" do
           expect(page).to have_content("Unassigned (0)")
         end
 
-        # Add test back in https://github.com/department-of-veterans-affairs/caseflow/issues/12782
-        # step "verify that there's a NoShowHearingTask with a hold in the HearingsManagement org assigned queue" do
-        #   User.authenticate!(user: hearing_mgmt_user)
-        #   visit "/organizations/#{HearingsManagement.singleton.url}"
-        #   click_on "Assigned (1)"
-        #   find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
-        #   no_show_active_row = find("dd", text: "No Show Hearing Task").find(:xpath, "ancestor::tr")
-        #   expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
-        # end
+        step "verify that there's a NoShowHearingTask with a hold in the HearingsManagement org assigned queue" do
+          User.authenticate!(user: hearing_mgmt_user)
+          visit "/organizations/#{HearingsManagement.singleton.url}"
+          click_on "Assigned (1)"
+          find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
+          no_show_active_row = find("dd", text: "No Show Hearing Task").find(:xpath, "ancestor::tr")
+          expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
+        end
       end
     end
 
@@ -204,15 +238,16 @@ RSpec.shared_examples "Change hearing disposition" do
       let(:hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
       let(:case_hearing_disposition) { :disposition_postponed }
       let!(:cancel_change_task) { change_task.update!(status: Constants.TASK_STATUSES.cancelled) }
-      let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let!(:hearing_task_2) { create(:hearing_task, parent: root_task) }
       let!(:association_2) do
         create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
       end
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task_2) }
       let(:instructions_text) { "This hearing is postponed, but it should be held." }
 
       before do
         User.authenticate!(user: hearing_mgmt_user)
+        cache_appeals
       end
 
       scenario "correct the hearing disposition to held" do
@@ -220,7 +255,7 @@ RSpec.shared_examples "Change hearing disposition" do
           visit "hearings/schedule/assign"
           expect(page).to have_content("Regional Office")
           click_dropdown(text: "Denver")
-          click_button(waiting_button_text)
+          click_button(waiting_button_text, exact: true)
           click_on veteran_hearing_link_text
           expect(page).to have_content(ScheduleHearingTask.last.label)
         end
@@ -352,7 +387,7 @@ RSpec.shared_examples "Change hearing disposition" do
     end
 
     context "disposition task" do
-      let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+      let!(:task) { create(:assign_hearing_disposition_task, parent: hearing_task) }
 
       scenario "can create a change hearing disposition task" do
         visit(appeal_path)
@@ -367,7 +402,7 @@ RSpec.shared_examples "Change hearing disposition" do
       end
 
       context "transcription task" do
-        let!(:child_task) { create(:transcription_task, parent: task, appeal: appeal) }
+        let!(:child_task) { create(:transcription_task, parent: task) }
 
         scenario "can create a change hearing disposition task" do
           visit(appeal_path)
@@ -382,7 +417,7 @@ RSpec.shared_examples "Change hearing disposition" do
       end
 
       context "no show hearing task" do
-        let!(:child_task) { create(:no_show_hearing_task, parent: task, appeal: appeal) }
+        let!(:child_task) { create(:no_show_hearing_task, parent: task) }
 
         scenario "can create a change hearing disposition task" do
           visit(appeal_path)
@@ -398,23 +433,23 @@ RSpec.shared_examples "Change hearing disposition" do
     end
 
     context "schedule hearing task" do
-      let!(:task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
+      let!(:task) { create(:schedule_hearing_task, parent: hearing_task) }
 
       scenario "cannot create a change hearing disposition task" do
         visit(appeal_path)
         expect(page).to have_content(ScheduleHearingTask.last.label)
-        expect(page).to_not have_css(".Select-control")
+        expect(page).to_not have_css(".cf-select__control")
       end
 
       context "hearing admin task" do
         let!(:child_task) do
-          create(:hearing_admin_action_incarcerated_veteran_task, parent: task, appeal: appeal)
+          create(:hearing_admin_action_incarcerated_veteran_task, parent: task)
         end
 
         scenario "cannot create a change hearing disposition task" do
           visit(appeal_path)
           expect(page).to have_content(HearingAdminActionIncarceratedVeteranTask.last.label)
-          expect(page).to_not have_css(".Select-control")
+          expect(page).to_not have_css(".cf-select__control")
         end
       end
     end
@@ -441,6 +476,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
     end
     let(:waiting_button_text) { "AMA Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.uuid}" }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
 
     include_examples "Change hearing disposition"
   end
@@ -459,10 +495,11 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
       create(:case_hearing, case_hearing_disposition, vdkey: hearing_day.id, folder_nr: appeal.vacols_id)
     end
     let(:hearing) do
-      create(:legacy_hearing, appeal: appeal, vacols_id: case_hearing.hearing_pkseq, disposition: hearing_disposition)
+      create(:legacy_hearing, appeal: appeal, case_hearing: case_hearing)
     end
     let(:waiting_button_text) { "Legacy Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.vacols_id}" }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     include_examples "Change hearing disposition"
   end

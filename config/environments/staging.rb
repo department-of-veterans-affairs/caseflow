@@ -18,7 +18,7 @@ Rails.application.configure do
     auth_token: ENV["GOVDELIVERY_TOKEN"],
     api_root: "https://#{ENV["GOVDELIVERY_SERVER"]}"
   }
-  
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
@@ -50,7 +50,4 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
-
-  # Allow health check to pushgateway
-  ENV["ENABLE_PUSHGATEWAY_HEALTHCHECK"] = "true"
 end

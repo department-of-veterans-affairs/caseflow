@@ -10,7 +10,7 @@ import { appealReducer, mapDataToInitialAppeal } from './reducers/appeal';
 import { featureToggleReducer, mapDataToFeatureToggle } from './reducers/featureToggles';
 import ReduxBase from '../components/ReduxBase';
 
-const reducer = combineReducers({
+export const reducer = combineReducers({
   intake: intakeReducer,
   rampElection: rampElectionReducer,
   rampRefiling: rampRefilingReducer,
@@ -18,6 +18,16 @@ const reducer = combineReducers({
   higherLevelReview: higherLevelReviewReducer,
   appeal: appealReducer,
   featureToggles: featureToggleReducer
+});
+
+export const generateInitialState = (props) => ({
+  intake: mapDataToInitialIntake(props),
+  rampElection: mapDataToInitialRampElection(props),
+  rampRefiling: mapDataToInitialRampRefiling(props),
+  supplementalClaim: mapDataToInitialSupplementalClaim(props),
+  higherLevelReview: mapDataToInitialHigherLevelReview(props),
+  appeal: mapDataToInitialAppeal(props),
+  featureToggles: mapDataToFeatureToggle(props)
 });
 
 class Intake extends React.PureComponent {
@@ -28,19 +38,13 @@ class Intake extends React.PureComponent {
   }
 
   render() {
-    const initialState = {
-      intake: mapDataToInitialIntake(this.props),
-      rampElection: mapDataToInitialRampElection(this.props),
-      rampRefiling: mapDataToInitialRampRefiling(this.props),
-      supplementalClaim: mapDataToInitialSupplementalClaim(this.props),
-      higherLevelReview: mapDataToInitialHigherLevelReview(this.props),
-      appeal: mapDataToInitialAppeal(this.props),
-      featureToggles: mapDataToFeatureToggle(this.props)
-    };
+    const initialState = generateInitialState(this.props);
 
-    return <ReduxBase initialState={initialState} reducer={reducer} analyticsMiddlewareArgs={['intake']}>
-      <IntakeFrame {...this.props} />
-    </ReduxBase>;
+    return (
+      <ReduxBase initialState={initialState} reducer={reducer} analyticsMiddlewareArgs={['intake']}>
+        <IntakeFrame {...this.props} />
+      </ReduxBase>
+    );
   }
 }
 

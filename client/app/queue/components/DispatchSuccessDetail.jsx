@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 const DispatchSuccessDetail = (props) => {
   const { task, feedbackUrl } = props;

@@ -35,7 +35,7 @@ describe SupplementalClaimIntake, :all_dbs do
     end
 
     let!(:claimant) do
-      Claimant.create!(
+      DependentClaimant.create!(
         decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
@@ -125,7 +125,7 @@ describe SupplementalClaimIntake, :all_dbs do
           payee_code: "00",
           predischarge: false,
           claim_type: "Claim",
-          station_of_jurisdiction: "499",
+          station_of_jurisdiction: user.station_id,
           date: detail.receipt_date.to_date,
           end_product_modifier: "040",
           end_product_label: "Supplemental Claim Rating",
@@ -134,7 +134,8 @@ describe SupplementalClaimIntake, :all_dbs do
           suppress_acknowledgement_letter: false,
           claimant_participant_id: claimant.participant_id,
           limited_poa_code: nil,
-          limited_poa_access: nil
+          limited_poa_access: nil,
+          status_type_code: "PEND"
         },
         veteran_hash: intake.veteran.to_vbms_hash,
         user: user

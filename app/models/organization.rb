@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Organization < ApplicationRecord
+class Organization < CaseflowRecord
   has_one :vso_config, dependent: :destroy
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
@@ -12,6 +12,13 @@ class Organization < ApplicationRecord
   validates :url, presence: true, uniqueness: true
 
   before_save :clean_url
+
+  enum status: {
+    Constants.ORGANIZATION_STATUSES.active.to_sym => Constants.ORGANIZATION_STATUSES.active,
+    Constants.ORGANIZATION_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
+  }
+
+  default_scope { active }
 
   class << self
     def assignable(task)
@@ -27,7 +34,17 @@ class Organization < ApplicationRecord
     end
   end
 
-  def can_bulk_assign_tasks?
+  def active!
+    self.status_updated_at = Time.zone.now
+    super
+  end
+
+  def inactive!
+    self.status_updated_at = Time.zone.now
+    super
+  end
+
+  def users_can_create_mail_task?
     false
   end
 
@@ -40,7 +57,7 @@ class Organization < ApplicationRecord
   end
 
   def use_task_pages_api?
-    false
+    true
   end
 
   def add_user(user)
@@ -48,7 +65,7 @@ class Organization < ApplicationRecord
   end
 
   def admins
-    organizations_users.includes(:user).select(&:admin?).map(&:user)
+    organizations_users.includes(:user).admin.map(&:user)
   end
 
   def non_admins
@@ -103,8 +120,7 @@ class Organization < ApplicationRecord
     ::OrganizationUnassignedTasksTab.new(
       assignee: self,
       show_regional_office_column: show_regional_office_in_queue?,
-      show_reader_link_column: show_reader_link_column?,
-      allow_bulk_assign: can_bulk_assign_tasks?
+      show_reader_link_column: show_reader_link_column?
     )
   end
 
@@ -118,10 +134,6 @@ class Organization < ApplicationRecord
 
   def completed_tasks_tab
     ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
-  end
-
-  def ama_task_serializer
-    WorkQueue::TaskSerializer
   end
 
   private

@@ -161,7 +161,7 @@ are mailed, causing VBMS dates to be earlier than VACOLS dates.
     Occasionally, especially with older appeals, an NOD or a Form 9 will be
     included in a document with a more general label such as a Statement in Support
     of Claim. These documents could contain other information such as testimony or
-    evidence. Add the appropriate label(s) from those listed in question 6 to the newly uploaded
+    evidence. Add the appropriate labels from those listed in question 6 to the newly uploaded
     document and make sure the date matches the one listed in VACOLS.
       </p>
 

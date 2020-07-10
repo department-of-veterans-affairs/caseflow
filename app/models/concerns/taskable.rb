@@ -18,4 +18,14 @@ module Taskable
       .detect { |t| t.is_a?(JudgeTask) }
       .try(:assigned_to)
   end
+
+  def overtime?
+    return !!work_mode&.overtime if FeatureToggle.enabled?(:overtime_revamp)
+
+    false
+  end
+
+  def overtime=(overtime)
+    WorkMode.create_or_update_by_appeal(self, overtime: overtime)
+  end
 end

@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import DocketTypeBadge from '../../../components/DocketTypeBadge';
+import PropTypes from 'prop-types';
+import React from 'react';
 
+import { HearingTime } from '../HearingTime';
 import { PreppedCheckbox } from './DailyDocketRowInputs';
-import COPY from '../../../../COPY.json';
-
-import moment from 'moment';
+import COPY from '../../../../COPY';
+import DocketTypeBadge from '../../../components/DocketTypeBadge';
+import { PowerOfAttorneyName } from '../../../queue/PowerOfAttorneyDetail';
 
 const hearingPropTypes = PropTypes.shape({
   appealExternalId: PropTypes.string,
@@ -19,27 +19,8 @@ const hearingPropTypes = PropTypes.shape({
   representative: PropTypes.string,
   representativeName: PropTypes.any,
   veteranFileNumber: PropTypes.string,
-  scheduledTimeString: PropTypes.string,
-  regionalOfficeTimezone: PropTypes.string,
-  centralOfficeTimeString: PropTypes.string,
-  readableRequestType: PropTypes.string,
-  regionalOfficeName: PropTypes.string,
-  currentIssueCount: PropTypes.number,
   paperCase: PropTypes.bool
 });
-
-export const getDisplayTime = (scheduledTimeString, timezone) => {
-  const val = scheduledTimeString ? moment(scheduledTimeString, 'HH:mm').format('h:mm a') : '';
-
-  if (timezone) {
-    const tz = moment().tz(timezone).
-      format('z');
-
-    return `${val} ${tz}`;
-  }
-
-  return val;
-};
 
 export const getHearingAppellantName = (hearing) => {
   let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName } = hearing;
@@ -69,37 +50,12 @@ const AppellantInformation = ({ hearing }) => {
     {hearing.appellantCity ?
       `${hearing.appellantCity} ${hearing.appellantState} ${hearing.appellantZip}` :
       <div>Loading address...</div>}
-    {hearing.representative ?
-      <div>{hearing.representative} <br /> {hearing.representativeName}</div> :
-      <div>Loading rep...</div>}
+    <br /><br />
+    <PowerOfAttorneyName appealId={hearing.appealExternalId} />
   </div>;
 };
 
 AppellantInformation.propTypes = {
-  hearing: hearingPropTypes
-};
-
-const HearingTime = ({ hearing }) => {
-  const localTime = getDisplayTime(
-    hearing.scheduledTimeString,
-    hearing.regionalOfficeTimezone || 'America/New_York'
-  );
-  const coTime = getDisplayTime(hearing.centralOfficeTimeString, 'America/New_York');
-
-  if (hearing.readableRequestType === 'Central') {
-    return <div>{coTime}<br />
-      {hearing.regionalOfficeName}
-    </div>;
-  }
-
-  return <div>{coTime} /<br />
-    {localTime} <br />
-    {hearing.regionalOfficeName}
-    <p>{hearing.currentIssueCount} issues</p>
-  </div>;
-};
-
-HearingTime.propTypes = {
   hearing: hearingPropTypes
 };
 
@@ -113,7 +69,7 @@ export default class HearingText extends React.Component {
       </div>
       <div><strong>{index + 1}</strong></div>
       <AppellantInformation hearing={hearing} />
-      <HearingTime hearing={initialState} />
+      <HearingTime hearing={initialState} showIssueCount showRegionalOffice showRequestType />
     </React.Fragment>;
   }
 }

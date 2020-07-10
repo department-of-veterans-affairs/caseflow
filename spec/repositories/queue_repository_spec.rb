@@ -33,7 +33,9 @@ describe QueueRepository, :all_dbs do
         expect(vacols_case.bfcurloc).to eq judge_staff.slogid
         expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 0
 
-        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        QueueRepository.assign_case_to_attorney!(
+          assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+        )
 
         expect(vacols_case.reload.bfcurloc).to eq attorney_staff.slogid
         expect(vacols_case.bfattid).to eq attorney_staff.sattyid
@@ -49,12 +51,44 @@ describe QueueRepository, :all_dbs do
       end
     end
 
+    context "when the assigner is a special case team movement member" do
+      let(:scm_user) { create(:user).tap { |user| SpecialCaseMovementTeam.singleton.add_user(user) } }
+      let!(:scm_staff) { create(:staff, sdomainid: scm_user.css_id) }
+
+      before do
+        RequestStore.store[:current_user] = scm_user
+      end
+
+      it "should assign a case to attorney" do
+        expect(vacols_case.bfcurloc).to eq judge_staff.slogid
+        expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 0
+
+        QueueRepository.assign_case_to_attorney!(
+          assigned_by: scm_user, judge: judge, attorney: attorney, vacols_id: vacols_id
+        )
+
+        expect(vacols_case.reload.bfcurloc).to eq attorney_staff.slogid
+        expect(vacols_case.bfattid).to eq attorney_staff.sattyid
+        decass = VACOLS::Decass.where(defolder: vacols_case.bfkey).first
+        expect(decass.present?).to eq true
+        expect(decass.deatty).to eq attorney_staff.sattyid
+        expect(decass.deteam).to eq attorney_staff.stitle[0..2]
+        expect(decass.deadusr).to eq scm_staff.slogid
+        expect(decass.demdusr).to eq scm_staff.slogid
+        expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
+        expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
+        expect(decass.deassign).to eq VacolsHelper.local_date_with_utc_timezone
+      end
+    end
+
     context "when vacols ID is not valid" do
       let(:vacols_id) { "09647474" }
 
       it "should raise ActiveRecord::RecordNotFound" do
         expect do
-          QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+          QueueRepository.assign_case_to_attorney!(
+            assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+          )
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -64,7 +98,9 @@ describe QueueRepository, :all_dbs do
         vacols_case.update(bfcurloc: attorney.vacols_uniq_id)
 
         expect do
-          QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+          QueueRepository.assign_case_to_attorney!(
+            assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+          )
         end.to raise_error(Caseflow::Error::LegacyCaseAlreadyAssignedError)
       end
     end
@@ -78,7 +114,9 @@ describe QueueRepository, :all_dbs do
                                deatty: "111",
                                deteam: "D5",
                                deprod: "DEV")
-        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        QueueRepository.assign_case_to_attorney!(
+          assigned_by: judge, judge: judge, attorney: attorney, vacols_id: vacols_id
+        )
         decass_results = VACOLS::Decass.where(defolder: vacols_case.bfkey)
         expect(decass_results.count).to eq 1
         decass = decass_results.first

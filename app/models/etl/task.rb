@@ -3,26 +3,18 @@
 # transformed Task model, with denormalized User/Org attributes
 
 class ETL::Task < ETL::Record
+  acts_as_tree
+
+  include PrintsTaskTree
+
+  belongs_to :appeal, primary_key: :appeal_id, foreign_key: :appeal_id, class_name: "ETL::Appeal"
+
   class << self
     def origin_primary_key
       :task_id
     end
 
     private
-
-    def org_cache(org_id)
-      return if org_id.blank?
-
-      @org_cache ||= {}
-      @org_cache[org_id] ||= Organization.find(org_id)
-    end
-
-    def user_cache(user_id)
-      return if user_id.blank?
-
-      @user_cache ||= {}
-      @user_cache[user_id] ||= User.find(user_id)
-    end
 
     def fetch_assigned_to(original)
       return org_cache(original.assigned_to_id) if original.assigned_to_type == "Organization"

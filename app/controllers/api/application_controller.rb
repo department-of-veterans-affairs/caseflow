@@ -13,7 +13,7 @@ class Api::ApplicationController < ActionController::Base
                 :set_api_user
 
   rescue_from StandardError do |error|
-    Raven.capture_exception(error)
+    Raven.capture_exception(error, extra: raven_extra_context)
 
     render json: {
       "errors": [
@@ -27,6 +27,10 @@ class Api::ApplicationController < ActionController::Base
   rescue_from BGS::ShareError, VBMS::ClientError, with: :on_external_error
 
   private
+
+  def raven_extra_context
+    {}
+  end
 
   # For API calls, we use the system user to make all BGS calls
   def set_api_user

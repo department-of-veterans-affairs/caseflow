@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class JudgeRepository
-  # :nocov:
+  # Includes acting judges, who are normally attorneys
   def self.find_all_judges
-    css_ids = judge_records.where.not(sdomainid: nil).pluck("UPPER(sdomainid)")
+    css_ids = VACOLS::Staff.css_ids_from_records_with_css_ids(VACOLS::Staff.judge)
 
     User.batch_find_by_css_id_or_create_with_default_station_id(css_ids)
   end
@@ -11,7 +11,7 @@ class JudgeRepository
   def self.find_all_judges_with_name_and_id
     # Our user model only contains a full name field, but for certain applications
     # (like the IDT), we need the separate name fields from VACOLS.
-    judge_records.map do |record|
+    VACOLS::Staff.judge.map do |record|
       { first_name: record.snamef,
         middle_name: record.snamemi,
         last_name: record.snamel,
@@ -19,9 +19,4 @@ class JudgeRepository
         vacols_attorney_id: record.sattyid }
     end
   end
-
-  def self.judge_records
-    VACOLS::Staff.where(svlj: %w[J A], sactive: "A")
-  end
-  # :nocov:
 end

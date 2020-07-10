@@ -32,6 +32,20 @@ class ETL::Record < ApplicationRecord
 
     private
 
+    def org_cache(org_id)
+      return if org_id.blank?
+
+      @org_cache ||= {}
+      @org_cache[org_id] ||= Organization.find(org_id)
+    end
+
+    def user_cache(user_id)
+      return if user_id.blank?
+
+      @user_cache ||= {}
+      @user_cache[user_id] ||= User.find(user_id)
+    end
+
     def merge_original_attributes_to_target(original, target)
       target.attributes = original.attributes
       target

@@ -5,6 +5,7 @@ import NavigationBar from '../../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { BrowserRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 const StatsContainer = (props) => <BrowserRouter>
   <React.Fragment>
@@ -28,9 +29,6 @@ const StatsContainer = (props) => <BrowserRouter>
           <li>
             <a href="/dispatch/stats">Dispatch Stats</a>
           </li>
-          <li>
-            <a href="/intake/stats">Intake Stats</a>
-          </li>
         </ul>
       </AppSegment>
     </AppFrame>
@@ -40,5 +38,12 @@ const StatsContainer = (props) => <BrowserRouter>
       buildDate={props.buildDate} />
   </React.Fragment>
 </BrowserRouter>;
+
+StatsContainer.propTypes = {
+  dropdownUrls: PropTypes.array,
+  userDisplayName: PropTypes.string.isRequired,
+  feedbackUrl: PropTypes.string.isRequired,
+  buildDate: PropTypes.string
+};
 
 export default StatsContainer;

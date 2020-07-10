@@ -69,7 +69,7 @@ describe HigherLevelReviewIntake, :all_dbs do
     end
 
     let!(:claimant) do
-      Claimant.create!(
+      DependentClaimant.create!(
         decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
@@ -133,7 +133,7 @@ describe HigherLevelReviewIntake, :all_dbs do
     end
 
     let!(:claimant) do
-      Claimant.create!(
+      VeteranClaimant.create!(
         decision_review: detail,
         participant_id: veteran.participant_id,
         payee_code: "00"
@@ -158,7 +158,7 @@ describe HigherLevelReviewIntake, :all_dbs do
           payee_code: "00",
           predischarge: false,
           claim_type: "Claim",
-          station_of_jurisdiction: "499",
+          station_of_jurisdiction: user.station_id,
           date: detail.receipt_date.to_date,
           end_product_modifier: "030",
           end_product_label: "Higher-Level Review Rating",
@@ -193,6 +193,30 @@ describe HigherLevelReviewIntake, :all_dbs do
         contested_issue_description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )
+    end
+
+    context "when disable_claim_establishment is enabled" do
+      before { FeatureToggle.enable!(:disable_claim_establishment) }
+      after { FeatureToggle.disable!(:disable_claim_establishment) }
+
+      it "does not submit claims to VBMS" do
+        subject
+
+        expect(intake).to be_success
+        expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
+        expect(ratings_end_product_establishment).to_not be_nil
+        expect(ratings_end_product_establishment.established_at).to eq(nil)
+        expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
+        expect(Fakes::VBMSService).not_to have_received(:create_contentions!)
+        expect(Fakes::VBMSService).not_to have_received(:associate_rating_request_issues!)
+        expect(intake.detail.request_issues.count).to eq 1
+        expect(intake.detail.request_issues.first).to have_attributes(
+          contested_rating_issue_reference_id: "reference-id",
+          contested_issue_description: "decision text",
+          rating_issue_associated_at: nil
+        )
+        expect(HigherLevelReview.processable.count).to eq 1
+      end
     end
 
     context "when benefit type is pension" do

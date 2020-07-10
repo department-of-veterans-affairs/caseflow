@@ -59,6 +59,7 @@ class AmaAppealDispatch
     complete_dispatch_root_task!
     close_request_issues_as_decided!
     store_poa_participant_id
+    DeNovoStreamCreator.new(appeal).call
   end
 
   def create_decision_document_and_submit_for_processing!(params)

@@ -150,8 +150,10 @@ describe Document, :postgres do
     context "when there is a match" do
       let(:documents) { [date_mismatch, type_mismatch, match] }
 
-      it { is_expected.to be_matching }
-      it { is_expected.to have_attributes(received_at: match.received_at) }
+      it "is expected match", :aggregate_failures do
+        is_expected.to be_matching
+        is_expected.to have_attributes(received_at: match.received_at)
+      end
     end
 
     context "when there isn't a match" do
@@ -173,8 +175,10 @@ describe Document, :postgres do
     context "when there is a match" do
       let(:documents) { [too_early, too_late, type_mismatch, match] }
 
-      it { is_expected.to be_matching }
-      it { is_expected.to have_attributes(received_at: match.received_at) }
+      it "is expected match", :aggregate_failures do
+        is_expected.to be_matching
+        is_expected.to have_attributes(received_at: match.received_at)
+      end
     end
 
     context "when there isn't a match" do
@@ -214,6 +218,19 @@ describe Document, :postgres do
       end
 
       it { is_expected.to have_attributes(type: "Form 9") }
+    end
+
+    context "when the doc type is a newly recognized label" do
+      let(:vbms_document) do
+        OpenStruct.new(
+          document_id: "1",
+          doc_type: "1249",
+          alt_doc_types: nil
+        )
+      end
+      it "assigns the correct label type" do
+        expect(subject.type).to eq("VA Form 20-0995 Supplemental Claim Application")
+      end
     end
   end
 

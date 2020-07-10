@@ -3,9 +3,11 @@
 # Reports the number of Request Issues by origin type week-over-week
 
 class RequestIssueReporter
+  include Reporter
+
   attr_reader :stats
 
-  def initialize(start_date: Constants::DATES["AMA_ACTIVATION"].to_date, end_date: Time.zone.today)
+  def initialize(start_date: Constants::DATES["AMA_ACTIVATION"].to_date, end_date: Time.zone.tomorrow)
     @start_date = start_date
     @end_date = end_date
     @stats = build
@@ -36,7 +38,7 @@ class RequestIssueReporter
           stat[:nonrating],
           stat[:decision_issue],
           stat[:unidentified],
-          ((total == 0) ? 0 : (stat[:unidentified].fdiv(total) * 100).round(2))
+          (total == 0) ? 0 : percent(stat[:unidentified], total)
         ]
       end
     end

@@ -19,6 +19,7 @@ export const COLORS = {
   COLOR_COOL_BLUE_LIGHTER: '#8ba6ca',
   PRIMARY: '#0071bc',
   BASE: '#212121',
+  RED: '#E31C3D',
   RED_DARK: '#cd2026'
 };
 
@@ -51,4 +52,18 @@ export const LOGO_COLORS = {
     ACCENT: '#F0835e',
     OVERLAP: COMMON_COLORS.GREY_LIGHT
   }
+};
+
+export const COMMON_TIMEZONES = [
+  'America/Los_Angeles',
+  'America/Denver',
+  'America/Chicago',
+  'America/New_York'
+];
+
+// NOTE: This information was determined by googling `what timezone is X` for each of the keys
+export const REGIONAL_OFFICE_ZONE_ALIASES = {
+  'America/Anchorage': 'America/Juneau',
+  'America/Boise': 'America/Denver',
+  'America/Kentucky/Louisville': 'America/New_York'
 };

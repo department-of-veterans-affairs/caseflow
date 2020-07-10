@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { FORM_TYPES } from '../constants';
 import AddedIssue from './AddedIssue';
 import Button from '../../components/Button';
@@ -22,7 +22,7 @@ export default class IssuesList extends React.Component {
     if (issue.correctionType && issue.endProductCleared) {
       options.push({ displayText: 'Undo correction',
         value: 'undo_correction' });
-    } else if (issue.correctionType) {
+    } else if (issue.correctionType && !issue.examRequested) {
       options.push(
         { displayText: 'Remove issue',
           value: 'remove' }
@@ -30,7 +30,7 @@ export default class IssuesList extends React.Component {
     } else if (issue.endProductCleared) {
       options.push({ displayText: 'Correct issue',
         value: 'correct' });
-    } else if (!issue.withdrawalDate && !issue.withdrawalPending && !isDtaError) {
+    } else if (!issue.examRequested && !issue.withdrawalDate && !issue.withdrawalPending && !isDtaError) {
       if (userCanWithdrawIssues) {
         options.push(
           { displayText: 'Withdraw issue',
@@ -83,7 +83,7 @@ export default class IssuesList extends React.Component {
               className="issue"
               data-key={`issue-${issue.index}`}
               key={`issue-${issue.index}`}
-              id={`issue-${issue.referenceId}`}>
+              id={`issue-${issue.id}`}>
 
               <AddedIssue
                 issue={issue}

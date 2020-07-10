@@ -7,16 +7,23 @@ module Caseflow::Error
     def initialize(args)
       @code = args[:code]
       @message = args[:message]
+      @title = args[:title]
     end
 
     def serialize_response
-      { json: { "errors": [{ "status": code, "title": message, "detail": message }] }, status: code }
+      { json: { "errors": [{ "status": code, "title": title || message, "detail": message }] }, status: code }
     end
   end
 
   class SerializableError < StandardError
     include Caseflow::Error::ErrorSerializer
-    attr_accessor :code, :message
+    attr_accessor :code, :message, :title
+  end
+
+  class TransientError < SerializableError
+    def ignorable?
+      true
+    end
   end
 
   class EfolderError < SerializableError; end
@@ -41,6 +48,12 @@ module Caseflow::Error
     def initialize(args = {})
       @code = args[:code] || 403
       @message = args[:message] || "Action forbidden"
+    end
+  end
+
+  class MissingBusinessLine < StandardError
+    def initialize
+      @message = "No Business Line found"
     end
   end
 
@@ -91,14 +104,35 @@ module Caseflow::Error
     end
   end
 
+  class InvalidUserId < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "\"#{@user_id}\" is not a valid CSS_ID or user ID"
+    end
+  end
+
+  class InvalidAssigneeStatusOnTaskCreate < SerializableError
+    def initialize(args)
+      @assignee = args[:assignee]
+      @assignee_name = @assignee.is_a?(User) ? @assignee.full_name : @assignee.name
+      @code = args[:code] || 400
+      @title = args[:title] || "Uh oh! We're unable to assign this to #{@assignee_name}"
+      @message = args[:message] || "#{@assignee_name} is marked as #{@assignee.status} in Caseflow. Please select " \
+                                   "another #{@assignee.class.name.downcase} assignee or contact support if you " \
+                                   "believe you're getting this message in error."
+    end
+  end
+
   class IneligibleForSpecialCaseMovement < SerializableError
     attr_accessor :appeal_id
 
     def initialize(args)
       @code = args[:code] || 500
       @appeal_id = args[:appeal_id] || nil
-      @message = args[:message] || "Appeal #{@appeal_id} must be in Case Storage and not have blocking Mail Tasks for"\
-                                   " Special Case Movement"
+      @title = "This appeal cannot be advanced to a judge"
+      @message = args[:message] || "Appeal #{@appeal_id} must be in Case Storage and not have blocking Mail Tasks to "\
+                                   "be eligible for Case Movement"
     end
   end
 
@@ -137,6 +171,7 @@ module Caseflow::Error
     def initialize(args)
       @code = args[:code] || 400
       @message = args[:message]
+      @title = args[:title]
     end
   end
 
@@ -162,15 +197,31 @@ module Caseflow::Error
   end
 
   class DuplicateOrgTask < SerializableError
-    attr_accessor :appeal_id, :task_type, :assignee_type
+    attr_accessor :docket_number, :task_type, :assignee_type
 
     def initialize(args)
-      @appeal_id = args[:appeal_id]
+      @docket_number = args[:docket_number]
       @task_type = args[:task_type]
       @assignee_type = args[:assignee_type]
       @code = args[:code] || 400
-      @message = args[:message] || "Appeal #{@appeal_id} already has an active task of type #{@task_type} assigned to "\
-                                   "#{assignee_type}. No action necessary"
+      @title = "Error assigning tasks"
+      @message = args[:message] || "Docket (#{@docket_number}) already has an open task type of "\
+                                   "#{@task_type} assigned to #{assignee_type}. Please refresh the page. Contact "\
+                                   "support if this error persists."
+    end
+  end
+
+  class DuplicateUserTask < SerializableError
+    attr_accessor :docket_number, :task_type
+
+    def initialize(args)
+      @docket_number = args[:docket_number]
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @title = "Error assigning tasks"
+      @message = args[:message] || "Docket (#{@docket_number}) already has an open task type of "\
+                                   "#{@task_type} assigned to a user. Please refresh the page. Contact support if " \
+                                   "this error persists."
     end
   end
 
@@ -256,7 +307,7 @@ module Caseflow::Error
   class VacolsRecordNotFound < VacolsRepositoryError; end
   class UserRepositoryError < VacolsRepositoryError
     include Caseflow::Error::ErrorSerializer
-    attr_accessor :code, :message
+    attr_accessor :code, :message, :title
 
     def initialize(args)
       @code = args[:code] || 400
@@ -265,7 +316,7 @@ module Caseflow::Error
   end
   class IssueRepositoryError < VacolsRepositoryError
     include Caseflow::Error::ErrorSerializer
-    attr_accessor :code, :message
+    attr_accessor :code, :message, :title
 
     def initialize(args)
       @code = args[:code] || 400
@@ -283,4 +334,6 @@ module Caseflow::Error
   class PexipNotFoundError < PexipApiError; end
   class PexipBadRequestError < PexipApiError; end
   class PexipMethodNotAllowedError < PexipApiError; end
+
+  class WorkModeCouldNotUpdateError < StandardError; end
 end

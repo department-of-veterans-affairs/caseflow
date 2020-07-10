@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "csv"
+# Summarize models (jobs) that consume the Asyncable concern.
 
 class AsyncableJobsReporter
   attr_reader :jobs

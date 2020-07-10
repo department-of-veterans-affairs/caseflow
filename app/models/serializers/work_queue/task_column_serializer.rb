@@ -26,7 +26,7 @@ class WorkQueue::TaskColumnSerializer
   attribute :external_appeal_id do |object, params|
     columns = [
       Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
-      Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
       Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name
     ]
 
@@ -59,6 +59,14 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       object.appeal.veteran_file_number
+    end
+  end
+
+  attribute :started_at do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]
+
+    if serialize_attribute?(params, columns)
+      object.started_at
     end
   end
 
@@ -111,7 +119,10 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :status do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]
+    columns = [
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name
+    ]
 
     if serialize_attribute?(params, columns)
       object.status
@@ -136,14 +147,15 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :assigned_to do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]
+    assignee = object.assigned_to
 
     if serialize_attribute?(params, columns)
       {
-        css_id: object.assigned_to.try(:css_id),
-        is_organization: object.assigned_to.is_a?(Organization),
-        name: object.appeal.assigned_to_location,
-        type: object.assigned_to.class.name,
-        id: object.assigned_to.id
+        css_id: assignee.try(:css_id),
+        is_organization: assignee.is_a?(Organization),
+        name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+        type: assignee.class.name,
+        id: assignee.id
       }
     else
       {
@@ -165,6 +177,51 @@ class WorkQueue::TaskColumnSerializer
     }
   end
 
+  # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
+  attribute :power_of_attorney_name do |object, params|
+    columns = [Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME]
+
+    if serialize_attribute?(params, columns)
+      # The `power_of_attorney_name` field doesn't exist on the actual model. This
+      # field needs to be added in a select statement and represents the field from
+      # the `cached_appeal_attributes` table.
+      object&.[](:power_of_attorney_name)
+    end
+  end
+
+  # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
+  attribute :suggested_hearing_location do |object, params|
+    columns = [Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.suggested_hearing_location&.to_hash
+    end
+  end
+
+  attribute :overtime do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:overtime?)
+    end
+  end
+
+  attribute :document_id do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]
+
+    if serialize_attribute?(params, columns)
+      object.latest_attorney_case_review&.document_id
+    end
+  end
+
+  attribute :decision_prepared_by do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]
+
+    if serialize_attribute?(params, columns)
+      object.prepared_by_display_name || { first_name: nil, last_name: nil }
+    end
+  end
+
   # UNUSED
 
   attribute :assignee_name do
@@ -180,10 +237,6 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :appeal_id do
-    nil
-  end
-
-  attribute :started_at do
     nil
   end
 
@@ -237,18 +290,13 @@ class WorkQueue::TaskColumnSerializer
     }
   end
 
-  attribute :document_id do
-    nil
-  end
-
-  attribute :decision_prepared_by do
-    {
-      first_name: nil,
-      last_name: nil
-    }
-  end
-
   attribute :available_actions do
     []
+  end
+
+  attribute :cancelled_by do
+    {
+      css_id: nil
+    }
   end
 end

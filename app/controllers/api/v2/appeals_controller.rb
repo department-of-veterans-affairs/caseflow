@@ -14,6 +14,10 @@ class Api::V2::AppealsController < Api::ApplicationController
 
   private
 
+  def raven_extra_context
+    { veteran_file_number: veteran_file_number, vbms_id: vbms_id, source: source }
+  end
+
   def ssn
     request.headers["ssn"]
   end

@@ -3,10 +3,10 @@
 RSpec.describe Tasks::EndHoldController, :postgres, type: :controller do
   describe "POST tasks/:id/end_hold" do
     let(:user) { create(:user) }
-    let!(:parent) { create(:generic_task) }
+    let!(:parent) { create(:ama_task) }
     let(:parent_id) { parent.id }
     let!(:timed_hold_task) do
-      create(:timed_hold_task, appeal: parent.appeal, assigned_to: user, days_on_hold: 18, parent: parent)
+      create(:timed_hold_task, assigned_to: user, days_on_hold: 18, parent: parent)
     end
 
     subject { post(:create, params: { task_id: parent_id }) }

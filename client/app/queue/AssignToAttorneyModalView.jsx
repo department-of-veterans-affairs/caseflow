@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 
-import { AssignWidgetModal } from './components/AssignWidget';
+import { AssignToAttorneyWidgetModal } from './components/AssignToAttorneyWidget';
 
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 import {
   taskById
@@ -17,7 +18,7 @@ import {
 
 class AssignToAttorneyModalView extends React.PureComponent {
   handleAssignment = (
-    { tasks, assigneeId }
+    { tasks, assigneeId, instructions }
   ) => {
     const previousAssigneeId = tasks[0].assignedTo.id.toString();
 
@@ -25,27 +26,30 @@ class AssignToAttorneyModalView extends React.PureComponent {
       return this.props.initialAssignTasksToUser({
         tasks,
         assigneeId,
-        previousAssigneeId
+        previousAssigneeId,
+        instructions
       });
     }
 
     return this.props.reassignTasksToUser({
       tasks,
       assigneeId,
-      previousAssigneeId
+      previousAssigneeId,
+      instructions
     });
   }
 
   render = () => {
-    const { task, userId } = this.props;
+    const { task, userId, match } = this.props;
     const previousAssigneeId = task ? task.assignedTo.id.toString() : null;
 
     if (!previousAssigneeId) {
       return null;
     }
 
-    return <AssignWidgetModal
+    return <AssignToAttorneyWidgetModal
       isModal
+      match={match}
       userId={userId}
       onTaskAssignment={this.handleAssignment}
       previousAssigneeId={previousAssigneeId}
@@ -53,9 +57,21 @@ class AssignToAttorneyModalView extends React.PureComponent {
   }
 }
 
+AssignToAttorneyModalView.propTypes = {
+  task: PropTypes.shape({
+    assignedTo: PropTypes.shape({
+      id: PropTypes.number
+    })
+  }),
+  userId: PropTypes.string,
+  match: PropTypes.object,
+  initialAssignTasksToUser: PropTypes.func,
+  reassignTasksToUser: PropTypes.func
+};
+
 const mapStateToProps = (state, ownProps) => {
   return {
-    task: taskById(state, { taskId: ownProps.taskId })
+    task: taskById(state, { taskId: ownProps.match.params.taskId })
   };
 };
 

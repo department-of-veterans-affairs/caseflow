@@ -29,36 +29,32 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
       let!(:task16) { create(:ama_attorney_task, :completed_in_the_past, assigned_to: user) }
-      let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
+      let!(:task14) { create(:ama_attorney_task, assigned_to: user) }
 
-      before { task3.update!(status: Constants.TASK_STATUSES.completed) }
+      before do
+        task3.update!(status: Constants.TASK_STATUSES.completed)
+        task14.update!(status: Constants.TASK_STATUSES.on_hold)
+      end
 
       it "should process the request successfully" do
         get :index, params: { user_id: user.id, role: "attorney" }
         expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)["tasks"]["data"]
+        response_body = JSON.parse(response.body)["queue_config"]["tabs"]
 
-        expect(response_body.size).to eq 6
-        expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
-        expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq user.id
-        expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
-        expect(response_body.first["attributes"]["veteran_full_name"]).to eq task1.appeal.veteran_full_name
-        expect(response_body.first["attributes"]["veteran_file_number"]).to eq task1.appeal.veteran_file_number
+        # Includes both assigned and in progress tasks
+        assigned_tasks = response_body[0]["tasks"]
+        expect(assigned_tasks.size).to eq 2
+        expect(assigned_tasks.map { |task| task["id"] }).to match_array([task11, task12].map(&:id).map(&:to_s))
 
-        expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
-        expect(response_body.second["attributes"]["assigned_by"]["pg_id"]).to eq user.id
-        expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
-        expect(response_body.second["attributes"]["veteran_full_name"]).to eq task2.appeal.veteran_full_name
-        expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number
+        # Includes both on hold tasks and legacy colocated tasks
+        on_hold_tasks = response_body[1]["tasks"]
+        expect(on_hold_tasks.size).to eq 3
+        expect(on_hold_tasks.map { |task| task["id"] }).to match_array([task1, task2, task14].map(&:id).map(&:to_s))
 
-        # Ensure we include recently completed tasks
-        expect(response_body.count { |task| task["id"] == task13.id.to_s }).to eq 1
-
-        ama_tasks = response_body.select { |task| task["attributes"]["type"] == "AttorneyTask" }
-        expect(ama_tasks.size).to eq 4
-        expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.assigned }).to eq 1
-        expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.in_progress }).to eq 1
-        expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.on_hold }).to eq 1
+        # Only includes recently completed tasks
+        completed_tasks = response_body[2]["tasks"]
+        expect(completed_tasks.size).to eq 1
+        expect(completed_tasks.map { |task| task["id"] }).to match_array([task13].map(&:id).map(&:to_s))
       end
     end
 
@@ -66,10 +62,10 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       let(:role) { :attorney_role }
 
       it "should process the request succesfully" do
-        get :index, params: { user_id: create(:user).id, role: "attorney" }
+        get :index, params: { user_id: user.id, role: "attorney" }
         expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.size).to eq 0
+        response_body = JSON.parse(response.body)["queue_config"]["tabs"]
+        expect(response_body.all? { |tab| tab["tasks"].count.eql?(0) }).to be true
       end
     end
 
@@ -83,60 +79,94 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
       end
       let!(:task6) { create(:colocated_task, :completed, assigned_to: user) }
-      let!(:task7) { create(:colocated_task) }
 
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "colocated" }
-        response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.size).to eq 4
+        response_body = JSON.parse(response.body)["queue_config"]["tabs"]
 
-        assigned = response_body.find { |task| task["id"] == task4.id.to_s }
+        assigned = response_body[0]["tasks"].find { |task| task["id"] == task4.id.to_s }
         expect(assigned["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-        expect(assigned["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(assigned["attributes"]["placed_on_hold_at"]).to be nil
         expect(assigned["attributes"]["aod"]).to be true
 
-        in_progress = response_body.find { |task| task["id"] == task5.id.to_s }
+        in_progress = response_body[0]["tasks"].find { |task| task["id"] == task5.id.to_s }
         expect(in_progress["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
-        expect(in_progress["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(in_progress["attributes"]["placed_on_hold_at"]).to be nil
 
-        ama = response_body.find { |task| task["id"] == task_ama_colocated_aod.id.to_s }
+        ama = response_body[0]["tasks"].find { |task| task["id"] == task_ama_colocated_aod.id.to_s }
         expect(ama["attributes"]["aod"]).to be true
 
-        recently_completed_task = response_body.find { |task| task["id"] == task6.id.to_s }
+        recently_completed_task = response_body[2]["tasks"].find { |task| task["id"] == task6.id.to_s }
         expect(recently_completed_task["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
-        expect(recently_completed_task["attributes"]["assigned_to"]["id"]).to eq user.id
       end
     end
 
-    context "when getting tasks for a judge" do
+    context "when getting review tasks for a judge" do
       let(:role) { :judge_role }
+      let(:attorney) { create(:user) }
+      let!(:judge_team) { JudgeTeam.create_for_judge(user).tap { |team| team.add_user(attorney) } }
 
-      let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
-      let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
-      let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
+      let!(:task8) { create(:ama_judge_decision_review_task, assigned_to: user, assigned_by: user) }
+      let!(:task9) { create(:ama_judge_decision_review_task, :in_progress, assigned_to: user, assigned_by: user) }
+      let!(:task16) { create(:ama_judge_decision_review_task, :on_hold, assigned_to: user, assigned_by: user) }
+      let!(:task10) { create(:ama_judge_decision_review_task, :completed, assigned_to: user, assigned_by: user) }
       let!(:task15) do
-        create(:ama_judge_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
+        create(:ama_judge_decision_review_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
       end
+      let!(:task17) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: user) }
 
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "judge" }
-        response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.size).to eq 3
+        response_body = JSON.parse(response.body)["queue_config"]["tabs"]
+        expect(response_body.size).to eq 1
+        response_body = response_body[0]["tasks"]
 
         assigned = response_body.find { |task| task["id"] == task8.id.to_s }
         expect(assigned["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-        expect(assigned["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(assigned["attributes"]["placed_on_hold_at"]).to be nil
 
         in_progress = response_body.find { |task| task["id"] == task9.id.to_s }
         expect(in_progress["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
-        expect(in_progress["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(in_progress["attributes"]["placed_on_hold_at"]).to be nil
 
-        # Ensure we include recently completed tasks
-        expect(response_body.count { |task| task["id"] == task10.id.to_s }).to eq 1
+        # Ensure we don't include recently completed tasks, on hold tasks, or attorney tasks
+        expect(response_body.count { |task| task["id"] == task10.id.to_s }).to eq 0
+        expect(response_body.count { |task| task["id"] == task16.id.to_s }).to eq 0
+        expect(response_body.count { |task| task["id"] == task17.id.to_s }).to eq 0
+      end
+    end
+
+    context "when getting tasks assign for a judge" do
+      let(:role) { :judge_role }
+      let(:attorney) { create(:user) }
+      let!(:judge_team) { JudgeTeam.create_for_judge(user).tap { |team| team.add_user(attorney) } }
+
+      let!(:task8) { create(:ama_judge_assign_task, assigned_to: user, assigned_by: user) }
+      let!(:task9) { create(:ama_judge_assign_task, :in_progress, assigned_to: user, assigned_by: user) }
+      let!(:task16) { create(:ama_judge_assign_task, :on_hold, assigned_to: user, assigned_by: user) }
+      let!(:task10) { create(:ama_judge_assign_task, :completed, assigned_to: user, assigned_by: user) }
+      let!(:task15) do
+        create(:ama_judge_assign_task, :completed_in_the_past, assigned_to: user, assigned_by: user)
+      end
+      let!(:task17) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: user) }
+
+      it "should process the request succesfully" do
+        get :index, params: { user_id: user.id, role: "judge", type: "assign" }
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.size).to eq 2
+
+        assigned = response_body.find { |task| task["id"] == task8.id.to_s }
+        expect(assigned["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+        expect(assigned["attributes"]["placed_on_hold_at"]).to be nil
+
+        in_progress = response_body.find { |task| task["id"] == task9.id.to_s }
+        expect(in_progress["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
+        expect(in_progress["attributes"]["placed_on_hold_at"]).to be nil
+
+        # Ensure we don't include recently completed tasks, on hold tasks, or attorney tasks
+        expect(response_body.count { |task| task["id"] == task10.id.to_s }).to eq 0
+        expect(response_body.count { |task| task["id"] == task16.id.to_s }).to eq 0
+        expect(response_body.count { |task| task["id"] == task17.id.to_s }).to eq 0
       end
     end
 
@@ -173,7 +203,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "RO04")
         end
         let!(:task) do
-          create(:generic_task, assigned_to: user, appeal: legacy_appeal)
+          create(:ama_task, assigned_to: user, appeal: legacy_appeal)
         end
 
         it "does not make a BGS call" do
@@ -182,76 +212,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           end
 
           get :index, params: { user_id: user.id, role: "unknown" }
-          expect(response).to have_http_status(:success)
+          expect(response).to be_successful
 
-          data = JSON.parse(response.body)["tasks"]["data"]
+          data = JSON.parse(response.body)["queue_config"]["tabs"][0]["tasks"]
 
           expect(data.size).to be(1)
-        end
-      end
-
-      context "when a task is assignable" do
-        let(:root_task) { create(:root_task) }
-
-        let(:org_1) { create(:organization) }
-        let(:org_1_member_cnt) { 6 }
-        let(:org_1_members) { create_list(:user, org_1_member_cnt) }
-        let(:org_1_assignee) { org_1_members[0] }
-        let(:org_1_non_assignee) { org_1_members[1] }
-        let!(:org_1_team_task) { create(:generic_task, assigned_to: org_1, parent: root_task) }
-        let!(:org_1_member_task) do
-          create(:generic_task, assigned_to: org_1_assignee, parent: org_1_team_task)
-        end
-
-        before do
-          org_1_members.each { |u| org_1.add_user(u) }
-        end
-
-        context "when user is assigned an individual task" do
-          let!(:user) { User.authenticate!(user: org_1_assignee) }
-
-          it "should return a list of all available actions for individual task" do
-            get :index, params: { user_id: user.id }
-            expect(response.status).to eq(200)
-            response_body = JSON.parse(response.body)
-
-            task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
-
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(5)
-
-            # org count minus one since we can't assign to ourselves.
-            assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
-              action["label"] == Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]
-            end
-
-            expect(assign_to_organization_action["data"]["options"].length).to eq(org_1_member_cnt - 1)
-          end
-        end
-      end
-
-      context "when the task belongs to the user" do
-        let(:no_role_user) { create(:user) }
-        let!(:task) { create(:generic_task, assigned_to: no_role_user) }
-        before { User.authenticate!(user: no_role_user) }
-
-        context "when there are Organizations in the table" do
-          let(:org_count) { 8 }
-          before { create_list(:organization, org_count) }
-
-          it "should return a list of all Organizations" do
-            get :index, params: { user_id: no_role_user.id }
-            expect(response.status).to eq(200)
-            response_body = JSON.parse(response.body)
-            task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
-
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(5)
-
-            assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
-              action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
-            end
-
-            expect(assign_to_organization_action["data"]["options"].length).to eq(org_count + 1)
-          end
         end
       end
     end
@@ -271,41 +236,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     subject { post :create, params: { tasks: params } }
 
-    context "Attorney task" do
-      context "when current user is a judge" do
-        let(:ama_appeal) { create(:appeal) }
-        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user, appeal: ama_appeal) }
-        let(:role) { :judge_role }
-
-        let(:params) do
-          [{
-            "external_id": ama_appeal.uuid,
-            "type": AttorneyTask.name,
-            "assigned_to_id": attorney.id,
-            "parent_id": ama_judge_task.id
-          }]
-        end
-
-        it "should be successful" do
-          subject
-
-          expect(response.status).to eq 200
-
-          response_body = JSON.parse(response.body)["tasks"]["data"]
-          expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
-          expect(response_body.second["attributes"]["appeal_id"]).to eq ama_appeal.id
-          expect(response_body.second["attributes"]["docket_number"]).to eq ama_appeal.docket_number
-          expect(response_body.second["attributes"]["appeal_type"]).to eq Appeal.name
-
-          attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
-          expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
-          expect(attorney_task.assigned_to).to eq attorney
-          expect(attorney_task.parent_id).to eq ama_judge_task.id
-          expect(ama_judge_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
-        end
-      end
-    end
-
     context "VSO user" do
       let(:user) { create(:default_user, roles: ["VSO"]) }
       let(:vso) { create(:vso) }
@@ -319,7 +249,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       end
 
-      context "when creating a generic task" do
+      context "when creating a task" do
         let(:params) do
           [{
             "external_id": appeal.external_id,
@@ -398,6 +328,64 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       before do
         u = create(:user)
         Colocated.singleton.add_user(u)
+      end
+
+      context "when current user is a judge" do
+        let(:role) { :judge_role }
+        let(:parent) { create(:ama_judge_decision_review_task, assigned_to: user) }
+
+        context "when multiple admin actions with task type field" do
+          let(:params) do
+            [{
+              "external_id": appeal.vacols_id,
+              "parent_id": parent.id,
+              "type": AddressVerificationColocatedTask.name,
+              "instructions": "do this"
+            }, {
+              "external_id": appeal.vacols_id,
+              "parent_id": parent.id,
+              "type": MissingRecordsColocatedTask.name,
+              "instructions": "another one"
+            }]
+          end
+
+          it "should be successful" do
+            expect(AppealRepository).to receive(:update_location!).exactly(2).times
+
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            expect(response_body.size).to eq(5)
+
+            # Ensure the parent task is also returned
+            expect(response_body.first["attributes"]["label"]).to eq "Review"
+            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
+            expect(response_body.first["id"]).to eq parent.id.to_s
+
+            # Ensure there is a colocated org parent task for the AddressVerificationColocatedTask
+            expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
+            expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
+            expect(response_body.second["attributes"]["label"]).to eq "Address verification"
+
+            # Ensure there is a AddressVerificationColocatedTask user task created
+            expect(response_body.third["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.third["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.third["attributes"]["instructions"][0]).to eq "do this"
+            expect(response_body.third["attributes"]["label"]).to eq "Address verification"
+
+            # Ensure there is a MissingRecordsColocatedTask user task created
+            expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
+            expect(response_body.last["attributes"]["label"]).to eq "Missing records"
+
+            # Assignee should be the same person for the two user tasks
+            id = response_body.third["attributes"]["assigned_to"]["id"]
+            expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
+          end
+        end
       end
 
       context "when current user is an attorney" do
@@ -572,19 +560,19 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         User.authenticate!(user: mail_team_user)
       end
 
-      context "when an EvidenceOrArgumentMailTask is created for an inactive appeal" do
+      context "when an AddressChangeMailTask is created for an inactive appeal" do
         let(:root_task) { create(:root_task) }
 
         let(:params) do
           [{
             "external_id": root_task.appeal.external_id,
-            "type": EvidenceOrArgumentMailTask.name,
+            "type": AddressChangeMailTask.name,
             "parent_id": root_task.id
           }]
         end
 
         before do
-          allow(EvidenceOrArgumentMailTask).to receive(:case_active?).and_return(false)
+          allow(AddressChangeMailTask).to receive(:case_active?).and_return(false)
         end
 
         it "returns a response indicating failure to create task" do
@@ -622,10 +610,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     it "updates status to on_hold" do
-      patch :update, params: {
-        task: { status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60 },
-        id: admin_action.id
-      }
+      patch :update, params: { task: { status: Constants.TASK_STATUSES.on_hold }, id: admin_action.id }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["tasks"]["data"]
       expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
@@ -634,16 +619,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     it "updates status to completed" do
       expect(admin_action.versions.length).to be 0
-      expect(admin_action.parent.versions.length).to be 1
       patch :update, params: { task: { status: Constants.TASK_STATUSES.completed }, id: admin_action.id }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["tasks"]["data"]
       expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
       expect(response_body.first["attributes"]["closed_at"]).to_not be nil
       expect(admin_action.reload.versions.length).to eq 1
-      expect(admin_action.parent.versions.length).to eq 2
       versions = PaperTrail::Version.where(request_id: admin_action.versions.first.request_id)
-      expect(versions.length).to eq 3
+      expect(versions.length).to eq 1
     end
 
     context "when some other user updates another user's task" do
@@ -696,6 +679,24 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       create(:ama_colocated_task, :ihp, appeal: appeal, assigned_to: colocated_user, assigned_by: assigning_user)
     end
 
+    shared_examples "judge view legacy tasks" do
+      it "should return JudgeLegacyTasks" do
+        get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "judge" }
+
+        assert_response :success
+        response_body = JSON.parse(response.body)
+        expect(response_body["tasks"].length).to eq 4
+        task = response_body["tasks"][0]
+        expect(task["id"]).to eq(legacy_appeal.vacols_id)
+        expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
+        expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
+        expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
+        expect(task["attributes"]["available_actions"].size).to eq 2
+
+        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(13)
+      end
+    end
+
     context "when user is a judge" do
       let(:legacy_appeal) do
         create(:legacy_appeal,
@@ -712,21 +713,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         DatabaseRequestCounter.disable
       end
 
-      it "should return JudgeLegacyTasks" do
-        get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "judge" }
-
-        assert_response :success
-        response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 4
-        task = response_body["tasks"][0]
-        expect(task["id"]).to eq(legacy_appeal.vacols_id)
-        expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
-        expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
-        expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
-        expect(task["attributes"]["available_actions"].size).to eq 2
-
-        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(18)
-      end
+      it_behaves_like "judge view legacy tasks"
 
       context "when appeal is not assigned to current user" do
         let(:another_judge) { create(:user) }
@@ -751,6 +738,24 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           expect(task["attributes"]["available_actions"].size).to eq 0
         end
       end
+    end
+
+    context "when the user is a memeber of the special case movement team" do
+      let(:legacy_appeal) do
+        create(:legacy_appeal,
+               vacols_case:
+               create(:case, :assigned, bfcorlid: "0000000000S", user: judge_user))
+      end
+
+      before do
+        scm_user = create(:user)
+        SpecialCaseMovementTeam.singleton.add_user(scm_user)
+        User.authenticate!(user: judge_user)
+        DatabaseRequestCounter.enable
+      end
+      after { DatabaseRequestCounter.disable }
+
+      it_behaves_like "judge view legacy tasks"
     end
 
     context "when user is an attorney" do
@@ -801,12 +806,13 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 2
+        expect(response_body["tasks"].length).to eq 3
 
         colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "IhpColocatedTask" }
         expect(colocated_task).to_not be_nil
         expect(colocated_task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
         expect(colocated_task["attributes"]["appeal_id"]).to eq appeal.id
+        expect(colocated_task["attributes"]["status"]).to eq Task.statuses[:in_progress]
       end
     end
 
@@ -828,55 +834,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
-        expect(appeal.tasks.size).to eq 3
-      end
-    end
-  end
-
-  describe "GET cases_to_schedule/:ro" do
-    context "when veteran is defined with regional office and hearing location" do
-      let!(:vacols_case) do
-        create(
-          :case,
-          bfcorlid: "#{veteran.file_number}S",
-          folder: create(:folder, tinum: "docket-number"),
-          bfregoff: "RO04",
-          bfcurloc: "57",
-          bfhr: "2",
-          bfdocind: HearingDay::REQUEST_TYPES[:video]
-        )
-      end
-      let(:closest_regional_office) { "RO10" }
-      let(:address) { "Fake Address" }
-      let!(:veteran) { create(:veteran) }
-
-      it "gets veterans ready for hearing schedule" do
-        BGSService.instance_methods(false).each do |method_name|
-          expect_any_instance_of(BGSService).not_to receive(method_name)
-        end
-
-        AppealRepository.create_schedule_hearing_tasks.each do |appeal|
-          appeal.update(closest_regional_office: closest_regional_office)
-
-          AvailableHearingLocations.create(
-            appeal: appeal,
-            address: address,
-            distance: 0,
-            facility_type: "va_health_facility"
-          )
-        end
-
-        get :ready_for_hearing_schedule, params: { ro: closest_regional_office }
-        expect(response).to have_http_status(:success)
-        data = JSON.parse(response.body)["data"]
-
-        expect(data.size).to be(1)
-        expect(data.first["attributes"]["closest_regional_office"]["location_hash"]["city"]).to eq(
-          RegionalOffice.find!(closest_regional_office).city
-        )
-        expect(data.first["attributes"]["available_hearing_locations"].first["address"]).to eq(
-          address
-        )
+        expect(appeal.tasks.size).to eq 5
       end
     end
   end
@@ -921,11 +879,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     subject { post(:request_hearing_disposition_change, params: params) }
 
     context "when the task is a no show hearing task with a HearingTask ancestor" do
-      let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task) }
       let(:disposition_task) do
-        create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+        create(:assign_hearing_disposition_task, parent: hearing_task)
       end
-      let!(:task) { create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+      let!(:task) { create(:no_show_hearing_task, parent: disposition_task) }
       let(:params) do
         {
           id: task.id,
@@ -956,14 +914,14 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: past_hearing_disposition)
       end
       let(:hearing_task) do
-        create(:hearing_task, :completed, parent: root_task, appeal: appeal)
+        create(:hearing_task, :completed, parent: root_task)
       end
       let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
-      let!(:hearing_task_2) { create(:hearing_task, parent: root_task, appeal: appeal) }
+      let!(:hearing_task_2) { create(:hearing_task, parent: root_task) }
       let!(:association_2) do
         create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
       end
-      let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+      let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2) }
       let(:params) do
         {
           id: task.id,
@@ -1002,7 +960,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
     context "when the task doesn't have a HearingTask ancestor" do
       let!(:task) do
-        create(:track_veteran_task, parent: root_task, appeal: appeal)
+        create(:track_veteran_task, parent: root_task)
       end
       let(:params) do
         {

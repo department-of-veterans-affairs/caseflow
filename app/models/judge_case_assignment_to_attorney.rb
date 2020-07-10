@@ -3,7 +3,7 @@
 class JudgeCaseAssignmentToAttorney
   include ActiveModel::Model
 
-  attr_accessor :appeal_id, :assigned_to, :task_id, :assigned_by
+  attr_accessor :appeal_id, :assigned_to, :task_id, :assigned_by, :judge
 
   validates :assigned_by, :assigned_to, presence: true
   validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
@@ -14,7 +14,8 @@ class JudgeCaseAssignmentToAttorney
                           service: :vacols,
                           name: "assign_case_to_attorney") do
       self.class.repository.assign_case_to_attorney!(
-        judge: assigned_by,
+        assigned_by: assigned_by,
+        judge: judge || assigned_by,
         attorney: assigned_to,
         vacols_id: vacols_id
       )
@@ -53,7 +54,9 @@ class JudgeCaseAssignmentToAttorney
   end
 
   def assigned_by_role_is_valid
-    errors.add(:assigned_by, "has to be a judge") if assigned_by && !assigned_by.judge_in_vacols?
+    if assigned_by && !(assigned_by.judge_in_vacols? || assigned_by.can_act_on_behalf_of_judges?)
+      errors.add(:assigned_by, "has to be a judge or a SpecialCaseMovementTeam member")
+    end
   end
 
   class << self

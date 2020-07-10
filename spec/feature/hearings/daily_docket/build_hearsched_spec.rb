@@ -6,14 +6,16 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
   context "Daily docket with one legacy hearing" do
     let!(:hearing_day) do
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             regional_office: "RO18",
-             scheduled_for: Date.new(2019, 4, 15))
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        regional_office: "RO18",
+        scheduled_for: Time.zone.today + 1.week
+      )
     end
 
     let!(:vacols_case) { create(:case, bfcorlid: "123456789S") }
-    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let!(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
     let!(:hearing_location) do
       create(:available_hearing_locations,
              appeal_id: legacy_appeal.id,
@@ -60,7 +62,6 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("8:30", visible: false)).to be_checked
     end
-
     scenario "User can see paper_case notification" do
       visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
       expect(page).to have_content(COPY::IS_PAPER_CASE)
@@ -71,7 +72,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     let!(:hearing) { create(:hearing, :with_tasks) }
     let!(:postponed_hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 3)) }
 
-    scenario "User can update fields" do
+    scenario "User can update fields", skip: "flake" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       find("textarea", id: "#{hearing.external_id}-notes").click.send_keys("This is a note about the hearing!")
       find("label", text: "9:00 am").click
@@ -84,7 +85,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
       expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("No Show")
-      expect(page).to have_content("This is a note about the hearing!", wait: 10)
+      expect(page).to have_content("This is a note about the hearing!", wait: 10) # flake
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("9:00 am", visible: false)).to be_checked
     end
@@ -105,7 +106,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     scenario "User cannot update disposition" do
       hearing_task_association.hearing_task.update(status: :in_progress)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".is-disabled")
+      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".cf-select__control--is-disabled")
     end
   end
 end

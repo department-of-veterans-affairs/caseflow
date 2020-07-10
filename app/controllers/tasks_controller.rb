@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
+# Controller that handles requests about tasks.
+# Often used by Caseflow Queue.
 class TasksController < ApplicationController
   include Errors
 
+  before_action :verify_view_access, only: [:index]
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
@@ -38,8 +41,9 @@ class TasksController < ApplicationController
   # e.g, GET /tasks?user_id=xxx&role=colocated
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
+  #      GET /tasks?user_id=xxx&role=judge&type=assign
   def index
-    tasks = QueueForRole.new(user_role).create(user: user).tasks
+    tasks = params[:type].eql?("assign") ? QueueForRole.new(user_role).create(user: user).tasks : []
     render json: { tasks: json_tasks(tasks), queue_config: queue_config }
   end
 
@@ -73,11 +77,9 @@ class TasksController < ApplicationController
     param_groups.each do |task_type, param_group|
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
-    tasks.flatten!
+    modified_tasks = [parent_tasks_from_params, tasks].flatten.uniq
 
-    tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
-
-    render json: { tasks: json_tasks(tasks_to_return) }
+    render json: { tasks: json_tasks(modified_tasks) }
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue Caseflow::Error::MailRoutingError => error
@@ -89,19 +91,19 @@ class TasksController < ApplicationController
   # {
   #   assigned_to_id: 23
   # }
-  # To update colocated task
-  # e.g, for ama/legacy appeal => PATCH /tasks/:id,
-  # {
-  #   status: :on_hold,
-  #   on_hold_duration: "something"
-  # }
   def update
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
-
-    render json: { tasks: json_tasks(tasks_to_return) }
+    render json: { tasks: json_tasks(tasks.uniq) }
+  rescue AssignHearingDispositionTask::HearingAssociationMissing => error
+    Raven.capture_exception(error)
+    render json: {
+      "errors": [
+        "title": "Missing Associated Hearing",
+        "detail": error
+      ]
+    }, status: :bad_request
   end
 
   def for_appeal
@@ -110,13 +112,6 @@ class TasksController < ApplicationController
     tasks = TasksForAppeal.new(appeal: appeal, user: current_user, user_role: user_role).call
 
     render json: { tasks: json_tasks(tasks)[:data] }
-  end
-
-  def ready_for_hearing_schedule
-    ro = HearingDayMapper.validate_regional_office(params[:ro])
-    tasks = HearingCoordinatorScheduleQueue.new(current_user, regional_office: ro).tasks
-
-    render json: json_tasks(tasks, ama_serializer: WorkQueue::RegionalOfficeTaskSerializer)
   end
 
   def reschedule
@@ -155,7 +150,15 @@ class TasksController < ApplicationController
   private
 
   def queue_config
-    QueueConfig.new(assignee: user).to_hash
+    params[:type].eql?("assign") ? {} : QueueConfig.new(assignee: user).to_hash
+  end
+
+  def verify_view_access
+    return true if user == current_user ||
+                   Judge.new(current_user).attorneys.include?(user) ||
+                   current_user.can_act_on_behalf_of_judges?
+
+    fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by members of the Case Movement Team."
   end
 
   def verify_task_access
@@ -198,14 +201,18 @@ class TasksController < ApplicationController
   def invalid_type_error
     render json: {
       "errors": [
-        "title": "Invalid Task Type Error",
-        "detail": "Task type is invalid, valid types: #{TASK_CLASSES_LOOKUP.keys}"
+        "title": "Invalid Task Type Error: #{(task_classes - valid_task_classes.keys).join(',')}",
+        "detail": "Should be one of the #{TASK_CLASSES_LOOKUP.count} valid types."
       ]
     }, status: :bad_request
   end
 
   def task
     @task ||= Task.find(params[:id])
+  end
+
+  def parent_tasks_from_params
+    Task.where(id: create_params.map { |params| params[:parent_id] })
   end
 
   def create_params
@@ -224,7 +231,6 @@ class TasksController < ApplicationController
   def update_params
     params.require("task").permit(
       :status,
-      :on_hold_duration,
       :assigned_to_id,
       :instructions,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],

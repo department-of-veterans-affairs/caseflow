@@ -13,15 +13,12 @@ describe DistributionTask, :postgres do
     let(:distribution_task) do
       create(
         :distribution_task,
-        :on_hold,
         appeal: create(:appeal),
         assigned_to: Bva.singleton
       )
     end
 
     it "is set to assigned and ready for distribution is tracked when all child tasks are completed" do
-      expect(distribution_task.ready_for_distribution?).to eq(false)
-
       child_task = create(:informal_hearing_presentation_task, parent: distribution_task)
       expect(distribution_task.ready_for_distribution?).to eq(false)
 
@@ -61,7 +58,7 @@ describe DistributionTask, :postgres do
       expect(distribution_task.available_actions(user).count).to eq(0)
     end
 
-    it "with Special Case Movement Team user has the Special Case Movement action" do
+    it "with Case Movement Team user has the Case Movement action" do
       expect(distribution_task.available_actions(scm_user).count).to eq(1)
     end
 

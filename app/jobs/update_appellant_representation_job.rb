@@ -99,7 +99,9 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 
-    slack_service.send_notification(msg)
+    Raven.capture_exception(err)
+
+    slack_service.send_notification("[ERROR] #{msg}")
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end

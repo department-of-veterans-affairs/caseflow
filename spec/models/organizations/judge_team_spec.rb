@@ -118,8 +118,8 @@ describe JudgeTeam, :postgres do
   end
 
   describe "feature use_judge_team_roles activated" do
-    before { FeatureToggle.enable!(:use_judge_team_role) }
-    after { FeatureToggle.disable!(:use_judge_team_role) }
+    before { FeatureToggle.enable!(:judge_admin_scm) }
+    after { FeatureToggle.disable!(:judge_admin_scm) }
 
     describe ".create_for_judge" do
       subject { JudgeTeam.create_for_judge(judge) }

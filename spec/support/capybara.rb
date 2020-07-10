@@ -30,7 +30,7 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
                                 disk_cache_dir: cache_directory)
 
   options = {
-    port: 51_674,
+    service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
     browser: :chrome,
     options: chrome_options
   }
@@ -55,7 +55,7 @@ Capybara.register_driver(:sniffybara_headless) do |app|
   chrome_options.args << "--window-size=1200,1200"
 
   options = {
-    port: 51_674,
+    service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
     browser: :chrome,
     options: chrome_options
   }

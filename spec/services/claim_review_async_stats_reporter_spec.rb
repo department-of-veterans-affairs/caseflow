@@ -87,6 +87,7 @@ describe ClaimReviewAsyncStatsReporter, :postgres do
       expect(subject).to eq(
         supplemental_claims: {
           total: 6,
+          expired: 1,
           in_progress: 1,
           canceled: 1,
           processed: 4,
@@ -99,6 +100,7 @@ describe ClaimReviewAsyncStatsReporter, :postgres do
         },
         higher_level_reviews: {
           total: 6,
+          expired: 1,
           in_progress: 1,
           canceled: 1,
           processed: 4,
@@ -111,6 +113,7 @@ describe ClaimReviewAsyncStatsReporter, :postgres do
         },
         request_issues_updates: {
           total: 4,
+          expired: 0,
           in_progress: 0,
           canceled: 1,
           processed: 3,

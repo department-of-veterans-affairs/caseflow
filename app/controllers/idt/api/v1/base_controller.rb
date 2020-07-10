@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 class Idt::Api::V1::BaseController < ActionController::Base
+  include AuthenticatedControllerAction
+
   protect_from_forgery with: :exception
   before_action :validate_token
   before_action :set_application
+  before_action :set_raven_user
 
   # :nocov:
   rescue_from StandardError do |error|
-    Raven.capture_exception(error)
+    log_error(error)
     if error.class.method_defined?(:serialize_response)
       render(error.serialize_response)
     else
@@ -35,7 +38,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
                  user.dispatch_user_in_vacols? ||
                  user.intake_user?
     unless has_access
-      return render json: { message: "User must be attorney, judge, dispatch, or intake" }, status: :forbidden
+      render json: { message: "User must be attorney, judge, dispatch, or intake" }, status: :forbidden
     end
   end
 
@@ -46,6 +49,9 @@ class Idt::Api::V1::BaseController < ActionController::Base
       user
     end
   end
+
+  # set_raven_user via AuthenticatedControllerAction expects a current_user
+  alias current_user user
 
   def set_application
     RequestStore.store[:application] = "idt"
@@ -65,5 +71,13 @@ class Idt::Api::V1::BaseController < ActionController::Base
 
   def feature_enabled?(feature)
     FeatureToggle.enabled?(feature, user: user)
+  end
+
+  private
+
+  def log_error(error)
+    Raven.capture_exception(error)
+    Rails.logger.error(error)
+    Rails.logger.error(error.backtrace.join("\n"))
   end
 end

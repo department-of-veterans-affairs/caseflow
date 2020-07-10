@@ -17,7 +17,7 @@ import {
   taskById
 } from './selectors';
 import { marginTop } from './constants';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 import { taskActionData } from './utils';
 import QueueFlowModal from './components/QueueFlowModal';

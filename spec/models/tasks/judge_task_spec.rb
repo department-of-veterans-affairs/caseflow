@@ -13,8 +13,10 @@ describe JudgeTask, :all_dbs do
 
   describe ".available_actions" do
     let(:user) { judge }
+    let(:appeal) { create(:appeal, stream_type: stream_type) }
+    let(:stream_type) { "original" }
     let(:subject_task) do
-      create(:ama_judge_task, assigned_to: judge, appeal: create(:appeal))
+      create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end
 
     subject { subject_task.available_actions_unwrapper(user) }
@@ -26,9 +28,42 @@ describe JudgeTask, :all_dbs do
       end
     end
 
+    context "user is a Case Movement team member" do
+      let(:user) do
+        create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
+      end
+
+      context "in the assign phase" do
+        it "should return the Case Management assignment actions along with attorneys" do
+          expect(subject).to eq(
+            [
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+              Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+            ].map { |action| subject_task.build_action_hash(action, user) }
+          )
+          assign_action_hash = subject.find { |hash| hash[:label].eql? Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label }
+          expect(assign_action_hash[:data][:options].nil?).to eq false
+        end
+      end
+
+      context "in the review phase" do
+        let(:subject_task) do
+          create(:ama_judge_decision_review_task, assigned_to: judge, parent: create(:root_task))
+        end
+
+        it "returns the reassign action" do
+          expect(subject).to eq(
+            [
+              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+            ].map { |action| subject_task.build_action_hash(action, judge) }
+          )
+        end
+      end
+    end
+
     context "the task is assigned to the current user" do
       context "in the assign phase" do
-        it "should return the assignment action" do
+        it "should return the assignment action, but no attorneys" do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -37,6 +72,8 @@ describe JudgeTask, :all_dbs do
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
+          assign_action_hash = subject.find { |hash| hash[:label].eql? Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label }
+          expect(assign_action_hash[:data][:options].nil?).to eq true
         end
 
         context "the task was assigned from Quality Review" do
@@ -90,11 +127,30 @@ describe JudgeTask, :all_dbs do
         end
 
         it "returns the correct additional actions" do
-          expect(JudgeDecisionReviewTask.new.additional_available_actions(user)).to eq(
+          expect(JudgeDecisionReviewTask.new(assigned_to: user).additional_available_actions(user)).to eq(
             [Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h,
              Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
           )
         end
+      end
+    end
+
+    context "when it is a vacate type appeal" do
+      let(:judge3) { create(:user) }
+      let!(:user) { judge3 }
+      let(:stream_type) { "vacate" }
+      let!(:task) do
+        create(:ama_judge_decision_review_task,
+               appeal: appeal,
+               assigned_to: judge3)
+      end
+
+      it "should show pulac cerullo task action" do
+        expect(task.additional_available_actions(user)).to eq(
+          [Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h,
+           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
+           Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
+        )
       end
     end
   end
@@ -124,7 +180,41 @@ describe JudgeTask, :all_dbs do
     end
   end
 
-  describe ".udpate_from_params" do
+  describe ".create" do
+    context "creating a second JudgeDecisionReviewTask" do
+      let(:root_task) { create(:root_task) }
+      let!(:jdrt) do
+        create(:ama_judge_decision_review_task, appeal: root_task.appeal, parent: root_task, assigned_to: judge)
+      end
+
+      subject { JudgeDecisionReviewTask.create!(appeal: root_task.appeal, parent: root_task, assigned_to: judge) }
+
+      Task.open_statuses.each do |o_status|
+        context "when an open (#{o_status}) JudgeDecisionReviewTask already exists" do
+          it "should fail creation of second JudgeDecisionReviewTask" do
+            expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+            jdrt.update(status: o_status)
+            expect { subject }.to raise_error(Caseflow::Error::DuplicateUserTask)
+            expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+          end
+        end
+      end
+
+      Task.closed_statuses.each do |c_status|
+        context "when a closed (#{c_status}) JudgeDecisionReviewTask exists" do
+          it "should create new active JudgeDecisionReviewTask" do
+            jdrt.update(status: c_status)
+            expect(root_task.appeal.tasks.count).to eq(2), root_task.appeal.tasks.to_a.to_s
+            expect { subject }.to_not raise_error
+            expect(root_task.appeal.tasks.count).to eq(3), root_task.appeal.tasks.to_a.to_s
+            expect(root_task.appeal.tasks.where(type: JudgeDecisionReviewTask.name).count).to eq(2)
+          end
+        end
+      end
+    end
+  end
+
+  describe ".update_from_params" do
     context "updating a JudgeQualityReviewTask" do
       let(:existing_instructions) { "existing instructions" }
       let(:existing_status) { :assigned }
@@ -203,7 +293,7 @@ describe JudgeTask, :all_dbs do
   end
 
   describe "when child task completed" do
-    let(:judge_task) { create(:ama_judge_task) }
+    let(:judge_task) { create(:ama_judge_assign_task) }
 
     subject { child_task.update!(status: Constants.TASK_STATUSES.completed) }
 

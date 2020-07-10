@@ -58,7 +58,7 @@ class HearingPrepHelp extends React.Component {
 
       <p>Caseflow Hearing Prep helps judges rapidly prepare for their hearings. It allows judges to view their upcoming hearings, view relevant appellant information, take notes before and during a hearing, and review documents in the veteran's eFolder.
         Hearing Prep was built by the Digital Service at VA (DSVA) and will create cost savings and process improvements for many areas at the VA. Learn more:
-        <a target="_blank" rel="noopener noreferrer" href="/hearingprep_training_guide_june2018.pdf">Training Guide</a>
+      <a target="_blank" rel="noopener noreferrer" href="/hearingprep_training_guide_june2018.pdf">Training Guide</a>
       </p>
 
       <h2 id="how-was-hearing-developed">2. How was Hearing Prep developed?</h2>
@@ -132,7 +132,7 @@ class HearingPrepHelp extends React.Component {
 
       <h2 id="access-past-hearings">13. How do I access the Hearing Worksheet for past hearings?</h2>
       <p>You may access Hearing Worksheets for hearings held within the past year from the Your Hearing Days page. Alternately, when a case is assigned to you, a link to the Hearing Worksheet (pdf version) will be accessible from the Caseflow Reader Cases Checked in page
-         (also known as the Reader Welcome page). Similarly, when the case is assigned to an attorney, the case will be displayed on their Caseflow Reader Cases Checked in page along with a link to its <b>Hearing Worksheet</b>(s).
+         (also known as the Reader Welcome page). Similarly, when the case is assigned to an attorney, the case will be displayed on their Caseflow Reader Cases Checked in page along with a link to one or more associated <b>Hearing Worksheets</b>.
       </p>
 
       <h2 id="use-veteran-id-button">14. How can I use the Veteran ID button on the Hearing Worksheet?</h2>

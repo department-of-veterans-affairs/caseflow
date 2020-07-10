@@ -1,0 +1,82 @@
+import { useState } from 'react';
+
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { action } from '@storybook/addon-actions';
+import { text, array, boolean, object, number } from '@storybook/addon-knobs';
+
+import TextareaField from './TextareaField';
+import Button from './Button';
+
+export const defaultProps = {};
+
+<Meta
+  title="Commons/Components/Form Fields/TextareaField"
+  component={TextareaField}
+/>
+
+# Text Area
+
+A text area allows multiple lines of text so that users can enter detailed and descriptive requested information. This freeform field allows users to write as much as they need to. When the message is longer than the length of the box, a scroll bar will appear on the side.
+
+<Story name="knobs" parameters={{ docs: { disable: true } }}>
+  {() => {
+    const [value, setValue] = useState('');
+    return (
+      <TextareaField
+        name={text('Name', 'knobs', 'knobs')}
+        id={text('ID', 'knobs', 'knobs')}
+        label={text('Label', 'Text Input Label', 'knobs')}
+        strongLabel={boolean('Strong Label', false, 'knobs')}
+        hideLabel={boolean('Hide Label', false, 'knobs')}
+        onChange={val => setValue(val)}
+        value={value}
+        maxlength={number('Character Length', undefined, {}, 'knobs')}
+        errorMessage={text('Error Message', '', 'knobs')}
+        placeholder={text('Placeholder', 'Placeholder text...', 'knobs')}
+        disabled={boolean('Disabled', false, 'knobs')}
+        required={boolean('Required', false, 'knobs')}
+        styling={object('Styling', { style: {} }, 'knobs')}
+        textAreaStyling={object('Textarea Styling', { style: {} }, 'knobs')}
+      />
+    );
+  }}
+</Story>
+
+<Preview>
+  <Story name="Normal">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <TextareaField
+          name="text1"
+          label="Enter your text here"
+          onChange={val => setValue(val)}
+          value={value}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Character Limit
+
+Character limits alert users of the maximum possible text input and is used to limit the amount of information a user can provide. This friction helps ensure the user is providing the appropriate information for the text input. As the user types inside the text area, the character number decreases while showing the number of characters remaining. When there are 0 characters remaining, the text box does not allow for more characters to be inserted.
+
+<Preview>
+  <Story name="Character Limit">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <TextareaField
+          name="text2"
+          label="Enter your text here (with character limit)"
+          onChange={val => setValue(val)}
+          value={value}
+          maxlength={2000}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+<Props of={TextareaField} />

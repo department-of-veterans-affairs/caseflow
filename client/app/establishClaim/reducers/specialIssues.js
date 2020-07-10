@@ -1,12 +1,14 @@
 import * as Constants from '../constants';
-import SPECIAL_ISSUES from '../../constants/SpecialIssues';
+import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler.js';
 import StringUtil from '../../util/StringUtil';
 
 export const getSpecialIssuesInitialState = function(props = {}) {
 
   let initialState = {};
 
-  SPECIAL_ISSUES.forEach((issue) => {
+  const enabled_special_issues  = enabledSpecialIssues(props.featureToggles?.specialIssuesRevamp)
+
+  enabled_special_issues.forEach((issue) => {
 
     // Check special issue boxes based on what was sent from the database
     let snakeCaseIssueSubstring =
@@ -29,6 +31,16 @@ let specialIssues = function(state = getSpecialIssuesInitialState(), action) {
     let newState = Object.assign({}, state);
 
     newState[action.payload.specialIssue] = action.payload.value;
+    return newState;
+  }
+  case Constants.CLEAR_SPECIAL_ISSUES: {
+    let newState = Object.assign({}, state);
+
+    Object.keys(newState).forEach((specialIssue) => {
+      if (newState[specialIssue] === true) {
+        newState[specialIssue] = false;
+      }
+    });
 
     return newState;
   }

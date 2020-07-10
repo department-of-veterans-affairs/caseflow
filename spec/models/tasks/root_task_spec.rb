@@ -8,14 +8,22 @@ describe RootTask, :postgres do
     subject { root_task.available_actions_unwrapper(user) }
 
     context "when user is a member of the Mail team" do
-      before { allow_any_instance_of(MailTeam).to receive(:user_has_access?).and_return(true) }
+      before { allow(user).to receive(:organizations).and_return([MailTeam.singleton]) }
 
       it "should return a list that includes only the create mail task" do
         expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h, user)])
       end
     end
 
-    context "when user is not a member of the Mail team" do
+    context "when user is a member of the Mail team" do
+      before { allow(user).to receive(:organizations).and_return([LitigationSupport.singleton]) }
+
+      it "should return a list that includes only the create mail task" do
+        expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h, user)])
+      end
+    end
+
+    context "when user is not a member of the Mail team or Litigation support" do
       it "should return an empty list" do
         expect(subject).to eq([])
       end
@@ -29,13 +37,48 @@ describe RootTask, :postgres do
     subject { root_task.update_children_status_after_closed }
 
     context "when there are multiple children tasks" do
-      let!(:generic_task) { create(:generic_task, appeal: appeal, parent: root_task) }
-      let!(:tracking_task) { create(:track_veteran_task, appeal: appeal, parent: root_task) }
+      let!(:task) { create(:ama_task, parent: root_task) }
+      let!(:tracking_task) { create(:track_veteran_task, parent: root_task) }
 
-      it "should close the tracking task but not the generic task" do
+      it "should only close the tracking task" do
         expect { subject }.to_not raise_error
         expect(tracking_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        expect(generic_task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
+        expect(task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
+      end
+    end
+  end
+
+  describe ".when_child_task_completed" do
+    let!(:root_task) { create(:root_task) }
+    let!(:appeal) { root_task.appeal }
+
+    context "when the Appeal has already been dispatched" do
+      let!(:tracking_task) { create(:track_veteran_task, parent: root_task) }
+      let!(:dispatch_task) do
+        create(:bva_dispatch_task, :completed, closed_at: Time.zone.now - 1, parent: root_task)
+      end
+      let!(:mail_task) { create(:reconsideration_motion_mail_task, parent: root_task) }
+
+      context "when there are non-closeable child tasks present" do
+        let!(:task) { create(:ama_task, parent: root_task) }
+
+        it "the RootTask does not close itself" do
+          expect(root_task).to be_on_hold
+
+          mail_task.completed!
+
+          expect(root_task).to be_on_hold
+        end
+      end
+
+      context "when all the child tasks are close-able" do
+        it "the RootTask closes itself" do
+          expect(root_task).to be_on_hold
+
+          mail_task.completed!
+
+          expect(root_task.reload).to be_completed
+        end
       end
     end
   end
@@ -98,10 +141,10 @@ describe RootTask, :postgres do
   end
 
   context "when child tasks are added" do
-    let(:root_task) { create(:root_task, appeal: create(:appeal)) }
+    let(:root_task) { create(:root_task) }
     let(:task_factory) { :task }
 
-    subject { create(task_factory, parent: root_task, appeal: root_task.appeal) }
+    subject { create(task_factory, parent: root_task) }
 
     before { allow(Raven).to receive(:capture_message) }
 
@@ -130,7 +173,7 @@ describe RootTask, :postgres do
         expect(root_task.children.count).to eq(1)
       end
 
-      context "when the child task is a generic 'ol task" do
+      context "when the child task is a normal 'ol task" do
         it "sends a message to Sentry" do
           subject
           expect(Raven).to have_received(:capture_message).exactly(1).times
@@ -146,8 +189,18 @@ describe RootTask, :postgres do
         end
       end
 
-      context "when the child task is a ReturnedUndeliverableCorrespondenceMailTask" do
-        let(:task_factory) { :returned_undeliverable_correspondence_mail_task }
+      context "when the child task is a MailTask" do
+        let(:task_factory) do
+          [
+            :appeal_withdrawal_mail_task,
+            :appeal_withdrawal_bva_task,
+            :returned_undeliverable_correspondence_mail_task,
+            :aod_motion_mail_task,
+            :reconsideration_motion_mail_task,
+            :vacate_motion_mail_task,
+            :congressional_interest_mail_task
+          ].sample
+        end
 
         # Automatic task assignment requires there to be members of the BVA dispatch team.
         before { BvaDispatch.singleton.add_user(create(:user)) }
@@ -172,7 +225,7 @@ describe RootTask, :postgres do
         expect(root_task.children.count).to eq(1)
       end
 
-      context "when the child task is a generic 'ol task" do
+      context "when the child task is a normal 'ol task" do
         it "does not send a message to Sentry" do
           subject
           expect(Raven).to have_received(:capture_message).exactly(0).times

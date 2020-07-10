@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TeamQuota < ApplicationRecord
+class TeamQuota < CaseflowRecord
   DEFAULT_USER_COUNT = 1
 
   class MismatchedTeamQuota < StandardError; end

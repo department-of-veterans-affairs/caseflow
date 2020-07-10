@@ -21,7 +21,7 @@ class ApplicationJob < ActiveJob::Base
     attr_reader :app_name
   end
 
-  rescue_from VBMS::ClientError, BGS::ShareError do |error|
+  rescue_from Caseflow::Error::TransientError, VBMS::ClientError, BGS::ShareError do |error|
     capture_exception(error: error)
   end
 
@@ -32,6 +32,17 @@ class ApplicationJob < ActiveJob::Base
       Raven.capture_exception(error, extra: extra)
     end
   end
+
+  # Testing America/New_York TZ for all jobs in UAT.
+  # :nocov:
+  if Rails.deploy_env?(:uat)
+    around_perform do |_job, block|
+      Time.use_zone(Rails.configuration.time_zone) do
+        block.call
+      end
+    end
+  end
+  # :nocov:
 
   before_perform do |job|
     # setup debug context

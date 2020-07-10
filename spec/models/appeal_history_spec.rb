@@ -40,9 +40,11 @@ describe AppealHistory, :all_dbs do
         :disposition_merged,
         bfkey: "7654321",
         bfcorlid: vbms_id,
-        bfddec: 500.days.ago.to_date
+        bfddec: merged_appeal_decision_date
       ))
   end
+
+  let(:merged_appeal_decision_date) { 500.days.ago.to_date }
 
   let(:another_merged) do
     create(:legacy_appeal, vacols_case:
@@ -236,6 +238,16 @@ describe AppealHistory, :all_dbs do
               create(:case_issue, issdesc: description_2)
             ]
           ))
+      end
+
+      context "decision date is nil" do
+        let(:merged_appeal_decision_date) { nil }
+
+        it "does not raise error" do
+          original.save
+          merged.save
+          expect { subject }.to_not raise_error
+        end
       end
 
       context "when there is a matching issue" do

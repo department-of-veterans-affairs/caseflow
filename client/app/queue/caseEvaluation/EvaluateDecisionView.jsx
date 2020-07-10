@@ -20,9 +20,9 @@ import { requestSave } from '../uiReducer/uiActions';
 import { buildCaseReviewPayload } from '../utils';
 import { taskById } from '../selectors';
 
-import COPY from '../../../COPY.json';
-import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
-import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
+import COPY from '../../../COPY';
+import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
+import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES';
 import {
   marginBottom,
   marginTop,

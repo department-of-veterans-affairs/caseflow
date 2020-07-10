@@ -5,11 +5,14 @@ class SupplementalClaim < ClaimReview
 
   belongs_to :decision_review_remanded, polymorphic: true
 
+  scope :updated_since_for_appeals, lambda { |since|
+    select(:decision_review_remanded_id)
+      .where("#{table_name}.updated_at >= ?", since)
+      .where("#{table_name}.decision_review_remanded_type='Appeal'")
+  }
+
   def ui_hash
-    super.merge(
-      formType: "supplemental_claim",
-      isDtaError: decision_review_remanded?
-    )
+    Intake::SupplementalClaimSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def start_processing_job!

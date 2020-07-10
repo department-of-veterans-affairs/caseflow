@@ -88,24 +88,24 @@ RSpec.feature "MailTasks", :postgres do
       visit "/queue/appeals/#{task.appeal.uuid}"
 
       # Make sure mail team tasks do not show in task snapshot
-      expect(find("#currently-active-tasks")).not_to have_content("ASSIGNED TO\nMail")
+      expect(find("#currently-active-tasks").has_no_content?("ASSIGNED TO\nMail")).to eq(true)
       expect(find_all("#currently-active-tasks tr").length).to eq 1
 
       # Navigate to the change task type modal
-      find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
 
       expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
 
       # Ensure all admin actions are available
       mail_tasks = MailTask.subclass_routing_options
-      find(".Select-control", text: "Select an action type").click do
-        visible_options = page.find_all(".Select-option")
+      find(".cf-select__control", text: "Select an action type").click do
+        visible_options = page.find_all(".cf-select__option")
         expect(visible_options.length).to eq mail_tasks.length
       end
 
       # Attempt to change task type without including instuctions.
-      find("div", class: "Select-option", text: new_task_type.label).click
+      find("div", class: "cf-select__option", text: new_task_type.label).click
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required

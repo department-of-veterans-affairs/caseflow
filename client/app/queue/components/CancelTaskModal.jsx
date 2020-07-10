@@ -14,10 +14,22 @@ import {
   requestPatch
 } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import TextareaField from '../../components/TextareaField';
+import COPY from '../../../COPY';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 
 class CancelTaskModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      instructions: ''
+    };
+  }
+
+  validateForm = () => this.state.instructions.length;
+
   submit = () => {
     const {
       task,
@@ -26,14 +38,17 @@ class CancelTaskModal extends React.Component {
     const payload = {
       data: {
         task: {
-          status: TASK_STATUSES.cancelled
+          status: TASK_STATUSES.cancelled,
+          instructions: this.state.instructions
         }
       }
     };
 
     const hearingScheduleLink = taskActionData(this.props).back_to_hearing_schedule ?
       <p>
-        <Link href={`/hearings/schedule/assign?roValue=${hearingDay.regionalOffice}`}>Back to Hearing Schedule </Link>
+        <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
+          Back to Hearing Schedule
+        </Link>
       </p> : null;
     const successMsg = {
       title: taskActionData(this.props).message_title,
@@ -48,13 +63,22 @@ class CancelTaskModal extends React.Component {
 
   render = () => {
     const taskData = taskActionData(this.props);
+    const { instructions } = this.state;
+    const { highlightFormItems } = this.props;
 
     return <QueueFlowModal
       title={taskData ? taskData.modal_title : ''}
       pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}
       submit={this.submit}
+      validateForm={this.validateForm}
     >
-      <div>{taskData && taskData.modal_body}</div>
+      <div>{taskData && taskData.modal_body}</div><br />
+      <TextareaField
+        name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+        errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+        id="taskInstructions"
+        onChange={(value) => this.setState({ instructions: value })}
+        value={instructions} />
     </QueueFlowModal>;
   };
 }
@@ -67,14 +91,16 @@ CancelTaskModal.propTypes = {
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string
-  })
+  }),
+  highlightFormItems: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
-  hearingDay: state.ui.hearingDay
+  hearingDay: state.ui.hearingDay,
+  highlightFormItems: state.ui.highlightFormItems
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

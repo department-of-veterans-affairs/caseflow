@@ -13,17 +13,17 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
     let(:appeal) { create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let(:root_task) { create(:root_task, appeal: appeal) }
-    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
-    let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task) }
     let(:disposition_task) do
-      create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
+      create(:assign_hearing_disposition_task, parent: parent_hearing_task)
     end
     let!(:no_show_hearing_task) do
-      create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+      create(:no_show_hearing_task, parent: disposition_task)
     end
 
     let!(:completed_scheduling_task) do
-      create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
+      create(:schedule_hearing_task, :completed, parent: parent_hearing_task)
     end
 
     it "closes current branch of task tree and starts a new one" do
@@ -107,17 +107,17 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
 
     let(:appeal) { create(:appeal, :hearing_docket) }
     let(:root_task) { create(:root_task, appeal: appeal) }
-    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
-    let(:parent_hearing_task) { create(:hearing_task, parent: hearing_task_parent, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:parent_hearing_task) { create(:hearing_task, parent: hearing_task_parent) }
     let(:disposition_task) do
-      create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
+      create(:assign_hearing_disposition_task, parent: parent_hearing_task)
     end
     let!(:no_show_hearing_task) do
-      create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+      create(:no_show_hearing_task, parent: disposition_task)
     end
 
     let!(:completed_scheduling_task) do
-      create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
+      create(:schedule_hearing_task, :completed, parent: parent_hearing_task)
     end
 
     context "when the appeal is a LegacyAppeal" do

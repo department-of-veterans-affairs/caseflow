@@ -3,7 +3,7 @@
 # Represents the action where a Caseflow user updates the request issues on
 # a review, typically to make a correction.
 
-class RequestIssuesUpdate < ApplicationRecord
+class RequestIssuesUpdate < CaseflowRecord
   include Asyncable
 
   belongs_to :user
@@ -172,7 +172,7 @@ class RequestIssuesUpdate < ApplicationRecord
   def withdrawal
     @withdrawal ||= RequestIssueWithdrawal.new(
       user: user,
-      review: review,
+      request_issues_update: self,
       request_issues_data: @request_issues_data
     )
   end

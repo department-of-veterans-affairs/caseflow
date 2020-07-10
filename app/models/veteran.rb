@@ -4,7 +4,7 @@
 #
 # TODO: How do we deal with differences between the BGS vet values and the
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
-class Veteran < ApplicationRecord
+class Veteran < CaseflowRecord
   include AssociatedBgsRecord
 
   has_many :available_hearing_locations,
@@ -14,16 +14,23 @@ class Veteran < ApplicationRecord
   bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
-                    :service, :date_of_birth, :date_of_death, :email_address
-
-  validates :first_name, :last_name, presence: true, on: :bgs
-  validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
+                    :service, :date_of_birth, :email_address
 
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
     validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
     validates :state, presence: true, if: :state_is_required?, on: :bgs
     validates :city, presence: true, unless: :military_address?, on: :bgs
+  end
+
+  with_options on: :bgs do
+    validates :first_name, :last_name, presence: true
+    validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }
+    validate :validate_address_line
+    validates :city, length: { maximum: 30 }
+    validate :validate_city
+    validate :validate_date_of_birth
+    validate :validate_name_suffix
   end
 
   delegate :full_address, to: :address
@@ -48,6 +55,7 @@ class Veteran < ApplicationRecord
 
   # key is local attribute name; value is corresponding bgs attribute name
   CACHED_BGS_ATTRIBUTES = {
+    date_of_death: :date_of_death,
     first_name: :first_name,
     last_name: :last_name,
     middle_name: :middle_name,
@@ -131,9 +139,13 @@ class Veteran < ApplicationRecord
   end
 
   def access_error
-    @access_error ||= nil if bgs_record.is_a?(Hash)
+    @access_error ||= nil if bgs_record_found?
   rescue BGS::ShareError => error
     error.message
+  end
+
+  def bgs_record_found?
+    bgs_record.is_a?(Hash)
   end
 
   # When two Veteran records get merged for data clean up, it can lead to multiple active phone numbers
@@ -159,54 +171,72 @@ class Veteran < ApplicationRecord
   end
 
   def incident_flash?
-    bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
+    bgs_record_found? && bgs_record[:block_cadd_ind] == "S"
   end
 
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
-    @zip_code || (@address_line3 if (@address_line3 || "").match?(/(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/))
+    zip_code = bgs_record&.[](:zip_code)
+    zip_code ||= (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
+
+    # Write to cache for research purposes. Will remove!
+    # See:
+    #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
+    Rails.cache.write("person-zip-#{zip_code}", true) if zip_code.present?
+
+    zip_code
   end
+
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2
   alias address_line_3 address_line3
   alias gender sex
 
-  def timely_ratings(from_date:)
-    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
+  def validate_address_line
+    [:address_line1, :address_line2, :address_line3].each do |address|
+      address_line = instance_variable_get("@#{address}")
+      next if address_line.blank?
+
+      # This regex validation is used in VBMS to validate address of veteran
+      unless address_line.match?(/^(?!.*\s\s)[a-zA-Z0-9+#@%&()_:',.\-\/\s]*$/)
+        errors.add(address.to_sym, "invalid_characters")
+      end
+    end
+  end
+
+  def validate_date_of_birth
+    return if date_of_birth.blank?
+
+    unless date_of_birth.match?(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d/)
+      errors.add(:date_of_birth, "invalid_date_of_birth")
+    end
+  end
+
+  def validate_city
+    return true if city.blank?
+
+    # This regex validation is used in VBMS to validate address of veteran
+    errors.add(:city, "invalid_characters") unless city.match?(/^[ a-zA-Z0-9`\\'~=+\[\]{}#?\^*<>!@$%&()\-_|;:",.\/]*$/)
+  end
+
+  def validate_name_suffix
+    # This regex validation checks for punctuations in the name suffix
+    errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
   end
 
   def ratings
-    @ratings ||= Rating.fetch_all(participant_id)
+    @ratings ||= begin
+      if FeatureToggle.enabled?(:ratings_at_issue, user: RequestStore.store[:current_user])
+        RatingAtIssue.fetch_all(participant_id)
+      else
+        PromulgatedRating.fetch_all(participant_id)
+      end
+    end
   end
 
   def decision_issues
     DecisionIssue.where(participant_id: participant_id)
-  end
-
-  def accessible_appeals_for_poa(poa_participant_ids)
-    appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
-    legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number)
-
-    poas = poas_for_appeals(appeals, legacy_appeals)
-
-    [
-      appeals.select do |appeal|
-        appeal.claimants.any? do |claimant|
-          poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
-        end
-      end,
-      legacy_appeals.select do |legacy_appeal|
-        poa_participant_ids.include?(poas[legacy_appeal.veteran.participant_id][:participant_id])
-      end
-    ].flatten
-  end
-
-  def poas_for_appeals(appeals, legacy_appeals)
-    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
-      .concat(legacy_appeals.map { |legacy_appeal| legacy_appeal.veteran.participant_id }.flatten)
-
-    bgs.fetch_poas_by_participant_ids(claimants_participant_ids.uniq)
   end
 
   def participant_id
@@ -214,7 +244,11 @@ class Veteran < ApplicationRecord
   end
 
   def ssn
-    super || (bgs_record.is_a?(Hash) ? bgs_record[:ssn] : nil)
+    super || (bgs_record_found? ? bgs_record[:ssn] : nil)
+  end
+
+  def date_of_death
+    super || (bgs_record_found? ? bgs_record[:date_of_death] : nil)
   end
 
   def address
@@ -237,12 +271,21 @@ class Veteran < ApplicationRecord
     raise response.error # rubocop:disable Style/SignalException
   end
 
+  def stale?
+    (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil? ||
+      email_address.nil?)
+  end
+
   def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil? || self[:participant_id].nil?)
-    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
+    is_stale = stale?
+    is_stale ||= stale_bgs_attributes?
     is_stale
+  end
+
+  def stale_bgs_attributes?
+    CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
   end
 
   def update_cached_attributes!
@@ -344,11 +387,11 @@ class Veteran < ApplicationRecord
   end
 
   def cached_attributes_updatable?
-    accessible? && bgs_record.is_a?(Hash) && stale_attributes?
+    accessible? && bgs_record_found? && stale_attributes?
   end
 
   def deceased?
-    !date_of_death.nil?
+    date_of_death.present?
   end
 
   def alive?
@@ -358,6 +401,7 @@ class Veteran < ApplicationRecord
   def unload_bgs_record
     @bgs_record_loaded = false
     @bgs_record = nil
+    self
   end
 
   private
@@ -423,7 +467,7 @@ class Veteran < ApplicationRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn, :date_of_death]
   end
 
   def military_address?

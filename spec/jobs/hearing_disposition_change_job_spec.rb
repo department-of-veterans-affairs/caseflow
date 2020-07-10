@@ -4,8 +4,8 @@ describe HearingDispositionChangeJob, :all_dbs do
   def create_disposition_task_ancestry(disposition: nil, scheduled_for: nil, associated_hearing: true)
     appeal = create(:appeal)
     root_task = create(:root_task, appeal: appeal)
-    distribution_task = create(:distribution_task, appeal: appeal, parent: root_task)
-    parent_hearing_task = create(:hearing_task, appeal: appeal, parent: distribution_task)
+    distribution_task = create(:distribution_task, parent: root_task)
+    parent_hearing_task = create(:hearing_task, parent: distribution_task)
 
     hearing = create(:hearing, appeal: appeal, disposition: disposition)
     if scheduled_for
@@ -23,21 +23,21 @@ describe HearingDispositionChangeJob, :all_dbs do
       create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
     end
 
-    create(:assign_hearing_disposition_task, appeal: appeal, parent: parent_hearing_task)
+    create(:assign_hearing_disposition_task, parent: parent_hearing_task)
   end
 
   def create_disposition_task_for_legacy_hearings_ancestry(associated_hearing: nil)
     appeal = create(:legacy_appeal, vacols_case: create(:case))
     root_task = create(:root_task, appeal: appeal)
-    distribution_task = create(:distribution_task, appeal: appeal, parent: root_task)
-    parent_hearing_task = create(:hearing_task, appeal: appeal, parent: distribution_task)
+    distribution_task = create(:distribution_task, parent: root_task)
+    parent_hearing_task = create(:hearing_task, parent: distribution_task)
 
     hearing_args = { appeal: appeal }
     hearing_args[:case_hearing] = associated_hearing if associated_hearing
     hearing = create(:legacy_hearing, hearing_args)
 
     create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
-    create(:assign_hearing_disposition_task, appeal: appeal, parent: parent_hearing_task)
+    create(:assign_hearing_disposition_task, parent: parent_hearing_task)
   end
 
   describe ".lock_hearing_days" do
@@ -74,10 +74,10 @@ describe HearingDispositionChangeJob, :all_dbs do
     # Property: Class that subclasses DispositionTask.
     context "when there are ChangeHearingDispositionTasks" do
       let!(:disposition_tasks) do
-        create_list(:assign_hearing_disposition_task, 6, parent: create(:hearing_task))
+        Array.new(6) { create(:assign_hearing_disposition_task, parent: create(:hearing_task)) }
       end
       let!(:change_disposition_tasks) do
-        create_list(:change_hearing_disposition_task, 3, parent: create(:hearing_task))
+        Array.new(3) { create(:change_hearing_disposition_task, parent: create(:hearing_task)) }
       end
 
       it "only returns the AssignHearingDispositionTasks" do

@@ -23,6 +23,8 @@ class WorkQueue::LegacyTaskSerializer
   attribute :work_product
   attribute :appeal_type
   attribute :timeline_title
+  attribute :started_at
+
   attribute :previous_task do |object|
     {
       assigned_on: object.previous_task.try(:assigned_at)
@@ -56,6 +58,10 @@ class WorkQueue::LegacyTaskSerializer
 
   attribute :aod do |object|
     object.appeal.aod
+  end
+
+  attribute :overtime do |object|
+    object.appeal.overtime?
   end
 
   attribute :external_appeal_id do |object|

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const ALTERNATE_COLUMN_NAMES = {
   'appeal.caseType': 'Case Type',
@@ -11,7 +11,7 @@ const ALTERNATE_COLUMN_NAMES = {
   readableRequestType: 'Hearing Type',
   regionalOffice: 'Regional Office',
   vlj: 'VLJ',
-  label: 'Task(s)',
+  label: 'Tasks',
   suggestedLocation: 'Suggested Location',
   hearingLocation: 'Hearing Location'
 };

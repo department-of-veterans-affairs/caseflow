@@ -41,7 +41,7 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def index_with_hearings
     if hearing_day_range.valid?
-      hearing_days_with_hearings = hearing_day_range.open_hearing_days_with_hearings_hash(current_user.id)
+      hearing_days_with_hearings = hearing_day_range.open_hearing_days_with_hearings_hash
 
       render json: { hearing_days: hearing_days_with_hearings }
     else

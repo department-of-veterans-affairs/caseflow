@@ -8,20 +8,23 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "abffaad34aa9c62afca70756277011d73bcee711"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "eb402ebd17eb39cd13df3c21d749e1b598676324"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ffb77dd0395cbd5b7c1a5729f7f8275b5ec681fa"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "6c0c2908a9e4a61f5bcf2a768061909e3c763fe8"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "049b3c5068fa6c6d1cae0b58654529316b84be57"
+gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
+gem "countries"
+gem "ddtrace"
 gem "dogstatsd-ruby"
+gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
+gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
+gem "icalendar"
 gem "kaminari"
-# active_model_serializers has a default dependency on loofah 2.2.2 which security vulnerabilities
-# (CVE-2018-16468 and CVE-2019-15587)
-gem "loofah", ">= 2.3.1"
 gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
 # https://github.com/ankane/multiverse#upgrading-to-rails-6
@@ -31,7 +34,7 @@ gem "newrelic_rpm"
 # https://github.com/sparklemotion/nokogiri/issues/1915
 # nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
 # https://github.com/sparklemotion/nokogiri/issues/1943
-gem "nokogiri", "~> 1.10.5"
+gem "nokogiri", "~> 1.10.8"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
@@ -44,11 +47,10 @@ gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 3.12.0"
-# rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
-# Explicitly define rack version here to avoid that.
-gem "rack", "~> 2.0.6"
-gem "rails", "5.1.6.2"
+# We are not yet at version 4.x because we have not tested.
+gem "puma", "~> 3.12.6"
+gem "rack", "~> 2.2.3"
+gem "rails", "5.2.4.3"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -69,13 +71,15 @@ gem "strong_migrations"
 gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
+gem "tzinfo"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter"
+  gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
   gem "ruby-oci8", "~> 2.2"
 end
 
@@ -103,12 +107,14 @@ group :test, :development, :demo do
   gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
-  gem "rubocop", "~> 0.52", require: false
+  gem "rubocop", "= 0.79", require: false
   gem "rubocop-performance"
+  gem "rubocop-rails"
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
+  gem "test-prof"
   gem "timecop"
   gem "webdrivers"
 end
@@ -121,14 +127,13 @@ group :development do
   gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  # gem 'spring', platforms: :ruby
-  # Include the IANA Time Zone Database on Windows, where Windows doesn't ship with a timezone database.
-  # POSIX systems should have this already, so we're not going to bring it in on other platforms
-  gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+  gem "rails-erd"
+  gem "ruby-prof", "~> 1.4"
 end
 
 group :test do
+  # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
+  gem "rspec-retry"
   gem "webmock"
 end
 # rubocop:enable Metrics/LineLength

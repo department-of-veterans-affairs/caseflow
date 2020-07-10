@@ -26,20 +26,11 @@ RSpec.feature "List Schedule for VSO", :all_dbs do
     let!(:hearing_one) { create(:hearing, :with_tasks, hearing_day: hearing_day_one) }
     let!(:hearing_two) { create(:hearing, :with_tasks, hearing_day: hearing_day_two) }
     let!(:legacy_hearing) { create(:legacy_hearing, case_hearing: create(:case_hearing, vdkey: hearing_day_three.id)) }
-    let!(:vso_participant_id) { "789" }
+    let!(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
     let!(:vso) { create(:vso, participant_id: vso_participant_id) }
     let!(:track_veteran_task_one) { create(:track_veteran_task, appeal: hearing_one.appeal, assigned_to: vso) }
     let!(:track_veteran_task_two) { create(:track_veteran_task, appeal: legacy_hearing.appeal, assigned_to: vso) }
-    let!(:vso_participant_ids) do
-      [
-        {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: vso_participant_id
-        }
-      ]
-    end
+    let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)

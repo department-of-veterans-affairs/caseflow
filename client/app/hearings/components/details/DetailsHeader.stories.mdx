@@ -1,0 +1,38 @@
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { date, text, boolean } from '@storybook/addon-knobs';
+import { addDecorator } from '@storybook/react';
+
+import { DetailsHeader } from './DetailsHeader';
+
+export const defaultProps = {};
+
+<Meta
+  title="Hearings/Components/Hearing Details/DetailsHeader"
+  component={DetailsHeader}
+/>
+
+# Email Notification History
+
+<Preview>
+  <Story name="Normal">
+    {() => (
+      <DetailsHeader
+        aod={boolean('Is Aod?', false, 'knobs')}
+        disposition={text('Disposition', 'held', 'knobs')}
+        docketName={text('Docket Name', 'hearing', 'knobs')}
+        docketNumber={text('Docket Number', '1234567', 'knobs')}
+        isVirtual={boolean('Is Virtual?', false, 'knobs')}
+        hearingDayId={1}
+        readableLocation={text('Location', 'Regional Office', 'knobs')}
+        readableRequestType={text('Request Type', 'Video', 'knobs')}
+        regionalOfficeName={text('Regional Office Name', 'Regional Office', 'knobs')}
+        scheduledFor={text('Scheduled For', '2020-06-01T21:23:17+0000', 'knobs')}
+        veteranFirstName={text('Veteran Last Name', 'Last', 'knobs')}
+        veteranLastName={text('Veteran First Name', 'First', 'knobs')}
+        veteranFileNumber={text('Veteran File Number', '12345678', 'knobs')}
+      />
+    )}
+  </Story>
+</Preview>
+
+<Props of={DetailsHeader} />

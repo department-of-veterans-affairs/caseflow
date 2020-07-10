@@ -24,7 +24,8 @@ export default class TextareaField extends React.Component {
       textAreaStyling,
       disabled,
       labelStyling,
-      placeholder
+      placeholder,
+      optional
     } = this.props;
 
     const className = 'cf-form-textarea' +
@@ -38,6 +39,7 @@ export default class TextareaField extends React.Component {
       <span>
         {label || name}
         {required && <span className="cf-required">Required</span>}
+        {optional && <span className="cf-optional">Optional</span>}
       </span>;
 
     // hideLabel still leaves the label element in the DOM (for a11y purposes)
@@ -72,7 +74,9 @@ export default class TextareaField extends React.Component {
 }
 
 TextareaField.defaultProps = {
-  disabled: false
+  disabled: false,
+  optional: false,
+  required: false
 };
 
 TextareaField.propTypes = {
@@ -89,5 +93,9 @@ TextareaField.propTypes = {
   value: PropTypes.string,
   styling: PropTypes.object,
   disabled: PropTypes.bool,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
+  optional: PropTypes.bool,
+  required: PropTypes.bool,
+  labelStyling: PropTypes.object,
+  textAreaStyling: PropTypes.object
 };

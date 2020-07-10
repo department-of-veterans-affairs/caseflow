@@ -7,7 +7,6 @@
 
 class HearingAdminActionTask < Task
   validates :parent, presence: true
-  validate :on_hold_duration_is_set, on: :update
 
   def self.child_task_assignee(parent, params)
     if params[:assigned_to_type] && params[:assigned_to_id]
@@ -47,14 +46,6 @@ class HearingAdminActionTask < Task
 
   def actions_allowable?(user)
     (HearingsManagement.singleton.user_has_access?(user) || HearingAdmin.singleton.user_has_access?(user)) && super
-  end
-
-  private
-
-  def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && !on_timed_hold? && assigned_to.is_a?(User)
-      errors.add(:on_hold_duration, "has to be specified")
-    end
   end
 end
 

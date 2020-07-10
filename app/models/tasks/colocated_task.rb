@@ -12,7 +12,6 @@ class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :task_is_unique, on: :create
-  validate :valid_type, on: :create
 
   after_update :update_location_in_vacols
 
@@ -31,7 +30,7 @@ class ColocatedTask < Task
         params_array = params_array.map do |params|
           # Find the task type for a given action.
           create_params = params.clone
-          new_task_type = Object.const_get(params[:type])
+          new_task_type = valid_type(params[:type])
           # new_task_type should be one of the valid_task_classes in tasks_controller; otherwise fail here
           create_params.merge!(type: new_task_type.name, assigned_to: new_task_type.default_assignee)
         end
@@ -52,10 +51,21 @@ class ColocatedTask < Task
 
     def verify_user_can_create!(user, parent)
       if parent
-        super(user, parent)
+        begin
+          super(user, parent)
+        rescue Caseflow::Error::ActionForbiddenError => error
+          # We want to allow task creation if done from attorney checkout on a vacate & de novo
+          raise error unless de_novo_atty_checkout?(user, parent)
+
+          true
+        end
       elsif !(user.attorney_in_vacols? || user.judge_in_vacols?)
         fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
       end
+    end
+
+    def de_novo_atty_checkout?(user, parent)
+      (parent.appeal.vacate_type == "vacate_and_de_novo") && user.attorney_in_vacols?
     end
 
     def default_assignee
@@ -75,6 +85,14 @@ class ColocatedTask < Task
       Constants::CO_LOCATED_ADMIN_ACTIONS.keys.select do |action|
         find_subclass_by_action(action).methods(false).exclude?(:default_assignee)
       end
+    end
+
+    def valid_type(type)
+      unless ColocatedTask.subclasses.map(&:name).include?(type)
+        fail Caseflow::Error::ActionForbiddenError, message: "Cannot create task of type #{type}"
+      end
+
+      Object.const_get(type)
     end
   end
 
@@ -116,14 +134,13 @@ class ColocatedTask < Task
   end
 
   def create_twin_of_type(params)
-    task_type = Object.const_get(params[:type])
-    ColocatedTask.create!(
+    task_type = ColocatedTask.valid_type(params[:type])
+    task_type.create!(
       appeal: appeal,
       parent: parent,
       assigned_by: assigned_by,
       instructions: params[:instructions],
-      assigned_to: task_type&.default_assignee,
-      type: task_type
+      assigned_to: task_type&.default_assignee
     )
   end
 
@@ -136,7 +153,7 @@ class ColocatedTask < Task
   def update_location_in_vacols
     if saved_change_to_status? &&
        !open? &&
-       all_tasks_closed_for_appeal? &&
+       all_colocated_tasks_closed_for_appeal? &&
        appeal_in_caseflow_vacols_location? &&
        assigned_to.is_a?(Organization)
       AppealRepository.update_location!(appeal, vacols_location)
@@ -144,15 +161,18 @@ class ColocatedTask < Task
   end
 
   def appeal_in_caseflow_vacols_location?
-    appeal.is_a?(LegacyAppeal) &&
-      VACOLS::Case.find(appeal.vacols_id).bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
+    return false unless appeal.is_a?(LegacyAppeal)
+
+    return false if appeal.case_record.nil? # VACOLS case must exist
+
+    appeal.case_record.reload.bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
   end
 
   def vacols_location
     assigned_by.vacols_uniq_id
   end
 
-  def all_tasks_closed_for_appeal?
+  def all_colocated_tasks_closed_for_appeal?
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
   end
 
@@ -176,12 +196,6 @@ class ColocatedTask < Task
         )
         break
       end
-    end
-  end
-
-  def valid_type
-    unless ColocatedTask.subclasses.include?(self.class)
-      errors[:base] << "Colocated subtype is not included in the list"
     end
   end
 end

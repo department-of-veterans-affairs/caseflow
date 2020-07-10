@@ -27,6 +27,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
   end
   let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+  let(:request_issue_decision_mdY) { request_issue.decision_or_promulgation_date.mdY }
   let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
 
   let(:decision_review_remanded) { nil }
@@ -65,7 +66,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   let(:contested_decision_issue) { nil }
 
   before do
-    supplemental_claim.create_claimants!(participant_id: "5382910292", payee_code: "10")
+    supplemental_claim.create_claimant!(participant_id: "5382910292", payee_code: "10", type: "DependentClaimant")
 
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
 
@@ -183,7 +184,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       after { FeatureToggle.disable!(:edit_contention_text) }
 
       let(:decision_review_remanded) { create(:higher_level_review) }
-      let(:contested_decision_issue) { create(:decision_issue, disposition: "remanded") }
+      let(:contested_decision_issue) { create(:decision_issue, :nonrating, disposition: "remanded") }
 
       it "only allows users to edit contention text" do
         nonrating_dta_claim_id = EndProductEstablishment.find_by(
@@ -298,7 +299,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       click_remove_intake_issue_dropdown("PTSD denied")
 
       # expect a pop up
-      expect(page).not_to have_content("PTSD denied")
+      expect(page.has_no_content?("PTSD denied")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -569,7 +570,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
     context "when a user can withdraw issues" do
       before do
-        BvaIntake.singleton.add_user(current_user)
+        CaseReview.singleton.add_user(current_user)
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
 
@@ -592,7 +593,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
-        expect(page).to have_content("1. PTSD denied\nDecision date: 05/10/2019\nWithdrawal pending")
+        expect(page).to have_content("1. PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -639,7 +640,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
         expect(page).to have_content(
-          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdrawal pending/i
+          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawal pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -656,11 +657,14 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
 
         sleep 1
+
         # reload to verify that the new issues populate the form
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
-        expect(page).to have_content("Requested issues\n1. Left knee granted")
-        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 05/10/2019\nWithdrawn on")
+        expect(find("div", class: "issue-container", match: :first)).to have_content("Left knee granted")
+        expect(find("div", class: "withdrawn-issue")).to have_content(
+          "PTSD denied\nDecision date: #{request_issue_decision_mdY}\nWithdrawn on"
+        )
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
     end
@@ -763,16 +767,16 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("Apportionment")
 
         click_edit_submit_and_confirm
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
 
-        sleep 1
+        expect(page).to have_content("Review Removed")
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         # going back to the edit page does not show any requested issues
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
-        expect(page).not_to have_content(existing_request_issues.first.description)
-        expect(page).not_to have_content(existing_request_issues.second.description)
+        expect(page.has_no_content?(existing_request_issues.first.description)).to eq(true)
+        expect(page.has_no_content?(existing_request_issues.second.description)).to eq(true)
       end
 
       scenario "no active tasks cancelled when request issues remain" do

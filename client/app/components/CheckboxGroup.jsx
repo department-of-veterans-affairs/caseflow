@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const renderCheckbox = (option, onChange, values = {}) => <div className="checkbox" key={option.id}>
+const renderCheckbox = (option, onChange, values = {}, disabled = false) => <div className="checkbox" key={option.id}>
   <input
     name={option.id}
     onChange={onChange}
     type="checkbox"
     id={option.id}
     checked={values[option.id]}
-    disabled={option.disabled ? 'disabled' : ''}
+    disabled={option.disabled || disabled ? 'disabled' : ''}
   />
   <label htmlFor={option.id}>
     {option.label}
@@ -33,8 +33,16 @@ export default class CheckboxGroup extends React.Component {
       errorMessage,
       errorState,
       getCheckbox,
-      styling
+      styling,
+      strongLabel,
+      disableAll
     } = this.props;
+
+    const labelContents = (
+      <span>
+        {label || name}
+      </span>
+    );
 
     let fieldClasses = `checkbox-wrapper-${name} cf-form-checkboxes cf-checkbox-group`;
 
@@ -51,10 +59,10 @@ export default class CheckboxGroup extends React.Component {
     return <fieldset className={fieldClasses} {...styling}>
       <legend className={legendClasses}>
         {required && <span className="cf-required">Required</span>}
-        {label || name}
+        {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
-      {options.map((option) => getCheckbox(option, onChange, values))}
+      {options.map((option) => getCheckbox(option, onChange, values, disableAll))}
     </fieldset>;
   }
 }
@@ -85,5 +93,7 @@ CheckboxGroup.propTypes = {
   errorMessage: PropTypes.string,
   errorState: PropTypes.bool,
   getCheckbox: PropTypes.func,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  strongLabel: PropTypes.bool,
+  disableAll: PropTypes.bool
 };

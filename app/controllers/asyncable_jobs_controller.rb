@@ -36,7 +36,7 @@ class AsyncableJobsController < ApplicationController
 
   def add_note
     send_to_intake_user = ActiveRecord::Type::Boolean.new.deserialize(allowed_params[:send_to_intake_user])
-    messaging = AsyncableJobMessaging.new(job: job, current_user: current_user)
+    messaging = AsyncableJobMessaging.new(job: job, user: current_user)
     job_note = messaging.add_job_note(
       text: allowed_params[:note],
       send_to_intake_user: send_to_intake_user
@@ -99,7 +99,7 @@ class AsyncableJobsController < ApplicationController
 
   def verify_access
     return true if current_user.admin?
-    return true if current_user.can?("Admin Intake")
+    return true if ["Admin Intake", "Manage Claim Establishment"].any? { |role| current_user.can?(role) }
 
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")

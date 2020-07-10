@@ -58,7 +58,7 @@ describe Hearing, :postgres do
           user_id: create(:user).id,
           person_id: hearing.claimant_id,
           granted: granted,
-          reason: "age"
+          reason: Constants.AOD_REASONS.age
         )
       end
     end
@@ -71,19 +71,10 @@ describe Hearing, :postgres do
   context "assigned_to_vso?" do
     let!(:hearing) { create(:hearing, :with_tasks) }
     let!(:user) { create(:user, :vso_role) }
-    let!(:vso_participant_id) { "789" }
+    let!(:vso_participant_id) { Fakes::BGSServicePOA::VIETNAM_VETERANS_VSO_PARTICIPANT_ID }
     let!(:vso) { create(:vso, participant_id: vso_participant_id) }
     let!(:track_veteran_task) { create(:track_veteran_task, appeal: hearing.appeal, assigned_to: vso) }
-    let!(:vso_participant_ids) do
-      [
-        {
-          legacy_poa_cd: "070",
-          nm: "VIETNAM VETERANS OF AMERICA",
-          org_type_nm: "POA National Organization",
-          ptcpnt_id: vso_participant_id
-        }
-      ]
-    end
+    let!(:vso_participant_ids) { Fakes::BGSServicePOA.default_vsos_poas }
 
     before do
       stub_const("BGSService", ExternalApi::BGSService)
@@ -111,6 +102,26 @@ describe Hearing, :postgres do
 
     context "when the hearing is assigned a vso" do
       it { is_expected.to eq(true) }
+    end
+  end
+
+  context "#hearing_location_or_regional_office" do
+    subject { hearing.hearing_location_or_regional_office }
+
+    context "hearing location is nil" do
+      let(:hearing) { create(:hearing, regional_office: nil) }
+
+      it "returns regional office" do
+        expect(subject).to eq(hearing.regional_office)
+      end
+    end
+
+    context "hearing location is not nil" do
+      let(:hearing) { create(:hearing, regional_office: "RO42") }
+
+      it "returns hearing location" do
+        expect(subject).to eq(hearing.location)
+      end
     end
   end
 end

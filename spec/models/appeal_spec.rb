@@ -1,12 +1,55 @@
 # frozen_string_literal: true
 
+require_relative "appeal_shared_examples"
+
 describe Appeal, :all_dbs do
   include IntakeHelpers
 
-  let!(:appeal) { create(:appeal) }
-
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+  end
+
+  let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze
+
+  context "#create_stream" do
+    let(:stream_type) { "vacate" }
+    let!(:appeal) { create(:appeal, number_of_claimants: 1) }
+
+    subject { appeal.create_stream(stream_type) }
+
+    it "creates a new appeal stream with data from the original appeal" do
+      expect(subject).to have_attributes(
+        receipt_date: appeal.receipt_date,
+        veteran_file_number: appeal.veteran_file_number,
+        legacy_opt_in_approved: appeal.legacy_opt_in_approved,
+        veteran_is_not_claimant: appeal.veteran_is_not_claimant,
+        stream_docket_number: appeal.docket_number,
+        stream_type: stream_type,
+        established_at: Time.zone.now
+      )
+      expect(subject.reload.claimant).to have_attributes(
+        participant_id: appeal.claimant.participant_id,
+        type: appeal.claimant.type
+      )
+    end
+
+    context "for de_novo appeal stream" do
+      let(:stream_type) { "de_novo" }
+
+      it "creates a de_novo appeal stream with data from the original appeal" do
+        expect(subject).to have_attributes(
+          receipt_date: appeal.receipt_date,
+          veteran_file_number: appeal.veteran_file_number,
+          legacy_opt_in_approved: appeal.legacy_opt_in_approved,
+          veteran_is_not_claimant: appeal.veteran_is_not_claimant,
+          stream_docket_number: appeal.docket_number,
+          stream_type: stream_type,
+          established_at: Time.zone.now
+        )
+        expect(Appeal.de_novo.find_by(stream_docket_number: appeal.docket_number)).to_not be_nil
+        expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
+      end
+    end
   end
 
   context "includes PrintsTaskTree concern" do
@@ -18,6 +61,16 @@ describe Appeal, :all_dbs do
       it "returns the task structure" do
         expect_any_instance_of(RootTask).to receive(:structure).with(:id)
         expect(subject.key?(:"Appeal #{appeal.id} [id]")).to be_truthy
+      end
+    end
+
+    context "#structure_as_json" do
+      let!(:root_task) { create(:root_task, appeal: appeal) }
+
+      subject { appeal.structure_as_json(:id) }
+
+      it "returns the task tree as a hash" do
+        expect(subject).to eq(Appeal: { id: appeal.id, tasks: [{ RootTask: { id: root_task.id, tasks: [] } }] })
       end
     end
   end
@@ -63,6 +116,59 @@ describe Appeal, :all_dbs do
         expect(VeteranRecordRequest).to_not receive(:create!)
 
         subject
+      end
+    end
+  end
+
+  context "#create_issues!" do
+    subject { appeal.create_issues!(issues) }
+
+    let(:issues) { [request_issue] }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        ineligible_reason: ineligible_reason,
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id
+      )
+    end
+    let(:ineligible_reason) { nil }
+    let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
+    let(:vacols_case) { create(:case, case_issues: [create(:case_issue)]) }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    context "when there is no associated legacy issue" do
+      it "does not create a legacy issue" do
+        subject
+
+        expect(request_issue.legacy_issues).to be_empty
+      end
+    end
+
+    context "when there is an associated legacy issue" do
+      let(:vacols_id) { legacy_appeal.vacols_id }
+      let(:vacols_sequence_id) { legacy_appeal.issues.first.vacols_sequence_id }
+
+      context "when the veteran did not opt in their legacy issues" do
+        let(:ineligible_reason) { "legacy_issue_not_withdrawn" }
+
+        it "creates a legacy issue, but no opt-in" do
+          subject
+
+          expect(request_issue.legacy_issues.count).to eq 1
+          expect(request_issue.legacy_issue_optin).to be_nil
+        end
+      end
+
+      context "when legacy opt in is approved by the veteran" do
+        let(:ineligible_reason) { nil }
+
+        it "creates a legacy issue and an associated opt-in" do
+          subject
+
+          expect(request_issue.legacy_issue_optin.legacy_issue).to eq(request_issue.legacy_issues.first)
+        end
       end
     end
   end
@@ -154,6 +260,10 @@ describe Appeal, :all_dbs do
     it "returns the latest record" do
       expect(subject).to eq attorney_case_review2
     end
+  end
+
+  context "#overtime" do
+    include_examples "toggle overtime"
   end
 
   context "#contestable_issues" do
@@ -305,7 +415,7 @@ describe Appeal, :all_dbs do
         create(:appeal, receipt_date: Time.new("2018", "04", "05").utc)
       end
 
-      it "returns a docket number if receipt_date is defined" do
+      it "returns a docket number if id and receipt_date are defined" do
         expect(appeal.docket_number).to eq("180405-#{appeal.id}")
       end
     end
@@ -318,6 +428,29 @@ describe Appeal, :all_dbs do
       it "returns Missing Docket Number" do
         expect(appeal.docket_number).to eq("Missing Docket Number")
       end
+    end
+  end
+
+  context "#set_stream_docket_number_and_stream_type" do
+    let(:appeal) { Appeal.new(veteran_file_number: "1234") }
+    let(:receipt_date) { Date.new(2020, 1, 24) }
+
+    it "persists an accurate value for stream_docket_number to the database" do
+      appeal.save!
+      expect(appeal.stream_docket_number).to be_nil
+      appeal.receipt_date = receipt_date
+      expect(appeal.docket_number).to eq("200124-#{appeal.id}")
+      appeal.save!
+      expect(appeal.stream_docket_number).to eq("200124-#{appeal.id}")
+      appeal.stream_docket_number = "something else"
+      appeal.save!
+      expect(Appeal.where(stream_docket_number: "something else").count).to eq(1)
+    end
+
+    it "persists a non-NULL value for stream_docket_number as soon as possible" do
+      appeal.receipt_date = receipt_date
+      appeal.save!
+      expect(Appeal.where(stream_docket_number: "200124-#{appeal.id}").count).to eq(1)
     end
   end
 
@@ -404,6 +537,25 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "#appellant_middle_initial" do
+    subject { appeal.appellant_middle_initial }
+
+    context "when appeal has claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+
+      it "returns non-nil string of size 1" do
+        expect(subject).to_not eq nil
+        expect(subject.size).to eq 1
+      end
+    end
+
+    context "when appeal doesn't have claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 0) }
+
+      it { is_expected.to eq nil }
+    end
+  end
+
   context "when claimants have different poas" do
     let(:participant_id_with_pva) { "1234" }
     let(:participant_id_with_aml) { "5678" }
@@ -420,39 +572,45 @@ describe Appeal, :all_dbs do
         name: "Paralyzed Veterans Of America",
         role: "VSO",
         url: "paralyzed-veterans-of-america",
-        participant_id: "9876"
+        participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
       )
     end
 
     before do
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
-        .with([participant_id_with_pva]).and_return(
-          participant_id_with_pva => {
-            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
-            representative_type: "POA National Organization",
-            participant_id: "9876"
-          }
-        )
+        .with([participant_id_with_pva]) do
+          { participant_id_with_pva => Fakes::BGSServicePOA.paralyzed_veterans_vso_mapped }
+        end
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
-        .with([participant_id_with_aml]).and_return(
-          participant_id_with_aml => {
-            representative_name: "AMERICAN LEGION",
-            representative_type: "POA National Organization",
-            participant_id: "54321"
-          }
-        )
+        .with([participant_id_with_aml]) do
+          { participant_id_with_aml => Fakes::BGSServicePOA.american_legion_vso_mapped }
+        end
     end
 
     context "#power_of_attorney" do
       it "returns the first claimant's power of attorney" do
-        expect(appeal.power_of_attorney.representative_name).to eq("AMERICAN LEGION")
+        expect(appeal.power_of_attorney.representative_name).to eq(Fakes::BGSServicePOA::AMERICAN_LEGION_VSO_NAME)
       end
     end
 
     context "#power_of_attorneys" do
       it "returns all claimants power of attorneys" do
-        expect(appeal.power_of_attorneys[0].representative_name).to eq("PARALYZED VETERANS OF AMERICA, INC.")
-        expect(appeal.power_of_attorneys[1].representative_name).to eq("AMERICAN LEGION")
+        expect(appeal.power_of_attorneys[0].representative_name)
+          .to eq(Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_NAME)
+        expect(appeal.power_of_attorneys[1].representative_name)
+          .to eq(Fakes::BGSServicePOA::AMERICAN_LEGION_VSO_NAME)
+      end
+
+      context "one claimant has no POA" do
+        before do
+          allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+            .with([participant_id_with_pva]).and_return({})
+          allow(appeal).to receive(:veteran_file_number) { "no-such-file-number" }
+        end
+
+        it "ignores nil values" do
+          expect(appeal.power_of_attorneys.count).to eq(1)
+        end
       end
     end
 
@@ -511,6 +669,19 @@ describe Appeal, :all_dbs do
         expect(VeteranRecordRequest).to receive(:create!).once
 
         subject
+      end
+    end
+
+    context "request issue is missing benefit type" do
+      let!(:appeal) do
+        create(:appeal, request_issues: [
+                 create(:request_issue, benefit_type: "unknown"),
+                 create(:request_issue, :unidentified)
+               ])
+      end
+
+      it "raises MissingBusinessLine exception" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingBusinessLine)
       end
     end
 
@@ -646,10 +817,10 @@ describe Appeal, :all_dbs do
       let(:appeal) { create(:appeal) }
       let(:today) { Time.zone.today }
 
+      let(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
       before do
-        create(:root_task, :in_progress, appeal: appeal)
-        create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 21)
-        create(:timed_hold_task, :in_progress, appeal: appeal, updated_at: today + 21)
+        create(:track_veteran_task, :in_progress, parent: root_task, updated_at: today + 21)
+        create(:timed_hold_task, :in_progress, parent: root_task, updated_at: today + 21)
       end
 
       describe "when there are no other tasks" do
@@ -658,12 +829,16 @@ describe Appeal, :all_dbs do
         end
       end
 
-      describe "when there is an actionable task with an assignee" do
+      describe "when there is an actionable task with an assignee", skip: "flake" do
         let(:assignee) { create(:user) }
-        let!(:task) { create(:ama_attorney_task, :in_progress, assigned_to: assignee, appeal: appeal) }
+        let!(:task) do
+          create(:ama_attorney_task, :in_progress, assigned_to: assignee, parent: root_task)
+        end
 
         it "returns the actionable task's label and does not include nonactionable tasks in its determinations" do
-          expect(appeal.assigned_to_location).to eq(assignee.css_id)
+          expect(appeal.assigned_to_location).to(
+            eq(assignee.css_id), appeal.structure_render(:id, :status, :created_at, :assigned_to_id)
+          )
         end
       end
     end
@@ -678,13 +853,13 @@ describe Appeal, :all_dbs do
 
       before do
         organization_root_task = create(:root_task, appeal: appeal_organization)
-        create(:generic_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
+        create(:ama_task, assigned_to: organization, parent: organization_root_task)
 
         user_root_task = create(:root_task, appeal: appeal_user)
-        create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+        create(:ama_task, assigned_to: user, parent: user_root_task)
 
         on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
-        create(:generic_task, :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
+        create(:ama_task, :on_hold, parent: on_hold_root, updated_at: today + 1)
 
         # These tasks are the most recently updated but should be ignored in the determination
         create(:track_veteran_task, :in_progress, appeal: appeal, updated_at: today + 20)
@@ -729,8 +904,8 @@ describe Appeal, :all_dbs do
       let!(:judge) { create(:user) }
       let!(:judge2) { create(:user) }
       let!(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal, created_at: 1.day.ago) }
-      let!(:task2) { create(:ama_judge_task, assigned_to: judge2, appeal: appeal) }
+      let!(:task) { create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal, created_at: 1.day.ago) }
+      let!(:task2) { create(:ama_judge_assign_task, assigned_to: judge2, appeal: appeal) }
 
       subject { appeal.assigned_judge }
 
@@ -827,6 +1002,27 @@ describe Appeal, :all_dbs do
 
       it "returns true" do
         expect(appeal.stuck?).to eq(true)
+      end
+    end
+  end
+
+  describe "#vacate_type" do
+    subject { appeal.vacate_type }
+
+    context "Appeal is a vacatur and has a post-decision motion" do
+      let(:original) { create(:appeal, :with_straight_vacate_stream) }
+      let(:appeal) { Appeal.vacate.find_by(stream_docket_number: original.docket_number) }
+
+      it "returns the post-decision motion's vacate type" do
+        expect(subject).to eq "straight_vacate"
+      end
+    end
+
+    context "Appeal is not a vacatur" do
+      let(:appeal) { create(:appeal) }
+
+      it "returns nil" do
+        expect(subject).to be_nil
       end
     end
   end

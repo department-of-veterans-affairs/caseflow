@@ -2,10 +2,9 @@
 
 class QualityReviewCaseSelector
   # AMA Limit and Probability. See Legacy numbers at app/models/judge_case_review.rb:28
-  # As of Dec 2019, we want AMA and Legacy to use the same cap. The percentages may differ. The
-  # goal is to get to the cap as steadily across the month as possible
-  MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 137
-  QUALITY_REVIEW_SELECTION_PROBABILITY = 0.032
+  # This probability was selected by Josh Freeman, QR Director at BVA
+  MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 133
+  QUALITY_REVIEW_SELECTION_PROBABILITY = 0.188
 
   class << self
     def select_case_for_quality_review?
@@ -15,7 +14,11 @@ class QualityReviewCaseSelector
     end
 
     def reached_monthly_limit_in_quality_reviews?
-      QualityReviewTask.created_this_month.size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
+      QualityReviewTask
+        .not_cancelled
+        .created_this_month
+        .where(assigned_to_type: Organization.name)
+        .size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
     end
   end
 end

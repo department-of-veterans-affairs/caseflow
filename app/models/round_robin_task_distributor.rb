@@ -8,9 +8,19 @@ class RoundRobinTaskDistributor
 
   attr_accessor :assignee_pool, :task_class
 
+  def initialize(assignee_pool:, task_class:)
+    @assignee_pool = assignee_pool.select(&:active?)
+    @task_class = task_class
+  end
+
   def latest_task
     # Use id as a proxy for created_at since the id field is already indexed.
-    task_class.where(assigned_to: assignee_pool).order(id: :desc).first
+    # Request .visible_in_queue_table_view to avoid TimedHoldTask or similar tasks
+    task_class
+      .visible_in_queue_table_view
+      .where(assigned_to: assignee_pool)
+      .order(id: :desc)
+      .first
   end
 
   def last_assignee

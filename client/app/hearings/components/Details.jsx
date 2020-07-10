@@ -1,36 +1,27 @@
-import React from 'react';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { css } from 'glamor';
-
-import CopyTextButton from '../../components/CopyTextButton';
-import Alert from '../../components/Alert';
-import Button from '../../components/Button';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import * as DateUtil from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
-import { deepDiff } from '../utils';
+import PropTypes from 'prop-types';
+import React, { useState, useEffect, useContext } from 'react';
 import _ from 'lodash';
 
-import DetailsSections from './DetailsSections';
-import DetailsOverview from './details/DetailsOverview';
-import { onChangeFormData, onReceiveAlerts } from '../../components/common/actions';
+import { DetailsHeader } from './details/DetailsHeader';
+import {
+  HearingsFormContext,
+  UPDATE_VIRTUAL_HEARING, SET_ALL_HEARING_FORMS, SET_UPDATED
+} from '../contexts/HearingsFormContext';
+import { deepDiff, pollVirtualHearingData, getChanges } from '../utils';
+import {
+  onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert
+} from '../../components/common/actions';
+import Alert from '../../components/Alert';
+import ApiUtil from '../../util/ApiUtil';
+import Button from '../../components/Button';
+import * as DateUtil from '../../util/DateUtil';
+import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
-
-const row = css({
-  marginLeft: '-15px',
-  marginRight: '-15px',
-  '& > *': {
-    display: 'inline-block',
-    paddingRight: '15px',
-    paddingLeft: '15px',
-    verticalAlign: 'middle',
-    margin: 0
-  }
-});
 
 const inputFix = css({
   '& .question-label': {
@@ -38,52 +29,52 @@ const inputFix = css({
   }
 });
 
-const HEARING_DETAILS_FORM_NAME = 'hearingDetails';
-const TRANSCRIPTION_DETAILS_FORM_NAME = 'transcriptionDetails';
-const VIRTUAL_HEARING_FORM_NAME = 'virtualHearing';
+const HearingDetails = (props) => {
+  const {
+    hearing, saveHearing, setHearing, goBack, disabled
+  } = props;
 
-class HearingDetails extends React.Component {
-  constructor(props) {
-    super(props);
+  const {
+    aod, appellantIsNotVeteran, bvaPoc, judgeId, isVirtual, wasVirtual,
+    externalId, veteranFirstName, veteranLastName,
+    veteranFileNumber, room, notes, evidenceWindowWaived,
+    scheduledFor, scheduledForIsPast, docketName, docketNumber,
+    transcriptSentDate, readableRequestType, hearingDayId,
+    regionalOfficeName, readableLocation,
+    disposition
+  } = hearing;
 
-    const initialFormData = this.getInitialFormData();
+  const isLegacy = docketName !== 'hearing';
 
-    this.state = {
-      disabled: this.props.disabled,
-      isLegacy: this.props.hearing.docketName !== 'hearing',
-      updated: false,
-      loading: false,
-      success: false,
-      error: false,
-      virtualHearingModalOpen: false,
-      virtualHearingModalType: null,
-      initialFormData
-    };
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [virtualHearingErrors, setVirtualHearingErrors] = useState({});
+  const [virtualHearingModalOpen, setVirtualHearingModalOpen] = useState(false);
+  const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
+  const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
-    this.updateAllFormData(initialFormData);
-  }
+  const hearingsFormContext = useContext(HearingsFormContext);
+  const hearingsFormDispatch = hearingsFormContext.dispatch;
+  const hearingForms = hearingsFormContext.state.hearingForms;
+  const formsUpdated = hearingsFormContext.state.updated;
 
-  openVirtualHearingModal = ({ type }) => this.setState({
-    virtualHearingModalOpen: true,
-    virtualHearingModalType: type
-  })
-  closeVirtualHearingModal = () => this.setState({ virtualHearingModalOpen: false })
-
-  getInitialFormData = () => {
-    const { hearing } = this.props;
+  const getInitialFormData = () => {
     const transcription = hearing.transcription || {};
     const virtualHearing = hearing.virtualHearing || {};
 
     return {
       hearingDetailsForm: {
-        bvaPoc: hearing.bvaPoc,
-        judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
-        evidenceWindowWaived: hearing.evidenceWindowWaived || false,
-        room: hearing.room,
-        notes: hearing.notes,
+        appellantIsNotVeteran,
+        bvaPoc,
+        judgeId: judgeId ? judgeId.toString() : null,
+        evidenceWindowWaived: evidenceWindowWaived || false,
+        room,
+        notes,
+        scheduledForIsPast,
+        emailEvents: _.values(hearing?.emailEvents),
         // Transcription Request
         transcriptRequested: hearing.transcriptRequested,
-        transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
+        transcriptSentDate: DateUtil.formatDateStr(transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
       },
       transcriptionDetailsForm: {
         // Transcription Details
@@ -98,81 +89,90 @@ class HearingDetails extends React.Component {
         requestedRemedy: transcription.requestedRemedy
       },
       virtualHearingForm: {
-        veteranEmail: virtualHearing.veteranEmail,
+        appellantEmail: virtualHearing.appellantEmail,
         representativeEmail: virtualHearing.representativeEmail,
         status: virtualHearing.status,
+        requestCancelled: virtualHearing.requestCancelled,
         // not used in form
         jobCompleted: virtualHearing.jobCompleted,
         clientHost: virtualHearing.clientHost,
-        alias: virtualHearing.alias,
+        aliasWithHost: virtualHearing.aliasWithHost,
         hostPin: virtualHearing.hostPin,
-        guestPin: virtualHearing.guestPin
+        guestPin: virtualHearing.guestPin,
+        hostLink: virtualHearing.hostLink,
+        guestLink: virtualHearing.guestLink
       }
     };
-  }
+  };
 
-  updateAllFormData = ({ hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm }) => {
-    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, hearingDetailsForm);
-    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, transcriptionDetailsForm);
-    this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, virtualHearingForm);
-  }
+  const initialFormData = getInitialFormData();
 
-  updateHearing = (values) => {
-    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, values);
-    this.setState({ updated: true });
-  }
+  useEffect(() => {
+    hearingsFormDispatch({ type: SET_ALL_HEARING_FORMS, payload: getInitialFormData() });
+  }, [props.hearing]);
 
-  updateVirtualHearing = (values) => {
-    this.props.onChangeFormData(VIRTUAL_HEARING_FORM_NAME, values);
-    this.setState({ updated: true });
-  }
+  const openVirtualHearingModal = ({ type }) => {
+    setVirtualHearingModalOpen(true);
+    setVirtualHearingModalType(type);
+  };
 
-  resetVirtualHearing = () => {
-    const { hearing: { virtualHearing } } = this.props;
+  const updateVirtualHearing = (newVirtualHearingValues) => {
+    hearingsFormDispatch({ type: UPDATE_VIRTUAL_HEARING, payload: newVirtualHearingValues });
 
-    if (virtualHearing) {
-      this.updateVirtualHearing(virtualHearing);
+    // Calculate the form changes
+    const updates = getChanges(initialFormData, { virtualHearingsForm: newVirtualHearingValues });
+
+    hearingsFormDispatch({
+      type: SET_UPDATED,
+      payload: !_.isEmpty(updates)
+    });
+    setVirtualHearingErrors({});
+  };
+
+  const closeVirtualHearingModal = () => setVirtualHearingModalOpen(false);
+
+  const resetVirtualHearing = () => {
+    if (hearing.virtualHearing) {
+      // Reset the jobCompleted so that we dont disable the hearings dropdown
+      // Addresses issue where frontend overrides backend on cancelling hearing change
+      // REMINDER: Refactor to get state from the backend
+      updateVirtualHearing({
+        ...hearing.virtualHearing,
+        jobCompleted: true,
+        requestCancelled: initialFormData.virtualHearingForm?.requestCancelled
+      });
     } else {
-      this.updateVirtualHearing(null);
+      hearingsFormDispatch({ type: UPDATE_VIRTUAL_HEARING, payload: null });
     }
+  };
 
-    this.closeVirtualHearingModal();
-  }
-
-  getEditedEmails = () => {
-    const { hearing: { virtualHearing }, formData: { virtualHearingForm } } = this.props;
-
-    const changes = deepDiff(virtualHearing, virtualHearingForm || {});
+  const getEditedEmails = () => {
+    const { virtualHearingForm } = hearingForms;
+    const changes = deepDiff(hearing.virtualHearing, virtualHearingForm || {});
 
     return {
-      repEmailEdited: !_.isUndefined(changes.representativeEmail),
-      vetEmailEdited: !_.isUndefined(changes.veteranEmail)
+      appellantEmailEdited: !_.isUndefined(changes.appellantEmail),
+      representativeEmailEdited: !_.isUndefined(changes.representativeEmail)
     };
-  }
+  };
 
-  updateTranscription = (values) => {
-    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, values);
-    this.setState({ updated: true });
-  }
-
-  submit = () => {
-    const { hearing: { externalId } } = this.props;
-    const { updated } = this.state;
-
-    if (!updated) {
+  const submit = () => {
+    if (!formsUpdated) {
       return;
     }
 
     // only send updated properties
-    const {
-      hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm
-    } = deepDiff(this.state.initialFormData, this.props.formData);
+    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = getChanges(
+      initialFormData,
+      hearingForms
+    );
 
-    const data = {
+    const submitData = {
       hearing: {
         ...(hearingDetailsForm || {}),
         transcription_attributes: {
-          ...(transcriptionDetailsForm || {})
+          // Always send full transcription details because a new record is created each update
+          ...(transcriptionDetailsForm ? hearingForms.transcriptionDetailsForm : {})
         },
         virtual_hearing_attributes: {
           ...(virtualHearingForm || {})
@@ -180,162 +180,176 @@ class HearingDetails extends React.Component {
       }
     };
 
-    this.setState({ loading: true });
+    setLoading(true);
 
-    return ApiUtil.patch(`/hearings/${externalId}`, {
-      data: ApiUtil.convertToSnakeCase(data)
-    }).then((response) => {
+    return saveHearing(submitData).then((response) => {
+      const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
+      const alerts = response.body?.alerts;
 
-      const hearing = ApiUtil.convertToCamelCase(response.body.data);
-      const alerts = response.body.alerts;
+      setLoading(false);
+      setError(false);
 
-      this.setState({
-        updated: false,
-        loading: false,
-        success: true,
-        error: false
-      });
+      // set hearing on DetailsContainer
+      setHearing(hearingResp, () => {
+        if (alerts) {
+          const {
+            hearing: hearingAlerts,
+            virtual_hearing: virtualHearingAlerts
+          } = alerts;
 
-      // set hearing on DetailsContainer then reset initialFormData
-      this.props.setHearing(hearing, () => {
-        const initialFormData = this.getInitialFormData();
+          if (hearingAlerts) {
+            props.onReceiveAlerts(hearingAlerts);
+          }
 
-        this.setState({
-          initialFormData
-        });
-
-        this.updateAllFormData(initialFormData);
-        this.props.onReceiveAlerts(alerts);
+          if (!_.isEmpty(virtualHearingAlerts)) {
+            props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
+            setShouldStartPolling(true);
+          }
+        }
       });
     }).
-      catch((error) => {
-        const code = _.get(error, 'response.body.errors[0].code') || '';
+      catch((respError) => {
+        const code = _.get(respError, 'response.body.errors[0].code') || '';
 
         if (code === 1002) {
-          // 1002 is returned with an invalid email. rethrow error, then re-catch it in VirtualHearingModal
-          throw error;
+          // 1002 is returned with an invalid email. rethrow respError, then re-catch it in VirtualHearingModal
+          throw respError;
         }
-        this.setState({
-          loading: false,
-          error: error.message,
-          success: false
-        });
+        setLoading(false);
+        setError(respError.message);
       });
-  }
+  };
 
-  render() {
-    const {
-      veteranFirstName,
-      veteranLastName,
-      veteranFileNumber
-    } = this.props.hearing;
+  const handleSave = (editedEmails) => {
+    const virtual = hearing.isVirtual || wasVirtual;
 
-    const { hearingDetailsForm, transcriptionDetailsForm, virtualHearingForm } = this.props.formData;
+    if (
+      virtual &&
+      (!hearingForms.virtualHearingForm?.representativeEmail ||
+      !hearingForms.virtualHearingForm?.appellantEmail)
+    ) {
+      setLoading(true);
+      setVirtualHearingErrors({
+        appellantEmail: !hearingForms.virtualHearingForm.appellantEmail && 'Appellant email is required',
+        representativeEmail: !hearingForms.virtualHearingForm.representativeEmail && 'Representative email is required'
+      });
+    } else if (editedEmails.representativeEmailEdited || editedEmails.appellantEmailEdited) {
+      openVirtualHearingModal({ type: 'change_email' });
+    } else {
+      submit();
+    }
+  };
 
-    const { disabled, error } = this.state;
+  const startPolling = () => {
+    return pollVirtualHearingData(externalId, (response) => {
+      // response includes jobCompleted, aliasWithHost, guestPin, hostPin,
+      // guestLink, and hostLink
+      const resp = ApiUtil.convertToCamelCase(response);
 
-    const editedEmails = this.getEditedEmails();
+      if (resp.jobCompleted) {
+        setShouldStartPolling(false);
+        hearingsFormDispatch({ type: UPDATE_VIRTUAL_HEARING, payload: resp });
+        hearingsFormDispatch({ type: SET_UPDATED, payload: false });
+        props.transitionAlert('virtualHearing');
+      }
 
-    return (
-      <AppSegment filledBackground>
-        <UserAlerts />
-        {error &&
-          <div {...css({ marginBottom: '4rem' })}>
-            <Alert type="error" title="There was an error updating hearing" />
-          </div>
-        }
-        <div {...inputFix}>
-          <div {...row}>
-            <h1 className="cf-margin-bottom-0">{`${veteranFirstName} ${veteranLastName}`}</h1>
-            <div>Veteran ID: <CopyTextButton text={veteranFileNumber} label="Veteran ID" /></div>
-          </div>
+      // continue polling if return true (opposite of job_completed)
+      return !response.job_completed;
+    });
+  };
 
-          <div className="cf-help-divider" />
-          <h2>Hearing Details</h2>
-          <DetailsOverview hearing={this.props.hearing} />
-          <div className="cf-help-divider" />
-          {this.state.virtualHearingModalOpen && <VirtualHearingModal
-            hearing={this.props.hearing}
-            virtualHearing={virtualHearingForm}
-            update={this.updateVirtualHearing}
-            submit={() => this.submit().then(this.closeVirtualHearingModal)}
-            closeModal={this.closeVirtualHearingModal}
-            reset={this.resetVirtualHearing}
-            type={this.state.virtualHearingModalType}
-            {...editedEmails} />}
-          <DetailsSections
-            user={this.props.user}
-            updateTranscription={this.updateTranscription}
-            updateHearing={this.updateHearing}
-            updateVirtualHearing={this.updateVirtualHearing}
-            transcription={transcriptionDetailsForm}
-            hearing={hearingDetailsForm}
-            virtualHearing={virtualHearingForm}
-            isLegacy={this.state.isLegacy}
-            openVirtualHearingModal={this.openVirtualHearingModal}
-            requestType={this.props.hearing.readableRequestType}
-            disabled={disabled}
-            isVirtual={this.props.hearing.isVirtual} />
-          <div>
-            <a
-              className="button-link"
-              onClick={this.props.goBack}
-              style={{ float: 'left' }}
-            >Cancel</a>
-            <span {...css({ float: 'right' })}>
-              <Button
-                name="Save"
-                disabled={!this.state.updated || this.state.disabled}
-                loading={this.state.loading}
-                className="usa-button"
-                onClick={() => {
-                  if (editedEmails.repEmailEdited || editedEmails.vetEmailEdited) {
-                    this.openVirtualHearingModal({ type: 'change_email' });
-                  } else {
-                    this.submit();
-                  }
-                }}
-                styling={css({ float: 'right' })}
-              >Save</Button>
-            </span>
-          </div>
+  const editedEmails = getEditedEmails();
+
+  return (
+    <React.Fragment>
+      <UserAlerts />
+      {error &&
+        <div>
+          <Alert type="error" title="There was an error updating the hearing" />
         </div>
+      }
+      <AppSegment filledBackground>
+        <div {...inputFix}>
+          <DetailsHeader
+            aod={aod}
+            disposition={disposition}
+            docketName={docketName}
+            docketNumber={docketNumber}
+            isVirtual={isVirtual}
+            hearingDayId={hearingDayId}
+            readableLocation={readableLocation}
+            readableRequestType={readableRequestType}
+            regionalOfficeName={regionalOfficeName}
+            scheduledFor={scheduledFor}
+            veteranFileNumber={veteranFileNumber}
+            veteranFirstName={veteranFirstName}
+            veteranLastName={veteranLastName}
+          />
+          <DetailsForm
+            errors={virtualHearingErrors}
+            isLegacy={isLegacy}
+            isVirtual={isVirtual}
+            openVirtualHearingModal={openVirtualHearingModal}
+            readOnly={disabled}
+            requestType={readableRequestType}
+            updateVirtualHearing={updateVirtualHearing}
+            wasVirtual={wasVirtual}
+          />
+        </div>
+        {shouldStartPolling && startPolling()}
+        {virtualHearingModalOpen && (
+          <VirtualHearingModal
+            hearing={hearing}
+            virtualHearing={hearingForms?.virtualHearingForm}
+            update={updateVirtualHearing}
+            submit={submit}
+            closeModal={closeVirtualHearingModal}
+            reset={resetVirtualHearing}
+            type={virtualHearingModalType}
+            {...editedEmails}
+          />
+        )}
       </AppSegment>
-    );
-  }
-}
+      <div {...css({ overflow: 'hidden' })}>
+        <Button
+          name="Cancel"
+          linkStyling
+          onClick={goBack}
+          styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
+        >
+          Cancel
+        </Button>
+        <span {...css({ float: 'right' })}>
+          <Button
+            name="Save"
+            disabled={!formsUpdated || disabled}
+            loading={loading}
+            className="usa-button"
+            onClick={() => handleSave(editedEmails)}
+          >
+            Save
+          </Button>
+        </span>
+      </div>
+    </React.Fragment>
+  );
+};
 
 HearingDetails.propTypes = {
-  user: PropTypes.shape({
-    userCanScheduleVirtualHearings: PropTypes.bool
-  }),
   hearing: PropTypes.object.isRequired,
+  saveHearing: PropTypes.func,
   setHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
   onReceiveAlerts: PropTypes.func,
-  onChangeFormData: PropTypes.func,
-  formData: PropTypes.shape({
-    hearingDetailsForm: PropTypes.object,
-    transcriptionDetailsForm: PropTypes.object,
-    virtualHearingForm: PropTypes.object
-  })
+  onReceiveTransitioningAlert: PropTypes.func,
+  transitionAlert: PropTypes.func
 };
 
-const mapStateToProps = (state) => ({
-  formData: {
-    hearingDetailsForm: state.components.forms[HEARING_DETAILS_FORM_NAME],
-    transcriptionDetailsForm: state.components.forms[TRANSCRIPTION_DETAILS_FORM_NAME],
-    virtualHearingForm: state.components.forms[VIRTUAL_HEARING_FORM_NAME]
-  }
-});
-
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onChangeFormData,
-  onReceiveAlerts
+  onReceiveAlerts,
+  onReceiveTransitioningAlert,
+  transitionAlert
 }, dispatch);
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(HearingDetails);
+export default connect(null, mapDispatchToProps)(HearingDetails);

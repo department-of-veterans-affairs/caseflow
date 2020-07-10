@@ -3,7 +3,16 @@
 require "faker"
 
 describe TaskPager, :all_dbs do
+  let(:assignee) { create(:organization) }
+
+  before { allow(assignee).to receive(:use_task_pages_api?).and_return(true) unless assignee.nil? }
+
   describe ".new" do
+    shared_examples "missing required property" do
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
+      end
+    end
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
 
@@ -12,40 +21,28 @@ describe TaskPager, :all_dbs do
     context "when object is created with no arguments" do
       let(:arguments) { {} }
 
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
-      end
+      it_behaves_like "missing required property"
     end
 
     context "when object is created with a nil assignee" do
       let(:assignee) { nil }
 
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
-      end
+      it_behaves_like "missing required property"
     end
 
     context "when object is created with a valid assignee but no tab name" do
-      let(:assignee) { create(:organization) }
       let(:tab_name) { nil }
 
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
-      end
+      it_behaves_like "missing required property"
     end
 
     context "when sort order is invalid" do
-      let(:assignee) { create(:organization) }
       let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_order: "invalid" } }
 
-      it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
-      end
+      it_behaves_like "missing required property"
     end
 
     context "when object is created with a valid assignee and a tab name" do
-      let(:assignee) { create(:organization) }
-
       it "successfully instantiates the object" do
         expect { subject }.to_not raise_error
       end
@@ -53,7 +50,6 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".tasks_for_tab" do
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
 
@@ -71,7 +67,7 @@ describe TaskPager, :all_dbs do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:task_count) { TaskPager::TASKS_PER_PAGE + 3 }
 
-      before { create_list(:generic_task, task_count, assigned_to: assignee) }
+      before { create_list(:ama_task, task_count, assigned_to: assignee) }
 
       it "returns the correct number of tasks" do
         expect(subject.count).to eq(task_count)
@@ -80,12 +76,11 @@ describe TaskPager, :all_dbs do
   end
 
   describe ".paged_tasks" do
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { create_list(:generic_task, task_count, assigned_to: assignee) }
+    before { create_list(:ama_task, task_count, assigned_to: assignee) }
 
     subject { TaskPager.new(arguments).paged_tasks }
 
@@ -111,40 +106,114 @@ describe TaskPager, :all_dbs do
       it "returns a single task" do
         expect(subject.count).to eq(1)
       end
+
+      context "when the assignee is a user" do
+        let(:assignee) { create(:user) }
+        let(:tab_name) { Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME }
+
+        it "returns a single task" do
+          expect(subject.count).to eq(1)
+        end
+      end
+    end
+
+    context "when pagination is not enabled for the assignee" do
+      let(:page) { 1 }
+      before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
+
+      it "returns all tasks" do
+        expect(subject.count).to eq(task_count)
+      end
+    end
+
+    context "when the tab cannot be paginated" do
+      let(:page) { 1 }
+      before { allow_any_instance_of(QueueTab).to receive(:contains_legacy_tasks?).and_return(true) }
+
+      it "returns all tasks" do
+        expect(subject.count).to eq(task_count)
+      end
     end
   end
 
   describe ".total_task_count" do
-    let(:assignee) { create(:organization) }
+    shared_examples "total task count" do
+      it "returns the total task count" do
+        expect(subject).to eq(task_count)
+      end
+    end
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { create_list(:generic_task, task_count, assigned_to: assignee) }
+    before { create_list(:ama_task, task_count, assigned_to: assignee) }
 
     subject { TaskPager.new(arguments).total_task_count }
 
     context "when the first page of tasks is requested" do
       let(:page) { 1 }
 
-      it "returns the total task count" do
-        expect(subject).to eq(task_count)
-      end
+      it_behaves_like "total task count"
     end
 
     context "when the page argument is nil" do
       let(:page) { nil }
 
-      it "returns the total task count" do
-        expect(subject).to eq(task_count)
-      end
+      it_behaves_like "total task count"
     end
 
     context "when the second page of tasks is requested" do
       let(:page) { 2 }
 
+      it_behaves_like "total task count"
+    end
+
+    context "when pagination is not enabled for the assignee" do
+      let(:page) { 1 }
+      before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
+
+      it_behaves_like "total task count"
+    end
+
+    context "when the tab cannot be paginated" do
+      let(:page) { 1 }
+      before { allow_any_instance_of(QueueTab).to receive(:contains_legacy_tasks?).and_return(true) }
+
       it "returns the total task count" do
         expect(subject).to eq(task_count)
+      end
+    end
+  end
+
+  describe ".task_page_count" do
+    let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
+    let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
+    let(:arguments) { { assignee: assignee, tab_name: tab_name } }
+
+    before { create_list(:ama_task, task_count, assigned_to: assignee) }
+
+    subject { TaskPager.new(arguments).task_page_count }
+
+    context "when pagination is enabled for the assignee" do
+      it "returns the total page count" do
+        expect(subject).to eq(2)
+      end
+    end
+
+    context "when pagination is not enabled for the assignee" do
+      before { allow(assignee).to receive(:use_task_pages_api?).and_return(false) }
+
+      it "returns one page with all tasks" do
+        expect(subject).to eq(1)
+      end
+    end
+
+    context "when the tab cannot be paginated" do
+      let(:page) { 1 }
+      before { allow_any_instance_of(QueueTab).to receive(:contains_legacy_tasks?).and_return(true) }
+
+      it "returns one page with all tasks" do
+        expect(subject).to eq(1)
       end
     end
   end
@@ -154,11 +223,10 @@ describe TaskPager, :all_dbs do
     let(:arguments) { { assignee: assignee, tab_name: tab_name, sort_by: sort_by, sort_order: sort_order } }
     let(:sort_by) { nil }
     let(:sort_order) { nil }
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:tasks) { task_pager.tasks_for_tab }
 
-    let!(:created_tasks) { create_list(:generic_task, 14, assigned_to: assignee) }
+    let!(:created_tasks) { create_list(:ama_task, 14, assigned_to: assignee) }
 
     subject { task_pager.sorted_tasks(tasks) }
 
@@ -181,9 +249,19 @@ describe TaskPager, :all_dbs do
       context "with desc sort_order" do
         let(:sort_order) { Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC }
 
-        it "sorts tasks in reserve by closed_at value" do
+        it "sorts tasks in reverse by closed_at value" do
           expected_order = created_tasks.sort_by(&:closed_at).reverse
           expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+        end
+
+        context "when the assignee is a user" do
+          let(:assignee) { create(:user) }
+          let(:tab_name) { Constants.QUEUE_CONFIG.INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME }
+
+          it "sorts tasks in reverse by closed_at value" do
+            expected_order = created_tasks.sort_by(&:closed_at).reverse
+            expect(subject.map(&:id)).to eq(expected_order.map(&:id))
+          end
         end
       end
     end
@@ -327,9 +405,14 @@ describe TaskPager, :all_dbs do
       let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name }
 
       before do
+        # not random, in order to have deterministic sort for testing.
+        first_initials = ("A".."Z").map(&:to_s)
+        last_initials = ("Z".."A").map(&:to_s)
+        middle_initials = ("a".."z").map(&:to_s)
+
         created_tasks.each do |task|
-          first_name = Faker::Name.unique.first_name
-          last_name = "#{Faker::Name.unique.first_name} #{Faker::Name.unique.first_name}"
+          first_name = first_initials.shift
+          last_name = "#{middle_initials.shift} #{last_initials.shift}"
           task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
           create(
             :cached_appeal,
@@ -372,7 +455,7 @@ describe TaskPager, :all_dbs do
         end
         appeals = [appeal_1, appeal_2]
         appeals.map do |appeal|
-          create(:colocated_task, assigned_to: assignee, appeal: appeal)
+          create(:ama_colocated_task, assigned_to: assignee, appeal: appeal)
           create(:cached_appeal,
                  appeal_id: appeal.id,
                  appeal_type: Appeal.name,
@@ -382,16 +465,15 @@ describe TaskPager, :all_dbs do
       end
 
       it "sorts by AOD status, case type, and docket number" do
-        expected_order = CachedAppeal.all.sort_by do |cached_appeal|
-          [cached_appeal.is_aod ? 1 : 0, cached_appeal.case_type, cached_appeal.docket_number]
-        end
-        expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+        # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up first
+        # so we sort descending on is_aod
+        expected_order = CachedAppeal.order(is_aod: :desc, case_type: :asc, docket_number: :asc)
+        expect(subject.map(&:appeal_id)).to eq(expected_order.pluck(:appeal_id))
       end
     end
   end
 
   describe ".filtered_tasks" do
-    let(:assignee) { create(:organization) }
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, filters: filters } }
 
@@ -415,7 +497,7 @@ describe TaskPager, :all_dbs do
       context "when filter includes TranslationTasks" do
         let(:filters) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}"] }
 
-        it "returns only translation tasks assigned to the current organization" do
+        it "returns only translation tasks assigned to the current organization", :aggregate_failures do
           expect(subject.map(&:id)).to_not match_array(task_pager.tasks_for_tab.map(&:id))
           expect(subject.map(&:type).uniq).to eq([TranslationTask.name])
           expect(subject.length).to eq(translation_tasks.count)
@@ -424,10 +506,10 @@ describe TaskPager, :all_dbs do
 
       context "when filter includes TranslationTasks and FoiaTasks" do
         let(:filters) do
-          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name},#{FoiaTask.name}"]
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{TranslationTask.name}|#{FoiaTask.name}"]
         end
 
-        it "returns all translation and FOIA tasks assigned to the current organization" do
+        it "returns all translation and FOIA tasks assigned to the current organization", :aggregate_failures do
           expect(subject.map(&:type).uniq).to match_array([TranslationTask.name, FoiaTask.name])
           expect(subject.length).to eq(translation_tasks.count + foia_tasks.count)
         end

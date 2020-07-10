@@ -1,13 +1,15 @@
-import React from 'react';
-import moment from 'moment';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+import moment from 'moment-timezone';
+
+import HEARING_TIME_OPTIONS from '../../../../constants/HEARING_TIME_OPTIONS';
+import HEARING_TIME_RADIO_OPTIONS from '../../../../constants/HEARING_TIME_RADIO_OPTIONS';
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
-import { TIME_OPTIONS } from '../../constants';
-import _ from 'lodash';
 
 export const getAssignHearingTime = (time, day) => {
-
   return {
     // eslint-disable-next-line id-length
     h: time.split(':')[0],
@@ -25,96 +27,65 @@ const formStyling = css({
   marginBottom: 0
 });
 
-let index = 0;
+const getTimeOptions = (regionalOffice, readOnly) => (
+  _.map(
+    regionalOffice === 'C' ? HEARING_TIME_RADIO_OPTIONS.central : HEARING_TIME_RADIO_OPTIONS.default,
+    (obj) => _.extend(obj, { disabled: readOnly })
+  )
+);
 
-export default class HearingTime extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isOther: this.getIsOther(),
-      index: index += 1
-    };
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!_.isEqual(this.props.value, prevProps.value)) {
-      this.setState({
-        isOther: this.getIsOther()
-      });
-    }
-  }
-
-  getIsOther = () => {
-    const selectedOption = _.find(this.getTimeOptions(), (opt) => opt.value === this.props.value);
-
-    return _.isUndefined(selectedOption);
-  }
-
-  getTimeOptions = (readOnly) => {
-    const { regionalOffice } = this.props;
-
-    if (regionalOffice === 'C') {
-      return [
-        { displayText: '9:00 am',
-          value: '09:00',
-          disabled: readOnly },
-        { displayText: '1:00 pm',
-          value: '13:00',
-          disabled: readOnly },
-        { displayText: 'Other',
-          value: 'other',
-          disabled: readOnly }
-      ];
-    }
-
-    return [
-      { displayText: '8:30 am',
-        value: '08:30',
-        disabled: readOnly },
-      { displayText: '12:30 pm',
-        value: '12:30',
-        disabled: readOnly },
-      { displayText: 'Other',
-        value: 'other',
-        disabled: readOnly }
-    ];
-  }
-
-  onRadioChange = (value) => {
-    if (value === 'other') {
-      this.setState({ isOther: true });
-      this.props.onChange(null);
+export const HearingTime = (
+  { componentIndex, errorMessage, onChange, readOnly, regionalOffice, value }
+) => {
+  const timeOptions = getTimeOptions(regionalOffice, readOnly);
+  const isOther = _.isUndefined(
+    _.find(timeOptions, (opt) => opt.value === value)
+  );
+  const onRadioChange = (newValue) => {
+    if (newValue === 'other') {
+      onChange(null);
     } else {
-      this.setState({ isOther: false });
-      this.props.onChange(value);
+      onChange(newValue);
     }
-  }
+  };
 
-  render() {
-    const { errorMessage, value, readOnly } = this.props;
-
-    return (
-      <React.Fragment>
-        <span {...formStyling}>
-          <RadioField
-            errorMessage={errorMessage}
-            name={`hearingTime${this.state.index}`}
-            label="Time"
-            strongLabel
-            options={this.getTimeOptions(readOnly)}
-            onChange={this.onRadioChange}
-            value={this.state.isOther ? 'other' : value} />
-        </span>
-        {this.state.isOther && <SearchableDropdown
+  return (
+    <React.Fragment>
+      <span {...formStyling}>
+        <RadioField
+          errorMessage={errorMessage}
+          name={`hearingTime${componentIndex}`}
+          label="Time"
+          strongLabel
+          options={timeOptions}
+          onChange={onRadioChange}
+          value={isOther ? 'other' : value}
+        />
+      </span>
+      {isOther && (
+        <SearchableDropdown
           readOnly={readOnly}
-          name={`optionalHearingTime${this.state.index}`}
+          name={`optionalHearingTime${componentIndex}`}
           placeholder="Select a time"
-          options={TIME_OPTIONS}
+          options={HEARING_TIME_OPTIONS}
           value={value}
-          onChange={(option) => this.props.onChange(option ? option.value : null)}
-          hideLabel />}
-      </React.Fragment>
-    );
-  }
-}
+          onChange={(option) => onChange(option ? option.value : null)}
+          hideLabel
+        />
+      )}
+    </React.Fragment>
+  );
+};
+
+HearingTime.defaultProps = {
+  componentIndex: 0
+};
+
+HearingTime.propTypes = {
+  componentIndex: PropTypes.number,
+  errorMessage: PropTypes.string,
+  onChange: PropTypes.func,
+  readOnly: PropTypes.bool,
+  regionalOffice: PropTypes.string,
+  value: PropTypes.string
+};

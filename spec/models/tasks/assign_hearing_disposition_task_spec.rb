@@ -5,7 +5,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     let(:appeal) { create(:appeal) }
     let!(:hearing) { create(:hearing, appeal: appeal) }
     let!(:root_task) { create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task) }
     let!(:disposition_task) do
       AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, hearing_task, hearing)
     end
@@ -32,12 +32,13 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls cancel!" do
-        expect(disposition_task).to receive(:cancel!).exactly(1).times
+        expect(disposition_task).to receive(:cancel!).exactly(1).times.and_call_original
 
         subject
 
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
+        expect(disposition_task.reload.closed_at).to_not be_nil
       end
     end
 
@@ -224,12 +225,45 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
   end
 
-  context "disposition updates" do
-    let(:disposition) { nil }
+  context "missing hearing association" do
     let(:appeal) { create(:appeal) }
     let(:root_task) { create(:root_task, appeal: appeal) }
-    let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
-    let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: distribution_task) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
+
+    let(:hearing) do
+      create(
+        :hearing,
+        appeal: appeal,
+        evidence_window_waived: evidence_window_waived
+      )
+    end
+    let!(:disposition_task) do
+      create(
+        :assign_hearing_disposition_task,
+        :in_progress,
+        parent: hearing_task
+      )
+    end
+
+    subject do
+      disposition_task.send(
+        :update_hearing_disposition,
+        disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+      )
+    end
+
+    it "fails with missing hearing association error" do
+      expect { subject }.to raise_error(AssignHearingDispositionTask::HearingAssociationMissing)
+    end
+  end
+
+  context "disposition updates" do
+    let(:disposition) { nil }
+    let(:appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
     let(:evidence_window_waived) { nil }
     let(:hearing_scheduled_for) { appeal.receipt_date + 15.days }
     let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_scheduled_for) }
@@ -253,16 +287,14 @@ describe AssignHearingDispositionTask, :all_dbs do
       create(
         :assign_hearing_disposition_task,
         :in_progress,
-        parent: hearing_task,
-        appeal: appeal
+        parent: hearing_task
       )
     end
     let!(:schedule_hearing_task) do
       create(
         :schedule_hearing_task,
         :completed,
-        parent: hearing_task,
-        appeal: appeal
+        parent: hearing_task
       )
     end
 
@@ -281,6 +313,8 @@ describe AssignHearingDispositionTask, :all_dbs do
 
             expect(disposition_task.reload.cancelled?).to be_truthy
             expect(hearing_task.reload.cancelled?).to be_truthy
+            expect(disposition_task.closed_at).to_not be_nil
+            expect(hearing_task.closed_at).to_not be_nil
             expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
             expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
             expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
@@ -288,7 +322,7 @@ describe AssignHearingDispositionTask, :all_dbs do
 
           context "the appeal has an existing EvidenceSubmissionWindowTask" do
             let!(:evidence_submission_window_task) do
-              create(:evidence_submission_window_task, appeal: appeal, parent: distribution_task)
+              create(:evidence_submission_window_task, parent: distribution_task)
             end
 
             it "does not raise an error" do
@@ -305,23 +339,25 @@ describe AssignHearingDispositionTask, :all_dbs do
             let(:appeal) do
               create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_pva)])
             end
+            let(:poa) do
+              Fakes::BGSServicePOA.paralyzed_veterans_vso_mapped.tap do |poa|
+                poa[:claimant_participant_id] = participant_id_with_pva
+                poa[:file_number] = appeal.veteran_file_number
+              end
+            end
 
             before do
               Vso.create(
                 name: "Paralyzed Veterans Of America",
                 role: "VSO",
                 url: "paralyzed-veterans-of-america",
-                participant_id: "2452383"
+                participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
               )
 
               allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
-                .with([participant_id_with_pva]).and_return(
-                  participant_id_with_pva => {
-                    representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
-                    representative_type: "POA National Organization",
-                    participant_id: "2452383"
-                  }
-                )
+                .with([participant_id_with_pva]).and_return(participant_id_with_pva => poa)
+              allow_any_instance_of(BGSService).to receive(:fetch_poa_by_file_number)
+                .with(appeal.veteran_file_number).and_return(poa)
             end
 
             it "creates an IHP task" do
@@ -351,7 +387,7 @@ describe AssignHearingDispositionTask, :all_dbs do
         let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        let(:disposition) { :C }
 
         context "there's no associated VSO" do
           it "updates the case location to case storage (81)" do
@@ -369,6 +405,7 @@ describe AssignHearingDispositionTask, :all_dbs do
             allow(BGSService).to receive(:power_of_attorney_records).and_return(
               appeal.veteran_file_number => {
                 file_number: appeal.veteran_file_number,
+                ptcpnt_id: "4567",
                 power_of_attorney: {
                   legacy_poa_cd: "3QQ",
                   nm: "Clarence Darrow",
@@ -435,7 +472,6 @@ describe AssignHearingDispositionTask, :all_dbs do
           no_show_hearing_task = NoShowHearingTask.first
           expect(no_show_hearing_task).to_not be_nil
           expect(no_show_hearing_task.placed_on_hold_at).to_not be_nil
-          expect(no_show_hearing_task.old_style_hold_expired?).to be_falsey
           expect(no_show_hearing_task.reload.on_hold?).to be_truthy
           expect(no_show_hearing_task.calculated_on_hold_duration).to eq 25
           instructions_text = "Mail must be received within 14 days of the original hearing date."
@@ -521,10 +557,10 @@ describe AssignHearingDispositionTask, :all_dbs do
         let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        let(:disposition) { :C }
 
         context "the task's hearing's disposition is held" do
-          let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+          let(:disposition) { :H }
 
           it "completes the AssignHearingDispositionTask, closes the HearingTask, and updates the appeal location" do
             expect(disposition_task.in_progress?).to be_truthy

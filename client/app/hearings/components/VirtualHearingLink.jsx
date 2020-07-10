@@ -1,43 +1,43 @@
 import { css } from 'glamor';
-import React from 'react';
-import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import { COLORS } from '../../constants/AppConstants';
 import { ExternalLink } from '../../components/RenderFunctions';
+import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../utils';
+import COPY from '../../../COPY';
 
-const ICON_POSITION_FIX = css({ position: 'relative',
-  top: 1 });
+const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
 
 class VirtualHearingLink extends React.PureComponent {
+  role = () => {
+    const { user, hearing } = this.props;
 
-  getPin() {
-    const { role, virtualHearing } = this.props;
+    return virtualHearingRoleForUser(user, hearing);
+  };
 
-    return role === 'host' ? virtualHearing.hostPin : virtualHearing.guestPin;
-  }
+  label = () => {
+    if (this.role() === VIRTUAL_HEARING_HOST) {
+      return COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL;
+    }
+
+    return COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
+  };
 
   render() {
-    const { isVirtual, newWindow, role, showFullLink, virtualHearing } = this.props;
+    const { isVirtual, newWindow, virtualHearing } = this.props;
 
     if (!isVirtual) {
       return null;
     }
 
-    const href = `https://${virtualHearing.clientHost}/webapp/\
-      ?conference=${virtualHearing.alias}\
-      &pin=${this.getPin()}\
-      &join=1\
-      &role=${role}`;
-
     return (
-      <Link
-        href={href}
-        target={newWindow ? '_blank' : '_self'}
-        disabled={!virtualHearing.jobCompleted}
-      >
-        <strong>{showFullLink ? href : 'Virtual Hearing Link'}</strong>
+      <Link href={this.props.link} target={newWindow ? '_blank' : '_self'} disabled={!virtualHearing.jobCompleted}>
+        <strong>{this.props.label || this.props.link}</strong>
         <span {...ICON_POSITION_FIX}>
-          &nbsp;<ExternalLink fill={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
+          &nbsp;
+          <ExternalLink fill={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
         </span>
       </Link>
     );
@@ -45,17 +45,31 @@ class VirtualHearingLink extends React.PureComponent {
 }
 
 VirtualHearingLink.propTypes = {
+  hearing: PropTypes.shape({
+    judgeId: PropTypes.string
+  }),
+  user: PropTypes.shape({
+    userId: PropTypes.number,
+    userCanAssignHearingSchedule: PropTypes.bool
+  }),
   isVirtual: PropTypes.bool,
+  link: PropTypes.string,
   newWindow: PropTypes.bool,
-  showFullLink: PropTypes.bool,
-  role: PropTypes.oneOf(['host', 'guest']).isRequired,
   virtualHearing: PropTypes.shape({
+    status: PropTypes.string,
     clientHost: PropTypes.string,
-    guestPin: PropTypes.number,
-    hostPin: PropTypes.number,
-    alias: PropTypes.string,
+    guestPin: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ]),
+    hostPin: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ]),
+    aliasWithHost: PropTypes.string,
     jobCompleted: PropTypes.bool
-  }).isRequired
+  }).isRequired,
+  label: PropTypes.string
 };
 
 VirtualHearingLink.defaultProps = {

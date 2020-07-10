@@ -34,7 +34,6 @@ RSpec.feature "Attorney queue", :all_dbs do
       let(:attorney_task) do
         create(
           :ama_attorney_task,
-          :on_hold,
           appeal: appeal,
           assigned_by: judge,
           assigned_to: attorney,
@@ -60,7 +59,7 @@ RSpec.feature "Attorney queue", :all_dbs do
         expect(find("tbody").find_all("tr").length).to eq(1)
       end
 
-      it "displays a Task(s) column" do
+      it "displays a Tasks column" do
         visit("/queue")
 
         expect(page).to have_content(format(COPY::CASE_LIST_TABLE_TASKS_COLUMN_TITLE), 1)
@@ -156,31 +155,6 @@ RSpec.feature "Attorney queue", :all_dbs do
 
         click_on(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
-        expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(colocated_org_task.label)
-      end
-    end
-
-    context "when the attorney has an on hold legacy ColocatedTask assigned to them" do
-      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:colocated_user) { Colocated.singleton.add_user(create(:user)) }
-      let!(:colocated_org_task) do
-        create(
-          :colocated_task,
-          :on_hold,
-          appeal: appeal,
-          assigned_by: attorney
-        )
-      end
-
-      before { colocated_org_task.children.first.update!(assigned_to: attorney) }
-
-      it "displays a single row for the appeal in the attorney's on hold tab" do
-        visit("/queue")
-
-        click_on(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
-
-        expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 0))
         expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(colocated_org_task.label)
       end

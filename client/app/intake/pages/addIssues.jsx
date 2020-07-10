@@ -36,7 +36,7 @@ import {
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -159,7 +159,7 @@ class AddIssuesPage extends React.Component {
         (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
       );
 
-    const issues = formatAddedIssues(intakeData, useAmaActivationDate);
+    const issues = formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
     const requestedIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
@@ -290,6 +290,7 @@ class AddIssuesPage extends React.Component {
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
+            editPage={editPage}
             onComplete={() => {
               this.setState({ addingIssue: false });
             }}
@@ -433,7 +434,8 @@ export const EditAddIssuesPage = connect(
         withdrawIssue,
         setIssueWithdrawalDate,
         correctIssue,
-        undoCorrection
+        undoCorrection,
+        toggleUnidentifiedIssuesModal
       },
       dispatch
     )

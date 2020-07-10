@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class HearingIssueNote < ApplicationRecord
+class HearingIssueNote < CaseflowRecord
   belongs_to :request_issue
   belongs_to :hearing
 

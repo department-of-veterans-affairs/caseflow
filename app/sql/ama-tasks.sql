@@ -20,7 +20,6 @@ SELECT
       "Tasks"."appeal_type" AS TEXT
     ) AS "appeal_type"
     ,"Tasks"."placed_on_hold_at" AS "placed_on_hold_at"
-    ,"Tasks"."on_hold_duration" AS "on_hold_duration"
     ,CAST (
       "Tasks"."assigned_to_type" AS TEXT
     ) AS "assigned_to_type"
@@ -391,6 +390,17 @@ SELECT
             ) AS bva_dispatch_or_quality_review_task_status
             ,(
               SELECT
+                  tasks.status
+              FROM
+                  tasks AS tasks
+              WHERE
+                  tasks.appeal_id = appeals.id
+                  AND tasks.type IN (
+                    'BoardGrantEffectuationTask'
+                  ) LIMIT 1
+            ) AS post_dispatch_task_status
+            ,(
+              SELECT
                   tasks.STATUS
                 FROM
                   tasks AS tasks
@@ -468,6 +478,12 @@ SELECT
               ,'in_progress'
             )
             THEN '8. Decision dispatched'
+            WHEN appeal_task_status.post_dispatch_task_status IN (
+              'on_hold'
+              ,'assigned'
+              ,'in_progress'
+            )
+            THEN '9. Post dispatch tasks'
             WHEN appeal_task_status.timed_hold_task_status IN (
               'on_hold'
               ,'assigned'
@@ -541,6 +557,12 @@ SELECT
               ,'in_progress'
             )
             THEN '10' -- 'MISC'
+            WHEN appeal_task_status.post_dispatch_task_status IN (
+              'assigned'
+              ,'in_progress'
+              ,'on_hold'
+            )
+            THEN '12' -- '9. Post dispatch tasks'
             ELSE '11' -- 'UNKNOWN'
           END AS "appeal_task_status.decision_status__sort_"
           ,CASE

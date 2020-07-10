@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ClaimEstablishment < ApplicationRecord
+class ClaimEstablishment < CaseflowRecord
   belongs_to :task, class_name: "Dispatch::Task"
 
   enum decision_type: {

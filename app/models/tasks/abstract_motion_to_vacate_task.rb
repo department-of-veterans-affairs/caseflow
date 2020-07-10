@@ -15,4 +15,8 @@ class AbstractMotionToVacateTask < Task
       parent.update!(status: status)
     end
   end
+
+  def child_must_have_active_assignee?
+    false
+  end
 end

@@ -1,3 +1,6 @@
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
 import React from 'react';
 import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';

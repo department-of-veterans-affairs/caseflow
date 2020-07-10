@@ -35,7 +35,7 @@ describe DecisionReview, :postgres do
     ]
   end
   let!(:rating) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       issues: issues,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -238,7 +238,7 @@ describe DecisionReview, :postgres do
       end
 
       let!(:future_rating) do
-        Generators::Rating.build(
+        Generators::PromulgatedRating.build(
           issues: [
             { reference_id: "321", decision_text: "future rating issue 1" },
             { reference_id: "654", decision_text: "future rating issue 2" }

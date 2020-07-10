@@ -48,7 +48,7 @@ describe BoardGrantEffectuation, :postgres do
     let(:associated_claims) { nil }
 
     let!(:rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: 15.days.ago,
         profile_date: 20.days.ago,

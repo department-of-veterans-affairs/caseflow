@@ -6,7 +6,7 @@ module IntakeHelpers
 
   def select_form(form_name)
     if FeatureToggle.enabled?(:ramp_intake)
-      safe_click ".Select"
+      safe_click ".cf-select"
       fill_in "Which form are you processing?", with: form_name
       find("#form-select").send_keys :enter
     else
@@ -84,7 +84,8 @@ module IntakeHelpers
     if claim_participant_id
       Claimant.create!(
         decision_review: supplemental_claim,
-        participant_id: claim_participant_id
+        participant_id: claim_participant_id,
+        type: veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
       )
     end
 
@@ -101,7 +102,7 @@ module IntakeHelpers
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      docket_type: "evidence_submission",
+      docket_type: Constants.AMA_DOCKETS.evidence_submission,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
@@ -113,7 +114,7 @@ module IntakeHelpers
       detail: appeal
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
@@ -168,7 +169,7 @@ module IntakeHelpers
   end
 
   def click_intake_nonrating_category_dropdown
-    safe_click ".dropdown-issue-category .Select-placeholder"
+    safe_click ".dropdown-issue-category .cf-select__placeholder"
   end
 
   def click_intake_add_issue
@@ -204,6 +205,11 @@ module IntakeHelpers
     # find_all with 'minimum' will wait like find() does.
     find_all("label", text: description, minimum: 1).first.click
     fill_in("Notes", with: note) if note
+    safe_click ".add-issue"
+  end
+
+  def select_intake_no_match
+    find_all("label", text: /^No VACOLS issues were found/, minimum: 1).first.click
     safe_click ".add-issue"
   end
 
@@ -420,9 +426,43 @@ module IntakeHelpers
       ))
   end
 
+  def setup_active_ineligible_with_exemption(veteran_file_number)
+    create(:legacy_appeal, vacols_case:
+      create(
+        :case,
+        :status_active,
+        bfkey: "vacols5",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 3.years.ago,
+        bfdsoc: Date.new(2019, 12, 28),
+        case_issues: [
+          create(:case_issue, :lumbosacral_strain),
+          create(:case_issue, :shoulder_or_arm_muscle_injury)
+        ]
+      ))
+  end
+
+  def setup_active_eligible_with_exemption(veteran_file_number)
+    create(:legacy_appeal, vacols_case:
+      create(
+        :case,
+        :status_active,
+        bfkey: "vacols6",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 2.years.ago,
+        bfdsoc: Date.new(2020, 2, 2),
+        case_issues: [
+          create(:case_issue, :rheumatoid_arthritis),
+          create(:case_issue, :osteomyelitis)
+        ]
+      ))
+  end
+
   def setup_legacy_opt_in_appeals(veteran_file_number)
     setup_active_eligible_legacy_appeal(veteran_file_number)
     setup_active_ineligible_legacy_appeal(veteran_file_number)
+    setup_active_eligible_with_exemption(veteran_file_number)
+    setup_active_ineligible_with_exemption(veteran_file_number)
     setup_inactive_eligible_legacy_appeal(veteran_file_number)
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
   end
@@ -580,7 +620,7 @@ module IntakeHelpers
       }
     end
 
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -590,7 +630,7 @@ module IntakeHelpers
   end
 
   def generate_rating(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -603,7 +643,7 @@ module IntakeHelpers
   end
 
   def generate_timely_rating(veteran, receipt_date, duplicate_reference_id)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 40.days,
       profile_date: receipt_date - 50.days,
@@ -616,7 +656,7 @@ module IntakeHelpers
   end
 
   def generate_untimely_rating(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -640,11 +680,11 @@ module IntakeHelpers
     if with_associated_claims
       args[:associated_claims] = { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
     end
-    Generators::Rating.build(args)
+    Generators::PromulgatedRating.build(args)
   end
 
   def generate_future_rating(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -656,7 +696,7 @@ module IntakeHelpers
   end
 
   def generate_pre_ama_rating(veteran)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: ama_test_start_date - 5.days,
       profile_date: ama_test_start_date - 10.days,
@@ -667,7 +707,7 @@ module IntakeHelpers
   end
 
   def generate_rating_with_defined_contention(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -680,7 +720,7 @@ module IntakeHelpers
   end
 
   def generate_rating_before_ama_from_ramp(veteran)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: ama_test_start_date - 5.days,
       profile_date: ama_test_start_date - 11.days,
@@ -693,7 +733,7 @@ module IntakeHelpers
   end
 
   def generate_rating_with_legacy_issues(veteran, promulgation_date, profile_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
@@ -705,7 +745,7 @@ module IntakeHelpers
   end
 
   def generate_rating_with_old_decisions(veteran, receipt_date)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 5.years,
       profile_date: receipt_date - 5.years,
@@ -876,7 +916,7 @@ module IntakeHelpers
   # rubocop:enable Metrics/AbcSize
 
   def select_agree_to_withdraw_legacy_issues(withdraw)
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+    within_fieldset("Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?") do
       find("label", text: withdraw ? "Yes" : "N/A", match: :prefer_exact).click
     end
   end

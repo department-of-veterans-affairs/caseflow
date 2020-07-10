@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-class LegacyIssueOptin < ApplicationRecord
+class LegacyIssueOptin < CaseflowRecord
   belongs_to :request_issue
+  belongs_to :legacy_issue
 
   VACOLS_DISPOSITION_CODE = "O" # oh not zero
   REMAND_DISPOSITION_CODES = %w[3 L].freeze

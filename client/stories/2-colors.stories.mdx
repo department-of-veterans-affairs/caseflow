@@ -1,0 +1,149 @@
+import { Meta, Story, Preview } from '@storybook/addon-docs/blocks';
+
+import { COLORS, LOGO_COLORS } from '../app/constants/AppConstants';
+
+export const Colors = {
+  Base: COLORS.BASE,
+  'Gray-dark': COLORS.GREY_DARK,
+  Gray: COLORS.GREY,
+  'Gray-light': '#aeb0b5',
+  'Gray-lighter': COLORS.GREY_LIGHT,
+  'Gray-warm-light': '#e4e2e0',
+  Primary: COLORS.PRIMARY,
+  White: COLORS.WHITE,
+  Secondary: '#e31c3d',
+  Green: '#2e8540',
+  'Primary-alt': COLORS.PRIMARY_ALT,
+  'Secondary-lightest': '#f9dede',
+  'Green-lightest': '#e7f4e4',
+  'Primary-alt-lightest': '#e1f3f8',
+  'Gold-lightest': '#fff1d2',
+  Dispatch: LOGO_COLORS.DISPATCH.ACCENT,
+  'eFolder Express': '#F0835e',
+  Feedback: '#73e5d4',
+  Certification: LOGO_COLORS.CERTIFICATION.ACCENT,
+  Reader: LOGO_COLORS.READER.ACCENT,
+  'Case Summary': LOGO_COLORS.INTAKE.ACCENT,
+  Intake: LOGO_COLORS.INTAKE.ACCENT,
+  Procedural: '#5a94ec',
+  Medical: '#ff6868',
+  'Other Evidence': '#3ad2cf'
+};
+
+export const Primary = [
+  'Base',
+  'Gray-dark',
+  'Gray',
+  'Gray-light',
+  'Gray-lighter',
+  'Gray-warm-light',
+  'Primary',
+  'White'
+];
+
+export const Secondary = [
+  'Secondary',
+  'Green',
+  'Primary-alt',
+  'Secondary-lightest',
+  'Green-lightest',
+  'Primary-alt-lightest',
+  'Gold-lightest'
+];
+
+export const Logos = [
+  'Dispatch',
+  'eFolder Express',
+  'Feedback',
+  'Certification',
+  'Reader',
+  'Intake'
+];
+
+export const Reader = [
+  'Case Summary',
+  'Procedural',
+  'Medical',
+  'Other Evidence'
+];
+
+export const VAR_TITLE =
+  'Use this variable to refer to the hexadecimal value in your SASS files';
+
+export const colorVar = name => {
+  return `$color-${name}`.toLowerCase();
+};
+
+<Meta title="Commons/Colors" />
+
+# Colors
+
+Caseflow's palette borrows heavily from USWDS to communicate warmth and trustworthiness while meeting the highest standards of 508 color contrast requirements.
+
+## Palette
+
+### Primary Colors
+
+This palette’s primary colors are blue, gray, and white. Blue is commonly associated with trust, confidence, and sincerity; it is also used to represent calmness and responsibility.
+
+<Story name="primary">
+  <div className="sg-colors-swatches">
+    {Primary.map(name => (
+      <div className="sg-colors-swatch" key={name}>
+        <div style={{ background: Colors[name] }} />
+        <b>{Colors[name]}</b>
+        <p>{name}</p>
+        <p title={VAR_TITLE}>{colorVar(name)}</p>
+      </div>
+    ))}
+  </div>
+</Story>
+
+### Secondary Colors
+
+These are accent colors to provide additional lightness and style to pages looking for a more modern flair. These colors should be used to highlight important features on a page, such as buttons, or for visual style elements, such as illustrations. They should be used sparingly and never draw the eye to more than one piece of information at a time.
+
+<Story name="secondary">
+  <div className="sg-colors-swatches">
+    {Secondary.map(name => (
+      <div className="sg-colors-swatch" key={name}>
+        <div style={{ background: Colors[name] }} />
+        <b>{Colors[name]}</b>
+        <p>{name}</p>
+        <p title={VAR_TITLE}>{colorVar(name)}</p>
+      </div>
+    ))}
+  </div>
+</Story>
+
+### Logo Colors
+
+Logos are the only time Caseflow products use colors outside of Web Design Standards. These unique colors add a layer of modernism and fluidity to the Caseflow's core color themes of trust, reliability, and transparency.
+
+<Story name="logo">
+  <div className="sg-colors-swatches">
+    {Logos.map(name => (
+      <div className="sg-colors-swatch" key={name}>
+        <div style={{ background: Colors[name] }} />
+        <b>{Colors[name]}</b>
+        <p>{name}</p>
+        <p title={VAR_TITLE}>{colorVar(name)}</p>
+      </div>
+    ))}
+  </div>
+</Story>
+
+### Reader Categories
+
+<Story name="reader">
+  <div className="sg-colors-swatches">
+    {Reader.map(name => (
+      <div className="sg-colors-swatch" key={name}>
+        <div style={{ background: Colors[name] }} />
+        <b>{Colors[name]}</b>
+        <p>{name}</p>
+        <p title={VAR_TITLE}>{colorVar(name)}</p>
+      </div>
+    ))}
+  </div>
+</Story>

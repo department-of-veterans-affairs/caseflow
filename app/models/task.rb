@@ -9,20 +9,25 @@
 #   - assigning a task to an individual
 
 # rubocop:disable Metrics/ClassLength
-class Task < ApplicationRecord
+class Task < CaseflowRecord
   has_paper_trail on: [:update, :destroy]
   acts_as_tree
 
   include PrintsTaskTree
+  include TaskExtensionForHearings
+  include HasAppealUpdatedSince
 
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
+  has_one :cached_appeal, ->(task) { where(appeal_type: task.appeal_type) }, foreign_key: :appeal_id
 
   validates :assigned_to, :appeal, :type, :status, presence: true
   validate :status_is_valid_on_create, on: :create
+  validate :assignee_status_is_valid_on_create, on: :create
+  validate :parent_can_have_children
 
   before_create :set_assigned_at
   before_create :verify_org_task_unique
@@ -55,6 +60,10 @@ class Task < ApplicationRecord
 
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
+  scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
+
+  scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
+
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
     where.not(
@@ -67,6 +76,12 @@ class Task < ApplicationRecord
                                    type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
                                  )
                                }
+
+  scope :with_assignees, -> { joins(Task.joins_with_assignees_clause) }
+
+  scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
+
+  scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
   ############################################################################################
   ## class methods
@@ -87,14 +102,6 @@ class Task < ApplicationRecord
       active_statuses.concat([Constants.TASK_STATUSES.on_hold])
     end
 
-    def recently_closed
-      closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now)
-    end
-
-    def incomplete_or_recently_closed
-      open.or(recently_closed)
-    end
-
     def create_many_from_params(params_array, current_user)
       multi_transaction do
         params_array.map { |params| create_from_params(params, current_user) }
@@ -109,6 +116,10 @@ class Task < ApplicationRecord
     end
 
     def hide_from_queue_table_view
+      false
+    end
+
+    def cannot_have_children
       false
     end
 
@@ -167,6 +178,32 @@ class Task < ApplicationRecord
         instructions: params[:instructions]
       )
     end
+
+    def assigners_table_clause
+      "(SELECT id, full_name AS display_name FROM users) AS assigners"
+    end
+
+    def joins_with_assigners_clause
+      "LEFT JOIN #{Task.assigners_table_clause} ON assigners.id = tasks.assigned_by_id"
+    end
+
+    def assignees_table_clause
+      "(SELECT id, 'Organization' AS type, name AS display_name FROM organizations " \
+      "UNION " \
+      "SELECT id, 'User' AS type, css_id AS display_name FROM users)" \
+      "AS assignees"
+    end
+
+    def joins_with_assignees_clause
+      "INNER JOIN #{Task.assignees_table_clause} ON " \
+      "assignees.id = tasks.assigned_to_id AND assignees.type = tasks.assigned_to_type"
+    end
+
+    def joins_with_cached_appeals_clause
+      "left join #{CachedAppeal.table_name} "\
+      "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
+      "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
+    end
   end
 
   ########################################################################################
@@ -219,30 +256,11 @@ class Task < ApplicationRecord
     ).any? && assigned_to.is_a?(Organization)
       fail(
         Caseflow::Error::DuplicateOrgTask,
-        appeal_id: appeal.id,
+        docket_number: appeal.docket_number,
         task_type: self.class.name,
-        assignee_type: assigned_to.class.name,
-        parent_id: parent&.id
+        assignee_type: assigned_to.class.name
       )
     end
-  end
-
-  def available_hearing_user_actions(user)
-    available_hearing_admin_actions(user) | available_hearing_mgmt_actions(user)
-  end
-
-  def create_change_hearing_disposition_task(instructions = nil)
-    hearing_task = ancestor_task_of_type(HearingTask)
-
-    if hearing_task.blank?
-      fail(Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
-    end
-
-    hearing_task.create_change_hearing_disposition_task(instructions)
-  end
-
-  def most_recent_closed_hearing_task_on_appeal
-    appeal.tasks.closed.order(closed_at: :desc).where(type: HearingTask.name).last
   end
 
   def label
@@ -302,6 +320,14 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
+  def post_dispatch_task?
+    dispatch_task = appeal.tasks.completed.find_by(type: [BvaDispatchTask.name, QualityReviewTask.name])
+
+    return false unless dispatch_task
+
+    created_at > dispatch_task.closed_at
+  end
+
   def children_attorney_tasks
     children.where(type: AttorneyTask.name)
   end
@@ -324,7 +350,7 @@ class Task < ApplicationRecord
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i || on_hold_duration
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def update_task_type(params)
@@ -486,10 +512,12 @@ class Task < ApplicationRecord
     end
 
     # Preserve the open children and status of the old task
-    children.open.update_all(parent_id: sibling.id)
+    children.select(&:stays_with_reassigned_parent?).each { |child| child.update!(parent_id: sibling.id) }
     sibling.update!(status: status)
 
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
+
+    appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
 
     [sibling, self, sibling.children].flatten
   end
@@ -518,24 +546,25 @@ class Task < ApplicationRecord
 
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
+    # it would be better if we could allow the callbacks to happen sanely
     descendant_ids = descendants.pluck(:id)
-    Task.open.where(id: descendant_ids).update_all(
-      status: Constants.TASK_STATUSES.cancelled,
-      closed_at: Time.zone.now
-    )
+
+    # by avoiding callbacks, we aren't saving PaperTrail versions
+    # Manually save the state before and after.
+    tasks = Task.open.where(id: descendant_ids)
+
+    transaction do
+      tasks.each { |task| task.paper_trail.save_with_version }
+      tasks.update_all(
+        status: Constants.TASK_STATUSES.cancelled,
+        closed_at: Time.zone.now
+      )
+      tasks.each { |task| task.reload.paper_trail.save_with_version }
+    end
   end
 
   def timeline_title
     "#{type} completed"
-  end
-
-  def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if old_style_hold_expired?
-  end
-
-  def old_style_hold_expired?
-    !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
-      (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
   end
 
   def serializer_class
@@ -546,29 +575,31 @@ class Task < ApplicationRecord
     assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
   end
 
+  def child_must_have_active_assignee?
+    true
+  end
+
+  def stays_with_reassigned_parent?
+    open?
+  end
+
+  def cancelled_by
+    return nil unless cancelled?
+
+    any_status_matcher = Constants::TASK_STATUSES.keys.join("|")
+    task_cancelled_version_matcher = "%status:\\n- (#{any_status_matcher})\\n- #{Constants.TASK_STATUSES.cancelled}%"
+    record = versions.order(:created_at).where("object_changes SIMILAR TO ?", task_cancelled_version_matcher).last
+
+    return nil unless record
+
+    User.find_by_id(record.whodunnit)
+  end
+
+  def reassign_clears_overtime?
+    false
+  end
+
   private
-
-  def available_hearing_admin_actions(user)
-    return [] unless HearingAdmin.singleton.user_has_access?(user)
-
-    hearing_task = ancestor_task_of_type(HearingTask)
-    return [] unless hearing_task&.open? && hearing_task&.disposition_task&.present?
-
-    [
-      Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
-    ]
-  end
-
-  def available_hearing_mgmt_actions(user)
-    return [] unless type == ScheduleHearingTask.name
-    return [] unless HearingsManagement.singleton.user_has_access?(user)
-
-    return [] if most_recent_closed_hearing_task_on_appeal&.hearing&.disposition.blank?
-
-    [
-      Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h
-    ]
-  end
 
   def create_and_auto_assign_child_task(options = {})
     dup.tap do |child_task|
@@ -653,11 +684,35 @@ class Task < ApplicationRecord
     return if will_save_change_to_attribute?(timestamp_to_update)
 
     self[timestamp_to_update] = Time.zone.now
+
+    nullify_closed_at_if_reopened if closed_at.present?
+  end
+
+  def nullify_closed_at_if_reopened
+    return unless self.class.open_statuses.include?(status_change_to_be_saved&.last)
+
+    self.closed_at = nil
   end
 
   def status_is_valid_on_create
     if status != Constants.TASK_STATUSES.assigned
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+    end
+
+    true
+  end
+
+  def assignee_status_is_valid_on_create
+    if parent&.child_must_have_active_assignee? && assigned_to.is_a?(User) && !assigned_to.active?
+      fail Caseflow::Error::InvalidAssigneeStatusOnTaskCreate, assignee: assigned_to
+    end
+
+    true
+  end
+
+  def parent_can_have_children
+    if parent&.class&.cannot_have_children
+      fail Caseflow::Error::InvalidParentTask, message: "Child tasks cannot be created for #{parent.type}s"
     end
 
     true

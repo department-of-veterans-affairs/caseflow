@@ -33,16 +33,16 @@ class Fakes::BGSServiceRecordMaker
 
   # rubocop:disable Naming/PredicateName
   def has_rating(veteran)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id
     )
   end
 
   def has_two_ratings(veteran)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id
     )
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: ama_begin_date + 2.days,
       issues: [
@@ -61,10 +61,10 @@ class Fakes::BGSServiceRecordMaker
     completed_review_reference_id = "cleared-review-ref-id"
     contention = Generators::Contention.build
 
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id
     )
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       profile_date: ama_begin_date + 3.days,
       promulgation_date: ama_begin_date + 7.days,
@@ -76,7 +76,7 @@ class Fakes::BGSServiceRecordMaker
         { decision_text: "I am on a completed Higher Level Review", contention_reference_id: contention.id }
       ]
     )
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       profile_date: ama_begin_date - 10.days,
       promulgation_date: ama_begin_date - 5.days,
@@ -88,7 +88,7 @@ class Fakes::BGSServiceRecordMaker
       ]
     )
     ramp_begin_date = Date.new(2017, 11, 1)
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       profile_date: ramp_begin_date - 20.days,
       promulgation_date: ramp_begin_date - 15.days,
@@ -99,7 +99,7 @@ class Fakes::BGSServiceRecordMaker
           reference_id: "ramp_reference_id" }
       ]
     )
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: Time.zone.today - 395,
       profile_date: Time.zone.today - 400,
@@ -153,7 +153,7 @@ class Fakes::BGSServiceRecordMaker
       veteran_file_number: veteran.file_number,
       bgs_attrs: { benefit_claim_id: completed_review_reference_id }
     )
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: ama_begin_date + 10.days,
       issues: [
@@ -164,7 +164,7 @@ class Fakes::BGSServiceRecordMaker
         { decision_text: "At dicit omnes per, vim tale tota no." }
       ]
     )
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: ama_begin_date + 12.days,
       issues: [
@@ -216,7 +216,7 @@ class Fakes::BGSServiceRecordMaker
       end_product_establishment: epe,
       contention_reference_id: contention_reference_id
     )
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: Time.zone.today - 40,
       profile_date: Time.zone.today - 30,

@@ -42,10 +42,24 @@ describe UserFinder, :all_dbs do
     end
 
     context "role" do
-      let(:role) { "Judge" }
+      context "role is Judge" do
+        let(:role) { Constants::USER_ROLE_TYPES["judge"] }
 
-      it "finds by role" do
-        expect(subject).to eq([judge])
+        it "finds by judges" do
+          expect(subject).to eq([judge])
+        end
+      end
+
+      context "role is Attorney" do
+        before do
+          create_list(:staff, 2, :attorney_judge_role)
+          create_list(:staff, 3, :attorney_role)
+        end
+        let(:role) { Constants::USER_ROLE_TYPES["attorney"] }
+
+        it "finds by attorneys and acting judges" do
+          expect(subject.size).to eq 5
+        end
       end
     end
 

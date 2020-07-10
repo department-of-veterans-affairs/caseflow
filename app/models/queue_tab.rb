@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Base DTO class for a queue table tab and set of tasks.
+# This DTO is used within the QueueConfig DTO's `tabs` array.
+# Attributes and tasks will be pulled from this config
+# on the frontend to build a tab for a queue table.
 class QueueTab
   include ActiveModel::Model
 
@@ -25,7 +29,8 @@ class QueueTab
       name: name,
       description: description,
       columns: columns.map { |column| column.to_hash(tasks) },
-      allow_bulk_assign: allow_bulk_assign?
+      allow_bulk_assign: allow_bulk_assign?,
+      contains_legacy_tasks: contains_legacy_tasks?
     }
   end
 
@@ -51,6 +56,38 @@ class QueueTab
     false
   end
 
+  def contains_legacy_tasks?
+    false
+  end
+
+  # rubocop:disable Metrics/AbcSize
+  def self.attorney_column_names
+    [
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+      Constants.QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.name
+    ]
+  end
+
+  def self.judge_column_names
+    [
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name,
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name
+    ]
+  end
+  # rubocop:enable Metrics/AbcSize
+
   private
 
   def assignee_is_org?
@@ -61,17 +98,36 @@ class QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).on_hold
   end
 
-  def recently_closed_tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
+  def recently_completed_tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_completed
+  end
+
+  def on_hold_task_children
+    Task.where(parent: on_hold_tasks)
+  end
+
+  def visible_child_task_ids
+    on_hold_task_children.visible_in_queue_table_view.pluck(:id)
+  end
+
+  def parents_with_child_timed_hold_task_ids
+    on_hold_task_children.where(type: TimedHoldTask.name).pluck(:parent_id)
+  end
+
+  def on_hold_task_children_and_timed_hold_parents
+    Task.includes(*task_includes).visible_in_queue_table_view.where(
+      id: [visible_child_task_ids, parents_with_child_timed_hold_task_ids].flatten
+    )
   end
 
   def task_includes
     [
-      { appeal: [:available_hearing_locations, :claimants] },
+      { appeal: [:available_hearing_locations, :claimants, :work_mode] },
       :assigned_by,
       :assigned_to,
       :children,
-      :parent
+      :parent,
+      :attorney_case_reviews
     ]
   end
 

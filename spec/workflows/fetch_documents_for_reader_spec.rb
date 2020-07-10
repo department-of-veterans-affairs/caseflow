@@ -69,7 +69,7 @@ describe FetchDocumentsForReaderJob, :all_dbs do
       end
       let!(:task) do
         create(
-          :colocated_task,
+          :ama_colocated_task,
           assigned_to: create(:user),
           assigned_by: user,
           appeal: appeal

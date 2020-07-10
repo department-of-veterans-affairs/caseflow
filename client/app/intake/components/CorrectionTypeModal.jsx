@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import { INTAKE_CORRECTION_TYPE_MODAL_TITLE, INTAKE_CORRECTION_TYPE_MODAL_COPY } from '../../../COPY.json';
+import { INTAKE_CORRECTION_TYPE_MODAL_TITLE, INTAKE_CORRECTION_TYPE_MODAL_COPY } from '../../../COPY';
 import { CORRECTION_TYPE_OPTIONS } from '../constants';
 
 class CorrectionTypeModal extends React.Component {

@@ -40,19 +40,8 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def ui_hash
-    super.merge(
-      asyncJobUrl: async_job_url,
-      benefitType: benefit_type,
-      payeeCode: payee_code
-    ).tap do |hash|
-      if processed?
-        hash.update(
-          hasClearedRatingEp: cleared_rating_ep?,
-          hasClearedNonratingEp: cleared_nonrating_ep?
-        )
-      end
-    end
+  def serialize
+    Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def validate_prior_to_edit
@@ -65,21 +54,27 @@ class ClaimReview < DecisionReview
     end
 
     # this will raise any errors for missing data
-    ui_hash
+    serialize
   end
 
   def async_job_url
     "/asyncable_jobs/#{self.class}/jobs/#{id}"
   end
 
+  def label
+    "#{self.class} #{id} (Veteran #{veteran_file_number})"
+  end
+
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 
-    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
+    @finalized_decision_issues_before_receipt_date ||= begin
+      DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+        .select(&:finalized?)
+        .select do |issue|
+          issue.approx_decision_date && issue.approx_decision_date < receipt_date
+        end
+    end
   end
 
   # Save issues and assign it the appropriate end product establishment.
@@ -128,12 +123,12 @@ class ClaimReview < DecisionReview
   # Cancel an unprocessed job, add a job note, and send a message to the job user's inbox.
   # Currently this only happens manually by an engineer, and requires a message explaining
   # why the job was cancelled and describing any additional action necessary.
-  def cancel_with_note!(current_user:, note:)
-    fail Caseflow::Error::ActionForbiddenError, message: "Acting user must be specified" unless current_user
+  def cancel_with_note!(user: RequestStore[:current_user], note:)
+    fail Caseflow::Error::ActionForbiddenError, message: "Acting user must be specified" unless user
     fail Caseflow::Error::ActionForbiddenError, message: "Processed job cannot be cancelled" if processed?
 
     cancel_establishment!
-    AsyncableJobMessaging.new(job: self, current_user: current_user).add_job_cancellation_note(text: note)
+    AsyncableJobMessaging.new(job: self, user: user).add_job_cancellation_note(text: note)
   end
 
   def invalid_modifiers
@@ -259,18 +254,18 @@ class ClaimReview < DecisionReview
     processed_in_vbms? && !try(:decision_review_remanded?)
   end
 
+  def cleared_rating_ep?
+    processed? && cleared_end_products.any?(&:rating?)
+  end
+
+  def cleared_nonrating_ep?
+    processed? && cleared_end_products.any?(&:nonrating?)
+  end
+
   private
 
   def cleared_end_products
     @cleared_end_products ||= end_product_establishments.select { |ep| ep.status_cleared?(sync: true) }
-  end
-
-  def cleared_rating_ep?
-    cleared_end_products.any?(&:rating?)
-  end
-
-  def cleared_nonrating_ep?
-    cleared_end_products.any?(&:nonrating?)
   end
 
   def verify_contentions

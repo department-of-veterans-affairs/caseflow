@@ -35,6 +35,7 @@ describe EndProductEstablishment, :postgres do
   let(:limited_poa_code) { "ABC" }
   let(:limited_poa_access) { true }
   let(:rating_profile_date) { Date.new(2018, 4, 30) }
+  let(:last_synced_at) { nil }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -54,12 +55,70 @@ describe EndProductEstablishment, :postgres do
       established_at: 30.days.ago,
       user: current_user,
       limited_poa_code: limited_poa_code,
-      limited_poa_access: limited_poa_access
+      limited_poa_access: limited_poa_access,
+      last_synced_at: last_synced_at
+    )
+  end
+  let(:orphaned_end_product) do
+    EndProduct.new(
+      claim_id: "1234",
+      claim_date: end_product_establishment.claim_date,
+      claim_type_code: end_product_establishment.code,
+      payee_code: end_product_establishment.payee_code,
+      status_type_code: "PEND"
     )
   end
 
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
+  end
+
+  context "#last_action_date" do
+    subject { end_product_establishment.last_action_date }
+
+    let(:last_action_date) { 5.days.ago.mdY }
+    let(:last_synced_at) { 4.days.ago }
+    let(:reference_id) { matching_ep.claim_id }
+
+    let!(:matching_ep) do
+      Generators::EndProduct.build(
+        veteran_file_number: veteran_file_number,
+        bgs_attrs: {
+          last_action_date: last_action_date,
+          status_type_code: "CLR"
+        }
+      )
+    end
+
+    it { is_expected.to eq 5.days.ago.to_date }
+
+    context "when the EP last action date is nil" do
+      let(:last_action_date) { nil }
+
+      it { is_expected.to eq last_synced_at.to_date }
+    end
+  end
+
+  context "#status_type_code" do
+    subject { end_product_establishment.status_type_code }
+
+    it "returns pending" do
+      expect(subject).to eq("PEND")
+    end
+
+    context "board grant effectuation" do
+      let(:code) { "030BGR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
+
+    context "board remand" do
+      let(:code) { "040BDENR" }
+      it "returns ready for decision" do
+        expect(subject).to eq("RFD")
+      end
+    end
   end
 
   context "#perform!" do
@@ -105,7 +164,6 @@ describe EndProductEstablishment, :postgres do
         # first fetch Veteran's info
         expect(veteran.to_vbms_hash).to include(address_line1: "1234 FAKE ST")
         Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
-
         subject
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -123,7 +181,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: hash_including(address_line1: "Changed"),
           user: current_user
@@ -156,7 +215,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -186,7 +246,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "PEND"
             },
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -217,7 +278,8 @@ describe EndProductEstablishment, :postgres do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: true
+              limited_poa_access: true,
+              status_type_code: "PEND"
             ),
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -241,6 +303,20 @@ describe EndProductEstablishment, :postgres do
 
       it "returns NoAvailableModifiers error" do
         expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
+      end
+    end
+
+    context "when a previous establishment attempt actually succeeded" do
+      it "recovers and saves the previous EP" do
+        allow(source).to receive(:previously_attempted?).and_return(true)
+        allow(end_product_establishment.veteran).to receive(:end_products).and_return([orphaned_end_product])
+        subject
+        expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
+        expect(end_product_establishment).to have_attributes(
+          reference_id: orphaned_end_product.claim_id,
+          established_at: Time.zone.now,
+          modifier: orphaned_end_product.modifier
+        )
       end
     end
 
@@ -315,7 +391,8 @@ describe EndProductEstablishment, :postgres do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             limited_poa_code: "ABC",
-            limited_poa_access: true
+            limited_poa_access: true,
+            status_type_code: "PEND"
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -864,11 +941,13 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "when the end product is canceled" do
-        let(:status_type_code) { "CAN" }
+        before { allow(Fakes::VBMSService).to receive(:fetch_contentions).and_call_original }
+        let(:status_type_code) { EndProduct::STATUSES.key("Canceled") }
 
-        it "closes request issues and cancels establishment" do
+        it "closes request issues, cancels establishment, and doesn't fetch contentions" do
           subject
 
+          expect(Fakes::VBMSService).to_not have_received(:fetch_contentions)
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
           expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
@@ -925,8 +1004,8 @@ describe EndProductEstablishment, :postgres do
     end
   end
 
-  context "#status_canceled?" do
-    subject { end_product_establishment.status_canceled? }
+  context "#status_cancelled?" do
+    subject { end_product_establishment.status_cancelled? }
 
     context "returns true if canceled" do
       let(:synced_status) { "CAN" }
@@ -948,7 +1027,7 @@ describe EndProductEstablishment, :postgres do
     let(:promulgation_date) { end_product_establishment.established_at + 1.day }
 
     let!(:rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: promulgation_date,
         associated_claims: associated_claims
@@ -987,7 +1066,8 @@ describe EndProductEstablishment, :postgres do
 
       context "when rating is before established_at date" do
         let!(:another_rating) do
-          Generators::Rating.build(
+          Generators::PromulgatedRating.build(
+            profile_date: end_product_establishment.established_at + 1.day,
             participant_id: veteran.participant_id,
             promulgation_date: end_product_establishment.established_at + 1.day,
             associated_claims: []
@@ -996,6 +1076,54 @@ describe EndProductEstablishment, :postgres do
         let(:promulgation_date) { end_product_establishment.established_at - 1.day }
 
         it { is_expected.to eq(nil) }
+      end
+    end
+
+    context "when many potential ratings" do
+      let(:reference_id) { "reference-id" }
+      let(:other_epe) do
+        create(
+          :end_product_establishment,
+          veteran_file_number: veteran_file_number,
+          established_at: end_product_establishment.established_at + 2.days,
+          code: "040SCR"
+        )
+      end
+
+      let(:associated_claims) do
+        [
+          { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code },
+          { clm_id: "09321", bnft_clm_tc: other_epe.code },
+          { clm_id: other_epe.reference_id, bnft_clm_tc: other_epe.code }
+        ]
+      end
+
+      let(:ratings) do
+        [
+          rating,
+          Generators::PromulgatedRating.build(
+            participant_id: veteran.participant_id,
+            promulgation_date: promulgation_date + 2.days,
+            associated_claims: associated_claims
+          )
+        ]
+      end
+
+      let(:cache_key) { end_product_establishment.associated_rating_cache_key }
+
+      before do
+        end_product_establishment.save!
+      end
+
+      it "caches the associated rating for the given EPE" do
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+        # If caching works, this should only get called once
+        expect(PromulgatedRating).to receive(:fetch_in_range).once.and_call_original
+        subject
+        expect(Rails.cache.exist?(cache_key)).to eq(true)
+        # when called a second time, should get from cache
+        subject
       end
     end
   end
@@ -1089,7 +1217,7 @@ describe EndProductEstablishment, :postgres do
     context "when decision issues are all synced" do
       context "when source is a higher level review" do
         let!(:claimant) do
-          Claimant.create!(
+          VeteranClaimant.create!(
             decision_review: source,
             participant_id: veteran.participant_id,
             payee_code: "10"

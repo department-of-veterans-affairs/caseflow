@@ -24,7 +24,7 @@ import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { appealWithDetailSelector, getAllTasksForAppeal } from './selectors';
@@ -71,18 +71,20 @@ export const CaseDetailsView = (props) => {
     }
   }, []);
 
-  const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(tasks), [tasks]);
+  const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
+
+  const modalIsOpen = window.location.pathname.includes('modal');
 
   return (
     <React.Fragment>
-      {error && (
+      {!modalIsOpen && error && (
         <div {...alertPaddingStyle}>
           <Alert title={error.title} type="error">
             {error.detail}
           </Alert>
         </div>
       )}
-      {success && (
+      {!modalIsOpen && success && (
         <div {...alertPaddingStyle}>
           <Alert type="success" title={success.title} scrollOnAlert={false}>
             {success.detail}
@@ -119,7 +121,7 @@ export const CaseDetailsView = (props) => {
           {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
             <CaseHearingsDetail title="Hearings" appeal={appeal} />
           )}
-          <VeteranDetail title="About the Veteran" appeal={appeal} />
+          <VeteranDetail title="About the Veteran" appealId={appealId} />
           {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran && (
             <AppellantDetail title="About the Appellant" appeal={appeal} />
           )}

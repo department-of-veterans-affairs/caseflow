@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :deny_non_bva_admins, only: [:represented_organizations, :update, :search_by_css_id]
+  include CssIdConcern
+
+  before_action :deny_non_bva_admins, only: [:represented_organizations, :update]
 
   def index
     return filter_by_role if params[:role]
-    return filter_by_css_id_or_name if params[:css_id]
+    return filter_by_css_id_or_name if css_id
 
     render json: {}, status: :ok
   end
 
-  def search_by_css_id
-    user = User.find_by_css_id(css_id)
-
+  def search
     fail ActiveRecord::RecordNotFound unless user
 
     render json: { user: user }
@@ -27,7 +27,7 @@ class UsersController < ApplicationController
   end
 
   def represented_organizations
-    render json: { represented_organizations: User.find(params[:id]).vsos_user_represents }
+    render json: { represented_organizations: User.find(id).vsos_user_represents }
   end
 
   def judge
@@ -35,6 +35,18 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def css_id
+    @css_id ||= valid_css_id_or_nil
+  end
+
+  def valid_css_id_or_nil
+    return nil unless params[:css_id].presence
+
+    return normalize_css_id(params[:css_id]) if non_normalized_css_id?(params[:css_id])
+
+    params[:css_id]
+  end
 
   def filter_by_role
     finder = UserFinder.new(role: params[:role])
@@ -65,16 +77,22 @@ class UsersController < ApplicationController
     render json: { users: json_users(users) }
   end
 
-  def css_id
-    unless params[:css_id]
+  # Depending on the route and the requested resource, the requested user's id could be sent as :id or :user_id
+  # ex from rake routes: user GET /users/:id       or      user_task_pages GET /users/:user_id/task_pages
+  def id
+    @id ||= params[:id] || params[:user_id]
+  end
+
+  def user
+    unless css_id || id
       fail(
         Caseflow::Error::InvalidParameter,
-        parameter: "css_id",
-        message: "Must provide a css id"
+        parameter: "css_id or id",
+        message: "Must provide a css id or user id"
       )
     end
 
-    params[:css_id]
+    @user ||= id ? User.find(id) : User.find_by_css_id(css_id)
   end
 
   def user_to_modify

@@ -87,7 +87,7 @@ describe InformalHearingPresentationTask, :postgres do
     it "should create a DistributionTask" do
       task.update!(status: Constants.TASK_STATUSES.cancelled)
       expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      expect(appeal.root_task.reload.children.select { |t| t.type == DistributionTask.name }.count).to eq(1)
+      expect(appeal.root_task.reload.children.count { |t| t.type == DistributionTask.name }).to eq(1)
     end
   end
 end

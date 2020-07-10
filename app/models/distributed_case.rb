@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DistributedCase < ApplicationRecord
+class DistributedCase < CaseflowRecord
   belongs_to :distribution
   belongs_to :task
 
@@ -10,6 +10,11 @@ class DistributedCase < ApplicationRecord
   validates :task_id, presence: true, if: :ama_docket
   validates :docket_index, presence: true, if: :legacy_nonpriority
   validates :priority, inclusion: [true, false]
+
+  def redistribute!
+    ymd = Time.zone.today.strftime("%F")
+    update!(case_id: "#{case_id}-redistributed-#{ymd}")
+  end
 
   private
 

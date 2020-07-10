@@ -6,7 +6,7 @@ class CacheManager
   BUCKETS = {
     bgs: [
       "bgs_can_access_*",
-      "bgs-participant-poa-*",
+      "bgs-participant-poa-not-found-*",
       "bgs-participant-address-*",
       "SupplementalClaim-*-ratings-*-cached-*",
       "HigherLevelReview-*-ratings-*-cached-*",
@@ -44,6 +44,12 @@ class CacheManager
 
   def all_cache_keys
     self.class.cache_store.keys
+  end
+
+  def key_count(pattern)
+    count = 0
+    self.class.cache_store.scan_each(match: pattern) { count += 1 }
+    count
   end
 
   def clear(bucket)

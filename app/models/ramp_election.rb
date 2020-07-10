@@ -62,7 +62,7 @@ class RampElection < RampReview
   def on_sync(end_product_establishment)
     recreate_issues_from_contentions!(end_product_establishment)
 
-    if FeatureToggle.enabled?(:automatic_ramp_rollback) && end_product_establishment.status_canceled?
+    if FeatureToggle.enabled?(:automatic_ramp_rollback) && end_product_establishment.status_cancelled?
       rollback_ramp_review
     end
   end

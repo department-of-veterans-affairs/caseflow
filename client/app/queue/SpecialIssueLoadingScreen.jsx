@@ -9,6 +9,7 @@ import ApiUtil from '../util/ApiUtil';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 
 import { setSpecialIssues } from './QueueActions';
+import WindowUtil from '../util/WindowUtil';
 
 class SpecialIssueLoadingScreen extends React.PureComponent {
 
@@ -28,12 +29,10 @@ class SpecialIssueLoadingScreen extends React.PureComponent {
     );
   }
 
-  reload = () => window.location.reload();
-
   render = () => {
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load this case's special issues<br />
-      Please <a onClick={this.reload}>refresh the page</a> and try again.
+      Please <a onClick={WindowUtil.reloadWithPOST}>refresh the page</a> and try again.
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay

@@ -15,9 +15,9 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("Add Hearing Day")
       expect(page).to have_content("Select Hearing Date")
       expect(page).to have_content("Select Hearing Type")
-      expect(page).not_to have_content("Select Regional Office (RO)")
-      expect(page).not_to have_content("Select VLJ (Optional)")
-      expect(page).not_to have_content("Select Hearing Coordinator (Optional)")
+      expect(page.has_no_content?("Select Regional Office (RO)")).to eq(true)
+      expect(page.has_no_content?("Select VLJ (Optional)")).to eq(true)
+      expect(page.has_no_content?("Select Hearing Coordinator (Optional)")).to eq(true)
       expect(page).to have_content("Notes (Optional)")
       expect(page).to have_content("Assign Board Hearing Room")
     end
@@ -42,7 +42,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("Add Hearing Day")
       click_dropdown(index: "C", text: "Central")
       expect(page).to have_content("Select VLJ (Optional)", wait: 30)
-      expect(page).not_to have_content("Select Regional Office (RO)")
+      expect(page.has_no_content?("Select Regional Office (RO)")).to eq(true)
       expect(page).to have_content("Select Hearing Coordinator (Optional)")
     end
 
@@ -100,9 +100,9 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       fill_in "hearingDate", with: "04152019"
       click_dropdown(index: "V", text: "Video")
       expect(page).to have_content("Select Regional Office (RO)", wait: 30)
-      dropdowns = page.all(".Select-control")
+      dropdowns = page.all(".cf-select__control")
       dropdowns[1].click
-      dropdowns[1].sibling(".Select-menu-outer").find("div .Select-option", text: "Atlanta, GA").click
+      dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Atlanta, GA").click
       fill_in "vlj", with: "Sallie L Anderson"
       fill_in "coordinator", with: "Casimir R Funk"
       fill_in "Notes (Optional)", with: "Test notes."

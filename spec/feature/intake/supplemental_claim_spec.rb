@@ -186,6 +186,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     click_intake_finish
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been submitted.")
+    expect(page).to have_content("It may take up to 24 hours for the claim to establish")
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Rating EP is being established:"
     )
@@ -206,7 +207,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "499",
+        station_of_jurisdiction: current_user.station_id,
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
@@ -215,7 +216,8 @@ feature "Supplemental Claim Intake", :all_dbs do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293",
         limited_poa_code: nil,
-        limited_poa_access: nil
+        limited_poa_access: nil,
+        status_type_code: "PEND"
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
@@ -237,7 +239,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "499",
+        station_of_jurisdiction: current_user.station_id,
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
@@ -246,7 +248,8 @@ feature "Supplemental Claim Intake", :all_dbs do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293",
         limited_poa_code: nil,
-        limited_poa_access: nil
+        limited_poa_access: nil,
+        status_type_code: "PEND"
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
@@ -364,7 +367,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       detail: supplemental_claim
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )
@@ -486,7 +489,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to_not have_content("Notes:")
 
       click_remove_intake_issue("1")
-      expect(page).not_to have_content("Left knee granted 2")
+      expect(page.has_no_content?("Left knee granted 2")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -594,7 +597,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         veteran_file_number: veteran.file_number,
         code: "040SCR",
         claimant_participant_id: supplemental_claim.claimant_participant_id,
-        station: "499"
+        station: current_user.station_id
       )
 
       expect(end_product_establishment).to_not be_nil
@@ -604,7 +607,7 @@ feature "Supplemental Claim Intake", :all_dbs do
         veteran_file_number: veteran.file_number,
         code: "040SCNR",
         claimant_participant_id: supplemental_claim.claimant_participant_id,
-        station: "499"
+        station: current_user.station_id
       )
       expect(non_rating_end_product_establishment).to_not be_nil
 
@@ -761,6 +764,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
           # should redirect to tasks review page
           expect(page).to have_content("Reviews needing action")
+          expect(page).not_to have_content("It may take up to 24 hours for the claim to establish")
           expect(current_path).to eq("/decision_reviews/education")
           expect(page).to have_content("Success!")
 
@@ -834,7 +838,7 @@ feature "Supplemental Claim Intake", :all_dbs do
           # Expect no untimely exemption modal for untimely issue, due to it being supplemental claim
           click_intake_add_issue
           add_intake_rating_issue("Untimely rating issue 1")
-          add_intake_rating_issue("None of these match")
+          select_intake_no_match
           expect(page).to_not have_content(
             "The issue requested isn't usually eligible because its decision date is older"
           )
@@ -852,7 +856,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
           expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
-          add_intake_rating_issue("None of these match")
+          select_intake_no_match
 
           expect(page).to have_content("Description for Active Duty Adjustments")
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Search", :all_dbs do
+feature "Search", :all_dbs do
   let(:attorney_user) { create(:user) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
@@ -39,20 +39,6 @@ RSpec.feature "Search", :all_dbs do
         click_on "button-clear-search"
 
         expect(page).to_not have_field("search", with: invalid_veteran_id)
-      end
-    end
-
-    context "when using AppealFinder" do
-      it "returns results upon valid input" do
-        res = AppealFinder.find_appeals_with_file_numbers(appeal.veteran_file_number)
-
-        expect(res.first.id).to eq(appeal.id)
-      end
-
-      it "returns nil when input is invalid format" do
-        res = AppealFinder.find_appeals_with_file_numbers(invalid_veteran_id)
-
-        expect(res).to be_empty
       end
     end
 
@@ -341,16 +327,40 @@ RSpec.feature "Search", :all_dbs do
       end
     end
 
-    context "when VSO employee does not have access to the file number" do
-      it "displays a helpful error message on same page" do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
-        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
-        User.authenticate!(user: vso_user)
+    context "BGS can_access? is false" do
+      before do
+        Fakes::BGSService.new.bust_can_access_cache(user, appeal.sanitized_vbms_id)
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.sanitized_vbms_id]
+        User.authenticate!(user: user)
+      end
+
+      let(:user) { create(:user) }
+
+      def perform_search
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
+      end
 
-        expect(page).to have_content("You do not have access to this claims file number")
+      context "when user is VSO employee" do
+        let(:user) { create(:user, :vso_role, css_id: "BVA_VSO") }
+
+        it "displays a helpful error message on same page" do
+          perform_search
+          expect(page).to have_content("You do not have access to this claims file number")
+        end
+      end
+
+      context "when user is BVA (not VSO) employee" do
+        let(:user) { create(:user, :judge) }
+
+        it "displays 1 result but clicking through gives permission denied" do
+          perform_search
+          expect(page).to have_content("1 case found")
+
+          visit "/queue/appeals/#{appeal.vacols_id}"
+          expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
+        end
       end
     end
 
@@ -401,7 +411,7 @@ RSpec.feature "Search", :all_dbs do
       it "clicking on docket number sends us to the case details page" do
         find("a", exact_text: appeal.docket_number).click
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
-        expect(page).not_to have_content "Select an action"
+        expect(page.has_no_content?("Select an action")).to eq(true)
       end
 
       scenario "found appeal is paper case" do
@@ -411,6 +421,23 @@ RSpec.feature "Search", :all_dbs do
 
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::IS_PAPER_CASE)
+      end
+    end
+
+    context "when appeal is associated with ssn not file number" do
+      let!(:veteran) { create(:veteran, file_number: "00000000", ssn: Generators::Random.unique_ssn) }
+      let!(:legacy_appeal) do
+        create(
+          :legacy_appeal,
+          vacols_case: create(:case, bfcorlid: "#{veteran.ssn}S")
+        )
+      end
+      scenario "found one appeal" do
+        visit "/search"
+        fill_in "searchBarEmptyList", with: veteran.file_number
+        click_on "Search"
+
+        expect(page).to have_content("1 case found for")
       end
     end
   end
@@ -423,37 +450,6 @@ RSpec.feature "Search", :all_dbs do
       visit "/search"
       fill_in "searchBarEmptyList", with: search_term
       click_on "Search"
-    end
-
-    context "when using AppealFinder" do
-      it "returns results upon valid input" do
-        res = AppealFinder.find_appeal_by_docket_number(appeal.docket_number)
-
-        expect(res.id).to eq(appeal.id)
-      end
-
-      it "returns nil when docket number is invalid format" do
-        res = AppealFinder.find_appeal_by_docket_number(invalid_docket_number)
-
-        expect(res).to be_nil
-      end
-
-      it "returns nil when docket number can't be found" do
-        res = AppealFinder.find_appeal_by_docket_number("012345-000")
-
-        expect(res).to be_nil
-      end
-
-      it "hides results for VSO user w/o access" do
-        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
-        User.authenticate!(user: vso_user)
-        res = AppealFinder.new(user: vso_user).send(
-          :filter_appeals_for_vso_user,
-          appeals: Array.wrap(appeal),
-          veterans: Array.wrap(appeal.veteran)
-        )
-        expect(res).to be_empty
-      end
     end
 
     context "when using invalid docket number" do
@@ -483,16 +479,40 @@ RSpec.feature "Search", :all_dbs do
       end
     end
 
-    context "when VSO employee does not have access to the file number" do
-      it "displays a helpful error message on same page" do
+    context "when BGS can_access? is false" do
+      before do
+        Fakes::BGSService.new.bust_can_access_cache(user, appeal.veteran_file_number)
         Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
-        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
-        User.authenticate!(user: vso_user)
+        User.authenticate!(user: user)
+      end
+
+      let(:user) { create(:user) }
+
+      def perform_search
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.docket_number
         click_on "Search"
+      end
 
-        expect(page).to have_content("You do not have access to this claims file number")
+      context "when user is VSO employee" do
+        let(:user) { create(:user, :vso_role, css_id: "BVA_VSO") }
+
+        it "displays a helpful error message on same page" do
+          perform_search
+          expect(page).to have_content("You do not have access to this claims file number")
+        end
+      end
+
+      context "when user is BVA (not VSO) employee" do
+        let(:user) { create(:user, :judge) }
+
+        it "displays 1 result but clicking through gives permission denied" do
+          perform_search
+          expect(page).to have_content("1 case found")
+
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
+        end
       end
     end
   end
@@ -604,14 +624,14 @@ RSpec.feature "Search", :all_dbs do
     end
   end
 
+  def perform_search
+    visit "/search"
+    fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
+    click_on "Search"
+  end
+
   context "has withdrawn decision reviews" do
     let!(:caseflow_appeal) { create(:appeal) }
-
-    def perform_search
-      visit "/search"
-      fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
-      click_on "Search"
-    end
 
     it "shows 'Withdrawn' text on search results page" do
       policy = instance_double(WithdrawnDecisionReviewPolicy)
@@ -620,6 +640,21 @@ RSpec.feature "Search", :all_dbs do
       perform_search
 
       expect(page).to have_content("Withdrawn")
+    end
+  end
+
+  context "is cancelled ama appeal" do
+    let!(:caseflow_appeal) { create(:appeal, :at_attorney_drafting, associated_attorney: attorney_user) }
+
+    it "shows 'Cancelled' text on search results page" do
+      perform_search
+      expect(page).to have_content("Assigned To Attorney")
+      expect(page).to have_content("Assigned to you")
+
+      caseflow_appeal.reload.tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+      perform_search
+      expect(page).to have_content("Cancelled")
+      expect(page).not_to have_content("Assigned to you")
     end
   end
 end

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class BvaIntake < Organization
-  def self.singleton
-    BvaIntake.first || BvaIntake.create(name: "Case Review", url: "case-review")
+  class << self
+    def singleton
+      BvaIntake.first || BvaIntake.create(name: "BVA Intake", url: "bva-intake")
+    end
   end
 end

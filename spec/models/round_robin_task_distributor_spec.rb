@@ -39,6 +39,18 @@ describe RoundRobinTaskDistributor, :all_dbs do
         expect(Task.all.max_by(&:created_at).assigned_to_type).to eq(Organization.name)
       end
     end
+
+    context "when a TimedHoldTask task is most recent task" do
+      let!(:task) { create(:task, assigned_to: assignee) }
+      let!(:timed_hold_task) do
+        create(:timed_hold_task, assigned_to: assignee_pool[assignee_index - 1])
+      end
+
+      it "should return the most recent non-TimedHoldTask assigned" do
+        expect(round_robin_distributor.latest_task.id).to eq(task.id)
+        expect(Task.all.max_by(&:created_at).id).to eq(timed_hold_task.id)
+      end
+    end
   end
 
   describe ".next_assignee" do
@@ -66,7 +78,7 @@ describe RoundRobinTaskDistributor, :all_dbs do
       end
 
       context "the assignee_pool contains items that aren't Users" do
-        let!(:assignee_pool) { create_list(:user, assignee_pool_size).pluck(:css_id) }
+        let!(:assignee_pool) { create_list(:organization, assignee_pool_size) }
 
         it "raises an error" do
           expect { round_robin_distributor.next_assignee }.to(raise_error) do |error|
@@ -90,6 +102,28 @@ describe RoundRobinTaskDistributor, :all_dbs do
       it "should have evenly distributed tasks to each assignee" do
         assignee_pool.each do |user|
           expect(Task.where(assigned_to: user).count).to eq(iterations)
+        end
+      end
+    end
+
+    context "the assignee_pool has inactive users" do
+      let(:iterations) { 4 }
+      let(:total_distribution_count) { iterations * assignee_pool_size }
+      let(:number_of_inactive_users) { assignee_pool_size / 2 }
+
+      before do
+        assignee_pool.take(number_of_inactive_users).each(&:inactive!)
+        total_distribution_count.times do
+          create(:task, assigned_to: round_robin_distributor.next_assignee)
+        end
+      end
+
+      it "should have evenly distributed tasks to each assignee" do
+        assignee_pool.select(&:active?).each do |user|
+          expect(Task.where(assigned_to: user).count).to eq(iterations * 2)
+        end
+        assignee_pool.select(&:inactive?).each do |user|
+          expect(Task.where(assigned_to: user).count).to eq(0)
         end
       end
     end

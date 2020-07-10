@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :claimant do
     sequence(:decision_review_id)
     sequence(:participant_id)
-    decision_review_type { "Appeal" }
+    association :decision_review, factory: :appeal
 
     trait :advanced_on_docket_due_to_age do
       after(:create) do |claimant, _evaluator|
@@ -18,8 +18,11 @@ FactoryBot.define do
       claimant.person&.date_of_birth
 
       if claimant.decision_review&.veteran&.participant_id == claimant.participant_id
+        claimant.type = "VeteranClaimant"
         veteran = claimant.decision_review.veteran
         claimant.person.update!(first_name: veteran.first_name, last_name: veteran.last_name)
+      else
+        claimant.type = "DependentClaimant"
       end
     end
   end
