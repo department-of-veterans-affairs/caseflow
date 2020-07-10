@@ -38,6 +38,7 @@ RSpec.feature "TranscriptionTeam", :postgres do
       visit("/organizations/transcription")
       click_on veteran_link_text
       click_dropdown(text: Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h[:label])
+      fill_in "taskInstructions", with: "Cancelling task"
       click_on "Submit"
 
       expect(page).to have_content(

@@ -31,11 +31,11 @@ class Api::V3::DecisionReviews::IntakeStatusesController < Api::V3::BaseControll
   end
 
   def render_unknown_error
-    render_error status: 500, code: :unknown_error, title: "Unknown error"
+    render_errors status: 500, code: :unknown_error, title: "Unknown error"
   end
 
   def render_no_decision_review_error
-    render_error(
+    render_errors(
       status: 404,
       code: :decision_review_not_found,
       title: "Unable to find a Decision Review using specified UUID"

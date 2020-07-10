@@ -80,12 +80,6 @@ class PowerOfAttorney
     BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
   rescue ActiveRecord::RecordInvalid # not found at BGS
     nil
-  rescue ActiveRecord::RecordNotUnique
-    # We've noticed that this error is thrown because of a race-condition
-    # where multiple processes are trying to create the same object.
-    # see: https://dsva.slack.com/archives/C3EAF3Q15/p1593726968095600 for investigation
-    # So a solution to this is to rescue the error and query it
-    BgsPowerOfAttorney.find_by(file_number: file_number)
   end
 
   def fetch_bgs_power_of_attorney_by_claimant_participant_id

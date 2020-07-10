@@ -134,12 +134,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
   rescue ActiveRecord::RecordInvalid # not found at BGS
     BgsPowerOfAttorney.new(file_number: file_number)
-  rescue ActiveRecord::RecordNotUnique
-    # We've noticed that this error is thrown because of a race-condition-y error
-    # with multiple processes trying to create the same object.
-    # see: https://dsva.slack.com/archives/CN3FQR4A1/p1593032872085600
-    # So a solution to this is to resuce the error and query it so the job can continue
-    BgsPowerOfAttorney.find_by(file_number: file_number)
   end
 
   # rubocop:disable Metrics/MethodLength

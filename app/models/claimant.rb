@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+##
+# The Claimant model associates a claimant to a decision review.
+
 class Claimant < CaseflowRecord
   include AssociatedBgsRecord
   include HasDecisionReviewUpdatedSince
@@ -14,10 +17,11 @@ class Claimant < CaseflowRecord
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
 
-  def self.create_without_intake!(participant_id:, payee_code:)
+  def self.create_without_intake!(participant_id:, payee_code:, type:)
     create!(
       participant_id: participant_id,
-      payee_code: payee_code
+      payee_code: payee_code,
+      type: type
     )
     Person.find_or_create_by_participant_id(participant_id)
   end
@@ -92,12 +96,6 @@ class Claimant < CaseflowRecord
     BgsPowerOfAttorney.find_or_create_by_file_number(decision_review.veteran_file_number)
   rescue ActiveRecord::RecordInvalid # not found at BGS
     nil
-  rescue ActiveRecord::RecordNotUnique
-    # We've noticed that this error is thrown because of a race-condition
-    # where multiple processes are trying to create the same object.
-    # see: https://dsva.slack.com/archives/C3EAF3Q15/p1593726968095600 for investigation
-    # So a solution to this is to rescue the error and query it
-    BgsPowerOfAttorney.find_by(file_number: decision_review.veteran_file_number)
   end
 
   def bgs_address_service

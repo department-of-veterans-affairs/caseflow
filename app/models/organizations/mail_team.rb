@@ -8,8 +8,4 @@ class MailTeam < Organization
   def users_can_create_mail_task?
     true
   end
-
-  def can_bulk_assign_tasks?
-    true
-  end
 end

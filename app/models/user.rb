@@ -346,10 +346,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
-  def can_bulk_assign_tasks?
-    false
-  end
-
   def can_act_on_behalf_of_judges?
     member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
   end
