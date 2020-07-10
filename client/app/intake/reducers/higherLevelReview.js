@@ -16,6 +16,7 @@ const updateFromServerIntake = (state, serverIntake) => {
   }
 
   const commonState = commonStateFromServerIntake(serverIntake);
+
   return update(state, {
     ...commonState,
     informalConference: {
@@ -50,6 +51,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     veteranIsNotClaimant: null,
     veteranIsNotClaimantError: null,
     claimant: null,
+    claimantType: null,
     claimantError: null,
     payeeCode: null,
     payeeCodeError: null,
