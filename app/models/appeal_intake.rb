@@ -59,7 +59,11 @@ class AppealIntake < DecisionReviewIntake
   # If user has specified a different claimant, use that
   # Otherwise we use the veteran's participant_id, even for OtherClaimant
   def participant_id
-    request_params[:claimant] || veteran.participant_id
+    if %w[VeteranClaimant OtherClaimant].include? claimant_type
+      veteran.participant_id
+    else
+      request_params[:claimant]
+    end
   end
 
   def claimant_type
