@@ -202,7 +202,8 @@ class Intake < CaseflowRecord
       veteran_is_deceased: veteran&.deceased?,
       completed_at: completed_at,
       relationships: veteran&.relationships&.map(&:serialize),
-      processed_in_caseflow: detail.try(:processed_in_caseflow?)
+      processed_in_caseflow: detail.try(:processed_in_caseflow?),
+      claimantType: detail&.claimant&.type
     }
   end
 
