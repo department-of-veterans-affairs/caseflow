@@ -127,6 +127,11 @@ FactoryBot.define do
 
     trait :cancelled do
       after(:create) do |appeal, _evaluator|
+        # make sure a request issue exists, then mark all removed
+        create(:request_issue, decision_review: appeal)
+        appeal.reload.request_issues.each(&:remove!)
+
+        # Cancel the task tree
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         root_task.cancel_task_and_child_subtasks
       end
