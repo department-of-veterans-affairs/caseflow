@@ -275,7 +275,7 @@ describe RequestIssue, :all_dbs do
     end
   end
 
-  fcontext "legacy_optin" do
+  context "legacy_optin" do
     let!(:legacy_appeal) do
       create(:legacy_appeal, vacols_case:
         create(
