@@ -15,7 +15,7 @@ describe DasDeprecation::CaseDistribution, :all_dbs do
       end
 
       let(:record) do
-        LegacyAppeal.repository.distribute_nonpriority_appeals(judge, "any", nil, 1).first
+        LegacyAppeal.repository.distribute_nonpriority_appeals(judge, "any", nil, 1, false).first
       end
 
       it "record is not nil" do

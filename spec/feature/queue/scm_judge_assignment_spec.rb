@@ -25,11 +25,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
 
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
     User.authenticate!(user: current_user)
-
-    FeatureToggle.enable!(:scm_view_judge_assign_queue)
   end
-
-  after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
   context "Non-SCM user should not see judge assign queue page if they are not the judge" do
     context "logged in user is some user" do
@@ -120,11 +116,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
         allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
         allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
-
-        FeatureToggle.enable!(:scm_view_judge_assign_queue)
       end
-
-      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       scenario "on ama appeals" do
         step "request cases" do
