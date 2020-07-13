@@ -76,7 +76,7 @@
   "TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS": "%s's case has been removed from overtime status",
   "TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS_DETAIL": "The \"OT\" label has been removed from this case and will no longer be visible to judges and attorneys",
   "TASK_SNAPSHOT_MARK_AS_OVERTIME_HEADER": "Mark case as overtime",
-  "TASK_SNAPSHOT_MARK_AS_OVERTIME_CONFIRMATION": "This case does not have an overtime status. Do you want to  to mark this case for overtime?",
+  "TASK_SNAPSHOT_MARK_AS_OVERTIME_CONFIRMATION": "This case does not have an overtime status. Do you want to mark this case for overtime?",
   "TASK_SNAPSHOT_MARK_AS_OVERTIME_SUCCESS": "%s's case has been marked for overtime",
   "TASK_SNAPSHOT_MARK_AS_OVERTIME_SUCCESS_DETAIL": "A new \"OT\" label has been added to the case and will be visible to all judges and attorneys",
   "TASK_SNAPSHOT_OVERTIME_LABEL": "Overtime Status",

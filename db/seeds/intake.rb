@@ -70,7 +70,8 @@ module Seeds
       )
       higher_level_review.create_claimant!(
         participant_id: "5382910292",
-        payee_code: "10"
+        payee_code: "10",
+        type: "DependentClaimant"
       )
 
       EndProductEstablishment.create!(

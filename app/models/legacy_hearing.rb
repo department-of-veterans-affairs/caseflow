@@ -17,8 +17,8 @@ class LegacyHearing < CaseflowRecord
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
 
   # scheduled_for is the correct hearing date and time in Eastern Time for travel
-  # board and video hearings, or in the user's time zone for central hearings; the
-  # transformation happens in HearingMapper.datetime_based_on_type
+  # board and video hearings, or in the user's (Hearing Coordinator) time zone for
+  # central hearings; the transformation happens in HearingMapper.datetime_based_on_type
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
@@ -104,7 +104,7 @@ class LegacyHearing < CaseflowRecord
   end
 
   def hearing_day_id
-    if self[:hearing_day_id].nil? && !hearing_day_id_refers_to_vacols_row?
+    if self[:hearing_day_id].nil? && hearing_day_vacols_id.present? && !hearing_day_id_refers_to_vacols_row?
       begin
         update!(hearing_day_id: hearing_day_vacols_id)
       rescue ActiveRecord::InvalidForeignKey
@@ -121,6 +121,10 @@ class LegacyHearing < CaseflowRecord
     @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
   end
 
+  # The logic for this method is mirrored in `HearingRepository#regional_office_for_scheduled_timezone`.
+  #
+  # There is a constraint within the `HearingRepository` context that means that calling
+  # `LegacyHearing#regional_office_Key` triggers an unnecessary call to VACOLS.
   def regional_office_key
     if request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
       return (venue_key || appeal&.regional_office_key)

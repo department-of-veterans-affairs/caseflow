@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import { timezones } from '../../utils';
-import { timezoneDropdownStyles, timezoneStyles } from '../details/style';
+import { timezoneStyles } from '../details/style';
 
 export const Timezone = ({
   name,
@@ -20,7 +20,6 @@ export const Timezone = ({
     <SearchableDropdown
       required={required}
       styling={timezoneStyles(commonsCount)}
-      dropdownStyling={timezoneDropdownStyles(commonsCount)}
       name={name}
       readOnly={readOnly}
       placeholder="Select a timezone"

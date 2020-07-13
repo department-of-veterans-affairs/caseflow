@@ -1200,6 +1200,8 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
 
 exports[`HearingTypeDropdown Matches snapshot with default props for central office hearings 1`] = `
 <SearchableDropdown
+  clearOnSelect={false}
+  clearable={false}
   label="Hearing Type"
   loading={false}
   name="hearingType"
@@ -1228,6 +1230,8 @@ exports[`HearingTypeDropdown Matches snapshot with default props for central off
 
 exports[`HearingTypeDropdown Matches snapshot with default props for video hearings 1`] = `
 <SearchableDropdown
+  clearOnSelect={false}
+  clearable={false}
   label="Hearing Type"
   loading={false}
   name="hearingType"
@@ -1256,6 +1260,8 @@ exports[`HearingTypeDropdown Matches snapshot with default props for video heari
 
 exports[`HearingTypeDropdown Matches snapshot with default props for virtual hearings 1`] = `
 <SearchableDropdown
+  clearOnSelect={false}
+  clearable={false}
   label="Hearing Type"
   loading={false}
   name="hearingType"
