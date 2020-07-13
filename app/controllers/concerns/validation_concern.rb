@@ -19,11 +19,12 @@ module ValidationConcern
     end
   end
 
+  # Returns only the params specified in the schema.
   def permitted_params
     schema = self.class.validation_schemas[action_name.to_sym]
     return if schema.nil?
 
-    params.permit!.slice(*schema.fields.map(&:name))
+    schema.remove_unknown_keys(params, in_place: false).permit!
   end
 
   # :nocov:
@@ -31,7 +32,7 @@ module ValidationConcern
     schema = self.class.validation_schemas[action_name.to_sym]
     return if schema.nil?
 
-    schema.remove_unknown_keys(params, request.path_parameters)
+    schema.remove_unknown_keys(params, path_params: request.path_parameters)
     result = schema.validate(params)
     if result.failure?
       errors = result.errors.map { |msg| msg.path.join(".") + " #{msg.text}" }
