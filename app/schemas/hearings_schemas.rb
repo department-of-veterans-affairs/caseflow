@@ -7,13 +7,53 @@ class HearingsSchemas
         s.nested :hearing,
                  optional: false,
                  nullable: false,
-                 doc: "Hearing attributes to update",
-                 &update_ama_hearing_schema
+                 doc: "Hearing attributes to update" do |h| 
+                   common_hearing_fields(h)
+
+                   h.date :transcript_sent_date,
+                          optional: true,
+                          nullable: false,
+                          doc: "The date the transcription was sent"
+                   h.bool :evidence_window_waived,
+                          optional: true,
+                          nullable: true,
+                          doc: "Whether or not the evidence submission window was waived for the hearing"
+                   h.nested :hearing_issue_notes_attributes,
+                            optional: true,
+                            nullable: true,
+                            doc: "Notes for a hearing issue",
+                            &hearing_issue_notes
+                   h.nested :transcription_attributes,
+                            optional: true,
+                            nullable: true,
+                            doc: "Details about hearing transcription",
+                            &transcription
+                 end
         s.nested :advance_on_docket_motion,
                  optional: true,
                  nullable: false,
                  doc: "AOD associated with the case",
                  &advance_on_docket_motion
+      end
+    end
+
+    def update_legacy
+      ControllerSchema.json do |s|
+        s.nested :hearing,
+                 optional: false,
+                 nullable: false,
+                 doc: "Hearing attributes to update" do |h| 
+                   common_hearing_fields(h)
+
+                   h.date :scheduled_for,
+                          optional: true,
+                          nullable: false,
+                          doc: "The datetime the hearing was scheduled for"
+                   h.bool :aod,
+                          optional: true,
+                          nullable: false,
+                          doc: "Whether or not an AOD for the case has been granted"
+                 end
       end
     end
 
@@ -68,30 +108,48 @@ class HearingsSchemas
                optional: true,
                nullable: true,
                doc: "The room the hearing will take place in"
-    end
-
-    def update_ama_hearing_schema
-      proc do |s|
-        common_hearing_fields(s)
-
-        s.date :transcript_sent_date,
-               optional: true,
-               nullable: false,
-               doc: "The date the transcription was sent"
-        s.bool :evidence_window_waived,
+      s.nested :hearing_location_attributes,
                optional: true,
                nullable: true,
-               doc: "Whether or not the evidence submission window was waived for the hearing"
-        s.nested :hearing_location_attributes,
+               doc: "The hearing location of the hearing",
+               &hearing_location
+      s.nested :virtual_hearing_attributes,
+               optional: true,
+               nullable: true,
+               doc: "Associated data for a virtual hearing",
+               &virtual_hearing
+    end
+
+    def hearing_issue_notes
+      proc do |s|
+        s.integer :id,
+                  optional: true,
+                  nullable: false,
+                  doc: "The ID of the issue note"
+        s.bool :allow,
+               optional: true,
+               nullable: false,
+               doc: "Whether or not the issue was allowed"
+        s.bool :deny,
+               optional: true,
+               nullable: false,
+               doc: "Whether or not the issue was denied"
+        s.bool :remand,
+               optional: true,
+               nullable: false,
+               doc: "Whether or not the issue was remanded"
+        s.bool :dismiss,
+               optional: true,
+               nullable: false,
+               doc: "Whether or not the issue was dismissed"
+        s.bool :reopen,
+               optional: true,
+               nullable: false,
+               doc: "Whether or not the issue was reopened"
+        s.string :worksheet_notes,
                  optional: true,
                  nullable: true,
-                 doc: "The hearing location of the hearing",
-                 &hearing_location
-        s.nested :virtual_hearing_attributes,
-                 optional: true,
-                 nullable: true,
-                 doc: "Associated data for a virtual hearing",
-                 &virtual_hearing
+                 doc: "Notes from the hearings worksheet"
       end
     end
 
@@ -110,7 +168,7 @@ class HearingsSchemas
                  nullable: true,
                  doc: "The state of the hearing location"
         s.string :facility_id,
-                 optional: true,
+                 optional: false,
                  nullable: false,
                  doc: "The facility ID of the hearing location (defined externally by VA.gov)"
         s.string :facility_type,
@@ -136,10 +194,23 @@ class HearingsSchemas
       end
     end
 
+    def transcription
+      proc do |s|
+        s.date :expected_return_date
+        s.date :problem_notice_sent_date
+        s.string :problem_type
+        s.string :requested_remedy
+        s.date :sent_to_transcriber_date
+        s.string :task_number
+        s.string :transcriber
+        s.date :uploaded_to_vbms_Date
+      end
+    end
+
     def virtual_hearing
       proc do |s|
         s.string :appellant_email,
-                 optional: false,
+                 optional: true,
                  nullable: false,
                  doc: "The email address of the appellant/veteran"
         s.string :judge_email,
@@ -168,15 +239,15 @@ class HearingsSchemas
     def advance_on_docket_motion
       proc do |s|
         s.integer :person_id,
-                  optional: false,
+                  optional: true,
                   nullable: false,
                   doc: "The person the AOD is being granted for"
         s.string :reason,
-                 optional: false,
+                 optional: true,
                  nullable: false,
                  doc: "The reason the AOD is being granted"
         s.bool :granted,
-               optional: false,
+               optional: true,
                nullable: true,
                doc: "Whether or not the AOD was granted"
       end
