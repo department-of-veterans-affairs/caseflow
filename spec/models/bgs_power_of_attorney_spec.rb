@@ -65,11 +65,11 @@ describe BgsPowerOfAttorney do
 
     context "when concurrent calls cause a race condition" do
       let(:concurrency) { 4 }
-      let(:pid) { "456" }
+      let(:pid) { "7108346" }
       let(:file_number) { "fn" }
       let(:bgs_record) do
         {
-          claimant_participant_id: "123",
+          claimant_participant_id: "1738055",
           participant_id: pid,
           file_number: file_number,
           representative_name: "some",
