@@ -457,6 +457,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     context "when a case is tied to a judge by a hearing on a prior appeal" do
       let(:original_docket_number) { aod_ready_case_docket_number }
       let(:hearing_judge) { judge.vacols_attorney_id }
+      let(:another_hearing_judge) { another_judge.vacols_attorney_id }
       let!(:hearing) do
         create(:case_hearing,
                :disposition_held,
@@ -470,7 +471,7 @@ describe VACOLS::CaseDocket, :all_dbs do
                :disposition_held,
                folder_nr: postcavc_ready_case.bfkey,
                hearing_date: 5.days.ago.to_date,
-               board_member: another_judge.vacols_attorney_id)
+               board_member: another_hearing_judge)
       end
 
       context "when genpop is no" do
@@ -479,6 +480,17 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(subject.count).to eq(1)
           expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+        end
+
+        context "when limit is nil" do
+          let(:limit) { nil }
+          let(:another_hearing_judge) { judge.vacols_attorney_id }
+
+          it "distributes all cases tied to the judge" do
+            expect(subject.count).to eq(2)
+            expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+            expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          end
         end
       end
 
