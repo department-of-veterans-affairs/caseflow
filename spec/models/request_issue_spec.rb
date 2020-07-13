@@ -275,6 +275,36 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "legacy_optin" do
+    let!(:legacy_appeal) do
+      create(:legacy_appeal, vacols_case:
+        create(
+          :case,
+          :status_active,
+          bfkey: vacols_id,
+          bfcorlid: "#{veteran.file_number}S",
+          bfdc: "G",
+          bfddec: 3.days.ago,
+          folder: create(:folder, tidcls: folder_date),
+          case_issues: [
+            create(:case_issue, :ankylosis_of_hip),
+            create(:case_issue, :limitation_of_thigh_motion_extension)
+          ]
+        ))
+    end
+    let(:vacols_id) { "vacols7" }
+    let(:vacols_sequence_id) { 1 }
+    let(:decision_date) { 3.days.ago.to_date }
+    let(:folder_date) { 5.days.ago.to_date }
+    subject { rating_request_issue.handle_legacy_issues! }
+    it "saves legacy appeal disposition and decision date " do
+      subject
+      expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_disposition_code).to eq "G"
+      expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_decision_date).to eq(decision_date)
+      expect(rating_request_issue.legacy_issue_optin.folder_decision_date).to eq(folder_date)
+    end
+  end
+
   context "#contention" do
     let(:end_product_establishment) { create(:end_product_establishment, :active) }
     let!(:contention) do
