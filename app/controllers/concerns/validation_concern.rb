@@ -19,6 +19,13 @@ module ValidationConcern
     end
   end
 
+  def permitted_params
+    schema = self.class.validation_schemas[action_name.to_sym]
+    return if schema.nil?
+
+    params.permit!.slice(*schema.fields.map(&:name))
+  end
+
   # :nocov:
   def validate_schema
     schema = self.class.validation_schemas[action_name.to_sym]
