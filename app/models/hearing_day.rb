@@ -5,11 +5,12 @@
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay < CaseflowRecord
+  include UpdatedByUserConcern
+
   acts_as_paranoid
 
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
-  belongs_to :updated_by, class_name: "User"
   has_many :hearings
 
   class HearingDayHasChildrenRecords < StandardError; end
@@ -37,8 +38,7 @@ class HearingDay < CaseflowRecord
     "America/Anchorage" => 8
   }.freeze
 
-  before_create :assign_created_and_updated_by_user
-  before_update :assign_updated_by_user
+  before_create :assign_created_by_user
   after_update :update_children_records
 
   # Validates if the judge id maps to an actual record.
@@ -138,13 +138,8 @@ class HearingDay < CaseflowRecord
 
   private
 
-  def assign_created_and_updated_by_user
+  def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
-    assign_updated_by_user
-  end
-
-  def assign_updated_by_user
-    self.updated_by ||= RequestStore[:current_user]
   end
 
   def update_children_records
