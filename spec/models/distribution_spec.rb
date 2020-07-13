@@ -181,6 +181,7 @@ describe Distribution, :all_dbs do
       expect(subject.statistics["total_batch_size"]).to eq(45)
       expect(subject.statistics["priority_count"]).to eq(legacy_priority_count + 1)
       expect(subject.statistics["legacy_proportion"]).to eq(0.4)
+      expect(subject.statistics["legacy_hearing_backlog_count"]).to be <= 3
       expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
       expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
       expect(subject.statistics["hearing_proportion"]).to eq(0.2)
@@ -200,6 +201,30 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 3
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
+    end
+
+    context "with priority_acd on and the judge's backlog is full" do
+      before { FeatureToggle.enable!(:priority_acd) }
+      after { FeatureToggle.disable!(:priority_acd) }
+
+      let!(:more_same_judge_nonpriority_hearings) do
+        legacy_nonpriority_cases[33..63].map do |appeal|
+          create(:case_hearing,
+                 :disposition_held,
+                 folder_nr: appeal.bfkey,
+                 hearing_date: 1.month.ago,
+                 board_member: judge.vacols_attorney_id)
+        end
+      end
+
+      it "distributes legacy hearing non priority cases down to 30" do
+        expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)).to eq 35
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(30)
+        expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(5)
+        expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
+      end
     end
 
     def create_nonpriority_distributed_case(distribution, case_id, ready_at)
