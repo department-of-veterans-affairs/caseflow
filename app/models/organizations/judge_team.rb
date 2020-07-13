@@ -62,6 +62,10 @@ class JudgeTeam < Organization
     false
   end
 
+  def available_for_priority_case_distribution?
+    automated_priority_case_distribution?
+  end
+
   private
 
   def use_judge_team_roles?
