@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_10_232644) do
+ActiveRecord::Schema.define(version: 2020_07_13_210643) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -939,6 +939,7 @@ ActiveRecord::Schema.define(version: 2020_07_10_232644) do
   end
 
   create_table "organizations", force: :cascade do |t|
+    t.boolean "automated_priority_case_distribution", comment: "Whether a JudgeTeam is currently available for automatically pushed priority cases"
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"

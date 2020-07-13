@@ -3,6 +3,21 @@
 describe JudgeTeam, :postgres do
   let(:judge) { create(:user) }
 
+  context "scope" do
+    context "available_for_priority_case_distribution" do
+      let(:judge2) { create(:user) }
+      let!(:judge_team_available) { JudgeTeam.create_for_judge(judge) }
+      let(:judge_team_unavailable) { JudgeTeam.create_for_judge(judge2) }
+
+      before { judge_team_unavailable.update(automated_priority_case_distribution: false) }
+
+      it "should return only the available JudgeTeams" do
+        byebug
+        expect(JudgeTeam.available_for_priority_case_distribution).to eq([judge_team_available])
+      end
+    end
+  end
+
   describe "feature use_judge_team_roles not activated" do
     describe ".create_for_judge" do
       subject { JudgeTeam.create_for_judge(judge) }
@@ -18,6 +33,7 @@ describe JudgeTeam, :postgres do
           expect(judge.administered_teams.length).to eq(1)
           expect(judge.administered_teams.first.class).to eq(JudgeTeam)
           expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase.parameterize.dasherize)
+          expect(judge.administered_teams.first.automated_priority_case_distribution).to eq(true)
         end
 
         it "creates association with a JudgeTeamLead role with the judge" do
@@ -136,6 +152,7 @@ describe JudgeTeam, :postgres do
           expect(judge.administered_teams.length).to eq(1)
           expect(judge.administered_teams.first.class).to eq(JudgeTeam)
           expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase.parameterize.dasherize)
+          expect(judge.administered_teams.first.automated_priority_case_distribution).to eq(true)
           expect(JudgeTeam.for_judge(judge)).not_to eq(nil)
         end
 
