@@ -8,7 +8,7 @@ class AppealFinder
       MetricsService.record("VACOLS: Get appeal information for file_numbers #{file_numbers}",
                             service: :queue,
                             name: "VeteranFinderQuery.find_appeals_with_file_numbers") do
-        appeals = Appeal.established.where(veteran_file_number: file_numbers).reject(&:removed?).to_a
+        appeals = Appeal.established.where(veteran_file_number: file_numbers).to_a
         begin
           appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(*file_numbers))
         rescue ActiveRecord::RecordNotFound
