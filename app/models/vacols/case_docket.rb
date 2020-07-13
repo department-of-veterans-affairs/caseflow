@@ -118,7 +118,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
       )
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-        and rownum <= ?
+        and (rownum <= ? or 1 = ?)
   "
 
   SELECT_NONPRIORITY_APPEALS = "
@@ -324,7 +324,8 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       judge.vacols_attorney_id,
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                                      limit
+                                      limit,
+                                      limit.nil? ? 1 : 0,
                                     ])
 
     distribute_appeals(fmtd_query, judge, dry_run)
