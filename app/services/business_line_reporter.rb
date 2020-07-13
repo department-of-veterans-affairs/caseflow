@@ -28,7 +28,7 @@ class BusinessLineReporter
           task.appeal.request_issues&.count,
           task.appeal.decision_issues&.count,
           task.appeal.veteran_file_number,
-          task.appeal.intake.user.css_id,
+          task.appeal.intake.user&.css_id,
           task.type,
           task.id,
           "https://appeals.cf.ds.va.gov#{business_line.tasks_url}/tasks/#{task.id}",
