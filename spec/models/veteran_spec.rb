@@ -665,6 +665,20 @@ describe Veteran, :all_dbs do
       it "fetches based on SSN" do
         expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
       end
+
+      context "veteran saved in Caseflow with SSN as filenumber" do
+        let!(:veteran_by_ssn) { create(:veteran, file_number: ssn, ssn: ssn)}
+
+        before do
+          veteran.destroy! # leaves it in BGS
+        end
+
+        it "finds the veteran based on SSN and does not create a duplicate" do
+          expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran_by_ssn)
+          expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran_by_ssn)
+          expect(Veteran.where(ssn: ssn).count).to eq 1
+        end
+      end
     end
 
     context "does not exist in BGS" do
