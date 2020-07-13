@@ -165,6 +165,10 @@ Rails.application.routes.draw do
 
   post 'hearings/hearing_view/:id', to: 'hearings/hearing_view#create'
 
+  get 'hearings/:id', to: "hearings#show"
+  patch 'hearings/:id', to: "hearings#update", id: /\h{8}-\h{4}-\h{4}-\h{4}-\h{12}/
+  patch 'hearings/:id', to: "hearings#update_legacy"
+
   resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"

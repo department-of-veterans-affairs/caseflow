@@ -31,13 +31,22 @@ class HearingsController < HearingsApplicationController
 
   validates :update, using: HearingsSchemas.update
   def update
-    form = if hearing.is_a?(LegacyHearing)
-             LegacyHearingUpdateForm.new(update_params_legacy)
-           else
-             HearingUpdateForm.new(update_params)
-           end
+    form = HearingUpdateForm.new(update_params)
     form.update
 
+    render json: {
+      data: form.hearing.to_hash(current_user.id),
+      alerts: {
+        hearing: form.hearing_alerts,
+        virtual_hearing: form.virtual_hearing_alert
+      }
+    }
+  end
+
+  validates :update_legacy, using: HearingsSchemas.update_legacy
+  def update_legacy
+    form = LegacyHearingUpdateForm.new(update_params_legacy)
+    form.update
     render json: {
       data: form.hearing.to_hash(current_user.id),
       alerts: {
