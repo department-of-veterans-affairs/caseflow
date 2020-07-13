@@ -2,6 +2,7 @@
 
 class HearingsController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
+  include ValidationConcern
 
   before_action :verify_access_to_hearings, except: [:show]
   before_action :verify_access_to_reader_or_hearings, only: [:show]
@@ -28,6 +29,7 @@ class HearingsController < HearingsApplicationController
     render json: { data: hearing.to_hash_for_worksheet(current_user.id) }
   end
 
+  validates :update, using: HearingsSchemas.update
   def update
     form = if hearing.is_a?(LegacyHearing)
              LegacyHearingUpdateForm.new(update_params_legacy)
@@ -82,66 +84,14 @@ class HearingsController < HearingsApplicationController
     params[:id]
   end
 
-  COMMON_HEARING_ATTRIBUTES = [
-    :representative_name, :witness, :military_service, :summary,
-    :notes, :disposition, :hold_open, :transcript_requested, :prepped,
-    :scheduled_time_string, :judge_id, :room, :bva_poc
-  ].freeze
-
-  HEARING_LOCATION_ATTRIBUTES = [
-    :city, :state, :address, :facility_id, :facility_type,
-    :classification, :name, :distance, :zip_code
-  ].freeze
-
-  TRANSCRIPTION_ATTRIBUTES = [
-    :expected_return_date, :problem_notice_sent_date, :problem_type,
-    :requested_remedy, :sent_to_transcriber_date, :task_number,
-    :transcriber, :uploaded_to_vbms_date
-  ].freeze
-
-  HEARING_ISSUES_NOTES_ATTRIBUTES = [
-    :id, :allow, :deny, :remand, :dismiss, :reopen, :worksheet_notes
-  ].freeze
-
-  VIRTUAL_HEARING_ATTRIBUTES = [
-    :appellant_email, :judge_email, :representative_email, :request_cancelled, :appellant_tz, :representative_tz
-  ].freeze
+  def update_params
+    permitted_params[:hearing].merge(
+      hearing: hearing,
+      advance_on_docket_motion_attributes: params[:advance_on_docket_motion]
+    )
+  end
 
   def update_params_legacy
-    params
-      .require(:hearing)
-      .permit(
-        *COMMON_HEARING_ATTRIBUTES,
-        :aod,
-        :scheduled_for,
-        hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
-        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
-      )
-      .merge(hearing: hearing)
-  end
-
-  def update_params
-    params
-      .require(:hearing)
-      .permit(
-        *COMMON_HEARING_ATTRIBUTES,
-        :transcript_sent_date,
-        :evidence_window_waived,
-        hearing_location_attributes: HEARING_LOCATION_ATTRIBUTES,
-        transcription_attributes: TRANSCRIPTION_ATTRIBUTES,
-        hearing_issue_notes_attributes: HEARING_ISSUES_NOTES_ATTRIBUTES,
-        virtual_hearing_attributes: VIRTUAL_HEARING_ATTRIBUTES
-      )
-      .merge(
-        hearing: hearing, advance_on_docket_motion_attributes: advance_on_docket_motion_params
-      )
-  end
-
-  def advance_on_docket_motion_params
-    if params.key?(:advance_on_docket_motion)
-      params[:advance_on_docket_motion]
-        .permit(:person_id, :reason, :granted)
-        .tap { |aod_params| aod_params.empty? || aod_params.require([:person_id, :reason]) }
-    end
+    permitted_params[:hearing].merge(hearing: hearing)
   end
 end
