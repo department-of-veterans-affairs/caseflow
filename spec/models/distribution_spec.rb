@@ -411,6 +411,12 @@ describe Distribution, :all_dbs do
   end
 
   context "validations" do
+    shared_examples "passes validations" do
+      it "is valid" do
+        expect(subject.valid?).to be true
+      end
+    end
+
     subject { Distribution.create(judge: user, priority: priority) }
 
     let(:user) { judge }
@@ -427,9 +433,7 @@ describe Distribution, :all_dbs do
       context "when the priority is not the same" do
         let!(:existing_distribution) { create(:distribution, judge: judge, priority: true) }
 
-        it "does not prevent a new Distribution record" do
-          expect(subject.valid?).to be true
-        end
+        it_behaves_like "passes validations"
       end
     end
 
@@ -444,9 +448,7 @@ describe Distribution, :all_dbs do
       context "when the priority is not the same" do
         let!(:existing_distribution) { create(:distribution, judge: judge, status: :started, priority: true) }
 
-        it "does not prevent a new Distribution record" do
-          expect(subject.valid?).to be true
-        end
+        it_behaves_like "passes validations"
       end
     end
 
@@ -484,10 +486,7 @@ describe Distribution, :all_dbs do
       context "when priority is true" do
         let(:priority) { true }
 
-        it "is valid" do
-          expect(subject.valid?).to be true
-          expect(subject.errors.details).not_to have_key(:judge)
-        end
+        it_behaves_like "passes validations"
       end
     end
 
@@ -502,10 +501,7 @@ describe Distribution, :all_dbs do
       context "when priority is true" do
         let(:priority) { true }
 
-        it "is valid" do
-          expect(subject.valid?).to be true
-          expect(subject.errors.details).not_to have_key(:judge)
-        end
+        it_behaves_like "passes validations"
       end
     end
 
@@ -520,10 +516,7 @@ describe Distribution, :all_dbs do
       context "when priority is true" do
         let(:priority) { true }
 
-        it "is valid" do
-          expect(subject.valid?).to be true
-          expect(subject.errors.details).not_to have_key(:judge)
-        end
+        it_behaves_like "passes validations"
       end
     end
   end
