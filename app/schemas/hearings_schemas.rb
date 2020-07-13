@@ -100,14 +100,18 @@ class HearingsSchemas
                optional: true,
                nullable: false,
                doc: "The time the hearing was scheduled"
-      s.integer :judge_id,
-                optional: true,
-                nullable: true,
-                doc: "The judge associated with the hearing"
+      s.string :judge_id,
+               optional: true,
+               nullable: true,
+               doc: "The judge associated with the hearing"
       s.string :room,
                optional: true,
                nullable: true,
                doc: "The room the hearing will take place in"
+      s.string :bva_poc,
+               optional: true,
+               nullable: true,
+               doc: "The point-of-contact at the BVA for this hearing"
       s.nested :hearing_location_attributes,
                optional: true,
                nullable: true,
@@ -196,14 +200,30 @@ class HearingsSchemas
 
     def transcription
       proc do |s|
-        s.date :expected_return_date
-        s.date :problem_notice_sent_date
-        s.string :problem_type
-        s.string :requested_remedy
-        s.date :sent_to_transcriber_date
-        s.string :task_number
-        s.string :transcriber
-        s.date :uploaded_to_vbms_Date
+        s.date :expected_return_date,
+               optional: true,
+               nullable: false
+        s.date :problem_notice_sent_date,
+               optional: true,
+               nullable: false        
+        s.string :problem_type,
+                 optional: true,
+                 nullable: false
+        s.string :requested_remedy,
+                 optional: true,
+                 nullable: false
+        s.date :sent_to_transcriber_date,
+               optional: true,
+               nullable: false
+        s.string :task_number,
+                 optional: true,
+                 nullable: false
+        s.string :transcriber,
+                 optional: true,
+                 nullable: false
+        s.date :uploaded_to_vbms_date,
+               optional: true,
+               nullable: false
       end
     end
 
