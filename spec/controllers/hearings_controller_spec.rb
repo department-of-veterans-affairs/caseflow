@@ -353,19 +353,19 @@ RSpec.describe HearingsController, type: :controller do
           hearing: {
             notes: "Test",
             hearing_location_attributes: {
-              distance: 50,
+              distance: 50.0,
               address: "fake address",
               city: "fake city"
             }
           }
         }
         patch :update, as: :json, params: params
-        expect(response.status).to eq 400
+        expect(response.status).to eq 422
       end
     end
 
     it "should return not found" do
-      patch :update, params: { id: "78484", hearing: { notes: "Test", hold_open: 30, transcript_requested: false } }
+      patch :update, as: :json, params: { id: "78484", hearing: { notes: "Test", hold_open: 30, transcript_requested: false } }
       expect(response.status).to eq 404
     end
   end
