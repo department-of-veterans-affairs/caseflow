@@ -739,11 +739,11 @@ class AppealRepository
     end
   end
 
-  def self.distribute_nonpriority_appeals(judge, genpop, range, limit)
+  def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog)
     MetricsService.record("VACOLS: distribute_nonpriority_appeals",
                           name: "distribute_nonpriority_appeals",
                           service: :vacols) do
-      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit)
+      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog)
     end
   end
 

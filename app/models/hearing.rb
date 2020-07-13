@@ -6,12 +6,12 @@ class Hearing < CaseflowRecord
   include HearingTimeConcern
   include HearingLocationConcern
   include HasSimpleAppealUpdatedSince
+  include UpdatedByUserConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
-  belongs_to :updated_by, class_name: "User"
   has_one :transcription, -> { order(created_at: :desc) }
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
@@ -42,7 +42,6 @@ class Hearing < CaseflowRecord
   after_create :update_fields_from_hearing_day
   before_create :check_available_slots, unless: :override_full_hearing_day_validation
   before_create :assign_created_by_user
-  before_update :assign_updated_by_user
 
   attr_accessor :override_full_hearing_day_validation
 
@@ -212,9 +211,5 @@ class Hearing < CaseflowRecord
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
-  end
-
-  def assign_updated_by_user
-    self.updated_by ||= RequestStore[:current_user]
   end
 end

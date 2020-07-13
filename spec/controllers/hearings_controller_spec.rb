@@ -388,17 +388,19 @@ RSpec.describe HearingsController, type: :controller do
       expect(subject.status).to eq 200
     end
 
-    shared_examples_for "returns the correct hearing time in EST" do
+    shared_examples_for "returns the correct hearing time in EST" do |expected_time|
       it "returns the correct hearing time in EST", :aggregate_failures do
         body = JSON.parse(subject.body)
 
         expect(body["data"]["regional_office_timezone"]).to eq(expected_time_zone)
-        expect(body["data"]["scheduled_time_string"]).to eq("08:30")
-        expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000#{utc_offset}")
+        expect(body["data"]["scheduled_time_string"]).to eq(expected_time)
+        expect(body["data"]["scheduled_for"]).to eq(
+          "#{hearing.hearing_day.scheduled_for}T#{expected_time}:00.000#{utc_offset}"
+        )
       end
     end
 
-    it_should_behave_like "returns the correct hearing time in EST"
+    it_should_behave_like "returns the correct hearing time in EST", "08:30"
 
     context "for user on west coast" do
       let!(:user) do
@@ -407,7 +409,7 @@ RSpec.describe HearingsController, type: :controller do
         )
       end
 
-      it_should_behave_like "returns the correct hearing time in EST"
+      it_should_behave_like "returns the correct hearing time in EST", "05:30"
     end
   end
 
