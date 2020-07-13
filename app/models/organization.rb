@@ -87,10 +87,6 @@ class Organization < CaseflowRecord
     !!next_assignee
   end
 
-  def available_for_priority_case_distribution?
-    false
-  end
-
   def selectable_in_queue?
     true
   end

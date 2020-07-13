@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class JudgeTeam < Organization
+
+  scope :available_for_priority_case_distribution, -> { where(automated_priority_case_distribution: true) }
+
   class << self
     def for_judge(user)
       if use_judge_team_roles?
@@ -60,10 +63,6 @@ class JudgeTeam < Organization
 
   def selectable_in_queue?
     false
-  end
-
-  def available_for_priority_case_distribution?
-    automated_priority_case_distribution?
   end
 
   private
