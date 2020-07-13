@@ -323,6 +323,7 @@ distributions,created_at,datetime ∗,x,,,,,
 distributions,errored_at,datetime,,,,,,when the Distribution job suffered an error
 distributions,id,integer (8) PK,x,x,,,,
 distributions,judge_id,integer FK,,,x,,,
+distributions,priority,boolean,,,,,,Whether or not this distribution was a priority appeals only push to judges via weekly job (not requested)
 distributions,started_at,datetime,,,,,,when the Distribution job commenced
 distributions,statistics,json,,,,,,
 distributions,status,string,,,,,,
@@ -687,18 +688,18 @@ legacy_issues,vacols_sequence_id,integer ∗,x,,,,,The sequence ID of the lega
 legacy_issue_optins,,,,,,,,"When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review."
 legacy_issue_optins,created_at,datetime ∗,x,,,,,"When a Request Issue is connected to a VACOLS issue on a legacy appeal, and the Veteran has agreed to withdraw their legacy appeals, a legacy_issue_optin is created at the time the Decision Review is successfully intaken. This is used to indicate that the legacy issue should subsequently be opted into AMA in VACOLS. "
 legacy_issue_optins,error,string,,,,,,
+legacy_issue_optins,folder_decision_date,date,,,,,,Decision date on case record folder
 legacy_issue_optins,id,integer (8) PK,x,x,,,,
 legacy_issue_optins,legacy_issue_id,integer (8) FK,,,x,,x,"The legacy issue being opted in, which connects to the request issue"
 legacy_issue_optins,optin_processed_at,datetime,,,,,,"The timestamp for when the opt-in was successfully processed, meaning it was updated in VACOLS as opted into AMA."
 legacy_issue_optins,original_disposition_code,string,,,,,,The original disposition code of the VACOLS issue being opted in. Stored in case the opt-in is rolled back.
 legacy_issue_optins,original_disposition_date,date,,,,,,The original disposition date of the VACOLS issue being opted in. Stored in case the opt-in is rolled back.
+legacy_issue_optins,original_legacy_appeal_decision_date,date,,,,,,The original disposition date of a legacy appeal being opted in
+legacy_issue_optins,original_legacy_appeal_disposition_code,string,,,,,,The original disposition code of legacy appeal being opted in
 legacy_issue_optins,request_issue_id,integer (8) ∗ FK,x,,x,,x,The request issue connected to the legacy VACOLS issue that has been opted in.
 legacy_issue_optins,rollback_created_at,datetime,,,,,,"Timestamp for when the connected request issue is removed from a Decision Review during edit, indicating that the opt-in needs to be rolled back."
 legacy_issue_optins,rollback_processed_at,datetime,,,,,,Timestamp for when a rolled back opt-in has successfully finished being rolled back.
 legacy_issue_optins,updated_at,datetime ∗,x,,,,x,Automatically populated when the record is updated.
-legacy_issue_optins,original_legacy_appeal_decision_date,datetime,,,,,,The original disposition date of a legacy appeal being opted in.
-legacy_issue_optins,original_legacy_appeal_disposition_code,string,,,,,,The original disposition code of legacy appeal being opted in.
-legacy_issue_optins,folder_decision_date,date,,,,,,Decision date on case record folder.
 messages,,,,,,,,
 messages,created_at,datetime ∗,x,,,,,
 messages,detail_id,integer FK,,,x,,x,ID of the related object
