@@ -74,7 +74,7 @@ class Distribution < CaseflowRecord
   end
 
   def validate_judge_has_no_pending_distributions
-    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge).where(priority: priority)
+    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge).where(priority: priority).exists?
   end
 
   def judge_tasks

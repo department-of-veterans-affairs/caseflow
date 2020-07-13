@@ -410,7 +410,7 @@ describe Distribution, :all_dbs do
     end
   end
 
-  fcontext "validations" do
+  context "validations" do
     subject { Distribution.create(judge: user, priority: priority) }
 
     let(:user) { judge }
@@ -482,7 +482,7 @@ describe Distribution, :all_dbs do
       end
 
       context "when priority is true" do
-        let(:priority) { false }
+        let(:priority) { true }
 
         it "is valid" do
           expect(subject.valid?).to be true
@@ -500,7 +500,7 @@ describe Distribution, :all_dbs do
       end
 
       context "when priority is true" do
-        let(:priority) { false }
+        let(:priority) { true }
 
         it "is valid" do
           expect(subject.valid?).to be true
@@ -518,7 +518,7 @@ describe Distribution, :all_dbs do
       end
 
       context "when priority is true" do
-        let(:priority) { false }
+        let(:priority) { true }
 
         it "is valid" do
           expect(subject.valid?).to be true
