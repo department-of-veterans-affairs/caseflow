@@ -17,6 +17,10 @@
     margin-left: 1em;
     margin-top: 0.25em;
   }
+  .field .nested-schema {
+    border-left: 3px solid #eee;
+    padding-left: 0.5em;
+  }
   .field code {
     background: #eee;
     border: 1px solid #ddd;
@@ -40,27 +44,7 @@
           <td>Schema</td>
           <td>
             <% if route.schema.present? %>
-              <% route.schema.fields.each do |field| %>
-                <div class="field">
-                  <span class="field-name"><%= field.name %></span>
-                  <span class="details">
-                    <%= field.type %>,
-                    <%= (field.optional ? "optional" : "required") %>,
-                    <%= (field.nullable ? "nullable" : "non-nullable") %>
-                  </span>
-                  <% unless field.included_in.nil? %>
-                    <div class="more-info">
-                      Allowed values:
-                      <% field.included_in.each do |value| %>
-                        <code><%= value.inspect %></code>
-                      <% end %>
-                    </div>
-                  <% end %>
-                  <% if field.doc.present? %>
-                    <div class="more-info"><%= field.doc %></div>
-                  <% end %>
-                </div>
-              <% end %>
+              <%= render "schema", schema: route.schema %>
             <% else %>
               No controller schema found.
             <% end %>

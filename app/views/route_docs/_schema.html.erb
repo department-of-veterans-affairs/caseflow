@@ -1,0 +1,26 @@
+<% schema.fields.each do |field| %>
+  <div class="field">
+    <span class="field-name"><%= field.name %></span>
+    <span class="details">
+      <%= field.type %>,
+      <%= (field.optional ? "optional" : "required") %>,
+      <%= (field.nullable ? "nullable" : "non-nullable") %>
+    </span>
+    <% unless field.included_in.nil? %>
+      <div class="more-info">
+        Allowed values:
+        <% field.included_in.each do |value| %>
+          <code><%= value.inspect %></code>
+        <% end %>
+      </div>
+    <% end %>
+    <% if field.doc.present? %>
+      <div class="more-info"><%= field.doc %></div>
+    <% end %>
+    <% if field.nested.present? %>
+      <div class="more-info nested-schema">
+        <%= render "schema", schema: field.nested %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
