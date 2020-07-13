@@ -31,5 +31,5 @@ Please explain the changes you made here.
 * [ ] Column comments updated
 * [ ] Query profiling performed (eyeball Rails log, check bullet and fasterer output)
 * [ ] Appropriate indexes added (especially for foreign keys, polymorphic columns, and unique constraints)
-* [ ] DB schema docs updated with `make docs`
+* [ ] DB schema docs updated with `make docs` (after running `make migrate`)
 * [ ] #appeals-schema notified with summary and link to this PR
