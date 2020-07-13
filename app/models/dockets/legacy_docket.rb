@@ -40,8 +40,12 @@ class LegacyDocket
     end.compact
   end
 
-  def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
-    LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
+  def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1, bust_backlog: false)
+    return [] if !range.nil? && range <= 0
+
+    LegacyAppeal.repository.distribute_nonpriority_appeals(
+      distribution.judge, genpop, range, limit, bust_backlog
+    ).map do |record|
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
 
       dist_case = new_distributed_case(distribution, record, docket_type, genpop, false)
