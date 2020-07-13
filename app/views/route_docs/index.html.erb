@@ -20,11 +20,41 @@
   .field .nested-schema {
     border-left: 3px solid #eee;
     padding-left: 0.5em;
+    max-height: 0;
+    overflow: hidden;
   }
   .field code {
     background: #eee;
     border: 1px solid #ddd;
     font-size: .8em;
+  }
+  .field input[type="checkbox"] {
+    display: none;
+  }
+  .field label {
+    top: 0;
+    color: gray;
+    position: relative;
+    float: right;
+  }
+  .field label::before {
+    content: "";
+    box-shadow: none;
+    height: 0;
+    width: 0;
+  }
+  .field label::after {
+    content: " +";
+    font-weight: bold;
+  }
+  .field input:checked + label::before {
+    box-shadow: none;
+  }
+  .field input:checked + label::after {
+    content: " - ";
+  }
+  .field input:checked ~ .nested-schema {
+    max-height: 100%;
   }
 </style>
 <section class="cf-app-segment cf-app-segment--alt">
