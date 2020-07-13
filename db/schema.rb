@@ -843,7 +843,7 @@ ActiveRecord::Schema.define(version: 2020_07_10_232644) do
     t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
-    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
+    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues; column added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
