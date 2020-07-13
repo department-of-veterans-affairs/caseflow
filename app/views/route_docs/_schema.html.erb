@@ -1,6 +1,11 @@
 <% schema.fields.each do |field| %>
   <div class="field">
     <span class="field-name"><%= field.name %></span>
+    <% if field.nested.present? %>
+      <% id = SecureRandom.hex(32) %>
+      <input type="checkbox" id="<%= id %>">
+      <label for="<%= id %>" aria-label="Expand Nested Schema"></label>
+    <% end %>
     <span class="details">
       <%= field.type %>,
       <%= (field.optional ? "optional" : "required") %>,
