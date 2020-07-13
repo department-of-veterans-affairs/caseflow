@@ -9,8 +9,8 @@ class Distribution < CaseflowRecord
 
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create
-  validate :validate_number_of_unassigned_cases, on: :create
-  validate :validate_days_waiting_of_unassigned_cases, on: :create
+  validate :validate_number_of_unassigned_cases, on: :create, unless: :priority?
+  validate :validate_days_waiting_of_unassigned_cases, on: :create, unless: :priority?
   validate :validate_judge_has_no_pending_distributions, on: :create
 
   enum status: { pending: "pending", started: "started", error: "error", completed: "completed" }
@@ -22,7 +22,7 @@ class Distribution < CaseflowRecord
 
   class << self
     def pending_for_judge(judge)
-      find_by(status: %w[pending started], judge: judge)
+      where(status: %w[pending started], judge: judge)
     end
   end
 
@@ -74,7 +74,7 @@ class Distribution < CaseflowRecord
   end
 
   def validate_judge_has_no_pending_distributions
-    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge)
+    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge).where(priority: priority)
   end
 
   def judge_tasks

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_07_012721) do
+ActiveRecord::Schema.define(version: 2020_07_13_174152) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -439,6 +439,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.datetime "created_at", null: false
     t.datetime "errored_at", comment: "when the Distribution job suffered an error"
     t.integer "judge_id"
+    t.boolean "priority", default: false, comment: "Whether or not this distribution was a priority appeals only push to judges via weekly job (not requested)"
     t.datetime "started_at", comment: "when the Distribution job commenced"
     t.json "statistics"
     t.string "status"

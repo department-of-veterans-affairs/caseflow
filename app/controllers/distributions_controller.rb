@@ -102,7 +102,7 @@ class DistributionsController < ApplicationController
   end
 
   def pending_distribution
-    Distribution.pending_for_judge(judge)
+    Distribution.pending_for_judge(judge).first
   end
 
   def judge
