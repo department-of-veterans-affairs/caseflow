@@ -367,7 +367,6 @@ RSpec.describe HearingsController, type: :controller do
     end
 
     it "should return not found" do
-      patch :update, as: :json, params: { id: "78484", hearing: { notes: "Test", hold_open: 30, transcript_requested: false } }
       patch :update_legacy,
             as: :json,
             params: { id: "78484", hearing: { notes: "Test", hold_open: 30, transcript_requested: false } }
