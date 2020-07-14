@@ -310,9 +310,9 @@ class ExternalApi::VADotGovService
       request.headers = headers.merge(apikey: ENV["VA_DOT_GOV_API_KEY"])
 
       # Rate limit requests to VA.gov veteran verification API. This is meant to be an
-      # aggressive safety meausre because it's more costly (in terms of computing resources)
+      # aggressive safety measure because it's more costly (in terms of computing resources)
       # if we hit the rate limit. The assumption I'm making here is that since this data is
-      # cached, this *mandatory* sleep call won't be a *massive* increase to the average time
+      # cached, this *mandatory* sleep call won't be a massive increase to the average time
       # for each request.
       #
       # Rate Limit: https://developer.va.gov/explore/verification/docs/veteran_confirmation?version=current
