@@ -29,40 +29,44 @@ class HearingsSchemas
 
     private
 
-    def ama_hearing_schema(schema)
-      common_hearing_fields(schema)
+    def ama_hearing_schema
+      proc do |schema|
+        common_hearing_fields(schema)
 
-      schema.date :transcript_sent_date,
-                  optional: true,
-                  nullable: false,
-                  doc: "The date the transcription was sent"
-      schema.bool :evidence_window_waived,
-                  optional: true,
-                  nullable: true,
-                  doc: "Whether or not the evidence submission window was waived for the hearing"
-      schema.nested :hearing_issue_notes_attributes,
-                    optional: true,
-                    nullable: true,
-                    doc: "Notes for a hearing issue",
-                    &hearing_issue_notes
-      schema.nested :transcription_attributes,
-                    optional: true,
-                    nullable: true,
-                    doc: "Details about hearing transcription",
-                    &transcription
-    end
-
-    def legacy_hearing_schema(schema)
-      common_hearing_fields(schema)
-
-      schema.date :scheduled_for,
-                  optional: true,
-                  nullable: false,
-                  doc: "The datetime the hearing was scheduled for"
-      schema.string :aod,
+        schema.date :transcript_sent_date,
                     optional: true,
                     nullable: false,
-                    doc: "The AOD status"
+                    doc: "The date the transcription was sent"
+        schema.bool :evidence_window_waived,
+                    optional: true,
+                    nullable: true,
+                    doc: "Whether or not the evidence submission window was waived for the hearing"
+        schema.nested :hearing_issue_notes_attributes,
+                      optional: true,
+                      nullable: true,
+                      doc: "Notes for a hearing issue",
+                      &hearing_issue_notes
+        schema.nested :transcription_attributes,
+                      optional: true,
+                      nullable: true,
+                      doc: "Details about hearing transcription",
+                      &transcription
+      end
+    end
+
+    def legacy_hearing_schema
+      proc do |schema|
+        common_hearing_fields(schema)
+
+        schema.date :scheduled_for,
+                    optional: true,
+                    nullable: false,
+                    doc: "The datetime the hearing was scheduled for"
+        schema.string :aod,
+                      optional: true,
+                      nullable: false,
+                      doc: "The AOD status"
+      end
     end
 
     def common_hearing_fields(schema)
