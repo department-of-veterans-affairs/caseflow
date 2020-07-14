@@ -103,6 +103,7 @@ detectors:
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
       - ControllerSchema#remove_unknown_keys
+      - BusinessLineReporter#as_csv
   InstanceVariableAssumption:
     exclude:
       - Appeal

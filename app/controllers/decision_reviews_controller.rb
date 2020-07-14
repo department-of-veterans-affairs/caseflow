@@ -6,7 +6,14 @@ class DecisionReviewsController < ApplicationController
 
   def index
     if business_line
-      render "index"
+      respond_to do |format|
+        format.html { render "index" }
+        format.csv do
+          jobs_as_csv = BusinessLineReporter.new(business_line).as_csv
+          filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+          send_data jobs_as_csv, filename: filename
+        end
+      end
     else
       # TODO: make index show error message
       render json: { error: "#{business_line_slug} not found" }, status: :not_found
