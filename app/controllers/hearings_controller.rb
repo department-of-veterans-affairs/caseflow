@@ -94,13 +94,17 @@ class HearingsController < HearingsApplicationController
   end
 
   def update_params
-    permitted_params[:hearing].merge(
-      hearing: hearing,
-      advance_on_docket_motion_attributes: params[:advance_on_docket_motion]
-    )
+    permitted_params[:hearing]
+      .to_h
+      .merge(
+        hearing: hearing,
+        advance_on_docket_motion_attributes: permitted_params[:advance_on_docket_motion].to_h
+      )
   end
 
   def update_params_legacy
-    permitted_params[:hearing].merge(hearing: hearing)
+    permitted_params[:hearing]
+      .to_h
+      .merge(hearing: hearing)
   end
 end
