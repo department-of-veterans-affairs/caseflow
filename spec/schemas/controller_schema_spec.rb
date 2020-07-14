@@ -3,15 +3,17 @@
 describe ControllerSchema do
   let(:params) { ActionController::Parameters.new(params_hash) }
   let(:schema) do
-    ControllerSchema.json do
-      integer :id
-      string :name, nullable: true
-      date :date_of_birth, optional: true
+    ControllerSchema.json do |s|
+      s.integer :id
+      s.string :name, nullable: true
+      s.date :date_of_birth, optional: true
     end
   end
 
   describe "#remove_unknown_keys" do
-    subject { schema.remove_unknown_keys(params, known: "foo") }
+    subject do
+      schema.remove_unknown_keys(params, path_params: { known: "foo" })
+    end
 
     context "when unknown params are included" do
       let(:params_hash) { { id: 123, name: "value", known: "foo", unknown: "bar" } }

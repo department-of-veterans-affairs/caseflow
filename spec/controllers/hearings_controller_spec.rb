@@ -10,7 +10,7 @@ RSpec.describe HearingsController, type: :controller do
   let(:baltimore_ro_eastern) { "RO13" }
   let(:timezone) { "America/New_York" }
 
-  describe "PATCH update" do
+  describe "PATCH update/update_legacy" do
     it "should be successful", :aggregate_failures do
       params = {
         notes: "Test",
@@ -23,7 +23,9 @@ RSpec.describe HearingsController, type: :controller do
         },
         prepped: true
       }
-      patch :update, as: :json, params: { id: legacy_hearing.external_id, hearing: params }
+      patch :update_legacy,
+            as: :json,
+            params: { id: legacy_hearing.external_id, hearing: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["data"]
       expect(response_body["notes"]).to eq "Test"
@@ -293,7 +295,7 @@ RSpec.describe HearingsController, type: :controller do
         patch_params = {
           id: hearing.external_id,
           hearing: {
-            judge_id: new_judge.id
+            judge_id: new_judge.id.to_s
           }
         }
 
@@ -326,12 +328,12 @@ RSpec.describe HearingsController, type: :controller do
         expect(response.status).to eq 200
       end
 
-      it "should return a 200 and update aod if provided", :aggregate_failures, skip: "flake AOD present" do
+      it "should return a 200 and update aod if provided", :aggregate_failures do
         params = {
           id: ama_hearing.external_id,
           advance_on_docket_motion: {
             user_id: user.id,
-            person_id: ama_hearing.appeal.appellant.id,
+            person_id: ama_hearing.appeal.appellant.person.id,
             reason: Constants.AOD_REASONS.age,
             granted: true
           },
@@ -340,7 +342,7 @@ RSpec.describe HearingsController, type: :controller do
         patch :update, as: :json, params: params
         expect(response.status).to eq 200
         ama_hearing.reload
-        expect(ama_hearing.advance_on_docket_motion.person.id).to eq ama_hearing.appeal.appellant.id
+        expect(ama_hearing.advance_on_docket_motion.person.id).to eq ama_hearing.appeal.appellant.person.id
         expect(ama_hearing.advance_on_docket_motion.reason).to eq Constants.AOD_REASONS.age
         expect(ama_hearing.advance_on_docket_motion.granted).to eq true
       end
@@ -360,7 +362,7 @@ RSpec.describe HearingsController, type: :controller do
           }
         }
         patch :update, as: :json, params: params
-        expect(response.status).to eq 422
+        expect(response.status).to eq 400
       end
     end
 
