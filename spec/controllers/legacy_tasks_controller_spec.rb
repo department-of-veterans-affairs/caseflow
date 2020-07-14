@@ -274,6 +274,9 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           "appeal_id": @appeal.id
         }
       end
+      before do
+        @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
+      end
 
       it "fails because the current user is not a judge" do
         patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
