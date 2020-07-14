@@ -75,7 +75,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(response.headers["Content-Type"]).to include "text/csv"
 
         expect(response.body).to start_with("business_line")
-        expect(response.body["appeal_type"]).to eq task.appeal_type
+        expect(response.body["appeal_type"]).to eq("appeal_type")
       end
     end
   end
