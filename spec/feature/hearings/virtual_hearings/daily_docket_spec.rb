@@ -8,17 +8,36 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   end
 
   let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
-  let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06", scheduled_time: "9:00AM") }
+  let(:regional_office_key) { "RO59" } # Honolulu, HI
+  let(:regional_office_timezone) { RegionalOffice.new(regional_office_key).timezone }
+  let!(:hearing) { create(:hearing, :with_tasks, regional_office: regional_office_key, scheduled_time: "9:00AM") }
   let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, status: :active, hearing: hearing) }
+  let(:updated_hearing_time) { "11:00 am" }
+  let(:expected_regional_office_time) do
+    Time
+      .parse(updated_hearing_time)
+      .strftime("%F %T")
+      .in_time_zone(regional_office_timezone) # cast the updated hearing time to the ro timezone
+      .strftime("%-l:%M %P %Z") # and render it in the format expected in the modal
+  end
+  let(:expected_central_office_time) do
+    Time
+      .parse(updated_hearing_time)
+      .strftime("%F %T")
+      .in_time_zone(regional_office_timezone) # cast the updated hearing time to the ro timezone
+      .in_time_zone(HearingTimeService::CENTRAL_OFFICE_TIMEZONE) # convert it to the central office timezone
+      .strftime("%-l:%M %P ET") # and render it in the format expected in the modal
+  end
 
   scenario "Virtual hearing time is updated" do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
     expect(page).to have_content("Daily Docket")
     choose("hearingTime0_other", allow_label_click: true)
-    click_dropdown(name: "optionalHearingTime0", index: 2)
+    click_dropdown(name: "optionalHearingTime0", text: updated_hearing_time)
     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
     expect(page).to have_content(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
+    expect(page).to have_content("Time: #{expected_central_office_time} / #{expected_regional_office_time}")
     click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
     hearing.reload
