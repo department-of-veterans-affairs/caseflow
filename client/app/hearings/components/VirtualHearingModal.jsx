@@ -17,7 +17,7 @@ const getCentralOfficeTime = (hearing) => {
   return moment.
     tz(newTime, hearing.regionalOfficeTimezone).
     tz('America/New_York').
-    format('hh:mm');
+    format('HH:mm');
 };
 
 const formatTimeString = (hearing, timeWasEdited) => {
