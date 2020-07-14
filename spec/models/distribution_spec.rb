@@ -40,7 +40,7 @@ describe Distribution, :all_dbs do
         .and_return(1000)
     end
 
-    context "priority is false" do
+    context "priority_push is false" do
       subject { Distribution.create!(judge: judge) }
 
       let(:legacy_priority_count) { 14 }
@@ -176,7 +176,7 @@ describe Distribution, :all_dbs do
         end
         subject.distribute!
         expect(subject.valid?).to eq(true)
-        expect(subject.priority).to eq(false)
+        expect(subject.priority_push).to eq(false)
         expect(subject.status).to eq("completed")
         expect(subject.started_at).to eq(Time.zone.now) # time is frozen so appears zero time elapsed
         expect(subject.errored_at).to be_nil
@@ -414,8 +414,8 @@ describe Distribution, :all_dbs do
       end
     end
 
-    context "priority is true" do
-      subject { Distribution.create!(judge: judge, priority: true) }
+    context "priority_push is true" do
+      subject { Distribution.create!(judge: judge, priority_push: true) }
 
       let!(:legacy_priority_cases) do
         (1..4).map do |i|
@@ -527,7 +527,7 @@ describe Distribution, :all_dbs do
             .concat(priority_ama_hearings_tied_to_judge.map(&:uuid))
           subject.distribute!
           expect(subject.valid?).to eq(true)
-          expect(subject.priority).to eq(true)
+          expect(subject.priority_push).to eq(true)
           expect(subject.status).to eq("completed")
           expect(subject.started_at).to eq(Time.zone.now) # time is frozen so appears zero time elapsed
           expect(subject.errored_at).to be_nil
@@ -563,7 +563,7 @@ describe Distribution, :all_dbs do
 
           subject.distribute!(limit)
           expect(subject.valid?).to eq(true)
-          expect(subject.priority).to eq(true)
+          expect(subject.priority_push).to eq(true)
           expect(subject.status).to eq("completed")
           expect(subject.started_at).to eq(Time.zone.now) # time is frozen so appears zero time elapsed
           expect(subject.errored_at).to be_nil
