@@ -439,7 +439,7 @@ ActiveRecord::Schema.define(version: 2020_07_13_174152) do
     t.datetime "created_at", null: false
     t.datetime "errored_at", comment: "when the Distribution job suffered an error"
     t.integer "judge_id"
-    t.boolean "priority", default: false, comment: "Whether or not this distribution was a priority appeals only push to judges via weekly job (not requested)"
+    t.boolean "priority_push", default: false, comment: "Whether or not this distribution is a priority-appeals-only push to judges via a weekly job (not manually requested)"
     t.datetime "started_at", comment: "when the Distribution job commenced"
     t.json "statistics"
     t.string "status"
@@ -844,7 +844,7 @@ ActiveRecord::Schema.define(version: 2020_07_13_174152) do
     t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
-    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
+    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues; added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
