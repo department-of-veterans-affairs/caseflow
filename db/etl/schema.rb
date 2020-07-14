@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_26_054515) do
+ActiveRecord::Schema.define(version: 2020_07_14_185603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -327,6 +327,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_054515) do
   end
 
   create_table "organizations", comment: "Copy of Organizations table", force: :cascade do |t|
+    t.boolean "automated_priority_case_distribution", comment: "Whether a JudgeTeam is currently available for automatically pushed priority cases"
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
@@ -336,6 +337,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_054515) do
     t.string "type", comment: "Single table inheritance"
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
+    t.index ["automated_priority_case_distribution"], name: "index_organizations_on_automated_priority_case_distribution"
     t.index ["created_at"], name: "index_organizations_on_created_at"
     t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"

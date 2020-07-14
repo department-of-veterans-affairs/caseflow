@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_13_210643) do
+ActiveRecord::Schema.define(version: 2020_07_14_185603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -949,6 +949,7 @@ ActiveRecord::Schema.define(version: 2020_07_13_210643) do
     t.string "type", comment: "Single table inheritance"
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
+    t.index ["automated_priority_case_distribution"], name: "index_organizations_on_automated_priority_case_distribution"
     t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true
