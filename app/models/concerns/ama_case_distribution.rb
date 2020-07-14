@@ -17,6 +17,19 @@ module AmaCaseDistribution
     @docket_coordinator ||= DocketCoordinator.new
   end
 
+  def priority_distribution(limit = nil)
+    @appeals = []
+    @rem = 0
+
+    if limit.nil?
+      # Distribute priority appeals that are tied to judges (not genpop) with no limit.
+      distribute_appeals(:legacy, nil, priority: true, genpop: "not_genpop")
+      distribute_appeals(:hearing, nil, priority: true, genpop: "not_genpop")
+    else
+      oldest_priority_appeals_by_docket(limit).each { |docket, n| distribute_appeals(docket, n, priority: true) }
+    end
+  end
+
   def ama_distribution
     @appeals = []
     @rem = batch_size
@@ -59,7 +72,7 @@ module AmaCaseDistribution
 
   def ama_statistics
     {
-      batch_size: batch_size,
+      batch_size: priority? ? @appeals.count : batch_size,
       total_batch_size: total_batch_size,
       priority_count: priority_count,
       direct_review_due_count: direct_review_due_count,
@@ -75,7 +88,7 @@ module AmaCaseDistribution
   end
 
   def distribute_appeals(docket, num, priority: false, genpop: "any", range: nil, bust_backlog: false)
-    return [] unless num > 0
+    return [] unless num.nil? || num > 0
 
     if range.nil? && !bust_backlog
       appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: num)
