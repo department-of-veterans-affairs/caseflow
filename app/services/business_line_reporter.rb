@@ -16,6 +16,7 @@ class BusinessLineReporter
   end
 
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def as_csv
     CSV.generate do |csv|
       csv << BUSINESS_LINE_OPTIONS
@@ -28,7 +29,7 @@ class BusinessLineReporter
           task.appeal.request_issues&.count,
           task.appeal.decision_issues&.count,
           task.appeal.veteran_file_number,
-          task.appeal.intake.user&.css_id,
+          task.appeal.intake&.user&.css_id,
           task.type,
           task.id,
           "https://appeals.cf.ds.va.gov#{business_line.tasks_url}/tasks/#{task.id}",
@@ -39,5 +40,6 @@ class BusinessLineReporter
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 end
