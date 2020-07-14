@@ -29,7 +29,7 @@ Please explain the changes you made here.
 
 * [ ] Timestamps (created_at, updated_at) for new tables
 * [ ] Column comments updated
-* [ ] Verify that `migrate:rollback` works as desired ([reason](https://stackoverflow.com/questions/10365129/rails-migrations-self-up-and-self-down-versus-change))
+* [ ] Verify that `migrate:rollback` works as desired ([`change` supported functions](https://edgeguides.rubyonrails.org/active_record_migrations.html#using-the-change-method))
 * [ ] Query profiling performed (eyeball Rails log, check bullet and fasterer output)
 * [ ] Appropriate indexes added (especially for foreign keys, polymorphic columns, unique constraints, and Rails scopes)
 * [ ] DB schema docs updated with `make docs` (after running `make migrate`)
