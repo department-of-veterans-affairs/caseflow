@@ -270,7 +270,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       let(:role) { :attorney_role }
       let(:params) do
         {
-          "assigned_to_id": user.id
+          "assigned_to_id": user.id,
+          "appeal_id": @appeal.id
         }
       end
 
@@ -284,7 +285,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       let(:role) { :judge_role }
       let(:params) do
         {
-          "assigned_to_id": attorney.id
+          "assigned_to_id": attorney.id,
+          "appeal_id": @appeal.id
         }
       end
       before do
@@ -306,7 +308,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       context "when attorney is not found" do
         let(:params) do
           {
-            "assigned_to_id": 7_777_777_777
+            "assigned_to_id": 7_777_777_777,
+            "appeal_id": @appeal.id
           }
         end
 
