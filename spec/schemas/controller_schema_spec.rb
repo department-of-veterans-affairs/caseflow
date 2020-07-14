@@ -10,6 +10,18 @@ describe ControllerSchema do
     end
   end
 
+  shared_context "nested_schema" do
+    let(:schema) do
+      ControllerSchema.json do |s|
+        s.nested :inner,
+                 optional: true,
+                 nullable: true do |nested|
+                   nested.string :field, optional: false, nullable: false
+                 end
+      end
+    end
+  end
+
   describe "#remove_unknown_keys" do
     subject do
       schema.remove_unknown_keys(params, path_params: { known: "foo" })
@@ -24,6 +36,21 @@ describe ControllerSchema do
         expect(params).not_to include(:unknown)
       end
     end
+
+    context "for nested schema" do
+      include_context "nested_schema"
+
+      context "when unknown params are included in nested field" do
+        let(:params_hash) { { inner: { field: "hello", not_field: 123 } } }
+
+        it "removes unknown params" do
+          subject
+          expect(params).to include(:inner)
+          expect(params[:inner]).to include(:field)
+          expect(params[:inner]).not_to include(:not_field)
+        end
+      end
+    end
   end
 
   describe "#validate" do
@@ -34,6 +61,34 @@ describe ControllerSchema do
 
       it "returns a failure result" do
         expect(subject.failure?).to be_truthy
+      end
+    end
+
+    context "for nested schema with nullable field" do
+      include_context "nested_schema"
+      
+      context "when nested field is null" do
+        let(:params_hash) { { inner: nil } }
+
+        it "returns a success" do
+          expect(subject.failure?).to be_falsey
+        end
+      end
+
+      context "when nested field is not included" do
+        let(:params_hash) { {} }
+
+        it "returns a success" do
+          expect(subject.failure?).to be_falsey
+        end
+      end
+
+      context "when nested field is not valid" do
+        let(:params_hash) { { inner: { field: nil } } }
+
+        it "returns a failure" do
+          expect(subject.failure?).to be_truthy
+        end
       end
     end
   end
