@@ -474,7 +474,7 @@ describe Distribution, :all_dbs do
       end
 
       let!(:priority_ama_hearings_tied_to_judge) do
-        (1...5).map do |i|
+        (1...5).map do
           appeal = create(:appeal,
                           :ready_for_distribution,
                           :advanced_on_docket_due_to_motion,
