@@ -91,16 +91,18 @@ describe('HearingTypeDropdown', () => {
         update={updateSpy}
       />
     );
+    const dropdown = hearingType.find(SearchableDropdown);
 
     // Initial state
     expect(hearingType.find(Select).prop('value')).toEqual(centralOpts[0]);
 
-    // Change the hearing
-    hearingType.find(SearchableDropdown).find('.Select-control').
-      simulate('keyDown', { keyCode: 40 });
-    hearingType.find('input').simulate('change', { target: { value: centralOpts[1].label } });
-    hearingType.find(SearchableDropdown).find('.Select-control').
-      simulate('keyDown', { keyCode: 13 });
+    // Open the menu
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    expect(hearingType.find('MenuList')).toHaveLength(1);
+
+    // Change the value
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // New state
     expect(hearingType.find(Select).prop('value')).toEqual(centralOpts[1]);
@@ -118,16 +120,18 @@ describe('HearingTypeDropdown', () => {
         update={updateSpy}
       />
     );
+    const dropdown = hearingType.find(SearchableDropdown);
 
     // Initial state
     expect(hearingType.find(Select).prop('value')).toEqual(videoOpts[0]);
 
-    // Change the hearing
-    hearingType.find(SearchableDropdown).find('.Select-control').
-      simulate('keyDown', { keyCode: 40 });
-    hearingType.find('input').simulate('change', { target: { value: videoOpts[1].label } });
-    hearingType.find(SearchableDropdown).find('.Select-control').
-      simulate('keyDown', { keyCode: 13 });
+    // Open the menu
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    expect(hearingType.find('MenuList')).toHaveLength(1);
+
+    // Change the value
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // New state
     expect(hearingType.find(Select).prop('value')).toEqual(videoOpts[1]);
@@ -146,16 +150,18 @@ describe('HearingTypeDropdown', () => {
         update={updateSpy}
       />
     );
+    const dropdown = hearingType.find(SearchableDropdown);
 
     // Initial state
     expect(hearingType.find(Select).prop('value')).toEqual(centralOpts[1]);
 
-    // Change the hearing
-    hearingType.find(SearchableDropdown).find('.Select-control').
-      simulate('keyDown', { keyCode: 40 });
-    hearingType.find('input').simulate('change', { target: { value: centralOpts[0].label } });
-    hearingType.find(SearchableDropdown).find('.Select-control').
-      simulate('keyDown', { keyCode: 13 });
+    // Open the menu
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    expect(hearingType.find('MenuList')).toHaveLength(1);
+
+    // Change the value
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // New state
     expect(hearingType.find(Select).prop('value')).toEqual(centralOpts[0]);
@@ -174,16 +180,18 @@ describe('HearingTypeDropdown', () => {
         update={updateSpy}
       />
     );
+    const dropdown = hearingType.find(SearchableDropdown);
 
     // Initial state
     expect(hearingType.find(Select).prop('value')).toEqual(videoOpts[1]);
 
-    // Change the hearing
-    hearingType.find(SearchableDropdown).find('.Select-control').
-      simulate('keyDown', { keyCode: 40 });
-    hearingType.find('input').simulate('change', { target: { value: videoOpts[0].label } });
-    hearingType.find(SearchableDropdown).find('.Select-control').
-      simulate('keyDown', { keyCode: 13 });
+    // Open the menu
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    expect(hearingType.find('MenuList')).toHaveLength(1);
+
+    // Change the value
+    dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // New state
     expect(hearingType.find(Select).prop('value')).toEqual(videoOpts[0]);

@@ -34,13 +34,14 @@ describe('HearingTime', () => {
     expect(form.exists({ name: 'hearingTime0' })).toBe(true);
     expect(form.exists({ name: 'optionalHearingTime0' })).toBe(true);
   });
+
   test('Matches snapshot when enableZone is true', () => {
     // Run the test
     const hearingTime = mount(<HearingTime enableZone value={HEARING_TIME_OPTIONS[0].value} />);
 
     // Assertions
     expect(hearingTime).toMatchSnapshot();
-    expect(hearingTime.findWhere((node) => node.props().className === 'Select-value-label').text()).toContain(timezoneLabel);
+    expect(hearingTime.find('Select').prop('value').label).toContain(timezoneLabel);
   });
 
   test('Matches snapshot when other time is not selected', () => {
