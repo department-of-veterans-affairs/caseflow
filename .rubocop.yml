@@ -157,6 +157,8 @@ Lint/SuppressedException:
 
 Layout/LineLength:
   Max: 120
+  Exclude:
+    - app/schemas/hearings_schemas.rb
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented

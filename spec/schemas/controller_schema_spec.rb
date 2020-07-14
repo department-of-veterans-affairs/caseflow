@@ -3,21 +3,21 @@
 describe ControllerSchema do
   let(:params) { ActionController::Parameters.new(params_hash) }
   let(:schema) do
-    ControllerSchema.json do |s|
-      s.integer :id
-      s.string :name, nullable: true
-      s.date :date_of_birth, optional: true
+    ControllerSchema.json do |schema|
+      schema.integer :id
+      schema.string :name, nullable: true
+      schema.date :date_of_birth, optional: true
     end
   end
 
   shared_context "nested_schema" do
     let(:schema) do
-      ControllerSchema.json do |s|
-        s.nested :inner,
-                 optional: true,
-                 nullable: true do |nested|
-                   nested.string :field, optional: false, nullable: false
-                 end
+      ControllerSchema.json do |schema|
+        schema.nested :inner,
+                      optional: true,
+                      nullable: true do |nested|
+                        nested.string :field, optional: false, nullable: false
+                      end
       end
     end
   end
@@ -66,7 +66,7 @@ describe ControllerSchema do
 
     context "for nested schema with nullable field" do
       include_context "nested_schema"
-      
+
       context "when nested field is null" do
         let(:params_hash) { { inner: nil } }
 
