@@ -49,10 +49,10 @@ class HearingsSchemas
                           optional: true,
                           nullable: false,
                           doc: "The datetime the hearing was scheduled for"
-                   h.bool :aod,
-                          optional: true,
-                          nullable: false,
-                          doc: "Whether or not an AOD for the case has been granted"
+                   h.string :aod,
+                            optional: true,
+                            nullable: false,
+                            doc: "The AOD status"
                  end
       end
     end
@@ -171,8 +171,10 @@ class HearingsSchemas
                  optional: true,
                  nullable: true,
                  doc: "The state of the hearing location"
+        # facility_id is required, but enforced on the model level. Because we send empty
+        # object to the API, this needs to be marked as optional.
         s.string :facility_id,
-                 optional: false,
+                 optional: true,
                  nullable: false,
                  doc: "The facility ID of the hearing location (defined externally by VA.gov)"
         s.string :facility_type,
