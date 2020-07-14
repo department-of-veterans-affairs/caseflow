@@ -12,7 +12,6 @@ describe JudgeTeam, :postgres do
       before { judge_team_unavailable.update(automated_priority_case_distribution: false) }
 
       it "should return only the available JudgeTeams" do
-        byebug
         expect(JudgeTeam.available_for_priority_case_distribution).to eq([judge_team_available])
       end
     end

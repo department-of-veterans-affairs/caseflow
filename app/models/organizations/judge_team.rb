@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class JudgeTeam < Organization
-
   scope :available_for_priority_case_distribution, -> { where(automated_priority_case_distribution: true) }
 
   class << self
