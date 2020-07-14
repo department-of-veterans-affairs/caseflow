@@ -20,7 +20,7 @@ class Distribution < CaseflowRecord
   CASES_PER_ATTORNEY = 3
   ALTERNATIVE_BATCH_SIZE = 15
 
-  scope :priority, -> { where(priority: true) }
+  scope :priority_push, -> { where(priority_push: true) }
 
   class << self
     def pending_for_judge(judge)
@@ -43,7 +43,7 @@ class Distribution < CaseflowRecord
     multi_transaction do
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
 
-      priority? ? priority_distribution(limit) : ama_distribution
+      priority_push? ? priority_push_distribution(limit) : ama_distribution
 
       update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
