@@ -16,7 +16,7 @@ RSpec.feature "Bulk task assignment", :postgres do
       assign_to.click
       task_type = options.find { |option| option.text =~ /No Show Hearing Task/ }
       task_type.click
-      number_of_tasks = options.find { |option| option.text =~ /3/ }
+      number_of_tasks = options.find { |option| option.text =~ /3 \(all available tasks\)/ }
       number_of_tasks.click
       expect(page).to_not have_content("Please select a value")
       submit = find("button", id: "Bulk-Assign-Tasks-button-id-1")
@@ -31,7 +31,7 @@ RSpec.feature "Bulk task assignment", :postgres do
       click_button(text: "Assign Tasks")
       expect(page).to have_content("Bulk Assign Tasks")
 
-      # Whem missing required fields
+      # When missing required fields
       submit = find("button", id: "Bulk-Assign-Tasks-button-id-1")
       submit.click
       expect(page).to have_content("Please select a value")
