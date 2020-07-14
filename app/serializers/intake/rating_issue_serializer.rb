@@ -13,6 +13,8 @@ class Intake::RatingIssueSerializer
   attribute :rba_contentions_data
   attribute :diagnostic_code
   attribute :benefit_type
+  attribute :subject_text
+  attribute :percent_number
   attribute :associated_end_products do |object|
     object.associated_end_products.map(&:serialize)
   end

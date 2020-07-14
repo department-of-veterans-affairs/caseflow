@@ -57,6 +57,18 @@ describe AppealFinder, :all_dbs do
         expect(subject).to be_empty
       end
     end
+
+    context "when the veteran has cancelled appeals" do
+      let!(:cancelled_appeal) { create(:appeal, :assigned_to_judge, :cancelled, veteran: veteran) }
+      let(:file_number) { appeal.veteran_file_number }
+
+      it "returns the cancelled appeals" do
+        results = subject
+
+        expect(results.count).to eq(3)
+        expect(results.map(&:id)).to contain_exactly(cancelled_appeal.id, appeal.id, legacy_appeal.id)
+      end
+    end
   end
 
   describe "#find_appeals_for_veterans" do

@@ -25,11 +25,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
 
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
     User.authenticate!(user: current_user)
-
-    FeatureToggle.enable!(:scm_view_judge_assign_queue)
   end
-
-  after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
   context "Non-SCM user should not see judge assign queue page if they are not the judge" do
     context "logged in user is some user" do
@@ -91,7 +87,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         expect(page.find(".usa-sidenav-list")).to have_content attorney_one.full_name
         expect(page.find(".usa-sidenav-list")).to have_content attorney_two.full_name
 
-        safe_click ".Select"
+        safe_click ".cf-select"
         expect(page.find(".dropdown-Assignee")).to have_content attorney_one.full_name
         expect(page.find(".dropdown-Assignee")).to have_content attorney_two.full_name
 
@@ -120,11 +116,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
         allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
         allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
-
-        FeatureToggle.enable!(:scm_view_judge_assign_queue)
       end
-
-      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       scenario "on ama appeals" do
         step "request cases" do
@@ -200,6 +192,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         step "cancel an AttorneyTask" do
           click_dropdown(propmt: "Select an action...", text: "Cancel task")
           expect(page).to have_content(format(COPY::CANCEL_TASK_MODAL_DETAIL, judge_two.user.full_name))
+          fill_in "taskInstructions", with: "Sending back to judge to be reassigned"
           click_on("Submit")
           expect(page).to have_content(
             "Task for #{appeal.veteran.first_name} #{appeal.veteran.last_name}'s case has been cancelled"

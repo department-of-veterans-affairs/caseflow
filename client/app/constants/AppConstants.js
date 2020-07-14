@@ -53,3 +53,17 @@ export const LOGO_COLORS = {
     OVERLAP: COMMON_COLORS.GREY_LIGHT
   }
 };
+
+export const COMMON_TIMEZONES = [
+  'America/Los_Angeles',
+  'America/Denver',
+  'America/Chicago',
+  'America/New_York'
+];
+
+// NOTE: This information was determined by googling `what timezone is X` for each of the keys
+export const REGIONAL_OFFICE_ZONE_ALIASES = {
+  'America/Anchorage': 'America/Juneau',
+  'America/Boise': 'America/Denver',
+  'America/Kentucky/Louisville': 'America/New_York'
+};

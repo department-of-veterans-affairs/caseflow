@@ -16,14 +16,14 @@ RSpec.feature "Bulk task assignment", :postgres do
       assign_to.click
       task_type = options.find { |option| option.text =~ /No Show Hearing Task/ }
       task_type.click
-      number_of_tasks = options.find { |option| option.text =~ /3/ }
+      number_of_tasks = options.find { |option| option.text =~ /3 \(all available tasks\)/ }
       number_of_tasks.click
       expect(page).to_not have_content("Please select a value")
-      submit = all("button", text: "Assign Tasks")[0]
+      submit = find("button", id: "Bulk-Assign-Tasks-button-id-1")
       submit.click
     end
 
-    it "is able to bulk assign tasks for the hearing management org", skip: "flake" do
+    it "is able to bulk assign tasks for the hearing management org" do
       3.times do
         create(:no_show_hearing_task)
       end
@@ -31,8 +31,8 @@ RSpec.feature "Bulk task assignment", :postgres do
       click_button(text: "Assign Tasks")
       expect(page).to have_content("Bulk Assign Tasks")
 
-      # Whem missing required fields
-      submit = all("button", text: "Assign Tasks")[0]
+      # When missing required fields
+      submit = find("button", id: "Bulk-Assign-Tasks-button-id-1")
       submit.click
       expect(page).to have_content("Please select a value")
       expect(page).to_not have_content("Loading")
@@ -138,14 +138,15 @@ RSpec.feature "Bulk task assignment", :postgres do
     end
   end
 
-  context "when there are more tasks than will fit on a single page" do
+  context "when there are more tasks than will fit on a single page for any org" do
+    let(:org) { create(:organization) }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 2 }
     let(:regional_offices) { RegionalOffice::CITIES.keys.last(task_count) }
 
     before do
       regional_offices.each do |ro|
         appeal = create(:appeal, :hearing_docket, closest_regional_office: ro)
-        create(:no_show_hearing_task, appeal: appeal)
+        create(:no_show_hearing_task, appeal: appeal, assigned_to: org)
       end
     end
 

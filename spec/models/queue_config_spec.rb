@@ -101,6 +101,7 @@ describe QueueConfig, :postgres do
                 :description,
                 :columns,
                 :allow_bulk_assign,
+                :contains_legacy_tasks,
                 :tasks,
                 :task_page_count,
                 :total_task_count,
@@ -176,6 +177,7 @@ describe QueueConfig, :postgres do
                 :description,
                 :columns,
                 :allow_bulk_assign,
+                :contains_legacy_tasks,
                 :tasks,
                 :task_page_count,
                 :total_task_count,
@@ -197,6 +199,10 @@ describe QueueConfig, :postgres do
 
       context "with a user assignee" do
         let(:assignee) { create(:user) }
+        let(:task_count) { TaskPager::TASKS_PER_PAGE + 1 }
+        let!(:active_tasks) { create_list(:ama_task, task_count, assigned_to: assignee) }
+        let!(:on_hold_tasks) { create_list(:ama_task, task_count, :on_hold, assigned_to: assignee) }
+        let!(:closed_tasks) { create_list(:ama_task, task_count, :completed, assigned_to: assignee) }
 
         it "does not include a tab for tracking tasks" do
           expect(subject.length).to eq(3)
@@ -212,6 +218,7 @@ describe QueueConfig, :postgres do
                 :description,
                 :columns,
                 :allow_bulk_assign,
+                :contains_legacy_tasks,
                 :tasks,
                 :task_page_count,
                 :total_task_count,
@@ -227,37 +234,50 @@ describe QueueConfig, :postgres do
           end
         end
 
-        context "when the user uses the task pages API and has tasks assigned to them" do
-          let!(:assigned_tasks) { create_list(:ama_task, 2, assigned_to: assignee) }
-          let!(:on_hold_tasks) { create_list(:ama_task, 5, :on_hold, assigned_to: assignee) }
-          let!(:completed_tasks) { create_list(:ama_task, 7, :completed, assigned_to: assignee) }
+        it "displays the correct labels for the tabs" do
+          tabs = subject
 
+          expect(tabs[0][:label]).to eq(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE)
+          expect(tabs[1][:label]).to eq(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE)
+          expect(tabs[2][:label]).to eq(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+        end
+
+        it "displays the correct descriptions for the tabs" do
+          tabs = subject
+
+          expect(tabs[0][:description]).to eq(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
+          expect(tabs[1][:description]).to eq(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+          expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+        end
+
+        context "when the user does not use the task pages API" do
+          it "returns all tasks rather than paged tasks" do
+            tabs = subject
+
+            # Ensure all tasks have been returned
+            expect(tabs.all? { |tab| tab[:tasks].count.eql? task_count }).to be true
+            expect(tabs.all? { |tab| tab[:task_page_count].eql? 1 }).to be true
+            expect(tabs.all? { |tab| tab[:total_task_count].eql? task_count }).to be true
+            # Tasks are serialized at this point so we need to convert integer task IDs to strings.
+            expect(tabs[0][:tasks].pluck(:id)).to match_array(active_tasks.map(&:id).map(&:to_s))
+            expect(tabs[1][:tasks].pluck(:id)).to match_array(on_hold_tasks.map(&:id).map(&:to_s))
+            expect(tabs[2][:tasks].pluck(:id)).to match_array(closed_tasks.map(&:id).map(&:to_s))
+          end
+        end
+
+        context "when the user uses the task pages API" do
           before { FeatureToggle.enable!(:user_queue_pagination, users: [assignee.css_id]) }
           after { FeatureToggle.disable!(:user_queue_pagination, users: [assignee.css_id]) }
 
-          it "returns the tasks in the correct tabs" do
+          it "returns the tasks in the correct tabs, but only 15" do
             tabs = subject
 
-            # Tasks are serialized at this point so we need to convert integer task IDs to strings.
-            expect(tabs[0][:tasks].pluck(:id)).to match_array(assigned_tasks.map { |t| t.id.to_s })
-            expect(tabs[1][:tasks].pluck(:id)).to match_array(on_hold_tasks.map { |t| t.id.to_s })
-            expect(tabs[2][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
-          end
-
-          it "displays the correct labels for the tabs" do
-            tabs = subject
-
-            expect(tabs[0][:label]).to eq(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE)
-            expect(tabs[1][:label]).to eq(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE)
-            expect(tabs[2][:label]).to eq(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
-          end
-
-          it "displays the correct descriptions for the tabs" do
-            tabs = subject
-
-            expect(tabs[0][:description]).to eq(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
-            expect(tabs[1][:description]).to eq(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
-            expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+            expect(tabs.all? { |tab| tab[:tasks].count.eql? TaskPager::TASKS_PER_PAGE }).to be true
+            expect(tabs.all? { |tab| tab[:task_page_count].eql? 2 }).to be true
+            expect(tabs.all? { |tab| tab[:total_task_count].eql? task_count }).to be true
+            expect(tabs[0][:tasks].pluck(:id).all? { |id| active_tasks.map(&:id).map(&:to_s).include?(id) }).to be true
+            expect(tabs[1][:tasks].pluck(:id).all? { |id| on_hold_tasks.map(&:id).map(&:to_s).include?(id) }).to be true
+            expect(tabs[2][:tasks].pluck(:id).all? { |id| closed_tasks.map(&:id).map(&:to_s).include?(id) }).to be true
           end
         end
       end

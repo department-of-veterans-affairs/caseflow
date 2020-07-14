@@ -181,6 +181,7 @@ describe Distribution, :all_dbs do
       expect(subject.statistics["total_batch_size"]).to eq(45)
       expect(subject.statistics["priority_count"]).to eq(legacy_priority_count + 1)
       expect(subject.statistics["legacy_proportion"]).to eq(0.4)
+      expect(subject.statistics["legacy_hearing_backlog_count"]).to be <= 3
       expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
       expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
       expect(subject.statistics["hearing_proportion"]).to eq(0.2)
@@ -200,6 +201,30 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 3
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
+    end
+
+    context "with priority_acd on and the judge's backlog is full" do
+      before { FeatureToggle.enable!(:priority_acd) }
+      after { FeatureToggle.disable!(:priority_acd) }
+
+      let!(:more_same_judge_nonpriority_hearings) do
+        legacy_nonpriority_cases[33..63].map do |appeal|
+          create(:case_hearing,
+                 :disposition_held,
+                 folder_nr: appeal.bfkey,
+                 hearing_date: 1.month.ago,
+                 board_member: judge.vacols_attorney_id)
+        end
+      end
+
+      it "distributes legacy hearing non priority cases down to 30" do
+        expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)).to eq 35
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(30)
+        expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(5)
+        expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
+      end
     end
 
     def create_nonpriority_distributed_case(distribution, case_id, ready_at)
@@ -386,9 +411,16 @@ describe Distribution, :all_dbs do
   end
 
   context "validations" do
-    subject { Distribution.create(judge: user) }
+    shared_examples "passes validations" do
+      it "is valid" do
+        expect(subject.valid?).to be true
+      end
+    end
+
+    subject { Distribution.create(judge: user, priority_push: priority_push) }
 
     let(:user) { judge }
+    let(:priority_push) { false }
 
     context "existing Distribution record with status pending" do
       let!(:existing_distribution) { create(:distribution, judge: judge) }
@@ -396,6 +428,12 @@ describe Distribution, :all_dbs do
       it "prevents new Distribution record" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
+      end
+
+      context "when the priority_push is not the same" do
+        let!(:existing_distribution) { create(:distribution, judge: judge, priority_push: true) }
+
+        it_behaves_like "passes validations"
       end
     end
 
@@ -406,12 +444,18 @@ describe Distribution, :all_dbs do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
       end
+
+      context "when the priority_push is not the same" do
+        let!(:existing_distribution) { create(:distribution, judge: judge, status: :started, priority_push: true) }
+
+        it_behaves_like "passes validations"
+      end
     end
 
     context "when the user is not a judge in VACOLS" do
       let(:user) { create(:user) }
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :not_judge)
       end
@@ -423,7 +467,7 @@ describe Distribution, :all_dbs do
         3.times { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: Time.zone.today) }
       end
 
-      it "validates" do
+      it "is valid" do
         expect(subject.errors.details).not_to have_key(:judge)
       end
     end
@@ -434,27 +478,45 @@ describe Distribution, :all_dbs do
         4.times { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: Time.zone.today) }
       end
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :too_many_unassigned_cases)
+      end
+
+      context "when priority_push is true" do
+        let(:priority_push) { true }
+
+        it_behaves_like "passes validations"
       end
     end
 
     context "when the judge has an appeal that has waited more than 30 days" do
       let!(:task) { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: 31.days.ago) }
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
+      end
+
+      context "when priority_push is true" do
+        let(:priority_push) { true }
+
+        it_behaves_like "passes validations"
       end
     end
 
     context "when the judge has a legacy appeal that has waited more than 30 days" do
       let!(:task) { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: 31.days.ago) }
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
+      end
+
+      context "when priority_push is true" do
+        let(:priority_push) { true }
+
+        it_behaves_like "passes validations"
       end
     end
   end

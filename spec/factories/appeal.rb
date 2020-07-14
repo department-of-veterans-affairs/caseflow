@@ -36,14 +36,21 @@ FactoryBot.define do
           claimant.save
         end
       elsif evaluator.number_of_claimants
-        appeal.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: appeal)
+        claimant_type = appeal.veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
+        create_list(
+          :claimant,
+          evaluator.number_of_claimants,
+          decision_review: appeal,
+          type: claimant_type
+        )
       else
-        appeal.claimants = [create(
+        create(
           :claimant,
           participant_id: appeal.veteran.participant_id,
           decision_review: appeal,
-          payee_code: "00"
-        )]
+          payee_code: "00",
+          type: "VeteranClaimant"
+        )
       end
     end
 
@@ -122,6 +129,18 @@ FactoryBot.define do
         create(:advance_on_docket_motion, person: claimant.person, granted: true)
         create(:advance_on_docket_motion, person: another_claimant.person, granted: false)
         [another_claimant, claimant]
+      end
+    end
+
+    trait :cancelled do
+      after(:create) do |appeal, _evaluator|
+        # make sure a request issue exists, then mark all removed
+        create(:request_issue, decision_review: appeal)
+        appeal.reload.request_issues.each(&:remove!)
+
+        # Cancel the task tree
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        root_task.cancel_task_and_child_subtasks
       end
     end
 

@@ -47,7 +47,7 @@ module HearingMapper
     # Travel Board and Video hearing datetimes reflect the timezone of
     # the local RO, so we append the timezone based on the regional
     # office location then convert the date to Eastern Time
-    def datetime_based_on_type(datetime:, regional_office_key:, type:)
+    def datetime_based_on_type(datetime:, regional_office:, type:)
       # convert the date to UTC then cast it to Time.zone. In a
       # web process, Time.zone is set based on the session's or user's
       # timezone in ApplicationController.set_timezone
@@ -65,13 +65,10 @@ module HearingMapper
       #     passed time zone.
       # (2) that time is then converted to Eastern Time to get the correct
       #     hearing time for the central office.
-      datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
-    end
-
-    def timezone(regional_office_key)
-      regional_office = RegionalOffice::CITIES[regional_office_key] ||
-                        RegionalOffice::SATELLITE_OFFICES[regional_office_key] || {}
-      regional_office[:timezone]
+      datetime
+        .asctime
+        .in_time_zone(regional_office&.timezone)
+        .in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE)
     end
 
     private

@@ -1,5 +1,6 @@
 import enzyme from 'enzyme';
 import EnzymeAdapterReact16 from 'enzyme-adapter-react-16';
+import 'jest-axe/extend-expect';
 
 enzyme.configure({ adapter: new EnzymeAdapterReact16() });
 
