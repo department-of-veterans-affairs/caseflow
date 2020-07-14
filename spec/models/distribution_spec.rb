@@ -590,10 +590,10 @@ describe Distribution, :all_dbs do
       end
     end
 
-    subject { Distribution.create(judge: user, priority: priority) }
+    subject { Distribution.create(judge: user, priority_push: priority_push) }
 
     let(:user) { judge }
-    let(:priority) { false }
+    let(:priority_push) { false }
 
     context "existing Distribution record with status pending" do
       let!(:existing_distribution) { create(:distribution, judge: judge) }
@@ -603,8 +603,8 @@ describe Distribution, :all_dbs do
         expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
       end
 
-      context "when the priority is not the same" do
-        let!(:existing_distribution) { create(:distribution, judge: judge, priority: true) }
+      context "when the priority_push is not the same" do
+        let!(:existing_distribution) { create(:distribution, judge: judge, priority_push: true) }
 
         it_behaves_like "passes validations"
       end
@@ -618,8 +618,8 @@ describe Distribution, :all_dbs do
         expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
       end
 
-      context "when the priority is not the same" do
-        let!(:existing_distribution) { create(:distribution, judge: judge, status: :started, priority: true) }
+      context "when the priority_push is not the same" do
+        let!(:existing_distribution) { create(:distribution, judge: judge, status: :started, priority_push: true) }
 
         it_behaves_like "passes validations"
       end
@@ -656,8 +656,8 @@ describe Distribution, :all_dbs do
         expect(subject.errors.details[:judge]).to include(error: :too_many_unassigned_cases)
       end
 
-      context "when priority is true" do
-        let(:priority) { true }
+      context "when priority_push is true" do
+        let(:priority_push) { true }
 
         it_behaves_like "passes validations"
       end
@@ -671,8 +671,8 @@ describe Distribution, :all_dbs do
         expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
       end
 
-      context "when priority is true" do
-        let(:priority) { true }
+      context "when priority_push is true" do
+        let(:priority_push) { true }
 
         it_behaves_like "passes validations"
       end
@@ -686,8 +686,8 @@ describe Distribution, :all_dbs do
         expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
       end
 
-      context "when priority is true" do
-        let(:priority) { true }
+      context "when priority_push is true" do
+        let(:priority_push) { true }
 
         it_behaves_like "passes validations"
       end

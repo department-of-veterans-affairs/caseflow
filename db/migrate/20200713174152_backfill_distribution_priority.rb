@@ -3,7 +3,7 @@ class BackfillDistributionPriority < ActiveRecord::Migration[5.2]
 
   def change
     Distribution.unscoped.in_batches do |relation|
-      relation.update_all priority: false
+      relation.update_all priority_push: false
       sleep(0.1)
     end
   end
