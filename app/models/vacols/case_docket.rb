@@ -325,7 +325,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
                                       limit,
-                                      limit.nil? ? 1 : 0,
+                                      limit.nil? ? 1 : 0
                                     ])
 
     distribute_appeals(fmtd_query, judge, dry_run)

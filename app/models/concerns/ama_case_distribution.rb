@@ -26,7 +26,9 @@ module AmaCaseDistribution
       distribute_appeals(:legacy, nil, priority: true, genpop: "not_genpop")
       distribute_appeals(:hearing, nil, priority: true, genpop: "not_genpop")
     else
-      oldest_priority_appeals_by_docket(limit).each { |docket, n| distribute_appeals(docket, n, priority: true) }
+      oldest_priority_appeals_by_docket(limit).each do |docket, number_of_cases|
+        distribute_appeals(docket, number_of_cases, priority: true)
+      end
     end
   end
 
