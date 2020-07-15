@@ -10,17 +10,18 @@ import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
 
 // Test helpers and data
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
-import { userWithVirtualHearingsFeatureEnabled, amaHearing, virtualHearing } from 'test/data';
+import { userWithVirtualHearingsFeatureEnabled, amaHearing, defaultHearing, virtualHearing } from 'test/data';
 
 describe('VirtualHearingForm', () => {
   test('Matches snapshot with default props', () => {
     // Run the test
     const virtualHearingForm = mount(
       <VirtualHearingForm
+        hearing={defaultHearing}
       />,
 
       {
-        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, amaHearing),
+        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, defaultHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
@@ -57,7 +58,7 @@ describe('VirtualHearingForm', () => {
     const virtualHearingForm = mount(
       <VirtualHearingForm
         hearing={amaHearing}
-        virtualHearing={virtualHearing}
+        virtualHearing={virtualHearing.virtualHearing}
       />,
 
       {

@@ -92,7 +92,10 @@ class BaseHearingUpdateForm
   end
 
   def only_time_updated?
-    !virtual_hearing_created? && scheduled_time_string.present?
+    (!virtual_hearing_created? && scheduled_time_string.present?) ||
+      # Also send virtual hearing time updates if the representative timezone is changed
+      virtual_hearing_attributes&.dig(:representative_tz).present? ||
+      virtual_hearing_attributes&.dig(:appellant_tz).present?
   end
 
   def start_async_job?

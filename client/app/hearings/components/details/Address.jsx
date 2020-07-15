@@ -29,7 +29,7 @@ export const AddressLine = ({
 };
 
 AddressLine.propTypes = {
-  addressLine1: PropTypes.string.isRequired,
+  addressLine1: PropTypes.string,
   name: PropTypes.string,
   addressState: PropTypes.string,
   addressCity: PropTypes.string,

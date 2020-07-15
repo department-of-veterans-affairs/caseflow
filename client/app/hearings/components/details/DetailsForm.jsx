@@ -7,7 +7,7 @@ import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
-  HearingRoomDropdown
+  HearingRoomDropdown,
 } from '../../../components/DataDropdowns/index';
 import { TranscriptionFormSection } from './TranscriptionFormSection';
 import { VirtualHearingForm } from './VirtualHearingForm';
@@ -25,10 +25,13 @@ const DetailsForm = (props) => {
     readOnly,
     requestType,
     errors,
-    convertHearing
+    convertHearing,
   } = props;
-  const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
-  const enableVirtualHearings = userCanScheduleVirtualHearings;
+  const { userCanScheduleVirtualHearings, userCanConvertCentralHearings } = useContext(HearingsUserContext);
+  const enableVirtualHearings =
+    requestType === 'Central' ?
+      userCanConvertCentralHearings :
+      userCanScheduleVirtualHearings;
 
   return (
     <React.Fragment>
@@ -63,7 +66,8 @@ const DetailsForm = (props) => {
               openModal={openVirtualHearingModal}
               readOnly={
                 hearing?.scheduledForIsPast ||
-                ((hearing?.isVirtual || hearing?.wasVirtual) && !hearing?.virtualHearing?.jobCompleted)
+                ((hearing?.isVirtual || hearing?.wasVirtual) &&
+                  !hearing?.virtualHearing?.jobCompleted)
               }
               styling={columnThird}
             />
@@ -102,11 +106,11 @@ const DetailsForm = (props) => {
         errors={errors}
         hearing={hearing}
         readOnly={readOnly}
-        virtualHearing={hearing.virtualHearing}
+        virtualHearing={hearing?.virtualHearing}
         update={update}
       />
 
-      {hearing?.emailEvents.length > 0 && (
+      {hearing?.emailEvents?.length > 0 && (
         <EmailNotificationHistory rows={hearing?.emailEvents} />
       )}
 
@@ -125,20 +129,20 @@ const DetailsForm = (props) => {
 DetailsForm.propTypes = {
   errors: PropTypes.shape({
     appellantEmail: PropTypes.string,
-    representativeEmail: PropTypes.string
+    representativeEmail: PropTypes.string,
   }),
   hearing: PropTypes.shape({
     virtualHearing: PropTypes.object,
     transcription: PropTypes.object,
     wasVirtual: PropTypes.bool,
-    isVirtual: PropTypes.bool
+    isVirtual: PropTypes.bool,
   }),
   isLegacy: PropTypes.bool,
   openVirtualHearingModal: PropTypes.func,
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,
   update: PropTypes.func,
-  convertHearing: PropTypes.func
+  convertHearing: PropTypes.func,
 };
 
 export default DetailsForm;

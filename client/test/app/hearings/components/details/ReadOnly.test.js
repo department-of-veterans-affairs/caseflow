@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 
 describe('ReadOnly', () => {
-  test('Matches snapshot with default props', () => { // Render the address component
+  test('Matches snapshot with default props', () => {
     // Setup the test
     const example = 'Something\n\tElse';
     const label = 'example';
