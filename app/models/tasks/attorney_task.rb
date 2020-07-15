@@ -54,8 +54,8 @@ class AttorneyTask < Task
 
   def send_back_to_judge_assign!(params)
     transaction do
-      update_with_instructions(params)
-      parent.update_with_instructions(params)
+      update_with_instructions(params.merge(status: :cancelled))
+      parent.update_with_instructions(params.merge(status: :cancelled))
       judge_assign_task = open_judge_assign_task
 
       [self, parent, judge_assign_task]
