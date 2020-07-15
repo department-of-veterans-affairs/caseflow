@@ -4,13 +4,10 @@
 # The Claimant model associates a claimant to a decision review.
 
 class Claimant < CaseflowRecord
-  include AssociatedBgsRecord
   include HasDecisionReviewUpdatedSince
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
-
-  bgs_attr_accessor :relationship
 
   validate { |claimant| ClaimantValidator.new(claimant).validate }
   validates :participant_id,
