@@ -22,6 +22,14 @@ describe ControllerSchema do
     end
   end
 
+  shared_context "array_schema" do
+    let(:schema) do
+      ControllerSchema.json do |schema|
+        schema.integer :ids, array: true, nullable: true
+      end
+    end
+  end
+
   describe "#remove_unknown_keys" do
     subject do
       schema.remove_unknown_keys(params, path_params: { known: "foo" })
@@ -88,6 +96,34 @@ describe ControllerSchema do
 
         it "returns a failure" do
           expect(subject.failure?).to be_truthy
+        end
+      end
+    end
+
+    context "for array schema" do
+      include_context "array_schema"
+
+      context "when ids is empty" do
+        let(:params_hash) { { ids: [] } }
+
+        it "returns a success" do
+          expect(subject.failure?).to be_falsey
+        end
+      end
+
+      context "when ids contains nil" do
+        let(:params_hash) { { ids: [nil] } }
+
+        it "returns a success" do
+          expect(subject.failure?).to be_truthy
+        end
+      end
+
+      context "when array field is nil" do
+        let(:params_hash) { { ids: nil } }
+
+        it "returns a success" do
+          expect(subject.failure?).to be_falsey
         end
       end
     end
