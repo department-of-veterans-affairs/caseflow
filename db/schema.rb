@@ -439,6 +439,7 @@ ActiveRecord::Schema.define(version: 2020_07_14_185603) do
     t.datetime "created_at", null: false
     t.datetime "errored_at", comment: "when the Distribution job suffered an error"
     t.integer "judge_id"
+    t.boolean "priority_push", default: false, comment: "Whether or not this distribution is a priority-appeals-only push to judges via a weekly job (not manually requested)"
     t.datetime "started_at", comment: "when the Distribution job commenced"
     t.json "statistics"
     t.string "status"

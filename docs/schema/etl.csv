@@ -208,6 +208,7 @@ hearings,uuid,uuid,,,,,x,Unique identifier for the Hearing
 hearings,vacols_id,string,,,,,x,"When type=LegacyHearing, this column points at the VACOLS case id"
 hearings,witness,string,,,,,,hearings.witness
 organizations,,,,,,,,Copy of Organizations table
+organizations,automated_priority_case_distribution,boolean,,,,,x,Whether a JudgeTeam is currently available for automatically pushed priority cases
 organizations,created_at,datetime,,,,,x,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string,,,,,,
