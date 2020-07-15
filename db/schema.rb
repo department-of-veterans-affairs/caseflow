@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_14_185603) do
+ActiveRecord::Schema.define(version: 2020_07_15_105703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -890,7 +890,7 @@ ActiveRecord::Schema.define(version: 2020_07_14_185603) do
   create_table "legacy_issue_optins", comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review.", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "When a Request Issue is connected to a VACOLS issue on a legacy appeal, and the Veteran has agreed to withdraw their legacy appeals, a legacy_issue_optin is created at the time the Decision Review is successfully intaken. This is used to indicate that the legacy issue should subsequently be opted into AMA in VACOLS. "
     t.string "error"
-    t.date "folder_decision_date", comment: "Decision date on case record folder"
+    t.datetime "folder_decision_date", comment: "Date/Time of decision"
     t.bigint "legacy_issue_id", comment: "The legacy issue being opted in, which connects to the request issue"
     t.datetime "optin_processed_at", comment: "The timestamp for when the opt-in was successfully processed, meaning it was updated in VACOLS as opted into AMA."
     t.string "original_disposition_code", comment: "The original disposition code of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
@@ -940,7 +940,7 @@ ActiveRecord::Schema.define(version: 2020_07_14_185603) do
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.boolean "automated_priority_case_distribution", comment: "Whether a JudgeTeam is currently available for automatically pushed priority cases"
+    t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distributiuon of automatically pushed priority cases"
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
@@ -950,7 +950,7 @@ ActiveRecord::Schema.define(version: 2020_07_14_185603) do
     t.string "type", comment: "Single table inheritance"
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
-    t.index ["automated_priority_case_distribution"], name: "index_organizations_on_automated_priority_case_distribution"
+    t.index ["accepts_priority_pushed_cases"], name: "index_organizations_on_accepts_priority_pushed_cases"
     t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true

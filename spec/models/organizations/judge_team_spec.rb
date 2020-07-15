@@ -9,7 +9,7 @@ describe JudgeTeam, :postgres do
       let!(:judge_team_available) { JudgeTeam.create_for_judge(judge) }
       let(:judge_team_unavailable) { JudgeTeam.create_for_judge(judge2) }
 
-      before { judge_team_unavailable.update(automated_priority_case_distribution: false) }
+      before { judge_team_unavailable.update(accepts_priority_pushed_cases: false) }
 
       it "should return only the available JudgeTeams" do
         expect(JudgeTeam.available_for_priority_case_distribution).to eq([judge_team_available])
@@ -32,7 +32,7 @@ describe JudgeTeam, :postgres do
           expect(judge.administered_teams.length).to eq(1)
           expect(judge.administered_teams.first.class).to eq(JudgeTeam)
           expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase.parameterize.dasherize)
-          expect(judge.administered_teams.first.automated_priority_case_distribution).to eq(true)
+          expect(judge.administered_teams.first.accepts_priority_pushed_cases).to eq(true)
         end
 
         it "creates association with a JudgeTeamLead role with the judge" do
@@ -151,7 +151,7 @@ describe JudgeTeam, :postgres do
           expect(judge.administered_teams.length).to eq(1)
           expect(judge.administered_teams.first.class).to eq(JudgeTeam)
           expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase.parameterize.dasherize)
-          expect(judge.administered_teams.first.automated_priority_case_distribution).to eq(true)
+          expect(judge.administered_teams.first.accepts_priority_pushed_cases).to eq(true)
           expect(JudgeTeam.for_judge(judge)).not_to eq(nil)
         end
 

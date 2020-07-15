@@ -688,7 +688,7 @@ legacy_issues,vacols_sequence_id,integer ∗,x,,,,,The sequence ID of the lega
 legacy_issue_optins,,,,,,,,"When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review."
 legacy_issue_optins,created_at,datetime ∗,x,,,,,"When a Request Issue is connected to a VACOLS issue on a legacy appeal, and the Veteran has agreed to withdraw their legacy appeals, a legacy_issue_optin is created at the time the Decision Review is successfully intaken. This is used to indicate that the legacy issue should subsequently be opted into AMA in VACOLS. "
 legacy_issue_optins,error,string,,,,,,
-legacy_issue_optins,folder_decision_date,date,,,,,,Decision date on case record folder
+legacy_issue_optins,folder_decision_date,datetime,,,,,,Date/Time of decision
 legacy_issue_optins,id,integer (8) PK,x,x,,,,
 legacy_issue_optins,legacy_issue_id,integer (8) FK,,,x,,x,"The legacy issue being opted in, which connects to the request issue"
 legacy_issue_optins,optin_processed_at,datetime,,,,,,"The timestamp for when the opt-in was successfully processed, meaning it was updated in VACOLS as opted into AMA."
@@ -719,7 +719,7 @@ non_availabilities,schedule_period_id,integer (8) ∗ FK,x,,x,,x,
 non_availabilities,type,string ∗,x,,,,,
 non_availabilities,updated_at,datetime ∗,x,,,,x,
 organizations,,,,,,,,
-organizations,automated_priority_case_distribution,boolean,,,,,x,Whether a JudgeTeam is currently available for automatically pushed priority cases
+organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distributiuon of automatically pushed priority cases
 organizations,created_at,datetime,,,,,,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string ∗,x,,,,,
