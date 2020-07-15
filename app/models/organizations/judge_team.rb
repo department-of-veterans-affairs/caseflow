@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class JudgeTeam < Organization
-  scope :available_for_priority_case_distribution, -> { where(accepts_priority_pushed_cases: true) }
+  scope :pushed_priority_cases_allowed, -> { where(accepts_priority_pushed_cases: true) }
 
   class << self
     def for_judge(user)

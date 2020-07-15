@@ -4,7 +4,7 @@ describe JudgeTeam, :postgres do
   let(:judge) { create(:user) }
 
   context "scope" do
-    context "available_for_priority_case_distribution" do
+    context "pushed_priority_cases_allowed" do
       let(:judge2) { create(:user) }
       let!(:judge_team_available) { JudgeTeam.create_for_judge(judge) }
       let(:judge_team_unavailable) { JudgeTeam.create_for_judge(judge2) }
@@ -12,7 +12,7 @@ describe JudgeTeam, :postgres do
       before { judge_team_unavailable.update(accepts_priority_pushed_cases: false) }
 
       it "should return only the available JudgeTeams" do
-        expect(JudgeTeam.available_for_priority_case_distribution).to eq([judge_team_available])
+        expect(JudgeTeam.pushed_priority_cases_allowed).to eq([judge_team_available])
       end
     end
   end
