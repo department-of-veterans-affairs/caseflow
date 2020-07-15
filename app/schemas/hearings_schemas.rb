@@ -42,6 +42,7 @@ class HearingsSchemas
                     nullable: true,
                     doc: "Whether or not the evidence submission window was waived for the hearing"
         schema.nested :hearing_issue_notes_attributes,
+                      array: true,
                       optional: true,
                       nullable: true,
                       doc: "Notes for a hearing issue",
