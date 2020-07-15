@@ -13,7 +13,7 @@ import { setActiveOrganization, requestSave } from '../uiReducer/uiActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
-import WindowUtil from '../../util/WindowUtil';
+import { setQueueConfig } from '../QueueActions';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -82,9 +82,9 @@ class BulkAssignModal extends React.PureComponent {
       detail: 'Please go to your individual queue to see any self assigned tasks'
     };
 
-    return this.props.requestSave('/bulk_task_assignments', { data }, successMessage).then(() => {
+    return this.props.requestSave('/bulk_task_assignments', { data }, successMessage).then((resp) => {
       this.props.history.push(`/organizations/${this.organizationUrl()}`);
-      WindowUtil.reloadWithPOST();
+      this.props.setQueueConfig(resp.body.queue_config);
     }).
       catch(() => {
         // handle the error
@@ -229,7 +229,8 @@ BulkAssignModal.propTypes = {
   history: PropTypes.object,
   location: PropTypes.object,
   onCancel: PropTypes.func,
-  requestSave: PropTypes.func
+  requestSave: PropTypes.func,
+  setQueueConfig: PropTypes.func
 };
 
 const mapStateToProps = (state) => {
@@ -245,7 +246,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     setActiveOrganization,
-    requestSave
+    requestSave,
+    setQueueConfig
   }, dispatch));
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BulkAssignModal));
