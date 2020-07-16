@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+##
+# Job that deletes the pexip conference resource if the hearing was held or
+# if the hearing type is switched from virtual to original hearing type.
+# It also sends cancellation emails to hearing participants if latter is case.
+
 class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule

@@ -1,9 +1,28 @@
 # frozen_string_literal: true
 
-# Class to coordinate interactions between controller
-# and repository class. Eventually may persist data to
-# Caseflow DB. For now all schedule data is sent to the
-# VACOLS DB (Aug 2018 implementation).
+##
+# HearingDay groups hearings, both AMA and legacy, by a regional office and a room at the BVA.
+# Hearing Admin can create a HearingDay either individually or in bulk at the begining of 
+# each year by uploading bunch of spreadsheets.
+#
+# Each HearingDay has a request type which applies to all hearings associated for that day.
+# Request types:
+#   'V' (also known as video hearing):
+#       The veteran/appellant travels to a regional office to have a hearing through video conference
+#       with a VLJ (Veterans Law Judge) who joins from the board at Washington D.C.
+#   'C' (also known as Central):
+#       The veteran/appellant travels to the board in D.C to have a in-person hearing with the VLJ.
+#   'T' (also known as travel board)
+#       The VLJ travels to the the Veteran/Appellant's closest regional office to conduct the hearing.
+# 
+# If the request type is video('V'), then the HearingDay has a regional office associated.
+# Currently, a video hearing can be switched to a virtual hearing represented by VirtualHearing.
+#
+# Each HearingDay has a maximum number of hearings that can be held which is either based on the
+# timezone of associated regional office or 12 if the request type is central('C).
+#
+# A HearingDay can be assigned to a judge.
+
 class HearingDay < CaseflowRecord
   include UpdatedByUserConcern
 

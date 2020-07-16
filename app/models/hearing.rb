@@ -1,5 +1,27 @@
 # frozen_string_literal: true
 
+##
+# The Veteran/Appellant, often with a representative, has a hearing with a Veterans Law Judge(VLJ) to
+# provide additional details for their appeal. In this case the appeal is an AMA Appeal meaning it was filed 
+# after Appeals Improvement and Modernization Act (AMA) was passed.
+# 
+# If the veterans/appellants opt in to have a hearing for their appeal process, an open ScheduleHearingTask is
+# created to track the the status of hearings. Hearings are created when a hearing coordinator
+# schedules the veteran/apellant for a hearing by completing the open ScheduleHearingTask. 
+# 
+# There are four types of hearings: travel board, in-person (also known as Central), video and virtual. Unlike the
+# other types, virtual type has VirtualHearing model which tracks additional details about virtual conference and emails.
+# Travel board hearings are only worked on in VACOLS.
+# 
+# Hearings have a nil disposition unless the hearing is held, cancelled, postponed or the veteran/appellant
+# does not show up for their hearing. AssignHearingDispositionTask is created after hearing has passed 
+# and allows users to set the disposition. 
+#
+# A HearingDay organizes hearings by regional office and a room. Hearing has a HearingLocation where the 
+# hearing will place as well as a Trascription which is the trascribed record of the hearing if hearing was held. 
+# If a hearing is virtual then it has EmailEvents which is a record of virtual hearing emails sent to
+# different recipients.
+
 class Hearing < CaseflowRecord
   include HasHearingTask
   include HasVirtualHearing
