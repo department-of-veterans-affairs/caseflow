@@ -940,7 +940,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_105703) do
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distributiuon of automatically pushed priority cases"
+    t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"

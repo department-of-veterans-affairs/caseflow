@@ -719,7 +719,7 @@ non_availabilities,schedule_period_id,integer (8) ∗ FK,x,,x,,x,
 non_availabilities,type,string ∗,x,,,,,
 non_availabilities,updated_at,datetime ∗,x,,,,x,
 organizations,,,,,,,,
-organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distributiuon of automatically pushed priority cases
+organizations,accepts_priority_pushed_cases,boolean,,,,,x,Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases
 organizations,created_at,datetime,,,,,,
 organizations,id,integer (8) PK,x,x,,,,
 organizations,name,string ∗,x,,,,,
