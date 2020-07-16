@@ -411,9 +411,16 @@ describe Distribution, :all_dbs do
   end
 
   context "validations" do
-    subject { Distribution.create(judge: user) }
+    shared_examples "passes validations" do
+      it "is valid" do
+        expect(subject.valid?).to be true
+      end
+    end
+
+    subject { Distribution.create(judge: user, priority_push: priority_push) }
 
     let(:user) { judge }
+    let(:priority_push) { false }
 
     context "existing Distribution record with status pending" do
       let!(:existing_distribution) { create(:distribution, judge: judge) }
@@ -421,6 +428,12 @@ describe Distribution, :all_dbs do
       it "prevents new Distribution record" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
+      end
+
+      context "when the priority_push is not the same" do
+        let!(:existing_distribution) { create(:distribution, judge: judge, priority_push: true) }
+
+        it_behaves_like "passes validations"
       end
     end
 
@@ -431,12 +444,18 @@ describe Distribution, :all_dbs do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
       end
+
+      context "when the priority_push is not the same" do
+        let!(:existing_distribution) { create(:distribution, judge: judge, status: :started, priority_push: true) }
+
+        it_behaves_like "passes validations"
+      end
     end
 
     context "when the user is not a judge in VACOLS" do
       let(:user) { create(:user) }
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :not_judge)
       end
@@ -448,7 +467,7 @@ describe Distribution, :all_dbs do
         3.times { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: Time.zone.today) }
       end
 
-      it "validates" do
+      it "is valid" do
         expect(subject.errors.details).not_to have_key(:judge)
       end
     end
@@ -459,27 +478,45 @@ describe Distribution, :all_dbs do
         4.times { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: Time.zone.today) }
       end
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :too_many_unassigned_cases)
+      end
+
+      context "when priority_push is true" do
+        let(:priority_push) { true }
+
+        it_behaves_like "passes validations"
       end
     end
 
     context "when the judge has an appeal that has waited more than 30 days" do
       let!(:task) { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: 31.days.ago) }
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
+      end
+
+      context "when priority_push is true" do
+        let(:priority_push) { true }
+
+        it_behaves_like "passes validations"
       end
     end
 
     context "when the judge has a legacy appeal that has waited more than 30 days" do
       let!(:task) { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: 31.days.ago) }
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
+      end
+
+      context "when priority_push is true" do
+        let(:priority_push) { true }
+
+        it_behaves_like "passes validations"
       end
     end
   end
