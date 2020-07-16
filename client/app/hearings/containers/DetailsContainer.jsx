@@ -31,12 +31,7 @@ class HearingDetailsContainer extends React.Component {
   }
 
   getHearing = () => {
-    const { hearingId, hearings } = this.props;
-    const hearing = _.find(hearings, (_hearing) => _hearing.externalId === hearingId);
-
-    if (hearing) {
-      return new Promise((resolve) => resolve(this.setHearing(hearing)));
-    }
+    const { hearingId } = this.props;
 
     return ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
       this.setHearing(ApiUtil.convertToCamelCase(resp.body.data));

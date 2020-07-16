@@ -18,6 +18,7 @@ export const VirtualHearingForm = (
   if (!hearing?.isVirtual && !hearing?.wasVirtual) {
     return null;
   }
+  console.log('HEARING', hearing.readableRequestType === 'Video');
 
   const showEmailFields = (hearing?.isVirtual || hearing?.wasVirtual) && virtualHearing;
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || hearing?.wasVirtual || hearing.scheduledForIsPast;
@@ -52,7 +53,7 @@ export const VirtualHearingForm = (
         <React.Fragment>
           <h3>{appellantTitle}</h3>
           <div id="email-section" className="usa-grid">
-            <div className="usa-width-one-third">
+            {hearing.readableRequestType !== 'Video' && <div className="usa-width-one-third">
               <Timezone
                 required
                 value={virtualHearing?.appellantTz}
@@ -62,7 +63,7 @@ export const VirtualHearingForm = (
                 name={`${appellantTitle} Timezone`}
               />
               <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
-            </div>
+            </div>}
             <div className="usa-width-one-third">
               <VirtualHearingEmail
                 required
@@ -78,7 +79,7 @@ export const VirtualHearingForm = (
           <div className="cf-help-divider" />
           <h3>Power of Attorney</h3>
           <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-            <div className="usa-width-one-third">
+            {hearing.readableRequestType !== 'Video' && <div className="usa-width-one-third">
               <Timezone
                 value={virtualHearing?.representativeTz}
                 onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
@@ -87,7 +88,7 @@ export const VirtualHearingForm = (
                 name="POA/Representative Timezone"
               />
               <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
-            </div>
+            </div>}
             <div className="usa-width-one-third">
               <VirtualHearingEmail
                 disabled={readOnlyEmails}
@@ -108,6 +109,7 @@ export const VirtualHearingForm = (
 VirtualHearingForm.propTypes = {
   update: PropTypes.func,
   hearing: PropTypes.shape({
+    readableRequestType: PropTypes.string,
     scheduledTimeString: PropTypes.string,
     appellantIsNotVeteran: PropTypes.bool,
     scheduledForIsPast: PropTypes.bool,
