@@ -27,7 +27,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end
   end
 
-  # Give any leftover cases due to intentions rounding error to judges with the lowest distribution targets
+  # Give any leftover cases to judges with the lowest distribution targets. Remove judges with 0 cases to be distributed
+  # as these are the final counts to distribute remaining ready priority cases
   def eligible_judge_target_distributions_with_leftovers
     leftover_cases = leftover_cases_count
     eligible_judge_target_distributions.sort_by(&:last).map do |judge, target|
@@ -39,12 +40,14 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end.compact.to_h
   end
 
-  # Because we cannot distribute fractionsal cases, there will be a cases leftover after taking the priority target
+  # Because we cannot distribute fractional cases, there can be cases leftover after taking the priority target
   # into account. This number will always be less than the number of judges that need distribution because division
   def leftover_cases_count
     ready_priority_appeals_count - eligible_judge_target_distributions.values.sum
   end
 
+  # Calculate the number of cases a judge should receive based on the priority target. Don't toss out judges with 0 as
+  # they could receive some of the leftover cases (if any)
   def eligible_judge_target_distributions
     eligible_judge_priority_distributions_this_month.map do |judge, distributions_this_month|
       target = priority_target - distributions_this_month
@@ -52,8 +55,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end.compact.to_h
   end
 
-  # Produces a target that will distribute all ready appeals so the remaining counts for each judge are as even as
-  # possible with cases over a full month
+  # Calculates a target that will distribute all ready appeals so the remaining counts for each judge will produce
+  # even case counts over a full month (or as close as we can get to it)
   def priority_target
     @priority_target ||= begin
       distribution_counts = eligible_judge_priority_distributions_this_month.values
@@ -72,6 +75,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @ready_priority_appeals_count ||= DocketCoordinator.new.priority_count
   end
 
+  # Number of priority distributions every eligible judge has received in the last month
   def eligible_judge_priority_distributions_this_month
     eligible_judges.map { |judge| [judge, judge_priority_distributions_this_month[judge.id] || 0] }.to_h
   end
