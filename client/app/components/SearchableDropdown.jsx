@@ -44,6 +44,9 @@ export class SearchableDropdown extends React.Component {
      */
     if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
+    } else if (this.props.multi && value === null) {
+      // Fix for https://github.com/JedWatson/react-select/issues/3632
+      newValue = [];
     }
     // don't set value in state if creatable is true
     if (!this.props.selfManageValueState) {
@@ -52,12 +55,12 @@ export class SearchableDropdown extends React.Component {
 
     if (
       this.state.value &&
-      value &&
-      Array.isArray(value) &&
+      newValue &&
+      Array.isArray(newValue) &&
       Array.isArray(this.state.value) &&
-      value.length < this.state.value.length
+      newValue.length < this.state.value.length
     ) {
-      deletedValue = _.differenceWith(this.state.value, value, _.isEqual);
+      deletedValue = _.differenceWith(this.state.value, newValue, _.isEqual);
     }
     if (this.props.onChange) {
       this.props.onChange(newValue, deletedValue);

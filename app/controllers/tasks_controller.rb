@@ -154,10 +154,9 @@ class TasksController < ApplicationController
   end
 
   def verify_view_access
-    return true if user == current_user || Judge.new(current_user).attorneys.include?(user)
-
-    return true if FeatureToggle.enabled?(:scm_view_judge_assign_queue) &&
-                   current_user.member_of_organization?(SpecialCaseMovementTeam.singleton)
+    return true if user == current_user ||
+                   Judge.new(current_user).attorneys.include?(user) ||
+                   current_user.can_act_on_behalf_of_judges?
 
     fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by members of the Case Movement Team."
   end

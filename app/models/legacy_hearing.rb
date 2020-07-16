@@ -1,5 +1,29 @@
 # frozen_string_literal: true
 
+##
+# The Veteran/Appellant, often with a representative, has a hearing with a Veterans Law Judge(VLJ) to
+# provide additional details for their appeal. In this case the appeal is LegacyAppeal meaning it was filed
+# before Appeals Improvement and Modernization Act (AMA) was passed.
+#
+# If the veterans/appellants opt in to have a hearing for their appeal process, an open ScheduleHearingTask is
+# created to track the the status of hearings. Hearings are created when a hearing coordinator
+# schedules the veteran/apellant for a hearing completing the open ScheduleHearingTask.
+#
+# There are four types of hearings: travel board, in-person (also known as Central), video and virtual. Unlike the
+# other types, virtual type has VirtualHearing model which tracks additional details about virtual conference and
+# emails. Travel board hearings are only worked on in VACOLS.
+#
+# The legacy hearings which are scheduled through caseflow are organized by a HearingDay by regional office and
+# a room but all data is updated both in Caseflow and VACOLS. Caseflow also stores legacy hearings which
+# were created in VACOLS. For these, there is no corresponding HearingDay in caseflow but it exists in VACOLS.
+#
+# Legcay Hearings have a nil disposition unless the hearing is held, cancelled, postponed or the veteran/appellant
+# does not show up for their hearing. AssignHearingDispositionTask is created after hearing has passed
+# and allows users to set the disposition.
+#
+# Legacy Hearing has a HearingLocation where the hearing will place. If a hearing is virtual then it has EmailEvents
+# which is a record of virtual hearing emails sent to different recipients.
+
 class LegacyHearing < CaseflowRecord
   include CachedAttributes
   include AssociatedVacolsModel
@@ -8,6 +32,7 @@ class LegacyHearing < CaseflowRecord
   include HasVirtualHearing
   include HearingLocationConcern
   include HearingTimeConcern
+  include UpdatedByUserConcern
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -28,7 +53,6 @@ class LegacyHearing < CaseflowRecord
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
   belongs_to :created_by, class_name: "User"
-  belongs_to :updated_by, class_name: "User"
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
@@ -52,7 +76,6 @@ class LegacyHearing < CaseflowRecord
   delegate :timezone, :name, to: :regional_office, prefix: true
 
   before_create :assign_created_by_user
-  before_update :assign_updated_by_user
 
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
@@ -323,9 +346,5 @@ class LegacyHearing < CaseflowRecord
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
-  end
-
-  def assign_updated_by_user
-    self.updated_by ||= RequestStore[:current_user]
   end
 end
