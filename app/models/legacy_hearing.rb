@@ -77,13 +77,19 @@ class LegacyHearing < CaseflowRecord
   def appellant_tz
     return if appeal&.appellant_address.blank?
 
-    TimezoneService.address_to_timezone(appeal&.appellant_address).identifier
+    # Use an address object if this is a hash
+    address = appeal&.appellant_address.is_a?(Hash) ? Address.new(appeal&.appellant_address) : appeal&.appellant_address
+
+    TimezoneService.address_to_timezone(address).identifier
   end
 
   def representative_tz
     return if representative_address.blank?
 
-    TimezoneService.address_to_timezone(representative_address).identifier
+    # Use an address object if this is a hash
+    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    TimezoneService.address_to_timezone(address).identifier
   end
 
   def assigned_to_vso?(user)

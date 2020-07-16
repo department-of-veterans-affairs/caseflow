@@ -108,13 +108,19 @@ class Hearing < CaseflowRecord
   def appellant_tz
     return if appeal&.address.blank?
 
-    TimezoneService.address_to_timezone(appeal&.address).identifier
+    # Use an address object if this is a hash
+    address = appeal&.address.is_a?(Hash) ? Address.new(appeal&.address) : appeal&.address
+
+    TimezoneService.address_to_timezone(address).identifier
   end
 
   def representative_tz
-    return if representative_address.blank?
+    return if representative_representative_addressaddress.blank?
 
-    TimezoneService.address_to_timezone(Address.new(representative_address)).identifier
+    # Use an address object if this is a hash
+    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    TimezoneService.address_to_timezone(address).identifier
   end
 
   def claimant_id
