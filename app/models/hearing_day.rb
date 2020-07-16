@@ -2,7 +2,7 @@
 
 ##
 # HearingDay groups hearings, both AMA and legacy, by a regional office and a room at the BVA.
-# Hearing Admin can create a HearingDay either individually or in bulk at the begining of 
+# Hearing Admin can create a HearingDay either individually or in bulk at the begining of
 # each year by uploading bunch of spreadsheets.
 #
 # Each HearingDay has a request type which applies to all hearings associated for that day.
@@ -14,7 +14,7 @@
 #       The veteran/appellant travels to the board in D.C to have a in-person hearing with the VLJ.
 #   'T' (also known as travel board)
 #       The VLJ travels to the the Veteran/Appellant's closest regional office to conduct the hearing.
-# 
+#
 # If the request type is video('V'), then the HearingDay has a regional office associated.
 # Currently, a video hearing can be switched to a virtual hearing represented by VirtualHearing.
 #
