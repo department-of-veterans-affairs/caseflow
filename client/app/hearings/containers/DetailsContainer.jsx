@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
 
 import { HearingsFormContextProvider } from '../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../contexts/HearingsUserContext';

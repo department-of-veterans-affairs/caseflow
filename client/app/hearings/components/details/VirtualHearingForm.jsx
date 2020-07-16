@@ -18,7 +18,6 @@ export const VirtualHearingForm = (
   if (!hearing?.isVirtual && !hearing?.wasVirtual) {
     return null;
   }
-  console.log('HEARING', hearing.readableRequestType === 'Video');
 
   const showEmailFields = (hearing?.isVirtual || hearing?.wasVirtual) && virtualHearing;
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || hearing?.wasVirtual || hearing.scheduledForIsPast;
