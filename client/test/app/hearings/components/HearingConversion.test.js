@@ -69,11 +69,6 @@ describe('HearingConversion', () => {
     );
 
     // Assertions
-    expect(
-      conversion.
-        findWhere((node) => node.prop('label') === 'Hearing Date').
-        prop('text')
-    ).toEqual(DateUtil.formatDateStr(amaHearing.scheduledFor));
     expect(conversion.find(RadioField)).toHaveLength(1);
 
     // Ensure the judge dropdown section is hidden
