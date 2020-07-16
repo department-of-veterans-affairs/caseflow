@@ -18,17 +18,17 @@ describe JudgeTeam, :postgres do
   end
 
   shared_examples "has the judge and attorneys" do
-      describe ".judge" do
-        it "returns the team judge" do
-          expect(judge_team.judge).to eq judge.user
-        end
+    describe ".judge" do
+      it "returns the team judge" do
+        expect(judge_team.judge).to eq judge.user
       end
+    end
 
-      describe ".attorneys" do
-        it "returns the team attorneys" do
-          expect(judge_team.attorneys).to match_array attorneys
-        end
+    describe ".attorneys" do
+      it "returns the team attorneys" do
+        expect(judge_team.attorneys).to match_array attorneys
       end
+    end
   end
 
   shared_examples "successful judge team creation" do
@@ -45,10 +45,9 @@ describe JudgeTeam, :postgres do
     it "creates association with a JudgeTeamLead role with the judge" do
       expect(JudgeTeamLead.where(organizations_user: judge.organizations_users).count).to eq(0)
 
-      judge_team = subject
+      subject
 
       expect(JudgeTeamLead.where(organizations_user: judge.organizations_users).count).to eq(1)
-
     end
   end
 
