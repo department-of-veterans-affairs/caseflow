@@ -323,6 +323,7 @@ distributions,created_at,datetime ∗,x,,,,,
 distributions,errored_at,datetime,,,,,,when the Distribution job suffered an error
 distributions,id,integer (8) PK,x,x,,,,
 distributions,judge_id,integer FK,,,x,,,
+distributions,priority_push,boolean,,,,,,Whether or not this distribution is a priority-appeals-only push to judges via a weekly job (not manually requested)
 distributions,started_at,datetime,,,,,,when the Distribution job commenced
 distributions,statistics,json,,,,,,
 distributions,status,string,,,,,,
