@@ -92,10 +92,14 @@ class BaseHearingUpdateForm
   end
 
   def only_time_updated_or_timezone_updated?
-    (!virtual_hearing_created? && scheduled_time_string.present?) ||
+    (!virtual_hearing_created? &&
+      scheduled_time_string.present? ||
       # Also send virtual hearing time updates if the representative timezone is changed
-      virtual_hearing_attributes&.dig(:representative_tz).present? ||
-      virtual_hearing_attributes&.dig(:appellant_tz).present?
+      (virtual_hearing_attributes&.dig(:representative_tz).present? &&
+        virtual_hearing_attributes&.dig(:representative_email).blank?) ||
+      (virtual_hearing_attributes&.dig(:appellant_tz).present? &&
+        virtual_hearing_attributes&.dig(:appellant_email).blank?)
+    )
   end
 
   def start_async_job?
@@ -193,7 +197,6 @@ class BaseHearingUpdateForm
     @virtual_hearing_created ||= false
   end
 
-  # rubocop:disable Metrics/AbcSize
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
@@ -223,7 +226,6 @@ class BaseHearingUpdateForm
       DataDogService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def only_emails_updated?
     email_changed = virtual_hearing_attributes&.key?(:appellant_email) ||
