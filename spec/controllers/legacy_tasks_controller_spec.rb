@@ -293,8 +293,11 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         }
       end
       before do
+        FeatureToggle.enable!(:overtime_revamp)
         @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
+        @appeal.update!(overtime:  true)
       end
+      after { FeatureToggle.disable!(:overtime_revamp) }
 
       it "should be successful" do
         allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
@@ -304,7 +307,9 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           created_in_vacols_date: "2018-04-18".to_date
         ).and_return(true)
 
+        expect(@appeal.overtime?).to be true
         patch :update, params: { tasks: params, id: "#{@appeal.vacols_id}-2018-04-18" }
+        expect(@appeal.reload.overtime?).to be false
         expect(response.status).to eq 200
       end
 
