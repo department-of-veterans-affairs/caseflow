@@ -29,7 +29,7 @@ class Hearing < CaseflowRecord
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   delegate :appellant_first_name, :appellant_last_name, :representative_address, :appellant_address_line_1,
-           :appellant_city, :appellant_state, :appellant_zip, :appellant_email_address,
+           :appellant_city, :appellant_state, :appellant_zip, :appellant_email_address, :appellant_tz, :representative_tz,
            :veteran_age, :veteran_gender, :veteran_first_name, :veteran_last_name, :veteran_file_number,
            :veteran_email_address, :docket_number, :docket_name, :request_issues, :decision_issues,
            :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
@@ -99,34 +99,6 @@ class Hearing < CaseflowRecord
 
   def representative_email_address
     appeal&.representative_email_address
-  end
-
-  def appellant_tz
-    return if appeal&.address.blank?
-
-    # Use an address object if this is a hash
-    address = appeal&.address.is_a?(Hash) ? Address.new(appeal&.address) : appeal&.address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      log_error(error)
-      nil
-    end
-  end
-
-  def representative_tz
-    return if representative_representative_addressaddress.blank?
-
-    # Use an address object if this is a hash
-    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      log_error(error)
-      nil
-    end
   end
 
   def claimant_id

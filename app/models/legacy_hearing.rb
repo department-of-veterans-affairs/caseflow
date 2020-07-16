@@ -41,7 +41,8 @@ class LegacyHearing < CaseflowRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
-  delegate :veteran_age, :veteran_gender, :vbms_id, :representative_address, :number_of_documents, :number_of_documents_after_certification,
+  delegate :veteran_age, :veteran_gender, :vbms_id, :representative_address, :number_of_documents,
+           :number_of_documents_after_certification, :appellant_tz, :representative_tz,
            :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
            :veteran_email_address, :appellant_address, :appellant_address_line_1, :appellant_address_line_2,
            :appellant_city, :appellant_country, :appellant_state, :appellant_zip, :appellant_email_address,
@@ -68,34 +69,6 @@ class LegacyHearing < CaseflowRecord
 
   def representative_email_address
     appeal&.representative_email_address
-  end
-
-  def appellant_tz
-    return if appeal&.appellant_address.blank?
-
-    # Use an address object if this is a hash
-    address = appeal&.appellant_address.is_a?(Hash) ? Address.new(appeal&.appellant_address) : appeal&.appellant_address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      log_error(error)
-      nil
-    end
-  end
-
-  def representative_tz
-    return if representative_address.blank?
-
-    # Use an address object if this is a hash
-    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
-
-    begin
-      TimezoneService.address_to_timezone(address).identifier
-    rescue StandardError => error
-      log_error(error)
-      nil
-    end
   end
 
   def assigned_to_vso?(user)
