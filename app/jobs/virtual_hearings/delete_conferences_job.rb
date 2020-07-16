@@ -20,7 +20,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     )
   end
 
-  retry_on(DeleteConferencesJobFailure, attempts: 5) do |job, exception|
+  retry_on(DeleteConferencesJobFailure, attempts: 5, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
 
     extra = {
