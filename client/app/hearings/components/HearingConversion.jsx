@@ -33,11 +33,14 @@ export const HearingConversion = ({
   useEffect(() => {
     // Determine which email to use
     const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
-    const appellantTz = virtualHearing?.appellantTz ? virtualHearing?.appellantTz : hearing?.appellantTz;
+
+    // Try to use the existing timezones if present
+    const { appellantTz, representativeTz } = (virtualHearing || {});
 
     // Set the emails and timezone if not already set
     update('virtualHearing', {
-      [!virtualHearing?.appellantTz && 'appellantTz']: appellantTz,
+      [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
+      [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
       [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
       [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
     });

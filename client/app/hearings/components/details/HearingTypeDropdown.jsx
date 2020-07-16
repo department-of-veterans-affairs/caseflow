@@ -34,11 +34,6 @@ class HearingTypeDropdown extends React.Component {
     const { convertHearing, update, openModal } = this.props;
     const { label: currentLabel } = this.getValue();
 
-    // Don't change if the value is the same
-    if (label === currentLabel) {
-      return;
-    }
-
     // Change from virtual if the current label is virtual
     const type = currentLabel === 'Virtual' ? 'change_from_virtual' : 'change_to_virtual';
 
@@ -59,7 +54,7 @@ class HearingTypeDropdown extends React.Component {
         label="Hearing Type"
         name="hearingType"
         strongLabel
-        options={this.HEARING_TYPE_OPTIONS}
+        options={this.HEARING_TYPE_OPTIONS.filter((opt) => opt.label !== this.getValue().label)}
         value={this.getValue()}
         onChange={this.onChange}
         readOnly={this.props.readOnly}

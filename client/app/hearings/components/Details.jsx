@@ -75,6 +75,8 @@ const HearingDetails = (props) => {
     return {
       appellantEmailEdited: !isUndefined(changes.appellantEmail),
       representativeEmailEdited: !isUndefined(changes.representativeEmail),
+      representativeTzEdited: !isUndefined(changes.representativeTz),
+      appellantTzEdited: !isUndefined(changes.appellantTz)
     };
   };
 
@@ -83,6 +85,7 @@ const HearingDetails = (props) => {
       const virtual = hearing.isVirtual || hearing.wasVirtual;
       const noEmail = !hearing.virtualHearing?.representativeEmail || !hearing.virtualHearing?.appellantEmail;
       const emailUpdated = editedEmails?.representativeEmailEdited || editedEmails?.appellantEmailEdited;
+      const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
 
       if (virtual && noEmail) {
         // Set the Virtual Hearing errors
@@ -93,8 +96,8 @@ const HearingDetails = (props) => {
 
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
-      } else if (emailUpdated && !converting) {
-        return openVirtualHearingModal({ type: 'change_email' });
+      } else if ((emailUpdated || timezoneUpdated) && !converting) {
+        return openVirtualHearingModal({ type: emailUpdated ? 'change_email' : 'change_hearing_time' });
       }
 
       // Only send updated properties

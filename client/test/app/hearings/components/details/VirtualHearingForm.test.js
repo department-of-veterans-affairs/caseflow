@@ -12,11 +12,15 @@ import { HearingLinks } from 'app/hearings/components/details/HearingLinks';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { userWithVirtualHearingsFeatureEnabled, amaHearing, defaultHearing, virtualHearing } from 'test/data';
 
+// Setup the spies
+const updateSpy = jest.fn();
+
 describe('VirtualHearingForm', () => {
   test('Matches snapshot with default props', () => {
     // Run the test
     const virtualHearingForm = mount(
       <VirtualHearingForm
+        update={updateSpy}
         hearing={defaultHearing}
       />,
 
@@ -36,6 +40,7 @@ describe('VirtualHearingForm', () => {
     // Run the test
     const virtualHearingForm = mount(
       <VirtualHearingForm
+        update={updateSpy}
         hearing={amaHearing}
       />,
 
@@ -57,6 +62,7 @@ describe('VirtualHearingForm', () => {
     // Run the test
     const virtualHearingForm = mount(
       <VirtualHearingForm
+        update={updateSpy}
         hearing={amaHearing}
         virtualHearing={virtualHearing.virtualHearing}
       />,

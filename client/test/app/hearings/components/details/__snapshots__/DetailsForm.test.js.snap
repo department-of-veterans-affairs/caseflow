@@ -23458,10 +23458,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
               options={
                 Array [
                   Object {
-                    "label": undefined,
-                    "value": false,
-                  },
-                  Object {
                     "label": "Virtual",
                     "value": true,
                   },
@@ -23517,10 +23513,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       options={
                         Array [
-                          Object {
-                            "label": undefined,
-                            "value": false,
-                          },
                           Object {
                             "label": "Virtual",
                             "value": true,
@@ -23583,10 +23575,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                         options={
                           Array [
                             Object {
-                              "label": undefined,
-                              "value": false,
-                            },
-                            Object {
                               "label": "Virtual",
                               "value": true,
                             },
@@ -23628,10 +23616,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                           isRtl={false}
                           options={
                             Array [
-                              Object {
-                                "label": undefined,
-                                "value": false,
-                              },
                               Object {
                                 "label": "Virtual",
                                 "value": true,
@@ -23683,10 +23667,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                               "openMenuOnClick": true,
                               "openMenuOnFocus": false,
                               "options": Array [
-                                Object {
-                                  "label": undefined,
-                                  "value": false,
-                                },
                                 Object {
                                   "label": "Virtual",
                                   "value": true,
@@ -23779,10 +23759,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                 options={
                                   Array [
                                     Object {
-                                      "label": undefined,
-                                      "value": false,
-                                    },
-                                    Object {
                                       "label": "Virtual",
                                       "value": true,
                                     },
@@ -23833,10 +23809,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                     "openMenuOnClick": true,
                                     "openMenuOnFocus": false,
                                     "options": Array [
-                                      Object {
-                                        "label": undefined,
-                                        "value": false,
-                                      },
                                       Object {
                                         "label": "Virtual",
                                         "value": true,
@@ -23937,10 +23909,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       options={
                                         Array [
                                           Object {
-                                            "label": undefined,
-                                            "value": false,
-                                          },
-                                          Object {
                                             "label": "Virtual",
                                             "value": true,
                                           },
@@ -23991,10 +23959,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                           "openMenuOnClick": true,
                                           "openMenuOnFocus": false,
                                           "options": Array [
-                                            Object {
-                                              "label": undefined,
-                                              "value": false,
-                                            },
                                             Object {
                                               "label": "Virtual",
                                               "value": true,
@@ -24086,10 +24050,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             options={
                                               Array [
                                                 Object {
-                                                  "label": undefined,
-                                                  "value": false,
-                                                },
-                                                Object {
                                                   "label": "Virtual",
                                                   "value": true,
                                                 },
@@ -24140,10 +24100,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -24280,10 +24236,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -24452,10 +24404,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       options={
                                         Array [
                                           Object {
-                                            "label": undefined,
-                                            "value": false,
-                                          },
-                                          Object {
                                             "label": "Virtual",
                                             "value": true,
                                           },
@@ -24506,10 +24454,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                           "openMenuOnClick": true,
                                           "openMenuOnFocus": false,
                                           "options": Array [
-                                            Object {
-                                              "label": undefined,
-                                              "value": false,
-                                            },
                                             Object {
                                               "label": "Virtual",
                                               "value": true,
@@ -24592,10 +24536,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             options={
                                               Array [
                                                 Object {
-                                                  "label": undefined,
-                                                  "value": false,
-                                                },
-                                                Object {
                                                   "label": "Virtual",
                                                   "value": true,
                                                 },
@@ -24646,10 +24586,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -24743,10 +24679,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             options={
                                               Array [
                                                 Object {
-                                                  "label": undefined,
-                                                  "value": false,
-                                                },
-                                                Object {
                                                   "label": "Virtual",
                                                   "value": true,
                                                 },
@@ -24797,10 +24729,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -34136,10 +34064,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
               options={
                 Array [
                   Object {
-                    "label": undefined,
-                    "value": false,
-                  },
-                  Object {
                     "label": "Virtual",
                     "value": true,
                   },
@@ -34195,10 +34119,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       options={
                         Array [
-                          Object {
-                            "label": undefined,
-                            "value": false,
-                          },
                           Object {
                             "label": "Virtual",
                             "value": true,
@@ -34261,10 +34181,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                         options={
                           Array [
                             Object {
-                              "label": undefined,
-                              "value": false,
-                            },
-                            Object {
                               "label": "Virtual",
                               "value": true,
                             },
@@ -34306,10 +34222,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                           isRtl={false}
                           options={
                             Array [
-                              Object {
-                                "label": undefined,
-                                "value": false,
-                              },
                               Object {
                                 "label": "Virtual",
                                 "value": true,
@@ -34361,10 +34273,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                               "openMenuOnClick": true,
                               "openMenuOnFocus": false,
                               "options": Array [
-                                Object {
-                                  "label": undefined,
-                                  "value": false,
-                                },
                                 Object {
                                   "label": "Virtual",
                                   "value": true,
@@ -34457,10 +34365,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                 options={
                                   Array [
                                     Object {
-                                      "label": undefined,
-                                      "value": false,
-                                    },
-                                    Object {
                                       "label": "Virtual",
                                       "value": true,
                                     },
@@ -34511,10 +34415,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                     "openMenuOnClick": true,
                                     "openMenuOnFocus": false,
                                     "options": Array [
-                                      Object {
-                                        "label": undefined,
-                                        "value": false,
-                                      },
                                       Object {
                                         "label": "Virtual",
                                         "value": true,
@@ -34615,10 +34515,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       options={
                                         Array [
                                           Object {
-                                            "label": undefined,
-                                            "value": false,
-                                          },
-                                          Object {
                                             "label": "Virtual",
                                             "value": true,
                                           },
@@ -34669,10 +34565,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                           "openMenuOnClick": true,
                                           "openMenuOnFocus": false,
                                           "options": Array [
-                                            Object {
-                                              "label": undefined,
-                                              "value": false,
-                                            },
                                             Object {
                                               "label": "Virtual",
                                               "value": true,
@@ -34764,10 +34656,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             options={
                                               Array [
                                                 Object {
-                                                  "label": undefined,
-                                                  "value": false,
-                                                },
-                                                Object {
                                                   "label": "Virtual",
                                                   "value": true,
                                                 },
@@ -34818,10 +34706,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -34958,10 +34842,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -35130,10 +35010,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       options={
                                         Array [
                                           Object {
-                                            "label": undefined,
-                                            "value": false,
-                                          },
-                                          Object {
                                             "label": "Virtual",
                                             "value": true,
                                           },
@@ -35184,10 +35060,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                           "openMenuOnClick": true,
                                           "openMenuOnFocus": false,
                                           "options": Array [
-                                            Object {
-                                              "label": undefined,
-                                              "value": false,
-                                            },
                                             Object {
                                               "label": "Virtual",
                                               "value": true,
@@ -35270,10 +35142,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             options={
                                               Array [
                                                 Object {
-                                                  "label": undefined,
-                                                  "value": false,
-                                                },
-                                                Object {
                                                   "label": "Virtual",
                                                   "value": true,
                                                 },
@@ -35324,10 +35192,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -35421,10 +35285,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             options={
                                               Array [
                                                 Object {
-                                                  "label": undefined,
-                                                  "value": false,
-                                                },
-                                                Object {
                                                   "label": "Virtual",
                                                   "value": true,
                                                 },
@@ -35475,10 +35335,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -44814,10 +44670,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
               options={
                 Array [
                   Object {
-                    "label": undefined,
-                    "value": false,
-                  },
-                  Object {
                     "label": "Virtual",
                     "value": true,
                   },
@@ -44873,10 +44725,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                       onChange={[Function]}
                       options={
                         Array [
-                          Object {
-                            "label": undefined,
-                            "value": false,
-                          },
                           Object {
                             "label": "Virtual",
                             "value": true,
@@ -44939,10 +44787,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                         options={
                           Array [
                             Object {
-                              "label": undefined,
-                              "value": false,
-                            },
-                            Object {
                               "label": "Virtual",
                               "value": true,
                             },
@@ -44984,10 +44828,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                           isRtl={false}
                           options={
                             Array [
-                              Object {
-                                "label": undefined,
-                                "value": false,
-                              },
                               Object {
                                 "label": "Virtual",
                                 "value": true,
@@ -45039,10 +44879,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                               "openMenuOnClick": true,
                               "openMenuOnFocus": false,
                               "options": Array [
-                                Object {
-                                  "label": undefined,
-                                  "value": false,
-                                },
                                 Object {
                                   "label": "Virtual",
                                   "value": true,
@@ -45135,10 +44971,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                 options={
                                   Array [
                                     Object {
-                                      "label": undefined,
-                                      "value": false,
-                                    },
-                                    Object {
                                       "label": "Virtual",
                                       "value": true,
                                     },
@@ -45189,10 +45021,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                     "openMenuOnClick": true,
                                     "openMenuOnFocus": false,
                                     "options": Array [
-                                      Object {
-                                        "label": undefined,
-                                        "value": false,
-                                      },
                                       Object {
                                         "label": "Virtual",
                                         "value": true,
@@ -45293,10 +45121,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                       options={
                                         Array [
                                           Object {
-                                            "label": undefined,
-                                            "value": false,
-                                          },
-                                          Object {
                                             "label": "Virtual",
                                             "value": true,
                                           },
@@ -45347,10 +45171,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                           "openMenuOnClick": true,
                                           "openMenuOnFocus": false,
                                           "options": Array [
-                                            Object {
-                                              "label": undefined,
-                                              "value": false,
-                                            },
                                             Object {
                                               "label": "Virtual",
                                               "value": true,
@@ -45442,10 +45262,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             options={
                                               Array [
                                                 Object {
-                                                  "label": undefined,
-                                                  "value": false,
-                                                },
-                                                Object {
                                                   "label": "Virtual",
                                                   "value": true,
                                                 },
@@ -45496,10 +45312,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -45636,10 +45448,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -45808,10 +45616,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                       options={
                                         Array [
                                           Object {
-                                            "label": undefined,
-                                            "value": false,
-                                          },
-                                          Object {
                                             "label": "Virtual",
                                             "value": true,
                                           },
@@ -45862,10 +45666,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                           "openMenuOnClick": true,
                                           "openMenuOnFocus": false,
                                           "options": Array [
-                                            Object {
-                                              "label": undefined,
-                                              "value": false,
-                                            },
                                             Object {
                                               "label": "Virtual",
                                               "value": true,
@@ -45948,10 +45748,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             options={
                                               Array [
                                                 Object {
-                                                  "label": undefined,
-                                                  "value": false,
-                                                },
-                                                Object {
                                                   "label": "Virtual",
                                                   "value": true,
                                                 },
@@ -46002,10 +45798,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,
@@ -46099,10 +45891,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             options={
                                               Array [
                                                 Object {
-                                                  "label": undefined,
-                                                  "value": false,
-                                                },
-                                                Object {
                                                   "label": "Virtual",
                                                   "value": true,
                                                 },
@@ -46153,10 +45941,6 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                 "openMenuOnClick": true,
                                                 "openMenuOnFocus": false,
                                                 "options": Array [
-                                                  Object {
-                                                    "label": undefined,
-                                                    "value": false,
-                                                  },
                                                   Object {
                                                     "label": "Virtual",
                                                     "value": true,

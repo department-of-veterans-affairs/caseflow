@@ -74,6 +74,18 @@ class LegacyHearing < CaseflowRecord
     appeal&.representative_address
   end
 
+  def appellant_tz
+    return if appeal&.appellant_address.blank?
+
+    TimezoneService.address_to_timezone(appeal&.appellant_address).identifier
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    TimezoneService.address_to_timezone(representative_address).identifier
+  end
+
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
       task.type == TrackVeteranTask.name &&

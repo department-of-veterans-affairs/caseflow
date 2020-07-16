@@ -105,6 +105,18 @@ class Hearing < CaseflowRecord
     appeal&.representative_address
   end
 
+  def appellant_tz
+    return if appeal&.address.blank?
+
+    TimezoneService.address_to_timezone(appeal&.address).identifier
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    TimezoneService.address_to_timezone(Address.new(representative_address)).identifier
+  end
+
   def claimant_id
     return nil if appeal.appellant.nil?
 

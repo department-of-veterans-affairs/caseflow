@@ -45,7 +45,7 @@ describe('HearingTypeDropdown', () => {
     expect(hearingType).toMatchSnapshot();
     expect(hearingType.find(SearchableDropdown)).toHaveLength(1);
     expect(hearingType.prop('label')).toEqual('Hearing Type');
-    expect(hearingType.prop('options')).toEqual(centralOpts);
+    expect(hearingType.prop('options')).toEqual([centralOpts[1]]);
     expect(hearingType.prop('value')).toEqual(centralOpts[0]);
   });
 
@@ -61,7 +61,7 @@ describe('HearingTypeDropdown', () => {
     expect(hearingType).toMatchSnapshot();
     expect(hearingType.find(SearchableDropdown)).toHaveLength(1);
     expect(hearingType.prop('label')).toEqual('Hearing Type');
-    expect(hearingType.prop('options')).toEqual(videoOpts);
+    expect(hearingType.prop('options')).toEqual([videoOpts[1]]);
     expect(hearingType.prop('value')).toEqual(videoOpts[0]);
   });
 
@@ -78,7 +78,7 @@ describe('HearingTypeDropdown', () => {
     expect(hearingType).toMatchSnapshot();
     expect(hearingType.find(SearchableDropdown)).toHaveLength(1);
     expect(hearingType.prop('label')).toEqual('Hearing Type');
-    expect(hearingType.prop('options')).toEqual(centralOpts);
+    expect(hearingType.prop('options')).toEqual([centralOpts[0]]);
     expect(hearingType.prop('value')).toEqual(centralOpts[1]);
   });
 

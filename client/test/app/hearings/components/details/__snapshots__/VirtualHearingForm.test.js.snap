@@ -83,6 +83,7 @@ exports[`VirtualHearingForm Matches snapshot with default props 1`] = `
       "worksheetIssues": Object {},
     }
   }
+  update={[MockFunction]}
 />
 `;
 
@@ -148,7 +149,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "2",
-      "scheduledFor": 16,
+      "scheduledFor": "17",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -179,6 +180,36 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
       "wasVirtual": false,
       "witness": null,
       "worksheetIssues": Object {},
+    }
+  }
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "appellantTz": undefined,
+            "representativeTz": undefined,
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "appellantTz": undefined,
+            "representativeTz": undefined,
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   virtualHearing={
@@ -273,7 +304,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               "representativeEmailAddress": "tom.brady@caseflow.gov",
               "representativeName": null,
               "room": "2",
-              "scheduledFor": 16,
+              "scheduledFor": "17",
               "scheduledForIsPast": false,
               "scheduledTime": "2000-01-01T03:30:00.000-05:00",
               "scheduledTimeString": "03:30",
@@ -400,7 +431,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "representativeEmailAddress": "tom.brady@caseflow.gov",
                   "representativeName": null,
                   "room": "2",
-                  "scheduledFor": 16,
+                  "scheduledFor": "17",
                   "scheduledForIsPast": false,
                   "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                   "scheduledTimeString": "03:30",
@@ -536,7 +567,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
                       "room": "2",
-                      "scheduledFor": 16,
+                      "scheduledFor": "17",
                       "scheduledForIsPast": false,
                       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                       "scheduledTimeString": "03:30",
@@ -663,7 +694,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
                         "room": "2",
-                        "scheduledFor": 16,
+                        "scheduledFor": "17",
                         "scheduledForIsPast": false,
                         "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                         "scheduledTimeString": "03:30",
@@ -938,7 +969,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "representativeEmailAddress": "tom.brady@caseflow.gov",
                   "representativeName": null,
                   "room": "2",
-                  "scheduledFor": 16,
+                  "scheduledFor": "17",
                   "scheduledForIsPast": false,
                   "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                   "scheduledTimeString": "03:30",
@@ -1074,7 +1105,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
                       "room": "2",
-                      "scheduledFor": 16,
+                      "scheduledFor": "17",
                       "scheduledForIsPast": false,
                       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                       "scheduledTimeString": "03:30",
@@ -1201,7 +1232,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
                         "room": "2",
-                        "scheduledFor": 16,
+                        "scheduledFor": "17",
                         "scheduledForIsPast": false,
                         "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                         "scheduledTimeString": "03:30",
@@ -16449,6 +16480,36 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               emailType="appellantEmail"
               label="Veteran Email"
               required={true}
+              update={
+                [MockFunction] {
+                  "calls": Array [
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": undefined,
+                        "representativeTz": undefined,
+                      },
+                    ],
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": undefined,
+                        "representativeTz": undefined,
+                      },
+                    ],
+                  ],
+                  "results": Array [
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                  ],
+                }
+              }
             >
               <TextField
                 className={
@@ -31538,6 +31599,36 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               email="tom.brady@caseflow.gov"
               emailType="representativeEmail"
               label="POA/Representative Email"
+              update={
+                [MockFunction] {
+                  "calls": Array [
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": undefined,
+                        "representativeTz": undefined,
+                      },
+                    ],
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": undefined,
+                        "representativeTz": undefined,
+                      },
+                    ],
+                  ],
+                  "results": Array [
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                  ],
+                }
+              }
             >
               <TextField
                 className={
@@ -31668,7 +31759,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "2",
-      "scheduledFor": 16,
+      "scheduledFor": "17",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -31699,6 +31790,25 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
       "wasVirtual": false,
       "witness": null,
       "worksheetIssues": Object {},
+    }
+  }
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "appellantTz": undefined,
+            "representativeTz": undefined,
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
 >
@@ -31777,7 +31887,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
               "representativeEmailAddress": "tom.brady@caseflow.gov",
               "representativeName": null,
               "room": "2",
-              "scheduledFor": 16,
+              "scheduledFor": "17",
               "scheduledForIsPast": false,
               "scheduledTime": "2000-01-01T03:30:00.000-05:00",
               "scheduledTimeString": "03:30",
@@ -31888,7 +31998,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                   "representativeEmailAddress": "tom.brady@caseflow.gov",
                   "representativeName": null,
                   "room": "2",
-                  "scheduledFor": 16,
+                  "scheduledFor": "17",
                   "scheduledForIsPast": false,
                   "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                   "scheduledTimeString": "03:30",
@@ -32013,7 +32123,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                   "representativeEmailAddress": "tom.brady@caseflow.gov",
                   "representativeName": null,
                   "room": "2",
-                  "scheduledFor": 16,
+                  "scheduledFor": "17",
                   "scheduledForIsPast": false,
                   "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                   "scheduledTimeString": "03:30",

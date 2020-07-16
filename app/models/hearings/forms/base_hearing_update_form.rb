@@ -252,10 +252,6 @@ class BaseHearingUpdateForm
       "CHANGED_FROM_VIRTUAL"
     elsif only_time_updated?
       "CHANGED_HEARING_TIME"
-    elsif virtual_hearing_attributes&.key?(:representative_tz)
-      "CHANGED_REPRESENTATIVE_TIMEZONE"
-    elsif virtual_hearing_attributes&.key?(:appellant_tz)
-      "CHANGED_APPELLANT_TIMEZONE"
     elsif only_emails_updated?
       email_change_type
     end

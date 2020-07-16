@@ -62,7 +62,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "2",
-      "scheduledFor": 16,
+      "scheduledFor": "17",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -95,7 +95,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
       "worksheetIssues": Object {},
     }
   }
-  scheduledFor="16"
+  scheduledFor="17"
   title="Convert to Virtual"
   type="change_from_virtual"
   update={
@@ -106,6 +106,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
           Object {
             "appellantTz": undefined,
             "false": "tom.brady@caseflow.gov",
+            "representativeTz": undefined,
           },
         ],
         Array [
@@ -113,6 +114,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
           Object {
             "appellantTz": undefined,
             "false": "tom.brady@caseflow.gov",
+            "representativeTz": undefined,
           },
         ],
       ],
@@ -146,7 +148,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
       </span>
       <ReadOnly
         label="Hearing Date"
-        text="01/01/2016"
+        text="01/01/2017"
       >
         <div
           data-css-1a5irm0=""
@@ -155,7 +157,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
             Hearing Date
           </strong>
           <pre>
-            01/01/2016
+            01/01/2017
           </pre>
         </div>
       </ReadOnly>
@@ -4157,6 +4159,7 @@ SAN FRANCISCO, CA 94103
                       Object {
                         "appellantTz": undefined,
                         "false": "tom.brady@caseflow.gov",
+                        "representativeTz": undefined,
                       },
                     ],
                     Array [
@@ -4164,6 +4167,7 @@ SAN FRANCISCO, CA 94103
                       Object {
                         "appellantTz": undefined,
                         "false": "tom.brady@caseflow.gov",
+                        "representativeTz": undefined,
                       },
                     ],
                   ],
@@ -4233,6 +4237,7 @@ SAN FRANCISCO, CA 94103
                       Object {
                         "appellantTz": undefined,
                         "false": "tom.brady@caseflow.gov",
+                        "representativeTz": undefined,
                       },
                     ],
                     Array [
@@ -4240,6 +4245,7 @@ SAN FRANCISCO, CA 94103
                       Object {
                         "appellantTz": undefined,
                         "false": "tom.brady@caseflow.gov",
+                        "representativeTz": undefined,
                       },
                     ],
                   ],
@@ -4346,7 +4352,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "2",
-      "scheduledFor": 16,
+      "scheduledFor": "17",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -4379,7 +4385,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       "worksheetIssues": Object {},
     }
   }
-  scheduledFor="16"
+  scheduledFor="17"
   title="Convert to Virtual"
   type="change_to_virtual"
   update={
@@ -4390,6 +4396,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
           Object {
             "appellantTz": undefined,
             "false": "tom.brady@caseflow.gov",
+            "representativeTz": undefined,
           },
         ],
       ],
@@ -4419,7 +4426,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       </span>
       <ReadOnly
         label="Hearing Date"
-        text="01/01/2016"
+        text="01/01/2017"
       >
         <div
           data-css-1a5irm0=""
@@ -4428,7 +4435,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
             Hearing Date
           </strong>
           <pre>
-            01/01/2016
+            01/01/2017
           </pre>
         </div>
       </ReadOnly>
@@ -23330,6 +23337,7 @@ SAN FRANCISCO, CA 94103
                       Object {
                         "appellantTz": undefined,
                         "false": "tom.brady@caseflow.gov",
+                        "representativeTz": undefined,
                       },
                     ],
                   ],
@@ -38450,6 +38458,7 @@ SAN FRANCISCO, CA 94103
                       Object {
                         "appellantTz": undefined,
                         "false": "tom.brady@caseflow.gov",
+                        "representativeTz": undefined,
                       },
                     ],
                   ],

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import classNames from 'classnames';
-import { isEmpty } from 'lodash';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
@@ -24,6 +23,18 @@ export const VirtualHearingForm = (
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || hearing?.wasVirtual || hearing.scheduledForIsPast;
   const appellantTitle = getAppellantTitleForHearing(hearing);
   const user = useContext(HearingsUserContext);
+
+  // Prefill appellant/veteran email address and representative email on mount.
+  useEffect(() => {
+    // Try to use the existing timezones if present
+    const { appellantTz, representativeTz } = (virtualHearing || {});
+
+    // Set the  timezone if not already set
+    update('virtualHearing', {
+      [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
+      [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
+    });
+  }, []);
 
   return (
     <ContentSection
