@@ -890,7 +890,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_105703) do
   create_table "legacy_issue_optins", comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review.", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "When a Request Issue is connected to a VACOLS issue on a legacy appeal, and the Veteran has agreed to withdraw their legacy appeals, a legacy_issue_optin is created at the time the Decision Review is successfully intaken. This is used to indicate that the legacy issue should subsequently be opted into AMA in VACOLS. "
     t.string "error"
-    t.datetime "folder_decision_date", comment: "Date/Time of decision"
+    t.date "folder_decision_date", comment: "Decision date on case record folder"
     t.bigint "legacy_issue_id", comment: "The legacy issue being opted in, which connects to the request issue"
     t.datetime "optin_processed_at", comment: "The timestamp for when the opt-in was successfully processed, meaning it was updated in VACOLS as opted into AMA."
     t.string "original_disposition_code", comment: "The original disposition code of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
