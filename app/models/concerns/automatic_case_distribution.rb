@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AmaCaseDistribution
+module AutomaticCaseDistribution
   extend ActiveSupport::Concern
 
   delegate :dockets,
@@ -33,7 +33,7 @@ module AmaCaseDistribution
     end
   end
 
-  def ama_distribution
+  def requested_distribution
     @appeals = []
     @rem = batch_size
     @remaining_docket_proportions = docket_proportions.clone
