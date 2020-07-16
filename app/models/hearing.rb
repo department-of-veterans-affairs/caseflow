@@ -28,9 +28,10 @@ class Hearing < CaseflowRecord
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
-  delegate :appellant_first_name, :appellant_last_name, :representative_address, :appellant_address_line_1,
-           :appellant_city, :appellant_state, :appellant_zip, :appellant_email_address, :appellant_tz, :representative_tz,
-           :veteran_age, :veteran_gender, :veteran_first_name, :veteran_last_name, :veteran_file_number,
+  delegate :appellant_first_name, :appellant_last_name, :representative_address,
+           :appellant_city, :appellant_state, :appellant_zip, :appellant_address_line_1,
+           :appellant_email_address, :appellant_tz, :representative_tz, :veteran_age,
+           :veteran_gender, :veteran_first_name, :veteran_last_name, :veteran_file_number,
            :veteran_email_address, :docket_number, :docket_name, :request_issues, :decision_issues,
            :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
