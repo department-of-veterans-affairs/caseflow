@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class JudgeTeam < Organization
+  scope :available_for_priority_case_distribution, -> { active }
+
   class << self
     def for_judge(user)
       if use_judge_team_roles?

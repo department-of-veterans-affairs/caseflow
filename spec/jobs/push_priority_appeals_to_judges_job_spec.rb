@@ -1,0 +1,621 @@
+# frozen_string_literal: true
+
+describe PushPriorityAppealsToJudgesJob, :all_dbs do
+  context ".perform" do
+  end
+
+  context ".distribute_non_genpop_priority_appeals" do
+  end
+
+  context ".distribute_genpop_priority_appeals" do
+  end
+
+  context ".eligible_judge_target_distributions_with_leftovers" do
+    shared_examples "correct target distributions with leftovers" do
+      before do
+        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+          .to receive(:eligible_judge_priority_distributions_this_month).and_return(
+            distribution_counts.each_with_index.map { |count, i| [i, count] }.to_h
+          )
+        allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
+      end
+
+      subject { PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions_with_leftovers }
+
+      it "returns hash of how many cases should be distributed to each judge that is below the priority target " \
+        "including any leftover cases" do
+        expect(subject.values).to match_array expected_priority_targets_with_leftovers
+      end
+    end
+
+    context "when the distributions this month have been even" do
+      shared_examples "even distributions this month" do
+        context "when there are more eligible judges than cases to distribute" do
+          let(:eligible_judge_count) { 10 }
+          let(:priority_count) { 5 }
+          # Priority target will be 0, 5 cases are allotted to 5 judges
+          let(:expected_priority_targets_with_leftovers) { Array.new(priority_count, 1) }
+
+          it_behaves_like "correct target distributions with leftovers"
+        end
+
+        context "when there are more cases to distribute than eligible judges" do
+          let(:eligible_judge_count) { 5 }
+          let(:priority_count) { 10 }
+          # Priority target will be 2, evenly distributed amongst judges
+          let(:expected_priority_targets_with_leftovers) { Array.new(eligible_judge_count, 2) }
+
+          it_behaves_like "correct target distributions with leftovers"
+
+          context "when the cases cannot be evenly distributed" do
+            let(:priority_count) { 9 }
+            # Priority target rounds down, leftover 4 cases are allotted to judges with the fewest cases to distribute
+            let(:expected_priority_targets_with_leftovers) { [1, 2, 2, 2, 2] }
+
+            it_behaves_like "correct target distributions with leftovers"
+          end
+        end
+      end
+
+      let(:distribution_counts) { Array.new(eligible_judge_count, number_of_distributions) }
+
+      context "when there have been no distributions this month" do
+        let(:number_of_distributions) { 0 }
+
+        it_behaves_like "even distributions this month"
+      end
+
+      context "when there have been some distributions this month" do
+        let(:number_of_distributions) { 10 }
+
+        it_behaves_like "even distributions this month"
+      end
+    end
+
+    context "when previous distributions counts are not greater than the priority target" do
+      let(:distribution_counts) { [10, 15, 20, 25, 30] }
+      let(:priority_count) { 75 }
+      # 75 should be able to be divided up to get all judges up to 35
+      let(:expected_priority_targets_with_leftovers) { [25, 20, 15, 10, 5] }
+
+      it_behaves_like "correct target distributions with leftovers"
+
+      context "when cases are not evenly distributable" do
+        let(:priority_count) { 79 }
+        # Priority target still is 35, the leftover 4 cases are allotted to judges with the fewest cases to distribute
+        let(:expected_priority_targets_with_leftovers) { [25, 21, 16, 11, 6] }
+
+        it_behaves_like "correct target distributions with leftovers"
+      end
+    end
+
+    context "when previous distributions counts are greater than the priority target" do
+      let(:distribution_counts) { [0, 0, 22, 28, 50] }
+      let(:priority_count) { 50 }
+      # The two judges with 0 cases should receive 24 cases, the one judge with 22 cases should recieve 2, leaving us
+      # with [24, 24, 24, 28, 50] to hopefully even out more in the next distribution.
+      let(:expected_priority_targets_with_leftovers) { [24, 24, 2] }
+
+      it_behaves_like "correct target distributions with leftovers"
+
+      context "when the distribution counts are even more disparate" do
+        let(:distribution_counts) { [0, 0, 5, 9, 26, 27, 55, 56, 89, 100] }
+        let(:priority_count) { 50 }
+        # Ending counts should be [16, 16, 16, 16, 26, 27, 55, 56, 89, 100], perfectly using up all 50 cases
+        let(:expected_priority_targets_with_leftovers) { [16, 16, 11, 7] }
+
+        it_behaves_like "correct target distributions with leftovers"
+
+        context "when there are leftover cases" do
+          let(:priority_count) { 53 }
+          # Ending counts should be [16, 17, 17, 17, 26, 27, 55, 56, 89, 100]
+          let(:expected_priority_targets_with_leftovers) { [16, 17, 12, 8] }
+
+          it_behaves_like "correct target distributions with leftovers"
+        end
+      end
+    end
+  end
+
+  context ".leftover_cases_count" do
+    before do
+      allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+        .to receive(:eligible_judge_target_distributions).and_return(target_distributions)
+      allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
+    end
+
+    subject { PushPriorityAppealsToJudgesJob.new.leftover_cases_count }
+
+    context "when the number of cases to distribute is evenly divisible by the number of judges that need cases" do
+      let(:eligible_judge_count) { 4 }
+      let(:priority_count) { 100 }
+      let(:target_distributions) do
+        Array.new(eligible_judge_count, priority_count / eligible_judge_count)
+          .each_with_index
+          .map { |count, i| [i, count] }.to_h
+      end
+
+      it "returns no leftover cases" do
+        expect(subject).to eq 0
+      end
+    end
+
+    context "when the number of cases can be distributed to all judges evenly" do
+      let(:priority_count) { target_distributions.values.sum }
+      let(:target_distributions) { [5, 10, 15, 20, 25].each_with_index.map { |count, i| [i, count] }.to_h }
+
+      it "returns no leftover cases" do
+        expect(subject).to eq 0
+      end
+    end
+
+    context "when the number of cases are not evenly distributable bewteen all judges" do
+      let(:leftover_cases_count) { target_distributions.count - 1 }
+      let(:priority_count) { target_distributions.values.sum + leftover_cases_count }
+      let(:target_distributions) { [5, 10, 15, 20, 25].each_with_index.map { |count, i| [i, count] }.to_h }
+
+      it "returns no leftover cases" do
+        expect(subject).to eq leftover_cases_count
+      end
+    end
+  end
+
+  context ".eligible_judge_target_distributions" do
+    shared_examples "correct target distributions" do
+      before do
+        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+          .to receive(:eligible_judge_priority_distributions_this_month).and_return(
+            distribution_counts.each_with_index.map { |count, i| [i, count] }.to_h
+          )
+        allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
+      end
+
+      subject { PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions }
+
+      it "returns hash of how many cases should be distributed to each judge that is below the priority target " \
+        "excluding any leftover cases" do
+        expect(subject).to eq expected_priority_targets.each_with_index.map { |count, i| [i, count] }.to_h
+      end
+    end
+
+    context "when the distributions this month have been even" do
+      let(:distribution_counts) { Array.new(eligible_judge_count, number_of_distributions) }
+
+      context "when there have been no distributions this month" do
+        let(:number_of_distributions) { 0 }
+
+        context "when there are more eligible judges than cases to distribute" do
+          let(:eligible_judge_count) { 10 }
+          let(:priority_count) { 5 }
+          # Priority target will be 0, cases will be allotted later from the leftover cases
+          let(:expected_priority_targets) { Array.new(eligible_judge_count, 0) }
+
+          it_behaves_like "correct target distributions"
+        end
+
+        context "when there are more cases to distribute than eligible judges" do
+          let(:eligible_judge_count) { 5 }
+          let(:priority_count) { 10 }
+          # Priority target will be 2, evenly distributed amongst judges
+          let(:expected_priority_targets) { Array.new(eligible_judge_count, 2) }
+
+          it_behaves_like "correct target distributions"
+
+          context "when the cases cannot be evenly distributed" do
+            let(:priority_count) { 9 }
+            # Priority target rounds down, the leftover 4 cases will be allotted later in the algorithm
+            let(:expected_priority_targets) { Array.new(eligible_judge_count, 1) }
+
+            it_behaves_like "correct target distributions"
+          end
+        end
+      end
+
+      context "when there have been some distributions this month" do
+        let(:number_of_distributions) { 10 }
+
+        context "when there are more eligible judges than cases to distribute" do
+          let(:eligible_judge_count) { 10 }
+          let(:priority_count) { 5 }
+          # Priority target is equal to how many cases have already been distributed. Cases will be allotted from the
+          # leftover cases. 5 judges will each be distributed 1 case
+          let(:expected_priority_targets) { Array.new(eligible_judge_count, 0) }
+
+          it_behaves_like "correct target distributions"
+        end
+
+        context "when there are more cases to distribute than eligible judges" do
+          let(:eligible_judge_count) { 5 }
+          let(:priority_count) { 10 }
+          # Priority target will be evenly distributed amongst judges
+          let(:expected_priority_targets) { Array.new(eligible_judge_count, 2) }
+
+          it_behaves_like "correct target distributions"
+
+          context "when the cases cannot be evenly distributed" do
+            let(:priority_count) { 9 }
+            # Priority target rounds down, the leftover 4 cases will be allotted later in the algorithm
+            let(:expected_priority_targets) { Array.new(eligible_judge_count, 1) }
+
+            it_behaves_like "correct target distributions"
+          end
+        end
+      end
+    end
+
+    context "when previous distributions counts are not greater than the priority target" do
+      let(:distribution_counts) { [10, 15, 20, 25, 30] }
+      let(:priority_count) { 75 }
+      # 75 should be able to be divided up to get all judges up to 35
+      let(:expected_priority_targets) { [25, 20, 15, 10, 5] }
+
+      it_behaves_like "correct target distributions"
+
+      context "when cases are not evenly distributable" do
+        let(:priority_count) { 79 }
+        # Priority target still is 35, the leftover 4 cases will be allotted later in the algorithm
+
+        it_behaves_like "correct target distributions"
+      end
+    end
+
+    context "when previous distributions counts are greater than the priority target" do
+      let(:distribution_counts) { [0, 0, 22, 28, 50] }
+      let(:priority_count) { 50 }
+      # The two judges with 0 cases should receive 24 cases, the one judge with 22 cases should recieve 2, leaving us
+      # with [24, 24, 24, 28, 50] to hopefully even out more in the next distribution.
+      let(:expected_priority_targets) { [24, 24, 2] }
+
+      it_behaves_like "correct target distributions"
+
+      context "when the dirstibution counts are even more disparate" do
+        let(:distribution_counts) { [0, 0, 5, 9, 26, 27, 55, 56, 89, 100] }
+        let(:priority_count) { 50 }
+        # Ending counts should be [16, 16, 16, 16, 26, 27, 55, 56, 89, 100], perfectly using up all 50 cases
+        let(:expected_priority_targets) { [16, 16, 11, 7] }
+
+        it_behaves_like "correct target distributions"
+      end
+    end
+  end
+
+  context ".priority_target" do
+    shared_examples "correct target" do
+      before do
+        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+          .to receive(:eligible_judge_priority_distributions_this_month).and_return(
+            distribution_counts.each_with_index.map { |count, i| [i, count] }.to_h
+          )
+        allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
+      end
+
+      subject { PushPriorityAppealsToJudgesJob.new.priority_target }
+
+      it "calculates a target that distributes cases evenly over one month" do
+        expect(subject).to eq expected_priority_target
+      end
+    end
+
+    context "when the distributions this month have been even" do
+      let(:distribution_counts) { Array.new(eligible_judge_count, number_of_distributions) }
+
+      context "when there have been no distributions this month" do
+        let(:number_of_distributions) { 0 }
+
+        context "when there are more eligible judges than cases to distribute" do
+          let(:eligible_judge_count) { 10 }
+          let(:priority_count) { 5 }
+          # Priority target will be 0, cases will be allotted from the leftover cases. judges will be distributed 1 case
+          let(:expected_priority_target) { 0 }
+
+          it_behaves_like "correct target"
+        end
+
+        context "when there are more cases to distribute than eligible judges" do
+          let(:eligible_judge_count) { 5 }
+          let(:priority_count) { 10 }
+          # Priority target will be 2evenly distributed amongst judges
+          let(:expected_priority_target) { 2 }
+
+          it_behaves_like "correct target"
+
+          context "when the cases cannot be evenly distributed" do
+            let(:priority_count) { 9 }
+            # Priority target rounds down, the leftover 4 cases will be allotted later in the algorithm
+            let(:expected_priority_target) { 1 }
+
+            it_behaves_like "correct target"
+          end
+        end
+      end
+
+      context "when there have been some distributions this month" do
+        let(:number_of_distributions) { 10 }
+
+        context "when there are more eligible judges than cases to distribute" do
+          let(:eligible_judge_count) { 10 }
+          let(:priority_count) { 5 }
+          # Priority target is equal to how many cases have already been distributed. Cases will be allotted from the
+          # leftover cases. judges will each be distributed 1 case
+          let(:expected_priority_target) { 10 }
+
+          it_behaves_like "correct target"
+        end
+
+        context "when there are more cases to distribute than eligible judges" do
+          let(:eligible_judge_count) { 5 }
+          let(:priority_count) { 10 }
+          # Priority target will be 2evenly distributed amongst judges
+          let(:expected_priority_target) { 12 }
+
+          it_behaves_like "correct target"
+
+          context "when the cases cannot be evenly distributed" do
+            let(:priority_count) { 9 }
+            # Priority target rounds down, the leftover 4 cases will be allotted later in the algorithm
+            let(:expected_priority_target) { 11 }
+
+            it_behaves_like "correct target"
+          end
+        end
+      end
+    end
+
+    context "when previous distributions counts are not greater than the priority target" do
+      let(:distribution_counts) { [10, 15, 20, 25, 30] }
+      let(:priority_count) { 75 }
+      # 75 should be able to be divided up to get all judges up to 35
+      let(:expected_priority_target) { 35 }
+
+      it_behaves_like "correct target"
+
+      context "when cases are not evenly distributable" do
+        let(:priority_count) { 79 }
+        # Priority target still is 35, the leftover 4 cases will be allotted later in the algorithm
+
+        it_behaves_like "correct target"
+      end
+    end
+
+    context "when previous distributions counts are greater than the priority target" do
+      let(:distribution_counts) { [0, 0, 22, 28, 50] }
+      let(:priority_count) { 50 }
+      # The two judges with 0 cases should receive 24 cases, the one judge with 22 cases should recieve 2, leaving us
+      # with [24, 24, 24, 28, 50] to hopefully even out more in the next distribution.
+      let(:expected_priority_target) { 24 }
+
+      it_behaves_like "correct target"
+
+      context "when the dirstibution counts are even more disparate" do
+        let(:distribution_counts) { [0, 0, 5, 9, 26, 27, 55, 56, 89, 100] }
+        let(:priority_count) { 50 }
+        # Ending counts should be [16, 16, 16, 16, 26, 27, 55, 56, 89, 100], perfectly using up all 50 cases
+        let(:expected_priority_target) { 16 }
+
+        it_behaves_like "correct target"
+      end
+    end
+  end
+
+  context ".eligible_judge_priority_distributions_this_month" do
+    let!(:judge_without_team) { create(:user) }
+    let!(:judge_without_active_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).inactive! } }
+    # let!(:judge_without_priority_push_team) do
+    #   create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
+    # end
+    let!(:judge_with_org) { create(:user).tap { |judge| create(:organization).add_user(judge) } }
+    let!(:judge_with_team_and_distributions) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
+    let!(:judge_with_team_without_distributions) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
+
+    let!(:distributions_for_valid_judge) { 6 }
+
+    subject { PushPriorityAppealsToJudgesJob.new.eligible_judge_priority_distributions_this_month }
+
+    before do
+      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:judge_priority_distributions_this_month)
+        .and_return(
+          judge_without_team.id => 5,
+          judge_without_active_team.id => 5,
+          # judge_without_priority_push_team.id => 5,
+          judge_with_org.id => 5,
+          judge_with_team_and_distributions.id => distributions_for_valid_judge
+        )
+    end
+
+    it "only returns hash containing the distribution counts of judges that can be pushed priority appeals" do
+      [
+        judge_without_team,
+        judge_without_active_team,
+        # judge_without_priority_push_team,
+        judge_with_org
+      ].each do |ineligible_judge|
+        expect(subject[ineligible_judge]).to be nil
+      end
+      expect(subject[judge_with_team_and_distributions]).to eq distributions_for_valid_judge
+      expect(subject[judge_with_team_without_distributions]).to eq 0
+    end
+  end
+
+  # TODO: Update when kat's toggle has been merged
+  context ".eligible_judges" do
+    let!(:judge_without_team) { create(:user) }
+    let!(:judge_without_active_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).inactive! } }
+    # let!(:judge_without_priority_push_team) do
+    #   create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
+    # end
+    let!(:judge_with_org) { create(:user).tap { |judge| create(:organization).add_user(judge) } }
+    let!(:judge_with_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
+
+    subject { PushPriorityAppealsToJudgesJob.new.eligible_judges }
+
+    it "only returns judges of active judge teams" do
+      expect(subject).to match_array([judge_with_team])
+    end
+  end
+
+  context ".judge_priority_distributions_this_month" do
+    let(:batch_size) { 20 }
+    let!(:judge_with_no_priority_distributions) do
+      create(:user, :with_vacols_judge_record).tap do |judge|
+        create(
+          :distribution,
+          judge: judge,
+          priority_push: false,
+          completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
+        ).tap { |distribution| distribution.update!(status: :completed) }
+      end
+    end
+    let!(:judge_with_no_recent_distributions) do
+      create(:user, :with_vacols_judge_record) do |judge|
+        create(
+          :distribution,
+          judge: judge,
+          priority_push: true,
+          completed_at: 41.days.ago,
+          statistics: { "batch_size": batch_size }
+        ).tap { |distribution| distribution.update!(status: :completed) }
+      end
+    end
+    let!(:judge_with_no_completed_distributions) do
+      create(:user, :with_vacols_judge_record) do |judge|
+        create(
+          :distribution,
+          judge: judge,
+          priority_push: true,
+          completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
+        )
+      end
+    end
+    let!(:judge_with_a_valid_distribution) do
+      create(:user, :with_vacols_judge_record) do |judge|
+        create(
+          :distribution,
+          judge: judge,
+          priority_push: true,
+          completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
+        ).tap { |distribution| distribution.update!(status: :completed) }
+      end
+    end
+    let!(:judge_with_multiple_valid_distributions) do
+      create(:user, :with_vacols_judge_record) do |judge|
+        create(
+          :distribution,
+          judge: judge,
+          priority_push: true,
+          completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
+        ).tap { |distribution| distribution.update!(status: :completed) }
+        create(
+          :distribution,
+          judge: judge,
+          priority_push: true,
+          completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
+        ).tap { |distribution| distribution.update!(status: :completed) }
+      end
+    end
+
+    subject { PushPriorityAppealsToJudgesJob.new.judge_priority_distributions_this_month }
+
+    it "returns the sum of the batch sizes from all valid distributions for each judge" do
+      expect(subject.keys).to match_array(
+        [judge_with_a_valid_distribution.id, judge_with_multiple_valid_distributions.id]
+      )
+      expect(subject[judge_with_a_valid_distribution.id]).to eq batch_size
+      expect(subject[judge_with_multiple_valid_distributions.id]).to eq batch_size * 2
+    end
+  end
+
+  context ".total_priority_distributions_this_month", skip: "no longer used" do
+    let(:number_of_valid_distributions) { 5 }
+    let!(:non_priority_distribution) do
+      create(
+        :distribution,
+        judge: create(:user, :with_vacols_judge_record),
+        priority_push: false,
+        completed_at: 1.day.ago,
+        statistics: { "batch_size": 20 }
+      ).tap { |distribution| distribution.update!(status: :completed) }
+    end
+    let!(:pending_priority_distribution) do
+      create(
+        :distribution,
+        judge: create(:user, :with_vacols_judge_record),
+        priority_push: true,
+        completed_at: 1.day.ago,
+        statistics: { "batch_size": 20 }
+      )
+    end
+    let!(:older_priority_distribution) do
+      create(
+        :distribution,
+        judge: create(:user, :with_vacols_judge_record),
+        priority_push: true,
+        completed_at: 41.days.ago,
+        statistics: { "batch_size": 20 }
+      ).tap { |distribution| distribution.update!(status: :completed) }
+    end
+    let!(:recent_completed_priority_distributions) do
+      (1..number_of_valid_distributions).each do |batch_size|
+        create(
+          :distribution,
+          judge: create(:user, :with_vacols_judge_record),
+          priority_push: true,
+          completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
+        ).tap { |distribution| distribution.update!(status: :completed) }
+      end
+    end
+
+    subject { PushPriorityAppealsToJudgesJob.new.total_priority_distributions_this_month }
+
+    it "returns the sum of the batch sizes from all valid distributions" do
+      expect(subject).to eq((1..number_of_valid_distributions).reduce(&:+))
+    end
+  end
+
+  context ".priority_distributions_this_month" do
+    let!(:non_priority_distribution) do
+      create(
+        :distribution,
+        judge: create(:user, :with_vacols_judge_record),
+        priority_push: false,
+        completed_at: 1.day.ago
+      ).tap { |distribution| distribution.update!(status: :completed) }
+    end
+    let!(:pending_priority_distribution) do
+      create(
+        :distribution,
+        judge: create(:user, :with_vacols_judge_record),
+        priority_push: true,
+        completed_at: 1.day.ago
+      )
+    end
+    let!(:older_priority_distribution) do
+      create(
+        :distribution,
+        judge: create(:user, :with_vacols_judge_record),
+        priority_push: true,
+        completed_at: 41.days.ago
+      ).tap { |distribution| distribution.update!(status: :completed) }
+    end
+    let!(:recent_completed_priority_distribution) do
+      create(
+        :distribution,
+        judge: create(:user, :with_vacols_judge_record),
+        priority_push: true,
+        completed_at: 1.day.ago
+      ).tap { |distribution| distribution.update!(status: :completed) }
+    end
+
+    subject { PushPriorityAppealsToJudgesJob.new.priority_distributions_this_month }
+
+    it "only returns recently completed priority distributions" do
+      expect(subject.count).to eq 1
+      expect(subject.first).to eq recent_completed_priority_distribution
+    end
+  end
+end
