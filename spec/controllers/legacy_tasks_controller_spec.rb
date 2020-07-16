@@ -295,7 +295,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       before do
         FeatureToggle.enable!(:overtime_revamp)
         @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
-        @appeal.update!(overtime:  true)
+        @appeal.update!(overtime: true)
       end
       after { FeatureToggle.disable!(:overtime_revamp) }
 
