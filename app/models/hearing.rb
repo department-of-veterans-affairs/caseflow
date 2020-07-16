@@ -111,7 +111,12 @@ class Hearing < CaseflowRecord
     # Use an address object if this is a hash
     address = appeal&.address.is_a?(Hash) ? Address.new(appeal&.address) : appeal&.address
 
-    TimezoneService.address_to_timezone(address).identifier
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
   end
 
   def representative_tz
@@ -120,7 +125,12 @@ class Hearing < CaseflowRecord
     # Use an address object if this is a hash
     address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
 
-    TimezoneService.address_to_timezone(address).identifier
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
   end
 
   def claimant_id

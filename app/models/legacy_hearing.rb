@@ -80,7 +80,12 @@ class LegacyHearing < CaseflowRecord
     # Use an address object if this is a hash
     address = appeal&.appellant_address.is_a?(Hash) ? Address.new(appeal&.appellant_address) : appeal&.appellant_address
 
-    TimezoneService.address_to_timezone(address).identifier
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
   end
 
   def representative_tz
@@ -89,7 +94,12 @@ class LegacyHearing < CaseflowRecord
     # Use an address object if this is a hash
     address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
 
-    TimezoneService.address_to_timezone(address).identifier
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
   end
 
   def assigned_to_vso?(user)
