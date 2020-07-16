@@ -41,7 +41,7 @@ class LegacyHearing < CaseflowRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
-  delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
+  delegate :veteran_age, :veteran_gender, :vbms_id, :representative_address, :number_of_documents, :number_of_documents_after_certification,
            :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
            :veteran_email_address, :appellant_address, :appellant_address_line_1, :appellant_address_line_2,
            :appellant_city, :appellant_country, :appellant_state, :appellant_zip, :appellant_email_address,
@@ -68,10 +68,6 @@ class LegacyHearing < CaseflowRecord
 
   def representative_email_address
     appeal&.representative_email_address
-  end
-
-  def representative_address
-    appeal&.representative_address
   end
 
   def appellant_tz

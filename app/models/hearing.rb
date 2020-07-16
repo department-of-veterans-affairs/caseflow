@@ -28,7 +28,7 @@ class Hearing < CaseflowRecord
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
-  delegate :appellant_first_name, :appellant_last_name, :appellant_address_line_1,
+  delegate :appellant_first_name, :appellant_last_name, :representative_address, :appellant_address_line_1,
            :appellant_city, :appellant_state, :appellant_zip, :appellant_email_address,
            :veteran_age, :veteran_gender, :veteran_first_name, :veteran_last_name, :veteran_file_number,
            :veteran_email_address, :docket_number, :docket_name, :request_issues, :decision_issues,
@@ -99,10 +99,6 @@ class Hearing < CaseflowRecord
 
   def representative_email_address
     appeal&.representative_email_address
-  end
-
-  def representative_address
-    appeal&.representative_address
   end
 
   def appellant_tz
