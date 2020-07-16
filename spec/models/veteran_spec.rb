@@ -667,7 +667,7 @@ describe Veteran, :all_dbs do
       end
 
       context "veteran saved in Caseflow with SSN as filenumber" do
-        let!(:veteran_by_ssn) { create(:veteran, file_number: ssn, ssn: ssn)}
+        let!(:veteran_by_ssn) { create(:veteran, file_number: ssn, ssn: ssn) }
 
         before do
           veteran.destroy! # leaves it in BGS
