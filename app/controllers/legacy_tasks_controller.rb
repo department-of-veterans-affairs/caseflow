@@ -117,6 +117,9 @@ class LegacyTasksController < ApplicationController
 
     return invalid_record_error(task) unless task.valid?
 
+    # Remove overtime status of an appeal when reassigning to another attorney
+    appeal.overtime = false if appeal.overtime?
+
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(
                         task.last_case_assignment,
