@@ -4,7 +4,7 @@
 # Task to schedule a hearing for a veteran making a claim.
 #
 # When this task is created, HearingTask is created as the parent task in the appeal tree.
-# 
+#
 # For AMA appeals, task is created by the intake process for any appeal electing to have a hearing.
 # For Legacy appeals, Geomatching is resposnible for finding all appeals in VACOLS ready to be scheduled
 # and creating a ScheduleHearingTask for each of them.
@@ -12,7 +12,7 @@
 # A coordinator can block this task by creating a HearingAdminActionTask for some reasons listed
 # here: https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#2-schedule-veteran
 #
-# This task also allows coordinators to withdraw hearings. For AMA, this creates an EvidenceSubmissionWindowTask 
+# This task also allows coordinators to withdraw hearings. For AMA, this creates an EvidenceSubmissionWindowTask
 # and for legacy this moves the appeal to case storage.
 #
 # Once completed, an AssignHearingDispositionTask is created.

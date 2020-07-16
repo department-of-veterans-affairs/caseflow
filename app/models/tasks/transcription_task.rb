@@ -2,9 +2,9 @@
 
 ##
 # Task to either confirm the completion of the hearing transcription or reschedule the hearing.
-# 
-# If there's a problem with the hearing recording, the veteran/appellant is usually notified. 
-# Veterans/Appllants can choose to continue with partial or no transcrition or ask to be 
+#
+# If there's a problem with the hearing recording, the veteran/appellant is usually notified.
+# Veterans/Appllants can choose to continue with partial or no transcrition or ask to be
 # scheduled for a new hearing.
 #
 # When marked as Transcribed, the appeal will be released to a judge for review but the
