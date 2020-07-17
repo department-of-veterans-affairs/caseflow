@@ -364,7 +364,14 @@ describe DecisionIssue, :postgres do
 
       context "when no supplemental claim matches decision issue" do
         let(:veteran) { create(:veteran) }
-        let(:decision_review) { create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number, veteran_is_not_claimant: true) }
+        let(:decision_review) do
+          create(
+            :appeal,
+            number_of_claimants: 1,
+            veteran_file_number: veteran.file_number,
+            veteran_is_not_claimant: true
+          )
+        end
         let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
         context "when there is a prior claim by the same claimant on the same veteran" do
