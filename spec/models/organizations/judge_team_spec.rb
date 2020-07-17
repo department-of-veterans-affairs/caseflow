@@ -121,8 +121,7 @@ describe JudgeTeam, :postgres do
     end
 
     context "a judge team with attorneys on it" do
-      let(:user) { create(:user) }
-      let(:judge) { Judge.new(user) }
+      let(:judge) { Judge.new(create(:user)) }
       let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
       let(:attorneys) { create_list(:user, 5) }
 
@@ -151,7 +150,7 @@ describe JudgeTeam, :postgres do
         let(:other_judge) { create(:user) }
         let(:judge) { create(:user) }
         let(:other_judge_team) { create(:judge_team) }
-        before { populate_judgeteam_for_testing(other_judge_team, other_judge, [judge]) }
+        before { populate_judge_team_for_testing(other_judge_team, other_judge, [judge]) }
 
         it_behaves_like "successful judge team creation"
       end
@@ -178,7 +177,7 @@ describe JudgeTeam, :postgres do
         let(:judge) { create(:user) }
         let(:user) { create(:user) }
         let(:judge_team) { create(:judge_team) }
-        before { populate_judgeteam_for_testing(judge_team, judge, [user]) }
+        before { populate_judge_team_for_testing(judge_team, judge, [user]) }
 
         it "should return nil, indicating user is not the Judge of this team" do
           expect(JudgeTeam.for_judge(user)).to eq(nil)
@@ -189,7 +188,7 @@ describe JudgeTeam, :postgres do
         let(:judge) { create(:user) }
         let(:user) { create(:user) }
         let!(:judge_team) { create(:judge_team) }
-        before { populate_judgeteam_for_testing(judge_team, judge, [create(:user), user]) }
+        before { populate_judge_team_for_testing(judge_team, judge, [create(:user), user]) }
 
         it "should return nil" do
           expect(JudgeTeam.for_judge(user)).to eq(nil)
@@ -200,7 +199,7 @@ describe JudgeTeam, :postgres do
         let(:judge) { create(:user) }
         let(:user) { create(:user) }
         let!(:judge_team) { create(:judge_team) }
-        before { populate_judgeteam_for_testing(judge_team, judge, [create(:user), user]) }
+        before { populate_judge_team_for_testing(judge_team, judge, [create(:user), user]) }
 
         it "should return judge team" do
           judge.reload
@@ -215,8 +214,8 @@ describe JudgeTeam, :postgres do
         let(:judge_team_reg) { create(:judge_team) }
         let(:judge_team_dvc) { create(:judge_team) }
         before do
-          populate_judgeteam_for_testing(judge_team_reg, judge, [dvc_judge, user])
-          populate_judgeteam_for_testing(judge_team_dvc, dvc_judge, [user]) # create_for_judge?
+          populate_judge_team_for_testing(judge_team_reg, judge, [dvc_judge, user])
+          populate_judge_team_for_testing(judge_team_dvc, dvc_judge, [user]) # create_for_judge?
         end
 
         it "should return the JudgeTeamLead team, not the admin'd team" do
@@ -228,13 +227,12 @@ describe JudgeTeam, :postgres do
     end
 
     context "a judge team with attorneys on it" do
-      let(:user) { create(:user) }
-      let(:judge) { Judge.new(user) }
+      let(:judge) { Judge.new(create(:user)) }
       let!(:judge_team) { create(:judge_team) }
       let(:attorneys) { create_list(:user, 5) }
 
       before do
-        populate_judgeteam_for_testing(judge_team, judge.user, attorneys)
+        populate_judge_team_for_testing(judge_team, judge.user, attorneys)
       end
       it_behaves_like "has the judge and attorneys"
     end
@@ -281,7 +279,7 @@ describe JudgeTeam, :postgres do
   # Expects an empty judge team, the user you want to be JudgeTeamLead,
   # and an array of users to make DecisionDraftingAttorneys
   # The first user in that array will also be an admin on the JudgeTeam
-  def populate_judgeteam_for_testing(judge_team, judge_user, attorneys)
+  def populate_judge_team_for_testing(judge_team, judge_user, attorneys)
     attorneys.each do |u|
       judge_team.users << u
       attorney_orgsuser = OrganizationsUser.existing_record(u, judge_team)
