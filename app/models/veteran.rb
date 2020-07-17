@@ -348,15 +348,15 @@ class Veteran < CaseflowRecord
     end
 
     def find_by_file_number_and_sync(file_number, sync_name: false)
-      begin
-        # Only make request to BGS if finding by file number is nil
-        veteran = find_by(file_number: file_number) ||
-          find_by(file_number: bgs.fetch_veteran_info(file_number)&.dig(:ssn))
-      rescue BGS::ShareError
-        false
-      end
+      veteran = begin
+            # Only make request to BGS if finding by file number is nil
+            find_by(file_number: file_number) ||
+              find_by(file_number: bgs.fetch_veteran_info(file_number)&.dig(:ssn))
+          rescue BGS::ShareError
+            nil
+          end
 
-      return nil unless veteran
+      return nil unless veteran.present?
 
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
