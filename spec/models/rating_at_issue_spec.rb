@@ -93,12 +93,65 @@ describe RatingAtIssue do
       )
     end
 
+    let!(:unpromulgated_rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: nil
+      )
+    end
+
     it "returns rating objects for all ratings" do
-      expect(subject.count).to eq(2)
+      expect(subject.count).to eq(3)
     end
 
     context "on NoRatingsExistForVeteran error" do
       subject { RatingAtIssue.fetch_all("FOOBAR") }
+
+      it "returns empty array" do
+        expect(subject.count).to eq(0)
+      end
+    end
+  end
+
+  context ".fetch_promulgated" do
+    let(:receipt_date) { Time.zone.today - 50.years }
+
+    subject { RatingAtIssue.fetch_promulgated("DRAYMOND") }
+
+    let!(:rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 370.days
+      )
+    end
+
+    let!(:untimely_rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 100.years
+      )
+    end
+
+    let!(:unpromulgated_rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: nil
+      )
+    end
+
+    let!(:promulgated_rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 100.days
+      )
+    end
+
+    it "returns rating objects for all ratings" do
+      expect(subject.count).to eq(3)
+    end
+
+    context "on NoRatingsExistForVeteran error" do
+      subject { RatingAtIssue.fetch_promulgated("FOOBAR") }
 
       it "returns empty array" do
         expect(subject.count).to eq(0)

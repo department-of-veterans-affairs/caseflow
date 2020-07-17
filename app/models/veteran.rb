@@ -228,7 +228,7 @@ class Veteran < CaseflowRecord
   def ratings
     @ratings ||= begin
       if FeatureToggle.enabled?(:ratings_at_issue, user: RequestStore.store[:current_user])
-        RatingAtIssue.fetch_all(participant_id)
+        RatingAtIssue.fetch_promulgated(participant_id)
       else
         PromulgatedRating.fetch_all(participant_id)
       end
