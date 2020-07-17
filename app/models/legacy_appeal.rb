@@ -1099,7 +1099,7 @@ class LegacyAppeal < CaseflowRecord
     def close_single(appeal:, user:, closed_on:, disposition:)
       fail "Only active appeals can be closed" unless appeal.active?
 
-      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
+      new_disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       if appeal.remand?
@@ -1109,6 +1109,9 @@ class LegacyAppeal < CaseflowRecord
           closed_on: closed_on,
           disposition_code: disposition_code
         )
+      elsif
+        original_disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(appeal.disposition)
+        disposition_code == "G"
       else
         repository.close_undecided_appeal!(
           appeal: appeal,

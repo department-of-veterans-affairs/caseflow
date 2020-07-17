@@ -393,20 +393,7 @@ class AppealRepository
       .map { |case_record| build_appeal(case_record) }
   end
 
-  # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
-  # WARNING: some parts of this action are not automatically reversable, and must
-  # be reversed by hand
-  def self.close_undecided_appeal!(appeal:, user:, closed_on:, disposition_code:)
-    case_record = appeal.case_record
-    folder_record = case_record.folder
-
-    # App logic should prevent this, but because this is a destructive operation
-    # add an additional failsafe
-    if case_record.bfdc
-      Raven.extra_context(undecided_appeal_id: appeal.id)
-      fail AppealNotValidToClose
-    end
-
+  def self.close_appeal_with_disposition!(case_record:, folder:, user:, closed_on:, disposition_code:)
     VACOLS::Case.transaction do
       case_record.update!(
         bfmpro: "HIS",
@@ -436,6 +423,29 @@ class AppealRepository
       close_associated_diary_notes(case_record, user)
       close_associated_hearings(case_record)
     end
+  end
+
+  # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
+  # WARNING: some parts of this action are not automatically reversable, and must
+  # be reversed by hand
+  def self.close_undecided_appeal!(appeal:, user:, closed_on:, disposition_code:)
+    case_record = appeal.case_record
+    folder_record = case_record.folder
+
+    # App logic should prevent this, but because this is a destructive operation
+    # add an additional failsafe
+    if case_record.bfdc
+      Raven.extra_context(undecided_appeal_id: appeal.id)
+      fail AppealNotValidToClose
+    end
+
+    self.class.close_appeal_with_disposition!(
+      case_record: case_record,
+      folder: folder_record,
+      user: user,
+      closed_on: closed_on,
+      disposition_code: disposition_code
+    )
   end
 
   # Close a remand (prematurely, such as for a withdrawal or a VAIMA opt in)
@@ -519,6 +529,31 @@ class AppealRepository
         )
       end
     end
+  end
+
+  # This method opts-in appeals to AMA even if they were already closed and decided in the past into AMA
+  def self.opt_in_decided_appeal!(appeal:, user:, closed_on:, disposition_code:)
+    return unless disposition_code == "O"
+
+    case_record = appeal.case_record
+    folder_record = case_record.folder
+
+    # Currently this is only allowed for appeals with Advance Failure to Respond (G code) dispositions
+    # By following the same pattern as closing undecided appeals
+    # The original disposition and case/folder decision dates are stored on LegacyIssueOptin
+
+    unless case_record.bfdc == "G"
+      Raven.extra_context(vacols_id: appeal.id)
+      fail AppealNotValidToClose
+    end
+
+    self.class.close_appeal_with_disposition!(
+      case_record: case_record,
+      folder: folder_record,
+      user: user,
+      closed_on: closed_on,
+      disposition_code: disposition_code
+    )
   end
 
   def self.reopen_undecided_appeal!(appeal:, user:, safeguards:, reopen_issues: true)
