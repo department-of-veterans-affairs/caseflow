@@ -65,11 +65,7 @@ const HearingDetails = (props) => {
   };
 
   // Create an effect to remove stale alerts on unmount
-  useEffect(() => {
-    return () => {
-      props.clearAlerts();
-    };
-  }, []);
+  useEffect(() => () => props.clearAlerts(), []);
 
   const openVirtualHearingModal = ({ type }) => {
     setVirtualHearingModalOpen(true);
