@@ -21,7 +21,7 @@ const getClaimantField = (veteran, intakeData) => {
     other: () => intakeData.claimantNotes
   };
 
-  const claimantType = intakeData.claimantType?.replace(/(.*)(Claimant)/, '$1').toLowerCase();
+  const claimantType = intakeData.claimantType;
   const claimant = claimantMap[claimantType ?? 'veteran']?.();
 
   return [{

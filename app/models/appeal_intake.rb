@@ -76,27 +76,8 @@ class AppealIntake < DecisionReviewIntake
     end
   end
 
-  def review_params
-    request_params.permit(
-      :claimant,
-      :claimant_type,
-      :claimant_notes,
-      :id,
-      :payee_code,
-      :receipt_date,
-      :docket_type,
-      :veteran_is_not_claimant,
-      :legacy_opt_in_approved
-    )
-  end
-
   def appeal_params
-    keys_to_extract = [
-      :receipt_date,
-      :docket_type,
-      :veteran_is_not_claimant,
-      :legacy_opt_in_approved
-    ]
-    review_params.select { |key, _| keys_to_extract.include? key.to_sym }
+    keys = %w[receipt_date docket_type veteran_is_not_claimant legacy_opt_in_approved]
+    Hash[keys.collect { |key| [key, request_params[key]] }]
   end
 end

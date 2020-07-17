@@ -180,7 +180,7 @@ export const commonStateFromServerIntake = (serverIntake) => {
       $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
     },
     claimantType: {
-      $set: serverIntake.claimantType?.replace(/(.*)(Claimant)/, '$1').toLowerCase()
+      $set: serverIntake.claimantType
     },
     payeeCode: {
       $set: serverIntake.payeeCode
