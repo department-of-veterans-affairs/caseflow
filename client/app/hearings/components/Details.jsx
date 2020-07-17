@@ -3,11 +3,16 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { isEmpty, isUndefined, get } from 'lodash';
 
 import { HearingsFormContext, updateHearingDispatcher, RESET_HEARING } from '../contexts/HearingsFormContext';
-import { onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert } from '../../components/common/actions';
+import {
+  onReceiveAlerts,
+  onReceiveTransitioningAlert,
+  transitionAlert,
+  clearAlerts
+} from '../../components/common/actions';
 import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import UserAlerts from '../../components/UserAlerts';
@@ -58,6 +63,13 @@ const HearingDetails = (props) => {
     // Focus the top of the page
     window.scrollTo(0, 0);
   };
+
+  // Create an effect to remove stale alerts on unmount
+  useEffect(() => {
+    return () => {
+      props.clearAlerts();
+    };
+  }, []);
 
   const openVirtualHearingModal = ({ type }) => {
     setVirtualHearingModalOpen(true);
@@ -290,10 +302,11 @@ HearingDetails.propTypes = {
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
+  clearAlerts: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert }, dispatch);
+  bindActionCreators({ clearAlerts, onReceiveAlerts, onReceiveTransitioningAlert, transitionAlert }, dispatch);
 
 export default connect(
   null,
