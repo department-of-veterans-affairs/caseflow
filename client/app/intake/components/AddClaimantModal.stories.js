@@ -1,7 +1,6 @@
 import React from 'react';
 import faker from 'faker';
 
-import { action } from '@storybook/addon-actions';
 import { AddClaimantModal } from './AddClaimantModal';
 
 export default {
@@ -11,9 +10,13 @@ export default {
   parameters: {
     docs: {
       inlineStories: false,
-      iframeHeight: 600
-    }
-  }
+      iframeHeight: 600,
+    },
+  },
+  argTypes: {
+    onCancel: { action: 'cancel' },
+    onSubmit: { action: 'submit' },
+  },
 };
 
 // Set up sample data & async fn for performing fuzzy search
@@ -21,7 +24,10 @@ export default {
 const totalRecords = 500;
 const data = Array.from({ length: totalRecords }, () => ({
   name: faker.name.findName(),
-  participant_id: faker.random.number({ min: 600000000, max: 600000000 + totalRecords })
+  participant_id: faker.random.number({
+    min: 600000000,
+    max: 600000000 + totalRecords,
+  }),
 }));
 const performQuery = async (search = '') => {
   const regex = RegExp(search, 'i');
@@ -29,16 +35,15 @@ const performQuery = async (search = '') => {
   return data.filter((item) => regex.test(item.name));
 };
 
-export const standard = () => (
-  <AddClaimantModal
-    onCancel={action('cancel', 'standard')}
-    onSubmit={action('submit', 'standard')}
-    onSearch={performQuery}
-  />
+const Template = (args) => (
+  <AddClaimantModal {...args} onSearch={performQuery} />
 );
 
-standard.parameters = {
+export const Basic = Template.bind({});
+
+Basic.parameters = {
   docs: {
-    storyDescription: 'This is used to add claimants not already associated with the appeal'
-  }
+    storyDescription:
+      'This is used to add claimants not already associated with the appeal',
+  },
 };
