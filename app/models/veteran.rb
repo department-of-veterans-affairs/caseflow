@@ -352,7 +352,6 @@ class Veteran < CaseflowRecord
         # Only make request to BGS if finding by file number is nil
         veteran = find_by(file_number: file_number) ||
           find_by(file_number: bgs.fetch_veteran_info(file_number)&.dig(:ssn))
-
       rescue BGS::ShareError
         false
       end
