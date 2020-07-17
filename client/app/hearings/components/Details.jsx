@@ -92,15 +92,14 @@ const HearingDetails = (props) => {
     try {
       // Determine the current state and whether to error
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
-      const noEmail = !hearing.virtualHearing?.representativeEmail || !hearing.virtualHearing?.appellantEmail;
-      const emailUpdated = editedEmails?.representativeEmailEdited || editedEmails?.appellantEmailEdited;
+      const noEmail = !hearing.virtualHearing?.appellantEmail;
+      const emailUpdated = editedEmails?.appellantEmailEdited;
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
 
       if (virtual && noEmail) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
           [!hearing.virtualHearing.appellantEmail && 'appellantEmail']: 'Appellant email is required',
-          [!hearing.virtualHearing.representativeEmail && 'representativeEmail']: 'Representative email is required',
         });
 
         // Focus to the error
