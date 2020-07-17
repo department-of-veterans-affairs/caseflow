@@ -29,8 +29,6 @@ export const HearingConversion = ({
   const virtual = type === 'change_to_virtual';
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
 
-  console.log('HEARING: ', hearing);
-
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
     // Determine which email to use
@@ -63,6 +61,7 @@ export const HearingConversion = ({
             onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
             value={hearing.scheduledTimeString}
           />
+          <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />
         </div>
       </div>
       <VirtualHearingSection label={appellantTitle}>
@@ -87,7 +86,7 @@ export const HearingConversion = ({
             </div>
           </div>
         )}
-        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+        <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
             <VirtualHearingEmail
               required

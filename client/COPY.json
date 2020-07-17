@@ -700,6 +700,7 @@
 
   "VIRTUAL_HEARING_REQUEST_TYPE": "Virtual",
   "VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS": "Scheduling in progress",
+  "VIRTUAL_HEARING_TIME_HELPER_TEXT": "The time at the Board of Veterans' Appeals in Washington, DC",
   "VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT": "The hearing time in email notifications is calculated based on the timezone",
   "VIRTUAL_HEARING_EMAIL_HELPER_TEXT": "Changes to the email are used to send notifications for this hearing only",
 

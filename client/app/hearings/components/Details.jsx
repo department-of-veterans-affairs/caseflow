@@ -82,7 +82,8 @@ const HearingDetails = (props) => {
 
   const submit = async (editedEmails) => {
     try {
-      const virtual = hearing.isVirtual || hearing.wasVirtual;
+      // Determine the current state and whether to error
+      const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
       const noEmail = !hearing.virtualHearing?.representativeEmail || !hearing.virtualHearing?.appellantEmail;
       const emailUpdated = editedEmails?.representativeEmailEdited || editedEmails?.appellantEmailEdited;
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
