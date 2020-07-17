@@ -124,5 +124,4 @@ export const HEARING_CONVERSION_TYPES = [
   'change_from_virtual',
   'change_email',
   'change_hearing_time'
-]
-;
+];

@@ -42,6 +42,5 @@ const Wrapped = (props) => {
 };
 
 export const Normal = () => {
-
   return <Wrapper />;
 };

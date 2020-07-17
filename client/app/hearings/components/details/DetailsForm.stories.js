@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { date, text, boolean } from '@storybook/addon-knobs';
-import { addDecorator } from '@storybook/react';
+import React, { useContext } from 'react';
+import { date } from '@storybook/addon-knobs';
 
 import DetailsForm from './DetailsForm';
 import {

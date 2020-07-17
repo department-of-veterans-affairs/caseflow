@@ -43,7 +43,6 @@ Timezone.propTypes = {
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
-  disabled: PropTypes.bool,
   value: PropTypes.string,
   name: PropTypes.string,
   time: PropTypes.string

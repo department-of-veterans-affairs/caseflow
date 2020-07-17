@@ -29,6 +29,8 @@ export const HearingConversion = ({
   const virtual = type === 'change_to_virtual';
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
 
+  console.log('HEARING: ', hearing);
+
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
     // Determine which email to use
@@ -90,7 +92,7 @@ export const HearingConversion = ({
             <VirtualHearingEmail
               required
               readOnly={!virtual}
-              label="Veteran Email"
+              label={`${appellantTitle} Email`}
               emailType="appellantEmail"
               email={virtualHearing?.appellantEmail}
               error={errors?.appellantEmail}

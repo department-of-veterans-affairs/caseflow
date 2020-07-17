@@ -38,7 +38,16 @@ export const defaultProps = {};
   <Story name="Hidden">
     {() => {
       const [value, setValue] = useState("");
-      return <div style={{ width: 500 }} />;
+      return (
+        <div style={{ width: 500 }}>
+          <VirtualHearingSection
+            hide={true}
+            label={text("Label", "Example", "knobs")}
+          >
+            {text("Children", "Some words", "knobs")}
+          </VirtualHearingSection>
+        </div>
+      );
     }}
   </Story>
 </Preview>
