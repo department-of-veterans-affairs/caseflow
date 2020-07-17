@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# HearingLocation is created for a Hearing/LegacyHearing when the coordinator schedules
+# the veteran/appellant for hearing for a location from a list of AvailableHearingLocations.
+
 class HearingLocation < CaseflowRecord
   belongs_to :hearing, polymorphic: true
 
