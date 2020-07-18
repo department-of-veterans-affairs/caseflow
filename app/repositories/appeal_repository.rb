@@ -531,14 +531,12 @@ class AppealRepository
     end
   end
 
-  # This method opts-in appeals to AMA even if they were already closed and decided in the past into AMA
-  def self.opt_in_decided_appeal!(appeal:, user:, closed_on:, disposition_code:)
-    return unless disposition_code == "O"
-
+  # This method opts-in appeals to AMA even if they are already closed
+  def self.opt_in_decided_appeal!(appeal:, user:, closed_on:)
     case_record = appeal.case_record
     folder_record = case_record.folder
 
-    # Currently this is only allowed for appeals with Advance Failure to Respond (G code) dispositions
+    #This is currently only allowed for appeals with Advance Failure to Respond (G code) dispositions
     # By following the same pattern as closing undecided appeals
     # The original disposition and case/folder decision dates are stored on LegacyIssueOptin
 
@@ -552,7 +550,7 @@ class AppealRepository
       folder: folder_record,
       user: user,
       closed_on: closed_on,
-      disposition_code: disposition_code
+      disposition_code: "O"
     )
   end
 

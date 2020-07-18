@@ -1143,8 +1143,7 @@ class LegacyAppeal < CaseflowRecord
       repository.opt_in_decided_appeal!(
         appeal: appeal,
         user: user,
-        closed_on: closed_on,
-        disposition_code: "O" # Disposition code for an AMA opt-in
+        closed_on: closed_on
       )
     end
 
