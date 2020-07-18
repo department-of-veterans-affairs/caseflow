@@ -1097,10 +1097,30 @@ class LegacyAppeal < CaseflowRecord
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
-      fail "Only active appeals can be closed" unless appeal.active?
-
       new_disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      if appeal.active?
+        close_active_appeal(
+          appeal: appeal,
+          user: user,
+          closed_on: closed_on,
+          disposition_code: new_disposition_code
+        )
+      else
+        # In specified cases, already closed appeals can be opted-in to AMA
+        if disposition == "AMA SOC/SSOC Opt-in"
+          if appeal.disposition == "Advance Failure to Respond"
+            opt_in_closed_appeal(appeal: appeal, user: user, closed_on: closed_on)
+          else
+            fail "Legacy appeal #{appeal.id} already closed with #{appeal.disposition} is not eligible to be opted-in"
+          end
+        end
+      end
+    end
+
+    def close_active_appeal(appeal:, user:, closed_on:, disposition_code:)
+      fail "Only active appeals can be closed" unless appeal.active?
 
       if appeal.remand?
         repository.close_remand!(
@@ -1109,9 +1129,6 @@ class LegacyAppeal < CaseflowRecord
           closed_on: closed_on,
           disposition_code: disposition_code
         )
-      elsif
-        original_disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(appeal.disposition)
-        disposition_code == "G"
       else
         repository.close_undecided_appeal!(
           appeal: appeal,
@@ -1120,6 +1137,15 @@ class LegacyAppeal < CaseflowRecord
           disposition_code: disposition_code
         )
       end
+    end
+
+    def opt_in_closed_appeal(appeal:, user:, closed_on:)
+      repository.opt_in_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on,
+        disposition_code: "O" # Disposition code for an AMA opt-in
+      )
     end
 
     def reopen_single(appeal:, user:, disposition:, safeguards:, reopen_issues: true)
