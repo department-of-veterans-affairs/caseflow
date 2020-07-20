@@ -2,9 +2,18 @@
 
 ##
 # Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask
-# is completed. When the associated hearing's disposition is set, the appropriate tasks are set as children
-#   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
-# The task is marked complete when these children tasks are completed.
+# is completed.
+#
+# When the associated hearing's disposition is set, the appropriate tasks are set as children
+#   held: For legacy, task is set to be completed; for AMA, TranscriptionTask is created as child and
+#         EvidenceSubmissionWindowTask is also created as child unless the veteran/appellant has waived
+#         the 90 day evidence hold
+#   Cancelled: Task is cancelled and EvidenceWindowSubmissionWindow task is created as a child of RootTask
+#   No show: NoShowHearingTask is created as a child of this task
+#   Postponed: 2 options: Schedule new hearing or cancel HearingTask tree and create new ScheduleHearingTask
+#
+# The task is marked complete when the children tasks are completed.
+
 class AssignHearingDispositionTask < Task
   validates :parent, presence: true
   before_create :check_parent_type
