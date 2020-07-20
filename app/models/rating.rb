@@ -36,8 +36,9 @@ class Rating
       unpromulgated = unsorted.select { |rating| rating.promulgation_date.nil? }
       sorted = unsorted.reject do |rating|
         rating.promulgation_date.nil? || rating.promulgation_date < start_date
-      end.sort_by(&:promulgation_date).reverse
-      
+      end
+      sorted.sort_by(&:promulgation_date).reverse
+
       unpromulgated + sorted
     end
 

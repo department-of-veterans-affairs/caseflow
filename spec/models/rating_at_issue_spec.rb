@@ -118,20 +118,6 @@ describe RatingAtIssue do
 
     subject { RatingAtIssue.fetch_promulgated("DRAYMOND") }
 
-    let!(:rating) do
-      Generators::RatingAtIssue.build(
-        participant_id: "DRAYMOND",
-        promulgation_date: receipt_date - 370.days
-      )
-    end
-
-    let!(:untimely_rating) do
-      Generators::RatingAtIssue.build(
-        participant_id: "DRAYMOND",
-        promulgation_date: receipt_date - 100.years
-      )
-    end
-
     let!(:unpromulgated_rating) do
       Generators::RatingAtIssue.build(
         participant_id: "DRAYMOND",
@@ -146,16 +132,8 @@ describe RatingAtIssue do
       )
     end
 
-    it "returns rating objects for all ratings" do
-      expect(subject.count).to eq(3)
-    end
-
-    context "on NoRatingsExistForVeteran error" do
-      subject { RatingAtIssue.fetch_promulgated("FOOBAR") }
-
-      it "returns empty array" do
-        expect(subject.count).to eq(0)
-      end
+    it "returns only promulgated ratings" do
+      expect(subject.count).to eq(1)
     end
   end
 
