@@ -215,12 +215,12 @@ describe LegacyOptinManager, :all_dbs do
 
           # Appeals that were closed and not failure to respond stay the same
           expect(already_closed_case.reload).to be_closed
-          expect(failure_to_respond_case.bfdc).to_not eq ("O")
+          expect(failure_to_respond_case.bfdc).to_not eq "O"
           expect(already_closed_case.bfddec).to eq(closed_disposition_date.to_date)
 
           # Appeals that were closed with a G disposition get opted in
           expect(failure_to_respond_case.reload).to be_closed
-          expect(failure_to_respond_case.bfdc).to eq ("O")
+          expect(failure_to_respond_case.bfdc).to eq "O"
           expect(failure_to_respond_case.bfddec).to eq(Time.zone.today)
         end
 
@@ -248,7 +248,7 @@ describe LegacyOptinManager, :all_dbs do
             expect(vacols_issue("gcode", 1).issdcls).to eq(Time.zone.today)
 
             # Parent legacy appeal does not get opted in
-            expect(failure_to_respond_case.bfdc).to eq ("G")
+            expect(failure_to_respond_case.bfdc).to eq "G"
           end
         end
 

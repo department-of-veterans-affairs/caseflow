@@ -401,17 +401,18 @@ describe AppealRepository, :all_dbs do
 
     context "Appeal does not have an advance failure to respond disposition" do
       let(:case_record) do
-        create(:case,
-               :status_complete,
-               :disposition_allowed,
-               bfddec: past_decision_date,
-               folder: folder_record
-             )
+        create(
+          :case,
+          :status_complete,
+          :disposition_allowed,
+          bfddec: past_decision_date,
+          folder: folder_record
+        )
       end
 
       it "raises an error" do
         expect { subject }.to raise_error(AppealRepository::AppealNotValidToClose)
-        expect(case_record.bfdc).to eq ("1")
+        expect(case_record.bfdc).to eq "1"
         expect(case_record.bfddec).to eq(past_decision_date)
         expect(folder_record.reload.tidcls).to eq(past_decision_date)
       end
@@ -419,19 +420,20 @@ describe AppealRepository, :all_dbs do
 
     context "Appeal has an advance failure to respond disposition" do
       let(:case_record) do
-        create(:case,
-               :status_complete,
-               :disposition_advance_failure_to_respond,
-               bfddec: past_decision_date,
-               folder: folder_record
-             )
+        create(
+          :case,
+          :status_complete,
+          :disposition_advance_failure_to_respond,
+          bfddec: past_decision_date,
+          folder: folder_record
+        )
       end
 
       it "opts in the appeal and updates decision dates" do
         subject
 
         expect(case_record.reload).to be_closed
-        expect(case_record.bfdc).to eq ("O")
+        expect(case_record.bfdc).to eq "O"
         expect(case_record.bfddec).to eq(new_decision_date)
         expect(folder_record.reload.tidcls).to eq(new_decision_date)
       end
