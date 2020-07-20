@@ -91,8 +91,15 @@ class BaseHearingUpdateForm
     )
   end
 
-  def only_time_updated?
-    !virtual_hearing_created? && scheduled_time_string.present?
+  def only_time_updated_or_timezone_updated?
+    (!virtual_hearing_created? &&
+      scheduled_time_string.present? ||
+      # Also send virtual hearing time updates if the representative timezone is changed
+      (virtual_hearing_attributes&.dig(:representative_tz).present? &&
+        virtual_hearing_attributes&.dig(:representative_email).blank?) ||
+      (virtual_hearing_attributes&.dig(:appellant_tz).present? &&
+        virtual_hearing_attributes&.dig(:appellant_email).blank?)
+    )
   end
 
   def start_async_job?
@@ -123,7 +130,7 @@ class BaseHearingUpdateForm
       hearing_type: hearing.class.name,
       # TODO: Ideally, this would use symbols, but symbols can't be serialized for ActiveJob.
       # Rails 6 supports passing symbols to a job.
-      email_type: only_time_updated? ? "updated_time_confirmation" : "confirmation"
+      email_type: only_time_updated_or_timezone_updated? ? "updated_time_confirmation" : "confirmation"
     }
 
     if run_async?
@@ -247,7 +254,7 @@ class BaseHearingUpdateForm
       "CHANGED_TO_VIRTUAL"
     elsif virtual_hearing_cancelled?
       "CHANGED_FROM_VIRTUAL"
-    elsif only_time_updated?
+    elsif only_time_updated_or_timezone_updated?
       "CHANGED_HEARING_TIME"
     elsif only_emails_updated?
       email_change_type

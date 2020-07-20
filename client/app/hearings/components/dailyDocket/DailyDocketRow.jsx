@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
+import { isUndefined, isNil, isEmpty, omitBy, get } from 'lodash';
 
 import { AodModal } from './DailyDocketModals';
 import {
@@ -109,7 +109,7 @@ class DailyDocketRow extends React.Component {
     });
   };
 
-  updateVirtualHearing = (values) => {
+  updateVirtualHearing = (_, values) => {
     this.update({
       virtualHearing: {
         ...(this.props.hearing.virtualHearing || {}),
@@ -143,8 +143,8 @@ class DailyDocketRow extends React.Component {
     const invalid = {
       advanceOnDocketMotionReason:
         hearing.advanceOnDocketMotion &&
-        !_.isNil(hearing.advanceOnDocketMotion.granted) &&
-        _.isNil(hearing.advanceOnDocketMotion.reason)
+        !isNil(hearing.advanceOnDocketMotion.granted) &&
+        isNil(hearing.advanceOnDocketMotion.reason)
     };
 
     this.setState({ invalid });
@@ -156,7 +156,7 @@ class DailyDocketRow extends React.Component {
     const { initialState } = this.state;
     const { user } = this.props;
 
-    if (_.isNil(initialState.advanceOnDocketMotion) || !user.userHasHearingPrepRole) {
+    if (isNil(initialState.advanceOnDocketMotion) || !user.userHasHearingPrepRole) {
       return false;
     }
 
@@ -179,7 +179,7 @@ class DailyDocketRow extends React.Component {
     }
 
     const hearingChanges = deepDiff(this.state.initialState, this.props.hearing);
-    const locationWasUpdated = !_.isEmpty(_.omitBy(hearingChanges?.location, _.isUndefined));
+    const locationWasUpdated = !isEmpty(omitBy(hearingChanges?.location, isUndefined));
     const submitData = {
       ...hearingChanges,
       // Always send full location details because a new record is created each update
@@ -200,7 +200,7 @@ class DailyDocketRow extends React.Component {
           this.props.onReceiveAlerts(alerts.hearing);
         }
 
-        if (!_.isEmpty(alerts.virtual_hearing)) {
+        if (!isEmpty(alerts.virtual_hearing)) {
           this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
           this.setState({ startPolling: true });
         }
@@ -378,7 +378,7 @@ class DailyDocketRow extends React.Component {
     <VirtualHearingModal
       closeModal={this.closeVirtualHearingModal}
       hearing={hearing}
-      timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
+      timeWasEdited={this.state.initialState.scheduledTimeString !== get(hearing, 'scheduledTimeString')}
       virtualHearing={hearing.virtualHearing || {}}
       reset={() => {
         this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });

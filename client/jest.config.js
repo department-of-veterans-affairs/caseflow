@@ -4,6 +4,7 @@ module.exports = {
     '^app/(.*)$': '<rootDir>/app/$1',
     '^constants/(.*)$': '<rootDir>/constants/$1',
     '^test/(.*)$': '<rootDir>/test/$1',
+    '^COPY': '<rootDir>/COPY',
     '\\.(css|less|scss|sss|styl)$': '<rootDir>/node_modules/jest-css-modules'
   },
   setupFilesAfterEnv: ['./test/app/jestSetup.js'],

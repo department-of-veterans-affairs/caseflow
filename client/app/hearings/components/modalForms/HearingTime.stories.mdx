@@ -14,13 +14,16 @@ import { HearingTime } from './HearingTime';
 # Hearing Time
 
 <Preview>
-  <Story name="normal">
+  <Story name="Normal">
     {() => {
       const [value, setValue] = useState('');
       return (
         <HearingTime
           errorMessage={text('Error Message', '', 'knobs')}
           readOnly={boolean('Read-Only', false, 'knobs')}
+          vertical={boolean('Vertical Align', false, 'knobs')}
+          disableRadioOptions={boolean('Disable Additional Options', false, 'knobs')}
+          enableZone={boolean('Show Timezone', false, 'knobs')}
           onChange={setValue}
           regionalOffice={text('Regional Office Key', 'RO01', 'knobs')}
           value={value}
@@ -33,7 +36,7 @@ import { HearingTime } from './HearingTime';
 ### Read-Only
 
 <Preview>
-  <Story name="readOnly">
+  <Story name="Read Only">
     {() => {
       return (
         <HearingTime
@@ -49,12 +52,48 @@ import { HearingTime } from './HearingTime';
 ### Error
 
 <Preview>
-  <Story name="errorMessage">
+  <Story name="With Error">
     {() => {
       const [value, setValue] = useState('');
       return (
         <HearingTime
           errorMessage={"Please select a hearing time"}
+          onChange={setValue}
+          regionalOffice={"RO01"}
+          value={value}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Timezone Enabled
+
+<Preview>
+  <Story name="Timezone Enabled">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <HearingTime
+          enableZone
+          onChange={setValue}
+          regionalOffice={"RO01"}
+          value={value}
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Without Radio Buttons
+
+<Preview>
+  <Story name="Without Radio Buttons">
+    {() => {
+      const [value, setValue] = useState('');
+      return (
+        <HearingTime
+          disableRadioOptions
           onChange={setValue}
           regionalOffice={"RO01"}
           value={value}
