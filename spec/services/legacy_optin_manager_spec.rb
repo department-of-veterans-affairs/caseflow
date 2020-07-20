@@ -42,7 +42,7 @@ describe LegacyOptinManager, :all_dbs do
     create(:request_issue, vacols_id: remand_case.bfkey, vacols_sequence_id: hlr_remand_issue.issseq)
   end
 
-  # Decided case (not g code)
+  # Decided case (not advance failure to respond)
   let(:already_closed_case) do
     create(:case,
            :status_complete,
@@ -64,7 +64,7 @@ describe LegacyOptinManager, :all_dbs do
     create(:request_issue, vacols_id: already_closed_case.bfkey, vacols_sequence_id: closed_issue2.issseq)
   end
 
-  # Decided case - advanced failure to respond ("G")
+  # Decided case - advance failure to respond ("G")
   let!(:failure_to_respond_appeal) { create(:legacy_appeal, vacols_case: failure_to_respond_case) }
   let(:failure_to_respond_case) do
     create(:case,
@@ -215,6 +215,7 @@ describe LegacyOptinManager, :all_dbs do
 
           # Appeals that were closed and not failure to respond stay the same
           expect(already_closed_case.reload).to be_closed
+          expect(failure_to_respond_case.bfdc).to_not eq ("O")
           expect(already_closed_case.bfddec).to eq(closed_disposition_date.to_date)
 
           # Appeals that were closed with a G disposition get opted in
