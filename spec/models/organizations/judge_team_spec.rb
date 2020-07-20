@@ -3,44 +3,73 @@
 describe JudgeTeam, :postgres do
   let(:judge) { create(:user) }
 
+  context "scope" do
+    context "pushed_priority_cases_allowed" do
+      let(:judge2) { create(:user) }
+      let!(:judge_team_available) { JudgeTeam.create_for_judge(judge) }
+      let(:judge_team_unavailable) { JudgeTeam.create_for_judge(judge2) }
+
+      before { judge_team_unavailable.update(accepts_priority_pushed_cases: false) }
+
+      it "should return only the available JudgeTeams" do
+        expect(JudgeTeam.pushed_priority_cases_allowed).to eq([judge_team_available])
+      end
+    end
+  end
+
+  shared_examples "has the judge and attorneys" do
+    describe ".judge" do
+      it "returns the team judge" do
+        expect(judge_team.judge).to eq judge.user
+      end
+    end
+
+    describe ".attorneys" do
+      it "returns the team attorneys" do
+        expect(judge_team.attorneys).to match_array attorneys
+      end
+    end
+  end
+
+  shared_examples "successful judge team creation" do
+    it "should create a new organization and make the user an admin of that group" do
+      expect(JudgeTeam.for_judge(judge)).to eq(nil)
+
+      expect { subject }.to_not raise_error
+      judge.reload
+
+      expect(JudgeTeam.for_judge(judge)).not_to eq(nil)
+      expect(JudgeTeam.for_judge(judge).accepts_priority_pushed_cases).to eq(true)
+    end
+
+    it "creates association with a JudgeTeamLead role with the judge" do
+      expect(JudgeTeamLead.where(organizations_user: judge.organizations_users).count).to eq(0)
+
+      subject
+
+      expect(JudgeTeamLead.where(organizations_user: judge.organizations_users).count).to eq(1)
+    end
+  end
+
+  shared_examples "judge team already exists" do
+    it "raises an error and fails to create the new JudgeTeam" do
+      judge.reload
+      expect { subject }.to raise_error(Caseflow::Error::DuplicateJudgeTeam)
+    end
+  end
+
   describe "feature use_judge_team_roles not activated" do
     describe ".create_for_judge" do
       subject { JudgeTeam.create_for_judge(judge) }
 
       context "when user is not already an admin of an existing JudgeTeam" do
-        it "should create a new organization and make the user an admin of that group" do
-          expect(judge.organizations.length).to eq(0)
-
-          expect { subject }.to_not raise_error
-          judge.reload
-
-          expect(judge.organizations.length).to eq(1)
-          expect(judge.administered_teams.length).to eq(1)
-          expect(judge.administered_teams.first.class).to eq(JudgeTeam)
-          expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase.parameterize.dasherize)
-        end
-
-        it "creates association with a JudgeTeamLead role with the judge" do
-          # Confirm there are no JudgeTeamLead entities associated with this judge.
-          expect(JudgeTeamLead.count).to eq(0)
-
-          judge_team = subject
-
-          # Find the association we should have created.
-          org_user = OrganizationsUser.find_by(organization: judge_team, user: judge)
-
-          # Make sure there is a JudgeTeamLead connected to it.
-          expect(org_user.judge_team_role).to be_a(JudgeTeamLead)
-        end
+        it_behaves_like "successful judge team creation"
       end
 
       context "when a JudgeTeam already exists for this user" do
         before { JudgeTeam.create_for_judge(judge) }
 
-        it "raises an error and fails to create the new JudgeTeam" do
-          judge.reload
-          expect { subject }.to raise_error(Caseflow::Error::DuplicateJudgeTeam)
-        end
+        it_behaves_like "judge team already exists"
       end
     end
 
@@ -92,8 +121,7 @@ describe JudgeTeam, :postgres do
     end
 
     context "a judge team with attorneys on it" do
-      let(:user) { create(:user) }
-      let(:judge) { Judge.new(user) }
+      let(:judge) { Judge.new(create(:user)) }
       let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
       let(:attorneys) { create_list(:user, 5) }
 
@@ -103,17 +131,7 @@ describe JudgeTeam, :postgres do
         end
       end
 
-      describe ".judge" do
-        it "returns the team judge" do
-          expect(judge_team.judge).to eq judge.user
-        end
-      end
-
-      describe ".attorneys" do
-        it "returns the team attorneys" do
-          expect(judge_team.attorneys).to match_array attorneys
-        end
-      end
+      it_behaves_like "has the judge and attorneys"
     end
   end
 
@@ -125,73 +143,22 @@ describe JudgeTeam, :postgres do
       subject { JudgeTeam.create_for_judge(judge) }
 
       context "when user is neither admin nor JudgeTeamLead of an existing JudgeTeam" do
-        it "should create a new organization and make the user an admin of that group" do
-          expect(judge.organizations.length).to eq(0)
-          expect(JudgeTeam.for_judge(judge)).to eq(nil)
-
-          expect { subject }.to_not raise_error
-          judge.reload
-
-          expect(judge.organizations.length).to eq(1)
-          expect(judge.administered_teams.length).to eq(1)
-          expect(judge.administered_teams.first.class).to eq(JudgeTeam)
-          expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase.parameterize.dasherize)
-          expect(JudgeTeam.for_judge(judge)).not_to eq(nil)
-        end
-
-        it "creates association with a JudgeTeamLead role with the judge" do
-          # Confirm there are no JudgeTeamLead entities associated with this judge.
-          expect(JudgeTeamLead.count).to eq(0)
-
-          judge_team = subject
-
-          # Find the association we should have created.
-          org_user = OrganizationsUser.find_by(organization: judge_team, user: judge)
-
-          # Make sure there is a JudgeTeamLead connected to it.
-          expect(org_user.judge_team_role).to be_a(JudgeTeamLead)
-        end
+        it_behaves_like "successful judge team creation"
       end
 
       context "when user is already an admin of an existing JudgeTeam, but not JudgeTeamLead" do
         let(:other_judge) { create(:user) }
         let(:judge) { create(:user) }
         let(:other_judge_team) { create(:judge_team) }
-        before { populate_judgeteam_for_testing(other_judge_team, other_judge, [judge]) }
+        before { populate_judge_team_for_testing(other_judge_team, other_judge, [judge]) }
 
-        it "should create a new organization and make the user an admin of that group" do
-          expect(JudgeTeam.for_judge(judge)).to eq(nil)
-          expect { subject }.to_not raise_error
-
-          judge.reload
-
-          expect(JudgeTeam.for_judge(judge)).not_to eq(nil)
-          expect(JudgeTeam.for_judge(judge)).not_to eq(other_judge_team)
-        end
-
-        it "creates association with a JudgeTeamLead role with the judge" do
-          # Confirm there are no JudgeTeamLead entities associated with this judge.
-          expect(JudgeTeamLead.count).to eq(1)
-
-          judge_team = subject
-
-          expect(JudgeTeamLead.count).to eq(2)
-
-          # Find the association we should have created.
-          org_user = OrganizationsUser.find_by(organization: judge_team, user: judge)
-
-          # Make sure there is a JudgeTeamLead connected to it.
-          expect(org_user.judge_team_role).to be_a(JudgeTeamLead)
-        end
+        it_behaves_like "successful judge team creation"
       end
 
       context "when user is already a JudgeTeamLead for a JudgeTeam" do
         before { JudgeTeam.create_for_judge(judge) }
 
-        it "raises an error and fails to create the new JudgeTeam" do
-          judge.reload
-          expect { subject }.to raise_error(Caseflow::Error::DuplicateJudgeTeam)
-        end
+        it_behaves_like "judge team already exists"
       end
     end
 
@@ -210,7 +177,7 @@ describe JudgeTeam, :postgres do
         let(:judge) { create(:user) }
         let(:user) { create(:user) }
         let(:judge_team) { create(:judge_team) }
-        before { populate_judgeteam_for_testing(judge_team, judge, [user]) }
+        before { populate_judge_team_for_testing(judge_team, judge, [user]) }
 
         it "should return nil, indicating user is not the Judge of this team" do
           expect(JudgeTeam.for_judge(user)).to eq(nil)
@@ -221,7 +188,7 @@ describe JudgeTeam, :postgres do
         let(:judge) { create(:user) }
         let(:user) { create(:user) }
         let!(:judge_team) { create(:judge_team) }
-        before { populate_judgeteam_for_testing(judge_team, judge, [create(:user), user]) }
+        before { populate_judge_team_for_testing(judge_team, judge, [create(:user), user]) }
 
         it "should return nil" do
           expect(JudgeTeam.for_judge(user)).to eq(nil)
@@ -232,7 +199,7 @@ describe JudgeTeam, :postgres do
         let(:judge) { create(:user) }
         let(:user) { create(:user) }
         let!(:judge_team) { create(:judge_team) }
-        before { populate_judgeteam_for_testing(judge_team, judge, [create(:user), user]) }
+        before { populate_judge_team_for_testing(judge_team, judge, [create(:user), user]) }
 
         it "should return judge team" do
           judge.reload
@@ -247,8 +214,8 @@ describe JudgeTeam, :postgres do
         let(:judge_team_reg) { create(:judge_team) }
         let(:judge_team_dvc) { create(:judge_team) }
         before do
-          populate_judgeteam_for_testing(judge_team_reg, judge, [dvc_judge, user])
-          populate_judgeteam_for_testing(judge_team_dvc, dvc_judge, [user]) # create_for_judge?
+          populate_judge_team_for_testing(judge_team_reg, judge, [dvc_judge, user])
+          populate_judge_team_for_testing(judge_team_dvc, dvc_judge, [user]) # create_for_judge?
         end
 
         it "should return the JudgeTeamLead team, not the admin'd team" do
@@ -260,32 +227,14 @@ describe JudgeTeam, :postgres do
     end
 
     context "a judge team with attorneys on it" do
-      let(:user) { create(:user) }
-      let(:judge) { create(:user) }
-      let(:judge_team) { create(:judge_team) }
+      let(:judge) { Judge.new(create(:user)) }
+      let!(:judge_team) { create(:judge_team) }
       let(:attorneys) { create_list(:user, 5) }
 
-      # create judge team empty. add an admin user attorney. add the judge
-      # add the rest of the attorneys
-
-      # Attorneys are added to JudgeTeam first, in a way that avoids the automatic Role assignment, with one of them
-      # being given admin
-      # Then judge is added to the JudgeTeam, again avoiding automatic role assignment, and given admin
       before do
-        populate_judgeteam_for_testing(judge_team, judge, attorneys)
+        populate_judge_team_for_testing(judge_team, judge.user, attorneys)
       end
-
-      describe ".judge" do
-        it "returns the team judge" do
-          expect(judge_team.judge).to eq judge
-        end
-      end
-
-      describe ".attorneys" do
-        it "returns the team attorneys" do
-          expect(judge_team.attorneys).to match_array attorneys
-        end
-      end
+      it_behaves_like "has the judge and attorneys"
     end
   end
 
@@ -330,7 +279,7 @@ describe JudgeTeam, :postgres do
   # Expects an empty judge team, the user you want to be JudgeTeamLead,
   # and an array of users to make DecisionDraftingAttorneys
   # The first user in that array will also be an admin on the JudgeTeam
-  def populate_judgeteam_for_testing(judge_team, judge_user, attorneys)
+  def populate_judge_team_for_testing(judge_team, judge_user, attorneys)
     attorneys.each do |u|
       judge_team.users << u
       attorney_orgsuser = OrganizationsUser.existing_record(u, judge_team)

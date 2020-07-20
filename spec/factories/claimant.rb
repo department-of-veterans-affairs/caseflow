@@ -6,6 +6,19 @@ FactoryBot.define do
     sequence(:participant_id)
     association :decision_review, factory: :appeal
 
+    initialize_with do
+      klass = attributes[:type]&.constantize
+      decision_review = attributes[:decision_review]
+      if decision_review
+        klass ||= (decision_review.veteran_is_not_claimant ? DependentClaimant : VeteranClaimant)
+      end
+      klass ||= VeteranClaimant
+      if klass == VeteranClaimant
+        attributes[:participant_id] ||= decision_review&.veteran&.participant_id
+      end
+      klass.new(**attributes)
+    end
+
     trait :advanced_on_docket_due_to_age do
       after(:create) do |claimant, _evaluator|
         claimant.person.update!(date_of_birth: 76.years.ago)
@@ -18,11 +31,8 @@ FactoryBot.define do
       claimant.person&.date_of_birth
 
       if claimant.decision_review&.veteran&.participant_id == claimant.participant_id
-        claimant.type = "VeteranClaimant"
         veteran = claimant.decision_review.veteran
         claimant.person.update!(first_name: veteran.first_name, last_name: veteran.last_name)
-      else
-        claimant.type = "DependentClaimant"
       end
     end
   end
