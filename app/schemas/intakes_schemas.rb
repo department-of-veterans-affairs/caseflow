@@ -27,7 +27,6 @@ class IntakesSchemas
         string :payee_code, optional: true, nullable: true
         bool :informal_conference, optional: true, nullable: true, doc: "HLRs only"
         bool :same_office, optional: true, nullable: true, doc: "HLRs only"
-        bool :veteran_is_not_claimant, optional: true, nullable: true
         bool :legacy_opt_in_approved, optional: true, nullable: true
 
         # RAMP-specific fields

@@ -107,6 +107,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       receipt_date: intakeData.receiptDate,
       benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
+      claimant_type: intakeData.claimantType,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
@@ -118,6 +119,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       benefit_type: intakeData.benefitType,
       receipt_date: intakeData.receiptDate,
       claimant: intakeData.claimant,
+      claimant_type: intakeData.claimantType,
       veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved

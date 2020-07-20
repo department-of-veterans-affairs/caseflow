@@ -106,10 +106,20 @@ class DecisionReviewIntake < Intake
   end
 
   def claimant_type
-    if request_params[:veteran_is_not_claimant] == true
-      "DependentClaimant"
+    "#{request_params[:claimant_type].capitalize}Claimant"
+  end
+
+  def veteran_is_not_claimant
+    claimant_type != "VeteranClaimant"
+  end
+
+  # If user has specified a different claimant, use that
+  # Otherwise we use the veteran's participant_id, even for OtherClaimant
+  def participant_id
+    if %w[VeteranClaimant OtherClaimant].include? claimant_type
+      veteran.participant_id
     else
-      "VeteranClaimant"
+      request_params[:claimant]
     end
   end
 end

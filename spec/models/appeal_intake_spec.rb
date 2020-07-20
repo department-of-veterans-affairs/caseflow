@@ -76,11 +76,10 @@ describe AppealIntake, :all_dbs do
     let(:receipt_date) { "2018-05-25" }
     let(:docket_type) { Constants.AMA_DOCKETS.hearing }
     let(:claimant) { nil }
-    let(:claimant_type) { nil }
+    let(:claimant_type) { "veteran" }
     let(:claimant_notes) { nil }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
-    let(:veteran_is_not_claimant) { "false" }
 
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
@@ -92,8 +91,7 @@ describe AppealIntake, :all_dbs do
         claimant_type: claimant_type,
         claimant_notes: claimant_notes,
         payee_code: payee_code,
-        legacy_opt_in_approved: legacy_opt_in_approved,
-        veteran_is_not_claimant: veteran_is_not_claimant
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 
@@ -139,9 +137,9 @@ describe AppealIntake, :all_dbs do
           receipt_date: receipt_date,
           docket_type: docket_type,
           claimant: claimant,
+          claimant_type: claimant_type,
           payee_code: payee_code,
           legacy_opt_in_approved: legacy_opt_in_approved,
-          veteran_is_not_claimant: veteran_is_not_claimant,
           claimant_notes: claimant_notes
         )
       end
@@ -159,7 +157,7 @@ describe AppealIntake, :all_dbs do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
-      let(:veteran_is_not_claimant) { true }
+      let(:claimant_type) { "dependent" }
 
       it "adds other relationship to claimants" do
         subject
@@ -215,7 +213,7 @@ describe AppealIntake, :all_dbs do
         context "when notes are empty" do
           it "is invalid" do
             expect(subject).to_not be_truthy
-          end          
+          end
         end
 
         context "when notes are set" do
