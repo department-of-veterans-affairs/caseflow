@@ -610,6 +610,10 @@ class LegacyAppeal < CaseflowRecord
     disposition == "Merged Appeal"
   end
 
+  def advance_failure_to_respond?
+    disposition == "Advance Failure to Respond"
+  end
+
   def special_issues
     SPECIAL_ISSUES.inject([]) do |list, special_issue|
       send(special_issue[0]) ? (list + [special_issue[1]]) : list
@@ -1041,6 +1045,14 @@ class LegacyAppeal < CaseflowRecord
       end
     end
 
+    def opt_in_decided_appeal(appeal:, user:, closed_on:)
+      repository.opt_in_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on
+      )
+    end
+
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
       # `find_by_vacols_id` filters out any cancelled certifications,
@@ -1097,30 +1109,10 @@ class LegacyAppeal < CaseflowRecord
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
-      new_disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
-      fail "Disposition #{disposition}, does not exist" unless disposition_code
-
-      if appeal.active?
-        close_active_appeal(
-          appeal: appeal,
-          user: user,
-          closed_on: closed_on,
-          disposition_code: new_disposition_code
-        )
-      else
-        # In specified cases, already closed appeals can be opted-in to AMA
-        if disposition == "AMA SOC/SSOC Opt-in"
-          if appeal.disposition == "Advance Failure to Respond"
-            opt_in_closed_appeal(appeal: appeal, user: user, closed_on: closed_on)
-          else
-            fail "Legacy appeal #{appeal.id} already closed with #{appeal.disposition} is not eligible to be opted-in"
-          end
-        end
-      end
-    end
-
-    def close_active_appeal(appeal:, user:, closed_on:, disposition_code:)
       fail "Only active appeals can be closed" unless appeal.active?
+
+      disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       if appeal.remand?
         repository.close_remand!(
@@ -1137,14 +1129,6 @@ class LegacyAppeal < CaseflowRecord
           disposition_code: disposition_code
         )
       end
-    end
-
-    def opt_in_closed_appeal(appeal:, user:, closed_on:)
-      repository.opt_in_decided_appeal!(
-        appeal: appeal,
-        user: user,
-        closed_on: closed_on
-      )
     end
 
     def reopen_single(appeal:, user:, disposition:, safeguards:, reopen_issues: true)

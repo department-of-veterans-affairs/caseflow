@@ -8,9 +8,10 @@ describe LegacyOptinManager, :all_dbs do
   let(:user) { Generators::User.build }
   let(:closed_disposition_date) { 1.year.ago }
   let!(:appeal) { create(:appeal, request_issues: request_issues) }
-  let(:request_issues) { [undecided_ri1, undecided_ri2, remand_ri1, remand_ri2, closed_ri1, closed_ri2] }
+  let(:request_issues) { [undecided_ri1, undecided_ri2, remand_ri1, remand_ri2, closed_ri1, closed_ri2, gcode_ri] }
   let(:legacy_opt_in_manager) { LegacyOptinManager.new(decision_review: appeal) }
 
+  # Undecided case
   let!(:undecided_issue1) { create(:case_issue, issseq: 1) }
   let!(:undecided_issue2) { create(:case_issue, issseq: 2) }
   let!(:undecided_case) do
@@ -25,6 +26,7 @@ describe LegacyOptinManager, :all_dbs do
     create(:request_issue, vacols_id: undecided_case.bfkey, vacols_sequence_id: undecided_issue2.issseq)
   end
 
+  # Remand case
   let(:remand_case) do
     create(:case, :status_remand, bfkey: "remand", case_issues: [remand_issue1, remand_issue2, hlr_remand_issue])
   end
@@ -40,6 +42,7 @@ describe LegacyOptinManager, :all_dbs do
     create(:request_issue, vacols_id: remand_case.bfkey, vacols_sequence_id: hlr_remand_issue.issseq)
   end
 
+  # Decided case (not g code)
   let(:already_closed_case) do
     create(:case,
            :status_complete,
@@ -59,6 +62,24 @@ describe LegacyOptinManager, :all_dbs do
   end
   let(:closed_ri2) do
     create(:request_issue, vacols_id: already_closed_case.bfkey, vacols_sequence_id: closed_issue2.issseq)
+  end
+
+  # Decided case - advanced failure to respond ("G")
+  let!(:failure_to_respond_appeal) { create(:legacy_appeal, vacols_case: failure_to_respond_case) }
+  let(:failure_to_respond_case) do
+    create(:case,
+           :status_complete,
+           :disposition_advance_failure_to_respond,
+           bfkey: "gcode",
+           case_issues: [gcode_issue],
+           bfdsoc: 1.day.ago,
+           bfddec: closed_disposition_date)
+  end
+  let(:gcode_issue) do
+    create(:case_issue, :disposition_advance_failure_to_respond, issseq: 1, issdcls: closed_disposition_date)
+  end
+  let(:gcode_ri) do
+    create(:request_issue, vacols_id: failure_to_respond_case.bfkey, vacols_sequence_id: gcode_issue.issseq)
   end
 
   def vacols_issue(vacols_id, vacols_sequence_id)
@@ -147,6 +168,7 @@ describe LegacyOptinManager, :all_dbs do
         let!(:remand_optin2) { create(:legacy_issue_optin, request_issue: remand_ri2) }
         let!(:closed_optin2) { create(:legacy_issue_optin, request_issue: closed_ri2) }
         let!(:hlr_remand_optin) { create(:legacy_issue_optin, request_issue: hlr_remand_ri) }
+        let!(:gcode_optin) { create(:legacy_issue_optin, request_issue: gcode_ri) }
 
         before do
           LegacyOptinManager.new(decision_review: higher_level_review).process!
@@ -181,15 +203,24 @@ describe LegacyOptinManager, :all_dbs do
           expect(follow_up_appeal_issues.count).to eq(3)
         end
 
-        it "closes the closed issues and does not re-close the already closed appeal" do
+        it "opts in issues and does not opt-in decided appeals unless they are advance failure to respond" do
           subject
+
           expect(vacols_issue("closed", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("closed", 1).issdcls).to eq(Time.zone.today)
           expect(vacols_issue("closed", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("closed", 2).issdcls).to eq(Time.zone.today)
+          expect(vacols_issue("gcode", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
+          expect(vacols_issue("gcode", 1).issdcls).to eq(Time.zone.today)
 
+          # Appeals that were closed and not failure to respond stay the same
           expect(already_closed_case.reload).to be_closed
           expect(already_closed_case.bfddec).to eq(closed_disposition_date.to_date)
+
+          # Appeals that were closed with a G disposition get opted in
+          expect(failure_to_respond_case.reload).to be_closed
+          expect(failure_to_respond_case.bfdc).to eq ("O")
+          expect(failure_to_respond_case.bfddec).to eq(Time.zone.today)
         end
 
         context "when issues are rolled back on a closed appeal" do

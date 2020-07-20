@@ -31,6 +31,14 @@ class LegacyIssueOptin < CaseflowRecord
         disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE]
       )
     end
+
+    def opt_in_decided_appeal(legacy_appeal)
+      LegacyAppeal.opt_in_decided_appeal(
+        appeal: legacy_appeal,
+        user: RequestStore.store[:current_user],
+        closed_on: Time.zone.today
+      )
+    end
   end
 
   def opt_in!

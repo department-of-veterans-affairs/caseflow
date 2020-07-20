@@ -389,4 +389,13 @@ describe AppealRepository, :all_dbs do
       end
     end
   end
+
+  describe ".close_appeal_with_disposition!" do
+
+
+  end
+
+  describe ".opt_in_decided_appeal!" do
+    
+  end
 end

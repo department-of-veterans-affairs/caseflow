@@ -22,6 +22,7 @@ class LegacyOptinManager
           if legacy_appeal.issues.reject(&:closed?).empty?
             LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
             LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
+            LegacyIssueOptin.opt_in_decided_appeal(legacy_appeal) if legacy_appeal.advance_failure_to_respond?
           end
         end
       end
