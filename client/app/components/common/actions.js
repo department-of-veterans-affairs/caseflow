@@ -94,3 +94,7 @@ export const removeAlertsWithTimestamps = (timestamps) => ({
     timestamps
   }
 });
+
+export const clearAlerts = () => ({
+  type: ACTIONS.CLEAR_ALERTS,
+});

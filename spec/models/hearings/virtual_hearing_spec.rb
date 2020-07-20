@@ -103,7 +103,7 @@ describe VirtualHearing do
         )
       end
 
-      it { expect(subject).to be(false) }
+      it { expect(subject).to be(true) }
     end
 
     context "for a central legacy hearing" do
@@ -117,7 +117,7 @@ describe VirtualHearing do
         )
       end
 
-      it { expect(subject).to be(false) }
+      it { expect(subject).to be(true) }
     end
 
     shared_examples_for "hearing with existing virtual hearing" do

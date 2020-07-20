@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VirtualHearingEmails Does not allow editing when ReadOnly 1`] = `
+<ReadOnly
+  label="Appellant Email"
+  text="123@gmail.com"
+/>
+`;
+
+exports[`VirtualHearingEmails Matches snapshot with default props 1`] = `
+<Fragment>
+  <TextField
+    className={
+      Array [
+        "cf-form-textinput cf-inline-field",
+      ]
+    }
+    inputStyling={
+      Object {
+        "data-css-d0z96": "",
+      }
+    }
+    name="Appellant Email"
+    onChange={[Function]}
+    optional={false}
+    required={false}
+    strongLabel={true}
+    type="text"
+    useAriaLabel={false}
+    value="123@gmail.com"
+  />
+  <HelperText
+    label="Changes to the email are used to send notifications for this hearing only"
+  />
+</Fragment>
+`;

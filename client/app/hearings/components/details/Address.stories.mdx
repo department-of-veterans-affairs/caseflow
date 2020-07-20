@@ -1,0 +1,29 @@
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { text } from '@storybook/addon-knobs';
+
+import { AddressLine } from './Address';
+
+export const defaultProps = {};
+
+<Meta
+  title="Hearings/Components/Hearing Details/Address"
+  component={AddressLine}
+/>
+
+# Address Line
+
+<Preview>
+  <Story name="Normal">
+    {() => (
+      <AddressLine
+        name={text('Name', 'John Smith', 'knobs')}
+        addressLine1={text('Address Line', '123 Test St.', 'knobs')}
+        addressCity={text('City', 'Washington', 'knobs')}
+        addressState={text('State', 'D.C.', 'knobs')}
+        addressZip={text('Zip Code', '20001', 'knobs')}
+      />
+    )}
+  </Story>
+</Preview>
+
+<Props of={AddressLine} />

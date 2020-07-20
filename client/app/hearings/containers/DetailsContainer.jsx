@@ -1,8 +1,8 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
 
+import { HearingsFormContextProvider } from '../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
@@ -31,16 +31,11 @@ class HearingDetailsContainer extends React.Component {
 
   getHearing = () => {
     const { hearingId } = this.props;
-    const { hearings } = this.state;
-    const hearing = _.find(hearings, (_hearing) => _hearing.externalId === hearingId);
 
-    if (hearing) {
-      this.setHearing(hearing);
-    } else {
-      return ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
-        this.setHearing(ApiUtil.convertToCamelCase(resp.body.data));
-      });
-    }
+    return ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
+      this.setHearing(ApiUtil.convertToCamelCase(resp.body.data));
+    });
+
   };
 
   saveHearing = (data) => {
@@ -65,13 +60,15 @@ class HearingDetailsContainer extends React.Component {
           title: 'Unable to load the details.'
         }}
       >
-        <HearingDetails
-          disabled={!userInHearingOrTranscriptionOrganization}
-          hearing={this.state.hearing}
-          setHearing={this.setHearing}
-          saveHearing={this.saveHearing}
-          goBack={this.goBack}
-        />
+        <HearingsFormContextProvider hearing={this.state.hearing}>
+          <HearingDetails
+            disabled={!userInHearingOrTranscriptionOrganization}
+            hearing={this.state.hearing}
+            setHearing={this.setHearing}
+            saveHearing={this.saveHearing}
+            goBack={this.goBack}
+          />
+        </HearingsFormContextProvider>
       </LoadingDataDisplay>
     );
   }
@@ -80,12 +77,13 @@ class HearingDetailsContainer extends React.Component {
 HearingDetailsContainer.contextType = HearingsUserContext;
 
 HearingDetailsContainer.propTypes = {
+  hearings: PropTypes.array.isRequired,
   hearingId: PropTypes.string.isRequired,
   history: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
-  hearings: state.hearingSchedule.hearings
+  hearings: state.dailyDocket.hearings
 });
 
 export default connect(
