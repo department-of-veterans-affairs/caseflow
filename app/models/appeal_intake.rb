@@ -15,7 +15,7 @@ class AppealIntake < DecisionReviewIntake
     @request_params = request_params
 
     transaction do
-      detail.assign_attributes(appeal_params)
+      detail.assign_attributes(review_params)
       create_claimant!
       detail.save(context: :intake_review)
     end
@@ -56,10 +56,7 @@ class AppealIntake < DecisionReviewIntake
     update_person!
   end
 
-  def appeal_params
-    keys = %w[receipt_date docket_type legacy_opt_in_approved]
-    params = Hash[keys.collect { |key| [key, request_params[key]] }]
-    params[:veteran_is_not_claimant] = veteran_is_not_claimant
-    params
+  def review_param_keys
+    %w[receipt_date docket_type legacy_opt_in_approved]
   end
 end

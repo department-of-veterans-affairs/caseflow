@@ -122,4 +122,16 @@ class DecisionReviewIntake < Intake
       request_params[:claimant]
     end
   end
+
+  # :nocov:
+  def review_param_keys
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+  # :nocov:
+
+  def review_params
+    params = request_params.permit(*review_param_keys)
+    params[:veteran_is_not_claimant] = veteran_is_not_claimant
+    params
+  end
 end

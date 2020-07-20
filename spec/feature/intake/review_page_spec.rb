@@ -386,6 +386,7 @@ feature "Intake Review Page", :postgres do
           expect(page).to have_content("#{attorney.name}, Attorney")
         end
 
+        # rubocop: disable Metrics/AbcSize
         def add_unlisted_claimant(notes)
           click_button("+ Add Claimant")
           expect(page).to have_content("Claimant not listed")
@@ -401,6 +402,7 @@ feature "Intake Review Page", :postgres do
           expect(page).to have_content("Claimant not listed, Attorney")
           expect(page).to have_content(notes)
         end
+        # rubocop: enable Metrics/AbcSize
 
         def claimant_search(search)
           find(".dropdown-claimant").fill_in "claimant", with: search
