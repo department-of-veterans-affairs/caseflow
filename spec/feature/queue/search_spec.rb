@@ -130,11 +130,11 @@ feature "Search", :all_dbs do
               let!(:caseflow_appeal) { create(:appeal, veteran: higher_level_review.veteran) }
               let!(:removed_request_issue) { create(:request_issue, :removed, decision_review: caseflow_appeal) }
 
-              it "does not show removed decision reviews" do
+              it "does show removed appeals but not removed decision reviews" do
                 perform_search
                 expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Supplemental Claim")
                 expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
-                expect(page).to_not have_css(".cf-case-list-table > tbody", text: "Original")
+                expect(page).to have_css(".cf-case-list-table > tbody", text: "Original")
               end
             end
 

@@ -1,35 +1,20 @@
 import React from 'react';
 
 import { EmailNotificationHistory } from 'app/hearings/components/details/EmailNotificationHistory';
-import { HearingsFormContext } from 'app/hearings/contexts/HearingsFormContext';
-import { HearingsUserContext } from 'app/hearings/contexts/HearingsUserContext';
 import { TranscriptionFormSection } from 'app/hearings/components/details/TranscriptionFormSection';
-import { WrappingComponent } from 'test/karma/establishClaim/WrappingComponent';
-import { detailsStore } from 'test/data/stores/hearingsStore';
+import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
-import { userWithVirtualHearingsFeatureEnabled } from 'test/data/user';
 import CheckBox from 'app/components/Checkbox';
 import DetailsForm from 'app/hearings/components/details/DetailsForm';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
-
-const hearingsDispatch = jest.fn();
-const openVirtualHearingModalMock = jest.fn();
-const updateVirtualHearingMock = jest.fn();
-const initialHearingFormState = {
-  state: { hearingForms: {} },
-  dispatch: hearingsDispatch
-};
+import { userWithVirtualHearingsFeatureEnabled, anyUser, amaHearing, defaultHearing, centralHearing } from 'test/data';
 
 describe('DetailsForm', () => {
   test('Matches snapshot with default props when passed in', () => {
     const form = mount(
-      <HearingsUserContext.Provider value={userWithVirtualHearingsFeatureEnabled}>
-        <HearingsFormContext.Provider value={initialHearingFormState}>
-          <DetailsForm />
-        </HearingsFormContext.Provider>
-      </HearingsUserContext.Provider>,
+      <DetailsForm hearing={defaultHearing} />,
       {
-        wrappingComponent: WrappingComponent,
+        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, amaHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
@@ -40,13 +25,9 @@ describe('DetailsForm', () => {
 
   test('Matches snapshot with for legacy hearing', () => {
     const form = mount(
-      <HearingsUserContext.Provider value={userWithVirtualHearingsFeatureEnabled}>
-        <HearingsFormContext.Provider value={initialHearingFormState}>
-          <DetailsForm isLegacy />
-        </HearingsFormContext.Provider>
-      </HearingsUserContext.Provider>,
+      <DetailsForm isLegacy hearing={defaultHearing} />,
       {
-        wrappingComponent: WrappingComponent,
+        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, amaHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
@@ -58,13 +39,9 @@ describe('DetailsForm', () => {
 
   test('Matches snapshot with for AMA hearing', () => {
     const form = mount(
-      <HearingsUserContext.Provider value={userWithVirtualHearingsFeatureEnabled}>
-        <HearingsFormContext.Provider value={initialHearingFormState}>
-          <DetailsForm isLegacy={false} />
-        </HearingsFormContext.Provider>
-      </HearingsUserContext.Provider>,
+      <DetailsForm isLegacy={false} hearing={defaultHearing} />,
       {
-        wrappingComponent: WrappingComponent,
+        wrappingComponent: hearingDetailsWrapper(userWithVirtualHearingsFeatureEnabled, amaHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );
@@ -79,13 +56,22 @@ describe('DetailsForm', () => {
 
   test('Matches snapshot if user does not have the enable virtual hearings feature flag enabled', () => {
     const form = mount(
-      <HearingsUserContext.Provider value={{ userCanScheduleVirtualHearings: false }}>
-        <HearingsFormContext.Provider value={initialHearingFormState}>
-          <DetailsForm />
-        </HearingsFormContext.Provider>
-      </HearingsUserContext.Provider>,
+      <DetailsForm hearing={defaultHearing} />,
       {
-        wrappingComponent: WrappingComponent,
+        wrappingComponent: hearingDetailsWrapper(anyUser, amaHearing),
+        wrappingComponentProps: { store: detailsStore }
+      }
+    );
+
+    expect(form).toMatchSnapshot();
+    expect(form.find(HearingTypeDropdown)).toHaveLength(0);
+  });
+
+  test('Matches snapshot if user does not have the enable convert central hearings feature flag enabled', () => {
+    const form = mount(
+      <DetailsForm hearing={centralHearing} />,
+      {
+        wrappingComponent: hearingDetailsWrapper(anyUser, centralHearing),
         wrappingComponentProps: { store: detailsStore }
       }
     );

@@ -132,13 +132,9 @@ class Appeal < DecisionReview
     decorated_with_status.fetch_status.to_s.titleize
   end
 
-  def program
-    decorated_with_status.program
-  end
+  delegate :program, to: :decorated_with_status
 
-  def distributed_to_a_judge?
-    decorated_with_status.distributed_to_a_judge?
-  end
+  delegate :distributed_to_a_judge?, to: :decorated_with_status
 
   def decorated_with_status
     AppealStatusApiDecorator.new(self)
@@ -295,6 +291,34 @@ class Appeal < DecisionReview
            :zip,
            :state,
            :email_address, to: :appellant, prefix: true, allow_nil: true
+
+  def appellant_tz
+    return if address.blank?
+
+    # Use an address object if this is a hash
+    appellant_address = address.is_a?(Hash) ? Address.new(address) : address
+
+    begin
+      TimezoneService.address_to_timezone(appellant_address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    # Use an address object if this is a hash
+    rep_address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    begin
+      TimezoneService.address_to_timezone(rep_address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
+  end
 
   def appellant_middle_initial
     appellant_middle_name&.first

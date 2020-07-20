@@ -4,7 +4,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
-  QUERY_LIMIT = 500
+  QUERY_LIMIT = 750
   def create_schedule_hearing_tasks
     AppealRepository.create_schedule_hearing_tasks
   end
@@ -37,6 +37,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         geomatch_result = geomatch(appeal)
         record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
       rescue Caseflow::Error::VaDotGovLimitError
+        Rails.logger.error("VA.gov returned a rate limit error")
         record_geomatched_appeal(appeal.external_id, "limit_error")
         break
       rescue StandardError => error
